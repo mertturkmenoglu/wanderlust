@@ -81,19 +81,23 @@ app.post("/", async (c) => {
 async function handleUserCreate(data: UserJSON): Promise<void> {
   try {
     await db.transaction(async (tx) => {
-      const [user] = await tx.insert(users).values({}).returning();
+      const [user] = await tx
+        .insert(users)
+        .values({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          username: data.username,
+          image: data.image_url,
+        })
+        .returning();
       await tx.insert(auths).values({
         clerkId: data.id,
-        firstName: data.first_name,
-        lastName: data.last_name,
         email: data.email_addresses[0]?.email_address,
         emailId: data.email_addresses[0]?.id,
         emailVerification: data.email_addresses[0]?.verification?.status,
         lastSignInAt: data.last_sign_in_at,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
-        username: data.username,
-        image: data.image_url,
         userId: user.id,
       });
     });
@@ -104,22 +108,31 @@ async function handleUserCreate(data: UserJSON): Promise<void> {
 
 async function handleUserUpdate(data: UserJSON): Promise<void> {
   try {
-    await db
-      .update(auths)
-      .set({
-        clerkId: data.id,
-        firstName: data.first_name,
-        lastName: data.last_name,
-        email: data.email_addresses[0]?.email_address,
-        emailId: data.email_addresses[0]?.id,
-        emailVerification: data.email_addresses[0]?.verification?.status,
-        lastSignInAt: data.last_sign_in_at,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        username: data.username,
-        image: data.image_url,
-      })
-      .where(eq(auths.clerkId, data.id));
+    await db.transaction(async (tx) => {
+      const [authObj] = await tx
+        .update(auths)
+        .set({
+          clerkId: data.id,
+          email: data.email_addresses[0]?.email_address,
+          emailId: data.email_addresses[0]?.id,
+          emailVerification: data.email_addresses[0]?.verification?.status,
+          lastSignInAt: data.last_sign_in_at,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        })
+        .where(eq(auths.clerkId, data.id))
+        .returning();
+
+      await tx
+        .update(users)
+        .set({
+          firstName: data.first_name,
+          lastName: data.last_name,
+          username: data.username,
+          image: data.image_url,
+        })
+        .where(eq(users.id, authObj.userId));
+    });
   } catch (e) {
     console.error(e);
   }
