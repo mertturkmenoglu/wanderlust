@@ -6,6 +6,7 @@ import { getCorsConfig } from "./cors";
 import { runDrizzleMigrations } from "./db";
 import mainRouter from "./routes/main";
 import { User } from "@clerk/backend";
+import env from "./env";
 
 export type Env = {
   Variables: {
@@ -24,7 +25,7 @@ app
   .route("/", mainRouter);
 
 export default {
-  port: 5000,
+  port: env.PORT,
   fetch: app.fetch,
 };
 
