@@ -4,6 +4,7 @@ export default cleanEnv(process.env, {
   NODE_ENV: str({ choices: ["development", "test", "production", "staging"] }),
   CLERK_SECRET_KEY: str(),
   CLERK_PUBLISHABLE_KEY: str(),
+  CLERK_WEBHOOK_SECRET: str(),
   CLIENT_ORIGIN: str({ devDefault: "http://localhost:3000/" }),
   DB_URL: str({
     devDefault: "postgres://postgres:postgres@localhost:5432/wanderlust",
