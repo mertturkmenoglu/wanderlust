@@ -7,6 +7,7 @@ const connectionString = env.DB_URL;
 
 export const sql = postgres(connectionString, {
   onnotice: () => {},
+  connect_timeout: 1_000_000,
 });
 
 export const db = drizzle(sql);
