@@ -29,6 +29,20 @@
       "when": 1715275253348,
       "tag": "0003_windy_speed",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1715295838099,
+      "tag": "0004_simple_rocket_raccoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1715296464014,
+      "tag": "0005_stale_shiver_man",
+      "breakpoints": true
     }
   ]
 }
