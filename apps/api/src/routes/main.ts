@@ -1,20 +1,11 @@
-import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
+import { clerkMiddleware } from "@hono/clerk-auth";
 import { Hono } from "hono";
+import { getAuth } from "../middlewares/get-auth";
 
-const app = new Hono();
-
-app.use("*", clerkMiddleware()).get("/", (c) => {
-  const auth = getAuth(c);
-
-  if (!auth?.userId) {
-    return c.json({
-      message: "You are not logged in.",
-    });
-  }
-
+const app = new Hono().get("/", clerkMiddleware(), getAuth, async (c) => {
   return c.json({
     message: "You are logged in!",
-    userId: auth.userId,
+    auth: c.get("auth"),
   });
 });
 

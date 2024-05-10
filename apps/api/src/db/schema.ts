@@ -45,6 +45,8 @@ export const auths = pgTable("auths", {
     .unique(),
 });
 
+export type AuthUser = typeof auths.$inferSelect;
+
 export const points = pgTable(
   "points",
   {

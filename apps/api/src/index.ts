@@ -2,25 +2,24 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { User } from "@clerk/backend";
 
 import { getCorsConfig } from "./cors";
 import { runDrizzleMigrations } from "./db";
 import mainRouter from "./routes/main";
 import webooksRouter from "./routes/webhooks";
 import env from "./env";
-
-export type Env = {
-  Variables: {
-    user: User;
-  };
-};
-
-const app = new Hono<Env>().basePath("/api");
+import { AuthUser } from "./db/schema";
 
 await runDrizzleMigrations();
 
-app
+export type Env = {
+  Variables: {
+    auth: AuthUser;
+  };
+};
+
+const app = new Hono<Env>()
+  .basePath("/api")
   .use(cors(getCorsConfig()))
   .use(logger())
   .use(secureHeaders())
