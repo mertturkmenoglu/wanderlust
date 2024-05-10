@@ -14,6 +14,7 @@ import Image from "next/image";
 import Logo from "./icon.png";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,7 +41,9 @@ export default function RootLayout({
             </ClerkLoading>
             <ClerkLoaded>
               <SignedOut>
-                <SignInButton />
+                <SignInButton>
+                  <Button>Sign in</Button>
+                </SignInButton>
               </SignedOut>
               <SignedIn>
                 <UserButton showName={true} />
