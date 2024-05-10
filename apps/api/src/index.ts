@@ -7,6 +7,7 @@ import { getCorsConfig } from "./cors";
 import { runDrizzleMigrations } from "./db";
 import mainRouter from "./routes/main";
 import webooksRouter from "./routes/webhooks";
+import usersRouter from "./routes/users";
 import env from "./env";
 import { AuthUser } from "./db/schema";
 
@@ -24,7 +25,8 @@ const app = new Hono<Env>()
   .use(logger())
   .use(secureHeaders())
   .route("/", mainRouter)
-  .route("/webhooks", webooksRouter);
+  .route("/webhooks", webooksRouter)
+  .route("/users", usersRouter);
 
 export default {
   port: env.PORT,
