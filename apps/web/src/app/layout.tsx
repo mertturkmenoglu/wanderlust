@@ -7,7 +7,13 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  ClerkLoaded,
+  ClerkLoading,
 } from "@clerk/nextjs";
+import Image from "next/image";
+import Logo from "./icon.png";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,13 +31,21 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <header>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+          <header className="flex items-center container mx-auto my-4 justify-between">
+            <Link href="/">
+              <Image src={Logo} alt="Wanderlust" className="size-12" />
+            </Link>
+            <ClerkLoading>
+              <Skeleton className="size-8 rounded-full" />
+            </ClerkLoading>
+            <ClerkLoaded>
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton showName={true} />
+              </SignedIn>
+            </ClerkLoaded>
           </header>
 
           <main>{children}</main>
