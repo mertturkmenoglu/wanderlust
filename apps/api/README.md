@@ -14,6 +14,14 @@
 - Start the API server: `bun dev`
 - Start ngrok: `ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000`
 
+## Getting Long Lived Token for API Development Testing
+* Open Web App.
+* Sign in as any user.
+* Open DevTools Console.
+* Get the token with this command: `window.Clerk.session.getToken({ template: "api-testing-token-template" }).then((data) => { console.table(data) })`
+* Token lives for 24 hours.
+* Send the token in headers: `Authorization: Bearer YOUR_TOKEN`
+
 ## Ports
 
 - API server: `localhost:5000`
