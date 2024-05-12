@@ -33,7 +33,7 @@ export default function Home() {
     <main className="">
       <nav className="mx-auto flex justify-center my-12 items-center space-x-4">
         <input
-          className="border border-black/30 w-1/2 py-4 rounded-full px-8"
+          className="border border-muted-foreground w-10/12 lg:w-1/2 py-4 rounded-full px-8"
           placeholder="Search a location or an event"
         />
 
