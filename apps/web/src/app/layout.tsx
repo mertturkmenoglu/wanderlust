@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={"mx-4 lg:mx-32 " + inter.className}>
+        <body className={"mx-4 md:mx-8 lg:mx-16 2xl:mx-32 " + inter.className}>
           <Header className="my-4" />
 
           <main>{children}</main>
