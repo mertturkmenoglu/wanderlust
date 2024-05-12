@@ -26,6 +26,8 @@ import {
   WineIcon,
 } from "lucide-react";
 
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 export default function Home() {
   return (
     <main className="">
@@ -40,32 +42,36 @@ export default function Home() {
         </Button>
       </nav>
 
-      <ul className="my-12 flex items-center justify-center space-x-4">
-        <CategoryNavIcon href="#" text="Trending" icon={FlameIcon} />
-        <CategoryNavIcon href="#" text="Family Friendly" icon={BabyIcon} />
-        <CategoryNavIcon href="#" text="Coffee" icon={CoffeeIcon} />
-        <CategoryNavIcon href="#" text="Bars" icon={BeerIcon} />
-        <CategoryNavIcon href="#" text="Landmarks" icon={LandmarkIcon} />
-        <CategoryNavIcon href="#" text="Trekking" icon={MountainIcon} />
-        <CategoryNavIcon href="#" text="Art" icon={PaletteIcon} />
-        <CategoryNavIcon href="#" text="Parties" icon={PartyPopperIcon} />
-        <CategoryNavIcon href="#" text="Vegan" icon={SaladIcon} />
-        <CategoryNavIcon href="#" text="Camping" icon={TentIcon} />
-        <CategoryNavIcon href="#" text="Music" icon={Music2Icon} />
-        <CategoryNavIcon href="#" text="Fine Dining" icon={UtensilsIcon} />
-        <CategoryNavIcon href="#" text="City Night" icon={MoonIcon} />
-        <CategoryNavIcon href="#" text="Steakhouse" icon={BeefIcon} />
-        <CategoryNavIcon href="#" text="Pattiseries" icon={CakeSliceIcon} />
-        <CategoryNavIcon href="#" text="Street Food" icon={DrumstickIcon} />
-        <CategoryNavIcon href="#" text="Yoga" icon={LeafIcon} />
-        <CategoryNavIcon href="#" text="Cocktail Bars" icon={MartiniIcon} />
-        <CategoryNavIcon href="#" text="Wine" icon={WineIcon} />
-        <CategoryNavIcon href="#" text="Movie Theaters" icon={PopcornIcon} />
-        <CategoryNavIcon href="#" text="Photography" icon={CameraIcon} />
-        <CategoryNavIcon href="#" text="On a Budget" icon={DollarSignIcon} />
-      </ul>
+      <ScrollArea>
+        <ul className="my-4 flex items-center justify-center space-x-4">
+          <CategoryNavIcon href="#" text="Trending" icon={FlameIcon} />
+          <CategoryNavIcon href="#" text="Family Friendly" icon={BabyIcon} />
+          <CategoryNavIcon href="#" text="Coffee" icon={CoffeeIcon} />
+          <CategoryNavIcon href="#" text="Bars" icon={BeerIcon} />
+          <CategoryNavIcon href="#" text="Landmarks" icon={LandmarkIcon} />
+          <CategoryNavIcon href="#" text="Trekking" icon={MountainIcon} />
+          <CategoryNavIcon href="#" text="Art" icon={PaletteIcon} />
+          <CategoryNavIcon href="#" text="Parties" icon={PartyPopperIcon} />
+          <CategoryNavIcon href="#" text="Vegan" icon={SaladIcon} />
+          <CategoryNavIcon href="#" text="Camping" icon={TentIcon} />
+          <CategoryNavIcon href="#" text="Music" icon={Music2Icon} />
+          <CategoryNavIcon href="#" text="Fine Dining" icon={UtensilsIcon} />
+          <CategoryNavIcon href="#" text="City Night" icon={MoonIcon} />
+          <CategoryNavIcon href="#" text="Steakhouse" icon={BeefIcon} />
+          <CategoryNavIcon href="#" text="Pattiseries" icon={CakeSliceIcon} />
+          <CategoryNavIcon href="#" text="Street Food" icon={DrumstickIcon} />
+          <CategoryNavIcon href="#" text="Yoga" icon={LeafIcon} />
+          <CategoryNavIcon href="#" text="Cocktail Bars" icon={MartiniIcon} />
+          <CategoryNavIcon href="#" text="Wine" icon={WineIcon} />
+          <CategoryNavIcon href="#" text="Movie Theaters" icon={PopcornIcon} />
+          <CategoryNavIcon href="#" text="Photography" icon={CameraIcon} />
+          <CategoryNavIcon href="#" text="On a Budget" icon={DollarSignIcon} />
+        </ul>
 
-      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tighter lg:text-3xl text-accent-foreground">
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+
+      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tighter lg:text-3xl text-accent-foreground mt-12">
         Discover What&apos;s Around you
       </h2>
     </main>
