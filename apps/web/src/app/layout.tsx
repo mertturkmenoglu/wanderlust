@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/blocks/Header";
+import QClientProvider from "@/providers/query-provider";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,9 +22,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={"mx-4 md:mx-8 lg:mx-16 2xl:mx-32 " + inter.className}>
-          <Header className="my-4" />
-
-          <main>{children}</main>
+          <QClientProvider>
+            <Header className="my-4" />
+            <main>{children}</main>
+            <ReactQueryDevtools />
+          </QClientProvider>
         </body>
       </html>
     </ClerkProvider>
