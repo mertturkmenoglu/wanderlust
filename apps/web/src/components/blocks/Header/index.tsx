@@ -7,15 +7,28 @@ import {
   SignInButton,
   SignedIn,
   SignedOut,
-  UserButton,
 } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { UserIcon } from "lucide-react";
+import { currentUser } from "@clerk/nextjs/server";
+import LogoutItem from "./logout-item";
 
 type Props = React.HTMLAttributes<HTMLElement>;
 
-function Header({ className, ...props }: Props): React.ReactElement {
+async function Header({ className, ...props }: Props) {
+  const user = await currentUser();
+
   return (
     <header
       className={cn("flex items-center justify-between", className)}
@@ -46,16 +59,60 @@ function Header({ className, ...props }: Props): React.ReactElement {
         </ul>
       </nav>
       <ClerkLoading>
-        <Skeleton className="size-8 rounded-full" />
+        <Skeleton className="size-8 rounded-full px-10 bg-muted" />
       </ClerkLoading>
       <ClerkLoaded>
         <SignedOut>
           <SignInButton>
-            <Button>Sign in</Button>
+            <Button variant="default" className="rounded-full">
+              Sign in
+            </Button>
           </SignInButton>
         </SignedOut>
         <SignedIn>
-          <UserButton showName={false} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="rounded-full" variant="ghost">
+                <UserIcon className="size-6 text-black" />
+                <span className="ml-2">{user?.firstName}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end">
+              <DropdownMenuLabel>{user?.fullName}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <Link href={`/user/${user?.username}`}>Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/notifications">Notifications</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <Link href="/friends">Friends</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/lists">My Lists</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/diary">Diary</Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled>Report</DropdownMenuItem>
+              <DropdownMenuItem disabled>Support</DropdownMenuItem>
+              <DropdownMenuItem disabled>Privacy</DropdownMenuItem>
+              <DropdownMenuItem disabled>Terms</DropdownMenuItem>
+              <DropdownMenuItem disabled>API</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <LogoutItem />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </SignedIn>
       </ClerkLoaded>
     </header>
