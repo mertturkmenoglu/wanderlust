@@ -16,6 +16,7 @@ await runDrizzleMigrations();
 export type Env = {
   Variables: {
     auth: AuthUser;
+    withAuth?: AuthUser | undefined;
   };
 };
 
