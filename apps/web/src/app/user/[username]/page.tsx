@@ -1,4 +1,4 @@
-import { api, getUserProfile } from "@/lib/api";
+import { getUserProfile } from "@/lib/api";
 import {
   HydrationBoundary,
   QueryClient,
