@@ -6,6 +6,7 @@ import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { HTTPException } from "hono/http-exception";
 
 const app = new Hono()
   .get("/me", clerkMiddleware(), getAuth, async (c) => {
@@ -21,7 +22,9 @@ const app = new Hono()
         data: user,
       });
     } catch (e) {
-      return c.notFound();
+      throw new HTTPException(404, {
+        message: "Not found",
+      });
     }
   })
   .get(
@@ -44,7 +47,9 @@ const app = new Hono()
           data: user,
         });
       } catch (e) {
-        return c.notFound();
+        throw new HTTPException(404, {
+          message: "Not found",
+        });
       }
     }
   );
