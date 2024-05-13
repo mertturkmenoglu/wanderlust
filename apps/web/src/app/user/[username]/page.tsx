@@ -18,6 +18,7 @@ async function Page({ params }: Props) {
   await qc.prefetchQuery({
     queryKey: ["user", params.username],
     queryFn: async () => getUserProfile(params.username),
+    staleTime: 2 * 1000,
   });
 
   return (
