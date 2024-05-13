@@ -5,7 +5,6 @@ import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
-import { withAuth } from "../middlewares/with-auth";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
