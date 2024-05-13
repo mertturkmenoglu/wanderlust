@@ -1,7 +1,7 @@
 import { hc } from "hono/client";
 import type { AppType } from "../../../api/src";
 
-export const { api } = hc<AppType>("http://localhost:5000");
+export const { api } = hc<AppType>(process.env.API_URL!);
 
 export async function getUserProfile(username: string) {
   const res = await api.users[":username"].profile.$get({
