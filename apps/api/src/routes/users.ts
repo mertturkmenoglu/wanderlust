@@ -4,7 +4,6 @@ import { getAuth } from "../middlewares/get-auth";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
@@ -22,9 +21,7 @@ const app = new Hono()
         data: user,
       });
     } catch (e) {
-      throw new HTTPException(404, {
-        message: "Not found",
-      });
+      return c.notFound();
     }
   })
   .get(
@@ -47,9 +44,7 @@ const app = new Hono()
           data: user,
         });
       } catch (e) {
-        throw new HTTPException(404, {
-          message: "Not found",
-        });
+        return c.notFound();
       }
     }
   );
