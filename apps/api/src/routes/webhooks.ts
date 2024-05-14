@@ -2,10 +2,12 @@ import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { Webhook } from "svix";
 import env from "../env";
-import { DeletedObjectJSON, UserJSON, WebhookEvent } from "@clerk/backend";
-import { db } from "../db";
-import { auths, users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { WebhookEvent } from "@clerk/backend";
+import {
+  handleUserCreate,
+  handleUserDelete,
+  handleUserUpdate,
+} from "../db/handle-user-sync";
 
 const app = new Hono();
 
@@ -77,83 +79,5 @@ app.post("/", async (c) => {
     );
   }
 });
-
-async function handleUserCreate(data: UserJSON): Promise<void> {
-  try {
-    await db.transaction(async (tx) => {
-      const [user] = await tx
-        .insert(users)
-        .values({
-          firstName: data.first_name,
-          lastName: data.last_name,
-          username: data.username,
-          image: data.image_url,
-        })
-        .returning();
-      await tx.insert(auths).values({
-        clerkId: data.id,
-        email: data.email_addresses[0]?.email_address,
-        emailId: data.email_addresses[0]?.id,
-        emailVerification: data.email_addresses[0]?.verification?.status,
-        lastSignInAt: data.last_sign_in_at,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        userId: user.id,
-      });
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function handleUserUpdate(data: UserJSON): Promise<void> {
-  try {
-    await db.transaction(async (tx) => {
-      const [authObj] = await tx
-        .update(auths)
-        .set({
-          clerkId: data.id,
-          email: data.email_addresses[0]?.email_address,
-          emailId: data.email_addresses[0]?.id,
-          emailVerification: data.email_addresses[0]?.verification?.status,
-          lastSignInAt: data.last_sign_in_at,
-          createdAt: data.created_at,
-          updatedAt: data.updated_at,
-        })
-        .where(eq(auths.clerkId, data.id))
-        .returning();
-
-      await tx
-        .update(users)
-        .set({
-          firstName: data.first_name,
-          lastName: data.last_name,
-          username: data.username,
-          image: data.image_url,
-        })
-        .where(eq(users.id, authObj.userId));
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-async function handleUserDelete(data: DeletedObjectJSON): Promise<void> {
-  try {
-    await db.transaction(async (tx) => {
-      const clerkId = data.id;
-      if (clerkId === undefined) {
-        throw new Error("Clerk ID is undefined");
-      }
-      const [authObj] = await tx
-        .delete(auths)
-        .where(eq(auths.clerkId, clerkId))
-        .returning();
-      await tx.delete(users).where(eq(users.id, authObj.userId));
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
 
 export default app;
