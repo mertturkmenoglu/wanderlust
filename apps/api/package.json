@@ -1,6 +1,7 @@
 {
   "scripts": {
     "dev": "bun run --hot src/index.ts",
+    "sync": "bun run src/sync.ts",
     "generate": "drizzle-kit generate:pg --config=src/db/drizzle.config.ts",
     "ngrok": "ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000"
   },
