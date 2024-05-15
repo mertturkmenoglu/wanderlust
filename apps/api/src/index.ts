@@ -5,7 +5,6 @@ import { secureHeaders } from "hono/secure-headers";
 
 import { getCorsConfig } from "./cors";
 import { runDrizzleMigrations } from "./db";
-import mainRouter from "./routes/main";
 import webooksRouter from "./routes/webhooks";
 import usersRouter from "./routes/users";
 import env from "./env";
@@ -25,7 +24,6 @@ const app = new Hono<Env>()
   .use(cors(getCorsConfig()))
   .use(logger())
   .use(secureHeaders())
-  .route("/", mainRouter)
   .route("/webhooks", webooksRouter)
   .route("/users", usersRouter);
 
