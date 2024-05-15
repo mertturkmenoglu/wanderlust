@@ -3,7 +3,9 @@
     "dev": "bun run --hot src/index.ts",
     "sync": "bun run src/sync.ts",
     "generate": "drizzle-kit generate:pg --config=src/db/drizzle.config.ts",
-    "ngrok": "ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000"
+    "ngrok": "ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000",
+    "env:pull": "bunx dotenv-vault@latest pull",
+    "env:push": "bunx dotenv-vault@latest push"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.5",
