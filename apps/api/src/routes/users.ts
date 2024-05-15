@@ -18,9 +18,12 @@ const app = new Hono()
         .from(users)
         .where(eq(users.id, auth.userId));
 
-      return c.json({
-        data: user,
-      });
+      return c.json(
+        {
+          data: user,
+        },
+        200
+      );
     } catch (e) {
       throw new HTTPException(404, {
         message: "Not found",
@@ -43,9 +46,12 @@ const app = new Hono()
           .select()
           .from(users)
           .where(eq(users.username, username));
-        return c.json({
-          data: user,
-        });
+        return c.json(
+          {
+            data: user,
+          },
+          200
+        );
       } catch (e) {
         throw new HTTPException(404, {
           message: "Not found",
