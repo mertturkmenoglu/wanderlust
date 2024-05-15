@@ -1,14 +1,14 @@
 import { User, createClerkClient } from "@clerk/backend";
-import env from "./env";
-import { db } from "./db";
-import { auths } from "./db/schema";
 import { count, eq, inArray } from "drizzle-orm";
+import { db } from "./db";
 import {
-  type THandleUserCreatePayload,
-  type THandleUserUpdatePayload,
   handleUserCreate,
   handleUserUpdate,
+  type THandleUserCreatePayload,
+  type THandleUserUpdatePayload,
 } from "./db/handle-user-sync";
+import { auths } from "./db/schema";
+import env from "./env";
 
 function mapUserToHandleUserCreatePayload(
   user: User

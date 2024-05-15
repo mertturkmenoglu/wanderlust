@@ -1,12 +1,12 @@
 import { clerkMiddleware } from "@hono/clerk-auth";
+import { zValidator } from "@hono/zod-validator";
+import { eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { getAuth } from "../middlewares/get-auth";
+import { HTTPException } from "hono/http-exception";
+import { z } from "zod";
 import { db } from "../db";
 import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
-import { HTTPException } from "hono/http-exception";
+import { getAuth } from "../middlewares/get-auth";
 
 const app = new Hono()
   .get("/me", clerkMiddleware(), getAuth, async (c) => {

@@ -1,7 +1,7 @@
 import { DeletedObjectJSON, UserJSON } from "@clerk/backend";
+import { eq } from "drizzle-orm";
 import { db } from ".";
 import { auths, users } from "./schema";
-import { eq } from "drizzle-orm";
 
 export type THandleUserCreatePayload = Pick<
   UserJSON,

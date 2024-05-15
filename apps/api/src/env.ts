@@ -1,4 +1,4 @@
-import { cleanEnv, str, num, bool } from "envalid";
+import { bool, cleanEnv, num, str } from "envalid";
 
 export default cleanEnv(process.env, {
   NODE_ENV: str({ choices: ["development", "test", "production", "staging"] }),

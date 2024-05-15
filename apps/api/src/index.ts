@@ -5,10 +5,10 @@ import { secureHeaders } from "hono/secure-headers";
 
 import { getCorsConfig } from "./cors";
 import { runDrizzleMigrations } from "./db";
-import webooksRouter from "./routes/webhooks";
-import usersRouter from "./routes/users";
-import env from "./env";
 import { AuthUser } from "./db/schema";
+import env from "./env";
+import usersRouter from "./routes/users";
+import webooksRouter from "./routes/webhooks";
 
 await runDrizzleMigrations();
 

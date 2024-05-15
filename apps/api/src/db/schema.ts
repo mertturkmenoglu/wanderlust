@@ -1,15 +1,15 @@
 import {
-  text,
-  pgTable,
-  uuid,
   bigint,
-  char,
-  smallint,
   boolean,
+  char,
+  index,
+  pgTable,
+  smallint,
   smallserial,
+  text,
   timestamp,
   uniqueIndex,
-  index,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
