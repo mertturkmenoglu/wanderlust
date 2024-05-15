@@ -5,7 +5,8 @@
     "generate": "drizzle-kit generate:pg --config=src/db/drizzle.config.ts",
     "ngrok": "ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000",
     "env:pull": "bunx dotenv-vault@latest pull",
-    "env:push": "bunx dotenv-vault@latest push"
+    "env:push": "bunx dotenv-vault@latest push",
+    "studio": "bunx drizzle-kit studio --config=src/db/drizzle.config.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.5",
@@ -18,6 +19,7 @@
     "hono-rate-limiter": "^0.3.0",
     "ioredis": "^5.4.1",
     "minio": "^8.0.0",
+    "pg": "^8.11.5",
     "postgres": "^3.4.4",
     "svix": "^1.24.0",
     "typesense": "^1.8.2",
