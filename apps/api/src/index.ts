@@ -1,3 +1,4 @@
+import type { SocketAddress } from "bun";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -17,6 +18,9 @@ export type Env = {
     auth: AuthUser;
     withAuth?: AuthUser | undefined;
   };
+  Bindings: {
+    ip: SocketAddress;
+  };
 };
 
 const app = new Hono<Env>()
@@ -27,9 +31,11 @@ const app = new Hono<Env>()
   .route("/webhooks", webooksRouter)
   .route("/users", usersRouter);
 
-export default {
+Bun.serve({
   port: env.PORT,
-  fetch: app.fetch,
-};
+  fetch(req, server) {
+    return app.fetch(req, { ip: server.requestIP(req) });
+  },
+});
 
 export type AppType = typeof app;
