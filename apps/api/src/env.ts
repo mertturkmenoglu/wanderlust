@@ -17,4 +17,5 @@ export default cleanEnv(process.env, {
   MINIO_DEFAULT_BUCKET: str({ devDefault: "default" }),
   MINIO_LOCATION: str({ devDefault: "eu-central-1" }),
   PORT: num({ devDefault: 5000 }),
+  ADMIN_ID: str(),
 });
