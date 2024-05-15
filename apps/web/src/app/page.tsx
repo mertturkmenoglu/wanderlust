@@ -1,4 +1,5 @@
 import CategoryNavigation from "@/components/blocks/CategoryNavigation";
+import UpcomingEvents from "@/components/blocks/UpcomingEvents";
 import { Button } from "@/components/ui/button";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
@@ -19,8 +20,10 @@ export default function Home() {
       <CategoryNavigation />
 
       <h2 className="scroll-m-20 text-2xl font-semibold tracking-tighter lg:text-3xl text-accent-foreground mt-12">
-        Discover What&apos;s Around you
+        Upcoming Events
       </h2>
+
+      <UpcomingEvents />
     </main>
   );
 }
