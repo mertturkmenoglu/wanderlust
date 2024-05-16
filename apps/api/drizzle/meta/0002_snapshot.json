@@ -1,10 +1,8 @@
 {
-  "id": "62676f82-a533-4ccf-937d-9f2b4b4767fe",
-  "prevId": "49809c05-90be-487f-886d-ad41a542af26",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "auths": {
+    "public.auths": {
       "name": "auths",
       "schema": "",
       "columns": {
@@ -93,36 +91,36 @@
         "auths_user_id_users_id_fk": {
           "name": "auths_user_id_users_id_fk",
           "tableFrom": "auths",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "auths_clerk_id_unique": {
           "name": "auths_clerk_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "clerk_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "auths_user_id_unique": {
           "name": "auths_user_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -143,8 +141,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "62676f82-a533-4ccf-937d-9f2b4b4767fe",
+  "prevId": "49809c05-90be-487f-886d-ad41a542af26"
 }

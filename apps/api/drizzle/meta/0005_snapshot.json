@@ -1,10 +1,8 @@
 {
-  "id": "16663fc4-3442-4c70-9508-aa9e3d164b3d",
-  "prevId": "2bba9c60-37a6-4af0-81bf-8d94fde5cc9f",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "auths": {
+    "public.auths": {
       "name": "auths",
       "schema": "",
       "columns": {
@@ -69,36 +67,36 @@
         "auths_user_id_users_id_fk": {
           "name": "auths_user_id_users_id_fk",
           "tableFrom": "auths",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "auths_clerk_id_unique": {
           "name": "auths_clerk_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "clerk_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "auths_user_id_unique": {
           "name": "auths_user_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "categories": {
+    "public.categories": {
       "name": "categories",
       "schema": "",
       "columns": {
@@ -120,7 +118,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "events": {
+    "public.events": {
       "name": "events",
       "schema": "",
       "columns": {
@@ -219,34 +217,34 @@
         "events_organizer_id_users_id_fk": {
           "name": "events_organizer_id_users_id_fk",
           "tableFrom": "events",
-          "tableTo": "users",
           "columnsFrom": [
             "organizer_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "events_location_id_locations_id_fk": {
           "name": "events_location_id_locations_id_fk",
           "tableFrom": "events",
-          "tableTo": "locations",
           "columnsFrom": [
             "location_id"
           ],
+          "tableTo": "locations",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "locations": {
+    "public.locations": {
       "name": "locations",
       "schema": "",
       "columns": {
@@ -314,7 +312,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "points": {
+    "public.points": {
       "name": "points",
       "schema": "",
       "columns": {
@@ -407,21 +405,21 @@
         "points_location_id_locations_id_fk": {
           "name": "points_location_id_locations_id_fk",
           "tableFrom": "points",
-          "tableTo": "locations",
           "columnsFrom": [
             "location_id"
           ],
+          "tableTo": "locations",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -474,8 +472,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "16663fc4-3442-4c70-9508-aa9e3d164b3d",
+  "prevId": "2bba9c60-37a6-4af0-81bf-8d94fde5cc9f"
 }
