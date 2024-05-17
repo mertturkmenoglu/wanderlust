@@ -12,10 +12,13 @@ function Layout({ children }: PropsWithChildren) {
   }
 
   return (
-    <div>
-      <h2>Dashboard</h2>
-      {children}
-    </div>
+    <main className="container mt-16">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
+        <p className="text-muted-foreground">Manage your app</p>
+      </div>
+      <div className="my-16">{children}</div>
+    </main>
   );
 }
 
