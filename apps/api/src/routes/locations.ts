@@ -7,11 +7,11 @@ import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { Env } from "..";
 import { db } from "../db";
-import { points } from "../db/schema";
+import { locations } from "../db/schema";
 import { authorize } from "../middlewares/authorize";
 import { getAuth } from "../middlewares/get-auth";
-import { createPointSchema } from "./dto/create-point";
-import { updatePointSchema } from "./dto/update-point";
+import { createLocationSchema } from "./dto/create-location";
+import { updateLocationSchema } from "./dto/update-location";
 
 const limiter = rateLimiter<Env>({
   windowMs: 10 * 60 * 1000, // 10 minutes
@@ -22,7 +22,7 @@ const limiter = rateLimiter<Env>({
 
 const app = new Hono()
   .use(limiter)
-  // Get Point by id
+  // Get Location by id
   .get(
     "/:id",
     zValidator(
@@ -34,9 +34,12 @@ const app = new Hono()
     async (c) => {
       const { id } = c.req.valid("param");
 
-      const [point] = await db.select().from(points).where(eq(points.id, id));
+      const [location] = await db
+        .select()
+        .from(locations)
+        .where(eq(locations.id, id));
 
-      if (!point) {
+      if (!location) {
         throw new HTTPException(404, {
           message: "Not found",
         });
@@ -44,27 +47,27 @@ const app = new Hono()
 
       return c.json(
         {
-          data: point,
+          data: location,
         },
         200
       );
     }
   )
-  // Create point
+  // Create location
   .post(
     "/",
     clerkMiddleware(),
     getAuth,
-    zValidator("json", createPointSchema),
-    authorize({ type: "create-point" }),
+    zValidator("json", createLocationSchema),
+    authorize({ type: "create-location" }),
     async (c) => {
       const dto = c.req.valid("json");
 
       try {
-        const [point] = await db.insert(points).values(dto).returning();
+        const [location] = await db.insert(locations).values(dto).returning();
         return c.json(
           {
-            data: point,
+            data: location,
           },
           201
         );
@@ -75,7 +78,7 @@ const app = new Hono()
       }
     }
   )
-  // Update point
+  // Update location
   .patch(
     "/:id",
     clerkMiddleware(),
@@ -86,31 +89,31 @@ const app = new Hono()
         id: z.string().min(1),
       })
     ),
-    zValidator("json", updatePointSchema),
-    authorize({ type: "update-point" }),
+    zValidator("json", updateLocationSchema),
+    authorize({ type: "update-location" }),
     async (c) => {
       const { id } = c.req.valid("param");
       const dto = c.req.valid("json");
 
-      const [point] = await db
-        .update(points)
+      const [location] = await db
+        .update(locations)
         .set(dto)
-        .where(eq(points.id, id))
+        .where(eq(locations.id, id))
         .returning();
 
-      if (!point) {
+      if (!location) {
         throw new HTTPException();
       }
 
       return c.json(
         {
-          data: point,
+          data: location,
         },
         200
       );
     }
   )
-  // Delete point
+  // Delete location
   .delete(
     "/:id",
     clerkMiddleware(),
@@ -121,16 +124,16 @@ const app = new Hono()
         id: z.string().min(1).uuid(),
       })
     ),
-    authorize({ type: "delete-point" }),
+    authorize({ type: "delete-location" }),
     async (c) => {
       const { id } = c.req.valid("param");
 
-      const [point] = await db
-        .delete(points)
-        .where(eq(points.id, id))
+      const [location] = await db
+        .delete(locations)
+        .where(eq(locations.id, id))
         .returning();
 
-      if (!point) {
+      if (!location) {
         throw new HTTPException(404, {
           message: "Not found",
         });
@@ -138,7 +141,7 @@ const app = new Hono()
 
       return c.json(
         {
-          data: point,
+          data: location,
         },
         200
       );
