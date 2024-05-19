@@ -8,7 +8,7 @@ import { getCorsConfig } from "./cors";
 import { runDrizzleMigrations } from "./db";
 import { AuthUser } from "./db/schema";
 import env from "./env";
-import pointsRouter from "./routes/points";
+import locationsRouter from "./routes/locations";
 import usersRouter from "./routes/users";
 import webooksRouter from "./routes/webhooks";
 
@@ -31,7 +31,7 @@ const app = new Hono<Env>()
   .use(secureHeaders())
   .route("/webhooks", webooksRouter)
   .route("/users", usersRouter)
-  .route("/points", pointsRouter);
+  .route("/locations", locationsRouter);
 
 Bun.serve({
   port: env.PORT,
