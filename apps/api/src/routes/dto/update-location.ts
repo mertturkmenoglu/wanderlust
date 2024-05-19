@@ -1,11 +1,11 @@
 import { createInsertSchema } from "drizzle-zod";
-import { points } from "../../db/schema";
+import { locations } from "../../db/schema";
 
-export const updatePointSchema = createInsertSchema(points).pick({
+export const updateLocationSchema = createInsertSchema(locations).pick({
   accessibilityLevel: true,
   categoryId: true,
   hasWifi: true,
-  locationId: true,
+  addressId: true,
   name: true,
   phone: true,
   priceLevel: true,
