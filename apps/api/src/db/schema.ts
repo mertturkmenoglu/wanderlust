@@ -47,13 +47,13 @@ export const auths = pgTable("auths", {
 
 export type AuthUser = typeof auths.$inferSelect;
 
-export const points = pgTable(
-  "points",
+export const locations = pgTable(
+  "locations",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     phone: text("phone"),
-    locationId: uuid("location_id").references(() => locations.id),
+    addressId: uuid("address_id").references(() => addresses.id),
     website: text("website"),
     priceLevel: smallint("price_level"),
     accessibilityLevel: smallint("accessibility_level"),
@@ -66,8 +66,10 @@ export const points = pgTable(
   },
   (table) => {
     return {
-      pointsLocationIdx: index("points_location_idx").on(table.locationId),
-      pointsCategoryIdx: index("points_category_idx").on(table.categoryId),
+      locationsAddressIdx: index("locations_address_idx").on(table.addressId),
+      locationsCategoryIdx: index("locations_category_idx").on(
+        table.categoryId
+      ),
     };
   }
 );
@@ -80,9 +82,9 @@ export const events = pgTable(
     organizerId: uuid("organizer_id")
       .notNull()
       .references(() => users.id),
-    locationId: uuid("location_id")
+    addressId: uuid("address_id")
       .notNull()
-      .references(() => locations.id),
+      .references(() => addresses.id),
     description: text("description").notNull(),
     startsAt: timestamp("starts_at").notNull(),
     endsAt: timestamp("ends_at").notNull(),
@@ -97,13 +99,13 @@ export const events = pgTable(
   (table) => {
     return {
       eventsOrganizerIdx: index("events_organizer_idx").on(table.organizerId),
-      eventsLocationIdx: index("events_location_idx").on(table.locationId),
+      eventsAddressIdx: index("events_address_idx").on(table.addressId),
     };
   }
 );
 
-export const locations = pgTable(
-  "locations",
+export const addresses = pgTable(
+  "addresses",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     country: char("country", { length: 2 }).notNull(), // Two-letter country code (ISO 3166-1 alpha-2).
@@ -115,8 +117,8 @@ export const locations = pgTable(
   },
   (table) => {
     return {
-      locationsCountryIdx: index("locations_country_idx").on(table.country),
-      locationsCityIdx: index("locations_city_idx").on(table.city),
+      addressesCountryIdx: index("addresses_country_idx").on(table.country),
+      addressesCityIdx: index("addresses_city_idx").on(table.city),
     };
   }
 );

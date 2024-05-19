@@ -43,6 +43,13 @@
       "when": 1715296464014,
       "tag": "0005_stale_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1716100114107,
+      "tag": "0006_big_shaman",
+      "breakpoints": true
     }
   ]
 }
