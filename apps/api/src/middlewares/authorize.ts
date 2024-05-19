@@ -22,6 +22,10 @@ const mapping = {
   "read-location": () => true,
   "delete-location": isAdmin,
   "update-location": isAdmin,
+  "create-event": isAdmin,
+  "read-event": () => true,
+  "delete-event": isAdmin,
+  "update-event": isAdmin,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (options: Options): MiddlewareHandler => {
