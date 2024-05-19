@@ -16,7 +16,7 @@
     "drizzle-orm": "^0.30.10",
     "drizzle-zod": "^0.5.1",
     "envalid": "^8.0.0",
-    "hono": "^4.3.5",
+    "hono": "4.3.7",
     "hono-rate-limiter": "^0.3.0",
     "ioredis": "^5.4.1",
     "minio": "^8.0.0",
