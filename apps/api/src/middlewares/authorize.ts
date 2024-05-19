@@ -18,15 +18,16 @@ const isAdmin: AuthorizationFn = (c) => {
 };
 
 const mapping = {
-  "create-point": isAdmin,
-  "read-point": () => true,
-  "delete-point": isAdmin,
-  "update-point": isAdmin,
+  "create-location": isAdmin,
+  "read-location": () => true,
+  "delete-location": isAdmin,
+  "update-location": isAdmin,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (options: Options): MiddlewareHandler => {
   return createMiddleware<Env>(async (c, next) => {
-    const ok = mapping[options.type](c);
+    const fn = mapping[options.type];
+    const ok = fn(c);
 
     if (ok) {
       await next();
