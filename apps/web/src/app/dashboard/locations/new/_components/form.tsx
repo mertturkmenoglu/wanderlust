@@ -1,6 +1,6 @@
 "use client";
 
-import { createPointSchema } from "#/routes/dto/create-point";
+import { createLocationSchema } from "#/routes/dto/create-location";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,11 +17,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-type FormInput = z.infer<typeof createPointSchema>;
+type FormInput = z.infer<typeof createLocationSchema>;
 
-function NewPointForm() {
+function NewLocationForm() {
   const form = useForm<FormInput>({
-    resolver: zodResolver(createPointSchema),
+    resolver: zodResolver(createLocationSchema),
   });
 
   const onSubmit: SubmitHandler<FormInput> = (data) => {
@@ -56,4 +56,4 @@ function NewPointForm() {
   );
 }
 
-export default NewPointForm;
+export default NewLocationForm;

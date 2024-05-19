@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Point, eventCols, pointCols } from "./_components/columns";
+import { Location, eventCols, locationsCols } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
-export const points: Point[] = [
+export const points: Location[] = [
   {
     id: "728ed52f",
     name: "Location 1",
@@ -20,9 +20,9 @@ function Page() {
     <div>
       <div>
         <h3 className="text-lg font-bold tracking-tight my-4">Points</h3>
-        <DataTable columns={pointCols} data={points} />
-        <Link href="/dashboard/points/new" className="mt-4 block">
-          Create new point
+        <DataTable columns={locationsCols} data={points} />
+        <Link href="/dashboard/locations/new" className="mt-4 block">
+          Create new location
         </Link>
       </div>
 

@@ -1,8 +1,6 @@
-"use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 
-export type Point = {
+export type Location = {
   id: string;
   name: string;
   categoryId: number;
@@ -14,7 +12,7 @@ export type Event = {
   organizerId: string;
 };
 
-export const pointCols: ColumnDef<Point>[] = [
+export const locationsCols: ColumnDef<Location>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -29,7 +27,7 @@ export const pointCols: ColumnDef<Point>[] = [
   },
 ];
 
-export const eventCols: ColumnDef<Point>[] = [
+export const eventCols: ColumnDef<Location>[] = [
   {
     accessorKey: "id",
     header: "ID",

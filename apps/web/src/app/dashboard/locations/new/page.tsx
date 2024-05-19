@@ -1,4 +1,4 @@
-import NewPointForm from "./_components/form";
+import NewLocationForm from "./_components/form";
 
 function Page() {
   return (
@@ -6,9 +6,9 @@ function Page() {
       <div>
         <div>
           <h3 className="text-lg font-bold tracking-tight my-8">
-            Create New Point
+            Create New Location
           </h3>
-          <NewPointForm />
+          <NewLocationForm />
         </div>
       </div>
     </div>
