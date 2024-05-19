@@ -7,10 +7,6 @@ const app = new Hono()
   .get("/", async (c) => {
     const allCategories = await db.select().from(categories);
 
-    console.log({
-      allCategories,
-    });
-
     return c.json(
       {
         data: allCategories,
