@@ -17,7 +17,15 @@ if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 export const db = drizzle(conn);
 
 export async function runDrizzleMigrations() {
+  if (Bun.env.NODE_ENV === "development") {
+    console.log("Running Drizzle migrations");
+  }
+
   const migrationPostgres = postgres(env.DB_URL, { onnotice: () => {} });
   const migrationConnection = drizzle(migrationPostgres);
   await migrate(migrationConnection, { migrationsFolder: "drizzle" });
+
+  if (Bun.env.NODE_ENV === "development") {
+    console.log("Drizzle migrations completed");
+  }
 }
