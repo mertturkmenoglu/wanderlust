@@ -1,9 +1,9 @@
+import { auths, db } from "@/db";
+import { type Env } from "@/start";
+
 import { getAuth as getAuthClerk } from "@hono/clerk-auth";
 import { eq } from "drizzle-orm";
 import { createMiddleware } from "hono/factory";
-import { db } from "../db";
-import { auths } from "../db/schema";
-import { Env } from "../runtime";
 
 /**
  * Check the auth status of user.

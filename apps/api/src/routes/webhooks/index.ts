@@ -1,17 +1,16 @@
-import { WebhookEvent } from "@clerk/backend";
-import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
-import { Webhook } from "svix";
 import {
   handleUserCreate,
   handleUserDelete,
   handleUserUpdate,
-} from "../db/handle-user-sync";
-import env from "../env";
+} from "@/db/handle-user-sync";
+import { env } from "@/start";
 
-const app = new Hono();
+import { WebhookEvent } from "@clerk/backend";
+import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { Webhook } from "svix";
 
-app.post("/", async (c) => {
+export const webhooksRouter = new Hono().post("/", async (c) => {
   // Get the Svix headers for verification
   const svix_id = c.req.header("svix-id");
   const svix_timestamp = c.req.header("svix-timestamp");
@@ -79,5 +78,3 @@ app.post("/", async (c) => {
     );
   }
 });
-
-export default app;

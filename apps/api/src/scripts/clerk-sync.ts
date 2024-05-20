@@ -1,15 +1,16 @@
-import { User, createClerkClient } from "@clerk/backend";
-import { cliui } from "@poppinss/cliui";
-import { count, eq, inArray } from "drizzle-orm";
-import { db } from "../db";
+import { db } from "@/db";
 import {
   handleUserCreate,
   handleUserUpdate,
   type THandleUserCreatePayload,
   type THandleUserUpdatePayload,
-} from "../db/handle-user-sync";
-import { auths } from "../db/schema";
-import env from "../env";
+} from "@/db/handle-user-sync";
+import { auths } from "@/db/schema";
+import env from "@/start/env";
+
+import { User, createClerkClient } from "@clerk/backend";
+import { cliui } from "@poppinss/cliui";
+import { count, eq, inArray } from "drizzle-orm";
 
 const ui = cliui();
 

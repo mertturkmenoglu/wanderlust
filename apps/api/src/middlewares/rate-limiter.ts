@@ -1,7 +1,9 @@
+import { type Env } from "@/start";
+import { getAuth } from "@hono/clerk-auth";
+
 import { MiddlewareHandler } from "hono";
 import { rateLimiter as honoRateLimiter } from "hono-rate-limiter";
 import { createMiddleware } from "hono/factory";
-import { Env } from "../runtime";
 
 type Options = {
   window?: number;
@@ -16,7 +18,7 @@ export const rateLimiter = (options?: Options): MiddlewareHandler => {
       windowMs: window,
       limit: limit,
       standardHeaders: "draft-6",
-      keyGenerator: (c) => c.get("clerkAuth")?.userId ?? c.env.ip.address,
+      keyGenerator: (c) => getAuth(c)?.userId ?? c.env.ip.address,
     })
   );
 };

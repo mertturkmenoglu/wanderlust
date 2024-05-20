@@ -8,6 +8,9 @@
     "moduleResolution": "Bundler",
     "types": ["bun-types"],
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

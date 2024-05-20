@@ -1,19 +1,16 @@
+import { addresses, db } from "@/db";
+import { authorize, getAuth, rateLimiter } from "@/middlewares";
+import { validateId } from "@/routes/dto";
+import { createAddressSchema, updateAddressSchema } from "./dto";
+
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { eq, ilike, or } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
-import { db } from "../db";
-import { addresses } from "../db/schema";
-import { authorize } from "../middlewares/authorize";
-import { getAuth } from "../middlewares/get-auth";
-import { rateLimiter } from "../middlewares/rate-limiter";
-import { createAddressSchema } from "./dto/create-address";
-import { updateAddressSchema } from "./dto/update-address";
-import { validateId } from "./dto/validate-id";
 
-const app = new Hono()
+export const addressesRouter = new Hono()
   .use(rateLimiter())
   // Get all addresses
   .get("/all", async (c) => {
@@ -168,5 +165,3 @@ const app = new Hono()
       );
     }
   );
-
-export default app;

@@ -1,27 +1,17 @@
+import { db, events } from "@/db";
+import { authorize, getAuth } from "@/middlewares";
+import { createEventSchema, updateEventSchema } from "./dto";
+
+import { rateLimiter } from "@/middlewares";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { rateLimiter } from "hono-rate-limiter";
 import { HTTPException } from "hono/http-exception";
-import { z } from "zod";
-import { db } from "../db";
-import { events } from "../db/schema";
-import { authorize } from "../middlewares/authorize";
-import { getAuth } from "../middlewares/get-auth";
-import { Env } from "../runtime";
-import { createEventSchema } from "./dto/create-event";
-import { updateEventSchema } from "./dto/update-event";
+import { validateId } from "../dto";
 
-const limiter = rateLimiter<Env>({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes).
-  standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  keyGenerator: (c) => c.get("clerkAuth")?.userId ?? c.env.ip.address,
-});
-
-const app = new Hono()
-  .use(limiter)
+export const eventsRouter = new Hono()
+  .use(rateLimiter())
   // Get all events
   .get("/all", async (c) => {
     const results = await db.select().from(events).limit(25);
@@ -34,33 +24,24 @@ const app = new Hono()
     );
   })
   // Get event by id
-  .get(
-    "/:id",
-    zValidator(
-      "param",
-      z.object({
-        id: z.string().min(1),
-      })
-    ),
-    async (c) => {
-      const { id } = c.req.valid("param");
+  .get("/:id", zValidator("param", validateId), async (c) => {
+    const { id } = c.req.valid("param");
 
-      const [event] = await db.select().from(events).where(eq(events.id, id));
+    const [event] = await db.select().from(events).where(eq(events.id, id));
 
-      if (!location) {
-        throw new HTTPException(404, {
-          message: "Not found",
-        });
-      }
-
-      return c.json(
-        {
-          data: event,
-        },
-        200
-      );
+    if (!event) {
+      throw new HTTPException(404, {
+        message: "Not found",
+      });
     }
-  )
+
+    return c.json(
+      {
+        data: event,
+      },
+      200
+    );
+  })
   // Create event
   .post(
     "/",
@@ -91,12 +72,7 @@ const app = new Hono()
     "/:id",
     clerkMiddleware(),
     getAuth,
-    zValidator(
-      "param",
-      z.object({
-        id: z.string().min(1),
-      })
-    ),
+    zValidator("param", validateId),
     zValidator("json", updateEventSchema),
     authorize({ type: "update-event" }),
     async (c) => {
@@ -126,12 +102,7 @@ const app = new Hono()
     "/:id",
     clerkMiddleware(),
     getAuth,
-    zValidator(
-      "param",
-      z.object({
-        id: z.string().min(1).uuid(),
-      })
-    ),
+    zValidator("param", validateId),
     authorize({ type: "delete-event" }),
     async (c) => {
       const { id } = c.req.valid("param");
@@ -141,7 +112,7 @@ const app = new Hono()
         .where(eq(events.id, id))
         .returning();
 
-      if (!location) {
+      if (!event) {
         throw new HTTPException(404, {
           message: "Not found",
         });
@@ -155,5 +126,3 @@ const app = new Hono()
       );
     }
   );
-
-export default app;

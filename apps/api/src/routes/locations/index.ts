@@ -2,26 +2,15 @@ import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { rateLimiter } from "hono-rate-limiter";
 import { HTTPException } from "hono/http-exception";
-import { z } from "zod";
-import { db } from "../db";
-import { locations } from "../db/schema";
-import { authorize } from "../middlewares/authorize";
-import { getAuth } from "../middlewares/get-auth";
-import { Env } from "../runtime";
-import { createLocationSchema } from "./dto/create-location";
-import { updateLocationSchema } from "./dto/update-location";
 
-const limiter = rateLimiter<Env>({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 10 minutes).
-  standardHeaders: "draft-6", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  keyGenerator: (c) => c.get("clerkAuth")?.userId ?? c.env.ip.address,
-});
+import { db, locations } from "@/db";
+import { authorize, getAuth, rateLimiter } from "@/middlewares";
+import { validateId } from "../dto";
+import { createLocationSchema, updateLocationSchema } from "./dto";
 
-const app = new Hono()
-  .use(limiter)
+export const locationsRouter = new Hono()
+  .use(rateLimiter())
   // Get locations
   .get("/all", async (c) => {
     const results = await db.select().from(locations).limit(25);
@@ -34,36 +23,27 @@ const app = new Hono()
     );
   })
   // Get Location by id
-  .get(
-    "/:id",
-    zValidator(
-      "param",
-      z.object({
-        id: z.string().min(1),
-      })
-    ),
-    async (c) => {
-      const { id } = c.req.valid("param");
+  .get("/:id", zValidator("param", validateId), async (c) => {
+    const { id } = c.req.valid("param");
 
-      const [location] = await db
-        .select()
-        .from(locations)
-        .where(eq(locations.id, id));
+    const [location] = await db
+      .select()
+      .from(locations)
+      .where(eq(locations.id, id));
 
-      if (!location) {
-        throw new HTTPException(404, {
-          message: "Not found",
-        });
-      }
-
-      return c.json(
-        {
-          data: location,
-        },
-        200
-      );
+    if (!location) {
+      throw new HTTPException(404, {
+        message: "Not found",
+      });
     }
-  )
+
+    return c.json(
+      {
+        data: location,
+      },
+      200
+    );
+  })
   // Create location
   .post(
     "/",
@@ -94,12 +74,7 @@ const app = new Hono()
     "/:id",
     clerkMiddleware(),
     getAuth,
-    zValidator(
-      "param",
-      z.object({
-        id: z.string().min(1),
-      })
-    ),
+    zValidator("param", validateId),
     zValidator("json", updateLocationSchema),
     authorize({ type: "update-location" }),
     async (c) => {
@@ -129,12 +104,7 @@ const app = new Hono()
     "/:id",
     clerkMiddleware(),
     getAuth,
-    zValidator(
-      "param",
-      z.object({
-        id: z.string().min(1).uuid(),
-      })
-    ),
+    zValidator("param", validateId),
     authorize({ type: "delete-location" }),
     async (c) => {
       const { id } = c.req.valid("param");
@@ -158,5 +128,3 @@ const app = new Hono()
       );
     }
   );
-
-export default app;

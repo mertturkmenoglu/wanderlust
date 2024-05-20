@@ -1,8 +1,8 @@
-import { Hono } from "hono";
-import { db } from "../db";
-import { categories } from "../db/schema";
+import { categories, db } from "@/db";
 
-const app = new Hono()
+import { Hono } from "hono";
+
+export const categoriesRouter = new Hono()
   // Get all categories
   .get("/", async (c) => {
     const allCategories = await db.select().from(categories);
@@ -14,5 +14,3 @@ const app = new Hono()
       200
     );
   });
-
-export default app;

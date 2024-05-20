@@ -1,7 +1,8 @@
+import { env } from "@/start";
+
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
-import env from "../env";
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
@@ -29,3 +30,5 @@ export async function runDrizzleMigrations() {
     console.log("Drizzle migrations completed");
   }
 }
+
+export * from "./schema";
