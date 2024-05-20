@@ -16,6 +16,7 @@ export type Address = {
   id: string;
   country: string;
   city: string;
+  state: string | null;
   lat: number;
   long: number;
 };
@@ -50,7 +51,7 @@ export const eventCols: ColumnDef<Event>[] = [
   },
 ];
 
-export const addressCols: ColumnDef<Location>[] = [
+export const addressCols: ColumnDef<Address>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -62,6 +63,10 @@ export const addressCols: ColumnDef<Location>[] = [
   {
     accessorKey: "city",
     header: "City",
+  },
+  {
+    accessorKey: "state",
+    header: "State",
   },
   {
     accessorKey: "lat",
