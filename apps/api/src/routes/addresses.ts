@@ -1,8 +1,9 @@
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { z } from "zod";
 import { db } from "../db";
 import { addresses } from "../db/schema";
 import { authorize } from "../middlewares/authorize";
@@ -14,6 +15,40 @@ import { validateId } from "./dto/validate-id";
 
 const app = new Hono()
   .use(rateLimiter())
+  // Search address
+  .get(
+    "/search",
+    zValidator(
+      "query",
+      z.object({
+        q: z.string().min(1),
+      })
+    ),
+    async (c) => {
+      const { q } = c.req.valid("query");
+
+      const results = await db
+        .select()
+        .from(addresses)
+        .where(
+          or(
+            ilike(addresses.city, `%${q}%`),
+            ilike(addresses.country, `%${q}%`),
+            ilike(addresses.state, `%${q}%`),
+            ilike(addresses.line1, `%${q}%`),
+            ilike(addresses.line2, `%${q}%`)
+          )
+        )
+        .limit(25);
+
+      return c.json(
+        {
+          data: results,
+        },
+        200
+      );
+    }
+  )
   // Get address by id
   .get("/:id", zValidator("param", validateId), async (c) => {
     const { id } = c.req.valid("param");
