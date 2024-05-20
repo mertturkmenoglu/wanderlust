@@ -9,6 +9,7 @@ import { runDrizzleMigrations } from "./db";
 import { AuthUser } from "./db/schema";
 import env from "./env";
 
+import addressesRouter from "./routes/addresses";
 import categoriesRouter from "./routes/categories";
 import eventsRouter from "./routes/events";
 import locationsRouter from "./routes/locations";
@@ -36,7 +37,8 @@ const app = new Hono<Env>()
   .route("/users", usersRouter)
   .route("/locations", locationsRouter)
   .route("/categories", categoriesRouter)
-  .route("/events", eventsRouter);
+  .route("/events", eventsRouter)
+  .route("/addresses", addressesRouter);
 
 Bun.serve({
   port: env.PORT,
