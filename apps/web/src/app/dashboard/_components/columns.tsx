@@ -12,6 +12,14 @@ export type Event = {
   organizerId: string;
 };
 
+export type Address = {
+  id: string;
+  country: string;
+  city: string;
+  lat: number;
+  long: number;
+};
+
 export const locationsCols: ColumnDef<Location>[] = [
   {
     accessorKey: "id",
@@ -27,7 +35,7 @@ export const locationsCols: ColumnDef<Location>[] = [
   },
 ];
 
-export const eventCols: ColumnDef<Location>[] = [
+export const eventCols: ColumnDef<Event>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -39,5 +47,28 @@ export const eventCols: ColumnDef<Location>[] = [
   {
     accessorKey: "organizerId",
     header: "Organizer",
+  },
+];
+
+export const addressCols: ColumnDef<Location>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "country",
+    header: "Country",
+  },
+  {
+    accessorKey: "city",
+    header: "City",
+  },
+  {
+    accessorKey: "lat",
+    header: "Latitude",
+  },
+  {
+    accessorKey: "long",
+    header: "Longitude",
   },
 ];
