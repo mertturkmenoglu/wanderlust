@@ -1,7 +1,7 @@
 import { createAddressSchema } from "#/routes/dto/create-address";
 import { createEventSchema } from "#/routes/dto/create-event";
 import { createLocationSchema } from "#/routes/dto/create-location";
-import { hc } from "hono/client";
+import { hc, InferResponseType } from "hono/client";
 import { z } from "zod";
 import type { AppType } from "../../../api/src";
 
@@ -72,6 +72,25 @@ type CreateNewAddressPayload = z.infer<typeof createAddressSchema>;
 export async function createNewAddress(payload: CreateNewAddressPayload) {
   const res = await api.addresses.$post({
     json: payload,
+  });
+
+  if (!res.ok) {
+    throw new Error("Error");
+  }
+
+  const { data } = await res.json();
+  return data;
+}
+
+const fnRef = api.addresses[":id"].$get;
+
+export type Address = InferResponseType<typeof fnRef>["data"];
+
+export async function searchAddress(q: string) {
+  const res = await api.addresses.search.$get({
+    query: {
+      q,
+    },
   });
 
   if (!res.ok) {
