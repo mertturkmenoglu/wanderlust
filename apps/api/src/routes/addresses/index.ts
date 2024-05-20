@@ -12,8 +12,8 @@ import { z } from "zod";
 
 export const addressesRouter = new Hono()
   .use(rateLimiter())
-  // Get all addresses
-  .get("/all", async (c) => {
+  // Peek last 25 items
+  .get("/peek", async (c) => {
     const results = await db.select().from(addresses).limit(25);
 
     return c.json(

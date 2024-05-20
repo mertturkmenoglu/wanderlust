@@ -11,8 +11,8 @@ import { createLocationSchema, updateLocationSchema } from "./dto";
 
 export const locationsRouter = new Hono()
   .use(rateLimiter())
-  // Get locations
-  .get("/all", async (c) => {
+  // Peek last 25 items
+  .get("/peek", async (c) => {
     const results = await db.select().from(locations).limit(25);
 
     return c.json(

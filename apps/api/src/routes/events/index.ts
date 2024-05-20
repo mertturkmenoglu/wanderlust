@@ -12,8 +12,8 @@ import { validateId } from "../dto";
 
 export const eventsRouter = new Hono()
   .use(rateLimiter())
-  // Get all events
-  .get("/all", async (c) => {
+  // Peek last 25 items
+  .get("/peek", async (c) => {
     const results = await db.select().from(events).limit(25);
 
     return c.json(
