@@ -100,3 +100,36 @@ export async function searchAddress(q: string) {
   const { data } = await res.json();
   return data;
 }
+
+export async function getLocations() {
+  const res = await api.locations.all.$get();
+
+  if (!res.ok) {
+    throw new Error("Error");
+  }
+
+  const { data } = await res.json();
+  return data;
+}
+
+export async function getEvents() {
+  const res = await api.events.all.$get();
+
+  if (!res.ok) {
+    throw new Error("Error");
+  }
+
+  const { data } = await res.json();
+  return data;
+}
+
+export async function getAddresses() {
+  const res = await api.addresses.all.$get();
+
+  if (!res.ok) {
+    throw new Error("Error");
+  }
+
+  const { data } = await res.json();
+  return data;
+}
