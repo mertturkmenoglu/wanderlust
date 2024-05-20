@@ -54,6 +54,9 @@ function NewLocationForm() {
     onSuccess: () => {
       router.push("/dashboard");
     },
+    onError: (e) => {
+      console.error(e);
+    },
   });
 
   const search = useMutation({
@@ -110,6 +113,7 @@ function NewLocationForm() {
             key={a.id}
             onClick={() => {
               setAddress(a);
+              form.setValue("addressId", a.id);
             }}
             type="button"
           >
