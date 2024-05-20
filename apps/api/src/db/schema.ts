@@ -2,31 +2,23 @@ import {
   bigint,
   boolean,
   char,
+  doublePrecision,
   index,
   pgTable,
   smallint,
   smallserial,
   text,
   timestamp,
-  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
-export const users = pgTable(
-  "users",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    firstName: text("first_name"),
-    lastName: text("last_name"),
-    username: text("username"),
-    image: text("image"),
-  },
-  (table) => {
-    return {
-      usersUsernameIdx: uniqueIndex("users_username_idx").on(table.username),
-    };
-  }
-);
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  username: text("username").notNull().unique(),
+  image: text("image"),
+});
 
 export type User = typeof users.$inferSelect;
 
@@ -53,12 +45,16 @@ export const locations = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     phone: text("phone"),
-    addressId: uuid("address_id").references(() => addresses.id),
+    addressId: uuid("address_id")
+      .references(() => addresses.id)
+      .notNull(),
     website: text("website"),
-    priceLevel: smallint("price_level"),
-    accessibilityLevel: smallint("accessibility_level"),
-    hasWifi: boolean("has_wifi"),
-    categoryId: smallserial("category_id"),
+    priceLevel: smallint("price_level").notNull().default(1),
+    accessibilityLevel: smallint("accessibility_level").notNull().default(1),
+    hasWifi: boolean("has_wifi").notNull().default(false),
+    categoryId: smallserial("category_id")
+      .notNull()
+      .references(() => categories.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
       .notNull()
@@ -89,8 +85,8 @@ export const events = pgTable(
     startsAt: timestamp("starts_at").notNull(),
     endsAt: timestamp("ends_at").notNull(),
     website: text("website"),
-    priceLevel: smallint("price_level"),
-    accessibilityLevel: smallint("accessibility_level"),
+    priceLevel: smallint("price_level").notNull().default(1),
+    accessibilityLevel: smallint("accessibility_level").notNull().default(1),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
       .notNull()
@@ -109,11 +105,13 @@ export const addresses = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     country: char("country", { length: 2 }).notNull(), // Two-letter country code (ISO 3166-1 alpha-2).
-    city: text("city"), // City, district, suburb, town, or village.
+    city: text("city").notNull(), // City, district, suburb, town, or village.
     line1: text("line1").notNull(), // Address line 1 (e.g., street, PO Box, or company name).
     line2: text("line2"), // Address line 2 (e.g., apartment, suite, unit, or building).
     postalCode: text("postal_code"), // ZIP or postal code.
     state: text("state"), // State, county, province, or region.
+    lat: doublePrecision("lat").notNull(),
+    long: doublePrecision("long").notNull(),
   },
   (table) => {
     return {

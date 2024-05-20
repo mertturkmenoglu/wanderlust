@@ -50,6 +50,13 @@
       "when": 1716100114107,
       "tag": "0006_big_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1716183369594,
+      "tag": "0007_unusual_deathbird",
+      "breakpoints": true
     }
   ]
 }
