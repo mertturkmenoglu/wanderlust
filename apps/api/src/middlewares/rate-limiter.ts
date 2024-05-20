@@ -1,7 +1,7 @@
 import { MiddlewareHandler } from "hono";
 import { rateLimiter as honoRateLimiter } from "hono-rate-limiter";
 import { createMiddleware } from "hono/factory";
-import { Env } from "..";
+import { Env } from "../runtime";
 
 type Options = {
   window?: number;

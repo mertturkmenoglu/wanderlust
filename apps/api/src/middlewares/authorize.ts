@@ -1,7 +1,7 @@
 import { Context, MiddlewareHandler } from "hono";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-import { Env } from "..";
+import { Env } from "../runtime";
 import env from "../env";
 
 type AuthorizationFn = (c: Context<Env, any, {}>) => boolean;

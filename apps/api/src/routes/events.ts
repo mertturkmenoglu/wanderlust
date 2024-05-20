@@ -5,11 +5,11 @@ import { Hono } from "hono";
 import { rateLimiter } from "hono-rate-limiter";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
-import { Env } from "..";
 import { db } from "../db";
 import { events } from "../db/schema";
 import { authorize } from "../middlewares/authorize";
 import { getAuth } from "../middlewares/get-auth";
+import { Env } from "../runtime";
 import { createEventSchema } from "./dto/create-event";
 import { updateEventSchema } from "./dto/update-event";
 

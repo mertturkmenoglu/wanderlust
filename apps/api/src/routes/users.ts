@@ -5,10 +5,10 @@ import { Hono } from "hono";
 import { rateLimiter } from "hono-rate-limiter";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
-import { Env } from "..";
 import { db } from "../db";
 import { users } from "../db/schema";
 import { getAuth } from "../middlewares/get-auth";
+import { Env } from "../runtime";
 
 const limiter = rateLimiter<Env>({
   windowMs: 10 * 60 * 1000, // 10 minutes

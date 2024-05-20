@@ -2,9 +2,9 @@ import { getAuth as getAuthClerk } from "@hono/clerk-auth";
 import { eq } from "drizzle-orm";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
-import { Env } from "..";
 import { db } from "../db";
 import { auths } from "../db/schema";
+import { Env } from "../runtime";
 
 /**
  * Enforces authentication.
