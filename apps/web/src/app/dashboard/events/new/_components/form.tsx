@@ -60,8 +60,8 @@ function NewEventForm() {
     resolver: zodResolver(createEventSchema),
     defaultValues: {
       website: null,
-      priceLevel: null,
-      accessibilityLevel: null,
+      priceLevel: 1,
+      accessibilityLevel: 1,
       description: "",
     },
   });

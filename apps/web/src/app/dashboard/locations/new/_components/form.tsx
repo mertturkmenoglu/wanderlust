@@ -52,8 +52,8 @@ function NewLocationForm() {
     defaultValues: {
       phone: null,
       website: null,
-      priceLevel: null,
-      accessibilityLevel: null,
+      priceLevel: 1,
+      accessibilityLevel: 1,
       hasWifi: false,
       categoryId: 1,
     },
