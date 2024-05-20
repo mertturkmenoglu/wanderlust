@@ -1,14 +1,17 @@
 import { User, createClerkClient } from "@clerk/backend";
+import { cliui } from "@poppinss/cliui";
 import { count, eq, inArray } from "drizzle-orm";
-import { db } from "./db";
+import { db } from "../db";
 import {
   handleUserCreate,
   handleUserUpdate,
   type THandleUserCreatePayload,
   type THandleUserUpdatePayload,
-} from "./db/handle-user-sync";
-import { auths } from "./db/schema";
-import env from "./env";
+} from "../db/handle-user-sync";
+import { auths } from "../db/schema";
+import env from "../env";
+
+const ui = cliui();
 
 function mapUserToHandleUserCreatePayload(
   user: User
@@ -50,7 +53,7 @@ function mapUserToHandleUserUpdatePayload(
 }
 
 async function syncClerkDataWithLocalDatabase() {
-  console.log(`Starting data sync: ${new Date().toISOString()}`);
+  ui.logger.info(`Starting data sync: ${new Date().toISOString()}`);
   console.time("sync-timer");
 
   const client = createClerkClient({
@@ -59,10 +62,10 @@ async function syncClerkDataWithLocalDatabase() {
   });
 
   const clerkUsersCount = await client.users.getCount();
-  console.log(`Clerk has ${clerkUsersCount} users`);
+  ui.logger.info(`Clerk has ${clerkUsersCount} users`);
 
   const [{ value }] = await db.select({ value: count() }).from(auths);
-  console.log(`Local database has ${value} users`);
+  ui.logger.info(`Local database has ${value} users`);
 
   // Pre allocate memory for all the Clerk user ids.
   const clerkUserIds: string[] = new Array(clerkUsersCount);
@@ -73,13 +76,17 @@ async function syncClerkDataWithLocalDatabase() {
 
   const STEP = 500; // Clerk max limit
 
+  ui.logger.info(`Starting fetching all Clerk users with ${STEP} steps`);
+
   for (let offset = 0; offset <= clerkUsersCount; offset += STEP) {
-    console.log(`Entered loop. Offset: ${offset}`);
+    ui.logger.info(`Fetching users. Offset: ${offset}`);
 
     const res = await client.users.getUserList({
       limit: STEP,
       offset,
     });
+
+    ui.logger.info("Checking if users are in database for this batch");
 
     for (const clerkUser of res.data) {
       const dbRes = await db
@@ -90,12 +97,12 @@ async function syncClerkDataWithLocalDatabase() {
 
       if (dbRes.length === 1) {
         // User is already in our database, update it.
-        console.log(`User ${clerkUser.id} found in database, updating`);
+        ui.logger.info(`User ${clerkUser.id} found in database, updating`);
         await handleUserUpdate(mapUserToHandleUserUpdatePayload(clerkUser));
         updatedCount++;
       } else if (dbRes.length === 0) {
         // User is not in our database, create one.
-        console.log(`User ${clerkUser.id} is not in database, creating`);
+        ui.logger.info(`User ${clerkUser.id} is not in database, creating`);
         await handleUserCreate(mapUserToHandleUserCreatePayload(clerkUser));
         createdCount++;
       }
@@ -105,6 +112,8 @@ async function syncClerkDataWithLocalDatabase() {
     }
   }
 
+  ui.logger.info("Fetched all Clerk users");
+
   // All Clerk user ids is in an array.
   // Traverse all local database users, find which ones are not in Clerk, delete them
   const toDeleteIds: string[] = [];
@@ -113,7 +122,10 @@ async function syncClerkDataWithLocalDatabase() {
     .select({ value: count() })
     .from(auths);
 
+  ui.logger.info(`Starting to read users from database in batches of 10`);
+
   for (let offset = 0; offset <= totalDbUsers; offset += 10) {
+    ui.logger.info(`Reading users from database. Offset: ${offset}`);
     const dbRes = await db.select().from(auths).offset(offset).limit(10);
 
     for (const dbUser of dbRes) {
@@ -127,19 +139,31 @@ async function syncClerkDataWithLocalDatabase() {
     }
   }
 
+  ui.logger.info("Read all users from database.");
+  ui.logger.info(
+    `Found ${toDeleteIds.length} many users that should be deleted.`
+  );
+
   if (toDeleteIds.length > 0) {
+    ui.logger.info("Deleting users");
     // Delete all the users that in local database but not in Clerk
     await db.delete(auths).where(inArray(auths.id, toDeleteIds));
+    ui.logger.info("Users deleted");
   }
 
-  console.log(`Sync ended: ${new Date().toISOString()}`);
+  ui.logger.info(`Sync ended: ${new Date().toISOString()}`);
   console.timeEnd("sync-timer");
-  console.log(`Summary:`);
-  console.table({
-    createdCount,
-    updatedCount,
-    deletedCount,
-  });
+  ui.logger.info(`Summary:`);
+
+  const table = ui.table();
+
+  table
+    .head(["Operation", "Count"])
+    .row(["User created", `${createdCount}`])
+    .row(["User updated", `${updatedCount}`])
+    .row(["User deleted", `${deletedCount}`])
+    .render();
+
   process.exit(0);
 }
 
