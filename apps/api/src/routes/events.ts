@@ -22,6 +22,17 @@ const limiter = rateLimiter<Env>({
 
 const app = new Hono()
   .use(limiter)
+  // Get all events
+  .get("/all", async (c) => {
+    const results = await db.select().from(events).limit(25);
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  })
   // Get event by id
   .get(
     "/:id",

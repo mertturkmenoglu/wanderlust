@@ -22,6 +22,17 @@ const limiter = rateLimiter<Env>({
 
 const app = new Hono()
   .use(limiter)
+  // Get locations
+  .get("/all", async (c) => {
+    const results = await db.select().from(locations).limit(25);
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  })
   // Get Location by id
   .get(
     "/:id",

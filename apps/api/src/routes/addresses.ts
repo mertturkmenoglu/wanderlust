@@ -15,6 +15,17 @@ import { validateId } from "./dto/validate-id";
 
 const app = new Hono()
   .use(rateLimiter())
+  // Get all addresses
+  .get("/all", async (c) => {
+    const results = await db.select().from(addresses).limit(25);
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  })
   // Search address
   .get(
     "/search",
