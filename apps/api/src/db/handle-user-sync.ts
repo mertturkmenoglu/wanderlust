@@ -23,6 +23,11 @@ export type THandleUserDeletePayload = Pick<DeletedObjectJSON, "id">;
 export async function handleUserCreate(
   data: THandleUserCreatePayload
 ): Promise<void> {
+  const username = data.username;
+  if (username === null) {
+    throw new Error("Username cannot be null");
+  }
+
   try {
     await db.transaction(async (tx) => {
       const [user] = await tx
@@ -30,7 +35,7 @@ export async function handleUserCreate(
         .values({
           firstName: data.first_name,
           lastName: data.last_name,
-          username: data.username,
+          username: username,
           image: data.image_url,
         })
         .returning();
@@ -53,6 +58,10 @@ export async function handleUserCreate(
 export async function handleUserUpdate(
   data: THandleUserUpdatePayload
 ): Promise<void> {
+  const username = data.username;
+  if (username === null) {
+    throw new Error("Username cannot be null");
+  }
   try {
     await db.transaction(async (tx) => {
       const [authObj] = await tx
@@ -74,7 +83,7 @@ export async function handleUserUpdate(
         .set({
           firstName: data.first_name,
           lastName: data.last_name,
-          username: data.username,
+          username: username,
           image: data.image_url,
         })
         .where(eq(users.id, authObj.userId));
