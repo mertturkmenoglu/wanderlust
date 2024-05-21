@@ -40,5 +40,13 @@ services:
       - ./typesense-data:/data
     command: "--data-dir /data --api-key=xyz --enable-cors"
 
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    stdin_open: true
+    tty: true
+    ports:
+      - 5672:5672
+      - 15672:15672
+
 networks:
   redisnet:
