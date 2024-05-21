@@ -1,4 +1,4 @@
-import { auths, db } from "@/db";
+import { auths, db, users } from "@/db";
 import { type Env } from "@/start";
 
 import { getAuth as getAuthClerk } from "@hono/clerk-auth";
@@ -31,6 +31,12 @@ export const getAuth = createMiddleware<Env>(async (c, next) => {
     .from(auths)
     .where(eq(auths.clerkId, auth.userId));
 
+  const [dbUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, authUser.userId));
+
   c.set("auth", authUser);
+  c.set("user", dbUser);
   await next();
 });
