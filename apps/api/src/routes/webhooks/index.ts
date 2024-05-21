@@ -3,6 +3,7 @@ import {
   handleUserDelete,
   handleUserUpdate,
 } from "@/db/handle-user-sync";
+import { sendWelcomeEmail } from "@/mq";
 import { Env, env } from "@/start";
 
 import { WebhookEvent } from "@clerk/backend";
@@ -54,6 +55,9 @@ const root = factory.createHandlers(async (c) => {
   try {
     if (eventType === "user.created") {
       await handleUserCreate(evt.data);
+      const email = evt.data.email_addresses[0].email_address;
+      const name = evt.data.first_name ?? "";
+      await sendWelcomeEmail(email, name);
     } else if (eventType === "user.updated") {
       await handleUserUpdate(evt.data);
     } else if (eventType === "user.deleted") {
