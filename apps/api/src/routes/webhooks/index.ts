@@ -3,14 +3,17 @@ import {
   handleUserDelete,
   handleUserUpdate,
 } from "@/db/handle-user-sync";
-import { env } from "@/start";
+import { Env, env } from "@/start";
 
 import { WebhookEvent } from "@clerk/backend";
 import { Hono } from "hono";
+import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { Webhook } from "svix";
 
-export const webhooksRouter = new Hono().post("/", async (c) => {
+const factory = createFactory<Env>();
+
+const root = factory.createHandlers(async (c) => {
   // Get the Svix headers for verification
   const svix_id = c.req.header("svix-id");
   const svix_timestamp = c.req.header("svix-timestamp");
@@ -78,3 +81,5 @@ export const webhooksRouter = new Hono().post("/", async (c) => {
     );
   }
 });
+
+export const webhooksRouter = new Hono().post("/", ...root);

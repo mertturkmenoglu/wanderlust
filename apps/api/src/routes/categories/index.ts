@@ -1,16 +1,20 @@
 import { categories, db } from "@/db";
+import { Env } from "@/start";
 
 import { Hono } from "hono";
+import { createFactory } from "hono/factory";
 
-export const categoriesRouter = new Hono()
-  // Get all categories
-  .get("/", async (c) => {
-    const allCategories = await db.select().from(categories);
+const factory = createFactory<Env>();
 
-    return c.json(
-      {
-        data: allCategories,
-      },
-      200
-    );
-  });
+const getAll = factory.createHandlers(async (c) => {
+  const allCategories = await db.select().from(categories);
+
+  return c.json(
+    {
+      data: allCategories,
+    },
+    200
+  );
+});
+
+export const categoriesRouter = new Hono().get("/", ...getAll);
