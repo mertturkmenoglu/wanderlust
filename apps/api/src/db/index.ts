@@ -1,4 +1,5 @@
 import { env } from "@/start";
+import * as schema from "./schema";
 
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
@@ -15,7 +16,7 @@ const globalForDb = globalThis as unknown as {
 const conn = globalForDb.conn ?? postgres(env.DB_URL);
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
-export const db = drizzle(conn);
+export const db = drizzle(conn, { schema });
 
 export async function runDrizzleMigrations() {
   if (Bun.env.NODE_ENV === "development") {

@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   bigint,
   boolean,
@@ -91,6 +92,17 @@ export const locations = pgTable(
   }
 );
 
+export const locationsRelations = relations(locations, ({ one }) => ({
+  address: one(addresses, {
+    fields: [locations.addressId],
+    references: [addresses.id],
+  }),
+  category: one(categories, {
+    fields: [locations.categoryId],
+    references: [categories.id],
+  }),
+}));
+
 export const events = pgTable(
   "events",
   {
@@ -120,6 +132,17 @@ export const events = pgTable(
     };
   }
 );
+
+export const eventsRelations = relations(events, ({ one }) => ({
+  organizer: one(users, {
+    fields: [events.organizerId],
+    references: [users.id],
+  }),
+  address: one(addresses, {
+    fields: [events.addressId],
+    references: [addresses.id],
+  }),
+}));
 
 export const addresses = pgTable(
   "addresses",
