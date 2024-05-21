@@ -9,6 +9,7 @@ import {
   smallserial,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -21,6 +22,26 @@ export const users = pgTable("users", {
 });
 
 export type User = typeof users.$inferSelect;
+
+export const follows = pgTable(
+  "follows",
+  {
+    followerId: uuid("follower_id")
+      .notNull()
+      .references(() => users.id),
+    followingId: uuid("following_id")
+      .notNull()
+      .references(() => users.id),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      followsFollowerIdx: index("follows_follower_idx").on(table.followerId),
+      followsFollowingIdx: index("follows_following_idx").on(table.followingId),
+      uniqueFollows: unique().on(table.followerId, table.followingId),
+    };
+  }
+);
 
 export const auths = pgTable("auths", {
   id: uuid("id").primaryKey().defaultRandom(),
