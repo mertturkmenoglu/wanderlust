@@ -8,7 +8,7 @@ type AuthorizationFn = (c: Context<Env, any, {}>) => boolean;
 
 type AuthorizationType = keyof typeof mapping;
 
-type Options = {
+type Payload = {
   type: AuthorizationType;
 };
 
@@ -32,9 +32,9 @@ const mapping = {
   "update-address": isAdmin,
 } as const satisfies Record<string, AuthorizationFn>;
 
-export const authorize = (options: Options): MiddlewareHandler => {
+export const authorize = (payload: Payload): MiddlewareHandler => {
   return createMiddleware<Env>(async (c, next) => {
-    const fn = mapping[options.type];
+    const fn = mapping[payload.type];
     const ok = fn(c);
 
     if (ok) {
