@@ -13,7 +13,13 @@ import { createLocationSchema, updateLocationSchema } from "./dto";
 const factory = createFactory<Env>();
 
 const peek = factory.createHandlers(async (c) => {
-  const results = await db.select().from(locations).limit(25);
+  const results = await db.query.locations.findMany({
+    limit: 25,
+    with: {
+      address: true,
+      category: true,
+    },
+  });
 
   return c.json(
     {
@@ -28,10 +34,13 @@ const getById = factory.createHandlers(
   async (c) => {
     const { id } = c.req.valid("param");
 
-    const [location] = await db
-      .select()
-      .from(locations)
-      .where(eq(locations.id, id));
+    const location = await db.query.locations.findFirst({
+      where: eq(locations.id, id),
+      with: {
+        address: true,
+        category: true,
+      },
+    });
 
     if (!location) {
       throw new HTTPException(404, {

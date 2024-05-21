@@ -15,7 +15,13 @@ import { validateId } from "../dto";
 const factory = createFactory<Env>();
 
 const peek = factory.createHandlers(async (c) => {
-  const results = await db.select().from(events).limit(25);
+  const results = await db.query.events.findMany({
+    limit: 25,
+    with: {
+      address: true,
+      organizer: true,
+    },
+  });
 
   return c.json(
     {
@@ -30,7 +36,13 @@ const getById = factory.createHandlers(
   async (c) => {
     const { id } = c.req.valid("param");
 
-    const [event] = await db.select().from(events).where(eq(events.id, id));
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, id),
+      with: {
+        address: true,
+        organizer: true,
+      },
+    });
 
     if (!event) {
       throw new HTTPException(404, {
