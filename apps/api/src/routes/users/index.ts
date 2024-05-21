@@ -27,23 +27,22 @@ const getProfileByUsername = factory.createHandlers(
   zValidator("param", validateUsername),
   async (c) => {
     const { username } = c.req.valid("param");
+    const user = await db.query.users.findFirst({
+      where: eq(users.username, username),
+    });
 
-    try {
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.username, username));
-      return c.json(
-        {
-          data: user,
-        },
-        200
-      );
-    } catch (e) {
+    if (!user) {
       throw new HTTPException(404, {
         message: "Not found",
       });
     }
+
+    return c.json(
+      {
+        data: user,
+      },
+      200
+    );
   }
 );
 
