@@ -57,7 +57,10 @@ const root = factory.createHandlers(async (c) => {
       await handleUserCreate(evt.data);
       const email = evt.data.email_addresses[0].email_address;
       const name = evt.data.first_name ?? "";
-      await sendWelcomeEmail(email, name);
+      await sendWelcomeEmail({
+        name,
+        to: email,
+      });
     } else if (eventType === "user.updated") {
       await handleUserUpdate(evt.data);
     } else if (eventType === "user.deleted") {
