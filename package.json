@@ -9,5 +9,9 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  }
+  },
+  "trustedDependencies": [
+    "@clerk/shared",
+    "es5-ext"
+  ]
 }
