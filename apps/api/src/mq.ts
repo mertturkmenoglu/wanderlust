@@ -1,18 +1,27 @@
 import amqplib from "amqplib";
+import { MQEventPayload, MQQueue, SendWelcomeEmailPayload } from "../../common";
 
 export const mq = await amqplib.connect("amqp://localhost");
 
-export async function sendWelcomeEmail(to: string, name: string) {
-  console.log("Sending email payload to queue");
+function serialize(payload: MQEventPayload) {
+  return Buffer.from(JSON.stringify(payload));
+}
 
-  const queue = "welcome-email";
+async function getEmailChannel() {
+  const queue: MQQueue = "email";
   const ch = await mq.createChannel();
   await ch.assertQueue(queue);
+  return [queue, ch] as const;
+}
 
-  const payload = {
-    to,
-    name,
-  };
+export async function sendWelcomeEmail(payload: SendWelcomeEmailPayload) {
+  const [queue, ch] = await getEmailChannel();
 
-  return ch.sendToQueue(queue, Buffer.from(JSON.stringify(payload)));
+  return ch.sendToQueue(
+    queue,
+    serialize({
+      type: "send-welcome-email",
+      payload,
+    })
+  );
 }
