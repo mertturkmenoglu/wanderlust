@@ -1,4 +1,5 @@
 {
+  "name": "email",
   "scripts": {
     "preview": "email dev",
     "dev": "bun run index.ts"
