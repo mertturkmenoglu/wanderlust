@@ -7,12 +7,7 @@ export const createEventSchema = createInsertSchema(events).omit({
 });
 
 export const updateEventSchema = createInsertSchema(events)
-  .pick({
-    description: true,
-    startsAt: true,
-    endsAt: true,
-    website: true,
-    priceLevel: true,
-    accessibilityLevel: true,
+  .omit({
+    id: true,
   })
   .partial();

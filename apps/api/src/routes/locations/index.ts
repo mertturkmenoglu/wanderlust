@@ -1,4 +1,4 @@
-import { db, locations } from "@/db";
+import { Address, db, locations } from "@/db";
 import { authorize, getAuth, rateLimiter } from "@/middlewares";
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
@@ -16,7 +16,6 @@ const peek = factory.createHandlers(async (c) => {
   const results = await db.query.locations.findMany({
     limit: 25,
     with: {
-      address: true,
       category: true,
     },
   });
@@ -37,7 +36,6 @@ const getById = factory.createHandlers(
     const location = await db.query.locations.findFirst({
       where: eq(locations.id, id),
       with: {
-        address: true,
         category: true,
       },
     });
@@ -66,7 +64,14 @@ const create = factory.createHandlers(
     const dto = c.req.valid("json");
 
     try {
-      const [location] = await db.insert(locations).values(dto).returning();
+      const [location] = await db
+        .insert(locations)
+        .values({
+          ...dto,
+          address: dto.address as Address,
+          tags: (dto.tags ?? []) as string[],
+        })
+        .returning();
       return c.json(
         {
           data: location,
@@ -93,7 +98,11 @@ const update = factory.createHandlers(
 
     const [location] = await db
       .update(locations)
-      .set(dto)
+      .set({
+        ...dto,
+        address: dto.address as Address,
+        tags: (dto.tags ?? []) as string[],
+      })
       .where(eq(locations.id, id))
       .returning();
 

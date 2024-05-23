@@ -1,4 +1,4 @@
-import { db, events } from "@/db";
+import { Address, db, events } from "@/db";
 import { authorize, getAuth } from "@/middlewares";
 import { createEventSchema, updateEventSchema } from "./dto";
 
@@ -18,7 +18,6 @@ const peek = factory.createHandlers(async (c) => {
   const results = await db.query.events.findMany({
     limit: 25,
     with: {
-      address: true,
       organizer: true,
     },
   });
@@ -39,7 +38,6 @@ const getById = factory.createHandlers(
     const event = await db.query.events.findFirst({
       where: eq(events.id, id),
       with: {
-        address: true,
         organizer: true,
       },
     });
@@ -68,7 +66,15 @@ const create = factory.createHandlers(
     const dto = c.req.valid("json");
 
     try {
-      const [event] = await db.insert(events).values(dto).returning();
+      const [event] = await db
+        .insert(events)
+        .values({
+          ...dto,
+          address: dto.address as Address,
+          tags: (dto.tags ?? []) as string[],
+        })
+        .returning();
+
       return c.json(
         {
           data: event,
@@ -95,7 +101,11 @@ const update = factory.createHandlers(
 
     const [event] = await db
       .update(events)
-      .set(dto)
+      .set({
+        ...dto,
+        address: dto.address as Address,
+        tags: (dto.tags ?? []) as string[],
+      })
       .where(eq(events.id, id))
       .returning();
 

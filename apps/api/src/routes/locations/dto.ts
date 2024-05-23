@@ -7,14 +7,7 @@ export const createLocationSchema = createInsertSchema(locations).omit({
 });
 
 export const updateLocationSchema = createInsertSchema(locations)
-  .pick({
-    accessibilityLevel: true,
-    categoryId: true,
-    hasWifi: true,
-    addressId: true,
-    name: true,
-    phone: true,
-    priceLevel: true,
-    website: true,
+  .omit({
+    id: true,
   })
   .partial();
