@@ -64,6 +64,13 @@
       "when": 1716281525071,
       "tag": "0008_milky_tiger_shark",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1716476955402,
+      "tag": "0009_outstanding_shadow_king",
+      "breakpoints": true
     }
   ]
 }
