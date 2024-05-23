@@ -18,4 +18,8 @@ export default cleanEnv(process.env, {
   MINIO_LOCATION: str({ devDefault: "eu-central-1" }),
   PORT: num({ devDefault: 5000 }),
   ADMIN_ID: str(),
+  TYPESENSE_HOST: str({ devDefault: "localhost" }),
+  TYPESENSE_PORT: num({ devDefault: 8108 }),
+  TYPESENSE_PROTOCOL: str({ devDefault: "http" }),
+  TYPESENSE_API_KEY: str(),
 });
