@@ -8,7 +8,8 @@
     "env:pull": "bunx dotenv-vault@latest pull",
     "env:push": "bunx dotenv-vault@latest push",
     "studio": "bunx drizzle-kit studio --config=src/db/drizzle.config.ts --verbose",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "migrate": "drizzle-kit migrate --config=src/db/drizzle.config.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.5",
