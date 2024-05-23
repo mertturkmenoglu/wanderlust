@@ -2,9 +2,8 @@ import { relations } from "drizzle-orm";
 import {
   bigint,
   boolean,
-  char,
-  doublePrecision,
   index,
+  json,
   pgTable,
   smallint,
   smallserial,
@@ -12,6 +11,7 @@ import {
   timestamp,
   unique,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -20,6 +20,17 @@ export const users = pgTable("users", {
   lastName: text("last_name"),
   username: text("username").notNull().unique(),
   image: text("image"),
+  isBusinessAccount: boolean("is_business_account").notNull().default(false),
+  isVerified: boolean("is_verified").notNull().default(false),
+  bio: varchar("bio", { length: 255 }),
+  website: text("website"),
+  phone: text("phone"),
+  followersCount: bigint("followers_count", { mode: "number" })
+    .notNull()
+    .default(0),
+  followingCount: bigint("following_count", { mode: "number" })
+    .notNull()
+    .default(0),
 });
 
 export type User = typeof users.$inferSelect;
@@ -61,19 +72,30 @@ export const auths = pgTable("auths", {
 
 export type AuthUser = typeof auths.$inferSelect;
 
+export type Address = {
+  id: string;
+  country: string;
+  city: string;
+  line1: string;
+  line2: string | null;
+  postalCode: string | null;
+  state: string | null;
+  lat: number;
+  long: number;
+};
+
 export const locations = pgTable(
   "locations",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text("name").notNull(),
     phone: text("phone"),
-    addressId: uuid("address_id")
-      .references(() => addresses.id)
-      .notNull(),
+    address: json("address").$type<Address>().notNull(),
     website: text("website"),
     priceLevel: smallint("price_level").notNull().default(1),
     accessibilityLevel: smallint("accessibility_level").notNull().default(1),
     hasWifi: boolean("has_wifi").notNull().default(false),
+    tags: json("tags").$type<string[]>().default([]),
     categoryId: smallserial("category_id")
       .notNull()
       .references(() => categories.id),
@@ -84,7 +106,6 @@ export const locations = pgTable(
   },
   (table) => {
     return {
-      locationsAddressIdx: index("locations_address_idx").on(table.addressId),
       locationsCategoryIdx: index("locations_category_idx").on(
         table.categoryId
       ),
@@ -93,10 +114,6 @@ export const locations = pgTable(
 );
 
 export const locationsRelations = relations(locations, ({ one }) => ({
-  address: one(addresses, {
-    fields: [locations.addressId],
-    references: [addresses.id],
-  }),
   category: one(categories, {
     fields: [locations.categoryId],
     references: [categories.id],
@@ -111,15 +128,14 @@ export const events = pgTable(
     organizerId: uuid("organizer_id")
       .notNull()
       .references(() => users.id),
-    addressId: uuid("address_id")
-      .notNull()
-      .references(() => addresses.id),
+    address: json("address").$type<Address>().notNull(),
     description: text("description").notNull(),
     startsAt: timestamp("starts_at").notNull(),
     endsAt: timestamp("ends_at").notNull(),
     website: text("website"),
     priceLevel: smallint("price_level").notNull().default(1),
     accessibilityLevel: smallint("accessibility_level").notNull().default(1),
+    tags: json("tags").$type<string[]>().default([]),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
       .notNull()
@@ -128,7 +144,6 @@ export const events = pgTable(
   (table) => {
     return {
       eventsOrganizerIdx: index("events_organizer_idx").on(table.organizerId),
-      eventsAddressIdx: index("events_address_idx").on(table.addressId),
     };
   }
 );
@@ -138,34 +153,98 @@ export const eventsRelations = relations(events, ({ one }) => ({
     fields: [events.organizerId],
     references: [users.id],
   }),
-  address: one(addresses, {
-    fields: [events.addressId],
-    references: [addresses.id],
-  }),
 }));
-
-export const addresses = pgTable(
-  "addresses",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    country: char("country", { length: 2 }).notNull(), // Two-letter country code (ISO 3166-1 alpha-2).
-    city: text("city").notNull(), // City, district, suburb, town, or village.
-    line1: text("line1").notNull(), // Address line 1 (e.g., street, PO Box, or company name).
-    line2: text("line2"), // Address line 2 (e.g., apartment, suite, unit, or building).
-    postalCode: text("postal_code"), // ZIP or postal code.
-    state: text("state"), // State, county, province, or region.
-    lat: doublePrecision("lat").notNull(),
-    long: doublePrecision("long").notNull(),
-  },
-  (table) => {
-    return {
-      addressesCountryIdx: index("addresses_country_idx").on(table.country),
-      addressesCityIdx: index("addresses_city_idx").on(table.city),
-    };
-  }
-);
 
 export const categories = pgTable("categories", {
   id: smallserial("id").primaryKey(),
   name: text("name").notNull(),
 });
+
+export const bookmarks = pgTable(
+  "bookmarks",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    locationId: uuid("location_id")
+      .notNull()
+      .references(() => locations.id),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      bookmarksUserIdx: index("bookmarks_user_idx").on(table.userId),
+      uniqueBookmarks: unique().on(table.userId, table.locationId),
+    };
+  }
+);
+
+export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+  user: one(users, {
+    fields: [bookmarks.userId],
+    references: [users.id],
+  }),
+  location: one(locations, {
+    fields: [bookmarks.locationId],
+    references: [locations.id],
+  }),
+}));
+
+export const lists = pgTable(
+  "lists",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    isPublic: boolean("is_public").notNull().default(true),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => {
+    return {
+      listsUserIdx: index("lists_user_idx").on(table.userId),
+    };
+  }
+);
+
+export const listsRelations = relations(lists, ({ one }) => ({
+  user: one(users, {
+    fields: [lists.userId],
+    references: [users.id],
+  }),
+}));
+
+export const listItems = pgTable(
+  "list_items",
+  {
+    listId: uuid("list_id")
+      .notNull()
+      .references(() => lists.id),
+    locationId: uuid("location_id")
+      .notNull()
+      .references(() => locations.id),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      listItemsListIdx: index("list_items_list_idx").on(table.listId),
+      uniqueListItems: unique().on(table.listId, table.locationId),
+    };
+  }
+);
+
+export const listItemsRelations = relations(listItems, ({ one }) => ({
+  list: one(lists, {
+    fields: [listItems.listId],
+    references: [lists.id],
+  }),
+  location: one(locations, {
+    fields: [listItems.locationId],
+    references: [locations.id],
+  }),
+}));
+
