@@ -1,75 +1,12 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1715254490204,
-      "tag": "0000_useful_puma",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1715273646516,
-      "tag": "0001_plain_layla_miller",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1715274287799,
-      "tag": "0002_elite_blade",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1715275253348,
-      "tag": "0003_windy_speed",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1715295838099,
-      "tag": "0004_simple_rocket_raccoon",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1715296464014,
-      "tag": "0005_stale_shiver_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
       "version": "6",
-      "when": 1716100114107,
-      "tag": "0006_big_shaman",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1716183369594,
-      "tag": "0007_unusual_deathbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "6",
-      "when": 1716281525071,
-      "tag": "0008_milky_tiger_shark",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "6",
-      "when": 1716476955402,
-      "tag": "0009_outstanding_shadow_king",
+      "when": 1716479452318,
+      "tag": "0000_soft_ultimatum",
       "breakpoints": true
     }
   ]
