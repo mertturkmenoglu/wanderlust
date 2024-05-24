@@ -4,3 +4,4 @@ typesense-data/
 .flaskenv*
 !.env.project
 !.env.vault
+src/scripts/data/
