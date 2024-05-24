@@ -13,8 +13,10 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import { getCorsConfig } from "./cors";
+import { initSearch } from "./search";
 
 await runDrizzleMigrations();
+await initSearch();
 
 const app = new Hono<Env>()
   .basePath("/api")
