@@ -40,6 +40,11 @@ services:
       - ./typesense-data:/data
     command: "--data-dir /data --api-key=xyz --enable-cors"
 
+  typesense-dashboard:
+    ports:
+      - 3006:80
+    image: ghcr.io/bfritscher/typesense-dashboard:latest
+
   rabbitmq:
     image: rabbitmq:3.13-management
     stdin_open: true
