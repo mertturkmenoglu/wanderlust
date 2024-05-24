@@ -73,7 +73,6 @@ export const auths = pgTable("auths", {
 export type AuthUser = typeof auths.$inferSelect;
 
 export type Address = {
-  id: string;
   country: string;
   city: string;
   line1: string;
