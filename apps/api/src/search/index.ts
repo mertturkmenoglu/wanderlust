@@ -17,11 +17,11 @@ export const searchClient = new Typesense.Client({
 });
 
 export async function initSearch() {
-  console.log('Creating search collections');
+  console.log("Creating search collections");
   for (const schema of schemas) {
     await createCollection(schema);
   }
-  console.log('Search collections created');
+  console.log("Search collections created");
 }
 
 async function createCollection(a: CollectionCreateSchema) {
