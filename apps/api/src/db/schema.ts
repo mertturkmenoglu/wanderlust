@@ -95,7 +95,7 @@ export const locations = pgTable(
     priceLevel: smallint("price_level").notNull().default(1),
     accessibilityLevel: smallint("accessibility_level").notNull().default(1),
     hasWifi: boolean("has_wifi").notNull().default(false),
-    tags: json("tags").$type<string[]>().default([]),
+    tags: json("tags").$type<string[]>().notNull().default([]),
     categoryId: smallserial("category_id")
       .notNull()
       .references(() => categories.id),
@@ -119,6 +119,8 @@ export const locationsRelations = relations(locations, ({ one }) => ({
     references: [categories.id],
   }),
 }));
+
+export type Location = typeof locations.$inferSelect;
 
 export const events = pgTable(
   "events",
@@ -247,4 +249,3 @@ export const listItemsRelations = relations(listItems, ({ one }) => ({
     references: [locations.id],
   }),
 }));
-
