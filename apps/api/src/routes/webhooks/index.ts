@@ -5,7 +5,6 @@ import {
 } from "@/db/handle-user-sync";
 import { sendWelcomeEmail } from "@/mq";
 import { Env, env } from "@/start";
-
 import { WebhookEvent } from "@clerk/backend";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";

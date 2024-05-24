@@ -1,5 +1,4 @@
 import { AuthUser, User } from "@/db/schema";
-
 import type { SocketAddress } from "bun";
 
 export type Env = {

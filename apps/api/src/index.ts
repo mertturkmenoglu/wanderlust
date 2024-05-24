@@ -7,7 +7,6 @@ import {
   webhooksRouter,
 } from "@/routes";
 import { env, type Env } from "@/start";
-
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";

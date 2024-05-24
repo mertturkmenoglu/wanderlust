@@ -1,6 +1,5 @@
 import { db, follows, users } from "@/db";
 import { getAuth, rateLimiter } from "@/middlewares";
-
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";

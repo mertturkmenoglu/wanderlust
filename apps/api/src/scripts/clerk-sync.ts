@@ -7,7 +7,6 @@ import {
 } from "@/db/handle-user-sync";
 import { auths } from "@/db/schema";
 import env from "@/start/env";
-
 import { User, createClerkClient } from "@clerk/backend";
 import { cliui } from "@poppinss/cliui";
 import { count, eq, inArray } from "drizzle-orm";

@@ -1,6 +1,3 @@
-import { createAddressSchema } from "#/routes/dto/create-address";
-import { createEventSchema } from "#/routes/dto/create-event";
-import { createLocationSchema } from "#/routes/dto/create-location";
 import { hc, InferResponseType } from "hono/client";
 import { z } from "zod";
 import type { AppType } from "../../../api/src";

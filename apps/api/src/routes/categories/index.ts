@@ -1,6 +1,5 @@
 import { categories, db } from "@/db";
 import { Env } from "@/start";
-
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 

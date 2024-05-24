@@ -1,5 +1,4 @@
 import { events } from "@/db/schema";
-
 import { createInsertSchema } from "drizzle-zod";
 
 export const createEventSchema = createInsertSchema(events).omit({
