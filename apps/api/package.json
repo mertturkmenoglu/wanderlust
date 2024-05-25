@@ -2,15 +2,15 @@
   "name": "api",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "clerk-sync": "bun run src/scripts/clerk-sync.ts",
+    "clerk-sync": "bun run ./scripts/clerk-sync.ts",
     "generate": "drizzle-kit generate --config=src/db/drizzle.config.ts",
-    "ngrok": "ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000",
+    "ngrok": "./scripts/ngrok.sh",
     "env:pull": "bunx dotenv-vault@latest pull",
     "env:push": "bunx dotenv-vault@latest push",
     "studio": "bunx drizzle-kit studio --config=src/db/drizzle.config.ts --verbose",
     "type-check": "tsc --noEmit",
     "migrate": "drizzle-kit migrate --config=src/db/drizzle.config.ts",
-    "locations": "bun run src/scripts/locations.ts"
+    "locations": "bun run ./scripts/locations.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.5",
