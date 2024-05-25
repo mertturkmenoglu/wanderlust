@@ -1,20 +1,20 @@
-import { db } from "@/db";
+import { User, createClerkClient } from "@clerk/backend";
+import { cliui } from "@poppinss/cliui";
+import { count, eq, inArray } from "drizzle-orm";
+import { db } from "../src/db";
 import {
   handleUserCreate,
   handleUserUpdate,
   type THandleUserCreatePayload,
   type THandleUserUpdatePayload,
-} from "@/db/handle-user-sync";
-import { auths } from "@/db/schema";
-import env from "@/start/env";
-import { User, createClerkClient } from "@clerk/backend";
-import { cliui } from "@poppinss/cliui";
-import { count, eq, inArray } from "drizzle-orm";
+} from "../src/db/handle-user-sync";
+import { auths } from "../src/db/schema";
+import env from "../src/start/env";
 
 const ui = cliui();
 
 function mapUserToHandleUserCreatePayload(
-  user: User
+  user: User,
 ): THandleUserCreatePayload {
   return {
     id: user.id,
@@ -47,7 +47,7 @@ function mapUserToHandleUserCreatePayload(
 }
 
 function mapUserToHandleUserUpdatePayload(
-  user: User
+  user: User,
 ): THandleUserUpdatePayload {
   return mapUserToHandleUserCreatePayload(user);
 }
@@ -141,7 +141,7 @@ async function syncClerkDataWithLocalDatabase() {
 
   ui.logger.info("Read all users from database.");
   ui.logger.info(
-    `Found ${toDeleteIds.length} many users that should be deleted.`
+    `Found ${toDeleteIds.length} many users that should be deleted.`,
   );
 
   if (toDeleteIds.length > 0) {
