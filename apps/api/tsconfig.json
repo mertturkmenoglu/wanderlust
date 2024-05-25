@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
     "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "types": ["bun-types"],
     "declaration": true,
-    "skipLibCheck": true,
+    "emitDeclarationOnly": true,
     "paths": {
       "@/*": ["./src/*"]
     }
-  },
-  "exclude": ["node_modules", "dist"]
+  }
 }
