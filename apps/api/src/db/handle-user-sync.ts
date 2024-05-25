@@ -21,16 +21,15 @@ export type THandleUserUpdatePayload = THandleUserCreatePayload;
 
 export type THandleUserDeletePayload = Pick<DeletedObjectJSON, "id">;
 
-export async function handleUserCreate(
-  data: THandleUserCreatePayload
-): Promise<void> {
+export async function handleUserCreate(data: THandleUserCreatePayload) {
   const username = data.username;
+
   if (username === null) {
     throw new Error("Username cannot be null");
   }
 
   try {
-    await db.transaction(async (tx) => {
+    return await db.transaction(async (tx) => {
       const [user] = await tx
         .insert(users)
         .values({
@@ -40,6 +39,7 @@ export async function handleUserCreate(
           image: data.image_url,
         })
         .returning();
+
       await tx.insert(auths).values({
         clerkId: data.id,
         email: data.email_addresses[0]?.email_address,
@@ -50,21 +50,23 @@ export async function handleUserCreate(
         updatedAt: data.updated_at,
         userId: user.id,
       });
+
+      return user;
     });
   } catch (e) {
-    console.error(e);
+    return null;
   }
 }
 
-export async function handleUserUpdate(
-  data: THandleUserUpdatePayload
-): Promise<void> {
+export async function handleUserUpdate(data: THandleUserUpdatePayload) {
   const username = data.username;
+
   if (username === null) {
     throw new Error("Username cannot be null");
   }
+
   try {
-    await db.transaction(async (tx) => {
+    return await db.transaction(async (tx) => {
       const [authObj] = await tx
         .update(auths)
         .set({
@@ -79,7 +81,7 @@ export async function handleUserUpdate(
         .where(eq(auths.clerkId, data.id))
         .returning();
 
-      await tx
+      const [user] = await tx
         .update(users)
         .set({
           firstName: data.first_name,
@@ -87,29 +89,38 @@ export async function handleUserUpdate(
           username: username,
           image: data.image_url,
         })
-        .where(eq(users.id, authObj.userId));
+        .where(eq(users.id, authObj.userId))
+        .returning();
+
+      return user;
     });
   } catch (e) {
-    console.error(e);
+    return null;
   }
 }
 
-export async function handleUserDelete(
-  data: THandleUserDeletePayload
-): Promise<void> {
+export async function handleUserDelete(data: THandleUserDeletePayload) {
   try {
-    await db.transaction(async (tx) => {
+    return await db.transaction(async (tx) => {
       const clerkId = data.id;
+
       if (clerkId === undefined) {
         throw new Error("Clerk ID is undefined");
       }
+
       const [authObj] = await tx
         .delete(auths)
         .where(eq(auths.clerkId, clerkId))
         .returning();
-      await tx.delete(users).where(eq(users.id, authObj.userId));
+
+      const [user] = await tx
+        .delete(users)
+        .where(eq(users.id, authObj.userId))
+        .returning();
+
+      return user;
     });
   } catch (e) {
-    console.error(e);
+    return null;
   }
 }
