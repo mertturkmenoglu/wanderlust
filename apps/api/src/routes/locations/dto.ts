@@ -1,6 +1,6 @@
-import { locations } from "@/db/schema";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { locations } from "../../db/schema";
 
 export const createLocationSchema = createInsertSchema(locations).omit({
   id: true,

@@ -1,5 +1,5 @@
-import { Address, db, locations } from "@/db";
 import { eq } from "drizzle-orm";
+import { Address, db, locations } from "../../db";
 import { CreateLocationDto, UpdateLocationDto } from "./dto";
 
 export async function peek() {

@@ -6,9 +6,6 @@
     "moduleResolution": "Bundler",
     "types": ["bun-types"],
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "emitDeclarationOnly": true
   }
 }

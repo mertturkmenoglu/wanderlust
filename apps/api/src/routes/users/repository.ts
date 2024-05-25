@@ -1,5 +1,5 @@
-import { db, follows, users } from "@/db";
 import { and, eq, sql } from "drizzle-orm";
+import { db, follows, users } from "../../db";
 
 export async function getByUsername(username: string) {
   const user = await db.query.users.findFirst({

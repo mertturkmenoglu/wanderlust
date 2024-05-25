@@ -1,4 +1,4 @@
-import { env } from "@/start";
+import { env } from "../start";
 
 import type { Config } from "drizzle-kit";
 

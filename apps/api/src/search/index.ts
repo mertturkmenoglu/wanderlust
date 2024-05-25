@@ -1,6 +1,6 @@
-import { Location } from "@/db";
-import { env } from "@/start";
 import Typesense from "typesense";
+import { Location } from "../db";
+import { env } from "../start";
 import { schemas } from "./schemas";
 
 export const searchClient = new Typesense.Client({

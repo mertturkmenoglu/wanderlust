@@ -1,9 +1,8 @@
-import { type Env } from "@/start";
 import { getAuth } from "@hono/clerk-auth";
-
 import { MiddlewareHandler } from "hono";
 import { rateLimiter as honoRateLimiter } from "hono-rate-limiter";
 import { createMiddleware } from "hono/factory";
+import { type Env } from "../start";
 
 type Options = {
   window?: number;

@@ -1,17 +1,18 @@
-import { runDrizzleMigrations } from "@/db";
+import { Hono } from "hono";
+import { hc } from "hono/client";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import { secureHeaders } from "hono/secure-headers";
+import { runDrizzleMigrations } from "./db";
 import {
   categoriesRouter,
   eventsRouter,
   locationsRouter,
   usersRouter,
   webhooksRouter,
-} from "@/routes";
-import { initSearch } from "@/search";
-import { Env, env, getCorsConfig } from "@/start";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
-import { secureHeaders } from "hono/secure-headers";
+} from "./routes";
+import { initSearch } from "./search";
+import { Env, env, getCorsConfig } from "./start";
 
 await runDrizzleMigrations();
 await initSearch();
@@ -35,3 +36,5 @@ Bun.serve({
 });
 
 export type AppType = typeof app;
+
+const c = hc<AppType>("");

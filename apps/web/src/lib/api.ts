@@ -1,6 +1,7 @@
-import { hc, InferResponseType } from "hono/client";
-import { z } from "zod";
-import type { AppType } from "../../../api/src";
+import { AppType } from "#/index";
+import { CreateEventDto } from "#/routes/events/dto";
+import { CreateLocationDto } from "#/routes/locations/dto";
+import { hc } from "hono/client";
 
 export const { api } = hc<AppType>(process.env.NEXT_PUBLIC_API_URL!, {
   init: {
@@ -34,9 +35,7 @@ export async function getCategories() {
   return data;
 }
 
-type CreateNewLocationPayload = z.infer<typeof createLocationSchema>;
-
-export async function createNewLocation(payload: CreateNewLocationPayload) {
+export async function createNewLocation(payload: CreateLocationDto) {
   const res = await api.locations.$post({
     json: payload,
   });
@@ -49,9 +48,7 @@ export async function createNewLocation(payload: CreateNewLocationPayload) {
   return data;
 }
 
-type CreateNewEventPayload = z.infer<typeof createEventSchema>;
-
-export async function createNewEvent(payload: CreateNewEventPayload) {
+export async function createNewEvent(payload: CreateEventDto) {
   const res = await api.events.$post({
     json: payload,
   });
@@ -64,42 +61,8 @@ export async function createNewEvent(payload: CreateNewEventPayload) {
   return data;
 }
 
-type CreateNewAddressPayload = z.infer<typeof createAddressSchema>;
-
-export async function createNewAddress(payload: CreateNewAddressPayload) {
-  const res = await api.addresses.$post({
-    json: payload,
-  });
-
-  if (!res.ok) {
-    throw new Error("Error");
-  }
-
-  const { data } = await res.json();
-  return data;
-}
-
-const fnRef = api.addresses[":id"].$get;
-
-export type Address = InferResponseType<typeof fnRef>["data"];
-
-export async function searchAddress(q: string) {
-  const res = await api.addresses.search.$get({
-    query: {
-      q,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error("Error");
-  }
-
-  const { data } = await res.json();
-  return data;
-}
-
 export async function getLocations() {
-  const res = await api.locations.all.$get();
+  const res = await api.locations.peek.$get();
 
   if (!res.ok) {
     throw new Error("Error");
@@ -110,18 +73,7 @@ export async function getLocations() {
 }
 
 export async function getEvents() {
-  const res = await api.events.all.$get();
-
-  if (!res.ok) {
-    throw new Error("Error");
-  }
-
-  const { data } = await res.json();
-  return data;
-}
-
-export async function getAddresses() {
-  const res = await api.addresses.all.$get();
+  const res = await api.events.peek.$get();
 
   if (!res.ok) {
     throw new Error("Error");

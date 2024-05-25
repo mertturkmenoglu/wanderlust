@@ -1,5 +1,5 @@
-import { Address, db, events } from "@/db";
 import { eq } from "drizzle-orm";
+import { Address, db, events } from "../../db";
 import { CreateEventDto, UpdateEventDto } from "./dto";
 
 export async function peek() {
@@ -48,10 +48,7 @@ export async function update(id: string, dto: UpdateEventDto) {
 }
 
 export async function deleteEvent(id: string) {
-  const [event] = await db
-    .delete(events)
-    .where(eq(events.id, id))
-    .returning();
+  const [event] = await db.delete(events).where(eq(events.id, id)).returning();
 
   return event;
 }

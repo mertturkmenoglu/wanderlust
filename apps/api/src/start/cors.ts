@@ -1,4 +1,4 @@
-import { env } from "@/start";
+import { env } from ".";
 import { cors } from "hono/cors";
 
 type CorsFn = typeof cors;

@@ -1,15 +1,15 @@
-import {
-  handleUserCreate,
-  handleUserDelete,
-  handleUserUpdate,
-} from "@/db/handle-user-sync";
-import { UserEventType, sendUserEvent, sendWelcomeEmail } from "@/mq";
-import { Env, env } from "@/start";
 import { WebhookEvent } from "@clerk/backend";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { Webhook } from "svix";
+import {
+  handleUserCreate,
+  handleUserDelete,
+  handleUserUpdate,
+} from "../../db/handle-user-sync";
+import { UserEventType, sendUserEvent, sendWelcomeEmail } from "../../mq";
+import { Env, env } from "../../start";
 
 const factory = createFactory<Env>();
 

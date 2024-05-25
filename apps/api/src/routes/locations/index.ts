@@ -1,11 +1,11 @@
-import { authorize, getAuth, rateLimiter } from "@/middlewares";
-import * as search from "@/search";
-import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import { authorize, getAuth, rateLimiter } from "../../middlewares";
+import * as search from "../../search";
+import { Env } from "../../start";
 import { validateId } from "../dto";
 import { createLocationSchema, updateLocationSchema } from "./dto";
 import * as repository from "./repository";
