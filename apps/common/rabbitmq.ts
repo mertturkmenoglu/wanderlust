@@ -1,8 +1,8 @@
 export type MQEventType =
   | "send-welcome-email"
-  | "lorem-ipsum"
-  | "lorem-ipsum-2"
-  | "lorem-ipsum-3";
+  | "user-created"
+  | "user-updated"
+  | "user-deleted";
 
 export type MQEventPayload =
   | {
@@ -10,25 +10,40 @@ export type MQEventPayload =
       payload: SendWelcomeEmailPayload;
     }
   | {
-      type: "lorem-ipsum";
-      payload: any;
+      type: "user-created";
+      payload: UserCreatedPayload;
     }
   | {
-      type: "lorem-ipsum-2";
-      payload: any;
+      type: "user-updated";
+      payload: UserUpdatedPayload;
     }
   | {
-      type: "lorem-ipsum-3";
-      payload: any;
+      type: "user-deleted";
+      payload: UserDeletedPayload;
     };
 
-export type MQQueue =
-  | "email"
-  | "lorem-ipsum"
-  | "lorem-ipsum-2"
-  | "lorem-ipsum-3";
+export type MQQueue = "email" | "user";
 
 export type SendWelcomeEmailPayload = {
   to: string;
   name: string;
 };
+
+export type UserCreatedPayload = {
+  id: string;
+  username: string;
+  firstName: string | null;
+  lastName: string | null;
+  image: string | null;
+  isBusinessAccount: boolean;
+  isVerified: boolean;
+  bio: string | null;
+  website: string | null;
+  phone: string | null;
+  followersCount: number;
+  followingCount: number;
+};
+
+export type UserUpdatedPayload = UserCreatedPayload;
+
+export type UserDeletedPayload = UserCreatedPayload;
