@@ -26,7 +26,7 @@ export async function create(dto: CreateLocationDto) {
     .values({
       ...dto,
       address: dto.address as Address,
-      tags: (dto.tags ?? []) as string[],
+      tags: dto.tags ? (dto.tags as string[]) : undefined,
     })
     .returning();
 

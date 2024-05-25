@@ -1,24 +1,18 @@
-import { Address, db, events } from "@/db";
 import { authorize, getAuth, rateLimiter } from "@/middlewares";
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { validateId } from "../dto";
 import { createEventSchema, updateEventSchema } from "./dto";
+import * as repository from "./repository";
 
 const factory = createFactory<Env>();
 
 const peek = factory.createHandlers(async (c) => {
-  const results = await db.query.events.findMany({
-    limit: 25,
-    with: {
-      organizer: true,
-    },
-  });
+  const results = await repository.peek();
 
   return c.json(
     {
@@ -32,13 +26,7 @@ const getById = factory.createHandlers(
   zValidator("param", validateId),
   async (c) => {
     const { id } = c.req.valid("param");
-
-    const event = await db.query.events.findFirst({
-      where: eq(events.id, id),
-      with: {
-        organizer: true,
-      },
-    });
+    const event = await repository.getById(id);
 
     if (!event) {
       throw new HTTPException(404, {
@@ -64,14 +52,7 @@ const create = factory.createHandlers(
     const dto = c.req.valid("json");
 
     try {
-      const [event] = await db
-        .insert(events)
-        .values({
-          ...dto,
-          address: dto.address as Address,
-          tags: (dto.tags ?? []) as string[],
-        })
-        .returning();
+      const event = await repository.create(dto);
 
       return c.json(
         {
@@ -97,15 +78,7 @@ const update = factory.createHandlers(
     const { id } = c.req.valid("param");
     const dto = c.req.valid("json");
 
-    const [event] = await db
-      .update(events)
-      .set({
-        ...dto,
-        address: dto.address as Address,
-        tags: (dto.tags ?? []) as string[],
-      })
-      .where(eq(events.id, id))
-      .returning();
+    const event = await repository.update(id, dto);
 
     if (!location) {
       throw new HTTPException();
@@ -127,11 +100,7 @@ const deleteEvent = factory.createHandlers(
   authorize({ type: "delete-event" }),
   async (c) => {
     const { id } = c.req.valid("param");
-
-    const [event] = await db
-      .delete(events)
-      .where(eq(events.id, id))
-      .returning();
+    const event = await repository.deleteEvent(id);
 
     if (!event) {
       throw new HTTPException(404, {
