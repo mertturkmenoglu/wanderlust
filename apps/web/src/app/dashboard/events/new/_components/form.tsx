@@ -2,9 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { createEventSchema } from "#/routes/dto/create-event";
+import { CreateEventDto } from "#/routes/events/dto";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -32,8 +31,31 @@ import { CalendarIcon, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { DateRange } from "react-day-picker";
+import { z } from "zod";
 
-type FormInput = z.infer<typeof createEventSchema>;
+type FormInput = CreateEventDto;
+
+const schema = z.object({
+  name: z.string().min(1),
+  address: z.object({
+    country: z.string().length(2),
+    city: z.string().min(1),
+    line1: z.string().min(1),
+    line2: z.string().optional(),
+    postalCode: z.string().optional(),
+    state: z.string().optional(),
+    lat: z.number(),
+    long: z.number(),
+  }),
+  description: z.string().min(1),
+  organizerId: z.string(),
+  startsAt: z.date(),
+  endsAt: z.date(),
+  website: z.string().optional(),
+  priceLevel: z.number().optional(),
+  accessibilityLevel: z.number().optional(),
+  tags: z.array(z.string()).optional(),
+});
 
 function NewEventForm() {
   const router = useRouter();
@@ -57,13 +79,7 @@ function NewEventForm() {
   });
 
   const form = useForm<FormInput>({
-    resolver: zodResolver(createEventSchema),
-    defaultValues: {
-      website: null,
-      priceLevel: 1,
-      accessibilityLevel: 1,
-      description: "",
-    },
+    resolver: zodResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormInput> = (data) => {
