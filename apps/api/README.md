@@ -30,7 +30,7 @@ Either setup manually or use Dotenv Vault (preferred).
 
 - Start Docker containers: `docker compose up`
 - Start the API server: `bun dev`
-- Start ngrok: `ngrok http --domain=welcomed-communal-raven.ngrok-free.app 5000` or `bun ngrok`
+- Start ngrok: `bun ngrok`
 
 ## Getting Long Lived Token for API Development Testing
 
