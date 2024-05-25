@@ -106,7 +106,7 @@ const update = factory.createHandlers(
       .set({
         ...dto,
         address: dto.address as Address,
-        tags: (dto.tags ?? []) as string[],
+        tags: dto.tags ? (dto.tags as string[]) : [],
       })
       .where(eq(locations.id, id))
       .returning();
