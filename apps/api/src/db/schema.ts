@@ -52,7 +52,7 @@ export const follows = pgTable(
       followsFollowingIdx: index("follows_following_idx").on(table.followingId),
       uniqueFollows: unique().on(table.followerId, table.followingId),
     };
-  }
+  },
 );
 
 export const auths = pgTable("auths", {
@@ -106,10 +106,10 @@ export const locations = pgTable(
   (table) => {
     return {
       locationsCategoryIdx: index("locations_category_idx").on(
-        table.categoryId
+        table.categoryId,
       ),
     };
-  }
+  },
 );
 
 export const locationsRelations = relations(locations, ({ one }) => ({
@@ -146,7 +146,7 @@ export const events = pgTable(
     return {
       eventsOrganizerIdx: index("events_organizer_idx").on(table.organizerId),
     };
-  }
+  },
 );
 
 export const eventsRelations = relations(events, ({ one }) => ({
@@ -177,7 +177,7 @@ export const bookmarks = pgTable(
       bookmarksUserIdx: index("bookmarks_user_idx").on(table.userId),
       uniqueBookmarks: unique().on(table.userId, table.locationId),
     };
-  }
+  },
 );
 
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
@@ -209,7 +209,7 @@ export const lists = pgTable(
     return {
       listsUserIdx: index("lists_user_idx").on(table.userId),
     };
-  }
+  },
 );
 
 export const listsRelations = relations(lists, ({ one }) => ({
@@ -235,7 +235,7 @@ export const listItems = pgTable(
       listItemsListIdx: index("list_items_list_idx").on(table.listId),
       uniqueListItems: unique().on(table.listId, table.locationId),
     };
-  }
+  },
 );
 
 export const listItemsRelations = relations(listItems, ({ one }) => ({

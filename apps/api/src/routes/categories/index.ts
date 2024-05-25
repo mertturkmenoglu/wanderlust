@@ -16,7 +16,7 @@ const getAll = factory.createHandlers(checkCache("categories"), async (c) => {
     {
       data: allCategories,
     },
-    200
+    200,
   );
 });
 

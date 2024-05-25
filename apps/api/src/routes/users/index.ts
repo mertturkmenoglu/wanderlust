@@ -17,7 +17,7 @@ const getMe = factory.createHandlers(clerkMiddleware(), getAuth, async (c) => {
     {
       data: user,
     },
-    200
+    200,
   );
 });
 
@@ -37,9 +37,9 @@ const getProfileByUsername = factory.createHandlers(
       {
         data: user,
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 const follow = factory.createHandlers(
@@ -64,14 +64,14 @@ const follow = factory.createHandlers(
         {
           data: result,
         },
-        201
+        201,
       );
     } catch (e) {
       throw new HTTPException(400, {
         message: "Already following",
       });
     }
-  }
+  },
 );
 
 const unfollow = factory.createHandlers(
@@ -96,14 +96,14 @@ const unfollow = factory.createHandlers(
         {
           message: "Unfollowed",
         },
-        200
+        200,
       );
     } catch (e) {
       throw new HTTPException(400, {
         message: "Not following",
       });
     }
-  }
+  },
 );
 
 export const usersRouter = new Hono()

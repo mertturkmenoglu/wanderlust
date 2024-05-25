@@ -82,7 +82,7 @@ const root = factory.createHandlers(async (c) => {
         success: true,
         message: "Webhook received",
       },
-      200
+      200,
     );
   } catch (e) {
     console.error(e);
@@ -91,7 +91,7 @@ const root = factory.createHandlers(async (c) => {
         success: false,
         message: "Something went wrong",
       },
-      500
+      500,
     );
   }
 });

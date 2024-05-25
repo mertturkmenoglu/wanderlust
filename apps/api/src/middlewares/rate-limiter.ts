@@ -18,6 +18,6 @@ export const rateLimiter = (options?: Options): MiddlewareHandler => {
       limit: limit,
       standardHeaders: "draft-6",
       keyGenerator: (c) => getAuth(c)?.userId ?? c.env.ip.address,
-    })
+    }),
   );
 };

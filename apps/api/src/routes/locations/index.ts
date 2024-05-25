@@ -19,7 +19,7 @@ const peek = factory.createHandlers(async (c) => {
     {
       data: results,
     },
-    200
+    200,
   );
 });
 
@@ -40,9 +40,9 @@ const getById = factory.createHandlers(
       {
         data: location,
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 const create = factory.createHandlers(
@@ -61,14 +61,14 @@ const create = factory.createHandlers(
         {
           data: location,
         },
-        201
+        201,
       );
     } catch (e) {
       throw new HTTPException(500, {
         message: "Something went wrong",
       });
     }
-  }
+  },
 );
 
 const update = factory.createHandlers(
@@ -92,9 +92,9 @@ const update = factory.createHandlers(
       {
         data: location,
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 const deleteLocation = factory.createHandlers(
@@ -118,9 +118,9 @@ const deleteLocation = factory.createHandlers(
       {
         data: location,
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 export const locationsRouter = new Hono()

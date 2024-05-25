@@ -46,8 +46,8 @@ export async function unfollow(followerId: string, followingId: string) {
       .where(
         and(
           eq(follows.followerId, followerId),
-          eq(follows.followingId, followingId)
-        )
+          eq(follows.followingId, followingId),
+        ),
       );
 
     await tx
