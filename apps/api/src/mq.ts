@@ -26,7 +26,7 @@ export async function sendWelcomeEmail(payload: SendWelcomeEmailPayload) {
     serialize({
       type: "send-welcome-email",
       payload,
-    })
+    }),
   );
 }
 
@@ -44,6 +44,6 @@ export async function sendUserEvent(type: UserEventType, payload: UserPayload) {
     serialize({
       type,
       payload,
-    })
+    }),
   );
 }

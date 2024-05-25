@@ -1,5 +1,5 @@
-import { env } from ".";
 import { cors } from "hono/cors";
+import { env } from ".";
 
 type CorsFn = typeof cors;
 type Config = Parameters<CorsFn>[0];
