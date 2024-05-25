@@ -36,6 +36,10 @@
   "devDependencies": {
     "@types/amqplib": "^0.10.5",
     "@types/bun": "latest",
-    "drizzle-kit": "^0.21.2"
+    "@types/eslint-config-prettier": "^6.11.3",
+    "@types/eslint__js": "^8.42.3",
+    "drizzle-kit": "^0.21.2",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "3.2.5"
   }
 }
