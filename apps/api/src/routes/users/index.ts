@@ -3,7 +3,7 @@ import { getAuth, rateLimiter } from "@/middlewares";
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
@@ -65,16 +65,35 @@ const follow = factory.createHandlers(
     }
 
     try {
-      const [follow] = await db
-        .insert(follows)
-        .values({
-          followerId: user.id,
-          followingId: targetUser.id,
-        })
-        .returning();
+      const result = await db.transaction(async (tx) => {
+        const [follow] = await tx
+          .insert(follows)
+          .values({
+            followerId: user.id,
+            followingId: targetUser.id,
+          })
+          .returning();
+
+        await tx
+          .update(users)
+          .set({
+            followingCount: sql`${users.followingCount} + 1`,
+          })
+          .where(eq(users.id, user.id));
+
+        await tx
+          .update(users)
+          .set({
+            followersCount: sql`${users.followersCount} + 1`,
+          })
+          .where(eq(users.id, targetUser.id));
+
+        return follow;
+      });
+
       return c.json(
         {
-          data: follow,
+          data: result,
         },
         201
       );
@@ -106,14 +125,31 @@ const unfollow = factory.createHandlers(
     }
 
     try {
-      await db
-        .delete(follows)
-        .where(
-          and(
-            eq(follows.followerId, user.id),
-            eq(follows.followingId, targetUser.id)
-          )
-        );
+      await db.transaction(async (tx) => {
+        await tx
+          .delete(follows)
+          .where(
+            and(
+              eq(follows.followerId, user.id),
+              eq(follows.followingId, targetUser.id)
+            )
+          );
+
+        await tx
+          .update(users)
+          .set({
+            followingCount: sql`${users.followingCount} - 1`,
+          })
+          .where(eq(users.id, user.id));
+
+        await tx
+          .update(users)
+          .set({
+            followersCount: sql`${users.followersCount} - 1`,
+          })
+          .where(eq(users.id, targetUser.id));
+      });
+
       return c.json(
         {
           message: "Unfollowed",
