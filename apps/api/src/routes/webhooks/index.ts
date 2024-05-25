@@ -3,7 +3,7 @@ import {
   handleUserDelete,
   handleUserUpdate,
 } from "@/db/handle-user-sync";
-import { sendWelcomeEmail } from "@/mq";
+import { UserEventType, sendUserEvent, sendWelcomeEmail } from "@/mq";
 import { Env, env } from "@/start";
 import { WebhookEvent } from "@clerk/backend";
 import { Hono } from "hono";
@@ -51,22 +51,30 @@ const root = factory.createHandlers(async (c) => {
   const { id } = evt.data;
   const eventType = evt.type;
 
+  let user: Awaited<ReturnType<typeof handleUserCreate>> = null;
+
   try {
     if (eventType === "user.created") {
-      await handleUserCreate(evt.data);
-      const email = evt.data.email_addresses[0].email_address;
-      const name = evt.data.first_name ?? "";
-      await sendWelcomeEmail({
-        name,
-        to: email,
-      });
+      user = await handleUserCreate(evt.data);
     } else if (eventType === "user.updated") {
-      await handleUserUpdate(evt.data);
+      user = await handleUserUpdate(evt.data);
     } else if (eventType === "user.deleted") {
-      await handleUserDelete(evt.data);
+      user = await handleUserDelete(evt.data);
     } else {
       console.log(`Different event: ${id} - ${eventType}`);
       console.log(evt.data);
+    }
+
+    if (user) {
+      if (evt.type === "user.created") {
+        await sendWelcomeEmail({
+          name: user.firstName ?? "",
+          to: evt.data.email_addresses[0]?.email_address ?? "",
+        });
+      }
+
+      const type = evt.type.replace(".", "-") as UserEventType;
+      await sendUserEvent(type, user);
     }
 
     return c.json(
