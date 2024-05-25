@@ -1,25 +1,19 @@
-import { Address, db, locations } from "@/db";
 import { authorize, getAuth, rateLimiter } from "@/middlewares";
 import * as search from "@/search";
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
-import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { validateId } from "../dto";
 import { createLocationSchema, updateLocationSchema } from "./dto";
+import * as repository from "./repository";
 
 const factory = createFactory<Env>();
 
 const peek = factory.createHandlers(async (c) => {
-  const results = await db.query.locations.findMany({
-    limit: 25,
-    with: {
-      category: true,
-    },
-  });
+  const results = await repository.peek();
 
   return c.json(
     {
@@ -34,12 +28,7 @@ const getById = factory.createHandlers(
   async (c) => {
     const { id } = c.req.valid("param");
 
-    const location = await db.query.locations.findFirst({
-      where: eq(locations.id, id),
-      with: {
-        category: true,
-      },
-    });
+    const location = await repository.getById(id);
 
     if (!location) {
       throw new HTTPException(404, {
@@ -65,15 +54,7 @@ const create = factory.createHandlers(
     const dto = c.req.valid("json");
 
     try {
-      const [location] = await db
-        .insert(locations)
-        .values({
-          ...dto,
-          address: dto.address as Address,
-          tags: (dto.tags ?? []) as string[],
-        })
-        .returning();
-
+      const location = await repository.create(dto);
       await search.upsertLocation(location);
 
       return c.json(
@@ -83,7 +64,6 @@ const create = factory.createHandlers(
         201
       );
     } catch (e) {
-      console.log("Error:", e);
       throw new HTTPException(500, {
         message: "Something went wrong",
       });
@@ -100,16 +80,7 @@ const update = factory.createHandlers(
   async (c) => {
     const { id } = c.req.valid("param");
     const dto = c.req.valid("json");
-
-    const [location] = await db
-      .update(locations)
-      .set({
-        ...dto,
-        address: dto.address as Address,
-        tags: dto.tags ? (dto.tags as string[]) : [],
-      })
-      .where(eq(locations.id, id))
-      .returning();
+    const location = await repository.update(id, dto);
 
     if (!location) {
       throw new HTTPException();
@@ -133,11 +104,7 @@ const deleteLocation = factory.createHandlers(
   authorize({ type: "delete-location" }),
   async (c) => {
     const { id } = c.req.valid("param");
-
-    const [location] = await db
-      .delete(locations)
-      .where(eq(locations.id, id))
-      .returning();
+    const location = await repository.deleteLocation(id);
 
     if (!location) {
       throw new HTTPException(404, {
