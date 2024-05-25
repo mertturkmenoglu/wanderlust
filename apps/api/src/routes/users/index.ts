@@ -1,13 +1,12 @@
-import { db, follows, users } from "@/db";
 import { getAuth, rateLimiter } from "@/middlewares";
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { createFactory } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { validateUsername } from "../dto";
+import * as repository from "./repository";
 
 const factory = createFactory<Env>();
 
@@ -26,9 +25,7 @@ const getProfileByUsername = factory.createHandlers(
   zValidator("param", validateUsername),
   async (c) => {
     const { username } = c.req.valid("param");
-    const user = await db.query.users.findFirst({
-      where: eq(users.username, username),
-    });
+    const user = await repository.getByUsername(username);
 
     if (!user) {
       throw new HTTPException(404, {
@@ -52,11 +49,7 @@ const follow = factory.createHandlers(
   async (c) => {
     const { username: targetUsername } = c.req.valid("param");
     const user = c.get("user");
-
-    const [targetUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.username, targetUsername));
+    const targetUser = await repository.getByUsername(targetUsername);
 
     if (!targetUser) {
       throw new HTTPException(404, {
@@ -65,31 +58,7 @@ const follow = factory.createHandlers(
     }
 
     try {
-      const result = await db.transaction(async (tx) => {
-        const [follow] = await tx
-          .insert(follows)
-          .values({
-            followerId: user.id,
-            followingId: targetUser.id,
-          })
-          .returning();
-
-        await tx
-          .update(users)
-          .set({
-            followingCount: sql`${users.followingCount} + 1`,
-          })
-          .where(eq(users.id, user.id));
-
-        await tx
-          .update(users)
-          .set({
-            followersCount: sql`${users.followersCount} + 1`,
-          })
-          .where(eq(users.id, targetUser.id));
-
-        return follow;
-      });
+      const result = await repository.follow(user.id, targetUser.id);
 
       return c.json(
         {
@@ -112,11 +81,7 @@ const unfollow = factory.createHandlers(
   async (c) => {
     const { username: targetUsername } = c.req.valid("param");
     const user = c.get("user");
-
-    const [targetUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.username, targetUsername));
+    const targetUser = await repository.getByUsername(targetUsername);
 
     if (!targetUser) {
       throw new HTTPException(404, {
@@ -125,30 +90,7 @@ const unfollow = factory.createHandlers(
     }
 
     try {
-      await db.transaction(async (tx) => {
-        await tx
-          .delete(follows)
-          .where(
-            and(
-              eq(follows.followerId, user.id),
-              eq(follows.followingId, targetUser.id)
-            )
-          );
-
-        await tx
-          .update(users)
-          .set({
-            followingCount: sql`${users.followingCount} - 1`,
-          })
-          .where(eq(users.id, user.id));
-
-        await tx
-          .update(users)
-          .set({
-            followersCount: sql`${users.followersCount} - 1`,
-          })
-          .where(eq(users.id, targetUser.id));
-      });
+      await repository.unfollow(user.id, targetUser.id);
 
       return c.json(
         {
