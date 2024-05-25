@@ -6,12 +6,12 @@ import {
   usersRouter,
   webhooksRouter,
 } from "@/routes";
-import { env, getCorsConfig, type Env } from "@/start";
+import { initSearch } from "@/search";
+import { Env, env, getCorsConfig } from "@/start";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { initSearch } from "./search";
 
 await runDrizzleMigrations();
 await initSearch();
