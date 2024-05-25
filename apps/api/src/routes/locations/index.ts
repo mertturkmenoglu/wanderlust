@@ -1,5 +1,6 @@
 import { Address, db, locations } from "@/db";
 import { authorize, getAuth, rateLimiter } from "@/middlewares";
+import * as search from "@/search";
 import { Env } from "@/start";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { zValidator } from "@hono/zod-validator";
@@ -72,6 +73,9 @@ const create = factory.createHandlers(
           tags: (dto.tags ?? []) as string[],
         })
         .returning();
+
+      await search.upsertLocation(location);
+
       return c.json(
         {
           data: location,
@@ -79,6 +83,7 @@ const create = factory.createHandlers(
         201
       );
     } catch (e) {
+      console.log("Error:", e);
       throw new HTTPException(500, {
         message: "Something went wrong",
       });
@@ -110,6 +115,8 @@ const update = factory.createHandlers(
       throw new HTTPException();
     }
 
+    await search.upsertLocation(location);
+
     return c.json(
       {
         data: location,
@@ -137,6 +144,8 @@ const deleteLocation = factory.createHandlers(
         message: "Not found",
       });
     }
+
+    await search.deleteLocation(id);
 
     return c.json(
       {
