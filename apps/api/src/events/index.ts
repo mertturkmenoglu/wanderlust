@@ -1,40 +1,8 @@
-import amqplib from 'amqplib';
-import { MQEventPayload, MQQueue } from '../../../common';
-import { handleUserCreate, handleUserDelete, handleUserUpdate } from './users';
+import { initLocationsEventHandlers } from './locations';
+import { initUsersEventHandlers } from './users';
 
-async function consumer() {
-  const conn = await amqplib.connect('amqp://localhost');
-  const queue: MQQueue = 'user';
-  const ch = await conn.createChannel();
-  await ch.assertQueue(queue);
-
-  await ch.consume(queue, (msg) => {
-    if (msg !== null) {
-      ch.ack(msg);
-      router(msg);
-    } else {
-      console.log('Consumer cancelled by server');
-    }
-  });
+// Don't await any of these functions, as they are meant to run in the background
+export async function initEventHandlers() {
+  initUsersEventHandlers();
+  initLocationsEventHandlers();
 }
-
-function router(msg: amqplib.ConsumeMessage) {
-  const str = msg.content.toString();
-  const payload = JSON.parse(str) as MQEventPayload;
-
-  switch (payload.type) {
-    case 'user-created':
-      handleUserCreate(payload.payload);
-      break;
-    case 'user-updated':
-      handleUserUpdate(payload.payload);
-      break;
-    case 'user-deleted':
-      handleUserDelete(payload.payload);
-      break;
-    default:
-      break;
-  }
-}
-
-consumer();

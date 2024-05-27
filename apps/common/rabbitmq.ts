@@ -2,7 +2,10 @@ export type MQEventType =
   | "send-welcome-email"
   | "user-created"
   | "user-updated"
-  | "user-deleted";
+  | "user-deleted"
+  | "location-created"
+  | "location-updated"
+  | "location-deleted";
 
 export type MQEventPayload =
   | {
@@ -20,9 +23,21 @@ export type MQEventPayload =
   | {
       type: "user-deleted";
       payload: UserDeletedPayload;
+    }
+  | {
+      type: "location-created";
+      payload: LocationCreatedPayload;
+    }
+  | {
+      type: "location-updated";
+      payload: LocationUpdatedPayload;
+    }
+  | {
+      type: "location-deleted";
+      payload: LocationDeletedPayload;
     };
 
-export type MQQueue = "email" | "user";
+export type MQQueue = "email" | "user" | "locations";
 
 export type SendWelcomeEmailPayload = {
   to: string;
@@ -47,3 +62,17 @@ export type UserCreatedPayload = {
 export type UserUpdatedPayload = UserCreatedPayload;
 
 export type UserDeletedPayload = UserCreatedPayload;
+
+export type LocationCreatedPayload = {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  placeId: string;
+  userId: string;
+};
+
+export type LocationUpdatedPayload = LocationCreatedPayload;
+
+export type LocationDeletedPayload = LocationCreatedPayload;

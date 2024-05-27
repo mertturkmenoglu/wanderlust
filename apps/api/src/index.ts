@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
 import { runDrizzleMigrations } from './db';
+import { initEventHandlers } from './events';
 import {
   categoriesRouter,
   eventsRouter,
@@ -16,6 +17,7 @@ import { Env, env, getCorsConfig } from './start';
 
 await runDrizzleMigrations();
 await initSearch();
+initEventHandlers();
 
 const app = new Hono<Env>()
   .basePath('/api')
