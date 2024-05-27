@@ -11,7 +11,8 @@
     "type-check": "tsc --noEmit",
     "migrate": "drizzle-kit migrate --config=src/db/drizzle.config.ts",
     "addresses": "bun run ./scripts/addresses.ts",
-    "fake": "bun run ./scripts/fake.ts"
+    "fake": "bun run ./scripts/fake.ts",
+    "seed": "bun run ./scripts/seed.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.5",
