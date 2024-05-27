@@ -6,6 +6,7 @@ import { runDrizzleMigrations } from './db';
 import {
   categoriesRouter,
   eventsRouter,
+  healthRouter,
   locationsRouter,
   usersRouter,
   webhooksRouter,
@@ -21,6 +22,7 @@ const app = new Hono<Env>()
   .use(cors(getCorsConfig()))
   .use(logger())
   .use(secureHeaders())
+  .route('/health', healthRouter)
   .route('/webhooks', webhooksRouter)
   .route('/users', usersRouter)
   .route('/locations', locationsRouter)
