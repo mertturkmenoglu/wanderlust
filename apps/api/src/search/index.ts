@@ -1,5 +1,6 @@
 import Typesense from 'typesense';
 import { Location } from '../db';
+import { logger } from '../logger';
 import { env } from '../start';
 import { schemas } from './schemas';
 
@@ -16,7 +17,7 @@ export const searchClient = new Typesense.Client({
 });
 
 export async function initSearch() {
-  console.log('Creating search collections');
+  logger.info('Creating search collections');
 
   for (const schema of schemas) {
     const name = schema.name;
@@ -27,7 +28,7 @@ export async function initSearch() {
     }
   }
 
-  console.log('Search collections created');
+  logger.info('Search collections created');
 }
 
 export async function upsertLocation(location: Location) {

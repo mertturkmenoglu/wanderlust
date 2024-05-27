@@ -1,8 +1,6 @@
-import { cliui } from '@poppinss/cliui';
 import { parse } from 'csv-parse';
 import fs from 'node:fs';
-
-const ui = cliui();
+import { logger } from '../src/logger';
 
 type Country = {
   id: number;
@@ -61,7 +59,7 @@ function checkFilesExist() {
 
   for (const file of files) {
     if (!fs.existsSync(file)) {
-      ui.logger.error(`File ${file} not found`);
+      logger.error(`File ${file} not found`);
       return false;
     }
   }
@@ -85,12 +83,12 @@ function readCsv<T>(path: string) {
     });
 
     parser.on('error', function (err) {
-      ui.logger.error(err.message);
+      logger.error(err.message);
       reject(err);
     });
 
     parser.on('end', function () {
-      ui.logger.success(`${path} processed successfully!`);
+      logger.info(`${path} processed successfully!`);
       resolve(items);
     });
 
@@ -99,7 +97,7 @@ function readCsv<T>(path: string) {
 }
 
 export async function syncLocations() {
-  ui.logger.info('Syncing locations...');
+  logger.info('Syncing locations...');
 
   if (!checkFilesExist()) {
     process.exit(1);
@@ -114,7 +112,7 @@ export async function syncLocations() {
   // TODO: Implement the logic to add the locations to the database
   // ui.logger.success("Locations synced successfully!");
 
-  ui.logger.error('Not implemented yet!');
+  logger.error('Not implemented yet!');
 }
 
 syncLocations();

@@ -1,9 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { cliui } from '@poppinss/cliui';
 import e from 'enquirer';
+import { logger } from '../src/logger';
 import { CreateLocationDto } from '../src/routes/locations/dto';
-
-const ui = cliui();
 
 async function bootstrap() {
   const { type } = await e.prompt<{ type: string }>({
@@ -24,7 +22,7 @@ async function bootstrap() {
     process.exit(1);
   }
 
-  ui.logger.info(`Generating ${count} ${type}`);
+  logger.info(`Generating ${count} ${type}`);
   let res: any[] = [];
 
   if (type === 'locations') {
@@ -35,12 +33,12 @@ async function bootstrap() {
     res = await generateCategories();
   }
 
-  ui.logger.success(`Generated ${res.length} ${type}`);
-  ui.logger.info('Writing to file...');
+  logger.info(`Generated ${res.length} ${type}`);
+  logger.info('Writing to file...');
 
   Bun.write(`scripts/data/${type}.json`, JSON.stringify(res, null, 2));
 
-  ui.logger.success('Done!');
+  logger.info('Done!');
 }
 
 async function generateLocations(count: number) {
@@ -77,7 +75,7 @@ async function generateLocations(count: number) {
 }
 
 async function generateEvents(count: number) {
-  ui.logger.error('Not implemented yet.');
+  logger.error('Not implemented yet.');
   return [];
 }
 

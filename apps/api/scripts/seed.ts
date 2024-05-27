@@ -1,16 +1,13 @@
-import { cliui } from '@poppinss/cliui';
 import e from 'enquirer';
 import { hc } from 'hono/client';
 import { AppType } from '../src';
+import { logger } from '../src/logger';
 import { CreateLocationDto } from '../src/routes/locations/dto';
-
-const ui = cliui();
 
 const client = hc<AppType>(`http://localhost:${Bun.env.PORT}`);
 
 async function bootstrap() {
-  const loader = ui.logger.await('checking server', { suffix: 'npm i' });
-  loader.start();
+  logger.warn('checking server', { suffix: 'npm i' });
 
   try {
     const res = await client.api.health.$get();
@@ -19,11 +16,9 @@ async function bootstrap() {
       throw new Error('Cannot reach server');
     }
 
-    loader.stop();
-    ui.logger.success('Server is running');
+    logger.info('Server is running');
   } catch (error) {
-    loader.stop();
-    ui.logger.error('Server is not running');
+    logger.error('Server is not running');
     process.exit(1);
   }
 
@@ -43,7 +38,7 @@ async function bootstrap() {
   if (type === 'locations') {
     await seedLocations(jwt);
   } else {
-    ui.logger.error('Not implemented');
+    logger.error('Not implemented');
   }
 }
 
@@ -51,35 +46,38 @@ async function seedLocations(jwt: string) {
   const file = Bun.file('scripts/data/locations.json');
 
   if (!file.exists()) {
-    ui.logger.error('No locations data found');
+    logger.error('No locations data found');
     process.exit(1);
   }
 
   const dtos: CreateLocationDto[] = await file.json();
 
-  ui.logger.info(`Seeding ${dtos.length} locations`);
+  logger.info(`Seeding ${dtos.length} locations`);
   let i = 1;
 
   for (const dto of dtos) {
-    ui.logger.info(`Seeding location ${i}/${dtos.length}`);
-    const res = await client.api.locations.$post({ json: dto }, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
+    logger.info(`Seeding location ${i}/${dtos.length}`);
+    const res = await client.api.locations.$post(
+      { json: dto },
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      }
+    );
 
     if (!res.ok) {
-      ui.logger.error(
+      logger.error(
         `Failed to seed location. Reason: ${res.status} ${res.statusText}`
       );
       process.exit(1);
     }
 
-    ui.logger.success('Seeded location');
+    logger.info('Seeded location');
     i++;
   }
 
-  ui.logger.success('Seeded all locations');
+  logger.info('Seeded all locations');
 }
 
 bootstrap();

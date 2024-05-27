@@ -4,6 +4,7 @@ import * as schema from './schema';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
+import { logger } from '../logger';
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
@@ -20,7 +21,7 @@ export const db = drizzle(conn, { schema });
 
 export async function runDrizzleMigrations() {
   if (Bun.env.NODE_ENV === 'development') {
-    console.log('Running Drizzle migrations');
+    logger.info('Running Drizzle migrations');
   }
 
   const migrationPostgres = postgres(env.DB_URL, { onnotice: () => {} });
@@ -28,7 +29,7 @@ export async function runDrizzleMigrations() {
   await migrate(migrationConnection, { migrationsFolder: 'drizzle' });
 
   if (Bun.env.NODE_ENV === 'development') {
-    console.log('Drizzle migrations completed');
+    logger.info('Drizzle migrations completed');
   }
 }
 
