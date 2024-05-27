@@ -5,3 +5,4 @@ typesense-data/
 !.env.project
 !.env.vault
 scripts/data/*.csv
+scripts/data/*.json
