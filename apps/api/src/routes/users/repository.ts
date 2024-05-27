@@ -1,5 +1,5 @@
-import { and, eq, sql } from "drizzle-orm";
-import { db, follows, users } from "../../db";
+import { and, eq, sql } from 'drizzle-orm';
+import { db, follows, users } from '../../db';
 
 export async function getByUsername(username: string) {
   const user = await db.query.users.findFirst({
@@ -46,8 +46,8 @@ export async function unfollow(followerId: string, followingId: string) {
       .where(
         and(
           eq(follows.followerId, followerId),
-          eq(follows.followingId, followingId),
-        ),
+          eq(follows.followingId, followingId)
+        )
       );
 
     await tx

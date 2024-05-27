@@ -1,6 +1,6 @@
-import { cliui } from "@poppinss/cliui";
-import { parse } from "csv-parse";
-import fs from "node:fs";
+import { cliui } from '@poppinss/cliui';
+import { parse } from 'csv-parse';
+import fs from 'node:fs';
 
 const ui = cliui();
 
@@ -52,9 +52,9 @@ type City = {
   wikiDataId: string;
 };
 
-const citiesPathname = "src/scripts/data/cities.csv";
-const statesPathname = "src/scripts/data/states.csv";
-const countriesPathname = "src/scripts/data/countries.csv";
+const citiesPathname = 'src/scripts/data/cities.csv';
+const statesPathname = 'src/scripts/data/states.csv';
+const countriesPathname = 'src/scripts/data/countries.csv';
 
 function checkFilesExist() {
   const files = [citiesPathname, statesPathname, countriesPathname];
@@ -74,22 +74,22 @@ function readCsv<T>(path: string) {
     const items: T[] = [];
     const parser = parse({
       columns: true,
-      delimiter: ",",
+      delimiter: ',',
     });
 
-    parser.on("readable", function () {
+    parser.on('readable', function () {
       let record;
       while ((record = parser.read()) !== null) {
         items.push(record);
       }
     });
 
-    parser.on("error", function (err) {
+    parser.on('error', function (err) {
       ui.logger.error(err.message);
       reject(err);
     });
 
-    parser.on("end", function () {
+    parser.on('end', function () {
       ui.logger.success(`${path} processed successfully!`);
       resolve(items);
     });
@@ -99,7 +99,7 @@ function readCsv<T>(path: string) {
 }
 
 export async function syncLocations() {
-  ui.logger.info("Syncing locations...");
+  ui.logger.info('Syncing locations...');
 
   if (!checkFilesExist()) {
     process.exit(1);
@@ -114,7 +114,7 @@ export async function syncLocations() {
   // TODO: Implement the logic to add the locations to the database
   // ui.logger.success("Locations synced successfully!");
 
-  ui.logger.error("Not implemented yet!");
+  ui.logger.error('Not implemented yet!');
 }
 
 syncLocations();

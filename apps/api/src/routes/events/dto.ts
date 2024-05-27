@@ -1,6 +1,6 @@
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
-import { events } from "../../db/schema";
+import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
+import { events } from '../../db/schema';
 
 export const createEventSchema = createInsertSchema(events).omit({
   id: true,

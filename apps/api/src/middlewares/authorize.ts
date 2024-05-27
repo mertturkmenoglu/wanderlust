@@ -1,7 +1,7 @@
-import { Context, MiddlewareHandler } from "hono";
-import { createMiddleware } from "hono/factory";
-import { HTTPException } from "hono/http-exception";
-import { env, type Env } from "../start";
+import { Context, MiddlewareHandler } from 'hono';
+import { createMiddleware } from 'hono/factory';
+import { HTTPException } from 'hono/http-exception';
+import { env, type Env } from '../start';
 
 type AuthorizationFn = (c: Context<Env, any, {}>) => boolean;
 
@@ -12,23 +12,23 @@ type Payload = {
 };
 
 const isAdmin: AuthorizationFn = (c) => {
-  const auth = c.get("auth");
+  const auth = c.get('auth');
   return auth.id === env.ADMIN_ID;
 };
 
 const mapping = {
-  "create-location": isAdmin,
-  "read-location": () => true,
-  "delete-location": isAdmin,
-  "update-location": isAdmin,
-  "create-event": isAdmin,
-  "read-event": () => true,
-  "delete-event": isAdmin,
-  "update-event": isAdmin,
-  "create-address": isAdmin,
-  "read-address": () => true,
-  "delete-address": isAdmin,
-  "update-address": isAdmin,
+  'create-location': isAdmin,
+  'read-location': () => true,
+  'delete-location': isAdmin,
+  'update-location': isAdmin,
+  'create-event': isAdmin,
+  'read-event': () => true,
+  'delete-event': isAdmin,
+  'update-event': isAdmin,
+  'create-address': isAdmin,
+  'read-address': () => true,
+  'delete-address': isAdmin,
+  'update-address': isAdmin,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (payload: Payload): MiddlewareHandler => {
@@ -40,7 +40,7 @@ export const authorize = (payload: Payload): MiddlewareHandler => {
       await next();
     } else {
       throw new HTTPException(403, {
-        message: "Unauthorized to perform this action",
+        message: 'Unauthorized to perform this action',
       });
     }
   });

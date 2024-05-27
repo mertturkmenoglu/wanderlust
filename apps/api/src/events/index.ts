@@ -1,10 +1,10 @@
-import amqplib from "amqplib";
-import { MQEventPayload, MQQueue } from "../../../common";
-import { handleUserCreate, handleUserDelete, handleUserUpdate } from "./users";
+import amqplib from 'amqplib';
+import { MQEventPayload, MQQueue } from '../../../common';
+import { handleUserCreate, handleUserDelete, handleUserUpdate } from './users';
 
 async function consumer() {
-  const conn = await amqplib.connect("amqp://localhost");
-  const queue: MQQueue = "user";
+  const conn = await amqplib.connect('amqp://localhost');
+  const queue: MQQueue = 'user';
   const ch = await conn.createChannel();
   await ch.assertQueue(queue);
 
@@ -13,7 +13,7 @@ async function consumer() {
       ch.ack(msg);
       router(msg);
     } else {
-      console.log("Consumer cancelled by server");
+      console.log('Consumer cancelled by server');
     }
   });
 }
@@ -23,13 +23,13 @@ function router(msg: amqplib.ConsumeMessage) {
   const payload = JSON.parse(str) as MQEventPayload;
 
   switch (payload.type) {
-    case "user-created":
+    case 'user-created':
       handleUserCreate(payload.payload);
       break;
-    case "user-updated":
+    case 'user-updated':
       handleUserUpdate(payload.payload);
       break;
-    case "user-deleted":
+    case 'user-deleted':
       handleUserDelete(payload.payload);
       break;
     default:

@@ -1,31 +1,31 @@
-import { DeletedObjectJSON, UserJSON } from "@clerk/backend";
-import { eq } from "drizzle-orm";
+import { DeletedObjectJSON, UserJSON } from '@clerk/backend';
+import { eq } from 'drizzle-orm';
 
-import { db } from ".";
-import { auths, users } from "./schema";
+import { db } from '.';
+import { auths, users } from './schema';
 
 export type THandleUserCreatePayload = Pick<
   UserJSON,
-  | "first_name"
-  | "last_name"
-  | "username"
-  | "image_url"
-  | "id"
-  | "email_addresses"
-  | "last_sign_in_at"
-  | "created_at"
-  | "updated_at"
+  | 'first_name'
+  | 'last_name'
+  | 'username'
+  | 'image_url'
+  | 'id'
+  | 'email_addresses'
+  | 'last_sign_in_at'
+  | 'created_at'
+  | 'updated_at'
 >;
 
 export type THandleUserUpdatePayload = THandleUserCreatePayload;
 
-export type THandleUserDeletePayload = Pick<DeletedObjectJSON, "id">;
+export type THandleUserDeletePayload = Pick<DeletedObjectJSON, 'id'>;
 
 export async function handleUserCreate(data: THandleUserCreatePayload) {
   const username = data.username;
 
   if (username === null) {
-    throw new Error("Username cannot be null");
+    throw new Error('Username cannot be null');
   }
 
   try {
@@ -62,7 +62,7 @@ export async function handleUserUpdate(data: THandleUserUpdatePayload) {
   const username = data.username;
 
   if (username === null) {
-    throw new Error("Username cannot be null");
+    throw new Error('Username cannot be null');
   }
 
   try {
@@ -105,7 +105,7 @@ export async function handleUserDelete(data: THandleUserDeletePayload) {
       const clerkId = data.id;
 
       if (clerkId === undefined) {
-        throw new Error("Clerk ID is undefined");
+        throw new Error('Clerk ID is undefined');
       }
 
       const [authObj] = await tx

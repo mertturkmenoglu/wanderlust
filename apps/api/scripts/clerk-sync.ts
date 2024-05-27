@@ -1,20 +1,20 @@
-import { User, createClerkClient } from "@clerk/backend";
-import { cliui } from "@poppinss/cliui";
-import { count, eq, inArray } from "drizzle-orm";
-import { db } from "../src/db";
+import { User, createClerkClient } from '@clerk/backend';
+import { cliui } from '@poppinss/cliui';
+import { count, eq, inArray } from 'drizzle-orm';
+import { db } from '../src/db';
 import {
   handleUserCreate,
   handleUserUpdate,
   type THandleUserCreatePayload,
   type THandleUserUpdatePayload,
-} from "../src/db/handle-user-sync";
-import { auths } from "../src/db/schema";
-import env from "../src/start/env";
+} from '../src/db/handle-user-sync';
+import { auths } from '../src/db/schema';
+import env from '../src/start/env';
 
 const ui = cliui();
 
 function mapUserToHandleUserCreatePayload(
-  user: User,
+  user: User
 ): THandleUserCreatePayload {
   return {
     id: user.id,
@@ -25,16 +25,16 @@ function mapUserToHandleUserCreatePayload(
       linked_to: e.linkedTo.map((l) => ({
         id: l.id,
         type: l.type,
-        object: "email_address",
+        object: 'email_address',
       })),
-      object: "email_address",
+      object: 'email_address',
       verification: {
         attempts: e.verification?.attempts ?? 0,
         expire_at: e.verification?.expireAt ?? 0,
-        id: "",
-        object: "email_address",
-        status: e.verification?.status ?? "",
-        strategy: e.verification?.strategy ?? "",
+        id: '',
+        object: 'email_address',
+        status: e.verification?.status ?? '',
+        strategy: e.verification?.strategy ?? '',
       },
     })),
     first_name: user.firstName,
@@ -47,14 +47,14 @@ function mapUserToHandleUserCreatePayload(
 }
 
 function mapUserToHandleUserUpdatePayload(
-  user: User,
+  user: User
 ): THandleUserUpdatePayload {
   return mapUserToHandleUserCreatePayload(user);
 }
 
 async function syncClerkDataWithLocalDatabase() {
   ui.logger.info(`Starting data sync: ${new Date().toISOString()}`);
-  console.time("sync-timer");
+  console.time('sync-timer');
 
   const client = createClerkClient({
     secretKey: env.CLERK_SECRET_KEY,
@@ -86,7 +86,7 @@ async function syncClerkDataWithLocalDatabase() {
       offset,
     });
 
-    ui.logger.info("Checking if users are in database for this batch");
+    ui.logger.info('Checking if users are in database for this batch');
 
     for (const clerkUser of res.data) {
       const dbRes = await db
@@ -112,7 +112,7 @@ async function syncClerkDataWithLocalDatabase() {
     }
   }
 
-  ui.logger.info("Fetched all Clerk users");
+  ui.logger.info('Fetched all Clerk users');
 
   // All Clerk user ids is in an array.
   // Traverse all local database users, find which ones are not in Clerk, delete them
@@ -139,29 +139,29 @@ async function syncClerkDataWithLocalDatabase() {
     }
   }
 
-  ui.logger.info("Read all users from database.");
+  ui.logger.info('Read all users from database.');
   ui.logger.info(
-    `Found ${toDeleteIds.length} many users that should be deleted.`,
+    `Found ${toDeleteIds.length} many users that should be deleted.`
   );
 
   if (toDeleteIds.length > 0) {
-    ui.logger.info("Deleting users");
+    ui.logger.info('Deleting users');
     // Delete all the users that in local database but not in Clerk
     await db.delete(auths).where(inArray(auths.id, toDeleteIds));
-    ui.logger.info("Users deleted");
+    ui.logger.info('Users deleted');
   }
 
   ui.logger.info(`Sync ended: ${new Date().toISOString()}`);
-  console.timeEnd("sync-timer");
+  console.timeEnd('sync-timer');
   ui.logger.info(`Summary:`);
 
   const table = ui.table();
 
   table
-    .head(["Operation", "Count"])
-    .row(["User created", `${createdCount}`])
-    .row(["User updated", `${updatedCount}`])
-    .row(["User deleted", `${deletedCount}`])
+    .head(['Operation', 'Count'])
+    .row(['User created', `${createdCount}`])
+    .row(['User updated', `${updatedCount}`])
+    .row(['User deleted', `${deletedCount}`])
     .render();
 
   process.exit(0);

@@ -1,12 +1,12 @@
-import amqplib from "amqplib";
+import amqplib from 'amqplib';
 import {
   MQEventPayload,
   MQEventType,
   MQQueue,
   SendWelcomeEmailPayload,
-} from "../../common";
+} from '../../common';
 
-export const mq = await amqplib.connect("amqp://localhost");
+export const mq = await amqplib.connect('amqp://localhost');
 
 function serialize(payload: MQEventPayload) {
   return Buffer.from(JSON.stringify(payload));
@@ -19,31 +19,31 @@ async function getChannel(q: MQQueue) {
 }
 
 export async function sendWelcomeEmail(payload: SendWelcomeEmailPayload) {
-  const [q, ch] = await getChannel("email");
+  const [q, ch] = await getChannel('email');
 
   return ch.sendToQueue(
     q,
     serialize({
-      type: "send-welcome-email",
+      type: 'send-welcome-email',
       payload,
-    }),
+    })
   );
 }
 
 export type UserEventType = Extract<
   MQEventType,
-  "user-created" | "user-updated" | "user-deleted"
+  'user-created' | 'user-updated' | 'user-deleted'
 >;
-type UserPayload = (MQEventPayload & { type: UserEventType })["payload"];
+type UserPayload = (MQEventPayload & { type: UserEventType })['payload'];
 
 export async function sendUserEvent(type: UserEventType, payload: UserPayload) {
-  const [q, ch] = await getChannel("user");
+  const [q, ch] = await getChannel('user');
 
   return ch.sendToQueue(
     q,
     serialize({
       type,
       payload,
-    }),
+    })
   );
 }

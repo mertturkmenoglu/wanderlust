@@ -1,7 +1,7 @@
-import Typesense from "typesense";
-import { Location } from "../db";
-import { env } from "../start";
-import { schemas } from "./schemas";
+import Typesense from 'typesense';
+import { Location } from '../db';
+import { env } from '../start';
+import { schemas } from './schemas';
 
 export const searchClient = new Typesense.Client({
   nodes: [
@@ -16,7 +16,7 @@ export const searchClient = new Typesense.Client({
 });
 
 export async function initSearch() {
-  console.log("Creating search collections");
+  console.log('Creating search collections');
 
   for (const schema of schemas) {
     const name = schema.name;
@@ -27,16 +27,16 @@ export async function initSearch() {
     }
   }
 
-  console.log("Search collections created");
+  console.log('Search collections created');
 }
 
 export async function upsertLocation(location: Location) {
   await searchClient
-    .collections("locations")
+    .collections('locations')
     .documents()
-    .upsert(location, { action: "upsert" });
+    .upsert(location, { action: 'upsert' });
 }
 
 export async function deleteLocation(id: string) {
-  await searchClient.collections("locations").documents(id).delete();
+  await searchClient.collections('locations').documents(id).delete();
 }

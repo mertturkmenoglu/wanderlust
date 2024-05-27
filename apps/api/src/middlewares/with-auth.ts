@@ -1,8 +1,8 @@
-import { getAuth as getAuthClerk } from "@hono/clerk-auth";
-import { eq } from "drizzle-orm";
-import { createMiddleware } from "hono/factory";
-import { auths, db } from "../db";
-import { type Env } from "../start";
+import { getAuth as getAuthClerk } from '@hono/clerk-auth';
+import { eq } from 'drizzle-orm';
+import { createMiddleware } from 'hono/factory';
+import { auths, db } from '../db';
+import { type Env } from '../start';
 
 /**
  * Check the auth status of user.
@@ -18,14 +18,14 @@ export const withAuth = createMiddleware<Env>(async (c, next) => {
   const auth = getAuthClerk(c);
 
   if (!auth || !auth.userId) {
-    c.set("withAuth", undefined);
+    c.set('withAuth', undefined);
   } else {
     const [authUser] = await db
       .select()
       .from(auths)
       .where(eq(auths.clerkId, auth.userId));
 
-    c.set("auth", authUser);
+    c.set('auth', authUser);
   }
 
   await next();

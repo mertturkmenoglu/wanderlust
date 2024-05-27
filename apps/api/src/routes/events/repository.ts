@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
-import { Address, db, events } from "../../db";
-import { CreateEventDto, UpdateEventDto } from "./dto";
+import { eq } from 'drizzle-orm';
+import { Address, db, events } from '../../db';
+import { CreateEventDto, UpdateEventDto } from './dto';
 
 export async function peek() {
   return await db.query.events.findMany({

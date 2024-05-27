@@ -1,9 +1,9 @@
-import { getAuth as getAuthClerk } from "@hono/clerk-auth";
-import { eq } from "drizzle-orm";
-import { createMiddleware } from "hono/factory";
-import { HTTPException } from "hono/http-exception";
-import { auths, db, users } from "../db";
-import { type Env } from "../start";
+import { getAuth as getAuthClerk } from '@hono/clerk-auth';
+import { eq } from 'drizzle-orm';
+import { createMiddleware } from 'hono/factory';
+import { HTTPException } from 'hono/http-exception';
+import { auths, db, users } from '../db';
+import { type Env } from '../start';
 
 /**
  * Enforces authentication.
@@ -21,7 +21,7 @@ export const getAuth = createMiddleware<Env>(async (c, next) => {
 
   if (!auth?.userId) {
     throw new HTTPException(401, {
-      message: "Unauthorized",
+      message: 'Unauthorized',
     });
   }
 
@@ -35,7 +35,7 @@ export const getAuth = createMiddleware<Env>(async (c, next) => {
     .from(users)
     .where(eq(users.id, authUser.userId));
 
-  c.set("auth", authUser);
-  c.set("user", dbUser);
+  c.set('auth', authUser);
+  c.set('user', dbUser);
   await next();
 });

@@ -1,31 +1,31 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
-import { secureHeaders } from "hono/secure-headers";
-import { runDrizzleMigrations } from "./db";
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { secureHeaders } from 'hono/secure-headers';
+import { runDrizzleMigrations } from './db';
 import {
   categoriesRouter,
   eventsRouter,
   locationsRouter,
   usersRouter,
   webhooksRouter,
-} from "./routes";
-import { initSearch } from "./search";
-import { Env, env, getCorsConfig } from "./start";
+} from './routes';
+import { initSearch } from './search';
+import { Env, env, getCorsConfig } from './start';
 
 await runDrizzleMigrations();
 await initSearch();
 
 const app = new Hono<Env>()
-  .basePath("/api")
+  .basePath('/api')
   .use(cors(getCorsConfig()))
   .use(logger())
   .use(secureHeaders())
-  .route("/webhooks", webhooksRouter)
-  .route("/users", usersRouter)
-  .route("/locations", locationsRouter)
-  .route("/categories", categoriesRouter)
-  .route("/events", eventsRouter);
+  .route('/webhooks', webhooksRouter)
+  .route('/users', usersRouter)
+  .route('/locations', locationsRouter)
+  .route('/categories', categoriesRouter)
+  .route('/events', eventsRouter);
 
 Bun.serve({
   port: env.PORT,

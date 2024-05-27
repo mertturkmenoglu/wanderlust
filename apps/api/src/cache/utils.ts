@@ -1,5 +1,5 @@
-import { cache } from "./init";
-import { CacheKey } from "./keys";
+import { cache } from './init';
+import { CacheKey } from './keys';
 
 export async function cacheRead<T>(key: CacheKey) {
   const cacheResult = await cache.get(key);
@@ -16,5 +16,5 @@ export async function cacheRead<T>(key: CacheKey) {
 }
 
 export async function cacheWrite<T>(key: CacheKey, value: T, ttl: number) {
-  await cache.set(key, JSON.stringify(value), "EX", ttl);
+  await cache.set(key, JSON.stringify(value), 'EX', ttl);
 }
