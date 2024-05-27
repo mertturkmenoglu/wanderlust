@@ -1,6 +1,6 @@
 "use client";
 
-import { getEvents, getLocations } from "@/lib/api";
+import { api, rpc } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { eventCols, locationsCols } from "./_components/columns";
@@ -9,12 +9,12 @@ import { DataTable } from "./_components/data-table";
 function Page() {
   const qLocations = useQuery({
     queryKey: ["locations"],
-    queryFn: async () => getLocations(),
+    queryFn: async () => rpc(() => api.locations.peek.$get()),
   });
 
   const qEvents = useQuery({
     queryKey: ["events"],
-    queryFn: async () => getEvents(),
+    queryFn: async () => rpc(() => api.events.peek.$get()),
   });
 
   return (

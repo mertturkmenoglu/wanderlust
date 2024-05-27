@@ -23,7 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { TimePickerInput } from "@/components/ui/time-picker/input";
-import { createNewLocation } from "@/lib/api";
+import { api, rpc } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { addDays, format } from "date-fns";
@@ -72,7 +72,12 @@ function NewEventForm() {
 
   const mutation = useMutation({
     mutationKey: ["new-event"],
-    mutationFn: async (payload: FormInput) => createNewLocation(payload),
+    mutationFn: async (payload: FormInput) =>
+      rpc(() =>
+        api.events.$post({
+          json: payload,
+        })
+      ),
     onSuccess: () => {
       router.push("/dashboard");
     },

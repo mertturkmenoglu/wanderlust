@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createNewLocation, getCategories } from "@/lib/api";
+import { api, rpc } from "@/lib/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -58,13 +58,18 @@ function NewLocationForm() {
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
-    queryFn: async () => getCategories(),
+    queryFn: async () => rpc(() => api.categories.$get()),
     staleTime: 10 * 60 * 1000,
   });
 
   const mutation = useMutation({
     mutationKey: ["new-location"],
-    mutationFn: async (payload: FormInput) => createNewLocation(payload),
+    mutationFn: async (payload: FormInput) =>
+      rpc(() =>
+        api.locations.$post({
+          json: payload,
+        })
+      ),
     onSuccess: () => {
       router.push("/dashboard");
     },
