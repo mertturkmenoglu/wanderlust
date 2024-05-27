@@ -10,11 +10,13 @@
     "studio": "bunx drizzle-kit studio --config=src/db/drizzle.config.ts --verbose",
     "type-check": "tsc --noEmit",
     "migrate": "drizzle-kit migrate --config=src/db/drizzle.config.ts",
-    "locations": "bun run ./scripts/locations.ts"
+    "addresses": "bun run ./scripts/addresses.ts",
+    "fake:locations": "bun run ./scripts/fake.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.5",
     "@clerk/backend": "^1.1.2",
+    "@faker-js/faker": "^8.4.1",
     "@hono/clerk-auth": "^2.0.0",
     "@hono/zod-validator": "^0.2.1",
     "@poppinss/cliui": "^6.4.1",
@@ -24,6 +26,7 @@
     "csv-parse": "^5.5.6",
     "drizzle-orm": "^0.30.10",
     "drizzle-zod": "^0.5.1",
+    "enquirer": "^2.4.1",
     "envalid": "^8.0.0",
     "eslint-plugin-drizzle": "^0.2.3",
     "hono": "4.3.11",
@@ -41,6 +44,7 @@
     "@types/bun": "latest",
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/eslint__js": "^8.42.3",
+    "@types/faker": "^6.6.9",
     "drizzle-kit": "^0.21.2",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "3.2.5"
