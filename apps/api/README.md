@@ -49,6 +49,8 @@ Either setup manually or use Dotenv Vault (preferred).
 - MinIO: `localhost:9000` and `localhost:9001` (Web UI)
 - Ngrok Web UI: `localhost:4040`
 - Typesense: `localhost:8108`
+- Typesense Dashboard: `localhost:3006`
+- RabbitMQ Management: `localhost:15672`
 
 ## Tech Stack
 
