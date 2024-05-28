@@ -45,6 +45,9 @@ async function generateLocations(count: number) {
   const locations: CreateLocationDto[] = [];
 
   for (let i = 0; i < count; i++) {
+    const mediaCount = faker.number.int({ min: 1, max: 5 });
+    const tmp = new Array(mediaCount).fill(0);
+
     const dto: CreateLocationDto = {
       address: {
         country: faker.location.countryCode('alpha-2'),
@@ -66,6 +69,15 @@ async function generateLocations(count: number) {
       website: faker.internet.url(),
       phone: faker.helpers.fromRegExp('[0-9]{3}-[0-9]{3}-[0-9]{4}'),
       categoryId: faker.number.int({ min: 1, max: 16 }),
+      media: tmp.map(() => ({
+        type: 'image',
+        url: faker.image.url(),
+        thumbnail: faker.image.url(),
+        alt: faker.lorem.words({ min: 2, max: 4 }),
+        caption: faker.lorem.sentence(),
+        width: faker.number.int({ min: 100, max: 1920 }),
+        height: faker.number.int({ min: 100, max: 1080 }),
+      })),
     };
 
     locations.push(dto);
