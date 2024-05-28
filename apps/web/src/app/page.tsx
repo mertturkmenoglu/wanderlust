@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/card";
 import { api, rpc } from "@/lib/api";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 600;
+export const revalidate = 6;
 
 async function peekLocations() {
   return await rpc(() => api.locations.peek.$get());
@@ -49,35 +50,39 @@ export default async function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 my-8">
         {data.map((location) => (
-          <Card key={location.id} className="group">
-            <img
-              src={location.media.slice(0, 1)[0].url}
-              alt={location.media.slice(0, 1)[0].alt}
-              className="aspect-video rounded-t-xl w-full object-cover"
-              width={512}
-              height={288}
-            />
+          <Link key={location.id} href={`/location/${location.id}`}>
+            <Card key={location.id} className="group">
+              <img
+                src={location.media.slice(0, 1)[0].url}
+                alt={location.media.slice(0, 1)[0].alt}
+                className="aspect-video rounded-t-xl w-full object-cover"
+                width={512}
+                height={288}
+              />
 
-            <CardHeader>
-              <CardTitle>{location.name}</CardTitle>
-              <CardDescription>
-                {location.address.city} / {location.address.state}
-              </CardDescription>
-            </CardHeader>
+              <CardHeader>
+                <CardTitle>{location.name}</CardTitle>
+                <CardDescription>
+                  {location.address.city} / {location.address.state}
+                </CardDescription>
+              </CardHeader>
 
-            <CardContent>
-              <div className="flex-1 space-y-1">
-                <p className="text-sm leading-none">{location.category.name}</p>
-                <div className="flex items-center gap-2 pt-4 flex-wrap">
-                  {location.tags.map((tag) => (
-                    <Badge key={tag} className="text-xs capitalize">
-                      {tag}
-                    </Badge>
-                  ))}
+              <CardContent>
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm leading-none">
+                    {location.category.name}
+                  </p>
+                  <div className="flex items-center gap-2 pt-4 flex-wrap">
+                    {location.tags.map((tag) => (
+                      <Badge key={tag} className="text-xs capitalize">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </main>
