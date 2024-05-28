@@ -6,14 +6,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { dummydata } from "@/lib/dummydata";
-import Image from "next/image";
 
 function UpcomingEvents() {
   return (
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-4 place-content-center">
+    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4 place-content-center">
       {dummydata.map((d) => (
         <Card key={d.image} className="group">
-          <Image
+          <img
             src={d.image}
             alt=""
             className="aspect-video rounded-t-xl w-full object-cover"
