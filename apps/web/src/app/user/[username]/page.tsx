@@ -1,3 +1,4 @@
+import EmptyContent from "@/components/blocks/EmptyContent";
 import Bio from "./_components/bio";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,8 @@ export default async function Page({ params: { username } }: Props) {
   return (
     <main>
       <Bio username={username} className="mt-16" />
+
+      <EmptyContent className="mt-16" />
     </main>
   );
 }
