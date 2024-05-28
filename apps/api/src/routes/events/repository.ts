@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { Address, db, events } from '../../db';
+import { Address, Media, db, events } from '../../db';
 import { CreateEventDto, UpdateEventDto } from './dto';
 
 export async function peek() {
@@ -26,6 +26,7 @@ export async function create(dto: CreateEventDto) {
     .values({
       ...dto,
       address: dto.address as Address,
+      media: dto.media ? (dto.media as Media[]) : undefined,
       tags: (dto.tags ?? []) as string[],
     })
     .returning();
@@ -39,6 +40,7 @@ export async function update(id: string, dto: UpdateEventDto) {
     .set({
       ...dto,
       address: dto.address as Address,
+      media: dto.media ? (dto.media as Media[]) : undefined,
       tags: dto.tags ? (dto.tags as string[]) : undefined,
     })
     .where(eq(events.id, id))

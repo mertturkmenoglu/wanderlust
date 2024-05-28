@@ -1,10 +1,11 @@
 import { eq } from 'drizzle-orm';
-import { Address, db, locations } from '../../db';
+import { Address, Media, db, locations } from '../../db';
 import { CreateLocationDto, UpdateLocationDto } from './dto';
 
 export async function peek() {
   return await db.query.locations.findMany({
     limit: 25,
+    orderBy: (table, { asc }) => asc(table.createdAt),
     with: {
       category: true,
     },
@@ -26,6 +27,7 @@ export async function create(dto: CreateLocationDto) {
     .values({
       ...dto,
       address: dto.address as Address,
+      media: dto.media ? (dto.media as Media[]) : undefined,
       tags: dto.tags ? (dto.tags as string[]) : undefined,
     })
     .returning();
@@ -39,6 +41,7 @@ export async function update(id: string, dto: UpdateLocationDto) {
     .set({
       ...dto,
       address: dto.address as Address,
+      media: dto.media ? (dto.media as Media[]) : undefined,
       tags: (dto.tags ?? []) as string[],
     })
     .where(eq(locations.id, id))
