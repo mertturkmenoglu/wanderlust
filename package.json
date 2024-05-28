@@ -17,5 +17,6 @@
   "trustedDependencies": [
     "@clerk/shared",
     "es5-ext"
-  ]
+  ],
+  "packageManager": "bun@1.1.10"
 }
