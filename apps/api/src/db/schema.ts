@@ -83,6 +83,16 @@ export type Address = {
   long: number;
 };
 
+export type Media = {
+  type: 'image' | 'video';
+  url: string;
+  thumbnail: string;
+  alt: string;
+  caption: string | null;
+  width: number;
+  height: number;
+};
+
 export const locations = pgTable(
   'locations',
   {
@@ -95,6 +105,7 @@ export const locations = pgTable(
     accessibilityLevel: smallint('accessibility_level').notNull().default(1),
     hasWifi: boolean('has_wifi').notNull().default(false),
     tags: json('tags').$type<string[]>().notNull().default([]),
+    media: json('media').$type<Media[]>().notNull().default([]),
     categoryId: smallserial('category_id')
       .notNull()
       .references(() => categories.id),
@@ -136,7 +147,8 @@ export const events = pgTable(
     website: text('website'),
     priceLevel: smallint('price_level').notNull().default(1),
     accessibilityLevel: smallint('accessibility_level').notNull().default(1),
-    tags: json('tags').$type<string[]>().default([]),
+    tags: json('tags').$type<string[]>().notNull().default([]),
+    media: json('media').$type<Media[]>().notNull().default([]),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { mode: 'date', precision: 3 })
       .notNull()
