@@ -1,10 +1,7 @@
-import { api, rpc } from "@/lib/api";
-import {
-  HydrationBoundary,
-  QueryClient,
-  dehydrate,
-} from "@tanstack/react-query";
-import Bio from "./bio";
+import Bio from "./_components/bio";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Props = {
   params: {
@@ -12,30 +9,10 @@ type Props = {
   };
 };
 
-async function Page({ params }: Props) {
-  const qc = new QueryClient();
-
-  await qc.prefetchQuery({
-    queryKey: ["user", params.username],
-    queryFn: async () =>
-      rpc(() =>
-        api.users[":username"].profile.$get({
-          param: {
-            username: params.username,
-          },
-        })
-      ),
-    staleTime: 2 * 1000,
-  });
-
+export default async function Page({ params: { username } }: Props) {
   return (
     <main>
-      <HydrationBoundary state={dehydrate(qc)}>
-        <Bio />
-        <div>Username: {params.username}</div>
-      </HydrationBoundary>
+      <Bio username={username} className="mt-16" />
     </main>
   );
 }
-
-export default Page;
