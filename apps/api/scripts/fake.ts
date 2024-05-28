@@ -60,6 +60,7 @@ async function generateLocations(count: number) {
         long: faker.location.longitude(),
       },
       name: faker.word.words({ count: { min: 2, max: 5 } }),
+      description: faker.lorem.sentences({ min: 2, max: 5 }),
       accessibilityLevel: faker.number.int({ min: 1, max: 5 }),
       hasWifi: faker.datatype.boolean(),
       priceLevel: faker.number.int({ min: 1, max: 5 }),
