@@ -99,6 +99,7 @@ export const locations = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
     phone: text('phone'),
+    description: text('description').notNull().default(''),
     address: json('address').$type<Address>().notNull(),
     website: text('website'),
     priceLevel: smallint('price_level').notNull().default(1),

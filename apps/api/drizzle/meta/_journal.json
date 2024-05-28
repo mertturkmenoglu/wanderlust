@@ -15,6 +15,13 @@
       "when": 1716902750591,
       "tag": "0001_damp_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1716922997317,
+      "tag": "0002_hesitant_strong_guy",
+      "breakpoints": true
     }
   ]
 }
