@@ -2,11 +2,6 @@ import Logo from '@/app/icon.png';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,7 +17,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import LogoutItem from './logout-item';
+import MenuContent from './menu-content';
 
 type Props = React.HTMLAttributes<HTMLElement>;
 
@@ -87,44 +82,10 @@ async function Header({ className, ...props }: Props) {
                 <span className="ml-2">{user?.firstName}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-56"
-              align="end"
-            >
-              <DropdownMenuLabel>{user?.fullName}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Link href={`/user/${user?.username}`}>Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/notifications">Notifications</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/settings">Settings</Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Link href="/friends">Friends</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/lists">My Lists</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/diary">Diary</Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem disabled>Report</DropdownMenuItem>
-              <DropdownMenuItem disabled>Support</DropdownMenuItem>
-              <DropdownMenuItem disabled>Privacy</DropdownMenuItem>
-              <DropdownMenuItem disabled>Terms</DropdownMenuItem>
-              <DropdownMenuItem disabled>API</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <LogoutItem />
-            </DropdownMenuContent>
+            <MenuContent
+              fullName={user?.fullName ?? ''}
+              username={user?.username ?? ''}
+            />
           </DropdownMenu>
         </SignedIn>
       </ClerkLoaded>
