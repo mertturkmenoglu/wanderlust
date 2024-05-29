@@ -4,6 +4,7 @@ import { api, rpc } from "@/lib/api";
 import Breadcrumb from "./_components/breadcrumb";
 import Carousel from "./_components/carousel";
 import InformationTable from "./_components/information-table";
+import LocationMap from "./_components/location-map";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -42,16 +43,14 @@ export default async function Page({ params: { id } }: Props) {
           <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight capitalize mt-8">
             {location.name}
           </h2>
-
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
-
           <p className="mt-2 text-sm text-gray-500">{location.description}</p>
-
           <h2 className="mt-8 text-lg font-bold">Information</h2>
-
           <InformationTable location={location} />
         </div>
       </div>
+
+      <LocationMap location={location} />
 
       <hr className="my-8" />
 
