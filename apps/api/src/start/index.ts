@@ -1,3 +1,3 @@
 export * from './cors';
-export { default as env } from './env';
+export { default as env, onlyDev } from './env';
 export * from './runtime';

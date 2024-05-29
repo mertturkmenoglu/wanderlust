@@ -1,6 +1,6 @@
 import { bool, cleanEnv, num, str } from 'envalid';
 
-export default cleanEnv(process.env, {
+const env = cleanEnv(process.env, {
   NODE_ENV: str({ choices: ['development', 'test', 'production', 'staging'] }),
   CLERK_SECRET_KEY: str(),
   CLERK_PUBLISHABLE_KEY: str(),
@@ -29,3 +29,9 @@ export default cleanEnv(process.env, {
   TYPESENSE_PROTOCOL: str({ devDefault: 'http' }),
   TYPESENSE_API_KEY: str(),
 });
+
+export default env;
+
+export function onlyDev(e: any) {
+  return env.NODE_ENV === 'development' ? e : undefined;
+}
