@@ -1,5 +1,4 @@
 import CategoryNavigation from '@/components/blocks/CategoryNavigation';
-import UpcomingEvents from '@/components/blocks/UpcomingEvents';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,12 +39,6 @@ export default async function Home() {
       </nav>
 
       <CategoryNavigation />
-
-      <h2 className="mt-12 scroll-m-20 text-2xl font-semibold tracking-tighter text-accent-foreground lg:text-3xl">
-        Upcoming Events
-      </h2>
-
-      <UpcomingEvents />
 
       <h2 className="mt-12 scroll-m-20 text-2xl font-semibold tracking-tighter text-accent-foreground lg:text-3xl">
         New Locations
