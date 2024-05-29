@@ -1,4 +1,5 @@
 import Header from '@/components/blocks/Header';
+import { CSPostHogProvider } from '@/providers/ph-provider';
 import QClientProvider from '@/providers/query-provider';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -21,13 +22,17 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={'mx-4 md:mx-8 lg:mx-16 2xl:mx-32 ' + inter.className}>
-          <QClientProvider>
-            <Header className="my-4" />
-            <main>{children}</main>
-            <ReactQueryDevtools />
-          </QClientProvider>
-        </body>
+        <CSPostHogProvider>
+          <body
+            className={'mx-4 md:mx-8 lg:mx-16 2xl:mx-32 ' + inter.className}
+          >
+            <QClientProvider>
+              <Header className="my-4" />
+              <main>{children}</main>
+              <ReactQueryDevtools />
+            </QClientProvider>
+          </body>
+        </CSPostHogProvider>
       </html>
     </ClerkProvider>
   );
