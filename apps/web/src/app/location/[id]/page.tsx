@@ -40,7 +40,7 @@ export default async function Page({ params: { id } }: Props) {
         <Carousel media={location.media} />
 
         <div>
-          <h2 className="mt-8 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
+          <h2 className="mt-8 line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
             {location.name}
           </h2>
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
