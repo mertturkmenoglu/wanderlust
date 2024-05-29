@@ -5,7 +5,7 @@ import { CreateLocationDto, UpdateLocationDto } from './dto';
 export async function peek() {
   return await db.query.locations.findMany({
     limit: 25,
-    orderBy: (table, { asc }) => asc(table.createdAt),
+    orderBy: (table, { desc }) => desc(table.createdAt),
     with: {
       category: true,
     },
