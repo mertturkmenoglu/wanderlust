@@ -2,7 +2,9 @@ import { relations } from 'drizzle-orm';
 import {
   bigint,
   boolean,
+  doublePrecision,
   index,
+  integer,
   json,
   pgTable,
   smallint,
@@ -261,3 +263,48 @@ export const listItemsRelations = relations(listItems, ({ one }) => ({
     references: [locations.id],
   }),
 }));
+
+export const countries = pgTable('countries', {
+  id: integer('id').primaryKey(),
+  name: text('name').notNull(),
+  iso2: text('iso2').notNull(),
+  numericCode: text('numeric_code').notNull(),
+  phoneCode: text('phone_code').notNull(),
+  capital: text('capital').notNull(),
+  currency: text('currency').notNull(),
+  currencyName: text('currency_name').notNull(),
+  currencySymbol: text('currency_symbol').notNull(),
+  tld: text('tld').notNull(),
+  native: text('native').notNull(),
+  region: text('region').notNull(),
+  subregion: text('subregion').notNull(),
+  timezones: text('timezones').notNull(),
+  latitude: doublePrecision('latitude').notNull(),
+  longitude: doublePrecision('longitude').notNull(),
+});
+
+export const states = pgTable('states', {
+  id: integer('id').primaryKey(),
+  name: text('name').notNull(),
+  countryId: integer('country_id').notNull(),
+  countryCode: text('country_code').notNull(),
+  countryName: text('country_name').notNull(),
+  stateCode: text('state_code').notNull(),
+  type: text('type'),
+  latitude: doublePrecision('latitude').notNull(),
+  longitude: doublePrecision('longitude').notNull(),
+});
+
+export const cities = pgTable('cities', {
+  id: integer('id').primaryKey(),
+  name: text('name').notNull(),
+  stateId: integer('state_id').notNull(),
+  stateCode: text('state_code').notNull(),
+  stateName: text('state_name').notNull(),
+  countryId: integer('country_id').notNull(),
+  countryCode: text('country_code').notNull(),
+  countryName: text('country_name').notNull(),
+  latitude: doublePrecision('latitude').notNull(),
+  longitude: doublePrecision('longitude').notNull(),
+  wikiDataId: text('wiki_data_id').notNull(),
+});
