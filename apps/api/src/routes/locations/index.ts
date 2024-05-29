@@ -5,7 +5,7 @@ import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { authorize, getAuth, rateLimiter } from '../../middlewares';
 import * as search from '../../search';
-import { Env } from '../../start';
+import { Env, onlyDev } from '../../start';
 import { validateId } from '../dto';
 import { createLocationSchema, updateLocationSchema } from './dto';
 import * as repository from './repository';
@@ -66,6 +66,7 @@ const create = factory.createHandlers(
     } catch (e) {
       throw new HTTPException(500, {
         message: 'Something went wrong',
+        cause: onlyDev(e),
       });
     }
   }
@@ -83,7 +84,9 @@ const update = factory.createHandlers(
     const location = await repository.update(id, dto);
 
     if (!location) {
-      throw new HTTPException();
+      throw new HTTPException(404, {
+        message: 'Not found',
+      });
     }
 
     await search.upsertLocation(location);
