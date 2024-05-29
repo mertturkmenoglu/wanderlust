@@ -7,13 +7,13 @@ services:
     networks:
       - redisnet
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
   postgres:
     image: postgres
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -35,10 +35,10 @@ services:
     image: typesense/typesense:26.0
     restart: on-failure
     ports:
-      - "8108:8108"
+      - '8108:8108'
     volumes:
       - ./typesense-data:/data
-    command: "--data-dir /data --api-key=xyz --enable-cors"
+    command: '--data-dir /data --api-key=xyz --enable-cors'
 
   typesense-dashboard:
     ports:
