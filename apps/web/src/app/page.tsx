@@ -14,7 +14,7 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 6;
+export const revalidate = 0;
 
 async function peekLocations() {
   return await rpc(() => api.locations.peek.$get());
