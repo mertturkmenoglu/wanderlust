@@ -5,8 +5,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Breadcrumb as ShadcnBreadcrumb,
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
+} from '@/components/ui/breadcrumb';
+import Link from 'next/link';
 
 type Props = {
   categoryId: number;

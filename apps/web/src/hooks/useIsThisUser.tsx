@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/nextjs";
+import { useUser } from '@clerk/nextjs';
 
 export function useIsThisUser(username: string): boolean {
   const user = useUser();

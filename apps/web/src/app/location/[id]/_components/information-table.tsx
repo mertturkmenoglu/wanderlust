@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Location } from "@/lib/types";
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Location } from '@/lib/types';
 
 type Props = {
   location: Location;
@@ -14,7 +14,7 @@ export default function InformationTable({ location }: Props) {
         <TableRow>
           <TableCell className="font-medium">Has WiFi</TableCell>
           <TableCell className="text-right">
-            {location.hasWifi ? "Yes" : "No"}
+            {location.hasWifi ? 'Yes' : 'No'}
           </TableCell>
         </TableRow>
 
@@ -46,7 +46,7 @@ export default function InformationTable({ location }: Props) {
             <br />
             {location.address.line2}
             <br />
-            {location.address.city}, {location.address.state} /{" "}
+            {location.address.city}, {location.address.state} /{' '}
             {location.address.country}
             <br />
             {location.address.postalCode}
@@ -56,7 +56,10 @@ export default function InformationTable({ location }: Props) {
         <TableRow>
           <TableCell className="font-medium">Price level</TableCell>
           <TableCell className="flex justify-end">
-            <Progress value={location.priceLevel * 19.8} className="max-w-32" />
+            <Progress
+              value={location.priceLevel * 19.8}
+              className="max-w-32"
+            />
           </TableCell>
         </TableRow>
 
@@ -74,7 +77,10 @@ export default function InformationTable({ location }: Props) {
           <TableCell className="font-medium">Tags</TableCell>
           <TableCell className="flex flex-col items-end gap-2">
             {location.tags.map((tag) => (
-              <Badge key={tag} className="mr-2">
+              <Badge
+                key={tag}
+                className="mr-2"
+              >
                 {tag}
               </Badge>
             ))}

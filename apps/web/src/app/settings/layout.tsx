@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
-import { PropsWithChildren } from "react";
-import Sidebar from "./_components/Sidebar";
+import { auth } from '@clerk/nextjs/server';
+import { PropsWithChildren } from 'react';
+import Sidebar from './_components/Sidebar';
 
 function Layout({ children }: PropsWithChildren): React.ReactElement {
   auth().protect();

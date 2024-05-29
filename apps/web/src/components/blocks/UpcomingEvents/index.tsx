@@ -4,18 +4,21 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { dummydata } from "@/lib/dummydata";
+} from '@/components/ui/card';
+import { dummydata } from '@/lib/dummydata';
 
 function UpcomingEvents() {
   return (
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4 place-content-center">
+    <div className="mt-8 grid grid-cols-1 place-content-center gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
       {dummydata.map((d) => (
-        <Card key={d.image} className="group">
+        <Card
+          key={d.image}
+          className="group"
+        >
           <img
             src={d.image}
             alt=""
-            className="aspect-video rounded-t-xl w-full object-cover"
+            className="aspect-video w-full rounded-t-xl object-cover"
             width={512}
             height={288}
           />

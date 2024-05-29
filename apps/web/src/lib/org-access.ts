@@ -1,5 +1,5 @@
-import { useAuth } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+import { useAuth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 
 export function canAccessOrg(): boolean {
   const { orgId } = auth();

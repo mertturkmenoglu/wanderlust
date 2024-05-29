@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { CreateEventDto } from "#/routes/events/dto";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { CreateEventDto } from '#/routes/events/dto';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Form,
   FormControl,
@@ -14,24 +14,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { TimePickerInput } from "@/components/ui/time-picker/input";
-import { api, rpc } from "@/lib/api";
-import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { addDays, format } from "date-fns";
-import { CalendarIcon, Clock } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
-import { DateRange } from "react-day-picker";
-import { z } from "zod";
+} from '@/components/ui/popover';
+import { TimePickerInput } from '@/components/ui/time-picker/input';
+import { api, rpc } from '@/lib/api';
+import { cn } from '@/lib/utils';
+import { useMutation } from '@tanstack/react-query';
+import { addDays, format } from 'date-fns';
+import { CalendarIcon, Clock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { DateRange } from 'react-day-picker';
+import { z } from 'zod';
 
 type FormInput = CreateEventDto;
 
@@ -71,7 +71,7 @@ function NewEventForm() {
   const secondRef = useRef<HTMLInputElement>(null);
 
   const mutation = useMutation({
-    mutationKey: ["new-event"],
+    mutationKey: ['new-event'],
     mutationFn: async (payload: FormInput) =>
       rpc(() =>
         api.events.$post({
@@ -79,7 +79,7 @@ function NewEventForm() {
         })
       ),
     onSuccess: () => {
-      router.push("/dashboard");
+      router.push('/dashboard');
     },
   });
 
@@ -96,7 +96,7 @@ function NewEventForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-xl"
+        className="max-w-xl space-y-8"
       >
         <FormField
           control={form.control}
@@ -105,7 +105,10 @@ function NewEventForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Name of the event" {...field} />
+                <Input
+                  placeholder="Name of the event"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>Required</FormDescription>
               <FormMessage />
@@ -120,7 +123,10 @@ function NewEventForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="Description" {...field} />
+                <Input
+                  placeholder="Description"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>Required</FormDescription>
               <FormMessage />
@@ -200,26 +206,26 @@ function NewEventForm() {
         />
 
         <div>
-          <FormLabel className="block my-2">Date</FormLabel>
+          <FormLabel className="my-2 block">Date</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 id="date"
-                variant={"outline"}
+                variant={'outline'}
                 className={cn(
-                  "w-[300px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
+                  'w-[300px] justify-start text-left font-normal',
+                  !date && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {date?.from ? (
                   date.to ? (
                     <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
+                      {format(date.from, 'LLL dd, y')} -{' '}
+                      {format(date.to, 'LLL dd, y')}
                     </>
                   ) : (
-                    format(date.from, "LLL dd, y")
+                    format(date.from, 'LLL dd, y')
                   )
                 ) : (
                   <span>Pick a date</span>
@@ -241,7 +247,10 @@ function NewEventForm() {
 
         <div className="flex items-end gap-2">
           <div className="grid gap-1 text-center">
-            <Label htmlFor="hours" className="text-xs">
+            <Label
+              htmlFor="hours"
+              className="text-xs"
+            >
               Hours
             </Label>
             <TimePickerInput
@@ -253,7 +262,10 @@ function NewEventForm() {
             />
           </div>
           <div className="grid gap-1 text-center">
-            <Label htmlFor="minutes" className="text-xs">
+            <Label
+              htmlFor="minutes"
+              className="text-xs"
+            >
               Minutes
             </Label>
             <TimePickerInput

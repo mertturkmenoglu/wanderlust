@@ -1,4 +1,4 @@
-import { Props as NavItemProps } from "./item";
+import { Props as NavItemProps } from './item';
 
 import {
   BabyIcon,
@@ -23,31 +23,31 @@ import {
   TentIcon,
   UtensilsIcon,
   WineIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 const data = [
-  { href: "#", text: "Trending", icon: FlameIcon },
-  { href: "#", text: "Family Friendly", icon: BabyIcon },
-  { href: "#", text: "Coffee", icon: CoffeeIcon },
-  { href: "#", text: "Bars", icon: BeerIcon },
-  { href: "#", text: "Landmarks", icon: LandmarkIcon },
-  { href: "#", text: "Trekking", icon: MountainIcon },
-  { href: "#", text: "Art", icon: PaletteIcon },
-  { href: "#", text: "Parties", icon: PartyPopperIcon },
-  { href: "#", text: "Vegan", icon: SaladIcon },
-  { href: "#", text: "Camping", icon: TentIcon },
-  { href: "#", text: "Music", icon: Music2Icon },
-  { href: "#", text: "Fine Dining", icon: UtensilsIcon },
-  { href: "#", text: "City Night", icon: MoonIcon },
-  { href: "#", text: "Steakhouse", icon: BeefIcon },
-  { href: "#", text: "Pattiseries", icon: CakeSliceIcon },
-  { href: "#", text: "Street Food", icon: DrumstickIcon },
-  { href: "#", text: "Yoga", icon: LeafIcon },
-  { href: "#", text: "Cocktail Bars", icon: MartiniIcon },
-  { href: "#", text: "Wine", icon: WineIcon },
-  { href: "#", text: "Movie Theaters", icon: PopcornIcon },
-  { href: "#", text: "Photography", icon: CameraIcon },
-  { href: "#", text: "On a Budget", icon: DollarSignIcon },
+  { href: '#', text: 'Trending', icon: FlameIcon },
+  { href: '#', text: 'Family Friendly', icon: BabyIcon },
+  { href: '#', text: 'Coffee', icon: CoffeeIcon },
+  { href: '#', text: 'Bars', icon: BeerIcon },
+  { href: '#', text: 'Landmarks', icon: LandmarkIcon },
+  { href: '#', text: 'Trekking', icon: MountainIcon },
+  { href: '#', text: 'Art', icon: PaletteIcon },
+  { href: '#', text: 'Parties', icon: PartyPopperIcon },
+  { href: '#', text: 'Vegan', icon: SaladIcon },
+  { href: '#', text: 'Camping', icon: TentIcon },
+  { href: '#', text: 'Music', icon: Music2Icon },
+  { href: '#', text: 'Fine Dining', icon: UtensilsIcon },
+  { href: '#', text: 'City Night', icon: MoonIcon },
+  { href: '#', text: 'Steakhouse', icon: BeefIcon },
+  { href: '#', text: 'Pattiseries', icon: CakeSliceIcon },
+  { href: '#', text: 'Street Food', icon: DrumstickIcon },
+  { href: '#', text: 'Yoga', icon: LeafIcon },
+  { href: '#', text: 'Cocktail Bars', icon: MartiniIcon },
+  { href: '#', text: 'Wine', icon: WineIcon },
+  { href: '#', text: 'Movie Theaters', icon: PopcornIcon },
+  { href: '#', text: 'Photography', icon: CameraIcon },
+  { href: '#', text: 'On a Budget', icon: DollarSignIcon },
 ] satisfies NavItemProps[];
 
 export default data;

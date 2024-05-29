@@ -35,10 +35,10 @@ export function getValidNumber(
       if (numericValue > max) numericValue = min;
       if (numericValue < min) numericValue = max;
     }
-    return numericValue.toString().padStart(2, "0");
+    return numericValue.toString().padStart(2, '0');
   }
 
-  return "00";
+  return '00';
 }
 
 export function getValidHour(value: string) {
@@ -71,7 +71,7 @@ export function getValidArrowNumber(
     numericValue += step;
     return getValidNumber(String(numericValue), { min, max, loop: true });
   }
-  return "00";
+  return '00';
 }
 
 export function getValidArrowHour(value: string, step: number) {
@@ -100,15 +100,15 @@ export function setHours(date: Date, value: string) {
   return date;
 }
 
-export type TimePickerType = "minutes" | "seconds" | "hours"; // | "12hours";
+export type TimePickerType = 'minutes' | 'seconds' | 'hours'; // | "12hours";
 
 export function setDateByType(date: Date, value: string, type: TimePickerType) {
   switch (type) {
-    case "minutes":
+    case 'minutes':
       return setMinutes(date, value);
-    case "seconds":
+    case 'seconds':
       return setSeconds(date, value);
-    case "hours":
+    case 'hours':
       return setHours(date, value);
     default:
       return date;
@@ -117,14 +117,14 @@ export function setDateByType(date: Date, value: string, type: TimePickerType) {
 
 export function getDateByType(date: Date, type: TimePickerType) {
   switch (type) {
-    case "minutes":
+    case 'minutes':
       return getValidMinuteOrSecond(String(date.getMinutes()));
-    case "seconds":
+    case 'seconds':
       return getValidMinuteOrSecond(String(date.getSeconds()));
-    case "hours":
+    case 'hours':
       return getValidHour(String(date.getHours()));
     default:
-      return "00";
+      return '00';
   }
 }
 
@@ -134,13 +134,13 @@ export function getArrowByType(
   type: TimePickerType
 ) {
   switch (type) {
-    case "minutes":
+    case 'minutes':
       return getValidArrowMinuteOrSecond(value, step);
-    case "seconds":
+    case 'seconds':
       return getValidArrowMinuteOrSecond(value, step);
-    case "hours":
+    case 'hours':
       return getValidArrowHour(value, step);
     default:
-      return "00";
+      return '00';
   }
 }

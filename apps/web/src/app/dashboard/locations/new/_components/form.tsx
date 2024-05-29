@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { CreateLocationDto } from "#/routes/locations/dto";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { CreateLocationDto } from '#/routes/locations/dto';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -14,20 +14,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { api, rpc } from "@/lib/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { z } from "zod";
+} from '@/components/ui/select';
+import { api, rpc } from '@/lib/api';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { z } from 'zod';
 
 type FormInput = CreateLocationDto;
 
@@ -53,17 +53,17 @@ const schema = z.object({
 });
 
 function NewLocationForm() {
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState('');
   const router = useRouter();
 
   const { data: categories } = useQuery({
-    queryKey: ["categories"],
+    queryKey: ['categories'],
     queryFn: async () => rpc(() => api.categories.$get()),
     staleTime: 10 * 60 * 1000,
   });
 
   const mutation = useMutation({
-    mutationKey: ["new-location"],
+    mutationKey: ['new-location'],
     mutationFn: async (payload: FormInput) =>
       rpc(() =>
         api.locations.$post({
@@ -71,7 +71,7 @@ function NewLocationForm() {
         })
       ),
     onSuccess: () => {
-      router.push("/dashboard");
+      router.push('/dashboard');
     },
     onError: (e) => {
       console.error(e);
@@ -100,7 +100,7 @@ function NewLocationForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-xl mt-16"
+        className="mt-16 max-w-xl space-y-8"
       >
         <FormField
           control={form.control}
@@ -109,7 +109,10 @@ function NewLocationForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Name of the location" {...field} />
+                <Input
+                  placeholder="Name of the location"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>Name of the location</FormDescription>
               <FormMessage />
@@ -250,7 +253,10 @@ function NewLocationForm() {
                 </FormControl>
                 <SelectContent>
                   {(categories ?? []).map((c) => (
-                    <SelectItem value={`${c.id}`} key={c.id}>
+                    <SelectItem
+                      value={`${c.id}`}
+                      key={c.id}
+                    >
                       {c.name}
                     </SelectItem>
                   ))}

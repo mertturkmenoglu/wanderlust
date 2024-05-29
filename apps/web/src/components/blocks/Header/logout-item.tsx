@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@clerk/nextjs";
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@clerk/nextjs';
 
 function LogoutItem(): React.ReactElement {
   const { signOut } = useAuth();

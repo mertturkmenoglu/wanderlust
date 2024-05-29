@@ -1,16 +1,5 @@
-import Link from "next/link";
-import Image from "next/image";
-import Logo from "@/app/icon.png";
-import {
-  ClerkLoaded,
-  ClerkLoading,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Logo from '@/app/icon.png';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,10 +8,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { UserIcon } from "lucide-react";
-import { currentUser } from "@clerk/nextjs/server";
-import LogoutItem from "./logout-item";
+} from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+} from '@clerk/nextjs';
+import { currentUser } from '@clerk/nextjs/server';
+import { UserIcon } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import LogoutItem from './logout-item';
 
 type Props = React.HTMLAttributes<HTMLElement>;
 
@@ -31,11 +31,15 @@ async function Header({ className, ...props }: Props) {
 
   return (
     <header
-      className={cn("flex items-center justify-between", className)}
+      className={cn('flex items-center justify-between', className)}
       {...props}
     >
       <Link href="/">
-        <Image src={Logo} alt="Wanderlust" className="size-12" />
+        <Image
+          src={Logo}
+          alt="Wanderlust"
+          className="size-12"
+        />
       </Link>
 
       <nav>
@@ -43,7 +47,7 @@ async function Header({ className, ...props }: Props) {
           <li>
             <Link
               href="/discover/locations"
-              className="hover:bg-muted px-4 py-2 rounded-full block"
+              className="block rounded-full px-4 py-2 hover:bg-muted"
             >
               Locations
             </Link>
@@ -51,7 +55,7 @@ async function Header({ className, ...props }: Props) {
           <li>
             <Link
               href="/discover/events"
-              className="hover:bg-muted px-4 py-2 rounded-full block"
+              className="block rounded-full px-4 py-2 hover:bg-muted"
             >
               Events
             </Link>
@@ -59,12 +63,15 @@ async function Header({ className, ...props }: Props) {
         </ul>
       </nav>
       <ClerkLoading>
-        <Skeleton className="size-8 rounded-full px-10 bg-muted" />
+        <Skeleton className="size-8 rounded-full bg-muted px-10" />
       </ClerkLoading>
       <ClerkLoaded>
         <SignedOut>
           <SignInButton>
-            <Button variant="default" className="rounded-full">
+            <Button
+              variant="default"
+              className="rounded-full"
+            >
               Sign in
             </Button>
           </SignInButton>
@@ -72,12 +79,18 @@ async function Header({ className, ...props }: Props) {
         <SignedIn>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="rounded-full" variant="ghost">
+              <Button
+                className="rounded-full"
+                variant="ghost"
+              >
                 <UserIcon className="size-6 text-black" />
                 <span className="ml-2">{user?.firstName}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
+            <DropdownMenuContent
+              className="w-56"
+              align="end"
+            >
               <DropdownMenuLabel>{user?.fullName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>

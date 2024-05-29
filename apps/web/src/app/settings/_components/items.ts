@@ -5,15 +5,15 @@ export type Item = {
 
 export const items = [
   {
-    text: "General",
-    href: "/settings",
+    text: 'General',
+    href: '/settings',
   },
   {
-    text: "Profile",
-    href: "/settings/profile",
+    text: 'Profile',
+    href: '/settings/profile',
   },
   {
-    text: "Dashboard",
-    href: "/dashboard",
+    text: 'Dashboard',
+    href: '/dashboard',
   },
 ] as const satisfies Item[];

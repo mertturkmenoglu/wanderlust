@@ -1,11 +1,11 @@
-import NewLocationForm from "./_components/form";
+import NewLocationForm from './_components/form';
 
 function Page() {
   return (
     <div>
       <div>
         <div>
-          <h3 className="text-lg font-bold tracking-tight my-8">
+          <h3 className="my-8 text-lg font-bold tracking-tight">
             Create New Location
           </h3>
           <NewLocationForm />

@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import Header from "@/components/blocks/Header";
-import QClientProvider from "@/providers/query-provider";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Header from '@/components/blocks/Header';
+import QClientProvider from '@/providers/query-provider';
+import { ClerkProvider } from '@clerk/nextjs';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Wanderlust",
-  description: "Inspiring explorations, one spark of Wanderlust!",
+  title: 'Wanderlust',
+  description: 'Inspiring explorations, one spark of Wanderlust!',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={"mx-4 md:mx-8 lg:mx-16 2xl:mx-32 " + inter.className}>
+        <body className={'mx-4 md:mx-8 lg:mx-16 2xl:mx-32 ' + inter.className}>
           <QClientProvider>
             <Header className="my-4" />
             <main>{children}</main>

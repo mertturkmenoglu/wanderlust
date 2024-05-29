@@ -1,15 +1,15 @@
-import { canAccessOrg } from "@/lib/org-access";
-import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { PropsWithChildren } from "react";
+import { canAccessOrg } from '@/lib/org-access';
+import { auth } from '@clerk/nextjs/server';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { PropsWithChildren } from 'react';
 
 function Layout({ children }: PropsWithChildren) {
   auth().protect();
   const ok = canAccessOrg();
 
   if (!ok) {
-    redirect("/");
+    redirect('/');
   }
 
   return (

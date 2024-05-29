@@ -1,13 +1,13 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { api, rpc } from "@/lib/api";
-import { currentUser as clerkCurrentUser } from "@clerk/nextjs/server";
-import clsx from "clsx";
-import { BadgeCheckIcon } from "lucide-react";
-import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { api, rpc } from '@/lib/api';
+import { currentUser as clerkCurrentUser } from '@clerk/nextjs/server';
+import clsx from 'clsx';
+import { BadgeCheckIcon } from 'lucide-react';
+import Link from 'next/link';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 
 async function getUser(username: string) {
   return rpc(() =>
-    api.users[":username"].profile.$get({
+    api.users[':username'].profile.$get({
       param: {
         username: username,
       },
@@ -32,11 +32,14 @@ export default async function Bio({ username, className }: Props) {
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
-    <div className={clsx("container", className)}>
+    <div className={clsx('container', className)}>
       <div className="flex flex-col items-center md:flex-row md:justify-between">
         <div className="flex flex-col items-center gap-4 md:flex-row">
           <Avatar className="size-24">
-            <AvatarImage src={user.image ?? ""} className="size-24" />
+            <AvatarImage
+              src={user.image ?? ''}
+              className="size-24"
+            />
             <AvatarFallback>
               <Skeleton className="size-24 rounded-full" />
             </AvatarFallback>
@@ -47,7 +50,7 @@ export default async function Bio({ username, className }: Props) {
             <h2 className="text-xl font-medium">{fullName}</h2>
             <h3 className="text-base text-primary">@{user.username}</h3>
             {user.isVerified && (
-              <div className="flex items-center gap-2 mt-2">
+              <div className="mt-2 flex items-center gap-2">
                 <BadgeCheckIcon className="size-6 text-primary" />
                 <span className="text-sm text-gray-500">Verified</span>
               </div>
@@ -55,7 +58,7 @@ export default async function Bio({ username, className }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 mt-8 md:mt-0 flex-col md:flex-row">
+        <div className="mt-8 flex flex-col items-center gap-4 md:mt-0 md:flex-row">
           {/* Followers */}
           <div className="flex items-center gap-4">
             <Link
@@ -77,7 +80,10 @@ export default async function Bio({ username, className }: Props) {
 
           {/* Action Button */}
           {isThisUser ? (
-            <Button asChild variant="secondary">
+            <Button
+              asChild
+              variant="secondary"
+            >
               <Link href="/settings">Settings</Link>
             </Button>
           ) : (
@@ -86,7 +92,7 @@ export default async function Bio({ username, className }: Props) {
         </div>
       </div>
 
-      <div className="my-4 md:mx-28 text-center md:text-left">
+      <div className="my-4 text-center md:mx-28 md:text-left">
         {user.bio && (
           <p className="leading-7 [&:not(:first-child)]:mt-6">{user.bio}</p>
         )}

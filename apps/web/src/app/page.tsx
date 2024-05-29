@@ -1,19 +1,19 @@
-import CategoryNavigation from "@/components/blocks/CategoryNavigation";
-import UpcomingEvents from "@/components/blocks/UpcomingEvents";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import CategoryNavigation from '@/components/blocks/CategoryNavigation';
+import UpcomingEvents from '@/components/blocks/UpcomingEvents';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { api, rpc } from "@/lib/api";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
+} from '@/components/ui/card';
+import { api, rpc } from '@/lib/api';
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 async function peekLocations() {
@@ -25,37 +25,46 @@ export default async function Home() {
 
   return (
     <main className="">
-      <nav className="mx-auto flex justify-center my-12 items-center space-x-4">
+      <nav className="mx-auto my-12 flex items-center justify-center space-x-4">
         <input
-          className="border border-muted-foreground w-10/12 lg:w-1/2 py-4 rounded-full px-8"
+          className="w-10/12 rounded-full border border-muted-foreground px-8 py-4 lg:w-1/2"
           placeholder="Search a location or an event"
         />
 
-        <Button size="icon" className="rounded-full size-12">
+        <Button
+          size="icon"
+          className="size-12 rounded-full"
+        >
           <MagnifyingGlassIcon className="size-6" />
         </Button>
       </nav>
 
       <CategoryNavigation />
 
-      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tighter lg:text-3xl text-accent-foreground mt-12">
+      <h2 className="mt-12 scroll-m-20 text-2xl font-semibold tracking-tighter text-accent-foreground lg:text-3xl">
         Upcoming Events
       </h2>
 
       <UpcomingEvents />
 
-      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tighter lg:text-3xl text-accent-foreground mt-12">
+      <h2 className="mt-12 scroll-m-20 text-2xl font-semibold tracking-tighter text-accent-foreground lg:text-3xl">
         New Locations
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 my-8">
+      <div className="my-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
         {data.map((location) => (
-          <Link key={location.id} href={`/location/${location.id}`}>
-            <Card key={location.id} className="group">
+          <Link
+            key={location.id}
+            href={`/location/${location.id}`}
+          >
+            <Card
+              key={location.id}
+              className="group"
+            >
               <img
                 src={location.media.slice(0, 1)[0].url}
                 alt={location.media.slice(0, 1)[0].alt}
-                className="aspect-video rounded-t-xl w-full object-cover"
+                className="aspect-video w-full rounded-t-xl object-cover"
                 width={512}
                 height={288}
               />
@@ -72,9 +81,12 @@ export default async function Home() {
                   <p className="text-sm leading-none">
                     {location.category.name}
                   </p>
-                  <div className="flex items-center gap-2 pt-4 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-2 pt-4">
                     {location.tags.map((tag) => (
-                      <Badge key={tag} className="text-xs capitalize">
+                      <Badge
+                        key={tag}
+                        className="text-xs capitalize"
+                      >
                         {tag}
                       </Badge>
                     ))}
