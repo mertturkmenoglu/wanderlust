@@ -1,6 +1,7 @@
 import EmptyContent from '@/components/blocks/EmptyContent';
 
 import { api, rpc } from '@/lib/api';
+import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
 import InformationTable from './_components/information-table';
@@ -40,9 +41,14 @@ export default async function Page({ params: { id } }: Props) {
         <Carousel media={location.media} />
 
         <div>
-          <h2 className="mt-8 line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
-            {location.name}
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
+              {location.name}
+            </h2>
+
+            <BookmarkButton locationId={location.id} />
+          </div>
+
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
           <p className="mt-2 text-sm text-gray-500">{location.description}</p>
           <h2 className="mt-8 text-lg font-bold">Information</h2>

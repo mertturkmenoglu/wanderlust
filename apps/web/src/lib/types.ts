@@ -9,3 +9,7 @@ const locationFnRef = api.locations[':id'].$get;
 export type Location = InferResponseType<typeof locationFnRef>['data'];
 
 export type Media = ArrayElement<Location['media']>;
+
+export type Bookmarks = InferResponseType<typeof api.bookmarks.$get>['data'];
+
+export type Bookmark = ArrayElement<Bookmarks>;
