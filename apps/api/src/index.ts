@@ -5,6 +5,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import { runDrizzleMigrations } from './db';
 import { initEventHandlers } from './events';
 import {
+  bookmarksRouter,
   categoriesRouter,
   eventsRouter,
   healthRouter,
@@ -29,7 +30,8 @@ const app = new Hono<Env>()
   .route('/users', usersRouter)
   .route('/locations', locationsRouter)
   .route('/categories', categoriesRouter)
-  .route('/events', eventsRouter);
+  .route('/events', eventsRouter)
+  .route('/bookmarks', bookmarksRouter);
 
 Bun.serve({
   port: env.PORT,

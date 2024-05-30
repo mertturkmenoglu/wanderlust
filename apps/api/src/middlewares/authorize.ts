@@ -29,6 +29,9 @@ const mapping = {
   'read-address': () => true,
   'delete-address': isAdmin,
   'update-address': isAdmin,
+  'create-bookmark': () => true,
+  'read-bookmark': () => true,
+  'delete-bookmark': () => true,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (payload: Payload): MiddlewareHandler => {
