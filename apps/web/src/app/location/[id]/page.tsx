@@ -37,7 +37,7 @@ export default async function Page({ params: { id } }: Props) {
         locationName={location.name}
       />
 
-      <div className="flex flex-col justify-between gap-8 lg:flex-row lg:gap-32">
+      <div className="mt-8 flex flex-col items-center justify-between gap-8 lg:flex-row lg:gap-32">
         <Carousel media={location.media} />
 
         <div>

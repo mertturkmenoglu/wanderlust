@@ -55,7 +55,7 @@ export default function InformationTable({ location }: Props) {
 
         <TableRow>
           <TableCell className="font-medium">Price level</TableCell>
-          <TableCell className="flex justify-end">
+          <TableCell className="mt-1 flex justify-end">
             <Progress
               value={location.priceLevel * 19.8}
               className="max-w-32"
@@ -65,7 +65,7 @@ export default function InformationTable({ location }: Props) {
 
         <TableRow>
           <TableCell className="font-medium">Accessibility level</TableCell>
-          <TableCell className="flex justify-end">
+          <TableCell className="mt-1 flex justify-end">
             <Progress
               value={location.accessibilityLevel * 19.8}
               className="max-w-32"

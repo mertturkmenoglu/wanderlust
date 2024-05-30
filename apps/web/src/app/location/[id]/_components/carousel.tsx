@@ -13,7 +13,7 @@ type Props = {
 
 export default function Carousel({ media }: Props) {
   return (
-    <ShadcnCarousel className="mx-auto mt-8 w-full max-w-xl lg:min-w-96">
+    <ShadcnCarousel className="mx-auto flex w-full max-w-xl items-center lg:min-w-96">
       <CarouselContent>
         {media.map((media, index) => (
           <CarouselItem key={index}>
