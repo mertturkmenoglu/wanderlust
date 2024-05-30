@@ -1,5 +1,13 @@
-import { eq } from 'drizzle-orm';
-import { Address, Media, db, locations } from '../../db';
+import { and, eq } from 'drizzle-orm';
+import {
+  Address,
+  Media,
+  cities,
+  countries,
+  db,
+  locations,
+  states,
+} from '../../db';
 import { CreateLocationDto, UpdateLocationDto } from './dto';
 
 export async function peek() {
@@ -10,6 +18,37 @@ export async function peek() {
       category: true,
     },
   });
+}
+
+export async function getCountries() {
+  return await db
+    .select({
+      id: countries.id,
+      name: countries.name,
+      iso2: countries.iso2,
+    })
+    .from(countries);
+}
+
+export async function getStates(countryId: number) {
+  return await db
+    .select({
+      id: states.id,
+      name: states.name,
+      stateCode: states.stateCode,
+    })
+    .from(states)
+    .where(eq(states.countryId, countryId));
+}
+
+export async function getCities(countryId: number, stateId: number) {
+  return await db
+    .select({
+      id: cities.id,
+      name: cities.name,
+    })
+    .from(cities)
+    .where(and(eq(cities.stateId, stateId), eq(cities.countryId, countryId)));
 }
 
 export async function getById(id: string) {

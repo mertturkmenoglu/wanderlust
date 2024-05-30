@@ -7,7 +7,12 @@ import { authorize, getAuth, rateLimiter } from '../../middlewares';
 import * as search from '../../search';
 import { Env, onlyDev } from '../../start';
 import { validateId } from '../dto';
-import { createLocationSchema, updateLocationSchema } from './dto';
+import {
+  createLocationSchema,
+  getCitiesSchema,
+  getStatesSchema,
+  updateLocationSchema,
+} from './dto';
 import * as repository from './repository';
 
 const factory = createFactory<Env>();
@@ -22,6 +27,47 @@ const peek = factory.createHandlers(async (c) => {
     200
   );
 });
+
+const countries = factory.createHandlers(async (c) => {
+  const results = await repository.getCountries();
+
+  return c.json(
+    {
+      data: results,
+    },
+    200
+  );
+});
+
+const states = factory.createHandlers(
+  zValidator('query', getStatesSchema),
+  async (c) => {
+    const { countryId } = c.req.valid('query');
+    const results = await repository.getStates(countryId);
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  }
+);
+
+const cities = factory.createHandlers(
+  zValidator('query', getCitiesSchema),
+  async (c) => {
+    const { countryId, stateId } = c.req.valid('query');
+    const results = await repository.getCities(countryId, stateId);
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  }
+);
 
 const getById = factory.createHandlers(
   zValidator('param', validateId),
@@ -129,6 +175,9 @@ const deleteLocation = factory.createHandlers(
 export const locationsRouter = new Hono()
   .use(rateLimiter())
   .get('/peek', ...peek)
+  .get('/countries', ...countries)
+  .get('/states', ...states)
+  .get('/cities', ...cities)
   .get('/:id', ...getById)
   .post('/', ...create)
   .patch('/:id', ...update)

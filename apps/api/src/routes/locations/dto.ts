@@ -15,3 +15,12 @@ export const updateLocationSchema = createInsertSchema(locations)
   .partial();
 
 export type UpdateLocationDto = z.infer<typeof updateLocationSchema>;
+
+export const getStatesSchema = z.object({
+  countryId: z.coerce.number().int(),
+});
+
+export const getCitiesSchema = z.object({
+  countryId: z.coerce.number().int(),
+  stateId: z.coerce.number().int(),
+});
