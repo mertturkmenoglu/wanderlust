@@ -73,13 +73,13 @@ export default function InformationTable({ location }: Props) {
           </TableCell>
         </TableRow>
 
-        <TableRow>
-          <TableCell className="font-medium">Tags</TableCell>
-          <TableCell className="flex flex-col items-end gap-2">
+        <TableRow className="">
+          <TableCell className="flex-grow font-medium">Tags</TableCell>
+          <TableCell className="self- ml-auto flex max-w-72 flex-wrap justify-end gap-2">
             {location.tags.map((tag) => (
               <Badge
                 key={tag}
-                className="mr-2"
+                className="capitalize"
               >
                 {tag}
               </Badge>
