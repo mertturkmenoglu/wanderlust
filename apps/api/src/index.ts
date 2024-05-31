@@ -10,6 +10,7 @@ import {
   eventsRouter,
   healthRouter,
   locationsRouter,
+  reviewsRouter,
   usersRouter,
   webhooksRouter,
 } from './routes';
@@ -31,7 +32,8 @@ const app = new Hono<Env>()
   .route('/locations', locationsRouter)
   .route('/categories', categoriesRouter)
   .route('/events', eventsRouter)
-  .route('/bookmarks', bookmarksRouter);
+  .route('/bookmarks', bookmarksRouter)
+  .route('/reviews', reviewsRouter);
 
 Bun.serve({
   port: env.PORT,

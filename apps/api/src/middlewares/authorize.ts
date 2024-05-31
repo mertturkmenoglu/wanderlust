@@ -32,6 +32,10 @@ const mapping = {
   'create-bookmark': () => true,
   'read-bookmark': () => true,
   'delete-bookmark': () => true,
+  'create-review': () => true,
+  'read-review': () => true,
+  'delete-review': () => true,
+  'update-review': () => true,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (payload: Payload): MiddlewareHandler => {
