@@ -332,7 +332,6 @@ export const reviews = pgTable(
     return {
       reviewsUserIdx: index('reviews_user_idx').on(table.userId),
       reviewsLocationIdx: index('reviews_location_idx').on(table.locationId),
-      reviewsUniqueIdx: unique().on(table.userId, table.locationId),
     };
   }
 );

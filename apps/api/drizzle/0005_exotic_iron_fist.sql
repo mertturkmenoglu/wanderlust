@@ -1,0 +1,1 @@
+ALTER TABLE "reviews" DROP CONSTRAINT "reviews_user_id_location_id_unique";
