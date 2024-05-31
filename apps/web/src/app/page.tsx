@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api, rpc } from '@/lib/api';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
@@ -44,7 +45,7 @@ export default async function Home() {
         New Locations
       </h2>
 
-      <div className="my-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
+      <div className="my-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {data.map((location) => (
           <Link
             key={location.id}
@@ -63,8 +64,10 @@ export default async function Home() {
               />
 
               <CardHeader>
-                <CardTitle>{location.name}</CardTitle>
-                <CardDescription>
+                <CardTitle className="line-clamp-1 capitalize">
+                  {location.name}
+                </CardTitle>
+                <CardDescription className="line-clamp-1">
                   {location.address.city} / {location.address.state}
                 </CardDescription>
               </CardHeader>
@@ -74,16 +77,20 @@ export default async function Home() {
                   <p className="text-sm leading-none">
                     {location.category.name}
                   </p>
-                  <div className="flex flex-wrap items-center gap-2 pt-4">
-                    {location.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        className="text-xs capitalize"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+                  <ScrollArea>
+                    <ul className="my-4 flex items-center gap-2">
+                      {location.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          className="text-xs capitalize"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </ul>
+
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                 </div>
               </CardContent>
             </Card>
