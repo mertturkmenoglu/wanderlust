@@ -30,7 +30,7 @@ export default async function Page({ params: { id } }: Props) {
   const location = await getLocation(id);
 
   return (
-    <main className="container mt-16">
+    <main className="container mx-auto mt-8 px-4 md:mt-16">
       <Breadcrumb
         categoryId={location.category.id}
         categoryName={location.category.name}
