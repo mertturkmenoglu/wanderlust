@@ -10,7 +10,12 @@ type Options = {
 };
 
 export const rateLimiter = (options?: Options): MiddlewareHandler => {
-  const { window = 10 * 60 * 1000, limit = 100 } = options ?? {};
+  let { window = 10 * 60 * 1000, limit = 100 } = options ?? {};
+
+  if (Bun.env.NODE_ENV === 'development') {
+    window = 1 * 1000;
+    limit = 1000;
+  }
 
   return createMiddleware<Env>(
     honoRateLimiter({
