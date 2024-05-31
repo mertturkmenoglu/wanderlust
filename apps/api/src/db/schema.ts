@@ -308,3 +308,61 @@ export const cities = pgTable('cities', {
   longitude: doublePrecision('longitude').notNull(),
   wikiDataId: text('wiki_data_id').notNull(),
 });
+
+export const reviews = pgTable(
+  'reviews',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    locationId: uuid('location_id')
+      .notNull()
+      .references(() => locations.id),
+    rating: smallint('rating').notNull(),
+    comment: text('comment').notNull(),
+    likeCount: integer('like_count').notNull().default(0),
+    media: json('media').$type<Media[]>().notNull().default([]),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { mode: 'date', precision: 3 })
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => {
+    return {
+      reviewsUserIdx: index('reviews_user_idx').on(table.userId),
+      reviewsLocationIdx: index('reviews_location_idx').on(table.locationId),
+      reviewsUniqueIdx: unique().on(table.userId, table.locationId),
+    };
+  }
+);
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  user: one(users, {
+    fields: [reviews.userId],
+    references: [users.id],
+  }),
+  location: one(locations, {
+    fields: [reviews.locationId],
+    references: [locations.id],
+  }),
+}));
+
+export const reviewLikes = pgTable(
+  'review_likes',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    reviewId: uuid('review_id')
+      .notNull()
+      .references(() => reviews.id),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      reviewLikesUserIdx: index('review_likes_user_idx').on(table.userId),
+      uniqueReviewLikes: unique().on(table.userId, table.reviewId),
+    };
+  }
+);

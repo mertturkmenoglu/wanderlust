@@ -29,6 +29,13 @@
       "when": 1717006898991,
       "tag": "0003_naive_pandemic",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1717165577620,
+      "tag": "0004_rich_penance",
+      "breakpoints": true
     }
   ]
 }
