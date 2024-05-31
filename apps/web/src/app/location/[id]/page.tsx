@@ -1,11 +1,10 @@
-import EmptyContent from '@/components/blocks/EmptyContent';
-
 import { api, rpc } from '@/lib/api';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
 import InformationTable from './_components/information-table';
 import LocationMap from './_components/location-map';
+import Reviews from './_components/reviews';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -61,12 +60,7 @@ export default async function Page({ params: { id } }: Props) {
       <hr className="my-8" />
 
       {/* reviews */}
-      <h2 className="text-2xl font-bold">Reviews</h2>
-
-      <EmptyContent
-        className="mt-16"
-        showBackButton={false}
-      />
+      <Reviews locationId={location.id} />
     </main>
   );
 }
