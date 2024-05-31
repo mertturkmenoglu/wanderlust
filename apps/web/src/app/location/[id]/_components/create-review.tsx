@@ -26,7 +26,7 @@ export default function CreateReview() {
       setError((prev) => [...prev, 'Please select a rating']);
     }
 
-    if (error.length > 0) {
+    if (!comment || rating === 0) {
       return;
     }
 
