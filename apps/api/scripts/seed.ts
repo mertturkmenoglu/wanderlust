@@ -6,8 +6,8 @@ import { CreateLocationDto } from '../src/routes/locations/dto';
 
 const client = hc<AppType>(`http://localhost:${Bun.env.PORT}`);
 
-async function bootstrap() {
-  logger.warn('checking server', { suffix: 'npm i' });
+async function checkServer() {
+  logger.warn('checking server');
 
   try {
     const res = await client.api.health.$get();
@@ -21,6 +21,12 @@ async function bootstrap() {
     logger.error('Server is not running');
     process.exit(1);
   }
+}
+
+async function bootstrap() {
+  await checkServer();
+
+  console.log();
 
   const { type } = await e.prompt<{ type: string }>({
     type: 'select',
@@ -29,11 +35,14 @@ async function bootstrap() {
     choices: ['locations', 'events', 'categories'],
   });
 
-  const { jwt } = await e.prompt<{ jwt: string }>({
-    type: 'input',
-    message: 'Enter your JWT token (without Bearer)',
-    name: 'jwt',
-  });
+  const jwt = Bun.env.TEST_JWT;
+
+  if (!jwt) {
+    logger.error(
+      'TEST_JWT not found in your environment variables. Exiting...'
+    );
+    process.exit(1);
+  }
 
   if (type === 'locations') {
     await seedLocations(jwt);
@@ -43,16 +52,19 @@ async function bootstrap() {
 }
 
 async function seedLocations(jwt: string) {
-  const file = Bun.file('scripts/data/locations.json');
+  const path = 'scripts/data/locations.json';
+  logger.info(`Reading locations data from: ${path}`);
+  const file = Bun.file(path);
 
   if (!file.exists()) {
-    logger.error('No locations data found');
+    logger.error(`Cannot find locations data file at ${path}. Exiting...`);
     process.exit(1);
   }
 
   const dtos: CreateLocationDto[] = await file.json();
 
   logger.info(`Seeding ${dtos.length} locations`);
+  console.time('seed-locations');
   let i = 1;
 
   for (const dto of dtos) {
@@ -76,6 +88,8 @@ async function seedLocations(jwt: string) {
     logger.info('Seeded location');
     i++;
   }
+
+  console.timeEnd('seed-locations');
 
   logger.info('Seeded all locations');
 }

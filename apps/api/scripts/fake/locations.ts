@@ -1,47 +1,28 @@
 import { faker } from '@faker-js/faker';
 import e from 'enquirer';
-import { logger } from '../src/logger';
-import { CreateLocationDto } from '../src/routes/locations/dto';
+import { logger } from '../../src/logger';
+import { CreateLocationDto } from '../../src/routes/locations/dto';
 
-async function bootstrap() {
-  const { type } = await e.prompt<{ type: string }>({
-    type: 'select',
-    message: 'What do you want to generate?',
-    name: 'type',
-    choices: ['locations', 'events', 'categories'],
-  });
-
+export async function handler() {
   const { count } = await e.prompt<{ count: number }>({
     type: 'numeral',
     message: 'How many do you want to generate?',
     name: 'count',
   });
 
-  if (count < 0 || count > 10_000 || (type !== 'categories' && count === 0)) {
-    console.error('Invalid count');
+  if (count <= 0 || count > 10_000) {
+    logger.error('Invalid count: must be between 1 and 10,000');
     process.exit(1);
   }
 
-  logger.info(`Generating ${count} ${type}`);
-  let res: any[] = [];
+  logger.info(`Generating ${count} locations`);
+  const res = await generate(count);
+  await write(res);
 
-  if (type === 'locations') {
-    res = await generateLocations(count);
-  } else if (type === 'events') {
-    res = await generateEvents(count);
-  } else {
-    res = await generateCategories();
-  }
-
-  logger.info(`Generated ${res.length} ${type}`);
-  logger.info('Writing to file...');
-
-  Bun.write(`scripts/data/${type}.json`, JSON.stringify(res, null, 2));
-
-  logger.info('Done!');
+  logger.info('Fake locations data written to scripts/data/locations.json');
 }
 
-async function generateLocations(count: number) {
+async function generate(count: number) {
   const locations: CreateLocationDto[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -87,30 +68,8 @@ async function generateLocations(count: number) {
   return locations;
 }
 
-async function generateEvents(count: number) {
-  logger.error('Not implemented yet.');
-  return [];
+async function write(data: CreateLocationDto[]) {
+  logger.info(`Generated ${data.length} locations`);
+  logger.info('Writing to file...');
+  await Bun.write(`scripts/data/locations.json`, JSON.stringify(data, null, 2));
 }
-
-async function generateCategories() {
-  return [
-    { id: 1, name: 'Coffe Shops' },
-    { id: 2, name: 'Restaurants' },
-    { id: 3, name: 'Bookstores' },
-    { id: 4, name: 'Natural Landmarks' },
-    { id: 5, name: 'Breweries' },
-    { id: 6, name: 'Bars & Clubs' },
-    { id: 7, name: 'Community Hubs' },
-    { id: 8, name: 'Co-working Spaces' },
-    { id: 9, name: 'Wellness Centers' },
-    { id: 10, name: 'Photography Spots' },
-    { id: 11, name: 'Artisanal Bakeries' },
-    { id: 12, name: 'Street Art & Murals' },
-    { id: 13, name: 'Street Food Vendors' },
-    { id: 14, name: 'Workshops' },
-    { id: 15, name: 'Specialty Shops' },
-    { id: 16, name: 'Famous Filming Locations' },
-  ];
-}
-
-bootstrap();
