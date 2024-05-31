@@ -63,7 +63,7 @@ export default async function NewLocations() {
                       {location.tags.map((tag) => (
                         <Badge
                           key={tag}
-                          className="text-xs capitalize"
+                          className="text-nowrap text-xs capitalize"
                         >
                           {tag}
                         </Badge>
