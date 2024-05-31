@@ -12,20 +12,20 @@ export default function InformationTable({ location }: Props) {
     <Table>
       <TableBody>
         <TableRow>
-          <TableCell className="font-medium">Has WiFi</TableCell>
+          <TableCell className="px-0 font-medium">Has WiFi</TableCell>
           <TableCell className="text-right">
             {location.hasWifi ? 'Yes' : 'No'}
           </TableCell>
         </TableRow>
 
         <TableRow>
-          <TableCell className="font-medium">Phone</TableCell>
+          <TableCell className="px-0 font-medium">Phone</TableCell>
           <TableCell className="text-right">{location.phone}</TableCell>
         </TableRow>
 
         {location.website && (
           <TableRow>
-            <TableCell className="font-medium">Website</TableCell>
+            <TableCell className="px-0 font-medium">Website</TableCell>
             <TableCell className="text-right">
               <a
                 href={location.website}
@@ -40,7 +40,7 @@ export default function InformationTable({ location }: Props) {
         )}
 
         <TableRow>
-          <TableCell className="font-medium">Address</TableCell>
+          <TableCell className="px-0 font-medium">Address</TableCell>
           <TableCell className="text-right">
             {location.address.line1}
             <br />
@@ -54,7 +54,7 @@ export default function InformationTable({ location }: Props) {
         </TableRow>
 
         <TableRow>
-          <TableCell className="font-medium">Price level</TableCell>
+          <TableCell className="px-0 font-medium">Price level</TableCell>
           <TableCell className="mt-1 flex justify-end">
             <Progress
               value={location.priceLevel * 19.8}
@@ -64,7 +64,9 @@ export default function InformationTable({ location }: Props) {
         </TableRow>
 
         <TableRow>
-          <TableCell className="font-medium">Accessibility level</TableCell>
+          <TableCell className="px-0 font-medium">
+            Accessibility level
+          </TableCell>
           <TableCell className="mt-1 flex justify-end">
             <Progress
               value={location.accessibilityLevel * 19.8}
@@ -73,8 +75,8 @@ export default function InformationTable({ location }: Props) {
           </TableCell>
         </TableRow>
 
-        <TableRow className="">
-          <TableCell className="flex-grow font-medium">Tags</TableCell>
+        <TableRow>
+          <TableCell className="flex-grow px-0 font-medium">Tags</TableCell>
           <TableCell className="self- ml-auto flex max-w-72 flex-wrap justify-end gap-2">
             {location.tags.map((tag) => (
               <Badge
