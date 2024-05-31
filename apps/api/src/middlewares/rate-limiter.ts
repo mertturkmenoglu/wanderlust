@@ -14,7 +14,7 @@ export const rateLimiter = (options?: Options): MiddlewareHandler => {
 
   if (Bun.env.NODE_ENV === 'development') {
     window = 1 * 1000;
-    limit = 1000;
+    limit = 10_000;
   }
 
   return createMiddleware<Env>(
