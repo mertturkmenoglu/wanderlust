@@ -15,13 +15,15 @@ const getNewUploadUrl = factory.createHandlers(
   getAuth,
   zValidator('query', getNewUploadUrlSchema),
   async (c) => {
-    const { type, count } = c.req.valid('query');
+    const { type, count, mime } = c.req.valid('query');
     const auth = c.get('auth');
     const data = [];
 
     for (let i = 0; i < count; i++) {
       const rnd = crypto.randomUUID();
-      const url = await minioClient.presignedPutObject(type, rnd, 60 * 15);
+      const ext = mime.split('/')[1];
+      const dest = `${rnd}.${ext}`;
+      const url = await minioClient.presignedPutObject(type, dest, 60 * 15);
 
       data.push({
         url,
