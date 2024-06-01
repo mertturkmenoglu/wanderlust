@@ -12,6 +12,7 @@ import { Rating } from '@/components/ui/rating';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import Dnd from './dnd';
+import { getDims, postReview, uploadImages } from './helpers';
 import { useUpload } from './use-upload';
 
 type Props = {
@@ -25,7 +26,7 @@ export default function CreateReview({ name, locationId }: Props) {
   const [error, setError] = useState<string[]>([]);
   const [capi, fapi] = useUpload();
 
-  function createReview() {
+  async function createReview() {
     setError([]);
     if (!comment) {
       setError((prev) => [...prev, 'Please enter a comment']);
@@ -38,7 +39,44 @@ export default function CreateReview({ name, locationId }: Props) {
       return;
     }
 
-    console.log('Creating review', { rating, comment, locationId });
+    const count = fapi.acceptedFiles.length;
+    const urls: string[] = [];
+
+    if (count > 0) {
+      const res = await uploadImages(fapi.acceptedFiles);
+      urls.push(...res);
+    }
+
+    if (count > 0 && urls.length !== count) {
+      setError((prev) => [...prev, 'Failed to upload one or more file(s)']);
+      return;
+    }
+
+    const dims = await getDims(fapi.acceptedFiles);
+
+    if (dims.length !== count) {
+      setError((prev) => [
+        ...prev,
+        'Failed to get dimensions for one or more file(s)',
+      ]);
+      return;
+    }
+
+    try {
+      await postReview({
+        comment,
+        rating,
+        locationId,
+        files: fapi.acceptedFiles,
+        urls,
+        dims,
+      });
+
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+      setError((prev) => [...prev, 'Failed to create review']);
+    }
   }
 
   return (
