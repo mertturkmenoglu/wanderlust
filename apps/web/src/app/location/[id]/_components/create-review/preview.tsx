@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getPreview } from './get-preview';
+import { getPreview } from './helpers';
 
 type Props = {
   file: File;
