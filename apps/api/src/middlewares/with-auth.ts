@@ -25,6 +25,7 @@ export const withAuth = createMiddleware<Env>(async (c, next) => {
       .from(auths)
       .where(eq(auths.clerkId, auth.userId));
 
+    c.set('withAuth', authUser);
     c.set('auth', authUser);
   }
 
