@@ -66,8 +66,10 @@ export default async function Page({ params: { id } }: Props) {
 
       <hr className="my-8" />
 
-      {/* reviews */}
-      <Reviews locationId={location.id} />
+      <Reviews
+        locationId={location.id}
+        name={location.name}
+      />
     </main>
   );
 }
