@@ -2,7 +2,7 @@
 
 import EmptyContent from '@/components/blocks/EmptyContent';
 import { Skeleton } from '@/components/ui/skeleton';
-import { api, rpcPaginated } from '@/lib/api';
+import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 
 type Props = {
@@ -13,7 +13,7 @@ export default function ReviewList({ locationId }: Props) {
   const query = useQuery({
     queryKey: ['reviews', locationId],
     queryFn: async () => {
-      return rpcPaginated(() =>
+      return rpc(() =>
         api.reviews.location[':id'].$get({
           param: {
             id: locationId,

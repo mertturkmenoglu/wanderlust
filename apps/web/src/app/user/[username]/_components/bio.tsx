@@ -28,7 +28,7 @@ async function getUser(username: string) {
 export default async function Bio({ username, className }: Props) {
   const currentUser = await clerkCurrentUser();
   const isThisUser = currentUser?.username === username;
-  const user = await getUser(username);
+  const { data: user } = await getUser(username);
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
