@@ -17,9 +17,11 @@ import {
 } from './routes';
 import { initSearch } from './search';
 import { Env, env, getCorsConfig } from './start';
+import { initUpload } from './upload';
 
 await runDrizzleMigrations();
 await initSearch();
+await initUpload();
 initEventHandlers();
 
 const app = new Hono<Env>()
