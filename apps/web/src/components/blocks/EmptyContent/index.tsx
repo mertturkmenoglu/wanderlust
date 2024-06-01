@@ -7,10 +7,12 @@ import Link from 'next/link';
 type Props = {
   className?: string;
   showBackButton?: boolean;
+  errorMessage?: string;
 };
 
 export default function EmptyContent({
   className,
+  errorMessage,
   showBackButton = true,
 }: Props) {
   return (
@@ -25,9 +27,16 @@ export default function EmptyContent({
         alt="Wanderlust"
         className="size-24 grayscale"
       />
-      <p className="text-lg font-semibold text-muted-foreground">
-        It looks like there&apos;s nothing here.
-      </p>
+      {errorMessage && (
+        <p className="text-lg font-semibold text-muted-foreground">
+          {errorMessage}
+        </p>
+      )}
+      {errorMessage === undefined && (
+        <p className="text-lg font-semibold text-muted-foreground">
+          It looks like there&apos;s nothing here.
+        </p>
+      )}
       {showBackButton && (
         <Button
           asChild
