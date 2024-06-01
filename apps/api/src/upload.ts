@@ -10,7 +10,7 @@ export const minioClient = new Minio.Client({
 });
 
 export async function initUpload() {
-  const buckets = [env.MINIO_DEFAULT_BUCKET];
+  const buckets = [env.MINIO_DEFAULT_BUCKET, 'reviews'];
   const location = env.MINIO_LOCATION;
 
   for (const bucket of buckets) {

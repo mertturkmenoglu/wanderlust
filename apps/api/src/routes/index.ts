@@ -4,5 +4,6 @@ export * from './events';
 export * from './health';
 export * from './locations';
 export * from './reviews';
+export * from './uploads';
 export * from './users';
 export * from './webhooks';
