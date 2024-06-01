@@ -8,6 +8,7 @@ import {
   locations,
   states,
 } from '../../db';
+import * as bookmarksRepository from '../bookmarks/repository';
 import { CreateLocationDto, UpdateLocationDto } from './dto';
 
 export async function peek() {
@@ -51,13 +52,19 @@ export async function getCities(countryId: number, stateId: number) {
     .where(and(eq(cities.stateId, stateId), eq(cities.countryId, countryId)));
 }
 
-export async function getById(id: string) {
-  return await db.query.locations.findFirst({
+export async function getById(id: string, userId?: string) {
+  const location = await db.query.locations.findFirst({
     where: eq(locations.id, id),
     with: {
       category: true,
     },
   });
+  const isBookmarked = userId
+    ? await bookmarksRepository.isBookmarked(userId, id)
+    : false;
+
+  console.log({ isBookmarked, userId });
+  return { data: location, metadata: { isBookmarked } };
 }
 
 export async function create(dto: CreateLocationDto) {

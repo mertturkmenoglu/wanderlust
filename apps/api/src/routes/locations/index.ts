@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import { authorize, getAuth, rateLimiter } from '../../middlewares';
+import { authorize, getAuth, rateLimiter, withAuth } from '../../middlewares';
 import * as search from '../../search';
 import { Env, onlyDev } from '../../start';
 import { validateId } from '../dto';
@@ -70,13 +70,16 @@ const cities = factory.createHandlers(
 );
 
 const getById = factory.createHandlers(
+  clerkMiddleware(),
+  withAuth,
   zValidator('param', validateId),
   async (c) => {
     const { id } = c.req.valid('param');
+    const auth = c.get('withAuth');
 
-    const location = await repository.getById(id);
+    const { data, metadata } = await repository.getById(id, auth?.userId);
 
-    if (!location) {
+    if (!data) {
       throw new HTTPException(404, {
         message: 'Not found',
       });
@@ -84,7 +87,8 @@ const getById = factory.createHandlers(
 
     return c.json(
       {
-        data: location,
+        data,
+        metadata,
       },
       200
     );
