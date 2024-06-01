@@ -12,6 +12,8 @@ export const schemas: CollectionCreateSchema[] = [
       { name: 'phone', type: 'string', optional: true },
       { name: 'priceLevel', type: 'int32', facet: true },
       { name: 'accessibilityLevel', type: 'int32', facet: true },
+      { name: 'description', type: 'string', index: true },
+      { name: 'media', type: 'object[]' },
       { name: 'tags', type: 'string[]', facet: true },
       { name: 'categoryId', type: 'int32', facet: true },
       { name: 'createdAt', type: 'auto' },
