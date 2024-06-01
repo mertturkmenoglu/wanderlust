@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import CreateReview from './create-review';
-import ReviewList from './review-list';
+import CreateReview from '../create-review';
+import ReviewList from './list';
 
 type Props = {
   name: string;

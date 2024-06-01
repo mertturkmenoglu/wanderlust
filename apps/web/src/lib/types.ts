@@ -13,3 +13,9 @@ export type Media = ArrayElement<Location['media']>;
 export type Bookmarks = InferResponseType<typeof api.bookmarks.$get>['data'];
 
 export type Bookmark = ArrayElement<Bookmarks>;
+
+const reviewsFnRef = api.reviews.location[':id'].$get;
+
+export type Reviews = InferResponseType<typeof reviewsFnRef>['data'];
+
+export type Review = ArrayElement<Reviews>;

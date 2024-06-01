@@ -4,6 +4,7 @@ import EmptyContent from '@/components/blocks/EmptyContent';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
+import ReviewCard from './card';
 
 type Props = {
   locationId: string;
@@ -40,20 +41,20 @@ export default function ReviewList({ locationId }: Props) {
   }
 
   return (
-    <>
+    <div className="my-16 space-y-4">
       {query.data && query.data.data.length === 0 && (
-        <EmptyContent
-          className="my-16"
-          showBackButton={false}
-        />
+        <EmptyContent showBackButton={false} />
       )}
-      {query.data &&
-        query.data.data.map((review) => (
-          <div key={review.id}>
-            <h3>{review.comment}</h3>
-            <p>{review.user.username}</p>
-          </div>
-        ))}
-    </>
+      {query.data && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {query.data.data.map((review) => (
+            <ReviewCard
+              key={review.id}
+              review={review}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
