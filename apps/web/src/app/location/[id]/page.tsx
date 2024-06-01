@@ -1,4 +1,5 @@
 import { api, rpc } from '@/lib/api';
+import { getAuthHeader } from '@/lib/headers';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
@@ -17,16 +18,19 @@ type Props = {
 
 async function getLocation(id: string) {
   return rpc(() =>
-    api.locations[':id'].$get({
-      param: {
-        id,
+    api.locations[':id'].$get(
+      {
+        param: {
+          id,
+        },
       },
-    })
+      getAuthHeader()
+    )
   );
 }
 
 export default async function Page({ params: { id } }: Props) {
-  const location = await getLocation(id);
+  const { data: location, metadata } = await getLocation(id);
 
   return (
     <main className="container mx-auto mt-8 px-4 md:mt-16">
@@ -45,7 +49,10 @@ export default async function Page({ params: { id } }: Props) {
               {location.name}
             </h2>
 
-            <BookmarkButton locationId={location.id} />
+            <BookmarkButton
+              locationId={location.id}
+              isBookmarked={metadata.isBookmarked}
+            />
           </div>
 
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>

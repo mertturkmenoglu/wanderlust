@@ -3,33 +3,23 @@
 import { Button } from '@/components/ui/button';
 import { api, rpc } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BookmarkIcon } from 'lucide-react';
+import { useState } from 'react';
 
 type Props = {
+  isBookmarked: boolean;
   locationId: string;
 };
 
-export default function BookmarkButton({ locationId }: Props) {
+export default function BookmarkButton({ isBookmarked, locationId }: Props) {
+  const [booked, setBooked] = useState(isBookmarked);
   const qc = useQueryClient();
-
-  const query = useQuery({
-    queryKey: ['bookmark', locationId],
-    queryFn: async () => {
-      return rpc(() =>
-        api.bookmarks[':id'].$get({
-          param: {
-            id: locationId,
-          },
-        })
-      );
-    },
-  });
 
   const mutation = useMutation({
     mutationKey: ['bookmark', locationId],
     mutationFn: async () => {
-      if (query.data) {
+      if (booked) {
         return api.bookmarks[':id'].$delete({
           param: {
             id: locationId,
@@ -46,7 +36,7 @@ export default function BookmarkButton({ locationId }: Props) {
       );
     },
     onSuccess: () => {
-      query.refetch();
+      setBooked((prev) => !prev);
       qc.invalidateQueries({ queryKey: ['bookmarks'] });
     },
   });
@@ -58,7 +48,7 @@ export default function BookmarkButton({ locationId }: Props) {
     >
       <BookmarkIcon
         className={cn('size-6 text-primary', {
-          'fill-primary': query.data,
+          'fill-primary': booked,
         })}
       />
     </Button>
