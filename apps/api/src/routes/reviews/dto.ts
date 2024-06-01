@@ -12,7 +12,7 @@ export const createReviewSchema = createInsertSchema(reviews)
   })
   .merge(
     z.object({
-      rating: z.number().int().min(1).max(10),
+      rating: z.number().int().min(1).max(5),
     })
   );
 
@@ -27,7 +27,7 @@ export const updateReviewSchema = createInsertSchema(reviews)
   })
   .merge(
     z.object({
-      rating: z.number().int().min(1).max(10).optional(),
+      rating: z.number().int().min(1).max(5).optional(),
     })
   )
   .partial();
