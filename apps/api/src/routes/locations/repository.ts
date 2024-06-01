@@ -63,7 +63,6 @@ export async function getById(id: string, userId?: string) {
     ? await bookmarksRepository.isBookmarked(userId, id)
     : false;
 
-  console.log({ isBookmarked, userId });
   return { data: location, metadata: { isBookmarked } };
 }
 
