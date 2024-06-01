@@ -14,11 +14,11 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 async function peekLocations() {
-  return await rpc(() => api.locations.peek.$get());
+  return rpc(() => api.locations.peek.$get());
 }
 
 export default async function NewLocations() {
-  const data = await peekLocations();
+  const { data } = await peekLocations();
 
   return (
     <>

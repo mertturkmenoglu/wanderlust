@@ -1,14 +1,14 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { api, rpcPaginated } from '@/lib/api';
+import { api, rpc } from '@/lib/api';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React from 'react';
 import BookmarkCard from './_components/bookmark-card';
 
 function getBookmarks(page: number) {
-  return rpcPaginated(() => api.bookmarks.$get({ query: { page: `${page}` } }));
+  return rpc(() => api.bookmarks.$get({ query: { page: `${page}` } }));
 }
 
 export default function Page() {

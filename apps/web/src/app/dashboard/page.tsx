@@ -23,7 +23,7 @@ function Page() {
         <h3 className="my-4 text-lg font-bold tracking-tight">Points</h3>
         <DataTable
           columns={locationsCols}
-          data={qLocations.data ?? []}
+          data={qLocations.data?.data ?? []}
         />
         <Link
           href="/dashboard/locations/new"
@@ -37,7 +37,7 @@ function Page() {
         <h3 className="my-4 text-lg font-bold tracking-tight">Events</h3>
         <DataTable
           columns={eventCols}
-          data={qEvents.data ?? []}
+          data={qEvents.data?.data ?? []}
         />
         <Link
           href="/dashboard/events/new"
