@@ -3,7 +3,7 @@ import { getAuthHeader } from '@/lib/headers';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
-import InformationTable from './_components/information-table';
+import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Reviews from './_components/reviews';
 
