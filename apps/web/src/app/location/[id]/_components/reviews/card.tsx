@@ -15,12 +15,15 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Rating } from '@/components/ui/rating';
+import { api, rpc } from '@/lib/api';
 import { Review } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 type Props = {
   review: Review;
@@ -29,6 +32,30 @@ type Props = {
 export default function ReviewCard({ review }: Props) {
   const { user } = useUser();
   const belongsToCurrentUser = user?.username === review.user.username;
+  const qc = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationKey: ['deleteReview', review.id],
+    mutationFn: async () => {
+      await rpc(() =>
+        api.reviews[':id'].$delete({
+          param: {
+            id: review.id,
+          },
+        })
+      );
+    },
+    onSuccess: async () => {
+      await qc.invalidateQueries({
+        queryKey: ['reviews', review.locationId],
+      });
+
+      toast.success('Review deleted successfully');
+    },
+    onError: (e) => {
+      toast.error('Failed to delete review');
+    },
+  });
 
   return (
     <Card key={review.id}>
@@ -90,6 +117,8 @@ export default function ReviewCard({ review }: Props) {
                   className="flex w-full justify-start text-destructive hover:no-underline"
                   variant="link"
                   size="sm"
+                  type="button"
+                  onClick={() => deleteMutation.mutate()}
                 >
                   <TrashIcon className="mr-2 size-4" />
                   Delete
