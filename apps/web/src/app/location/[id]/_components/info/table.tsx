@@ -2,15 +2,31 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Location } from '@/lib/types';
+import RatingElement from './rating';
 
 type Props = {
   location: Location;
 };
 
 export default function InformationTable({ location }: Props) {
+  function calculateRating() {
+    if (location.totalVotes === 0) return 0;
+    return location.totalPoints / location.totalVotes;
+  }
+
   return (
     <Table>
       <TableBody>
+        <TableRow>
+          <TableCell className="px-0 font-medium">Rating</TableCell>
+          <TableCell className="flex items-center justify-end">
+            <RatingElement
+              rating={calculateRating()}
+              votes={location.totalVotes}
+            />
+          </TableCell>
+        </TableRow>
+
         <TableRow>
           <TableCell className="px-0 font-medium">Has WiFi</TableCell>
           <TableCell className="text-right">
