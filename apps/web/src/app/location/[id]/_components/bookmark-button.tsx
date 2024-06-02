@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BookmarkIcon } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
   isBookmarked: boolean;
@@ -35,9 +36,14 @@ export default function BookmarkButton({ isBookmarked, locationId }: Props) {
         })
       );
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      const prev = booked;
       setBooked((prev) => !prev);
-      qc.invalidateQueries({ queryKey: ['bookmarks'] });
+      await qc.invalidateQueries({ queryKey: ['bookmarks'] });
+      toast.success(prev ? 'Bookmark removed' : 'Bookmark added');
+    },
+    onError: () => {
+      toast.error('Something went wrong');
     },
   });
 
