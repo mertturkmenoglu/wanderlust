@@ -15,15 +15,13 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Rating } from '@/components/ui/rating';
-import { api, rpc } from '@/lib/api';
 import { Review } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { useDeleteReview } from './delete-review';
 
 type Props = {
   review: Review;
@@ -32,29 +30,8 @@ type Props = {
 export default function ReviewCard({ review }: Props) {
   const { user } = useUser();
   const belongsToCurrentUser = user?.username === review.user.username;
-  const qc = useQueryClient();
-
-  const deleteMutation = useMutation({
-    mutationKey: ['deleteReview', review.id],
-    mutationFn: async () => {
-      await rpc(() =>
-        api.reviews[':id'].$delete({
-          param: {
-            id: review.id,
-          },
-        })
-      );
-    },
-    onSuccess: async () => {
-      await qc.invalidateQueries({
-        queryKey: ['reviews', review.locationId],
-      });
-
-      toast.success('Review deleted successfully');
-    },
-    onError: (e) => {
-      toast.error('Failed to delete review');
-    },
+  const deleteMutation = useDeleteReview({
+    locationId: review.locationId,
   });
 
   return (
@@ -118,7 +95,7 @@ export default function ReviewCard({ review }: Props) {
                   variant="link"
                   size="sm"
                   type="button"
-                  onClick={() => deleteMutation.mutate()}
+                  onClick={() => deleteMutation.mutate(review.id)}
                 >
                   <TrashIcon className="mr-2 size-4" />
                   Delete
@@ -158,7 +135,7 @@ export default function ReviewCard({ review }: Props) {
 
       <CardFooter>
         <div className="mx-auto grid w-full min-w-fit max-w-min grid-cols-2 gap-2">
-          {review.media.map((m, i) => (
+          {review.media.map((m) => (
             <img
               key={m.url}
               src={m.url}
