@@ -109,6 +109,8 @@ export const locations = pgTable(
     hasWifi: boolean('has_wifi').notNull().default(false),
     tags: json('tags').$type<string[]>().notNull().default([]),
     media: json('media').$type<Media[]>().notNull().default([]),
+    totalVotes: integer('total_votes').notNull().default(0),
+    totalPoints: integer('total_points').notNull().default(0),
     categoryId: smallserial('category_id')
       .notNull()
       .references(() => categories.id),
