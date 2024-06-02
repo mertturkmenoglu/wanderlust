@@ -1,5 +1,5 @@
-import { and, count, eq } from 'drizzle-orm';
-import { Media, db, reviews } from '../../db';
+import { and, count, eq, sql } from 'drizzle-orm';
+import { Media, db, locations, reviews } from '../../db';
 import { PaginationParams, getPagination } from '../../pagination';
 import { CreateReviewDto } from './dto';
 
@@ -43,24 +43,64 @@ export async function getReviewsOfLocation(
 }
 
 export async function createReview(userId: string, dto: CreateReviewDto) {
-  const [result] = await db
-    .insert(reviews)
-    .values({
-      ...dto,
-      media: dto.media ? (dto.media as Media[]) : undefined,
-      userId,
-      likeCount: 0,
-    })
-    .returning();
+  const location = await db.query.locations.findFirst({
+    where: eq(locations.id, dto.locationId),
+  });
 
-  return result;
+  if (!location) {
+    throw new Error('Location not found');
+  }
+
+  const review = await db.transaction(async (tx) => {
+    const [result] = await tx
+      .insert(reviews)
+      .values({
+        ...dto,
+        media: dto.media ? (dto.media as Media[]) : undefined,
+        userId,
+        likeCount: 0,
+      })
+      .returning();
+
+    if (!result) {
+      throw new Error('Review not created');
+    }
+
+    await tx
+      .update(locations)
+      .set({
+        totalPoints: sql`${locations.totalPoints} + ${dto.rating}`,
+        totalVotes: sql`${locations.totalVotes} + 1`,
+      })
+      .where(eq(locations.id, dto.locationId));
+
+    return result;
+  });
+
+  return review;
 }
 
 export async function deleteReview(id: string, userId: string) {
-  const [result] = await db
-    .delete(reviews)
-    .where(and(eq(reviews.id, id), eq(reviews.userId, userId)))
-    .returning();
+  const deleted = await db.transaction(async (tx) => {
+    const [result] = await tx
+      .delete(reviews)
+      .where(and(eq(reviews.id, id), eq(reviews.userId, userId)))
+      .returning();
 
-  return result;
+    if (!result) {
+      throw new Error('Review not found');
+    }
+
+    await tx
+      .update(locations)
+      .set({
+        totalPoints: sql`${locations.totalPoints} - ${result.rating}`,
+        totalVotes: sql`${locations.totalVotes} - 1`,
+      })
+      .where(eq(locations.id, result.locationId));
+
+    return result;
+  });
+
+  return deleted;
 }
