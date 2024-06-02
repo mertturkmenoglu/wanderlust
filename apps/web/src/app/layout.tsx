@@ -1,4 +1,5 @@
 import Header from '@/components/blocks/Header';
+import { Toaster } from '@/components/ui/sonner';
 import { CSPostHogProvider } from '@/providers/ph-provider';
 import QClientProvider from '@/providers/query-provider';
 import { ClerkProvider } from '@clerk/nextjs';
@@ -29,6 +30,7 @@ export default function RootLayout({
             <QClientProvider>
               <Header className="my-4" />
               <main>{children}</main>
+              <Toaster richColors />
               <ReactQueryDevtools />
             </QClientProvider>
           </body>
