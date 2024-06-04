@@ -1,13 +1,28 @@
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
-import { cacheTTL, cacheWrite } from '../../cache';
+import { cacheRead, cacheTTL, cacheWrite } from '../../cache';
 import { categories, db } from '../../db';
-import { checkCache } from '../../middlewares';
 import { Env } from '../../start';
 
 const factory = createFactory<Env>();
 
-const getAll = factory.createHandlers(checkCache('categories'), async (c) => {
+type TCategory = {
+  id: number;
+  name: string;
+};
+
+const getAll = factory.createHandlers(async (c) => {
+  const res = await cacheRead<TCategory[]>('categories');
+
+  if (res) {
+    return c.json(
+      {
+        data: res,
+      },
+      200
+    );
+  }
+
   const allCategories = await db.select().from(categories);
 
   await cacheWrite('categories', allCategories, cacheTTL.categories);
