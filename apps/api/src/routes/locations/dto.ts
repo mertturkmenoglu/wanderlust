@@ -4,6 +4,10 @@ import { locations } from '../../db/schema';
 
 export const createLocationSchema = createInsertSchema(locations).omit({
   id: true,
+  createdAt: true,
+  updatedAt: true,
+  totalPoints: true,
+  totalVotes: true,
 });
 
 export type CreateLocationDto = z.infer<typeof createLocationSchema>;
