@@ -10,9 +10,12 @@ export const checkCache = <T>(key: CacheKey): MiddlewareHandler => {
     if (cacheResult === null) {
       await next();
     } else {
-      c.json({
-        data: cacheResult,
-      });
+      return c.json(
+        {
+          data: cacheResult,
+        },
+        200
+      );
     }
   });
 };
