@@ -3,8 +3,15 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
+import { cacheTTL, cacheWrite } from '../../cache';
 import { logger } from '../../logger';
-import { authorize, getAuth, rateLimiter, withAuth } from '../../middlewares';
+import {
+  authorize,
+  checkCache,
+  getAuth,
+  rateLimiter,
+  withAuth,
+} from '../../middlewares';
 import * as search from '../../search';
 import { Env, onlyDev } from '../../start';
 import { validateId } from '../dto';
@@ -18,16 +25,22 @@ import * as repository from './repository';
 
 const factory = createFactory<Env>();
 
-const peek = factory.createHandlers(async (c) => {
-  const results = await repository.peek();
+type PeekResult = Awaited<ReturnType<typeof repository.peek>>;
 
-  return c.json(
-    {
-      data: results,
-    },
-    200
-  );
-});
+const peek = factory.createHandlers(
+  checkCache<PeekResult>('locations-peek'),
+  async (c) => {
+    const results = await repository.peek();
+    await cacheWrite('locations-peek', results, cacheTTL['locations-peek']);
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  }
+);
 
 const countries = factory.createHandlers(async (c) => {
   const results = await repository.getCountries();
