@@ -1,4 +1,5 @@
 import * as Minio from 'minio';
+import { logger } from './logger';
 import { env } from './start';
 
 export const minioClient = new Minio.Client({
@@ -10,7 +11,7 @@ export const minioClient = new Minio.Client({
 });
 
 export async function initUpload() {
-  const buckets = [env.MINIO_DEFAULT_BUCKET, 'reviews'];
+  const buckets = [env.MINIO_DEFAULT_BUCKET, 'reviews', 'locations'];
   const location = env.MINIO_LOCATION;
 
   for (const bucket of buckets) {
@@ -18,6 +19,7 @@ export async function initUpload() {
 
     if (!exists) {
       await minioClient.makeBucket(bucket, location);
+      logger.info(`Created bucket ${bucket}`);
     }
   }
 }
