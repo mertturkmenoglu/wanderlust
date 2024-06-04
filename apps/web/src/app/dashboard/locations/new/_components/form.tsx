@@ -1,11 +1,15 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-
-import { CreateLocationDto } from '#/routes/locations/dto';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import {
   Form,
   FormControl,
@@ -17,90 +21,75 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { api, rpc } from '@/lib/api';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
-import { z } from 'zod';
-
-type FormInput = CreateLocationDto;
-
-const schema = z.object({
-  name: z.string().min(1),
-  address: z.object({
-    country: z.string().length(2),
-    city: z.string().min(1),
-    line1: z.string().min(1),
-    line2: z.string().optional(),
-    postalCode: z.string().optional(),
-    state: z.string().optional(),
-    lat: z.number(),
-    long: z.number(),
-  }),
-  phone: z.string(),
-  website: z.string().optional(),
-  priceLevel: z.number().optional(),
-  accessibilityLevel: z.number().optional(),
-  hasWifi: z.boolean().optional(),
-  tags: z.array(z.string()).optional(),
-  categoryId: z.number(),
-});
+import { SubmitErrorHandler, SubmitHandler } from 'react-hook-form';
+import { useCategories, useCities, useCountries, useStates } from './queries';
+import { useCreateLocation } from './use-create-location';
+import { FormInput, useLocationForm } from './use-form';
+import { useTags } from './use-tags';
 
 function NewLocationForm() {
-  const [q, setQ] = useState('');
-  const router = useRouter();
+  const [countryId, setCountryId] = useState<number | null>(null);
+  const [stateId, setStateId] = useState<number | null>(null);
+  const [cityId, setCityId] = useState<number | null>(null);
 
-  const { data: categories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => rpc(() => api.categories.$get()),
-    staleTime: 10 * 60 * 1000,
-  });
-
-  const mutation = useMutation({
-    mutationKey: ['new-location'],
-    mutationFn: async (payload: FormInput) =>
-      rpc(() =>
-        api.locations.$post({
-          json: payload,
-        })
-      ),
-    onSuccess: () => {
-      router.push('/dashboard');
-    },
-    onError: (e) => {
-      console.error(e);
-    },
-  });
-
-  const form = useForm<FormInput>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      phone: null,
-      website: null,
-      priceLevel: 1,
-      accessibilityLevel: 1,
-      hasWifi: false,
-      categoryId: 1,
-    },
-  });
+  const categories = useCategories();
+  const countries = useCountries();
+  const states = useStates(countryId);
+  const cities = useCities(countryId, stateId);
+  const createLocation = useCreateLocation();
+  const form = useLocationForm();
+  const tagsApi = useTags();
 
   const onSubmit: SubmitHandler<FormInput> = (data) => {
-    mutation.mutate({
-      ...data,
+    createLocation.mutate({
+      address: {
+        lat: data.lat,
+        long: data.long,
+        line1: data.line1,
+        line2: data.line2 ?? '',
+        country: countries.data?.find((c) => c.id === countryId)?.iso2 ?? '',
+        state: states.data?.find((s) => s.id === stateId)?.stateCode ?? '',
+        city: cities.data?.find((c) => c.id === cityId)?.name ?? '',
+        postalCode: data.postalCode ?? '',
+      },
+      name: data.name,
+      description: data.description,
+      phone: data.phone,
+      website: data.website,
+      accessibilityLevel: data.accessibilityLevel,
+      priceLevel: data.priceLevel,
+      hasWifi: data.hasWifi,
+      tags: tagsApi.value,
+      categoryId: data.categoryId,
     });
+  };
+
+  const onError: SubmitErrorHandler<FormInput> = (errors) => {
+    console.error(errors);
   };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-16 max-w-xl space-y-8"
+        onSubmit={form.handleSubmit(onSubmit, onError)}
+        className="mt-4 max-w-xl space-y-8"
       >
         <FormField
           control={form.control}
@@ -111,6 +100,24 @@ function NewLocationForm() {
               <FormControl>
                 <Input
                   placeholder="Name of the location"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>Name of the location</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Description of the location"
                   {...field}
                 />
               </FormControl>
@@ -165,16 +172,20 @@ function NewLocationForm() {
             <FormItem>
               <FormLabel>Price Level</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="1"
-                  {...field}
-                  type="number"
-                  value={`${field.value}`}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    field.onChange(e.target.valueAsNumber);
-                  }}
-                />
+                <>
+                  <Slider
+                    defaultValue={[1]}
+                    max={5}
+                    min={1}
+                    step={1}
+                    value={[field.value]}
+                    onValueChange={(v) => {
+                      field.onChange(v[0]);
+                    }}
+                  />
+
+                  <div>You selected: {field.value}</div>
+                </>
               </FormControl>
               <FormDescription>
                 1 is cheap, 5 is expensive (Optional)
@@ -191,16 +202,20 @@ function NewLocationForm() {
             <FormItem>
               <FormLabel>Accessibility Level</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="5"
-                  {...field}
-                  type="number"
-                  value={`${field.value}`}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    field.onChange(e.target.valueAsNumber);
-                  }}
-                />
+                <>
+                  <Slider
+                    defaultValue={[1]}
+                    max={5}
+                    min={1}
+                    step={1}
+                    value={[field.value]}
+                    onValueChange={(v) => {
+                      field.onChange(v[0]);
+                    }}
+                  />
+
+                  <div>You selected: {field.value}</div>
+                </>
               </FormControl>
               <FormDescription>
                 1 is low 5 is highly accessible (Optional)
@@ -252,7 +267,7 @@ function NewLocationForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {(categories ?? []).map((c) => (
+                  {(categories.data ?? []).map((c) => (
                     <SelectItem
                       value={`${c.id}`}
                       key={c.id}
@@ -267,6 +282,341 @@ function NewLocationForm() {
             </FormItem>
           )}
         />
+
+        <div className="flex flex-col gap-3">
+          <FormLabel>Tags</FormLabel>
+          <div
+            {...tagsApi.rootProps}
+            className="flex gap-2 rounded border border-border p-1"
+          >
+            {tagsApi.value.map((value, index) => (
+              <span
+                key={index}
+                {...tagsApi.getItemProps({ index, value })}
+              >
+                <div
+                  {...tagsApi.getItemPreviewProps({ index, value })}
+                  className="rounded border border-primary bg-primary/10 px-2 py-0.5 text-primary"
+                >
+                  <span>{value} </span>
+                  <button
+                    {...tagsApi.getItemDeleteTriggerProps({ index, value })}
+                  >
+                    &#x2715;
+                  </button>
+                </div>
+                <input {...tagsApi.getItemInputProps({ index, value })} />
+              </span>
+            ))}
+            <input
+              placeholder="Add tag..."
+              className="px-2 outline-none"
+              {...tagsApi.inputProps}
+            />
+          </div>
+        </div>
+
+        <div
+          id="address"
+          className="space-y-8"
+        >
+          <h3 className="my-8 text-lg font-bold tracking-tight">Address</h3>
+
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Country</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'w-[200px] justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value
+                          ? (countries.data ?? []).find(
+                              (c) => c.iso2 === field.value
+                            )?.name
+                          : 'Select country'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search country..." />
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {(countries.data ?? []).map((country) => (
+                            <CommandItem
+                              value={country.iso2}
+                              key={country.id}
+                              onSelect={() => {
+                                form.setValue('country', country.iso2);
+                                setCountryId(country.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  country.iso2 === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {country.name}
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>Select a country</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>State</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'w-[200px] justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value
+                          ? (states.data ?? []).find(
+                              (c) => c.stateCode === field.value
+                            )?.name
+                          : 'Select state'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search state..." />
+                      <CommandEmpty>No state found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {(states.data ?? []).map((state) => (
+                            <CommandItem
+                              value={state.stateCode}
+                              key={state.id}
+                              onSelect={() => {
+                                form.setValue('state', state.stateCode);
+                                setStateId(state.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  state.stateCode === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {state.name}
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>Select a state</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>City</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'w-[200px] justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value
+                          ? (cities.data ?? []).find(
+                              (c) => c.name === field.value
+                            )?.name
+                          : 'Select city'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search city..." />
+                      <CommandEmpty>No city found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {(cities.data ?? []).map((city) => (
+                            <CommandItem
+                              value={city.name}
+                              key={city.id}
+                              onSelect={() => {
+                                form.setValue('city', city.name);
+                                setCityId(city.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  city.name === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {city.name}
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>Select a city</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="line1"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Address Line 1</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Address line 1"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Address line 1 (e.g., street, PO Box, or company name).
+                  (Required)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="line2"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Address Line 2</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Address line 2"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Address line 2 (e.g., apartment, suite, unit, or building).
+                  (Optional)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="postalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Postal Code</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Postal Code"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  ZIP or postal code. (Optional)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="lat"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Latitude</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Latitude"
+                    type="number"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(parseFloat(e.target.value));
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>Latitude (Required)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="long"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Longitude</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Longitude"
+                    type="number"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(parseFloat(e.target.value));
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>Longitude (Required)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <Button type="submit">Create</Button>
       </form>
