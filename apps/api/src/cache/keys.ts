@@ -1,5 +1,5 @@
 export type CacheKey =
   | 'categories'
-  | 'lorem-ipsum'
+  | 'locations-peek'
   | 'dolor-sit-amet'
   | 'consectetur-adipiscing-elit';

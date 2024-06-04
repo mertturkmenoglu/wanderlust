@@ -1,7 +1,7 @@
 import { cache } from './init';
 import { CacheKey } from './keys';
 
-export async function cacheRead<T>(key: CacheKey | string) {
+export async function cacheRead<T>(key: CacheKey) {
   const cacheResult = await cache.get(key);
 
   if (cacheResult === null) {
