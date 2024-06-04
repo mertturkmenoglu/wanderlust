@@ -1,5 +1,6 @@
 'use client';
 
+import Dnd from '@/components/blocks/FileUploadDnd';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -34,20 +35,22 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
-
+import { uploadImages } from '@/lib/api';
+import { cn, getDims } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
-import { SubmitErrorHandler, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import { useCategories, useCities, useCountries, useStates } from './queries';
 import { useCreateLocation } from './use-create-location';
 import { FormInput, useLocationForm } from './use-form';
 import { useTags } from './use-tags';
+import { useUpload } from './use-upload';
 
 function NewLocationForm() {
   const [countryId, setCountryId] = useState<number | null>(null);
   const [stateId, setStateId] = useState<number | null>(null);
   const [cityId, setCityId] = useState<number | null>(null);
+  const [fileError, setFileError] = useState<string[]>([]);
 
   const categories = useCategories();
   const countries = useCountries();
@@ -56,8 +59,33 @@ function NewLocationForm() {
   const createLocation = useCreateLocation();
   const form = useLocationForm();
   const tagsApi = useTags();
+  const [capi, fapi] = useUpload();
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    setFileError([]);
+
+    if (fapi.acceptedFiles.length === 0) {
+      setFileError(['Please upload at least one image']);
+      return;
+    }
+
+    const res = await uploadImages(fapi.acceptedFiles, 'locations');
+
+    if (res.length !== fapi.acceptedFiles.length) {
+      setFileError((prev) => [...prev, 'Failed to upload one or more file(s)']);
+      return;
+    }
+
+    const dims = await getDims(fapi.acceptedFiles);
+
+    if (dims.length !== fapi.acceptedFiles.length) {
+      setFileError((prev) => [
+        ...prev,
+        'Failed to get dimensions for one or more file(s)',
+      ]);
+      return;
+    }
+
     createLocation.mutate({
       address: {
         lat: data.lat,
@@ -78,17 +106,24 @@ function NewLocationForm() {
       hasWifi: data.hasWifi,
       tags: tagsApi.value,
       categoryId: data.categoryId,
+      media: res.map((url, i) => {
+        return {
+          type: 'image',
+          url,
+          thumbnail: url,
+          alt: fapi.acceptedFiles[i].name,
+          caption: fapi.acceptedFiles[i].name,
+          width: dims[i].width,
+          height: dims[i].height,
+        };
+      }),
     });
-  };
-
-  const onError: SubmitErrorHandler<FormInput> = (errors) => {
-    console.error(errors);
   };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit, onError)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="mt-4 max-w-xl space-y-8"
       >
         <FormField
@@ -617,6 +652,24 @@ function NewLocationForm() {
             )}
           />
         </div>
+
+        <Dnd
+          capi={capi}
+          fapi={fapi}
+        />
+
+        {fileError.length > 0 && (
+          <div>
+            {fileError.map((error, i) => (
+              <div
+                key={i}
+                className="text-destructive"
+              >
+                {error}
+              </div>
+            ))}
+          </div>
+        )}
 
         <Button type="submit">Create</Button>
       </form>
