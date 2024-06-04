@@ -3,6 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
+import { logger } from '../../logger';
 import { authorize, getAuth, rateLimiter, withAuth } from '../../middlewares';
 import * as search from '../../search';
 import { Env, onlyDev } from '../../start';
@@ -102,23 +103,35 @@ const create = factory.createHandlers(
   authorize({ type: 'create-location' }),
   async (c) => {
     const dto = c.req.valid('json');
+    let location: Awaited<ReturnType<typeof repository.create>> | null = null;
 
     try {
-      const location = await repository.create(dto);
-      await search.upsertLocation(location);
-
-      return c.json(
-        {
-          data: location,
-        },
-        201
-      );
+      location = await repository.create(dto);
     } catch (e) {
-      throw new HTTPException(500, {
-        message: 'Something went wrong',
+      throw new HTTPException(400, {
+        message: 'Cannot create location',
         cause: onlyDev(e),
       });
     }
+
+    try {
+      await search.upsertLocation(location);
+    } catch (e) {
+      logger.error('Cannot upsert location to search', e);
+    }
+
+    if (!location) {
+      throw new HTTPException(500, {
+        message: 'Cannot create location',
+      });
+    }
+
+    return c.json(
+      {
+        data: location,
+      },
+      201
+    );
   }
 );
 
