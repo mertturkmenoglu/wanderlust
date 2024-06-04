@@ -1,3 +1,4 @@
+import { GetNewUploadUrlQuery } from '#/routes/uploads/dto';
 import { InferResponseType } from 'hono/client';
 import { api } from './api';
 
@@ -19,3 +20,5 @@ const reviewsFnRef = api.reviews.location[':id'].$get;
 export type Reviews = InferResponseType<typeof reviewsFnRef>['data'];
 
 export type Review = ArrayElement<Reviews>;
+
+export type UploadImageType = GetNewUploadUrlQuery['type'];
