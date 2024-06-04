@@ -42,16 +42,26 @@ const peek = factory.createHandlers(
   }
 );
 
-const countries = factory.createHandlers(async (c) => {
-  const results = await repository.getCountries();
+type Countries = Awaited<ReturnType<typeof repository.getCountries>>;
 
-  return c.json(
-    {
-      data: results,
-    },
-    200
-  );
-});
+const countries = factory.createHandlers(
+  checkCache<Countries>('locations-countries'),
+  async (c) => {
+    const results = await repository.getCountries();
+    await cacheWrite(
+      'locations-countries',
+      results,
+      cacheTTL['locations-countries']
+    );
+
+    return c.json(
+      {
+        data: results,
+      },
+      200
+    );
+  }
+);
 
 const states = factory.createHandlers(
   zValidator('query', getStatesSchema),
