@@ -34,7 +34,10 @@ export default function ReviewCard({ review }: Props) {
   const deleteMutation = useDeleteReview({
     locationId: review.locationId,
   });
+  const charLimit = 200;
   const [showMore, setShowMore] = useState(false);
+  const [showButton] = useState(() => review.comment.length > charLimit);
+  const shortText = review.comment.length < charLimit ? review.comment : review.comment.slice(0, charLimit) + "..."
 
   return (
     <Card key={review.id}>
@@ -109,13 +112,16 @@ export default function ReviewCard({ review }: Props) {
       </CardHeader>
 
       <CardContent>
-        <div className="flex-1 space-y-1">
-          {showMore ? review.comment : review.comment.slice(0, 100)}
-          {review.comment.length > 100 && <button onClick={() => setShowMore(!showMore)}>
-            {showMore ? 'Show Less' : 'Show More'}
-          </button>}
-
-        </div>
+        <p className='text-sm text-gray-500'>{showMore ? review.comment : shortText}</p>
+        {showButton &&
+          <Button
+            variant="link"
+            className='px-0'
+            onClick={() => setShowMore((prev) => !prev)}
+          >
+            {showMore ? "Show less" : "Show more"}
+          </Button>
+        }
 
         <div className="mt-2 flex items-center space-x-2">
           <span className="text-sm font-bold">Rating:</span>
