@@ -36,11 +36,12 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { uploadImages } from '@/lib/api';
-import { cn, getDims } from '@/lib/utils';
+import { cn, getDims, mapImagesToMedia } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { useCategories, useCities, useCountries, useStates } from './queries';
+import Tags from './tags';
 import { useCreateLocation } from './use-create-location';
 import { FormInput, useLocationForm } from './use-form';
 import { useTags } from './use-tags';
@@ -106,17 +107,7 @@ function NewLocationForm() {
       hasWifi: data.hasWifi,
       tags: tagsApi.value,
       categoryId: data.categoryId,
-      media: res.map((url, i) => {
-        return {
-          type: 'image',
-          url,
-          thumbnail: url,
-          alt: fapi.acceptedFiles[i].name,
-          caption: fapi.acceptedFiles[i].name,
-          width: dims[i].width,
-          height: dims[i].height,
-        };
-      }),
+      media: mapImagesToMedia(res, fapi.acceptedFiles, dims),
     });
   };
 
@@ -320,35 +311,7 @@ function NewLocationForm() {
 
         <div className="flex flex-col gap-3">
           <FormLabel>Tags</FormLabel>
-          <div
-            {...tagsApi.rootProps}
-            className="flex gap-2 rounded border border-border p-1"
-          >
-            {tagsApi.value.map((value, index) => (
-              <span
-                key={index}
-                {...tagsApi.getItemProps({ index, value })}
-              >
-                <div
-                  {...tagsApi.getItemPreviewProps({ index, value })}
-                  className="rounded border border-primary bg-primary/10 px-2 py-0.5 text-primary"
-                >
-                  <span>{value} </span>
-                  <button
-                    {...tagsApi.getItemDeleteTriggerProps({ index, value })}
-                  >
-                    &#x2715;
-                  </button>
-                </div>
-                <input {...tagsApi.getItemInputProps({ index, value })} />
-              </span>
-            ))}
-            <input
-              placeholder="Add tag..."
-              className="px-2 outline-none"
-              {...tagsApi.inputProps}
-            />
-          </div>
+          <Tags api={tagsApi} />
         </div>
 
         <div
