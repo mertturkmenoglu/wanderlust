@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { api, rpc } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -37,12 +38,21 @@ export default function NewListForm() {
 
   const mutation = useMutation({
     mutationKey: ['profile'],
-    mutationFn: async (data: FormInput) => {},
+    mutationFn: async (data: FormInput) => {
+      await rpc(() =>
+        api.lists.$post({
+          json: data,
+        })
+      );
+    },
     onSuccess: async () => {
       await qc.invalidateQueries({
         queryKey: [''],
       });
       toast.success('Created new list. Redirecting...');
+      setTimeout(() => {
+        window.location.href = '/lists';
+      }, 2000);
     },
     onError: () => {
       toast.error('Failed to create list');
