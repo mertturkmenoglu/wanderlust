@@ -25,6 +25,9 @@ import {
 import Link from 'next/link';
 import DeleteButton from './_components/delete-button';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type Props = {
   params: {
     id: string;
