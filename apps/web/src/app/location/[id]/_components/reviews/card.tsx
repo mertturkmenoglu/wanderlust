@@ -22,7 +22,7 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useDeleteReview } from './delete-review';
-import { useState } from 'react';
+import CollapsibleText from '@/components/blocks/CollapsibleText';
 
 type Props = {
   review: Review;
@@ -34,10 +34,6 @@ export default function ReviewCard({ review }: Props) {
   const deleteMutation = useDeleteReview({
     locationId: review.locationId,
   });
-  const charLimit = 200;
-  const [showMore, setShowMore] = useState(false);
-  const [showButton] = useState(() => review.comment.length > charLimit);
-  const shortText = review.comment.length < charLimit ? review.comment : review.comment.slice(0, charLimit) + "..."
 
   return (
     <Card key={review.id}>
@@ -112,16 +108,7 @@ export default function ReviewCard({ review }: Props) {
       </CardHeader>
 
       <CardContent>
-        <p className='text-sm text-gray-500'>{showMore ? review.comment : shortText}</p>
-        {showButton &&
-          <Button
-            variant="link"
-            className='px-0'
-            onClick={() => setShowMore((prev) => !prev)}
-          >
-            {showMore ? "Show less" : "Show more"}
-          </Button>
-        }
+        <CollapsibleText text={review.comment} />
 
         <div className="mt-2 flex items-center space-x-2">
           <span className="text-sm font-bold">Rating:</span>

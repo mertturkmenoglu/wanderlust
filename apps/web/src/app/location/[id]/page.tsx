@@ -3,7 +3,7 @@ import { getAuthHeader } from '@/lib/headers';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
-import Description from './_components/description';
+import CollapsibleText from '@/components/blocks/CollapsibleText';
 import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Reviews from './_components/reviews';
@@ -62,7 +62,7 @@ export default async function Page({ params: { id } }: Props) {
           </div>
 
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
-          <Description description={location.description} />
+          <CollapsibleText text={location.description} />
           <h2 className="mt-8 text-lg font-bold">Information</h2>
           <InformationTable location={location} />
         </div>
