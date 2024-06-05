@@ -27,7 +27,7 @@ export default function RatingElement({ rating, votes }: Props) {
         disabled={true}
       />
       <div className="flex items-center space-x-1">
-        <span className="font-bold">{rating}</span>
+        <span className="font-bold">{rating.toFixed(1)}</span>
         <span>({formattedRating})</span>
       </div>
     </div>
