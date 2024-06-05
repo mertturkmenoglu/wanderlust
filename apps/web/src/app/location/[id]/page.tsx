@@ -3,6 +3,7 @@ import { getAuthHeader } from '@/lib/headers';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
+import Description from './_components/description';
 import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Reviews from './_components/reviews';
@@ -33,14 +34,14 @@ export default async function Page({ params: { id } }: Props) {
   const { data: location, metadata } = await getLocation(id);
 
   return (
-    <main className="container mx-auto mt-8 px-4 md:mt-16">
+    <main className="container mx-auto mt-8 px-4 md:mt-16 md:px-0">
       <Breadcrumb
         categoryId={location.category.id}
         categoryName={location.category.name}
         locationName={location.name}
       />
 
-      <div className="mt-8 flex flex-col items-center justify-between gap-8 lg:flex-row lg:gap-32">
+      <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-32">
         <Carousel media={location.media} />
 
         <div>
@@ -56,7 +57,7 @@ export default async function Page({ params: { id } }: Props) {
           </div>
 
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
-          <p className="mt-2 text-sm text-gray-500">{location.description}</p>
+          <Description description={location.description} />
           <h2 className="mt-8 text-lg font-bold">Information</h2>
           <InformationTable location={location} />
         </div>
