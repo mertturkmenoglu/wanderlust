@@ -49,3 +49,31 @@ export function getImageDims(
     img.src = URL.createObjectURL(f);
   });
 }
+
+export type CreateMediaDto = {
+  type: 'image' | 'video';
+  url: string;
+  thumbnail: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+};
+
+export function mapImagesToMedia(
+  urls: string[],
+  files: File[],
+  dims: Array<{ width: number; height: number }>
+): CreateMediaDto[] {
+  return urls.map((url, i) => {
+    return {
+      type: 'image',
+      url,
+      thumbnail: url,
+      alt: files[i].name,
+      caption: files[i].name,
+      width: dims[i].width,
+      height: dims[i].height,
+    };
+  });
+}
