@@ -1,9 +1,27 @@
+import CollapsibleText from '@/components/blocks/CollapsibleText';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { api, rpc } from '@/lib/api';
 import { getAuthHeader } from '@/lib/headers';
+import { EllipsisVertical, FlagIcon, Plus } from 'lucide-react';
+import AddToListButton from './_components/add-to-list-button';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
-import CollapsibleText from '@/components/blocks/CollapsibleText';
 import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Reviews from './_components/reviews';
@@ -51,13 +69,69 @@ export default async function Page({ params: { id } }: Props) {
               {location.name}
             </h2>
 
-            <div>
+            <div className="flex items-center">
               <ShareButton />
 
               <BookmarkButton
                 locationId={location.id}
                 isBookmarked={metadata.isBookmarked}
               />
+
+              <Dialog>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    asChild
+                    className="block"
+                  >
+                    <Button
+                      className="flex items-center justify-center rounded-full"
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <EllipsisVertical className="size-6" />
+                    </Button>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent
+                    className=" w-32 space-y-2 p-2"
+                    align="end"
+                  >
+                    <DropdownMenuItem className="cursor-pointer p-0">
+                      <Button
+                        className="flex w-full justify-start hover:no-underline"
+                        variant="link"
+                        size="sm"
+                      >
+                        <FlagIcon className="mr-2 size-4" />
+                        Report
+                      </Button>
+                    </DropdownMenuItem>
+
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem className="cursor-pointer p-0">
+                        <Button
+                          className="flex w-full justify-start hover:no-underline"
+                          variant="link"
+                          size="sm"
+                          type="button"
+                        >
+                          <Plus className="mr-2 size-4" />
+                          Add to list
+                        </Button>
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Select a list</DialogTitle>
+                    <DialogDescription>[[Lists]]</DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <AddToListButton locationId={id} />
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
