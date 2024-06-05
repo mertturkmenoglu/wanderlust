@@ -13,13 +13,16 @@ type Props = {
 
 export default function Carousel({ media }: Props) {
   return (
-    <ShadcnCarousel className="mx-auto flex w-full max-w-xl items-center lg:min-w-96">
+    <ShadcnCarousel className="mx-auto flex h-min w-11/12 justify-center lg:w-full">
       <CarouselContent>
         {media.map((media, index) => (
-          <CarouselItem key={index}>
-            <div className="rounded-lg">
+          <CarouselItem
+            key={index}
+            className="mx-auto flex justify-center"
+          >
+            <div className="flex h-[512px] w-11/12 items-center justify-center overflow-hidden rounded-lg lg:w-full">
               <img
-                className="h-full w-full rounded-lg object-cover"
+                className="rounded-lg object-cover"
                 src={media.url}
                 alt={media.alt}
               />
