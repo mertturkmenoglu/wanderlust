@@ -1,4 +1,4 @@
-import { count, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { db, lists } from '../../db';
 import { PaginationParams, getPagination } from '../../pagination';
 import { CreateListDto } from './dto';
@@ -42,4 +42,13 @@ export async function getMyLists(userId: string, pagination: PaginationParams) {
     data: res,
     pagination: getPagination(pagination, totalRecords),
   };
+}
+
+export async function deleteList(userId: string, listId: string) {
+  const [deleted] = await db
+    .delete(lists)
+    .where(and(eq(lists.userId, userId), eq(lists.id, listId)))
+    .returning();
+
+  return deleted;
 }

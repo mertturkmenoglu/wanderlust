@@ -81,8 +81,40 @@ const create = factory.createHandlers(
   }
 );
 
+const deleteList = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateId),
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const auth = c.get('auth');
+
+    try {
+      const deleted = await repository.deleteList(auth.userId, id);
+
+      if (!deleted) {
+        throw new HTTPException(404, {
+          message: 'List not found',
+        });
+      }
+
+      return c.json(
+        {
+          data: deleted,
+        },
+        200
+      );
+    } catch (e) {
+      throw new HTTPException(400, {
+        message: 'Invalid request',
+      });
+    }
+  }
+);
+
 export const listsRouter = new Hono()
   .use(rateLimiter())
   .get('/my', ...getMyLists)
   .get('/:id', ...getById)
-  .post('/', ...create);
+  .post('/', ...create)
+  .delete('/:id', ...deleteList);
