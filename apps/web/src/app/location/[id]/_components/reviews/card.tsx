@@ -1,5 +1,6 @@
 'use client';
 
+import CollapsibleText from '@/components/blocks/CollapsibleText';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,6 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +32,6 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useDeleteReview } from './delete-review';
-import CollapsibleText from '@/components/blocks/CollapsibleText';
 
 type Props = {
   review: Review;
@@ -62,49 +71,70 @@ export default function ReviewCard({ review }: Props) {
           </Link>
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            asChild
-            className="block"
-          >
-            <Button
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              asChild
               className="block"
-              variant="ghost"
             >
-              <EllipsisVertical className="size-6" />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent
-            className="mr-4 w-32 space-y-2 p-2"
-            align="end"
-          >
-            <DropdownMenuItem className="cursor-pointer p-0">
               <Button
-                className="flex w-full justify-start hover:no-underline"
-                variant="link"
-                size="sm"
+                className="block"
+                variant="ghost"
               >
-                <FlagIcon className="mr-2 size-4" />
-                Report
+                <EllipsisVertical className="size-6" />
               </Button>
-            </DropdownMenuItem>
-            {belongsToCurrentUser && (
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              className="mr-4 w-32 space-y-2 p-2"
+              align="end"
+            >
               <DropdownMenuItem className="cursor-pointer p-0">
                 <Button
-                  className="flex w-full justify-start text-destructive hover:no-underline"
+                  className="flex w-full justify-start hover:no-underline"
                   variant="link"
                   size="sm"
-                  type="button"
-                  onClick={() => deleteMutation.mutate(review.id)}
                 >
-                  <TrashIcon className="mr-2 size-4" />
-                  Delete
+                  <FlagIcon className="mr-2 size-4" />
+                  Report
                 </Button>
               </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {belongsToCurrentUser && (
+                <DialogTrigger asChild>
+                  <DropdownMenuItem className="cursor-pointer p-0">
+                    <Button
+                      className="flex w-full justify-start text-destructive hover:no-underline"
+                      variant="link"
+                      size="sm"
+                      type="button"
+                    >
+                      <TrashIcon className="mr-2 size-4" />
+                      Delete
+                    </Button>
+                  </DropdownMenuItem>
+                </DialogTrigger>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Are you absolutely sure?</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. Are you sure you want to
+                permanently delete this review?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                type="submit"
+                variant="destructive"
+                onClick={() => deleteMutation.mutate(review.id)}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardHeader>
 
       <CardContent>
@@ -115,7 +145,7 @@ export default function ReviewCard({ review }: Props) {
           <Rating
             disabled={true}
             defaultValue={review.rating}
-            onChange={() => { }}
+            onChange={() => {}}
             id={review.id}
           />
         </div>
