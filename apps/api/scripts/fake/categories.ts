@@ -31,6 +31,7 @@ async function generate() {
     { id: 14, name: 'Workshops' },
     { id: 15, name: 'Specialty Shops' },
     { id: 16, name: 'Famous Filming Locations' },
+    { id: 17, name: 'Historical Landmarks' },
   ];
 }
 
