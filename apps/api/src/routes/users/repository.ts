@@ -1,5 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { db, follows, users } from '../../db';
+import { UpdateProfileDto } from './dto';
 
 export async function getByUsername(username: string) {
   const user = await db.query.users.findFirst({
@@ -7,6 +8,29 @@ export async function getByUsername(username: string) {
   });
 
   return user;
+}
+
+export async function updateProfile(userId: string, dto: UpdateProfileDto) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+  });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const [updated] = await db
+    .update(users)
+    .set({
+      bio: dto.bio ?? user.bio,
+      pronouns: dto.pronouns ?? user.pronouns,
+      website: dto.website ?? user.website,
+      phone: dto.phone ?? user.phone,
+    })
+    .where(eq(users.id, userId))
+    .returning();
+
+  return updated;
 }
 
 export async function follow(followerId: string, followingId: string) {

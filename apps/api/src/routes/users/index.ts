@@ -6,6 +6,7 @@ import { HTTPException } from 'hono/http-exception';
 import { getAuth, rateLimiter } from '../../middlewares';
 import { Env } from '../../start';
 import { validateUsername } from '../dto';
+import { updateProfileSchema } from './dto';
 import * as repository from './repository';
 
 const factory = createFactory<Env>();
@@ -36,6 +37,25 @@ const getProfileByUsername = factory.createHandlers(
     return c.json(
       {
         data: user,
+      },
+      200
+    );
+  }
+);
+
+const updateProfile = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('json', updateProfileSchema),
+  async (c) => {
+    const user = c.get('user');
+    const dto = c.req.valid('json');
+
+    const updatedUser = await repository.updateProfile(user.id, dto);
+
+    return c.json(
+      {
+        data: updatedUser,
       },
       200
     );
@@ -110,5 +130,6 @@ export const usersRouter = new Hono()
   .use(rateLimiter())
   .get('/me', ...getMe)
   .get('/:username/profile', ...getProfileByUsername)
+  .patch('/profile', ...updateProfile)
   .post('/follow/:username', ...follow)
   .post('/unfollow/:username', ...unfollow);
