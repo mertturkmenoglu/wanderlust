@@ -9,6 +9,10 @@ export const items = [
     href: '/settings',
   },
   {
+    text: 'Account',
+    href: '/settings/account',
+  },
+  {
     text: 'Profile',
     href: '/settings/profile',
   },
