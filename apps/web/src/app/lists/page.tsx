@@ -6,6 +6,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import Loading from './loading';
 
 async function getLists(page: number) {
   return rpc(() => api.lists.my.$get({ query: { page: `${page}` } }));
@@ -19,6 +20,10 @@ export default function Page() {
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
+
+  if (query.isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
