@@ -22,6 +22,7 @@ import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useDeleteReview } from './delete-review';
+import { useState } from 'react';
 
 type Props = {
   review: Review;
@@ -33,6 +34,7 @@ export default function ReviewCard({ review }: Props) {
   const deleteMutation = useDeleteReview({
     locationId: review.locationId,
   });
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <Card key={review.id}>
@@ -108,7 +110,11 @@ export default function ReviewCard({ review }: Props) {
 
       <CardContent>
         <div className="flex-1 space-y-1">
-          <p className="leading-none">{review.comment}</p>
+          {showMore ? review.comment : review.comment.slice(0, 100)}
+          {review.comment.length > 100 && <button onClick={() => setShowMore(!showMore)}>
+            {showMore ? 'Show Less' : 'Show More'}
+          </button>}
+
         </div>
 
         <div className="mt-2 flex items-center space-x-2">
@@ -116,7 +122,7 @@ export default function ReviewCard({ review }: Props) {
           <Rating
             disabled={true}
             defaultValue={review.rating}
-            onChange={() => {}}
+            onChange={() => { }}
             id={review.id}
           />
         </div>
