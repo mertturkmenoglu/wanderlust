@@ -230,11 +230,12 @@ export const lists = pgTable(
   }
 );
 
-export const listsRelations = relations(lists, ({ one }) => ({
+export const listsRelations = relations(lists, ({ one, many }) => ({
   user: one(users, {
     fields: [lists.userId],
     references: [users.id],
   }),
+  items: many(listItems),
 }));
 
 export const listItems = pgTable(
