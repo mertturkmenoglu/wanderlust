@@ -22,3 +22,5 @@ export type Reviews = InferResponseType<typeof reviewsFnRef>['data'];
 export type Review = ArrayElement<Reviews>;
 
 export type UploadImageType = GetNewUploadUrlQuery['type'];
+
+export type Profile = InferResponseType<typeof api.users.me.$get>['data'];
