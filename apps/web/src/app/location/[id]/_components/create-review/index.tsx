@@ -1,5 +1,6 @@
 'use client';
 
+import Dnd from '@/components/blocks/FileUploadDnd';
 import { Button } from '@/components/ui/button';
 import {
   DialogContent,
@@ -10,9 +11,13 @@ import {
 } from '@/components/ui/dialog';
 import { Rating } from '@/components/ui/rating';
 import { Textarea } from '@/components/ui/textarea';
+import { uploadImages } from '@/lib/api';
+import { getDims, mapImagesToMedia } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import Dnd from './dnd';
-import { getDims, postReview, uploadImages } from './helpers';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { postReview } from './helpers';
 import { useUpload } from './use-upload';
 
 type Props = {
@@ -20,30 +25,33 @@ type Props = {
   locationId: string;
 };
 
+const schema = z.object({
+  comment: z.string().min(1).max(256),
+  rating: z.number().int().min(1).max(5),
+});
+
+type FormInput = z.infer<typeof schema>;
+
 export default function CreateReview({ name, locationId }: Props) {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
   const [error, setError] = useState<string[]>([]);
   const [capi, fapi] = useUpload();
 
-  async function createReview() {
-    setError([]);
-    if (!comment) {
-      setError((prev) => [...prev, 'Please enter a comment']);
-    }
-    if (rating === 0) {
-      setError((prev) => [...prev, 'Please select a rating']);
-    }
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      comment: '',
+      rating: 0,
+    },
+  });
 
-    if (!comment || rating === 0) {
-      return;
-    }
+  async function createReview({ comment, rating }: FormInput) {
+    setError([]);
 
     const count = fapi.acceptedFiles.length;
     const urls: string[] = [];
 
     if (count > 0) {
-      const res = await uploadImages(fapi.acceptedFiles);
+      const res = await uploadImages(fapi.acceptedFiles, 'reviews');
       urls.push(...res);
     }
 
@@ -67,9 +75,7 @@ export default function CreateReview({ name, locationId }: Props) {
         comment,
         rating,
         locationId,
-        files: fapi.acceptedFiles,
-        urls,
-        dims,
+        media: mapImagesToMedia(urls, fapi.acceptedFiles, dims),
       });
 
       window.location.reload();
@@ -85,21 +91,23 @@ export default function CreateReview({ name, locationId }: Props) {
         <DialogTitle>Your Review</DialogTitle>
         <DialogDescription>Share your experience with others</DialogDescription>
       </DialogHeader>
-      <div className="grid gap-4 py-4">
+      <form
+        className="grid gap-4 py-4"
+        onSubmit={form.handleSubmit(createReview)}
+      >
         <div className="flex flex-row items-center justify-between">
           <p className="text-lg font-bold capitalize">{name}</p>
           <Rating
             id="review"
-            onChange={(v) => setRating(v.value)}
+            defaultValue={form.getValues('rating')}
+            onChange={(v) => form.setValue('rating', v.value)}
           />
         </div>
         <div className="">
           <Textarea
-            id="comment"
             placeholder="Write your review here..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
             rows={4}
+            {...form.register('comment')}
           />
         </div>
 
@@ -117,15 +125,10 @@ export default function CreateReview({ name, locationId }: Props) {
             </ul>
           )}
         </div>
-      </div>
-      <DialogFooter className="flex !justify-center">
-        <Button
-          type="button"
-          onClick={createReview}
-        >
-          Create review
-        </Button>
-      </DialogFooter>
+        <DialogFooter className="flex !justify-center">
+          <Button type="submit">Create review</Button>
+        </DialogFooter>
+      </form>
     </DialogContent>
   );
 }
