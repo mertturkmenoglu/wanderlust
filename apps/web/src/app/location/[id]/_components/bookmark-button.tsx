@@ -1,6 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { api, rpc } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -48,15 +54,24 @@ export default function BookmarkButton({ isBookmarked, locationId }: Props) {
   });
 
   return (
-    <Button
-      variant="ghost"
-      onClick={() => mutation.mutate()}
-    >
-      <BookmarkIcon
-        className={cn('size-6 text-primary', {
-          'fill-primary': booked,
-        })}
-      />
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            onClick={() => mutation.mutate()}
+          >
+            <BookmarkIcon
+              className={cn('size-6 text-primary', {
+                'fill-primary': booked,
+              })}
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>{booked ? 'Remove bookmark' : 'Add to bookmarks'}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

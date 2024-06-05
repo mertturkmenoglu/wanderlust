@@ -7,6 +7,7 @@ import Description from './_components/description';
 import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Reviews from './_components/reviews';
+import ShareButton from './_components/share-button';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -50,10 +51,14 @@ export default async function Page({ params: { id } }: Props) {
               {location.name}
             </h2>
 
-            <BookmarkButton
-              locationId={location.id}
-              isBookmarked={metadata.isBookmarked}
-            />
+            <div>
+              <ShareButton />
+
+              <BookmarkButton
+                locationId={location.id}
+                isBookmarked={metadata.isBookmarked}
+              />
+            </div>
           </div>
 
           <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
