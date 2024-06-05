@@ -32,7 +32,7 @@ export default async function Bio({ username, className }: Props) {
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
-    <div className={clsx('container', className)}>
+    <div className={clsx('', className)}>
       <div className="flex flex-col items-center md:flex-row md:justify-between">
         <div className="flex flex-col items-center gap-4 md:flex-row">
           <Avatar className="size-24">
