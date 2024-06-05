@@ -25,6 +25,7 @@ export const users = pgTable('users', {
   isBusinessAccount: boolean('is_business_account').notNull().default(false),
   isVerified: boolean('is_verified').notNull().default(false),
   bio: varchar('bio', { length: 255 }),
+  pronouns: varchar('pronouns', { length: 32 }),
   website: text('website'),
   phone: text('phone'),
   followersCount: bigint('followers_count', { mode: 'number' })
