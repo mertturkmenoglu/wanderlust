@@ -1,6 +1,7 @@
 import e from 'enquirer';
 import { hc } from 'hono/client';
 import { AppType } from '../src';
+import { categories, db } from '../src/db';
 import { logger } from '../src/logger';
 import { CreateLocationDto } from '../src/routes/locations/dto';
 
@@ -46,6 +47,8 @@ async function bootstrap() {
 
   if (type === 'locations') {
     await seedLocations(jwt);
+  } else if (type === 'categories') {
+    await seedCategories();
   } else {
     logger.error('Not implemented');
   }
@@ -92,6 +95,39 @@ async function seedLocations(jwt: string) {
   console.timeEnd('seed-locations');
 
   logger.info('Seeded all locations');
+}
+
+type Category = {
+  id: number;
+  name: string;
+};
+
+async function seedCategories() {
+  const path = 'scripts/data/categories.json';
+  logger.info(`Reading categories data from: ${path}`);
+  const file = Bun.file(path);
+
+  if (!file.exists()) {
+    logger.error(`Cannot find categories data file at ${path}. Exiting...`);
+    process.exit(1);
+  }
+
+  const dtos: Category[] = await file.json();
+
+  logger.info(`Seeding ${dtos.length} categories`);
+  console.time('seed-categories');
+  let i = 1;
+
+  for (const dto of dtos) {
+    logger.info(`Seeding category ${i}/${dtos.length}`);
+    await db.insert(categories).values(dto);
+
+    logger.info('Seeded category');
+    i++;
+  }
+
+  console.timeEnd('seed-categories');
+  logger.info('Seeded all categories');
 }
 
 bootstrap();
