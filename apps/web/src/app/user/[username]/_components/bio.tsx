@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api, rpc } from '@/lib/api';
 import { currentUser as clerkCurrentUser } from '@clerk/nextjs/server';
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import clsx from 'clsx';
 import { BadgeCheckIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -49,6 +50,18 @@ export default async function Bio({ username, className }: Props) {
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-xl font-medium">{fullName}</h2>
             <h3 className="text-base text-primary">@{user.username}</h3>
+            {user.pronouns !== null && (
+              <div className="flex items-center space-x-1">
+                <span className="text-sm text-gray-500">{user.pronouns}</span>
+                <a
+                  href={`https://en.pronouns.page/${user.pronouns}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <QuestionMarkCircledIcon className="size-4 text-gray-500" />
+                </a>
+              </div>
+            )}
             {user.isVerified && (
               <div className="mt-2 flex items-center gap-2">
                 <BadgeCheckIcon className="size-6 text-primary" />
