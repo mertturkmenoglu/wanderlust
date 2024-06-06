@@ -39,7 +39,7 @@ export default function Menu({ locationId }: Props) {
   const [listId, setListId] = useState<string | null>(null);
 
   const query = useQuery({
-    queryKey: ['lists'],
+    queryKey: ['my-lists'],
     queryFn: async () => {
       const res = await rpc(() =>
         api.lists.my.$get({
