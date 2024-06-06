@@ -1,3 +1,4 @@
+import EmptyContent from '@/components/blocks/EmptyContent';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -24,6 +25,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import DeleteButton from './_components/delete-button';
+import Items from './_components/items';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -128,7 +130,12 @@ export default async function Page({ params: { id } }: Props) {
         </Dialog>
       </div>
       <hr className="my-2" />
-      <div className="my-16"></div>
+      <div className="my-16">
+        {(list.data.isPublic || belongsToCurrentUser) && <Items listId={id} />}
+        {!list.data.isPublic && !belongsToCurrentUser && (
+          <EmptyContent errorMessage="You do not have the permissions to view this list" />
+        )}
+      </div>
     </div>
   );
 }
