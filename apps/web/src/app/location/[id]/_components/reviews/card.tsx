@@ -32,6 +32,9 @@ import { useUser } from '@clerk/nextjs';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { useDeleteReview } from './delete-review';
 
 type Props = {
@@ -44,6 +47,8 @@ export default function ReviewCard({ review }: Props) {
   const deleteMutation = useDeleteReview({
     locationId: review.locationId,
   });
+  const [open, setOpen] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
 
   return (
     <Card key={review.id}>
@@ -166,20 +171,38 @@ export default function ReviewCard({ review }: Props) {
       <CardFooter>
         <ScrollArea>
           <div className="mb-4 flex gap-2">
-            {review.media.map((m) => (
-              <img
+            {review.media.map((m, i) => (
+              <button
                 key={m.url}
-                src={m.url}
-                alt={m.alt}
-                className={cn('aspect-square w-32 object-cover', {
-                  'col-span-2 mx-auto': review.media.length === 1,
-                })}
-              />
+                onClick={() => {
+                  setImageIndex(() => {
+                    setOpen(true);
+                    return i;
+                  });
+                }}
+              >
+                <img
+                  src={m.url}
+                  alt={m.alt}
+                  className={cn('aspect-square w-32 object-cover', {
+                    'col-span-2 mx-auto': review.media.length === 1,
+                  })}
+                />
+              </button>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </CardFooter>
+
+      <Lightbox
+        open={open}
+        close={() => setOpen(false)}
+        slides={review.media.map((m) => ({
+          src: m.url,
+        }))}
+        index={imageIndex}
+      />
     </Card>
   );
 }
