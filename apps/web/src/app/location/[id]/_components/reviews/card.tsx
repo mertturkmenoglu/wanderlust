@@ -27,7 +27,6 @@ import {
 import { Rating } from '@/components/ui/rating';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Review } from '@/lib/types';
-import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
@@ -174,6 +173,7 @@ export default function ReviewCard({ review }: Props) {
             {review.media.map((m, i) => (
               <button
                 key={m.url}
+                className="aspect-square w-32"
                 onClick={() => {
                   setImageIndex(() => {
                     setOpen(true);
@@ -184,9 +184,7 @@ export default function ReviewCard({ review }: Props) {
                 <img
                   src={m.url}
                   alt={m.alt}
-                  className={cn('aspect-square w-32 object-cover', {
-                    'col-span-2 mx-auto': review.media.length === 1,
-                  })}
+                  className="aspect-square w-32 object-cover"
                 />
               </button>
             ))}
