@@ -46,7 +46,7 @@ export default function ReviewList({ locationId }: Props) {
         <EmptyContent showBackButton={false} />
       )}
       {query.data && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-[1000px] grid-cols-1 gap-4">
           {query.data.data.map((review) => (
             <ReviewCard
               key={review.id}

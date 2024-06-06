@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -25,8 +24,8 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Rating } from '@/components/ui/rating';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Review } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { EllipsisVertical, FlagIcon, ThumbsUp, TrashIcon } from 'lucide-react';
@@ -142,38 +141,41 @@ export default function ReviewCard({ review }: Props) {
         </Dialog>
       </CardHeader>
 
-      <CardContent>
-        <CollapsibleText text={review.comment} />
+      <div className="grid grid-cols-3 items-start">
+        <CardContent className="col-span-3 lg:col-span-2">
+          <CollapsibleText text={review.comment} />
 
-        <div className="mt-2 flex items-center space-x-2">
-          <span className="text-sm font-bold">Rating:</span>
-          <Rating
-            disabled={true}
-            defaultValue={review.rating}
-            onChange={() => {}}
-            id={review.id}
-          />
-        </div>
+          <div className="mt-2 flex items-center space-x-2">
+            <span className="text-sm font-bold">Rating:</span>
+            <Rating
+              disabled={true}
+              defaultValue={review.rating}
+              onChange={() => {}}
+              id={review.id}
+            />
+          </div>
 
-        <div className="mt-2 flex items-center">
-          <Button
-            variant={'ghost'}
-            size={'icon'}
-            disabled={true}
-          >
-            <ThumbsUp className="size-4 text-primary" />
-          </Button>
-          <span className="text-sm">{review.likeCount} likes</span>
-        </div>
-      </CardContent>
+          <div className="mt-2 flex items-center">
+            <Button
+              variant={'ghost'}
+              size={'icon'}
+              disabled={true}
+            >
+              <ThumbsUp className="size-4 text-primary" />
+            </Button>
+            <span className="text-sm">{review.likeCount} likes</span>
+          </div>
+        </CardContent>
 
-      <CardFooter>
-        <ScrollArea>
-          <div className="mb-4 flex gap-2">
+        <div className="col-span-3 m-6 flex justify-center lg:col-span-1 lg:justify-end">
+          <div className="mb-4 grid max-w-[300px] grid-cols-2 gap-2">
             {review.media.map((m, i) => (
               <button
                 key={m.url}
-                className="aspect-square w-32"
+                className={cn('w-32', {
+                  'col-span-2': review.media.length === 1,
+                  'col-span-2 mx-auto': review.media.length === 3 && i === 2,
+                })}
                 onClick={() => {
                   setImageIndex(() => {
                     setOpen(true);
@@ -184,14 +186,13 @@ export default function ReviewCard({ review }: Props) {
                 <img
                   src={m.url}
                   alt={m.alt}
-                  className="aspect-square w-32 object-cover"
+                  className={cn('aspect-square object-cover')}
                 />
               </button>
             ))}
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </CardFooter>
+        </div>
+      </div>
 
       <Lightbox
         open={open}
