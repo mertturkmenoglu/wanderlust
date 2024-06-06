@@ -201,6 +201,17 @@ export default function ReviewCard({ review }: Props) {
         slides={review.media.map((m) => ({
           src: m.url,
         }))}
+        carousel={{
+          finite: true,
+        }}
+        controller={{
+          closeOnBackdropClick: true,
+        }}
+        styles={{
+          container: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          },
+        }}
         index={imageIndex}
       />
     </Card>
