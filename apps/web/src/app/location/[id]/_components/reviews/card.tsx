@@ -25,6 +25,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Rating } from '@/components/ui/rating';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Review } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useUser } from '@clerk/nextjs';
@@ -163,18 +164,21 @@ export default function ReviewCard({ review }: Props) {
       </CardContent>
 
       <CardFooter>
-        <div className="mx-auto grid w-full min-w-fit max-w-min grid-cols-2 gap-2">
-          {review.media.map((m) => (
-            <img
-              key={m.url}
-              src={m.url}
-              alt={m.alt}
-              className={cn('aspect-square w-32 object-cover', {
-                'col-span-2 mx-auto': review.media.length === 1,
-              })}
-            />
-          ))}
-        </div>
+        <ScrollArea>
+          <div className="mb-4 flex gap-2">
+            {review.media.map((m) => (
+              <img
+                key={m.url}
+                src={m.url}
+                alt={m.alt}
+                className={cn('aspect-square w-32 object-cover', {
+                  'col-span-2 mx-auto': review.media.length === 1,
+                })}
+              />
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </CardFooter>
     </Card>
   );
