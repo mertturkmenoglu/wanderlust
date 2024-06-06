@@ -9,7 +9,6 @@ export function getById(id: string) {
     where: eq(lists.id, id),
     with: {
       user: true,
-      items: true,
     },
   });
 }
@@ -67,10 +66,17 @@ export async function getListItems(
   }
 
   const res = await db.query.listItems.findMany({
-    where: eq(lists.id, listId),
+    where: eq(listItems.listId, listId),
     orderBy: (table, { desc }) => desc(table.createdAt),
     offset: pagination.offset,
     limit: pagination.pageSize,
+    with: {
+      location: {
+        with: {
+          category: true,
+        },
+      },
+    },
   });
 
   const [{ value: totalRecords }] = await db
