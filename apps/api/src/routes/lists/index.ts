@@ -88,20 +88,14 @@ const createListItem = factory.createHandlers(
     const dto = c.req.valid('json');
     const auth = c.get('auth');
 
-    try {
-      const item = await repository.createListItem(auth.userId, listId, dto);
+    const item = await repository.createListItem(auth.userId, listId, dto);
 
-      return c.json(
-        {
-          data: item,
-        },
-        201
-      );
-    } catch (e) {
-      throw new HTTPException(400, {
-        message: 'Invalid request',
-      });
-    }
+    return c.json(
+      {
+        data: item,
+      },
+      201
+    );
   }
 );
 

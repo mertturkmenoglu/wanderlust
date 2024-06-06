@@ -136,6 +136,19 @@ export async function createListItem(
     });
   }
 
+  const dbItem = await db.query.listItems.findFirst({
+    where: and(
+      eq(listItems.listId, listId),
+      eq(listItems.locationId, dto.locationId)
+    ),
+  });
+
+  if (dbItem) {
+    throw new HTTPException(400, {
+      message: 'Item is already on the list',
+    });
+  }
+
   const [item] = await db
     .insert(listItems)
     .values({
