@@ -3,11 +3,11 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import { getAuth, rateLimiter } from '../../middlewares';
+import { getAuth, rateLimiter, withAuth } from '../../middlewares';
 import { withOffset } from '../../pagination';
 import { Env } from '../../start';
 import { validateId, validatePagination } from '../dto';
-import { createListSchema } from './dto';
+import { createListItemSchema, createListSchema } from './dto';
 import * as repository from './repository';
 
 const factory = createFactory<Env>();
@@ -56,7 +56,56 @@ const getById = factory.createHandlers(
   }
 );
 
-const create = factory.createHandlers(
+const getListItems = factory.createHandlers(
+  clerkMiddleware(),
+  withAuth,
+  zValidator('param', validateId),
+  zValidator('query', validatePagination),
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const pagination = withOffset(c.req.valid('query'));
+    const auth = c.get('withAuth');
+
+    const result = await repository.getListItems(id, pagination, auth?.userId);
+
+    return c.json(
+      {
+        data: result.data,
+        pagination: result.pagination,
+      },
+      200
+    );
+  }
+);
+
+const createListItem = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateId),
+  zValidator('json', createListItemSchema),
+  async (c) => {
+    const { id: listId } = c.req.valid('param');
+    const dto = c.req.valid('json');
+    const auth = c.get('auth');
+
+    try {
+      const item = await repository.createListItem(auth.userId, listId, dto);
+
+      return c.json(
+        {
+          data: item,
+        },
+        201
+      );
+    } catch (e) {
+      throw new HTTPException(400, {
+        message: 'Invalid request',
+      });
+    }
+  }
+);
+
+const createList = factory.createHandlers(
   clerkMiddleware(),
   getAuth,
   zValidator('json', createListSchema),
@@ -116,5 +165,7 @@ export const listsRouter = new Hono()
   .use(rateLimiter())
   .get('/my', ...getMyLists)
   .get('/:id', ...getById)
-  .post('/', ...create)
+  .get('/:id/items', ...getListItems)
+  .post('/', ...createList)
+  .post('/:id/items', ...createListItem)
   .delete('/:id', ...deleteList);

@@ -1,6 +1,6 @@
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { lists } from '../../db';
+import { listItems, lists } from '../../db';
 
 export const createListSchema = createInsertSchema(lists).omit({
   id: true,
@@ -10,3 +10,10 @@ export const createListSchema = createInsertSchema(lists).omit({
 });
 
 export type CreateListDto = z.infer<typeof createListSchema>;
+
+export const createListItemSchema = createInsertSchema(listItems).omit({
+  createdAt: true,
+  listId: true,
+});
+
+export type CreateListItemDto = z.infer<typeof createListItemSchema>;
