@@ -48,6 +48,7 @@
     "@types/eslint-config-prettier": "^6.11.3",
     "@types/eslint__js": "^8.42.3",
     "@types/faker": "^6.6.9",
+    "@types/pg": "^8.11.6",
     "drizzle-kit": "^0.21.2",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "3.2.5"
