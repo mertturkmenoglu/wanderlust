@@ -131,7 +131,7 @@ export default async function Page({ params: { id } }: Props) {
       </div>
       <hr className="my-2" />
       <div className="my-16">
-        {(list.data.isPublic || belongsToCurrentUser) && <Items listId={id} />}
+        {(list.data.isPublic || belongsToCurrentUser) && <Items items={list.data.items}/>}
         {!list.data.isPublic && !belongsToCurrentUser && (
           <EmptyContent errorMessage="You do not have the permissions to view this list" />
         )}
