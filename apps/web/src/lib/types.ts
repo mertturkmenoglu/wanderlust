@@ -24,3 +24,9 @@ export type Review = ArrayElement<Reviews>;
 export type UploadImageType = GetNewUploadUrlQuery['type'];
 
 export type Profile = InferResponseType<typeof api.users.me.$get>['data'];
+
+const listFnRef = api.lists[':id'].$get;
+
+export type List = InferResponseType<typeof listFnRef>['data'];
+
+export type ListItem = ArrayElement<List['items']>;
