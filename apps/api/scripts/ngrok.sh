@@ -2,4 +2,4 @@
 
 export $(xargs <.env)
 
-ngrok http --domain=$NGROK_URL 5000
+ngrok http --domain=$NGROK_URL $PORT
