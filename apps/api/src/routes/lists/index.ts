@@ -3,10 +3,9 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import { getAuth, rateLimiter, withAuth } from '../../middlewares';
-import { withOffset } from '../../pagination';
+import { getAuth, rateLimiter } from '../../middlewares';
 import { Env } from '../../start';
-import { validateId, validatePagination } from '../dto';
+import { validateId } from '../dto';
 import { createListItemSchema, createListSchema } from './dto';
 import * as repository from './repository';
 
@@ -15,19 +14,12 @@ const factory = createFactory<Env>();
 const getMyLists = factory.createHandlers(
   clerkMiddleware(),
   getAuth,
-  zValidator('query', validatePagination),
   async (c) => {
-    const pagination = withOffset(c.req.valid('query'));
-
-    const result = await repository.getMyLists(
-      c.get('auth').userId,
-      pagination
-    );
+    const result = await repository.getMyLists(c.get('auth').userId);
 
     return c.json(
       {
-        data: result.data,
-        pagination: result.pagination,
+        data: result,
       },
       200
     );
@@ -50,28 +42,6 @@ const getById = factory.createHandlers(
     return c.json(
       {
         data: list,
-      },
-      200
-    );
-  }
-);
-
-const getListItems = factory.createHandlers(
-  clerkMiddleware(),
-  withAuth,
-  zValidator('param', validateId),
-  zValidator('query', validatePagination),
-  async (c) => {
-    const { id } = c.req.valid('param');
-    const pagination = withOffset(c.req.valid('query'));
-    const auth = c.get('withAuth');
-
-    const result = await repository.getListItems(id, pagination, auth?.userId);
-
-    return c.json(
-      {
-        data: result.data,
-        pagination: result.pagination,
       },
       200
     );
@@ -159,7 +129,6 @@ export const listsRouter = new Hono()
   .use(rateLimiter())
   .get('/my', ...getMyLists)
   .get('/:id', ...getById)
-  .get('/:id/items', ...getListItems)
   .post('/', ...createList)
   .post('/:id/items', ...createListItem)
   .delete('/:id', ...deleteList);
