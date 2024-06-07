@@ -2,23 +2,20 @@
 
 import { Button } from '@/components/ui/button';
 import { api, rpc } from '@/lib/api';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
 import Loading from './loading';
 
-async function getLists(page: number) {
-  return rpc(() => api.lists.my.$get({ query: { page: `${page}` } }));
+async function getLists() {
+  const res = await rpc(() => api.lists.my.$get());
+  return res.data;
 }
 
 export default function Page() {
-  const query = useInfiniteQuery({
+  const query = useQuery({
     queryKey: ['lists'],
-    queryFn: ({ pageParam }) => getLists(pageParam),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
+    queryFn: () => getLists(),
   });
 
   if (query.isLoading) {
@@ -44,33 +41,15 @@ export default function Page() {
       <div className="mt-8">
         {query.data && (
           <div className="grid grid-cols-1 gap-4">
-            {query.data.pages.map((page, i) => (
-              <React.Fragment key={i}>
-                {page.data.map((list) => (
-                  <Link
-                    href={`/lists/${list.id}`}
-                    key={list.id}
-                    className="block"
-                  >
-                    {list.name}
-                  </Link>
-                ))}
-              </React.Fragment>
+            {query.data.map((list) => (
+              <Link
+                href={`/lists/${list.id}`}
+                key={list.id}
+                className="block"
+              >
+                {list.name}
+              </Link>
             ))}
-          </div>
-        )}
-        {query.hasNextPage && (
-          <div className="mt-4 flex justify-center">
-            <Button
-              onClick={() => query.fetchNextPage()}
-              disabled={!query.hasNextPage || query.isFetchingNextPage}
-            >
-              {query.isFetchingNextPage
-                ? 'Loading more...'
-                : query.hasNextPage
-                  ? 'Load More'
-                  : 'Nothing more to load'}
-            </Button>
           </div>
         )}
       </div>

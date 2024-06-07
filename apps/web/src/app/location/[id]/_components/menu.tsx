@@ -41,15 +41,7 @@ export default function Menu({ locationId }: Props) {
   const query = useQuery({
     queryKey: ['my-lists'],
     queryFn: async () => {
-      const res = await rpc(() =>
-        api.lists.my.$get({
-          query: {
-            page: '1',
-            pageSize: '100',
-          },
-        })
-      );
-
+      const res = await rpc(() => api.lists.my.$get());
       return res.data;
     },
   });
