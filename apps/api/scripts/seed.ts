@@ -52,6 +52,8 @@ async function bootstrap() {
   } else {
     logger.error('Not implemented');
   }
+
+  process.exit(0);
 }
 
 async function seedLocations(jwt: string) {
