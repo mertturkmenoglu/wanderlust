@@ -1,6 +1,6 @@
 import { and, count, eq, gt, gte, lte, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { db, listItems, lists } from '../../db';
+import { db, listItems, lists, users } from '../../db';
 import { CreateListDto, CreateListItemDto } from './dto';
 
 export function getById(id: string) {
@@ -8,6 +8,35 @@ export function getById(id: string) {
     where: eq(lists.id, id),
     with: {
       user: true,
+      items: {
+        orderBy: (table, { asc }) => asc(table.index),
+        with: {
+          location: {
+            with: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function getUsersPublicLists(username: string) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.username, username),
+  });
+
+  if (!user) {
+    throw new HTTPException(404, {
+      message: 'User not found',
+    });
+  }
+
+  return db.query.lists.findMany({
+    where: eq(lists.userId, user.id),
+    orderBy: (table, { desc }) => desc(table.createdAt),
+    with: {
       items: {
         orderBy: (table, { asc }) => asc(table.index),
         with: {
