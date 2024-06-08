@@ -57,6 +57,27 @@
       "when": 1717579856545,
       "tag": "0007_serious_franklin_richards",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1717761552756,
+      "tag": "0008_typical_ulik",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1717761585936,
+      "tag": "0009_outstanding_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1717763346880,
+      "tag": "0010_yummy_stellaris",
+      "breakpoints": true
     }
   ]
 }
