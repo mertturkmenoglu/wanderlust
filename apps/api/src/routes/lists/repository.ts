@@ -50,6 +50,18 @@ export async function getMyLists(userId: string) {
   return db.query.lists.findMany({
     where: eq(lists.userId, userId),
     orderBy: (table, { desc }) => desc(table.createdAt),
+    with: {
+      items: {
+        orderBy: (table, { asc }) => asc(table.index),
+        with: {
+          location: {
+            with: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
