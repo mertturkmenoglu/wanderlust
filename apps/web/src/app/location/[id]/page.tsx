@@ -4,6 +4,7 @@ import { getAuthHeader } from '@/lib/headers';
 import BookmarkButton from './_components/bookmark-button';
 import Breadcrumb from './_components/breadcrumb';
 import Carousel from './_components/carousel';
+import FavoriteButton from './_components/favorite-button';
 import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Menu from './_components/menu';
@@ -54,6 +55,11 @@ export default async function Page({ params: { id } }: Props) {
 
             <div className="flex items-center">
               <ShareButton />
+
+              <FavoriteButton
+                locationId={location.id}
+                isFavorite={metadata.isFavorite}
+              />
 
               <BookmarkButton
                 locationId={location.id}
