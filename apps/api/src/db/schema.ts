@@ -371,3 +371,35 @@ export const reviewLikes = pgTable(
     };
   }
 );
+
+export const favorites = pgTable(
+  'favorites',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    locationId: uuid('location_id')
+      .notNull()
+      .references(() => locations.id),
+    profileIndex: smallint('profile_index').notNull().default(-1),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      favoritesUserIdIdx: index('favorites_user_id_idx').on(table.userId),
+      uniqueFavorites: unique().on(table.userId, table.locationId),
+    };
+  }
+);
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  user: one(users, {
+    fields: [favorites.userId],
+    references: [users.id],
+  }),
+  location: one(locations, {
+    fields: [favorites.locationId],
+    references: [locations.id],
+  }),
+}));
