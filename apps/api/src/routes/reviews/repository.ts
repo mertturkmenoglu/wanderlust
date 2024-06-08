@@ -1,5 +1,6 @@
 import { and, count, eq, sql } from 'drizzle-orm';
-import { Media, db, locations, reviews } from '../../db';
+import { HTTPException } from 'hono/http-exception';
+import { Media, db, locations, reviews, users } from '../../db';
 import { PaginationParams, getPagination } from '../../pagination';
 import { CreateReviewDto } from './dto';
 
@@ -35,6 +36,42 @@ export async function getReviewsOfLocation(
     .select({ value: count() })
     .from(reviews)
     .where(eq(reviews.locationId, locationId));
+
+  return {
+    data: results,
+    pagination: getPagination(paginationParams, totalRecords),
+  };
+}
+
+export async function getReviewsByUsername(
+  username: string,
+  paginationParams: PaginationParams
+) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.username, username),
+  });
+
+  if (!user) {
+    throw new HTTPException(404, {
+      message: 'User not found',
+    });
+  }
+
+  const results = await db.query.reviews.findMany({
+    where: eq(reviews.userId, user.id),
+    orderBy: (table, { desc }) => desc(table.createdAt),
+    offset: paginationParams.offset,
+    limit: paginationParams.pageSize,
+    with: {
+      location: true,
+      user: true,
+    },
+  });
+
+  const [{ value: totalRecords }] = await db
+    .select({ value: count() })
+    .from(reviews)
+    .where(eq(reviews.userId, user.id));
 
   return {
     data: results,

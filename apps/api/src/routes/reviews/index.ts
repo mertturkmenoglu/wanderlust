@@ -6,7 +6,7 @@ import { HTTPException } from 'hono/http-exception';
 import { authorize, getAuth, rateLimiter } from '../../middlewares';
 import { withOffset } from '../../pagination';
 import { Env } from '../../start';
-import { validateId, validatePagination } from '../dto';
+import { validateId, validatePagination, validateUsername } from '../dto';
 import { createReviewSchema } from './dto';
 import * as repository from './repository';
 
@@ -46,6 +46,28 @@ const getById = factory.createHandlers(
     return c.json(
       {
         data: review,
+      },
+      200
+    );
+  }
+);
+
+const getByUsername = factory.createHandlers(
+  zValidator('param', validateUsername),
+  zValidator('query', validatePagination),
+  async (c) => {
+    const { username } = c.req.valid('param');
+    const paginationParams = withOffset(c.req.valid('query'));
+
+    const result = await repository.getReviewsByUsername(
+      username,
+      paginationParams
+    );
+
+    return c.json(
+      {
+        data: result.data,
+        pagination: result.pagination,
       },
       200
     );
@@ -119,6 +141,7 @@ const like = factory.createHandlers(async (c) => {
 export const reviewsRouter = new Hono()
   .use(rateLimiter())
   .get('/location/:id', ...getReviewsOfLocation)
+  .get('/user/:username', ...getByUsername)
   .get('/:id', ...getById)
   .post('/', ...create)
   .patch('/:id', ...update)
