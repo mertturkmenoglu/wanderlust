@@ -64,7 +64,7 @@ export default function Menu({ locationId }: Props) {
             variant="ghost"
             size="icon"
           >
-            <EllipsisVertical className="size-6" />
+            <EllipsisVertical className="size-6 text-primary" />
           </Button>
         </DropdownMenuTrigger>
 
