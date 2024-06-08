@@ -244,7 +244,7 @@ export const listItems = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     listId: uuid('list_id')
       .notNull()
-      .references(() => lists.id),
+      .references(() => lists.id, { onDelete: 'cascade' }),
     locationId: uuid('location_id')
       .notNull()
       .references(() => locations.id),
