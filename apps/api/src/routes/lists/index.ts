@@ -6,7 +6,11 @@ import { HTTPException } from 'hono/http-exception';
 import { getAuth, rateLimiter } from '../../middlewares';
 import { Env } from '../../start';
 import { validateId } from '../dto';
-import { createListItemSchema, createListSchema } from './dto';
+import {
+  createListItemSchema,
+  createListSchema,
+  validateDeleteListItemParams,
+} from './dto';
 import * as repository from './repository';
 
 const factory = createFactory<Env>();
@@ -66,6 +70,31 @@ const createListItem = factory.createHandlers(
       },
       201
     );
+  }
+);
+
+const deleteListItem = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateDeleteListItemParams),
+  async (c) => {
+    const { id, itemId } = c.req.valid('param');
+    const auth = c.get('auth');
+
+    try {
+      const deleted = await repository.deleteListItem(auth.userId, id, itemId);
+
+      return c.json(
+        {
+          data: deleted,
+        },
+        200
+      );
+    } catch (e) {
+      throw new HTTPException(400, {
+        message: 'Invalid request',
+      });
+    }
   }
 );
 
@@ -131,4 +160,5 @@ export const listsRouter = new Hono()
   .get('/:id', ...getById)
   .post('/', ...createList)
   .post('/:id/items', ...createListItem)
-  .delete('/:id', ...deleteList);
+  .delete('/:id', ...deleteList)
+  .delete('/:id/items/:itemId', ...deleteListItem);
