@@ -12,7 +12,7 @@ const duration = {
  */
 export const cacheTTL = {
   categories: 1 * duration.hour,
-  'consectetur-adipiscing-elit': 0,
+  'categories-with-count': 1 * duration.hour,
   'locations-countries': 1 * duration.day,
   'locations-peek': 1 * duration.hour,
 } as const satisfies Record<CacheKey, number>;
