@@ -1,11 +1,11 @@
 'use client';
 
+import ListCard from '@/components/blocks/ListCard';
 import { Button } from '@/components/ui/button';
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import ListCard from './_components/list-card';
 import Loading from './loading';
 
 async function getLists() {
