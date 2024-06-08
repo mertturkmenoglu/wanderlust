@@ -1,4 +1,4 @@
-import { and, count, eq } from 'drizzle-orm';
+import { and, count, eq, gt, gte, lte, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db, listItems, lists } from '../../db';
 import { CreateListDto, CreateListItemDto } from './dto';
@@ -9,6 +9,7 @@ export function getById(id: string) {
     with: {
       user: true,
       items: {
+        orderBy: (table, { asc }) => asc(table.index),
         with: {
           location: {
             with: {
@@ -104,7 +105,7 @@ export async function createListItem(
     });
   }
 
-  // Check how many lists user already has
+  // Check how many items this list has
   const [{ value: totalListItems }] = await db
     .select({ value: count() })
     .from(listItems)
@@ -133,7 +134,8 @@ export async function createListItem(
     .insert(listItems)
     .values({
       ...dto,
-      listId: listId,
+      listId,
+      index: totalListItems,
     })
     .returning();
 
@@ -143,7 +145,7 @@ export async function createListItem(
 export async function deleteListItem(
   userId: string,
   listId: string,
-  locationId: string
+  itemId: string
 ) {
   const list = await db.query.lists.findFirst({
     where: eq(lists.id, listId),
@@ -161,12 +163,122 @@ export async function deleteListItem(
     });
   }
 
-  const [deleted] = await db
-    .delete(listItems)
-    .where(
-      and(eq(listItems.listId, listId), eq(listItems.locationId, locationId))
-    )
-    .returning();
+  const item = await db.query.listItems.findFirst({
+    where: and(eq(listItems.listId, listId), eq(listItems.id, itemId)),
+  });
+
+  if (!item) {
+    throw new HTTPException(404, {
+      message: 'Item not found',
+    });
+  }
+
+  const deleted = await db.transaction(async (tx) => {
+    const [res] = await tx
+      .delete(listItems)
+      .where(and(eq(listItems.listId, listId), eq(listItems.id, itemId)))
+      .returning();
+
+    await tx
+      .update(listItems)
+      .set({
+        index: sql`${listItems.index} - 1`,
+      })
+      .where(
+        and(eq(listItems.listId, listId), gt(listItems.index, item.index))
+      );
+
+    return res;
+  });
 
   return deleted;
+}
+
+export async function moveItemAfter(
+  userId: string,
+  listId: string,
+  itemId: string,
+  afterItemId: string
+) {
+  const list = await db.query.lists.findFirst({
+    where: eq(lists.id, listId),
+  });
+
+  if (!list) {
+    throw new HTTPException(404, {
+      message: 'List not found',
+    });
+  }
+
+  if (list.userId !== userId) {
+    throw new HTTPException(403, {
+      message: 'You do not have permission to move items on this list',
+    });
+  }
+
+  const item = await db.query.listItems.findFirst({
+    where: and(eq(listItems.listId, listId), eq(listItems.id, itemId)),
+  });
+
+  if (!item) {
+    throw new HTTPException(404, {
+      message: 'Item not found',
+    });
+  }
+
+  const afterItem = await db.query.listItems.findFirst({
+    where: and(eq(listItems.listId, listId), eq(listItems.id, afterItemId)),
+  });
+
+  if (!afterItem) {
+    throw new HTTPException(404, {
+      message: 'After item not found',
+    });
+  }
+
+  if (item.index < afterItem.index) {
+    await db.transaction(async (tx) => {
+      await tx
+        .update(listItems)
+        .set({
+          index: sql`${listItems.index} - 1`,
+        })
+        .where(
+          and(
+            eq(listItems.listId, listId),
+            gte(listItems.index, item.index + 1),
+            lte(listItems.index, afterItem.index)
+          )
+        );
+
+      await tx
+        .update(listItems)
+        .set({
+          index: afterItem.index,
+        })
+        .where(eq(listItems.id, item.id));
+    });
+  } else {
+    await db.transaction(async (tx) => {
+      await tx
+        .update(listItems)
+        .set({
+          index: sql`${listItems.index} + 1`,
+        })
+        .where(
+          and(
+            eq(listItems.listId, listId),
+            gte(listItems.index, afterItem.index + 1),
+            lte(listItems.index, item.index - 1)
+          )
+        );
+
+      await tx
+        .update(listItems)
+        .set({
+          index: afterItem.index + 1,
+        })
+        .where(eq(listItems.id, item.id));
+    });
+  }
 }
