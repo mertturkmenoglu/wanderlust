@@ -41,7 +41,13 @@ export default function Menu({ locationId }: Props) {
   const query = useQuery({
     queryKey: ['my-lists'],
     queryFn: async () => {
-      const res = await rpc(() => api.lists.my.$get());
+      const res = await rpc(() =>
+        api.lists.info[':locationId'].$get({
+          param: {
+            locationId,
+          },
+        })
+      );
       return res.data;
     },
   });
@@ -108,6 +114,7 @@ export default function Menu({ locationId }: Props) {
                     <SelectItem
                       value={list.id}
                       key={list.id}
+                      disabled={list.includes}
                     >
                       {list.name}
                     </SelectItem>
