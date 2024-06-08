@@ -1,10 +1,10 @@
 'use client';
 
 import EmptyContent from '@/components/blocks/EmptyContent';
+import ReviewCard from '@/components/blocks/ReviewCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
-import ReviewCard from './card';
 
 type Props = {
   locationId: string;
