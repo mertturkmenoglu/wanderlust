@@ -7,7 +7,7 @@ import { logger } from '../../logger';
 import { getAuth } from '../../middlewares';
 import { withOffset } from '../../pagination';
 import { Env } from '../../start';
-import { validateId, validatePagination } from '../dto';
+import { validateId, validatePagination, validateUsername } from '../dto';
 import { createFavoriteSchema } from './dto';
 import * as repository from './repository';
 
@@ -29,6 +29,22 @@ const getFavorites = factory.createHandlers(
       {
         data: result.data,
         pagination: result.pagination,
+      },
+      200
+    );
+  }
+);
+
+const getFavoritesByUsername = factory.createHandlers(
+  zValidator('param', validateUsername),
+  async (c) => {
+    const { username } = c.req.valid('param');
+
+    const result = await repository.getUserFavoritesByUsername(username);
+
+    return c.json(
+      {
+        data: result,
       },
       200
     );
@@ -102,6 +118,7 @@ const deleteFavorite = factory.createHandlers(
 
 export const favoritesRouter = new Hono()
   .get('/', ...getFavorites)
+  .get('/user/:username', ...getFavoritesByUsername)
   .get('/:id', ...isFavorite)
   .post('/', ...create)
   .delete('/:id', ...deleteFavorite);
