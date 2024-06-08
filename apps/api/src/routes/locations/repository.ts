@@ -9,6 +9,7 @@ import {
   states,
 } from '../../db';
 import * as bookmarksRepository from '../bookmarks/repository';
+import * as favoritesRepository from '../favorites/repository';
 import { CreateLocationDto, UpdateLocationDto } from './dto';
 
 export async function peek() {
@@ -63,7 +64,11 @@ export async function getById(id: string, userId?: string) {
     ? await bookmarksRepository.isBookmarked(userId, id)
     : false;
 
-  return { data: location, metadata: { isBookmarked } };
+  const isFavorite = userId
+    ? await favoritesRepository.isFavorite(userId, id)
+    : false;
+
+  return { data: location, metadata: { isBookmarked, isFavorite } };
 }
 
 export async function create(dto: CreateLocationDto) {
