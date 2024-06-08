@@ -5,17 +5,23 @@ import { Env } from '../start';
 
 export const checkCache = <T>(key: CacheKey): MiddlewareHandler => {
   return createMiddleware<Env>(async (c, next) => {
-    const cacheResult = await cacheRead<T>(key);
+    const cacheControlHeader = c.req.header('Cache-Control');
 
-    if (cacheResult === null) {
+    if (cacheControlHeader === 'no-cache') {
       await next();
     } else {
-      return c.json(
-        {
-          data: cacheResult,
-        },
-        200
-      );
+      const cacheResult = await cacheRead<T>(key);
+
+      if (cacheResult === null) {
+        await next();
+      } else {
+        return c.json(
+          {
+            data: cacheResult,
+          },
+          200
+        );
+      }
     }
   });
 };
