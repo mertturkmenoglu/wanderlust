@@ -5,7 +5,7 @@ import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { getAuth, rateLimiter } from '../../middlewares';
 import { Env } from '../../start';
-import { validateId } from '../dto';
+import { validateId, validateUsername } from '../dto';
 import {
   createListItemSchema,
   createListSchema,
@@ -20,6 +20,22 @@ const getMyLists = factory.createHandlers(
   getAuth,
   async (c) => {
     const result = await repository.getMyLists(c.get('auth').userId);
+
+    return c.json(
+      {
+        data: result,
+      },
+      200
+    );
+  }
+);
+
+const getUsersPublicLists = factory.createHandlers(
+  zValidator('param', validateUsername),
+  async (c) => {
+    const { username } = c.req.valid('param');
+
+    const result = await repository.getUsersPublicLists(username);
 
     return c.json(
       {
@@ -157,6 +173,7 @@ const deleteList = factory.createHandlers(
 export const listsRouter = new Hono()
   .use(rateLimiter())
   .get('/my', ...getMyLists)
+  .get('/user/:username', ...getUsersPublicLists)
   .get('/:id', ...getById)
   .post('/', ...createList)
   .post('/:id/items', ...createListItem)
