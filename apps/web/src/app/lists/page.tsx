@@ -5,6 +5,7 @@ import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import ListCard from './_components/list-card';
 import Loading from './loading';
 
 async function getLists() {
@@ -45,9 +46,9 @@ export default function Page() {
               <Link
                 href={`/lists/${list.id}`}
                 key={list.id}
-                className="block"
+                className=""
               >
-                {list.name}
+                <ListCard list={list} />
               </Link>
             ))}
           </div>
