@@ -1,12 +1,4 @@
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import LocationCard from '@/components/blocks/LocationCard';
 import { api, rpc } from '@/lib/api';
 import Link from 'next/link';
 
@@ -32,49 +24,7 @@ export default async function NewLocations() {
             key={location.id}
             href={`/location/${location.id}`}
           >
-            <Card
-              key={location.id}
-              className="group"
-            >
-              <img
-                src={location.media.slice(0, 1)[0].url}
-                alt={location.media.slice(0, 1)[0].alt}
-                className="aspect-video w-full rounded-t-xl object-cover"
-                width={512}
-                height={288}
-              />
-
-              <CardHeader>
-                <CardTitle className="line-clamp-1 capitalize">
-                  {location.name}
-                </CardTitle>
-                <CardDescription className="line-clamp-1">
-                  {location.address.city} / {location.address.state}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm leading-none">
-                    {location.category.name}
-                  </p>
-                  <ScrollArea>
-                    <ul className="my-4 flex items-center gap-2">
-                      {location.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          className="text-nowrap text-xs capitalize"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </ul>
-
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                </div>
-              </CardContent>
-            </Card>
+            <LocationCard location={location} />
           </Link>
         ))}
       </div>
