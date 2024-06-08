@@ -241,12 +241,14 @@ export const listsRelations = relations(lists, ({ one, many }) => ({
 export const listItems = pgTable(
   'list_items',
   {
+    id: uuid('id').primaryKey().defaultRandom(),
     listId: uuid('list_id')
       .notNull()
       .references(() => lists.id),
     locationId: uuid('location_id')
       .notNull()
       .references(() => locations.id),
+    index: integer('index').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (table) => {
