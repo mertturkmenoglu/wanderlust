@@ -1,6 +1,7 @@
 export * from './bookmarks';
 export * from './categories';
 export * from './events';
+export * from './favorites';
 export * from './health';
 export * from './lists';
 export * from './locations';
