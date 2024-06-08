@@ -1,4 +1,4 @@
-import { and, count, eq, gt, gte, lte, sql } from 'drizzle-orm';
+import { and, count, eq, gt, gte, inArray, lte, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db, listItems, lists, users } from '../../db';
 import { CreateListDto, CreateListItemDto } from './dto';
@@ -322,4 +322,27 @@ export async function moveItemAfter(
         .where(eq(listItems.id, item.id));
     });
   }
+}
+
+export async function itemListInfo(userId: string, locationId: string) {
+  const usersLists = await db.query.lists.findMany({
+    where: eq(lists.userId, userId),
+  });
+
+  const listIds = usersLists.map((list) => list.id);
+
+  const items = await db.query.listItems.findMany({
+    where: and(
+      eq(listItems.locationId, locationId),
+      inArray(listItems.listId, listIds)
+    ),
+  });
+
+  return usersLists.map((list) => {
+    return {
+      id: list.id,
+      name: list.name,
+      includes: items.filter((item) => item.listId === list.id).length > 0,
+    };
+  });
 }

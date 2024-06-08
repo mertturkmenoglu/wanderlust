@@ -24,3 +24,7 @@ export const validateDeleteListItemParams = z.object({
   id: z.string().min(1).uuid(),
   itemId: z.string().min(1).uuid(),
 });
+
+export const validateItemListInfoParams = z.object({
+  locationId: z.string().min(1).uuid(),
+});

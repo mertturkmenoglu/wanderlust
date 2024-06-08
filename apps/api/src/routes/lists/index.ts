@@ -10,6 +10,7 @@ import {
   createListItemSchema,
   createListSchema,
   validateDeleteListItemParams,
+  validateItemListInfoParams,
 } from './dto';
 import * as repository from './repository';
 
@@ -170,10 +171,30 @@ const deleteList = factory.createHandlers(
   }
 );
 
+const itemListInfo = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateItemListInfoParams),
+  async (c) => {
+    const { locationId } = c.req.valid('param');
+    const auth = c.get('auth');
+
+    const info = await repository.itemListInfo(auth.userId, locationId);
+
+    return c.json(
+      {
+        data: info,
+      },
+      200
+    );
+  }
+);
+
 export const listsRouter = new Hono()
   .use(rateLimiter())
   .get('/my', ...getMyLists)
   .get('/user/:username', ...getUsersPublicLists)
+  .get('/info/:locationId', ...itemListInfo)
   .get('/:id', ...getById)
   .post('/', ...createList)
   .post('/:id/items', ...createListItem)
