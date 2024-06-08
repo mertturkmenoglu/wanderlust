@@ -1,6 +1,6 @@
-import { and, count, eq } from 'drizzle-orm';
+import { and, count, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { db, favorites, users } from '../../db';
+import { db, favorites, locations, users } from '../../db';
 import { PaginationParams, getPagination } from '../../pagination';
 
 export async function getUserFavorites(
@@ -69,21 +69,36 @@ export async function isFavorite(userId: string, locationId: string) {
 }
 
 export async function createFavorite(userId: string, locationId: string) {
-  const [res] = await db
-    .insert(favorites)
-    .values({
-      userId,
-      locationId,
-    })
-    .returning();
+  const favorite = await db.transaction(async (tx) => {
+    const [res] = await tx
+      .insert(favorites)
+      .values({ userId, locationId })
+      .returning();
 
-  return res;
+    await tx
+      .update(locations)
+      .set({ totalFavorites: sql`${locations.totalFavorites} + 1` })
+      .where(eq(locations.id, locationId));
+
+    return res;
+  });
+
+  return favorite;
 }
 
 export async function deleteFavorite(userId: string, locationId: string) {
-  await db
-    .delete(favorites)
-    .where(
-      and(eq(favorites.userId, userId), eq(favorites.locationId, locationId))
-    );
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(favorites)
+      .where(
+        and(eq(favorites.userId, userId), eq(favorites.locationId, locationId))
+      );
+
+    await tx
+      .update(locations)
+      .set({
+        totalFavorites: sql`${locations.totalFavorites} - 1`,
+      })
+      .where(eq(locations.id, locationId));
+  });
 }
