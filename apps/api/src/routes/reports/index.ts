@@ -4,9 +4,15 @@ import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { authorize, getAuth, rateLimiter } from '../../middlewares';
+import { withOffset } from '../../pagination';
 import { Env } from '../../start';
-import { validateId, validatePagination } from '../dto';
-import { createReportSchema, updateReportSchema } from './dto';
+import { validateId } from '../dto';
+import {
+  createReportSchema,
+  getReportsQueryParamsSchema,
+  updateReportSchema,
+} from './dto';
+import * as repository from './repository';
 
 const factory = createFactory<Env>();
 
@@ -14,11 +20,23 @@ const getReports = factory.createHandlers(
   clerkMiddleware(),
   getAuth,
   authorize({ type: 'read-report' }),
-  zValidator('query', validatePagination),
+  zValidator('query', getReportsQueryParamsSchema),
   async (c) => {
-    throw new HTTPException(501, {
-      message: 'Not implemented',
-    });
+    const q = c.req.valid('query');
+    const paginationParams = withOffset({ page: q.page, pageSize: q.pageSize });
+
+    const { data, pagination } = await repository.getReports(
+      q.status,
+      paginationParams
+    );
+
+    return c.json(
+      {
+        data,
+        pagination,
+      },
+      200
+    );
   }
 );
 
@@ -28,9 +46,22 @@ const getReportById = factory.createHandlers(
   authorize({ type: 'read-report' }),
   zValidator('param', validateId),
   async (c) => {
-    throw new HTTPException(501, {
-      message: 'Not implemented',
-    });
+    const { id } = c.req.valid('param');
+
+    const report = await repository.getReportById(id);
+
+    if (!report) {
+      throw new HTTPException(404, {
+        message: 'Report not found',
+      });
+    }
+
+    return c.json(
+      {
+        data: report,
+      },
+      200
+    );
   }
 );
 
