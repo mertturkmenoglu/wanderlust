@@ -9,7 +9,6 @@ import InformationTable from './_components/info/table';
 import LocationMap from './_components/location-map';
 import Menu from './_components/menu';
 import Reviews from './_components/reviews';
-import ShareButton from './_components/share-button';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -54,23 +53,21 @@ export default async function Page({ params: { id } }: Props) {
             </h2>
 
             <div className="flex items-center">
-              <ShareButton />
-
               <FavoriteButton
-                locationId={location.id}
                 isFavorite={metadata.isFavorite}
+                locationId={location.id}
               />
 
               <BookmarkButton
-                locationId={location.id}
                 isBookmarked={metadata.isBookmarked}
+                locationId={location.id}
               />
 
               <Menu locationId={location.id} />
             </div>
           </div>
 
-          <p className="mt-2 text-sm text-gray-500">{location.category.name}</p>
+          <p className="mt-2 text-sm text-primary">{location.category.name}</p>
           <CollapsibleText text={location.description} />
           <h2 className="mt-8 text-lg font-bold">Information</h2>
           <InformationTable location={location} />
