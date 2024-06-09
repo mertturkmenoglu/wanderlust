@@ -36,6 +36,10 @@ const mapping = {
   'read-review': () => true,
   'delete-review': () => true,
   'update-review': () => true,
+  'read-report': isAdmin,
+  'create-report': () => true,
+  'update-report': isAdmin,
+  'delete-report': isAdmin,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (payload: Payload): MiddlewareHandler => {
