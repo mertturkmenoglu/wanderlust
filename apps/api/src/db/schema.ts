@@ -6,6 +6,7 @@ import {
   index,
   integer,
   json,
+  pgEnum,
   pgTable,
   smallint,
   smallserial,
@@ -404,3 +405,33 @@ export const favoritesRelations = relations(favorites, ({ one }) => ({
     references: [locations.id],
   }),
 }));
+
+export const reportStatusEnum = pgEnum('report_status', [
+  'pending',
+  'in_progress',
+  'resolved',
+]);
+
+export const reportTargetTypeEnum = pgEnum('report_target_type', [
+  'event',
+  'location',
+  'list',
+  'user',
+  'review',
+]);
+
+export const reports = pgTable('reports', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  reporterId: uuid('reporter_id')
+    .notNull()
+    .references(() => users.id),
+  targetId: text('target_id').notNull(),
+  targetType: reportTargetTypeEnum('target_type').notNull(),
+  reason: text('reason').notNull(),
+  comment: text('comment'),
+  status: reportStatusEnum('status').notNull().default('pending'),
+  resolvedBy: uuid('resolved_by'),
+  resolvedAt: timestamp('resolved_at'),
+  resolveComment: text('resolve_comment'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
