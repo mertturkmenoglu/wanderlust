@@ -5,6 +5,7 @@ export * from './favorites';
 export * from './health';
 export * from './lists';
 export * from './locations';
+export * from './reports';
 export * from './reviews';
 export * from './uploads';
 export * from './users';
