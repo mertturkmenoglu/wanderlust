@@ -37,4 +37,11 @@ export async function createReport() {}
 
 export async function updateReport() {}
 
-export async function deleteReport() {}
+export async function deleteReport(id: string) {
+  const [deleted] = await db
+    .delete(reports)
+    .where(eq(reports.id, id))
+    .returning();
+
+  return deleted;
+}

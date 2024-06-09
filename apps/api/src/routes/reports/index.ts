@@ -97,9 +97,22 @@ const deleteReport = factory.createHandlers(
   authorize({ type: 'delete-report' }),
   zValidator('param', validateId),
   async (c) => {
-    throw new HTTPException(501, {
-      message: 'Not implemented',
-    });
+    const { id } = c.req.valid('param');
+
+    const deleted = await repository.deleteReport(id);
+
+    if (!deleted) {
+      throw new HTTPException(404, {
+        message: 'Report not found',
+      });
+    }
+
+    return c.json(
+      {
+        message: 'Report deleted',
+      },
+      200
+    );
   }
 );
 
