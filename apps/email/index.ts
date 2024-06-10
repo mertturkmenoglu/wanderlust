@@ -1,6 +1,6 @@
 import * as amqplib from "amqplib";
 import { MQEventPayload, MQQueue } from "../common";
-import { sendWelcomeEmail } from "./send";
+import { sendReportCreatedEmail, sendWelcomeEmail } from "./send";
 
 async function consumer() {
   const conn = await amqplib.connect("amqp://localhost");
@@ -25,6 +25,9 @@ function router(msg: amqplib.ConsumeMessage) {
   switch (payload.type) {
     case "send-welcome-email":
       sendWelcomeEmail(payload.payload);
+      break;
+    case "report-created":
+      sendReportCreatedEmail(payload.payload);
       break;
     default:
       console.log("Unknown event type");

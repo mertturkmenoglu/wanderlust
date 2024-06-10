@@ -1,6 +1,10 @@
 import { render } from "@react-email/render";
 import { createTransport } from "nodemailer";
-import { SendWelcomeEmailPayload } from "../common";
+import {
+  SendReportCreatedEmailPayload,
+  SendWelcomeEmailPayload,
+} from "../common";
+import { ReportCreatedEmail } from "./emails/report-created";
 import { WelcomeEmail } from "./emails/welcome";
 
 const transporter = createTransport({
@@ -19,5 +23,14 @@ export function sendWelcomeEmail(payload: SendWelcomeEmailPayload) {
     to: payload.to,
     subject: "Welcome to Wanderlust",
     html: render(WelcomeEmail({ name: payload.name })),
+  });
+}
+
+export function sendReportCreatedEmail(payload: SendReportCreatedEmailPayload) {
+  return transporter.sendMail({
+    from: Bun.env["FROM_EMAIL"],
+    to: payload.to,
+    subject: "We have received your report!",
+    html: render(ReportCreatedEmail()),
   });
 }
