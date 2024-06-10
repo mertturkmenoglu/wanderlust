@@ -5,7 +5,8 @@ export type MQEventType =
   | "user-deleted"
   | "location-created"
   | "location-updated"
-  | "location-deleted";
+  | "location-deleted"
+  | "report-created";
 
 export type MQEventPayload =
   | {
@@ -35,6 +36,10 @@ export type MQEventPayload =
   | {
       type: "location-deleted";
       payload: LocationDeletedPayload;
+    }
+  | {
+      type: "report-created";
+      payload: SendReportCreatedEmailPayload;
     };
 
 export type MQQueue = "email" | "user" | "locations";
@@ -76,3 +81,7 @@ export type LocationCreatedPayload = {
 export type LocationUpdatedPayload = LocationCreatedPayload;
 
 export type LocationDeletedPayload = LocationCreatedPayload;
+
+export type SendReportCreatedEmailPayload = {
+  to: string;
+};
