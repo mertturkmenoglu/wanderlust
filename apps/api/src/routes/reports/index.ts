@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { authorize, getAuth, rateLimiter } from '../../middlewares';
+import { sendReportCreatedEvent } from '../../mq';
 import { withOffset } from '../../pagination';
 import { Env } from '../../start';
 import { validateId } from '../dto';
@@ -72,9 +73,23 @@ const create = factory.createHandlers(
   authorize({ type: 'create-report' }),
   zValidator('json', createReportSchema),
   async (c) => {
-    throw new HTTPException(501, {
-      message: 'Not implemented',
-    });
+    const auth = c.get('auth');
+    const dto = c.req.valid('json');
+
+    const report = await repository.createReport(auth.userId, dto);
+
+    if (report && auth.email) {
+      await sendReportCreatedEvent({
+        to: auth.email,
+      });
+    }
+
+    return c.json(
+      {
+        data: report,
+      },
+      201
+    );
   }
 );
 
@@ -85,9 +100,17 @@ const update = factory.createHandlers(
   zValidator('param', validateId),
   zValidator('json', updateReportSchema),
   async (c) => {
-    throw new HTTPException(501, {
-      message: 'Not implemented',
-    });
+    const { id } = c.req.valid('param');
+    const dto = c.req.valid('json');
+
+    const report = await repository.updateReport(id, dto);
+
+    return c.json(
+      {
+        data: report,
+      },
+      200
+    );
   }
 );
 

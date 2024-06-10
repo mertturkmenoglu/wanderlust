@@ -1,7 +1,7 @@
 import { count, eq } from 'drizzle-orm';
 import { db, reports } from '../../db';
 import { PaginationParams, getPagination } from '../../pagination';
-import { GetReportsQueryParams } from './dto';
+import { CreateReportDto, GetReportsQueryParams, UpdateReportDto } from './dto';
 
 type GetReportsQuery = GetReportsQueryParams['status'];
 
@@ -33,9 +33,29 @@ export async function getReportById(id: string) {
   });
 }
 
-export async function createReport() {}
+export async function createReport(userId: string, dto: CreateReportDto) {
+  const [report] = await db
+    .insert(reports)
+    .values({
+      ...dto,
+      reporterId: userId,
+    })
+    .returning();
 
-export async function updateReport() {}
+  return report;
+}
+
+export async function updateReport(id: string, dto: UpdateReportDto) {
+  const [updated] = await db
+    .update(reports)
+    .set({
+      ...dto,
+    })
+    .where(eq(reports.id, id))
+    .returning();
+
+  return updated;
+}
 
 export async function deleteReport(id: string) {
   const [deleted] = await db
