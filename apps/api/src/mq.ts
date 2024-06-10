@@ -3,6 +3,7 @@ import {
   MQEventPayload,
   MQEventType,
   MQQueue,
+  SendReportCreatedEmailPayload,
   SendWelcomeEmailPayload,
 } from '../../common';
 
@@ -43,6 +44,20 @@ export async function sendUserEvent(type: UserEventType, payload: UserPayload) {
     q,
     serialize({
       type,
+      payload,
+    })
+  );
+}
+
+export async function sendReportCreatedEvent(
+  payload: SendReportCreatedEmailPayload
+) {
+  const [q, ch] = await getChannel('email');
+
+  return ch.sendToQueue(
+    q,
+    serialize({
+      type: 'report-created',
       payload,
     })
   );
