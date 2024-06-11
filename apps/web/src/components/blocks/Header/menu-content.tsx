@@ -73,7 +73,6 @@ export default function MenuContent({ fullName, username }: Props) {
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
-      <DropdownMenuItem disabled>Report</DropdownMenuItem>
       <DropdownMenuItem disabled>Support</DropdownMenuItem>
       <DropdownMenuItem disabled>Privacy</DropdownMenuItem>
       <DropdownMenuItem disabled>Terms</DropdownMenuItem>

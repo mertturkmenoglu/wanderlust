@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/select';
 import { useAuth } from '@clerk/nextjs';
 import { EllipsisVertical, FlagIcon, Plus, Share2 } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import AddToListButton from './add-to-list-button';
@@ -97,9 +98,12 @@ export default function Menu({ locationId }: Props) {
               className="flex w-full justify-start hover:no-underline"
               variant="link"
               size="sm"
+              asChild
             >
-              <FlagIcon className="mr-2 size-4" />
-              Report
+              <Link href={`/report?id=${locationId}&type=location`}>
+                <FlagIcon className="mr-2 size-4" />
+                Report
+              </Link>
             </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>

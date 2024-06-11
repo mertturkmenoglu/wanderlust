@@ -93,9 +93,12 @@ export default async function Page({ params: { id } }: Props) {
                   className="flex w-full justify-start hover:no-underline"
                   variant="link"
                   size="sm"
+                  asChild
                 >
-                  <FlagIcon className="mr-2 size-4" />
-                  Report
+                  <Link href={`/report?id=${id}&type=list`}>
+                    <FlagIcon className="mr-2 size-4" />
+                    Report
+                  </Link>
                 </Button>
               </DropdownMenuItem>
               {belongsToCurrentUser && (
@@ -131,7 +134,9 @@ export default async function Page({ params: { id } }: Props) {
       </div>
       <hr className="my-2" />
       <div className="my-16">
-        {(list.data.isPublic || belongsToCurrentUser) && <Items items={list.data.items}/>}
+        {(list.data.isPublic || belongsToCurrentUser) && (
+          <Items items={list.data.items} />
+        )}
         {!list.data.isPublic && !belongsToCurrentUser && (
           <EmptyContent errorMessage="You do not have the permissions to view this list" />
         )}

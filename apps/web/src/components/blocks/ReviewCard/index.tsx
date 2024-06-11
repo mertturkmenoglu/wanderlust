@@ -98,9 +98,12 @@ export default function ReviewCard({ review }: Props) {
                   className="flex w-full justify-start hover:no-underline"
                   variant="link"
                   size="sm"
+                  asChild
                 >
-                  <FlagIcon className="mr-2 size-4" />
-                  Report
+                  <Link href={`/report?id=${review.id}&type=review`}>
+                    <FlagIcon className="mr-2 size-4" />
+                    Report
+                  </Link>
                 </Button>
               </DropdownMenuItem>
               {belongsToCurrentUser && (
