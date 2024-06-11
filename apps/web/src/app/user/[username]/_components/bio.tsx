@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api, rpc } from '@/lib/api';
 import { currentUser as clerkCurrentUser } from '@clerk/nextjs/server';
@@ -7,6 +8,9 @@ import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 import clsx from 'clsx';
 import { BadgeCheckIcon } from 'lucide-react';
 import Link from 'next/link';
+import { EllipsisVertical, FlagIcon } from 'lucide-react';
+
+
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -90,18 +94,51 @@ export default async function Bio({ username, className }: Props) {
               <span>Following</span>
             </Link>
           </div>
-
-          {/* Action Button */}
-          {isThisUser ? (
-            <Button
-              asChild
-              variant="secondary"
-            >
-              <Link href="/settings">Settings</Link>
-            </Button>
-          ) : (
-            <Button variant="default">Follow</Button>
-          )}
+          <div className='flex'>
+            {/* Action Button */}
+            {isThisUser ? (
+              <Button
+                asChild
+                variant="secondary"
+              >
+                <Link href="/settings">Settings</Link>
+              </Button>
+            ) : (
+              <Button variant="default">Follow</Button>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                asChild
+                className="block"
+              >
+                <Button
+                  className="flex items-center justify-center rounded-full"
+                  variant="ghost"
+                  size="icon"
+                >
+                  <EllipsisVertical className="size-6 text-primary" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-48 space-y-2 p-2"
+                align="end"
+              >
+                <DropdownMenuItem className="cursor-pointer p-0">
+                  <Button
+                    className="flex w-full justify-start hover:no-underline"
+                    variant="link"
+                    size="sm"
+                    asChild
+                  >
+                    <Link href={`/report?id=${user.id}&type=user`}>
+                      <FlagIcon className="mr-2 size-4" />
+                      Report
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
