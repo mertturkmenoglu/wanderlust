@@ -53,6 +53,9 @@ export default function AppMessage({
         <Button
           asChild
           variant="link"
+          className={cn({
+            'text-destructive': errorMessage,
+          })}
         >
           <Link href="/">Go back to the homepage</Link>
         </Button>
