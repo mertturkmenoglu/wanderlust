@@ -3,8 +3,9 @@ import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { PropsWithChildren } from 'react';
+import Sidebar from './_components/sidebar';
 
-function Layout({ children }: PropsWithChildren) {
+export default function Layout({ children }: PropsWithChildren) {
   auth().protect();
   const ok = canAccessOrg();
 
@@ -16,13 +17,13 @@ function Layout({ children }: PropsWithChildren) {
     <main className="container mt-16">
       <div>
         <Link href="/dashboard">
-          <h2 className="text-2xl font-bold tracking-tight">Your Dashboard</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
         </Link>
-        <p className="text-muted-foreground">Manage your app</p>
       </div>
-      <div className="my-16">{children}</div>
+      <div className="my-8 flex flex-col gap-8 md:flex-row">
+        <Sidebar className="w-[256px] md:border-r md:border-border" />
+        <div className="w-full">{children}</div>
+      </div>
     </main>
   );
 }
-
-export default Layout;
