@@ -5,9 +5,9 @@ export const schemas: CollectionCreateSchema[] = [
     name: 'locations',
     enable_nested_fields: true,
     fields: [
-      { name: 'id', type: 'string', facet: true },
-      { name: 'name', type: 'string', facet: true, index: true },
-      { name: 'address', type: 'object', index: true },
+      { name: 'id', type: 'string' },
+      { name: 'name', type: 'string', index: true },
+      { name: 'address', type: 'auto', index: true, facet: true },
       { name: 'website', type: 'string', optional: true },
       { name: 'phone', type: 'string', optional: true },
       { name: 'priceLevel', type: 'int32', facet: true },
