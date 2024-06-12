@@ -24,6 +24,7 @@ export default function Page() {
             state: loc.address.state ?? '-',
             country: loc.address.country,
           }))}
+          hrefPrefix="/dashboard/locations"
         />
       )}
     </div>
