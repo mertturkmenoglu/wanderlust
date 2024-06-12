@@ -18,6 +18,7 @@ export default function Page() {
         <DataTable
           columns={eventCols}
           data={query.data?.data ?? []}
+          hrefPrefix="/dashboard/events"
         />
       )}
     </div>
