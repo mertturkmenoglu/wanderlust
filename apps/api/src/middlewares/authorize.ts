@@ -40,6 +40,7 @@ const mapping = {
   'create-report': () => true,
   'update-report': isAdmin,
   'delete-report': isAdmin,
+  'verify-user': isAdmin,
 } as const satisfies Record<string, AuthorizationFn>;
 
 export const authorize = (payload: Payload): MiddlewareHandler => {
