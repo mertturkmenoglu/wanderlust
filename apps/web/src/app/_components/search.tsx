@@ -1,20 +1,43 @@
-import { Button } from '@/components/ui/button';
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+'use client';
+
+import { Autocomplete } from '@/components/blocks/Autocomplete';
+import { useSearchClient } from '@/hooks/useSearchClient';
+import { InstantSearch } from 'react-instantsearch';
 
 export default function Search() {
+  const searchClient = useSearchClient();
   return (
-    <nav className="mx-auto my-12 flex items-center justify-center space-x-4">
-      <input
-        className="w-10/12 rounded-full border border-muted-foreground px-8 py-4 lg:w-1/2"
-        placeholder="Search a location or an event"
-      />
-
-      <Button
-        size="icon"
-        className="size-12 rounded-full"
+    <nav className="container mx-auto my-12 flex items-center justify-center space-x-4">
+      <InstantSearch
+        indexName="locations"
+        searchClient={searchClient}
+        routing={false}
+        insights
+        future={{
+          preserveSharedStateOnUnmount: true,
+        }}
       >
-        <MagnifyingGlassIcon className="size-6" />
-      </Button>
+        {/* <CustomSearchBox /> */}
+
+        <Autocomplete />
+
+        {/* <div className="my-8 flex gap-8">
+          <RefinementList attribute="tags" />
+
+          <div>
+            <Button
+              asChild
+              variant="link"
+              className="cursor-pointer"
+            >
+              <ClearRefinements />
+            </Button>
+            <CurrentRefinements />
+            <Hits hitComponent={HitComponent} />
+          </div>
+        </div>
+        <Pagination /> */}
+      </InstantSearch>
     </nav>
   );
 }
