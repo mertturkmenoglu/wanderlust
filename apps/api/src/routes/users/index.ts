@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import { getAuth, rateLimiter } from '../../middlewares';
+import { authorize, getAuth, rateLimiter } from '../../middlewares';
 import { Env } from '../../start';
 import { validateUsername } from '../dto';
 import { updateProfileSchema } from './dto';
@@ -126,10 +126,36 @@ const unfollow = factory.createHandlers(
   }
 );
 
+const verifyUser = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateUsername),
+  authorize({ type: 'verify-user' }),
+  async (c) => {
+    const { username } = c.req.valid('param');
+
+    const ok = await repository.makeUserVerified(username);
+
+    if (!ok) {
+      throw new HTTPException(400, {
+        message: 'Cannot make user verified',
+      });
+    }
+
+    return c.json(
+      {
+        data: 'OK',
+      },
+      200
+    );
+  }
+);
+
 export const usersRouter = new Hono()
   .use(rateLimiter())
   .get('/me', ...getMe)
   .get('/:username/profile', ...getProfileByUsername)
   .patch('/profile', ...updateProfile)
   .post('/follow/:username', ...follow)
-  .post('/unfollow/:username', ...unfollow);
+  .post('/unfollow/:username', ...unfollow)
+  .patch('/verify/:username', ...verifyUser);
