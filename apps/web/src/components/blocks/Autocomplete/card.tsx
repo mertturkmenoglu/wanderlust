@@ -18,7 +18,7 @@ export default function Card({
   state,
 }: Props) {
   return (
-    <div className="p-4">
+    <div className="p-4 hover:bg-muted">
       <Link
         href={`/location/${id}`}
         className="flex gap-8"
