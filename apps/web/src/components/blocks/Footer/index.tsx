@@ -34,29 +34,29 @@ function Footer() {
       </ul>
       <ul className="flex justify-center items-center gap-8 mb-8">
         <li>
-          <Link href="https://github.com/">
+          <a href="https://github.com/">
             <GithubIcon className="size-6" />
-          </Link>
+          </a>
         </li>
         <li>
-          <Link href="https://www.facebook.com/">
+          <a href="https://www.facebook.com/">
             <FacebookIcon className="size-6" />
-          </Link>
+          </a>
         </li>
         <li>
-          <Link href="https://twitter.com/home">
+          <a href="https://twitter.com/home">
             <TwitterIcon className="size-6" />
-          </Link>
+          </a>
         </li>
         <li>
-          <Link href="https://youtube.com/">
+          <a href="https://youtube.com/">
             <YoutubeIcon className="size-6" />
-          </Link>
+          </a>
         </li>
         <li>
-          <Link href="https://instagram.com/">
+          <a href="https://instagram.com/">
             <InstagramIcon className="size-6" />
-          </Link>
+          </a>
         </li>
       </ul>
       <div className="text-center">© 2024 Wanderlust, Inc. All rights reserved.</div>
