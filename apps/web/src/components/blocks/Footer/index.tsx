@@ -1,31 +1,62 @@
 import { GithubIcon, FacebookIcon, TwitterIcon, YoutubeIcon, InstagramIcon } from "lucide-react";
+import Link from "next/link";
 
 function Footer() {
 
   return (
     <footer className="my-20">
       <ul className="flex justify-center items-center gap-8 mb-8">
-        <li>About</li>
-        <li>Blog</li>
-        <li>FAQ</li>
-        <li>Contact Us</li>
-        <li>Privacy</li>
+        <li>
+          <Link href="/about">
+            About
+          </Link>
+        </li>
+        <li>
+          <Link href="/blog">
+            Blog
+          </Link>
+        </li>
+        <li>
+          <Link href="/help">
+            FAQ
+          </Link>
+        </li>
+        <li>
+          <Link href="/contact-us">
+            Contact Us
+          </Link>
+        </li>
+        <li>
+          <Link href="/privacy">
+            Privacy
+          </Link>
+        </li>
       </ul>
       <ul className="flex justify-center items-center gap-8 mb-8">
         <li>
-          <GithubIcon className="size-6" />
+          <Link href="https://github.com/">
+            <GithubIcon className="size-6" />
+          </Link>
         </li>
         <li>
-          <FacebookIcon className="size-6" />
+          <Link href="https://www.facebook.com/">
+            <FacebookIcon className="size-6" />
+          </Link>
         </li>
         <li>
-          <TwitterIcon className="size-6" />
+          <Link href="https://twitter.com/home">
+            <TwitterIcon className="size-6" />
+          </Link>
         </li>
         <li>
-          <YoutubeIcon className="size-6" />
+          <Link href="https://youtube.com/">
+            <YoutubeIcon className="size-6" />
+          </Link>
         </li>
         <li>
-          <InstagramIcon className="size-6" />
+          <Link href="https://instagram.com/">
+            <InstagramIcon className="size-6" />
+          </Link>
         </li>
       </ul>
       <div className="text-center">© 2024 Wanderlust, Inc. All rights reserved.</div>
