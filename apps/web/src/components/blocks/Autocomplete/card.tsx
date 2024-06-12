@@ -3,14 +3,22 @@ import Link from 'next/link';
 type Props = {
   id: string;
   name: string;
-  tags: string[];
   image: string;
-  categoryId: number;
+  categoryName: string;
+  city: string;
+  state: string;
 };
 
-export default function Card({ name, tags, categoryId, image, id }: Props) {
+export default function Card({
+  name,
+  image,
+  id,
+  categoryName,
+  city,
+  state,
+}: Props) {
   return (
-    <div className="p-2">
+    <div className="p-4">
       <Link
         href={`/location/${id}`}
         className="flex gap-8"
@@ -22,9 +30,16 @@ export default function Card({ name, tags, categoryId, image, id }: Props) {
         />
 
         <div>
-          <div className=''>{name}</div>
-          <div>{JSON.stringify(tags)}</div>
-          <div>{categoryId}</div>
+          <div className="line-clamp-1 text-lg font-semibold capitalize leading-none tracking-tight">
+            {name}
+          </div>
+          <div className="my-1 line-clamp-1 text-sm text-muted-foreground">
+            {city} / {state}
+          </div>
+
+          <div className="text-sm font-semibold leading-none tracking-tight text-primary">
+            {categoryName}
+          </div>
         </div>
       </Link>
     </div>
