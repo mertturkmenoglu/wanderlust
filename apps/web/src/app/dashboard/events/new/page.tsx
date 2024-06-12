@@ -5,7 +5,7 @@ function Page() {
     <div>
       <div>
         <div>
-          <h3 className="my-8 text-lg font-bold tracking-tight">
+          <h3 className="mb-8 text-lg font-bold tracking-tight">
             Create New Event
           </h3>
           <NewEventForm />
