@@ -123,6 +123,30 @@ export default function Sidebar({ className }: Props) {
             </ul>
           </CollapsibleContent>
         </Collapsible>
+
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="link"
+              className="px-0"
+            >
+              Reports
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul className="ml-4">
+              <li>
+                <Button
+                  asChild
+                  variant="link"
+                  className="px-0"
+                >
+                  <Link href="/dashboard/reports">View</Link>
+                </Button>
+              </li>
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
       </ul>
     </div>
   );
