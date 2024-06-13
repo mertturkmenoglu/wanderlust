@@ -9,8 +9,8 @@ import { Media } from '@/lib/types';
 import 'instantsearch.css/themes/reset.css';
 import { Hits, InstantSearch } from 'react-instantsearch';
 import HitsPerPage from './_components/hits-per-page';
-import RefinementList from './_components/refinement-list';
 import Pagination from './_components/pagination';
+import RefinementList from './_components/refinement-list';
 
 type Props = {
   hit: {
@@ -60,6 +60,8 @@ function Page(): React.ReactElement {
             <RefinementList attribute="tags" />
 
             <RefinementList attribute="address.city" />
+
+            <RefinementList attribute="address.state" />
 
             {query.data && (
               <RefinementList

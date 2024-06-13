@@ -12,6 +12,7 @@ type Props = {
     | 'tags'
     | 'categoryId'
     | 'address.city'
+    | 'address.state'
     | 'priceLevel'
     | 'accessibilityLevel';
   className?: string;
@@ -54,6 +55,8 @@ export default function RefinementList({
         return 'Price Level';
       case 'address.city':
         return 'Cities';
+      case 'address.state':
+        return 'States';
       default:
         return '';
     }
@@ -65,13 +68,15 @@ export default function RefinementList({
         return 'Search a tag';
       case 'address.city':
         return 'Search a city';
+      case 'address.state':
+        return 'Search a state';
       default:
         return '';
     }
   }, [attribute]);
 
   const showInput = useMemo(() => {
-    const searchable = ['tags', 'address.city'];
+    const searchable = ['tags', 'address.city', 'address.state'];
     return searchable.includes(attribute);
   }, [attribute]);
 
