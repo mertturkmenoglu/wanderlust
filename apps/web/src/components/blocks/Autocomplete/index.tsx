@@ -1,9 +1,11 @@
 'use client';
 
 import CustomSearchBox from '@/components/blocks/CustomSearchBox';
+import { Button } from '@/components/ui/button';
 import { UseAutocompleteProps, useAutocomplete } from '@/hooks/useAutocomplete';
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 import Card from './card';
 
 export function Autocomplete(props: UseAutocompleteProps) {
@@ -26,6 +28,16 @@ export function Autocomplete(props: UseAutocompleteProps) {
 
   return (
     <div className="w-full">
+      <div className="text-sm leading-none tracking-tight">
+        Need more power? Try our{' '}
+        <Button
+          variant="link"
+          className="px-0 underline"
+          asChild
+        >
+          <Link href="/search">Advanced Search</Link>
+        </Button>
+      </div>
       <CustomSearchBox />
 
       {currentRefinement !== '' && (
