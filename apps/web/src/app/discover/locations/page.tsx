@@ -16,7 +16,7 @@ export default async function Page(): Promise<React.ReactElement> {
         {data.map((c) => (
           <Link
             key={c.category.id}
-            href={`/search?c=${c.category.id}`}
+            href={`/search?locations[refinementList][categoryId][0]=${c.category.id}`}
           >
             <div className="rounded-xl border border-border">
               <img
