@@ -68,7 +68,7 @@ export default function SearchPagination() {
           )}
         </PaginationContent>
       </Pagination>
-      <div className="flex justify-center text-sm text-muted-foreground">
+      <div className="mt-4 flex justify-center text-sm text-muted-foreground">
         {currentRefinement + 1} / {nbPages} pages
       </div>
     </div>
