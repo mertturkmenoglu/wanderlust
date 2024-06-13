@@ -29,7 +29,7 @@ export default function Breadcrumb({
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href={`/search?c=${categoryId}`}>
+          <BreadcrumbLink href={`/search?locations[refinementList][categoryId][0]=${categoryId}`}>
             {categoryName}
           </BreadcrumbLink>
         </BreadcrumbItem>
