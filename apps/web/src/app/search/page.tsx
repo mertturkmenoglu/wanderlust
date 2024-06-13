@@ -7,9 +7,10 @@ import { useCategories } from '@/hooks/use-categories';
 import { useSearchClient } from '@/hooks/useSearchClient';
 import { Media } from '@/lib/types';
 import 'instantsearch.css/themes/reset.css';
-import { Hits, InstantSearch, Pagination } from 'react-instantsearch';
+import { Hits, InstantSearch } from 'react-instantsearch';
 import HitsPerPage from './_components/hits-per-page';
 import RefinementList from './_components/refinement-list';
+import Pagination from './_components/pagination';
 
 type Props = {
   hit: {
