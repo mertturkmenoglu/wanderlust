@@ -74,8 +74,22 @@ export default function MenuContent({ fullName, username }: Props) {
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem disabled>Support</DropdownMenuItem>
-      <DropdownMenuItem disabled>Privacy</DropdownMenuItem>
-      <DropdownMenuItem disabled>Terms</DropdownMenuItem>
+      <DropdownMenuItem
+        asChild
+        className='cursor-pointer'
+      >
+        <Link href="/privacy">
+          Privacy
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        asChild
+        className='cursor-pointer'
+      >
+        <Link href="/terms">
+          Terms
+        </Link>
+      </DropdownMenuItem>
       <DropdownMenuItem disabled>API</DropdownMenuItem>
       <DropdownMenuSeparator />
       <LogoutItem />
