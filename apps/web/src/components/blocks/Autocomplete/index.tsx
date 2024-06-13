@@ -53,6 +53,15 @@ export function Autocomplete(props: UseAutocompleteProps) {
               state={hit.address.state}
             />
           ))}
+
+          <Button
+            asChild
+            variant="link"
+          >
+            <Link href={`/search?locations%5Bquery%5D=${currentRefinement}`}>
+              See all results
+            </Link>
+          </Button>
         </div>
       )}
     </div>
