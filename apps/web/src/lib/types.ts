@@ -30,3 +30,6 @@ const listFnRef = api.lists[':id'].$get;
 export type List = InferResponseType<typeof listFnRef>['data'];
 
 export type ListItem = ArrayElement<List['items']>;
+
+const reportFnRef = api.reports[':id'].$get;
+export type Report = InferResponseType<typeof reportFnRef>['data'];
