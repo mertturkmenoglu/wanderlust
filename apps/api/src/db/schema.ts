@@ -430,7 +430,7 @@ export const reports = pgTable('reports', {
   reason: text('reason').notNull(),
   comment: text('comment'),
   status: reportStatusEnum('status').notNull().default('pending'),
-  resolvedBy: uuid('resolved_by'),
+  resolvedBy: text('resolved_by'),
   resolvedAt: timestamp('resolved_at'),
   resolveComment: text('resolve_comment'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
