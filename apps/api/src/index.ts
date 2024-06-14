@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
+import { timeout } from 'hono/timeout';
 import { runDrizzleMigrations } from './db';
 import { initEventHandlers } from './events';
 import {
@@ -32,6 +33,7 @@ const app = new Hono<Env>()
   .use(cors(getCorsConfig()))
   .use(logger())
   .use(secureHeaders())
+  .use(timeout(5000))
   .route('/health', healthRouter)
   .route('/webhooks', webhooksRouter)
   .route('/users', usersRouter)
