@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import { authorize, getAuth, rateLimiter } from '../../middlewares';
+import { authorize, getAuth, rateLimiter, withAuth } from '../../middlewares';
 import { withOffset } from '../../pagination';
 import { Env } from '../../start';
 import { validateId, validatePagination, validateUsername } from '../dto';
@@ -32,20 +32,18 @@ const getReviewsOfLocation = factory.createHandlers(
 );
 
 const getById = factory.createHandlers(
+  clerkMiddleware(),
+  withAuth,
   zValidator('param', validateId),
   async (c) => {
     const { id } = c.req.valid('param');
-    const review = await repository.getById(id);
-
-    if (!review) {
-      throw new HTTPException(404, {
-        message: 'Not Found',
-      });
-    }
+    const auth = c.get('withAuth');
+    const { data, metadata } = await repository.getById(id, auth?.userId);
 
     return c.json(
       {
-        data: review,
+        data,
+        metadata,
       },
       200
     );
@@ -132,11 +130,55 @@ const deleteReview = factory.createHandlers(
   }
 );
 
-const like = factory.createHandlers(async (c) => {
-  throw new HTTPException(501, {
-    message: 'Not implemented',
-  });
-});
+const like = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateId),
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const auth = c.get('auth');
+
+    try {
+      const like = await repository.likeReview(id, auth.userId);
+
+      return c.json(
+        {
+          data: like,
+        },
+        201
+      );
+    } catch (e) {
+      throw new HTTPException(400, {
+        message: 'Bad Request',
+      });
+    }
+  }
+);
+
+const unlike = factory.createHandlers(
+  clerkMiddleware(),
+  getAuth,
+  zValidator('param', validateId),
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const auth = c.get('auth');
+
+    try {
+      const like = await repository.unlikeReview(id, auth.userId);
+
+      return c.json(
+        {
+          data: like,
+        },
+        200
+      );
+    } catch (e) {
+      throw new HTTPException(400, {
+        message: 'Bad Request',
+      });
+    }
+  }
+);
 
 export const reviewsRouter = new Hono()
   .use(rateLimiter())
@@ -146,4 +188,5 @@ export const reviewsRouter = new Hono()
   .post('/', ...create)
   .patch('/:id', ...update)
   .delete('/:id', ...deleteReview)
-  .post('/:id/like', ...like);
+  .post('/:id/like', ...like)
+  .delete('/:id/unlike', ...unlike);
