@@ -1,11 +1,11 @@
 import { and, count, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { Media, db, locations, reviews, users } from '../../db';
+import { Media, db, locations, reviewLikes, reviews, users } from '../../db';
 import { PaginationParams, getPagination } from '../../pagination';
 import { CreateReviewDto } from './dto';
 
-export async function getById(id: string) {
-  return db.query.reviews.findFirst({
+export async function getById(id: string, userId?: string) {
+  const data = await db.query.reviews.findFirst({
     where: eq(reviews.id, id),
     with: {
       location: {
@@ -16,6 +16,31 @@ export async function getById(id: string) {
       user: true,
     },
   });
+
+  if (!data) {
+    throw new HTTPException(404, {
+      message: 'Review not found',
+    });
+  }
+
+  let liked = false;
+
+  if (userId) {
+    const like = await db.query.reviewLikes.findFirst({
+      where: and(eq(reviewLikes.reviewId, id), eq(reviewLikes.userId, userId)),
+    });
+
+    if (like) {
+      liked = true;
+    }
+  }
+
+  return {
+    data,
+    metadata: {
+      liked,
+    },
+  };
 }
 
 export async function getReviewsOfLocation(
@@ -140,4 +165,74 @@ export async function deleteReview(id: string, userId: string) {
   });
 
   return deleted;
+}
+
+export async function likeReview(reviewId: string, userId: string) {
+  const rev = await db.query.reviewLikes.findFirst({
+    where: and(
+      eq(reviewLikes.userId, userId),
+      eq(reviewLikes.reviewId, reviewId)
+    ),
+  });
+
+  if (rev) {
+    throw new HTTPException(400, {
+      message: 'Review already liked',
+    });
+  }
+
+  const like = await db.transaction(async (tx) => {
+    const [result] = await tx
+      .insert(reviewLikes)
+      .values({
+        reviewId,
+        userId,
+      })
+      .returning();
+
+    if (!result) {
+      throw new HTTPException(400, {
+        message: 'Cannot like review',
+      });
+    }
+
+    await tx
+      .update(reviews)
+      .set({
+        likeCount: sql`${reviews.likeCount} + 1`,
+      })
+      .where(eq(reviews.id, reviewId));
+
+    return result;
+  });
+
+  return like;
+}
+
+export async function unlikeReview(reviewId: string, userId: string) {
+  const like = await db.transaction(async (tx) => {
+    const [result] = await tx
+      .delete(reviewLikes)
+      .where(
+        and(eq(reviewLikes.userId, userId), eq(reviewLikes.reviewId, reviewId))
+      )
+      .returning();
+
+    if (!result) {
+      throw new HTTPException(400, {
+        message: 'Cannot unlike review',
+      });
+    }
+
+    await tx
+      .update(reviews)
+      .set({
+        likeCount: sql`${reviews.likeCount} - 1`,
+      })
+      .where(eq(reviews.id, reviewId));
+
+    return result;
+  });
+
+  return like;
 }
