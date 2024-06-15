@@ -358,6 +358,7 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
 export const reviewLikes = pgTable(
   'review_likes',
   {
+    id: uuid('id').primaryKey().defaultRandom(),
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id),
