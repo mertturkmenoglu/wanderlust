@@ -35,7 +35,13 @@ export async function upsertLocation(location: Location) {
   await searchClient
     .collections('locations')
     .documents()
-    .upsert(location, { action: 'upsert' });
+    .upsert(
+      {
+        ...location,
+        coordinates: [location.address.lat, location.address.long],
+      },
+      { action: 'upsert' }
+    );
 }
 
 export async function deleteLocation(id: string) {
