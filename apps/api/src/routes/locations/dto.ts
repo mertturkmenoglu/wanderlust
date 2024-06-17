@@ -28,3 +28,12 @@ export const getCitiesSchema = z.object({
   countryId: z.coerce.number().int(),
   stateId: z.coerce.number().int(),
 });
+
+export const peekQuerySchema = z.object({
+  type: z
+    .enum(['new', 'featured', 'popular', 'favorite'])
+    .optional()
+    .default('new'),
+});
+
+export type PeekQueryDto = z.infer<typeof peekQuerySchema>;

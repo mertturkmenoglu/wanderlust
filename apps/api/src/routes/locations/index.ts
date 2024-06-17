@@ -19,19 +19,18 @@ import {
   createLocationSchema,
   getCitiesSchema,
   getStatesSchema,
+  peekQuerySchema,
   updateLocationSchema,
 } from './dto';
 import * as repository from './repository';
 
 const factory = createFactory<Env>();
 
-type PeekResult = Awaited<ReturnType<typeof repository.peek>>;
-
 const peek = factory.createHandlers(
-  checkCache<PeekResult>('locations-peek'),
+  zValidator('query', peekQuerySchema),
   async (c) => {
-    const results = await repository.peek();
-    await cacheWrite('locations-peek', results, cacheTTL['locations-peek']);
+    const { type } = c.req.valid('query');
+    const results = await repository.peek(type);
 
     return c.json(
       {

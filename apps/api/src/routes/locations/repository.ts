@@ -10,9 +10,40 @@ import {
 } from '../../db';
 import * as bookmarksRepository from '../bookmarks/repository';
 import * as favoritesRepository from '../favorites/repository';
-import { CreateLocationDto, UpdateLocationDto } from './dto';
+import { CreateLocationDto, PeekQueryDto, UpdateLocationDto } from './dto';
 
-export async function peek() {
+export async function peek(type: PeekQueryDto['type']) {
+  if (type === 'favorite') {
+    return db.query.locations.findMany({
+      limit: 25,
+      orderBy: (table, { desc }) => desc(table.totalFavorites),
+      with: {
+        category: true,
+      },
+    });
+  }
+
+  if (type === 'featured') {
+    return db.query.locations.findMany({
+      limit: 25,
+      orderBy: (table, { desc }) => desc(table.totalPoints),
+      with: {
+        category: true,
+      },
+    });
+  }
+
+  if (type === 'popular') {
+    return db.query.locations.findMany({
+      limit: 25,
+      orderBy: (table, { desc }) => desc(table.totalVotes),
+      with: {
+        category: true,
+      },
+    });
+  }
+
+  // Default to new
   return await db.query.locations.findMany({
     limit: 25,
     orderBy: (table, { desc }) => desc(table.createdAt),
