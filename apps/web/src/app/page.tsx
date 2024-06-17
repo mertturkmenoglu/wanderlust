@@ -1,4 +1,5 @@
-import CategoryNavigation from '@/components/blocks/CategoryNavigation';
+import TagNavigation from '@/components/blocks/TagNavigation';
+import DiscoverAroundYou from './_components/discover-around-you';
 import NewLocations from './_components/new-locations';
 import Search from './_components/search';
 
@@ -7,12 +8,14 @@ export const revalidate = 0;
 
 export default async function Home() {
   return (
-    <main className="">
+    <div className="container">
       <Search />
 
-      <CategoryNavigation />
+      <TagNavigation />
 
       <NewLocations />
-    </main>
+
+      <DiscoverAroundYou />
+    </div>
   );
 }
