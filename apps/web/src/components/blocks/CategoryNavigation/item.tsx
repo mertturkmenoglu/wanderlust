@@ -12,7 +12,7 @@ function NavItem(props: Props): React.ReactElement {
   return (
     <li>
       <Link
-        href={props.href}
+        href={encodeURI(props.href)}
         className={cn(
           'flex flex-col items-center p-1',
           'transition-all duration-200',
