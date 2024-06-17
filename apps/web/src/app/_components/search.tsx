@@ -12,7 +12,6 @@ export default function Search() {
         indexName="locations"
         searchClient={searchClient}
         routing={false}
-        insights
         future={{
           preserveSharedStateOnUnmount: true,
         }}
