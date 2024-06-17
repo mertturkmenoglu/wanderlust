@@ -8,7 +8,7 @@ export type Props = {
   icon: LucideIcon;
 };
 
-function NavItem(props: Props): React.ReactElement {
+export default function NavItem(props: Props): React.ReactElement {
   return (
     <li>
       <Link
@@ -28,5 +28,3 @@ function NavItem(props: Props): React.ReactElement {
     </li>
   );
 }
-
-export default NavItem;
