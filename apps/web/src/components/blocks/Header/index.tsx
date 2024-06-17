@@ -26,7 +26,7 @@ async function Header({ className, ...props }: Props) {
 
   return (
     <header
-      className={cn('flex items-center justify-between', className)}
+      className={cn('container flex items-center justify-between', className)}
       {...props}
     >
       <Link href="/">
