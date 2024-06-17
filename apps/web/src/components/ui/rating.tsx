@@ -10,9 +10,16 @@ type Props = {
   onChange: ({ value }: { value: number }) => void;
   id: string;
   disabled?: boolean;
+  starsClassName?: string;
 };
 
-export function Rating({ defaultValue, onChange, id, disabled }: Props) {
+export function Rating({
+  defaultValue,
+  onChange,
+  id,
+  disabled,
+  starsClassName,
+}: Props) {
   const [state, send] = useMachine(
     rating.machine({
       id,
@@ -39,9 +46,13 @@ export function Rating({ defaultValue, onChange, id, disabled }: Props) {
               {...api.getItemProps({ index })}
             >
               <Star
-                className={cn('text-primary', {
-                  'fill-primary': state.highlighted,
-                })}
+                className={cn(
+                  'text-primary',
+                  {
+                    'fill-primary': state.highlighted,
+                  },
+                  starsClassName
+                )}
               />
             </span>
           );

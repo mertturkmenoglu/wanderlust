@@ -6,9 +6,14 @@ import { useId } from 'react';
 type Props = {
   rating: number;
   votes: number;
+  starsClassName?: string;
 };
 
-export default function RatingElement({ rating, votes }: Props) {
+export default function FormattedRating({
+  rating,
+  votes,
+  starsClassName,
+}: Props) {
   const id = useId();
   const fmt = new Intl.NumberFormat('en-US', {
     style: 'decimal',
@@ -25,6 +30,7 @@ export default function RatingElement({ rating, votes }: Props) {
         onChange={() => {}}
         defaultValue={rating}
         disabled={true}
+        starsClassName={starsClassName}
       />
       <div className="flex items-center space-x-1">
         <span className="font-bold">{rating.toFixed(1)}</span>
