@@ -1,14 +1,6 @@
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Location } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import FormattedRating from '../FormattedRating';
 
 type Props = {
   location: Location;
@@ -17,48 +9,42 @@ type Props = {
 export default function LocationCard({ location, className, ...props }: Props) {
   const image = location.media[0];
 
+  const rating = (() => {
+    if (location.totalVotes === 0) return 0;
+    return location.totalPoints / location.totalVotes;
+  })();
+
   return (
-    <Card
+    <div
       key={location.id}
-      className={cn('group', className)}
+      className={cn('group ', className)}
       {...props}
     >
       <img
         src={image.url}
         alt={image.alt}
-        className="aspect-video w-full rounded-t-xl object-cover"
-        width={512}
-        height={288}
+        className="aspect-square size-[256px] w-full rounded-xl object-cover"
       />
 
-      <CardHeader>
-        <CardTitle className="line-clamp-1 capitalize">
+      <div className="my-2">
+        <FormattedRating
+          rating={rating}
+          votes={location.totalVotes}
+          starsClassName="size-4"
+        />
+        <div className="mt-2 line-clamp-1 text-lg font-semibold capitalize">
           {location.name}
-        </CardTitle>
-        <CardDescription className="line-clamp-1">
-          {location.address.city} / {location.address.state}
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        <div className="flex-1 space-y-1">
-          <p className="text-sm leading-none">{location.category.name}</p>
-          <ScrollArea>
-            <ul className="my-4 flex items-center gap-2">
-              {location.tags.map((tag) => (
-                <Badge
-                  key={tag}
-                  className="text-nowrap text-xs capitalize"
-                >
-                  {tag}
-                </Badge>
-              ))}
-            </ul>
-
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
         </div>
-      </CardContent>
-    </Card>
+        <div className="line-clamp-1 text-sm text-muted-foreground">
+          {location.address.city} / {location.address.state}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex-1 space-y-2">
+          <div className="text-sm text-primary">{location.category.name}</div>
+        </div>
+      </div>
+    </div>
   );
 }
