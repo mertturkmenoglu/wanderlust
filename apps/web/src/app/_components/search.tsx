@@ -17,26 +17,7 @@ export default function Search() {
           preserveSharedStateOnUnmount: true,
         }}
       >
-        {/* <CustomSearchBox /> */}
-
         <Autocomplete />
-
-        {/* <div className="my-8 flex gap-8">
-          <RefinementList attribute="tags" />
-
-          <div>
-            <Button
-              asChild
-              variant="link"
-              className="cursor-pointer"
-            >
-              <ClearRefinements />
-            </Button>
-            <CurrentRefinements />
-            <Hits hitComponent={HitComponent} />
-          </div>
-        </div>
-        <Pagination /> */}
       </InstantSearch>
     </nav>
   );
