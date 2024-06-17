@@ -1,8 +1,8 @@
+import FormattedRating from '@/components/blocks/FormattedRating';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Location } from '@/lib/types';
-import RatingElement from './rating';
 
 type Props = {
   location: Location;
@@ -20,7 +20,7 @@ export default function InformationTable({ location }: Props) {
         <TableRow>
           <TableCell className="px-0 font-medium">Rating</TableCell>
           <TableCell className="flex items-center justify-end">
-            <RatingElement
+            <FormattedRating
               rating={calculateRating()}
               votes={location.totalVotes}
             />
