@@ -16,6 +16,7 @@ export const schemas: CollectionCreateSchema[] = [
       { name: 'media', type: 'object[]' },
       { name: 'tags', type: 'string[]', facet: true },
       { name: 'categoryId', type: 'int32', facet: true },
+      { name: 'coordinates', type: 'geopoint', index: true },
       { name: 'createdAt', type: 'auto' },
       { name: 'updatedAt', type: 'auto' },
     ],
