@@ -4,7 +4,7 @@ import TagNavigation from '@/components/blocks/TagNavigation';
 import VerticalBanner from '@/components/blocks/VerticalBanner';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import NewLocations from './_components/new-locations';
+import LocationsGrid from './_components/locations-grid';
 import Search from './_components/search';
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +24,7 @@ export default async function Home() {
         className="my-8"
       />
 
-      <NewLocations />
+      <LocationsGrid type="featured" />
 
       <OverlayBanner
         image="https://images.unsplash.com/photo-1607388510015-c632e99da586?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -43,6 +43,8 @@ export default async function Home() {
         className="my-8"
         imgClassName="aspect-[3]"
       />
+
+      <LocationsGrid type="popular" />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
@@ -70,6 +72,8 @@ export default async function Home() {
         }
       />
 
+      <LocationsGrid type="new" />
+
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
         alt="Trip Planner Banner Image"
@@ -93,6 +97,8 @@ export default async function Home() {
         className="my-8"
         imgClassName=""
       />
+
+      <LocationsGrid type="favorite" />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
