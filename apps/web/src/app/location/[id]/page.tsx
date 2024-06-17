@@ -36,7 +36,7 @@ export default async function Page({ params: { id } }: Props) {
   const { data: location, metadata } = await getLocation(id);
 
   return (
-    <main className="container mx-auto mt-8 px-4 md:mt-16 md:px-0">
+    <main className="container mx-auto mt-8 md:mt-16">
       <Breadcrumb
         categoryId={location.category.id}
         categoryName={location.category.name}
