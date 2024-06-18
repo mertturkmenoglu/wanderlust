@@ -1,25 +1,13 @@
 import LocationCard from '@/components/blocks/LocationCard';
-import { api, rpc } from '@/lib/api';
+import { HomeAggregation } from '@/lib/types';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
-async function peekLocations(type: Props['type']) {
-  return rpc(() =>
-    api.locations.peek.$get({
-      query: {
-        type,
-      },
-    })
-  );
-}
-
 type Props = {
-  type: 'new' | 'popular' | 'featured' | 'favorite';
+  dataKey: 'new' | 'popular' | 'featured' | 'favorite';
+  data: HomeAggregation[];
 };
 
-function getTitle(type: Props['type']) {
+function getTitle(type: Props['dataKey']) {
   switch (type) {
     case 'new':
       return 'New Locations';
@@ -32,9 +20,8 @@ function getTitle(type: Props['type']) {
   }
 }
 
-export default async function LocationsGrid({ type }: Props) {
-  const { data } = await peekLocations(type);
-  const title = getTitle(type);
+export default async function LocationsGrid({ dataKey: key, data }: Props) {
+  const title = getTitle(key);
 
   return (
     <div className="mx-auto">
