@@ -3,6 +3,7 @@ import OverlayBanner from '@/components/blocks/OverlayBanner';
 import TagNavigation from '@/components/blocks/TagNavigation';
 import VerticalBanner from '@/components/blocks/VerticalBanner';
 import { Button } from '@/components/ui/button';
+import { api, rpc } from '@/lib/api';
 import Link from 'next/link';
 import LocationsGrid from './_components/locations-grid';
 import Search from './_components/search';
@@ -10,7 +11,13 @@ import Search from './_components/search';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+async function getHomeAggregationData() {
+  return rpc(() => api.aggregator.home.$get());
+}
+
 export default async function Home() {
+  const { data } = await getHomeAggregationData();
+
   return (
     <div className="container">
       <Search />
@@ -24,7 +31,10 @@ export default async function Home() {
         className="my-8"
       />
 
-      <LocationsGrid type="featured" />
+      <LocationsGrid
+        data={data['featured']}
+        dataKey={'featured'}
+      />
 
       <OverlayBanner
         image="https://images.unsplash.com/photo-1607388510015-c632e99da586?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -44,7 +54,10 @@ export default async function Home() {
         imgClassName="aspect-[3]"
       />
 
-      <LocationsGrid type="popular" />
+      <LocationsGrid
+        data={data['popular']}
+        dataKey={'popular'}
+      />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
@@ -72,7 +85,10 @@ export default async function Home() {
         }
       />
 
-      <LocationsGrid type="new" />
+      <LocationsGrid
+        data={data['new']}
+        dataKey={'new'}
+      />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
@@ -98,7 +114,10 @@ export default async function Home() {
         imgClassName=""
       />
 
-      <LocationsGrid type="favorite" />
+      <LocationsGrid
+        data={data['favorite']}
+        dataKey={'favorite'}
+      />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
