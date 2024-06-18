@@ -41,7 +41,7 @@ export function Autocomplete(props: UseAutocompleteProps) {
           <Link href="/search">Advanced Search</Link>
         </Button>
       </div>
-      <CustomSearchBox />
+      <CustomSearchBox isSearchOnType={true} />
 
       {showDropdown && (
         <div className="my-2 rounded-lg border border-border">
