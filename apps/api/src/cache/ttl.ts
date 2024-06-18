@@ -15,4 +15,5 @@ export const cacheTTL = {
   'categories-with-count': 1 * duration.hour,
   'locations-countries': 1 * duration.day,
   'locations-peek': 1 * duration.hour,
+  'aggregate-home': 1 * duration.hour,
 } as const satisfies Record<CacheKey, number>;
