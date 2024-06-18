@@ -6,13 +6,13 @@ async function getCategoriesWithCount() {
   return rpc(() => api.categories.count.$get());
 }
 
-export default async function Page(): Promise<React.ReactElement> {
+export default async function Page() {
   const { data } = await getCategoriesWithCount();
 
   return (
-    <main>
+    <div className="container">
       <h2 className="mt-16 text-3xl font-bold tracking-tight">Categories</h2>
-      <div className="my-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="my-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data.map((c) => (
           <Link
             key={c.category.id}
@@ -38,6 +38,6 @@ export default async function Page(): Promise<React.ReactElement> {
           </Link>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
