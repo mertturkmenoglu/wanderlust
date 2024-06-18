@@ -1,13 +1,13 @@
+import Footer from '@/components/blocks/Footer';
 import Header from '@/components/blocks/Header';
 import { Toaster } from '@/components/ui/sonner';
+import ClerkProvider from '@/providers/clerk-provider';
 import { CSPostHogProvider } from '@/providers/ph-provider';
 import QClientProvider from '@/providers/query-provider';
-import { ClerkProvider } from '@clerk/nextjs';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Footer from '@/components/blocks/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
