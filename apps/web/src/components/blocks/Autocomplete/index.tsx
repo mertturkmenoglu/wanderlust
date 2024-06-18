@@ -26,6 +26,9 @@ export function Autocomplete(props: UseAutocompleteProps) {
     return category ? category.name : '';
   }
 
+  const showDropdown = currentRefinement !== '';
+  const isEmptyResult = hits.length === 0;
+
   return (
     <div className="w-full">
       <div className="text-sm leading-none tracking-tight">
@@ -40,7 +43,7 @@ export function Autocomplete(props: UseAutocompleteProps) {
       </div>
       <CustomSearchBox />
 
-      {currentRefinement !== '' && (
+      {showDropdown && (
         <div className="my-2 rounded-lg border border-border">
           {hits.slice(0, 5).map((hit) => (
             <Card
@@ -54,14 +57,27 @@ export function Autocomplete(props: UseAutocompleteProps) {
             />
           ))}
 
-          <Button
-            asChild
-            variant="link"
-          >
-            <Link href={`/search?locations%5Bquery%5D=${currentRefinement}`}>
-              See all results
-            </Link>
-          </Button>
+          {!isEmptyResult && (
+            <Button
+              asChild
+              variant="link"
+            >
+              <Link href={`/search?locations%5Bquery%5D=${currentRefinement}`}>
+                See all results
+              </Link>
+            </Button>
+          )}
+
+          {isEmptyResult && (
+            <Button
+              asChild
+              variant="link"
+            >
+              <Link href="/search">
+                No results found. Try our advanced search
+              </Link>
+            </Button>
+          )}
         </div>
       )}
     </div>
