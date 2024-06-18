@@ -6,14 +6,23 @@ import { SearchIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { UseSearchBoxProps, useSearchBox } from 'react-instantsearch';
 
-export default function CustomSearchBox(props: UseSearchBoxProps) {
+type Props = {
+  isSearchOnType?: boolean;
+} & UseSearchBoxProps;
+
+export default function CustomSearchBox({
+  isSearchOnType = false,
+  ...props
+}: Props) {
   const { query, refine } = useSearchBox(props);
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function setQuery(newQuery: string) {
     setInputValue(newQuery);
-    refine(newQuery);
+    if (isSearchOnType) {
+      refine(newQuery);
+    }
   }
 
   return (
@@ -30,6 +39,10 @@ export default function CustomSearchBox(props: UseSearchBoxProps) {
           if (inputRef.current) {
             inputRef.current.blur();
           }
+
+          if (!isSearchOnType) {
+            refine(inputValue);
+          }
         }}
         onReset={(e) => {
           e.preventDefault();
@@ -39,6 +52,10 @@ export default function CustomSearchBox(props: UseSearchBoxProps) {
 
           if (inputRef.current) {
             inputRef.current.focus();
+          }
+
+          if (!isSearchOnType) {
+            refine('');
           }
         }}
       >
