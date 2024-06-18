@@ -1,3 +1,4 @@
+export * from './aggregator';
 export * from './bookmarks';
 export * from './categories';
 export * from './events';

@@ -6,6 +6,7 @@ import { timeout } from 'hono/timeout';
 import { runDrizzleMigrations } from './db';
 import { initEventHandlers } from './events';
 import {
+  aggregatorRouter,
   bookmarksRouter,
   categoriesRouter,
   eventsRouter,
@@ -45,7 +46,8 @@ const app = new Hono<Env>()
   .route('/uploads', uploadsRouter)
   .route('/lists', listsRouter)
   .route('/favorites', favoritesRouter)
-  .route('/reports', reportsRouter);
+  .route('/reports', reportsRouter)
+  .route('/aggregator', aggregatorRouter);
 
 Bun.serve({
   port: env.PORT,
