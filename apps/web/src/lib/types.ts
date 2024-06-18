@@ -33,3 +33,8 @@ export type ListItem = ArrayElement<List['items']>;
 
 const reportFnRef = api.reports[':id'].$get;
 export type Report = InferResponseType<typeof reportFnRef>['data'];
+
+const homeAggregationFnRef = api.aggregator.home.$get;
+export type HomeAggregation = ArrayElement<
+  InferResponseType<typeof homeAggregationFnRef>['data']['new']
+>;
