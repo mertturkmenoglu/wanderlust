@@ -8,6 +8,7 @@ import Results from './results';
 
 export default function Container() {
   const { isEmptyResult, isEmptyQuery } = useEmptyResult();
+  const show = !(isEmptyResult || isEmptyQuery);
 
   return (
     <>
@@ -29,7 +30,7 @@ export default function Container() {
         />
       )}
 
-      {!(isEmptyResult || isEmptyQuery) && (
+      {show && (
         <div className="my-8 flex gap-8">
           <div className="min-w-[256px]">
             <Filters />
