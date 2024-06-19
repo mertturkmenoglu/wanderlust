@@ -115,7 +115,7 @@ function NewLocationForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-4 max-w-xl space-y-8"
+        className="mt-4 max-w-4xl space-y-8"
       >
         <FormField
           control={form.control}
@@ -153,103 +153,107 @@ function NewLocationForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="+1 (000) 000 0000"
-                  {...field}
-                  value={field.value ?? undefined}
-                />
-              </FormControl>
-              <FormDescription>Optional</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="website"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Website</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="https://example.com"
-                  {...field}
-                  value={field.value ?? undefined}
-                />
-              </FormControl>
-              <FormDescription>Optional</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="priceLevel"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price Level</FormLabel>
-              <FormControl>
-                <>
-                  <Slider
-                    defaultValue={[1]}
-                    max={5}
-                    min={1}
-                    step={1}
-                    value={[field.value]}
-                    onValueChange={(v) => {
-                      field.onChange(v[0]);
-                    }}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="+1 (000) 000 0000"
+                    {...field}
+                    value={field.value ?? undefined}
                   />
+                </FormControl>
+                <FormDescription>Optional</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                  <div>You selected: {field.value}</div>
-                </>
-              </FormControl>
-              <FormDescription>
-                1 is cheap, 5 is expensive (Optional)
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="accessibilityLevel"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Accessibility Level</FormLabel>
-              <FormControl>
-                <>
-                  <Slider
-                    defaultValue={[1]}
-                    max={5}
-                    min={1}
-                    step={1}
-                    value={[field.value]}
-                    onValueChange={(v) => {
-                      field.onChange(v[0]);
-                    }}
+          <FormField
+            control={form.control}
+            name="website"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="https://example.com"
+                    {...field}
+                    value={field.value ?? undefined}
                   />
+                </FormControl>
+                <FormDescription>Optional</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-                  <div>You selected: {field.value}</div>
-                </>
-              </FormControl>
-              <FormDescription>
-                1 is low 5 is highly accessible (Optional)
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="priceLevel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price Level</FormLabel>
+                <FormControl>
+                  <>
+                    <Slider
+                      defaultValue={[1]}
+                      max={5}
+                      min={1}
+                      step={1}
+                      value={[field.value]}
+                      onValueChange={(v) => {
+                        field.onChange(v[0]);
+                      }}
+                    />
+
+                    <div>You selected: {field.value}</div>
+                  </>
+                </FormControl>
+                <FormDescription>
+                  1 is cheap, 5 is expensive (Optional)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="accessibilityLevel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Accessibility Level</FormLabel>
+                <FormControl>
+                  <>
+                    <Slider
+                      defaultValue={[1]}
+                      max={5}
+                      min={1}
+                      step={1}
+                      value={[field.value]}
+                      onValueChange={(v) => {
+                        field.onChange(v[0]);
+                      }}
+                    />
+
+                    <div>You selected: {field.value}</div>
+                  </>
+                </FormControl>
+                <FormDescription>
+                  1 is low 5 is highly accessible (Optional)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -320,194 +324,196 @@ function NewLocationForm() {
         >
           <h3 className="my-8 text-lg font-bold tracking-tight">Address</h3>
 
-          <FormField
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Country</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          'w-[200px] justify-between',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value
-                          ? (countries.data ?? []).find(
-                              (c) => c.iso2 === field.value
-                            )?.name
-                          : 'Select country'}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search country..." />
-                      <CommandEmpty>No country found.</CommandEmpty>
-                      <CommandGroup>
-                        <CommandList>
-                          {(countries.data ?? []).map((country) => (
-                            <CommandItem
-                              value={country.iso2}
-                              key={country.id}
-                              onSelect={() => {
-                                form.setValue('country', country.iso2);
-                                setCountryId(country.id);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  country.iso2 === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {country.name}
-                            </CommandItem>
-                          ))}
-                        </CommandList>
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormDescription>Select a country</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Country</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            'w-[200px] justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? (countries.data ?? []).find(
+                                (c) => c.iso2 === field.value
+                              )?.name
+                            : 'Select country'}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search country..." />
+                        <CommandEmpty>No country found.</CommandEmpty>
+                        <CommandGroup>
+                          <CommandList>
+                            {(countries.data ?? []).map((country) => (
+                              <CommandItem
+                                value={country.iso2}
+                                key={country.id}
+                                onSelect={() => {
+                                  form.setValue('country', country.iso2);
+                                  setCountryId(country.id);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    country.iso2 === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                                {country.name}
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>Select a country</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="state"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>State</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          'w-[200px] justify-between',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value
-                          ? (states.data ?? []).find(
-                              (c) => c.stateCode === field.value
-                            )?.name
-                          : 'Select state'}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search state..." />
-                      <CommandEmpty>No state found.</CommandEmpty>
-                      <CommandGroup>
-                        <CommandList>
-                          {(states.data ?? []).map((state) => (
-                            <CommandItem
-                              value={state.stateCode}
-                              key={state.id}
-                              onSelect={() => {
-                                form.setValue('state', state.stateCode);
-                                setStateId(state.id);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  state.stateCode === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {state.name}
-                            </CommandItem>
-                          ))}
-                        </CommandList>
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormDescription>Select a state</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="state"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>State</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            'w-[200px] justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? (states.data ?? []).find(
+                                (c) => c.stateCode === field.value
+                              )?.name
+                            : 'Select state'}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search state..." />
+                        <CommandEmpty>No state found.</CommandEmpty>
+                        <CommandGroup>
+                          <CommandList>
+                            {(states.data ?? []).map((state) => (
+                              <CommandItem
+                                value={state.stateCode}
+                                key={state.id}
+                                onSelect={() => {
+                                  form.setValue('state', state.stateCode);
+                                  setStateId(state.id);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    state.stateCode === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                                {state.name}
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>Select a state</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>City</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          'w-[200px] justify-between',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value
-                          ? (cities.data ?? []).find(
-                              (c) => c.name === field.value
-                            )?.name
-                          : 'Select city'}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search city..." />
-                      <CommandEmpty>No city found.</CommandEmpty>
-                      <CommandGroup>
-                        <CommandList>
-                          {(cities.data ?? []).map((city) => (
-                            <CommandItem
-                              value={city.name}
-                              key={city.id}
-                              onSelect={() => {
-                                form.setValue('city', city.name);
-                                setCityId(city.id);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  city.name === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {city.name}
-                            </CommandItem>
-                          ))}
-                        </CommandList>
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormDescription>Select a city</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>City</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            'w-[200px] justify-between',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? (cities.data ?? []).find(
+                                (c) => c.name === field.value
+                              )?.name
+                            : 'Select city'}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search city..." />
+                        <CommandEmpty>No city found.</CommandEmpty>
+                        <CommandGroup>
+                          <CommandList>
+                            {(cities.data ?? []).map((city) => (
+                              <CommandItem
+                                value={city.name}
+                                key={city.id}
+                                onSelect={() => {
+                                  form.setValue('city', city.name);
+                                  setCityId(city.id);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    city.name === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                                {city.name}
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>Select a city</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -530,90 +536,94 @@ function NewLocationForm() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="line2"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address Line 2</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Address line 2"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Address line 2 (e.g., apartment, suite, unit, or building).
-                  (Optional)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="line2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address Line 2</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Address line 2"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Address line 2 (e.g., apartment, suite, unit, or building).
+                    (Optional)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="postalCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Postal Code</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Postal Code"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  ZIP or postal code. (Optional)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="postalCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Postal Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Postal Code"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    ZIP or postal code. (Optional)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="lat"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Latitude</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Latitude"
-                    type="number"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(parseFloat(e.target.value));
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>Latitude (Required)</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="lat"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Latitude</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Latitude"
+                      type="number"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(parseFloat(e.target.value));
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>Latitude (Required)</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="long"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Longitude</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Longitude"
-                    type="number"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(parseFloat(e.target.value));
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>Longitude (Required)</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="long"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Longitude</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Longitude"
+                      type="number"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(parseFloat(e.target.value));
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>Longitude (Required)</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <Dnd
