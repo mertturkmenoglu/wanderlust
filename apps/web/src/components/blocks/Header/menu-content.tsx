@@ -47,7 +47,7 @@ export default function MenuContent({ fullName, username }: Props) {
       <DropdownMenuGroup>
         <DropdownMenuItem asChild>
           <Link
-            href="/friends"
+            href={`/user/${username}/following`}
             className="cursor-pointer"
           >
             Friends
@@ -76,19 +76,15 @@ export default function MenuContent({ fullName, username }: Props) {
       <DropdownMenuItem disabled>Support</DropdownMenuItem>
       <DropdownMenuItem
         asChild
-        className='cursor-pointer'
+        className="cursor-pointer"
       >
-        <Link href="/privacy">
-          Privacy
-        </Link>
+        <Link href="/privacy">Privacy</Link>
       </DropdownMenuItem>
       <DropdownMenuItem
         asChild
-        className='cursor-pointer'
+        className="cursor-pointer"
       >
-        <Link href="/terms">
-          Terms
-        </Link>
+        <Link href="/terms">Terms</Link>
       </DropdownMenuItem>
       <DropdownMenuItem disabled>API</DropdownMenuItem>
       <DropdownMenuSeparator />
