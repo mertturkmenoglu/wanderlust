@@ -16,6 +16,8 @@ function Layout({ children, params: { username } }: Props): React.ReactElement {
     <div className="container">
       <Bio username={username} />
 
+      <hr className="mx-auto my-4 hidden max-w-4xl md:block" />
+
       <Tabs
         className="my-4"
         username={username}
