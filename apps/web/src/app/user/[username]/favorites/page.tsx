@@ -1,6 +1,6 @@
 'use client';
 
-import EmptyContent from '@/components/blocks/EmptyContent';
+import AppMessage from '@/components/blocks/AppMessage';
 import LocationCard from '@/components/blocks/LocationCard';
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
@@ -40,7 +40,11 @@ export default function Page() {
   return (
     <div className="mx-auto max-w-4xl">
       {query.data && query.data.length === 0 && (
-        <EmptyContent className="mt-16" />
+        <AppMessage
+          className="my-16"
+          emptyMessage="This user has no favorites"
+          showBackButton={false}
+        />
       )}
       {query.data && query.data.length > 0 && (
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">

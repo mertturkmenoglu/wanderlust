@@ -1,5 +1,6 @@
 'use client';
 
+import AppMessage from '@/components/blocks/AppMessage';
 import EmptyContent from '@/components/blocks/EmptyContent';
 import ReviewCard from '@/components/blocks/ReviewCard';
 import { Button } from '@/components/ui/button';
@@ -38,8 +39,18 @@ export default function Page() {
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
 
+  const isEmpty =
+    query.data?.pages.every((page) => page.data.length === 0) ?? true;
+
   return (
     <div className="mx-auto my-8 max-w-4xl">
+      {isEmpty && (
+        <AppMessage
+          className="my-16"
+          emptyMessage="This user has no reviews"
+          showBackButton={false}
+        />
+      )}
       {query.data && (
         <div className="grid grid-cols-1 gap-4">
           {query.data.pages.map((page, i) => (

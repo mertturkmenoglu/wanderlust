@@ -1,6 +1,6 @@
 'use client';
 
-import EmptyContent from '@/components/blocks/EmptyContent';
+import AppMessage from '@/components/blocks/AppMessage';
 import ListCard from '@/components/blocks/ListCard';
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
@@ -39,7 +39,11 @@ export default function Page() {
   return (
     <div className="mx-auto max-w-4xl">
       {query.data && query.data.length === 0 && (
-        <EmptyContent className="mt-16" />
+        <AppMessage
+          className="my-16"
+          emptyMessage="This user has no lists"
+          showBackButton={false}
+        />
       )}
       {query.data && query.data.length > 0 && (
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4">
