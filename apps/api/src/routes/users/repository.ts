@@ -1,6 +1,7 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, count, desc, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db, follows, users } from '../../db';
+import { PaginationParams, getPagination } from '../../pagination';
 import { UpdateProfileDto } from './dto';
 
 export async function getByUsername(username: string, userId?: string) {
@@ -130,4 +131,74 @@ export async function makeUserVerified(username: string) {
     .where(eq(users.username, username));
 
   return true;
+}
+
+export async function getFollowers(
+  username: string,
+  pagination: PaginationParams
+) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.username, username),
+  });
+
+  if (!user) {
+    throw new HTTPException(404, {
+      message: 'User not found',
+    });
+  }
+
+  const res = await db.query.follows.findMany({
+    where: eq(follows.followingId, user.id),
+    orderBy: desc(follows.createdAt),
+    offset: pagination.offset,
+    limit: pagination.pageSize,
+    with: {
+      follower: true,
+    },
+  });
+
+  const [{ value: totalRecords }] = await db
+    .select({ value: count() })
+    .from(follows)
+    .where(eq(follows.followingId, user.id));
+
+  return {
+    data: res,
+    pagination: getPagination(pagination, totalRecords),
+  };
+}
+
+export async function getFollowing(
+  username: string,
+  pagination: PaginationParams
+) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.username, username),
+  });
+
+  if (!user) {
+    throw new HTTPException(404, {
+      message: 'User not found',
+    });
+  }
+
+  const res = await db.query.follows.findMany({
+    where: eq(follows.followerId, user.id),
+    orderBy: desc(follows.createdAt),
+    offset: pagination.offset,
+    limit: pagination.pageSize,
+    with: {
+      following: true,
+    },
+  });
+
+  const [{ value: totalRecords }] = await db
+    .select({ value: count() })
+    .from(follows)
+    .where(eq(follows.followerId, user.id));
+
+  return {
+    data: res,
+    pagination: getPagination(pagination, totalRecords),
+  };
 }

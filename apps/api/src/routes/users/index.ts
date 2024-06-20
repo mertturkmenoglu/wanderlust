@@ -4,8 +4,9 @@ import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { authorize, getAuth, rateLimiter, withAuth } from '../../middlewares';
+import { withOffset } from '../../pagination';
 import { Env } from '../../start';
-import { validateUsername } from '../dto';
+import { validatePagination, validateUsername } from '../dto';
 import { updateProfileSchema } from './dto';
 import * as repository from './repository';
 
@@ -152,10 +153,48 @@ const verifyUser = factory.createHandlers(
   }
 );
 
+const getFollowers = factory.createHandlers(
+  zValidator('param', validateUsername),
+  zValidator('query', validatePagination),
+  async (c) => {
+    const { username } = c.req.valid('param');
+    const pagination = withOffset(c.req.valid('query'));
+    const result = await repository.getFollowers(username, pagination);
+
+    return c.json(
+      {
+        data: result.data,
+        pagination: result.pagination,
+      },
+      200
+    );
+  }
+);
+
+const getFollowing = factory.createHandlers(
+  zValidator('param', validateUsername),
+  zValidator('query', validatePagination),
+  async (c) => {
+    const { username } = c.req.valid('param');
+    const pagination = withOffset(c.req.valid('query'));
+    const result = await repository.getFollowing(username, pagination);
+
+    return c.json(
+      {
+        data: result.data,
+        pagination: result.pagination,
+      },
+      200
+    );
+  }
+);
+
 export const usersRouter = new Hono()
   .use(rateLimiter())
   .get('/me', ...getMe)
   .get('/:username/profile', ...getProfileByUsername)
+  .get('/:username/followers', ...getFollowers)
+  .get('/:username/following', ...getFollowing)
   .patch('/profile', ...updateProfile)
   .post('/follow/:username', ...follow)
   .post('/unfollow/:username', ...unfollow)
