@@ -30,7 +30,7 @@ export default function CustomSearchBox({
       <form
         action=""
         role="search"
-        className="flex gap-8"
+        className="flex gap-2 sm:gap-4 lg:gap-8"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();
@@ -76,8 +76,8 @@ export default function CustomSearchBox({
         />
 
         <Button type="submit">
-          Search
-          <SearchIcon className="ml-2 size-4" />
+          <span className="hidden sm:block">Search</span>
+          <SearchIcon className="ml-0 size-4 sm:ml-2" />
         </Button>
       </form>
     </div>

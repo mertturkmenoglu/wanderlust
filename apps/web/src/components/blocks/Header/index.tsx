@@ -14,7 +14,7 @@ import {
   SignedOut,
 } from '@clerk/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
-import { UserIcon } from 'lucide-react';
+import { Calendar, MapPin, UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import MenuContent from './menu-content';
@@ -42,17 +42,19 @@ async function Header({ className, ...props }: Props) {
           <li>
             <Link
               href="/discover/locations"
-              className="block rounded-full px-4 py-2 hover:bg-muted"
+              className="flex items-center gap-2 rounded-full px-4 py-2 hover:bg-muted"
             >
-              Locations
+              <MapPin className="size-6" />
+              <span className="hidden sm:block">Locations</span>
             </Link>
           </li>
           <li>
             <Link
               href="/discover/events"
-              className="block rounded-full px-4 py-2 hover:bg-muted"
+              className="flex items-center gap-2 rounded-full px-4 py-2 hover:bg-muted"
             >
-              Events
+              <Calendar className="size-6" />
+              <span className="hidden sm:block">Events</span>
             </Link>
           </li>
         </ul>
