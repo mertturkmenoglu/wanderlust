@@ -25,13 +25,13 @@ export default function OverlayBanner({
       <img
         src={image}
         className={cn(
-          'aspect-[5] h-full rounded-md object-cover opacity-70',
+          'aspect-[2] h-full rounded-md object-cover opacity-70 md:aspect-[5]',
           imgClassName
         )}
         role="presentation"
         alt={alt}
       />
-      <div className="absolute bottom-2 left-2 rounded-md px-8 py-4 md:bottom-8 md:left-8">
+      <div className="absolute bottom-2 left-2 rounded-md px-4 py-2 md:bottom-8 md:left-8 md:px-8 md:py-4">
         <div className="text-base font-bold text-white md:text-2xl">
           {message}
         </div>
