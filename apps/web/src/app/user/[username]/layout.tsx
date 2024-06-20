@@ -14,10 +14,7 @@ export const revalidate = 0;
 function Layout({ children, params: { username } }: Props): React.ReactElement {
   return (
     <div className="container">
-      <Bio
-        username={username}
-        className="mt-16"
-      />
+      <Bio username={username} />
 
       <Tabs
         className="my-4"
