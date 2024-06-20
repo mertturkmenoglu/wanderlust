@@ -59,7 +59,7 @@ export default async function Bio({ username, className }: Props) {
         </div>
       </Banner>
 
-      <div className="-mt-8 ml-8 mr-4 flex flex-col justify-between md:flex-row">
+      <div className="-mt-8 flex flex-col justify-between md:flex-row">
         <div className="">
           <h2 className="text-2xl font-semibold">{fullName}</h2>
           <h3 className="text-base text-primary">@{user.username}</h3>
@@ -74,9 +74,9 @@ export default async function Bio({ username, className }: Props) {
         />
       </div>
 
-      <hr className="mx-8 my-4 hidden md:block" />
+      <hr className="my-4 hidden md:block" />
 
-      <div className="mx-8 flex items-center gap-4">
+      <div className="flex items-center gap-4">
         <div className="font-semibold">About {user.firstName}</div>
         {user.pronouns !== null && <Pronouns pronouns={user.pronouns} />}
       </div>
@@ -84,7 +84,7 @@ export default async function Bio({ username, className }: Props) {
         bio={user.bio}
         website={user.website}
         isBusinessAccount={user.isBusinessAccount}
-        className="mx-8 my-4"
+        className="my-4"
       />
     </div>
   );
