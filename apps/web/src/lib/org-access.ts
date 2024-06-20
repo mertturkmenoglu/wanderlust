@@ -8,6 +8,5 @@ export function canAccessOrg(): boolean {
 
 export function useCanAccessOrg(): boolean {
   const { orgId } = useAuth();
-  console.log({ orgId, env: process.env.CLERK_ADMIN_ORG_ID });
   return orgId !== undefined && orgId === process.env.CLERK_ADMIN_ORG_ID;
 }
