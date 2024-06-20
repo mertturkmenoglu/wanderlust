@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
 import { api, rpc } from '@/lib/api';
+import { getAuthHeader } from '@/lib/headers';
 import { currentUser as clerkCurrentUser } from '@clerk/nextjs/server';
 import clsx from 'clsx';
-import Link from 'next/link';
+import ActionButtons from './action-buttons';
 import Banner from './banner';
 import BioDropdown from './bio-dropdown';
 import Followers from './followers';
@@ -21,18 +21,23 @@ type Props = {
 
 export async function getUser(username: string) {
   return rpc(() =>
-    api.users[':username'].profile.$get({
-      param: {
-        username,
+    api.users[':username'].profile.$get(
+      {
+        param: {
+          username,
+        },
       },
-    })
+      {
+        ...getAuthHeader(),
+      }
+    )
   );
 }
 
 export default async function Bio({ username, className }: Props) {
   const currentUser = await clerkCurrentUser();
   const isThisUser = currentUser?.username === username;
-  const { data: user } = await getUser(username);
+  const { data: user, metadata } = await getUser(username);
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
@@ -44,16 +49,11 @@ export default async function Bio({ username, className }: Props) {
         />
 
         <div className="absolute bottom-10 right-4 flex gap-4 md:bottom-16 md:right-8">
-          {isThisUser ? (
-            <Button
-              asChild
-              variant="outline"
-            >
-              <Link href="/settings">Settings</Link>
-            </Button>
-          ) : (
-            <Button variant="default">Follow</Button>
-          )}
+          <ActionButtons
+            isThisUser={isThisUser}
+            isFollowing={metadata.isFollowing}
+            username={username}
+          />
 
           <BioDropdown userId={user.id} />
         </div>
