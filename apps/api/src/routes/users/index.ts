@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
-import { authorize, getAuth, rateLimiter } from '../../middlewares';
+import { authorize, getAuth, rateLimiter, withAuth } from '../../middlewares';
 import { Env } from '../../start';
 import { validateUsername } from '../dto';
 import { updateProfileSchema } from './dto';
@@ -23,20 +23,21 @@ const getMe = factory.createHandlers(clerkMiddleware(), getAuth, async (c) => {
 });
 
 const getProfileByUsername = factory.createHandlers(
+  clerkMiddleware(),
+  withAuth,
   zValidator('param', validateUsername),
   async (c) => {
+    const auth = c.get('withAuth');
     const { username } = c.req.valid('param');
-    const user = await repository.getByUsername(username);
-
-    if (!user) {
-      throw new HTTPException(404, {
-        message: 'Not found',
-      });
-    }
+    const { data, metadata } = await repository.getByUsername(
+      username,
+      auth?.userId
+    );
 
     return c.json(
       {
-        data: user,
+        data,
+        metadata,
       },
       200
     );
@@ -69,7 +70,7 @@ const follow = factory.createHandlers(
   async (c) => {
     const { username: targetUsername } = c.req.valid('param');
     const user = c.get('user');
-    const targetUser = await repository.getByUsername(targetUsername);
+    const { data: targetUser } = await repository.getByUsername(targetUsername);
 
     if (!targetUser) {
       throw new HTTPException(404, {
@@ -78,11 +79,11 @@ const follow = factory.createHandlers(
     }
 
     try {
-      const result = await repository.follow(user.id, targetUser.id);
+      await repository.follow(user.id, targetUser.id);
 
       return c.json(
         {
-          data: result,
+          data: 'OK',
         },
         201
       );
@@ -101,7 +102,7 @@ const unfollow = factory.createHandlers(
   async (c) => {
     const { username: targetUsername } = c.req.valid('param');
     const user = c.get('user');
-    const targetUser = await repository.getByUsername(targetUsername);
+    const { data: targetUser } = await repository.getByUsername(targetUsername);
 
     if (!targetUser) {
       throw new HTTPException(404, {
@@ -114,7 +115,7 @@ const unfollow = factory.createHandlers(
 
       return c.json(
         {
-          message: 'Unfollowed',
+          data: 'OK',
         },
         200
       );

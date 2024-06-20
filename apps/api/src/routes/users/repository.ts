@@ -3,12 +3,32 @@ import { HTTPException } from 'hono/http-exception';
 import { db, follows, users } from '../../db';
 import { UpdateProfileDto } from './dto';
 
-export async function getByUsername(username: string) {
+export async function getByUsername(username: string, userId?: string) {
   const user = await db.query.users.findFirst({
     where: eq(users.username, username),
   });
 
-  return user;
+  if (!user) {
+    throw new HTTPException(404, {
+      message: 'User not found',
+    });
+  }
+
+  const isFollowing = userId
+    ? (await db.query.follows.findFirst({
+        where: and(
+          eq(follows.followerId, userId),
+          eq(follows.followingId, user.id)
+        ),
+      })) !== undefined
+    : false;
+
+  return {
+    data: user,
+    metadata: {
+      isFollowing,
+    },
+  };
 }
 
 export async function updateProfile(userId: string, dto: UpdateProfileDto) {
