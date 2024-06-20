@@ -26,7 +26,7 @@ export default function Tabs({ username, className }: Props) {
   const activeTab = tabs.find((tab) => pathname === tab.href);
 
   return (
-    <div className={cn('mx-auto flex justify-center md:max-w-2xl', className)}>
+    <div className={cn('mx-auto md:max-w-4xl', className)}>
       <ScrollArea>
         <ul className="mx-auto my-4 flex gap-2">
           {tabs.map((tab) => (
