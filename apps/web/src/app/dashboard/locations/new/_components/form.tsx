@@ -35,12 +35,13 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
+import { useCategories } from '@/hooks/use-categories';
 import { uploadImages } from '@/lib/api';
 import { cn, getDims, mapImagesToMedia } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
-import { useCategories, useCities, useCountries, useStates } from './queries';
+import { useCities, useCountries, useStates } from './queries';
 import Tags from './tags';
 import { useCreateLocation } from './use-create-location';
 import { FormInput, useLocationForm } from './use-form';
@@ -297,7 +298,7 @@ function NewLocationForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {(categories.data ?? []).map((c) => (
+                  {(categories.data?.data ?? []).map((c) => (
                     <SelectItem
                       value={`${c.id}`}
                       key={c.id}

@@ -1,17 +1,6 @@
 import { api, rpc } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 
-export function useCategories() {
-  return useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const res = await rpc(() => api.categories.$get());
-      return res.data;
-    },
-    staleTime: 10 * 60 * 1000,
-  });
-}
-
 export function useCountries() {
   return useQuery({
     queryKey: ['countries'],
