@@ -59,6 +59,17 @@ export const follows = pgTable(
   }
 );
 
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, {
+    fields: [follows.followerId],
+    references: [users.id],
+  }),
+  following: one(users, {
+    fields: [follows.followingId],
+    references: [users.id],
+  }),
+}));
+
 export const auths = pgTable('auths', {
   id: uuid('id').primaryKey().defaultRandom(),
   clerkId: text('clerk_id').notNull().unique(),
