@@ -37,7 +37,7 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-4xl">
       {query.data && query.data.length === 0 && (
         <EmptyContent className="mt-16" />
       )}

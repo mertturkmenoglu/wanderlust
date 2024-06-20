@@ -39,7 +39,7 @@ export default function Page() {
   });
 
   return (
-    <div className="my-8">
+    <div className="mx-auto my-8 max-w-4xl">
       {query.data && (
         <div className="grid grid-cols-1 gap-4">
           {query.data.pages.map((page, i) => (

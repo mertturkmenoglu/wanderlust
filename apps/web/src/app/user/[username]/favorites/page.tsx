@@ -38,12 +38,12 @@ export default function Page() {
   }
 
   return (
-    <div>
+    <div className="mx-auto max-w-4xl">
       {query.data && query.data.length === 0 && (
         <EmptyContent className="mt-16" />
       )}
       {query.data && query.data.length > 0 && (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {query.data.map((favorite) => (
             <Link
               href={`/location/${favorite.locationId}`}
