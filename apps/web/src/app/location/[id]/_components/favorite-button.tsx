@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/tooltip';
 import { api, rpc } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@clerk/nextjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Heart } from 'lucide-react';
 import { useState } from 'react';
@@ -21,6 +22,7 @@ type Props = {
 
 export default function FavoriteButton({ isFavorite, locationId }: Props) {
   const [fav, setFav] = useState(isFavorite);
+  const { isSignedIn } = useAuth();
   const qc = useQueryClient();
 
   const mutation = useMutation({
@@ -59,7 +61,14 @@ export default function FavoriteButton({ isFavorite, locationId }: Props) {
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
-            onClick={() => mutation.mutate()}
+            onClick={() => {
+              if (!isSignedIn) {
+                toast.warning('You need to be signed in.');
+                return;
+              }
+
+              mutation.mutate();
+            }}
           >
             <Heart
               className={cn('size-6 text-primary', {

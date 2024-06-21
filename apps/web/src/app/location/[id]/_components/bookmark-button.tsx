@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/tooltip';
 import { api, rpc } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@clerk/nextjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BookmarkIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -22,6 +23,7 @@ type Props = {
 export default function BookmarkButton({ isBookmarked, locationId }: Props) {
   const [booked, setBooked] = useState(isBookmarked);
   const qc = useQueryClient();
+  const { isSignedIn } = useAuth();
 
   const mutation = useMutation({
     mutationKey: ['bookmark', locationId],
@@ -59,7 +61,14 @@ export default function BookmarkButton({ isBookmarked, locationId }: Props) {
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
-            onClick={() => mutation.mutate()}
+            onClick={() => {
+              if (!isSignedIn) {
+                toast.warning('You need to be signed in.');
+                return;
+              }
+
+              mutation.mutate();
+            }}
           >
             <BookmarkIcon
               className={cn('size-6 text-primary', {
