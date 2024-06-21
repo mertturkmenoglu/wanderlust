@@ -447,3 +447,51 @@ export const reports = pgTable('reports', {
   resolveComment: text('resolve_comment'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+export type NotificationData = Record<string, any>;
+
+export const notificationTypeEnum = pgEnum('notification_type', [
+  'review_like',
+  'user_follow',
+  'list_like',
+  'trip_add_user',
+  'trip_update',
+  'trip_add_comment',
+  'event_suggest',
+  'wl_list_suggest',
+]);
+
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    senderId: uuid('sender_id')
+      .notNull()
+      .references(() => users.id),
+    recipientId: uuid('recipient_id')
+      .notNull()
+      .references(() => users.id),
+    type: text('type').notNull(),
+    read: boolean('read').notNull().default(false),
+    data: json('data').$type<NotificationData>().notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      notificationsRecipientIdx: index('notifications_recipient_idx').on(
+        table.recipientId
+      ),
+    };
+  }
+);
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  sender: one(users, {
+    fields: [notifications.senderId],
+    references: [users.id],
+  }),
+  recipient: one(users, {
+    fields: [notifications.recipientId],
+    references: [users.id],
+  }),
+}));
