@@ -11,6 +11,7 @@ type Props = {
   errorMessage?: React.ReactNode;
   successMessage?: React.ReactNode;
   emptyMessage?: React.ReactNode;
+  imageClassName?: string;
 };
 
 export default function AppMessage({
@@ -19,6 +20,7 @@ export default function AppMessage({
   successMessage,
   emptyMessage,
   showBackButton = true,
+  imageClassName,
 }: Props) {
   return (
     <div
@@ -30,9 +32,13 @@ export default function AppMessage({
       <Image
         src={Logo}
         alt="Wanderlust"
-        className={cn('size-24', {
-          grayscale: !successMessage,
-        })}
+        className={cn(
+          'size-24',
+          {
+            grayscale: !successMessage,
+          },
+          imageClassName
+        )}
       />
       {errorMessage && (
         <div className="text-lg font-semibold text-destructive">
