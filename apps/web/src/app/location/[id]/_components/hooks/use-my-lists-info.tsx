@@ -1,9 +1,12 @@
 import { api, rpc } from '@/lib/api';
+import { useAuth } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 
 export function useMyListsInfo(locationId: string) {
+  const { isSignedIn } = useAuth();
+
   const query = useQuery({
-    queryKey: ['my-lists-info'],
+    queryKey: ['my-lists-info', locationId],
     queryFn: async () => {
       const res = await rpc(() =>
         api.lists.info[':locationId'].$get({
@@ -14,6 +17,7 @@ export function useMyListsInfo(locationId: string) {
       );
       return res.data;
     },
+    enabled: isSignedIn,
   });
 
   return query;
