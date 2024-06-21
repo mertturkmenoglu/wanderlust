@@ -18,6 +18,7 @@ import { Calendar, MapPin, UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import MenuContent from './menu-content';
+import Notifications from './notifications';
 
 type Props = React.HTMLAttributes<HTMLElement>;
 
@@ -33,7 +34,7 @@ async function Header({ className, ...props }: Props) {
         <Image
           src={Logo}
           alt="Wanderlust"
-          className="size-12"
+          className="size-12 min-h-12 min-w-12"
         />
       </Link>
 
@@ -59,8 +60,12 @@ async function Header({ className, ...props }: Props) {
           </li>
         </ul>
       </nav>
+
       <ClerkLoading>
-        <Skeleton className="size-8 rounded-full bg-muted px-10" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="size-8 rounded-full bg-muted" />
+          <Skeleton className="size-8 rounded-full bg-muted px-10" />
+        </div>
       </ClerkLoading>
       <ClerkLoaded>
         <SignedOut>
@@ -74,21 +79,26 @@ async function Header({ className, ...props }: Props) {
           </SignInButton>
         </SignedOut>
         <SignedIn>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="rounded-full"
-                variant="ghost"
-              >
-                <UserIcon className="size-6 text-black" />
-                <span className="ml-2">{user?.firstName}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <MenuContent
-              fullName={user?.fullName ?? ''}
-              username={user?.username ?? ''}
-            />
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <Notifications />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="rounded-full"
+                  variant="ghost"
+                >
+                  <UserIcon className="size-5 text-black" />
+                  <span className="hidden sm:ml-2 sm:block">
+                    {user?.firstName}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <MenuContent
+                fullName={user?.fullName ?? ''}
+                username={user?.username ?? ''}
+              />
+            </DropdownMenu>
+          </div>
         </SignedIn>
       </ClerkLoaded>
     </header>
