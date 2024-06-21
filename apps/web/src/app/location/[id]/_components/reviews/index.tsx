@@ -1,7 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import CreateReview from '../create-review';
-import ReviewList from './list';
+import CreateReviewDialog from './_components/create-review-dialog';
+import ReviewList from './_components/list';
 
 type Props = {
   name: string;
@@ -13,16 +11,10 @@ export default function Reviews({ name, locationId }: Props) {
     <div className="mb-32">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Reviews</h2>
-
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="default">Create a review</Button>
-          </DialogTrigger>
-          <CreateReview
-            name={name}
-            locationId={locationId}
-          />
-        </Dialog>
+        <CreateReviewDialog
+          name={name}
+          locationId={locationId}
+        />
       </div>
 
       <ReviewList locationId={locationId} />
