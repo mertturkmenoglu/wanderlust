@@ -41,12 +41,14 @@ import { cn, getDims, mapImagesToMedia } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
-import { useCities, useCountries, useStates } from './queries';
 import Tags from './tags';
 import { useCreateLocation } from './use-create-location';
 import { FormInput, useLocationForm } from './use-form';
 import { useTags } from './use-tags';
 import { useUpload } from './use-upload';
+import { useCountries } from '@/hooks/use-countries';
+import { useStates } from '@/hooks/use-states';
+import { useCities } from '@/hooks/use-cities';
 
 function NewLocationForm() {
   const [countryId, setCountryId] = useState<number | null>(null);
