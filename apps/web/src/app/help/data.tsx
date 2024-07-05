@@ -17,7 +17,7 @@ type FAQItem = {
 };
 
 export const faqData: FAQ = {
-  title: 'Help Centre',
+  title: 'Help Center',
   subtitle: 'How can we help you?',
   groups: [
     {
