@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import Link from 'next/link';
 import { SubmitHandler } from 'react-hook-form';
 import { ReportInput } from '../page';
 import { reasons } from './data';
@@ -40,7 +41,7 @@ export default function ReportForm(props: Props) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto mt-4 max-w-2xl space-y-8"
+        className="mx-auto mt-4 flex max-w-2xl flex-col space-y-8"
       >
         <FormField
           control={form.control}
@@ -128,12 +129,24 @@ export default function ReportForm(props: Props) {
           )}
         />
 
-        <Button
-          type="submit"
-          disabled={form.formState.isLoading || form.formState.isSubmitting}
-        >
-          Report
-        </Button>
+        <div className="flex items-center justify-between">
+          <Button
+            type="button"
+            asChild
+            variant="link"
+            className="px-0"
+          >
+            <Link href="/help">Need help? Check our help center.</Link>
+          </Button>
+
+          <Button
+            type="submit"
+            disabled={form.formState.isLoading || form.formState.isSubmitting}
+            className="ml-auto"
+          >
+            <span>Report</span>
+          </Button>
+        </div>
       </form>
     </Form>
   );
