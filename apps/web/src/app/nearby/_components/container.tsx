@@ -37,6 +37,8 @@ export default function Container(props: UseGeoSearchProps) {
     return <div>{errMsg}</div>;
   }
 
+  const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
+
   return (
     <MapContainer
       center={pos}
@@ -49,7 +51,7 @@ export default function Container(props: UseGeoSearchProps) {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url={url}
       />
       <GeoSearch {...props} />
     </MapContainer>
