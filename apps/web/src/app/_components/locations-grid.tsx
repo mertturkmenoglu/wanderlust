@@ -22,6 +22,8 @@ function getTitle(type: Props['dataKey']) {
 
 export default async function LocationsGrid({ dataKey: key, data }: Props) {
   const title = getTitle(key);
+  const sliced = data.slice(0, 6);
+  const isEmpty = sliced.length === 0;
 
   return (
     <div className="mx-auto">
@@ -30,14 +32,16 @@ export default async function LocationsGrid({ dataKey: key, data }: Props) {
       </h2>
 
       <div className="my-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {data.slice(0, 6).map((location) => (
-          <Link
-            key={location.id}
-            href={`/location/${location.id}`}
-          >
-            <LocationCard location={location} />
-          </Link>
-        ))}
+        {isEmpty && <div>No data available.</div>}
+        {!isEmpty &&
+          data.slice(0, 6).map((location) => (
+            <Link
+              key={location.id}
+              href={`/location/${location.id}`}
+            >
+              <LocationCard location={location} />
+            </Link>
+          ))}
       </div>
     </div>
   );
