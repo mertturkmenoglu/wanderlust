@@ -1,7 +1,5 @@
 # Fake Data Generation
 
----
-
 ## Initial Setup
 
 - You must first run the `addresses` script.
