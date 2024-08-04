@@ -20,3 +20,4 @@
 - You **must** insert categories first.
 - Then you can insert other type of data.
 - Make sure you have the `TEST_JWT` environment variable. It will bypass the rate limiter to send requests at maximum capacity.
+- Make sure you have the `ADMIN_ID` environment variable.
