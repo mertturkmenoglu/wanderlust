@@ -329,6 +329,10 @@ export async function itemListInfo(userId: string, locationId: string) {
     where: eq(lists.userId, userId),
   });
 
+  if (usersLists.length === 0) {
+    return [];
+  }
+
   const listIds = usersLists.map((list) => list.id);
 
   const items = await db.query.listItems.findMany({
