@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api, rpc } from '@/lib/api';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 type Props = {
   locationId: string;
@@ -34,6 +34,20 @@ export default function ReviewList({ locationId }: Props) {
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
 
+  const isEmpty = useMemo(() => {
+    if (!query.data) {
+      return true;
+    }
+
+    const firstPage = query.data.pages.at(0);
+
+    if (!firstPage) {
+      return true;
+    }
+
+    return firstPage.data.length === 0;
+  }, [query.data]);
+
   if (query.isLoading) {
     return (
       <div className="mt-16 flex w-full justify-center">
@@ -48,9 +62,8 @@ export default function ReviewList({ locationId }: Props) {
 
   return (
     <div className="my-16 space-y-4">
-      {query.data && query.data.pages.length === 0 && (
-        <EmptyContent showBackButton={false} />
-      )}
+      {isEmpty && <EmptyContent showBackButton={false} />}
+
       {query.data && (
         <div className="mx-auto grid max-w-[1000px] grid-cols-1 gap-4">
           {query.data.pages.map((page, i) => (
