@@ -1,5 +1,6 @@
 'use client';
 
+import AppMessage from '@/components/blocks/AppMessage';
 import ListCard from '@/components/blocks/ListCard';
 import { Button } from '@/components/ui/button';
 import { api, rpc } from '@/lib/api';
@@ -51,6 +52,12 @@ export default function Page() {
                 <ListCard list={list} />
               </Link>
             ))}
+            {query.data.length === 0 && (
+              <AppMessage
+                emptyMessage="You don't have any lists."
+                showBackButton={false}
+              />
+            )}
           </div>
         )}
       </div>
