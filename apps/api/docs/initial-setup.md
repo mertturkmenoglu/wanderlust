@@ -17,3 +17,4 @@
 - Obtain an API development token. Read `api-development-token.md` file.
 - Sync Clerk with local database. Read `clerk-sync.md` file.
 - Run fake data scripts. Read `fake-data-generation.md` file.
+- Update bucket policies. Read `bucket-policy.md` file.
