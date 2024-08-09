@@ -1,3 +1,4 @@
+import AppMessage from '@/components/blocks/AppMessage';
 import EmptyContent from '@/components/blocks/EmptyContent';
 import { Button } from '@/components/ui/button';
 import {
@@ -135,10 +136,18 @@ export default async function Page({ params: { id } }: Props) {
       <hr className="my-2" />
       <div className="my-16">
         {(list.data.isPublic || belongsToCurrentUser) && (
-          <Items items={list.data.items} />
+          <>
+            <Items items={list.data.items} />
+            {list.data.items.length === 0 && (
+              <AppMessage
+                emptyMessage="This list is empty."
+                showBackButton={false}
+              />
+            )}
+          </>
         )}
         {!list.data.isPublic && !belongsToCurrentUser && (
-          <EmptyContent errorMessage="You do not have the permissions to view this list" />
+          <AppMessage errorMessage="You do not have the permissions to view this list" />
         )}
       </div>
     </div>
