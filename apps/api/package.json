@@ -30,7 +30,7 @@
     "enquirer": "^2.4.1",
     "envalid": "^8.0.0",
     "eslint-plugin-drizzle": "^0.2.3",
-    "hono": "4.4.6",
+    "hono": "4.5.8",
     "hono-rate-limiter": "^0.3.0",
     "ioredis": "^5.4.1",
     "minio": "^8.0.0",
