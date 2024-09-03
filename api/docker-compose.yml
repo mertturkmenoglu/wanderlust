@@ -1,0 +1,111 @@
+name: wanderlust
+
+services:
+  redis:
+    container_name: redis
+    image: redis:7.4.0-alpine
+    restart: always
+    networks:
+      - redisnet
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  postgres:
+    container_name: postgres
+    image: postgres:16.4-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: wanderlust
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  minio:
+    container_name: minio
+    restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - ./minio/data:/data
+    environment:
+      - MINIO_ROOT_USER=wanderlust
+      - MINIO_ROOT_PASSWORD=wanderlust
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+
+  typesense:
+    container_name: typesense
+    image: typesense/typesense:26.0
+    restart: always
+    ports:
+      - "8108:8108"
+    volumes:
+      - ./typesense-data:/data
+    command: "--data-dir /data --api-key=wanderlust --enable-cors"
+    networks:
+      - searchnet
+
+  typesense-dashboard:
+    container_name: typesense-dashboard
+    restart: always
+    ports:
+      - 3006:80
+    image: ghcr.io/bfritscher/typesense-dashboard:latest
+    networks:
+      - searchnet
+
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - "3001:3000"
+
+  inbucket:
+    container_name: inbucket
+    restart: always
+    ports:
+      - 10000:9000
+      - 2500:2500
+      - 1100:1100
+    image: inbucket/inbucket
+
+  asynqmon:
+    image: hibiken/asynqmon
+    restart: always
+    networks:
+      - redisnet
+    ports:
+      - "8080:8080"
+    environment:
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+
+networks:
+  redisnet:
+  searchnet:
+
+volumes:
+  pg_data:

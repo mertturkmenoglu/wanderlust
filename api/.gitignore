@@ -1,0 +1,7 @@
+minio/
+tmp/
+.env
+*.log
+typesense-data/
+data/*.csv
+*.out
