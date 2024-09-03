@@ -1,0 +1,47 @@
+basePath: /api
+definitions:
+  HealthGetHealthResponseDto:
+    description: GetHealthResponseDto
+    properties:
+      message:
+        type: string
+    required:
+    - message
+    type: object
+host: localhost:5000
+info:
+  contact:
+    email: getwanderlust@gmail.com
+    name: Mert Turkmenoglu
+    url: https://mertturkmenoglu.com
+  description: Wanderlust backend services
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  termsOfService: http://localhost:3000/terms
+  title: Wanderlust API
+  version: "1.0"
+paths:
+  /health/:
+    get:
+      consumes:
+      - application/json
+      description: An endpoint to be used by load balancers to check the health of
+        the service.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/HealthGetHealthResponseDto'
+      summary: Health Check
+      tags:
+      - Health
+securityDefinitions:
+  CookieAuth:
+    description: Cookie based session authentication
+    in: cookie
+    name: __wanderlust_auth
+    type: apiKey
+swagger: "2.0"
