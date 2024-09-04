@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"time"
 	"wanderlust/config"
-	"wanderlust/internal/api"
+	"wanderlust/internal/app"
 	"wanderlust/internal/db"
 
 	"github.com/labstack/echo-contrib/echoprometheus"
@@ -40,7 +40,7 @@ import (
 func main() {
 	config.Bootstrap()
 
-	a := api.New()
+	a := app.New()
 	e := a.RegisterRoutes()
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -61,7 +61,7 @@ func main() {
 		return c.HTML(http.StatusOK, htmlContent)
 	})
 
-	api.InitGlobalMiddlewares(e)
+	app.InitGlobalMiddlewares(e)
 
 	shouldRunMigrations := os.Getenv("RUN_MIGRATIONS")
 
