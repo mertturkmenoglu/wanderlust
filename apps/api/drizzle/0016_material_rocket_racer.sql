@@ -1,1 +1,0 @@
-ALTER TABLE "reports" ALTER COLUMN "resolved_by" SET DATA TYPE text;

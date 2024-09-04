@@ -1,1 +1,0 @@
-ALTER TABLE "locations" ADD COLUMN "description" text DEFAULT '' NOT NULL;

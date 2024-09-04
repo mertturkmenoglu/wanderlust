@@ -1,8 +1,0 @@
-node_modules
-typesense-data/
-.env*
-.flaskenv*
-!.env.project
-!.env.vault
-scripts/data/*.csv
-scripts/data/*.json

@@ -1,1 +1,0 @@
-ALTER TABLE "list_items" ALTER COLUMN "index" SET DEFAULT 0;
