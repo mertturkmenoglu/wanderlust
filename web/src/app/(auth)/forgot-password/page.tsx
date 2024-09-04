@@ -19,7 +19,7 @@ export default function Page() {
     <Card className="container mx-auto my-32 flex max-w-lg flex-col py-8">
       <Image
         src={Logo}
-        alt="Horizon"
+        alt="Wanderlust"
         className="size-12 min-h-12 min-w-12"
       />
       <h2 className="mt-4 text-xl font-bold">Forgot Password</h2>
