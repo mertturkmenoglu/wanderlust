@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"wanderlust/config"
+	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/cache"
 	"wanderlust/internal/db"
@@ -74,6 +75,7 @@ func (s *Application) RegisterRoutes() *echo.Echo {
 
 	modules := []IModule{
 		health.New(),
+		auth.New(s.Db, s.Logger, s.Flake, s.Cache, s.Tasks),
 	}
 
 	api := e.Group("/api")
