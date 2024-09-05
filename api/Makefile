@@ -37,7 +37,7 @@ search-sync:
 	@go run cmd/search-sync/main.go
 
 gen-swagger:
-	@swag init --parseInternal --parseDependency --dir ./cmd/core,./internal/api --output ./swaggerdocs
+	@swag init --parseInternal --parseDependency --dir ./cmd/core,./internal/app --output ./swaggerdocs
 
 fmt-swagger:
 	@swag fmt --dir ./cmd/core,./internal/api
