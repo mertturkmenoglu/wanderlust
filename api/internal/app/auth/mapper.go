@@ -1,46 +1,34 @@
 package auth
 
-import "wanderlust/internal/db"
+import (
+	"wanderlust/internal/db"
+	"wanderlust/internal/utils"
+)
 
 func mapGetMeResponseToDto(v db.User) GetMeResponseDto {
-	var gender *string = nil
-
-	if v.Gender.Valid {
-		gender = &v.Gender.String
-	}
-
-	var profileImage *string = nil
-
-	if v.ProfileImage.Valid {
-		profileImage = &v.ProfileImage.String
-	}
-
-	var googleId *string = nil
-
-	if v.GoogleID.Valid {
-		googleId = &v.GoogleID.String
-	}
-
-	var fbId *string = nil
-
-	if v.FbID.Valid {
-		fbId = &v.FbID.String
-	}
-
 	return GetMeResponseDto{
-		ID:              v.ID,
-		Email:           v.Email,
-		Username:        v.Username,
-		FullName:        v.FullName,
-		GoogleID:        googleId,
-		FacebookID:      fbId,
-		IsEmailVerified: v.IsEmailVerified,
-		IsActive:        v.IsActive,
-		Role:            v.Role,
-		Gender:          gender,
-		ProfileImage:    profileImage,
-		LastLogin:       v.LastLogin.Time,
-		CreatedAt:       v.CreatedAt.Time,
-		UpdatedAt:       v.UpdatedAt.Time,
+		ID:                v.ID,
+		Email:             v.Email,
+		Username:          v.Username,
+		FullName:          v.FullName,
+		GoogleID:          utils.TextOrNil(v.GoogleID),
+		FacebookID:        utils.TextOrNil(v.FbID),
+		IsEmailVerified:   v.IsEmailVerified,
+		IsActive:          v.IsActive,
+		IsBusinessAccount: v.IsBusinessAccount,
+		IsVerified:        v.IsVerified,
+		Role:              v.Role,
+		Gender:            utils.TextOrNil(v.Gender),
+		Bio:               utils.TextOrNil(v.Bio),
+		Pronouns:          utils.TextOrNil(v.Pronouns),
+		Website:           utils.TextOrNil(v.Website),
+		Phone:             utils.TextOrNil(v.Phone),
+		ProfileImage:      utils.TextOrNil(v.ProfileImage),
+		BannerImage:       utils.TextOrNil(v.BannerImage),
+		FollowersCount:    v.FollowersCount,
+		FollowingCount:    v.FollowingCount,
+		LastLogin:         v.LastLogin.Time,
+		CreatedAt:         v.CreatedAt.Time,
+		UpdatedAt:         v.UpdatedAt.Time,
 	}
 }
