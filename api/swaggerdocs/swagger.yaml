@@ -1,5 +1,156 @@
 basePath: /api
 definitions:
+  AuthGetMeResponseDto:
+    description: Get me response dto
+    properties:
+      createdAt:
+        example: "2024-08-26T10:24:13.508676+03:00"
+        format: date-time
+        type: string
+      email:
+        example: johndoe@example.com
+        type: string
+      facebookId:
+        example: "2391004269112809"
+        type: string
+      fullName:
+        example: John Doe
+        type: string
+      gender:
+        example: male
+        type: string
+      googleId:
+        example: "10887502189381205719451"
+        type: string
+      id:
+        example: "528696135489945615"
+        type: string
+      isActive:
+        example: true
+        type: boolean
+      isEmailVerified:
+        example: true
+        type: boolean
+      lastLogin:
+        example: "2024-08-26T10:24:13.508676+03:00"
+        type: string
+      profileImage:
+        example: https://example.com/image.jpg
+        type: string
+      role:
+        example: user
+        type: string
+      updatedAt:
+        example: "2024-08-26T10:24:13.508676+03:00"
+        format: date-time
+        type: string
+      username:
+        example: johndoe
+        type: string
+    required:
+    - createdAt
+    - email
+    - fullName
+    - id
+    - isActive
+    - isEmailVerified
+    - lastLogin
+    - role
+    - updatedAt
+    - username
+    type: object
+  AuthLoginRequestDto:
+    description: Login request dto
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: password123
+        format: password
+        maxLength: 128
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  AuthRegisterRequestDto:
+    description: Register request dto
+    properties:
+      email:
+        example: johndoe@example.com
+        maxLength: 128
+        minLength: 3
+        type: string
+      fullName:
+        example: John Doe
+        maxLength: 128
+        minLength: 3
+        type: string
+      password:
+        example: password123
+        format: password
+        maxLength: 128
+        minLength: 6
+        type: string
+      username:
+        example: johndoe
+        maxLength: 32
+        minLength: 4
+        type: string
+    required:
+    - email
+    - fullName
+    - password
+    - username
+    type: object
+  AuthResetPasswordRequestDto:
+    description: Reset password request dto
+    properties:
+      code:
+        example: "123456"
+        type: string
+      email:
+        example: johndoe@example.com
+        type: string
+      newPassword:
+        example: password123
+        format: password
+        maxLength: 128
+        minLength: 6
+        type: string
+    required:
+    - code
+    - email
+    - newPassword
+    type: object
+  AuthSendForgotPasswordEmailRequestDto:
+    description: Send forgot password email request dto
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+    required:
+    - email
+    type: object
+  AuthSendVerificationEmailRequestDto:
+    description: Send verification email request dto
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+    required:
+    - email
+    type: object
+  ErrorResponse:
+    description: Error response
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/api.ErrorDto'
+        type: array
+    type: object
   HealthGetHealthResponseDto:
     description: GetHealthResponseDto
     properties:
@@ -7,6 +158,26 @@ definitions:
         type: string
     required:
     - message
+    type: object
+  api.ErrorDto:
+    properties:
+      code:
+        type: string
+      detail:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  api.Response:
+    description: Response
+    properties:
+      data: {}
+    type: object
+  echo.HTTPError:
+    properties:
+      message: {}
     type: object
 host: localhost:5000
 info:
@@ -22,6 +193,258 @@ info:
   title: Wanderlust API
   version: "1.0"
 paths:
+  /auth/{provider}:
+    get:
+      description: Logs in the user with Google or Facebook OAuth
+      parameters:
+      - description: Provider
+        in: path
+        name: provider
+        required: true
+        type: string
+      responses:
+        "307":
+          description: Temporary Redirect
+        "400":
+          description: Invalid provider
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Login with an OAuth provider
+      tags:
+      - Auth
+  /auth/{provider}/callback:
+    get:
+      description: OAuth callback for Google or Facebook
+      parameters:
+      - description: Provider
+        in: path
+        name: provider
+        required: true
+        type: string
+      responses:
+        "307":
+          description: Temporary Redirect
+        "400":
+          description: Invalid provider
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: OAuth callback
+      tags:
+      - Auth
+  /auth/credentials/login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in the user with email and password
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/AuthLoginRequestDto'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid email or password
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Login with email and password
+      tags:
+      - Auth
+  /auth/credentials/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user with email and password
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/AuthRegisterRequestDto'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Invalid email or username
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Register with email and password
+      tags:
+      - Auth
+  /auth/forgot-password/reset:
+    post:
+      consumes:
+      - application/json
+      description: Resets the password of the user
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/AuthResetPasswordRequestDto'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid email or code
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Reset password
+      tags:
+      - Auth
+  /auth/forgot-password/send:
+    post:
+      consumes:
+      - application/json
+      description: Sends a forgot password email to the user
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/AuthSendForgotPasswordEmailRequestDto'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid email
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Send forgot password email
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logs out the current user
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Logs out the current user
+      tags:
+      - Auth
+  /auth/me:
+    get:
+      consumes:
+      - application/json
+      description: Gets the currently authenticated user or returns an error
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/AuthGetMeResponseDto'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Gets the current user
+      tags:
+      - Auth
+  /auth/verify-email/send:
+    post:
+      consumes:
+      - application/json
+      description: Sends a verification email to the user
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/AuthSendVerificationEmailRequestDto'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid email or email already verified
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Send verification email
+      tags:
+      - Auth
+  /auth/verify-email/verify:
+    get:
+      consumes:
+      - application/json
+      description: Verifies the email of the user
+      parameters:
+      - description: Verification code
+        in: query
+        name: code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Invalid or expired verification code
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/echo.HTTPError'
+      summary: Verify email
+      tags:
+      - Auth
   /health/:
     get:
       consumes:
