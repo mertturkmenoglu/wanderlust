@@ -71,7 +71,7 @@ func (q *Queries) DeleteSessionById(ctx context.Context, arg DeleteSessionByIdPa
 }
 
 const getSessionById = `-- name: GetSessionById :one
-SELECT sessions.id, sessions.user_id, sessions.session_data, sessions.created_at, sessions.expires_at, users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_active, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.gender, users.profile_image, users.last_login, users.created_at, users.updated_at FROM sessions
+SELECT sessions.id, sessions.user_id, sessions.session_data, sessions.created_at, sessions.expires_at, users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_active, users.is_business_account, users.is_verified, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.gender, users.bio, users.pronouns, users.website, users.phone, users.profile_image, users.banner_image, users.followers_count, users.following_count, users.last_login, users.created_at, users.updated_at FROM sessions
 JOIN users ON users.id = sessions.user_id
 WHERE sessions.id = $1 LIMIT 1
 `
@@ -99,13 +99,22 @@ func (q *Queries) GetSessionById(ctx context.Context, id string) (GetSessionById
 		&i.User.FbID,
 		&i.User.IsEmailVerified,
 		&i.User.IsActive,
+		&i.User.IsBusinessAccount,
+		&i.User.IsVerified,
 		&i.User.Role,
 		&i.User.PasswordResetToken,
 		&i.User.PasswordResetExpires,
 		&i.User.LoginAttempts,
 		&i.User.LockoutUntil,
 		&i.User.Gender,
+		&i.User.Bio,
+		&i.User.Pronouns,
+		&i.User.Website,
+		&i.User.Phone,
 		&i.User.ProfileImage,
+		&i.User.BannerImage,
+		&i.User.FollowersCount,
+		&i.User.FollowingCount,
 		&i.User.LastLogin,
 		&i.User.CreatedAt,
 		&i.User.UpdatedAt,

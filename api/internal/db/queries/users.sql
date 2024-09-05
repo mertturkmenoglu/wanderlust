@@ -60,3 +60,8 @@ INSERT INTO users (
   $8,
   $9
 ) RETURNING *;
+
+-- name: GetUserProfileByUsername :one
+SELECT id, username, full_name, gender, profile_image, created_at
+FROM users
+WHERE username = $1 LIMIT 1;

@@ -26,13 +26,22 @@ type User struct {
 	FbID                 pgtype.Text
 	IsEmailVerified      bool
 	IsActive             bool
+	IsBusinessAccount    bool
+	IsVerified           bool
 	Role                 string
 	PasswordResetToken   pgtype.Text
 	PasswordResetExpires pgtype.Timestamptz
 	LoginAttempts        pgtype.Int4
 	LockoutUntil         pgtype.Timestamptz
 	Gender               pgtype.Text
+	Bio                  pgtype.Text
+	Pronouns             pgtype.Text
+	Website              pgtype.Text
+	Phone                pgtype.Text
 	ProfileImage         pgtype.Text
+	BannerImage          pgtype.Text
+	FollowersCount       int32
+	FollowingCount       int32
 	LastLogin            pgtype.Timestamptz
 	CreatedAt            pgtype.Timestamptz
 	UpdatedAt            pgtype.Timestamptz
