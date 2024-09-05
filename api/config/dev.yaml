@@ -40,15 +40,16 @@ api:
     session:
       path: "/"
       max-age: 604800
+    oauth:
+      redirect: "http://localhost:3000/"
     google:
       client-id: ""
       client-secret: ""
       callback: "http://localhost:5000/api/auth/google/callback"
-      redirect: "http://localhost:3000/"
-    github:
+    facebook:
       client-id: ""
       client-secret: ""
-      callback: "http://localhost:5000/api/auth/github/callback"
+      callback: "http://localhost:5000/api/auth/facebook/callback"
   search:
     server-url: "http://localhost:8108"
     api-key: wanderlust

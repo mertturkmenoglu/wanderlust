@@ -30,6 +30,6 @@ func Bootstrap() {
 	// Fill empty values in yaml file using .env file values
 	viper.Set(GOOGLE_CLIENT_ID, os.Getenv("GOOGLE_CLIENT_ID"))
 	viper.Set(GOOGLE_CLIENT_SECRET, os.Getenv("GOOGLE_CLIENT_SECRET"))
-	viper.Set(GITHUB_CLIENT_ID, os.Getenv("GITHUB_CLIENT_ID"))
-	viper.Set(GITHUB_CLIENT_SECRET, os.Getenv("GITHUB_CLIENT_SECRET"))
+	viper.Set(FB_CLIENT_ID, os.Getenv("FACEBOOK_CLIENT_ID"))
+	viper.Set(FB_CLIENT_SECRET, os.Getenv("FACEBOOK_CLIENT_SECRET"))
 }
