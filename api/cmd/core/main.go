@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -54,7 +53,6 @@ func main() {
 		})
 
 		if err != nil {
-			fmt.Println(err)
 			return err
 		}
 
