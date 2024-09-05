@@ -3,6 +3,12 @@ definitions:
   AuthGetMeResponseDto:
     description: Get me response dto
     properties:
+      bannerImage:
+        example: https://example.com/image.jpg
+        type: string
+      bio:
+        example: I'm a software engineer
+        type: string
       createdAt:
         example: "2024-08-26T10:24:13.508676+03:00"
         format: date-time
@@ -13,6 +19,12 @@ definitions:
       facebookId:
         example: "2391004269112809"
         type: string
+      followersCount:
+        example: 100
+        type: integer
+      followingCount:
+        example: 100
+        type: integer
       fullName:
         example: John Doe
         type: string
@@ -28,14 +40,26 @@ definitions:
       isActive:
         example: true
         type: boolean
+      isBusinessAccount:
+        example: true
+        type: boolean
       isEmailVerified:
+        example: true
+        type: boolean
+      isVerified:
         example: true
         type: boolean
       lastLogin:
         example: "2024-08-26T10:24:13.508676+03:00"
         type: string
+      phone:
+        example: "+1234567890"
+        type: string
       profileImage:
         example: https://example.com/image.jpg
+        type: string
+      pronouns:
+        example: he/him
         type: string
       role:
         example: user
@@ -47,13 +71,20 @@ definitions:
       username:
         example: johndoe
         type: string
+      website:
+        example: https://example.com
+        type: string
     required:
     - createdAt
     - email
+    - followersCount
+    - followingCount
     - fullName
     - id
     - isActive
+    - isBusinessAccount
     - isEmailVerified
+    - isVerified
     - lastLogin
     - role
     - updatedAt
@@ -158,6 +189,65 @@ definitions:
         type: string
     required:
     - message
+    type: object
+  UsersGetUserProfileResponseDto:
+    description: Get user profile response dto
+    properties:
+      bannerImage:
+        example: https://example.com/image.jpg
+        type: string
+      bio:
+        example: I'm a software engineer
+        type: string
+      createdAt:
+        example: "2024-08-26T10:24:13.508676+03:00"
+        format: date-time
+        type: string
+      followersCount:
+        example: 100
+        type: integer
+      followingCount:
+        example: 100
+        type: integer
+      fullName:
+        example: John Doe
+        type: string
+      gender:
+        example: male
+        type: string
+      id:
+        example: "528696135489945615"
+        type: string
+      isBusinessAccount:
+        example: true
+        type: boolean
+      isVerified:
+        example: true
+        type: boolean
+      phone:
+        example: "+1234567890"
+        type: string
+      profileImage:
+        example: https://example.com/image.jpg
+        type: string
+      pronouns:
+        example: he/him
+        type: string
+      username:
+        example: johndoe
+        type: string
+      website:
+        example: https://example.com
+        type: string
+    required:
+    - createdAt
+    - followersCount
+    - followingCount
+    - fullName
+    - id
+    - isBusinessAccount
+    - isVerified
+    - username
     type: object
   api.ErrorDto:
     properties:
@@ -461,6 +551,44 @@ paths:
       summary: Health Check
       tags:
       - Health
+  /users/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Gets a user profile by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful request
+          schema:
+            allOf:
+            - $ref: '#/definitions/api.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/UsersGetUserProfileResponseDto'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Get user profile by username
+      tags:
+      - Users
 securityDefinitions:
   CookieAuth:
     description: Cookie based session authentication

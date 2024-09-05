@@ -436,6 +436,68 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/{username}": {
+            "get": {
+                "description": "Gets a user profile by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user profile by username",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/api.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/UsersGetUserProfileResponseDto"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -445,16 +507,28 @@ const docTemplate = `{
             "required": [
                 "createdAt",
                 "email",
+                "followersCount",
+                "followingCount",
                 "fullName",
                 "id",
                 "isActive",
+                "isBusinessAccount",
                 "isEmailVerified",
+                "isVerified",
                 "lastLogin",
                 "role",
                 "updatedAt",
                 "username"
             ],
             "properties": {
+                "bannerImage": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
+                "bio": {
+                    "type": "string",
+                    "example": "I'm a software engineer"
+                },
                 "createdAt": {
                     "type": "string",
                     "format": "date-time",
@@ -467,6 +541,14 @@ const docTemplate = `{
                 "facebookId": {
                     "type": "string",
                     "example": "2391004269112809"
+                },
+                "followersCount": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "followingCount": {
+                    "type": "integer",
+                    "example": 100
                 },
                 "fullName": {
                     "type": "string",
@@ -488,7 +570,15 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": true
                 },
+                "isBusinessAccount": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "isEmailVerified": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "isVerified": {
                     "type": "boolean",
                     "example": true
                 },
@@ -496,9 +586,17 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2024-08-26T10:24:13.508676+03:00"
                 },
+                "phone": {
+                    "type": "string",
+                    "example": "+1234567890"
+                },
                 "profileImage": {
                     "type": "string",
                     "example": "https://example.com/image.jpg"
+                },
+                "pronouns": {
+                    "type": "string",
+                    "example": "he/him"
                 },
                 "role": {
                     "type": "string",
@@ -512,6 +610,10 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "johndoe"
+                },
+                "website": {
+                    "type": "string",
+                    "example": "https://example.com"
                 }
             }
         },
@@ -646,6 +748,83 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "UsersGetUserProfileResponseDto": {
+            "description": "Get user profile response dto",
+            "type": "object",
+            "required": [
+                "createdAt",
+                "followersCount",
+                "followingCount",
+                "fullName",
+                "id",
+                "isBusinessAccount",
+                "isVerified",
+                "username"
+            ],
+            "properties": {
+                "bannerImage": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
+                "bio": {
+                    "type": "string",
+                    "example": "I'm a software engineer"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2024-08-26T10:24:13.508676+03:00"
+                },
+                "followersCount": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "followingCount": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "fullName": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "gender": {
+                    "type": "string",
+                    "example": "male"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "528696135489945615"
+                },
+                "isBusinessAccount": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "isVerified": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+1234567890"
+                },
+                "profileImage": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
+                "pronouns": {
+                    "type": "string",
+                    "example": "he/him"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                },
+                "website": {
+                    "type": "string",
+                    "example": "https://example.com"
                 }
             }
         },
