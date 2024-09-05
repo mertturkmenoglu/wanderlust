@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   full_name VARCHAR (128) NOT NULL,
   password_hash VARCHAR (255),
   google_id VARCHAR(64) UNIQUE,
+  fb_id VARCHAR(64) UNIQUE,
   is_email_verified BOOLEAN DEFAULT FALSE NOT NULL,
   is_active BOOLEAN DEFAULT TRUE NOT NULL,
   role VARCHAR(32) DEFAULT 'user' NOT NULL,

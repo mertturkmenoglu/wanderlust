@@ -11,8 +11,81 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const createUser = `-- name: CreateUser :one
+INSERT INTO users (
+  id,
+  email,
+  username,
+  full_name,
+  password_hash,
+  google_id,
+  fb_id,
+  is_email_verified,
+  profile_image
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9
+) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at
+`
+
+type CreateUserParams struct {
+	ID              string
+	Email           string
+	Username        string
+	FullName        string
+	PasswordHash    pgtype.Text
+	GoogleID        pgtype.Text
+	FbID            pgtype.Text
+	IsEmailVerified bool
+	ProfileImage    pgtype.Text
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRow(ctx, createUser,
+		arg.ID,
+		arg.Email,
+		arg.Username,
+		arg.FullName,
+		arg.PasswordHash,
+		arg.GoogleID,
+		arg.FbID,
+		arg.IsEmailVerified,
+		arg.ProfileImage,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsEmailVerified,
+		&i.IsActive,
+		&i.Role,
+		&i.PasswordResetToken,
+		&i.PasswordResetExpires,
+		&i.LoginAttempts,
+		&i.LockoutUntil,
+		&i.Gender,
+		&i.ProfileImage,
+		&i.LastLogin,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, username, full_name, password_hash, google_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
 WHERE email = $1 LIMIT 1
 `
 
@@ -26,6 +99,39 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.FullName,
 		&i.PasswordHash,
 		&i.GoogleID,
+		&i.FbID,
+		&i.IsEmailVerified,
+		&i.IsActive,
+		&i.Role,
+		&i.PasswordResetToken,
+		&i.PasswordResetExpires,
+		&i.LoginAttempts,
+		&i.LockoutUntil,
+		&i.Gender,
+		&i.ProfileImage,
+		&i.LastLogin,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUserByFbId = `-- name: GetUserByFbId :one
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
+WHERE fb_id = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByFbId(ctx context.Context, fbID pgtype.Text) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByFbId, fbID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
 		&i.IsEmailVerified,
 		&i.IsActive,
 		&i.Role,
@@ -43,7 +149,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByGoogleId = `-- name: GetUserByGoogleId :one
-SELECT id, email, username, full_name, password_hash, google_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
 WHERE google_id = $1 LIMIT 1
 `
 
@@ -57,6 +163,7 @@ func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (
 		&i.FullName,
 		&i.PasswordHash,
 		&i.GoogleID,
+		&i.FbID,
 		&i.IsEmailVerified,
 		&i.IsActive,
 		&i.Role,
@@ -74,7 +181,7 @@ func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, full_name, password_hash, google_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -88,6 +195,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.FullName,
 		&i.PasswordHash,
 		&i.GoogleID,
+		&i.FbID,
 		&i.IsEmailVerified,
 		&i.IsActive,
 		&i.Role,
@@ -105,7 +213,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, email, username, full_name, password_hash, google_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_active, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, profile_image, last_login, created_at, updated_at FROM users
 WHERE username = $1 LIMIT 1
 `
 
@@ -119,6 +227,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.FullName,
 		&i.PasswordHash,
 		&i.GoogleID,
+		&i.FbID,
 		&i.IsEmailVerified,
 		&i.IsActive,
 		&i.Role,
@@ -133,4 +242,68 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const updateUserFbId = `-- name: UpdateUserFbId :exec
+UPDATE users
+SET fb_id = $2
+WHERE id = $1
+`
+
+type UpdateUserFbIdParams struct {
+	ID   string
+	FbID pgtype.Text
+}
+
+func (q *Queries) UpdateUserFbId(ctx context.Context, arg UpdateUserFbIdParams) error {
+	_, err := q.db.Exec(ctx, updateUserFbId, arg.ID, arg.FbID)
+	return err
+}
+
+const updateUserGoogleId = `-- name: UpdateUserGoogleId :exec
+UPDATE users
+SET google_id = $2
+WHERE id = $1
+`
+
+type UpdateUserGoogleIdParams struct {
+	ID       string
+	GoogleID pgtype.Text
+}
+
+func (q *Queries) UpdateUserGoogleId(ctx context.Context, arg UpdateUserGoogleIdParams) error {
+	_, err := q.db.Exec(ctx, updateUserGoogleId, arg.ID, arg.GoogleID)
+	return err
+}
+
+const updateUserIsEmailVerified = `-- name: UpdateUserIsEmailVerified :exec
+UPDATE users
+SET is_email_verified = $2
+WHERE id = $1
+`
+
+type UpdateUserIsEmailVerifiedParams struct {
+	ID              string
+	IsEmailVerified bool
+}
+
+func (q *Queries) UpdateUserIsEmailVerified(ctx context.Context, arg UpdateUserIsEmailVerifiedParams) error {
+	_, err := q.db.Exec(ctx, updateUserIsEmailVerified, arg.ID, arg.IsEmailVerified)
+	return err
+}
+
+const updateUserPassword = `-- name: UpdateUserPassword :exec
+UPDATE users
+SET password_hash = $2
+WHERE id = $1
+`
+
+type UpdateUserPasswordParams struct {
+	ID           string
+	PasswordHash pgtype.Text
+}
+
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
+	_, err := q.db.Exec(ctx, updateUserPassword, arg.ID, arg.PasswordHash)
+	return err
 }

@@ -23,6 +23,7 @@ type User struct {
 	FullName             string
 	PasswordHash         pgtype.Text
 	GoogleID             pgtype.Text
+	FbID                 pgtype.Text
 	IsEmailVerified      bool
 	IsActive             bool
 	Role                 string
