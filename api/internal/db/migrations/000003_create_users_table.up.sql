@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   full_name VARCHAR (128) NOT NULL,
   password_hash VARCHAR (255),
   google_id VARCHAR(64) UNIQUE,
+  fb_id VARCHAR(64) UNIQUE,
   is_email_verified BOOLEAN DEFAULT FALSE NOT NULL,
   is_active BOOLEAN DEFAULT TRUE NOT NULL,
   role VARCHAR(32) DEFAULT 'user' NOT NULL,
@@ -25,6 +26,8 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
+
+CREATE INDEX IF NOT EXISTS idx_users_fb_id ON users(fb_id);
 
 CREATE OR REPLACE TRIGGER update_users_timestamp BEFORE
 UPDATE
