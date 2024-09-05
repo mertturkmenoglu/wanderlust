@@ -299,18 +299,42 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 }
 
 const getUserProfileByUsername = `-- name: GetUserProfileByUsername :one
-SELECT id, username, full_name, gender, profile_image, created_at
+SELECT 
+  id,
+  username,
+  full_name,
+  is_business_account,
+  is_verified,
+  gender,
+  bio,
+  pronouns,
+  website,
+  phone,
+  profile_image,
+  banner_image,
+  followers_count,
+  following_count,
+  created_at
 FROM users
 WHERE username = $1 LIMIT 1
 `
 
 type GetUserProfileByUsernameRow struct {
-	ID           string
-	Username     string
-	FullName     string
-	Gender       pgtype.Text
-	ProfileImage pgtype.Text
-	CreatedAt    pgtype.Timestamptz
+	ID                string
+	Username          string
+	FullName          string
+	IsBusinessAccount bool
+	IsVerified        bool
+	Gender            pgtype.Text
+	Bio               pgtype.Text
+	Pronouns          pgtype.Text
+	Website           pgtype.Text
+	Phone             pgtype.Text
+	ProfileImage      pgtype.Text
+	BannerImage       pgtype.Text
+	FollowersCount    int32
+	FollowingCount    int32
+	CreatedAt         pgtype.Timestamptz
 }
 
 func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string) (GetUserProfileByUsernameRow, error) {
@@ -320,8 +344,17 @@ func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string)
 		&i.ID,
 		&i.Username,
 		&i.FullName,
+		&i.IsBusinessAccount,
+		&i.IsVerified,
 		&i.Gender,
+		&i.Bio,
+		&i.Pronouns,
+		&i.Website,
+		&i.Phone,
 		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
 		&i.CreatedAt,
 	)
 	return i, err
