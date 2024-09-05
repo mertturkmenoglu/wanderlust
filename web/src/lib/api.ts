@@ -76,3 +76,9 @@ export const status = {
   NotExtended: 510,
   NetworkAuthenticationRequired: 511,
 } as const;
+
+export type ResetPasswordRequestDto = {
+  email: string;
+  code: string;
+  newPassword: string;
+};
