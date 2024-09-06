@@ -1,7 +1,9 @@
 package api
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -45,13 +47,21 @@ func NewErr(c echo.Context, status int, err ApiError) error {
 }
 
 type ApiError struct {
-	Code string
-	Err  error
+	Status int
+	Code   string
+	Err    error
 }
 
-func NewApiError(code string, err error) ApiError {
+func (e ApiError) Error() string {
+	return e.Err.Error()
+}
+
+func NewApiError(status int, code string, err error) ApiError {
 	return ApiError{
-		Code: code,
-		Err:  err,
+		Status: status,
+		Code:   code,
+		Err:    err,
 	}
 }
+
+var InternalServerError = NewApiError(http.StatusInternalServerError, "0000", errors.New("internal server error"))
