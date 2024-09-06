@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"wanderlust/config"
+	"wanderlust/internal/app/api"
 	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/app/users"
@@ -73,6 +74,8 @@ func New() *Application {
 // RegisterRoutes registers all the routes for the application.
 func (s *Application) RegisterRoutes() *echo.Echo {
 	e := echo.New()
+
+	e.HTTPErrorHandler = api.CustomHTTPErrorHandler
 
 	modules := []IModule{
 		health.New(),
