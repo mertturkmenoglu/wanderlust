@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"wanderlust/config"
-	"wanderlust/internal/app/api"
 	"wanderlust/internal/random"
 
 	"github.com/gorilla/sessions"
@@ -85,29 +84,29 @@ func getFbOAuth2Config() *oauth2.Config {
 	}
 }
 
-func getOAuthToken(params getOAuthTokenParams) (*oauth2.Token, *api.ApiError) {
+func getOAuthToken(params getOAuthTokenParams) (*oauth2.Token, error) {
 	cfg := getOAuthConfig(params.provider)
 	savedState, ok := params.sess.Values["state"].(string)
 
 	if !ok || savedState == "" {
-		return nil, &ErrInvalidSessionState
+		return nil, ErrInvalidSessionState
 	}
 
 	if params.state != savedState {
-		return nil, &ErrInvalidStateParameter
+		return nil, ErrInvalidStateParameter
 	}
 
 	// Exchange the code for a token
 	token, err := cfg.Exchange(context.Background(), params.code)
 
 	if err != nil {
-		return nil, &ErrOAuthTokenExchange
+		return nil, ErrOAuthTokenExchange
 	}
 
 	return token, nil
 }
 
-func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, *api.ApiError) {
+func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, error) {
 	cfg := getOAuthConfig(provider)
 	client := cfg.Client(context.Background(), token)
 
@@ -125,7 +124,7 @@ func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, *api.ApiEr
 	res, err := client.Get(endpoint)
 
 	if err != nil {
-		return nil, &ErrOAuthFailedUserFetch
+		return nil, ErrOAuthFailedUserFetch
 	}
 
 	defer res.Body.Close()
@@ -136,13 +135,13 @@ func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, *api.ApiEr
 	case "google":
 		googleUser := googleUser{}
 		if err := json.NewDecoder(res.Body).Decode(&googleUser); err != nil {
-			return nil, &ErrOAuthInvalidUserResp
+			return nil, ErrOAuthInvalidUserResp
 		}
 		mapGoogleUserToOAuthUser(&userInfo, &googleUser)
 	case "facebook":
 		fbUser := fbUser{}
 		if err := json.NewDecoder(res.Body).Decode(&fbUser); err != nil {
-			return nil, &ErrOAuthInvalidUserResp
+			return nil, ErrOAuthInvalidUserResp
 		}
 		mapFbUserToOAuthUser(&userInfo, &fbUser)
 	default:

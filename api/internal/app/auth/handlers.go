@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -33,14 +32,14 @@ func (h *handlers) OAuth(c echo.Context) error {
 	provider := c.Param("provider")
 
 	if provider != "google" && provider != "facebook" {
-		return api.NewErr(c, http.StatusBadRequest, ErrInvalidProvider)
+		return ErrInvalidProvider
 	}
 
 	state, url, err := getOAuthStateAndRedirectUrl(c.Param("provider"))
 
 	// Random string generation could fail
 	if err != nil {
-		return api.NewErr(c, http.StatusInternalServerError, ErrCreateOAuthState)
+		return ErrCreateOAuthState
 	}
 
 	// Save the state in the session
@@ -69,7 +68,7 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	state := c.QueryParam("state")
 
 	if provider != "google" && provider != "facebook" {
-		return api.NewErr(c, http.StatusBadRequest, ErrInvalidProvider)
+		return ErrInvalidProvider
 	}
 
 	token, err := getOAuthToken(getOAuthTokenParams{
@@ -80,7 +79,7 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	})
 
 	if err != nil {
-		return api.NewErr(c, http.StatusBadRequest, *err)
+		return err
 	}
 
 	// Because this state string is used, it shouldn't be used again.
@@ -92,13 +91,13 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	userInfo, err := fetchUserInfo(provider, token)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusBadRequest, *err)
+		return err
 	}
 
 	userId, err := h.service.getOrCreateUserId(userInfo)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusInternalServerError, *err)
+		return err
 	}
 
 	// Create a new session for the user.
@@ -106,7 +105,7 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	err = h.service.createSession(sessionId, userId)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusInternalServerError, *err)
+		return err
 	}
 
 	// Save the session
@@ -186,14 +185,14 @@ func (h *handlers) CredentialsLogin(c echo.Context) error {
 
 	// If the passwords don't match, or there's an error, return a generic error message.
 	if !matched || dbErr != nil || verifyErr != nil {
-		return api.NewErr(c, http.StatusBadRequest, ErrInvalidEmailOrPassword)
+		return ErrInvalidEmailOrPassword
 	}
 
 	sessionId := uuid.New().String()
-	e := h.service.createSession(sessionId, user.ID)
+	err := h.service.createSession(sessionId, user.ID)
 
-	if e != nil {
-		return api.NewErr(c, http.StatusInternalServerError, *e)
+	if err != nil {
+		return err
 	}
 
 	sess.Options = getAuthSessionOptions()
@@ -220,20 +219,20 @@ func (h *handlers) CredentialsRegister(c echo.Context) error {
 	err := h.service.checkIfEmailOrUsernameIsTaken(body.Email, body.Username)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusBadRequest, *err)
+		return err
 	}
 
 	// Check username characters
 	ok := isValidUsername(body.Username)
 
 	if !ok {
-		return api.NewErr(c, http.StatusBadRequest, ErrUsernameChars)
+		return ErrUsernameChars
 	}
 
 	_, err = h.service.createUserFromCredentialsInfo(body)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusInternalServerError, *err)
+		return err
 	}
 
 	h.tasks.CreateAndEnqueue(tasks.TypeWelcomeEmail, tasks.WelcomeEmailPayload{
@@ -260,11 +259,11 @@ func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	user, err := s.service.getUserByEmail(body.Email)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusBadRequest, ErrInvalidEmail)
+		return ErrInvalidEmail
 	}
 
 	if user.IsEmailVerified {
-		return api.NewErr(c, http.StatusBadRequest, ErrEmailAlreadyVerified)
+		return ErrEmailAlreadyVerified
 	}
 
 	code, err := random.DigitsString(6)
@@ -284,7 +283,7 @@ func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	})
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return api.InternalServerError
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -305,35 +304,35 @@ func (s *handlers) VerifyEmail(c echo.Context) error {
 	code := c.QueryParam("code")
 
 	if code == "" {
-		return api.NewErr(c, http.StatusBadRequest, ErrMalformedOrMissingVerifyToken)
+		return ErrMalformedOrMissingVerifyToken
 	}
 
 	key := fmt.Sprintf("verify-email:%s", code)
 
 	if !s.cache.Has(key) {
-		return api.NewErr(c, http.StatusBadRequest, ErrInvalidOrExpiredVerifyCode)
+		return ErrInvalidOrExpiredVerifyCode
 	}
 
 	email, err := s.cache.Get(key)
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return api.InternalServerError
 	}
 
 	user, err := s.service.getUserByEmail(email)
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return err
 	}
 
 	if user.IsEmailVerified {
-		return api.NewErr(c, http.StatusBadRequest, ErrEmailAlreadyVerified)
+		return ErrEmailAlreadyVerified
 	}
 
 	err = s.service.verifyUserEmail(user.ID)
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return err
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -362,7 +361,7 @@ func (s *handlers) SendForgotPasswordEmail(c echo.Context) error {
 	code, err := random.DigitsString(6)
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return api.InternalServerError
 	}
 
 	key := fmt.Sprintf("forgot-password:%s", code)
@@ -374,7 +373,7 @@ func (s *handlers) SendForgotPasswordEmail(c echo.Context) error {
 	})
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return api.InternalServerError
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -397,34 +396,30 @@ func (s *handlers) ResetPassword(c echo.Context) error {
 	user, err := s.service.getUserByEmail(body.Email)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusBadRequest, ErrInvalidEmail)
+		return ErrInvalidEmail
 	}
 
 	key := fmt.Sprintf("forgot-password:%s", body.Code)
 	cacheVal, err := s.cache.Get(key)
 
 	if err != nil {
-		return api.NewErr(c, http.StatusBadRequest, ErrPasswordResetCodeExpiredOrInvalid)
+		return ErrPasswordResetCodeExpiredOrInvalid
 	}
 
 	if cacheVal != body.Email {
-		return api.NewErr(c, http.StatusBadRequest, ErrPasswordResetCodeExpiredOrInvalid)
+		return ErrPasswordResetCodeExpiredOrInvalid
 	}
 
 	err = s.service.updateUserPassword(user.ID, body.NewPassword)
 
 	if err != nil {
-		if errors.Is(err, ErrHash.Err) {
-			return api.NewErr(c, http.StatusInternalServerError, ErrHash)
-		}
-
-		return utils.HandleDbErr(c, err)
+		return err
 	}
 
 	err = s.cache.Del(key)
 
 	if err != nil {
-		return echo.ErrInternalServerError
+		return api.InternalServerError
 	}
 
 	return c.NoContent(http.StatusOK)

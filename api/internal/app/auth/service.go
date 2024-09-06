@@ -25,7 +25,7 @@ func (s *service) resetCookie() *http.Cookie {
 	return cookie
 }
 
-func (s *service) getOrCreateUserId(user *oauthUser) (string, *api.ApiError) {
+func (s *service) getOrCreateUserId(user *oauthUser) (string, error) {
 	dbUser, err := s.repository.getUserBySocialId(user.provider, user.id)
 
 	// If there's no error, user is found, return id
@@ -35,8 +35,7 @@ func (s *service) getOrCreateUserId(user *oauthUser) (string, *api.ApiError) {
 
 	// If the error is not pgx.ErrNoRows, return it immediately
 	if !errors.Is(err, pgx.ErrNoRows) {
-		e := api.NewApiError("0000", err)
-		return "", &e
+		return "", api.InternalServerError
 	}
 
 	// If there are no rows, either user doesn't exists
@@ -51,8 +50,7 @@ func (s *service) getOrCreateUserId(user *oauthUser) (string, *api.ApiError) {
 		err = s.repository.updateUserSocialId(user.provider, dbUser.ID, user.id)
 
 		if err != nil {
-			e := api.NewApiError("0000", err)
-			return "", &e
+			return "", api.InternalServerError
 		}
 
 		return dbUser.ID, nil
@@ -62,19 +60,17 @@ func (s *service) getOrCreateUserId(user *oauthUser) (string, *api.ApiError) {
 	savedId, err := s.repository.createUser(user)
 
 	if err != nil {
-		e := api.NewApiError("0000", err)
-		return "", &e
+		return "", api.InternalServerError
 	}
 
 	return savedId, nil
 }
 
-func (s *service) createSession(sessionId string, userId string) *api.ApiError {
+func (s *service) createSession(sessionId string, userId string) error {
 	err := s.repository.createSession(sessionId, userId)
 
 	if err != nil {
-		e := api.NewApiError("0000", err)
-		return &e
+		return api.InternalServerError
 	}
 
 	return nil
@@ -88,34 +84,29 @@ func (s *service) getUserByUsername(username string) (db.User, error) {
 	return s.repository.getUserByUsername(username)
 }
 
-func (s *service) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.User, *api.ApiError) {
+func (s *service) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.User, error) {
 	user, err := s.repository.createUserFromCredentialsInfo(dto)
 
 	if err != nil {
-		if errors.Is(err, ErrHash.Err) {
-			return nil, &ErrHash
-		}
-
-		e := api.NewApiError("0000", err)
-		return nil, &e
+		return nil, err
 	}
 
 	return user, nil
 }
 
-func (s *service) checkIfEmailOrUsernameIsTaken(email string, username string) *api.ApiError {
+func (s *service) checkIfEmailOrUsernameIsTaken(email string, username string) error {
 	// Check if email is taken
 	dbUser, err := s.getUserByEmail(email)
 
 	if err == nil && dbUser.Email != "" {
-		return &ErrEmailTaken
+		return ErrEmailTaken
 	}
 
 	// Check if username is taken
 	dbUser, err = s.getUserByUsername(username)
 
 	if err == nil && dbUser.Username != "" {
-		return &ErrUsernameTaken
+		return ErrUsernameTaken
 	}
 
 	return nil

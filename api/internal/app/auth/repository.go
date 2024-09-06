@@ -129,7 +129,7 @@ func (r *repository) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.
 	hashed, err := hash.Hash(dto.Password)
 
 	if err != nil {
-		return nil, ErrHash.Err
+		return nil, ErrHash
 	}
 
 	saved, err := r.db.Queries.CreateUser(context.Background(), db.CreateUserParams{
