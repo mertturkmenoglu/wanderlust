@@ -8,16 +8,15 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *service) GetUserProfile(username string) (db.GetUserProfileByUsernameRow, *api.ApiError) {
+func (s *service) GetUserProfile(username string) (db.GetUserProfileByUsernameRow, error) {
 	res, err := s.repository.GetUserProfile(username)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return db.GetUserProfileByUsernameRow{}, &ErrUserNotFound
+			return db.GetUserProfileByUsernameRow{}, ErrUserNotFound
 		}
 
-		e := api.NewApiError("0000", err)
-		return db.GetUserProfileByUsernameRow{}, &e
+		return db.GetUserProfileByUsernameRow{}, api.InternalServerError
 	}
 
 	return res, nil

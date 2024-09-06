@@ -1,7 +1,6 @@
 package users
 
 import (
-	"errors"
 	"net/http"
 	"wanderlust/internal/app/api"
 
@@ -25,17 +24,13 @@ func (h *handlers) GetUserProfile(c echo.Context) error {
 	username := c.Param("username")
 
 	if username == "" {
-		return api.NewErr(c, http.StatusBadRequest, ErrUsernameNotProvided)
+		return ErrUsernameNotProvided
 	}
 
 	res, err := h.service.GetUserProfile(username)
 
 	if err != nil {
-		if errors.Is(err.Err, ErrUserNotFound.Err) {
-			return api.NewErr(c, http.StatusNotFound, *err)
-		}
-
-		return api.NewErr(c, http.StatusInternalServerError, *err)
+		return err
 	}
 
 	v := mapGetUserProfileResponseToDto(res)
