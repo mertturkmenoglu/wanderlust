@@ -23,10 +23,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type IModule interface {
-	RegisterRoutes(e *echo.Group)
-}
-
 // Application struct is the main definition of all the different dependencies
 // that are needed to run the application.
 type Application struct {
@@ -77,7 +73,7 @@ func (s *Application) RegisterRoutes() *echo.Echo {
 
 	e.HTTPErrorHandler = api.CustomHTTPErrorHandler
 
-	modules := []IModule{
+	modules := []api.IModule{
 		health.New(),
 		auth.New(s.Db, s.Logger, s.Flake, s.Cache, s.Tasks),
 		users.New(s.Db, s.Logger, s.Cache),
