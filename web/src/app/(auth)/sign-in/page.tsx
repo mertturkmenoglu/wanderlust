@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input';
 import InputError from '@/components/ui/input-error';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { AuthContext } from '@/providers/auth-provider';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import AuthLink from '../_components/auth-link';
 import OAuthButton from '../_components/oauth-button';
@@ -17,6 +18,8 @@ import { useLoginMutation, useSignInForm } from './hooks';
 import { FormInput } from './schema';
 
 export default function Page() {
+  const auth = useContext(AuthContext);
+
   const [showPassword, setShowPassword] = useState(false);
   const { formState, register, handleSubmit } = useSignInForm();
   const mutation = useLoginMutation();
@@ -24,6 +27,10 @@ export default function Page() {
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     mutation.mutate(data);
   };
+
+  if (!auth.isLoading && auth.user !== null) {
+    window.location.href = '/';
+  }
 
   return (
     <Card className="container mx-auto my-32 flex max-w-lg flex-col py-8">
