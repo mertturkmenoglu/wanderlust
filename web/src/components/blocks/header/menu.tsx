@@ -5,12 +5,12 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Auth } from '@/lib/auth';
+import { AuthDto } from '@/lib/auth';
 import { UserIcon } from 'lucide-react';
 import MenuContent from './menu-content';
 
 type Props = {
-  auth: Auth;
+  auth: AuthDto;
 };
 
 export default function Menu({ auth }: Readonly<Props>) {
