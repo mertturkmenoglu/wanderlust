@@ -1,6 +1,7 @@
 package users
 
 import (
+	"wanderlust/internal/app/api"
 	"wanderlust/internal/cache"
 	"wanderlust/internal/db"
 
@@ -10,6 +11,8 @@ import (
 type Module struct {
 	handlers *handlers
 }
+
+var _ api.IModule = (*Module)(nil)
 
 type handlers struct {
 	service *service
