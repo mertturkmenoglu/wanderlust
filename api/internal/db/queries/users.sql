@@ -48,6 +48,7 @@ INSERT INTO users (
   google_id,
   fb_id,
   is_email_verified,
+  is_onboarding_completed,
   profile_image
 ) VALUES (
   $1,
@@ -58,7 +59,8 @@ INSERT INTO users (
   $6,
   $7,
   $8,
-  $9
+  $9,
+  $10
 ) RETURNING *;
 
 -- name: GetUserProfileByUsername :one
