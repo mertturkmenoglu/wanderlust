@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   google_id VARCHAR(64) UNIQUE,
   fb_id VARCHAR(64) UNIQUE,
   is_email_verified BOOLEAN DEFAULT FALSE NOT NULL,
+  is_onboarding_completed BOOLEAN DEFAULT FALSE NOT NULL,
   is_active BOOLEAN DEFAULT TRUE NOT NULL,
   is_business_account BOOLEAN DEFAULT FALSE NOT NULL,
   is_verified BOOLEAN DEFAULT FALSE NOT NULL,
