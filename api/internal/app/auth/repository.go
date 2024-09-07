@@ -81,15 +81,16 @@ func (r *repository) createUser(oauthUser *oauthUser) (string, error) {
 	}
 
 	saved, err := r.db.Queries.CreateUser(context.Background(), db.CreateUserParams{
-		ID:              utils.GenerateId(r.flake),
-		Email:           oauthUser.email,
-		Username:        username,
-		FullName:        oauthUser.name,
-		PasswordHash:    pgtype.Text{},
-		GoogleID:        pgtype.Text{String: oauthUser.id, Valid: oauthUser.provider == "google"},
-		FbID:            pgtype.Text{String: oauthUser.id, Valid: oauthUser.provider == "facebook"},
-		IsEmailVerified: true,
-		ProfileImage:    pgtype.Text{String: oauthUser.picture, Valid: true},
+		ID:                    utils.GenerateId(r.flake),
+		Email:                 oauthUser.email,
+		Username:              username,
+		FullName:              oauthUser.name,
+		PasswordHash:          pgtype.Text{},
+		GoogleID:              pgtype.Text{String: oauthUser.id, Valid: oauthUser.provider == "google"},
+		FbID:                  pgtype.Text{String: oauthUser.id, Valid: oauthUser.provider == "facebook"},
+		IsEmailVerified:       true,
+		IsOnboardingCompleted: false,
+		ProfileImage:          pgtype.Text{String: oauthUser.picture, Valid: true},
 	})
 
 	if err != nil {
@@ -133,15 +134,16 @@ func (r *repository) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.
 	}
 
 	saved, err := r.db.Queries.CreateUser(context.Background(), db.CreateUserParams{
-		ID:              utils.GenerateId(r.flake),
-		Email:           dto.Email,
-		Username:        dto.Username,
-		FullName:        dto.FullName,
-		PasswordHash:    pgtype.Text{String: hashed, Valid: true},
-		GoogleID:        pgtype.Text{},
-		FbID:            pgtype.Text{},
-		IsEmailVerified: false,
-		ProfileImage:    pgtype.Text{},
+		ID:                    utils.GenerateId(r.flake),
+		Email:                 dto.Email,
+		Username:              dto.Username,
+		FullName:              dto.FullName,
+		PasswordHash:          pgtype.Text{String: hashed, Valid: true},
+		GoogleID:              pgtype.Text{},
+		FbID:                  pgtype.Text{},
+		IsEmailVerified:       false,
+		IsOnboardingCompleted: true,
+		ProfileImage:          pgtype.Text{},
 	})
 
 	return &saved, err
