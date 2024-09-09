@@ -20,6 +20,16 @@ type Address struct {
 	Lng        float64
 }
 
+type AmenitiesPoi struct {
+	AmenityID int32
+	PoiID     string
+}
+
+type Amenity struct {
+	ID   int32
+	Name string
+}
+
 type Category struct {
 	ID    int16
 	Name  string
