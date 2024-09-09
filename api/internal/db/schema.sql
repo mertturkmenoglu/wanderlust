@@ -115,3 +115,9 @@ CREATE TABLE IF NOT EXISTS cities (
   longitude DOUBLE PRECISION NOT NULL,
   wiki_data_id VARCHAR(64) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS follows (
+  follower_id TEXT NOT NULL,
+  following_id TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);

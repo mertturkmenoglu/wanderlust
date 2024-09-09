@@ -58,6 +58,12 @@ type Country struct {
 	Longitude      float64
 }
 
+type Follow struct {
+	FollowerID  string
+	FollowingID string
+	CreatedAt   pgtype.Timestamptz
+}
+
 type Medium struct {
 	ID         int64
 	PoiID      string
