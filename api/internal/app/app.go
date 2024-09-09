@@ -6,6 +6,7 @@ import (
 	"wanderlust/internal/app/api"
 	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/health"
+	"wanderlust/internal/app/uploads"
 	"wanderlust/internal/app/users"
 	"wanderlust/internal/cache"
 	"wanderlust/internal/db"
@@ -74,8 +75,9 @@ func (s *Application) RegisterRoutes() *echo.Echo {
 	e.HTTPErrorHandler = api.CustomHTTPErrorHandler
 
 	modules := []api.IModule{
-		health.New(),
 		auth.New(s.Db, s.Logger, s.Flake, s.Cache, s.Tasks),
+		health.New(),
+		uploads.New(s.Upload),
 		users.New(s.Db, s.Logger, s.Cache),
 	}
 
