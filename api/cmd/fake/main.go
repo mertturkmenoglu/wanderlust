@@ -73,10 +73,9 @@ func main() {
 }
 
 func generateAndInsert(genType string, count int) error {
-	logger.Debug("count", logger.Args("count", count))
 	switch genType {
 	case "addresses":
-		return fmt.Errorf("not implemented")
+		return handleAddresses(count)
 	case "amenities":
 		return handleAmenities()
 	case "bookmarks":
@@ -84,9 +83,9 @@ func generateAndInsert(genType string, count int) error {
 	case "categories":
 		return handleCategories()
 	case "cities":
-		return fmt.Errorf("not implemented")
+		return handleCities()
 	case "countries":
-		return fmt.Errorf("not implemented")
+		return handleCountries()
 	case "favorites":
 		return fmt.Errorf("not implemented")
 	case "follows":
@@ -102,7 +101,7 @@ func generateAndInsert(genType string, count int) error {
 	case "reviews":
 		return fmt.Errorf("not implemented")
 	case "states":
-		return fmt.Errorf("not implemented")
+		return handleStates()
 	case "users":
 		return fmt.Errorf("not implemented")
 	default:
