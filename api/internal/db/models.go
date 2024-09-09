@@ -41,6 +41,7 @@ type City struct {
 	Name        string
 	StateID     int32
 	StateCode   string
+	StateName   string
 	CountryID   int32
 	CountryCode string
 	CountryName string
