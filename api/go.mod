@@ -92,6 +92,7 @@ require (
 
 require (
 	github.com/MarceloPetrucio/go-scalar-api-reference v0.0.0-20240521013641-ce5d2efe0e06
+	github.com/brianvoe/gofakeit/v7 v7.0.4
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/golang-migrate/migrate/v4 v4.17.1
