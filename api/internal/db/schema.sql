@@ -121,3 +121,21 @@ CREATE TABLE IF NOT EXISTS follows (
   following_id TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS pois (
+  id TEXT PRIMARY KEY,
+  name VARCHAR(128) NOT NULL,
+  phone VARCHAR(32),
+  description VARCHAR(512) NOT NULL,
+  address_id INT NOT NULL,
+  website VARCHAR(255),
+  price_level SMALLINT NOT NULL,
+  accessibility_level SMALLINT NOT NULL,
+  total_votes INT NOT NULL,
+  total_points INT NOT NULL,
+  total_favorites INT NOT NULL,
+  category_id SMALLINT NOT NULL,
+  open_times JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);

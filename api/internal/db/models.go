@@ -80,6 +80,24 @@ type Medium struct {
 	CreatedAt  pgtype.Timestamptz
 }
 
+type Poi struct {
+	ID                 string
+	Name               string
+	Phone              pgtype.Text
+	Description        string
+	AddressID          int32
+	Website            pgtype.Text
+	PriceLevel         int16
+	AccessibilityLevel int16
+	TotalVotes         int32
+	TotalPoints        int32
+	TotalFavorites     int32
+	CategoryID         int16
+	OpenTimes          []byte
+	CreatedAt          pgtype.Timestamptz
+	UpdatedAt          pgtype.Timestamptz
+}
+
 type Session struct {
 	ID          string
 	UserID      string
