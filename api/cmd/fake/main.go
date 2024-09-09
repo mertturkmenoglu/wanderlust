@@ -14,13 +14,20 @@ var logger = pterm.DefaultLogger.WithLevel(pterm.LogLevelTrace)
 var database *db.Db
 
 var genOptions = []string{
+	"addresses",
+	"amenities",
 	"bookmarks",
 	"categories",
+	"cities",
+	"countries",
 	"favorites",
+	"follows",
 	"lists",
 	"list-items",
-	"locations",
+	"media",
+	"point-of-interests",
 	"reviews",
+	"states",
 	"users",
 }
 
@@ -38,6 +45,7 @@ func main() {
 
 	genType, _ := pterm.
 		DefaultInteractiveSelect.
+		WithMaxHeight(20).
 		WithOptions(genOptions).
 		Show()
 
@@ -67,19 +75,33 @@ func main() {
 func generateAndInsert(genType string, count int) error {
 	logger.Debug("count", logger.Args("count", count))
 	switch genType {
+	case "addresses":
+		return fmt.Errorf("not implemented")
+	case "amenities":
+		return handleAmenities()
 	case "bookmarks":
 		return fmt.Errorf("not implemented")
 	case "categories":
 		return handleCategories()
+	case "cities":
+		return fmt.Errorf("not implemented")
+	case "countries":
+		return fmt.Errorf("not implemented")
 	case "favorites":
+		return fmt.Errorf("not implemented")
+	case "follows":
 		return fmt.Errorf("not implemented")
 	case "lists":
 		return fmt.Errorf("not implemented")
 	case "list-items":
 		return fmt.Errorf("not implemented")
-	case "locations":
+	case "media":
+		return fmt.Errorf("not implemented")
+	case "point-of-interests":
 		return fmt.Errorf("not implemented")
 	case "reviews":
+		return fmt.Errorf("not implemented")
+	case "states":
 		return fmt.Errorf("not implemented")
 	case "users":
 		return fmt.Errorf("not implemented")
