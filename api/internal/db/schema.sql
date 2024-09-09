@@ -43,3 +43,75 @@ CREATE TABLE IF NOT EXISTS categories (
   name VARCHAR(64) UNIQUE NOT NULL,
   image VARCHAR(128) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS addresses (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  country CHAR(2) NOT NULL,
+  city VARCHAR(64) NOT NULL,
+  line1 VARCHAR(64) NOT NULL,
+  line2 VARCHAR(64),
+  postal_code VARCHAR(16),
+  state VARCHAR(64),
+  lat DOUBLE PRECISION NOT NULL,
+  lng DOUBLE PRECISION NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS media (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  poi_id TEXT NOT NULL,
+  url VARCHAR(255) NOT NULL,
+  thumbnail VARCHAR(255) NOT NULL,
+  alt VARCHAR(255) NOT NULL,
+  caption VARCHAR(255),
+  width INT NOT NULL,
+  height INT NOT NULL,
+  media_order SMALLINT NOT NULL,
+  extension VARCHAR(16) NOT NULL,
+  mime_type VARCHAR(64) NOT NULL,
+  file_size BIGINT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS countries (
+  id INT PRIMARY KEY,
+  name VARCHAR(64) NOT NULL,
+  iso2 CHAR(2) NOT NULL,
+  numeric_code VARCHAR(3) NOT NULL,
+  phone_code VARCHAR(32) NOT NULL,
+  capital VARCHAR(32) NOT NULL,
+  currency CHAR(3) NOT NULL,
+  currency_name VARCHAR(64) NOT NULL,
+  currency_symbol VARCHAR(10) NOT NULL,
+  tld CHAR(3) NOT NULL,
+  native VARCHAR(64) NOT NULL,
+  region VARCHAR(64) NOT NULL,
+  subregion VARCHAR(64) NOT NULL,
+  timezones TEXT NOT NULL,
+  latitude DOUBLE PRECISION NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS states (
+  id INT PRIMARY KEY,
+  name VARCHAR(64) NOT NULL,
+  country_id INT NOT NULL,
+  country_code CHAR(2) NOT NULL,
+  country_name VARCHAR(64) NOT NULL,
+  state_code VARCHAR(16) NOT NULL,
+  type VARCHAR(16),
+  latitude DOUBLE PRECISION NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS cities (
+  id INT PRIMARY KEY,
+  name VARCHAR(64) NOT NULL,
+  state_id INT NOT NULL,
+  state_code VARCHAR(16) NOT NULL,
+  country_id INT NOT NULL,
+  country_code CHAR(2) NOT NULL,
+  country_name VARCHAR(64) NOT NULL,
+  latitude DOUBLE PRECISION NOT NULL,
+  longitude DOUBLE PRECISION NOT NULL,
+  wiki_data_id VARCHAR(64) NOT NULL
+);
