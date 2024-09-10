@@ -54,6 +54,10 @@ func handleUsers(count int) error {
 
 	step := 1000
 
+	if count < step {
+		step = count
+	}
+
 	for i := 0; i < count; i += step {
 		if i%step == 0 {
 			logger.Trace("Inserting users", logger.Args("index", i))
