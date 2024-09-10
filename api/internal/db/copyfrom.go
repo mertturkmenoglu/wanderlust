@@ -9,6 +9,45 @@ import (
 	"context"
 )
 
+// iteratorForBatchCreateAddresses implements pgx.CopyFromSource.
+type iteratorForBatchCreateAddresses struct {
+	rows                 []BatchCreateAddressesParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateAddresses) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateAddresses) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].Country,
+		r.rows[0].City,
+		r.rows[0].Line1,
+		r.rows[0].Line2,
+		r.rows[0].PostalCode,
+		r.rows[0].State,
+		r.rows[0].Lat,
+		r.rows[0].Lng,
+	}, nil
+}
+
+func (r iteratorForBatchCreateAddresses) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateAddresses(ctx context.Context, arg []BatchCreateAddressesParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"addresses"}, []string{"country", "city", "line1", "line2", "postal_code", "state", "lat", "lng"}, &iteratorForBatchCreateAddresses{rows: arg})
+}
+
 // iteratorForCreateBatchUsers implements pgx.CopyFromSource.
 type iteratorForCreateBatchUsers struct {
 	rows                 []CreateBatchUsersParams

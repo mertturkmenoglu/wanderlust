@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BatchCreateAddressesParams struct {
+	Country    string
+	City       string
+	Line1      string
+	Line2      pgtype.Text
+	PostalCode pgtype.Text
+	State      pgtype.Text
+	Lat        float64
+	Lng        float64
+}
+
 const createAddress = `-- name: CreateAddress :one
 INSERT INTO addresses (
   country,
