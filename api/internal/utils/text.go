@@ -9,3 +9,7 @@ func TextOrNil(v pgtype.Text) *string {
 
 	return nil
 }
+
+func StrToText(v string) pgtype.Text {
+	return pgtype.Text{String: v, Valid: true}
+}
