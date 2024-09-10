@@ -121,7 +121,7 @@ func generateAndInsert(genType string, count int) error {
 	case "media":
 		return fmt.Errorf("not implemented")
 	case "point-of-interests":
-		return fmt.Errorf("not implemented")
+		return handlePois(count)
 	case "reviews":
 		return fmt.Errorf("not implemented")
 	case "states":
