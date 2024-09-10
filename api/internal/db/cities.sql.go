@@ -5,39 +5,7 @@
 
 package db
 
-import (
-	"context"
-)
-
-const createCity = `-- name: CreateCity :one
-INSERT INTO cities (
-  id,
-  name,
-  state_id,
-  state_code,
-  state_name,
-  country_id,
-  country_code,
-  country_name,
-  latitude,
-  longitude,
-  wiki_data_id
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4,
-  $5,
-  $6,
-  $7,
-  $8,
-  $9,
-  $10,
-  $11
-) RETURNING id, name, state_id, state_code, state_name, country_id, country_code, country_name, latitude, longitude, wiki_data_id
-`
-
-type CreateCityParams struct {
+type CreateCitiesParams struct {
 	ID          int32
 	Name        string
 	StateID     int32
@@ -49,35 +17,4 @@ type CreateCityParams struct {
 	Latitude    float64
 	Longitude   float64
 	WikiDataID  string
-}
-
-func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, error) {
-	row := q.db.QueryRow(ctx, createCity,
-		arg.ID,
-		arg.Name,
-		arg.StateID,
-		arg.StateCode,
-		arg.StateName,
-		arg.CountryID,
-		arg.CountryCode,
-		arg.CountryName,
-		arg.Latitude,
-		arg.Longitude,
-		arg.WikiDataID,
-	)
-	var i City
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.StateID,
-		&i.StateCode,
-		&i.StateName,
-		&i.CountryID,
-		&i.CountryCode,
-		&i.CountryName,
-		&i.Latitude,
-		&i.Longitude,
-		&i.WikiDataID,
-	)
-	return i, err
 }
