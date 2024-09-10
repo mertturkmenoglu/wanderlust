@@ -11,6 +11,19 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type CreateBatchUsersParams struct {
+	ID                    string
+	Email                 string
+	Username              string
+	FullName              string
+	PasswordHash          pgtype.Text
+	GoogleID              pgtype.Text
+	FbID                  pgtype.Text
+	IsEmailVerified       bool
+	IsOnboardingCompleted bool
+	ProfileImage          pgtype.Text
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   id,

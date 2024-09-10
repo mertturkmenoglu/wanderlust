@@ -63,6 +63,31 @@ INSERT INTO users (
   $10
 ) RETURNING *;
 
+-- name: CreateBatchUsers :copyfrom
+INSERT INTO users (
+  id,
+  email,
+  username,
+  full_name,
+  password_hash,
+  google_id,
+  fb_id,
+  is_email_verified,
+  is_onboarding_completed,
+  profile_image
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10
+);
+
 -- name: GetUserProfileByUsername :one
 SELECT 
   id,
