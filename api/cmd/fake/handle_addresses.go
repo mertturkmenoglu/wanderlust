@@ -27,21 +27,13 @@ func handleAddresses(count int) error {
 
 func batchInsertAddresses(n int) error {
 	d := GetDb()
-	tctx := context.Background()
-
-	tx, err := d.Pool.Begin(tctx)
-
-	if err != nil {
-		return err
-	}
-
-	defer tx.Rollback(tctx)
-	qtx := d.Queries.WithTx(tx)
+	arg := make([]db.BatchCreateAddressesParams, 0, n)
 
 	for range n {
 		lat, _ := gofakeit.LatitudeInRange(32, 45)
 		lng, _ := gofakeit.LongitudeInRange(-80, -120)
-		_, err = qtx.CreateAddress(context.Background(), db.CreateAddressParams{
+
+		arg = append(arg, db.BatchCreateAddressesParams{
 			Country:    gofakeit.CountryAbr(),
 			State:      pgtype.Text{String: gofakeit.State(), Valid: true},
 			City:       gofakeit.City(),
@@ -51,11 +43,9 @@ func batchInsertAddresses(n int) error {
 			Lat:        lat,
 			Lng:        lng,
 		})
-
-		if err != nil {
-			return err
-		}
 	}
 
-	return tx.Commit(tctx)
+	_, err := d.Queries.BatchCreateAddresses(context.Background(), arg)
+
+	return err
 }
