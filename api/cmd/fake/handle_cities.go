@@ -12,7 +12,7 @@ import (
 func handleCities() error {
 	const (
 		filepath = "data/cities.csv"
-		step     = 1_000
+		step     = 100
 	)
 
 	logger.Trace("handling cities. reading file", logger.Args("filepath", filepath))
@@ -37,7 +37,7 @@ func handleCities() error {
 	logger.Trace("batch generating and inserting", logger.Args("total items", len(r)))
 
 	for chunk := range slices.Chunk(r, step) {
-		if chunkIndex%10 == 0 {
+		if chunkIndex%100 == 0 {
 			logger.Trace("Processing chunk", logger.Args("index", chunkIndex))
 		}
 
@@ -55,16 +55,7 @@ func handleCities() error {
 
 func batchInsertCities(chunk [][]string) error {
 	d := GetDb()
-	tctx := context.Background()
-
-	tx, err := d.Pool.Begin(tctx)
-
-	if err != nil {
-		return err
-	}
-
-	defer tx.Rollback(tctx)
-	qtx := d.Queries.WithTx(tx)
+	p := make([]db.CreateCitiesParams, 0, len(chunk))
 
 	for i, record := range chunk {
 		id, err := strconv.Atoi(record[0])
@@ -102,7 +93,7 @@ func batchInsertCities(chunk [][]string) error {
 			continue
 		}
 
-		_, err = qtx.CreateCity(context.Background(), db.CreateCityParams{
+		p = append(p, db.CreateCitiesParams{
 			ID:          int32(id),
 			Name:        record[1],
 			StateID:     int32(stateId),
@@ -115,12 +106,13 @@ func batchInsertCities(chunk [][]string) error {
 			Longitude:   lng,
 			WikiDataID:  record[10],
 		})
-
-		if err != nil {
-			logger.Error("Error inserting record", logger.Args("index", i, "err", err.Error()))
-			continue
-		}
 	}
 
-	return tx.Commit(tctx)
+	_, err := d.Queries.CreateCities(context.Background(), p)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
