@@ -48,6 +48,50 @@ func (q *Queries) BatchCreateAddresses(ctx context.Context, arg []BatchCreateAdd
 	return q.db.CopyFrom(ctx, []string{"addresses"}, []string{"country", "city", "line1", "line2", "postal_code", "state", "lat", "lng"}, &iteratorForBatchCreateAddresses{rows: arg})
 }
 
+// iteratorForBatchCreatePois implements pgx.CopyFromSource.
+type iteratorForBatchCreatePois struct {
+	rows                 []BatchCreatePoisParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreatePois) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreatePois) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].Name,
+		r.rows[0].Phone,
+		r.rows[0].Description,
+		r.rows[0].AddressID,
+		r.rows[0].Website,
+		r.rows[0].PriceLevel,
+		r.rows[0].AccessibilityLevel,
+		r.rows[0].TotalVotes,
+		r.rows[0].TotalPoints,
+		r.rows[0].TotalFavorites,
+		r.rows[0].CategoryID,
+		r.rows[0].OpenTimes,
+	}, nil
+}
+
+func (r iteratorForBatchCreatePois) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreatePois(ctx context.Context, arg []BatchCreatePoisParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"pois"}, []string{"id", "name", "phone", "description", "address_id", "website", "price_level", "accessibility_level", "total_votes", "total_points", "total_favorites", "category_id", "open_times"}, &iteratorForBatchCreatePois{rows: arg})
+}
+
 // iteratorForCreateBatchUsers implements pgx.CopyFromSource.
 type iteratorForCreateBatchUsers struct {
 	rows                 []CreateBatchUsersParams

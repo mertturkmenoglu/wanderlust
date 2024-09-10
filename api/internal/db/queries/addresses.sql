@@ -39,3 +39,9 @@ INSERT INTO addresses (
   $7,
   $8
 );
+
+-- name: RandSelectAddresses :many
+SELECT id
+FROM addresses
+ORDER BY RANDOM()
+LIMIT $1;

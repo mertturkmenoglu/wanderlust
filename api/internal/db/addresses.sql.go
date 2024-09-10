@@ -80,3 +80,30 @@ func (q *Queries) CreateAddress(ctx context.Context, arg CreateAddressParams) (A
 	)
 	return i, err
 }
+
+const randSelectAddresses = `-- name: RandSelectAddresses :many
+SELECT id
+FROM addresses
+ORDER BY RANDOM()
+LIMIT $1
+`
+
+func (q *Queries) RandSelectAddresses(ctx context.Context, limit int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, randSelectAddresses, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var id int32
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
