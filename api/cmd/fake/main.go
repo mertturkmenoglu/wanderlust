@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"wanderlust/config"
 	"wanderlust/internal/db"
@@ -31,6 +32,21 @@ var genOptions = []string{
 	"users",
 }
 
+var countOptions = []string{
+	"1000",
+	"10000",
+	"100000",
+	"500000",
+}
+
+var noCountNeeded = []string{
+	"amenities",
+	"categories",
+	"cities",
+	"countries",
+	"states",
+}
+
 func GetDb() *db.Db {
 	if database == nil {
 		database = db.NewDb()
@@ -41,7 +57,8 @@ func GetDb() *db.Db {
 func main() {
 	config.Bootstrap()
 
-	pterm.DefaultBasicText.Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
+	pterm.DefaultBasicText.
+		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
 
 	genType, _ := pterm.
 		DefaultInteractiveSelect.
@@ -49,20 +66,27 @@ func main() {
 		WithOptions(genOptions).
 		Show()
 
-	sCount, _ := pterm.
-		DefaultInteractiveTextInput.
-		Show("How many do you want to generate? (Between 1 and 10 000)")
+	n := 0
 
-	count, err := strconv.Atoi(sCount)
+	if !slices.Contains(noCountNeeded, genType) {
+		sCount, _ := pterm.
+			DefaultInteractiveSelect.
+			WithOptions(countOptions).
+			Show("How many do you want to generate?")
 
-	if err != nil || count < 1 || count > 10_000 {
-		logger.Error("Invalid count. Terminating.", logger.Args("count", count))
-		return
+		count, err := strconv.Atoi(sCount)
+
+		if err != nil {
+			logger.Error("Invalid count. Terminating.", logger.Args("count", count))
+			return
+		}
+
+		n = count
 	}
 
-	logger.Info("Generating data", logger.Args("count", count, "type", genType))
+	logger.Info("Generating data", logger.Args("count", n, "type", genType))
 
-	err = generateAndInsert(genType, int(count))
+	err := generateAndInsert(genType, int(n))
 
 	if err != nil {
 		logger.Fatal("Encountered error. Terminating", logger.Args("error", err.Error()))
@@ -103,7 +127,7 @@ func generateAndInsert(genType string, count int) error {
 	case "states":
 		return handleStates()
 	case "users":
-		return fmt.Errorf("not implemented")
+		return handleUsers(count)
 	default:
 		return fmt.Errorf("invalid type")
 	}
