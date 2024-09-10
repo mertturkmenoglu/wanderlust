@@ -1,4 +1,4 @@
--- name: CreateCity :one
+-- name: CreateCities :copyfrom
 INSERT INTO cities (
   id,
   name,
@@ -23,4 +23,4 @@ INSERT INTO cities (
   $9,
   $10,
   $11
-) RETURNING *;
+);
