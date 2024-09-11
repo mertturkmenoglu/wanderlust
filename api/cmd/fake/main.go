@@ -17,6 +17,7 @@ var database *db.Db
 var genOptions = []string{
 	"addresses",
 	"amenities",
+	"amenities-pois",
 	"bookmarks",
 	"categories",
 	"cities",
@@ -102,6 +103,8 @@ func generateAndInsert(genType string, count int) error {
 		return handleAddresses(count)
 	case "amenities":
 		return handleAmenities()
+	case "amenities-pois":
+		return handleAmenitiesPois(count)
 	case "bookmarks":
 		return fmt.Errorf("not implemented")
 	case "categories":
