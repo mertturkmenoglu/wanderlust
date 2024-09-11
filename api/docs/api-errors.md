@@ -5,7 +5,7 @@
 - Each API module has its own error codes.
 - 100 codes are reserved for each module.
 
-## Error Codes per Module
+## Error Code Ranges per Module
 
 - `0000`: Reserved for internal errors.
 - `0001-0099`: Auth module errors.
