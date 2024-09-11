@@ -25,7 +25,6 @@
 Follow these steps in this specific order:
 
 - Read `database.md` file.
-- Read `read-location.md` file.
 - Read `fake.md` file.
 - Read `search-sync.md` file.
 - Read `swagger.md` file.
