@@ -48,6 +48,39 @@ func (q *Queries) BatchCreateAddresses(ctx context.Context, arg []BatchCreateAdd
 	return q.db.CopyFrom(ctx, []string{"addresses"}, []string{"country", "city", "line1", "line2", "postal_code", "state", "lat", "lng"}, &iteratorForBatchCreateAddresses{rows: arg})
 }
 
+// iteratorForBatchCreateAmenitiesPois implements pgx.CopyFromSource.
+type iteratorForBatchCreateAmenitiesPois struct {
+	rows                 []BatchCreateAmenitiesPoisParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateAmenitiesPois) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateAmenitiesPois) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].AmenityID,
+		r.rows[0].PoiID,
+	}, nil
+}
+
+func (r iteratorForBatchCreateAmenitiesPois) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateAmenitiesPois(ctx context.Context, arg []BatchCreateAmenitiesPoisParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"amenities_pois"}, []string{"amenity_id", "poi_id"}, &iteratorForBatchCreateAmenitiesPois{rows: arg})
+}
+
 // iteratorForBatchCreatePois implements pgx.CopyFromSource.
 type iteratorForBatchCreatePois struct {
 	rows                 []BatchCreatePoisParams

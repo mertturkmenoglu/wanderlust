@@ -6,6 +6,8 @@
 package db
 
 import (
+	"context"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -23,4 +25,31 @@ type BatchCreatePoisParams struct {
 	TotalFavorites     int32
 	CategoryID         int16
 	OpenTimes          []byte
+}
+
+const randSelectPois = `-- name: RandSelectPois :many
+SELECT id
+FROM pois
+ORDER BY RANDOM()
+LIMIT $1
+`
+
+func (q *Queries) RandSelectPois(ctx context.Context, limit int32) ([]string, error) {
+	rows, err := q.db.Query(ctx, randSelectPois, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

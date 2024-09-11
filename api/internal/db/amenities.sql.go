@@ -9,6 +9,11 @@ import (
 	"context"
 )
 
+type BatchCreateAmenitiesPoisParams struct {
+	AmenityID int32
+	PoiID     string
+}
+
 const createAmenity = `-- name: CreateAmenity :one
 INSERT INTO amenities (
   name
@@ -22,4 +27,29 @@ func (q *Queries) CreateAmenity(ctx context.Context, name string) (Amenity, erro
 	var i Amenity
 	err := row.Scan(&i.ID, &i.Name)
 	return i, err
+}
+
+const getAllAmenities = `-- name: GetAllAmenities :many
+SELECT id, name
+FROM amenities
+`
+
+func (q *Queries) GetAllAmenities(ctx context.Context) ([]Amenity, error) {
+	rows, err := q.db.Query(ctx, getAllAmenities)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Amenity
+	for rows.Next() {
+		var i Amenity
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

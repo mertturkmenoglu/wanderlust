@@ -28,3 +28,9 @@ INSERT INTO pois (
   $12,
   $13
 );
+
+-- name: RandSelectPois :many
+SELECT id
+FROM pois
+ORDER BY RANDOM()
+LIMIT $1;
