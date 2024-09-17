@@ -12,3 +12,4 @@
 - `0100-0199`: Users module errors.
 - `0200-0299`: Uploads module errors.
 - `0300-0399`: Pois module errors.
+- `0300-0349`: Cities module errors.
