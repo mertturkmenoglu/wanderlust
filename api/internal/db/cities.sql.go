@@ -5,6 +5,10 @@
 
 package db
 
+import (
+	"context"
+)
+
 type CreateCitiesParams struct {
 	ID          int32
 	Name        string
@@ -17,4 +21,61 @@ type CreateCitiesParams struct {
 	Latitude    float64
 	Longitude   float64
 	WikiDataID  string
+}
+
+const getCityById = `-- name: GetCityById :one
+SELECT cities.id, cities.name, cities.state_id, cities.state_code, cities.state_name, cities.country_id, cities.country_code, cities.country_name, cities.latitude, cities.longitude, cities.wiki_data_id, states.id, states.name, states.country_id, states.country_code, states.country_name, states.state_code, states.type, states.latitude, states.longitude, countries.id, countries.name, countries.iso2, countries.numeric_code, countries.phone_code, countries.capital, countries.currency, countries.currency_name, countries.currency_symbol, countries.tld, countries.native, countries.region, countries.subregion, countries.timezones, countries.latitude, countries.longitude FROM cities
+LEFT JOIN states ON cities.state_id = states.id
+LEFT JOIN countries ON cities.country_id = countries.id
+WHERE cities.id = $1 LIMIT 1
+`
+
+type GetCityByIdRow struct {
+	City    City
+	State   State
+	Country Country
+}
+
+func (q *Queries) GetCityById(ctx context.Context, id int32) (GetCityByIdRow, error) {
+	row := q.db.QueryRow(ctx, getCityById, id)
+	var i GetCityByIdRow
+	err := row.Scan(
+		&i.City.ID,
+		&i.City.Name,
+		&i.City.StateID,
+		&i.City.StateCode,
+		&i.City.StateName,
+		&i.City.CountryID,
+		&i.City.CountryCode,
+		&i.City.CountryName,
+		&i.City.Latitude,
+		&i.City.Longitude,
+		&i.City.WikiDataID,
+		&i.State.ID,
+		&i.State.Name,
+		&i.State.CountryID,
+		&i.State.CountryCode,
+		&i.State.CountryName,
+		&i.State.StateCode,
+		&i.State.Type,
+		&i.State.Latitude,
+		&i.State.Longitude,
+		&i.Country.ID,
+		&i.Country.Name,
+		&i.Country.Iso2,
+		&i.Country.NumericCode,
+		&i.Country.PhoneCode,
+		&i.Country.Capital,
+		&i.Country.Currency,
+		&i.Country.CurrencyName,
+		&i.Country.CurrencySymbol,
+		&i.Country.Tld,
+		&i.Country.Native,
+		&i.Country.Region,
+		&i.Country.Subregion,
+		&i.Country.Timezones,
+		&i.Country.Latitude,
+		&i.Country.Longitude,
+	)
+	return i, err
 }

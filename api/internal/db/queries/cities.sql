@@ -24,3 +24,9 @@ INSERT INTO cities (
   $10,
   $11
 );
+
+-- name: GetCityById :one
+SELECT sqlc.embed(cities), sqlc.embed(states), sqlc.embed(countries) FROM cities
+LEFT JOIN states ON cities.state_id = states.id
+LEFT JOIN countries ON cities.country_id = countries.id
+WHERE cities.id = $1 LIMIT 1;
