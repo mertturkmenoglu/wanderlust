@@ -4,10 +4,13 @@ import AuthContextProvider from '@/providers/auth-provider';
 import QClientProvider from '@/providers/query-provider';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Lato } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const lato = Lato({
+  subsets: ['latin'],
+  weight: ['100', '300', '400', '700', '900'],
+});
 
 export const metadata: Metadata = {
   title: 'Wanderlust',
@@ -21,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={'mx-4 md:mx-8 lg:mx-16 2xl:mx-32 ' + inter.className}>
+      <body className={'mx-4 md:mx-8 lg:mx-16 2xl:mx-32 ' + lato.className}>
         <QClientProvider>
           <AuthContextProvider>
             <Header className="my-4" />
