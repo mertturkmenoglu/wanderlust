@@ -26,6 +26,7 @@ func handleCities() error {
 	defer file.Close()
 
 	reader := csv.NewReader(file)
+	reader.Comma = '|'
 	records, err := reader.ReadAll()
 
 	if err != nil {
@@ -58,35 +59,32 @@ func batchInsertCities(chunk [][]string) error {
 	p := make([]db.CreateCitiesParams, 0, len(chunk))
 
 	for i, record := range chunk {
-		id, err := strconv.Atoi(record[0])
+		idStr := record[0]
+		name := record[1]
+		stateCode := record[2]
+		stateName := record[3]
+		countryCode := record[4]
+		countryName := record[5]
+		imageUrl := record[6]
+		latitudeStr := record[7]
+		longitudeStr := record[8]
+		description := record[9]
+
+		id, err := strconv.Atoi(idStr)
 
 		if err != nil {
 			logger.Error("Error processing record at id field. Continuing", logger.Args("index", i, "err", err.Error()))
 			continue
 		}
 
-		stateId, err := strconv.Atoi(record[2])
-
-		if err != nil {
-			logger.Error("Error processing record at state id field. Continuing", logger.Args("index", i, "err", err.Error()))
-			continue
-		}
-
-		countryId, err := strconv.Atoi(record[5])
-
-		if err != nil {
-			logger.Error("Error processing record at country id field. Continuing", logger.Args("index", i, "err", err.Error()))
-			continue
-		}
-
-		lat, err := strconv.ParseFloat(record[8], 64)
+		lat, err := strconv.ParseFloat(latitudeStr, 64)
 
 		if err != nil {
 			logger.Error("Error processing record at latitude field. Continuing", logger.Args("index", i, "err", err.Error()))
 			continue
 		}
 
-		lng, err := strconv.ParseFloat(record[9], 64)
+		lng, err := strconv.ParseFloat(longitudeStr, 64)
 
 		if err != nil {
 			logger.Error("Error processing record at longitude field. Continuing", logger.Args("index", i, "err", err.Error()))
@@ -95,16 +93,15 @@ func batchInsertCities(chunk [][]string) error {
 
 		p = append(p, db.CreateCitiesParams{
 			ID:          int32(id),
-			Name:        record[1],
-			StateID:     int32(stateId),
-			StateCode:   record[3],
-			StateName:   record[4],
-			CountryID:   int32(countryId),
-			CountryCode: record[6],
-			CountryName: record[7],
+			Name:        name,
+			StateCode:   stateCode,
+			StateName:   stateName,
+			CountryCode: countryCode,
+			CountryName: countryName,
+			ImageUrl:    imageUrl,
 			Latitude:    lat,
 			Longitude:   lng,
-			WikiDataID:  record[10],
+			Description: description,
 		})
 	}
 

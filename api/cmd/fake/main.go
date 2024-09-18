@@ -21,7 +21,6 @@ var genOptions = []string{
 	"bookmarks",
 	"categories",
 	"cities",
-	"countries",
 	"favorites",
 	"follows",
 	"lists",
@@ -29,7 +28,6 @@ var genOptions = []string{
 	"media",
 	"point-of-interests",
 	"reviews",
-	"states",
 	"users",
 }
 
@@ -44,8 +42,6 @@ var noCountNeeded = []string{
 	"amenities",
 	"categories",
 	"cities",
-	"countries",
-	"states",
 }
 
 func GetDb() *db.Db {
@@ -111,8 +107,6 @@ func generateAndInsert(genType string, count int) error {
 		return handleCategories()
 	case "cities":
 		return handleCities()
-	case "countries":
-		return handleCountries()
 	case "favorites":
 		return fmt.Errorf("not implemented")
 	case "follows":
@@ -127,8 +121,6 @@ func generateAndInsert(genType string, count int) error {
 		return handlePois(count)
 	case "reviews":
 		return fmt.Errorf("not implemented")
-	case "states":
-		return handleStates()
 	case "users":
 		return handleUsers(count)
 	default:

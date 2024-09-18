@@ -28,15 +28,18 @@ func handleAddresses(count int) error {
 func batchInsertAddresses(n int) error {
 	d := GetDb()
 	arg := make([]db.BatchCreateAddressesParams, 0, n)
+	cityIds, err := d.Queries.RandSelectCities(context.Background(), int32(n))
 
-	for range n {
+	if err != nil {
+		return err
+	}
+
+	for i := range n {
 		lat, _ := gofakeit.LatitudeInRange(32, 45)
 		lng, _ := gofakeit.LongitudeInRange(-80, -120)
 
 		arg = append(arg, db.BatchCreateAddressesParams{
-			Country:    gofakeit.CountryAbr(),
-			State:      pgtype.Text{String: gofakeit.State(), Valid: true},
-			City:       gofakeit.City(),
+			CityID:     cityIds[i],
 			Line1:      gofakeit.Street(),
 			Line2:      pgtype.Text{String: gofakeit.StreetName(), Valid: true},
 			PostalCode: pgtype.Text{String: gofakeit.Zip(), Valid: true},
@@ -45,7 +48,7 @@ func batchInsertAddresses(n int) error {
 		})
 	}
 
-	_, err := d.Queries.BatchCreateAddresses(context.Background(), arg)
+	_, err = d.Queries.BatchCreateAddresses(context.Background(), arg)
 
 	return err
 }

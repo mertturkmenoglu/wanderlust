@@ -66,10 +66,10 @@ func handleUsers(count int) error {
 			step = count - i
 		}
 
-		arg := make([]db.CreateBatchUsersParams, 0, step)
+		arg := make([]db.BatchCreateUsersParams, 0, step)
 
 		for range step {
-			arg = append(arg, db.CreateBatchUsersParams{
+			arg = append(arg, db.BatchCreateUsersParams{
 				ID:                    gofakeit.UUID(),
 				Email:                 gofakeit.LetterN(4) + gofakeit.Email(),
 				Username:              gofakeit.Username() + gofakeit.LetterN(3),
@@ -83,7 +83,7 @@ func handleUsers(count int) error {
 			})
 		}
 
-		_, err := d.Queries.CreateBatchUsers(ctx, arg)
+		_, err := d.Queries.BatchCreateUsers(ctx, arg)
 
 		if err != nil {
 			return err
