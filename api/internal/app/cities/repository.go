@@ -5,6 +5,6 @@ import (
 	"wanderlust/internal/db"
 )
 
-func (r *repository) getCityById(id int32) (db.GetCityByIdRow, error) {
+func (r *repository) getCityById(id int32) (db.City, error) {
 	return r.db.Queries.GetCityById(context.Background(), id)
 }

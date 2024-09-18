@@ -8,15 +8,15 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *service) getCityById(id int32) (db.GetCityByIdRow, error) {
+func (s *service) getCityById(id int32) (db.City, error) {
 	res, err := s.repository.getCityById(id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return db.GetCityByIdRow{}, ErrCityNotFound
+			return db.City{}, ErrCityNotFound
 		}
 
-		return db.GetCityByIdRow{}, api.InternalServerError
+		return db.City{}, api.InternalServerError
 	}
 
 	return res, nil
