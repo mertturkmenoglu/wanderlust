@@ -10,3 +10,7 @@ export type GetCityByIdResponseDto = {
   longitude: number;
   description: string;
 };
+
+export type GetCitiesResponseDto = {
+  cities: GetCityByIdResponseDto[];
+};
