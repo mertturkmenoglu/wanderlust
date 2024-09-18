@@ -21,3 +21,17 @@ func (s *service) getCityById(id int32) (db.City, error) {
 
 	return res, nil
 }
+
+func (s *service) getCities() ([]db.City, error) {
+	res, err := s.repository.getCities()
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return []db.City{}, ErrCityNotFound
+		}
+
+		return []db.City{}, api.InternalServerError
+	}
+
+	return res, nil
+}

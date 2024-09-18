@@ -33,3 +33,17 @@ func (h *handlers) GetCityById(c echo.Context) error {
 		Data: v,
 	})
 }
+
+func (h *handlers) GetCities(c echo.Context) error {
+	res, err := h.service.getCities()
+
+	if err != nil {
+		return err
+	}
+
+	v := mapGetCitiesToDto(res)
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: v,
+	})
+}

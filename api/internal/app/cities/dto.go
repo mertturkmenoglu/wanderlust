@@ -15,3 +15,10 @@ type GetCityByIdResponseDto struct {
 	Longitude   float64 `json:"longitude" example:"-0.1277583" validate:"required"`
 	Description string  `json:"description" example:"New York City is the most populous city in the United States." validate:"required"`
 } //@name CitiesGetCityByIdResponseDto
+
+// GetCitiesResponseDto godoc
+//
+// @Description Get cities response dto
+type GetCitiesResponseDto struct {
+	Cities []GetCityByIdResponseDto `json:"cities" validate:"required"`
+}
