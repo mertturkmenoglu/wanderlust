@@ -22,6 +22,41 @@ type CreateCitiesParams struct {
 	Description string
 }
 
+const getCities = `-- name: GetCities :many
+SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description FROM cities
+`
+
+func (q *Queries) GetCities(ctx context.Context) ([]City, error) {
+	rows, err := q.db.Query(ctx, getCities)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []City
+	for rows.Next() {
+		var i City
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.StateCode,
+			&i.StateName,
+			&i.CountryCode,
+			&i.CountryName,
+			&i.ImageUrl,
+			&i.Latitude,
+			&i.Longitude,
+			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCityById = `-- name: GetCityById :one
 SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description FROM cities
 WHERE cities.id = $1 LIMIT 1

@@ -32,3 +32,6 @@ SELECT id
 FROM cities
 ORDER BY RANDOM()
 LIMIT $1;
+
+-- name: GetCities :many
+SELECT * FROM cities;
