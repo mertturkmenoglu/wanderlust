@@ -12,70 +12,62 @@ import (
 type CreateCitiesParams struct {
 	ID          int32
 	Name        string
-	StateID     int32
 	StateCode   string
 	StateName   string
-	CountryID   int32
 	CountryCode string
 	CountryName string
+	ImageUrl    string
 	Latitude    float64
 	Longitude   float64
-	WikiDataID  string
+	Description string
 }
 
 const getCityById = `-- name: GetCityById :one
-SELECT cities.id, cities.name, cities.state_id, cities.state_code, cities.state_name, cities.country_id, cities.country_code, cities.country_name, cities.latitude, cities.longitude, cities.wiki_data_id, states.id, states.name, states.country_id, states.country_code, states.country_name, states.state_code, states.type, states.latitude, states.longitude, countries.id, countries.name, countries.iso2, countries.numeric_code, countries.phone_code, countries.capital, countries.currency, countries.currency_name, countries.currency_symbol, countries.tld, countries.native, countries.region, countries.subregion, countries.timezones, countries.latitude, countries.longitude FROM cities
-LEFT JOIN states ON cities.state_id = states.id
-LEFT JOIN countries ON cities.country_id = countries.id
+SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description FROM cities
 WHERE cities.id = $1 LIMIT 1
 `
 
-type GetCityByIdRow struct {
-	City    City
-	State   State
-	Country Country
-}
-
-func (q *Queries) GetCityById(ctx context.Context, id int32) (GetCityByIdRow, error) {
+func (q *Queries) GetCityById(ctx context.Context, id int32) (City, error) {
 	row := q.db.QueryRow(ctx, getCityById, id)
-	var i GetCityByIdRow
+	var i City
 	err := row.Scan(
-		&i.City.ID,
-		&i.City.Name,
-		&i.City.StateID,
-		&i.City.StateCode,
-		&i.City.StateName,
-		&i.City.CountryID,
-		&i.City.CountryCode,
-		&i.City.CountryName,
-		&i.City.Latitude,
-		&i.City.Longitude,
-		&i.City.WikiDataID,
-		&i.State.ID,
-		&i.State.Name,
-		&i.State.CountryID,
-		&i.State.CountryCode,
-		&i.State.CountryName,
-		&i.State.StateCode,
-		&i.State.Type,
-		&i.State.Latitude,
-		&i.State.Longitude,
-		&i.Country.ID,
-		&i.Country.Name,
-		&i.Country.Iso2,
-		&i.Country.NumericCode,
-		&i.Country.PhoneCode,
-		&i.Country.Capital,
-		&i.Country.Currency,
-		&i.Country.CurrencyName,
-		&i.Country.CurrencySymbol,
-		&i.Country.Tld,
-		&i.Country.Native,
-		&i.Country.Region,
-		&i.Country.Subregion,
-		&i.Country.Timezones,
-		&i.Country.Latitude,
-		&i.Country.Longitude,
+		&i.ID,
+		&i.Name,
+		&i.StateCode,
+		&i.StateName,
+		&i.CountryCode,
+		&i.CountryName,
+		&i.ImageUrl,
+		&i.Latitude,
+		&i.Longitude,
+		&i.Description,
 	)
 	return i, err
+}
+
+const randSelectCities = `-- name: RandSelectCities :many
+SELECT id
+FROM cities
+ORDER BY RANDOM()
+LIMIT $1
+`
+
+func (q *Queries) RandSelectCities(ctx context.Context, limit int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, randSelectCities, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var id int32
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

@@ -63,7 +63,7 @@ INSERT INTO users (
   $10
 ) RETURNING *;
 
--- name: CreateBatchUsers :copyfrom
+-- name: BatchCreateUsers :copyfrom
 INSERT INTO users (
   id,
   email,

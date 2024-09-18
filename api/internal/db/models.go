@@ -10,12 +10,10 @@ import (
 
 type Address struct {
 	ID         int32
-	Country    string
-	City       string
+	CityID     int32
 	Line1      string
 	Line2      pgtype.Text
 	PostalCode pgtype.Text
-	State      pgtype.Text
 	Lat        float64
 	Lng        float64
 }
@@ -39,34 +37,14 @@ type Category struct {
 type City struct {
 	ID          int32
 	Name        string
-	StateID     int32
 	StateCode   string
 	StateName   string
-	CountryID   int32
 	CountryCode string
 	CountryName string
+	ImageUrl    string
 	Latitude    float64
 	Longitude   float64
-	WikiDataID  string
-}
-
-type Country struct {
-	ID             int32
-	Name           string
-	Iso2           string
-	NumericCode    string
-	PhoneCode      string
-	Capital        string
-	Currency       string
-	CurrencyName   string
-	CurrencySymbol string
-	Tld            string
-	Native         string
-	Region         string
-	Subregion      string
-	Timezones      string
-	Latitude       float64
-	Longitude      float64
+	Description string
 }
 
 type Follow struct {
@@ -115,18 +93,6 @@ type Session struct {
 	SessionData pgtype.Text
 	CreatedAt   pgtype.Timestamptz
 	ExpiresAt   pgtype.Timestamptz
-}
-
-type State struct {
-	ID          int32
-	Name        string
-	CountryID   int32
-	CountryCode string
-	CountryName string
-	StateCode   string
-	Type        pgtype.Text
-	Latitude    float64
-	Longitude   float64
 }
 
 type User struct {

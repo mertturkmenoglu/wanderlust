@@ -1,11 +1,9 @@
 -- name: CreateAddress :one
 INSERT INTO addresses (
-  country,
-  city,
+  city_id,
   line1,
   line2,
   postal_code,
-  state,
   lat,
   lng
 ) VALUES (
@@ -14,19 +12,15 @@ INSERT INTO addresses (
   $3,
   $4,
   $5,
-  $6,
-  $7,
-  $8
+  $6
 ) RETURNING *;
 
 -- name: BatchCreateAddresses :copyfrom
 INSERT INTO addresses (
-  country,
-  city,
+  city_id,
   line1,
   line2,
   postal_code,
-  state,
   lat,
   lng
 ) VALUES (
@@ -35,9 +29,7 @@ INSERT INTO addresses (
   $3,
   $4,
   $5,
-  $6,
-  $7,
-  $8
+  $6
 );
 
 -- name: RandSelectAddresses :many

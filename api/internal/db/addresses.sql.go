@@ -12,24 +12,20 @@ import (
 )
 
 type BatchCreateAddressesParams struct {
-	Country    string
-	City       string
+	CityID     int32
 	Line1      string
 	Line2      pgtype.Text
 	PostalCode pgtype.Text
-	State      pgtype.Text
 	Lat        float64
 	Lng        float64
 }
 
 const createAddress = `-- name: CreateAddress :one
 INSERT INTO addresses (
-  country,
-  city,
+  city_id,
   line1,
   line2,
   postal_code,
-  state,
   lat,
   lng
 ) VALUES (
@@ -38,43 +34,35 @@ INSERT INTO addresses (
   $3,
   $4,
   $5,
-  $6,
-  $7,
-  $8
-) RETURNING id, country, city, line1, line2, postal_code, state, lat, lng
+  $6
+) RETURNING id, city_id, line1, line2, postal_code, lat, lng
 `
 
 type CreateAddressParams struct {
-	Country    string
-	City       string
+	CityID     int32
 	Line1      string
 	Line2      pgtype.Text
 	PostalCode pgtype.Text
-	State      pgtype.Text
 	Lat        float64
 	Lng        float64
 }
 
 func (q *Queries) CreateAddress(ctx context.Context, arg CreateAddressParams) (Address, error) {
 	row := q.db.QueryRow(ctx, createAddress,
-		arg.Country,
-		arg.City,
+		arg.CityID,
 		arg.Line1,
 		arg.Line2,
 		arg.PostalCode,
-		arg.State,
 		arg.Lat,
 		arg.Lng,
 	)
 	var i Address
 	err := row.Scan(
 		&i.ID,
-		&i.Country,
-		&i.City,
+		&i.CityID,
 		&i.Line1,
 		&i.Line2,
 		&i.PostalCode,
-		&i.State,
 		&i.Lat,
 		&i.Lng,
 	)

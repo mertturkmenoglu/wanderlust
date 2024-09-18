@@ -29,12 +29,10 @@ func (r *iteratorForBatchCreateAddresses) Next() bool {
 
 func (r iteratorForBatchCreateAddresses) Values() ([]interface{}, error) {
 	return []interface{}{
-		r.rows[0].Country,
-		r.rows[0].City,
+		r.rows[0].CityID,
 		r.rows[0].Line1,
 		r.rows[0].Line2,
 		r.rows[0].PostalCode,
-		r.rows[0].State,
 		r.rows[0].Lat,
 		r.rows[0].Lng,
 	}, nil
@@ -45,7 +43,7 @@ func (r iteratorForBatchCreateAddresses) Err() error {
 }
 
 func (q *Queries) BatchCreateAddresses(ctx context.Context, arg []BatchCreateAddressesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"addresses"}, []string{"country", "city", "line1", "line2", "postal_code", "state", "lat", "lng"}, &iteratorForBatchCreateAddresses{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"addresses"}, []string{"city_id", "line1", "line2", "postal_code", "lat", "lng"}, &iteratorForBatchCreateAddresses{rows: arg})
 }
 
 // iteratorForBatchCreateAmenitiesPois implements pgx.CopyFromSource.
@@ -125,13 +123,13 @@ func (q *Queries) BatchCreatePois(ctx context.Context, arg []BatchCreatePoisPara
 	return q.db.CopyFrom(ctx, []string{"pois"}, []string{"id", "name", "phone", "description", "address_id", "website", "price_level", "accessibility_level", "total_votes", "total_points", "total_favorites", "category_id", "open_times"}, &iteratorForBatchCreatePois{rows: arg})
 }
 
-// iteratorForCreateBatchUsers implements pgx.CopyFromSource.
-type iteratorForCreateBatchUsers struct {
-	rows                 []CreateBatchUsersParams
+// iteratorForBatchCreateUsers implements pgx.CopyFromSource.
+type iteratorForBatchCreateUsers struct {
+	rows                 []BatchCreateUsersParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForCreateBatchUsers) Next() bool {
+func (r *iteratorForBatchCreateUsers) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -143,7 +141,7 @@ func (r *iteratorForCreateBatchUsers) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForCreateBatchUsers) Values() ([]interface{}, error) {
+func (r iteratorForBatchCreateUsers) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
 		r.rows[0].Email,
@@ -158,12 +156,12 @@ func (r iteratorForCreateBatchUsers) Values() ([]interface{}, error) {
 	}, nil
 }
 
-func (r iteratorForCreateBatchUsers) Err() error {
+func (r iteratorForBatchCreateUsers) Err() error {
 	return nil
 }
 
-func (q *Queries) CreateBatchUsers(ctx context.Context, arg []CreateBatchUsersParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"users"}, []string{"id", "email", "username", "full_name", "password_hash", "google_id", "fb_id", "is_email_verified", "is_onboarding_completed", "profile_image"}, &iteratorForCreateBatchUsers{rows: arg})
+func (q *Queries) BatchCreateUsers(ctx context.Context, arg []BatchCreateUsersParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"users"}, []string{"id", "email", "username", "full_name", "password_hash", "google_id", "fb_id", "is_email_verified", "is_onboarding_completed", "profile_image"}, &iteratorForBatchCreateUsers{rows: arg})
 }
 
 // iteratorForCreateCities implements pgx.CopyFromSource.
@@ -188,15 +186,14 @@ func (r iteratorForCreateCities) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
 		r.rows[0].Name,
-		r.rows[0].StateID,
 		r.rows[0].StateCode,
 		r.rows[0].StateName,
-		r.rows[0].CountryID,
 		r.rows[0].CountryCode,
 		r.rows[0].CountryName,
+		r.rows[0].ImageUrl,
 		r.rows[0].Latitude,
 		r.rows[0].Longitude,
-		r.rows[0].WikiDataID,
+		r.rows[0].Description,
 	}, nil
 }
 
@@ -205,5 +202,5 @@ func (r iteratorForCreateCities) Err() error {
 }
 
 func (q *Queries) CreateCities(ctx context.Context, arg []CreateCitiesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"cities"}, []string{"id", "name", "state_id", "state_code", "state_name", "country_id", "country_code", "country_name", "latitude", "longitude", "wiki_data_id"}, &iteratorForCreateCities{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"cities"}, []string{"id", "name", "state_code", "state_name", "country_code", "country_name", "image_url", "latitude", "longitude", "description"}, &iteratorForCreateCities{rows: arg})
 }

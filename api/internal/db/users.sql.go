@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type CreateBatchUsersParams struct {
+type BatchCreateUsersParams struct {
 	ID                    string
 	Email                 string
 	Username              string

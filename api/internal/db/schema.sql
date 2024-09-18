@@ -35,7 +35,9 @@ CREATE TABLE IF NOT EXISTS sessions (
   user_id TEXT NOT NULL,
   session_data TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  expires_at TIMESTAMPTZ NOT NULL
+  expires_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT 
+    fk_sessions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -44,77 +46,29 @@ CREATE TABLE IF NOT EXISTS categories (
   image VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS addresses (
-  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  country CHAR(2) NOT NULL,
-  city VARCHAR(64) NOT NULL,
-  line1 VARCHAR(64) NOT NULL,
-  line2 VARCHAR(64),
-  postal_code VARCHAR(16),
-  state VARCHAR(64),
-  lat DOUBLE PRECISION NOT NULL,
-  lng DOUBLE PRECISION NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS media (
-  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  poi_id TEXT NOT NULL,
-  url VARCHAR(255) NOT NULL,
-  thumbnail VARCHAR(255) NOT NULL,
-  alt VARCHAR(255) NOT NULL,
-  caption VARCHAR(255),
-  width INT NOT NULL,
-  height INT NOT NULL,
-  media_order SMALLINT NOT NULL,
-  extension VARCHAR(16) NOT NULL,
-  mime_type VARCHAR(64) NOT NULL,
-  file_size BIGINT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS countries (
-  id INT PRIMARY KEY,
-  name VARCHAR(64) NOT NULL,
-  iso2 CHAR(2) NOT NULL,
-  numeric_code VARCHAR(3) NOT NULL,
-  phone_code VARCHAR(32) NOT NULL,
-  capital VARCHAR(32) NOT NULL,
-  currency CHAR(3) NOT NULL,
-  currency_name VARCHAR(64) NOT NULL,
-  currency_symbol VARCHAR(10) NOT NULL,
-  tld CHAR(3) NOT NULL,
-  native VARCHAR(64) NOT NULL,
-  region VARCHAR(64) NOT NULL,
-  subregion VARCHAR(64) NOT NULL,
-  timezones TEXT NOT NULL,
-  latitude DOUBLE PRECISION NOT NULL,
-  longitude DOUBLE PRECISION NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS states (
-  id INT PRIMARY KEY,
-  name VARCHAR(64) NOT NULL,
-  country_id INT NOT NULL,
-  country_code CHAR(2) NOT NULL,
-  country_name VARCHAR(64) NOT NULL,
-  state_code VARCHAR(16) NOT NULL,
-  type VARCHAR(16),
-  latitude DOUBLE PRECISION NOT NULL,
-  longitude DOUBLE PRECISION NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS cities (
   id INT PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
-  state_id INT NOT NULL,
   state_code VARCHAR(16) NOT NULL,
   state_name VARCHAR(64) NOT NULL,
-  country_id INT NOT NULL,
   country_code CHAR(2) NOT NULL,
   country_name VARCHAR(64) NOT NULL,
+  image_url VARCHAR(255) NOT NULL,
   latitude DOUBLE PRECISION NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
-  wiki_data_id VARCHAR(64) NOT NULL
+  description VARCHAR(512) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS addresses (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  city_id INT NOT NULL,
+  line1 VARCHAR(64) NOT NULL,
+  line2 VARCHAR(64),
+  postal_code VARCHAR(16),
+  lat DOUBLE PRECISION NOT NULL,
+  lng DOUBLE PRECISION NOT NULL,
+  CONSTRAINT
+    fk_addresses_city FOREIGN KEY (city_id) REFERENCES cities(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS follows (
@@ -138,7 +92,28 @@ CREATE TABLE IF NOT EXISTS pois (
   category_id SMALLINT NOT NULL,
   open_times JSONB NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  CONSTRAINT
+    fk_pois_address FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE CASCADE,
+  CONSTRAINT
+    fk_pois_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS media (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  poi_id TEXT NOT NULL,
+  url VARCHAR(255) NOT NULL,
+  thumbnail VARCHAR(255) NOT NULL,
+  alt VARCHAR(255) NOT NULL,
+  caption VARCHAR(255),
+  width INT NOT NULL,
+  height INT NOT NULL,
+  media_order SMALLINT NOT NULL,
+  extension VARCHAR(16) NOT NULL,
+  mime_type VARCHAR(64) NOT NULL,
+  file_size BIGINT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  CONSTRAINT fk_media_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE SET DEFAULT
 );
 
 CREATE TABLE IF NOT EXISTS amenities (
@@ -148,5 +123,9 @@ CREATE TABLE IF NOT EXISTS amenities (
 
 CREATE TABLE IF NOT EXISTS amenities_pois (
   amenity_id INT NOT NULL,
-  poi_id TEXT NOT NULL
+  poi_id TEXT NOT NULL,
+  CONSTRAINT
+    fk_amenities_pois_amenity FOREIGN KEY (amenity_id) REFERENCES amenities(id) ON DELETE CASCADE,
+  CONSTRAINT
+    fk_amenities_pois_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE
 );
