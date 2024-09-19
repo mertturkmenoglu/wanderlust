@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS cities (
   image_url VARCHAR(255) NOT NULL,
   latitude DOUBLE PRECISION NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
-  description VARCHAR(512) NOT NULL
+  description VARCHAR(1024) NOT NULL
 );
 
 --
