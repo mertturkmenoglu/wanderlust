@@ -69,7 +69,7 @@ export default async function Home() {
               asChild
               variant="default"
             >
-              <Link href="/discover/locations">See categories</Link>
+              <Link href="/categories">See categories</Link>
             </Button>
           </div>
         }
