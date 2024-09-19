@@ -8,3 +8,6 @@ INSERT INTO categories (
   $2,
   $3
 ) RETURNING *;
+
+-- name: GetCategories :many
+SELECT * FROM categories;
