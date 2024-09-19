@@ -12,3 +12,7 @@ func (r *repository) getCityById(id int32) (db.City, error) {
 func (r *repository) getCities() ([]db.City, error) {
 	return r.db.Queries.GetCities(context.Background())
 }
+
+func (r *repository) getFeaturedCities(cityIds []int32) ([]db.City, error) {
+	return r.db.Queries.GetFeaturedCities(context.Background(), cityIds)
+}

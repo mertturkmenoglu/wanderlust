@@ -30,3 +30,15 @@ func mapGetCitiesToDto(v []db.City) GetCitiesResponseDto {
 		Cities: cities,
 	}
 }
+
+func mapGetFeaturedCitiesToDto(v []db.City) GetFeaturedCitiesResponseDto {
+	var cities []GetCityByIdResponseDto
+
+	for _, city := range v {
+		cities = append(cities, mapGetCityByIdRowToDto(city))
+	}
+
+	return GetFeaturedCitiesResponseDto{
+		Cities: cities,
+	}
+}

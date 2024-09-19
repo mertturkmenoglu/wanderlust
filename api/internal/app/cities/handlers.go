@@ -47,3 +47,17 @@ func (h *handlers) GetCities(c echo.Context) error {
 		Data: v,
 	})
 }
+
+func (h *handlers) GetFeaturedCities(c echo.Context) error {
+	res, err := h.service.getFeaturedCities()
+
+	if err != nil {
+		return err
+	}
+
+	v := mapGetFeaturedCitiesToDto(res)
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: v,
+	})
+}

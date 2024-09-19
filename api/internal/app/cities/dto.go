@@ -22,3 +22,10 @@ type GetCityByIdResponseDto struct {
 type GetCitiesResponseDto struct {
 	Cities []GetCityByIdResponseDto `json:"cities" validate:"required"`
 }
+
+// GetFeaturedCitiesResponseDto godoc
+//
+// @Description Get featured cities response dto
+type GetFeaturedCitiesResponseDto struct {
+	Cities []GetCityByIdResponseDto `json:"cities" validate:"required"`
+}
