@@ -6,12 +6,12 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function getCities() {
-  return api.get('cities/').json<{ data: GetCitiesResponseDto }>();
+async function getFeaturedCities() {
+  return api.get('cities/featured').json<{ data: GetCitiesResponseDto }>();
 }
 
 export default async function Home() {
-  const { data } = await getCities();
+  const { data } = await getFeaturedCities();
 
   return (
     <div className="container">
