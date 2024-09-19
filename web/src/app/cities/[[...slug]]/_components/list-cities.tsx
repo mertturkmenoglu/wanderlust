@@ -4,9 +4,6 @@ import api from '@/lib/api';
 import { GetCitiesResponseDto } from '@/lib/dto';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 async function getCities() {
   return api.get('cities/').json<{ data: GetCitiesResponseDto }>();
 }
@@ -28,7 +25,7 @@ function groupByCountry(cities: GetCitiesResponseDto['cities']) {
   return countriesArray;
 }
 
-export default async function Page() {
+export default async function ListCities() {
   const { data } = await getCities();
   const groups = groupByCountry(data.cities);
 

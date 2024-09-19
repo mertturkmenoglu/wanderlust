@@ -12,6 +12,10 @@ import { Button } from '@/components/ui/button';
 import api from '@/lib/api';
 import { GetCityByIdResponseDto } from '@/lib/dto';
 import Link from 'next/link';
+import ListCities from './_components/list-cities';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 type Props = {
   params: {
@@ -25,7 +29,7 @@ async function getCity(id: string) {
 
 export default async function Page({ params: { slug } }: Readonly<Props>) {
   if (!slug || slug.length < 1) {
-    throw new Error('404: Invalid city id');
+    return <ListCities />;
   }
 
   const cityId = slug[0];
