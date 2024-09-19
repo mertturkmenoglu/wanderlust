@@ -28,7 +28,7 @@ export default async function Page({ params: { slug } }: Readonly<Props>) {
   const city = await getCity(cityId);
 
   return (
-    <div className="mx-auto max-w-3xl py-8">
+    <div className="container mx-auto py-8">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -45,18 +45,22 @@ export default async function Page({ params: { slug } }: Readonly<Props>) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <img
-        src={city.data.imageUrl}
-        alt=""
-        className="mt-8 aspect-video rounded-md object-cover"
-      />
-      <h2 className="mt-8 text-6xl font-bold">{city.data.name}</h2>
-      <div className="mt-2 text-sm text-muted-foreground">
-        {city.data.stateName}/{city.data.countryName}
-      </div>
+      <div className="flex gap-8">
+        <img
+          src={city.data.imageUrl}
+          alt=""
+          className="mt-8 max-w-md rounded-md object-cover"
+        />
 
-      <div className="mt-4 text-lg text-muted-foreground">
-        {city.data.description}
+        <div>
+          <h2 className="mt-8 text-6xl font-bold">{city.data.name}</h2>
+          <div className="mt-2 text-sm text-muted-foreground">
+            {city.data.stateName}/{city.data.countryName}
+          </div>
+          <div className="mt-4 text-lg text-muted-foreground">
+            {city.data.description}
+          </div>
+        </div>
       </div>
     </div>
   );
