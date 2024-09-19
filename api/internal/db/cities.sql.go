@@ -80,6 +80,42 @@ func (q *Queries) GetCityById(ctx context.Context, id int32) (City, error) {
 	return i, err
 }
 
+const getFeaturedCities = `-- name: GetFeaturedCities :many
+SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description FROM cities
+WHERE id = ANY($1::int[])
+`
+
+func (q *Queries) GetFeaturedCities(ctx context.Context, dollar_1 []int32) ([]City, error) {
+	rows, err := q.db.Query(ctx, getFeaturedCities, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []City
+	for rows.Next() {
+		var i City
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.StateCode,
+			&i.StateName,
+			&i.CountryCode,
+			&i.CountryName,
+			&i.ImageUrl,
+			&i.Latitude,
+			&i.Longitude,
+			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const randSelectCities = `-- name: RandSelectCities :many
 SELECT id
 FROM cities

@@ -35,3 +35,7 @@ LIMIT $1;
 
 -- name: GetCities :many
 SELECT * FROM cities;
+
+-- name: GetFeaturedCities :many
+SELECT * FROM cities
+WHERE id = ANY($1::int[]);
