@@ -14,3 +14,13 @@ export type GetCityByIdResponseDto = {
 export type GetCitiesResponseDto = {
   cities: GetCityByIdResponseDto[];
 };
+
+export type GetCategoriesResponseDto = {
+  categories: GetCategoryByIdResponseDto[];
+};
+
+export type GetCategoryByIdResponseDto = {
+  id: number;
+  name: string;
+  image: string;
+};
