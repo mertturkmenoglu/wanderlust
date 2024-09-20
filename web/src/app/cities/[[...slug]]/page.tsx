@@ -53,11 +53,11 @@ export default async function Page({ params: { slug } }: Readonly<Props>) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex flex-col md:flex-row md:gap-8">
+      <div className="flex flex-col lg:flex-row lg:gap-8">
         <img
           src={city.data.imageUrl}
           alt=""
-          className="mt-8 w-full rounded-md object-cover md:max-w-md"
+          className="mt-8 w-full rounded-md object-cover lg:max-w-md"
         />
 
         <div>
@@ -112,20 +112,6 @@ export default async function Page({ params: { slug } }: Readonly<Props>) {
             favorite: true,
             image: 'https://i.imgur.com/JYnxkQM.jpg',
           },
-          {
-            id: '4',
-            title: 'No Time to Squirrel',
-            category: 'Photography Spots',
-            favorite: false,
-            image: 'https://i.imgur.com/XFG5Q7R.jpg',
-          },
-          {
-            id: '5',
-            title: "Squirrel's Gambit",
-            category: 'Restaurant',
-            favorite: true,
-            image: 'https://i.imgur.com/FKlIkC5.jpg',
-          },
         ]}
       />
 
@@ -149,7 +135,7 @@ export default async function Page({ params: { slug } }: Readonly<Props>) {
 
       <Collection
         className="my-8"
-        title="Popular Tourist Attractions"
+        title="Users Favorites"
         actions={
           <Button
             asChild
@@ -175,6 +161,35 @@ export default async function Page({ params: { slug } }: Readonly<Props>) {
             image:
               'https://a.ltrbxd.com/resized/film-poster/5/3/6/3/5363-the-king-s-speech-0-1000-0-1500-crop.jpg?v=334f06fd89',
           },
+          {
+            id: '4',
+            title: 'No Time to Squirrel',
+            category: 'Photography Spots',
+            favorite: false,
+            image: 'https://i.imgur.com/XFG5Q7R.jpg',
+          },
+          {
+            id: '5',
+            title: "Squirrel's Gambit",
+            category: 'Restaurant',
+            favorite: true,
+            image: 'https://i.imgur.com/FKlIkC5.jpg',
+          },
+        ]}
+      />
+
+      <Collection
+        className="my-8"
+        title="Popular Tourist Attractions"
+        actions={
+          <Button
+            asChild
+            variant="link"
+          >
+            <Link href={`/collections/city/curated/${cityId}`}>See more</Link>
+          </Button>
+        }
+        items={[
           {
             id: '2',
             title: 'The Squirrel from Earth',
