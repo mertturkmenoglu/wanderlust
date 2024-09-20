@@ -2,27 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import api from './api';
-
-export type AuthDto = {
-  data: GetMeResponseDto;
-};
-
-export type GetMeResponseDto = {
-  id: string;
-  email: string;
-  username: string;
-  fullName: string;
-  googleId: string | null;
-  isEmailVerified: boolean;
-  isOnboardingCompleted: boolean;
-  isActive: boolean;
-  role: string;
-  gender: string | null;
-  profileImage: string | null;
-  lastLogin: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { AuthDto } from './dto';
 
 const cookieName = '__wanderlust_auth';
 
