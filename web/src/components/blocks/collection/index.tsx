@@ -27,7 +27,7 @@ export default function Collection({
         {actions && <div>{actions}</div>}
       </div>
 
-      <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (
           <div key={item.id}>
             <div className="relative">
