@@ -1,7 +1,7 @@
 'use client';
 
 import api from '@/lib/api';
-import { AuthDto } from '@/lib/auth';
+import { AuthDto } from '@/lib/dto';
 import { useQuery } from '@tanstack/react-query';
 import React, { PropsWithChildren, useEffect, useMemo } from 'react';
 

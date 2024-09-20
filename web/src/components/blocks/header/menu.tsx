@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { AuthDto } from '@/lib/auth';
+import { AuthDto } from '@/lib/dto';
 import { UserIcon } from 'lucide-react';
 import MenuContent from './menu-content';
 
