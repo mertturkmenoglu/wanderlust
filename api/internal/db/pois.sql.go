@@ -27,6 +27,47 @@ type BatchCreatePoisParams struct {
 	OpenTimes          []byte
 }
 
+const peekPois = `-- name: PeekPois :many
+SELECT id, name, phone, description, address_id, website, price_level, accessibility_level, total_votes, total_points, total_favorites, category_id, open_times, created_at, updated_at FROM pois
+LIMIT 25
+`
+
+func (q *Queries) PeekPois(ctx context.Context) ([]Poi, error) {
+	rows, err := q.db.Query(ctx, peekPois)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Poi
+	for rows.Next() {
+		var i Poi
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Phone,
+			&i.Description,
+			&i.AddressID,
+			&i.Website,
+			&i.PriceLevel,
+			&i.AccessibilityLevel,
+			&i.TotalVotes,
+			&i.TotalPoints,
+			&i.TotalFavorites,
+			&i.CategoryID,
+			&i.OpenTimes,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const randSelectPois = `-- name: RandSelectPois :many
 SELECT id
 FROM pois

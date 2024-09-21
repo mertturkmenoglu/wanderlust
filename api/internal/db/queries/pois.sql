@@ -34,3 +34,7 @@ SELECT id
 FROM pois
 ORDER BY RANDOM()
 LIMIT $1;
+
+-- name: PeekPois :many
+SELECT * FROM pois
+LIMIT 25;
