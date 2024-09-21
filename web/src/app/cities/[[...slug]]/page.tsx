@@ -9,8 +9,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
-import api from '@/lib/api';
-import { GetCityByIdResponseDto } from '@/lib/dto';
+import { getCityById } from '@/lib/api';
 import Link from 'next/link';
 import ListCities from './_components/list-cities';
 
@@ -23,17 +22,13 @@ type Props = {
   };
 };
 
-async function getCity(id: string) {
-  return api.get(`cities/${id}`).json<{ data: GetCityByIdResponseDto }>();
-}
-
 export default async function Page({ params: { slug } }: Readonly<Props>) {
   if (!slug || slug.length < 1) {
     return <ListCities />;
   }
 
   const cityId = slug[0];
-  const city = await getCity(cityId);
+  const city = await getCityById(cityId);
 
   return (
     <div className="container mx-auto py-8">
