@@ -9,6 +9,7 @@ import (
 func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/pois")
 	{
+		routes.GET("/peek", m.handlers.PeekPois)
 		routes.GET("/:id", m.handlers.GetPoiById, middlewares.WithAuth)
 	}
 }
