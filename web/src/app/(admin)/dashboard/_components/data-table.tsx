@@ -66,7 +66,7 @@ export function DataTable<TData, TValue>({
                   <TableCell key={cell.id}>
                     <Link
                       key={cell.id}
-                      href={`${hrefPrefix}/${cell.getValue()}`}
+                      href={`${hrefPrefix}/${row.getValue('id')}`}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
