@@ -3,10 +3,8 @@ import { ColumnDef } from '@tanstack/react-table';
 export type Poi = {
   id: string;
   name: string;
-  category: string;
-  city: string;
-  state: string;
-  country: string;
+  addressId: number;
+  categoryId: number;
 };
 
 export const poisCols: ColumnDef<Poi>[] = [
@@ -19,19 +17,11 @@ export const poisCols: ColumnDef<Poi>[] = [
     header: 'Name',
   },
   {
-    accessorKey: 'city',
-    header: 'City',
+    accessorKey: 'addressId',
+    header: 'Address ID',
   },
   {
-    accessorKey: 'state',
-    header: 'State',
-  },
-  {
-    accessorKey: 'country',
-    header: 'Country',
-  },
-  {
-    accessorKey: 'category',
-    header: 'Category',
+    accessorKey: 'categoryId',
+    header: 'Category ID',
   },
 ];
