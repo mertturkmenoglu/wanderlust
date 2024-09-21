@@ -2,16 +2,11 @@ import ActionBanner from '@/components/blocks/action-banner';
 import OverlayBanner from '@/components/blocks/overlay-banner';
 import VerticalBanner from '@/components/blocks/vertical-banner';
 import { Button } from '@/components/ui/button';
-import api from '@/lib/api';
-import { GetCitiesResponseDto } from '@/lib/dto';
+import { getFeaturedCities } from '@/lib/api';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-async function getFeaturedCities() {
-  return api.get('cities/featured').json<{ data: GetCitiesResponseDto }>();
-}
 
 export default async function Home() {
   const { data } = await getFeaturedCities();
