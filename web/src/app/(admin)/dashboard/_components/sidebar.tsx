@@ -31,7 +31,7 @@ export default function Sidebar({ className }: Props) {
               variant="link"
               className="px-0"
             >
-              Locations
+              Point of Interests
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent>
@@ -42,7 +42,7 @@ export default function Sidebar({ className }: Props) {
                   variant="link"
                   className="px-0"
                 >
-                  <Link href="/dashboard/locations">View</Link>
+                  <Link href="/dashboard/pois">View</Link>
                 </Button>
               </li>
               <li>
@@ -51,7 +51,7 @@ export default function Sidebar({ className }: Props) {
                   variant="link"
                   className="px-0"
                 >
-                  <Link href="/dashboard/locations/new">New Location</Link>
+                  <Link href="/dashboard/pois/new">New</Link>
                 </Button>
               </li>
             </ul>
