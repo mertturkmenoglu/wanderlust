@@ -1,33 +1,12 @@
 import OverlayBanner from '@/components/blocks/overlay-banner';
 import { Button } from '@/components/ui/button';
-import api from '@/lib/api';
-import { GetCitiesResponseDto } from '@/lib/dto';
+import { getCities } from '@/lib/api';
 import Link from 'next/link';
-
-async function getCities() {
-  return api.get('cities/').json<{ data: GetCitiesResponseDto }>();
-}
-
-function groupByCountry(cities: GetCitiesResponseDto['cities']) {
-  const countries = new Map<string, GetCitiesResponseDto['cities']>();
-
-  cities.forEach((city) => {
-    const country = city.countryName;
-    if (!countries.has(country)) {
-      countries.set(country, []);
-    }
-    countries.get(country)?.push(city);
-  });
-
-  const countriesArray = Array.from(countries.entries());
-  countriesArray.sort((a, b) => a[0].localeCompare(b[0]));
-
-  return countriesArray;
-}
+import { groupCitiesByCountry } from './utils';
 
 export default async function ListCities() {
   const { data } = await getCities();
-  const groups = groupByCountry(data.cities);
+  const groups = groupCitiesByCountry(data.cities);
 
   return (
     <div className="container">
