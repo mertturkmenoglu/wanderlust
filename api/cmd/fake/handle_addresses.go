@@ -38,8 +38,10 @@ func batchInsertAddresses(n int) error {
 		lat, _ := gofakeit.LatitudeInRange(32, 45)
 		lng, _ := gofakeit.LongitudeInRange(-80, -120)
 
+		idx := i % len(cityIds)
+
 		arg = append(arg, db.BatchCreateAddressesParams{
-			CityID:     cityIds[i],
+			CityID:     cityIds[idx],
 			Line1:      gofakeit.Street(),
 			Line2:      pgtype.Text{String: gofakeit.StreetName(), Valid: true},
 			PostalCode: pgtype.Text{String: gofakeit.Zip(), Valid: true},
