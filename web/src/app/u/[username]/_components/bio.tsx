@@ -1,8 +1,6 @@
 import UserImage from '@/components/blocks/user-image';
-import api from '@/lib/api';
+import { getUserByUsername } from '@/lib/api';
 import { getAuth } from '@/lib/auth';
-import { GetUserProfileResponseDto } from '@/lib/dto';
-import { getAuthCookie } from '@/lib/headers';
 import clsx from 'clsx';
 import ActionButtons from './action-buttons';
 import Banner from './banner';
@@ -20,20 +18,10 @@ type Props = {
   className?: string;
 };
 
-export async function getUser(username: string) {
-  return api
-    .get(`users/${username}`, {
-      headers: {
-        ...getAuthCookie(),
-      },
-    })
-    .json<{ data: GetUserProfileResponseDto }>();
-}
-
 export default async function Bio({ username, className }: Props) {
   const currentUser = await getAuth();
   const isThisUser = currentUser?.data?.username === username;
-  const { data: user } = await getUser(username);
+  const { data: user } = await getUserByUsername(username);
 
   return (
     <div className={clsx('mx-auto max-w-4xl', className)}>
