@@ -63,3 +63,34 @@ export type GetUserProfileResponseDto = {
   followingCount: number;
   createdAt: string;
 };
+
+export type OpenTimesSingle = {
+  day: string;
+  open: string | null;
+  close: string | null;
+  closed: boolean;
+};
+
+export type OpenTimes = OpenTimesSingle[];
+
+export type PeekPoisResponseDto = {
+  pois: PeekPoisItemDto[];
+};
+
+export type PeekPoisItemDto = {
+  id: string;
+  name: string;
+  phone: string | null;
+  description: string;
+  addressId: number;
+  website: string | null;
+  priceLevel: number;
+  accessibilityLevel: number;
+  totalVotes: number;
+  totalPoints: number;
+  totalFavorites: number;
+  categoryId: number;
+  openTimes: OpenTimes;
+  createdAt: string;
+  updatedAt: string;
+};
