@@ -23,27 +23,27 @@ export default function MenuContent({ fullName, username }: Readonly<Props>) {
           <Link to={`/u/${username}`}>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/notifications">Notifications</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="cursor-pointer">
           <Link to="/settings">Settings</Link>
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuItem asChild>
-          <Link to={`/schedule`} className="cursor-pointer">
-            Schedule
+          <Link to={`/u/${username}/following`} className="cursor-pointer">
+            Friends
           </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild className="cursor-pointer">
-          <Link to="/overview">Overview</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild className="cursor-pointer">
-          <Link to="/services">Services</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
           <Link to="/bookmarks">Bookmarks</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link to="/lists">Lists</Link>
+          <Link to="/lists">My Lists</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/diary">Diary</Link>
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
@@ -57,9 +57,6 @@ export default function MenuContent({ fullName, username }: Readonly<Props>) {
       </DropdownMenuItem>
       <DropdownMenuItem asChild className="cursor-pointer">
         <Link to="/terms">Terms</Link>
-      </DropdownMenuItem>
-      <DropdownMenuItem asChild className="cursor-pointer">
-        <Link to="/contact">Contact Us</Link>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <Logout />
