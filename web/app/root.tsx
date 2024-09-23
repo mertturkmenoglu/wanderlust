@@ -1,7 +1,6 @@
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -46,7 +45,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <Toaster />
             <ScrollRestoration />
             <Scripts />
-            <LiveReload />
             <ReactQueryDevtools />
           </AuthContextProvider>
         </QueryClientProvider>
