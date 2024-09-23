@@ -1,4 +1,4 @@
-<img width="192" src="https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/main/web/src/app/icon.png" alt="Wanderlust logo" />
+<img width="192" src="https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/main/web/public/logo.png" alt="Wanderlust logo" />
 
 # Wanderlust
 
