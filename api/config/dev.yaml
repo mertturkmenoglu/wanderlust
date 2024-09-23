@@ -41,7 +41,7 @@ api:
       path: "/"
       max-age: 604800
     oauth:
-      redirect: "http://localhost:3000/"
+      redirect: "http://localhost:5173/"
     google:
       client-id: ""
       client-secret: ""
@@ -56,4 +56,4 @@ api:
   upload:
     presigned-url-exp-min: 15
 web:
-  url: "http://localhost:3000"
+  url: "http://localhost:5173"
