@@ -1,33 +1,27 @@
-import { Link } from "@remix-run/react";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { json, type MetaFunction } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
 import OverlayBanner from "~/components/blocks/overlay-banner";
-import Spinner from "~/components/kit/spinner";
 import { Button } from "~/components/ui/button";
 import { getCities } from "~/lib/api";
-import { GetCityByIdResponseDto } from "~/lib/dto";
+import { groupCitiesByCountry } from "./utils";
 
-export default function ListCities() {
-  const query = useQuery({
-    queryKey: ["cities"],
-    queryFn: async () => getCities(),
-  });
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Cities | Wanderlust" },
+    {
+      name: "description",
+      content: "Discover cities around the world",
+    },
+  ];
+};
 
-  const groups = useMemo(() => {
-    if (query.data) {
-      return groupCitiesByCountry(query.data.data.cities);
-    }
+export const loader = async () => {
+  const res = await getCities();
+  return json({ groups: groupCitiesByCountry(res.data.cities) });
+};
 
-    return [];
-  }, [query.data]);
-
-  if (query.isLoading) {
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
-  }
+export default function Page() {
+  const { groups } = useLoaderData<typeof loader>();
 
   return (
     <div className="container mx-auto">
@@ -77,21 +71,4 @@ export default function ListCities() {
       </div>
     </div>
   );
-}
-
-function groupCitiesByCountry(cities: GetCityByIdResponseDto[]) {
-  const countries = new Map<string, GetCityByIdResponseDto[]>();
-
-  cities.forEach((city) => {
-    const country = city.countryName;
-    if (!countries.has(country)) {
-      countries.set(country, []);
-    }
-    countries.get(country)?.push(city);
-  });
-
-  const countriesArray = Array.from(countries.entries());
-  countriesArray.sort((a, b) => a[0].localeCompare(b[0]));
-
-  return countriesArray;
 }

@@ -1,8 +1,7 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json, type MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { useQuery } from "@tanstack/react-query";
 import Collection from "~/components/blocks/collection";
-import Spinner from "~/components/kit/spinner";
+import OverlayBanner from "~/components/blocks/overlay-banner";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,50 +12,37 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
-import ListCities from "./list-cities";
-import OverlayBanner from "~/components/blocks/overlay-banner";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let slug = params["*"];
 
   if (!slug) {
-    slug = "";
+    throw new Response("Slug is missing", { status: 404 });
   }
 
-  let cityId = "";
+  const cityId: string | undefined = slug.split("/")[0];
 
-  if (slug.length > 0) {
-    cityId = slug.split("/")[0];
+  if (!cityId) {
+    throw new Response("City ID is missing", { status: 404 });
   }
 
-  return json({ slug, cityId });
+  const city = await getCityById(cityId);
+
+  return json({ city: city.data });
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: `${data?.city.name} | Wanderlust` },
+    {
+      name: "description",
+      content: `Discover ${data?.city.name} with Wanderlust`,
+    },
+  ];
 };
 
 export default function Page() {
-  const { slug, cityId } = useLoaderData<typeof loader>();
-  const query = useQuery({
-    queryKey: ["cities", cityId],
-    queryFn: async () => getCityById(cityId),
-    enabled: cityId.length > 0,
-  });
-
-  if (slug.length < 1) {
-    return <ListCities />;
-  }
-
-  if (query.isLoading) {
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
-  }
-
-  const city = query.data;
-
-  if (!city) {
-    return <div>City not found</div>;
-  }
+  const { city } = useLoaderData<typeof loader>();
 
   return (
     <div className="container mx-auto py-8">
@@ -67,29 +53,29 @@ export default function Page() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/cities">Cities</BreadcrumbLink>
+            <BreadcrumbLink href="/cities/list">Cities</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{city.data.name}</BreadcrumbPage>
+            <BreadcrumbPage>{city.name}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <div className="flex flex-col lg:flex-row lg:gap-8">
         <img
-          src={city.data.imageUrl}
+          src={city.imageUrl}
           alt=""
           className="mt-8 w-full rounded-md object-cover lg:max-w-md"
         />
 
         <div>
-          <h2 className="mt-8 text-6xl font-bold">{city.data.name}</h2>
+          <h2 className="mt-8 text-6xl font-bold">{city.name}</h2>
           <div className="mt-2 text-sm text-muted-foreground">
-            {city.data.stateName}/{city.data.countryName}
+            {city.stateName}/{city.countryName}
           </div>
           <div className="mt-4 text-lg text-muted-foreground">
-            {city.data.description}
+            {city.description}
           </div>
         </div>
       </div>
@@ -99,7 +85,7 @@ export default function Page() {
         title="Curated Locations"
         actions={
           <Button asChild variant="link">
-            <Link to={`/collections/city/curated/${cityId}`}>See more</Link>
+            <Link to={`/collections/city/curated/${city.id}`}>See more</Link>
           </Button>
         }
         items={[
@@ -140,7 +126,7 @@ export default function Page() {
         alt="Categories Banner Image"
         message={
           <div className="flex items-center gap-4">
-            <div>Plan a trip to {city.data.name}</div>
+            <div>Plan a trip to {city.name}</div>
             <Button asChild variant="default">
               <Link to="/trips/planner">Start Planning</Link>
             </Button>
@@ -155,7 +141,7 @@ export default function Page() {
         title="Users Favorites"
         actions={
           <Button asChild variant="link">
-            <Link to={`/collections/city/curated/${cityId}`}>See more</Link>
+            <Link to={`/collections/city/curated/${city.id}`}>See more</Link>
           </Button>
         }
         items={[
@@ -197,7 +183,7 @@ export default function Page() {
         title="Popular Tourist Attractions"
         actions={
           <Button asChild variant="link">
-            <Link to={`/collections/city/curated/${cityId}`}>See more</Link>
+            <Link to={`/collections/city/curated/${city.id}`}>See more</Link>
           </Button>
         }
         items={[
