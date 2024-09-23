@@ -30,10 +30,10 @@ export default function ActionBanner({
       <img
         src={image}
         className={cn(
-          "aspect-video w-full rounded-t-xl object-cover md:aspect-square md:max-w-md",
+          "aspect-video w-full rounded-t-xl md:rounded-t-none object-cover md:aspect-square md:max-w-md",
           {
-            "md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl": lefty,
-            "md:rounded-r-xl md:rounded-t-none md:rounded-tr-xl": !lefty,
+            "md:rounded-l-xl md:rounded-tl-xl": lefty,
+            "md:rounded-r-xl md:rounded-tr-xl": !lefty,
           },
           imgClassName
         )}
