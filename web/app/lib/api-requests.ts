@@ -6,6 +6,7 @@ import {
   GetCityByIdResponseDto,
   GetMeResponseDto,
   GetUserProfileResponseDto,
+  PeekPoisResponseDto,
 } from "./dto";
 
 export async function getMe(options?: Options) {
@@ -32,4 +33,8 @@ export async function getFeaturedCities() {
 
 export async function getCategories() {
   return api.get("categories/").json<{ data: GetCategoriesResponseDto }>();
+}
+
+export async function peekPois() {
+  return api.get("pois/peek").json<{ data: PeekPoisResponseDto }>();
 }
