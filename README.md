@@ -13,7 +13,14 @@ It's open source and free.
 ## Requirements
 
 - Docker
-- bun v1.1.10 or later
+- Go
+- sqlc
+- GNU Make
+- Air
+- Go Migrate
+- swaggo/swag
+- Node.js
+- pnpm
 
 ## Installation and Running
 
