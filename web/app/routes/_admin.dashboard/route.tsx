@@ -1,21 +1,26 @@
-import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
+import {
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+  redirect,
+} from "@remix-run/node";
 import { Link, Outlet } from "@remix-run/react";
 import { getMe } from "~/lib/api";
 import Sidebar from "./components/sidebar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const Cookie = request.headers.get("Cookie") ?? "";
-  const auth = await getMe({ headers: { Cookie } });
+  try {
+    const Cookie = request.headers.get("Cookie") ?? "";
+    const auth = await getMe({ headers: { Cookie } });
 
-  if (!auth.data) {
-    throw new Response("Unauthorized", { status: 401 });
+    if (!auth.data || auth.data.role !== "admin") {
+      throw redirect("/");
+    }
+
+    return json({ auth: auth.data });
+  } catch (e) {
+    throw redirect("/");
   }
-
-  if (auth.data.role !== "admin") {
-    throw new Response("Unauthorized", { status: 401 });
-  }
-
-  return json({ auth: auth.data });
 }
 
 export const meta: MetaFunction = () => {
