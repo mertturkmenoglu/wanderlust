@@ -13,6 +13,7 @@ import Header from "./components/blocks/header";
 import { Toaster } from "./components/ui/sonner";
 import AuthContextProvider from "./providers/auth-provider";
 import "./tailwind.css";
+import { GeneralErrorBoundary } from "./components/blocks/error-boundary";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -60,4 +61,8 @@ export default function App() {
       <Outlet />
     </div>
   );
+}
+
+export function ErrorBoundary() {
+  return <GeneralErrorBoundary />;
 }

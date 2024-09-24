@@ -1,6 +1,7 @@
 import { json, type MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import ActionBanner from "~/components/blocks/action-banner";
+import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import VerticalBanner from "~/components/blocks/vertical-banner";
 import { Button } from "~/components/ui/button";
@@ -139,4 +140,8 @@ export default function Page() {
       />
     </div>
   );
+}
+
+export function ErrorBoundary() {
+  return <GeneralErrorBoundary />;
 }

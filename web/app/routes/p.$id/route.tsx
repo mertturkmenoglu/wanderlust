@@ -1,15 +1,13 @@
-import { json, LoaderFunctionArgs, MetaArgs, redirect } from "@remix-run/node";
+import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import invariant from "tiny-invariant";
+import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import { getPoiById } from "~/lib/api";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const id = params.id;
+  invariant(params.id, "id is required");
 
-  if (!id) {
-    throw redirect("/");
-  }
-
-  const res = await getPoiById(id);
+  const res = await getPoiById(params.id);
   return json({ poi: res.data });
 }
 
@@ -35,4 +33,8 @@ export default function Page() {
       </div>
     </div>
   );
+}
+
+export function ErrorBoundary() {
+  return <GeneralErrorBoundary />;
 }
