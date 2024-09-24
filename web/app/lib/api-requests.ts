@@ -1,10 +1,16 @@
+import { Options } from "ky";
 import api from "./api";
 import {
   GetCategoriesResponseDto,
   GetCitiesResponseDto,
   GetCityByIdResponseDto,
+  GetMeResponseDto,
   GetUserProfileResponseDto,
 } from "./dto";
+
+export async function getMe(options?: Options) {
+  return api.get("auth/me", options).json<{ data: GetMeResponseDto }>();
+}
 
 export async function getCities() {
   return api.get("cities/").json<{ data: GetCitiesResponseDto }>();
