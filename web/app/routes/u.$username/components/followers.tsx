@@ -18,14 +18,14 @@ export default function Followers({
   return (
     <div className={cn("mt-4 flex items-center gap-2", className)}>
       <Button variant="ghost" asChild>
-        <Link to={`/user/${username}/followers`}>
+        <Link to={`/u/${username}/followers`}>
           <span>{followersCount}</span>
           <span className="ml-1">Followers</span>
         </Link>
       </Button>
 
       <Button variant="ghost" asChild>
-        <Link to={`/user/${username}/following`}>
+        <Link to={`/u/${username}/following`}>
           <span>{followingCount}</span>
           <span className="ml-1">Following</span>
         </Link>
