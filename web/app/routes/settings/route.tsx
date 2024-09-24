@@ -18,6 +18,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
+export function meta() {
+  return [{ title: "Settings | Wanderlust" }];
+}
+
 export default function Page() {
   return (
     <div className="flex w-full flex-col">
