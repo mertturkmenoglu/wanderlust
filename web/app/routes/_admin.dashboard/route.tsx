@@ -1,7 +1,43 @@
+import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
+import { Link, Outlet } from "@remix-run/react";
+import { getMe } from "~/lib/api";
+import Sidebar from "./components/sidebar";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const Cookie = request.headers.get("Cookie") ?? "";
+  const auth = await getMe({ headers: { Cookie } });
+
+  if (!auth.data) {
+    throw new Response("Unauthorized", { status: 401 });
+  }
+
+  if (auth.data.role !== "admin") {
+    throw new Response("Unauthorized", { status: 401 });
+  }
+
+  return json({ auth: auth.data });
+}
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Admin Dashboard | Wanderlust" }];
+};
+
 export default function Page() {
   return (
-    <div>
-      <div>This is the admin dashboard page</div>
+    <div className="my-16">
+      <div>
+        <Link to="/dashboard">
+          <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+            Admin Dashboard
+          </h2>
+        </Link>
+      </div>
+      <div className="my-8 flex flex-col gap-8 md:flex-row">
+        <Sidebar className="w-[256px] md:border-r md:border-border" />
+        <div className="w-full">
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 }
