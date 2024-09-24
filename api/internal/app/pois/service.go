@@ -20,3 +20,13 @@ func (s *service) peekPois() ([]db.Poi, error) {
 
 	return res, nil
 }
+
+func (s *service) getPoiById(id string) (GetPoiByIdResponseDto, error) {
+	dao, err := s.repository.getPoiById(id)
+
+	if err != nil {
+		return GetPoiByIdResponseDto{}, err
+	}
+
+	return mapGetPoiByIdToDto(dao)
+}

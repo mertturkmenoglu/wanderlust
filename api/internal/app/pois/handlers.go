@@ -1,6 +1,7 @@
 package pois
 
 import (
+	"fmt"
 	"net/http"
 	"wanderlust/internal/app/api"
 
@@ -14,7 +15,18 @@ func (h *handlers) GetPoiById(c echo.Context) error {
 		return ErrIdRequired
 	}
 
-	return c.NoContent(http.StatusNoContent)
+	fmt.Println("id is: ", id)
+
+	res, err := h.service.getPoiById(id)
+
+	if err != nil {
+		fmt.Println("err is: ", err)
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: res,
+	})
 }
 
 func (h *handlers) PeekPois(c echo.Context) error {
