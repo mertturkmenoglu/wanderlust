@@ -18,6 +18,16 @@ export default function Sidebar({ className }: Props) {
         <Item href="/dashboard" text="Dashboard" />
 
         <Collapsible>
+          <Trigger text="Cities" />
+          <CollapsibleContent>
+            <ul className="ml-4">
+              <Item href="/dashboard/cities" text="View" />
+              <Item href="/dashboard/cities/new" text="New" />
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Collapsible>
           <Trigger text="Point of Interests" />
           <CollapsibleContent>
             <ul className="ml-4">
@@ -38,7 +48,7 @@ export default function Sidebar({ className }: Props) {
         </Collapsible>
 
         <Collapsible>
-        <Trigger text="Reports" />
+          <Trigger text="Reports" />
           <CollapsibleContent>
             <ul className="ml-4"></ul>
           </CollapsibleContent>
