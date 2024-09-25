@@ -1,6 +1,7 @@
 import { Options } from "ky";
 import api from "./api";
 import {
+  GetAmenitiesResponseDto,
   GetCategoriesResponseDto,
   GetCitiesResponseDto,
   GetCityByIdResponseDto,
@@ -42,4 +43,8 @@ export async function peekPois() {
 
 export async function getPoiById(id: string) {
   return api.get(`pois/${id}`).json<{ data: GetPoiByIdResponseDto }>();
+}
+
+export async function getAmenities() {
+  return api.get("amenities/").json<{ data: GetAmenitiesResponseDto }>();
 }
