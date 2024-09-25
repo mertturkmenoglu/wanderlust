@@ -8,6 +8,16 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { usePasswordResetForm, usePasswordResetMutation } from "./hooks";
 
+export function meta() {
+  return [
+    { title: "Reset Password | Wanderlust" },
+    {
+      name: "description",
+      content: "Reset your Wanderlust account password",
+    },
+  ];
+}
+
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
   const { formState, register, handleSubmit } = usePasswordResetForm();

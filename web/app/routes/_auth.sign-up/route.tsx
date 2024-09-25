@@ -10,13 +10,23 @@ import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
 import { useSignUpForm, useSignUpMutation } from "./hooks";
 
+export function meta() {
+  return [
+    { title: "Sign Up | Wanderlust" },
+    {
+      name: "description",
+      content: "Sign up to Wanderlust",
+    },
+  ];
+}
+
 export default function Page() {
   const [showPassword, setShowPassword] = useState(false);
   const { formState, register, handleSubmit } = useSignUpForm();
   const mutation = useSignUpMutation();
 
   return (
-    <Card className="container mx-auto my-32 flex max-w-lg flex-col py-8">
+    <Card className="container mx-auto my-32 flex max-w-lg flex-col p-8">
       <img
         src="/logo.png"
         alt="Wanderlust"

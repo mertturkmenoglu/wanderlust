@@ -6,6 +6,16 @@ import {
 } from "~/components/ui/accordion";
 import { faqData } from "./data";
 
+export function meta() {
+  return [
+    { title: "Help Center | Wanderlust" },
+    {
+      name: "description",
+      content: "Get help with Wanderlust",
+    },
+  ];
+}
+
 export default function Page() {
   return (
     <>

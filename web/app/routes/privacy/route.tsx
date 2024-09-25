@@ -1,5 +1,15 @@
 import { Button } from "~/components/ui/button";
 
+export function meta() {
+  return [
+    { title: "Privacy Policy | Wanderlust" },
+    {
+      name: "description",
+      content: "Privacy Policy for Wanderlust",
+    },
+  ];
+}
+
 export default function PrivacyPage() {
   return (
     <div>

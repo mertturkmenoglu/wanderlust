@@ -1,4 +1,3 @@
-import { MetaFunction } from "@remix-run/node";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useContext, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
@@ -14,7 +13,7 @@ import { AuthContext } from "~/providers/auth-provider";
 import { useLoginMutation, useSignInForm } from "./hooks";
 import { FormInput } from "./schema";
 
-export const meta: MetaFunction = () => {
+export function meta() {
   return [
     { title: "Sign In | Wanderlust" },
     {
@@ -22,7 +21,7 @@ export const meta: MetaFunction = () => {
       content: "Sign in to your Wanderlust account",
     },
   ];
-};
+}
 
 export default function Page() {
   const auth = useContext(AuthContext);

@@ -1,6 +1,16 @@
 import { Link } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 
+export function meta() {
+  return [
+    { title: "Terms of Service | Wanderlust" },
+    {
+      name: "description",
+      content: "Terms of Service for Wanderlust",
+    },
+  ];
+}
+
 export default function page() {
   return (
     <div className="mx-auto my-16 max-w-2xl text-wrap">

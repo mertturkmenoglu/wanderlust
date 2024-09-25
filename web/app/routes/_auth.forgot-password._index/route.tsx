@@ -7,6 +7,16 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { useForgotPasswordForm, useForgotPasswordMutation } from "./hooks";
 
+export function meta() {
+  return [
+    { title: "Forgot Password | Wanderlust" },
+    {
+      name: "description",
+      content: "Forgot your password? Reset your Wanderlust account password",
+    },
+  ];
+}
+
 export default function Page() {
   const { formState, register, handleSubmit } = useForgotPasswordForm();
   const mutation = useForgotPasswordMutation();
