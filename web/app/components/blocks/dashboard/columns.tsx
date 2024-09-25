@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from "@tanstack/react-table";
 
 export type Poi = {
   id: string;
@@ -9,19 +9,45 @@ export type Poi = {
 
 export const poisCols: ColumnDef<Poi>[] = [
   {
-    accessorKey: 'id',
-    header: 'ID',
+    accessorKey: "id",
+    header: "ID",
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: "name",
+    header: "Name",
   },
   {
-    accessorKey: 'addressId',
-    header: 'Address ID',
+    accessorKey: "addressId",
+    header: "Address ID",
   },
   {
-    accessorKey: 'categoryId',
-    header: 'Category ID',
+    accessorKey: "categoryId",
+    header: "Category ID",
+  },
+];
+
+export type City = {
+  id: number;
+  name: string;
+  stateName: string;
+  countryName: string;
+};
+
+export const citiesCols: ColumnDef<City>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "stateName",
+    header: "State",
+  },
+  {
+    accessorKey: "countryName",
+    header: "Country",
   },
 ];
