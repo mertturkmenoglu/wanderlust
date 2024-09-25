@@ -29,7 +29,7 @@ export const meta: MetaFunction = () => {
 
 export default function Page() {
   return (
-    <div className="my-16">
+    <div className="my-16 container mx-auto">
       <div>
         <Link to="/dashboard">
           <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
