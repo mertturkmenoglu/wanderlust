@@ -18,6 +18,26 @@ export default function Sidebar({ className }: Props) {
         <Item href="/dashboard" text="Dashboard" />
 
         <Collapsible>
+          <Trigger text="Amenities" />
+          <CollapsibleContent>
+            <ul className="ml-4">
+              <Item href="/dashboard/amenities" text="View" />
+              <Item href="/dashboard/amenities/new" text="New" />
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Collapsible>
+          <Trigger text="Categories" />
+          <CollapsibleContent>
+            <ul className="ml-4">
+              <Item href="/dashboard/categories" text="View" />
+              <Item href="/dashboard/categories/new" text="New" />
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
+
+        <Collapsible>
           <Trigger text="Cities" />
           <CollapsibleContent>
             <ul className="ml-4">
