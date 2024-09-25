@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"wanderlust/config"
+	"wanderlust/internal/app/amenities"
 	"wanderlust/internal/app/api"
 	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/categories"
@@ -85,6 +86,7 @@ func (s *Application) RegisterRoutes() *echo.Echo {
 		cities.New(s.Db, s.Cache),
 		categories.New(s.Db),
 		pois.New(s.Db, s.Flake),
+		amenities.New(s.Db),
 	}
 
 	api := e.Group("/api")
