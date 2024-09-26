@@ -11,3 +11,13 @@ func (s *service) getAmenities() ([]db.Amenity, error) {
 
 	return res, nil
 }
+
+func (s *service) updateAmenity(id int32, dto UpdateAmenityRequestDto) error {
+	err := s.repository.updateAmenity(id, dto)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
