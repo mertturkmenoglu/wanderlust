@@ -22,6 +22,84 @@ type CreateCitiesParams struct {
 	Description string
 }
 
+const createCity = `-- name: CreateCity :one
+INSERT INTO cities (
+  id,
+  name,
+  state_code,
+  state_name,
+  country_code,
+  country_name,
+  image_url,
+  latitude,
+  longitude,
+  description
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10
+) RETURNING id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description
+`
+
+type CreateCityParams struct {
+	ID          int32
+	Name        string
+	StateCode   string
+	StateName   string
+	CountryCode string
+	CountryName string
+	ImageUrl    string
+	Latitude    float64
+	Longitude   float64
+	Description string
+}
+
+func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, error) {
+	row := q.db.QueryRow(ctx, createCity,
+		arg.ID,
+		arg.Name,
+		arg.StateCode,
+		arg.StateName,
+		arg.CountryCode,
+		arg.CountryName,
+		arg.ImageUrl,
+		arg.Latitude,
+		arg.Longitude,
+		arg.Description,
+	)
+	var i City
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.StateCode,
+		&i.StateName,
+		&i.CountryCode,
+		&i.CountryName,
+		&i.ImageUrl,
+		&i.Latitude,
+		&i.Longitude,
+		&i.Description,
+	)
+	return i, err
+}
+
+const deleteCity = `-- name: DeleteCity :exec
+DELETE FROM cities
+WHERE id = $1
+`
+
+func (q *Queries) DeleteCity(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteCity, id)
+	return err
+}
+
 const getCities = `-- name: GetCities :many
 SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description FROM cities
 `
@@ -141,4 +219,62 @@ func (q *Queries) RandSelectCities(ctx context.Context, limit int32) ([]int32, e
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateCity = `-- name: UpdateCity :one
+UPDATE cities
+SET 
+  name = $2,
+  state_code = $3,
+  state_name = $4,
+  country_code = $5,
+  country_name = $6,
+  image_url = $7,
+  latitude = $8,
+  longitude = $9,
+  description = $10
+WHERE id = $1
+RETURNING id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description
+`
+
+type UpdateCityParams struct {
+	ID          int32
+	Name        string
+	StateCode   string
+	StateName   string
+	CountryCode string
+	CountryName string
+	ImageUrl    string
+	Latitude    float64
+	Longitude   float64
+	Description string
+}
+
+func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (City, error) {
+	row := q.db.QueryRow(ctx, updateCity,
+		arg.ID,
+		arg.Name,
+		arg.StateCode,
+		arg.StateName,
+		arg.CountryCode,
+		arg.CountryName,
+		arg.ImageUrl,
+		arg.Latitude,
+		arg.Longitude,
+		arg.Description,
+	)
+	var i City
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.StateCode,
+		&i.StateName,
+		&i.CountryCode,
+		&i.CountryName,
+		&i.ImageUrl,
+		&i.Latitude,
+		&i.Longitude,
+		&i.Description,
+	)
+	return i, err
 }
