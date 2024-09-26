@@ -16,4 +16,10 @@ INSERT INTO amenities_pois (
 
 -- name: GetAllAmenities :many
 SELECT *
-FROM amenities;
+FROM amenities
+ORDER BY id;
+
+-- name: UpdateAmenity :exec
+UPDATE amenities
+SET name = $1
+WHERE id = $2;

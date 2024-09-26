@@ -107,3 +107,10 @@ SELECT
   created_at
 FROM users
 WHERE username = $1 LIMIT 1;
+
+-- name: IsAdmin :one
+SELECT EXISTS (
+  SELECT 1
+  FROM users
+  WHERE id = $1 AND role = 'admin'
+);

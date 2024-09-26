@@ -32,6 +32,7 @@ func (q *Queries) CreateAmenity(ctx context.Context, name string) (Amenity, erro
 const getAllAmenities = `-- name: GetAllAmenities :many
 SELECT id, name
 FROM amenities
+ORDER BY id
 `
 
 func (q *Queries) GetAllAmenities(ctx context.Context) ([]Amenity, error) {
@@ -52,4 +53,20 @@ func (q *Queries) GetAllAmenities(ctx context.Context) ([]Amenity, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateAmenity = `-- name: UpdateAmenity :exec
+UPDATE amenities
+SET name = $1
+WHERE id = $2
+`
+
+type UpdateAmenityParams struct {
+	Name string
+	ID   int32
+}
+
+func (q *Queries) UpdateAmenity(ctx context.Context, arg UpdateAmenityParams) error {
+	_, err := q.db.Exec(ctx, updateAmenity, arg.Name, arg.ID)
+	return err
 }

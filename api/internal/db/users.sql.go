@@ -383,6 +383,21 @@ func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string)
 	return i, err
 }
 
+const isAdmin = `-- name: IsAdmin :one
+SELECT EXISTS (
+  SELECT 1
+  FROM users
+  WHERE id = $1 AND role = 'admin'
+)
+`
+
+func (q *Queries) IsAdmin(ctx context.Context, id string) (bool, error) {
+	row := q.db.QueryRow(ctx, isAdmin, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const updateUserFbId = `-- name: UpdateUserFbId :exec
 UPDATE users
 SET fb_id = $2
