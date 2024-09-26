@@ -56,8 +56,8 @@ export default function Page() {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="">
-          <Label htmlFor="name">Name</Label>
-          <Input type="text" id="name" value={category.id} disabled />
+          <Label htmlFor="id">ID</Label>
+          <Input type="text" id="id" value={category.id} disabled />
           <InputInfo text="You cannot change the ID of the category" />
         </div>
 
@@ -83,8 +83,8 @@ export default function Page() {
             autoComplete="off"
             {...form.register("image")}
           />
-          <InputInfo text="Name of the amenity" />
-          <InputError error={form.formState.errors.name} />
+          <InputInfo text="Image URL for the category" />
+          <InputError error={form.formState.errors.image} />
           <Button
             type="button"
             variant="link"
