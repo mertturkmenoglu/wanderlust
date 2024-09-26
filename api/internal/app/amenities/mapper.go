@@ -26,3 +26,10 @@ func mapGetAmenityByIdRowToDto(v db.Amenity) GetAmenityByIdResponseDto {
 		Name: v.Name,
 	}
 }
+
+func mapCreateAmenityResponseToDto(v db.Amenity) CreateAmenityResponseDto {
+	return CreateAmenityResponseDto{
+		ID:   int32(v.ID),
+		Name: v.Name,
+	}
+}

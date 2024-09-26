@@ -44,3 +44,17 @@ func (h *handlers) UpdateAmenity(c echo.Context) error {
 
 	return c.NoContent(http.StatusNoContent)
 }
+
+func (h *handlers) CreateAmenity(c echo.Context) error {
+	dto := c.Get("body").(CreateAmenityRequestDto)
+
+	res, err := h.service.createAmenity(dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, api.Response{
+		Data: res,
+	})
+}

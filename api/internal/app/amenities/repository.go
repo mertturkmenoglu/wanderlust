@@ -15,3 +15,7 @@ func (r *repository) updateAmenity(id int32, dto UpdateAmenityRequestDto) error 
 		Name: dto.Name,
 	})
 }
+
+func (r *repository) createAmenity(dto CreateAmenityRequestDto) (db.Amenity, error) {
+	return r.db.Queries.CreateAmenity(context.Background(), dto.Name)
+}

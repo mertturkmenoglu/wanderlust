@@ -21,3 +21,15 @@ func (s *service) updateAmenity(id int32, dto UpdateAmenityRequestDto) error {
 
 	return nil
 }
+
+func (s *service) createAmenity(dto CreateAmenityRequestDto) (CreateAmenityResponseDto, error) {
+	res, err := s.repository.createAmenity(dto)
+
+	if err != nil {
+		return CreateAmenityResponseDto{}, err
+	}
+
+	v := mapCreateAmenityResponseToDto(res)
+
+	return v, nil
+}

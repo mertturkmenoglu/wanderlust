@@ -11,3 +11,9 @@ type GetAmenityByIdResponseDto struct {
 type UpdateAmenityRequestDto struct {
 	Name string `json:"name" validate:"required,min=1,max=64"`
 }
+
+type CreateAmenityRequestDto struct {
+	Name string `json:"name" validate:"required,min=1,max=64"`
+}
+
+type CreateAmenityResponseDto = GetAmenityByIdResponseDto
