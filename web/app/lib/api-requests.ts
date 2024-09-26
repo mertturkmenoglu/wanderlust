@@ -1,6 +1,8 @@
 import { Options } from "ky";
 import api from "./api";
 import {
+  CreateAmenityRequestDto,
+  CreateAmenityResponseDto,
   GetAmenitiesResponseDto,
   GetCategoriesResponseDto,
   GetCitiesResponseDto,
@@ -54,4 +56,12 @@ export async function updateAmenity(id: number, dto: UpdateAmenityRequestDto) {
   return api.patch(`amenities/${id}`, {
     json: dto,
   });
+}
+
+export async function createAmenity(dto: CreateAmenityRequestDto) {
+  return api
+    .post("amenities/", {
+      json: dto,
+    })
+    .json<{ data: CreateAmenityResponseDto }>();
 }
