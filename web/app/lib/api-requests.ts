@@ -9,6 +9,7 @@ import {
   GetPoiByIdResponseDto,
   GetUserProfileResponseDto,
   PeekPoisResponseDto,
+  UpdateAmenityRequestDto,
 } from "./dto";
 
 export async function getMe(options?: Options) {
@@ -47,4 +48,10 @@ export async function getPoiById(id: string) {
 
 export async function getAmenities() {
   return api.get("amenities/").json<{ data: GetAmenitiesResponseDto }>();
+}
+
+export async function updateAmenity(id: number, dto: UpdateAmenityRequestDto) {
+  return api.patch(`amenities/${id}`, {
+    json: dto,
+  });
 }
