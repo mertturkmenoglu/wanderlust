@@ -10,3 +10,9 @@ export type GetAmenityByIdResponseDto = {
 export type UpdateAmenityRequestDto = {
   name: string;
 };
+
+export type CreateAmenityRequestDto = {
+  name: string;
+};
+
+export type CreateAmenityResponseDto = GetAmenityByIdResponseDto;
