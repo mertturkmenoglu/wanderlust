@@ -398,6 +398,17 @@ func (q *Queries) IsAdmin(ctx context.Context, id string) (bool, error) {
 	return exists, err
 }
 
+const makeUserVerified = `-- name: MakeUserVerified :exec
+UPDATE users
+SET is_verified = true
+WHERE id = $1
+`
+
+func (q *Queries) MakeUserVerified(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, makeUserVerified, id)
+	return err
+}
+
 const updateUserFbId = `-- name: UpdateUserFbId :exec
 UPDATE users
 SET fb_id = $2

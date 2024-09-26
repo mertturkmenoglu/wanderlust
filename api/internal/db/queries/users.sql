@@ -114,3 +114,8 @@ SELECT EXISTS (
   FROM users
   WHERE id = $1 AND role = 'admin'
 );
+
+-- name: MakeUserVerified :exec
+UPDATE users
+SET is_verified = true
+WHERE id = $1;
