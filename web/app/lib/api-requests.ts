@@ -65,3 +65,7 @@ export async function createAmenity(dto: CreateAmenityRequestDto) {
     })
     .json<{ data: CreateAmenityResponseDto }>();
 }
+
+export async function deleteAmenity(id: number) {
+  return api.delete(`amenities/${id}`);
+}
