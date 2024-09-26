@@ -61,3 +61,64 @@ func (h *handlers) GetFeaturedCities(c echo.Context) error {
 		Data: v,
 	})
 }
+
+func (h *handlers) CreateCity(c echo.Context) error {
+	dto := c.Get("body").(CreateCityRequestDto)
+
+	res, err := h.service.createCity(dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, api.Response{
+		Data: res,
+	})
+}
+
+func (h *handlers) DeleteCity(c echo.Context) error {
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		return ErrInvalidId
+	}
+
+	err = h.service.deleteCity(int32(idInt))
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func (h *handlers) UpdateCity(c echo.Context) error {
+	dto := c.Get("body").(UpdateCityRequestDto)
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		return ErrInvalidId
+	}
+
+	res, err := h.service.updateCity(int32(idInt), dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: res,
+	})
+}

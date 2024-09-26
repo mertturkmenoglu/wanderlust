@@ -57,3 +57,31 @@ func (s *service) getFeaturedCities() ([]db.City, error) {
 
 	return res, nil
 }
+
+func (s *service) createCity(dto CreateCityRequestDto) (CreateCityResponseDto, error) {
+	res, err := s.repository.createCity(dto)
+
+	if err != nil {
+		return CreateCityResponseDto{}, err
+	}
+
+	v := mapCreateCityResponseToDto(res)
+
+	return v, nil
+}
+
+func (s *service) updateCity(id int32, dto UpdateCityRequestDto) (UpdateCityResponseDto, error) {
+	res, err := s.repository.updateCity(id, dto)
+
+	if err != nil {
+		return UpdateCityResponseDto{}, err
+	}
+
+	v := mapUpdateCityResponseToDto(res)
+
+	return v, nil
+}
+
+func (s *service) deleteCity(id int32) error {
+	return s.repository.deleteCity(id)
+}

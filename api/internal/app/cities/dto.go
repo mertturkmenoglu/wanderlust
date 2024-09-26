@@ -1,31 +1,51 @@
 package cities
 
-// GetCityByIdResponseDto godoc
-//
-// @Description Get city by id response dto
 type GetCityByIdResponseDto struct {
-	ID          int32   `json:"id" example:"24601" validate:"required"`
-	Name        string  `json:"name" example:"New York City" validate:"required"`
-	StateCode   string  `json:"stateCode" example:"NY" validate:"required"`
-	StateName   string  `json:"stateName" example:"New York" validate:"required"`
-	CountryCode string  `json:"countryCode" example:"US" validate:"required"`
-	CountryName string  `json:"countryName" example:"United States" validate:"required"`
-	ImageUrl    string  `json:"imageUrl" example:"https://example.com/foo.png" validate:"required"`
-	Latitude    float64 `json:"latitude" example:"51.5073509" validate:"required"`
-	Longitude   float64 `json:"longitude" example:"-0.1277583" validate:"required"`
-	Description string  `json:"description" example:"New York City is the most populous city in the United States." validate:"required"`
-} //@name CitiesGetCityByIdResponseDto
+	ID          int32   `json:"id"`
+	Name        string  `json:"name"`
+	StateCode   string  `json:"stateCode"`
+	StateName   string  `json:"stateName"`
+	CountryCode string  `json:"countryCode"`
+	CountryName string  `json:"countryName"`
+	ImageUrl    string  `json:"imageUrl"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+	Description string  `json:"description"`
+}
 
-// GetCitiesResponseDto godoc
-//
-// @Description Get cities response dto
 type GetCitiesResponseDto struct {
-	Cities []GetCityByIdResponseDto `json:"cities" validate:"required"`
+	Cities []GetCityByIdResponseDto `json:"cities"`
 }
 
-// GetFeaturedCitiesResponseDto godoc
-//
-// @Description Get featured cities response dto
 type GetFeaturedCitiesResponseDto struct {
-	Cities []GetCityByIdResponseDto `json:"cities" validate:"required"`
+	Cities []GetCityByIdResponseDto `json:"cities"`
 }
+
+type CreateCityRequestDto struct {
+	ID          int32   `json:"id" validate:"required,min=1"`
+	Name        string  `json:"name" validate:"required,min=1,max=64"`
+	StateCode   string  `json:"stateCode" validate:"required,min=1,max=16"`
+	StateName   string  `json:"stateName" validate:"required,min=1,max=64"`
+	CountryCode string  `json:"countryCode" validate:"required,len=2"`
+	CountryName string  `json:"countryName" validate:"required,min=1,max=64"`
+	ImageUrl    string  `json:"imageUrl" validate:"required,min=1,max=256"`
+	Latitude    float64 `json:"latitude" validate:"required,min=-90,max=90"`
+	Longitude   float64 `json:"longitude" validate:"required,min=-180,max=180"`
+	Description string  `json:"description" validate:"required,min=1,max=1024"`
+}
+
+type CreateCityResponseDto = GetCityByIdResponseDto
+
+type UpdateCityRequestDto struct {
+	Name        string  `json:"name" validate:"required,min=1,max=64"`
+	StateCode   string  `json:"stateCode" validate:"required,min=1,max=16"`
+	StateName   string  `json:"stateName" validate:"required,min=1,max=64"`
+	CountryCode string  `json:"countryCode" validate:"required,len=2"`
+	CountryName string  `json:"countryName" validate:"required,min=1,max=64"`
+	ImageUrl    string  `json:"imageUrl" validate:"required,min=1,max=256"`
+	Latitude    float64 `json:"latitude" validate:"required,min=-90,max=90"`
+	Longitude   float64 `json:"longitude" validate:"required,min=-180,max=180"`
+	Description string  `json:"description" validate:"required,min=1,max=1024"`
+}
+
+type UpdateCityResponseDto = GetCityByIdResponseDto
