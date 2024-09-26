@@ -1,17 +1,26 @@
 package categories
 
-// GetCategoriesResponseDto godoc
-//
-// @Description Get categories response dto
 type GetCategoriesResponseDto struct {
-	Categories []GetCategoryByIdResponseDto `json:"categories" validate:"required"`
-} //@name CategoriesGetCategoriesResponseDto
+	Categories []GetCategoryByIdResponseDto `json:"categories"`
+}
 
-// GetCategoryByIdResponseDto godoc
-//
-// @Description Get category by id response dto
 type GetCategoryByIdResponseDto struct {
-	ID    int32  `json:"id" example:"10" validate:"required"`
-	Name  string `json:"name" example:"Photography Spots" validate:"required"`
-	Image string `json:"image" example:"https://example.com/foo.png" validate:"required"`
-} //@name CategoriesGetCategoryByIdResponseDto
+	ID    int32  `json:"id"`
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
+type CreateCategoryRequestDto struct {
+	ID    int16  `json:"id" validate:"required,min=1"`
+	Name  string `json:"name" validate:"required,min=1,max=64"`
+	Image string `json:"image" validate:"required,url"`
+}
+
+type CreateCategoryResponseDto = GetCategoryByIdResponseDto
+
+type UpdateCategoryRequestDto struct {
+	Name  string `json:"name" validate:"required,min=1,max=64"`
+	Image string `json:"image" validate:"required,url"`
+}
+
+type UpdateCategoryResponseDto = GetCategoryByIdResponseDto

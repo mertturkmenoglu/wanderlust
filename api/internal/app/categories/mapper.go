@@ -21,3 +21,19 @@ func mapGetCategoryByIdRowToDto(v db.Category) GetCategoryByIdResponseDto {
 		Image: v.Image,
 	}
 }
+
+func mapCreateCategoryResponseToDto(v db.Category) CreateCategoryResponseDto {
+	return CreateCategoryResponseDto{
+		ID:    int32(v.ID),
+		Name:  v.Name,
+		Image: v.Image,
+	}
+}
+
+func mapUpdateCategoryResponseToDto(v db.Category) UpdateCategoryResponseDto {
+	return UpdateCategoryResponseDto{
+		ID:    int32(v.ID),
+		Name:  v.Name,
+		Image: v.Image,
+	}
+}
