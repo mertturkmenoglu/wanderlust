@@ -29,6 +29,16 @@ func (q *Queries) CreateAmenity(ctx context.Context, name string) (Amenity, erro
 	return i, err
 }
 
+const deleteAmenity = `-- name: DeleteAmenity :exec
+DELETE FROM amenities
+WHERE id = $1
+`
+
+func (q *Queries) DeleteAmenity(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteAmenity, id)
+	return err
+}
+
 const getAllAmenities = `-- name: GetAllAmenities :many
 SELECT id, name
 FROM amenities

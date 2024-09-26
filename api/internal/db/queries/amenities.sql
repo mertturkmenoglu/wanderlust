@@ -23,3 +23,7 @@ ORDER BY id;
 UPDATE amenities
 SET name = $1
 WHERE id = $2;
+
+-- name: DeleteAmenity :exec
+DELETE FROM amenities
+WHERE id = $1;
