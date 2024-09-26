@@ -11,6 +11,9 @@ const (
 	ActBookmarkCreate AuthzAct = "bookmark-create"
 	ActBookmarkRead   AuthzAct = "bookmark-read"
 	ActBookmarkDelete AuthzAct = "bookmark-delete"
+	ActCategoryCreate AuthzAct = "category-create"
+	ActCategoryUpdate AuthzAct = "category-update"
+	ActCategoryDelete AuthzAct = "category-delete"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -22,4 +25,7 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActBookmarkCreate: Identity,
 	ActBookmarkRead:   Identity,
 	ActBookmarkDelete: Identity,
+	ActCategoryCreate: IsAdmin,
+	ActCategoryUpdate: IsAdmin,
+	ActCategoryDelete: IsAdmin,
 }
