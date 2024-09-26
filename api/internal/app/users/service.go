@@ -21,3 +21,7 @@ func (s *service) GetUserProfile(username string) (db.GetUserProfileByUsernameRo
 
 	return res, nil
 }
+
+func (s *service) makeUserVerified(id string) error {
+	return s.repository.makeUserVerified(id)
+}
