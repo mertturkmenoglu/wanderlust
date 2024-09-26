@@ -1,23 +1,11 @@
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useVerifyUserMutation } from "./hooks";
 
 export default function Page() {
   const [username, setUsername] = useState("");
-  const mutation = useMutation({
-    mutationKey: ["user-verify"],
-    mutationFn: async () => {
-      // TODO: Implement later
-    },
-    onSuccess: () => {
-      toast.success("User is verified");
-    },
-    onError: (e) => {
-      toast.error(`An error happened: ${e.message}`);
-    },
-  });
+  const mutation = useVerifyUserMutation();
 
   return (
     <div>
@@ -35,7 +23,7 @@ export default function Page() {
 
       <Button
         onClick={() => {
-          mutation.mutate();
+          mutation.mutate(username);
         }}
         className="mt-4"
       >
