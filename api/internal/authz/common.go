@@ -14,6 +14,9 @@ const (
 	ActCategoryCreate AuthzAct = "category-create"
 	ActCategoryUpdate AuthzAct = "category-update"
 	ActCategoryDelete AuthzAct = "category-delete"
+	ActCityCreate     AuthzAct = "city-create"
+	ActCityUpdate     AuthzAct = "city-update"
+	ActCityDelete     AuthzAct = "city-delete"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -28,4 +31,7 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCategoryCreate: IsAdmin,
 	ActCategoryUpdate: IsAdmin,
 	ActCategoryDelete: IsAdmin,
+	ActCityCreate:     IsAdmin,
+	ActCityUpdate:     IsAdmin,
+	ActCityDelete:     IsAdmin,
 }
