@@ -7,6 +7,7 @@ type AuthzAct string
 const (
 	ActAmenityCreate  AuthzAct = "amenity-create"
 	ActAmenityUpdate  AuthzAct = "amenity-update"
+	ActAmenityDelete  AuthzAct = "amenity-delete"
 	ActBookmarkCreate AuthzAct = "bookmark-create"
 	ActBookmarkRead   AuthzAct = "bookmark-read"
 	ActBookmarkDelete AuthzAct = "bookmark-delete"
@@ -17,6 +18,7 @@ type AuthzFn func(s *Authz, c echo.Context) (bool, error)
 var Fns = map[AuthzAct]AuthzFn{
 	ActAmenityCreate:  IsAdmin,
 	ActAmenityUpdate:  IsAdmin,
+	ActAmenityDelete:  IsAdmin,
 	ActBookmarkCreate: Identity,
 	ActBookmarkRead:   Identity,
 	ActBookmarkDelete: Identity,
