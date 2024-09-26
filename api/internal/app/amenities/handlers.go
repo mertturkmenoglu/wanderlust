@@ -58,3 +58,25 @@ func (h *handlers) CreateAmenity(c echo.Context) error {
 		Data: res,
 	})
 }
+
+func (h *handlers) DeleteAmenity(c echo.Context) error {
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	idInt, err := strconv.Atoi(id)
+
+	if err != nil {
+		return ErrInvalidId
+	}
+
+	err = h.service.deleteAmenity(int32(idInt))
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}

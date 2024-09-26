@@ -33,3 +33,7 @@ func (s *service) createAmenity(dto CreateAmenityRequestDto) (CreateAmenityRespo
 
 	return v, nil
 }
+
+func (s *service) deleteAmenity(id int32) error {
+	return s.repository.deleteAmenity(id)
+}
