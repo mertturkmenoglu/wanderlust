@@ -9,11 +9,12 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { GeneralErrorBoundary } from "./components/blocks/error-boundary";
+import Footer from "./components/blocks/footer";
 import Header from "./components/blocks/header";
 import { Toaster } from "./components/ui/sonner";
 import AuthContextProvider from "./providers/auth-provider";
 import "./tailwind.css";
-import { GeneralErrorBoundary } from "./components/blocks/error-boundary";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -59,6 +60,7 @@ export default function App() {
     <div>
       <Header />
       <Outlet />
+      <Footer />
     </div>
   );
 }
