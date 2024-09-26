@@ -5,6 +5,8 @@ import {
   CreateAmenityResponseDto,
   CreateCategoryRequestDto,
   CreateCategoryResponseDto,
+  CreateCityRequestDto,
+  CreateCityResponseDto,
   GetAmenitiesResponseDto,
   GetCategoriesResponseDto,
   GetCitiesResponseDto,
@@ -16,6 +18,8 @@ import {
   UpdateAmenityRequestDto,
   UpdateCategoryRequestDto,
   UpdateCategoryResponseDto,
+  UpdateCityRequestDto,
+  UpdateCityResponseDto,
 } from "./dto";
 
 export async function getMe(options?: Options) {
@@ -38,6 +42,26 @@ export async function getUserByUsername(username: string) {
 
 export async function getFeaturedCities() {
   return api.get("cities/featured").json<{ data: GetCitiesResponseDto }>();
+}
+
+export async function createCity(dto: CreateCityRequestDto) {
+  return api
+    .post("cities/", {
+      json: dto,
+    })
+    .json<{ data: CreateCityResponseDto }>();
+}
+
+export async function updateCity(id: number, dto: UpdateCityRequestDto) {
+  return api
+    .patch(`cities/${id}`, {
+      json: dto,
+    })
+    .json<{ data: UpdateCityResponseDto }>();
+}
+
+export async function deleteCity(id: number) {
+  return api.delete(`cities/${id}`);
 }
 
 export async function getCategories() {
