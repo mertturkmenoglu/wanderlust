@@ -3,6 +3,8 @@ import api from "./api";
 import {
   CreateAmenityRequestDto,
   CreateAmenityResponseDto,
+  CreateCategoryRequestDto,
+  CreateCategoryResponseDto,
   GetAmenitiesResponseDto,
   GetCategoriesResponseDto,
   GetCitiesResponseDto,
@@ -12,6 +14,8 @@ import {
   GetUserProfileResponseDto,
   PeekPoisResponseDto,
   UpdateAmenityRequestDto,
+  UpdateCategoryRequestDto,
+  UpdateCategoryResponseDto,
 } from "./dto";
 
 export async function getMe(options?: Options) {
@@ -38,6 +42,29 @@ export async function getFeaturedCities() {
 
 export async function getCategories() {
   return api.get("categories/").json<{ data: GetCategoriesResponseDto }>();
+}
+
+export async function deleteCategory(id: number) {
+  return api.delete(`categories/${id}`);
+}
+
+export async function createCategory(dto: CreateCategoryRequestDto) {
+  return api
+    .post("categories/", {
+      json: dto,
+    })
+    .json<{ data: CreateCategoryResponseDto }>();
+}
+
+export async function updateCategory(
+  id: number,
+  dto: UpdateCategoryRequestDto
+) {
+  return api
+    .patch(`categories/${id}`, {
+      json: dto,
+    })
+    .json<{ data: UpdateCategoryResponseDto }>();
 }
 
 export async function peekPois() {
