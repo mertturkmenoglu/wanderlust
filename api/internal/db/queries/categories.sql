@@ -11,3 +11,15 @@ INSERT INTO categories (
 
 -- name: GetCategories :many
 SELECT * FROM categories;
+
+-- name: DeleteCategory :exec
+DELETE FROM categories
+WHERE id = $1;
+
+-- name: UpdateCategory :one
+UPDATE categories
+SET 
+  name = $2,
+  image = $3
+WHERE id = $1
+RETURNING *;
