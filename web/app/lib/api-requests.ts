@@ -40,6 +40,10 @@ export async function getUserByUsername(username: string) {
     .json<{ data: GetUserProfileResponseDto }>();
 }
 
+export async function makeUserVerified(username: string) {
+  return api.post(`users/${username}/make-verified`);
+}
+
 export async function getFeaturedCities() {
   return api.get("cities/featured").json<{ data: GetCitiesResponseDto }>();
 }
