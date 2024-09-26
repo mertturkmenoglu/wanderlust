@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
+import DeleteDialog from "./delete-dialog";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -23,6 +24,7 @@ export default function Page() {
         <Button variant="link" className="px-0" asChild>
           <Link to={`/dashboard/cities/${city.id}/edit`}>Edit</Link>
         </Button>
+        <DeleteDialog id={city.id} />
       </div>
       <img
         src={city.imageUrl}
