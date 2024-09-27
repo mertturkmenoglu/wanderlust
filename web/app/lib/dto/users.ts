@@ -15,3 +15,14 @@ export type GetUserProfileResponseDto = {
   followingCount: number;
   createdAt: string;
 };
+
+export type UpdateUserProfileRequestDto = {
+  fullName: string | null;
+  gender: string | null;
+  bio: string | null;
+  pronouns: string | null;
+  website: string | null;
+  phone: string | null;
+};
+
+export type UpdateUserProfileResponseDto = GetUserProfileResponseDto;
