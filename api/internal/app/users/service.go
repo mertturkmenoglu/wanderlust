@@ -25,3 +25,15 @@ func (s *service) GetUserProfile(username string) (db.GetUserProfileByUsernameRo
 func (s *service) makeUserVerified(id string) error {
 	return s.repository.makeUserVerified(id)
 }
+
+func (s *service) updateUserProfile(id string, dto UpdateUserProfileRequestDto) (UpdateUserProfileResponseDto, error) {
+	res, err := s.repository.updateUserProfile(id, dto)
+
+	if err != nil {
+		return UpdateUserProfileResponseDto{}, err
+	}
+
+	v := mapUpdateUserProfileResponseToDto(res)
+
+	return v, nil
+}

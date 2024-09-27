@@ -48,3 +48,18 @@ func (h *handlers) MakeUserVerified(c echo.Context) error {
 
 	return c.NoContent(http.StatusNoContent)
 }
+
+func (h *handlers) UpdateUserProfile(c echo.Context) error {
+	dto := c.Get("body").(UpdateUserProfileRequestDto)
+	userId := c.Get("user_id").(string)
+
+	res, err := h.service.updateUserProfile(userId, dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: res,
+	})
+}
