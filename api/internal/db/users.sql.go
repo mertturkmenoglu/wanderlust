@@ -472,3 +472,71 @@ func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPassword
 	_, err := q.db.Exec(ctx, updateUserPassword, arg.ID, arg.PasswordHash)
 	return err
 }
+
+const updateUserProfile = `-- name: UpdateUserProfile :one
+UPDATE users
+SET
+  full_name = $2,
+  gender = $3,
+  bio = $4,
+  pronouns = $5,
+  website = $6,
+  phone = $7
+WHERE id = $1
+RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
+`
+
+type UpdateUserProfileParams struct {
+	ID       string
+	FullName string
+	Gender   pgtype.Text
+	Bio      pgtype.Text
+	Pronouns pgtype.Text
+	Website  pgtype.Text
+	Phone    pgtype.Text
+}
+
+func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfileParams) (User, error) {
+	row := q.db.QueryRow(ctx, updateUserProfile,
+		arg.ID,
+		arg.FullName,
+		arg.Gender,
+		arg.Bio,
+		arg.Pronouns,
+		arg.Website,
+		arg.Phone,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsEmailVerified,
+		&i.IsOnboardingCompleted,
+		&i.IsActive,
+		&i.IsBusinessAccount,
+		&i.IsVerified,
+		&i.Role,
+		&i.PasswordResetToken,
+		&i.PasswordResetExpires,
+		&i.LoginAttempts,
+		&i.LockoutUntil,
+		&i.Gender,
+		&i.Bio,
+		&i.Pronouns,
+		&i.Website,
+		&i.Phone,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.LastLogin,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

@@ -119,3 +119,15 @@ SELECT EXISTS (
 UPDATE users
 SET is_verified = true
 WHERE id = $1;
+
+-- name: UpdateUserProfile :one
+UPDATE users
+SET
+  full_name = $2,
+  gender = $3,
+  bio = $4,
+  pronouns = $5,
+  website = $6,
+  phone = $7
+WHERE id = $1
+RETURNING *;
