@@ -27,6 +27,81 @@ type BatchCreatePoisParams struct {
 	OpenTimes          []byte
 }
 
+const createPoiMedia = `-- name: CreatePoiMedia :one
+INSERT INTO media (
+  poi_id,
+  url,
+  thumbnail,
+  alt,
+  caption,
+  width,
+  height,
+  media_order,
+  extension,
+  mime_type,
+  file_size
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10,
+  $11
+) RETURNING id, poi_id, url, thumbnail, alt, caption, width, height, media_order, extension, mime_type, file_size, created_at
+`
+
+type CreatePoiMediaParams struct {
+	PoiID      string
+	Url        string
+	Thumbnail  string
+	Alt        string
+	Caption    pgtype.Text
+	Width      int32
+	Height     int32
+	MediaOrder int16
+	Extension  string
+	MimeType   string
+	FileSize   int64
+}
+
+func (q *Queries) CreatePoiMedia(ctx context.Context, arg CreatePoiMediaParams) (Medium, error) {
+	row := q.db.QueryRow(ctx, createPoiMedia,
+		arg.PoiID,
+		arg.Url,
+		arg.Thumbnail,
+		arg.Alt,
+		arg.Caption,
+		arg.Width,
+		arg.Height,
+		arg.MediaOrder,
+		arg.Extension,
+		arg.MimeType,
+		arg.FileSize,
+	)
+	var i Medium
+	err := row.Scan(
+		&i.ID,
+		&i.PoiID,
+		&i.Url,
+		&i.Thumbnail,
+		&i.Alt,
+		&i.Caption,
+		&i.Width,
+		&i.Height,
+		&i.MediaOrder,
+		&i.Extension,
+		&i.MimeType,
+		&i.FileSize,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const getPoiAmenities = `-- name: GetPoiAmenities :many
 SELECT amenities_pois.amenity_id, amenities_pois.poi_id, amenities.id, amenities.name FROM amenities_pois
 LEFT JOIN amenities ON amenities.id = amenities_pois.amenity_id

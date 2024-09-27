@@ -56,3 +56,30 @@ SELECT sqlc.embed(amenities_pois), sqlc.embed(amenities) FROM amenities_pois
 LEFT JOIN amenities ON amenities.id = amenities_pois.amenity_id
 WHERE poi_id = $1
 ORDER BY amenity_id;
+
+-- name: CreatePoiMedia :one
+INSERT INTO media (
+  poi_id,
+  url,
+  thumbnail,
+  alt,
+  caption,
+  width,
+  height,
+  media_order,
+  extension,
+  mime_type,
+  file_size
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10,
+  $11
+) RETURNING *;
