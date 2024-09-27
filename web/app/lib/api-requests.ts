@@ -20,6 +20,8 @@ import {
   UpdateCategoryResponseDto,
   UpdateCityRequestDto,
   UpdateCityResponseDto,
+  UpdateUserProfileRequestDto,
+  UpdateUserProfileResponseDto,
 } from "./dto";
 
 export async function getMe(options?: Options) {
@@ -42,6 +44,14 @@ export async function getUserByUsername(username: string) {
 
 export async function makeUserVerified(username: string) {
   return api.post(`users/${username}/make-verified`);
+}
+
+export async function updateUserProfile(dto: UpdateUserProfileRequestDto) {
+  return api
+    .patch("users/profile", {
+      json: dto,
+    })
+    .json<{ data: UpdateUserProfileResponseDto }>();
 }
 
 export async function getFeaturedCities() {
