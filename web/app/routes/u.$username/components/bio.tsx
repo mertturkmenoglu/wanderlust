@@ -24,7 +24,7 @@ export default function Bio({ className }: Props) {
 
   return (
     <div className={cn("", className)}>
-      <Banner>
+      <Banner userBannerImage={user.bannerImage ?? undefined}>
         <div className="mt-4 flex items-center justify-between">
           <UserImage
             src={user.profileImage}
