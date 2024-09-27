@@ -42,6 +42,7 @@ var noCountNeeded = []string{
 	"amenities",
 	"categories",
 	"cities",
+	"media", // because we handle it on the handler level
 }
 
 func GetDb() *db.Db {
@@ -116,7 +117,7 @@ func generateAndInsert(genType string, count int) error {
 	case "list-items":
 		return fmt.Errorf("not implemented")
 	case "media":
-		return fmt.Errorf("not implemented")
+		return handleMedia()
 	case "point-of-interests":
 		return handlePois(count)
 	case "reviews":
