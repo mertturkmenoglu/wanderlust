@@ -17,6 +17,43 @@ export const schema = z.object({
     lng: z.number().min(-180).max(180),
   }),
   amenities: z.array(z.number()).optional(),
+  openTimes: z.object({
+    mon: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+    tue: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+    wed: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+    thu: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+    fri: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+    sat: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+    sun: z.object({
+      open: z.string().min(1),
+      close: z.string().min(1),
+      closed: z.boolean().optional(),
+    }),
+  }),
 });
 
 export type FormInput = z.infer<typeof schema>;
