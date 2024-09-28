@@ -9,7 +9,7 @@ import (
 func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/bookmarks")
 	{
-		routes.POST("/:id", m.handlers.createBookmark, middlewares.IsAuth)
+		routes.POST("/", m.handlers.createBookmark, middlewares.ParseBody[CreateBookmarkRequestDto], middlewares.IsAuth)
 		routes.DELETE("/:id", m.handlers.deleteBookmarkByPoiId, middlewares.IsAuth)
 		routes.GET("/", m.handlers.getUserBookmarks, middlewares.IsAuth)
 	}
