@@ -28,7 +28,7 @@ export type BookmarkPoi = {
   address: BookmarkPoiAddress;
   categoryId: number;
   category: BookmarkPoiCategory;
-  firstMedia: BookmarkPoiMedia;
+  media: BookmarkPoiMedia;
 };
 
 export type BookmarkPoiAddress = {
