@@ -11,11 +11,16 @@ import FavoriteButton from "./components/favorite-button";
 import InformationTable from "./components/info-table";
 import Menu from "./components/menu";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
+  const Cookie = request.headers.get("Cookie") ?? "";
 
-  const res = await getPoiById(params.id);
-  return json({ poi: res.data });
+  const res = await getPoiById(params.id, { headers: { Cookie } });
+
+  return json({
+    poi: res.data,
+    meta: res.meta,
+  });
 }
 
 export function meta({ data }: MetaArgs<typeof loader>) {
@@ -30,7 +35,7 @@ export function meta({ data }: MetaArgs<typeof loader>) {
 }
 
 export default function Page() {
-  const { poi } = useLoaderData<typeof loader>();
+  const { poi, meta } = useLoaderData<typeof loader>();
 
   return (
     <main className="container mx-auto mt-8 md:mt-16">
@@ -49,15 +54,9 @@ export default function Page() {
             </h2>
 
             <div className="flex items-center">
-              <FavoriteButton
-                isFavorite={false} // TODO: Update later
-                poiId={poi.id}
-              />
+              <FavoriteButton isFavorite={meta.isFavorite} poiId={poi.id} />
 
-              <BookmarkButton
-                isBookmarked={false} // TODO: Update later
-                poiId={poi.id}
-              />
+              <BookmarkButton isBookmarked={meta.isBookmarked} poiId={poi.id} />
 
               <Menu poiId={poi.id} />
             </div>
