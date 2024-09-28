@@ -4,5 +4,6 @@ export * from "./bookmarks";
 export * from "./categories";
 export * from "./cities";
 export * from "./common";
+export * from "./favorites";
 export * from "./pois";
 export * from "./users";
