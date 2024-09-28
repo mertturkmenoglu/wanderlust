@@ -44,13 +44,14 @@ func (h *handlers) getUserBookmarks(c echo.Context) error {
 		return err
 	}
 
-	res, err := h.service.getUserBookmarks(userId, params.Offset, params.PageSize)
+	res, count, err := h.service.getUserBookmarks(userId, params.Offset, params.PageSize)
 
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
-		Data: res,
+	return c.JSON(http.StatusOK, api.PaginatedResponse{
+		Data:       res,
+		Pagination: pagination.Compute(params, count),
 	})
 }

@@ -16,20 +16,20 @@ func (s *service) deleteBookmarkByPoiId(poiId string, userId string) error {
 	return s.repository.deleteBookmarkByPoiId(poiId, userId)
 }
 
-func (s *service) getUserBookmarks(userId string, offset int, limit int) (GetUserBookmarksResponseDto, error) {
+func (s *service) getUserBookmarks(userId string, offset int, limit int) (GetUserBookmarksResponseDto, int64, error) {
 	res, err := s.repository.getUserBookmarks(userId, offset, limit)
 
 	if err != nil {
-		return GetUserBookmarksResponseDto{}, err
+		return GetUserBookmarksResponseDto{}, 0, err
 	}
 
 	count, err := s.repository.countUserBookmarks(userId)
 
 	if err != nil {
-		return GetUserBookmarksResponseDto{}, err
+		return GetUserBookmarksResponseDto{}, 0, err
 	}
 
-	v := mapGetUserBookmarksResponseToDto(res, count)
+	v := mapGetUserBookmarksResponseToDto(res)
 
-	return v, nil
+	return v, count, nil
 }

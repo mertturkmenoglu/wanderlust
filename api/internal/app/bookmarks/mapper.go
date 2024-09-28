@@ -14,7 +14,7 @@ func mapCreateBookmarkResponseToDto(v db.Bookmark) CreateBookmarkResponseDto {
 	}
 }
 
-func mapGetUserBookmarksResponseToDto(v []db.GetBookmarksByUserIdRow, count int64) GetUserBookmarksResponseDto {
+func mapGetUserBookmarksResponseToDto(v []db.GetBookmarksByUserIdRow) GetUserBookmarksResponseDto {
 	var bookmarks []GetBookmarkByIdResponseDto
 
 	for _, bookmark := range v {
