@@ -4,22 +4,22 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"wanderlust/internal/pagination"
 
 	"github.com/labstack/echo/v4"
 )
 
-// ErrorResponse godoc
-//
-// @Description	Error response
 type ErrorResponse struct {
 	Errors []ErrorDto `json:"errors"`
-} //@name ErrorResponse
+}
 
-// Response godoc
-//
-// @Description	Response
 type Response struct {
 	Data interface{} `json:"data"`
+}
+
+type PaginatedResponse struct {
+	Data       interface{}           `json:"data"`
+	Pagination pagination.Pagination `json:"pagination"`
 }
 
 type ErrorDto struct {
