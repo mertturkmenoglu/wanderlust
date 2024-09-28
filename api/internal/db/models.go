@@ -54,6 +54,13 @@ type City struct {
 	Description string
 }
 
+type Favorite struct {
+	ID        int32
+	PoiID     string
+	UserID    string
+	CreatedAt pgtype.Timestamptz
+}
+
 type Follow struct {
 	FollowerID  string
 	FollowingID string

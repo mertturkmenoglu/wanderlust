@@ -37,7 +37,7 @@ WHERE user_id = $1;
 
 -- name: GetBookmarkById :one
 SELECT sqlc.embed(bookmarks), sqlc.embed(pois) FROM bookmarks
-JOIN pois ON hservices.id = bookmarks.poi_id
+JOIN pois ON pois.id = bookmarks.poi_id
 WHERE bookmarks.id = $1;
 
 -- name: IsBookmarked :one
