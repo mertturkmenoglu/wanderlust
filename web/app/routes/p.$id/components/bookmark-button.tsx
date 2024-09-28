@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { createBookmark, deleteBookmarkByPoiId } from "~/lib/api-requests";
 import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
 
@@ -25,7 +26,11 @@ export default function BookmarkButton({ isBookmarked, poiId }: Props) {
   const mutation = useMutation({
     mutationKey: ["bookmark", poiId],
     mutationFn: async () => {
-      // TODO: Implement later
+      if (booked) {
+        await deleteBookmarkByPoiId(poiId);
+      } else {
+        await createBookmark({ poiId });
+      }
     },
     onSuccess: async () => {
       const prev = booked;
@@ -45,7 +50,7 @@ export default function BookmarkButton({ isBookmarked, poiId }: Props) {
           <Button
             variant="ghost"
             onClick={() => {
-              if (!auth.isSignedIn) {
+              if (!auth.user) {
                 toast.warning("You need to be signed in.");
                 return;
               }
