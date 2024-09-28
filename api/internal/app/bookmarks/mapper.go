@@ -17,6 +17,12 @@ func mapCreateBookmarkResponseToDto(v db.Bookmark) CreateBookmarkResponseDto {
 func mapGetUserBookmarksResponseToDto(v []db.GetBookmarksByUserIdRow) GetUserBookmarksResponseDto {
 	var bookmarks []GetBookmarkByIdResponseDto
 
+	if v == nil {
+		return GetUserBookmarksResponseDto{
+			Bookmarks: make([]GetBookmarkByIdResponseDto, 0),
+		}
+	}
+
 	for _, bookmark := range v {
 		bookmarks = append(bookmarks, mapGetBookmarkByIdRowToDto(bookmark))
 	}
