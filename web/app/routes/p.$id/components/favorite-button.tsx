@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { createFavorite, deleteFavoriteByPoiId } from "~/lib/api-requests";
 import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
 
@@ -19,13 +20,17 @@ type Props = {
 
 export default function FavoriteButton({ isFavorite, poiId }: Props) {
   const [fav, setFav] = useState(isFavorite);
-  const { isSignedIn } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const qc = useQueryClient();
 
   const mutation = useMutation({
     mutationKey: ["favorites", poiId],
     mutationFn: async () => {
-      // TODO: Implement later
+      if (fav) {
+        await deleteFavoriteByPoiId(poiId);
+      } else {
+        await createFavorite({ poiId });
+      }
     },
     onSuccess: async () => {
       const prev = fav;
@@ -45,7 +50,7 @@ export default function FavoriteButton({ isFavorite, poiId }: Props) {
           <Button
             variant="ghost"
             onClick={() => {
-              if (!isSignedIn) {
+              if (!auth.user) {
                 toast.warning("You need to be signed in.");
                 return;
               }
