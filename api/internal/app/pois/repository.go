@@ -46,7 +46,12 @@ func (r *repository) getPoiById(id string) (GetPoiByIdDao, error) {
 }
 
 func (r *repository) isFavorite(poiId string, userId string) bool {
-	return false // TODO: Implement later
+	_, err := r.db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
+		PoiID:  poiId,
+		UserID: userId,
+	})
+
+	return err == nil
 }
 
 func (r *repository) isBookmarked(poiId string, userId string) bool {
