@@ -1,6 +1,7 @@
 import { Controller } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
+import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -16,6 +17,7 @@ import { useAmenities } from "~/hooks/use-amenities";
 import { useCategories } from "~/hooks/use-categories";
 import { useCities } from "~/hooks/use-cities";
 import { useNewPoiForm } from "./hooks";
+import OpenTimes from "./open-times";
 
 export default function NewPoiForm() {
   const form = useNewPoiForm();
@@ -250,7 +252,7 @@ export default function NewPoiForm() {
             id="lat"
             placeholder="Latitude"
             autoComplete="off"
-            {...form.register("address.lat")}
+            {...form.register("address.lat", { valueAsNumber: true })}
           />
           <InputInfo text="Latitude" />
           <InputError error={form.formState.errors.address?.lat} />
@@ -263,7 +265,7 @@ export default function NewPoiForm() {
             id="lng"
             placeholder="Longitude"
             autoComplete="off"
-            {...form.register("address.lng")}
+            {...form.register("address.lng", { valueAsNumber: true })}
           />
           <InputInfo text="Longitude" />
           <InputError error={form.formState.errors.address?.lng} />
@@ -305,7 +307,9 @@ export default function NewPoiForm() {
                               }}
                             />
 
-                            <Label className="font-normal">{amenity.name}</Label>
+                            <Label className="font-normal">
+                              {amenity.name}
+                            </Label>
                           </div>
                         );
                       }}
@@ -316,6 +320,26 @@ export default function NewPoiForm() {
             }}
           />
           <InputError error={form.formState.errors.amenities?.root} />
+        </div>
+
+        {/* open times */}
+        <div className="col-span-2">
+          <h3 className="my-4 text-lg font-bold tracking-tight">Open Times</h3>
+          <div className="grid grid-cols-3 gap-4 mt-2">
+            <OpenTimes day="mon" form={form} />
+            <OpenTimes day="tue" form={form} />
+            <OpenTimes day="wed" form={form} />
+            <OpenTimes day="thu" form={form} />
+            <OpenTimes day="fri" form={form} />
+            <OpenTimes day="sat" form={form} />
+            <OpenTimes day="sun" form={form} />
+          </div>
+        </div>
+
+        {/* media */}
+
+        <div>
+          <Button type="submit">Create</Button>
         </div>
       </form>
     </div>
