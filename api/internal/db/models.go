@@ -28,6 +28,13 @@ type Amenity struct {
 	Name string
 }
 
+type Bookmark struct {
+	ID        int32
+	PoiID     string
+	UserID    string
+	CreatedAt pgtype.Timestamptz
+}
+
 type Category struct {
 	ID    int16
 	Name  string
