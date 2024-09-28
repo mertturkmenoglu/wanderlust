@@ -44,3 +44,16 @@ func (r *repository) getPoiById(id string) (GetPoiByIdDao, error) {
 		amenities: amenities,
 	}, nil
 }
+
+func (r *repository) isFavorite(poiId string, userId string) bool {
+	return false // TODO: Implement later
+}
+
+func (r *repository) isBookmarked(poiId string, userId string) bool {
+	_, err := r.db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
+		PoiID:  poiId,
+		UserID: userId,
+	})
+
+	return err == nil
+}

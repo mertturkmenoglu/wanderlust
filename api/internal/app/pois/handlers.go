@@ -1,7 +1,6 @@
 package pois
 
 import (
-	"fmt"
 	"net/http"
 	"wanderlust/internal/app/api"
 
@@ -9,23 +8,33 @@ import (
 )
 
 func (h *handlers) GetPoiById(c echo.Context) error {
+	userId := c.Get("user_id").(string)
 	id := c.Param("id")
 
 	if id == "" {
 		return ErrIdRequired
 	}
 
-	fmt.Println("id is: ", id)
-
 	res, err := h.service.getPoiById(id)
 
 	if err != nil {
-		fmt.Println("err is: ", err)
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	var isFavorite bool = false
+	var isBookmarked bool = false
+
+	if userId != "" {
+		isFavorite = h.service.isFavorite(id, userId)
+		isBookmarked = h.service.isBookmarked(id, userId)
+	}
+
+	return c.JSON(http.StatusOK, api.MetadataResponse{
 		Data: res,
+		Meta: echo.Map{
+			"isFavorite":   isFavorite,
+			"isBookmarked": isBookmarked,
+		},
 	})
 }
 

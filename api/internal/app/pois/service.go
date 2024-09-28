@@ -30,3 +30,11 @@ func (s *service) getPoiById(id string) (GetPoiByIdResponseDto, error) {
 
 	return mapGetPoiByIdToDto(dao)
 }
+
+func (s *service) isFavorite(poiId string, userId string) bool {
+	return s.repository.isFavorite(poiId, userId)
+}
+
+func (s *service) isBookmarked(poiId string, userId string) bool {
+	return s.repository.isBookmarked(poiId, userId)
+}
