@@ -1,9 +1,11 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { getDraft } from "~/lib/api-requests";
 import DeleteDialog from "./delete-dialog";
+import Step1 from "./steps/step-1";
+import Step2 from "./steps/step-2";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -18,16 +20,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 export default function Page() {
   const { draft } = useLoaderData<typeof loader>();
+  const [params] = useSearchParams();
+  const step = params.get("step") ?? "1";
 
   return (
     <div>
       <BackLink href="/dashboard/pois/drafts" text="Go back to drafts page" />
-      <div className="flex items-end gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">Draft</h2>
+      <div className="flex items-end gap-4 mt-8">
+        <h2 className="text-2xl font-bold tracking-tight">
+          {draft.name ?? "Unnamed Draft"}
+        </h2>
         <DeleteDialog id={draft.id} />
       </div>
 
-      <pre className="mt-8">{JSON.stringify(draft, null, 2)}</pre>
+      {step === "1" && <Step1 />}
+      {step === "2" && <Step2 />}
     </div>
   );
 }
