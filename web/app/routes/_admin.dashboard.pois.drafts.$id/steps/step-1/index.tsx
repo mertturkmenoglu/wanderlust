@@ -214,7 +214,7 @@ export default function Step1() {
 
         <div>
           <Button type="button" className="block w-full" disabled={true}>
-            Prev
+            Previous
           </Button>
         </div>
 
