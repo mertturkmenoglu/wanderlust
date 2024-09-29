@@ -52,7 +52,7 @@ export default function Sidebar({ className }: Props) {
           <CollapsibleContent>
             <ul className="ml-4">
               <Item href="/dashboard/pois" text="View" />
-              <Item href="/dashboard/pois/new" text="New" />
+              <Item href="/dashboard/pois/drafts" text="Drafts" />
             </ul>
           </CollapsibleContent>
         </Collapsible>
