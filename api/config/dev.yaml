@@ -27,7 +27,7 @@ minio:
   buckets:
     - default
     - profile-images
-    - locations
+    - pois
     - reviews
   location: eu-central-1
   autocreate-buckets: true
