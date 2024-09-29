@@ -18,6 +18,11 @@ const (
 	ActCityUpdate       AuthzAct = "city-update"
 	ActCityDelete       AuthzAct = "city-delete"
 	ActMakeUserVerified AuthzAct = "make-user-verified"
+	ActPoiMediaUpload   AuthzAct = "poi-media-upload"
+	ActPoiDraftCreate   AuthzAct = "poi-draft-create"
+	ActPoiDraftRead     AuthzAct = "poi-draft-read"
+	ActPoiDraftUpdate   AuthzAct = "poi-draft-update"
+	ActPoiDraftDelete   AuthzAct = "poi-draft-delete"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -36,4 +41,9 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCityUpdate:       IsAdmin,
 	ActCityDelete:       IsAdmin,
 	ActMakeUserVerified: IsAdmin,
+	ActPoiMediaUpload:   IsAdmin,
+	ActPoiDraftCreate:   IsAdmin,
+	ActPoiDraftRead:     IsAdmin,
+	ActPoiDraftUpdate:   IsAdmin,
+	ActPoiDraftDelete:   IsAdmin,
 }
