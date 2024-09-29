@@ -111,3 +111,5 @@ export type City = {
   longitude: number;
   description: string;
 };
+
+export type Draft = Record<string, any>;
