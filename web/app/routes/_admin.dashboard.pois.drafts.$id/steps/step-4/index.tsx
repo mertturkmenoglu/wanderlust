@@ -3,14 +3,15 @@ import { SubmitHandler } from "react-hook-form";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import { loader } from "../../route";
-import { useStep4Form, useStep4Mutation } from "./hooks";
+import { useUpdateDraftMutation } from "../use-update-draft";
+import { useStep4Form } from "./hooks";
 import OpenTimes from "./open-times";
 import { FormInput } from "./schema";
 
 export default function Step4() {
   const { draft } = useLoaderData<typeof loader>();
   const form = useStep4Form(draft);
-  const mutation = useStep4Mutation(draft);
+  const mutation = useUpdateDraftMutation<FormInput>(draft, "4");
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     mutation.mutate(data);

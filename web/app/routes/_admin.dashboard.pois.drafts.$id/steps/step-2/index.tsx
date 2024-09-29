@@ -15,14 +15,15 @@ import {
 import { useCities } from "~/hooks/use-cities";
 import { cn } from "~/lib/utils";
 import { loader } from "../../route";
-import { useStep2Form, useStep2Mutation } from "./hooks";
+import { useUpdateDraftMutation } from "../use-update-draft";
+import { useStep2Form } from "./hooks";
 import { FormInput } from "./schema";
 
 export default function Step2() {
   const { draft } = useLoaderData<typeof loader>();
   const form = useStep2Form(draft);
   const qCities = useCities();
-  const mutation = useStep2Mutation(draft);
+  const mutation = useUpdateDraftMutation<FormInput>(draft, "2");
 
   if (!qCities.data || !qCities.data.data.cities) {
     return <></>;

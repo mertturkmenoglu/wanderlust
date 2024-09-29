@@ -7,13 +7,14 @@ import { Label } from "~/components/ui/label";
 import { useAmenities } from "~/hooks/use-amenities";
 import { cn } from "~/lib/utils";
 import { loader } from "../../route";
-import { useStep3Form, useStep3Mutation } from "./hooks";
+import { useUpdateDraftMutation } from "../use-update-draft";
+import { useStep3Form } from "./hooks";
 import { FormInput } from "./schema";
 
 export default function Step3() {
   const { draft } = useLoaderData<typeof loader>();
   const form = useStep3Form(draft);
-  const mutation = useStep3Mutation(draft);
+  const mutation = useUpdateDraftMutation<FormInput>(draft, "3");
   const qAmenities = useAmenities();
 
   if (!qAmenities.data || !qAmenities.data.data.amenities) {

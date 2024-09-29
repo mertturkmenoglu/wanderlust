@@ -1,9 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@remix-run/react";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { updateDraft } from "~/lib/api";
 import { Draft } from "~/lib/dto";
 import { FormInput, schema } from "./schema";
 
@@ -48,26 +44,6 @@ export function useStep4Form(draft: Draft) {
           closed: draft.openTimes?.sun?.closed ?? undefined,
         },
       },
-    },
-  });
-}
-
-export function useStep4Mutation(draft: Draft) {
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationKey: ["poi-draft-update", draft.id, "step-4"],
-    mutationFn: async (data: FormInput) =>
-      updateDraft(draft.id, {
-        ...draft,
-        ...data,
-      }),
-    onSuccess: () => {
-      toast.success("Draft updated");
-      navigate(`/dashboard/pois/drafts/${draft.id}?step=5`);
-    },
-    onError: () => {
-      toast.error("Something went wrong");
     },
   });
 }

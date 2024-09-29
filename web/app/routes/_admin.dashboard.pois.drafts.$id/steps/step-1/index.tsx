@@ -15,14 +15,15 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { useCategories } from "~/hooks/use-categories";
 import { loader } from "../../route";
-import { useStep1Form, useStep1Mutation } from "./hooks";
+import { useUpdateDraftMutation } from "../use-update-draft";
+import { useStep1Form } from "./hooks";
 import { FormInput } from "./schema";
 
 export default function Step1() {
   const { draft } = useLoaderData<typeof loader>();
   const form = useStep1Form(draft);
   const qCategories = useCategories();
-  const mutation = useStep1Mutation(draft);
+  const mutation = useUpdateDraftMutation<FormInput>(draft, "1");
 
   if (!qCategories.data || !qCategories.data.data.categories) {
     return <></>;
