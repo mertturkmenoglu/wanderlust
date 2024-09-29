@@ -1,6 +1,6 @@
 import { Options } from "ky";
 import api from "../api";
-import { GetPoiByIdResponseDto, PeekPoisResponseDto } from "../dto";
+import { Draft, GetPoiByIdResponseDto, PeekPoisResponseDto } from "../dto";
 
 export async function peekPois() {
   return api.get("pois/peek").json<{ data: PeekPoisResponseDto }>();
@@ -14,4 +14,20 @@ export async function getPoiById(id: string, options?: Options) {
       isBookmarked: boolean;
     };
   }>();
+}
+
+export async function createDraft(options?: Options) {
+  return api.post("pois/drafts/new", options).json<{ data: Draft }>();
+}
+
+export async function getDrafts(options?: Options) {
+  return api.get("pois/drafts", options).json<{ data: Draft[] | null }>();
+}
+
+export async function getDraft(id: string, options?: Options) {
+  return api.get(`pois/drafts/${id}`, options).json<{ data: Draft }>();
+}
+
+export async function deleteDraft(id: string, options?: Options) {
+  return api.delete(`pois/drafts/${id}`, options);
 }
