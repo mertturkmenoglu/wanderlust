@@ -6,6 +6,9 @@ import { getDraft } from "~/lib/api-requests";
 import DeleteDialog from "./delete-dialog";
 import Step1 from "./steps/step-1";
 import Step2 from "./steps/step-2";
+import Step3 from "./steps/step-3";
+import Step4 from "./steps/step-4";
+import Step5 from "./steps/step-5";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -35,6 +38,9 @@ export default function Page() {
 
       {step === "1" && <Step1 />}
       {step === "2" && <Step2 />}
+      {step === "3" && <Step3 />}
+      {step === "4" && <Step4 />}
+      {step === "5" && <Step5 />}
     </div>
   );
 }
