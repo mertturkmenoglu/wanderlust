@@ -31,3 +31,10 @@ export async function getDraft(id: string, options?: Options) {
 export async function deleteDraft(id: string, options?: Options) {
   return api.delete(`pois/drafts/${id}`, options);
 }
+
+export async function updateDraft(id: string, dto: Draft, options?: Options) {
+  return api.patch(`pois/drafts/${id}`, {
+    json: dto,
+    ...options,
+  });
+}
