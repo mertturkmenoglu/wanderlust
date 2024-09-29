@@ -12,7 +12,6 @@ import (
 	"wanderlust/internal/app/favorites"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/app/pois"
-	"wanderlust/internal/app/uploads"
 	"wanderlust/internal/app/users"
 	"wanderlust/internal/cache"
 	"wanderlust/internal/db"
@@ -83,11 +82,10 @@ func (s *Application) RegisterRoutes() *echo.Echo {
 	modules := []api.IModule{
 		auth.New(s.Db, s.Logger, s.Flake, s.Cache, s.Tasks),
 		health.New(),
-		uploads.New(s.Upload),
 		users.New(s.Db, s.Logger, s.Cache),
 		cities.New(s.Db, s.Cache),
 		categories.New(s.Db),
-		pois.New(s.Db, s.Flake),
+		pois.New(s.Db, s.Flake, s.Upload, s.Cache),
 		amenities.New(s.Db),
 		bookmarks.New(s.Db),
 		favorites.New(s.Db),
