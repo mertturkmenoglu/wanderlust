@@ -30,7 +30,7 @@ export default function UserImage({
       <AvatarImage
         src={src ?? ""}
         referrerPolicy="no-referrer"
-        className={cn(imgClassName)}
+        className={cn("object-cover", imgClassName)}
       />
       <AvatarFallback
         delayMs={1000}
