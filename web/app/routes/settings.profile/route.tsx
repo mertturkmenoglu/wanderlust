@@ -15,11 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Separator } from "~/components/ui/separator";
 import { Textarea } from "~/components/ui/textarea";
 import { getMe, getUserByUsername } from "~/lib/api";
 import { useProfileForm, useProfileMutation } from "./hooks";
 import { pronounGroups } from "./pronouns";
 import { FormInput } from "./schema";
+import UpdateProfileImage from "./update-profile-image";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -59,6 +61,13 @@ export default function Page() {
       <h2 className="text-2xl font-semibold tracking-tight first:mt-0">
         Profile
       </h2>
+
+      <UpdateProfileImage
+        fullName={profile.fullName}
+        image={profile.profileImage}
+      />
+
+      <Separator className="my-4 max-w-xl" />
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 max-w-xl">
         <Label htmlFor="name">Full Name</Label>
