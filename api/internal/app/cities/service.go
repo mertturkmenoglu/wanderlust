@@ -38,12 +38,18 @@ func (s *service) getCities() ([]db.City, error) {
 
 func (s *service) getFeaturedCities() ([]db.City, error) {
 	featuredCitiesIds := []int32{
+		1106, // Salzburg
 		1108, // Vienna
 		1109, // Istanbul
-		1115, // Antalya
 		2300, // Athens
-		2301, // Thessaloniki
 		3012, // Rome
+		3014, // Turin
+		3015, // Florence
+		3016, // Venice
+		4010, // Prague
+		5010, // Amsterdam
+		6010, // Paris
+		7010, // Barcelona
 	}
 	res, err := s.repository.getFeaturedCities(featuredCitiesIds)
 
