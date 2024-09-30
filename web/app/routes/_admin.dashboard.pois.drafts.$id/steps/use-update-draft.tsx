@@ -18,7 +18,7 @@ export function useUpdateDraftMutation<TForm>(draft: Draft, step: TStep) {
       }),
     onSuccess: () => {
       toast.success("Draft updated");
-      navigate(`/dashboard/pois/drafts/${draft.id}?step=${step + 1}`);
+      navigate(`/dashboard/pois/drafts/${draft.id}?step=${+step + 1}`);
     },
     onError: () => {
       toast.error("Something went wrong");
