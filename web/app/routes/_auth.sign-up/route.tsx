@@ -1,6 +1,7 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import AuthLink from "~/components/blocks/auth-link";
+import AuthLegalText from "~/components/blocks/auth/legal-text";
+import AuthLink from "~/components/blocks/auth/link";
 import OAuthButton from "~/components/blocks/oauth-button";
 import InputError from "~/components/kit/input-error";
 import { Button } from "~/components/ui/button";
@@ -114,6 +115,10 @@ export default function Page() {
         <div className="space-y-4">
           <OAuthButton provider="google" text="Sign up with Google" />
           <OAuthButton provider="facebook" text="Sign up with Facebook" />
+        </div>
+
+        <div className="mt-4 text-center">
+          <AuthLegalText type="signup" />
         </div>
       </form>
     </Card>
