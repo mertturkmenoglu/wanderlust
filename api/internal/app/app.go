@@ -82,7 +82,7 @@ func (s *Application) RegisterRoutes() *echo.Echo {
 	modules := []api.IModule{
 		auth.New(s.Db, s.Logger, s.Flake, s.Cache, s.Tasks),
 		health.New(),
-		users.New(s.Db, s.Logger, s.Cache),
+		users.New(s.Db, s.Logger, s.Cache, s.Upload),
 		cities.New(s.Db, s.Cache),
 		categories.New(s.Db),
 		pois.New(s.Db, s.Flake, s.Upload, s.Cache),
