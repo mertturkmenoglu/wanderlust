@@ -18,3 +18,9 @@ export async function updateUserProfile(dto: UpdateUserProfileRequestDto) {
     })
     .json<{ data: UpdateUserProfileResponseDto }>();
 }
+
+export async function updateUserProfileImage(formData: FormData) {
+  return api.post("users/profile-image", {
+    body: formData,
+  });
+}
