@@ -25,3 +25,10 @@ func (r *repository) updateUserProfile(id string, dto UpdateUserProfileRequestDt
 		Phone:    utils.NilStrToText(dto.Phone),
 	})
 }
+
+func (r *repository) updateProfileImage(userId string, imageUrl string) error {
+	return r.db.Queries.UpdateUserProfileImage(context.Background(), db.UpdateUserProfileImageParams{
+		ID:           userId,
+		ProfileImage: utils.StrToText(imageUrl),
+	})
+}

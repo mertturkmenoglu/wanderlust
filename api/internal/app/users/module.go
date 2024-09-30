@@ -4,6 +4,7 @@ import (
 	"wanderlust/internal/app/api"
 	"wanderlust/internal/cache"
 	"wanderlust/internal/db"
+	"wanderlust/internal/upload"
 
 	"github.com/pterm/pterm"
 )
@@ -21,20 +22,22 @@ type handlers struct {
 }
 
 type service struct {
-	repository *repository
+	repository   *repository
+	uploadClient *upload.Upload
 }
 
 type repository struct {
 	db *db.Db
 }
 
-func New(db *db.Db, logger *pterm.Logger, cache *cache.Cache) *Module {
+func New(db *db.Db, logger *pterm.Logger, cache *cache.Cache, upload *upload.Upload) *Module {
 	repository := repository{
 		db: db,
 	}
 
 	service := service{
-		repository: &repository,
+		repository:   &repository,
+		uploadClient: upload,
 	}
 
 	handlers := handlers{
