@@ -1,4 +1,4 @@
-import AuthLink from "~/components/blocks/auth-link";
+import AuthLink from "~/components/blocks/auth/link";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
 import { Button } from "~/components/ui/button";

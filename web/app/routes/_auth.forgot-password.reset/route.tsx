@@ -1,6 +1,6 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import AuthLink from "~/components/blocks/auth-link";
+import AuthLink from "~/components/blocks/auth/link";
 import InputError from "~/components/kit/input-error";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
