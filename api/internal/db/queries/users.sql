@@ -131,3 +131,8 @@ SET
   phone = $7
 WHERE id = $1
 RETURNING *;
+
+-- name: UpdateUserProfileImage :exec
+UPDATE users
+SET profile_image = $2
+WHERE id = $1;
