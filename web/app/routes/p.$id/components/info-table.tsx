@@ -1,3 +1,4 @@
+import FormattedRating from "~/components/kit/formatted-rating";
 import { Progress } from "~/components/ui/progress";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 import { GetPoiByIdResponseDto } from "~/lib/dto";
@@ -15,6 +16,16 @@ export default function InformationTable({ poi }: Props) {
   return (
     <Table>
       <TableBody>
+        <TableRow>
+          <TableCell className="px-0 font-medium">Rating</TableCell>
+          <TableCell className="flex items-center justify-end">
+            <FormattedRating
+              rating={calculateRating()}
+              votes={poi.totalVotes}
+            />
+          </TableCell>
+        </TableRow>
+
         {poi.website && (
           <TableRow>
             <TableCell className="px-0 font-medium">Website</TableCell>
@@ -26,6 +37,20 @@ export default function InformationTable({ poi }: Props) {
                 className="text-primary hover:underline"
               >
                 {poi.website}
+              </a>
+            </TableCell>
+          </TableRow>
+        )}
+
+        {poi.phone && (
+          <TableRow>
+            <TableCell className="px-0 font-medium">Phone</TableCell>
+            <TableCell className="text-right">
+              <a
+                href={`tel:${poi.phone}`}
+                className="text-primary hover:underline"
+              >
+                {poi.phone}
               </a>
             </TableCell>
           </TableRow>
