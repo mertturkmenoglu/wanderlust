@@ -409,6 +409,22 @@ func (q *Queries) MakeUserVerified(ctx context.Context, id string) error {
 	return err
 }
 
+const updateUserBannerImage = `-- name: UpdateUserBannerImage :exec
+UPDATE users
+SET banner_image = $2
+WHERE id = $1
+`
+
+type UpdateUserBannerImageParams struct {
+	ID          string
+	BannerImage pgtype.Text
+}
+
+func (q *Queries) UpdateUserBannerImage(ctx context.Context, arg UpdateUserBannerImageParams) error {
+	_, err := q.db.Exec(ctx, updateUserBannerImage, arg.ID, arg.BannerImage)
+	return err
+}
+
 const updateUserFbId = `-- name: UpdateUserFbId :exec
 UPDATE users
 SET fb_id = $2

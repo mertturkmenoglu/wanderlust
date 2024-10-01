@@ -136,3 +136,8 @@ RETURNING *;
 UPDATE users
 SET profile_image = $2
 WHERE id = $1;
+
+-- name: UpdateUserBannerImage :exec
+UPDATE users
+SET banner_image = $2
+WHERE id = $1;
