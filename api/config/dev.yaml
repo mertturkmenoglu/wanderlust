@@ -27,6 +27,7 @@ minio:
   buckets:
     - default
     - profile-images
+    - banner-images
     - pois
     - reviews
   location: eu-central-1
