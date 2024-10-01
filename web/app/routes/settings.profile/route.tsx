@@ -21,6 +21,7 @@ import { getMe, getUserByUsername } from "~/lib/api";
 import { useProfileForm, useProfileMutation } from "./hooks";
 import { pronounGroups } from "./pronouns";
 import { FormInput } from "./schema";
+import UpdateBannerImage from "./update-banner-image";
 import UpdateProfileImage from "./update-profile-image";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -66,6 +67,13 @@ export default function Page() {
         fullName={profile.fullName}
         image={profile.profileImage}
       />
+
+      <div className="mt-8">
+        <UpdateBannerImage
+          fullName={profile.fullName}
+          image={profile.bannerImage}
+        />
+      </div>
 
       <Separator className="my-4 max-w-xl" />
 
