@@ -12,7 +12,7 @@ export default function Banner({
       <img
         src={userBannerImage}
         alt="banner"
-        className="h-48 w-full object-cover object-top rounded-lg"
+        className="h-64 w-full object-cover object-center rounded-lg"
       />
 
       <div>{children}</div>
