@@ -102,6 +102,288 @@ func (q *Queries) CreatePoiMedia(ctx context.Context, arg CreatePoiMediaParams) 
 	return i, err
 }
 
+const getFavoritePois = `-- name: GetFavoritePois :many
+SELECT
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
+  categories.id, categories.name, categories.image,
+  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE media.media_order = 1
+ORDER BY total_favorites DESC
+LIMIT 25
+`
+
+type GetFavoritePoisRow struct {
+	Poi      Poi
+	Category Category
+	Address  Address
+	City     City
+	Medium   Medium
+}
+
+func (q *Queries) GetFavoritePois(ctx context.Context) ([]GetFavoritePoisRow, error) {
+	rows, err := q.db.Query(ctx, getFavoritePois)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetFavoritePoisRow
+	for rows.Next() {
+		var i GetFavoritePoisRow
+		if err := rows.Scan(
+			&i.Poi.ID,
+			&i.Poi.Name,
+			&i.Poi.Phone,
+			&i.Poi.Description,
+			&i.Poi.AddressID,
+			&i.Poi.Website,
+			&i.Poi.PriceLevel,
+			&i.Poi.AccessibilityLevel,
+			&i.Poi.TotalVotes,
+			&i.Poi.TotalPoints,
+			&i.Poi.TotalFavorites,
+			&i.Poi.CategoryID,
+			&i.Poi.OpenTimes,
+			&i.Poi.CreatedAt,
+			&i.Poi.UpdatedAt,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.Image,
+			&i.Address.ID,
+			&i.Address.CityID,
+			&i.Address.Line1,
+			&i.Address.Line2,
+			&i.Address.PostalCode,
+			&i.Address.Lat,
+			&i.Address.Lng,
+			&i.City.ID,
+			&i.City.Name,
+			&i.City.StateCode,
+			&i.City.StateName,
+			&i.City.CountryCode,
+			&i.City.CountryName,
+			&i.City.ImageUrl,
+			&i.City.Latitude,
+			&i.City.Longitude,
+			&i.City.Description,
+			&i.Medium.ID,
+			&i.Medium.PoiID,
+			&i.Medium.Url,
+			&i.Medium.Thumbnail,
+			&i.Medium.Alt,
+			&i.Medium.Caption,
+			&i.Medium.Width,
+			&i.Medium.Height,
+			&i.Medium.MediaOrder,
+			&i.Medium.Extension,
+			&i.Medium.MimeType,
+			&i.Medium.FileSize,
+			&i.Medium.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getFeaturedPois = `-- name: GetFeaturedPois :many
+SELECT 
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
+  categories.id, categories.name, categories.image,
+  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE total_votes != 0 AND media.media_order = 1
+ORDER BY total_points / total_votes DESC, total_votes DESC
+LIMIT 25
+`
+
+type GetFeaturedPoisRow struct {
+	Poi      Poi
+	Category Category
+	Address  Address
+	City     City
+	Medium   Medium
+}
+
+func (q *Queries) GetFeaturedPois(ctx context.Context) ([]GetFeaturedPoisRow, error) {
+	rows, err := q.db.Query(ctx, getFeaturedPois)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetFeaturedPoisRow
+	for rows.Next() {
+		var i GetFeaturedPoisRow
+		if err := rows.Scan(
+			&i.Poi.ID,
+			&i.Poi.Name,
+			&i.Poi.Phone,
+			&i.Poi.Description,
+			&i.Poi.AddressID,
+			&i.Poi.Website,
+			&i.Poi.PriceLevel,
+			&i.Poi.AccessibilityLevel,
+			&i.Poi.TotalVotes,
+			&i.Poi.TotalPoints,
+			&i.Poi.TotalFavorites,
+			&i.Poi.CategoryID,
+			&i.Poi.OpenTimes,
+			&i.Poi.CreatedAt,
+			&i.Poi.UpdatedAt,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.Image,
+			&i.Address.ID,
+			&i.Address.CityID,
+			&i.Address.Line1,
+			&i.Address.Line2,
+			&i.Address.PostalCode,
+			&i.Address.Lat,
+			&i.Address.Lng,
+			&i.City.ID,
+			&i.City.Name,
+			&i.City.StateCode,
+			&i.City.StateName,
+			&i.City.CountryCode,
+			&i.City.CountryName,
+			&i.City.ImageUrl,
+			&i.City.Latitude,
+			&i.City.Longitude,
+			&i.City.Description,
+			&i.Medium.ID,
+			&i.Medium.PoiID,
+			&i.Medium.Url,
+			&i.Medium.Thumbnail,
+			&i.Medium.Alt,
+			&i.Medium.Caption,
+			&i.Medium.Width,
+			&i.Medium.Height,
+			&i.Medium.MediaOrder,
+			&i.Medium.Extension,
+			&i.Medium.MimeType,
+			&i.Medium.FileSize,
+			&i.Medium.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getNewPois = `-- name: GetNewPois :many
+SELECT 
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
+  categories.id, categories.name, categories.image,
+  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE media.media_order = 1
+ORDER BY pois.created_at DESC
+LIMIT 25
+`
+
+type GetNewPoisRow struct {
+	Poi      Poi
+	Category Category
+	Address  Address
+	City     City
+	Medium   Medium
+}
+
+func (q *Queries) GetNewPois(ctx context.Context) ([]GetNewPoisRow, error) {
+	rows, err := q.db.Query(ctx, getNewPois)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetNewPoisRow
+	for rows.Next() {
+		var i GetNewPoisRow
+		if err := rows.Scan(
+			&i.Poi.ID,
+			&i.Poi.Name,
+			&i.Poi.Phone,
+			&i.Poi.Description,
+			&i.Poi.AddressID,
+			&i.Poi.Website,
+			&i.Poi.PriceLevel,
+			&i.Poi.AccessibilityLevel,
+			&i.Poi.TotalVotes,
+			&i.Poi.TotalPoints,
+			&i.Poi.TotalFavorites,
+			&i.Poi.CategoryID,
+			&i.Poi.OpenTimes,
+			&i.Poi.CreatedAt,
+			&i.Poi.UpdatedAt,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.Image,
+			&i.Address.ID,
+			&i.Address.CityID,
+			&i.Address.Line1,
+			&i.Address.Line2,
+			&i.Address.PostalCode,
+			&i.Address.Lat,
+			&i.Address.Lng,
+			&i.City.ID,
+			&i.City.Name,
+			&i.City.StateCode,
+			&i.City.StateName,
+			&i.City.CountryCode,
+			&i.City.CountryName,
+			&i.City.ImageUrl,
+			&i.City.Latitude,
+			&i.City.Longitude,
+			&i.City.Description,
+			&i.Medium.ID,
+			&i.Medium.PoiID,
+			&i.Medium.Url,
+			&i.Medium.Thumbnail,
+			&i.Medium.Alt,
+			&i.Medium.Caption,
+			&i.Medium.Width,
+			&i.Medium.Height,
+			&i.Medium.MediaOrder,
+			&i.Medium.Extension,
+			&i.Medium.MimeType,
+			&i.Medium.FileSize,
+			&i.Medium.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getPoiAmenities = `-- name: GetPoiAmenities :many
 SELECT amenities_pois.amenity_id, amenities_pois.poi_id, amenities.id, amenities.name FROM amenities_pois
 LEFT JOIN amenities ON amenities.id = amenities_pois.amenity_id
@@ -226,6 +508,100 @@ func (q *Queries) GetPoiMedia(ctx context.Context, poiID string) ([]Medium, erro
 			&i.MimeType,
 			&i.FileSize,
 			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPopularPois = `-- name: GetPopularPois :many
+SELECT
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
+  categories.id, categories.name, categories.image,
+  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE media.media_order = 1
+ORDER BY total_votes DESC
+LIMIT 25
+`
+
+type GetPopularPoisRow struct {
+	Poi      Poi
+	Category Category
+	Address  Address
+	City     City
+	Medium   Medium
+}
+
+func (q *Queries) GetPopularPois(ctx context.Context) ([]GetPopularPoisRow, error) {
+	rows, err := q.db.Query(ctx, getPopularPois)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPopularPoisRow
+	for rows.Next() {
+		var i GetPopularPoisRow
+		if err := rows.Scan(
+			&i.Poi.ID,
+			&i.Poi.Name,
+			&i.Poi.Phone,
+			&i.Poi.Description,
+			&i.Poi.AddressID,
+			&i.Poi.Website,
+			&i.Poi.PriceLevel,
+			&i.Poi.AccessibilityLevel,
+			&i.Poi.TotalVotes,
+			&i.Poi.TotalPoints,
+			&i.Poi.TotalFavorites,
+			&i.Poi.CategoryID,
+			&i.Poi.OpenTimes,
+			&i.Poi.CreatedAt,
+			&i.Poi.UpdatedAt,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.Image,
+			&i.Address.ID,
+			&i.Address.CityID,
+			&i.Address.Line1,
+			&i.Address.Line2,
+			&i.Address.PostalCode,
+			&i.Address.Lat,
+			&i.Address.Lng,
+			&i.City.ID,
+			&i.City.Name,
+			&i.City.StateCode,
+			&i.City.StateName,
+			&i.City.CountryCode,
+			&i.City.CountryName,
+			&i.City.ImageUrl,
+			&i.City.Latitude,
+			&i.City.Longitude,
+			&i.City.Description,
+			&i.Medium.ID,
+			&i.Medium.PoiID,
+			&i.Medium.Url,
+			&i.Medium.Thumbnail,
+			&i.Medium.Alt,
+			&i.Medium.Caption,
+			&i.Medium.Width,
+			&i.Medium.Height,
+			&i.Medium.MediaOrder,
+			&i.Medium.Extension,
+			&i.Medium.MimeType,
+			&i.Medium.FileSize,
+			&i.Medium.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

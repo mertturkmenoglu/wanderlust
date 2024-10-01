@@ -83,3 +83,67 @@ INSERT INTO media (
   $10,
   $11
 ) RETURNING *;
+
+-- name: GetFavoritePois :many
+SELECT
+  sqlc.embed(pois),
+  sqlc.embed(categories),
+  sqlc.embed(addresses),
+  sqlc.embed(cities),
+  sqlc.embed(media)
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE media.media_order = 1
+ORDER BY total_favorites DESC
+LIMIT 25;
+
+-- name: GetFeaturedPois :many
+SELECT 
+  sqlc.embed(pois),
+  sqlc.embed(categories),
+  sqlc.embed(addresses),
+  sqlc.embed(cities),
+  sqlc.embed(media)
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE total_votes != 0 AND media.media_order = 1
+ORDER BY total_points / total_votes DESC, total_votes DESC
+LIMIT 25;
+
+-- name: GetPopularPois :many
+SELECT
+  sqlc.embed(pois),
+  sqlc.embed(categories),
+  sqlc.embed(addresses),
+  sqlc.embed(cities),
+  sqlc.embed(media)
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE media.media_order = 1
+ORDER BY total_votes DESC
+LIMIT 25;
+
+-- name: GetNewPois :many
+SELECT 
+  sqlc.embed(pois),
+  sqlc.embed(categories),
+  sqlc.embed(addresses),
+  sqlc.embed(cities),
+  sqlc.embed(media)
+FROM pois
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE media.media_order = 1
+ORDER BY pois.created_at DESC
+LIMIT 25;
