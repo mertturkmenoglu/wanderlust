@@ -41,7 +41,7 @@ export function Rating({
             <span key={index} {...api.getItemProps({ index })}>
               <Star
                 className={cn(
-                  "text-primary",
+                  "text-primary size-4",
                   {
                     "fill-primary": state.highlighted,
                   },
