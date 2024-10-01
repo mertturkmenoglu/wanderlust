@@ -32,3 +32,10 @@ func (r *repository) updateProfileImage(userId string, imageUrl string) error {
 		ProfileImage: utils.StrToText(imageUrl),
 	})
 }
+
+func (r *repository) updateBannerImage(userId string, imageUrl string) error {
+	return r.db.Queries.UpdateUserBannerImage(context.Background(), db.UpdateUserBannerImageParams{
+		ID:          userId,
+		BannerImage: utils.StrToText(imageUrl),
+	})
+}

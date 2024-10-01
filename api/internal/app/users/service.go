@@ -1,17 +1,13 @@
 package users
 
 import (
-	"context"
 	"errors"
 	"mime/multipart"
-	"wanderlust/config"
 	"wanderlust/internal/app/api"
 	"wanderlust/internal/db"
 	"wanderlust/internal/upload"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/minio/minio-go/v7"
-	"github.com/spf13/viper"
 )
 
 func (s *service) GetUserProfile(username string) (db.GetUserProfileByUsernameRow, error) {
@@ -45,74 +41,44 @@ func (s *service) updateUserProfile(id string, dto UpdateUserProfileRequestDto) 
 }
 
 func (s *service) validateProfileImageMPF(mpf *multipart.Form) error {
-	files := mpf.File["files"]
-
-	if files == nil {
-		return upload.ErrInvalidNumberOfFiles
+	validator := sImageUploadValidator{
+		action: updateProfileImage,
+		mpf:    mpf,
 	}
 
-	num := len(files)
+	return validator.Validate()
+}
 
-	if !isAllowedCount(num) {
-		return upload.ErrInvalidNumberOfFiles
+func (s *service) validateBannerImageMPF(mpf *multipart.Form) error {
+	validator := sImageUploadValidator{
+		action: updateBannerImage,
+		mpf:    mpf,
 	}
 
-	// Check content type and size
-	for _, f := range files {
-		mime := f.Header.Get("Content-Type")
-
-		if !isAllowedMimeType(mime) {
-			return upload.ErrInvalidMimeType
-		}
-
-		if !isAllowedFileSize(f.Size) {
-			return upload.ErrFileTooBig
-		}
-	}
-
-	return nil
+	return validator.Validate()
 }
 
 func (s *service) updateProfileImage(user db.User, mpf *multipart.Form) (string, error) {
-	files := mpf.File["files"]
-
-	if files == nil || len(files) != 1 {
-		return "", upload.ErrInvalidNumberOfFiles
+	uploader := sImageUploader{
+		action:   updateProfileImage,
+		mpf:      mpf,
+		client:   s.uploadClient,
+		username: user.Username,
 	}
 
-	f := files[0]
-	file, err := f.Open()
+	fileInfo, err := uploader.GetSingleFile()
 
 	if err != nil {
 		return "", err
 	}
 
-	defer file.Close()
+	defer fileInfo.file.Close()
 
-	mimeType := f.Header.Get("Content-Type")
-	fileExtension, err := upload.GetFileExtensionFromMimeType(mimeType)
-
-	if err != nil {
-		return "", err
-	}
-
-	// username + file extension is the file name
-	fileName := user.Username + "." + fileExtension
-
-	info, err := s.uploadClient.Client.PutObject(
-		context.Background(),
-		"profile-images",
-		fileName,
-		file,
-		int64(f.Size),
-		minio.PutObjectOptions{},
-	)
+	url, err := uploader.UploadFile(fileInfo)
 
 	if err != nil {
-		return "", err
+		return "", upload.ErrInvalidFile
 	}
-
-	url := "//" + viper.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
 
 	err = s.repository.updateProfileImage(user.ID, url)
 
@@ -120,19 +86,40 @@ func (s *service) updateProfileImage(user db.User, mpf *multipart.Form) (string,
 		return "", err
 	}
 
-	// Remove old image
-	// Could be optimized but i can't be bothered right now. maybe later.
-	for _, mime := range allowedMimeTypes {
-		ext, _ := upload.GetFileExtensionFromMimeType(mime)
+	_ = uploader.DeleteOldFile(fileInfo)
 
-		if ext == fileExtension {
-			// Skip the current file extension
-			continue
-		}
+	return url, nil
+}
 
-		name := user.Username + "." + ext
-		_ = s.uploadClient.Client.RemoveObject(context.Background(), "profile-images", name, minio.RemoveObjectOptions{})
+func (s *service) updateBannerImage(user db.User, mpf *multipart.Form) (string, error) {
+	uploader := sImageUploader{
+		action:   updateBannerImage,
+		mpf:      mpf,
+		client:   s.uploadClient,
+		username: user.Username,
 	}
+
+	fileInfo, err := uploader.GetSingleFile()
+
+	if err != nil {
+		return "", err
+	}
+
+	defer fileInfo.file.Close()
+
+	url, err := uploader.UploadFile(fileInfo)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = s.repository.updateBannerImage(user.ID, url)
+
+	if err != nil {
+		return "", err
+	}
+
+	_ = uploader.DeleteOldFile(fileInfo)
 
 	return url, nil
 }

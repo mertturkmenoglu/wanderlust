@@ -93,3 +93,31 @@ func (h *handlers) UpdateProfileImage(c echo.Context) error {
 		},
 	})
 }
+
+func (h *handlers) UpdateBannerImage(c echo.Context) error {
+	user := c.Get("user").(db.User)
+	err := c.Request().ParseMultipartForm(maxMemory)
+
+	if err != nil {
+		return upload.ErrParseMultipartForm
+	}
+
+	mpf := c.Request().MultipartForm
+	err = h.service.validateBannerImageMPF(mpf)
+
+	if err != nil {
+		return err
+	}
+
+	res, err := h.service.updateBannerImage(user, mpf)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, api.Response{
+		Data: echo.Map{
+			"url": res,
+		},
+	})
+}
