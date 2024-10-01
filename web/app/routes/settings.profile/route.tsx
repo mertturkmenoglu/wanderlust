@@ -21,8 +21,7 @@ import { getMe, getUserByUsername } from "~/lib/api";
 import { useProfileForm, useProfileMutation } from "./hooks";
 import { pronounGroups } from "./pronouns";
 import { FormInput } from "./schema";
-import UpdateBannerImage from "./update-banner-image";
-import UpdateProfileImage from "./update-profile-image";
+import UpdateImage from "./update-image";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -63,15 +62,19 @@ export default function Page() {
         Profile
       </h2>
 
-      <UpdateProfileImage
+      <UpdateImage
         fullName={profile.fullName}
         image={profile.profileImage}
+        fallbackImage="/profile.png"
+        action="profile"
       />
 
       <div className="mt-8">
-        <UpdateBannerImage
+        <UpdateImage
           fullName={profile.fullName}
           image={profile.bannerImage}
+          fallbackImage="https://i.imgur.com/EwvUEmR.jpg"
+          action="banner"
         />
       </div>
 
