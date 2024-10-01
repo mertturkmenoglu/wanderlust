@@ -33,8 +33,8 @@ export function Rating({
   const api = rating.connect(state, send, normalizeProps);
 
   return (
-    <div {...api.rootProps}>
-      <div {...api.controlProps} className="flex">
+    <div {...api.getRootProps()}>
+      <div {...api.getControlProps()} className="flex">
         {api.items.map((index) => {
           const state = api.getItemState({ index });
           return (
@@ -52,7 +52,7 @@ export function Rating({
           );
         })}
       </div>
-      <input {...api.hiddenInputProps} data-testid="hidden-input" />
+      <input {...api.getHiddenInputProps()} data-testid="hidden-input" />
     </div>
   );
 }
