@@ -13,5 +13,6 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.POST("/:username/make-verified", m.handlers.MakeUserVerified)
 		routes.PATCH("/profile", m.handlers.UpdateUserProfile, middlewares.ParseBody[UpdateUserProfileRequestDto], middlewares.IsAuth)
 		routes.POST("/profile-image", m.handlers.UpdateProfileImage, middlewares.IsAuth)
+		routes.POST("/banner-image", m.handlers.UpdateBannerImage, middlewares.IsAuth)
 	}
 }
