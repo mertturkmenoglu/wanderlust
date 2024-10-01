@@ -11,8 +11,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/labstack/echo/v4"
-	"github.com/minio/minio-go/v7"
 )
 
 func (s *service) peekPois() ([]db.Poi, error) {
@@ -48,81 +46,35 @@ func (s *service) isBookmarked(poiId string, userId string) bool {
 }
 
 func (s *service) validateMediaUpload(mpf *multipart.Form) error {
-	files := mpf.File["files"]
-
-	if files == nil {
-		return upload.ErrInvalidNumberOfFiles
+	v := ImageUploadValidator{
+		mpf: mpf,
 	}
 
-	num := len(files)
-
-	if !isAllowedCount(num) {
-		return upload.ErrInvalidNumberOfFiles
-	}
-
-	// Check content type and size
-	for _, f := range files {
-		mime := f.Header.Get("Content-Type")
-
-		if !isAllowedMimeType(mime) {
-			return upload.ErrInvalidMimeType
-		}
-
-		if !isAllowedFileSize(f.Size) {
-			return upload.ErrFileTooBig
-		}
-	}
-
-	return nil
+	return v.Validate()
 }
 
-func (s *service) uploadMedia(mpf *multipart.Form) ([]echo.Map, error) {
-	bucket := "pois"
-	files := mpf.File["files"]
-	res := make([]echo.Map, 0)
-
-	for _, f := range files {
-		file, err := f.Open()
-
-		if err != nil {
-			return nil, err
-		}
-
-		defer file.Close()
-
-		// Generate a random key
-		key := uuid.New().String()
-		mime := f.Header.Get("Content-Type")
-		fileExtension, err := upload.GetFileExtensionFromMimeType(mime)
-
-		if err != nil {
-			return nil, err
-		}
-
-		// key and file extension combined to create a file name
-		fileName := upload.ConstructFilename(key, fileExtension)
-
-		info, err := s.uploadClient.Client.PutObject(
-			context.Background(),
-			bucket,
-			fileName,
-			file,
-			int64(f.Size),
-			minio.PutObjectOptions{},
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		res = append(res, echo.Map{
-			"key":  key,
-			"info": info,
-			"url":  "/" + info.Bucket + "/" + info.Key,
-		})
+func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
+	uploader := ImageUploader{
+		mpf:     mpf,
+		client:  s.uploadClient,
+		draftId: mpf.Value["id"][0],
 	}
 
-	return res, nil
+	fileInfo, err := uploader.getSingleFile()
+
+	if err != nil {
+		return sUploadResult{}, err
+	}
+
+	defer fileInfo.file.Close()
+
+	uploadResult, err := uploader.uploadFile(fileInfo)
+
+	if err != nil {
+		return sUploadResult{}, upload.ErrInvalidFile
+	}
+
+	return uploadResult, nil
 }
 
 func (s *service) createDraft() (map[string]any, error) {
