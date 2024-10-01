@@ -1,14 +1,18 @@
 import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+
+import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import { getPoiById } from "~/lib/api";
+import Amenities from "./components/amenities";
 import BookmarkButton from "./components/bookmark-button";
 import Breadcrumb from "./components/breadcrumb";
 import Carousel from "./components/carousel";
 import FavoriteButton from "./components/favorite-button";
 import InformationTable from "./components/info-table";
+import { Map } from "./components/map.client";
 import Menu from "./components/menu";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -68,7 +72,12 @@ export default function Page() {
           <InformationTable poi={poi} />
         </div>
       </div>
-      {/* <LocationMap location={location} /> */}
+
+      <ClientOnly fallback={<div>Loading...</div>}>
+        {() => <Map lat={poi.address.lat} lng={poi.address.lng} />}
+      </ClientOnly>
+
+      <Amenities amenities={poi.amenities} />
 
       <hr className="my-8" />
       {/* <Reviews locationId={location.id} name={location.name} /> */}
