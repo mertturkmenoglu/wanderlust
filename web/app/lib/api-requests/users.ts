@@ -24,3 +24,9 @@ export async function updateUserProfileImage(formData: FormData) {
     body: formData,
   });
 }
+
+export async function updateBannerImage(formData: FormData) {
+  return api.post("users/banner-image", {
+    body: formData,
+  });
+}
