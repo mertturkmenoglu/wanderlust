@@ -120,6 +120,7 @@ export default function Step2() {
             id="lat"
             placeholder="Latitude"
             autoComplete="off"
+            step="any"
             {...form.register("address.lat", { valueAsNumber: true })}
           />
           <InputInfo text="Latitude" />
@@ -132,6 +133,7 @@ export default function Step2() {
             type="number"
             id="lng"
             placeholder="Longitude"
+            step="any"
             autoComplete="off"
             {...form.register("address.lng", { valueAsNumber: true })}
           />
