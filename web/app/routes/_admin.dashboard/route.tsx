@@ -6,7 +6,6 @@ import {
 } from "@remix-run/node";
 import { Link, Outlet } from "@remix-run/react";
 import { getMe } from "~/lib/api";
-import Sidebar from "./components/sidebar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -37,8 +36,7 @@ export default function Page() {
           </h2>
         </Link>
       </div>
-      <div className="my-8 flex flex-col gap-8 md:flex-row">
-        <Sidebar className="w-[256px] md:border-r md:border-border" />
+      <div className="my-8 flex flex-col gap-8">
         <div className="w-full">
           <Outlet />
         </div>
