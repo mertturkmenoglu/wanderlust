@@ -1,17 +1,85 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
-import { Button, buttonVariants } from "~/components/ui/button";
-import { cn } from "~/lib/utils";
+import { ClientOnly } from "remix-utils/client-only";
+import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { loader } from "../../route";
+import StepsNavigation from "../steps-navigation";
 import { useUpdateDraftMutation } from "../use-update-draft";
-import { useStep4Form } from "./hooks";
-import OpenTimes from "./open-times";
+import OpenHours from "./open-hours";
 import { FormInput } from "./schema";
+
+export type ShortDayName =
+  | "mon"
+  | "tue"
+  | "wed"
+  | "thu"
+  | "fri"
+  | "sat"
+  | "sun";
+
+export type Day = {
+  id: ShortDayName;
+  name: string;
+  longName: string;
+  ariaLabel: string;
+};
+
+const allDays: Array<Day> = [
+  {
+    id: "mon",
+    name: "Mon",
+    longName: "Monday",
+    ariaLabel: "Toggle monday",
+  },
+  {
+    id: "tue",
+    name: "Tue",
+    longName: "Tuesday",
+    ariaLabel: "Toggle tuesday",
+  },
+  {
+    id: "wed",
+    name: "Wed",
+    longName: "Wednesday",
+    ariaLabel: "Toggle wednesday",
+  },
+  {
+    id: "thu",
+    name: "Thu",
+    longName: "Thursday",
+    ariaLabel: "Toggle thursday",
+  },
+  {
+    id: "fri",
+    name: "Fri",
+    longName: "Friday",
+    ariaLabel: "Toggle friday",
+  },
+  {
+    id: "sat",
+    name: "Sat",
+    longName: "Saturday",
+    ariaLabel: "Toggle saturday",
+  },
+  {
+    id: "sun",
+    name: "Sun",
+    longName: "Sunday",
+    ariaLabel: "Toggle sunday",
+  },
+];
 
 export default function Step4() {
   const { draft } = useLoaderData<typeof loader>();
-  const form = useStep4Form(draft);
   const mutation = useUpdateDraftMutation<FormInput>(draft, "4");
+  const [days, setDays] = useState<Day[]>(() => {
+    if (draft.openHours) {
+      return allDays.filter((d) => draft.openHours.includes(d.id));
+    }
+
+    return [];
+  });
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     mutation.mutate(data);
@@ -19,42 +87,45 @@ export default function Step4() {
 
   return (
     <div>
-      <h3 className="mt-8 text-lg font-bold tracking-tight">Open Times</h3>
-
-      <form
-        className="container mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+      <ToggleGroup
+        type="multiple"
+        className="mt-8"
+        onValueChange={(v) => {
+          setDays([...allDays.filter((d) => v.includes(d.id))]);
+        }}
       >
+        {allDays.map((day) => (
+          <ToggleGroupItem
+            key={day.id}
+            value={day.id}
+            aria-label={day.ariaLabel}
+            size={"sm"}
+          >
+            {day.name}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+
+      <div className="text-center mt-2 text-xs text-muted-foreground">
+        Select the days you want to be open
+      </div>
+
+      <form className="container mt-8 grid grid-cols-1 gap-4 px-0 max-w-5xl mx-auto md:grid-cols-2">
         <div className="col-span-2">
-          <h3 className="my-4 text-lg font-bold tracking-tight">Open Times</h3>
-          <div className="grid grid-cols-3 gap-4 mt-2">
-            <OpenTimes day="mon" form={form} />
-            <OpenTimes day="tue" form={form} />
-            <OpenTimes day="wed" form={form} />
-            <OpenTimes day="thu" form={form} />
-            <OpenTimes day="fri" form={form} />
-            <OpenTimes day="sat" form={form} />
-            <OpenTimes day="sun" form={form} />
+          <div className="">
+            <ClientOnly fallback={<div>Loading...</div>}>
+              {() => (
+                <div className="grid grid-cols-2 gap-4">
+                  {days.map((day) => (
+                    <OpenHours key={day.id} day={day} />
+                  ))}
+                </div>
+              )}
+            </ClientOnly>
           </div>
         </div>
 
-        <div>
-          <Link
-            to={`/dashboard/pois/drafts/${draft.id}?step=3`}
-            className={cn(
-              "block w-full",
-              buttonVariants({ variant: "default" })
-            )}
-          >
-            Previous
-          </Link>
-        </div>
-
-        <div>
-          <Button type="submit" className="block w-full">
-            Next
-          </Button>
-        </div>
+        <StepsNavigation draftId={draft.id} step={4} />
       </form>
     </div>
   );
