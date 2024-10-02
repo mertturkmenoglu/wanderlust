@@ -1,11 +1,11 @@
 import { Link, useLoaderData } from "@remix-run/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Controller, SubmitHandler } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
 import { useAmenities } from "~/hooks/use-amenities";
-import { cn } from "~/lib/utils";
 import { loader } from "../../route";
 import { useUpdateDraftMutation } from "../use-update-draft";
 import { useStep3Form } from "./hooks";
@@ -29,8 +29,6 @@ export default function Step3() {
 
   return (
     <div>
-      <h3 className="mt-8 text-lg font-bold tracking-tight">Amenities</h3>
-
       <form
         className="container mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -82,21 +80,18 @@ export default function Step3() {
           <InputError error={form.formState.errors.amenities?.root} />
         </div>
 
-        <div>
+        <div className="flex justify-end">
           <Link
             to={`/dashboard/pois/drafts/${draft.id}?step=2`}
-            className={cn(
-              "block w-full",
-              buttonVariants({ variant: "default" })
-            )}
+            className={buttonVariants({ variant: "default", size: "icon" })}
           >
-            Previous
+            <ChevronLeftIcon className="size-4" />
           </Link>
         </div>
 
-        <div>
-          <Button type="submit" className="block w-full">
-            Next
+        <div className="flex justify-start">
+          <Button variant="default" size="icon" type="submit">
+            <ChevronRightIcon className="size-4" />
           </Button>
         </div>
       </form>
