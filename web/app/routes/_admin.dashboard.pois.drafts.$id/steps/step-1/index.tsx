@@ -1,9 +1,7 @@
-import { Link, useLoaderData } from "@remix-run/react";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useLoaderData } from "@remix-run/react";
 import { Controller, SubmitHandler } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
-import { Button, buttonVariants } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
@@ -16,6 +14,7 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { useCategories } from "~/hooks/use-categories";
 import { loader } from "../../route";
+import StepsNavigation from "../steps-navigation";
 import { useUpdateDraftMutation } from "../use-update-draft";
 import { useStep1Form } from "./hooks";
 import { FormInput } from "./schema";
@@ -187,20 +186,7 @@ export default function Step1() {
           <InputError error={form.formState.errors.priceLevel} />
         </div>
 
-        <div className="flex justify-end">
-          <Link
-            to={"#"}
-            className={buttonVariants({ variant: "secondary", size: "icon" })}
-          >
-            <ChevronLeftIcon className="size-4" />
-          </Link>
-        </div>
-
-        <div className="flex justify-start">
-          <Button variant="default" size="icon" type="submit">
-            <ChevronRightIcon className="size-4" />
-          </Button>
-        </div>
+        <StepsNavigation draftId={draft.id} step={1} />
       </form>
     </div>
   );

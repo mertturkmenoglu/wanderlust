@@ -1,12 +1,11 @@
-import { Link, useLoaderData } from "@remix-run/react";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useLoaderData } from "@remix-run/react";
 import { Controller, SubmitHandler } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
-import { Button, buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
 import { useAmenities } from "~/hooks/use-amenities";
 import { loader } from "../../route";
+import StepsNavigation from "../steps-navigation";
 import { useUpdateDraftMutation } from "../use-update-draft";
 import { useStep3Form } from "./hooks";
 import { FormInput } from "./schema";
@@ -80,20 +79,7 @@ export default function Step3() {
           <InputError error={form.formState.errors.amenities?.root} />
         </div>
 
-        <div className="flex justify-end">
-          <Link
-            to={`/dashboard/pois/drafts/${draft.id}?step=2`}
-            className={buttonVariants({ variant: "default", size: "icon" })}
-          >
-            <ChevronLeftIcon className="size-4" />
-          </Link>
-        </div>
-
-        <div className="flex justify-start">
-          <Button variant="default" size="icon" type="submit">
-            <ChevronRightIcon className="size-4" />
-          </Button>
-        </div>
+        <StepsNavigation draftId={draft.id} step={3} />
       </form>
     </div>
   );
