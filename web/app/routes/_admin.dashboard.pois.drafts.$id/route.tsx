@@ -2,8 +2,10 @@ import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useSearchParams } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
+import { Separator } from "~/components/ui/separator";
 import { getDraft } from "~/lib/api-requests";
 import DeleteDialog from "./delete-dialog";
+import StepsIndicator from "./steps-indicator";
 import Step1 from "./steps/step-1";
 import Step2 from "./steps/step-2";
 import Step3 from "./steps/step-3";
@@ -27,14 +29,21 @@ export default function Page() {
   const step = params.get("step") ?? "1";
 
   return (
-    <div>
-      <BackLink href="/dashboard/pois/drafts" text="Go back to drafts page" />
-      <div className="flex items-end gap-4 mt-8">
-        <h2 className="text-2xl font-bold tracking-tight">
+    <div className="mx-auto">
+      <BackLink
+        href="/dashboard/pois/drafts"
+        text="Go back to the drafts page"
+      />
+      <div className="flex items-end gap-8 mt-4">
+        <h2 className="text-4xl font-bold tracking-tight">
           {draft.name ?? "Unnamed Draft"}
         </h2>
         <DeleteDialog id={draft.id} />
       </div>
+
+      <Separator className="my-4" />
+
+      <StepsIndicator draftId={draft.id} />
 
       {step === "1" && <Step1 />}
       {step === "2" && <Step2 />}
