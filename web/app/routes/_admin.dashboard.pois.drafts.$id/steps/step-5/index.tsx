@@ -17,17 +17,7 @@ export default function Step5() {
 
       <div className="container mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2">
         <div className="col-span-2">
-          <Dnd capi={collapseApi} fapi={fileApi} />
-
-          {fileError.length > 0 && (
-            <div>
-              {fileError.map((error, i) => (
-                <div key={i} className="text-destructive">
-                  {error}
-                </div>
-              ))}
-            </div>
-          )}
+          
         </div>
         <div>
           <Link
