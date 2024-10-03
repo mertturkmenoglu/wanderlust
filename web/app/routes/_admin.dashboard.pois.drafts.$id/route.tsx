@@ -14,11 +14,12 @@ import Step5 from "./steps/step-5";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
+  const baseApiUrl = import.meta.env.VITE_API_URL ?? "";
 
   try {
     const Cookie = request.headers.get("Cookie") ?? "";
     const draft = await getDraft(params.id, { headers: { Cookie } });
-    return json({ draft: draft.data });
+    return json({ draft: draft.data, baseApiUrl });
   } catch (e) {
     throw new Response("Something went wrong", { status: 500 });
   }
