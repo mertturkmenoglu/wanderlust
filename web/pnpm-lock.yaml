@@ -116,6 +116,9 @@ importers:
       '@uppy/react':
         specifier: ^4.0.2
         version: 4.0.2(@uppy/core@4.2.1)(@uppy/dashboard@4.1.0(@uppy/core@4.2.1))(@uppy/drag-drop@4.0.2(@uppy/core@4.2.1))(@uppy/file-input@4.0.1(@uppy/core@4.2.1))(@uppy/progress-bar@4.0.0(@uppy/core@4.2.1))(@uppy/status-bar@4.0.3(@uppy/core@4.2.1))(react@18.3.1)
+      '@uppy/xhr-upload':
+        specifier: ^4.2.0
+        version: 4.2.0(@uppy/core@4.2.1)
       '@zag-js/collapsible':
         specifier: ^0.69.0
         version: 0.69.0
@@ -1826,6 +1829,9 @@ packages:
   '@types/react@18.3.8':
     resolution: {integrity: sha512-syBUrW3/XpnW4WJ41Pft+I+aPoDVbrBVQGEnbD7NijDGlVC+8gV/XKRY+7vMDlfPpbwYt0l1vd/Sj8bJGMbs9Q==}
 
+  '@types/retry@0.12.2':
+    resolution: {integrity: sha512-XISRgDJ2Tc5q4TRqvgJtzsRkFYNJzZrhTdtMoGVBttwzzQJkPnS3WWTFc7kuDRoPtPakl+T+OfdEUjYJj7Jbow==}
+
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
 
@@ -1920,6 +1926,11 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
+  '@uppy/companion-client@4.1.0':
+    resolution: {integrity: sha512-nQ8CQfZcYVBNtFQ6ePj7FDIq38DXlH0YpzP/91LR9gnDVISJKKUuvWfr6tPktj1lRw9FZV8jLmlMKT2ituVKiw==}
+    peerDependencies:
+      '@uppy/core': ^4.2.0
+
   '@uppy/core@4.2.1':
     resolution: {integrity: sha512-5u6hoyESYbAswnSevo5mHnOQANqiEk1X3y4/JobmQEMdPJegbWgbZ0hpTx7zk/rBpEj5hr+xxNPF3LqqkC369g==}
 
@@ -1995,6 +2006,11 @@ packages:
 
   '@uppy/utils@6.0.2':
     resolution: {integrity: sha512-ZoNeAa1YTKSlcvXe1SP3POjzjRZ9jSojorbst03vwd1Ks9vHPGf6pne61DowTXHZ3HMj1vpcIaQ1VIEWeeADlA==}
+
+  '@uppy/xhr-upload@4.2.0':
+    resolution: {integrity: sha512-MhpazjMEjFgEyB9Ewiz+ba4U3uZ6yBDrylBeMI0XSxJD5ZwygYBzqpacB6eoVZqHqyb9He90fdZnod5dD9Cc0g==}
+    peerDependencies:
+      '@uppy/core': ^4.2.0
 
   '@vanilla-extract/babel-plugin-debug-ids@1.0.6':
     resolution: {integrity: sha512-C188vUEYmw41yxg3QooTs8r1IdbDQQ2mH7L5RkORBnHx74QlmsNfqVmKwAVTgrlYt8JoRaWMtPfGm/Ql0BNQrA==}
@@ -3257,6 +3273,10 @@ packages:
     resolution: {integrity: sha512-5KoIu2Ngpyek75jXodFvnafB6DJgr3u8uuK0LEZJjrU19DrMD3EVERaR8sjz8CCGgpZvxPl9SuE1GMVPFHx1mw==}
     engines: {node: '>= 0.4'}
 
+  is-network-error@1.1.0:
+    resolution: {integrity: sha512-tUdRRAnhT+OtCZR/LxZelH/C7QtjtFrTu5tXCA8pl55eTUElUHT+GPYV8MBMBvea/j+NxQqVt3LbWMRir7Gx9g==}
+    engines: {node: '>=16'}
+
   is-number-object@1.0.7:
     resolution: {integrity: sha512-k1U0IRzLMo7ZlYIfzRu23Oh6MiIFasgpb9X76eqfFZAqwH44UI4KTBvBYIZ1dSL9ZzChTB9ShHfLkR4pdW5krQ==}
     engines: {node: '>= 0.4'}
@@ -3900,6 +3920,10 @@ packages:
     resolution: {integrity: sha512-NXzu9aQJTAzbBqOt2hwsR63ea7yvxJc0PwN/zobNAudYfb1B7R08SzB4TsLeSbUCuG467NhnoT0oO6w1qRO+BA==}
     engines: {node: '>=18'}
 
+  p-retry@6.2.0:
+    resolution: {integrity: sha512-JA6nkq6hKyWLLasXQXUrO4z8BUZGUt/LjlJxx8Gb2+2ntodU/SS63YZ8b0LUTbQ8ZB9iwOfhEPhg4ykKnn2KsA==}
+    engines: {node: '>=16.17'}
+
   p-timeout@6.1.2:
     resolution: {integrity: sha512-UbD77BuZ9Bc9aABo74gfXhNvzC9Tx7SxtHSh1fxvx3jTLLYvmVhiQZZrJzqqU0jKbN32kb5VOKiLEQI/3bIjgQ==}
     engines: {node: '>=14.16'}
@@ -4355,6 +4379,10 @@ packages:
 
   retry@0.12.0:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
+    engines: {node: '>= 4'}
+
+  retry@0.13.1:
+    resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
     engines: {node: '>= 4'}
 
   reusify@1.0.4:
@@ -6579,6 +6607,8 @@ snapshots:
       '@types/prop-types': 15.7.13
       csstype: 3.1.3
 
+  '@types/retry@0.12.2': {}
+
   '@types/semver@7.5.8': {}
 
   '@types/unist@2.0.11': {}
@@ -6709,6 +6739,13 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
+  '@uppy/companion-client@4.1.0(@uppy/core@4.2.1)':
+    dependencies:
+      '@uppy/core': 4.2.1
+      '@uppy/utils': 6.0.2
+      namespace-emitter: 2.0.1
+      p-retry: 6.2.0
+
   '@uppy/core@4.2.1':
     dependencies:
       '@transloadit/prettier-bytes': 0.3.4
@@ -6809,6 +6846,12 @@ snapshots:
     dependencies:
       lodash: 4.17.21
       preact: 10.24.0
+
+  '@uppy/xhr-upload@4.2.0(@uppy/core@4.2.1)':
+    dependencies:
+      '@uppy/companion-client': 4.1.0(@uppy/core@4.2.1)
+      '@uppy/core': 4.2.1
+      '@uppy/utils': 6.0.2
 
   '@vanilla-extract/babel-plugin-debug-ids@1.0.6':
     dependencies:
@@ -8417,6 +8460,8 @@ snapshots:
 
   is-negative-zero@2.0.3: {}
 
+  is-network-error@1.1.0: {}
+
   is-number-object@1.0.7:
     dependencies:
       has-tostringtag: 1.0.2
@@ -9205,6 +9250,12 @@ snapshots:
       eventemitter3: 5.0.1
       p-timeout: 6.1.2
 
+  p-retry@6.2.0:
+    dependencies:
+      '@types/retry': 0.12.2
+      is-network-error: 1.1.0
+      retry: 0.13.1
+
   p-timeout@6.1.2: {}
 
   package-json-from-dist@1.0.0: {}
@@ -9650,6 +9701,8 @@ snapshots:
       signal-exit: 3.0.7
 
   retry@0.12.0: {}
+
+  retry@0.13.1: {}
 
   reusify@1.0.4: {}
 
