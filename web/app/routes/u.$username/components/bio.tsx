@@ -1,6 +1,7 @@
 import { useLoaderData } from "@remix-run/react";
 import { useContext } from "react";
 import UserImage from "~/components/blocks/user-image";
+import { ipx } from "~/lib/img-proxy";
 import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
 import { loader } from "../route";
@@ -27,7 +28,7 @@ export default function Bio({ className }: Props) {
       <Banner userBannerImage={user.bannerImage ?? undefined}>
         <div className="mt-4 flex items-center justify-between">
           <UserImage
-            src={user.profileImage}
+            src={ipx(`http://${user.profileImage ?? ""}`, "w_256")}
             imgClassName="size-24 ring-4 ring-white"
             fallbackClassName="size-24 ring-4 ring-white"
             className="size-24"
