@@ -38,3 +38,7 @@ export async function updateDraft(id: string, dto: Draft, options?: Options) {
     ...options,
   });
 }
+
+export async function deleteDraftMedia(draftId: string, name: string) {
+  return api.delete(`pois/media?draftId=${draftId}&name=${name}`);
+}
