@@ -19,6 +19,7 @@ const (
 	ActCityDelete       AuthzAct = "city-delete"
 	ActMakeUserVerified AuthzAct = "make-user-verified"
 	ActPoiMediaUpload   AuthzAct = "poi-media-upload"
+	ActPoiMediaDelete   AuthzAct = "poi-media-delete"
 	ActPoiDraftCreate   AuthzAct = "poi-draft-create"
 	ActPoiDraftRead     AuthzAct = "poi-draft-read"
 	ActPoiDraftUpdate   AuthzAct = "poi-draft-update"
@@ -42,6 +43,7 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCityDelete:       IsAdmin,
 	ActMakeUserVerified: IsAdmin,
 	ActPoiMediaUpload:   IsAdmin,
+	ActPoiMediaDelete:   IsAdmin,
 	ActPoiDraftCreate:   IsAdmin,
 	ActPoiDraftRead:     IsAdmin,
 	ActPoiDraftUpdate:   IsAdmin,
