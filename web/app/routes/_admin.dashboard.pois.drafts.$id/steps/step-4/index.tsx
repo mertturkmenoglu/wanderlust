@@ -1,13 +1,11 @@
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
-import { SubmitHandler } from "react-hook-form";
 import { ClientOnly } from "remix-utils/client-only";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { loader } from "../../route";
 import StepsNavigation from "../steps-navigation";
 import { useUpdateDraftMutation } from "../use-update-draft";
 import OpenHours from "./open-hours";
-import { FormInput } from "./schema";
 
 export type ShortDayName =
   | "mon"
@@ -70,26 +68,33 @@ const allDays: Array<Day> = [
   },
 ];
 
+export type TData = {
+  days: string[];
+  hours: Record<string, { opensAt: string; closesAt: string }>;
+};
+
 export default function Step4() {
   const { draft } = useLoaderData<typeof loader>();
-  const mutation = useUpdateDraftMutation<FormInput>(draft, "4");
+  const mutation = useUpdateDraftMutation<TData>(draft, "4");
+
   const [days, setDays] = useState<Day[]>(() => {
-    if (draft.openHours) {
-      return allDays.filter((d) => draft.openHours.includes(d.id));
+    if (draft.days) {
+      return allDays.filter((d) => draft.days.includes(d.id));
     }
 
     return [];
   });
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
-  };
+  const [hours, setHours] = useState<TData["hours"]>(() => {
+    return draft.hours ? draft.hours : {};
+  });
 
   return (
     <div>
       <ToggleGroup
         type="multiple"
         className="mt-8"
+        defaultValue={days.map((day) => day.id)}
         onValueChange={(v) => {
           setDays([...allDays.filter((d) => v.includes(d.id))]);
         }}
@@ -110,14 +115,26 @@ export default function Step4() {
         Select the days you want to be open
       </div>
 
-      <form className="container mt-8 grid grid-cols-1 gap-4 px-0 max-w-5xl mx-auto md:grid-cols-2">
+      <form
+        className="container mt-8 grid grid-cols-1 gap-4 px-0 max-w-5xl mx-auto md:grid-cols-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const tmp: string[] = days.map((day) => day.id);
+          mutation.mutate({ days: tmp, hours });
+        }}
+      >
         <div className="col-span-2">
           <div className="">
             <ClientOnly fallback={<div>Loading...</div>}>
               {() => (
                 <div className="grid grid-cols-2 gap-4">
                   {days.map((day) => (
-                    <OpenHours key={day.id} day={day} />
+                    <OpenHours
+                      key={day.id}
+                      day={day}
+                      hours={hours}
+                      setHours={setHours}
+                    />
                   ))}
                 </div>
               )}

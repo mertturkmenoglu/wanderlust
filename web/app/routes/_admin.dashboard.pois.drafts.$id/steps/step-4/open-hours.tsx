@@ -1,15 +1,15 @@
-import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Day } from "./index";
+import { Day, TData } from "./index";
 
 type Props = {
   day: Day;
+  hours: TData["hours"];
+  setHours: React.Dispatch<React.SetStateAction<TData["hours"]>>;
 };
 
-export default function OpenHours({ day }: Props) {
-  const [openAt, setOpenAt] = useState<Date | null>(null);
-  const [closeAt, setCloseAt] = useState<Date | null>(null);
+export default function OpenHours({ day, hours, setHours }: Props) {
+  const o = hours[day.id];
 
   return (
     <div>
@@ -19,14 +19,19 @@ export default function OpenHours({ day }: Props) {
         <div className="grid grid-cols-2 gap-2 max-w-xs">
           <div>Opening At:</div>
           <DatePicker
-            selected={openAt}
+            selected={new Date(o?.opensAt ?? new Date())}
+            className="border border-border rounded-md px-2 py-1 disabled:text-muted-foreground"
             onChange={(date) => {
               if (date) {
-                console.log("open", date.getHours(), date.getMinutes());
-                setOpenAt(date);
+                setHours((prev) => ({
+                  ...prev,
+                  [day.id]: {
+                    ...prev[day.id],
+                    opensAt: date.toLocaleString(),
+                  },
+                }));
               }
             }}
-            className="border border-border rounded-md px-2 py-1 disabled:text-muted-foreground"
             showTimeSelect
             showTimeSelectOnly
             timeIntervals={30}
@@ -38,10 +43,16 @@ export default function OpenHours({ day }: Props) {
         <div className="grid grid-cols-2 gap-2 max-w-xs mt-2">
           <div>Closing At:</div>
           <DatePicker
-            selected={closeAt}
+            selected={new Date(o?.closesAt ?? new Date())}
             onChange={(date) => {
               if (date) {
-                setCloseAt(date);
+                setHours((prev) => ({
+                  ...prev,
+                  [day.id]: {
+                    ...prev[day.id],
+                    closesAt: date.toLocaleString(),
+                  },
+                }));
               }
             }}
             className="border border-border rounded-md px-2 py-1 disabled:text-muted-foreground"
