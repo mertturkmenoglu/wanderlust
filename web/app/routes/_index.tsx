@@ -6,6 +6,7 @@ import OverlayBanner from "~/components/blocks/overlay-banner";
 import VerticalBanner from "~/components/blocks/vertical-banner";
 import { Button } from "~/components/ui/button";
 import { getFeaturedCities } from "~/lib/api";
+import { ipx } from "~/lib/img-proxy";
 
 export const meta: MetaFunction = () => {
   return [
@@ -49,7 +50,7 @@ export default function Page() {
             className="rounded-md"
           >
             <img
-              src={city.imageUrl}
+              src={ipx(city.imageUrl, "w_600")}
               alt=""
               className="aspect-video w-full rounded-md object-cover"
             />
