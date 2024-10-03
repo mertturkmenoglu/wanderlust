@@ -161,3 +161,20 @@ func (h *handlers) UploadMedia(c echo.Context) error {
 		Data: res,
 	})
 }
+
+func (h *handlers) DeleteMedia(c echo.Context) error {
+	name := c.QueryParam("name")
+	draftId := c.QueryParam("draftId")
+
+	if name == "" || draftId == "" {
+		return ErrIdRequired
+	}
+
+	err := h.service.deleteMedia(draftId, name)
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}

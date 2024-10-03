@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"mime/multipart"
+	"strings"
 	"time"
 	"wanderlust/internal/db"
 	"wanderlust/internal/upload"
@@ -53,6 +54,45 @@ func (s *service) validateMediaUpload(mpf *multipart.Form) error {
 	return v.Validate()
 }
 
+func (s *service) deleteMedia(draftId string, name string) error {
+	uploader := ImageUploader{
+		draftId: draftId,
+		client:  s.uploadClient,
+		mpf:     nil,
+	}
+
+	err := uploader.deleteFile(name)
+
+	if err != nil {
+		return err
+	}
+
+	draft, _ := s.getDraft(uploader.draftId)
+	media, has := draft["media"]
+
+	if !has {
+		return nil
+	}
+
+	newMedia := make([]interface{}, 0)
+
+	for _, m := range media.([]interface{}) {
+		url := m.(map[string]any)["url"].(string)
+		if !strings.HasSuffix(url, name) {
+			newMedia = append(newMedia, m)
+		}
+	}
+
+	draft["media"] = newMedia
+	err = s.updateDraft(uploader.draftId, draft)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
 	uploader := ImageUploader{
 		mpf:     mpf,
@@ -72,6 +112,29 @@ func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
 
 	if err != nil {
 		return sUploadResult{}, upload.ErrInvalidFile
+	}
+
+	draft, _ := s.getDraft(uploader.draftId)
+	media, has := draft["media"]
+
+	if !has {
+		media = make([]map[string]any, 0)
+	}
+
+	draft["media"] = append(media.([]interface{}), map[string]any{
+		"type":      "image",
+		"url":       uploadResult.url,
+		"alt":       fileInfo.alt,
+		"caption":   fileInfo.caption,
+		"size":      fileInfo.size,
+		"order":     fileInfo.mediaOrder,
+		"extension": fileInfo.extension,
+	})
+
+	err = s.updateDraft(uploader.draftId, draft)
+
+	if err != nil {
+		return sUploadResult{}, err
 	}
 
 	return uploadResult, nil

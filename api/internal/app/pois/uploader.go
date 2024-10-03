@@ -2,6 +2,7 @@ package pois
 
 import (
 	"mime/multipart"
+	"strconv"
 	"wanderlust/config"
 	"wanderlust/internal/upload"
 
@@ -17,11 +18,14 @@ type ImageUploader struct {
 }
 
 type sFileInfo struct {
-	file      multipart.File
-	name      string
-	extension string
-	mime      string
-	size      int64
+	file       multipart.File
+	name       string
+	extension  string
+	mime       string
+	size       int64
+	caption    string
+	alt        string
+	mediaOrder int16
 }
 
 type sUploadResult struct {
@@ -55,13 +59,29 @@ func (s *ImageUploader) getSingleFile() (*sFileInfo, error) {
 	}
 
 	newName := uuid.New().String()
+	captionArr := s.mpf.Value["caption"]
+	altArr := s.mpf.Value["alt"]
+	orderArr := s.mpf.Value["order"]
+
+	if len(captionArr) != 1 || len(altArr) != 1 || len(orderArr) != 1 {
+		return nil, upload.ErrInvalidNumberOfFiles
+	}
+
+	orderInt, err := strconv.Atoi(orderArr[0])
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &sFileInfo{
-		file:      file,
-		name:      newName + "." + extension,
-		mime:      mime,
-		extension: extension,
-		size:      f.Size,
+		file:       file,
+		name:       newName + "." + extension,
+		mime:       mime,
+		extension:  extension,
+		size:       f.Size,
+		caption:    captionArr[0],
+		alt:        altArr[0],
+		mediaOrder: int16(orderInt),
 	}, nil
 }
 
@@ -81,7 +101,7 @@ func (s *ImageUploader) uploadFile(f *sFileInfo) (sUploadResult, error) {
 		return sUploadResult{}, err
 	}
 
-	url := "//" + viper.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
+	url := "http://" + viper.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
 	return sUploadResult{
 		url:  url,
 		name: info.Key,
