@@ -1,11 +1,16 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getCategories } from "~/lib/api";
+import { ipx } from "~/lib/img-proxy";
 
-export const loader = async () => {
+export async function loader() {
   const res = await getCategories();
   return json({ categories: res.data.categories });
-};
+}
+
+export function meta() {
+  return [{ title: "Categories | Wanderlust" }];
+}
 
 export default function Page() {
   const { categories } = useLoaderData<typeof loader>();
@@ -24,7 +29,7 @@ export default function Page() {
             className="rounded-md"
           >
             <img
-              src={category.image}
+              src={ipx(category.image, "w_512")}
               alt=""
               className="aspect-video w-full rounded-md object-cover"
             />
