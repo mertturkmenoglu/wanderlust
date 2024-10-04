@@ -10,6 +10,8 @@ type Props = {
 export default function StepsNavigation({ draftId, step }: Props) {
   const prevLink =
     step === 1 ? "#" : `/dashboard/pois/drafts/${draftId}?step=${step - 1}`;
+  const nextLink =
+    step === 5 ? `/dashboard/pois/drafts/${draftId}?step=6` : "#";
 
   return (
     <>
@@ -26,9 +28,22 @@ export default function StepsNavigation({ draftId, step }: Props) {
       </div>
 
       <div className="flex justify-start">
-        <Button variant="default" size="icon" type="submit">
-          <ChevronRightIcon className="size-4" />
-        </Button>
+        {step !== 5 && (
+          <Button variant="default" size="icon" type="submit">
+            <ChevronRightIcon className="size-4" />
+          </Button>
+        )}
+        {step === 5 && (
+          <Link
+            to={nextLink}
+            className={buttonVariants({
+              variant: "default",
+              size: "icon",
+            })}
+          >
+            <ChevronRightIcon className="size-4" />
+          </Link>
+        )}
       </div>
     </>
   );
