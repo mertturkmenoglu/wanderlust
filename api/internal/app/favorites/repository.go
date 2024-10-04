@@ -30,3 +30,13 @@ func (r *repository) getUserFavorites(userId string, offset int, limit int) ([]d
 func (r *repository) countUserFavorites(userId string) (int64, error) {
 	return r.db.Queries.CountUserFavorites(context.Background(), userId)
 }
+
+func (r *repository) getUserIdByUsername(username string) (string, error) {
+	user, err := r.db.Queries.GetUserByUsername(context.Background(), username)
+
+	if err != nil {
+		return "", err
+	}
+
+	return user.ID, nil
+}
