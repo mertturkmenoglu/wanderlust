@@ -22,8 +22,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function Page() {
   return (
-    <div className="container mx-auto">
-      <Bio className="mt-8 max-w-5xl mx-auto" />
+    <div className=" max-w-5xl mx-auto">
+      <Bio className="mt-8" />
       <Outlet />
     </div>
   );
