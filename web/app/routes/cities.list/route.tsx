@@ -3,6 +3,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import { Button } from "~/components/ui/button";
 import { getCities } from "~/lib/api";
+import { ipx } from "~/lib/img-proxy";
 import { groupCitiesByCountry } from "./utils";
 
 export const meta: MetaFunction = () => {
@@ -48,7 +49,7 @@ export default function Page() {
         {groups.map((group) => (
           <div key={group[0]} className="my-8">
             <h3 className="text-2xl font-bold">{group[0]}</h3>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {group[1].map((city) => (
                 <a
                   href={`/cities/${city.id}/${city.name}`}
@@ -56,7 +57,7 @@ export default function Page() {
                   className="rounded-md"
                 >
                   <img
-                    src={city.imageUrl}
+                    src={ipx(city.imageUrl, "w_512")}
                     alt=""
                     className="aspect-video w-full rounded-md object-cover"
                   />
