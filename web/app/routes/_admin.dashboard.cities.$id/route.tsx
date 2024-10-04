@@ -5,6 +5,7 @@ import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { getCityById } from "~/lib/api";
+import { ipx } from "~/lib/img-proxy";
 import DeleteDialog from "./delete-dialog";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -22,7 +23,7 @@ export default function Page() {
       <BackLink href="/dashboard/cities" text="Go back to cities page" />
 
       <img
-        src={city.imageUrl}
+        src={ipx(city.imageUrl, "w_512")}
         alt={city.name}
         className="mt-4 w-64 rounded-md aspect-video object-cover"
       />

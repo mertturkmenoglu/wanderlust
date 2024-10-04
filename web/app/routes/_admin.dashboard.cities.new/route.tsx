@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { ipx } from "~/lib/img-proxy";
 import { useNewCityForm, useNewCityMutation } from "./hooks";
 import { FormInput } from "./schema";
 
@@ -24,7 +25,7 @@ export default function Page() {
 
       {previewUrl !== "" && (
         <img
-          src={previewUrl}
+          src={ipx(previewUrl, "w_512")}
           alt="Preview"
           className="mt-8 w-64 rounded-md aspect-video object-cover"
         />
@@ -121,7 +122,7 @@ export default function Page() {
             autoComplete="off"
             {...form.register("imageUrl")}
           />
-          <InputInfo text="Image URL for the city" />
+          <InputInfo text={(form.watch("imageUrl")?.length ?? 0) + "/255"} />
           <InputError error={form.formState.errors.imageUrl} />
           <Button
             type="button"
