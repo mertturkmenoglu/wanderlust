@@ -24,3 +24,16 @@ export function getUserFavorites(page: number, pageSize: number) {
     pagination: Pagination;
   }>();
 }
+
+export function getUserFavoritesByUsername(
+  username: string,
+  page: number,
+  pageSize: number
+) {
+  return api
+    .get(`favorites/${username}?page=${page}&pageSize=${pageSize}`)
+    .json<{
+      data: GetUserFavoritesResponseDto;
+      pagination: Pagination;
+    }>();
+}
