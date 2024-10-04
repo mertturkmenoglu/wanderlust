@@ -71,15 +71,9 @@ type Medium struct {
 	ID         int64
 	PoiID      string
 	Url        string
-	Thumbnail  string
 	Alt        string
 	Caption    pgtype.Text
-	Width      int32
-	Height     int32
 	MediaOrder int16
-	Extension  string
-	MimeType   string
-	FileSize   int64
 	CreatedAt  pgtype.Timestamptz
 }
 

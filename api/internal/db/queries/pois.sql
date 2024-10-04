@@ -29,6 +29,37 @@ INSERT INTO pois (
   $13
 );
 
+-- name: CreateOnePoi :one
+INSERT INTO pois (
+  id,
+  name,
+  phone,
+  description,
+  address_id,
+  website,
+  price_level,
+  accessibility_level,
+  total_votes,
+  total_points,
+  total_favorites,
+  category_id,
+  open_times
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10,
+  $11,
+  $12,
+  $13
+) RETURNING *;
+
 -- name: RandSelectPois :many
 SELECT id
 FROM pois
@@ -61,27 +92,15 @@ ORDER BY amenity_id;
 INSERT INTO media (
   poi_id,
   url,
-  thumbnail,
   alt,
   caption,
-  width,
-  height,
-  media_order,
-  extension,
-  mime_type,
-  file_size
+  media_order
 ) VALUES (
   $1,
   $2,
   $3,
   $4,
-  $5,
-  $6,
-  $7,
-  $8,
-  $9,
-  $10,
-  $11
+  $5
 ) RETURNING *;
 
 -- name: GetFavoritePois :many

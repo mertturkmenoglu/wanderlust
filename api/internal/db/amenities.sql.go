@@ -29,6 +29,28 @@ func (q *Queries) CreateAmenity(ctx context.Context, name string) (Amenity, erro
 	return i, err
 }
 
+const createOneAmenitiesPois = `-- name: CreateOneAmenitiesPois :one
+INSERT INTO amenities_pois (
+  amenity_id,
+  poi_id
+) VALUES (
+  $1,
+  $2
+) RETURNING amenity_id, poi_id
+`
+
+type CreateOneAmenitiesPoisParams struct {
+	AmenityID int32
+	PoiID     string
+}
+
+func (q *Queries) CreateOneAmenitiesPois(ctx context.Context, arg CreateOneAmenitiesPoisParams) (AmenitiesPoi, error) {
+	row := q.db.QueryRow(ctx, createOneAmenitiesPois, arg.AmenityID, arg.PoiID)
+	var i AmenitiesPoi
+	err := row.Scan(&i.AmenityID, &i.PoiID)
+	return i, err
+}
+
 const deleteAmenity = `-- name: DeleteAmenity :exec
 DELETE FROM amenities
 WHERE id = $1

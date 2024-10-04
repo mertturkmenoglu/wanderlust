@@ -27,19 +27,21 @@ type BatchCreatePoisParams struct {
 	OpenTimes          []byte
 }
 
-const createPoiMedia = `-- name: CreatePoiMedia :one
-INSERT INTO media (
-  poi_id,
-  url,
-  thumbnail,
-  alt,
-  caption,
-  width,
-  height,
-  media_order,
-  extension,
-  mime_type,
-  file_size
+const createOnePoi = `-- name: CreateOnePoi :one
+INSERT INTO pois (
+  id,
+  name,
+  phone,
+  description,
+  address_id,
+  website,
+  price_level,
+  accessibility_level,
+  total_votes,
+  total_points,
+  total_favorites,
+  category_id,
+  open_times
 ) VALUES (
   $1,
   $2,
@@ -51,52 +53,105 @@ INSERT INTO media (
   $8,
   $9,
   $10,
-  $11
-) RETURNING id, poi_id, url, thumbnail, alt, caption, width, height, media_order, extension, mime_type, file_size, created_at
+  $11,
+  $12,
+  $13
+) RETURNING id, name, phone, description, address_id, website, price_level, accessibility_level, total_votes, total_points, total_favorites, category_id, open_times, created_at, updated_at
+`
+
+type CreateOnePoiParams struct {
+	ID                 string
+	Name               string
+	Phone              pgtype.Text
+	Description        string
+	AddressID          int32
+	Website            pgtype.Text
+	PriceLevel         int16
+	AccessibilityLevel int16
+	TotalVotes         int32
+	TotalPoints        int32
+	TotalFavorites     int32
+	CategoryID         int16
+	OpenTimes          []byte
+}
+
+func (q *Queries) CreateOnePoi(ctx context.Context, arg CreateOnePoiParams) (Poi, error) {
+	row := q.db.QueryRow(ctx, createOnePoi,
+		arg.ID,
+		arg.Name,
+		arg.Phone,
+		arg.Description,
+		arg.AddressID,
+		arg.Website,
+		arg.PriceLevel,
+		arg.AccessibilityLevel,
+		arg.TotalVotes,
+		arg.TotalPoints,
+		arg.TotalFavorites,
+		arg.CategoryID,
+		arg.OpenTimes,
+	)
+	var i Poi
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Phone,
+		&i.Description,
+		&i.AddressID,
+		&i.Website,
+		&i.PriceLevel,
+		&i.AccessibilityLevel,
+		&i.TotalVotes,
+		&i.TotalPoints,
+		&i.TotalFavorites,
+		&i.CategoryID,
+		&i.OpenTimes,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const createPoiMedia = `-- name: CreatePoiMedia :one
+INSERT INTO media (
+  poi_id,
+  url,
+  alt,
+  caption,
+  media_order
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING id, poi_id, url, alt, caption, media_order, created_at
 `
 
 type CreatePoiMediaParams struct {
 	PoiID      string
 	Url        string
-	Thumbnail  string
 	Alt        string
 	Caption    pgtype.Text
-	Width      int32
-	Height     int32
 	MediaOrder int16
-	Extension  string
-	MimeType   string
-	FileSize   int64
 }
 
 func (q *Queries) CreatePoiMedia(ctx context.Context, arg CreatePoiMediaParams) (Medium, error) {
 	row := q.db.QueryRow(ctx, createPoiMedia,
 		arg.PoiID,
 		arg.Url,
-		arg.Thumbnail,
 		arg.Alt,
 		arg.Caption,
-		arg.Width,
-		arg.Height,
 		arg.MediaOrder,
-		arg.Extension,
-		arg.MimeType,
-		arg.FileSize,
 	)
 	var i Medium
 	err := row.Scan(
 		&i.ID,
 		&i.PoiID,
 		&i.Url,
-		&i.Thumbnail,
 		&i.Alt,
 		&i.Caption,
-		&i.Width,
-		&i.Height,
 		&i.MediaOrder,
-		&i.Extension,
-		&i.MimeType,
-		&i.FileSize,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -108,7 +163,7 @@ SELECT
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
   cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
-  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
   LEFT JOIN addresses ON addresses.id = pois.address_id
@@ -175,15 +230,9 @@ func (q *Queries) GetFavoritePois(ctx context.Context) ([]GetFavoritePoisRow, er
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
-			&i.Medium.Thumbnail,
 			&i.Medium.Alt,
 			&i.Medium.Caption,
-			&i.Medium.Width,
-			&i.Medium.Height,
 			&i.Medium.MediaOrder,
-			&i.Medium.Extension,
-			&i.Medium.MimeType,
-			&i.Medium.FileSize,
 			&i.Medium.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -202,7 +251,7 @@ SELECT
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
   cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
-  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
   LEFT JOIN addresses ON addresses.id = pois.address_id
@@ -269,15 +318,9 @@ func (q *Queries) GetFeaturedPois(ctx context.Context) ([]GetFeaturedPoisRow, er
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
-			&i.Medium.Thumbnail,
 			&i.Medium.Alt,
 			&i.Medium.Caption,
-			&i.Medium.Width,
-			&i.Medium.Height,
 			&i.Medium.MediaOrder,
-			&i.Medium.Extension,
-			&i.Medium.MimeType,
-			&i.Medium.FileSize,
 			&i.Medium.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -296,7 +339,7 @@ SELECT
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
   cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
-  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
   LEFT JOIN addresses ON addresses.id = pois.address_id
@@ -363,15 +406,9 @@ func (q *Queries) GetNewPois(ctx context.Context) ([]GetNewPoisRow, error) {
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
-			&i.Medium.Thumbnail,
 			&i.Medium.Alt,
 			&i.Medium.Caption,
-			&i.Medium.Width,
-			&i.Medium.Height,
 			&i.Medium.MediaOrder,
-			&i.Medium.Extension,
-			&i.Medium.MimeType,
-			&i.Medium.FileSize,
 			&i.Medium.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -480,7 +517,7 @@ func (q *Queries) GetPoiById(ctx context.Context, id string) (GetPoiByIdRow, err
 }
 
 const getPoiMedia = `-- name: GetPoiMedia :many
-SELECT id, poi_id, url, thumbnail, alt, caption, width, height, media_order, extension, mime_type, file_size, created_at FROM media
+SELECT id, poi_id, url, alt, caption, media_order, created_at FROM media
 WHERE poi_id = $1
 ORDER BY media_order
 `
@@ -498,15 +535,9 @@ func (q *Queries) GetPoiMedia(ctx context.Context, poiID string) ([]Medium, erro
 			&i.ID,
 			&i.PoiID,
 			&i.Url,
-			&i.Thumbnail,
 			&i.Alt,
 			&i.Caption,
-			&i.Width,
-			&i.Height,
 			&i.MediaOrder,
-			&i.Extension,
-			&i.MimeType,
-			&i.FileSize,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -525,7 +556,7 @@ SELECT
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
   cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
-  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
   LEFT JOIN addresses ON addresses.id = pois.address_id
@@ -592,15 +623,9 @@ func (q *Queries) GetPopularPois(ctx context.Context) ([]GetPopularPoisRow, erro
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
-			&i.Medium.Thumbnail,
 			&i.Medium.Alt,
 			&i.Medium.Caption,
-			&i.Medium.Width,
-			&i.Medium.Height,
 			&i.Medium.MediaOrder,
-			&i.Medium.Extension,
-			&i.Medium.MimeType,
-			&i.Medium.FileSize,
 			&i.Medium.CreatedAt,
 		); err != nil {
 			return nil, err

@@ -109,7 +109,7 @@ SELECT
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
   cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
-  media.id, media.poi_id, media.url, media.thumbnail, media.alt, media.caption, media.width, media.height, media.media_order, media.extension, media.mime_type, media.file_size, media.created_at
+  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM favorites
   JOIN pois ON pois.id = favorites.poi_id
   JOIN categories ON categories.id = pois.category_id
@@ -189,15 +189,9 @@ func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUs
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
-			&i.Medium.Thumbnail,
 			&i.Medium.Alt,
 			&i.Medium.Caption,
-			&i.Medium.Width,
-			&i.Medium.Height,
 			&i.Medium.MediaOrder,
-			&i.Medium.Extension,
-			&i.Medium.MimeType,
-			&i.Medium.FileSize,
 			&i.Medium.CreatedAt,
 		); err != nil {
 			return nil, err

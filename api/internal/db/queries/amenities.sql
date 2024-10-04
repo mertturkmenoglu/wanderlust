@@ -14,6 +14,15 @@ INSERT INTO amenities_pois (
   $2
 );
 
+-- name: CreateOneAmenitiesPois :one
+INSERT INTO amenities_pois (
+  amenity_id,
+  poi_id
+) VALUES (
+  $1,
+  $2
+) RETURNING *;
+
 -- name: GetAllAmenities :many
 SELECT *
 FROM amenities
