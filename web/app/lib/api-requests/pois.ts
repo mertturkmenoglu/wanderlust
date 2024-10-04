@@ -42,3 +42,7 @@ export async function updateDraft(id: string, dto: Draft, options?: Options) {
 export async function deleteDraftMedia(draftId: string, name: string) {
   return api.delete(`pois/media?draftId=${draftId}&name=${name}`);
 }
+
+export async function publishDraft(draftId: string) {
+  return api.post(`pois/drafts/${draftId}/publish`);
+}
