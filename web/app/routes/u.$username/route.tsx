@@ -1,17 +1,12 @@
 import { json, LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
+import invariant from "tiny-invariant";
 import { getUserByUsername } from "~/lib/api";
 import Bio from "./components/bio";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const username = params.username;
-
-  if (!username) {
-    throw new Response("Username is missing", { status: 404 });
-  }
-
-  const res = await getUserByUsername(username);
-
+  invariant(params.username, "username is missing");
+  const res = await getUserByUsername(params.username);
   return json({ user: res.data });
 };
 
