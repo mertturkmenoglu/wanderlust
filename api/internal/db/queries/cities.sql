@@ -34,7 +34,8 @@ ORDER BY RANDOM()
 LIMIT $1;
 
 -- name: GetCities :many
-SELECT * FROM cities;
+SELECT * FROM cities
+ORDER BY id;
 
 -- name: GetFeaturedCities :many
 SELECT * FROM cities

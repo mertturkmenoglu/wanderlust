@@ -102,6 +102,7 @@ func (q *Queries) DeleteCity(ctx context.Context, id int32) error {
 
 const getCities = `-- name: GetCities :many
 SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description FROM cities
+ORDER BY id
 `
 
 func (q *Queries) GetCities(ctx context.Context) ([]City, error) {
