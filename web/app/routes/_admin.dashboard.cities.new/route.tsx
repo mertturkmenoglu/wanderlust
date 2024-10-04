@@ -172,7 +172,7 @@ export default function Page() {
             rows={6}
             {...form.register("description")}
           />
-          <InputInfo text="Description of the city" />
+          <InputInfo text={form.watch("description").length + "/1024"} />
           <InputError error={form.formState.errors.description} />
         </div>
 
