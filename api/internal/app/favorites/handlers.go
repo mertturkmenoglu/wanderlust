@@ -1,6 +1,5 @@
 package favorites
 
-
 import (
 	"net/http"
 	"wanderlust/internal/app/api"
@@ -46,6 +45,30 @@ func (h *handlers) getUserFavorites(c echo.Context) error {
 	}
 
 	res, count, err := h.service.getUserFavorites(userId, params.Offset, params.PageSize)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.PaginatedResponse{
+		Data:       res,
+		Pagination: pagination.Compute(params, count),
+	})
+}
+
+func (h *handlers) getUserFavoritesByUsername(c echo.Context) error {
+	username := c.Param("username")
+	params, err := pagination.GetParamsFromContext(c)
+
+	if username == "" {
+		return ErrUsernameRequired
+	}
+
+	if err != nil {
+		return err
+	}
+
+	res, count, err := h.service.getUserFavoritesByUsername(username, params.Offset, params.PageSize)
 
 	if err != nil {
 		return err
