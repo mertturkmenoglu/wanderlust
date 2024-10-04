@@ -33,3 +33,13 @@ func (s *service) getUserFavorites(userId string, offset int, limit int) (GetUse
 
 	return v, count, nil
 }
+
+func (s *service) getUserFavoritesByUsername(username string, offset int, limit int) (GetUserFavoritesResponseDto, int64, error) {
+	userId, err := s.repository.getUserIdByUsername(username)
+
+	if err != nil {
+		return GetUserFavoritesResponseDto{}, 0, err
+	}
+
+	return s.getUserFavorites(userId, offset, limit)
+}
