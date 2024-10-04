@@ -118,7 +118,7 @@ func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
 	media, has := draft["media"]
 
 	if !has {
-		media = make([]map[string]any, 0)
+		media = make([]interface{}, 0)
 	}
 
 	draft["media"] = append(media.([]interface{}), map[string]any{
