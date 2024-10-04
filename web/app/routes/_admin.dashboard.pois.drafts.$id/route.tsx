@@ -11,6 +11,7 @@ import Step2 from "./steps/step-2";
 import Step3 from "./steps/step-3";
 import Step4 from "./steps/step-4";
 import Step5 from "./steps/step-5";
+import Step6 from "./steps/step-6";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -51,6 +52,7 @@ export default function Page() {
       {step === "3" && <Step3 />}
       {step === "4" && <Step4 />}
       {step === "5" && <Step5 />}
+      {step === "6" && <Step6 />}
     </div>
   );
 }
