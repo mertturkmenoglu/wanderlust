@@ -12,6 +12,7 @@ import {
 } from "~/components/ui/breadcrumb";
 import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
+import { ipx } from "~/lib/img-proxy";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let slug = params["*"];
@@ -64,7 +65,7 @@ export default function Page() {
 
       <div className="flex flex-col lg:flex-row lg:gap-8">
         <img
-          src={city.imageUrl}
+          src={ipx(city.imageUrl, "f_webp,w_1024")}
           alt=""
           className="mt-8 w-full rounded-md object-cover lg:max-w-md"
         />
