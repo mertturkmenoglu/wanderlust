@@ -50,12 +50,8 @@ func mapPeekPoisItemToDto(v db.Poi) (PeekPoisItemDto, error) {
 	}, nil
 }
 
-type tmpOpenTimes struct {
-	OpenHours []OpenTimes `json:"openhours"`
-}
-
-func mapOpenTimesToDto(v []byte) ([]OpenTimes, error) {
-	var times tmpOpenTimes
+func mapOpenTimesToDto(v []byte) (map[string]OpenHours, error) {
+	var times map[string]OpenHours
 
 	err := json.Unmarshal(v, &times)
 
@@ -63,7 +59,7 @@ func mapOpenTimesToDto(v []byte) ([]OpenTimes, error) {
 		return nil, err
 	}
 
-	return times.OpenHours, nil
+	return times, nil
 }
 
 func mapGetPoiByIdToDto(dao GetPoiByIdDao) (GetPoiByIdResponseDto, error) {
@@ -80,15 +76,9 @@ func mapGetPoiByIdToDto(dao GetPoiByIdDao) (GetPoiByIdResponseDto, error) {
 			ID:         m.ID,
 			PoiID:      dao.poi.ID,
 			Url:        m.Url,
-			Thumbnail:  m.Thumbnail,
 			Alt:        m.Alt,
 			Caption:    utils.TextOrNil(m.Caption),
-			Width:      m.Width,
-			Height:     m.Height,
 			MediaOrder: m.MediaOrder,
-			Extension:  m.Extension,
-			MimeType:   m.MimeType,
-			FileSize:   m.FileSize,
 			CreatedAt:  m.CreatedAt.Time,
 		}
 	}

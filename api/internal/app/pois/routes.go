@@ -19,5 +19,6 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.GET("/drafts/:id", m.handlers.GetDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftRead))
 		routes.DELETE("/drafts/:id", m.handlers.DeleteDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftDelete))
 		routes.PATCH("/drafts/:id", m.handlers.UpdateDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftUpdate))
+		routes.POST("/drafts/:id/publish", m.handlers.PublishDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftPublish))
 	}
 }

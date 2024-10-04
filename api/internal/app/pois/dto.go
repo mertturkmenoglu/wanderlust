@@ -2,11 +2,9 @@ package pois
 
 import "time"
 
-type OpenTimes struct {
-	Day    string  `json:"day"`
-	Open   *string `json:"open"`
-	Close  *string `json:"close"`
-	Closed bool    `json:"closed"`
+type OpenHours struct {
+	ClosesAt string `json:"closesAt"`
+	OpensAt  string `json:"opensAt"`
 }
 
 type PeekPoisResponseDto struct {
@@ -14,43 +12,43 @@ type PeekPoisResponseDto struct {
 }
 
 type PeekPoisItemDto struct {
-	ID                 string      `json:"id"`
-	Name               string      `json:"name"`
-	Phone              *string     `json:"phone"`
-	Description        string      `json:"description"`
-	AddressID          int32       `json:"addressId"`
-	Website            *string     `json:"website"`
-	PriceLevel         int16       `json:"priceLevel"`
-	AccessibilityLevel int16       `json:"accessibilityLevel"`
-	TotalVotes         int32       `json:"totalVotes"`
-	TotalPoints        int32       `json:"totalPoints"`
-	TotalFavorites     int32       `json:"totalFavorites"`
-	CategoryID         int16       `json:"categoryId"`
-	OpenTimes          []OpenTimes `json:"openTimes"`
-	CreatedAt          time.Time   `json:"createdAt"`
-	UpdatedAt          time.Time   `json:"updatedAt"`
+	ID                 string               `json:"id"`
+	Name               string               `json:"name"`
+	Phone              *string              `json:"phone"`
+	Description        string               `json:"description"`
+	AddressID          int32                `json:"addressId"`
+	Website            *string              `json:"website"`
+	PriceLevel         int16                `json:"priceLevel"`
+	AccessibilityLevel int16                `json:"accessibilityLevel"`
+	TotalVotes         int32                `json:"totalVotes"`
+	TotalPoints        int32                `json:"totalPoints"`
+	TotalFavorites     int32                `json:"totalFavorites"`
+	CategoryID         int16                `json:"categoryId"`
+	OpenTimes          map[string]OpenHours `json:"openTimes"`
+	CreatedAt          time.Time            `json:"createdAt"`
+	UpdatedAt          time.Time            `json:"updatedAt"`
 }
 
 type GetPoiByIdResponseDto struct {
-	ID                 string      `json:"id"`
-	Name               string      `json:"name"`
-	Phone              *string     `json:"phone"`
-	Description        string      `json:"description"`
-	AddressID          int32       `json:"addressId"`
-	Website            *string     `json:"website"`
-	PriceLevel         int16       `json:"priceLevel"`
-	AccessibilityLevel int16       `json:"accessibilityLevel"`
-	TotalVotes         int32       `json:"totalVotes"`
-	TotalPoints        int32       `json:"totalPoints"`
-	TotalFavorites     int32       `json:"totalFavorites"`
-	CategoryID         int16       `json:"categoryId"`
-	Category           Category    `json:"category"`
-	Amenities          []Amenity   `json:"amenities"`
-	OpenTimes          []OpenTimes `json:"openTimes"`
-	Media              []Media     `json:"media"`
-	Address            Address     `json:"address"`
-	CreatedAt          time.Time   `json:"createdAt"`
-	UpdatedAt          time.Time   `json:"updatedAt"`
+	ID                 string               `json:"id"`
+	Name               string               `json:"name"`
+	Phone              *string              `json:"phone"`
+	Description        string               `json:"description"`
+	AddressID          int32                `json:"addressId"`
+	Website            *string              `json:"website"`
+	PriceLevel         int16                `json:"priceLevel"`
+	AccessibilityLevel int16                `json:"accessibilityLevel"`
+	TotalVotes         int32                `json:"totalVotes"`
+	TotalPoints        int32                `json:"totalPoints"`
+	TotalFavorites     int32                `json:"totalFavorites"`
+	CategoryID         int16                `json:"categoryId"`
+	Category           Category             `json:"category"`
+	Amenities          []Amenity            `json:"amenities"`
+	OpenTimes          map[string]OpenHours `json:"openTimes"`
+	Media              []Media              `json:"media"`
+	Address            Address              `json:"address"`
+	CreatedAt          time.Time            `json:"createdAt"`
+	UpdatedAt          time.Time            `json:"updatedAt"`
 }
 
 type Category struct {
