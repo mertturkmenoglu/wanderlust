@@ -15,3 +15,4 @@
 - `0300-0349`: Cities module errors.
 - `0350-0399`: Amenities module errors.
 - `0400-0449`: Categories module errors.
+- `0500-0549`: Favorites module errors.
