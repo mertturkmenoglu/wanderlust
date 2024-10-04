@@ -31,15 +31,9 @@ func handleMedia() error {
 		_, err := GetDb().Queries.CreatePoiMedia(context.Background(), db.CreatePoiMediaParams{
 			PoiID:      poiId,
 			Url:        url,
-			Thumbnail:  url,
 			Alt:        "Alt text for image " + strconv.Itoa(i),
 			Caption:    utils.StrToText("Caption text for image " + strconv.Itoa(i)),
-			Width:      960,
-			Height:     720,
 			MediaOrder: int16(i + 1),
-			Extension:  "jpg",
-			MimeType:   "image/jpeg",
-			FileSize:   0,
 		})
 
 		if err != nil {
