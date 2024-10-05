@@ -5,8 +5,9 @@ import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import VerticalBanner from "~/components/blocks/vertical-banner";
 import { Button } from "~/components/ui/button";
-import { getFeaturedCities } from "~/lib/api";
+import { getFeaturedCities, getHomeAggregation } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
+import PoiGrid from "./poi-grid";
 
 export const meta: MetaFunction = () => {
   return [
@@ -20,11 +21,12 @@ export const meta: MetaFunction = () => {
 
 export const loader = async () => {
   const res = await getFeaturedCities();
-  return json({ cities: res.data.cities });
+  const aggregation = await getHomeAggregation();
+  return json({ cities: res.data.cities, aggregation: aggregation.data });
 };
 
 export default function Page() {
-  const { cities } = useLoaderData<typeof loader>();
+  const { cities, aggregation } = useLoaderData<typeof loader>();
 
   return (
     <div className="container mx-auto">
@@ -76,6 +78,8 @@ export default function Page() {
         imgClassName="aspect-[3]"
       />
 
+      <PoiGrid dataKey="featured" data={aggregation.new} />
+
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
         alt="Discover Around You Banner Image"
@@ -96,6 +100,8 @@ export default function Page() {
           </>
         }
       />
+
+      <PoiGrid dataKey="popular" data={aggregation.popular} />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
@@ -118,6 +124,8 @@ export default function Page() {
         imgClassName=""
       />
 
+      <PoiGrid dataKey="favorite" data={aggregation.favorites} />
+
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
         alt="Events Banner Image"
@@ -139,6 +147,8 @@ export default function Page() {
         imgClassName=""
         lefty={false}
       />
+
+      <PoiGrid dataKey="new" data={aggregation.new} />
     </div>
   );
 }
