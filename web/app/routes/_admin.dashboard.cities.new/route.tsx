@@ -168,6 +168,27 @@ export default function Page() {
         </div>
 
         <div className="col-span-2">
+          <Button
+            type="button"
+            variant="link"
+            className="px-0"
+            onClick={async () => {
+              const text = await navigator.clipboard.readText();
+              const [lat, lng] = text.split(", ").map((s) => parseFloat(s));
+              if (isNaN(lat) || isNaN(lng)) {
+                toast.error("Invalid GeoHack format");
+                return;
+              }
+
+              form.setValue("latitude", lat);
+              form.setValue("longitude", lng);
+            }}
+          >
+            Paste from clipboard as GeoHack format
+          </Button>
+        </div>
+
+        <div className="col-span-2">
           <Label htmlFor="desc">Description</Label>
           <Textarea
             id="desc"
