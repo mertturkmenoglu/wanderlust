@@ -1,3 +1,4 @@
+export * from "./aggregator";
 export * from "./amenities";
 export * from "./auth";
 export * from "./bookmarks";
