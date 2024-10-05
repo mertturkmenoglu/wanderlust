@@ -14,6 +14,9 @@ import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 
+import "leaflet/dist/leaflet.css";
+import MapContainer from "./components/map-container";
+
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   let slug = params["*"];
 
@@ -67,7 +70,7 @@ export default function Page() {
         <img
           src={ipx(city.imageUrl, "f_webp,w_1024")}
           alt=""
-          className="mt-8 w-full rounded-md object-cover lg:max-w-md"
+          className="mt-8 w-full rounded-md object-cover lg:max-w-md aspect-video"
         />
 
         <div>
@@ -80,6 +83,8 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      <MapContainer lat={city.latitude} lng={city.longitude} />
 
       <Collection
         className="my-8"
