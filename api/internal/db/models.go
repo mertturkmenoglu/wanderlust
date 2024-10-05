@@ -54,6 +54,19 @@ type City struct {
 	Description string
 }
 
+type Collection struct {
+	ID          string
+	Name        string
+	Description string
+	CreatedAt   pgtype.Timestamptz
+}
+
+type CollectionItem struct {
+	CollectionID string
+	PoiID        string
+	CreatedAt    pgtype.Timestamptz
+}
+
 type Favorite struct {
 	ID        int32
 	PoiID     string
