@@ -123,16 +123,20 @@ func (r *repository) publishDraft(draft map[string]any) error {
 		return err
 	}
 
-	amenitiesIds := draft["amenities"].([]interface{})
+	_, has := draft["amenities"]
 
-	for _, amenityId := range amenitiesIds {
-		_, err = qtx.CreateOneAmenitiesPois(ctx, db.CreateOneAmenitiesPoisParams{
-			AmenityID: int32(amenityId.(float64)),
-			PoiID:     poi.ID,
-		})
+	if has {
+		amenitiesIds := draft["amenities"].([]interface{})
 
-		if err != nil {
-			return err
+		for _, amenityId := range amenitiesIds {
+			_, err = qtx.CreateOneAmenitiesPois(ctx, db.CreateOneAmenitiesPoisParams{
+				AmenityID: int32(amenityId.(float64)),
+				PoiID:     poi.ID,
+			})
+
+			if err != nil {
+				return err
+			}
 		}
 	}
 
