@@ -1,11 +1,7 @@
-export type OpenTimesSingle = {
-  day: string;
-  open: string | null;
-  close: string | null;
-  closed: boolean;
+export type OpenHours = {
+  closesAt: string;
+  opensAt: string;
 };
-
-export type OpenTimes = OpenTimesSingle[];
 
 export type PeekPoisResponseDto = {
   pois: PeekPoisItemDto[];
@@ -24,7 +20,7 @@ export type PeekPoisItemDto = {
   totalPoints: number;
   totalFavorites: number;
   categoryId: number;
-  openTimes: OpenTimes;
+  openTimes: Record<string, OpenHours>;
   createdAt: string;
   updatedAt: string;
 };
@@ -52,7 +48,7 @@ export type GetPoiByIdResponseDto = {
   totalPoints: number;
   totalFavorites: number;
   categoryId: number;
-  openTimes: OpenTimesSingle[];
+  openTimes: Record<string, OpenHours>;
   createdAt: string;
   updatedAt: string;
   category: Category;
