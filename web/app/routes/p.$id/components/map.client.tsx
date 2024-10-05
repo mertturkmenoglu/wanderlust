@@ -22,6 +22,7 @@ export function Map({ lat, lng }: Props) {
         style={{
           height: "400px",
           marginTop: "16px",
+          zIndex: 0,
         }}
       >
         <TileLayer attribution="" url={url} />
