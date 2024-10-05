@@ -1,7 +1,9 @@
 import FormattedRating from "~/components/kit/formatted-rating";
+
 import { Progress } from "~/components/ui/progress";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 import { GetPoiByIdResponseDto } from "~/lib/dto";
+import OpenHoursDialog from "./open-hours-dialog";
 
 type Props = {
   poi: GetPoiByIdResponseDto;
@@ -86,6 +88,13 @@ export default function InformationTable({ poi }: Props) {
               value={poi.accessibilityLevel * 19.8}
               className="max-w-32"
             />
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell className="px-0 font-medium"></TableCell>
+          <TableCell className="mt-1 flex justify-end">
+            <OpenHoursDialog data={poi.openTimes} />
           </TableCell>
         </TableRow>
       </TableBody>
