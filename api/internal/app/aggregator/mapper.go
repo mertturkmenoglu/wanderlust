@@ -67,7 +67,7 @@ func mapGetHomeAggregationDaoToDto(dao GetHomeAggregationDao) HomeAggregatorResp
 }
 
 func mapGetNewPoisRowsToDto(rows []db.GetNewPoisRow) []HomeAggregatorPoi {
-	var pois []HomeAggregatorPoi
+	pois := make([]HomeAggregatorPoi, 0)
 
 	for _, row := range rows {
 		pois = append(pois, mapRow(Row{
@@ -83,7 +83,7 @@ func mapGetNewPoisRowsToDto(rows []db.GetNewPoisRow) []HomeAggregatorPoi {
 }
 
 func mapGetPopularPoisRowsToDto(rows []db.GetPopularPoisRow) []HomeAggregatorPoi {
-	var pois []HomeAggregatorPoi
+	pois := make([]HomeAggregatorPoi, 0)
 
 	for _, row := range rows {
 		pois = append(pois, mapRow(Row{
@@ -99,7 +99,7 @@ func mapGetPopularPoisRowsToDto(rows []db.GetPopularPoisRow) []HomeAggregatorPoi
 }
 
 func mapGetFeaturedPoisRowsToDto(rows []db.GetFeaturedPoisRow) []HomeAggregatorPoi {
-	var pois []HomeAggregatorPoi
+	pois := make([]HomeAggregatorPoi, 0)
 
 	for _, row := range rows {
 		pois = append(pois, mapRow(Row{
@@ -115,7 +115,7 @@ func mapGetFeaturedPoisRowsToDto(rows []db.GetFeaturedPoisRow) []HomeAggregatorP
 }
 
 func mapGetFavoritePoisRowsToDto(rows []db.GetFavoritePoisRow) []HomeAggregatorPoi {
-	var pois []HomeAggregatorPoi
+	pois := make([]HomeAggregatorPoi, 0)
 
 	for _, row := range rows {
 		pois = append(pois, mapRow(Row{
