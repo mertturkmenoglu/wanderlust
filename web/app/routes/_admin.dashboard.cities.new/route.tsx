@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
+import BackLink from "~/components/blocks/back-link";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
 import { Button } from "~/components/ui/button";
@@ -21,6 +23,7 @@ export default function Page() {
 
   return (
     <div>
+      <BackLink href="/dashboard/cities" text="Go back to cities page" />
       <h3 className="mb-8 text-lg font-bold tracking-tight">Create New City</h3>
 
       {previewUrl !== "" && (
