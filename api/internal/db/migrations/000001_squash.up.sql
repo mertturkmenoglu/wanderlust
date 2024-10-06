@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS users (
   password_reset_expires TIMESTAMPTZ,
   login_attempts INT DEFAULT 0,
   lockout_until TIMESTAMPTZ,
-  gender VARCHAR(32),
   bio VARCHAR(255),
   pronouns VARCHAR(32),
   website VARCHAR(255),

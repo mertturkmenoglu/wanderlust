@@ -134,7 +134,6 @@ type User struct {
 	PasswordResetExpires  pgtype.Timestamptz
 	LoginAttempts         pgtype.Int4
 	LockoutUntil          pgtype.Timestamptz
-	Gender                pgtype.Text
 	Bio                   pgtype.Text
 	Pronouns              pgtype.Text
 	Website               pgtype.Text

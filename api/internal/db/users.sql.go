@@ -47,7 +47,7 @@ INSERT INTO users (
   $8,
   $9,
   $10
-) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
+) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -95,7 +95,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -112,7 +111,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
 WHERE email = $1 LIMIT 1
 `
 
@@ -137,7 +136,6 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -154,7 +152,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByFbId = `-- name: GetUserByFbId :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
 WHERE fb_id = $1 LIMIT 1
 `
 
@@ -179,7 +177,6 @@ func (q *Queries) GetUserByFbId(ctx context.Context, fbID pgtype.Text) (User, er
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -196,7 +193,7 @@ func (q *Queries) GetUserByFbId(ctx context.Context, fbID pgtype.Text) (User, er
 }
 
 const getUserByGoogleId = `-- name: GetUserByGoogleId :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
 WHERE google_id = $1 LIMIT 1
 `
 
@@ -221,7 +218,6 @@ func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -238,7 +234,7 @@ func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -263,7 +259,6 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -280,7 +275,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
 WHERE username = $1 LIMIT 1
 `
 
@@ -305,7 +300,6 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -328,7 +322,6 @@ SELECT
   full_name,
   is_business_account,
   is_verified,
-  gender,
   bio,
   pronouns,
   website,
@@ -348,7 +341,6 @@ type GetUserProfileByUsernameRow struct {
 	FullName          string
 	IsBusinessAccount bool
 	IsVerified        bool
-	Gender            pgtype.Text
 	Bio               pgtype.Text
 	Pronouns          pgtype.Text
 	Website           pgtype.Text
@@ -369,7 +361,6 @@ func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string)
 		&i.FullName,
 		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
@@ -493,19 +484,17 @@ const updateUserProfile = `-- name: UpdateUserProfile :one
 UPDATE users
 SET
   full_name = $2,
-  gender = $3,
-  bio = $4,
-  pronouns = $5,
-  website = $6,
-  phone = $7
+  bio = $3,
+  pronouns = $4,
+  website = $5,
+  phone = $6
 WHERE id = $1
-RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, gender, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
+RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
 `
 
 type UpdateUserProfileParams struct {
 	ID       string
 	FullName string
-	Gender   pgtype.Text
 	Bio      pgtype.Text
 	Pronouns pgtype.Text
 	Website  pgtype.Text
@@ -516,7 +505,6 @@ func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfilePa
 	row := q.db.QueryRow(ctx, updateUserProfile,
 		arg.ID,
 		arg.FullName,
-		arg.Gender,
 		arg.Bio,
 		arg.Pronouns,
 		arg.Website,
@@ -541,7 +529,6 @@ func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfilePa
 		&i.PasswordResetExpires,
 		&i.LoginAttempts,
 		&i.LockoutUntil,
-		&i.Gender,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,

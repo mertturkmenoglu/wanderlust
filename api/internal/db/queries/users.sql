@@ -95,7 +95,6 @@ SELECT
   full_name,
   is_business_account,
   is_verified,
-  gender,
   bio,
   pronouns,
   website,
@@ -124,11 +123,10 @@ WHERE id = $1;
 UPDATE users
 SET
   full_name = $2,
-  gender = $3,
-  bio = $4,
-  pronouns = $5,
-  website = $6,
-  phone = $7
+  bio = $3,
+  pronouns = $4,
+  website = $5,
+  phone = $6
 WHERE id = $1
 RETURNING *;
 
