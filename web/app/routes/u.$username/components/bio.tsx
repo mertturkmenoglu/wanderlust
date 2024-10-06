@@ -26,15 +26,23 @@ export default function Bio({ className }: Props) {
   return (
     <div className={cn("", className)}>
       <Banner userBannerImage={user.bannerImage ?? undefined}>
-        <div className="mt-4 flex items-center justify-between">
-          <UserImage
-            src={ipx(`http://${user.profileImage ?? ""}`, "w_256")}
-            imgClassName="size-24 ring-4 ring-white"
-            fallbackClassName="size-24 ring-4 ring-white"
-            className="size-24"
-          />
+        <div className="mt-4 flex flex-col md:flex-row items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center gap-8 items-start">
+            <UserImage
+              src={ipx(`http://${user.profileImage ?? ""}`, "w_512")}
+              imgClassName="size-48 md:size-32 ring-4 ring-white"
+              fallbackClassName="size-48 md:size-32 ring-4 ring-white"
+              className="size-48 md:size-32 mx-auto"
+            />
 
-          <div className="flex gap-4">
+            <div className="text-center flex flex-col items-center md:items-start">
+              <h2 className="text-4xl font-semibold">{user.fullName}</h2>
+              <h3 className="text-lg text-primary">@{user.username}</h3>
+              {user.isVerified && <Verified className="mt-2" />}
+            </div>
+          </div>
+
+          <div className="flex gap-2 mt-4 md:mt-0">
             <ActionButtons
               loading={auth.isLoading}
               isThisUser={isThisUser}
@@ -47,31 +55,27 @@ export default function Bio({ className }: Props) {
         </div>
       </Banner>
 
-      <div className="flex flex-col justify-between md:flex-row mt-4">
-        <div className="">
-          <h2 className="text-2xl font-semibold">{user.fullName}</h2>
-          <h3 className="text-base text-primary">@{user.username}</h3>
-          {user.isVerified && <Verified />}
+      <div className="flex flex-col justify-between mt-4">
+        <div>
+          <Info
+            bio={user.bio}
+            website={user.website}
+            isBusinessAccount={user.isBusinessAccount}
+          />
+          <div className="flex items-center gap-4">
+            {user.pronouns !== null && <Pronouns pronouns={user.pronouns} />}
+          </div>
         </div>
 
         <Followers
           username={user.username}
           followersCount={user.followersCount}
           followingCount={user.followingCount}
-          className="-ml-4"
+          className="mx-auto md:-ml-4"
         />
       </div>
 
       <hr className="mt-4 hidden md:block" />
-
-      <div className="flex items-center gap-4">
-        {user.pronouns !== null && <Pronouns pronouns={user.pronouns} />}
-      </div>
-      <Info
-        bio={user.bio}
-        website={user.website}
-        isBusinessAccount={user.isBusinessAccount}
-      />
 
       <Tabs className="my-4 md:max-w-5xl" username={user.username} />
     </div>
