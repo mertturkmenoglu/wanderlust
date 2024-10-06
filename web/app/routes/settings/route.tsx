@@ -1,7 +1,7 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { getMe } from "~/lib/api";
-import Sidebar from "./components/sidebar";
+import Sidebar from "./__components/sidebar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
