@@ -1,5 +1,5 @@
 import "leaflet-defaulticon-compatibility";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import { useEffect, useState } from "react";
 
 import { MapContainer, TileLayer } from "react-leaflet";
 
@@ -9,24 +9,33 @@ type Props = {
 };
 
 export function Map({ lat, lng }: Props) {
+  const [componentLoading, setComponentLoading] = useState(true);
   const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
 
+  useEffect(() => {
+    setComponentLoading(false);
+  }, []);
+
   return (
-    <div className="mt-8">
-      <h3 className="text-2xl font-bold">Location</h3>
-      <MapContainer
-        center={[lat, lng]}
-        zoom={16}
-        minZoom={4}
-        scrollWheelZoom={true}
-        style={{
-          height: "400px",
-          marginTop: "16px",
-          zIndex: 0,
-        }}
-      >
-        <TileLayer attribution="" url={url} />
-      </MapContainer>
+    <div className="mt-8 w-full">
+      {componentLoading ? (
+        <div className="bg-muted w-full h-[400px] mt-8"></div>
+      ) : (
+        <MapContainer
+          center={[lat, lng]}
+          zoom={16}
+          minZoom={4}
+          scrollWheelZoom={true}
+          style={{
+            height: "400px",
+            marginTop: "16px",
+            zIndex: 0,
+            width: "100%",
+          }}
+        >
+          <TileLayer attribution="" url={url} />
+        </MapContainer>
+      )}
     </div>
   );
 }
