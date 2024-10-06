@@ -19,7 +19,6 @@ export function useProfileMutation() {
     mutationFn: async (data: FormInput) => {
       const dto: UpdateUserProfileRequestDto = {
         fullName: data.fullName ?? null,
-        gender: data.gender ?? null,
         bio: data.bio ?? null,
         pronouns: data.pronouns ?? null,
         website: data.website ?? null,

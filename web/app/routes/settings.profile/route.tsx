@@ -44,7 +44,6 @@ export default function Page() {
   const { profile } = useLoaderData<typeof loader>();
   const form = useProfileForm({
     fullName: profile.fullName ?? undefined,
-    gender: profile.gender ?? undefined,
     bio: profile.bio ?? undefined,
     pronouns: profile.pronouns ?? undefined,
     website: profile.website ?? undefined,
@@ -126,18 +125,6 @@ export default function Page() {
         />
         <InputInfo text="Your website address" />
         <InputError error={form.formState.errors.website} />
-        <div className="my-4"></div>
-
-        <Label htmlFor="gender">Gender</Label>
-        <Input
-          id="gender"
-          type="text"
-          placeholder="Your gender"
-          autoComplete="off"
-          {...form.register("gender")}
-        />
-        <InputInfo text="Your gender" />
-        <InputError error={form.formState.errors.gender} />
         <div className="my-4"></div>
 
         <Label htmlFor="pronouns">Pronouns</Label>
