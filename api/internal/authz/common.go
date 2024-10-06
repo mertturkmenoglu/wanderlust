@@ -25,6 +25,10 @@ const (
 	ActPoiDraftUpdate   AuthzAct = "poi-draft-update"
 	ActPoiDraftDelete   AuthzAct = "poi-draft-delete"
 	ActPoiDraftPublish  AuthzAct = "poi-draft-publish"
+	ActCollectionCreate AuthzAct = "collection-create"
+	ActCollectionRead   AuthzAct = "collection-read"
+	ActCollectionUpdate AuthzAct = "collection-update"
+	ActCollectionDelete AuthzAct = "collection-delete"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -50,4 +54,8 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActPoiDraftUpdate:   IsAdmin,
 	ActPoiDraftDelete:   IsAdmin,
 	ActPoiDraftPublish:  IsAdmin,
+	ActCollectionCreate: IsAdmin,
+	ActCollectionRead:   IsAdmin,
+	ActCollectionUpdate: IsAdmin,
+	ActCollectionDelete: IsAdmin,
 }
