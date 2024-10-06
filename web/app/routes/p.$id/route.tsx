@@ -87,7 +87,7 @@ export default function Page() {
 
       <Amenities amenities={poi.amenities} />
 
-      <hr className="my-8" />
+      <hr className="my-4" />
       {/* <Reviews locationId={location.id} name={location.name} /> */}
     </main>
   );
