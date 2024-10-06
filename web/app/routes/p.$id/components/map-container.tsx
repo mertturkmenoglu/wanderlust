@@ -8,8 +8,11 @@ type Props = {
 
 export default function MapContainer({ lat, lng }: Props) {
   return (
-    <ClientOnly fallback={<div>Loading...</div>}>
-      {() => <Map lat={lat} lng={lng} />}
-    </ClientOnly>
+    <>
+      <h3 className="text-2xl font-bold">Location</h3>
+      <ClientOnly fallback={<div className="w-full h-[400px] bg-muted mt-8" />}>
+        {() => <Map lat={lat} lng={lng} />}
+      </ClientOnly>
+    </>
   );
 }
