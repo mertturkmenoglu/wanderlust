@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { poisCols } from "~/components/blocks/dashboard/columns";
+import { DataTable } from "~/components/blocks/dashboard/data-table";
 import { peekPois } from "~/lib/api";
-import { DataTable } from "../../components/blocks/dashboard/data-table";
-import { poisCols } from "../../components/blocks/dashboard/columns";
 
 export default function Page() {
   const query = useQuery({

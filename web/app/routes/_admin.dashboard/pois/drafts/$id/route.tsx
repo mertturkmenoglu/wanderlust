@@ -6,12 +6,12 @@ import { Separator } from "~/components/ui/separator";
 import { getDraft } from "~/lib/api-requests";
 import DeleteDialog from "./delete-dialog";
 import StepsIndicator from "./steps-indicator";
-import Step1 from "./steps/step-1";
-import Step2 from "./steps/step-2";
-import Step3 from "./steps/step-3";
-import Step4 from "./steps/step-4";
-import Step5 from "./steps/step-5";
-import Step6 from "./steps/step-6";
+import Step1 from "./__steps/step-1";
+import Step2 from "./__steps/step-2";
+import Step3 from "./__steps/step-3";
+import Step4 from "./__steps/step-4";
+import Step5 from "./__steps/step-5";
+import Step6 from "./__steps/step-6";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");

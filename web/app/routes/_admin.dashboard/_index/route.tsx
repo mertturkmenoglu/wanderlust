@@ -71,6 +71,16 @@ export default function Page() {
 
         <Card>
           <CardHeader>
+            <CardTitle>Collections</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-row gap-2">
+            <Item href="/dashboard/collections" text="View" />
+            <Item href="/dashboard/collections/new" text="New" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>Reports</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-row gap-2"></CardContent>
