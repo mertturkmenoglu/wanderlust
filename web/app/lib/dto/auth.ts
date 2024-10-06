@@ -12,7 +12,6 @@ export type GetMeResponseDto = {
   isOnboardingCompleted: boolean;
   isActive: boolean;
   role: string;
-  gender: string | null;
   profileImage: string | null;
   lastLogin: string;
   createdAt: string;

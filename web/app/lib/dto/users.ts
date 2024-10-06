@@ -4,7 +4,6 @@ export type GetUserProfileResponseDto = {
   fullName: string;
   isBusinessAccount: boolean;
   isVerified: boolean;
-  gender: string | null;
   bio: string | null;
   pronouns: string | null;
   website: string | null;
@@ -18,7 +17,6 @@ export type GetUserProfileResponseDto = {
 
 export type UpdateUserProfileRequestDto = {
   fullName: string | null;
-  gender: string | null;
   bio: string | null;
   pronouns: string | null;
   website: string | null;
