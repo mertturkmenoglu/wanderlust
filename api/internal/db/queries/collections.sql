@@ -14,3 +14,9 @@ WHERE id = $1 LIMIT 1;
 -- name: DeleteCollection :exec
 DELETE FROM collections
 WHERE id = $1;
+
+-- name: GetCollections :many
+SELECT * FROM collections
+ORDER BY created_at DESC
+OFFSET $1
+LIMIT $2;
