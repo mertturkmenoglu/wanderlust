@@ -19,7 +19,6 @@ func mapGetMeResponseToDto(v db.User) GetMeResponseDto {
 		IsBusinessAccount:     v.IsBusinessAccount,
 		IsVerified:            v.IsVerified,
 		Role:                  v.Role,
-		Gender:                utils.TextOrNil(v.Gender),
 		Bio:                   utils.TextOrNil(v.Bio),
 		Pronouns:              utils.TextOrNil(v.Pronouns),
 		Website:               utils.TextOrNil(v.Website),
