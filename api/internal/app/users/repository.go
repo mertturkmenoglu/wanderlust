@@ -18,7 +18,6 @@ func (r *repository) updateUserProfile(id string, dto UpdateUserProfileRequestDt
 	return r.db.Queries.UpdateUserProfile(context.Background(), db.UpdateUserProfileParams{
 		ID:       id,
 		FullName: dto.FullName,
-		Gender:   utils.NilStrToText(dto.Gender),
 		Bio:      utils.NilStrToText(dto.Bio),
 		Pronouns: utils.NilStrToText(dto.Pronouns),
 		Website:  utils.NilStrToText(dto.Website),

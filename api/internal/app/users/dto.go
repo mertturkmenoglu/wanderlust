@@ -8,7 +8,6 @@ type GetUserProfileResponseDto struct {
 	FullName          string    `json:"fullName"`
 	IsBusinessAccount bool      `json:"isBusinessAccount"`
 	IsVerified        bool      `json:"isVerified"`
-	Gender            *string   `json:"gender"`
 	Bio               *string   `json:"bio"`
 	Pronouns          *string   `json:"pronouns"`
 	Website           *string   `json:"website"`
@@ -22,7 +21,6 @@ type GetUserProfileResponseDto struct {
 
 type UpdateUserProfileRequestDto struct {
 	FullName string  `json:"fullName"`
-	Gender   *string `json:"gender"`
 	Bio      *string `json:"bio"`
 	Pronouns *string `json:"pronouns"`
 	Website  *string `json:"website"`
