@@ -14,51 +14,13 @@ import (
 	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus"
-
-	"github.com/MarceloPetrucio/go-scalar-api-reference"
-	echoSwagger "github.com/swaggo/echo-swagger"
-
-	_ "wanderlust/swaggerdocs"
 )
 
-// @title			Wanderlust API
-// @version		1.0
-// @description	Wanderlust backend services
-// @termsOfService	http://localhost:3000/terms
-// @contact.name	Mert Turkmenoglu
-// @contact.url	https://mertturkmenoglu.com
-// @contact.email	getwanderlust@gmail.com
-// @license.name	MIT
-// @license.url	https://mit-license.org/
-// @host			localhost:5000
-// @BasePath		/api
-// @securityDefinitions.apikey	CookieAuth
-// @in							cookie
-// @name						__wanderlust_auth
-// @description			Cookie based session authentication
 func main() {
 	config.Bootstrap()
 
 	a := app.New()
 	e := a.RegisterRoutes()
-
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	e.GET("/scalar", func(c echo.Context) error {
-		htmlContent, err := scalar.ApiReferenceHTML(&scalar.Options{
-			SpecURL: "./swaggerdocs/swagger.json",
-			CustomOptions: scalar.CustomOptions{
-				PageTitle: "Scalar Docs",
-			},
-			DarkMode: true,
-		})
-
-		if err != nil {
-			return err
-		}
-
-		return c.HTML(http.StatusOK, htmlContent)
-	})
-
 	app.InitGlobalMiddlewares(e)
 
 	shouldRunMigrations := os.Getenv("RUN_MIGRATIONS")
