@@ -2,7 +2,7 @@ import { json, LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { getUserByUsername } from "~/lib/api";
-import Bio from "./components/bio";
+import Bio from "./__components/bio";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(params.username, "username is missing");
