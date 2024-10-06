@@ -1,7 +1,8 @@
 import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
-import "leaflet/dist/leaflet.css";
+import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
+import leafletStyles from "leaflet/dist/leaflet.css?url";
 import invariant from "tiny-invariant";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
@@ -25,6 +26,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     poi: res.data,
     meta: res.meta,
   });
+}
+
+export function links() {
+  return [
+    { rel: "stylesheet", href: leafletStyles },
+    { rel: "stylesheet", href: leafletIconCompatStyles },
+  ];
 }
 
 export function meta({ data }: MetaArgs<typeof loader>) {
@@ -73,7 +81,9 @@ export default function Page() {
         </div>
       </div>
 
-      <MapContainer lat={poi.address.lat} lng={poi.address.lng} />
+      <div className="w-full">
+        <MapContainer lat={poi.address.lat} lng={poi.address.lng} />
+      </div>
 
       <Amenities amenities={poi.amenities} />
 
