@@ -38,6 +38,17 @@ type CollectionItemPoiDto struct {
 	UpdatedAt   time.Time                    `json:"updatedAt"`
 	Address     CollectionItemPoiAddressDto  `json:"address"`
 	Category    CollectionItemPoiCategoryDto `json:"category"`
+	FirstMedia  CollectionItemPoiMedia       `json:"firstMedia"`
+}
+
+type CollectionItemPoiMedia struct {
+	ID         int64     `json:"id"`
+	PoiID      string    `json:"poiId"`
+	Url        string    `json:"url"`
+	Alt        string    `json:"alt"`
+	Caption    *string   `json:"caption"`
+	MediaOrder int16     `json:"mediaOrder"`
+	CreatedAt  time.Time `json:"createdAt"`
 }
 
 type CollectionItemPoiAddressDto struct {

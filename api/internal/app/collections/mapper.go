@@ -47,6 +47,15 @@ func mapToGetCollectionByIdResponseDto(collection db.Collection, items []db.GetC
 					Name:  item.Category.Name,
 					Image: item.Category.Image,
 				},
+				FirstMedia: CollectionItemPoiMedia{
+					ID:         item.Medium.ID,
+					PoiID:      item.Poi.ID,
+					Url:        item.Medium.Url,
+					Alt:        item.Medium.Alt,
+					Caption:    utils.TextOrNil(item.Medium.Caption),
+					MediaOrder: item.Medium.MediaOrder,
+					CreatedAt:  item.Medium.CreatedAt.Time,
+				},
 			},
 		})
 	}
