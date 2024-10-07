@@ -16,3 +16,4 @@
 - `0350-0399`: Amenities module errors.
 - `0400-0449`: Categories module errors.
 - `0500-0549`: Favorites module errors.
+- `0550-0599`: Collections module errors.
