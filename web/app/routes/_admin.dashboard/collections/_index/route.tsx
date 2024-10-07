@@ -15,6 +15,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
+function shortDescription(str: string) {
+  if (str.length > 64) {
+    return str.slice(0, 64) + "...";
+  }
+
+  return str;
+}
+
 export default function Page() {
   const { collections } = useLoaderData<typeof loader>();
 
@@ -32,8 +40,8 @@ export default function Page() {
         data={collections.map((collection) => ({
           id: collection.id,
           name: collection.name,
-          description: collection.description,
-          createdAt: collection.createdAt,
+          description: shortDescription(collection.description),
+          createdAt: new Date(collection.createdAt).toLocaleDateString(),
         }))}
         hrefPrefix="/dashboard/collections"
       />
