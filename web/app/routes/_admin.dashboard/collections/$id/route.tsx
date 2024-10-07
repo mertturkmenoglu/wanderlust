@@ -85,21 +85,20 @@ export default function Page() {
 
       <h3 className="mt-4 text-lg font-bold tracking-tight">Short Info</h3>
 
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Collection Id:</div>
-        <div>{collection.id}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Collection Name:</div>
-        <div>{collection.name}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Collection Description:</div>
-        <div>{collection.description}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Created At:</div>
-        <div>{collection.createdAt}</div>
+      <div className="grid grid-cols-12 gap-2 mt-4">
+        <div className="font-semibold col-span-1">Id:</div>
+        <div className="col-span-11">{collection.id}</div>
+
+        <div className="font-semibold col-span-1">Name:</div>
+        <div className="col-span-11">{collection.name}</div>
+
+        <div className="font-semibold col-span-1">Description:</div>
+        <div className="col-span-11">{collection.description}</div>
+
+        <div className="font-semibold col-span-1">Created At:</div>
+        <div className="col-span-11">
+          {new Date(collection.createdAt).toLocaleString()}
+        </div>
       </div>
     </>
   );
