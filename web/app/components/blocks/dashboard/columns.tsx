@@ -51,3 +51,29 @@ export const citiesCols: ColumnDef<City>[] = [
     header: "Country",
   },
 ];
+
+export type Collection = {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+};
+
+export const collectionsCols: ColumnDef<Collection>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+  },
+];
