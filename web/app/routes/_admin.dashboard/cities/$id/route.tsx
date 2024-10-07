@@ -6,7 +6,8 @@ import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
-import DeleteDialog from "./delete-dialog";
+import DeleteDialog from "../../__components/delete-dialog";
+import { useDeleteCityMutation } from "./hooks";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -17,6 +18,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function Page() {
   const { city } = useLoaderData<typeof loader>();
+  const mutation = useDeleteCityMutation(city.id);
 
   return (
     <>
@@ -39,7 +41,7 @@ export default function Page() {
           <Link to={`/dashboard/cities/${city.id}/edit`}>Edit</Link>
         </Button>
 
-        <DeleteDialog id={city.id} />
+        <DeleteDialog type="city" onClick={() => mutation.mutate()} />
       </div>
 
       <Separator className="my-4 max-w-md" />
