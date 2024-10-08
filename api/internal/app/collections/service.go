@@ -60,3 +60,15 @@ func (s *service) createCollection(dto CreateCollectionRequestDto) (GetCollectio
 func (s *service) updateCollection(id string, dto UpdateCollectionRequestDto) error {
 	return s.repository.updateCollection(id, dto)
 }
+
+func (s *service) getCollectionItems(id string) (GetCollectionItemsResponseDto, error) {
+	items, err := s.repository.getCollectionItems(id)
+
+	if err != nil {
+		return GetCollectionItemsResponseDto{}, err
+	}
+
+	dto := mapToGetCollectionItemsResponseDto(items)
+
+	return dto, nil
+}

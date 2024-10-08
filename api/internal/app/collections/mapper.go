@@ -6,13 +6,49 @@ import (
 )
 
 func mapToGetCollectionByIdResponseDto(collection db.Collection, items []db.GetCollectionItemsRow) GetCollectionByIdResponseDto {
+	itemsArr := mapCollectionItems(items)
+
+	return GetCollectionByIdResponseDto{
+		ID:          collection.ID,
+		Name:        collection.Name,
+		Description: collection.Description,
+		CreatedAt:   collection.CreatedAt.Time,
+		Items:       itemsArr,
+	}
+}
+
+func mapToGetCollectionsResponseDto(collections []db.Collection) GetCollectionsResponseDto {
+	dtoArr := make([]CollectionDto, 0)
+
+	for _, collection := range collections {
+		dtoArr = append(dtoArr, CollectionDto{
+			ID:          collection.ID,
+			Name:        collection.Name,
+			Description: collection.Description,
+			CreatedAt:   collection.CreatedAt.Time,
+		})
+	}
+
+	return GetCollectionsResponseDto{
+		Collections: dtoArr,
+	}
+}
+
+func mapToGetCollectionItemsResponseDto(items []db.GetCollectionItemsRow) GetCollectionItemsResponseDto {
+	return GetCollectionItemsResponseDto{
+		Items: mapCollectionItems(items),
+	}
+}
+
+func mapCollectionItems(items []db.GetCollectionItemsRow) []CollectionItemDto {
 	itemsArr := make([]CollectionItemDto, 0)
 
 	for _, item := range items {
 		itemsArr = append(itemsArr, CollectionItemDto{
-			CollectionID: collection.ID,
-			PoiID:        item.Poi.ID,
-			CreatedAt:    item.Poi.CreatedAt.Time,
+			CollectionID: item.CollectionItem.CollectionID,
+			PoiID:        item.CollectionItem.PoiID,
+			CreatedAt:    item.CollectionItem.CreatedAt.Time,
+			ListIndex:    item.CollectionItem.ListIndex,
 			Poi: CollectionItemPoiDto{
 				ID:          item.Poi.ID,
 				Name:        item.Poi.Name,
@@ -60,28 +96,5 @@ func mapToGetCollectionByIdResponseDto(collection db.Collection, items []db.GetC
 		})
 	}
 
-	return GetCollectionByIdResponseDto{
-		ID:          collection.ID,
-		Name:        collection.Name,
-		Description: collection.Description,
-		CreatedAt:   collection.CreatedAt.Time,
-		Items:       itemsArr,
-	}
-}
-
-func mapToGetCollectionsResponseDto(collections []db.Collection) GetCollectionsResponseDto {
-	dtoArr := make([]CollectionDto, 0)
-
-	for _, collection := range collections {
-		dtoArr = append(dtoArr, CollectionDto{
-			ID:          collection.ID,
-			Name:        collection.Name,
-			Description: collection.Description,
-			CreatedAt:   collection.CreatedAt.Time,
-		})
-	}
-
-	return GetCollectionsResponseDto{
-		Collections: dtoArr,
-	}
+	return itemsArr
 }

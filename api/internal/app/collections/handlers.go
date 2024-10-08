@@ -91,3 +91,33 @@ func (h *handlers) UpdateCollection(c echo.Context) error {
 
 	return c.NoContent(http.StatusNoContent)
 }
+
+func (h *handlers) GetCollectionItems(c echo.Context) error {
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.getCollectionItems(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: res,
+	})
+}
+
+func (h *handlers) CreateCollectionItem(c echo.Context) error {
+	return echo.ErrNotImplemented
+}
+
+func (h *handlers) DeleteCollectionItem(c echo.Context) error {
+	return echo.ErrNotImplemented
+}
+
+func (h *handlers) UpdateCollectionItems(c echo.Context) error {
+	return echo.ErrNotImplemented
+}

@@ -24,6 +24,7 @@ type GetCollectionByIdResponseDto struct {
 type CollectionItemDto struct {
 	CollectionID string               `json:"collectionId"`
 	PoiID        string               `json:"poiId"`
+	ListIndex    int32                `json:"listIndex"`
 	Poi          CollectionItemPoiDto `json:"poi"`
 	CreatedAt    time.Time            `json:"createdAt"`
 }
@@ -89,4 +90,14 @@ type CreateCollectionRequestDto struct {
 type UpdateCollectionRequestDto struct {
 	Name        string `json:"name" validate:"min=1,max=128"`
 	Description string `json:"description" validate:"min=1,max=1024"`
+}
+
+type GetCollectionItemsResponseDto struct {
+	Items []CollectionItemDto `json:"items"`
+}
+
+type CreateCollectionItemRequestDto struct {
+}
+
+type UpdateCollectionItemsRequestDto struct {
 }
