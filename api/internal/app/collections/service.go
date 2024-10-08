@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"slices"
 	"wanderlust/internal/db"
 	"wanderlust/internal/pagination"
 )
@@ -105,4 +106,28 @@ func (s *service) deleteCollectionItem(collectionId string, poiId string) error 
 	}
 
 	return s.repository.deleteCollectionItemAtIndex(collectionId, item.ListIndex)
+}
+
+func (s *service) updateCollectionItems(collectionId string, dto UpdateCollectionItemsRequestDto) error {
+	lastIndex, err := s.repository.getLastIndexOfCollection(collectionId)
+
+	if err != nil {
+		return err
+	}
+
+	if len(dto.NewOrder) != int(lastIndex) {
+		return ErrInvalidOrder
+	}
+
+	for i := 1; i <= int(lastIndex); i++ {
+		ok := slices.ContainsFunc(dto.NewOrder, func(item NewOrderItem) bool {
+			return item.ListIndex == int32(i)
+		})
+
+		if !ok {
+			return ErrInvalidOrder
+		}
+	}
+
+	return s.repository.updateCollectionItems(collectionId, dto.NewOrder)
 }
