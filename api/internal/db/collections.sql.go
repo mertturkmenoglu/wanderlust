@@ -79,28 +79,28 @@ func (q *Queries) GetCollectionById(ctx context.Context, id string) (Collection,
 
 const getCollectionItems = `-- name: GetCollectionItems :many
 SELECT 
+  collection_items.collection_id, collection_items.poi_id, collection_items.list_index, collection_items.created_at,
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
   cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
   media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
-FROM pois
+FROM collection_items
+  INNER JOIN pois ON collection_items.poi_id = pois.id
   LEFT JOIN categories ON pois.category_id = categories.id
   LEFT JOIN addresses ON pois.address_id = addresses.id
   LEFT JOIN cities ON addresses.city_id = cities.id
   LEFT JOIN media ON pois.id = media.poi_id
-WHERE media.media_order = 1 AND pois.id IN (
-  SELECT poi_id FROM collection_items
-  WHERE collection_id = $1
-)
+WHERE media.media_order = 1 AND collection_items.collection_id = $1
 `
 
 type GetCollectionItemsRow struct {
-	Poi      Poi
-	Category Category
-	Address  Address
-	City     City
-	Medium   Medium
+	CollectionItem CollectionItem
+	Poi            Poi
+	Category       Category
+	Address        Address
+	City           City
+	Medium         Medium
 }
 
 func (q *Queries) GetCollectionItems(ctx context.Context, collectionID string) ([]GetCollectionItemsRow, error) {
@@ -113,6 +113,10 @@ func (q *Queries) GetCollectionItems(ctx context.Context, collectionID string) (
 	for rows.Next() {
 		var i GetCollectionItemsRow
 		if err := rows.Scan(
+			&i.CollectionItem.CollectionID,
+			&i.CollectionItem.PoiID,
+			&i.CollectionItem.ListIndex,
+			&i.CollectionItem.CreatedAt,
 			&i.Poi.ID,
 			&i.Poi.Name,
 			&i.Poi.Phone,

@@ -32,20 +32,19 @@ WHERE id = $3;
 
 -- name: GetCollectionItems :many
 SELECT 
+  sqlc.embed(collection_items),
   sqlc.embed(pois),
   sqlc.embed(categories),
   sqlc.embed(addresses),
   sqlc.embed(cities),
   sqlc.embed(media)
-FROM pois
+FROM collection_items
+  INNER JOIN pois ON collection_items.poi_id = pois.id
   LEFT JOIN categories ON pois.category_id = categories.id
   LEFT JOIN addresses ON pois.address_id = addresses.id
   LEFT JOIN cities ON addresses.city_id = cities.id
   LEFT JOIN media ON pois.id = media.poi_id
-WHERE media.media_order = 1 AND pois.id IN (
-  SELECT poi_id FROM collection_items
-  WHERE collection_id = $1
-);
+WHERE media.media_order = 1 AND collection_items.collection_id = $1;
 
 -- name: CountCollections :one
 SELECT count(*) FROM collections;
