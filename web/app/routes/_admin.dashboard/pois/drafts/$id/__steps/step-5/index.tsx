@@ -28,13 +28,14 @@ export default function Step5() {
         withCredentials: true,
         shouldRetry: () => false,
         fieldName: "files",
+        limit: 1,
       })
       .on("file-added", (file) => {
         uppy.setFileMeta(file.id, {
           id: draft.id,
         });
       })
-      .on("upload-success", () => {
+      .on("complete", () => {
         window.location.reload();
       })
   );
