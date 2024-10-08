@@ -146,3 +146,42 @@ func (r *repository) deleteCollectionItemAtIndex(collectionId string, index int3
 
 	return nil
 }
+
+func (r *repository) updateCollectionItems(collectionId string, newOrderItems []NewOrderItem) error {
+	ctx := context.Background()
+	tx, err := r.db.Pool.Begin(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := r.db.Queries.WithTx(tx)
+
+	err = qtx.DeleteAllCollectionItems(ctx, collectionId)
+
+	if err != nil {
+		return err
+	}
+
+	for _, item := range newOrderItems {
+		_, err = qtx.CreateCollectionItem(ctx, db.CreateCollectionItemParams{
+			CollectionID: collectionId,
+			PoiID:        item.PoiID,
+			ListIndex:    item.ListIndex,
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
