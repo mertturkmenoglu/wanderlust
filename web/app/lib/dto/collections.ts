@@ -103,4 +103,11 @@ export type CreateCollectionItemResponseDto = {
   createdAt: string;
 };
 
-export type UpdateCollectionItemsRequestDto = {};
+export type UpdateCollectionItemsRequestDto = {
+  newOrder: NewOrderItem[];
+};
+
+export type NewOrderItem = {
+  listIndex: number;
+  poiId: string;
+};
