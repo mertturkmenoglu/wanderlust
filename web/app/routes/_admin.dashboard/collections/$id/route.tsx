@@ -78,6 +78,12 @@ export default function Page() {
           <Link to={`/dashboard/collections/${collection.id}/edit`}>Edit</Link>
         </Button>
 
+        <Button variant="outline" asChild>
+          <Link to={`/dashboard/collections/${collection.id}/items`}>
+            See Collection Items
+          </Link>
+        </Button>
+
         <DeleteDialog type="collection" onClick={() => mutation.mutate()} />
       </div>
 
