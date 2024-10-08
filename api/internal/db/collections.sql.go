@@ -177,6 +177,7 @@ FROM collection_items
   LEFT JOIN cities ON addresses.city_id = cities.id
   LEFT JOIN media ON pois.id = media.poi_id
 WHERE media.media_order = 1 AND collection_items.collection_id = $1
+ORDER BY collection_items.list_index ASC
 `
 
 type GetCollectionItemsRow struct {
