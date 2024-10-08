@@ -1,14 +1,18 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { LinkIcon } from "lucide-react";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { GripVerticalIcon, LinkIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { createSwapy, SwapEventArray } from "swapy";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import PoiCard from "~/components/blocks/poi-card";
 import { Button } from "~/components/ui/button";
-import { getCollectionById } from "~/lib/api-requests";
+import { getCollectionById, updateCollectionItems } from "~/lib/api-requests";
+import { UpdateCollectionItemsRequestDto } from "~/lib/dto";
+import { cn } from "~/lib/utils";
 import AddItemDialog from "./add-item-dialog";
 import DeleteItemDialog from "./delete-item-dialog";
 
@@ -32,6 +36,41 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function Page() {
   const { items, collectionId, name } = useLoaderData<typeof loader>();
   const [addItemOpen, setAddItemOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [arr, setArr] = useState<SwapEventArray>([]);
+
+  const mutation = useMutation({
+    mutationKey: ["collection-items-update", collectionId],
+    mutationFn: async (data: UpdateCollectionItemsRequestDto) =>
+      updateCollectionItems(collectionId, data),
+    onSuccess: () => {
+      toast.success("Collection items updated");
+      setIsEditMode(false);
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+
+  useEffect(() => {
+    if (!isEditMode) {
+      return;
+    }
+
+    const container = document.querySelector("#items-container")!;
+    const swapy = createSwapy(container, {
+      swapMode: "stop",
+      autoScrollOnDrag: true,
+    });
+
+    swapy.onSwapEnd(({ data }) => {
+      setArr(data.array);
+    });
+
+    return () => {
+      swapy.destroy();
+    };
+  }, [isEditMode]);
 
   return (
     <>
@@ -43,54 +82,118 @@ export default function Page() {
       <h2 className="text-4xl font-bold mt-4">{name} Items</h2>
 
       <div className="flex flex-row gap-2 w-min items-start mt-4">
-        <AddItemDialog
-          collectionId={collectionId}
-          open={addItemOpen}
-          setOpen={setAddItemOpen}
-        />
+        {!isEditMode && (
+          <>
+            <AddItemDialog
+              collectionId={collectionId}
+              open={addItemOpen}
+              setOpen={setAddItemOpen}
+            />
 
-        <Button variant="outline" disabled>
-          Edit
-        </Button>
+            <Button variant="outline" onClick={() => setIsEditMode(true)}>
+              Edit
+            </Button>
+          </>
+        )}
+
+        {isEditMode && (
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              variant="default"
+              onClick={() => {
+                mutation.mutate({
+                  newOrder: arr.map((el) => ({
+                    listIndex: +el.slotId + 1,
+                    poiId: el.itemId!,
+                  })),
+                });
+              }}
+            >
+              Save
+            </Button>
+          </>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-        {items.map((item) => (
-          <div key={item.listIndex} className="flex flex-col gap-2">
-            <Link to={`/p/${item.poiId}`}>
-              <PoiCard
-                poi={{
-                  ...item.poi,
-                  image: {
-                    url: item.poi.firstMedia.url,
-                    alt: item.poi.firstMedia.alt,
-                  },
-                }}
-              />
-            </Link>
+      <div
+        className={cn("grid grid-cols-1 gap-4 mt-4", {
+          "grid-cols-5": isEditMode,
+          "md:grid-cols-3": !isEditMode,
+        })}
+        id="items-container"
+      >
+        {items.map((item, i) => (
+          <div
+            key={item.poiId}
+            className="flex flex-col gap-2"
+            data-swapy-slot={`${i}`}
+          >
+            <div data-swapy-item={item.poiId}>
+              {!isEditMode && (
+                <Link to={`/p/${item.poiId}`}>
+                  <PoiCard
+                    poi={{
+                      ...item.poi,
+                      image: {
+                        url: item.poi.firstMedia.url,
+                        alt: item.poi.firstMedia.alt,
+                      },
+                    }}
+                  />
+                </Link>
+              )}
 
-            <div className="flex flex-row gap-2">
-              <DeleteItemDialog
-                collectionId={collectionId}
-                poiId={item.poiId}
-                poiName={item.poi.name}
-              />
+              {isEditMode && (
+                <div className="flex flex-row gap-4 items-center">
+                  <div>
+                    <GripVerticalIcon className="size-6" />
+                  </div>
+                  <PoiCard
+                    poi={{
+                      ...item.poi,
+                      image: {
+                        url: item.poi.firstMedia.url,
+                        alt: item.poi.firstMedia.alt,
+                      },
+                    }}
+                  />
+                </div>
+              )}
 
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={async () => {
-                  await window.navigator.clipboard.writeText(
-                    new URL(
-                      `/p/${item.poiId}`,
-                      window.location.origin
-                    ).toString()
-                  );
-                  toast.success("Link copied to clipboard");
-                }}
-              >
-                <LinkIcon className="size-4" />
-              </Button>
+              {!isEditMode && (
+                <div className="flex flex-row gap-2">
+                  <DeleteItemDialog
+                    collectionId={collectionId}
+                    poiId={item.poiId}
+                    poiName={item.poi.name}
+                  />
+
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    onClick={async () => {
+                      await window.navigator.clipboard.writeText(
+                        new URL(
+                          `/p/${item.poiId}`,
+                          window.location.origin
+                        ).toString()
+                      );
+                      toast.success("Link copied to clipboard");
+                    }}
+                  >
+                    <LinkIcon className="size-4" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         ))}
