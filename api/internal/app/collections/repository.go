@@ -69,3 +69,80 @@ func (r *repository) updateCollection(id string, dto UpdateCollectionRequestDto)
 		ID:          id,
 	})
 }
+
+func (r *repository) createCollectionItem(collectionId string, dto CreateCollectionItemRequestDto, listIndex int32) (db.CollectionItem, error) {
+	return r.db.Queries.CreateCollectionItem(context.Background(), db.CreateCollectionItemParams{
+		CollectionID: collectionId,
+		PoiID:        dto.PoiID,
+		ListIndex:    listIndex,
+	})
+}
+
+func (r *repository) getLastIndexOfCollection(collectionId string) (int32, error) {
+	res, err := r.db.Queries.GetLastIndexOfCollection(context.Background(), collectionId)
+
+	if err != nil {
+		return 0, err
+	}
+
+	asInt, ok := res.(int32)
+
+	if !ok {
+		return 0, ErrCollectionIndexCast
+	}
+
+	return asInt, nil
+}
+
+func (r *repository) getCollectionItem(collectionId string, poiId string) (db.CollectionItem, error) {
+	res, err := r.db.Queries.GetCollectionItem(context.Background(), db.GetCollectionItemParams{
+		CollectionID: collectionId,
+		PoiID:        poiId,
+	})
+
+	if err != nil {
+		return db.CollectionItem{}, err
+	}
+
+	return res, nil
+}
+
+func (r *repository) deleteCollectionItemAtIndex(collectionId string, index int32) error {
+	ctx := context.Background()
+	tx, err := r.db.Pool.Begin(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := r.db.Queries.WithTx(tx)
+
+	err = qtx.DeleteCollectionItemAtIndex(ctx, db.DeleteCollectionItemAtIndexParams{
+		CollectionID: collectionId,
+		ListIndex:    index,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// Decrement list index of all items after the deleted one
+	err = qtx.DecrListIndexAfterDelete(ctx, db.DecrListIndexAfterDeleteParams{
+		CollectionID: collectionId,
+		ListIndex:    index,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

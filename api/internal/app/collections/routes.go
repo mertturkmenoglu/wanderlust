@@ -18,7 +18,7 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 
 		routes.GET("/:id/items", m.handlers.GetCollectionItems)
 		routes.POST("/:id/items", m.handlers.CreateCollectionItem, middlewares.ParseBody[CreateCollectionItemRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemCreate))
-		routes.DELETE("/:id/items/:itemId", m.handlers.DeleteCollectionItem, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemDelete))
+		routes.DELETE("/:id/items/:poiId", m.handlers.DeleteCollectionItem, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemDelete))
 		routes.PATCH("/:id/items", m.handlers.UpdateCollectionItems, middlewares.ParseBody[UpdateCollectionItemsRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemUpdate))
 	}
 }

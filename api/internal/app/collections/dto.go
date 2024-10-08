@@ -97,6 +97,14 @@ type GetCollectionItemsResponseDto struct {
 }
 
 type CreateCollectionItemRequestDto struct {
+	PoiID string `json:"poiId" validate:"required,min=1,max=32"`
+}
+
+type CreateCollectionItemResponseDto struct {
+	CollectionID string `json:"collectionId"`
+	PoiID        string `json:"poiId"`
+	ListIndex    int32  `json:"listIndex"`
+	CreatedAt    time.Time
 }
 
 type UpdateCollectionItemsRequestDto struct {

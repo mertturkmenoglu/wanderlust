@@ -111,11 +111,39 @@ func (h *handlers) GetCollectionItems(c echo.Context) error {
 }
 
 func (h *handlers) CreateCollectionItem(c echo.Context) error {
-	return echo.ErrNotImplemented
+	collectionId := c.Param("id")
+	dto := c.Get("body").(CreateCollectionItemRequestDto)
+
+	if collectionId == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.createCollectionItem(collectionId, dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, api.Response{
+		Data: res,
+	})
 }
 
 func (h *handlers) DeleteCollectionItem(c echo.Context) error {
-	return echo.ErrNotImplemented
+	collectionId := c.Param("id")
+	poiId := c.Param("poiId")
+
+	if collectionId == "" || poiId == "" {
+		return ErrIdRequired
+	}
+
+	err := h.service.deleteCollectionItem(collectionId, poiId)
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }
 
 func (h *handlers) UpdateCollectionItems(c echo.Context) error {

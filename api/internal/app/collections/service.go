@@ -72,3 +72,37 @@ func (s *service) getCollectionItems(id string) (GetCollectionItemsResponseDto, 
 
 	return dto, nil
 }
+
+func (s *service) createCollectionItem(collectionId string, dto CreateCollectionItemRequestDto) (CreateCollectionItemResponseDto, error) {
+	lastIndex, err := s.repository.getLastIndexOfCollection(collectionId)
+
+	if err != nil {
+		return CreateCollectionItemResponseDto{}, err
+	}
+
+	created, err := s.repository.createCollectionItem(collectionId, dto, lastIndex+1)
+
+	if err != nil {
+		return CreateCollectionItemResponseDto{}, err
+	}
+
+	resDto := mapToCreateCollectionItemResponseDto(created)
+
+	return resDto, nil
+}
+
+func (s *service) deleteCollectionItem(collectionId string, poiId string) error {
+	_, err := s.repository.getCollectionById(collectionId)
+
+	if err != nil {
+		return err
+	}
+
+	item, err := s.repository.getCollectionItem(collectionId, poiId)
+
+	if err != nil {
+		return err
+	}
+
+	return s.repository.deleteCollectionItemAtIndex(collectionId, item.ListIndex)
+}

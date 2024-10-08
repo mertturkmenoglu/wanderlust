@@ -98,3 +98,12 @@ func mapCollectionItems(items []db.GetCollectionItemsRow) []CollectionItemDto {
 
 	return itemsArr
 }
+
+func mapToCreateCollectionItemResponseDto(item db.CollectionItem) CreateCollectionItemResponseDto {
+	return CreateCollectionItemResponseDto{
+		CollectionID: item.CollectionID,
+		PoiID:        item.PoiID,
+		ListIndex:    item.ListIndex,
+		CreatedAt:    item.CreatedAt.Time,
+	}
+}
