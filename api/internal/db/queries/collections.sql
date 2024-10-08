@@ -80,3 +80,7 @@ UPDATE collection_items
 SET 
   list_index = list_index - 1
 WHERE collection_id = $1 AND list_index > $2;
+
+-- name: DeleteAllCollectionItems :exec
+DELETE FROM collection_items
+WHERE collection_id = $1;

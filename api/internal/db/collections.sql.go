@@ -97,6 +97,16 @@ func (q *Queries) DecrListIndexAfterDelete(ctx context.Context, arg DecrListInde
 	return err
 }
 
+const deleteAllCollectionItems = `-- name: DeleteAllCollectionItems :exec
+DELETE FROM collection_items
+WHERE collection_id = $1
+`
+
+func (q *Queries) DeleteAllCollectionItems(ctx context.Context, collectionID string) error {
+	_, err := q.db.Exec(ctx, deleteAllCollectionItems, collectionID)
+	return err
+}
+
 const deleteCollection = `-- name: DeleteCollection :exec
 DELETE FROM collections
 WHERE id = $1
