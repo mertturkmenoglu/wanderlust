@@ -48,3 +48,34 @@ WHERE media.media_order = 1 AND collection_items.collection_id = $1;
 
 -- name: CountCollections :one
 SELECT count(*) FROM collections;
+
+-- name: CreateCollectionItem :one
+INSERT INTO collection_items (
+  collection_id,
+  poi_id,
+  list_index
+) VALUES (
+  $1,
+  $2,
+  $3
+) RETURNING *;
+
+-- name: GetLastIndexOfCollection :one
+SELECT COALESCE(MAX(list_index), 0)
+FROM collection_items
+WHERE collection_id = $1;
+
+-- name: GetCollectionItem :one
+SELECT * FROM collection_items
+WHERE collection_id = $1 AND poi_id = $2
+LIMIT 1;
+
+-- name: DeleteCollectionItemAtIndex :exec
+DELETE FROM collection_items
+WHERE collection_id = $1 AND list_index = $2;
+
+-- name: DecrListIndexAfterDelete :exec
+UPDATE collection_items
+SET 
+  list_index = list_index - 1
+WHERE collection_id = $1 AND list_index > $2;

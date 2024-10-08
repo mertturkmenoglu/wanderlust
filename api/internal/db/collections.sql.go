@@ -50,6 +50,53 @@ func (q *Queries) CreateCollection(ctx context.Context, arg CreateCollectionPara
 	return i, err
 }
 
+const createCollectionItem = `-- name: CreateCollectionItem :one
+INSERT INTO collection_items (
+  collection_id,
+  poi_id,
+  list_index
+) VALUES (
+  $1,
+  $2,
+  $3
+) RETURNING collection_id, poi_id, list_index, created_at
+`
+
+type CreateCollectionItemParams struct {
+	CollectionID string
+	PoiID        string
+	ListIndex    int32
+}
+
+func (q *Queries) CreateCollectionItem(ctx context.Context, arg CreateCollectionItemParams) (CollectionItem, error) {
+	row := q.db.QueryRow(ctx, createCollectionItem, arg.CollectionID, arg.PoiID, arg.ListIndex)
+	var i CollectionItem
+	err := row.Scan(
+		&i.CollectionID,
+		&i.PoiID,
+		&i.ListIndex,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const decrListIndexAfterDelete = `-- name: DecrListIndexAfterDelete :exec
+UPDATE collection_items
+SET 
+  list_index = list_index - 1
+WHERE collection_id = $1 AND list_index > $2
+`
+
+type DecrListIndexAfterDeleteParams struct {
+	CollectionID string
+	ListIndex    int32
+}
+
+func (q *Queries) DecrListIndexAfterDelete(ctx context.Context, arg DecrListIndexAfterDeleteParams) error {
+	_, err := q.db.Exec(ctx, decrListIndexAfterDelete, arg.CollectionID, arg.ListIndex)
+	return err
+}
+
 const deleteCollection = `-- name: DeleteCollection :exec
 DELETE FROM collections
 WHERE id = $1
@@ -57,6 +104,21 @@ WHERE id = $1
 
 func (q *Queries) DeleteCollection(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteCollection, id)
+	return err
+}
+
+const deleteCollectionItemAtIndex = `-- name: DeleteCollectionItemAtIndex :exec
+DELETE FROM collection_items
+WHERE collection_id = $1 AND list_index = $2
+`
+
+type DeleteCollectionItemAtIndexParams struct {
+	CollectionID string
+	ListIndex    int32
+}
+
+func (q *Queries) DeleteCollectionItemAtIndex(ctx context.Context, arg DeleteCollectionItemAtIndexParams) error {
+	_, err := q.db.Exec(ctx, deleteCollectionItemAtIndex, arg.CollectionID, arg.ListIndex)
 	return err
 }
 
@@ -72,6 +134,29 @@ func (q *Queries) GetCollectionById(ctx context.Context, id string) (Collection,
 		&i.ID,
 		&i.Name,
 		&i.Description,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getCollectionItem = `-- name: GetCollectionItem :one
+SELECT collection_id, poi_id, list_index, created_at FROM collection_items
+WHERE collection_id = $1 AND poi_id = $2
+LIMIT 1
+`
+
+type GetCollectionItemParams struct {
+	CollectionID string
+	PoiID        string
+}
+
+func (q *Queries) GetCollectionItem(ctx context.Context, arg GetCollectionItemParams) (CollectionItem, error) {
+	row := q.db.QueryRow(ctx, getCollectionItem, arg.CollectionID, arg.PoiID)
+	var i CollectionItem
+	err := row.Scan(
+		&i.CollectionID,
+		&i.PoiID,
+		&i.ListIndex,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -205,6 +290,19 @@ func (q *Queries) GetCollections(ctx context.Context, arg GetCollectionsParams) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const getLastIndexOfCollection = `-- name: GetLastIndexOfCollection :one
+SELECT COALESCE(MAX(list_index), 0)
+FROM collection_items
+WHERE collection_id = $1
+`
+
+func (q *Queries) GetLastIndexOfCollection(ctx context.Context, collectionID string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, getLastIndexOfCollection, collectionID)
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const updateCollection = `-- name: UpdateCollection :exec
