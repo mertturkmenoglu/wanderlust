@@ -64,6 +64,7 @@ type Collection struct {
 type CollectionItem struct {
 	CollectionID string
 	PoiID        string
+	ListIndex    int32
 	CreatedAt    pgtype.Timestamptz
 }
 
