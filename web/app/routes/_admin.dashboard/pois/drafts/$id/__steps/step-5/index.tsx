@@ -28,7 +28,7 @@ export default function Step5() {
         withCredentials: true,
         shouldRetry: () => false,
         fieldName: "files",
-        limit: 1,
+        limit: 5,
       })
       .on("file-added", (file) => {
         uppy.setFileMeta(file.id, {
