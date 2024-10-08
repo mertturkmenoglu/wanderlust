@@ -6,7 +6,7 @@ import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import PoiCard from "~/components/blocks/poi-card";
 import { Button } from "~/components/ui/button";
-import { getCollectionItems } from "~/lib/api-requests";
+import { getCollectionById } from "~/lib/api-requests";
 import AddItemDialog from "./add-item-dialog";
 import DeleteItemDialog from "./delete-item-dialog";
 
@@ -14,17 +14,21 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
   try {
     const Cookie = request.headers.get("Cookie") ?? "";
-    const items = await getCollectionItems(params.id, {
+    const collection = await getCollectionById(params.id, {
       headers: { Cookie },
     });
-    return json({ items: items.data.items, collectionId: params.id });
+    return json({
+      items: collection.data.items,
+      collectionId: params.id,
+      name: collection.data.name,
+    });
   } catch (e) {
     throw redirect("/");
   }
 }
 
 export default function Page() {
-  const { items, collectionId } = useLoaderData<typeof loader>();
+  const { items, collectionId, name } = useLoaderData<typeof loader>();
   const [addItemOpen, setAddItemOpen] = useState(false);
 
   return (
@@ -34,7 +38,7 @@ export default function Page() {
         text="Go back to collection details page"
       />
 
-      <h2 className="text-4xl font-bold mt-4">{collectionId} Items</h2>
+      <h2 className="text-4xl font-bold mt-4">{name} Items</h2>
 
       <div className="flex flex-row gap-2 w-min items-start mt-4">
         <AddItemDialog
