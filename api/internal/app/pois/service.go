@@ -114,6 +114,9 @@ func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
 		return sUploadResult{}, upload.ErrInvalidFile
 	}
 
+	s.draftMutex.Lock()
+	defer s.draftMutex.Unlock()
+
 	draft, _ := s.getDraft(uploader.draftId)
 	media, has := draft["media"]
 

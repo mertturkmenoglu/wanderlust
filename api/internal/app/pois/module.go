@@ -1,6 +1,7 @@
 package pois
 
 import (
+	"sync"
 	"wanderlust/internal/app/api"
 	"wanderlust/internal/cache"
 	"wanderlust/internal/db"
@@ -22,6 +23,7 @@ type handlers struct {
 type service struct {
 	repository   *repository
 	uploadClient *upload.Upload
+	draftMutex   sync.Mutex
 	cache        *cache.Cache
 }
 
