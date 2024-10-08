@@ -108,4 +108,10 @@ type CreateCollectionItemResponseDto struct {
 }
 
 type UpdateCollectionItemsRequestDto struct {
+	NewOrder []NewOrderItem `json:"newOrder"`
+}
+
+type NewOrderItem struct {
+	ListIndex int32  `json:"listIndex"`
+	PoiID     string `json:"poiId"`
 }
