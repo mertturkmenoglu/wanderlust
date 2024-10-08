@@ -87,3 +87,20 @@ export type UpdateCollectionRequestDto = {
   name: string;
   description: string;
 };
+
+export type GetCollectionItemsResponseDto = {
+  items: CollectionItemDto[];
+};
+
+export type CreateCollectionItemRequestDto = {
+  poiId: string;
+};
+
+export type CreateCollectionItemResponseDto = {
+  collectionId: string;
+  poiId: string;
+  listIndex: number;
+  createdAt: string;
+};
+
+export type UpdateCollectionItemsRequestDto = {};
