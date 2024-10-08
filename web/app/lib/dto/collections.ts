@@ -21,6 +21,7 @@ export type CollectionItemDto = {
   collectionId: string;
   poiId: string;
   poi: CollectionItemPoiDto;
+  listIndex: number;
   createdAt: string;
 };
 
