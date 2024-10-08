@@ -1,6 +1,8 @@
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import { LinkIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
@@ -54,7 +56,7 @@ export default function Page() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         {items.map((item) => (
-          <div key={item.listIndex} className="flex flex-col gap-4">
+          <div key={item.listIndex} className="flex flex-col gap-2">
             <Link to={`/p/${item.poiId}`}>
               <PoiCard
                 poi={{
@@ -64,15 +66,32 @@ export default function Page() {
                     alt: item.poi.firstMedia.alt,
                   },
                 }}
-                className="my-4"
               />
             </Link>
 
-            <DeleteItemDialog
-              collectionId={collectionId}
-              poiId={item.poiId}
-              poiName={item.poi.name}
-            />
+            <div className="flex flex-row gap-2">
+              <DeleteItemDialog
+                collectionId={collectionId}
+                poiId={item.poiId}
+                poiName={item.poi.name}
+              />
+
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={async () => {
+                  await window.navigator.clipboard.writeText(
+                    new URL(
+                      `/p/${item.poiId}`,
+                      window.location.origin
+                    ).toString()
+                  );
+                  toast.success("Link copied to clipboard");
+                }}
+              >
+                <LinkIcon className="size-4" />
+              </Button>
+            </div>
           </div>
         ))}
         {items.length === 0 && (
