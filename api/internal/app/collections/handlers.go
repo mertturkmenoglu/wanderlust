@@ -147,5 +147,18 @@ func (h *handlers) DeleteCollectionItem(c echo.Context) error {
 }
 
 func (h *handlers) UpdateCollectionItems(c echo.Context) error {
-	return echo.ErrNotImplemented
+	collectionId := c.Param("id")
+	dto := c.Get("body").(UpdateCollectionItemsRequestDto)
+
+	if collectionId == "" {
+		return ErrIdRequired
+	}
+
+	err := h.service.updateCollectionItems(collectionId, dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }
