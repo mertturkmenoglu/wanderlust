@@ -65,7 +65,7 @@ export default function App() {
       <Header />
       <Outlet />
       <Footer />
-      <Toaster />
+      <Toaster position="bottom-center" richColors />
     </div>
   );
 }
