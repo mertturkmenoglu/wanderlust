@@ -1,9 +1,25 @@
 package lists
 
-import "github.com/labstack/echo/v4"
+import (
+	"net/http"
+	"wanderlust/internal/app/api"
+
+	"github.com/labstack/echo/v4"
+)
 
 func (h *handlers) createList(c echo.Context) error {
-	return echo.ErrNotImplemented
+	dto := c.Get("body").(CreateListRequestDto)
+	userId := c.Get("user_id").(string)
+
+	res, err := h.service.createList(dto, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, api.Response{
+		Data: res,
+	})
 }
 
 func (h *handlers) getAllListOfUser(c echo.Context) error {

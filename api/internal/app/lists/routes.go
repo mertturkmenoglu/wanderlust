@@ -1,6 +1,10 @@
 package lists
 
-import "github.com/labstack/echo/v4"
+import (
+	"wanderlust/internal/middlewares"
+
+	"github.com/labstack/echo/v4"
+)
 
 func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/lists")
@@ -8,7 +12,7 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.GET("/", m.handlers.getAllListOfUser)
 		routes.GET("/:id", m.handlers.getListById)
 		routes.GET("/user/:username", m.handlers.getPublicListsOfUser)
-		routes.POST("/", m.handlers.createList)
+		routes.POST("/", m.handlers.createList, middlewares.ParseBody[CreateListRequestDto], middlewares.IsAuth)
 		routes.PATCH("/:id", m.handlers.updateList)
 		routes.DELETE("/:id", m.handlers.deleteList)
 
