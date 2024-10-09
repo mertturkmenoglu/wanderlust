@@ -25,3 +25,7 @@ func IsAdmin(s *Authz, c echo.Context) (bool, error) {
 func Identity(s *Authz, c echo.Context) (bool, error) {
 	return true, nil
 }
+
+func NotImplemented(s *Authz, c echo.Context) (bool, error) {
+	return false, echo.ErrNotImplemented
+}
