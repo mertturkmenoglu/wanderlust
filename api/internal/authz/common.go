@@ -33,6 +33,14 @@ const (
 	ActCollectionItemRead   AuthzAct = "collection-item-read"
 	ActCollectionItemUpdate AuthzAct = "collection-item-update"
 	ActCollectionItemDelete AuthzAct = "collection-item-delete"
+	ActListCreate           AuthzAct = "list-create"
+	ActListRead             AuthzAct = "list-read"
+	ActListUpdate           AuthzAct = "list-update"
+	ActListDelete           AuthzAct = "list-delete"
+	ActListItemCreate       AuthzAct = "list-item-create"
+	ActListItemRead         AuthzAct = "list-item-read"
+	ActListItemUpdate       AuthzAct = "list-item-update"
+	ActListItemDelete       AuthzAct = "list-item-delete"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -66,4 +74,12 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCollectionItemRead:   IsAdmin,
 	ActCollectionItemUpdate: IsAdmin,
 	ActCollectionItemDelete: IsAdmin,
+	ActListCreate:           NotImplemented,
+	ActListRead:             NotImplemented,
+	ActListUpdate:           NotImplemented,
+	ActListDelete:           NotImplemented,
+	ActListItemCreate:       NotImplemented,
+	ActListItemRead:         NotImplemented,
+	ActListItemUpdate:       NotImplemented,
+	ActListItemDelete:       NotImplemented,
 }
