@@ -27,7 +27,21 @@ func (h *handlers) getAllListOfUser(c echo.Context) error {
 }
 
 func (h *handlers) getListById(c echo.Context) error {
-	return echo.ErrNotImplemented
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.getListById(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.Response{
+		Data: res,
+	})
 }
 
 func (h *handlers) getPublicListsOfUser(c echo.Context) error {
