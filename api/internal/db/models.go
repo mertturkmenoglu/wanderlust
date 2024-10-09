@@ -81,6 +81,22 @@ type Follow struct {
 	CreatedAt   pgtype.Timestamptz
 }
 
+type List struct {
+	ID        string
+	Name      string
+	UserID    string
+	IsPublic  bool
+	CreatedAt pgtype.Timestamptz
+	UpdatedAt pgtype.Timestamptz
+}
+
+type ListItem struct {
+	ListID    string
+	PoiID     string
+	ListIndex int32
+	CreatedAt pgtype.Timestamptz
+}
+
 type Medium struct {
 	ID         int64
 	PoiID      string
