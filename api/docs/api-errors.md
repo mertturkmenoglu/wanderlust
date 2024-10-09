@@ -17,3 +17,4 @@
 - `0400-0449`: Categories module errors.
 - `0500-0549`: Favorites module errors.
 - `0550-0599`: Collections module errors.
+- `0600-0649`: Lists module errors.
