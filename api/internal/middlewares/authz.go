@@ -2,7 +2,9 @@ package middlewares
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"wanderlust/internal/app/api"
 	"wanderlust/internal/authz"
 
 	"github.com/labstack/echo/v4"
@@ -16,20 +18,30 @@ func Authz(key authz.AuthzAct) echo.MiddlewareFunc {
 			isAuthorized, err := fn(az, c)
 
 			if err != nil {
-				var status int = http.StatusInternalServerError
+				var echoErr *echo.HTTPError
 
-				if errors.Is(err, echo.ErrNotFound) {
-					status = http.StatusNotFound
-				} else if errors.Is(err, echo.ErrForbidden) {
-					status = http.StatusForbidden
-				} else {
-					status = http.StatusInternalServerError
+				if errors.As(err, &echoErr) {
+					return c.JSON(echoErr.Code, api.ErrorResponse{
+						Errors: []api.ErrorDto{
+							{
+								Status: "0000",
+								Code:   fmt.Sprintf("%d", echoErr.Code),
+								Title:  echoErr.Message.(string),
+								Detail: echoErr.Error(),
+							},
+						},
+					})
 				}
 
-				statusText := http.StatusText(status)
-
-				return c.JSON(status, echo.Map{
-					"message": statusText,
+				return c.JSON(http.StatusInternalServerError, echo.Map{
+					"errors": []echo.Map{
+						{
+							"status": "0000",
+							"code":   "500",
+							"title":  fmt.Sprintf("An error happened: %v", err.Error()),
+							"detail": fmt.Sprintf("An error happened: %v", err.Error()),
+						},
+					},
 				})
 			}
 
