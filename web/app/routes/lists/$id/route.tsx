@@ -45,3 +45,26 @@ export default function Page() {
     </div>
   );
 }
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <AppMessage
+        errorMessage={error.data}
+        className="my-32"
+        backLink="/lists"
+        backLinkText="Go back to the lists page"
+      />
+    );
+  } else if (error instanceof Error) {
+    return (
+      <div>
+        <div>Instance of</div>
+      </div>
+    );
+  }
+
+  return <div>Generic error</div>;
+}
