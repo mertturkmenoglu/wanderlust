@@ -53,7 +53,19 @@ func (h *handlers) updateList(c echo.Context) error {
 }
 
 func (h *handlers) deleteList(c echo.Context) error {
-	return echo.ErrNotImplemented
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	err := h.service.deleteList(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }
 
 func (h *handlers) createListItem(c echo.Context) error {
