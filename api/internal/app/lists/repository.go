@@ -22,3 +22,7 @@ func (r *repository) getListById(id string) (db.List, error) {
 func (r *repository) getListItems(listId string) ([]db.GetListItemsRow, error) {
 	return r.db.Queries.GetListItems(context.Background(), listId)
 }
+
+func (r *repository) deleteList(id string) error {
+	return r.db.Queries.DeleteList(context.Background(), id)
+}
