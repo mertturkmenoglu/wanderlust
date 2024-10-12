@@ -5,6 +5,7 @@ import {
   CreateListResponseDto,
   GetAllListsOfUserDto,
   GetListByIdResponseDto,
+  GetPublicListsOfUserDto,
   Pagination,
 } from "../dto";
 
@@ -34,4 +35,15 @@ export async function getAllListsOfUser(
 
 export async function deleteListById(listId: string) {
   return api.delete(`lists/${listId}`);
+}
+
+export async function getPublicListsOfUser(
+  username: string,
+  page: number,
+  pageSize: number,
+  options?: Options
+) {
+  return api
+    .get(`lists/user/${username}?page=${page}&pageSize=${pageSize}`, options)
+    .json<{ data: GetPublicListsOfUserDto; pagination: Pagination }>();
 }

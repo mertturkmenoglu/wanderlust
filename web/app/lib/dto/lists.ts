@@ -2,6 +2,10 @@ export type GetAllListsOfUserDto = {
   lists: ListDto[];
 };
 
+export type GetPublicListsOfUserDto = {
+  lists: ListDto[];
+};
+
 export type ListDto = {
   id: string;
   name: string;
