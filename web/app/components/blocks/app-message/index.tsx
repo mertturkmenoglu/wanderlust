@@ -10,6 +10,8 @@ type Props = {
   successMessage?: React.ReactNode;
   emptyMessage?: React.ReactNode;
   imageClassName?: string;
+  backLink?: string;
+  backLinkText?: string;
 };
 
 export default function AppMessage({
@@ -19,6 +21,8 @@ export default function AppMessage({
   emptyMessage,
   showBackButton = true,
   imageClassName,
+  backLink = "/",
+  backLinkText = "Go back to the homepage",
 }: Readonly<Props>) {
   return (
     <div
@@ -61,7 +65,7 @@ export default function AppMessage({
             "text-destructive": errorMessage,
           })}
         >
-          <Link to="/">Go back to the homepage</Link>
+          <Link to={backLink}>{backLinkText}</Link>
         </Button>
       )}
     </div>
