@@ -3,6 +3,7 @@ package lists
 import (
 	"net/http"
 	"wanderlust/internal/app/api"
+	"wanderlust/internal/pagination"
 
 	"github.com/labstack/echo/v4"
 )
@@ -22,8 +23,24 @@ func (h *handlers) createList(c echo.Context) error {
 	})
 }
 
-func (h *handlers) getAllListOfUser(c echo.Context) error {
-	return echo.ErrNotImplemented
+func (h *handlers) getAllListsOfUser(c echo.Context) error {
+	userId := c.Get("user_id").(string)
+	params, err := pagination.GetParamsFromContext(c)
+
+	if err != nil {
+		return err
+	}
+
+	res, count, err := h.service.getAllListsOfUser(userId, params)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.PaginatedResponse{
+		Data:       res,
+		Pagination: pagination.Compute(params, count),
+	})
 }
 
 func (h *handlers) getListById(c echo.Context) error {

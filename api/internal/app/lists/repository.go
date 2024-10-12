@@ -3,6 +3,7 @@ package lists
 import (
 	"context"
 	"wanderlust/internal/db"
+	"wanderlust/internal/pagination"
 	"wanderlust/internal/utils"
 )
 
@@ -25,4 +26,16 @@ func (r *repository) getListItems(listId string) ([]db.GetListItemsRow, error) {
 
 func (r *repository) deleteList(id string) error {
 	return r.db.Queries.DeleteList(context.Background(), id)
+}
+
+func (r *repository) getAllListsOfUser(userId string, params pagination.Params) ([]db.List, error) {
+	return r.db.Queries.GetAllListsOfUser(context.Background(), db.GetAllListsOfUserParams{
+		UserID: userId,
+		Offset: int32(params.Offset),
+		Limit:  int32(params.PageSize),
+	})
+}
+
+func (r *repository) countListsOfUser(userId string) (int64, error) {
+	return r.db.Queries.CountAllListsOfUser(context.Background(), userId)
 }

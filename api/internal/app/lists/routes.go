@@ -10,7 +10,7 @@ import (
 func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/lists")
 	{
-		routes.GET("/", m.handlers.getAllListOfUser)
+		routes.GET("/", m.handlers.getAllListsOfUser, middlewares.IsAuth)
 		routes.GET("/:id", m.handlers.getListById, middlewares.WithAuth, middlewares.Authz(authz.ActListRead))
 		routes.GET("/user/:username", m.handlers.getPublicListsOfUser)
 		routes.POST("/", m.handlers.createList, middlewares.ParseBody[CreateListRequestDto], middlewares.IsAuth)

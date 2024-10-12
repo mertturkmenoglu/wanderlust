@@ -86,3 +86,22 @@ func mapListItemsToDto(listItems []db.GetListItemsRow) []ListItemDto {
 
 	return listItemsArr
 }
+
+func mapToGetAllListsOfUserDto(v []db.List) GetAllListsOfUserDto {
+	lists := make([]ListDto, 0)
+
+	for _, list := range v {
+		lists = append(lists, ListDto{
+			ID:        list.ID,
+			Name:      list.Name,
+			UserID:    list.UserID,
+			IsPublic:  list.IsPublic,
+			CreatedAt: list.CreatedAt.Time,
+			UpdatedAt: list.UpdatedAt.Time,
+		})
+	}
+
+	return GetAllListsOfUserDto{
+		Lists: lists,
+	}
+}

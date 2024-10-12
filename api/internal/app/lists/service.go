@@ -2,6 +2,7 @@ package lists
 
 import (
 	"errors"
+	"wanderlust/internal/pagination"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -42,4 +43,22 @@ func (s *service) getListById(id string) (GetListByIdResponseDto, error) {
 
 func (s *service) deleteList(id string) error {
 	return s.repository.deleteList(id)
+}
+
+func (s *service) getAllListsOfUser(userId string, params pagination.Params) (GetAllListsOfUserDto, int64, error) {
+	res, err := s.repository.getAllListsOfUser(userId, params)
+
+	if err != nil {
+		return GetAllListsOfUserDto{}, 0, err
+	}
+
+	count, err := s.repository.countListsOfUser(userId)
+
+	if err != nil {
+		return GetAllListsOfUserDto{}, 0, err
+	}
+
+	v := mapToGetAllListsOfUserDto(res)
+
+	return v, count, nil
 }
