@@ -15,7 +15,7 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.GET("/user/:username", m.handlers.getPublicListsOfUser)
 		routes.POST("/", m.handlers.createList, middlewares.ParseBody[CreateListRequestDto], middlewares.IsAuth)
 		routes.PATCH("/:id", m.handlers.updateList)
-		routes.DELETE("/:id", m.handlers.deleteList)
+		routes.DELETE("/:id", m.handlers.deleteList, middlewares.IsAuth, middlewares.Authz(authz.ActListDelete))
 
 		routes.POST("/:id/items", m.handlers.createListItem)
 		routes.DELETE("/:id/items/:poiId", m.handlers.deleteListItem)
