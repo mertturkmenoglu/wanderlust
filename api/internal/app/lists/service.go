@@ -16,6 +16,10 @@ func (s *service) getListById(id string) (GetListByIdResponseDto, error) {
 	list, err := s.repository.getListById(id)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return GetListByIdResponseDto{}, ErrListNotFound
+		}
+
 		return GetListByIdResponseDto{}, err
 	}
 
