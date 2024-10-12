@@ -40,7 +40,7 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
 
 export default function Page() {
   return (
-    <div>
+    <div className="container mx-auto my-8">
       <div>List details page</div>
     </div>
   );
