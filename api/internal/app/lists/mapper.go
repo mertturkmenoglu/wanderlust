@@ -105,3 +105,22 @@ func mapToGetAllListsOfUserDto(v []db.List) GetAllListsOfUserDto {
 		Lists: lists,
 	}
 }
+
+func mapToGetPublicListsOfUserDto(v []db.List) GetPublicListsOfUserDto {
+	lists := make([]ListDto, 0)
+
+	for _, list := range v {
+		lists = append(lists, ListDto{
+			ID:        list.ID,
+			Name:      list.Name,
+			UserID:    list.UserID,
+			IsPublic:  list.IsPublic,
+			CreatedAt: list.CreatedAt.Time,
+			UpdatedAt: list.UpdatedAt.Time,
+		})
+	}
+
+	return GetPublicListsOfUserDto{
+		Lists: lists,
+	}
+}

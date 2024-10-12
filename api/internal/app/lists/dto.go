@@ -6,6 +6,10 @@ type GetAllListsOfUserDto struct {
 	Lists []ListDto `json:"lists"`
 }
 
+type GetPublicListsOfUserDto struct {
+	Lists []ListDto `json:"lists"`
+}
+
 type ListDto struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`

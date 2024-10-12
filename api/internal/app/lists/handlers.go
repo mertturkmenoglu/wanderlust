@@ -62,7 +62,28 @@ func (h *handlers) getListById(c echo.Context) error {
 }
 
 func (h *handlers) getPublicListsOfUser(c echo.Context) error {
-	return echo.ErrNotImplemented
+	username := c.Param("username")
+
+	if username == "" {
+		return ErrUsernameRequired
+	}
+
+	params, err := pagination.GetParamsFromContext(c)
+
+	if err != nil {
+		return err
+	}
+
+	res, count, err := h.service.getPublicListsOfUser(username, params)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, api.PaginatedResponse{
+		Data:       res,
+		Pagination: pagination.Compute(params, count),
+	})
 }
 
 func (h *handlers) updateList(c echo.Context) error {

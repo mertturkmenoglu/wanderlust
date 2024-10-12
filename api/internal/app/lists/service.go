@@ -62,3 +62,27 @@ func (s *service) getAllListsOfUser(userId string, params pagination.Params) (Ge
 
 	return v, count, nil
 }
+
+func (s *service) getPublicListsOfUser(username string, params pagination.Params) (GetPublicListsOfUserDto, int64, error) {
+	userId, err := s.repository.getUserIdByUsername(username)
+
+	if err != nil {
+		return GetPublicListsOfUserDto{}, 0, ErrUserNotFound
+	}
+
+	res, err := s.repository.getPublicListsOfUser(userId, params)
+
+	if err != nil {
+		return GetPublicListsOfUserDto{}, 0, err
+	}
+
+	count, err := s.repository.countPublicListsOfUser(userId)
+
+	if err != nil {
+		return GetPublicListsOfUserDto{}, 0, err
+	}
+
+	v := mapToGetPublicListsOfUserDto(res)
+
+	return v, count, nil
+}
