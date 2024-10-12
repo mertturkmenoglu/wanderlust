@@ -1,5 +1,8 @@
+import { useNavigate } from "@remix-run/react";
+import { useMutation } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import InputInfo from "~/components/kit/input-info";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -14,6 +17,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { createList } from "~/lib/api-requests";
 
 export default function CreateListDialog() {
   const [name, setName] = useState("");
@@ -21,6 +25,19 @@ export default function CreateListDialog() {
   const [isDirty, setIsDirty] = useState(false);
   const isErr = name.length > 128 || name.length < 1;
   const showErr = isDirty && isErr;
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationKey: ["list-create"],
+    mutationFn: async () => createList({ name, isPublic }),
+    onSuccess: (res) => {
+      toast.success("List created");
+      navigate(`/lists/${res.data.id}`);
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
 
   return (
     <Dialog>
@@ -81,7 +98,7 @@ export default function CreateListDialog() {
             type="button"
             variant="default"
             disabled={isErr}
-            onClick={() => {}}
+            onClick={() => mutation.mutate()}
           >
             Create
           </Button>
