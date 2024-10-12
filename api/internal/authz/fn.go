@@ -43,7 +43,7 @@ func FnListRead(s *Authz, c echo.Context) (bool, error) {
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return false, echo.ErrUnauthorized
+			return false, echo.ErrNotFound
 		}
 
 		return false, err
