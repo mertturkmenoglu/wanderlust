@@ -2,7 +2,9 @@ package authz
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -40,6 +42,10 @@ func FnListRead(s *Authz, c echo.Context) (bool, error) {
 	list, err := s.Db.Queries.GetListById(context.Background(), listId)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, echo.ErrUnauthorized
+		}
+
 		return false, err
 	}
 
