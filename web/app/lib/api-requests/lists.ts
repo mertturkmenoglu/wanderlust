@@ -1,5 +1,10 @@
+import { Options } from "ky";
 import api from "../api";
-import { CreateListRequestDto, CreateListResponseDto } from "../dto";
+import {
+  CreateListRequestDto,
+  CreateListResponseDto,
+  GetListByIdResponseDto,
+} from "../dto";
 
 export async function createList(dto: CreateListRequestDto) {
   return api
@@ -7,4 +12,10 @@ export async function createList(dto: CreateListRequestDto) {
       json: dto,
     })
     .json<{ data: CreateListResponseDto }>();
+}
+
+export async function getListById(id: string, options?: Options) {
+  return api
+    .get(`lists/${id}`, options)
+    .json<{ data: GetListByIdResponseDto }>();
 }
