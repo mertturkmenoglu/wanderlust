@@ -4,7 +4,7 @@ import "time"
 
 type CreateListRequestDto struct {
 	Name     string `json:"name" validate:"required,min=1,max=128"`
-	IsPublic bool   `json:"isPublic" validate:"required"`
+	IsPublic bool   `json:"isPublic" validate:"boolean"`
 }
 
 type CreateListResponseDto struct {
