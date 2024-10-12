@@ -63,7 +63,7 @@ func FnListRead(s *Authz, c echo.Context) (bool, error) {
 		return true, nil
 	}
 
-	return false, echo.ErrUnauthorized
+	return false, echo.ErrForbidden
 }
 
 func FnListDelete(s *Authz, c echo.Context) (bool, error) {
@@ -92,5 +92,5 @@ func FnListDelete(s *Authz, c echo.Context) (bool, error) {
 		return true, nil
 	}
 
-	return false, echo.ErrUnauthorized
+	return false, echo.ErrForbidden
 }
