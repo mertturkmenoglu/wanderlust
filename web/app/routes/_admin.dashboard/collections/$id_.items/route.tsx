@@ -154,7 +154,7 @@ export default function Page() {
 
               {isEditMode && (
                 <div className="flex flex-row gap-4 items-center">
-                  <div>
+                  <div className="cursor-grabbing">
                     <GripVerticalIcon className="size-6" />
                   </div>
                   <PoiCard
