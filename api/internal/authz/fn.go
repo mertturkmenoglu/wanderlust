@@ -76,6 +76,9 @@ func FnListDelete(s *Authz, c echo.Context) (bool, error) {
 	list, err := s.Db.Queries.GetListById(context.Background(), listId)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, echo.ErrNotFound
+		}
 		return false, err
 	}
 
