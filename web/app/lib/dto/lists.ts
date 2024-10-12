@@ -1,3 +1,16 @@
+export type GetAllListsOfUserDto = {
+  lists: ListDto[];
+};
+
+export type ListDto = {
+  id: string;
+  name: string;
+  userId: string;
+  isPublic: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type CreateListRequestDto = {
   name: string;
   isPublic: boolean;
