@@ -67,13 +67,14 @@ export function ErrorBoundary() {
         backLinkText="Go back to the lists page"
       />
     );
-  } else if (error instanceof Error) {
-    return (
-      <div>
-        <div>Instance of</div>
-      </div>
-    );
   }
 
-  return <div>Generic error</div>;
+  return (
+    <AppMessage
+      errorMessage={"Something went wrong"}
+      className="my-32"
+      backLink="/lists"
+      backLinkText="Go back to the lists page"
+    />
+  );
 }
