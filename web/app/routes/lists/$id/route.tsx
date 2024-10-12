@@ -1,7 +1,12 @@
 import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
+import BackLink from "~/components/blocks/back-link";
 import { getListById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 
@@ -39,9 +44,13 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
 }
 
 export default function Page() {
+  const { list } = useLoaderData<typeof loader>();
+
   return (
     <div className="container mx-auto my-8">
+      <BackLink href="/lists" text="Go back to lists" />
       <div>List details page</div>
+      <pre>{JSON.stringify(list, null, 2)}</pre>
     </div>
   );
 }
