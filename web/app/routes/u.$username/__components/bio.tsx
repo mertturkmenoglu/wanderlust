@@ -77,7 +77,7 @@ export default function Bio({ className }: Props) {
 
       <hr className="mt-4 hidden md:block" />
 
-      <Tabs className="my-4 md:max-w-5xl" username={user.username} />
+      <Tabs className="md:max-w-5xl" username={user.username} />
     </div>
   );
 }
