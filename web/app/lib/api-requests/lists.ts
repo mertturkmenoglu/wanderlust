@@ -31,3 +31,7 @@ export async function getAllListsOfUser(
     .get(`lists/?page=${page}&pageSize=${pageSize}`, options)
     .json<{ data: GetAllListsOfUserDto; pagination: Pagination }>();
 }
+
+export async function deleteListById(listId: string) {
+  return api.delete(`lists/${listId}`);
+}
