@@ -1,5 +1,11 @@
 package lists
 
+import (
+	"errors"
+
+	"github.com/jackc/pgx/v5"
+)
+
 func (s *service) createList(dto CreateListRequestDto, userId string) (CreateListResponseDto, error) {
 	res, err := s.repository.createList(dto, userId)
 
@@ -32,4 +38,8 @@ func (s *service) getListById(id string) (GetListByIdResponseDto, error) {
 	v := mapToGetListByIdResponseDto(list, listItems)
 
 	return v, nil
+}
+
+func (s *service) deleteList(id string) error {
+	return s.repository.deleteList(id)
 }
