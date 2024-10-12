@@ -7,5 +7,6 @@ export * from "./categories";
 export * from "./cities";
 export * from "./collections";
 export * from "./favorites";
+export * from "./lists";
 export * from "./pois";
 export * from "./users";
