@@ -36,7 +36,7 @@ export default function Header({ className, ...props }: Readonly<Props>) {
 
           {isSignedIn && ctx.user && (
             <div className="flex items-center gap-2">
-              <SignedInLinks city={null} />
+              <SignedInLinks />
               <Menu auth={ctx.user} />
             </div>
           )}
