@@ -4,8 +4,8 @@ import (
 	"errors"
 	"mime/multipart"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/db"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/jackc/pgx/v5"
 )

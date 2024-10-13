@@ -3,9 +3,9 @@ package collections
 import (
 	"context"
 	"errors"
-	"wanderlust/internal/db"
-	"wanderlust/internal/pagination"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/pagination"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/jackc/pgx/v5"
 )

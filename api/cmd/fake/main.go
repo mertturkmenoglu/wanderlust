@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strconv"
 	"wanderlust/config"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 
 	"github.com/pterm/pterm"
 )

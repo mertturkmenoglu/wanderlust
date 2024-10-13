@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"wanderlust/internal/db"
-	"wanderlust/internal/random"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/random"
 
 	"github.com/jackc/pgx/v5"
 )

@@ -3,8 +3,8 @@ package users
 import (
 	"net/http"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/db"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/labstack/echo/v4"
 )

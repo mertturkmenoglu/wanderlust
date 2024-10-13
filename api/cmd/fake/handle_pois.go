@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 )

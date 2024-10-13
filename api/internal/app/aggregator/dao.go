@@ -1,6 +1,6 @@
 package aggregator
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 type GetHomeAggregationDao struct {
 	new       []db.GetNewPoisRow

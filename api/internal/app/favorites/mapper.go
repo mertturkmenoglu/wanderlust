@@ -1,8 +1,8 @@
 package favorites
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapCreateFavoriteResponseToDto(v db.Favorite) CreateFavoriteResponseDto {

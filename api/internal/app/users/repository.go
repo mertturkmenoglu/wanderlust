@@ -2,8 +2,8 @@ package users
 
 import (
 	"context"
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func (r *repository) GetUserProfile(username string) (db.GetUserProfileByUsernameRow, error) {

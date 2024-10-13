@@ -2,7 +2,7 @@ package amenities
 
 import (
 	"context"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func (r *repository) getAmenities() ([]db.Amenity, error) {

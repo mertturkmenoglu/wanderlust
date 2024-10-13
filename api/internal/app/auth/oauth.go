@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"wanderlust/config"
-	"wanderlust/internal/random"
+	"wanderlust/internal/pkg/random"
 
 	"github.com/gorilla/sessions"
 	"github.com/spf13/viper"

@@ -2,7 +2,7 @@ package bookmarks
 
 import (
 	"context"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func (r *repository) createBookmark(poiId string, userId string) (db.Bookmark, error) {

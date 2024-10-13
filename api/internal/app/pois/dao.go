@@ -1,6 +1,6 @@
 package pois
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 type GetPoiByIdDao struct {
 	Poi       db.Poi

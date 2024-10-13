@@ -3,7 +3,7 @@ package aggregator
 import (
 	"context"
 	"sync"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func (r *repository) getHomeAggregation() (GetHomeAggregationDao, error) {

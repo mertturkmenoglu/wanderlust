@@ -3,9 +3,9 @@ package pois
 import (
 	"sync"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/cache"
-	"wanderlust/internal/db"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/cache"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/sony/sonyflake"
 )

@@ -1,6 +1,6 @@
 package amenities
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 func mapGetAmenitiesToDto(v []db.Amenity) GetAmenitiesResponseDto {
 	if v == nil {

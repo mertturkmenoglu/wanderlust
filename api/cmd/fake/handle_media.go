@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/pterm/pterm"

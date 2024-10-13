@@ -7,8 +7,8 @@ import (
 	"mime/multipart"
 	"strings"
 	"time"
-	"wanderlust/internal/db"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"

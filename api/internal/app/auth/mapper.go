@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapGetMeResponseToDto(v db.User) GetMeResponseDto {

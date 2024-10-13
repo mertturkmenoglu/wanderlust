@@ -3,7 +3,7 @@ package pois
 import (
 	"mime/multipart"
 	"slices"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/upload"
 )
 
 const (

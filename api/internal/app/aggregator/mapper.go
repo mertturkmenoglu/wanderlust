@@ -1,8 +1,8 @@
 package aggregator
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 type Row struct {

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"wanderlust/internal/app/pois"
-	"wanderlust/internal/db"
-	"wanderlust/internal/search"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/search"
 
 	"github.com/sony/sonyflake"
 )

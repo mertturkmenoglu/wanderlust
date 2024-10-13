@@ -3,7 +3,7 @@ package cities
 import (
 	"errors"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 
 	"github.com/jackc/pgx/v5"
 )

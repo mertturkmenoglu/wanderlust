@@ -8,8 +8,8 @@ import (
 	"time"
 	"wanderlust/config"
 	"wanderlust/internal/app"
-	"wanderlust/internal/db"
-	"wanderlust/internal/tracing"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/tracing"
 )
 
 func main() {

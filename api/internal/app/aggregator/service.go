@@ -1,6 +1,6 @@
 package aggregator
 
-import "wanderlust/internal/cache"
+import "wanderlust/internal/pkg/cache"
 
 func (s *service) checkCacheForHomeAggregation() (*HomeAggregatorResponseDto, error) {
 	var cacheRes HomeAggregatorResponseDto

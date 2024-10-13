@@ -2,7 +2,7 @@ package lists
 
 import (
 	"errors"
-	"wanderlust/internal/pagination"
+	"wanderlust/internal/pkg/pagination"
 
 	"github.com/jackc/pgx/v5"
 )

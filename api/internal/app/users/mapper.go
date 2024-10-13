@@ -1,8 +1,8 @@
 package users
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapGetUserProfileResponseToDto(v db.GetUserProfileByUsernameRow) GetUserProfileResponseDto {

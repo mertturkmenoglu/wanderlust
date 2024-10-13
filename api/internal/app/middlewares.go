@@ -3,8 +3,8 @@ package app
 import (
 	"time"
 	"wanderlust/config"
-	"wanderlust/internal/middlewares"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/middlewares"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"

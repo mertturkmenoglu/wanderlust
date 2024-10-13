@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"wanderlust/internal/pagination"
+	"wanderlust/internal/pkg/pagination"
 
 	"github.com/labstack/echo/v4"
 )

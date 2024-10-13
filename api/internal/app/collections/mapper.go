@@ -1,8 +1,8 @@
 package collections
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapToGetCollectionByIdResponseDto(collection db.Collection, items []db.GetCollectionItemsRow) GetCollectionByIdResponseDto {

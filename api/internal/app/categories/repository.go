@@ -2,7 +2,7 @@ package categories
 
 import (
 	"context"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func (r *repository) getCategories() ([]db.Category, error) {

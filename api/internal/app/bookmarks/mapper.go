@@ -1,8 +1,8 @@
 package bookmarks
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapCreateBookmarkResponseToDto(v db.Bookmark) CreateBookmarkResponseDto {

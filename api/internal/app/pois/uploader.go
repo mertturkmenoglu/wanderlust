@@ -4,7 +4,7 @@ import (
 	"mime/multipart"
 	"strconv"
 	"wanderlust/config"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"

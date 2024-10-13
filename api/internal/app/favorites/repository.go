@@ -2,7 +2,7 @@ package favorites
 
 import (
 	"context"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func (r *repository) createFavorite(poiId string, userId string) (db.Favorite, error) {

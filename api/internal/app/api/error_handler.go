@@ -2,7 +2,7 @@ package api
 
 import (
 	"wanderlust/config"
-	"wanderlust/internal/logs"
+	"wanderlust/internal/pkg/logs"
 
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"

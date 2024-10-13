@@ -4,7 +4,7 @@ import (
 	"context"
 	"mime/multipart"
 	"wanderlust/config"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/spf13/viper"

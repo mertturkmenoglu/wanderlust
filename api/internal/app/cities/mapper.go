@@ -1,7 +1,7 @@
 package cities
 
 import (
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func mapGetCityByIdRowToDto(v db.City) GetCityByIdResponseDto {

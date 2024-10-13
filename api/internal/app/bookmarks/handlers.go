@@ -3,7 +3,7 @@ package bookmarks
 import (
 	"net/http"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/pagination"
+	"wanderlust/internal/pkg/pagination"
 
 	"github.com/labstack/echo/v4"
 )

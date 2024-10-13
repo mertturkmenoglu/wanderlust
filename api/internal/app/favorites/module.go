@@ -2,7 +2,7 @@ package favorites
 
 import (
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 type Module struct {

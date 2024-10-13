@@ -1,6 +1,6 @@
 package categories
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 func mapGetCategoriesToDto(v []db.Category) GetCategoriesResponseDto {
 	var categories []GetCategoryByIdResponseDto

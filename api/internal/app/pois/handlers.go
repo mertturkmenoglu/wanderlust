@@ -3,7 +3,7 @@ package pois
 import (
 	"net/http"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/labstack/echo/v4"
 )

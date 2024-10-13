@@ -2,9 +2,9 @@ package auth
 
 import (
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/cache"
-	"wanderlust/internal/db"
-	"wanderlust/internal/tasks"
+	"wanderlust/internal/pkg/cache"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/tasks"
 
 	"github.com/pterm/pterm"
 	"github.com/sony/sonyflake"

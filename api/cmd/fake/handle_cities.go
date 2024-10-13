@@ -6,7 +6,7 @@ import (
 	"os"
 	"slices"
 	"strconv"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func handleCities() error {

@@ -1,8 +1,8 @@
 package amenities
 
 import (
-	"wanderlust/internal/authz"
-	"wanderlust/internal/middlewares"
+	"wanderlust/internal/pkg/authz"
+	"wanderlust/internal/pkg/middlewares"
 
 	"github.com/labstack/echo/v4"
 )

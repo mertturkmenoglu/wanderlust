@@ -1,8 +1,8 @@
 package lists
 
 import (
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapToCreateListResponseDto(v db.List) CreateListResponseDto {

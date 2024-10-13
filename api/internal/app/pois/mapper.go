@@ -2,8 +2,8 @@ package pois
 
 import (
 	"encoding/json"
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 )
 
 func mapPeekPoisToDto(v []db.Poi) (PeekPoisResponseDto, error) {

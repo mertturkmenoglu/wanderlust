@@ -7,8 +7,8 @@ import (
 	"time"
 	"wanderlust/config"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/db"
-	"wanderlust/internal/hash"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/hash"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/spf13/viper"

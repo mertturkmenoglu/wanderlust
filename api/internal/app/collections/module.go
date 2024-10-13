@@ -2,7 +2,7 @@ package collections
 
 import (
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 
 	"github.com/sony/sonyflake"
 )

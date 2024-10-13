@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 	"time"
-	"wanderlust/internal/db"
-	"wanderlust/internal/hash"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/hash"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )

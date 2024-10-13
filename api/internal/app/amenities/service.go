@@ -1,6 +1,6 @@
 package amenities
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 func (s *service) getAmenities() ([]db.Amenity, error) {
 	res, err := s.repository.getAmenities()

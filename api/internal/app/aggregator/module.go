@@ -2,8 +2,8 @@ package aggregator
 
 import (
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/cache"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/cache"
+	"wanderlust/internal/pkg/db"
 )
 
 type Module struct {

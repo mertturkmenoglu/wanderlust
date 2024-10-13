@@ -3,9 +3,9 @@ package lists
 import (
 	"context"
 	"fmt"
-	"wanderlust/internal/db"
-	"wanderlust/internal/pagination"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/pagination"
+	"wanderlust/internal/pkg/utils"
 )
 
 func (r *repository) createList(dto CreateListRequestDto, userId string) (db.List, error) {

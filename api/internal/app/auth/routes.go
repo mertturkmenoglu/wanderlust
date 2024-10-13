@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"wanderlust/internal/middlewares"
+	"wanderlust/internal/pkg/middlewares"
 
 	"github.com/labstack/echo/v4"
 )

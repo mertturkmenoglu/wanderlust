@@ -2,8 +2,8 @@ package collections
 
 import (
 	"slices"
-	"wanderlust/internal/db"
-	"wanderlust/internal/pagination"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/pagination"
 )
 
 func (s *service) getCollections(params pagination.Params) (GetCollectionsResponseDto, int64, error) {

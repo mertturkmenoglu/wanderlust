@@ -1,6 +1,6 @@
 package categories
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 func (s *service) getCategories() ([]db.Category, error) {
 	res, err := s.repository.getCategories()

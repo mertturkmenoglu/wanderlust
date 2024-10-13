@@ -3,7 +3,7 @@ package users
 import (
 	"mime/multipart"
 	"slices"
-	"wanderlust/internal/upload"
+	"wanderlust/internal/pkg/upload"
 )
 
 type imageUploadAction string

@@ -2,7 +2,7 @@ package cities
 
 import (
 	"context"
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 func (r *repository) getCityById(id int32) (db.City, error) {
