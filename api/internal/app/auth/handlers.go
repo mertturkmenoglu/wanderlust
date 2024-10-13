@@ -17,16 +17,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// OAuth Login godoc
-//
-//	@Summary		Login with an OAuth provider
-//	@Description	Logs in the user with Google or Facebook OAuth
-//	@Tags			Auth
-//	@Param			provider	path	string	true	"Provider"
-//	@Success		307
-//	@Failure		400	{object}	api.ErrorResponse	"Invalid provider"
-//	@Failure		500	{object}	api.ErrorResponse "Internal Server Error"
-//	@Router			/auth/{provider} [get]
 func (h *handlers) OAuth(c echo.Context) error {
 	sess := mustGetAuthSession(c)
 	provider := c.Param("provider")
@@ -50,16 +40,6 @@ func (h *handlers) OAuth(c echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
-// OAuth Callback godoc
-//
-//	@Summary		OAuth callback
-//	@Description	OAuth callback for Google or Facebook
-//	@Tags			Auth
-//	@Param			provider	path	string	true	"Provider"
-//	@Success		307
-//	@Failure		400	{object}	api.ErrorResponse	"Invalid provider"
-//	@Failure		500	{object}	api.ErrorResponse "Internal Server Error"
-//	@Router			/auth/{provider}/callback [get]
 func (h *handlers) OAuthCallback(c echo.Context) error {
 	sess := mustGetAuthSession(c)
 
@@ -119,16 +99,6 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, redirectUrl)
 }
 
-// Get Me godoc
-//
-//	@Summary		Gets the current user
-//	@Description	Gets the currently authenticated user or returns an error
-//	@Tags			Auth
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	api.Response{data=GetMeResponseDto}
-//	@Failure		401	{object}	ErrorResponse
-//	@Router			/auth/me [get]
 func (h *handlers) GetMe(c echo.Context) error {
 	user := c.Get("user").(db.User)
 	res := mapGetMeResponseToDto(user)
@@ -138,16 +108,6 @@ func (h *handlers) GetMe(c echo.Context) error {
 	})
 }
 
-// Logout godoc
-//
-//	@Summary		Logs out the current user
-//	@Description	Logs out the current user
-//	@Tags			Auth
-//	@Accept			json
-//	@Success		204
-//	@Failure		401	{object}	api.ErrorResponse
-//	@Failure		500	{object}	api.ErrorResponse
-//	@Router			/auth/logout [post]
 func (h *handlers) Logout(c echo.Context) error {
 	sess := mustGetAuthSession(c)
 
@@ -160,17 +120,6 @@ func (h *handlers) Logout(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-// Credentials Login godoc
-//
-//	@Summary		Login with email and password
-//	@Description	Logs in the user with email and password
-//	@Tags			Auth
-//	@Accept			json
-//	@Param			body	body	LoginRequestDto	true	"Request body"
-//	@Success		200
-//	@Failure		400	{object}	api.ErrorResponse	"Invalid email or password"
-//	@Failure		500	{object}	api.ErrorResponse	"Internal Server Error"
-//	@Router			/auth/credentials/login [post]
 func (h *handlers) CredentialsLogin(c echo.Context) error {
 	sess := mustGetAuthSession(c)
 	body := c.Get("body").(LoginRequestDto)
@@ -203,17 +152,6 @@ func (h *handlers) CredentialsLogin(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// Credentials Register godoc
-//
-//	@Summary		Register with email and password
-//	@Description	Registers a new user with email and password
-//	@Tags			Auth
-//	@Accept			json
-//	@Param			body	body	RegisterRequestDto	true	"Request body"
-//	@Success		201
-//	@Failure		400	{object}	api.ErrorResponse	"Invalid email or username"
-//	@Failure		500	{object}	api.ErrorResponse	"Internal Server Error"
-//	@Router			/auth/credentials/register [post]
 func (h *handlers) CredentialsRegister(c echo.Context) error {
 	body := c.Get("body").(RegisterRequestDto)
 	err := h.service.checkIfEmailOrUsernameIsTaken(body.Email, body.Username)
@@ -243,17 +181,6 @@ func (h *handlers) CredentialsRegister(c echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
-// Send Verification Email godoc
-//
-//	@Summary		Send verification email
-//	@Description	Sends a verification email to the user
-//	@Tags			Auth
-//	@Accept			json
-//	@Param			body	body	SendVerificationEmailRequestDto	true	"Request body"
-//	@Success		200
-//	@Failure		400	{object}	echo.HTTPError	"Invalid email or email already verified"
-//	@Failure		500	{object}	echo.HTTPError	"Internal Server Error"
-//	@Router			/auth/verify-email/send [post]
 func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	body := c.Get("body").(SendVerificationEmailRequestDto)
 	user, err := s.service.getUserByEmail(body.Email)
@@ -289,17 +216,6 @@ func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// Verify Email godoc
-//
-//	@Summary		Verify email
-//	@Description	Verifies the email of the user
-//	@Tags			Auth
-//	@Accept			json
-//	@Param			code	query	string	true	"Verification code"
-//	@Success		200
-//	@Failure		400	{object}	echo.HTTPError	"Invalid or expired verification code"
-//	@Failure		500	{object}	echo.HTTPError	"Internal Server Error"
-//	@Router			/auth/verify-email/verify [get]
 func (s *handlers) VerifyEmail(c echo.Context) error {
 	code := c.QueryParam("code")
 
@@ -338,18 +254,6 @@ func (s *handlers) VerifyEmail(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// Send Forgot Password Email godoc
-//
-//	@Summary		Send forgot password email
-//	@Description	Sends a forgot password email to the user
-//	@Tags			Auth
-//	@Accept			json
-//	@Param			body	body	SendForgotPasswordEmailRequestDto	true	"Request body"
-//	@Success		200
-//	@Failure		400	{object}	echo.HTTPError	"Invalid email"
-//	@Failure		404	{object}	echo.HTTPError	"User not found"
-//	@Failure		500	{object}	echo.HTTPError	"Internal Server Error"
-//	@Router			/auth/forgot-password/send [post]
 func (s *handlers) SendForgotPasswordEmail(c echo.Context) error {
 	body := c.Get("body").(SendForgotPasswordEmailRequestDto)
 	_, err := s.service.getUserByEmail(body.Email)
@@ -379,18 +283,6 @@ func (s *handlers) SendForgotPasswordEmail(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// Reset Password godoc
-//
-//	@Summary		Reset password
-//	@Description	Resets the password of the user
-//	@Tags			Auth
-//	@Accept			json
-//	@Param			body	body	ResetPasswordRequestDto	true	"Request body"
-//	@Success		200
-//	@Failure		400	{object}	echo.HTTPError	"Invalid email or code"
-//	@Failure		404	{object}	echo.HTTPError	"User not found"
-//	@Failure		500	{object}	echo.HTTPError	"Internal Server Error"
-//	@Router			/auth/forgot-password/reset [post]
 func (s *handlers) ResetPassword(c echo.Context) error {
 	body := c.Get("body").(ResetPasswordRequestDto)
 	user, err := s.service.getUserByEmail(body.Email)
