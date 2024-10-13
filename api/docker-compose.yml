@@ -40,7 +40,7 @@ services:
       - 9000:9000
       - 9001:9001
     volumes:
-      - ./minio/data:/data
+      - ./tmp/minio/data:/data
     environment:
       - MINIO_ROOT_USER=wanderlust
       - MINIO_ROOT_PASSWORD=wanderlust
@@ -54,7 +54,7 @@ services:
     ports:
       - "8108:8108"
     volumes:
-      - ./typesense-data:/data
+      - ./tmp/typesense-data:/data
     command: "--data-dir /data --api-key=wanderlust --enable-cors"
     networks:
       - searchnet
@@ -72,7 +72,7 @@ services:
     image: prom/prometheus
     restart: always
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
