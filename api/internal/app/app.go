@@ -29,7 +29,6 @@ import (
 	"github.com/pterm/pterm"
 	"github.com/sony/sonyflake"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
 // Application struct is the main definition of all the different dependencies
@@ -38,7 +37,6 @@ type Application struct {
 	Port       int
 	PortString string
 	Upload     *upload.Upload
-	ZapLogger  *zap.Logger
 	Flake      *sonyflake.Sonyflake
 	Db         *db.Db
 	Search     *search.Search
@@ -53,7 +51,6 @@ func New() *Application {
 	apiObj := &Application{
 		Upload:     upload.New(),
 		Flake:      nil,
-		ZapLogger:  logs.New(),
 		Port:       viper.GetInt(config.PORT),
 		PortString: fmt.Sprintf(":%d", viper.GetInt(config.PORT)),
 		Db:         db.NewDb(),
