@@ -6,8 +6,8 @@ import (
 
 	"net/http"
 	"time"
-	"wanderlust/internal/db"
-	"wanderlust/internal/utils"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"

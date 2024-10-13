@@ -2,8 +2,8 @@ package tasks
 
 import (
 	"context"
-	"wanderlust/internal/email"
 	"time"
+	"wanderlust/internal/pkg/email"
 
 	"github.com/hibiken/asynq"
 )

@@ -1,6 +1,6 @@
 package middlewares
 
-import "wanderlust/internal/db"
+import "wanderlust/internal/pkg/db"
 
 var dbClient *db.Db = nil
 

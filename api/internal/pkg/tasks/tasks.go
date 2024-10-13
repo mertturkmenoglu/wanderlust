@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"wanderlust/config"
-	"wanderlust/internal/email"
+	"wanderlust/internal/pkg/email"
 
 	"github.com/hibiken/asynq"
 	"github.com/spf13/viper"

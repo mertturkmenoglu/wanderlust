@@ -6,8 +6,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"wanderlust/internal/random"
 	"strings"
+	"wanderlust/internal/pkg/random"
 
 	"golang.org/x/crypto/argon2"
 )

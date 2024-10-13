@@ -1,7 +1,7 @@
 package authz
 
 import (
-	"wanderlust/internal/db"
+	"wanderlust/internal/pkg/db"
 )
 
 type Authz struct {

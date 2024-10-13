@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"testing"
-	"wanderlust/internal/random"
+	"wanderlust/internal/pkg/random"
 )
 
 var (

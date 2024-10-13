@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"wanderlust/internal/app/api"
-	"wanderlust/internal/authz"
+	"wanderlust/internal/pkg/authz"
 
 	"github.com/labstack/echo/v4"
 )
