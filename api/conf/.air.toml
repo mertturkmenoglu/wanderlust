@@ -4,8 +4,8 @@ tmp_dir = "tmp"
 
 [build]
 args_bin = []
-bin = "./tmp/core"
-cmd = "go build -o ./tmp/core cmd/core/main.go"
+bin = "./tmp/core/core"
+cmd = "go build -o ./tmp/core/core cmd/core/main.go"
 delay = 1000
 exclude_dir = ["assets", "tmp", "vendor", "testdata", "cmd/fake"]
 exclude_file = []
