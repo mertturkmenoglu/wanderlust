@@ -4,7 +4,7 @@ import (
 	"time"
 	"wanderlust/config"
 	"wanderlust/internal/middlewares"
-	"wanderlust/internal/validation"
+	"wanderlust/internal/utils"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -13,7 +13,7 @@ import (
 )
 
 func InitGlobalMiddlewares(e *echo.Echo) {
-	e.Validator = &validation.CustomValidator{
+	e.Validator = &utils.CustomValidator{
 		Validator: validator.New(),
 	}
 
