@@ -70,6 +70,15 @@ LIMIT $1;
 SELECT * FROM pois
 LIMIT 25;
 
+-- name: CountPois :one
+SELECT COUNT(*) FROM pois;
+
+-- name: GetPaginatedPoiIds :many
+SELECT id FROM pois
+ORDER BY created_at ASC
+OFFSET $1
+LIMIT $2;
+
 -- name: GetPoiById :one
 SELECT sqlc.embed(pois), sqlc.embed(addresses), sqlc.embed(categories), sqlc.embed(cities) FROM pois
 LEFT JOIN addresses ON addresses.id = pois.address_id

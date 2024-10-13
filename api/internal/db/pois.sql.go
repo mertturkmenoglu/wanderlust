@@ -27,6 +27,17 @@ type BatchCreatePoisParams struct {
 	OpenTimes          []byte
 }
 
+const countPois = `-- name: CountPois :one
+SELECT COUNT(*) FROM pois
+`
+
+func (q *Queries) CountPois(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countPois)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createOnePoi = `-- name: CreateOnePoi :one
 INSERT INTO pois (
   id,
@@ -414,6 +425,38 @@ func (q *Queries) GetNewPois(ctx context.Context) ([]GetNewPoisRow, error) {
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPaginatedPoiIds = `-- name: GetPaginatedPoiIds :many
+SELECT id FROM pois
+ORDER BY created_at ASC
+OFFSET $1
+LIMIT $2
+`
+
+type GetPaginatedPoiIdsParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) GetPaginatedPoiIds(ctx context.Context, arg GetPaginatedPoiIdsParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, getPaginatedPoiIds, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
