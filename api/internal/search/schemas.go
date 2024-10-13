@@ -2,6 +2,24 @@ package search
 
 import (
 	tsapi "github.com/typesense/typesense-go/v2/typesense/api"
+	"github.com/typesense/typesense-go/v2/typesense/api/pointer"
 )
 
-var schemas = []*tsapi.CollectionSchema{}
+type CollectionName string
+
+const (
+	CollectionPois CollectionName = "pois"
+)
+
+var schemas = []*tsapi.CollectionSchema{
+	{
+		Name:               string(CollectionPois),
+		EnableNestedFields: pointer.True(),
+		Fields: []tsapi.Field{
+			{
+				Name: "name",
+				Type: "string",
+			},
+		},
+	},
+}
