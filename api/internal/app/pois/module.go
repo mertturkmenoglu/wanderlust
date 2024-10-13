@@ -21,21 +21,21 @@ type handlers struct {
 }
 
 type service struct {
-	repository   *repository
+	repository   *Repository
 	uploadClient *upload.Upload
 	draftMutex   sync.Mutex
 	cache        *cache.Cache
 }
 
-type repository struct {
-	db    *db.Db
-	flake *sonyflake.Sonyflake
+type Repository struct {
+	Db    *db.Db
+	Flake *sonyflake.Sonyflake
 }
 
 func New(db *db.Db, flake *sonyflake.Sonyflake, upload *upload.Upload, cache *cache.Cache) *Module {
-	repository := repository{
-		db:    db,
-		flake: flake,
+	repository := Repository{
+		Db:    db,
+		Flake: flake,
 	}
 
 	service := service{

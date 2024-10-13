@@ -63,18 +63,18 @@ func mapOpenTimesToDto(v []byte) (map[string]OpenHours, error) {
 }
 
 func mapGetPoiByIdToDto(dao GetPoiByIdDao) (GetPoiByIdResponseDto, error) {
-	openTimes, err := mapOpenTimesToDto(dao.poi.OpenTimes)
+	openTimes, err := mapOpenTimesToDto(dao.Poi.OpenTimes)
 
 	if err != nil {
 		return GetPoiByIdResponseDto{}, err
 	}
 
-	media := make([]Media, len(dao.media))
+	media := make([]Media, len(dao.Media))
 
-	for i, m := range dao.media {
+	for i, m := range dao.Media {
 		media[i] = Media{
 			ID:         m.ID,
-			PoiID:      dao.poi.ID,
+			PoiID:      dao.Poi.ID,
 			Url:        m.Url,
 			Alt:        m.Alt,
 			Caption:    utils.TextOrNil(m.Caption),
@@ -83,9 +83,9 @@ func mapGetPoiByIdToDto(dao GetPoiByIdDao) (GetPoiByIdResponseDto, error) {
 		}
 	}
 
-	amenities := make([]Amenity, len(dao.amenities))
+	amenities := make([]Amenity, len(dao.Amenities))
 
-	for i, a := range dao.amenities {
+	for i, a := range dao.Amenities {
 		amenities[i] = Amenity{
 			ID:   a.Amenity.ID,
 			Name: a.Amenity.Name,
@@ -93,48 +93,48 @@ func mapGetPoiByIdToDto(dao GetPoiByIdDao) (GetPoiByIdResponseDto, error) {
 	}
 
 	return GetPoiByIdResponseDto{
-		ID:                 dao.poi.ID,
-		Name:               dao.poi.Name,
-		Phone:              utils.TextOrNil(dao.poi.Phone),
-		Description:        dao.poi.Description,
-		AddressID:          dao.poi.AddressID,
-		Website:            utils.TextOrNil(dao.poi.Website),
-		PriceLevel:         dao.poi.PriceLevel,
-		AccessibilityLevel: dao.poi.AccessibilityLevel,
-		TotalVotes:         dao.poi.TotalVotes,
-		TotalPoints:        dao.poi.TotalPoints,
-		TotalFavorites:     dao.poi.TotalFavorites,
-		CategoryID:         dao.poi.CategoryID,
+		ID:                 dao.Poi.ID,
+		Name:               dao.Poi.Name,
+		Phone:              utils.TextOrNil(dao.Poi.Phone),
+		Description:        dao.Poi.Description,
+		AddressID:          dao.Poi.AddressID,
+		Website:            utils.TextOrNil(dao.Poi.Website),
+		PriceLevel:         dao.Poi.PriceLevel,
+		AccessibilityLevel: dao.Poi.AccessibilityLevel,
+		TotalVotes:         dao.Poi.TotalVotes,
+		TotalPoints:        dao.Poi.TotalPoints,
+		TotalFavorites:     dao.Poi.TotalFavorites,
+		CategoryID:         dao.Poi.CategoryID,
 		Media:              media,
 		Amenities:          amenities,
 		OpenTimes:          openTimes,
-		CreatedAt:          dao.poi.CreatedAt.Time,
-		UpdatedAt:          dao.poi.UpdatedAt.Time,
+		CreatedAt:          dao.Poi.CreatedAt.Time,
+		UpdatedAt:          dao.Poi.UpdatedAt.Time,
 		Category: Category{
-			ID:    dao.category.ID,
-			Name:  dao.category.Name,
-			Image: dao.category.Image,
+			ID:    dao.Category.ID,
+			Name:  dao.Category.Name,
+			Image: dao.Category.Image,
 		},
 		Address: Address{
-			ID:     dao.address.ID,
-			CityID: dao.address.CityID,
+			ID:     dao.Address.ID,
+			CityID: dao.Address.CityID,
 			City: City{
-				ID:          dao.city.ID,
-				Name:        dao.city.Name,
-				StateCode:   dao.city.StateCode,
-				StateName:   dao.city.StateName,
-				CountryCode: dao.city.CountryCode,
-				CountryName: dao.city.CountryName,
-				ImageUrl:    dao.city.ImageUrl,
-				Latitude:    dao.city.Latitude,
-				Longitude:   dao.city.Longitude,
-				Description: dao.city.Description,
+				ID:          dao.City.ID,
+				Name:        dao.City.Name,
+				StateCode:   dao.City.StateCode,
+				StateName:   dao.City.StateName,
+				CountryCode: dao.City.CountryCode,
+				CountryName: dao.City.CountryName,
+				ImageUrl:    dao.City.ImageUrl,
+				Latitude:    dao.City.Latitude,
+				Longitude:   dao.City.Longitude,
+				Description: dao.City.Description,
 			},
-			Line1:      dao.address.Line1,
-			Line2:      utils.TextOrNil(dao.address.Line2),
-			PostalCode: utils.TextOrNil(dao.address.PostalCode),
-			Lat:        dao.address.Lat,
-			Lng:        dao.address.Lng,
+			Line1:      dao.Address.Line1,
+			Line2:      utils.TextOrNil(dao.Address.Line2),
+			PostalCode: utils.TextOrNil(dao.Address.PostalCode),
+			Lat:        dao.Address.Lat,
+			Lng:        dao.Address.Lng,
 		},
 	}, nil
 }

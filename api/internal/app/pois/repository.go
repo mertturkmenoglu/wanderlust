@@ -10,12 +10,12 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (r *repository) peekPois() ([]db.Poi, error) {
-	return r.db.Queries.PeekPois(context.Background())
+func (r *Repository) peekPois() ([]db.Poi, error) {
+	return r.Db.Queries.PeekPois(context.Background())
 }
 
-func (r *repository) getPoiById(id string) (GetPoiByIdDao, error) {
-	poi, err := r.db.Queries.GetPoiById(context.Background(), id)
+func (r *Repository) GetPoiById(id string) (GetPoiByIdDao, error) {
+	poi, err := r.Db.Queries.GetPoiById(context.Background(), id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -25,30 +25,30 @@ func (r *repository) getPoiById(id string) (GetPoiByIdDao, error) {
 		return GetPoiByIdDao{}, err
 	}
 
-	media, err := r.db.Queries.GetPoiMedia(context.Background(), id)
+	media, err := r.Db.Queries.GetPoiMedia(context.Background(), id)
 
 	if err != nil {
 		return GetPoiByIdDao{}, err
 	}
 
-	amenities, err := r.db.Queries.GetPoiAmenities(context.Background(), id)
+	amenities, err := r.Db.Queries.GetPoiAmenities(context.Background(), id)
 
 	if err != nil {
 		return GetPoiByIdDao{}, err
 	}
 
 	return GetPoiByIdDao{
-		poi:       poi.Poi,
-		address:   poi.Address,
-		city:      poi.City,
-		category:  poi.Category,
-		media:     media,
-		amenities: amenities,
+		Poi:       poi.Poi,
+		Address:   poi.Address,
+		City:      poi.City,
+		Category:  poi.Category,
+		Media:     media,
+		Amenities: amenities,
 	}, nil
 }
 
-func (r *repository) isFavorite(poiId string, userId string) bool {
-	_, err := r.db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
+func (r *Repository) isFavorite(poiId string, userId string) bool {
+	_, err := r.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -56,8 +56,8 @@ func (r *repository) isFavorite(poiId string, userId string) bool {
 	return err == nil
 }
 
-func (r *repository) isBookmarked(poiId string, userId string) bool {
-	_, err := r.db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
+func (r *Repository) isBookmarked(poiId string, userId string) bool {
+	_, err := r.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -65,9 +65,9 @@ func (r *repository) isBookmarked(poiId string, userId string) bool {
 	return err == nil
 }
 
-func (r *repository) publishDraft(draft map[string]any) error {
+func (r *Repository) publishDraft(draft map[string]any) error {
 	ctx := context.Background()
-	tx, err := r.db.Pool.Begin(ctx)
+	tx, err := r.Db.Pool.Begin(ctx)
 
 	if err != nil {
 		return err
@@ -75,7 +75,7 @@ func (r *repository) publishDraft(draft map[string]any) error {
 
 	defer tx.Rollback(ctx)
 
-	qtx := r.db.Queries.WithTx(tx)
+	qtx := r.Db.Queries.WithTx(tx)
 
 	address := draft["address"].(map[string]any)
 	cityId, ok := address["cityId"].(float64)
@@ -104,7 +104,7 @@ func (r *repository) publishDraft(draft map[string]any) error {
 	}
 
 	poi, err := qtx.CreateOnePoi(ctx, db.CreateOnePoiParams{
-		ID:                 utils.GenerateId(r.flake),
+		ID:                 utils.GenerateId(r.Flake),
 		Name:               draft["name"].(string),
 		Phone:              utils.StrToText(draft["phone"].(string)),
 		Description:        draft["description"].(string),

@@ -29,7 +29,7 @@ func (s *service) peekPois() ([]db.Poi, error) {
 }
 
 func (s *service) getPoiById(id string) (GetPoiByIdResponseDto, error) {
-	dao, err := s.repository.getPoiById(id)
+	dao, err := s.repository.GetPoiById(id)
 
 	if err != nil {
 		return GetPoiByIdResponseDto{}, err
