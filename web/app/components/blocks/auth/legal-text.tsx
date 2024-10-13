@@ -26,6 +26,9 @@ export default function AuthLegalText({ type }: Props) {
         Privacy Policy
       </Link>
       {"."}
+      <div>
+        You also agree that you are not Baran Kandil or an affiliate of him.
+      </div>
     </div>
   );
 }
