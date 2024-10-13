@@ -6,8 +6,8 @@ import (
 
 	"net/http"
 	"time"
-	"wanderlust/internal/cookies"
 	"wanderlust/internal/db"
+	"wanderlust/internal/utils"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -36,7 +36,7 @@ func IsAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		userId, sessionId, ok := getValuesFromSession(sess)
 
 		if !ok || sessionId == "" || userId == "" {
-			cookies.DeleteSessionCookie(c)
+			utils.DeleteSessionCookie(c)
 
 			return echo.NewHTTPError(http.StatusUnauthorized, errInvalidSession.Error())
 		}
@@ -44,21 +44,21 @@ func IsAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		s, err := getDb().Queries.GetSessionById(context.Background(), sessionId)
 
 		if err != nil {
-			cookies.DeleteSessionCookie(c)
+			utils.DeleteSessionCookie(c)
 
 			return echo.NewHTTPError(http.StatusUnauthorized, errInvalidSession.Error())
 		}
 
 		// Check if the session belongs to the user
 		if s.Session.UserID != userId {
-			cookies.DeleteSessionCookie(c)
+			utils.DeleteSessionCookie(c)
 
 			return echo.NewHTTPError(http.StatusUnauthorized, errInvalidSession.Error())
 		}
 
 		// Check if the session is expired
 		if s.Session.ExpiresAt.Time.Before(time.Now()) {
-			cookies.DeleteSessionCookie(c)
+			utils.DeleteSessionCookie(c)
 
 			return echo.NewHTTPError(http.StatusUnauthorized, errSessionExpired.Error())
 		}
