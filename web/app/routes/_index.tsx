@@ -1,13 +1,16 @@
 import { json, type MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import { ClientOnly } from "remix-utils/client-only";
 import ActionBanner from "~/components/blocks/action-banner";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import OverlayBanner from "~/components/blocks/overlay-banner";
+import TagNavigation from "~/components/blocks/tag-navigation";
 import VerticalBanner from "~/components/blocks/vertical-banner";
 import { Button } from "~/components/ui/button";
 import { getFeaturedCities, getHomeAggregation } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 import PoiGrid from "./poi-grid";
+import Search from "./search";
 
 export const meta: MetaFunction = () => {
   return [
@@ -30,6 +33,12 @@ export default function Page() {
 
   return (
     <div className="container mx-auto">
+      <ClientOnly fallback={<div className="my-12 h-16 bg-muted rounded" />}>
+        {() => <Search />}
+      </ClientOnly>
+
+      <TagNavigation />
+
       <OverlayBanner
         image="https://images.unsplash.com/photo-1524168272322-bf73616d9cb5?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         alt="Wanderlust Banner Image"
