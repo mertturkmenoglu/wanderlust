@@ -11,7 +11,7 @@ import (
 )
 
 func (r *repository) getCollections(params pagination.Params) ([]db.Collection, error) {
-	res, err := r.db.Queries.GetCollections(context.Background(), db.GetCollectionsParams{
+	res, err := r.di.Db.Queries.GetCollections(context.Background(), db.GetCollectionsParams{
 		Offset: int32(params.Offset),
 		Limit:  int32(params.PageSize),
 	})
@@ -24,11 +24,11 @@ func (r *repository) getCollections(params pagination.Params) ([]db.Collection, 
 }
 
 func (r *repository) countCollections() (int64, error) {
-	return r.db.Queries.CountCollections(context.Background())
+	return r.di.Db.Queries.CountCollections(context.Background())
 }
 
 func (r *repository) getCollectionById(id string) (db.Collection, error) {
-	res, err := r.db.Queries.GetCollectionById(context.Background(), id)
+	res, err := r.di.Db.Queries.GetCollectionById(context.Background(), id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -41,11 +41,11 @@ func (r *repository) getCollectionById(id string) (db.Collection, error) {
 }
 
 func (r *repository) deleteCollection(id string) error {
-	return r.db.Queries.DeleteCollection(context.Background(), id)
+	return r.di.Db.Queries.DeleteCollection(context.Background(), id)
 }
 
 func (r *repository) getCollectionItems(id string) ([]db.GetCollectionItemsRow, error) {
-	res, err := r.db.Queries.GetCollectionItems(context.Background(), id)
+	res, err := r.di.Db.Queries.GetCollectionItems(context.Background(), id)
 
 	if err != nil {
 		return []db.GetCollectionItemsRow{}, err
@@ -55,15 +55,15 @@ func (r *repository) getCollectionItems(id string) ([]db.GetCollectionItemsRow, 
 }
 
 func (r *repository) createCollection(dto CreateCollectionRequestDto) (db.Collection, error) {
-	return r.db.Queries.CreateCollection(context.Background(), db.CreateCollectionParams{
-		ID:          utils.GenerateId(r.flake),
+	return r.di.Db.Queries.CreateCollection(context.Background(), db.CreateCollectionParams{
+		ID:          utils.GenerateId(r.di.Flake),
 		Name:        dto.Name,
 		Description: dto.Description,
 	})
 }
 
 func (r *repository) updateCollection(id string, dto UpdateCollectionRequestDto) error {
-	return r.db.Queries.UpdateCollection(context.Background(), db.UpdateCollectionParams{
+	return r.di.Db.Queries.UpdateCollection(context.Background(), db.UpdateCollectionParams{
 		Name:        dto.Name,
 		Description: dto.Description,
 		ID:          id,
@@ -71,7 +71,7 @@ func (r *repository) updateCollection(id string, dto UpdateCollectionRequestDto)
 }
 
 func (r *repository) createCollectionItem(collectionId string, dto CreateCollectionItemRequestDto, listIndex int32) (db.CollectionItem, error) {
-	return r.db.Queries.CreateCollectionItem(context.Background(), db.CreateCollectionItemParams{
+	return r.di.Db.Queries.CreateCollectionItem(context.Background(), db.CreateCollectionItemParams{
 		CollectionID: collectionId,
 		PoiID:        dto.PoiID,
 		ListIndex:    listIndex,
@@ -79,7 +79,7 @@ func (r *repository) createCollectionItem(collectionId string, dto CreateCollect
 }
 
 func (r *repository) getLastIndexOfCollection(collectionId string) (int32, error) {
-	res, err := r.db.Queries.GetLastIndexOfCollection(context.Background(), collectionId)
+	res, err := r.di.Db.Queries.GetLastIndexOfCollection(context.Background(), collectionId)
 
 	if err != nil {
 		return 0, err
@@ -95,7 +95,7 @@ func (r *repository) getLastIndexOfCollection(collectionId string) (int32, error
 }
 
 func (r *repository) getCollectionItem(collectionId string, poiId string) (db.CollectionItem, error) {
-	res, err := r.db.Queries.GetCollectionItem(context.Background(), db.GetCollectionItemParams{
+	res, err := r.di.Db.Queries.GetCollectionItem(context.Background(), db.GetCollectionItemParams{
 		CollectionID: collectionId,
 		PoiID:        poiId,
 	})
@@ -109,7 +109,7 @@ func (r *repository) getCollectionItem(collectionId string, poiId string) (db.Co
 
 func (r *repository) deleteCollectionItemAtIndex(collectionId string, index int32) error {
 	ctx := context.Background()
-	tx, err := r.db.Pool.Begin(ctx)
+	tx, err := r.di.Db.Pool.Begin(ctx)
 
 	if err != nil {
 		return err
@@ -117,7 +117,7 @@ func (r *repository) deleteCollectionItemAtIndex(collectionId string, index int3
 
 	defer tx.Rollback(ctx)
 
-	qtx := r.db.Queries.WithTx(tx)
+	qtx := r.di.Db.Queries.WithTx(tx)
 
 	err = qtx.DeleteCollectionItemAtIndex(ctx, db.DeleteCollectionItemAtIndexParams{
 		CollectionID: collectionId,
@@ -149,7 +149,7 @@ func (r *repository) deleteCollectionItemAtIndex(collectionId string, index int3
 
 func (r *repository) updateCollectionItems(collectionId string, newOrderItems []NewOrderItem) error {
 	ctx := context.Background()
-	tx, err := r.db.Pool.Begin(ctx)
+	tx, err := r.di.Db.Pool.Begin(ctx)
 
 	if err != nil {
 		return err
@@ -157,7 +157,7 @@ func (r *repository) updateCollectionItems(collectionId string, newOrderItems []
 
 	defer tx.Rollback(ctx)
 
-	qtx := r.db.Queries.WithTx(tx)
+	qtx := r.di.Db.Queries.WithTx(tx)
 
 	err = qtx.DeleteAllCollectionItems(ctx, collectionId)
 
