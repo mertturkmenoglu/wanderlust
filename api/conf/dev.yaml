@@ -1,0 +1,60 @@
+port: 5000
+redis:
+  url: redis://localhost:6379/0
+  addr: "127.0.0.1:6379"
+db:
+  host: localhost
+  name: wanderlust
+  user: postgres
+  password: postgres
+  port: 5432
+  timezone: Europe/Istanbul
+env: dev
+debug: false
+email:
+  name: Wanderlust
+  from: getwanderlust@gmail.com
+smtp:
+  identity: ""
+  username: ""
+  password: ""
+  addr: "localhost:2500"
+  host: localhost
+minio:
+  user: wanderlust
+  password: wanderlust
+  endpoint: "localhost:9000"
+  buckets:
+    - default
+    - profile-images
+    - banner-images
+    - pois
+    - reviews
+  location: eu-central-1
+  autocreate-buckets: true
+api:
+  url: "http://localhost:5000"
+  logger:
+    type: file
+  auth:
+    sign-key: wanderlust
+    session:
+      path: "/"
+      max-age: 604800
+    oauth:
+      redirect: "http://localhost:5173/"
+    google:
+      client-id: ""
+      client-secret: ""
+      callback: "http://localhost:5000/api/auth/google/callback"
+    facebook:
+      client-id: ""
+      client-secret: ""
+      callback: "http://localhost:5000/api/auth/facebook/callback"
+  search:
+    server-url: "http://localhost:8108"
+    api-key: wanderlust
+  upload:
+    presigned-url-exp-min: 15
+web:
+  url: "http://localhost:5173"
