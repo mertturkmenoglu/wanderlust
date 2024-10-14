@@ -7,15 +7,15 @@ import (
 )
 
 func (r *repository) GetUserProfile(username string) (db.GetUserProfileByUsernameRow, error) {
-	return r.db.Queries.GetUserProfileByUsername(context.Background(), username)
+	return r.di.Db.Queries.GetUserProfileByUsername(context.Background(), username)
 }
 
 func (r *repository) makeUserVerified(id string) error {
-	return r.db.Queries.MakeUserVerified(context.Background(), id)
+	return r.di.Db.Queries.MakeUserVerified(context.Background(), id)
 }
 
 func (r *repository) updateUserProfile(id string, dto UpdateUserProfileRequestDto) (db.User, error) {
-	return r.db.Queries.UpdateUserProfile(context.Background(), db.UpdateUserProfileParams{
+	return r.di.Db.Queries.UpdateUserProfile(context.Background(), db.UpdateUserProfileParams{
 		ID:       id,
 		FullName: dto.FullName,
 		Bio:      utils.NilStrToText(dto.Bio),
@@ -26,14 +26,14 @@ func (r *repository) updateUserProfile(id string, dto UpdateUserProfileRequestDt
 }
 
 func (r *repository) updateProfileImage(userId string, imageUrl string) error {
-	return r.db.Queries.UpdateUserProfileImage(context.Background(), db.UpdateUserProfileImageParams{
+	return r.di.Db.Queries.UpdateUserProfileImage(context.Background(), db.UpdateUserProfileImageParams{
 		ID:           userId,
 		ProfileImage: utils.StrToText(imageUrl),
 	})
 }
 
 func (r *repository) updateBannerImage(userId string, imageUrl string) error {
-	return r.db.Queries.UpdateUserBannerImage(context.Background(), db.UpdateUserBannerImageParams{
+	return r.di.Db.Queries.UpdateUserBannerImage(context.Background(), db.UpdateUserBannerImageParams{
 		ID:          userId,
 		BannerImage: utils.StrToText(imageUrl),
 	})

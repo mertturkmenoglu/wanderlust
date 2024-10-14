@@ -3,11 +3,10 @@ package users
 import (
 	"context"
 	"mime/multipart"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/upload"
 
 	"github.com/minio/minio-go/v7"
-	"github.com/spf13/viper"
 )
 
 type sImageUploader struct {
@@ -81,8 +80,8 @@ func (s *sImageUploader) UploadFile(f *sFileInfo) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	url := "//" + viper.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
+	cfg := config.GetConfiguration()
+	url := "//" + cfg.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
 	return url, nil
 }
 

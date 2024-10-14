@@ -3,7 +3,7 @@ package users
 import (
 	"errors"
 	"mime/multipart"
-	"wanderlust/internal/app/api"
+	errs "wanderlust/internal/pkg/core/errors"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/upload"
 
@@ -18,7 +18,7 @@ func (s *service) GetUserProfile(username string) (db.GetUserProfileByUsernameRo
 			return db.GetUserProfileByUsernameRow{}, ErrUserNotFound
 		}
 
-		return db.GetUserProfileByUsernameRow{}, api.InternalServerError
+		return db.GetUserProfileByUsernameRow{}, errs.InternalServerError
 	}
 
 	return res, nil
@@ -62,7 +62,7 @@ func (s *service) updateProfileImage(user db.User, mpf *multipart.Form) (string,
 	uploader := sImageUploader{
 		action:   updateProfileImage,
 		mpf:      mpf,
-		client:   s.uploadClient,
+		client:   s.di.Upload,
 		username: user.Username,
 	}
 
@@ -95,7 +95,7 @@ func (s *service) updateBannerImage(user db.User, mpf *multipart.Form) (string, 
 	uploader := sImageUploader{
 		action:   updateBannerImage,
 		mpf:      mpf,
-		client:   s.uploadClient,
+		client:   s.di.Upload,
 		username: user.Username,
 	}
 

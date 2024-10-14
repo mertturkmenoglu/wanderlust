@@ -3,10 +3,10 @@ package users
 import (
 	"errors"
 	"net/http"
-	"wanderlust/internal/app/api"
+	errs "wanderlust/internal/pkg/core/errors"
 )
 
 var (
-	ErrUserNotFound        = api.NewApiError(http.StatusNotFound, "0100", errors.New("user not found"))
-	ErrUsernameNotProvided = api.NewApiError(http.StatusBadRequest, "0101", errors.New("username not provided"))
+	ErrUserNotFound        = errs.NewApiError(http.StatusNotFound, "0100", errors.New("user not found"))
+	ErrUsernameNotProvided = errs.NewApiError(http.StatusBadRequest, "0101", errors.New("username not provided"))
 )

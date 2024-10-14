@@ -1,49 +1,42 @@
 package users
 
 import (
-	"wanderlust/internal/app/api"
-	"wanderlust/internal/pkg/cache"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/upload"
-
-	"github.com/pterm/pterm"
+	"wanderlust/internal/pkg/core"
 )
 
 type Module struct {
 	handlers *handlers
 }
 
-var _ api.IModule = (*Module)(nil)
+var _ core.AppModule = (*Module)(nil)
 
 type handlers struct {
 	service *service
-	logger  *pterm.Logger
-	cache   *cache.Cache
+	di      *core.SharedModules
 }
 
 type service struct {
-	repository   *repository
-	uploadClient *upload.Upload
+	repository *repository
+	di         *core.SharedModules
 }
 
 type repository struct {
-	db *db.Db
+	di *core.SharedModules
 }
 
-func New(db *db.Db, logger *pterm.Logger, cache *cache.Cache, upload *upload.Upload) *Module {
+func New(di *core.SharedModules) *Module {
 	repository := repository{
-		db: db,
+		di: di,
 	}
 
 	service := service{
-		repository:   &repository,
-		uploadClient: upload,
+		repository: &repository,
+		di:         di,
 	}
 
 	handlers := handlers{
 		service: &service,
-		logger:  logger,
-		cache:   cache,
+		di:      di,
 	}
 
 	return &Module{

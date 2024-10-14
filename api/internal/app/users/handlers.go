@@ -2,7 +2,7 @@ package users
 
 import (
 	"net/http"
-	"wanderlust/internal/app/api"
+	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/upload"
 
@@ -24,7 +24,7 @@ func (h *handlers) GetUserProfile(c echo.Context) error {
 
 	v := mapGetUserProfileResponseToDto(res)
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: v,
 	})
 }
@@ -61,7 +61,7 @@ func (h *handlers) UpdateUserProfile(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: res,
 	})
 }
@@ -87,7 +87,7 @@ func (h *handlers) UpdateProfileImage(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, api.Response{
+	return c.JSON(http.StatusCreated, core.Response{
 		Data: echo.Map{
 			"url": res,
 		},
@@ -115,7 +115,7 @@ func (h *handlers) UpdateBannerImage(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, api.Response{
+	return c.JSON(http.StatusCreated, core.Response{
 		Data: echo.Map{
 			"url": res,
 		},
