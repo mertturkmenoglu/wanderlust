@@ -98,10 +98,12 @@ export default function Page() {
       <BackLink href="/lists" text="Go back to lists" />
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold tracking-tighter">{list.name}</h2>
-          <div className="text-xs text-muted-foreground mt-1">
-            {new Date(list.createdAt).toLocaleDateString()}
+          <h2 className="text-2xl tracking-tighter">{list.name}</h2>
+          <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+            <div>Created by: {list.user.fullName}</div>
+            <div>{new Date(list.createdAt).toLocaleDateString()}</div>
           </div>
+          <div className="text-xs text-muted-foreground mt-1"></div>
         </div>
         <Dialog>
           <DropdownMenu>
@@ -175,8 +177,14 @@ export default function Page() {
 
       <Separator className="my-2" />
 
-      <div>List details page</div>
-      <pre>{JSON.stringify(list, null, 2)}</pre>
+      {list.items.length === 0 && (
+        <AppMessage
+          emptyMessage="This list is empty"
+          className="my-16"
+          backLink="/lists"
+          backLinkText="Go back to the lists page"
+        />
+      )}
     </div>
   );
 }
