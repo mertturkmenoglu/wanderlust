@@ -103,3 +103,11 @@ WHERE list_id = $1 AND list_index > $2;
 -- name: DeleteAllListItems :exec
 DELETE FROM list_items
 WHERE list_id = $1;
+
+-- name: GetListIdsOfUser :many
+SELECT id FROM lists
+WHERE user_id = $1;
+
+-- name: GetListItemsInListStatus :many
+SELECT list_id, poi_id FROM list_items
+WHERE list_items.poi_id = $1 AND list_items.list_id = ANY($2::TEXT[]);

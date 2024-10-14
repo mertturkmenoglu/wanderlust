@@ -265,6 +265,31 @@ func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, e
 	return i, err
 }
 
+const getListIdsOfUser = `-- name: GetListIdsOfUser :many
+SELECT id FROM lists
+WHERE user_id = $1
+`
+
+func (q *Queries) GetListIdsOfUser(ctx context.Context, userID string) ([]string, error) {
+	rows, err := q.db.Query(ctx, getListIdsOfUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getListItem = `-- name: GetListItem :one
 SELECT list_id, poi_id, list_index, created_at FROM list_items
 WHERE list_id = $1 AND poi_id = $2
@@ -372,6 +397,41 @@ func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListIte
 			&i.Medium.MediaOrder,
 			&i.Medium.CreatedAt,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getListItemsInListStatus = `-- name: GetListItemsInListStatus :many
+SELECT list_id, poi_id FROM list_items
+WHERE list_items.poi_id = $1 AND list_items.list_id = ANY($2::TEXT[])
+`
+
+type GetListItemsInListStatusParams struct {
+	PoiID   string
+	Column2 []string
+}
+
+type GetListItemsInListStatusRow struct {
+	ListID string
+	PoiID  string
+}
+
+func (q *Queries) GetListItemsInListStatus(ctx context.Context, arg GetListItemsInListStatusParams) ([]GetListItemsInListStatusRow, error) {
+	rows, err := q.db.Query(ctx, getListItemsInListStatus, arg.PoiID, arg.Column2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetListItemsInListStatusRow
+	for rows.Next() {
+		var i GetListItemsInListStatusRow
+		if err := rows.Scan(&i.ListID, &i.PoiID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
