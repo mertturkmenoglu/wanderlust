@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/db"
 
 	"github.com/pterm/pterm"
@@ -53,7 +53,7 @@ func GetDb() *db.Db {
 }
 
 func main() {
-	config.Bootstrap()
+	_ = config.GetConfiguration()
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")

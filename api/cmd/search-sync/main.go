@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 
 	"github.com/pterm/pterm"
 )
@@ -14,7 +14,7 @@ var generationOptions = []string{
 }
 
 func main() {
-	config.Bootstrap()
+	_ = config.GetConfiguration()
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")

@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"wanderlust/internal/app/pois"
+	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/search"
 
@@ -26,11 +28,14 @@ func handlePoiSync() error {
 	}
 
 	repo := pois.Repository{
-		Db:    d,
-		Flake: flake,
+		DI: &core.SharedModules{
+			Flake: flake,
+			Db:    d,
+		},
 	}
 
-	searchService := search.New()
+	cfg := config.GetConfiguration()
+	searchService := search.New(cfg)
 
 	const step int64 = 10
 
