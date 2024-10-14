@@ -107,7 +107,22 @@ func (h *handlers) deleteList(c echo.Context) error {
 }
 
 func (h *handlers) createListItem(c echo.Context) error {
-	return echo.ErrNotImplemented
+	dto := c.Get("body").(CreateListItemRequestDto)
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.createListItem(id, dto.PoiID)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, core.Response{
+		Data: res,
+	})
 }
 
 func (h *handlers) deleteListItem(c echo.Context) error {
@@ -116,4 +131,23 @@ func (h *handlers) deleteListItem(c echo.Context) error {
 
 func (h *handlers) updateListItems(c echo.Context) error {
 	return echo.ErrNotImplemented
+}
+
+func (h *handlers) getListStatus(c echo.Context) error {
+	poiId := c.Param("poiId")
+	userId := c.Get("user_id").(string)
+
+	if poiId == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.getListStatus(userId, poiId)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
 }

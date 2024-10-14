@@ -2,10 +2,13 @@ package lists
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/utils"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func (r *repository) createList(dto CreateListRequestDto, userId string) (db.List, error) {
@@ -62,4 +65,76 @@ func (r *repository) getPublicListsOfUser(userId string, params pagination.Param
 
 func (r *repository) countPublicListsOfUser(userId string) (int64, error) {
 	return r.di.Db.Queries.CountPublicListsOfUser(context.Background(), userId)
+}
+
+func (r *repository) addItemToEndOfList(listId string, poiId string) (db.ListItem, error) {
+	lastIndex, err := r.di.Db.Queries.GetLastIndexOfList(context.Background(), listId)
+
+	if err != nil {
+		return db.ListItem{}, err
+	}
+
+	lastIndexAsInt, ok := lastIndex.(int32)
+
+	if !ok {
+		return db.ListItem{}, ErrListIndexCast
+	}
+
+	index := lastIndexAsInt + 1
+
+	return r.di.Db.Queries.CreateListItem(context.Background(), db.CreateListItemParams{
+		ListID:    listId,
+		PoiID:     poiId,
+		ListIndex: index,
+	})
+}
+
+func (r *repository) getListStatus(userId string, poiId string) ([]ListStatusDto, error) {
+	listIds, err := r.di.Db.Queries.GetListIdsOfUser(context.Background(), userId)
+	r.di.Logger.Trace("list ids", r.di.Logger.Args("list ids", listIds))
+
+	if err != nil {
+		r.di.Logger.Trace("error", r.di.Logger.Args("error", err.Error()))
+		empty := make([]ListStatusDto, 0)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return empty, nil
+		}
+
+		return nil, err
+	}
+
+	rows, err := r.di.Db.Queries.GetListItemsInListStatus(context.Background(), db.GetListItemsInListStatusParams{
+		PoiID:   poiId,
+		Column2: listIds,
+	})
+
+	r.di.Logger.Trace("rows", r.di.Logger.Args("rows", rows))
+
+	if err != nil {
+		return nil, err
+	}
+
+	resultArr := make([]ListStatusDto, 0)
+
+	for _, listId := range listIds {
+		var includes = false
+
+		for _, row := range rows {
+			if row.ListID == listId {
+				includes = true
+				break
+			}
+		}
+
+		resultArr = append(resultArr, ListStatusDto{
+			ID:       listId,
+			Name:     listId,
+			Includes: includes,
+		})
+	}
+
+	r.di.Logger.Trace("result", r.di.Logger.Args("result", resultArr))
+
+	return resultArr, nil
 }

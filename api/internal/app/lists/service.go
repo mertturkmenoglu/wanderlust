@@ -86,3 +86,27 @@ func (s *service) getPublicListsOfUser(username string, params pagination.Params
 
 	return v, count, nil
 }
+
+func (s *service) createListItem(listId string, poiId string) (CreateListItemResponseDto, error) {
+	res, err := s.repository.addItemToEndOfList(listId, poiId)
+
+	if err != nil {
+		return CreateListItemResponseDto{}, err
+	}
+
+	v := mapToCreateListItemResponseDto(res)
+
+	return v, nil
+}
+
+func (s *service) getListStatus(userId string, poiId string) (GetListStatusResponseDto, error) {
+	res, err := s.repository.getListStatus(userId, poiId)
+
+	if err != nil {
+		return GetListStatusResponseDto{}, err
+	}
+
+	v := mapToGetListStatusResponseDto(res)
+
+	return v, nil
+}

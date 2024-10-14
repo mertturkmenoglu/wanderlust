@@ -130,3 +130,18 @@ func mapToGetPublicListsOfUserDto(v []db.List) GetPublicListsOfUserDto {
 		Lists: lists,
 	}
 }
+
+func mapToCreateListItemResponseDto(v db.ListItem) CreateListItemResponseDto {
+	return CreateListItemResponseDto{
+		ListID:    v.ListID,
+		PoiID:     v.PoiID,
+		ListIndex: v.ListIndex,
+		CreatedAt: v.CreatedAt.Time,
+	}
+}
+
+func mapToGetListStatusResponseDto(v []ListStatusDto) GetListStatusResponseDto {
+	return GetListStatusResponseDto{
+		Statuses: v,
+	}
+}

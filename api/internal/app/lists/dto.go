@@ -1,6 +1,8 @@
 package lists
 
-import "time"
+import (
+	"time"
+)
 
 type GetAllListsOfUserDto struct {
 	Lists []ListDto `json:"lists"`
@@ -110,4 +112,25 @@ type ListItemPoiCategoryDto struct {
 	ID    int16  `json:"id"`
 	Name  string `json:"name"`
 	Image string `json:"image"`
+}
+
+type CreateListItemRequestDto struct {
+	PoiID string `json:"poiId" validate:"required,min=1"`
+}
+
+type CreateListItemResponseDto struct {
+	ListID    string
+	PoiID     string
+	ListIndex int32
+	CreatedAt time.Time
+}
+
+type ListStatusDto struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Includes bool   `json:"includes"`
+}
+
+type GetListStatusResponseDto struct {
+	Statuses []ListStatusDto `json:"statuses"`
 }

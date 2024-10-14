@@ -11,4 +11,5 @@ var (
 	ErrListNotFound     = errs.NewApiError(http.StatusNotFound, "0601", errors.New("list not found"))
 	ErrUsernameRequired = errs.NewApiError(http.StatusBadRequest, "0602", errors.New("username is required"))
 	ErrUserNotFound     = errs.NewApiError(http.StatusNotFound, "0603", errors.New("user not found"))
+	ErrListIndexCast    = errs.NewApiError(http.StatusInternalServerError, "0604", errors.New("cannot cast index value"))
 )
