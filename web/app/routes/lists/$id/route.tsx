@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
+import PoiCard from "~/components/blocks/poi-card";
 import { Button, buttonVariants } from "~/components/ui/button";
 import {
   Dialog,
@@ -184,6 +185,22 @@ export default function Page() {
           backLink="/lists"
           backLinkText="Go back to the lists page"
         />
+      )}
+
+      {list.items.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {list.items.map((listItem) => (
+            <PoiCard
+              poi={{
+                ...listItem.poi,
+                image: {
+                  url: listItem.poi.firstMedia.url,
+                  alt: listItem.poi.firstMedia.alt,
+                },
+              }}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
