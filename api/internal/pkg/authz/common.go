@@ -77,7 +77,7 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCollectionItemDelete: IsAdmin,
 	ActListCreate:           Identity,
 	ActListRead:             FnListRead,
-	ActListUpdate:           NotImplemented,
+	ActListUpdate:           FnListUpdate,
 	ActListDelete:           FnListDelete,
 	ActListStatus:           Identity,
 	ActListItemCreate:       FnListItemCreate,
