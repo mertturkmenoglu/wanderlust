@@ -6,11 +6,11 @@
 - Run `make create-migrations` to create a new migration.
 - Run the app with `RUN_MIGRATIONS=1` environment variable to auto run migrations when app is started.
 - Or, you can run `make watch` to run the app with auto migration option enabled.
-- Generate Go files from your schema and query files: `sqlc generate` or `make sqlc-generate`.
+- Generate Go files from your schema and query files: `make sqlc-generate`.
 
 # Updating the database & models & queries
 
-- Run `make create-migrations`, give migration a name, and check `internal/db/migrations` folder for the generated migration file.
+- Run `make create-migrations`, give migration a name, and check `internal/pkg/db/migrations` folder for the generated migration file.
 - Fill `.down.sql` and `.up.sql` files with the SQL statements to migrate the database.
 - Go to `internal/db/schema.sql` and add the table definitions.
 - Go to `internal/db/queries` folder and create/update the query file.
@@ -23,7 +23,7 @@
 
   - Run `make create-migrations`.
   - Give the migration a name, like `create_squirrels_table`.
-  - Script will create `.up.sql` and `.down.sql` files inside `internal/db/migrations` folder.
+  - Script will create `.up.sql` and `.down.sql` files inside `internal/pkg/db/migrations` folder.
 
 - Open the `.up.sql` file and write the SQL statements to create the table.
 - Open the `.down.sql` file and write the SQL statements to drop the table.
@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS squirrels (
 DROP TABLE IF EXISTS squirrels;
 ```
 
-- Now you need to copy the table definition and paste it into `internal/db/schema.sql` file.
+- Now you need to copy the table definition and paste it into `internal/pkg/db/schema.sql` file.
 
-- Now you need to create a new query file inside `internal/db/queries` folder.
+- Now you need to create a new query file inside `internal/pkg/db/queries` folder.
 
 - Add your CRUD operations to the query file.
 

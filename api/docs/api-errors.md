@@ -3,7 +3,6 @@
 ## API Error Codes
 
 - Each API module has its own error codes.
-- 100 codes are reserved for each module.
 
 ## Error Code Ranges per Module
 
