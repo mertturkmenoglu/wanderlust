@@ -4,16 +4,15 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/spf13/viper"
 	"golang.org/x/time/rate"
 )
 
-func GetRateLimiterConfig() middleware.RateLimiterConfig {
-	env := viper.GetString(config.ENV)
+func GetRateLimiterConfig(cfg *config.Configuration) middleware.RateLimiterConfig {
+	env := cfg.GetString(config.ENV)
 	isProd := strings.Contains(env, "prod")
 	var r float64 = 100
 	var burst int = 50

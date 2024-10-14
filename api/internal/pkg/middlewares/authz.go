@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"wanderlust/internal/app/api"
 	"wanderlust/internal/pkg/authz"
+	api_errors "wanderlust/internal/pkg/core/errors"
 
 	"github.com/labstack/echo/v4"
 )
@@ -21,8 +21,8 @@ func Authz(key authz.AuthzAct) echo.MiddlewareFunc {
 				var echoErr *echo.HTTPError
 
 				if errors.As(err, &echoErr) {
-					return c.JSON(echoErr.Code, api.ErrorResponse{
-						Errors: []api.ErrorDto{
+					return c.JSON(echoErr.Code, api_errors.ErrorResponse{
+						Errors: []api_errors.ErrorDto{
 							{
 								Status: "0000",
 								Code:   fmt.Sprintf("%d", echoErr.Code),
