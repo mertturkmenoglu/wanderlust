@@ -13,7 +13,7 @@ func RunMigrations() {
 	connString := getConnStringFromEnv()
 
 	m, err := migrate.New(
-		"file://internal/db/migrations",
+		"file://internal/pkg/db/migrations",
 		connString,
 	)
 
