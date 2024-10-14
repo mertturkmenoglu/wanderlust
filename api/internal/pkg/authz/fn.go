@@ -49,7 +49,7 @@ func FnListRead(s *Authz, c echo.Context) (bool, error) {
 		return false, err
 	}
 
-	if list.IsPublic {
+	if list.List.IsPublic {
 		return true, nil
 	}
 
@@ -59,7 +59,7 @@ func FnListRead(s *Authz, c echo.Context) (bool, error) {
 		return false, echo.ErrUnauthorized
 	}
 
-	if list.UserID == userId {
+	if list.User.ID == userId {
 		return true, nil
 	}
 
@@ -88,7 +88,7 @@ func FnListDelete(s *Authz, c echo.Context) (bool, error) {
 		return false, echo.ErrUnauthorized
 	}
 
-	if list.UserID == userId {
+	if list.User.ID == userId {
 		return true, nil
 	}
 
