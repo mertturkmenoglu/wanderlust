@@ -90,8 +90,7 @@ func (r *repository) addItemToEndOfList(listId string, poiId string) (db.ListIte
 }
 
 func (r *repository) getListStatus(userId string, poiId string) ([]ListStatusDto, error) {
-	listIds, err := r.di.Db.Queries.GetListIdsOfUser(context.Background(), userId)
-	r.di.Logger.Trace("list ids", r.di.Logger.Args("list ids", listIds))
+	lists, err := r.di.Db.Queries.GetListIdsAndNamesOfUser(context.Background(), userId)
 
 	if err != nil {
 		r.di.Logger.Trace("error", r.di.Logger.Args("error", err.Error()))
@@ -104,12 +103,16 @@ func (r *repository) getListStatus(userId string, poiId string) ([]ListStatusDto
 		return nil, err
 	}
 
+	listIds := make([]string, 0)
+
+	for _, list := range lists {
+		listIds = append(listIds, list.ID)
+	}
+
 	rows, err := r.di.Db.Queries.GetListItemsInListStatus(context.Background(), db.GetListItemsInListStatusParams{
 		PoiID:   poiId,
 		Column2: listIds,
 	})
-
-	r.di.Logger.Trace("rows", r.di.Logger.Args("rows", rows))
 
 	if err != nil {
 		return nil, err
@@ -117,24 +120,22 @@ func (r *repository) getListStatus(userId string, poiId string) ([]ListStatusDto
 
 	resultArr := make([]ListStatusDto, 0)
 
-	for _, listId := range listIds {
+	for _, list := range lists {
 		var includes = false
 
 		for _, row := range rows {
-			if row.ListID == listId {
+			if row.ListID == list.ID {
 				includes = true
 				break
 			}
 		}
 
 		resultArr = append(resultArr, ListStatusDto{
-			ID:       listId,
-			Name:     listId,
+			ID:       list.ID,
+			Name:     list.Name,
 			Includes: includes,
 		})
 	}
-
-	r.di.Logger.Trace("result", r.di.Logger.Args("result", resultArr))
 
 	return resultArr, nil
 }
