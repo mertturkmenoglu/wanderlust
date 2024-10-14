@@ -2,7 +2,7 @@ package cities
 
 import (
 	"errors"
-	"wanderlust/internal/app/api"
+	errs "wanderlust/internal/pkg/core/errors"
 	"wanderlust/internal/pkg/db"
 
 	"github.com/jackc/pgx/v5"
@@ -16,7 +16,7 @@ func (s *service) getCityById(id int32) (db.City, error) {
 			return db.City{}, ErrCityNotFound
 		}
 
-		return db.City{}, api.InternalServerError
+		return db.City{}, errs.InternalServerError
 	}
 
 	return res, nil
@@ -30,7 +30,7 @@ func (s *service) getCities() ([]db.City, error) {
 			return []db.City{}, ErrCityNotFound
 		}
 
-		return []db.City{}, api.InternalServerError
+		return []db.City{}, errs.InternalServerError
 	}
 
 	return res, nil
@@ -58,7 +58,7 @@ func (s *service) getFeaturedCities() ([]db.City, error) {
 			return []db.City{}, ErrCityNotFound
 		}
 
-		return []db.City{}, api.InternalServerError
+		return []db.City{}, errs.InternalServerError
 	}
 
 	return res, nil

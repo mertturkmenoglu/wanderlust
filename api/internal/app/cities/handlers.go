@@ -3,7 +3,7 @@ package cities
 import (
 	"net/http"
 	"strconv"
-	"wanderlust/internal/app/api"
+	"wanderlust/internal/pkg/core"
 
 	"github.com/labstack/echo/v4"
 )
@@ -29,7 +29,7 @@ func (h *handlers) GetCityById(c echo.Context) error {
 
 	v := mapGetCityByIdRowToDto(res)
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: v,
 	})
 }
@@ -43,7 +43,7 @@ func (h *handlers) GetCities(c echo.Context) error {
 
 	v := mapGetCitiesToDto(res)
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: v,
 	})
 }
@@ -57,7 +57,7 @@ func (h *handlers) GetFeaturedCities(c echo.Context) error {
 
 	v := mapGetFeaturedCitiesToDto(res)
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: v,
 	})
 }
@@ -71,7 +71,7 @@ func (h *handlers) CreateCity(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, api.Response{
+	return c.JSON(http.StatusCreated, core.Response{
 		Data: res,
 	})
 }
@@ -118,7 +118,7 @@ func (h *handlers) UpdateCity(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: res,
 	})
 }
