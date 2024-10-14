@@ -19,6 +19,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { getListStatus } from "~/lib/api-requests";
 import { AuthContext } from "~/providers/auth-provider";
 import AddToListButton from "./add-to-list-button";
 
@@ -32,7 +40,7 @@ async function handleShareClick() {
 }
 
 export default function Menu({ poiId }: Props) {
-  const { isSignedIn } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const [listId, setListId] = useState<string | null>(null);
   const query = useMyListsInfo(poiId);
 
@@ -50,7 +58,7 @@ export default function Menu({ poiId }: Props) {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-48 space-y-2 p-2" align="end">
-          {isSignedIn && (
+          {!!auth.user && (
             <DialogTrigger asChild>
               <DropdownMenuItem className="cursor-pointer p-0">
                 <Button
@@ -97,24 +105,24 @@ export default function Menu({ poiId }: Props) {
         <DialogHeader>
           <DialogTitle>Select a list</DialogTitle>
           <DialogDescription>
-            {/* {query.data && (
+            {query.data && (
               <Select onValueChange={(v) => setListId(v)}>
                 <SelectTrigger className="mt-4">
                   <SelectValue placeholder="Select a list" />
                 </SelectTrigger>
                 <SelectContent>
-                  {query.data.map((list) => (
+                  {query.data.data.statuses.map((listStatus) => (
                     <SelectItem
-                      value={list.id}
-                      key={list.id}
-                      disabled={list.includes}
+                      value={listStatus.id}
+                      key={listStatus.id}
+                      disabled={listStatus.includes}
                     >
-                      {list.name}
+                      {listStatus.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            )} */}
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -125,14 +133,13 @@ export default function Menu({ poiId }: Props) {
   );
 }
 
-export function useMyListsInfo(locationId: string) {
-  const { isSignedIn } = useContext(AuthContext);
+export function useMyListsInfo(poiId: string) {
+  const auth = useContext(AuthContext);
+  const isSignedIn = !!auth.user;
 
   const query = useQuery({
-    queryKey: ["my-lists-info", locationId],
-    queryFn: async () => {
-      // TODO: Implement later
-    },
+    queryKey: ["my-lists-info", poiId],
+    queryFn: async () => getListStatus(poiId),
     enabled: isSignedIn,
   });
 

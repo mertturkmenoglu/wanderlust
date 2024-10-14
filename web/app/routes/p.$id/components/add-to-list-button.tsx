@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
+import { createListItem } from "~/lib/api";
 
 type Props = {
   poiId: string;
@@ -14,7 +15,12 @@ export default function AddToListButton({ poiId, listId }: Props) {
     <Button
       type="button"
       variant="default"
-      onClick={() => mutation.mutate({ poiId, listId })}
+      onClick={() => {
+        if (!listId) {
+          return;
+        }
+        mutation.mutate({ poiId, listId });
+      }}
       disabled={listId === null}
     >
       Add to list
@@ -24,7 +30,7 @@ export default function AddToListButton({ poiId, listId }: Props) {
 
 type Data = {
   poiId: string;
-  listId: string | null;
+  listId: string;
 };
 
 export function useAddToList() {
@@ -32,9 +38,8 @@ export function useAddToList() {
 
   const mutation = useMutation({
     mutationKey: ["add-to-list"],
-    mutationFn: async ({ poiId, listId }: Data) => {
-      // TODO: Implement later
-    },
+    mutationFn: async ({ poiId, listId }: Data) =>
+      createListItem(listId, poiId),
     onSuccess: async () => {
       await qc.invalidateQueries({
         queryKey: ["my-lists-info"],
