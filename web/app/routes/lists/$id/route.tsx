@@ -190,15 +190,17 @@ export default function Page() {
       {list.items.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {list.items.map((listItem) => (
-            <PoiCard
-              poi={{
-                ...listItem.poi,
-                image: {
-                  url: listItem.poi.firstMedia.url,
-                  alt: listItem.poi.firstMedia.alt,
-                },
-              }}
-            />
+            <Link to={`/p/${listItem.poiId}`} key={listItem.poiId}>
+              <PoiCard
+                poi={{
+                  ...listItem.poi,
+                  image: {
+                    url: listItem.poi.firstMedia.url,
+                    alt: listItem.poi.firstMedia.alt,
+                  },
+                }}
+              />
+            </Link>
           ))}
         </div>
       )}
