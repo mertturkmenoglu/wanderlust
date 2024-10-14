@@ -3,7 +3,7 @@ package categories
 import (
 	"net/http"
 	"strconv"
-	"wanderlust/internal/app/api"
+	"wanderlust/internal/pkg/core"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,7 +17,7 @@ func (h *handlers) GetCategories(c echo.Context) error {
 
 	v := mapGetCategoriesToDto(res)
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: v,
 	})
 }
@@ -31,7 +31,7 @@ func (h *handlers) CreateCategory(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, api.Response{
+	return c.JSON(http.StatusCreated, core.Response{
 		Data: res,
 	})
 }
@@ -78,7 +78,7 @@ func (h *handlers) UpdateCategory(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: res,
 	})
 }
