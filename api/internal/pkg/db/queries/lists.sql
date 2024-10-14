@@ -12,8 +12,12 @@ INSERT INTO lists (
 ) RETURNING *;
 
 -- name: GetListById :one
-SELECT * FROM lists
-WHERE id = $1 LIMIT 1;
+SELECT 
+  sqlc.embed(lists), 
+  sqlc.embed(users)
+FROM lists
+  LEFT JOIN users ON users.id = lists.user_id
+WHERE lists.id = $1 LIMIT 1;
 
 -- name: DeleteList :exec
 DELETE FROM lists

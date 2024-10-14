@@ -210,20 +210,57 @@ func (q *Queries) GetLastIndexOfList(ctx context.Context, listID string) (interf
 }
 
 const getListById = `-- name: GetListById :one
-SELECT id, name, user_id, is_public, created_at, updated_at FROM lists
-WHERE id = $1 LIMIT 1
+SELECT 
+  lists.id, lists.name, lists.user_id, lists.is_public, lists.created_at, lists.updated_at, 
+  users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_onboarding_completed, users.is_active, users.is_business_account, users.is_verified, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.bio, users.pronouns, users.website, users.phone, users.profile_image, users.banner_image, users.followers_count, users.following_count, users.last_login, users.created_at, users.updated_at
+FROM lists
+  LEFT JOIN users ON users.id = lists.user_id
+WHERE lists.id = $1 LIMIT 1
 `
 
-func (q *Queries) GetListById(ctx context.Context, id string) (List, error) {
+type GetListByIdRow struct {
+	List List
+	User User
+}
+
+func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, error) {
 	row := q.db.QueryRow(ctx, getListById, id)
-	var i List
+	var i GetListByIdRow
 	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.UserID,
-		&i.IsPublic,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.List.ID,
+		&i.List.Name,
+		&i.List.UserID,
+		&i.List.IsPublic,
+		&i.List.CreatedAt,
+		&i.List.UpdatedAt,
+		&i.User.ID,
+		&i.User.Email,
+		&i.User.Username,
+		&i.User.FullName,
+		&i.User.PasswordHash,
+		&i.User.GoogleID,
+		&i.User.FbID,
+		&i.User.IsEmailVerified,
+		&i.User.IsOnboardingCompleted,
+		&i.User.IsActive,
+		&i.User.IsBusinessAccount,
+		&i.User.IsVerified,
+		&i.User.Role,
+		&i.User.PasswordResetToken,
+		&i.User.PasswordResetExpires,
+		&i.User.LoginAttempts,
+		&i.User.LockoutUntil,
+		&i.User.Bio,
+		&i.User.Pronouns,
+		&i.User.Website,
+		&i.User.Phone,
+		&i.User.ProfileImage,
+		&i.User.BannerImage,
+		&i.User.FollowersCount,
+		&i.User.FollowingCount,
+		&i.User.LastLogin,
+		&i.User.CreatedAt,
+		&i.User.UpdatedAt,
 	)
 	return i, err
 }
