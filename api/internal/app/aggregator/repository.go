@@ -57,7 +57,7 @@ func (r *repository) getHomeAggregation() (GetHomeAggregationDao, error) {
 }
 
 func (r *repository) getNewPois() ([]db.GetNewPoisRow, error) {
-	arr, err := r.db.Queries.GetNewPois(context.Background())
+	arr, err := r.di.Db.Queries.GetNewPois(context.Background())
 
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (r *repository) getNewPois() ([]db.GetNewPoisRow, error) {
 }
 
 func (r *repository) getPopularPois() ([]db.GetPopularPoisRow, error) {
-	arr, err := r.db.Queries.GetPopularPois(context.Background())
+	arr, err := r.di.Db.Queries.GetPopularPois(context.Background())
 
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (r *repository) getPopularPois() ([]db.GetPopularPoisRow, error) {
 }
 
 func (r *repository) getFeaturedPois() ([]db.GetFeaturedPoisRow, error) {
-	arr, err := r.db.Queries.GetFeaturedPois(context.Background())
+	arr, err := r.di.Db.Queries.GetFeaturedPois(context.Background())
 
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func (r *repository) getFeaturedPois() ([]db.GetFeaturedPoisRow, error) {
 }
 
 func (r *repository) getFavoritePois() ([]db.GetFavoritePoisRow, error) {
-	arr, err := r.db.Queries.GetFavoritePois(context.Background())
+	arr, err := r.di.Db.Queries.GetFavoritePois(context.Background())
 
 	if err != nil {
 		return nil, err

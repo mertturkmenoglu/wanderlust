@@ -1,42 +1,42 @@
 package aggregator
 
 import (
-	"wanderlust/internal/app/api"
-	"wanderlust/internal/pkg/cache"
-	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/core"
 )
 
 type Module struct {
 	handlers *handlers
 }
 
-var _ api.IModule = (*Module)(nil)
+var _ core.AppModule = (*Module)(nil)
 
 type handlers struct {
 	service *service
+	di      *core.SharedModules
 }
 
 type service struct {
 	repository *repository
-	cache      *cache.Cache
+	di         *core.SharedModules
 }
 
 type repository struct {
-	db *db.Db
+	di *core.SharedModules
 }
 
-func New(db *db.Db, cache *cache.Cache) *Module {
+func New(di *core.SharedModules) *Module {
 	repository := &repository{
-		db: db,
+		di: di,
 	}
 
 	service := &service{
 		repository: repository,
-		cache:      cache,
+		di:         di,
 	}
 
 	handlers := &handlers{
 		service: service,
+		di:      di,
 	}
 
 	return &Module{

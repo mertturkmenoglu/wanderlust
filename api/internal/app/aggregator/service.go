@@ -5,7 +5,7 @@ import "wanderlust/internal/pkg/cache"
 func (s *service) checkCacheForHomeAggregation() (*HomeAggregatorResponseDto, error) {
 	var cacheRes HomeAggregatorResponseDto
 
-	err := s.cache.ReadObj(cache.KeyHomeAggregations, &cacheRes)
+	err := s.di.Cache.ReadObj(cache.KeyHomeAggregations, &cacheRes)
 
 	if err == nil {
 		return &cacheRes, nil
@@ -29,7 +29,7 @@ func (s *service) getHomeAggregation() (HomeAggregatorResponseDto, error) {
 
 	dto := mapGetHomeAggregationDaoToDto(dao)
 
-	err = s.cache.SetObj(cache.KeyHomeAggregations, dto, cache.TTLHomeAggregations)
+	err = s.di.Cache.SetObj(cache.KeyHomeAggregations, dto, cache.TTLHomeAggregations)
 
 	if err != nil {
 		return HomeAggregatorResponseDto{}, err
