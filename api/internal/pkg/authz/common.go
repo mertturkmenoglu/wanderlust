@@ -37,6 +37,7 @@ const (
 	ActListRead             AuthzAct = "list-read"
 	ActListUpdate           AuthzAct = "list-update"
 	ActListDelete           AuthzAct = "list-delete"
+	ActListStatus           AuthzAct = "list-status"
 	ActListItemCreate       AuthzAct = "list-item-create"
 	ActListItemRead         AuthzAct = "list-item-read"
 	ActListItemUpdate       AuthzAct = "list-item-update"
@@ -78,7 +79,8 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActListRead:             FnListRead,
 	ActListUpdate:           NotImplemented,
 	ActListDelete:           FnListDelete,
-	ActListItemCreate:       NotImplemented,
+	ActListStatus:           Identity,
+	ActListItemCreate:       FnListItemCreate,
 	ActListItemRead:         NotImplemented,
 	ActListItemUpdate:       NotImplemented,
 	ActListItemDelete:       NotImplemented,
