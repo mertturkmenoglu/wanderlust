@@ -18,33 +18,24 @@ clean:
 # Live reload
 watch:
 	@if command -v air > /dev/null; then \
-		RUN_MIGRATIONS=1 air; \
+		RUN_MIGRATIONS=1 air -c conf/.air.toml; \
 		echo "Watching...";\
 	else \
 		echo "Air is not installed. Run 'go install github.com/air-verse/air@latest' to install Air";\
 	fi
 
-read-location:
-	@go run cmd/read-location/main.go
-
 generate-fake-data:
 	@go run cmd/fake/*.go
 
 sqlc-generate:
-	@sqlc generate
+	@sqlc generate -f ./conf/sqlc.yaml
 
 search-sync:
 	@go run cmd/search-sync/*.go
 
-gen-swagger:
-	@swag init --parseInternal --parseDependency --dir ./cmd/core,./internal/app --output ./swaggerdocs
-
-fmt-swagger:
-	@swag fmt --dir ./cmd/core,./internal/api
-
 create-migration:
 	@read -p "Give migration a name: " migrationname; \
-	migrate create -ext sql -dir internal/db/migrations -seq $$migrationname; \
+	migrate create -ext sql -dir internal/pkg/db/migrations -seq $$migrationname; \
 	echo "Created migration with name $$migrationname. Update sql files."
 
-.PHONY: all build run clean watch read-location generate-fake-data sqlc-generate search-sync create-migration gen-swagger fmt-swagger
+.PHONY: all build run clean watch generate-fake-data sqlc-generate search-sync create-migration
