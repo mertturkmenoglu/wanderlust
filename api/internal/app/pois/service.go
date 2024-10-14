@@ -57,7 +57,7 @@ func (s *service) validateMediaUpload(mpf *multipart.Form) error {
 func (s *service) deleteMedia(draftId string, name string) error {
 	uploader := ImageUploader{
 		draftId: draftId,
-		client:  s.uploadClient,
+		client:  s.di.Upload,
 		mpf:     nil,
 	}
 
@@ -96,7 +96,7 @@ func (s *service) deleteMedia(draftId string, name string) error {
 func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
 	uploader := ImageUploader{
 		mpf:     mpf,
-		client:  s.uploadClient,
+		client:  s.di.Upload,
 		draftId: mpf.Value["id"][0],
 	}
 
@@ -156,13 +156,13 @@ func (s *service) createDraft() (map[string]any, error) {
 		return nil, err
 	}
 
-	err = s.cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
+	err = s.di.Cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
 
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = s.cache.Client.LPush(context.Background(), "poi-drafts", id).Result()
+	_, err = s.di.Cache.Client.LPush(context.Background(), "poi-drafts", id).Result()
 
 	if err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ func (s *service) createDraft() (map[string]any, error) {
 }
 
 func (s *service) getDrafts() ([]map[string]any, error) {
-	ids, err := s.cache.Client.LRange(context.Background(), "poi-drafts", 0, -1).Result()
+	ids, err := s.di.Cache.Client.LRange(context.Background(), "poi-drafts", 0, -1).Result()
 
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (s *service) getDrafts() ([]map[string]any, error) {
 	var drafts []map[string]any
 
 	for _, id := range ids {
-		v, err := s.cache.Get("poi-draft:" + id)
+		v, err := s.di.Cache.Get("poi-draft:" + id)
 
 		if err != nil {
 			return nil, err
@@ -202,7 +202,7 @@ func (s *service) getDrafts() ([]map[string]any, error) {
 }
 
 func (s *service) getDraft(id string) (map[string]any, error) {
-	v, err := s.cache.Get("poi-draft:" + id)
+	v, err := s.di.Cache.Get("poi-draft:" + id)
 
 	if err != nil {
 		return nil, err
@@ -220,13 +220,13 @@ func (s *service) getDraft(id string) (map[string]any, error) {
 }
 
 func (s *service) deleteDraft(id string) error {
-	_, err := s.cache.Client.LRem(context.Background(), "poi-drafts", 1, id).Result()
+	_, err := s.di.Cache.Client.LRem(context.Background(), "poi-drafts", 1, id).Result()
 
 	if err != nil {
 		return err
 	}
 
-	return s.cache.Del("poi-draft:" + id)
+	return s.di.Cache.Del("poi-draft:" + id)
 }
 
 func (s *service) updateDraft(id string, body map[string]any) error {
@@ -236,7 +236,7 @@ func (s *service) updateDraft(id string, body map[string]any) error {
 		return err
 	}
 
-	err = s.cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
+	err = s.di.Cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
 
 	if err != nil {
 		return err

@@ -2,50 +2,43 @@ package pois
 
 import (
 	"sync"
-	"wanderlust/internal/app/api"
-	"wanderlust/internal/pkg/cache"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/upload"
-
-	"github.com/sony/sonyflake"
+	"wanderlust/internal/pkg/core"
 )
 
 type Module struct {
 	handlers *handlers
 }
 
-var _ api.IModule = (*Module)(nil)
+var _ core.AppModule = (*Module)(nil)
 
 type handlers struct {
 	service *service
+	di      *core.SharedModules
 }
 
 type service struct {
-	repository   *Repository
-	uploadClient *upload.Upload
-	draftMutex   sync.Mutex
-	cache        *cache.Cache
+	repository *Repository
+	draftMutex sync.Mutex
+	di         *core.SharedModules
 }
 
 type Repository struct {
-	Db    *db.Db
-	Flake *sonyflake.Sonyflake
+	DI *core.SharedModules
 }
 
-func New(db *db.Db, flake *sonyflake.Sonyflake, upload *upload.Upload, cache *cache.Cache) *Module {
+func New(di *core.SharedModules) *Module {
 	repository := Repository{
-		Db:    db,
-		Flake: flake,
+		DI: di,
 	}
 
 	service := service{
-		repository:   &repository,
-		uploadClient: upload,
-		cache:        cache,
+		repository: &repository,
+		di:         di,
 	}
 
 	handlers := handlers{
 		service: &service,
+		di:      di,
 	}
 
 	return &Module{

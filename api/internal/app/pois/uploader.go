@@ -3,12 +3,11 @@ package pois
 import (
 	"mime/multipart"
 	"strconv"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/upload"
 
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
-	"github.com/spf13/viper"
 )
 
 type ImageUploader struct {
@@ -101,7 +100,9 @@ func (s *ImageUploader) uploadFile(f *sFileInfo) (sUploadResult, error) {
 		return sUploadResult{}, err
 	}
 
-	url := "http://" + viper.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
+	cfg := config.GetConfiguration()
+
+	url := "http://" + cfg.GetString(config.MINIO_ENDPOINT) + "/" + info.Bucket + "/" + info.Key
 	return sUploadResult{
 		url:  url,
 		name: info.Key,

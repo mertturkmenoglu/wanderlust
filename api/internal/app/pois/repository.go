@@ -11,11 +11,11 @@ import (
 )
 
 func (r *Repository) peekPois() ([]db.Poi, error) {
-	return r.Db.Queries.PeekPois(context.Background())
+	return r.DI.Db.Queries.PeekPois(context.Background())
 }
 
 func (r *Repository) GetPoiById(id string) (GetPoiByIdDao, error) {
-	poi, err := r.Db.Queries.GetPoiById(context.Background(), id)
+	poi, err := r.DI.Db.Queries.GetPoiById(context.Background(), id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -25,13 +25,13 @@ func (r *Repository) GetPoiById(id string) (GetPoiByIdDao, error) {
 		return GetPoiByIdDao{}, err
 	}
 
-	media, err := r.Db.Queries.GetPoiMedia(context.Background(), id)
+	media, err := r.DI.Db.Queries.GetPoiMedia(context.Background(), id)
 
 	if err != nil {
 		return GetPoiByIdDao{}, err
 	}
 
-	amenities, err := r.Db.Queries.GetPoiAmenities(context.Background(), id)
+	amenities, err := r.DI.Db.Queries.GetPoiAmenities(context.Background(), id)
 
 	if err != nil {
 		return GetPoiByIdDao{}, err
@@ -48,7 +48,7 @@ func (r *Repository) GetPoiById(id string) (GetPoiByIdDao, error) {
 }
 
 func (r *Repository) isFavorite(poiId string, userId string) bool {
-	_, err := r.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
+	_, err := r.DI.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -57,7 +57,7 @@ func (r *Repository) isFavorite(poiId string, userId string) bool {
 }
 
 func (r *Repository) isBookmarked(poiId string, userId string) bool {
-	_, err := r.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
+	_, err := r.DI.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -67,7 +67,7 @@ func (r *Repository) isBookmarked(poiId string, userId string) bool {
 
 func (r *Repository) publishDraft(draft map[string]any) error {
 	ctx := context.Background()
-	tx, err := r.Db.Pool.Begin(ctx)
+	tx, err := r.DI.Db.Pool.Begin(ctx)
 
 	if err != nil {
 		return err
@@ -75,7 +75,7 @@ func (r *Repository) publishDraft(draft map[string]any) error {
 
 	defer tx.Rollback(ctx)
 
-	qtx := r.Db.Queries.WithTx(tx)
+	qtx := r.DI.Db.Queries.WithTx(tx)
 
 	address := draft["address"].(map[string]any)
 	cityId, ok := address["cityId"].(float64)
@@ -104,7 +104,7 @@ func (r *Repository) publishDraft(draft map[string]any) error {
 	}
 
 	poi, err := qtx.CreateOnePoi(ctx, db.CreateOnePoiParams{
-		ID:                 utils.GenerateId(r.Flake),
+		ID:                 utils.GenerateId(r.DI.Flake),
 		Name:               draft["name"].(string),
 		Phone:              utils.StrToText(draft["phone"].(string)),
 		Description:        draft["description"].(string),

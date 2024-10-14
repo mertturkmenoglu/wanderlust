@@ -2,7 +2,7 @@ package pois
 
 import (
 	"net/http"
-	"wanderlust/internal/app/api"
+	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/upload"
 
 	"github.com/labstack/echo/v4"
@@ -30,7 +30,7 @@ func (h *handlers) GetPoiById(c echo.Context) error {
 		isBookmarked = h.service.isBookmarked(id, userId)
 	}
 
-	return c.JSON(http.StatusOK, api.MetadataResponse{
+	return c.JSON(http.StatusOK, core.MetadataResponse{
 		Data: res,
 		Meta: echo.Map{
 			"isFavorite":   isFavorite,
@@ -52,7 +52,7 @@ func (h *handlers) PeekPois(c echo.Context) error {
 		return ErrUnmarshal
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: v,
 	})
 }
@@ -64,7 +64,7 @@ func (h *handlers) CreateDraft(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, api.Response{
+	return c.JSON(http.StatusCreated, core.Response{
 		Data: res,
 	})
 }
@@ -76,7 +76,7 @@ func (h *handlers) GetDrafts(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: res,
 	})
 }
@@ -94,7 +94,7 @@ func (h *handlers) GetDraft(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: res,
 	})
 }
@@ -157,7 +157,7 @@ func (h *handlers) UploadMedia(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.Response{
+	return c.JSON(http.StatusOK, core.Response{
 		Data: res,
 	})
 }
