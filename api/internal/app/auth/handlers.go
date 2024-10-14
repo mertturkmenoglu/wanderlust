@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"wanderlust/config"
-	"wanderlust/internal/app/api"
+	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/core"
+	errs "wanderlust/internal/pkg/core/errors"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/hash"
 	"wanderlust/internal/pkg/random"
@@ -93,7 +94,7 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	sess.Values["user_id"] = userId
 	sess.Values["session_id"] = sessionId
 	sess.Save(c.Request(), c.Response())
-	redirectUrl := viper.GetString(config.OAUTH_REDIRECT)
+	redirectUrl := viper.GetString(h.di.Config.GetString(config.OAUTH_REDIRECT))
 
 	// Redirect user to the frontend application
 	return c.Redirect(http.StatusTemporaryRedirect, redirectUrl)
@@ -103,8 +104,8 @@ func (h *handlers) GetMe(c echo.Context) error {
 	user := c.Get("user").(db.User)
 	res := mapGetMeResponseToDto(user)
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"data": res,
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
 	})
 }
 
@@ -173,7 +174,7 @@ func (h *handlers) CredentialsRegister(c echo.Context) error {
 		return err
 	}
 
-	h.tasks.CreateAndEnqueue(tasks.TypeWelcomeEmail, tasks.WelcomeEmailPayload{
+	h.di.Tasks.CreateAndEnqueue(tasks.TypeWelcomeEmail, tasks.WelcomeEmailPayload{
 		Email: body.Email,
 		Name:  body.FullName,
 	})
@@ -200,17 +201,17 @@ func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	}
 
 	key := fmt.Sprintf("verify-email:%s", code)
-	s.cache.Set(key, body.Email, time.Minute*15)
+	s.di.Cache.Set(key, body.Email, time.Minute*15)
 
 	url := s.service.getEmailVerifyUrl(code)
 
-	_, err = s.tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
+	_, err = s.di.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
 		Email: body.Email,
 		Url:   url,
 	})
 
 	if err != nil {
-		return api.InternalServerError
+		return errs.InternalServerError
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -225,14 +226,14 @@ func (s *handlers) VerifyEmail(c echo.Context) error {
 
 	key := fmt.Sprintf("verify-email:%s", code)
 
-	if !s.cache.Has(key) {
+	if !s.di.Cache.Has(key) {
 		return ErrInvalidOrExpiredVerifyCode
 	}
 
-	email, err := s.cache.Get(key)
+	email, err := s.di.Cache.Get(key)
 
 	if err != nil {
-		return api.InternalServerError
+		return errs.InternalServerError
 	}
 
 	user, err := s.service.getUserByEmail(email)
@@ -265,19 +266,19 @@ func (s *handlers) SendForgotPasswordEmail(c echo.Context) error {
 	code, err := random.DigitsString(6)
 
 	if err != nil {
-		return api.InternalServerError
+		return errs.InternalServerError
 	}
 
 	key := fmt.Sprintf("forgot-password:%s", code)
-	s.cache.Set(key, body.Email, time.Minute*15)
+	s.di.Cache.Set(key, body.Email, time.Minute*15)
 
-	_, err = s.tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
+	_, err = s.di.Tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
 		Email: body.Email,
 		Code:  code,
 	})
 
 	if err != nil {
-		return api.InternalServerError
+		return errs.InternalServerError
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -292,7 +293,7 @@ func (s *handlers) ResetPassword(c echo.Context) error {
 	}
 
 	key := fmt.Sprintf("forgot-password:%s", body.Code)
-	cacheVal, err := s.cache.Get(key)
+	cacheVal, err := s.di.Cache.Get(key)
 
 	if err != nil {
 		return ErrPasswordResetCodeExpiredOrInvalid
@@ -308,10 +309,10 @@ func (s *handlers) ResetPassword(c echo.Context) error {
 		return err
 	}
 
-	err = s.cache.Del(key)
+	err = s.di.Cache.Del(key)
 
 	if err != nil {
-		return api.InternalServerError
+		return errs.InternalServerError
 	}
 
 	return c.NoContent(http.StatusOK)

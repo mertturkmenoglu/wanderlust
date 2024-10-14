@@ -4,11 +4,10 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/random"
 
 	"github.com/gorilla/sessions"
-	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/facebook"
 	"golang.org/x/oauth2/google"
@@ -65,20 +64,24 @@ func getOAuthConfig(provider string) *oauth2.Config {
 }
 
 func getGoogleOAuth2Config() *oauth2.Config {
+	cfg := config.GetConfiguration()
+
 	return &oauth2.Config{
-		ClientID:     viper.GetString(config.GOOGLE_CLIENT_ID),
-		ClientSecret: viper.GetString(config.GOOGLE_CLIENT_SECRET),
-		RedirectURL:  viper.GetString(config.GOOGLE_CALLBACK),
+		ClientID:     cfg.GetString(config.GOOGLE_CLIENT_ID),
+		ClientSecret: cfg.GetString(config.GOOGLE_CLIENT_SECRET),
+		RedirectURL:  cfg.GetString(config.GOOGLE_CALLBACK),
 		Scopes:       []string{"profile", "email"},
 		Endpoint:     google.Endpoint,
 	}
 }
 
 func getFbOAuth2Config() *oauth2.Config {
+	cfg := config.GetConfiguration()
+
 	return &oauth2.Config{
-		ClientID:     viper.GetString(config.FB_CLIENT_ID),
-		ClientSecret: viper.GetString(config.FB_CLIENT_SECRET),
-		RedirectURL:  viper.GetString(config.FB_CALLBACK),
+		ClientID:     cfg.GetString(config.FB_CLIENT_ID),
+		ClientSecret: cfg.GetString(config.FB_CLIENT_SECRET),
+		RedirectURL:  cfg.GetString(config.FB_CALLBACK),
 		Scopes:       []string{"public_profile", "email"},
 		Endpoint:     facebook.Endpoint,
 	}

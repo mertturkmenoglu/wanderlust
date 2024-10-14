@@ -1,54 +1,42 @@
 package auth
 
 import (
-	"wanderlust/internal/app/api"
-	"wanderlust/internal/pkg/cache"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/tasks"
-
-	"github.com/pterm/pterm"
-	"github.com/sony/sonyflake"
+	"wanderlust/internal/pkg/core"
 )
 
 type Module struct {
 	handlers *handlers
 }
 
-var _ api.IModule = (*Module)(nil)
+var _ core.AppModule = (*Module)(nil)
 
 type handlers struct {
 	service *service
-	logger  *pterm.Logger
-	flake   *sonyflake.Sonyflake
-	cache   *cache.Cache
-	tasks   *tasks.Tasks
+	di      *core.SharedModules
 }
 
 type service struct {
 	repository *repository
+	di         *core.SharedModules
 }
 
 type repository struct {
-	db    *db.Db
-	flake *sonyflake.Sonyflake
+	di *core.SharedModules
 }
 
-func New(db *db.Db, logger *pterm.Logger, flake *sonyflake.Sonyflake, cache *cache.Cache, tasks *tasks.Tasks) *Module {
+func New(di *core.SharedModules) *Module {
 	repository := repository{
-		db:    db,
-		flake: flake,
+		di: di,
 	}
 
 	service := service{
 		repository: &repository,
+		di:         di,
 	}
 
 	handlers := handlers{
 		service: &service,
-		logger:  logger,
-		flake:   flake,
-		cache:   cache,
-		tasks:   tasks,
+		di:      di,
 	}
 
 	return &Module{

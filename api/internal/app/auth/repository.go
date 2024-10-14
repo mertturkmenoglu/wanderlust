@@ -22,21 +22,21 @@ func (r *repository) getUserBySocialId(provider string, id string) (db.User, err
 }
 
 func (r *repository) getUserByGoogleId(id string) (db.User, error) {
-	return r.db.Queries.GetUserByGoogleId(
+	return r.di.Db.Queries.GetUserByGoogleId(
 		context.Background(),
 		pgtype.Text{String: id, Valid: true},
 	)
 }
 
 func (r *repository) getUserByFacebookId(id string) (db.User, error) {
-	return r.db.Queries.GetUserByFbId(
+	return r.di.Db.Queries.GetUserByFbId(
 		context.Background(),
 		pgtype.Text{String: id, Valid: true},
 	)
 }
 
 func (r *repository) getUserByEmail(email string) (db.User, error) {
-	return r.db.Queries.GetUserByEmail(
+	return r.di.Db.Queries.GetUserByEmail(
 		context.Background(),
 		email,
 	)
@@ -54,7 +54,7 @@ func (r *repository) updateUserSocialId(provider string, id string, socialId str
 }
 
 func (r *repository) updateUserGoogleId(id string, googleId string) error {
-	return r.db.Queries.UpdateUserGoogleId(
+	return r.di.Db.Queries.UpdateUserGoogleId(
 		context.Background(),
 		db.UpdateUserGoogleIdParams{
 			ID:       id,
@@ -64,7 +64,7 @@ func (r *repository) updateUserGoogleId(id string, googleId string) error {
 }
 
 func (r *repository) updateUserFbId(id string, fbId string) error {
-	return r.db.Queries.UpdateUserFbId(
+	return r.di.Db.Queries.UpdateUserFbId(
 		context.Background(),
 		db.UpdateUserFbIdParams{
 			ID:   id,
@@ -74,14 +74,14 @@ func (r *repository) updateUserFbId(id string, fbId string) error {
 }
 
 func (r *repository) createUser(oauthUser *oauthUser) (string, error) {
-	username, err := generateUsernameFromEmail(r.db, oauthUser.email)
+	username, err := generateUsernameFromEmail(r.di.Db, oauthUser.email)
 
 	if err != nil {
 		return "", err
 	}
 
-	saved, err := r.db.Queries.CreateUser(context.Background(), db.CreateUserParams{
-		ID:                    utils.GenerateId(r.flake),
+	saved, err := r.di.Db.Queries.CreateUser(context.Background(), db.CreateUserParams{
+		ID:                    utils.GenerateId(r.di.Flake),
 		Email:                 oauthUser.email,
 		Username:              username,
 		FullName:              oauthUser.name,
@@ -104,7 +104,7 @@ func (r *repository) createSession(sessionId string, userId string) error {
 	createdAt := time.Now()
 	expiresAt := createdAt.Add(time.Hour * 24 * 7)
 
-	_, err := r.db.Queries.CreateSession(
+	_, err := r.di.Db.Queries.CreateSession(
 		context.Background(),
 		db.CreateSessionParams{
 			ID:          sessionId,
@@ -119,7 +119,7 @@ func (r *repository) createSession(sessionId string, userId string) error {
 }
 
 func (r *repository) getUserByUsername(username string) (db.User, error) {
-	return r.db.Queries.GetUserByUsername(
+	return r.di.Db.Queries.GetUserByUsername(
 		context.Background(),
 		username,
 	)
@@ -133,8 +133,8 @@ func (r *repository) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.
 		return nil, ErrHash
 	}
 
-	saved, err := r.db.Queries.CreateUser(context.Background(), db.CreateUserParams{
-		ID:                    utils.GenerateId(r.flake),
+	saved, err := r.di.Db.Queries.CreateUser(context.Background(), db.CreateUserParams{
+		ID:                    utils.GenerateId(r.di.Flake),
 		Email:                 dto.Email,
 		Username:              dto.Username,
 		FullName:              dto.FullName,
@@ -150,7 +150,7 @@ func (r *repository) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.
 }
 
 func (r *repository) verifyUserEmail(userId string) error {
-	return r.db.Queries.UpdateUserIsEmailVerified(
+	return r.di.Db.Queries.UpdateUserIsEmailVerified(
 		context.Background(),
 		db.UpdateUserIsEmailVerifiedParams{
 			ID:              userId,
@@ -160,7 +160,7 @@ func (r *repository) verifyUserEmail(userId string) error {
 }
 
 func (r *repository) updateUserPassword(userId string, hashed string) error {
-	return r.db.Queries.UpdateUserPassword(
+	return r.di.Db.Queries.UpdateUserPassword(
 		context.Background(),
 		db.UpdateUserPasswordParams{
 			ID:           userId,

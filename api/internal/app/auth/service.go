@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"wanderlust/config"
-	"wanderlust/internal/app/api"
+
+	"wanderlust/internal/pkg/config"
+	errs "wanderlust/internal/pkg/core/errors"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/hash"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/spf13/viper"
 )
 
 func (s *service) resetCookie() *http.Cookie {
@@ -35,7 +35,7 @@ func (s *service) getOrCreateUserId(user *oauthUser) (string, error) {
 
 	// If the error is not pgx.ErrNoRows, return it immediately
 	if !errors.Is(err, pgx.ErrNoRows) {
-		return "", api.InternalServerError
+		return "", errs.InternalServerError
 	}
 
 	// If there are no rows, either user doesn't exists
@@ -50,7 +50,7 @@ func (s *service) getOrCreateUserId(user *oauthUser) (string, error) {
 		err = s.repository.updateUserSocialId(user.provider, dbUser.ID, user.id)
 
 		if err != nil {
-			return "", api.InternalServerError
+			return "", errs.InternalServerError
 		}
 
 		return dbUser.ID, nil
@@ -60,7 +60,7 @@ func (s *service) getOrCreateUserId(user *oauthUser) (string, error) {
 	savedId, err := s.repository.createUser(user)
 
 	if err != nil {
-		return "", api.InternalServerError
+		return "", errs.InternalServerError
 	}
 
 	return savedId, nil
@@ -70,7 +70,7 @@ func (s *service) createSession(sessionId string, userId string) error {
 	err := s.repository.createSession(sessionId, userId)
 
 	if err != nil {
-		return api.InternalServerError
+		return errs.InternalServerError
 	}
 
 	return nil
@@ -113,9 +113,10 @@ func (s *service) checkIfEmailOrUsernameIsTaken(email string, username string) e
 }
 
 func (s *service) getEmailVerifyUrl(code string) string {
+	cfg := config.GetConfiguration()
 	return fmt.Sprintf(
 		"%s/api/auth/verify-email/verify?code=%s",
-		viper.GetString(config.API_URL),
+		cfg.GetString(config.API_URL),
 		code,
 	)
 }

@@ -2,20 +2,21 @@ package auth
 
 import (
 	"net/http"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
 )
 
 func getAuthSessionOptions() *sessions.Options {
+	cfg := config.GetConfiguration()
+
 	return &sessions.Options{
-		Path:     viper.GetString(config.AUTH_SESSION_PATH),
-		MaxAge:   viper.GetInt(config.AUTH_SESSION_MAX_AGE),
+		Path:     cfg.GetString(config.AUTH_SESSION_PATH),
+		MaxAge:   cfg.GetInt(config.AUTH_SESSION_MAX_AGE),
 		HttpOnly: true,
-		Secure:   viper.GetString(config.ENV) != "dev",
+		Secure:   cfg.GetString(config.ENV) != "dev",
 		SameSite: http.SameSiteLaxMode,
 	}
 }
