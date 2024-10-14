@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/spf13/viper"
 )
 
 type Cache struct {
@@ -16,10 +15,10 @@ type Cache struct {
 	Context context.Context
 }
 
-func New() *Cache {
-	url := viper.GetString(config.REDIS_URL)
-	options, err := redis.ParseURL(url)
+func New(cfg *config.Configuration) *Cache {
+	url := cfg.GetString(config.REDIS_URL)
 
+	options, err := redis.ParseURL(url)
 	if err != nil {
 		panic(err)
 	}
