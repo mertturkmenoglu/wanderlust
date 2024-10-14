@@ -3,22 +3,28 @@ package upload
 import (
 	"context"
 	"log"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/spf13/viper"
 )
 
 type Upload struct {
-	Client  *minio.Client
-	Context context.Context
+	Client   *minio.Client
+	Context  context.Context
+	buckets  []string
+	location string
 }
 
-func New() *Upload {
-	endpoint := viper.GetString(config.MINIO_ENDPOINT)
-	id := viper.GetString(config.MINIO_USER)
-	secret := viper.GetString(config.MINIO_PASSWORD)
+func New(cfg *config.Configuration) *Upload {
+	var (
+		endpoint          = cfg.GetString(config.MINIO_ENDPOINT)
+		id                = cfg.GetString(config.MINIO_USER)
+		secret            = cfg.GetString(config.MINIO_PASSWORD)
+		buckets           = cfg.GetStringSlice(config.MINIO_BUCKETS)
+		autocreateBuckets = cfg.GetBool(config.MINIO_AUTOCREATE_BUCKETS)
+		location          = cfg.GetString(config.MINIO_LOCATION)
+	)
 
 	client, err := minio.New(endpoint, &minio.Options{
 		Creds: credentials.NewStaticV4(id, secret, ""),
@@ -29,11 +35,11 @@ func New() *Upload {
 	}
 
 	up := &Upload{
-		Client:  client,
-		Context: context.Background(),
+		Client:   client,
+		Context:  context.Background(),
+		buckets:  buckets,
+		location: location,
 	}
-
-	autocreateBuckets := viper.GetBool(config.MINIO_AUTOCREATE_BUCKETS)
 
 	// if autocreate buckets environment variable is true, try to create buckets
 	if autocreateBuckets {
@@ -48,10 +54,9 @@ func New() *Upload {
 }
 
 func (up *Upload) autocreateBuckets() ([]*minio.BucketInfo, error) {
-	buckets := viper.GetStringSlice(config.MINIO_BUCKETS)
 	bucketInfo := make([]*minio.BucketInfo, 0)
 
-	for _, bucketName := range buckets {
+	for _, bucketName := range up.buckets {
 		// Check if a bucket exists. If it already exists, skip it.
 		if exists, _ := up.Client.BucketExists(up.Context, bucketName); !exists {
 			info, err := up.createBucket(bucketName)
@@ -68,10 +73,9 @@ func (up *Upload) autocreateBuckets() ([]*minio.BucketInfo, error) {
 }
 
 func (up *Upload) createBucket(bucket string) (*minio.BucketInfo, error) {
-	location := viper.GetString(config.MINIO_LOCATION)
 	// Create a bucket
 	err := up.Client.MakeBucket(up.Context, bucket, minio.MakeBucketOptions{
-		Region: location,
+		Region: up.location,
 	})
 
 	if err != nil {

@@ -3,34 +3,34 @@ package tasks
 import (
 	"encoding/json"
 	"log"
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/email"
 
 	"github.com/hibiken/asynq"
-	"github.com/spf13/viper"
 )
 
 type Tasks struct {
 	Client *asynq.Client
 	email  *email.EmailService
+	addr   string
 }
 
-func New(emailService *email.EmailService) *Tasks {
-	addr := viper.GetString(config.REDIS_ADDR)
-	client := asynq.NewClient(asynq.RedisClientOpt{
-		Addr: addr,
-	})
-
+func New(cfg *config.Configuration, emailService *email.EmailService) *Tasks {
+	addr := cfg.GetString(config.REDIS_ADDR)
 	return &Tasks{
-		Client: client,
-		email:  emailService,
+		Client: asynq.NewClient(asynq.RedisClientOpt{
+			Addr: addr,
+		}),
+		email: emailService,
+		addr:  addr,
 	}
 }
 
 func (t *Tasks) Run() {
-	addr := viper.GetString(config.REDIS_ADDR)
 	srv := asynq.NewServer(
-		asynq.RedisClientOpt{Addr: addr},
+		asynq.RedisClientOpt{
+			Addr: t.addr,
+		},
 		asynq.Config{
 			Concurrency: 10,
 		},

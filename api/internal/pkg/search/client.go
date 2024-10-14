@@ -1,9 +1,8 @@
 package search
 
 import (
-	"wanderlust/config"
+	"wanderlust/internal/pkg/config"
 
-	"github.com/spf13/viper"
 	"github.com/typesense/typesense-go/v2/typesense"
 )
 
@@ -11,9 +10,12 @@ type Search struct {
 	Client *typesense.Client
 }
 
-func New() *Search {
-	serverUrl := viper.GetString(config.SEARCH_SERVER_URL)
-	apiKey := viper.GetString(config.SEARCH_API_KEY)
+func New(cfg *config.Configuration) *Search {
+	var (
+		serverUrl = cfg.GetString(config.SEARCH_SERVER_URL)
+		apiKey    = cfg.GetString(config.SEARCH_API_KEY)
+	)
+
 	client := typesense.NewClient(
 		typesense.WithServer(serverUrl),
 		typesense.WithAPIKey(apiKey),
