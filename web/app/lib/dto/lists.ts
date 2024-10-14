@@ -33,10 +33,18 @@ export type GetListByIdResponseDto = {
   id: string;
   name: string;
   userId: string;
+  user: ListUserDto;
   isPublic: boolean;
   createdAt: string;
   updatedAt: string;
   items: ListItemDto[];
+};
+
+export type ListUserDto = {
+  id: string;
+  username: string;
+  fullName: string;
+  profileImage: string | null;
 };
 
 export type ListItemDto = {
