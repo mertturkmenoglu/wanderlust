@@ -17,7 +17,7 @@ func (r *repository) createList(dto CreateListRequestDto, userId string) (db.Lis
 	})
 }
 
-func (r *repository) getListById(id string) (db.List, error) {
+func (r *repository) getListById(id string) (db.GetListByIdRow, error) {
 	return r.di.Db.Queries.GetListById(context.Background(), id)
 }
 

@@ -16,15 +16,21 @@ func mapToCreateListResponseDto(v db.List) CreateListResponseDto {
 	}
 }
 
-func mapToGetListByIdResponseDto(list db.List, listItems []db.GetListItemsRow) GetListByIdResponseDto {
+func mapToGetListByIdResponseDto(list db.GetListByIdRow, listItems []db.GetListItemsRow) GetListByIdResponseDto {
 	return GetListByIdResponseDto{
-		ID:        list.ID,
-		Name:      list.Name,
-		UserID:    list.UserID,
-		IsPublic:  list.IsPublic,
-		CreatedAt: list.CreatedAt.Time,
-		UpdatedAt: list.UpdatedAt.Time,
-		Items:     mapListItemsToDto(listItems),
+		ID:        list.List.ID,
+		Name:      list.List.Name,
+		UserID:    list.List.UserID,
+		IsPublic:  list.List.IsPublic,
+		CreatedAt: list.List.CreatedAt.Time,
+		UpdatedAt: list.List.UpdatedAt.Time,
+		User: ListUserDto{
+			ID:           list.User.ID,
+			Username:     list.User.Username,
+			FullName:     list.User.FullName,
+			ProfileImage: utils.TextOrNil(list.User.ProfileImage),
+		},
+		Items: mapListItemsToDto(listItems),
 	}
 }
 

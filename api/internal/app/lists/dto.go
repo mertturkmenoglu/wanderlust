@@ -37,10 +37,18 @@ type GetListByIdResponseDto struct {
 	ID        string        `json:"id"`
 	Name      string        `json:"name"`
 	UserID    string        `json:"userId"`
+	User      ListUserDto   `json:"user"`
 	IsPublic  bool          `json:"isPublic"`
 	CreatedAt time.Time     `json:"createdAt"`
 	UpdatedAt time.Time     `json:"updatedAt"`
 	Items     []ListItemDto `json:"items"`
+}
+
+type ListUserDto struct {
+	ID           string  `json:"id"`
+	Username     string  `json:"username"`
+	FullName     string  `json:"fullName"`
+	ProfileImage *string `json:"profileImage"`
 }
 
 type ListItemDto struct {
