@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/smtp"
+	"wanderlust/internal/pkg/config"
 
 	jwEmail "github.com/jordan-wright/email"
-	"github.com/spf13/viper"
 )
 
 type EmailService struct {
@@ -17,14 +17,17 @@ type EmailService struct {
 	auth      smtp.Auth
 }
 
-func New() *EmailService {
-	from := viper.GetString("email.name")
-	fromEmail := viper.GetString("email.from")
-	addr := viper.GetString("smtp.addr")
-	identity := viper.GetString("smtp.identity")
-	username := viper.GetString("smtp.username")
-	password := viper.GetString("smtp.password")
-	host := viper.GetString("smtp.host")
+func New(cfg *config.Configuration) *EmailService {
+	var (
+		from      = cfg.GetString(config.EMAIL_NAME)
+		fromEmail = cfg.GetString(config.EMAIL_FROM)
+		addr      = cfg.GetString(config.SMTP_ADDR)
+		identity  = cfg.GetString(config.SMTP_IDENTITY)
+		username  = cfg.GetString(config.SMTP_USERNAME)
+		password  = cfg.GetString(config.SMTP_PASSWORD)
+		host      = cfg.GetString(config.SMTP_HOST)
+	)
+
 	auth := smtp.PlainAuth(identity, username, password, host)
 
 	return &EmailService{
