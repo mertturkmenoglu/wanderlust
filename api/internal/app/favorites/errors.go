@@ -3,9 +3,9 @@ package favorites
 import (
 	"errors"
 	"net/http"
-	"wanderlust/internal/app/api"
+	errs "wanderlust/internal/pkg/core/errors"
 )
 
 var (
-	ErrUsernameRequired = api.NewApiError(http.StatusBadRequest, "0500", errors.New("username is required"))
+	ErrUsernameRequired = errs.NewApiError(http.StatusBadRequest, "0500", errors.New("username is required"))
 )

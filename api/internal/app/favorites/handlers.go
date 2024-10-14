@@ -2,7 +2,7 @@ package favorites
 
 import (
 	"net/http"
-	"wanderlust/internal/app/api"
+	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/pagination"
 
 	"github.com/labstack/echo/v4"
@@ -18,7 +18,7 @@ func (h *handlers) createFavorite(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, api.Response{
+	return c.JSON(http.StatusCreated, core.Response{
 		Data: res,
 	})
 }
@@ -50,7 +50,7 @@ func (h *handlers) getUserFavorites(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.PaginatedResponse{
+	return c.JSON(http.StatusOK, core.PaginatedResponse{
 		Data:       res,
 		Pagination: pagination.Compute(params, count),
 	})
@@ -74,7 +74,7 @@ func (h *handlers) getUserFavoritesByUsername(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, api.PaginatedResponse{
+	return c.JSON(http.StatusOK, core.PaginatedResponse{
 		Data:       res,
 		Pagination: pagination.Compute(params, count),
 	})
