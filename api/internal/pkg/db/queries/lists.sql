@@ -104,8 +104,8 @@ WHERE list_id = $1 AND list_index > $2;
 DELETE FROM list_items
 WHERE list_id = $1;
 
--- name: GetListIdsOfUser :many
-SELECT id FROM lists
+-- name: GetListIdsAndNamesOfUser :many
+SELECT id, name FROM lists
 WHERE user_id = $1;
 
 -- name: GetListItemsInListStatus :many

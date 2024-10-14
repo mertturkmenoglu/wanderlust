@@ -265,24 +265,29 @@ func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, e
 	return i, err
 }
 
-const getListIdsOfUser = `-- name: GetListIdsOfUser :many
-SELECT id FROM lists
+const getListIdsAndNamesOfUser = `-- name: GetListIdsAndNamesOfUser :many
+SELECT id, name FROM lists
 WHERE user_id = $1
 `
 
-func (q *Queries) GetListIdsOfUser(ctx context.Context, userID string) ([]string, error) {
-	rows, err := q.db.Query(ctx, getListIdsOfUser, userID)
+type GetListIdsAndNamesOfUserRow struct {
+	ID   string
+	Name string
+}
+
+func (q *Queries) GetListIdsAndNamesOfUser(ctx context.Context, userID string) ([]GetListIdsAndNamesOfUserRow, error) {
+	rows, err := q.db.Query(ctx, getListIdsAndNamesOfUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []GetListIdsAndNamesOfUserRow
 	for rows.Next() {
-		var id string
-		if err := rows.Scan(&id); err != nil {
+		var i GetListIdsAndNamesOfUserRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
 			return nil, err
 		}
-		items = append(items, id)
+		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
