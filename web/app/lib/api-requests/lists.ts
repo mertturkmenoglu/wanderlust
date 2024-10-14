@@ -1,10 +1,13 @@
 import { Options } from "ky";
 import api from "../api";
 import {
+  CreateListItemRequestDto,
+  CreateListItemResponseDto,
   CreateListRequestDto,
   CreateListResponseDto,
   GetAllListsOfUserDto,
   GetListByIdResponseDto,
+  GetListStatusResponseDto,
   GetPublicListsOfUserDto,
   Pagination,
 } from "../dto";
@@ -46,4 +49,22 @@ export async function getPublicListsOfUser(
   return api
     .get(`lists/user/${username}?page=${page}&pageSize=${pageSize}`, options)
     .json<{ data: GetPublicListsOfUserDto; pagination: Pagination }>();
+}
+
+export async function getListStatus(poiId: string) {
+  return api
+    .get(`lists/status/${poiId}`)
+    .json<{ data: GetListStatusResponseDto }>();
+}
+
+export async function createListItem(listId: string, poiId: string) {
+  const dto: CreateListItemRequestDto = {
+    poiId,
+  };
+
+  return api
+    .post(`lists/${listId}/items`, {
+      json: dto,
+    })
+    .json<{ data: CreateListItemResponseDto }>();
 }

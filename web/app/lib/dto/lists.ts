@@ -107,3 +107,24 @@ export type ListItemPoiCategoryDto = {
   name: string;
   image: string;
 };
+
+export type CreateListItemRequestDto = {
+  poiId: string;
+};
+
+export type CreateListItemResponseDto = {
+  listId: string;
+  poiId: string;
+  listIndex: number;
+  createdAt: string;
+};
+
+export type ListStatusDto = {
+  id: string;
+  name: string;
+  includes: boolean;
+};
+
+export type GetListStatusResponseDto = {
+  statuses: ListStatusDto[];
+};
