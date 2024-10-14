@@ -94,3 +94,33 @@ func FnListDelete(s *Authz, c echo.Context) (bool, error) {
 
 	return false, echo.ErrForbidden
 }
+
+func FnListItemCreate(s *Authz, c echo.Context) (bool, error) {
+	listId := c.Param("id")
+
+	if listId == "" {
+		return false, echo.ErrBadRequest
+	}
+
+	list, err := s.Db.Queries.GetListById(context.Background(), listId)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, echo.ErrNotFound
+		}
+
+		return false, err
+	}
+
+	userId, ok := c.Get("user_id").(string)
+
+	if !ok {
+		return false, echo.ErrUnauthorized
+	}
+
+	if list.User.ID == userId {
+		return true, nil
+	}
+
+	return false, echo.ErrForbidden
+}
