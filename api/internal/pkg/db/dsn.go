@@ -2,38 +2,58 @@ package db
 
 import (
 	"fmt"
-	"wanderlust/config"
-
-	"github.com/spf13/viper"
+	"wanderlust/internal/pkg/config"
 )
 
+type databaseConfigVariables struct {
+	user     string
+	password string
+	host     string
+	name     string
+	port     int
+	timezone string
+}
+
+func getVariables() databaseConfigVariables {
+	cfg := config.GetConfiguration()
+
+	return databaseConfigVariables{
+		user:     cfg.GetString(config.DB_USER),
+		password: cfg.GetString(config.DB_PASSWORD),
+		host:     cfg.GetString(config.DB_HOST),
+		name:     cfg.GetString(config.DB_NAME),
+		port:     cfg.GetInt(config.DB_PORT),
+		timezone: cfg.GetString(config.DB_TIMEZONE),
+	}
+}
+
 func getDsnFromEnv() string {
-	dbUser := viper.GetString(config.DB_USER)
-	dbPassword := viper.GetString(config.DB_PASSWORD)
-	dbHost := viper.GetString(config.DB_HOST)
-	dbName := viper.GetString(config.DB_NAME)
-	dbPort := viper.GetInt(config.DB_PORT)
-	dbTimezone := viper.GetString(config.DB_TIMEZONE)
+	vars := getVariables()
+
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=%s",
-		dbHost,
-		dbUser,
-		dbPassword,
-		dbName,
-		dbPort,
-		dbTimezone,
+		vars.host,
+		vars.user,
+		vars.password,
+		vars.name,
+		vars.port,
+		vars.timezone,
 	)
 
 	return dsn
 }
 
 func getConnStringFromEnv() string {
-	dbUser := viper.GetString(config.DB_USER)
-	dbPassword := viper.GetString(config.DB_PASSWORD)
-	dbHost := viper.GetString(config.DB_HOST)
-	dbName := viper.GetString(config.DB_NAME)
-	dbPort := viper.GetInt(config.DB_PORT)
-	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
+	vars := getVariables()
+
+	connString := fmt.Sprintf(
+		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		vars.user,
+		vars.password,
+		vars.host,
+		vars.port,
+		vars.name,
+	)
 
 	return connString
 }
