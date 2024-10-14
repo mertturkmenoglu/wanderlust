@@ -10,6 +10,7 @@ import {
   GetListStatusResponseDto,
   GetPublicListsOfUserDto,
   Pagination,
+  UpdateListRequestDto,
 } from "../dto";
 
 export async function createList(dto: CreateListRequestDto) {
@@ -67,4 +68,10 @@ export async function createListItem(listId: string, poiId: string) {
       json: dto,
     })
     .json<{ data: CreateListItemResponseDto }>();
+}
+
+export async function updateList(id: string, dto: UpdateListRequestDto) {
+  return api.patch(`lists/${id}`, {
+    json: dto,
+  });
 }

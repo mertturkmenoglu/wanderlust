@@ -20,6 +20,11 @@ export type CreateListRequestDto = {
   isPublic: boolean;
 };
 
+export type UpdateListRequestDto = {
+  name: string;
+  isPublic: boolean;
+};
+
 export type CreateListResponseDto = {
   id: string;
   name: string;
