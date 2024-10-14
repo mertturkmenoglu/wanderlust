@@ -1,12 +1,12 @@
 package health
 
-import "wanderlust/internal/app/api"
+import "wanderlust/internal/pkg/core"
 
 type Module struct {
 	handlers *handlers
 }
 
-var _ api.IModule = (*Module)(nil)
+var _ core.AppModule = (*Module)(nil)
 
 type handlers struct {
 }
