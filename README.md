@@ -18,7 +18,6 @@ It's open source and free.
 - GNU Make
 - Air
 - Go Migrate
-- swaggo/swag
 - Node.js
 - pnpm
 
