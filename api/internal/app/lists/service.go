@@ -110,3 +110,7 @@ func (s *service) getListStatus(userId string, poiId string) (GetListStatusRespo
 
 	return v, nil
 }
+
+func (s *service) updateList(id string, dto UpdateListRequestDto) error {
+	return s.repository.updateList(id, dto)
+}

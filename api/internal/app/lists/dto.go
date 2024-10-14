@@ -26,6 +26,11 @@ type CreateListRequestDto struct {
 	IsPublic bool   `json:"isPublic" validate:"boolean"`
 }
 
+type UpdateListRequestDto struct {
+	Name     string `json:"name" validate:"required,min=1,max=128"`
+	IsPublic bool   `json:"isPublic" validate:"boolean"`
+}
+
 type CreateListResponseDto struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`

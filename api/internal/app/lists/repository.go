@@ -139,3 +139,11 @@ func (r *repository) getListStatus(userId string, poiId string) ([]ListStatusDto
 
 	return resultArr, nil
 }
+
+func (r *repository) updateList(id string, dto UpdateListRequestDto) error {
+	return r.di.Db.Queries.UpdateList(context.Background(), db.UpdateListParams{
+		ID:       id,
+		Name:     dto.Name,
+		IsPublic: dto.IsPublic,
+	})
+}
