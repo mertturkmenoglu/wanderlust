@@ -6,9 +6,22 @@ import {
 } from "~/hooks/use-autocomplete";
 import { ipx } from "~/lib/img-proxy";
 import CustomSearchBox from "../custom-search-box";
-import Card from "./card";
+import Card, { AutocompleteItemInfo } from "./card";
 
-export function Autocomplete(props: UseAutocompleteProps) {
+type Props = {
+  showAdvancedSearch?: boolean;
+  showAllResultsButton?: boolean;
+  isCardClickable?: boolean;
+  onCardClick?: (v: AutocompleteItemInfo) => void;
+} & UseAutocompleteProps;
+
+export function Autocomplete({
+  showAdvancedSearch = true,
+  showAllResultsButton = true,
+  isCardClickable = false,
+  onCardClick,
+  ...props
+}: Props) {
   const { indices, currentRefinement } = useAutocomplete(props);
   const hits = indices[0].hits;
 
@@ -17,12 +30,15 @@ export function Autocomplete(props: UseAutocompleteProps) {
 
   return (
     <div className="w-full">
-      <div className="text-sm leading-none tracking-tight">
-        Need more power? Try our{" "}
-        <Button variant="link" className="px-0 underline" asChild>
-          <Link to="/search">Advanced Search</Link>
-        </Button>
-      </div>
+      {showAdvancedSearch && (
+        <div className="text-sm leading-none tracking-tight">
+          Need more power? Try our{" "}
+          <Button variant="link" className="px-0 underline" asChild>
+            <Link to="/search">Advanced Search</Link>
+          </Button>
+        </div>
+      )}
+
       <CustomSearchBox isSearchOnType={true} />
 
       {showDropdown && (
@@ -36,10 +52,12 @@ export function Autocomplete(props: UseAutocompleteProps) {
               categoryName={hit.poi.Category.Name}
               city={hit.poi.City.Name}
               state={hit.poi.City.StateName}
+              isCardClickable={isCardClickable}
+              onCardClick={onCardClick}
             />
           ))}
 
-          {!isEmptyResult && (
+          {!isEmptyResult && showAllResultsButton && (
             <Button asChild variant="link">
               <Link to={`/search?locations%5Bquery%5D=${currentRefinement}`}>
                 See all results
