@@ -20,7 +20,7 @@ type Props = {
 
 export default function Bio({ className }: Props) {
   const auth = useContext(AuthContext);
-  const { user } = useLoaderData<typeof loader>();
+  const { user, meta } = useLoaderData<typeof loader>();
   const isThisUser = auth.user?.data.username === user.username;
 
   return (
@@ -46,7 +46,7 @@ export default function Bio({ className }: Props) {
             <ActionButtons
               loading={auth.isLoading}
               isThisUser={isThisUser}
-              isFollowing={false} // TODO: Update later
+              isFollowing={meta.isFollowing}
               username={user.username}
             />
 
