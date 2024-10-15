@@ -11,6 +11,7 @@ import (
 
 func (h *handlers) GetUserProfile(c echo.Context) error {
 	username := c.Param("username")
+	userId := c.Get("user_id").(string)
 
 	if username == "" {
 		return ErrUsernameNotProvided
@@ -24,8 +25,21 @@ func (h *handlers) GetUserProfile(c echo.Context) error {
 
 	v := mapGetUserProfileResponseToDto(res)
 
-	return c.JSON(http.StatusOK, core.Response{
+	var following = false
+
+	if userId != "" {
+		following, err = h.service.isUserFollowing(userId, res.ID)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return c.JSON(http.StatusOK, core.MetadataResponse{
 		Data: v,
+		Meta: echo.Map{
+			"isFollowing": following,
+		},
 	})
 }
 
@@ -120,4 +134,33 @@ func (h *handlers) UpdateBannerImage(c echo.Context) error {
 			"url": res,
 		},
 	})
+}
+
+func (h *handlers) FollowUser(c echo.Context) error {
+	username := c.Param("username")
+	userId := c.Get("user_id").(string)
+
+	if username == "" {
+		return ErrUsernameNotProvided
+	}
+
+	otherUser, err := h.service.GetUserProfile(username)
+
+	if err != nil {
+		return err
+	}
+
+	isFollowing, err := h.service.isUserFollowing(userId, otherUser.ID)
+
+	if err != nil {
+		return err
+	}
+
+	err = h.service.changeFollow(isFollowing, userId, otherUser.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
 }

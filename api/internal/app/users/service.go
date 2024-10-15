@@ -123,3 +123,25 @@ func (s *service) updateBannerImage(user db.User, mpf *multipart.Form) (string, 
 
 	return url, nil
 }
+
+func (s *service) isUserFollowing(thisUserId string, otherUserId string) (bool, error) {
+	if thisUserId == otherUserId {
+		return false, nil
+	}
+
+	isFollowing, err := s.repository.isUserFollowing(thisUserId, otherUserId)
+
+	if err != nil {
+		return false, err
+	}
+
+	return isFollowing, nil
+}
+
+func (s *service) changeFollow(isFollowing bool, thisUserId string, otherUserId string) error {
+	if isFollowing {
+		return s.repository.unfollow(thisUserId, otherUserId)
+	}
+
+	return s.repository.follow(thisUserId, otherUserId)
+}

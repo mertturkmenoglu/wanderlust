@@ -38,3 +38,100 @@ func (r *repository) updateBannerImage(userId string, imageUrl string) error {
 		BannerImage: utils.StrToText(imageUrl),
 	})
 }
+
+func (r *repository) isUserFollowing(thisUserId string, otherUserId string) (bool, error) {
+	res, err := r.di.Db.Queries.IsUserFollowing(context.Background(), db.IsUserFollowingParams{
+		FollowerID:  thisUserId,
+		FollowingID: otherUserId,
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return res, nil
+}
+
+func (r *repository) follow(thisUserId string, otherUserId string) error {
+	ctx := context.Background()
+	tx, err := r.di.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := r.di.Db.Queries.WithTx(tx)
+
+	err = qtx.Follow(ctx, db.FollowParams{
+		FollowerID:  thisUserId,
+		FollowingID: otherUserId,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = qtx.IncrUserFollowers(ctx, otherUserId)
+
+	if err != nil {
+		return err
+	}
+
+	err = qtx.IncrUserFollowing(ctx, thisUserId)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *repository) unfollow(thisUserId string, otherUserId string) error {
+	ctx := context.Background()
+	tx, err := r.di.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := r.di.Db.Queries.WithTx(tx)
+
+	err = qtx.Unfollow(ctx, db.UnfollowParams{
+		FollowerID:  thisUserId,
+		FollowingID: otherUserId,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = qtx.DecrUserFollowers(ctx, otherUserId)
+
+	if err != nil {
+		return err
+	}
+
+	err = qtx.DecrUserFollowing(ctx, thisUserId)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
