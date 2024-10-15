@@ -11,7 +11,7 @@ export default function Step1({ form }: Props) {
   return (
     <div className="w-full mt-16 max-w-xl mx-auto">
       <div className="text-lg text-muted-foreground text-center">
-        Let's start with giving your memory a title.
+        Let's start with giving your entry a title.
       </div>
       <label htmlFor="title" className="mt-16 block">
         Title
