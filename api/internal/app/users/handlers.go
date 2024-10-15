@@ -164,3 +164,39 @@ func (h *handlers) FollowUser(c echo.Context) error {
 
 	return c.NoContent(http.StatusNoContent)
 }
+
+func (h *handlers) GetUserFollowers(c echo.Context) error {
+	username := c.Param("username")
+
+	if username == "" {
+		return ErrUsernameNotProvided
+	}
+
+	res, err := h.service.getUserFollowers(username)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
+}
+
+func (h *handlers) GetUserFollowing(c echo.Context) error {
+	username := c.Param("username")
+
+	if username == "" {
+		return ErrUsernameNotProvided
+	}
+
+	res, err := h.service.getUserFollowing(username)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
+}

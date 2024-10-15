@@ -145,3 +145,39 @@ func (s *service) changeFollow(isFollowing bool, thisUserId string, otherUserId 
 
 	return s.repository.follow(thisUserId, otherUserId)
 }
+
+func (s *service) getUserFollowers(username string) (GetUserFollowersResponseDto, error) {
+	user, err := s.GetUserProfile(username)
+
+	if err != nil {
+		return GetUserFollowersResponseDto{}, err
+	}
+
+	res, err := s.repository.getUserFollowers(user.ID)
+
+	if err != nil {
+		return GetUserFollowersResponseDto{}, err
+	}
+
+	v := mapToGetUserFollowersResponseDto(res)
+
+	return v, nil
+}
+
+func (s *service) getUserFollowing(username string) (GetUserFollowingResponseDto, error) {
+	user, err := s.GetUserProfile(username)
+
+	if err != nil {
+		return GetUserFollowingResponseDto{}, err
+	}
+
+	res, err := s.repository.getUserFollowing(user.ID)
+
+	if err != nil {
+		return GetUserFollowingResponseDto{}, err
+	}
+
+	v := mapToGetUserFollowingResponseDto(res)
+
+	return v, nil
+}

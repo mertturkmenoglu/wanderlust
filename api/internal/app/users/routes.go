@@ -10,6 +10,8 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/users")
 	{
 		routes.GET("/:username", m.handlers.GetUserProfile, middlewares.WithAuth)
+		routes.GET("/:username/followers", m.handlers.GetUserFollowers)
+		routes.GET("/:username/following", m.handlers.GetUserFollowing)
 		routes.POST("/:username/make-verified", m.handlers.MakeUserVerified)
 		routes.PATCH("/profile", m.handlers.UpdateUserProfile, middlewares.ParseBody[UpdateUserProfileRequestDto], middlewares.IsAuth)
 		routes.POST("/profile-image", m.handlers.UpdateProfileImage, middlewares.IsAuth)

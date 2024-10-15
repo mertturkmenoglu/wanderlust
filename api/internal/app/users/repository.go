@@ -135,3 +135,23 @@ func (r *repository) unfollow(thisUserId string, otherUserId string) error {
 
 	return nil
 }
+
+func (r *repository) getUserFollowers(userId string) ([]db.GetUserFollowersRow, error) {
+	res, err := r.di.Db.Queries.GetUserFollowers(context.Background(), userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (r *repository) getUserFollowing(userId string) ([]db.GetUserFollowingRow, error) {
+	res, err := r.di.Db.Queries.GetUserFollowing(context.Background(), userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}

@@ -28,3 +28,11 @@ type UpdateUserProfileRequestDto struct {
 }
 
 type UpdateUserProfileResponseDto = GetUserProfileResponseDto
+
+type GetUserFollowersResponseDto struct {
+	Followers []GetUserProfileResponseDto `json:"followers"`
+}
+
+type GetUserFollowingResponseDto struct {
+	Following []GetUserProfileResponseDto `json:"following"`
+}
