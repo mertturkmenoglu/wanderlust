@@ -61,7 +61,7 @@ export default function Card({
               state,
             })
           }
-          className="flex gap-8"
+          className="flex gap-8 text-left"
         >
           {innerContent}
         </button>
