@@ -24,3 +24,11 @@ export type UpdateUserProfileRequestDto = {
 };
 
 export type UpdateUserProfileResponseDto = GetUserProfileResponseDto;
+
+export type GetUserFollowersResponseDto = {
+  followers: GetUserProfileResponseDto[];
+};
+
+export type GetUserFollowingResponseDto = {
+  following: GetUserProfileResponseDto[];
+};

@@ -1,6 +1,8 @@
 import { Options } from "ky";
 import api from "../api";
 import {
+  GetUserFollowersResponseDto,
+  GetUserFollowingResponseDto,
   GetUserProfileResponseDto,
   UpdateUserProfileRequestDto,
   UpdateUserProfileResponseDto,
@@ -35,4 +37,16 @@ export async function updateBannerImage(formData: FormData) {
 
 export async function follow(username: string) {
   return api.post(`users/follow/${username}`);
+}
+
+export async function getUserFollowers(username: string) {
+  return api
+    .get(`users/${username}/followers`)
+    .json<{ data: GetUserFollowersResponseDto }>();
+}
+
+export async function getUserFollowing(username: string) {
+  return api
+    .get(`users/${username}/following`)
+    .json<{ data: GetUserFollowingResponseDto }>();
 }
