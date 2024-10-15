@@ -110,6 +110,28 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const decrUserFollowers = `-- name: DecrUserFollowers :exec
+UPDATE users
+SET followers_count = followers_count - 1
+WHERE id = $1
+`
+
+func (q *Queries) DecrUserFollowers(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, decrUserFollowers, id)
+	return err
+}
+
+const decrUserFollowing = `-- name: DecrUserFollowing :exec
+UPDATE users
+SET following_count = following_count - 1
+WHERE id = $1
+`
+
+func (q *Queries) DecrUserFollowing(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, decrUserFollowing, id)
+	return err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
 WHERE email = $1 LIMIT 1
@@ -372,6 +394,28 @@ func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string)
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const incrUserFollowers = `-- name: IncrUserFollowers :exec
+UPDATE users
+SET followers_count = followers_count + 1
+WHERE id = $1
+`
+
+func (q *Queries) IncrUserFollowers(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, incrUserFollowers, id)
+	return err
+}
+
+const incrUserFollowing = `-- name: IncrUserFollowing :exec
+UPDATE users
+SET following_count = following_count + 1
+WHERE id = $1
+`
+
+func (q *Queries) IncrUserFollowing(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, incrUserFollowing, id)
+	return err
 }
 
 const isAdmin = `-- name: IsAdmin :one

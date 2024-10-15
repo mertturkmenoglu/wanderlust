@@ -139,3 +139,23 @@ WHERE id = $1;
 UPDATE users
 SET banner_image = $2
 WHERE id = $1;
+
+-- name: IncrUserFollowers :exec
+UPDATE users
+SET followers_count = followers_count + 1
+WHERE id = $1;
+
+-- name: DecrUserFollowers :exec
+UPDATE users
+SET followers_count = followers_count - 1
+WHERE id = $1;
+
+-- name: IncrUserFollowing :exec
+UPDATE users
+SET following_count = following_count + 1
+WHERE id = $1;
+
+-- name: DecrUserFollowing :exec
+UPDATE users
+SET following_count = following_count - 1
+WHERE id = $1;
