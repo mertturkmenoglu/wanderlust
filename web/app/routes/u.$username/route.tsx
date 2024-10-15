@@ -1,13 +1,26 @@
-import { json, LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
+import {
+  json,
+  LoaderFunctionArgs,
+  type MetaFunction,
+  redirect,
+} from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { getUserByUsername } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
 import Bio from "./__components/bio";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   invariant(params.username, "username is missing");
-  const res = await getUserByUsername(params.username);
-  return json({ user: res.data });
+  try {
+    const Cookie = getCookiesFromRequest(request);
+    const res = await getUserByUsername(params.username, {
+      headers: { Cookie },
+    });
+    return json({ user: res.data, meta: res.meta });
+  } catch (e) {
+    throw redirect("/");
+  }
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
