@@ -2,6 +2,7 @@ import { InstantSearch } from "react-instantsearch";
 import { ClientOnly } from "remix-utils/client-only";
 import { Autocomplete } from "~/components/blocks/autocomplete";
 import { Card } from "~/components/ui/card";
+import { Separator } from "~/components/ui/separator";
 import { useSearchClient } from "~/hooks/use-search-client";
 import { FormType } from "./hooks";
 
@@ -47,9 +48,16 @@ export default function Step2({ form }: Props) {
                 />
               </InstantSearch>
 
+              <Separator className="my-8" />
+
               <h3 className="mt-8 text-lg font-bold tracking-tight">
                 Selected Locations
               </h3>
+              {form.watch("locations").length === 0 && (
+                <div className="text-center text-sm text-muted-foreground my-8">
+                  No locations selected
+                </div>
+              )}
               {form.watch("locations").map((l) => (
                 <Card key={l.id} className="mt-4 flex gap-8 p-4">
                   <img
