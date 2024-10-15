@@ -1,11 +1,12 @@
 "use client";
 
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
+import { Link, useRevalidator } from "@remix-run/react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Spinner from "~/components/kit/spinner";
 import { Button } from "~/components/ui/button";
+import { follow } from "~/lib/api-requests";
 
 type Props = {
   loading: boolean;
@@ -20,13 +21,14 @@ export default function ActionButtons({
   isFollowing,
   username,
 }: Props) {
+  const revalidator = useRevalidator();
+
   const mutation = useMutation({
     mutationKey: ["follow", username],
-    mutationFn: async () => {
-      // TODO: Implement later
-    },
+    mutationFn: async () => follow(username),
     onSettled: async () => {
-      // TODO: Implement later
+      toast.success(isFollowing ? "Unfollowed" : "Followed");
+      revalidator.revalidate();
     },
     onError: () => {
       toast.error("Something went wrong");
@@ -57,7 +59,7 @@ export default function ActionButtons({
           onClick={handleFollowClick}
           disabled={mutation.isPending}
         >
-          {isFollowing ? "Unfollow" : "Follow"}
+          {isFollowing ? "Following" : "Follow"}
           {mutation.isPending && (
             <ReloadIcon className="ml-2 size-4 animate-spin" />
           )}
