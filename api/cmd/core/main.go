@@ -14,6 +14,7 @@ import (
 	"wanderlust/internal/app/categories"
 	"wanderlust/internal/app/cities"
 	"wanderlust/internal/app/collections"
+	"wanderlust/internal/app/diary"
 	"wanderlust/internal/app/favorites"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/app/lists"
@@ -104,6 +105,7 @@ func New() *core.Application {
 		categories.New(&application.SharedModules),
 		cities.New(&application.SharedModules),
 		collections.New(&application.SharedModules),
+		diary.New(&application.SharedModules),
 		favorites.New(&application.SharedModules),
 		health.New(),
 		lists.New(&application.SharedModules),
