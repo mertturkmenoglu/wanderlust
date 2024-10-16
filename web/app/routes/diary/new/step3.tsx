@@ -20,12 +20,11 @@ export default function Step3({ form }: Props) {
       <textarea
         id="description"
         className={cn(
-          "flex w-full border-b border-input bg-transparent py-1 text-base mt-4 px-1 [field-sizing:content]"
+          "flex w-full border-b border-input bg-transparent py-1 text-base mt-4 px-1 leading-6 min-h-60 [field-sizing:content] max-h-[45rem]"
         )}
         placeholder="Describe how was your trip"
         autoComplete="off"
         spellCheck={false}
-        rows={10}
         {...form.register("description")}
       />
       <InputInfo text={lengthTracker(form.watch("description"), 4096)} />
