@@ -17,7 +17,7 @@ export const steps = [
   },
   {
     step: 5,
-    content: "Share with Friends",
+    content: "Friends",
   },
   {
     step: 6,
