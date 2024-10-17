@@ -16,6 +16,7 @@ export const schema = z.object({
       })
     )
     .default([]),
+  friendSearch: z.string().min(1).max(128).default(""),
 });
 
 export type FormInput = z.infer<typeof schema>;

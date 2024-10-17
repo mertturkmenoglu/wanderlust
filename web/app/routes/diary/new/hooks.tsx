@@ -10,6 +10,7 @@ export function useNewDiaryEntryForm() {
       description: "",
       shareWithFriends: false,
       locations: [],
+      friendSearch: "",
     },
   });
 }
