@@ -4,6 +4,7 @@ import {
   GetUserFollowersResponseDto,
   GetUserFollowingResponseDto,
   GetUserProfileResponseDto,
+  SearchUserFollowingResponseDto,
   UpdateUserProfileRequestDto,
   UpdateUserProfileResponseDto,
 } from "../dto";
@@ -49,4 +50,15 @@ export async function getUserFollowing(username: string) {
   return api
     .get(`users/${username}/following`)
     .json<{ data: GetUserFollowingResponseDto }>();
+}
+
+export async function searchUserFollowing(
+  thisUsername: string,
+  searchUsername: string
+) {
+  return api
+    .get(`users/${thisUsername}/following/search?username=${searchUsername}`)
+    .json<{
+      data: SearchUserFollowingResponseDto;
+    }>();
 }
