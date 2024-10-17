@@ -155,3 +155,16 @@ func (r *repository) getUserFollowing(userId string) ([]db.GetUserFollowingRow, 
 
 	return res, nil
 }
+
+func (r *repository) searchUserFollowing(userId string, username string) ([]db.SearchUserFollowingRow, error) {
+	res, err := r.di.Db.Queries.SearchUserFollowing(context.Background(), db.SearchUserFollowingParams{
+		FollowerID: userId,
+		Username:   username,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}

@@ -200,3 +200,22 @@ func (h *handlers) GetUserFollowing(c echo.Context) error {
 		Data: res,
 	})
 }
+
+func (h *handlers) SearchUserFollowing(c echo.Context) error {
+	userId := c.Get("user_id").(string)
+	username := c.QueryParam("username")
+
+	if username == "" {
+		return ErrUsernameNotProvided
+	}
+
+	res, err := h.service.searchUserFollowing(userId, username)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
+}

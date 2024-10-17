@@ -181,3 +181,15 @@ func (s *service) getUserFollowing(username string) (GetUserFollowingResponseDto
 
 	return v, nil
 }
+
+func (s *service) searchUserFollowing(userId string, username string) (SearchUserFollowingResponseDto, error) {
+	res, err := s.repository.searchUserFollowing(userId, username)
+
+	if err != nil {
+		return SearchUserFollowingResponseDto{}, err
+	}
+
+	v := mapToSearchUserFollowingResponseDto(res)
+
+	return v, nil
+}

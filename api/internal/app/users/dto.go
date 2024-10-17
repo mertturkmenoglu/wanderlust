@@ -36,3 +36,7 @@ type GetUserFollowersResponseDto struct {
 type GetUserFollowingResponseDto struct {
 	Following []GetUserProfileResponseDto `json:"following"`
 }
+
+type SearchUserFollowingResponseDto struct {
+	Friends []GetUserProfileResponseDto `json:"friends"`
+}

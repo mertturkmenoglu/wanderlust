@@ -67,6 +67,18 @@ func mapToGetUserFollowingResponseDto(v []db.GetUserFollowingRow) GetUserFollowi
 	}
 }
 
+func mapToSearchUserFollowingResponseDto(v []db.SearchUserFollowingRow) SearchUserFollowingResponseDto {
+	friends := make([]GetUserProfileResponseDto, 0)
+
+	for _, friend := range v {
+		friends = append(friends, mapToGetUserProfileResponseDto(friend.User))
+	}
+
+	return SearchUserFollowingResponseDto{
+		Friends: friends,
+	}
+}
+
 func mapToGetUserProfileResponseDto(v db.User) GetUserProfileResponseDto {
 	return GetUserProfileResponseDto{
 		ID:                v.ID,
