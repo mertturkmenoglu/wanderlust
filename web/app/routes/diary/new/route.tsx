@@ -6,6 +6,7 @@ import Nav from "./nav";
 import Step1 from "./step1";
 import Step2 from "./step2";
 import Step3 from "./step3";
+import Step5 from "./step5";
 import Stepper from "./stepper";
 import { steps } from "./steps";
 
@@ -42,6 +43,7 @@ export default function Page() {
       {currentStep === 1 && <Step1 form={form} />}
       {currentStep === 2 && <Step2 form={form} />}
       {currentStep === 3 && <Step3 form={form} />}
+      {currentStep === 5 && <Step5 form={form} />}
 
       <Nav currentStep={currentStep} setCurrentStep={setCurrentStep} />
     </div>
