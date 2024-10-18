@@ -14,9 +14,15 @@ export default function Step3({ form }: Props) {
       <div className="text-lg text-muted-foreground text-center">
         Now describe your trip in detail.
       </div>
-      <label htmlFor="description" className="mt-16 block">
-        Description
-      </label>
+      <input
+        id="date"
+        type="date"
+        className={cn("flex bg-transparent text-base ml-auto mt-4")}
+        placeholder="Select the date"
+        {...form.register("date", { valueAsDate: true })}
+      />
+      <InputError error={form.formState.errors.date} />
+
       <textarea
         id="description"
         className={cn(

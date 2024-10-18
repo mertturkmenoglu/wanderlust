@@ -11,6 +11,7 @@ export function useNewDiaryEntryForm() {
       shareWithFriends: false,
       locations: [],
       friendSearch: "",
+      date: new Date(),
     },
   });
 }

@@ -4,6 +4,7 @@ export const schema = z.object({
   title: z.string().min(1).max(128).default(""),
   description: z.string().min(1).max(4096).default(""),
   shareWithFriends: z.boolean().default(false),
+  date: z.date().default(new Date()),
   locations: z
     .array(
       z.object({
