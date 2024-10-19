@@ -52,7 +52,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         status: 404,
       });
     } else {
-      console.log({ status });
       throw json("Something went wrong", {
         status: status ?? 500,
       });
