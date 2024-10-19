@@ -112,7 +112,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto my-8">
-      <BackLink href="/lists" text="Go back to lists" />
+      <BackLink href={`/lists/${list.id}`} text="Go back to the list page" />
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl tracking-tighter">Editing: {list.name}</h2>
