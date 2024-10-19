@@ -91,7 +91,7 @@ export default function Page() {
       </div>
       <div>
         <Link
-          to={`/lists/${list.id}/items/edit`}
+          to={`/lists/${list.id}/items`}
           className={cn("my-4", buttonVariants({ variant: "outline" }))}
         >
           Edit List Items
