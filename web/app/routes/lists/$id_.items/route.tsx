@@ -76,9 +76,12 @@ export default function Page() {
 
   return (
     <div className="container mx-auto my-8">
-      <BackLink href="/lists" text="Go back to lists" />
+      <BackLink
+        href={`/lists/${list.id}`}
+        text="Go back to the edit list page"
+      />
       <div>
-        <div>This is the list items page</div>
+        <div>This is the edit list items page</div>
       </div>
     </div>
   );
