@@ -60,7 +60,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         status: 401,
       });
     } else if (status === 403) {
-      throw json("You do not have permissions to view this list", {
+      throw json("You do not have permissions to edit this list", {
         status: 403,
       });
     } else if (status === 404) {
