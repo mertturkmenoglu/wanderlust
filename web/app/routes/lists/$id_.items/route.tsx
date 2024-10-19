@@ -11,7 +11,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     const Cookie = getCookiesFromRequest(request);
     const auth = await getMe({ headers: { Cookie } });
-    const list = await getListById(params.id);
+    const list = await getListById(params.id, { headers: { Cookie } });
 
     if (!list.data) {
       throw json("List not found", {
