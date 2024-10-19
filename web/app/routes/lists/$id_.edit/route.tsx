@@ -17,7 +17,7 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { getListById, updateList } from "~/lib/api";
+import { getListById, getMe, updateList } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { cn } from "~/lib/utils";
 
@@ -26,18 +26,51 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   try {
     const Cookie = getCookiesFromRequest(request);
-    const res = await getListById(params.id, { headers: { Cookie } });
-    return json({ list: res.data });
+    const auth = await getMe({ headers: { Cookie } });
+    const list = await getListById(params.id, { headers: { Cookie } });
+
+    if (!list.data) {
+      throw json("List not found", {
+        status: 404,
+      });
+    }
+
+    if (!auth.data) {
+      throw json("You are not signed in", {
+        status: 401,
+      });
+    }
+
+    if (list.data.userId !== auth.data.id) {
+      throw json("You do not have permission to edit this list", {
+        status: 403,
+      });
+    }
+
+    return json({ list: list.data });
   } catch (e) {
-    const status = (e as any)?.response?.status;
-    if (status === 401 || status === 403) {
+    let status = (e as any)?.response?.status;
+
+    if (status === undefined) {
+      status = (e as any)?.status;
+    }
+
+    if (status === 401) {
+      throw json("You are not signed in", {
+        status: 401,
+      });
+    } else if (status === 403) {
       throw json("You do not have permissions to view this list", {
         status: 403,
       });
     } else if (status === 404) {
-      throw json("List not found", { status: 404 });
+      throw json("List not found", {
+        status: 404,
+      });
     } else {
-      throw json("Something went wrong", { status: status ?? 500 });
+      throw json("Something went wrong", {
+        status: status ?? 500,
+      });
     }
   }
 }
