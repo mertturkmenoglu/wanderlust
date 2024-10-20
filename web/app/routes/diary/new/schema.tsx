@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const schema = z.object({
-  title: z.string().min(1).max(128).default(""),
-  description: z.string().min(1).max(4096).default(""),
+  title: z.string().min(1).max(128).default("").catch(""),
+  description: z.string().min(1).max(4096).default("").catch(""),
   shareWithFriends: z.boolean().default(false),
-  date: z.date().default(new Date()),
+  date: z.coerce.date().default(new Date()),
   locations: z
     .array(
       z.object({
@@ -17,7 +17,7 @@ export const schema = z.object({
       })
     )
     .default([]),
-  friendSearch: z.string().min(1).max(128).default(""),
+  friendSearch: z.string().default(""),
 });
 
 export type FormInput = z.infer<typeof schema>;
