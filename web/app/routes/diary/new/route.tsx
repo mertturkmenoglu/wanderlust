@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { json, redirect, useLoaderData } from "@remix-run/react";
+import { toast } from "sonner";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
 import { getMe } from "~/lib/api";
@@ -50,10 +51,13 @@ export function meta() {
 
 clientLoader.hydrate = true;
 
+type SaveStatus = "saving" | "saved" | "idle";
+
 export default function Page() {
   const { baseApiUrl } = useLoaderData<typeof clientLoader>();
   const form = useNewDiaryEntryForm();
   const [currentStep, setCurrentStep] = useState(1);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
 
   const title = form.watch("title");
   const displayTitle = useMemo(() => {
@@ -64,10 +68,19 @@ export default function Page() {
     return "New Diary Entry";
   }, [title]);
 
-  const saveToLocalStorage = () => {
-    if (form !== null) {
-      localStorage.setItem("diary-entry", JSON.stringify(form.getValues()));
-    }
+  const saveToLocalStorage = async () => {
+    setSaveStatus("saving");
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    localStorage.setItem("diary-entry", JSON.stringify(form.getValues()));
+    setSaveStatus("saved");
+
+    toast.success("Diary entry saved");
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    setSaveStatus("idle");
   };
 
   useEffect(() => {
@@ -78,12 +91,9 @@ export default function Page() {
     }
 
     try {
-      const asObject = JSON.parse(v);
-      const parsed = schema.parse(asObject);
+      const parsed = schema.parse(JSON.parse(v));
       form.reset(parsed);
-    } catch (e) {
-      console.log("try catch", e);
-    }
+    } catch (e) {}
   }, []);
 
   return (
@@ -92,8 +102,16 @@ export default function Page() {
 
       <div className="flex items-center gap-4 mt-8">
         <h2 className="text-4xl">{displayTitle}</h2>
-        <Button onClick={saveToLocalStorage} variant="link">
-          Save
+        <Button
+          onClick={saveToLocalStorage}
+          variant="link"
+          disabled={saveStatus !== "idle"}
+        >
+          {saveStatus === "saving"
+            ? "Saving..."
+            : saveStatus === "saved"
+            ? "Saved"
+            : "Save"}
         </Button>
       </div>
 
