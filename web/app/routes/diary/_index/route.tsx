@@ -37,7 +37,7 @@ export default function Page() {
 
       <div>
         <AppMessage
-          emptyMessage="This user has no diary entries yet"
+          emptyMessage="You have no diary entries yet"
           className="my-16"
           showBackButton={false}
         />
