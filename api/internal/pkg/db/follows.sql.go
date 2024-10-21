@@ -180,6 +180,7 @@ FROM follows
   LEFT JOIN users ON users.id = follows.following_id
 WHERE follows.follower_id = $1 AND users.username ILIKE $2
 ORDER BY follows.created_at DESC
+LIMIT 25
 `
 
 type SearchUserFollowingParams struct {
