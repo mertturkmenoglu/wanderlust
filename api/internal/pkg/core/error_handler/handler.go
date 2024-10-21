@@ -2,7 +2,7 @@ package errorhandler
 
 import (
 	"wanderlust/internal/pkg/config"
-	"wanderlust/internal/pkg/core/errors"
+	errs "wanderlust/internal/pkg/core/errors"
 	"wanderlust/internal/pkg/logs"
 
 	"github.com/labstack/echo/v4"
