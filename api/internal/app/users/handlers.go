@@ -5,6 +5,7 @@ import (
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/upload"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -207,6 +208,12 @@ func (h *handlers) SearchUserFollowing(c echo.Context) error {
 
 	if username == "" {
 		return ErrUsernameNotProvided
+	}
+
+	ok := utils.IsValidUsername(username)
+
+	if !ok {
+		return ErrInvalidUsername
 	}
 
 	res, err := h.service.searchUserFollowing(userId, username)
