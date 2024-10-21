@@ -12,7 +12,7 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.GET("/:username", m.handlers.GetUserProfile, middlewares.WithAuth)
 		routes.GET("/:username/followers", m.handlers.GetUserFollowers)
 		routes.GET("/:username/following", m.handlers.GetUserFollowing)
-		routes.GET("/:username/following/search", m.handlers.SearchUserFollowing)
+		routes.GET("/following/search", m.handlers.SearchUserFollowing, middlewares.IsAuth)
 		routes.POST("/:username/make-verified", m.handlers.MakeUserVerified)
 		routes.PATCH("/profile", m.handlers.UpdateUserProfile, middlewares.ParseBody[UpdateUserProfileRequestDto], middlewares.IsAuth)
 		routes.POST("/profile-image", m.handlers.UpdateProfileImage, middlewares.IsAuth)
