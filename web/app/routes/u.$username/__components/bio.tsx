@@ -27,7 +27,7 @@ export default function Bio({ className }: Props) {
     <div className={cn("", className)}>
       <Banner userBannerImage={user.bannerImage ?? undefined}>
         <div className="mt-4 flex flex-col md:flex-row items-center justify-between">
-          <div className="flex flex-col md:flex-row md:items-center gap-8 items-start">
+          <div className="flex flex-col md:flex-row md:items-center gap-8">
             <UserImage
               src={ipx(`http://${user.profileImage ?? ""}`, "w_512")}
               imgClassName="size-48 md:size-32 ring-4 ring-white"
