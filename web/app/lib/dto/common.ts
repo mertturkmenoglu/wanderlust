@@ -6,3 +6,14 @@ export type Pagination = {
   hasPrevious: boolean;
   hasNext: boolean;
 };
+
+export type ErrorResponse = {
+  errors: ErrorDto[];
+};
+
+export type ErrorDto = {
+  status: string;
+  code: string;
+  title: string;
+  detail: string;
+};
