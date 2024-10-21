@@ -52,13 +52,8 @@ export async function getUserFollowing(username: string) {
     .json<{ data: GetUserFollowingResponseDto }>();
 }
 
-export async function searchUserFollowing(
-  thisUsername: string,
-  searchUsername: string
-) {
-  return api
-    .get(`users/${thisUsername}/following/search?username=${searchUsername}`)
-    .json<{
-      data: SearchUserFollowingResponseDto;
-    }>();
+export async function searchUserFollowing(searchUsername: string) {
+  return api.get(`users/following/search?username=${searchUsername}`).json<{
+    data: SearchUserFollowingResponseDto;
+  }>();
 }
