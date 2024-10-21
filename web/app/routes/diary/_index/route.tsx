@@ -1,9 +1,27 @@
-import { Link } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { json, Link } from "@remix-run/react";
 import { BookMarkedIcon, PlusIcon } from "lucide-react";
 import AppMessage from "~/components/blocks/app-message";
 import { buttonVariants } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import { getMe } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
 import { cn } from "~/lib/utils";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  try {
+    const Cookie = getCookiesFromRequest(request);
+    const auth = await getMe({ headers: { Cookie } });
+
+    if (!auth.data) {
+      throw redirect("/");
+    }
+
+    return json({ auth: auth.data });
+  } catch (e) {
+    throw redirect("/");
+  }
+}
 
 export function meta() {
   return [
