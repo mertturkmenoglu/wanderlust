@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"fmt"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/utils"
 )
@@ -159,7 +160,7 @@ func (r *repository) getUserFollowing(userId string) ([]db.GetUserFollowingRow, 
 func (r *repository) searchUserFollowing(userId string, username string) ([]db.SearchUserFollowingRow, error) {
 	res, err := r.di.Db.Queries.SearchUserFollowing(context.Background(), db.SearchUserFollowingParams{
 		FollowerID: userId,
-		Username:   username,
+		Username:   fmt.Sprintf("%%%s%%", username),
 	})
 
 	if err != nil {
