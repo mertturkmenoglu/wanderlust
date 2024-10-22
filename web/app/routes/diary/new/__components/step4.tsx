@@ -2,7 +2,7 @@ import { Uppy } from "@uppy/core";
 import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
 import XHRUpload from "@uppy/xhr-upload";
 import { useState } from "react";
-import { FormType } from "./hooks";
+import { FormType } from "../hooks";
 
 import "@uppy/core/dist/style.min.css";
 import "@uppy/dashboard/dist/style.min.css";

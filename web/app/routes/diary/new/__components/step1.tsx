@@ -1,7 +1,7 @@
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
 import { cn } from "~/lib/utils";
-import { FormType } from "./hooks";
+import { FormType } from "../hooks";
 
 type Props = {
   form: FormType;
