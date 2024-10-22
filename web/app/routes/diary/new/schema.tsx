@@ -17,6 +17,16 @@ export const schema = z.object({
       })
     )
     .default([]),
+  friends: z
+    .array(
+      z.object({
+        id: z.string(),
+        username: z.string(),
+        fullName: z.string(),
+        profileImage: z.string().nullable(),
+      })
+    )
+    .default([]),
   friendSearch: z.string().default(""),
 });
 
