@@ -1,9 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
 import { FormInput, schema } from "./schema";
 
 export function useNewDiaryEntryForm() {
-  return useForm<FormInput>({
+  const form = useForm<FormInput>({
     resolver: zodResolver(schema),
     defaultValues: {
       title: "",
@@ -14,6 +16,59 @@ export function useNewDiaryEntryForm() {
       date: new Date(),
     },
   });
+
+  useEffect(() => {
+    const v = localStorage.getItem("diary-entry");
+
+    if (!v) {
+      return;
+    }
+
+    try {
+      const parsed = schema.parse(JSON.parse(v));
+      form.reset(parsed);
+    } catch (e) {}
+  }, []);
+
+  return form;
 }
 
 export type FormType = UseFormReturn<FormInput, any, undefined>;
+
+export type SaveStatus = "saving" | "saved" | "idle";
+
+export function useSaveToLocalStorage(form: FormType) {
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+
+  const saveToLocalStorage = async () => {
+    setSaveStatus("saving");
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    localStorage.setItem(
+      "diary-entry",
+      JSON.stringify({ ...form.getValues(), friendSearch: "" })
+    );
+    setSaveStatus("saved");
+
+    toast.success("Diary entry saved");
+
+    await new Promise((res) => setTimeout(res, 1000));
+
+    setSaveStatus("idle");
+  };
+
+  const saveText = useMemo(() => {
+    if (saveStatus === "saving") {
+      return "Saving...";
+    }
+
+    if (saveStatus === "saved") {
+      return "Saved";
+    }
+
+    return "Save";
+  }, [saveStatus]);
+
+  return { saveStatus, setSaveStatus, saveToLocalStorage, saveText };
+}
