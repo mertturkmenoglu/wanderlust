@@ -1,6 +1,8 @@
 package users
 
-import "time"
+import (
+	"time"
+)
 
 type GetUserProfileResponseDto struct {
 	ID                string    `json:"id"`
