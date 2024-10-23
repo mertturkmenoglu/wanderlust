@@ -29,7 +29,7 @@ export default function Nav({
       <Button
         variant="ghost"
         className="flex items-center gap-2"
-        disabled={currentStep === 6}
+        disabled={currentStep === 5}
         onClick={() => {
           setCurrentStep(currentStep + 1);
           onNavigationChange();
