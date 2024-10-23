@@ -1,7 +1,7 @@
 export const steps = [
   {
     step: 1,
-    content: "Title",
+    content: "Description",
   },
   {
     step: 2,
@@ -9,7 +9,7 @@ export const steps = [
   },
   {
     step: 3,
-    content: "Description",
+    content: "Friends",
   },
   {
     step: 4,
@@ -17,10 +17,6 @@ export const steps = [
   },
   {
     step: 5,
-    content: "Friends",
-  },
-  {
-    step: 6,
     content: "Review and Complete",
   },
 ];
