@@ -26,7 +26,10 @@ export function useNewDiaryEntryForm() {
 
     try {
       const parsed = schema.parse(JSON.parse(v));
-      form.reset(parsed);
+      form.reset({
+        ...parsed,
+        date: new Date(parsed.date),
+      });
     } catch (e) {}
   }, []);
 
