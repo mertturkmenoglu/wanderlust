@@ -1,11 +1,25 @@
-import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, PencilIcon, XIcon } from "lucide-react";
 import { InstantSearch } from "react-instantsearch";
 import { ClientOnly } from "remix-utils/client-only";
 import { Autocomplete } from "~/components/blocks/autocomplete";
+import InputInfo from "~/components/kit/input-info";
+import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
+import { Textarea } from "~/components/ui/textarea";
 import { useSearchClient } from "~/hooks/use-search-client";
-import { FormType } from "../../hooks";
+import { lengthTracker } from "~/lib/form-utils";
+import { FormType, useSaveToLocalStorage } from "../../hooks";
 
 type Props = {
   form: FormType;
@@ -14,6 +28,7 @@ type Props = {
 export default function Step2({ form }: Props) {
   const searchClient = useSearchClient();
   const locations = form.watch("locations") ?? [];
+  const { saveToLocalStorage } = useSaveToLocalStorage(form);
 
   const moveItemUp = (id: string) => {
     const index = locations.findIndex((l) => l.id === id);
@@ -84,7 +99,13 @@ export default function Step2({ form }: Props) {
                       return;
                     }
 
-                    form.setValue("locations", [...current, v]);
+                    form.setValue("locations", [
+                      ...current,
+                      {
+                        ...v,
+                        description: "",
+                      },
+                    ]);
                   }}
                 />
               </InstantSearch>
@@ -123,6 +144,56 @@ export default function Step2({ form }: Props) {
                   </Card>
 
                   <div className="ml-auto mt-1">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="p-1.5 hover:bg-muted rounded-full">
+                          <PencilIcon className="size-3" />
+                          <span className="sr-only">
+                            Edit {l.name} description
+                          </span>
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Description</DialogTitle>
+                          <DialogDescription>
+                            <div className="text-sm">
+                              You can add a short description for this location.
+                            </div>
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-2">
+                          <div className="">
+                            <Label htmlFor="description" className="text-right">
+                              Description
+                            </Label>
+                            <Textarea
+                              id="description"
+                              className="col-span-3"
+                              placeholder="Add a short description"
+                              {...form.register(`locations.${i}.description`)}
+                            />
+                            <InputInfo
+                              text={lengthTracker(
+                                form.watch(`locations.${i}.description`),
+                                256
+                              )}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            type="button"
+                            onClick={async () => {
+                              await saveToLocalStorage();
+                            }}
+                          >
+                            Save changes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
                     <button
                       className="p-1.5 hover:bg-muted rounded-full disabled:hover:bg-transparent"
                       disabled={i === 0}
