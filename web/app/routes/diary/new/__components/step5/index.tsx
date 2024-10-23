@@ -1,82 +1,62 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { searchUserFollowing } from "~/lib/api";
+import Uppy, { Meta } from "@uppy/core";
+import { useUppyState } from "@uppy/react";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Label } from "~/components/ui/label";
 import { FormType } from "../../hooks";
-import CardActions from "./card-actions";
-import SearchInput from "./search-input";
-import SearchResults from "./search-results";
-import UserCard from "./user-card";
 
 type Props = {
   form: FormType;
+  uppy: Uppy<Meta, Record<string, never>>;
 };
 
-export default function Step5({ form }: Props) {
-  const [term, setTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const friends = form.watch("friends") ?? [];
-
-  const query = useQuery({
-    queryKey: ["search-user-following", term],
-    queryFn: async () => {
-      return await searchUserFollowing(term);
-    },
-    enabled: (term?.length ?? 0) >= 4,
-  });
-
-  useEffect(() => {
-    const len = form.watch("friendSearch")?.length ?? 0;
-    if (len < 4) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setTimeout(() => {
-      setTerm(form.watch("friendSearch"));
-      setIsLoading(false);
-    }, 1000);
-  }, [form.watch("friendSearch")]);
+export default function Step5({ form, uppy }: Props) {
+  const files = useUppyState(uppy, (s) => s.files);
+  const fileCount = Object.keys(files).length;
+  const description = form.watch("description");
+  const shortDescription =
+    description.length > 256 ? description.slice(0, 256) + "..." : description;
 
   return (
-    <div className="w-full mt-16">
-      <div className="text-lg text-muted-foreground text-center">
-        Have you had any friends with you? Let's add them to your diary.
-      </div>
-      <div className="mt-16 mx-auto w-full flex items-center">
-        <div className="flex flex-col items-center md:flex-row md:items-start gap-8 mx-auto">
-          <div className="h-[640px] overflow-y-scroll px-2">
-            <SearchInput form={form} />
-
-            <SearchResults
-              isLoading={query.isLoading || isLoading}
-              form={form}
-              results={query.data?.data.friends}
-            />
-          </div>
-          <div className="max-w-xl md:min-w-[640px] h-[640px] overflow-y-scroll px-2">
-            {friends.map((friend, i) => (
-              <div key={friend.id} className="flex flex-col w-full">
-                <UserCard
-                  fullName={friend.fullName}
-                  username={friend.username}
-                  image={friend.profileImage}
-                  className="w-full"
-                />
-
-                <CardActions
-                  className="ml-auto mt-1"
-                  index={i}
-                  id={friend.id}
-                  fullName={friend.fullName}
-                  form={form}
-                  friends={friends}
-                />
-              </div>
+    <div className="flex flex-col mx-auto max-w-xl">
+      <div>
+        <h3 className="text-muted-foreground text-lg">Summary</h3>
+        <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground mt-2">
+          <div>Title:</div>
+          <div>{form.watch("title")}</div>
+          <div>Description:</div>
+          <div>{shortDescription}</div>
+          <div>Date:</div>
+          <div>{form.watch("date").toLocaleDateString()}</div>
+          <div>Locations:</div>
+          <ul>
+            {form.watch("locations").map((l) => (
+              <li key={l.id} className="list-disc list-outside">
+                {l.name}
+              </li>
             ))}
+          </ul>
+          <div>Friends:</div>
+          <ul>
+            {form.watch("friends").map((f) => (
+              <li key={f.id} className="list-disc list-outside">
+                {f.fullName}
+              </li>
+            ))}
+          </ul>
+          <div>Media:</div>
+          <div>
+            {fileCount > 0 ? "Selected " + fileCount + " files" : "No files"}
           </div>
         </div>
       </div>
+
+      <div className="flex items-center gap-2 mt-4">
+        <Checkbox {...form.register("shareWithFriends")} />
+        <Label htmlFor="share-with-friends">Share with friends</Label>
+      </div>
+
+      <Button className="mt-4">Create Diary Entry</Button>
     </div>
   );
 }
