@@ -13,6 +13,11 @@ import Stepper from "./__components/stepper";
 import { useNewDiaryEntryForm, useSaveToLocalStorage } from "./hooks";
 import { steps } from "./steps";
 
+import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
+import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
+import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
+import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
+
 export async function clientLoader() {
   try {
     const auth = await getMe();
@@ -44,6 +49,15 @@ export function HydrateFallback() {
 
 export function meta() {
   return [{ title: "New Diary Entry | Wanderlust" }];
+}
+
+export function links() {
+  return [
+    { rel: "stylesheet", href: uppyCoreStyles },
+    { rel: "stylesheet", href: uppyDashboardStyles },
+    { rel: "stylesheet", href: uppyFileInputStyles },
+    { rel: "stylesheet", href: uppyImageEditorStyles },
+  ];
 }
 
 clientLoader.hydrate = true;
