@@ -14,6 +14,7 @@ export const schema = z.object({
         categoryName: z.string(),
         city: z.string(),
         state: z.string(),
+        description: z.string().max(256).default(""),
       })
     )
     .default([]),
