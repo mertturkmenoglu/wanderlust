@@ -52,6 +52,8 @@ export function useSaveToLocalStorage(form: FormType) {
       "diary-entry",
       JSON.stringify({ ...form.getValues(), friendSearch: "" })
     );
+    form.reset(form.getValues());
+
     setSaveStatus("saved");
 
     toast.success("Diary entry saved");
