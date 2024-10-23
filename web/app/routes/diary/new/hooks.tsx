@@ -14,6 +14,7 @@ export function useNewDiaryEntryForm() {
       locations: [],
       friendSearch: "",
       date: new Date(),
+      friends: [],
     },
   });
 
