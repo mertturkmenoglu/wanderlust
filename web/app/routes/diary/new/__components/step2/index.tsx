@@ -5,7 +5,7 @@ import { Autocomplete } from "~/components/blocks/autocomplete";
 import { Card } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { useSearchClient } from "~/hooks/use-search-client";
-import { FormType } from "../hooks";
+import { FormType } from "../../hooks";
 
 type Props = {
   form: FormType;
