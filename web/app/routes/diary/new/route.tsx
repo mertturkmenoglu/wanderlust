@@ -1,8 +1,12 @@
 import { json, redirect, useLoaderData } from "@remix-run/react";
+import { Uppy } from "@uppy/core";
+import GoldenRetriever from "@uppy/golden-retriever";
+import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
+import XHRUpload from "@uppy/xhr-upload";
 import { useState } from "react";
 import BackLink from "~/components/blocks/back-link";
-import { Button } from "~/components/ui/button";
 import { getMe } from "~/lib/api";
+import EntryTitle from "./__components/entry-title";
 import Nav from "./__components/nav";
 import Step1 from "./__components/step1";
 import Step2 from "./__components/step2";
@@ -66,25 +70,37 @@ export default function Page() {
   const { baseApiUrl } = useLoaderData<typeof clientLoader>();
   const form = useNewDiaryEntryForm();
   const [currentStep, setCurrentStep] = useState(1);
-  const title = form.watch("title");
-  const displayTitle = title && title !== "" ? title : "New Diary Entry";
-  const { saveStatus, saveText, saveToLocalStorage } =
-    useSaveToLocalStorage(form);
+  const { saveToLocalStorage } = useSaveToLocalStorage(form);
+  const [uppy] = useState(() =>
+    new Uppy({
+      restrictions: {
+        allowedFileTypes: [".jpg", ".jpeg", ".png"],
+        maxNumberOfFiles: 10,
+        maxFileSize: 5 * 1024 * 1024,
+      },
+    })
+      .use(ImageEditor)
+      .use(GoldenRetriever, { expires: 7 * 24 * 60 * 60 * 1000 })
+      .use(XHRUpload, {
+        endpoint: `${baseApiUrl}diary/media`,
+        withCredentials: true,
+        shouldRetry: () => false,
+        fieldName: "files",
+        limit: 5,
+      })
+      .on("file-added", (file) => {
+        console.log("file added", file);
+      })
+      .on("complete", () => {
+        console.log("complete");
+      })
+  );
 
   return (
     <div className="container mx-auto my-8">
       <BackLink href="/diary" text="Go back to your diary" />
 
-      <div className="flex items-center gap-4 mt-8">
-        <h2 className="text-4xl">{displayTitle}</h2>
-        <Button
-          onClick={saveToLocalStorage}
-          variant="link"
-          disabled={saveStatus !== "idle"}
-        >
-          {saveText}
-        </Button>
-      </div>
+      <EntryTitle form={form} className="mt-8" />
 
       <Stepper
         className="my-16 mx-auto"
@@ -96,8 +112,10 @@ export default function Page() {
       {currentStep === 1 && <Step1 form={form} />}
       {currentStep === 2 && <Step2 form={form} />}
       {currentStep === 3 && <Step3 form={form} />}
-      {currentStep === 4 && <Step4 form={form} baseApiUrl={baseApiUrl} />}
-      {currentStep === 5 && <Step5 form={form} />}
+      {currentStep === 4 && (
+        <Step4 form={form} baseApiUrl={baseApiUrl} uppy={uppy} />
+      )}
+      {currentStep === 5 && <Step5 form={form} uppy={uppy} />}
 
       <Nav
         onNavigationChange={saveToLocalStorage}
