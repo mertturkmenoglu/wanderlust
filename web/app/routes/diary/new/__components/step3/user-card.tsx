@@ -15,19 +15,15 @@ export default function UserCard({
   className,
 }: Props) {
   return (
-    <Card className={cn("flex gap-8 p-4 flex-1 items-center", className)}>
+    <Card className={cn("flex gap-4 p-2 items-center", className)}>
       <img
         src={image ?? "/profile.png"}
-        className="aspect-square w-16 rounded-lg object-cover"
+        className="aspect-square w-12 rounded-lg object-cover"
       />
 
       <div>
-        <div className="line-clamp-1 text-lg font-semibold capitalize leading-none tracking-tight">
-          {fullName}
-        </div>
-        <div className="my-1 line-clamp-1 text-sm text-muted-foreground">
-          @{username}
-        </div>
+        <div className="line-clamp-1 text-sm capitalize">{fullName}</div>
+        <div className="my-1 text-xs text-muted-foreground">@{username}</div>
       </div>
     </Card>
   );

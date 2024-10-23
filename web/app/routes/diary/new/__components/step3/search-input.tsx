@@ -1,6 +1,6 @@
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
-import { cn } from "~/lib/utils";
+import { Input } from "~/components/ui/input";
 import { FormType } from "../../hooks";
 
 type Props = {
@@ -9,20 +9,19 @@ type Props = {
 
 export default function SearchInput({ form }: Props) {
   return (
-    <div className="flex flex-col gap-4 mx-auto">
-      <label htmlFor="friend-search" className="block">
+    <div className="flex flex-col mx-auto group">
+      <label htmlFor="friend-search" className="sr-only">
         Search your friends
       </label>
-      <div className="relative">
-        <div className="absolute top-1.5 text-muted-foreground">@</div>
-        <input
-          id="friend-search"
-          className={cn(
-            "flex h-9 w-full border-b border-input bg-transparent py-1 text-base px-1 pl-5"
-          )}
+      <div className="relative mt-4">
+        <div className="absolute top-1.5 text-muted-foreground left-4 group-focus:text-foreground">
+          @
+        </div>
+        <Input
           placeholder="john_doe"
-          autoComplete="off"
+          className="rounded-full pl-8"
           spellCheck={false}
+          autoComplete="off"
           {...form.register("friendSearch")}
         />
         <InputInfo text="Search for your friends by their handle" />
