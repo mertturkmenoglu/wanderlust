@@ -18,16 +18,16 @@ import { FormType, useSaveToLocalStorage } from "../../hooks";
 
 type Props = {
   className?: string;
-  form: FormType;
 };
 
-export default function EntryTitle({ className, form }: Props) {
+export default function EntryTitle({ className }: Props) {
+  const form = useFormContext<FormInput>();
+  const state = useFormState(form);
   const title = form.watch("title");
   const displayTitle = title && title !== "" ? title : "New Diary Entry";
-  const { saveStatus, saveText, saveToLocalStorage } =
-    useSaveToLocalStorage(form);
+  const shortDisplayTitle = truncateWithEllipses(displayTitle, 32);
+  const lsSave = useSaveToLocalStorage(form);
   const [isEditMode, setIsEditMode] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <div className={cn("flex items-end gap-4", className)}>
