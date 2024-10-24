@@ -23,6 +23,7 @@ import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
 import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
 import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
 import { FormProvider } from "react-hook-form";
+import AppMessage from "~/components/blocks/app-message";
 
 export async function clientLoader() {
   try {
@@ -50,7 +51,11 @@ export async function clientLoader() {
 }
 
 export function HydrateFallback() {
-  return <h1>Loading...</h1>;
+  return (
+    <div className="container mx-auto my-32">
+      <AppMessage emptyMessage="Loading..." showBackButton={false} />
+    </div>
+  );
 }
 
 export function meta() {
