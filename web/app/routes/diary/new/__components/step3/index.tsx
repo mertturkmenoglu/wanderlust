@@ -1,21 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { searchUserFollowing } from "~/lib/api";
-import { FormType } from "../../hooks";
+import { FormInput } from "../../schema";
 import CardActions from "./card-actions";
 import SearchInput from "./search-input";
 import SearchResults from "./search-results";
 import UserCard from "./user-card";
 
-type Props = {
-  form: FormType;
-};
-
-export default function Step3({ form }: Props) {
+export default function Step3() {
+  const form = useFormContext<FormInput>();
   const [term, setTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const friends = form.watch("friends") ?? [];
+  const friends = useWatch({
+    control: form.control,
+    name: "friends",
+  });
 
   const query = useQuery({
     queryKey: ["search-user-following", term],

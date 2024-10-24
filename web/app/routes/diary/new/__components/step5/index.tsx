@@ -1,12 +1,12 @@
 import Uppy, { Meta } from "@uppy/core";
 import { useUppyState } from "@uppy/react";
+import { useFormContext } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
-import { FormType } from "../../hooks";
+import { FormInput } from "../../schema";
 
 type Props = {
-  form: FormType;
   uppy: Uppy<Meta, Record<string, never>>;
 };
 
@@ -14,7 +14,8 @@ function strOrDefault(s: string, defaultValue: string): string {
   return s === "" ? defaultValue : s;
 }
 
-export default function Step5({ form, uppy }: Props) {
+export default function Step5({ uppy }: Props) {
+  const form = useFormContext<FormInput>();
   const files = useUppyState(uppy, (s) => s.files);
   const fileCount = Object.keys(files).length;
 

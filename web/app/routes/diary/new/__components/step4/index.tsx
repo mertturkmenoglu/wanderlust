@@ -1,11 +1,8 @@
 import Uppy, { Meta } from "@uppy/core";
 import { Dashboard } from "@uppy/react";
 import { ClientOnly } from "remix-utils/client-only";
-import { FormType } from "../../hooks";
 
 type Props = {
-  form: FormType;
-  baseApiUrl: string;
   uppy: Uppy<Meta, Record<string, never>>;
 };
 

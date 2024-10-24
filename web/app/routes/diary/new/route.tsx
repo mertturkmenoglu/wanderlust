@@ -115,11 +115,9 @@ export default function Page() {
 
           {currentStep === 1 && <Step1 />}
           {currentStep === 2 && <Step2 />}
-          {currentStep === 3 && <Step3 form={form} />}
-          {currentStep === 4 && (
-            <Step4 form={form} baseApiUrl={baseApiUrl} uppy={uppy} />
-          )}
-          {currentStep === 5 && <Step5 form={form} uppy={uppy} />}
+          {currentStep === 3 && <Step3 />}
+          {currentStep === 4 && <Step4 uppy={uppy} />}
+          {currentStep === 5 && <Step5 uppy={uppy} />}
 
           <Nav
             onNavigationChange={saveToLocalStorage}
