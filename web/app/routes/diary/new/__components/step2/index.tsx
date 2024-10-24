@@ -43,7 +43,7 @@ export default function Step2() {
                   showAllResultsButton={false}
                   isCardClickable={true}
                   onCardClick={(v) => {
-                    const maxAllowedCount = 3;
+                    const maxAllowedCount = 32;
                     const current = form.getValues("locations");
                     const alreadyInList =
                       current.findIndex((lo) => lo.id === v.id) !== -1;
