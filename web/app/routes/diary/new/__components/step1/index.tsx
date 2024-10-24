@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { compareAsc, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useFormContext, useFormState } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
@@ -42,6 +42,24 @@ export default function Step1() {
           <Calendar
             mode="single"
             selected={date}
+            required={true}
+            disabled={(d) => {
+              const current = new Date();
+
+              // Compare the two dates and return 1 if the first date is after the second,
+              // -1 if the first date is before the second or 0 if dates are equal.
+              if (compareAsc(d, current) === 1) {
+                return true;
+              }
+
+              const oldestAllowedDate = new Date("1999-12-31");
+
+              if (compareAsc(d, oldestAllowedDate) === -1) {
+                return true;
+              }
+
+              return false;
+            }}
             onSelect={(d) => form.setValue("date", d ?? new Date())}
             initialFocus
           />
