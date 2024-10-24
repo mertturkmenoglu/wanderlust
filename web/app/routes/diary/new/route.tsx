@@ -1,5 +1,5 @@
 import { DevTool } from "@hookform/devtools";
-import { json, redirect, useLoaderData } from "@remix-run/react";
+import { json, redirect, useBlocker, useLoaderData } from "@remix-run/react";
 import { Uppy } from "@uppy/core";
 import GoldenRetriever from "@uppy/golden-retriever";
 import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
@@ -22,8 +22,18 @@ import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
 import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
 import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
 import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
-import { FormProvider } from "react-hook-form";
+import { FormProvider, useFormState } from "react-hook-form";
 import AppMessage from "~/components/blocks/app-message";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 
 export async function clientLoader() {
   try {
@@ -76,6 +86,7 @@ clientLoader.hydrate = true;
 export default function Page() {
   const { baseApiUrl } = useLoaderData<typeof clientLoader>();
   const form = useNewDiaryEntryForm();
+  const state = useFormState(form);
   const [currentStep, setCurrentStep] = useState(1);
   const { saveToLocalStorage } = useSaveToLocalStorage(form);
   const [uppy] = useState(() =>
@@ -101,6 +112,12 @@ export default function Page() {
       .on("complete", () => {
         console.log("complete");
       })
+  );
+
+  // Block navigating elsewhere when data has been entered into the input
+  let blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      state.isDirty && currentLocation.pathname !== nextLocation.pathname
   );
 
   return (
@@ -132,6 +149,28 @@ export default function Page() {
         </div>
       </FormProvider>
       <DevTool control={form.control} />
+
+      {blocker.state === "blocked" ? (
+        <AlertDialog open={blocker.state === "blocked"}>
+          <AlertDialogContent className="sm:max-w-[425px]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            </AlertDialogHeader>
+            <div className="grid gap-4 py-2">
+              You have unsaved changes. You will lose your progress. Do you want
+              to proceed?
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => blocker.reset()}>
+                No
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={() => blocker.proceed()}>
+                Yes
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      ) : null}
     </>
   );
 }
