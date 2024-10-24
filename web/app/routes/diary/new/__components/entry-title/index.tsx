@@ -58,7 +58,12 @@ export default function EntryTitle({ className }: Props) {
 
       {!isEditMode && (
         <>
-          <h2 className="text-4xl">{displayTitle}</h2>
+          <h2
+            className="text-lg font-bold md:font-normal md:text-4xl break-all"
+            title={displayTitle}
+          >
+            {shortDisplayTitle}
+          </h2>
           <Button
             variant="ghost"
             size="icon"
