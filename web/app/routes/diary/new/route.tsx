@@ -1,3 +1,4 @@
+import { DevTool } from "@hookform/devtools";
 import { json, redirect, useLoaderData } from "@remix-run/react";
 import { Uppy } from "@uppy/core";
 import GoldenRetriever from "@uppy/golden-retriever";
@@ -21,6 +22,7 @@ import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
 import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
 import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
 import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
+import { FormProvider } from "react-hook-form";
 
 export async function clientLoader() {
   try {
@@ -97,31 +99,36 @@ export default function Page() {
   );
 
   return (
-    <div className="container mx-auto my-8">
-      <BackLink href="/diary" text="Go back to your diary" />
+    <>
+      <FormProvider {...form}>
+        <div className="container mx-auto my-8">
+          <BackLink href="/diary" text="Go back to your diary" />
 
-      <EntryTitle form={form} className="mt-8" />
+          <EntryTitle className="mt-8" />
 
-      <Stepper
-        className="my-16 mx-auto"
-        currentStep={currentStep}
-        setCurrentStep={setCurrentStep}
-        steps={steps}
-      />
+          <Stepper
+            className="my-16 mx-auto"
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+            steps={steps}
+          />
 
-      {currentStep === 1 && <Step1 form={form} />}
-      {currentStep === 2 && <Step2 form={form} />}
-      {currentStep === 3 && <Step3 form={form} />}
-      {currentStep === 4 && (
-        <Step4 form={form} baseApiUrl={baseApiUrl} uppy={uppy} />
-      )}
-      {currentStep === 5 && <Step5 form={form} uppy={uppy} />}
+          {currentStep === 1 && <Step1 />}
+          {currentStep === 2 && <Step2 />}
+          {currentStep === 3 && <Step3 form={form} />}
+          {currentStep === 4 && (
+            <Step4 form={form} baseApiUrl={baseApiUrl} uppy={uppy} />
+          )}
+          {currentStep === 5 && <Step5 form={form} uppy={uppy} />}
 
-      <Nav
-        onNavigationChange={saveToLocalStorage}
-        currentStep={currentStep}
-        setCurrentStep={setCurrentStep}
-      />
-    </div>
+          <Nav
+            onNavigationChange={saveToLocalStorage}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+          />
+        </div>
+      </FormProvider>
+      <DevTool control={form.control} />
+    </>
   );
 }
