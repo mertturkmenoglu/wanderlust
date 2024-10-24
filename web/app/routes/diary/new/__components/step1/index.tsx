@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useFormContext, useFormState } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
 import { Button } from "~/components/ui/button";
@@ -11,13 +12,11 @@ import {
 } from "~/components/ui/popover";
 import { lengthTracker } from "~/lib/form-utils";
 import { cn } from "~/lib/utils";
-import { FormType } from "../../hooks";
+import { FormInput } from "../../schema";
 
-type Props = {
-  form: FormType;
-};
-
-export default function Step1({ form }: Props) {
+export default function Step1() {
+  const form = useFormContext<FormInput>();
+  const state = useFormState(form);
   const date = form.watch("date");
 
   return (
@@ -63,7 +62,7 @@ export default function Step1({ form }: Props) {
         {...form.register("description")}
       />
       <InputInfo text={lengthTracker(form.watch("description"), 4096)} />
-      <InputError error={form.formState.errors.title} />
+      <InputError error={state.errors.title} />
     </div>
   );
 }

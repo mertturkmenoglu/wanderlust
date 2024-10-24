@@ -1,22 +1,24 @@
 import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { InstantSearch } from "react-instantsearch";
 import { ClientOnly } from "remix-utils/client-only";
 import { Autocomplete } from "~/components/blocks/autocomplete";
 import { Card } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { useSearchClient } from "~/hooks/use-search-client";
-import { FormType } from "../../hooks";
+import { FormInput } from "../../schema";
 import ActionButton from "./action-button";
 import { moveItemDown, moveItemUp, removeItem } from "./actions";
 import EditDialog from "./edit-dialog";
 
-type Props = {
-  form: FormType;
-};
-
-export default function Step2({ form }: Props) {
+export default function Step2() {
+  const form = useFormContext<FormInput>();
   const searchClient = useSearchClient();
-  const locations = form.watch("locations") ?? [];
+
+  const locations = useWatch({
+    control: form.control,
+    name: "locations",
+  });
 
   return (
     <div className="w-full mt-16">
