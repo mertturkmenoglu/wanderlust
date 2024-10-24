@@ -1,3 +1,4 @@
+import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { cn } from "~/lib/utils";
 
 type Props = {
@@ -17,27 +18,32 @@ export default function Stepper({
   setCurrentStep,
 }: Props) {
   return (
-    <div className={cn("flex items-center justify-between", className)}>
-      {steps.map((s) => (
-        <div
-          key={s.step}
-          className={cn("flex items-center", {
-            "flex-1": s.step !== steps.length,
-          })}
-        >
-          <StepperItem
+    <ScrollArea>
+      <div
+        className={cn("flex flex-row items-center justify-between", className)}
+      >
+        {steps.map((s) => (
+          <div
             key={s.step}
-            step={s.step}
-            content={s.content}
-            currentStep={currentStep}
-            onClick={() => setCurrentStep(s.step)}
-          />
-          {s.step !== steps.length && (
-            <div className="h-[1px] bg-border block w-full -mt-12"></div>
-          )}
-        </div>
-      ))}
-    </div>
+            className={cn("flex items-center", {
+              "flex-1": s.step !== steps.length,
+            })}
+          >
+            <StepperItem
+              key={s.step}
+              step={s.step}
+              content={s.content}
+              currentStep={currentStep}
+              onClick={() => setCurrentStep(s.step)}
+            />
+            {s.step !== steps.length && (
+              <div className="h-[1px] bg-border block w-full -mt-12"></div>
+            )}
+          </div>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
 
