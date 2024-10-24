@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const schema = z.object({
-  title: z.string().min(1).max(128).default("").catch(""),
+  title: z.string().min(1).max(128),
   description: z.string().min(1).max(4096).default("").catch(""),
   shareWithFriends: z.boolean().default(false),
   date: z.coerce.date().default(new Date()),
