@@ -1,4 +1,5 @@
 import { LoaderCircleIcon } from "lucide-react";
+import { toast } from "sonner";
 import AppMessage from "~/components/blocks/app-message";
 import UserImage from "~/components/blocks/user-image";
 import { Card } from "~/components/ui/card";
@@ -44,11 +45,18 @@ export default function SearchResults({
                 key={res.id}
                 className="flex gap-4 items-center hover:bg-muted p-2 rounded-md w-full"
                 onClick={() => {
+                  const maxAllowedCount = 32;
                   const friends = form.getValues("friends");
                   const alreadyInList =
                     friends.find((lo) => lo.id === res.id) !== undefined;
 
                   if (alreadyInList) {
+                    toast.error("User is already added.");
+                    return;
+                  }
+
+                  if (friends.length >= maxAllowedCount) {
+                    toast.error(`Maximum ${maxAllowedCount} can be added.`);
                     return;
                   }
 
