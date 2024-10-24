@@ -55,7 +55,11 @@ CREATE TABLE IF NOT EXISTS cities (
   image_url VARCHAR(255) NOT NULL,
   latitude DOUBLE PRECISION NOT NULL,
   longitude DOUBLE PRECISION NOT NULL,
-  description VARCHAR(1024) NOT NULL
+  description VARCHAR(1024) NOT NULL,
+  img_license VARCHAR(32),
+  img_license_link VARCHAR(256),
+  img_attr VARCHAR(256),
+  img_attr_link VARCHAR(256)
 );
 
 CREATE TABLE IF NOT EXISTS addresses (
