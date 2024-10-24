@@ -9,7 +9,11 @@ INSERT INTO cities (
   image_url,
   latitude,
   longitude,
-  description
+  description,
+  img_license,
+  img_license_link,
+  img_attr,
+  img_attr_link
 ) VALUES (
   $1,
   $2,
@@ -20,7 +24,11 @@ INSERT INTO cities (
   $7,
   $8,
   $9,
-  $10
+  $10,
+  $11,
+  $12,
+  $13,
+  $14
 );
 
 -- name: GetCityById :one
@@ -52,7 +60,11 @@ INSERT INTO cities (
   image_url,
   latitude,
   longitude,
-  description
+  description,
+  img_license,
+  img_license_link,
+  img_attr,
+  img_attr_link
 ) VALUES (
   $1,
   $2,
@@ -63,7 +75,11 @@ INSERT INTO cities (
   $7,
   $8,
   $9,
-  $10
+  $10,
+  $11,
+  $12,
+  $13,
+  $14
 ) RETURNING *;
 
 -- name: UpdateCity :one
@@ -77,7 +93,11 @@ SET
   image_url = $7,
   latitude = $8,
   longitude = $9,
-  description = $10
+  description = $10,
+  img_license = $11,
+  img_license_link = $12,
+  img_attr = $13,
+  img_attr_link = $14
 WHERE id = $1
 RETURNING *;
 
