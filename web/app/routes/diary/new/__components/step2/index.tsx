@@ -2,6 +2,7 @@ import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { InstantSearch } from "react-instantsearch";
 import { ClientOnly } from "remix-utils/client-only";
+import { toast } from "sonner";
 import { Autocomplete } from "~/components/blocks/autocomplete";
 import { Card } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
@@ -42,11 +43,20 @@ export default function Step2() {
                   showAllResultsButton={false}
                   isCardClickable={true}
                   onCardClick={(v) => {
+                    const maxAllowedCount = 3;
                     const current = form.getValues("locations");
                     const alreadyInList =
                       current.findIndex((lo) => lo.id === v.id) !== -1;
 
                     if (alreadyInList) {
+                      toast.error("Location is already added.");
+                      return;
+                    }
+
+                    if (current.length >= maxAllowedCount) {
+                      toast.error(
+                        `Maximum ${maxAllowedCount} locations can be added.`
+                      );
                       return;
                     }
 
