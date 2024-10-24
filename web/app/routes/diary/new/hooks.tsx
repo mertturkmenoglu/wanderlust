@@ -81,3 +81,5 @@ export function useSaveToLocalStorage(form: FormType) {
 
   return { saveStatus, setSaveStatus, saveToLocalStorage, saveText };
 }
+
+export type UseSaveReturn = ReturnType<typeof useSaveToLocalStorage>;
