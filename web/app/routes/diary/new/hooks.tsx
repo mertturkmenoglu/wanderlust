@@ -16,6 +16,9 @@ export function useNewDiaryEntryForm() {
       date: new Date(),
       friends: [],
     },
+    criteriaMode: "all",
+    shouldFocusError: true,
+    mode: "onChange",
   });
 
   useEffect(() => {
