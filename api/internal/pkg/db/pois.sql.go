@@ -173,7 +173,7 @@ SELECT
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
   media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
@@ -238,6 +238,10 @@ func (q *Queries) GetFavoritePois(ctx context.Context) ([]GetFavoritePoisRow, er
 			&i.City.Latitude,
 			&i.City.Longitude,
 			&i.City.Description,
+			&i.City.ImgLicense,
+			&i.City.ImgLicenseLink,
+			&i.City.ImgAttr,
+			&i.City.ImgAttrLink,
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
@@ -261,7 +265,7 @@ SELECT
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
   media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
@@ -326,6 +330,10 @@ func (q *Queries) GetFeaturedPois(ctx context.Context) ([]GetFeaturedPoisRow, er
 			&i.City.Latitude,
 			&i.City.Longitude,
 			&i.City.Description,
+			&i.City.ImgLicense,
+			&i.City.ImgLicenseLink,
+			&i.City.ImgAttr,
+			&i.City.ImgAttrLink,
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
@@ -349,7 +357,7 @@ SELECT
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
   media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
@@ -414,6 +422,10 @@ func (q *Queries) GetNewPois(ctx context.Context) ([]GetNewPoisRow, error) {
 			&i.City.Latitude,
 			&i.City.Longitude,
 			&i.City.Description,
+			&i.City.ImgLicense,
+			&i.City.ImgLicenseLink,
+			&i.City.ImgAttr,
+			&i.City.ImgAttrLink,
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
@@ -502,7 +514,7 @@ func (q *Queries) GetPoiAmenities(ctx context.Context, poiID string) ([]GetPoiAm
 }
 
 const getPoiById = `-- name: GetPoiById :one
-SELECT pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at, addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng, categories.id, categories.name, categories.image, cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description FROM pois
+SELECT pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at, addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng, categories.id, categories.name, categories.image, cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link FROM pois
 LEFT JOIN addresses ON addresses.id = pois.address_id
 LEFT JOIN categories ON categories.id = pois.category_id
 LEFT JOIN cities ON cities.id = addresses.city_id
@@ -555,6 +567,10 @@ func (q *Queries) GetPoiById(ctx context.Context, id string) (GetPoiByIdRow, err
 		&i.City.Latitude,
 		&i.City.Longitude,
 		&i.City.Description,
+		&i.City.ImgLicense,
+		&i.City.ImgLicenseLink,
+		&i.City.ImgAttr,
+		&i.City.ImgAttrLink,
 	)
 	return i, err
 }
@@ -598,7 +614,7 @@ SELECT
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
   media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM pois
   LEFT JOIN categories ON categories.id = pois.category_id
@@ -663,6 +679,10 @@ func (q *Queries) GetPopularPois(ctx context.Context) ([]GetPopularPoisRow, erro
 			&i.City.Latitude,
 			&i.City.Longitude,
 			&i.City.Description,
+			&i.City.ImgLicense,
+			&i.City.ImgLicenseLink,
+			&i.City.ImgAttr,
+			&i.City.ImgAttrLink,
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,

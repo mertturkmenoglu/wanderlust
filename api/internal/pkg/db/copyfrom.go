@@ -194,6 +194,10 @@ func (r iteratorForCreateCities) Values() ([]interface{}, error) {
 		r.rows[0].Latitude,
 		r.rows[0].Longitude,
 		r.rows[0].Description,
+		r.rows[0].ImgLicense,
+		r.rows[0].ImgLicenseLink,
+		r.rows[0].ImgAttr,
+		r.rows[0].ImgAttrLink,
 	}, nil
 }
 
@@ -202,5 +206,5 @@ func (r iteratorForCreateCities) Err() error {
 }
 
 func (q *Queries) CreateCities(ctx context.Context, arg []CreateCitiesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"cities"}, []string{"id", "name", "state_code", "state_name", "country_code", "country_name", "image_url", "latitude", "longitude", "description"}, &iteratorForCreateCities{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"cities"}, []string{"id", "name", "state_code", "state_name", "country_code", "country_name", "image_url", "latitude", "longitude", "description", "img_license", "img_license_link", "img_attr", "img_attr_link"}, &iteratorForCreateCities{rows: arg})
 }

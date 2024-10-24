@@ -42,16 +42,20 @@ type Category struct {
 }
 
 type City struct {
-	ID          int32
-	Name        string
-	StateCode   string
-	StateName   string
-	CountryCode string
-	CountryName string
-	ImageUrl    string
-	Latitude    float64
-	Longitude   float64
-	Description string
+	ID             int32
+	Name           string
+	StateCode      string
+	StateName      string
+	CountryCode    string
+	CountryName    string
+	ImageUrl       string
+	Latitude       float64
+	Longitude      float64
+	Description    string
+	ImgLicense     pgtype.Text
+	ImgLicenseLink pgtype.Text
+	ImgAttr        pgtype.Text
+	ImgAttrLink    pgtype.Text
 }
 
 type Collection struct {

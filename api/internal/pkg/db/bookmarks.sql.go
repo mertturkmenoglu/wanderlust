@@ -108,7 +108,7 @@ SELECT
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
   categories.id, categories.name, categories.image,
   addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
   media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
 FROM bookmarks
   JOIN pois ON pois.id = bookmarks.poi_id
@@ -186,6 +186,10 @@ func (q *Queries) GetBookmarksByUserId(ctx context.Context, arg GetBookmarksByUs
 			&i.City.Latitude,
 			&i.City.Longitude,
 			&i.City.Description,
+			&i.City.ImgLicense,
+			&i.City.ImgLicenseLink,
+			&i.City.ImgAttr,
+			&i.City.ImgAttrLink,
 			&i.Medium.ID,
 			&i.Medium.PoiID,
 			&i.Medium.Url,
