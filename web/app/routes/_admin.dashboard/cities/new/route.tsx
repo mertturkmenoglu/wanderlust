@@ -140,6 +140,61 @@ export default function Page() {
         <div></div>
 
         <div className="">
+          <Label htmlFor="image-license">Image License</Label>
+          <Input
+            type="text"
+            id="image-license"
+            placeholder="Image License"
+            autoComplete="off"
+            {...form.register("imageLicense")}
+          />
+          <InputInfo text="Image License (e.g. CC v3)" />
+          <InputError error={form.formState.errors.imageLicense} />
+        </div>
+
+        <div className="">
+          <Label htmlFor="image-license-link">Image License Link</Label>
+          <Input
+            type="text"
+            id="image-license-link"
+            placeholder="Image License Link"
+            autoComplete="off"
+            {...form.register("imageLicenseLink")}
+          />
+          <InputInfo text="Link to image license" />
+          <InputError error={form.formState.errors.imageLicense} />
+        </div>
+
+        <div className="">
+          <Label htmlFor="image-attribute">Image Attribute</Label>
+          <Input
+            type="text"
+            id="image-attribute"
+            placeholder="Image Attribute"
+            autoComplete="off"
+            {...form.register("imageAttribute")}
+          />
+          <InputInfo text="Attribution to original work" />
+          <InputError error={form.formState.errors.imageAttribute} />
+        </div>
+
+        <div className="">
+          <Label htmlFor="image-attribution-link">Image Attribution Link</Label>
+          <Input
+            type="text"
+            id="image-attribution-link"
+            placeholder="Image Attribution Link"
+            autoComplete="off"
+            {...form.register("imageAttributionLink")}
+          />
+          <InputInfo text="Link to original work" />
+          <InputError error={form.formState.errors.imageAttributionLink} />
+        </div>
+
+        <div />
+        <div />
+
+        <div className="">
           <Label htmlFor="lat">Latitude</Label>
           <Input
             type="number"
