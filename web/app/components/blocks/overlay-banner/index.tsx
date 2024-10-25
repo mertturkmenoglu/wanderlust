@@ -6,7 +6,7 @@ type Props = {
   alt: string;
   message: React.ReactNode;
   imgClassName?: string;
-};
+} & Pick<React.ComponentProps<"img">, "fetchPriority" | "loading">;
 
 export default function OverlayBanner({
   className,
@@ -14,6 +14,8 @@ export default function OverlayBanner({
   alt,
   message,
   imgClassName,
+  fetchPriority = "auto",
+  loading = "eager",
 }: Props) {
   return (
     <div
@@ -28,6 +30,8 @@ export default function OverlayBanner({
           "aspect-[2] h-full rounded-md object-cover opacity-70 md:aspect-[5]",
           imgClassName
         )}
+        fetchPriority={fetchPriority}
+        loading={loading}
         role="presentation"
         alt={alt}
       />

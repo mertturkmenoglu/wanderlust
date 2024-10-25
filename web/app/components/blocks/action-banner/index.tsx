@@ -7,7 +7,7 @@ type Props = {
   message: React.ReactNode;
   imgClassName?: string;
   lefty?: boolean;
-};
+} & Pick<React.ComponentProps<"img">, "fetchPriority" | "loading">;
 
 export default function ActionBanner({
   className,
@@ -16,6 +16,8 @@ export default function ActionBanner({
   message,
   imgClassName,
   lefty = true,
+  fetchPriority = "auto",
+  loading = "eager",
 }: Props) {
   return (
     <div
@@ -38,6 +40,8 @@ export default function ActionBanner({
           imgClassName
         )}
         role="presentation"
+        fetchPriority={fetchPriority}
+        loading={loading}
         alt={alt}
       />
       <div className="p-8 md:p-4 lg:p-8">
