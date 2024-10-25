@@ -1,27 +1,51 @@
+import { useQuery } from "@tanstack/react-query";
 import { LoaderCircleIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { UseFieldArrayAppend, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import AppMessage from "~/components/blocks/app-message";
 import UserImage from "~/components/blocks/user-image";
 import { Card } from "~/components/ui/card";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { GetUserProfileResponseDto } from "~/lib/dto";
+import { searchUserFollowing } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 import { cn } from "~/lib/utils";
-import { FormType } from "../../hooks";
+import { FormInput } from "../../schema";
 
 type Props = {
-  isLoading: boolean;
-  results: GetUserProfileResponseDto[] | undefined;
-  form: FormType;
   className?: string;
+  append: UseFieldArrayAppend<FormInput>;
 };
 
-export default function SearchResults({
-  isLoading,
-  results,
-  form,
-  className,
-}: Props) {
+export default function SearchResults({ className, append }: Props) {
+  const form = useFormContext<FormInput>();
+  const friendSearch = form.watch("friendSearch") ?? "";
+  const [term, setTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const query = useQuery({
+    queryKey: ["search-user-following", term],
+    queryFn: async () => {
+      return await searchUserFollowing(term);
+    },
+    enabled: (term?.length ?? 0) >= 4,
+  });
+
+  useEffect(() => {
+    if (friendSearch.length < 4) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setTimeout(() => {
+      setTerm(friendSearch);
+      setIsLoading(false);
+    }, 1000);
+  }, [friendSearch]);
+
+  const results = query.data?.data.friends;
+
   return (
     <Card className={cn(className)}>
       {isLoading && (
@@ -60,15 +84,12 @@ export default function SearchResults({
                     return;
                   }
 
-                  form.setValue("friends", [
-                    ...friends,
-                    {
-                      id: res.id,
-                      username: res.username,
-                      fullName: res.fullName,
-                      profileImage: res.profileImage,
-                    },
-                  ]);
+                  append({
+                    id: res.id,
+                    username: res.username,
+                    fullName: res.fullName,
+                    profileImage: res.profileImage,
+                  });
                 }}
               >
                 <UserImage

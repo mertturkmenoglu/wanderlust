@@ -1,44 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { searchUserFollowing } from "~/lib/api";
 import { FormInput } from "../../schema";
-import CardActions from "./card-actions";
 import SearchInput from "./search-input";
 import SearchResults from "./search-results";
 import UserCard from "./user-card";
 
 export default function Step3() {
   const form = useFormContext<FormInput>();
-  const [term, setTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const friends = useWatch({
+  const { fields, swap, append, remove } = useFieldArray({
     control: form.control,
     name: "friends",
   });
-
-  const query = useQuery({
-    queryKey: ["search-user-following", term],
-    queryFn: async () => {
-      return await searchUserFollowing(term);
-    },
-    enabled: (term?.length ?? 0) >= 4,
-  });
-
-  useEffect(() => {
-    const len = form.watch("friendSearch")?.length ?? 0;
-    if (len < 4) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setTimeout(() => {
-      setTerm(form.watch("friendSearch"));
-      setIsLoading(false);
-    }, 1000);
-  }, [form.watch("friendSearch")]);
 
   return (
     <div className="w-full mt-16">
@@ -47,18 +20,16 @@ export default function Step3() {
       </div>
 
       <div className="max-w-xl mx-auto group mt-4">
-        <SearchInput form={form} />
+        <SearchInput />
 
         <SearchResults
-          isLoading={query.isLoading || isLoading}
-          form={form}
-          results={query.data?.data.friends}
           className="hidden group-focus-within:block"
+          append={append}
         />
       </div>
 
       <ScrollArea className="max-w-xl h-[512px] px-4 mt-4 mx-auto">
-        {friends.map((friend, i) => (
+        {fields.map((friend, i) => (
           <div key={friend.id} className="flex flex-col w-full mt-2 first:mt-0">
             <UserCard
               fullName={friend.fullName}
@@ -67,14 +38,31 @@ export default function Step3() {
               className="w-full"
             />
 
-            <CardActions
-              className="ml-auto mt-1"
-              index={i}
-              id={friend.id}
-              fullName={friend.fullName}
-              form={form}
-              friends={friends}
-            />
+            <div className="ml-auto mt-1">
+              <button
+                className="p-1.5 hover:bg-muted rounded-full disabled:hover:bg-transparent"
+                disabled={i === 0}
+                onClick={() => swap(i, i - 1)}
+              >
+                <ArrowUpIcon className="size-3" />
+                <span className="sr-only">Move {friend.fullName} up</span>
+              </button>
+              <button
+                className="p-1.5 hover:bg-muted rounded-full disabled:hover:bg-transparent"
+                disabled={i === fields.length - 1}
+                onClick={() => swap(i, i + 1)}
+              >
+                <ArrowDownIcon className="size-3" />
+                <span className="sr-only">Move {friend.fullName} down</span>
+              </button>
+              <button
+                className="p-1.5 hover:bg-muted rounded-full"
+                onClick={() => remove(i)}
+              >
+                <XIcon className="size-3" />
+                <span className="sr-only">Remove {friend.fullName}</span>
+              </button>
+            </div>
           </div>
         ))}
       </ScrollArea>

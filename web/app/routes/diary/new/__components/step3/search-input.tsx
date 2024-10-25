@@ -1,13 +1,12 @@
+import { useFormContext } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
 import { Input } from "~/components/ui/input";
-import { FormType } from "../../hooks";
+import { FormInput } from "../../schema";
 
-type Props = {
-  form: FormType;
-};
+export default function SearchInput() {
+  const form = useFormContext<FormInput>();
 
-export default function SearchInput({ form }: Props) {
   return (
     <div className="flex flex-col mx-auto group">
       <label htmlFor="friend-search" className="sr-only">
