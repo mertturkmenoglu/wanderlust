@@ -1,12 +1,11 @@
 import { LoaderFunctionArgs, json, type MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
+import leafletStyles from "leaflet/dist/leaflet.css?url";
 import Collection from "~/components/blocks/collection";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
-
-import "leaflet/dist/leaflet.css";
 import CityBreadcrumb from "./components/city-breadcrumb";
 import ImageAttributionPopover from "./components/image-attribution-popover";
 import MapContainer from "./components/map-container";
@@ -38,6 +37,10 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     },
   ];
 };
+
+export function links() {
+  return [{ rel: "stylesheet", href: leafletStyles }];
+}
 
 export default function Page() {
   const { city } = useLoaderData<typeof loader>();
