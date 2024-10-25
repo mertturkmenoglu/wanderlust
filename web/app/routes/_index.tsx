@@ -87,11 +87,18 @@ export default function Page() {
         imgClassName="aspect-[3]"
       />
 
-      <PoiGrid dataKey="featured" data={aggregation.new} />
+      <PoiGrid
+        dataKey="featured"
+        data={aggregation.new}
+        fetchPriority="low"
+        loading="lazy"
+      />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
         alt="Discover Around You Banner Image"
+        fetchPriority="low"
+        loading="lazy"
         content={
           <>
             <div className="text-center">
@@ -110,11 +117,18 @@ export default function Page() {
         }
       />
 
-      <PoiGrid dataKey="popular" data={aggregation.popular} />
+      <PoiGrid
+        dataKey="popular"
+        data={aggregation.popular}
+        fetchPriority="low"
+        loading="lazy"
+      />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
         alt="Trip Planner Banner Image"
+        fetchPriority="low"
+        loading="lazy"
         message={
           <div className="flex flex-col gap-4">
             <div className="text-2xl font-bold text-primary">
@@ -133,11 +147,18 @@ export default function Page() {
         imgClassName=""
       />
 
-      <PoiGrid dataKey="favorite" data={aggregation.favorites} />
+      <PoiGrid
+        dataKey="favorite"
+        data={aggregation.favorites}
+        fetchPriority="low"
+        loading="lazy"
+      />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
         alt="Events Banner Image"
+        fetchPriority="low"
+        loading="lazy"
         message={
           <div className="flex flex-col gap-4">
             <div className="text-2xl font-bold text-primary">
@@ -157,7 +178,12 @@ export default function Page() {
         lefty={false}
       />
 
-      <PoiGrid dataKey="new" data={aggregation.new} />
+      <PoiGrid
+        dataKey="new"
+        data={aggregation.new}
+        fetchPriority="low"
+        loading="lazy"
+      />
     </div>
   );
 }

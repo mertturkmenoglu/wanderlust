@@ -5,7 +5,7 @@ import { HomeAggregatorPoi } from "~/lib/dto";
 type Props = {
   dataKey: "new" | "popular" | "featured" | "favorite";
   data: HomeAggregatorPoi[];
-};
+} & Pick<React.ComponentProps<"img">, "fetchPriority" | "loading">;
 
 function getTitle(type: Props["dataKey"]) {
   switch (type) {
@@ -20,7 +20,12 @@ function getTitle(type: Props["dataKey"]) {
   }
 }
 
-export default function PoiGrid({ dataKey: key, data }: Props) {
+export default function PoiGrid({
+  dataKey: key,
+  data,
+  fetchPriority = "auto",
+  loading = "eager",
+}: Props) {
   const title = getTitle(key);
   const sliced = data.slice(0, 6);
   const isEmpty = sliced.length === 0;
@@ -44,6 +49,8 @@ export default function PoiGrid({ dataKey: key, data }: Props) {
                     alt: poi.media.alt,
                   },
                 }}
+                fetchPriority={fetchPriority}
+                loading={loading}
               />
             </Link>
           ))}
