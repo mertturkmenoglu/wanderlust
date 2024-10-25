@@ -1,5 +1,5 @@
 import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { InstantSearch } from "react-instantsearch";
 import { ClientOnly } from "remix-utils/client-only";
 import { toast } from "sonner";
@@ -10,14 +10,12 @@ import { Separator } from "~/components/ui/separator";
 import { useSearchClient } from "~/hooks/use-search-client";
 import { FormInput } from "../../schema";
 import ActionButton from "./action-button";
-import { moveItemDown, moveItemUp, removeItem } from "./actions";
 import EditDialog from "./edit-dialog";
 
 export default function Step2() {
   const form = useFormContext<FormInput>();
   const searchClient = useSearchClient();
-
-  const locations = useWatch({
+  const { fields, append, remove, swap } = useFieldArray({
     control: form.control,
     name: "locations",
   });
@@ -45,29 +43,25 @@ export default function Step2() {
                   isCardClickable={true}
                   onCardClick={(v) => {
                     const maxAllowedCount = 32;
-                    const current = form.getValues("locations");
                     const alreadyInList =
-                      current.findIndex((lo) => lo.id === v.id) !== -1;
+                      fields.findIndex((lo) => lo.id === v.id) !== -1;
 
                     if (alreadyInList) {
                       toast.error("Location is already added.");
                       return;
                     }
 
-                    if (current.length >= maxAllowedCount) {
+                    if (fields.length >= maxAllowedCount) {
                       toast.error(
                         `Maximum ${maxAllowedCount} locations can be added.`
                       );
                       return;
                     }
 
-                    form.setValue("locations", [
-                      ...current,
-                      {
-                        ...v,
-                        description: "",
-                      },
-                    ]);
+                    append({
+                      ...v,
+                      description: "",
+                    });
                   }}
                 />
               </InstantSearch>
@@ -78,12 +72,12 @@ export default function Step2() {
                 Selected Locations
               </h3>
               <ScrollArea className="h-[640px]">
-                {locations.length === 0 && (
+                {fields.length === 0 && (
                   <div className="text-center text-sm text-muted-foreground my-8">
                     No locations selected
                   </div>
                 )}
-                {locations.map((l, i) => (
+                {fields.map((l, i) => (
                   <div key={l.id} className="flex flex-col">
                     <Card className="mt-4 flex gap-8 p-4 flex-1">
                       <img
@@ -111,19 +105,19 @@ export default function Step2() {
 
                       <ActionButton
                         disabled={i === 0}
-                        onClick={() => moveItemUp(form, l.id)}
+                        onClick={() => swap(i, i - 1)}
                       >
                         <ArrowUpIcon className="size-3" />
                         <span className="sr-only">Move {l.name} up</span>
                       </ActionButton>
                       <ActionButton
-                        disabled={i === locations.length - 1}
-                        onClick={() => moveItemDown(form, l.id)}
+                        disabled={i === fields.length - 1}
+                        onClick={() => swap(i, i + 1)}
                       >
                         <ArrowDownIcon className="size-3" />
                         <span className="sr-only">Move {l.name} down</span>
                       </ActionButton>
-                      <ActionButton onClick={() => removeItem(form, l.id)}>
+                      <ActionButton onClick={() => remove(i)}>
                         <XIcon className="size-3" />
                         <span className="sr-only">Remove {l.name}</span>
                       </ActionButton>
