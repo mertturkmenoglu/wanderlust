@@ -2,19 +2,13 @@ import { LoaderFunctionArgs, json, type MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import Collection from "~/components/blocks/collection";
 import OverlayBanner from "~/components/blocks/overlay-banner";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
 import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 
 import "leaflet/dist/leaflet.css";
+import CityBreadcrumb from "./components/city-breadcrumb";
+import ImageAttributionPopover from "./components/image-attribution-popover";
 import MapContainer from "./components/map-container";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -50,31 +44,30 @@ export default function Page() {
 
   return (
     <div className="container mx-auto py-8">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Discover</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/cities/list">Cities</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{city.name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <CityBreadcrumb cityName={city.name} />
 
-      <div className="flex flex-col lg:flex-row lg:gap-8">
-        <img
-          src={ipx(city.imageUrl, "f_webp,w_1024")}
-          alt=""
-          className="mt-8 w-full rounded-md object-cover lg:max-w-md aspect-video"
-        />
+      <div className="grid grid-cols-5 gap-8 mt-8">
+        <div className="col-span-5 lg:col-span-2">
+          <div className="">
+            <img
+              src={ipx(city.imageUrl, "f_webp,w_1024")}
+              alt=""
+              loading="eager"
+              fetchPriority="high"
+              className="rounded-md object-cover aspect-video"
+            />
 
-        <div>
-          <h2 className="mt-8 text-6xl font-bold">{city.name}</h2>
+            <ImageAttributionPopover
+              imageAttribute={city.imageAttribute}
+              imageAttributionLink={city.imageAttributionLink}
+              imageLicense={city.imageLicense}
+              imageLicenseLink={city.imageLicenseLink}
+            />
+          </div>
+        </div>
+
+        <div className="col-span-5 lg:col-span-3">
+          <h2 className="text-6xl font-bold">{city.name}</h2>
           <div className="mt-2 text-sm text-muted-foreground">
             {city.stateName}/{city.countryName}
           </div>
