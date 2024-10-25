@@ -20,7 +20,7 @@ export default function Step1() {
   const date = form.watch("date");
 
   return (
-    <div className="w-full mt-8 max-w-xl mx-auto flex flex-col">
+    <div className="w-full mt-16 max-w-xl mx-auto flex flex-col">
       <div className="text-lg text-muted-foreground text-center">
         Select the date
       </div>

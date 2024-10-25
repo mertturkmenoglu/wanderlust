@@ -13,7 +13,7 @@ export default function SearchInput({ form }: Props) {
       <label htmlFor="friend-search" className="sr-only">
         Search your friends
       </label>
-      <div className="relative mt-4">
+      <div className="relative">
         <div className="absolute top-1.5 text-muted-foreground left-4 group-focus:text-foreground">
           @
         </div>

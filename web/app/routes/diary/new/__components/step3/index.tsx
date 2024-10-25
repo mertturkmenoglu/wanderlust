@@ -46,7 +46,7 @@ export default function Step3() {
         Have you had any friends with you? Let's add them to your diary.
       </div>
 
-      <div className="max-w-xl mx-auto group">
+      <div className="max-w-xl mx-auto group mt-4">
         <SearchInput form={form} />
 
         <SearchResults

@@ -27,7 +27,7 @@ export default function Step2() {
       <div className="text-lg text-muted-foreground text-center">
         Now let's add the locations you visited.
       </div>
-      <div className="max-w-xl mt-16 mx-auto">
+      <div className="max-w-xl mt-4 mx-auto">
         <ClientOnly fallback={<div>Loading...</div>}>
           {() => (
             <div>

@@ -31,7 +31,7 @@ export default function Step5({ uppy }: Props) {
   const canCreateEntry = form.formState.isValid;
 
   return (
-    <div className="flex flex-col mx-auto max-w-xl">
+    <div className="flex flex-col mx-auto max-w-xl mt-16">
       <div>
         <h3 className="text-muted-foreground text-lg">Summary</h3>
         <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground mt-2">
