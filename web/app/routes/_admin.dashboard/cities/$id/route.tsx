@@ -72,6 +72,22 @@ export default function Page() {
         <div className="font-semibold">Country Name:</div>
         <div>{city.countryName}</div>
       </div>
+      <div className="flex gap-2 mt-2">
+        <div className="font-semibold">Image License:</div>
+        <div>{city.imageLicense ?? "-"}</div>
+      </div>
+      <div className="flex gap-2 mt-2">
+        <div className="font-semibold">Image License Link:</div>
+        <div>{city.imageLicenseLink ?? "-"}</div>
+      </div>
+      <div className="flex gap-2 mt-2">
+        <div className="font-semibold">Image Attribution:</div>
+        <div>{city.imageAttribute ?? "-"}</div>
+      </div>
+      <div className="flex gap-2 mt-2">
+        <div className="font-semibold">Image Attribution Link:</div>
+        <div>{city.imageAttributionLink ?? "-"}</div>
+      </div>
     </>
   );
 }
