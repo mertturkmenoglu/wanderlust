@@ -9,6 +9,10 @@ export type GetCityByIdResponseDto = {
   latitude: number;
   longitude: number;
   description: string;
+  imageLicense: string | null;
+  imageLicenseLink: string | null;
+  imageAttribute: string | null;
+  imageAttributionLink: string | null;
 };
 
 export type GetCitiesResponseDto = {
@@ -26,6 +30,10 @@ export type CreateCityRequestDto = {
   latitude: number;
   longitude: number;
   description: string;
+  imageLicense: string;
+  imageLicenseLink: string;
+  imageAttribute: string;
+  imageAttributionLink: string;
 };
 
 export type CreateCityResponseDto = GetCityByIdResponseDto;
@@ -40,6 +48,10 @@ export type UpdateCityRequestDto = {
   latitude: number;
   longitude: number;
   description: string;
+  imageLicense: string | null;
+  imageLicenseLink: string | null;
+  imageAttribute: string | null;
+  imageAttributionLink: string | null;
 };
 
 export type UpdateCityResponseDto = GetCityByIdResponseDto;
