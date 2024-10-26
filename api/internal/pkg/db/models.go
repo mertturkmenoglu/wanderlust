@@ -72,6 +72,39 @@ type CollectionItem struct {
 	CreatedAt    pgtype.Timestamptz
 }
 
+type DiaryEntriesPoi struct {
+	DiaryEntryID string
+	PoiID        string
+	Description  pgtype.Text
+	ListIndex    int32
+}
+
+type DiaryEntriesUser struct {
+	DiaryEntryID string
+	UserID       string
+	ListIndex    int32
+}
+
+type DiaryEntry struct {
+	ID               string
+	Title            string
+	Description      string
+	ShareWithFriends bool
+	Date             pgtype.Timestamptz
+	CreatedAt        pgtype.Timestamptz
+	UpdatedAt        pgtype.Timestamptz
+}
+
+type DiaryMedium struct {
+	ID           int64
+	DiaryEntryID string
+	Url          string
+	Alt          string
+	Caption      pgtype.Text
+	MediaOrder   int16
+	CreatedAt    pgtype.Timestamptz
+}
+
 type Favorite struct {
 	ID        int32
 	PoiID     string
