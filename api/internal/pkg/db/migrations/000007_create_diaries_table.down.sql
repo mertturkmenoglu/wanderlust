@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS diary_entries_users;
 
 DROP TABLE IF EXISTS diary_entries_pois;
 
+DROP INDEX IF EXISTS idx_diary_entries_user;
+
 DROP INDEX IF EXISTS idx_diary_entries_date;
 
 DROP TABLE IF EXISTS diary_entries;
