@@ -14,3 +14,18 @@ func (h *handlers) getDiary(c echo.Context) error {
 		},
 	})
 }
+
+func (h *handlers) createNewDiaryEntry(c echo.Context) error {
+	userId := c.Get("user_id").(string)
+	dto := c.Get("body").(CreateDiaryEntryRequestDto)
+
+	res, err := h.service.createNewDiaryEntry(userId, dto)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, core.Response{
+		Data: res,
+	})
+}
