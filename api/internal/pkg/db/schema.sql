@@ -190,12 +190,14 @@ CREATE TABLE IF NOT EXISTS list_items (
 
 CREATE TABLE IF NOT EXISTS diary_entries (
   id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
   title VARCHAR(128) NOT NULL,
   description VARCHAR(4096) NOT NULL,
   share_with_friends BOOLEAN NOT NULL DEFAULT false,
   date TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  CONSTRAINT fk_diary_entries_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS diary_entries_pois (
