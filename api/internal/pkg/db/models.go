@@ -87,6 +87,7 @@ type DiaryEntriesUser struct {
 
 type DiaryEntry struct {
 	ID               string
+	UserID           string
 	Title            string
 	Description      string
 	ShareWithFriends bool
