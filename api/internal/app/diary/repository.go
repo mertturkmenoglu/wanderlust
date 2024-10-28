@@ -73,3 +73,15 @@ func (r *repository) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequ
 
 	return entry, err
 }
+
+func (r *repository) addMedia(id string, url string, fileInfo *sFileInfo) error {
+	_, err := r.di.Db.Queries.CreateDiaryMedia(context.Background(), db.CreateDiaryMediaParams{
+		DiaryEntryID: id,
+		Url:          url,
+		Alt:          fileInfo.alt,
+		Caption:      utils.StrToText(fileInfo.caption),
+		MediaOrder:   fileInfo.mediaOrder,
+	})
+
+	return err
+}
