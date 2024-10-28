@@ -39,3 +39,17 @@ INSERT INTO diary_entries_users (
   $3
 ) RETURNING *;
 
+-- name: CreateDiaryMedia :one
+INSERT INTO diary_media (
+  diary_entry_id,
+  url,
+  alt,
+  caption,
+  media_order
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING *;

@@ -74,6 +74,51 @@ func (q *Queries) CreateDiaryEntryUser(ctx context.Context, arg CreateDiaryEntry
 	return i, err
 }
 
+const createDiaryMedia = `-- name: CreateDiaryMedia :one
+INSERT INTO diary_media (
+  diary_entry_id,
+  url,
+  alt,
+  caption,
+  media_order
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING id, diary_entry_id, url, alt, caption, media_order, created_at
+`
+
+type CreateDiaryMediaParams struct {
+	DiaryEntryID string
+	Url          string
+	Alt          string
+	Caption      pgtype.Text
+	MediaOrder   int16
+}
+
+func (q *Queries) CreateDiaryMedia(ctx context.Context, arg CreateDiaryMediaParams) (DiaryMedium, error) {
+	row := q.db.QueryRow(ctx, createDiaryMedia,
+		arg.DiaryEntryID,
+		arg.Url,
+		arg.Alt,
+		arg.Caption,
+		arg.MediaOrder,
+	)
+	var i DiaryMedium
+	err := row.Scan(
+		&i.ID,
+		&i.DiaryEntryID,
+		&i.Url,
+		&i.Alt,
+		&i.Caption,
+		&i.MediaOrder,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const createNewDiaryEntry = `-- name: CreateNewDiaryEntry :one
 INSERT INTO diary_entries (
   id,
