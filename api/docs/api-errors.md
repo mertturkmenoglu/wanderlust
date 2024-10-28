@@ -17,3 +17,5 @@
 - `0500-0549`: Favorites module errors.
 - `0550-0599`: Collections module errors.
 - `0600-0649`: Lists module errors.
+- `0650-0699`: <Reserved>
+- `0700-0799`: Diary module errors.
