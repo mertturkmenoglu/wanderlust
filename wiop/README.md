@@ -1,5 +1,9 @@
 # Wanderlust Image Optimization Proxy Server
 
+## What is it?
+
+- WIOP (Wanderlust Image Optimization Proxy) is a web server utilizing `ipx` to optimize and/or modify media requests on the fly.
+
 ## How to Run
 
 - Make sure you have Node.js LTS and pnpm installed.

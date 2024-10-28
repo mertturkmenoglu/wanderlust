@@ -1,5 +1,7 @@
 # Wanderlust - Web
 
+A Remix web application.
+
 ## Prerequisites
 
 - Node.js
@@ -14,6 +16,6 @@
 
 ## Scripts
 
-- `pnpm dev`: Start the development server.
+- `pnpm dev`: Start the development server on port 5173.
 - `pnpm build`: Build the application for production.
 - `pnpm start`: Start the production server.
