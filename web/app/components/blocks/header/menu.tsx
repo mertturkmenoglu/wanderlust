@@ -18,6 +18,7 @@ export default function Menu({ auth }: Readonly<Props>) {
         <DropdownMenuTrigger asChild>
           <Button className="rounded-full" variant="ghost">
             <UserIcon className="size-5 text-black" />
+            <span className="sr-only">Menu</span>
             <span className="hidden sm:ml-2 sm:block">
               {auth.data.fullName}
             </span>

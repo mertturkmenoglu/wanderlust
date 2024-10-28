@@ -18,6 +18,7 @@ export default function SignedInLinks() {
               className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
             >
               <BellIcon className="size-5 transition-all duration-500 ease-in-out group-hover:text-primary" />
+              <span className="sr-only">Notifications</span>
             </Link>
           </TooltipTrigger>
           <TooltipContent side="bottom" sideOffset={8}>
@@ -34,6 +35,7 @@ export default function SignedInLinks() {
               className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
             >
               <SendIcon className="size-5 transition-all duration-500 ease-in-out group-hover:text-primary" />
+              <span className="sr-only">Messages</span>
             </Link>
           </TooltipTrigger>
           <TooltipContent side="bottom" sideOffset={8}>

@@ -139,7 +139,9 @@ export default function Page() {
               use and you can save your trips for later.
             </div>
             <Button asChild variant="default">
-              <Link to="/trip/planner">Go to Trip Planner</Link>
+              <Link to="/trip/planner" className="text-white">
+                Go to Trip Planner
+              </Link>
             </Button>
           </div>
         }

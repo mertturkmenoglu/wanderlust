@@ -32,7 +32,6 @@ export default function OverlayBanner({
         )}
         fetchPriority={fetchPriority}
         loading={loading}
-        role="presentation"
         alt={alt}
       />
       <div className="absolute bottom-2 left-2 rounded-md px-4 py-2 md:bottom-8 md:left-8 md:px-8 md:py-4">

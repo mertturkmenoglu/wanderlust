@@ -33,6 +33,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <GitHubLogoIcon className="size-6" />
+            <span className="sr-only">GitHub</span>
           </a>
         </li>
         <li>
@@ -42,6 +43,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <TwitterLogoIcon className="size-6" />
+            <span className="sr-only">Twitter</span>
           </a>
         </li>
         <li>
@@ -51,6 +53,7 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <LinkedInLogoIcon className="size-6" />
+            <span className="sr-only">LinkedIn</span>
           </a>
         </li>
       </ul>

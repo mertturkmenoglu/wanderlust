@@ -39,7 +39,6 @@ export default function ActionBanner({
           },
           imgClassName
         )}
-        role="presentation"
         fetchPriority={fetchPriority}
         loading={loading}
         alt={alt}
