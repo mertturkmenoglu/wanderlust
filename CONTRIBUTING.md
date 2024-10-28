@@ -16,23 +16,17 @@ To get an overview of the project, read the [README](README.md) file. You will f
 - How to setup your system to run Wanderlust locally
 - How to fill environment variables and download some necessary files.
 
+After that, you can find documentation files inside each subproject.
+
 ## Getting started
 
 First, you must read the [README](README.md) file in the root directory. It will help you understand what you need to do for getting started with the project.
 
-Then, you can navigate to apps folder. `apps` folder includes 4 different projects:
+Then, you can navigate to different subproject folders. There are 3 different applications inside Wanderlust repository:
 
-- api
-- common
-- email
-- web
-
-As you can understand from their names:
-
-- `api`: Includes Hono API server and related modules.
-- `common`: Common type definitions for all other modules.
-- `email`: Email sending system.
-- `web`: A Next.js app serving web application.
+- `api`: A RESTful Go + Echo web server.
+- `web`: A Remix app serving web application.
+- `wiop`: An on-the-fly image optimization proxy to serve media.
 
 Each folder includes a README file that will guide you how to setup that project and run. You can follow from there.
 
