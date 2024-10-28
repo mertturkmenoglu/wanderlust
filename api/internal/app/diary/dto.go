@@ -12,7 +12,6 @@ type CreateDiaryEntryRequestDto struct {
 type CreateDiaryEntryLocationDto struct {
 	ID          string  `json:"id" validate:"required,min=1,max=32"`
 	Description *string `json:"description" validate:"min=1,max=256"`
-	ListIndex   int32   `json:"listIndex" validate:"min=1,max=32"`
 }
 
 type CreateDiaryEntryResponseDto struct{}
