@@ -1,8 +1,6 @@
 package middlewares
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,7 +13,7 @@ func ParseBody[T any](next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		if err := c.Validate(&body); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			return err
 		}
 
 		c.Set("body", body)
