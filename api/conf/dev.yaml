@@ -30,6 +30,7 @@ minio:
     - banner-images
     - pois
     - reviews
+    - diaries
   location: eu-central-1
   autocreate-buckets: true
 api:
