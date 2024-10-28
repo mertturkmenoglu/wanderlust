@@ -18,6 +18,7 @@
 - Run sqlc to generate latest database queries & types: `make sqlc-generate`
 - Run Docker containers: `docker compose up -d`
 - Run the development server: `make watch`
+- Server will run at port `5000`.
 
 ## Next Steps
 
