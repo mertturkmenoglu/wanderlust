@@ -1,5 +1,7 @@
 package diary
 
+import "time"
+
 type CreateDiaryEntryRequestDto struct {
 	ShareWithFriends bool                          `json:"shareWithFriends" validate:"boolean"`
 	Title            string                        `json:"title" validate:"required,min=1,max=128"`
@@ -14,4 +16,13 @@ type CreateDiaryEntryLocationDto struct {
 	Description *string `json:"description" validate:"min=1,max=256"`
 }
 
-type CreateDiaryEntryResponseDto struct{}
+type CreateDiaryEntryResponseDto struct {
+	ID               string    `json:"id"`
+	UserID           string    `json:"userId"`
+	Title            string    `json:"title"`
+	Description      string    `json:"description"`
+	ShareWithFriends bool      `json:"shareWithFriends"`
+	Date             time.Time `json:"date"`
+	CreatedAt        time.Time `json:"createdAt"`
+	UpdatedAt        time.Time `json:"updatedAt"`
+}
