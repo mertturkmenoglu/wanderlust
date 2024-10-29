@@ -1,23 +1,19 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { json, Link } from "@remix-run/react";
-import { BookMarkedIcon, PlusIcon } from "lucide-react";
+import { json, Link, useLoaderData } from "@remix-run/react";
+import { BookMarkedIcon, GlobeIcon, LockIcon, PlusIcon } from "lucide-react";
 import AppMessage from "~/components/blocks/app-message";
 import { buttonVariants } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { getMe } from "~/lib/api";
+import { listDiaryEntries } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { cn } from "~/lib/utils";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const Cookie = getCookiesFromRequest(request);
-    const auth = await getMe({ headers: { Cookie } });
+    const res = await listDiaryEntries({ headers: { Cookie } });
 
-    if (!auth.data) {
-      throw redirect("/");
-    }
-
-    return json({ auth: auth.data });
+    return json({ entries: res.data.entries });
   } catch (e) {
     throw redirect("/");
   }
@@ -32,6 +28,8 @@ export function meta() {
 }
 
 export default function Page() {
+  const { entries } = useLoaderData<typeof loader>();
+
   return (
     <div className="container mx-auto my-8">
       <div className="flex items-center justify-between">
@@ -54,11 +52,38 @@ export default function Page() {
       <Separator className="my-4" />
 
       <div>
-        <AppMessage
-          emptyMessage="You have no diary entries yet"
-          className="my-16"
-          showBackButton={false}
-        />
+        {entries.length === 0 ? (
+          <AppMessage
+            emptyMessage="You have no diary entries yet"
+            className="my-16"
+            showBackButton={false}
+          />
+        ) : (
+          <div className="flex flex-col gap-4">
+            {entries.map((entry) => (
+              <Link to={`/diary/${entry.id}`} key={entry.id} className="block">
+                <div className="flex items-center gap-4">
+                  <div>
+                    {entry.shareWithFriends ? (
+                      <GlobeIcon className="size-4" />
+                    ) : (
+                      <LockIcon className="size-4" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-primary hover:underline">
+                      {entry.title}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Created at:{" "}
+                      {new Date(entry.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
