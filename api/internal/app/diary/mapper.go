@@ -14,3 +14,7 @@ func mapToCreateDiaryEntryResponseDto(v db.DiaryEntry) CreateDiaryEntryResponseD
 		UpdatedAt:        v.UpdatedAt.Time,
 	}
 }
+
+func mapToGetDiaryEntryByIdResponseDto(v db.DiaryEntry) GetDiaryEntryByIdResponseDto {
+	return GetDiaryEntryByIdResponseDto{}
+}
