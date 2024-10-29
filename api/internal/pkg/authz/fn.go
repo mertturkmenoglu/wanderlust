@@ -173,7 +173,7 @@ func FnDiaryUploadMedia(s *Authz, c echo.Context) (bool, error) {
 		return false, err
 	}
 
-	if diary.UserID != userId {
+	if diary.DiaryEntry.UserID != userId {
 		return false, echo.ErrForbidden
 	}
 
