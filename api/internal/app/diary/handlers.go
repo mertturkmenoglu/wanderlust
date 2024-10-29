@@ -8,11 +8,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) getDiary(c echo.Context) error {
+func (h *handlers) listDiaryEntries(c echo.Context) error {
+	userId := c.Get("user_id").(string)
+
+	res, err := h.service.listDiaryEntries(userId)
+
+	if err != nil {
+		return err
+	}
+
 	return c.JSON(http.StatusOK, core.Response{
-		Data: map[string]any{
-			"foo": "bar",
-		},
+		Data: res,
 	})
 }
 

@@ -123,3 +123,24 @@ func mapToGetDiaryEntryByIdUserDto(v db.Profile) common_dto.Profile {
 		CreatedAt:         v.CreatedAt.Time,
 	}
 }
+
+func mapToListDiaryEntriesResponseDto(v []db.DiaryEntry) ListDiaryEntriesResponseDto {
+	entries := make([]DiaryEntryDto, 0)
+
+	for _, entry := range v {
+		entries = append(entries, DiaryEntryDto{
+			ID:               entry.ID,
+			UserID:           entry.UserID,
+			Title:            entry.Title,
+			Description:      entry.Description,
+			ShareWithFriends: entry.ShareWithFriends,
+			Date:             entry.Date.Time,
+			CreatedAt:        entry.CreatedAt.Time,
+			UpdatedAt:        entry.UpdatedAt.Time,
+		})
+	}
+
+	return ListDiaryEntriesResponseDto{
+		Entries: entries,
+	}
+}

@@ -9,6 +9,10 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+func (r *repository) listDiaryEntries(userId string) ([]db.DiaryEntry, error) {
+	return r.di.Db.Queries.ListDiaryEntries(context.Background(), userId)
+}
+
 func (r *repository) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequestDto) (db.DiaryEntry, error) {
 	t, err := time.Parse(time.RFC3339, dto.Date)
 

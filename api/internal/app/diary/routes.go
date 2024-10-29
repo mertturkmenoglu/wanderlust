@@ -10,7 +10,7 @@ import (
 func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/diary")
 	{
-		routes.GET("/", m.handlers.getDiary)
+		routes.GET("/", m.handlers.listDiaryEntries, middlewares.IsAuth)
 		routes.GET("/:id", m.handlers.getDiaryEntryById, middlewares.IsAuth)
 		routes.POST("/", m.handlers.createNewDiaryEntry, middlewares.IsAuth, middlewares.ParseBody[CreateDiaryEntryRequestDto])
 		routes.POST("/media/:id", m.handlers.uploadDiaryMedia, middlewares.IsAuth, middlewares.Authz(authz.ActDiaryUploadMedia))

@@ -8,6 +8,18 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+func (s *service) listDiaryEntries(userId string) (ListDiaryEntriesResponseDto, error) {
+	res, err := s.repository.listDiaryEntries(userId)
+
+	if err != nil {
+		return ListDiaryEntriesResponseDto{}, err
+	}
+
+	v := mapToListDiaryEntriesResponseDto(res)
+
+	return v, nil
+}
+
 func (s *service) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequestDto) (CreateDiaryEntryResponseDto, error) {
 	res, err := s.repository.createNewDiaryEntry(userId, dto)
 
