@@ -63,3 +63,21 @@ func (h *handlers) uploadDiaryMedia(c echo.Context) error {
 		},
 	})
 }
+
+func (h *handlers) getDiaryEntryById(c echo.Context) error {
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.getDiaryEntryById(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
+}
