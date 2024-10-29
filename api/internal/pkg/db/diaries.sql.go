@@ -168,3 +168,195 @@ func (q *Queries) CreateNewDiaryEntry(ctx context.Context, arg CreateNewDiaryEnt
 	)
 	return i, err
 }
+
+const getDiaryEntryById = `-- name: GetDiaryEntryById :one
+SELECT diary_entries.id, diary_entries.user_id, diary_entries.title, diary_entries.description, diary_entries.share_with_friends, diary_entries.date, diary_entries.created_at, diary_entries.updated_at, profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at FROM diary_entries
+  LEFT JOIN profile ON diary_entries.user_id = profile.id
+WHERE diary_entries.id = $1 LIMIT 1
+`
+
+type GetDiaryEntryByIdRow struct {
+	DiaryEntry DiaryEntry
+	Profile    Profile
+}
+
+func (q *Queries) GetDiaryEntryById(ctx context.Context, id string) (GetDiaryEntryByIdRow, error) {
+	row := q.db.QueryRow(ctx, getDiaryEntryById, id)
+	var i GetDiaryEntryByIdRow
+	err := row.Scan(
+		&i.DiaryEntry.ID,
+		&i.DiaryEntry.UserID,
+		&i.DiaryEntry.Title,
+		&i.DiaryEntry.Description,
+		&i.DiaryEntry.ShareWithFriends,
+		&i.DiaryEntry.Date,
+		&i.DiaryEntry.CreatedAt,
+		&i.DiaryEntry.UpdatedAt,
+		&i.Profile.ID,
+		&i.Profile.Username,
+		&i.Profile.FullName,
+		&i.Profile.IsBusinessAccount,
+		&i.Profile.IsVerified,
+		&i.Profile.Bio,
+		&i.Profile.Pronouns,
+		&i.Profile.Website,
+		&i.Profile.Phone,
+		&i.Profile.ProfileImage,
+		&i.Profile.BannerImage,
+		&i.Profile.FollowersCount,
+		&i.Profile.FollowingCount,
+		&i.Profile.CreatedAt,
+	)
+	return i, err
+}
+
+const getDiaryEntryPois = `-- name: GetDiaryEntryPois :many
+SELECT 
+  diary_entries_pois.diary_entry_id, diary_entries_pois.poi_id, diary_entries_pois.description, diary_entries_pois.list_index,
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
+  categories.id, categories.name, categories.image,
+  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
+  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
+  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
+FROM diary_entries_pois
+  LEFT JOIN pois ON diary_entries_pois.poi_id = pois.id
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE diary_entries_pois.diary_entry_id = $1 AND media.media_order = 1
+ORDER BY diary_entries_pois.list_index ASC
+`
+
+type GetDiaryEntryPoisRow struct {
+	DiaryEntriesPoi DiaryEntriesPoi
+	Poi             Poi
+	Category        Category
+	Address         Address
+	City            City
+	Medium          Medium
+}
+
+func (q *Queries) GetDiaryEntryPois(ctx context.Context, diaryEntryID string) ([]GetDiaryEntryPoisRow, error) {
+	rows, err := q.db.Query(ctx, getDiaryEntryPois, diaryEntryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetDiaryEntryPoisRow
+	for rows.Next() {
+		var i GetDiaryEntryPoisRow
+		if err := rows.Scan(
+			&i.DiaryEntriesPoi.DiaryEntryID,
+			&i.DiaryEntriesPoi.PoiID,
+			&i.DiaryEntriesPoi.Description,
+			&i.DiaryEntriesPoi.ListIndex,
+			&i.Poi.ID,
+			&i.Poi.Name,
+			&i.Poi.Phone,
+			&i.Poi.Description,
+			&i.Poi.AddressID,
+			&i.Poi.Website,
+			&i.Poi.PriceLevel,
+			&i.Poi.AccessibilityLevel,
+			&i.Poi.TotalVotes,
+			&i.Poi.TotalPoints,
+			&i.Poi.TotalFavorites,
+			&i.Poi.CategoryID,
+			&i.Poi.OpenTimes,
+			&i.Poi.CreatedAt,
+			&i.Poi.UpdatedAt,
+			&i.Category.ID,
+			&i.Category.Name,
+			&i.Category.Image,
+			&i.Address.ID,
+			&i.Address.CityID,
+			&i.Address.Line1,
+			&i.Address.Line2,
+			&i.Address.PostalCode,
+			&i.Address.Lat,
+			&i.Address.Lng,
+			&i.City.ID,
+			&i.City.Name,
+			&i.City.StateCode,
+			&i.City.StateName,
+			&i.City.CountryCode,
+			&i.City.CountryName,
+			&i.City.ImageUrl,
+			&i.City.Latitude,
+			&i.City.Longitude,
+			&i.City.Description,
+			&i.City.ImgLicense,
+			&i.City.ImgLicenseLink,
+			&i.City.ImgAttr,
+			&i.City.ImgAttrLink,
+			&i.Medium.ID,
+			&i.Medium.PoiID,
+			&i.Medium.Url,
+			&i.Medium.Alt,
+			&i.Medium.Caption,
+			&i.Medium.MediaOrder,
+			&i.Medium.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getDiaryEntryUsers = `-- name: GetDiaryEntryUsers :many
+SELECT 
+  diary_entries_users.diary_entry_id, diary_entries_users.user_id, diary_entries_users.list_index,
+  profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+FROM diary_entries_users
+  JOIN profile ON diary_entries_users.user_id = profile.id
+WHERE diary_entries_users.diary_entry_id = $1
+ORDER BY diary_entries_users.list_index ASC
+`
+
+type GetDiaryEntryUsersRow struct {
+	DiaryEntriesUser DiaryEntriesUser
+	Profile          Profile
+}
+
+func (q *Queries) GetDiaryEntryUsers(ctx context.Context, diaryEntryID string) ([]GetDiaryEntryUsersRow, error) {
+	rows, err := q.db.Query(ctx, getDiaryEntryUsers, diaryEntryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetDiaryEntryUsersRow
+	for rows.Next() {
+		var i GetDiaryEntryUsersRow
+		if err := rows.Scan(
+			&i.DiaryEntriesUser.DiaryEntryID,
+			&i.DiaryEntriesUser.UserID,
+			&i.DiaryEntriesUser.ListIndex,
+			&i.Profile.ID,
+			&i.Profile.Username,
+			&i.Profile.FullName,
+			&i.Profile.IsBusinessAccount,
+			&i.Profile.IsVerified,
+			&i.Profile.Bio,
+			&i.Profile.Pronouns,
+			&i.Profile.Website,
+			&i.Profile.Phone,
+			&i.Profile.ProfileImage,
+			&i.Profile.BannerImage,
+			&i.Profile.FollowersCount,
+			&i.Profile.FollowingCount,
+			&i.Profile.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

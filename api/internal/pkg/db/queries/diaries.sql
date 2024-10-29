@@ -53,3 +53,37 @@ INSERT INTO diary_media (
   $4,
   $5
 ) RETURNING *;
+
+-- name: GetDiaryEntryById :one
+SELECT 
+  sqlc.embed(diary_entries), 
+  sqlc.embed(profile)
+FROM diary_entries
+  LEFT JOIN profile ON diary_entries.user_id = profile.id
+WHERE diary_entries.id = $1 LIMIT 1;
+
+-- name: GetDiaryEntryUsers :many
+SELECT 
+  sqlc.embed(diary_entries_users),
+  sqlc.embed(profile)
+FROM diary_entries_users
+  JOIN profile ON diary_entries_users.user_id = profile.id
+WHERE diary_entries_users.diary_entry_id = $1
+ORDER BY diary_entries_users.list_index ASC;
+
+-- name: GetDiaryEntryPois :many
+SELECT 
+  sqlc.embed(diary_entries_pois),
+  sqlc.embed(pois),
+  sqlc.embed(categories),
+  sqlc.embed(addresses),
+  sqlc.embed(cities),
+  sqlc.embed(media)
+FROM diary_entries_pois
+  LEFT JOIN pois ON diary_entries_pois.poi_id = pois.id
+  LEFT JOIN categories ON categories.id = pois.category_id
+  LEFT JOIN addresses ON addresses.id = pois.address_id
+  LEFT JOIN cities ON addresses.city_id = cities.id
+  LEFT JOIN media ON media.poi_id = pois.id
+WHERE diary_entries_pois.diary_entry_id = $1 AND media.media_order = 1
+ORDER BY diary_entries_pois.list_index ASC;
