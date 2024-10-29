@@ -231,3 +231,21 @@ CREATE TABLE IF NOT EXISTS diary_media (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   CONSTRAINT fk_diary_media_diary_entry FOREIGN KEY (diary_entry_id) REFERENCES diary_entries(id) ON DELETE SET DEFAULT
 );
+
+CREATE OR REPLACE VIEW profile AS
+SELECT 
+  id,
+  username,
+  full_name,
+  is_business_account,
+  is_verified,
+  bio,
+  pronouns,
+  website,
+  phone,
+  profile_image,
+  banner_image,
+  followers_count,
+  following_count,
+  created_at
+FROM users;
