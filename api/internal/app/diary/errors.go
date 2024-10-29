@@ -7,5 +7,6 @@ import (
 )
 
 var (
-	ErrIdRequired = errs.NewApiError(http.StatusBadRequest, "0700", errors.New("id is required"))
+	ErrIdRequired         = errs.NewApiError(http.StatusBadRequest, "0700", errors.New("id is required"))
+	ErrDiaryEntryNotFound = errs.NewApiError(http.StatusNotFound, "0701", errors.New("diary entry not found"))
 )
