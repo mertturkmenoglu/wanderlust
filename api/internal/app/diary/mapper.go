@@ -16,5 +16,6 @@ func mapToCreateDiaryEntryResponseDto(v db.DiaryEntry) CreateDiaryEntryResponseD
 }
 
 func mapToGetDiaryEntryByIdResponseDto(v db.DiaryEntry) GetDiaryEntryByIdResponseDto {
+	_ = v
 	return GetDiaryEntryByIdResponseDto{}
 }
