@@ -53,3 +53,15 @@ func (s *service) uploadMedia(id string, mpf *multipart.Form) (string, error) {
 
 	return url, nil
 }
+
+func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, error) {
+	res, err := s.repository.getDiaryEntryById(id)
+
+	if err != nil {
+		return GetDiaryEntryByIdResponseDto{}, err
+	}
+
+	v := mapToGetDiaryEntryByIdResponseDto(res)
+
+	return v, nil
+}
