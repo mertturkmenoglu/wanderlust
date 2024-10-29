@@ -1,8 +1,11 @@
 package diary
 
 import (
+	"errors"
 	"mime/multipart"
 	"wanderlust/internal/pkg/upload"
+
+	"github.com/jackc/pgx/v5"
 )
 
 func (s *service) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequestDto) (CreateDiaryEntryResponseDto, error) {
@@ -58,6 +61,10 @@ func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, er
 	res, err := s.repository.getDiaryEntryById(id)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return GetDiaryEntryByIdResponseDto{}, ErrDiaryEntryNotFound
+		}
+
 		return GetDiaryEntryByIdResponseDto{}, err
 	}
 
