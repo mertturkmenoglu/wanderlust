@@ -87,3 +87,7 @@ FROM diary_entries_pois
   LEFT JOIN media ON media.poi_id = pois.id
 WHERE diary_entries_pois.diary_entry_id = $1 AND media.media_order = 1
 ORDER BY diary_entries_pois.list_index ASC;
+
+-- name: ListDiaryEntries :many
+SELECT * FROM diary_entries
+WHERE user_id = $1;

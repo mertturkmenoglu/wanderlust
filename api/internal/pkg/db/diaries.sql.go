@@ -170,7 +170,10 @@ func (q *Queries) CreateNewDiaryEntry(ctx context.Context, arg CreateNewDiaryEnt
 }
 
 const getDiaryEntryById = `-- name: GetDiaryEntryById :one
-SELECT diary_entries.id, diary_entries.user_id, diary_entries.title, diary_entries.description, diary_entries.share_with_friends, diary_entries.date, diary_entries.created_at, diary_entries.updated_at, profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at FROM diary_entries
+SELECT 
+  diary_entries.id, diary_entries.user_id, diary_entries.title, diary_entries.description, diary_entries.share_with_friends, diary_entries.date, diary_entries.created_at, diary_entries.updated_at, 
+  profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+FROM diary_entries
   LEFT JOIN profile ON diary_entries.user_id = profile.id
 WHERE diary_entries.id = $1 LIMIT 1
 `
@@ -350,6 +353,40 @@ func (q *Queries) GetDiaryEntryUsers(ctx context.Context, diaryEntryID string) (
 			&i.Profile.FollowersCount,
 			&i.Profile.FollowingCount,
 			&i.Profile.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listDiaryEntries = `-- name: ListDiaryEntries :many
+SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
+WHERE user_id = $1
+`
+
+func (q *Queries) ListDiaryEntries(ctx context.Context, userID string) ([]DiaryEntry, error) {
+	rows, err := q.db.Query(ctx, listDiaryEntries, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []DiaryEntry
+	for rows.Next() {
+		var i DiaryEntry
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Title,
+			&i.Description,
+			&i.ShareWithFriends,
+			&i.Date,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
