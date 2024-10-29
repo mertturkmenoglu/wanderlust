@@ -85,3 +85,29 @@ func (r *repository) addMedia(id string, url string, fileInfo *sFileInfo) error 
 
 	return err
 }
+
+func (r *repository) getDiaryEntryById(id string) (GetDiaryEntryByIdDao, error) {
+	entry, err := r.di.Db.Queries.GetDiaryEntryById(context.Background(), id)
+
+	if err != nil {
+		return GetDiaryEntryByIdDao{}, err
+	}
+
+	users, err := r.di.Db.Queries.GetDiaryEntryUsers(context.Background(), id)
+
+	if err != nil {
+		return GetDiaryEntryByIdDao{}, err
+	}
+
+	pois, err := r.di.Db.Queries.GetDiaryEntryPois(context.Background(), id)
+
+	if err != nil {
+		return GetDiaryEntryByIdDao{}, err
+	}
+
+	return GetDiaryEntryByIdDao{
+		DiaryEntry: entry,
+		Users:      users,
+		Pois:       pois,
+	}, nil
+}
