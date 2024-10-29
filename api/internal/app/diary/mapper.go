@@ -1,6 +1,10 @@
 package diary
 
-import "wanderlust/internal/pkg/db"
+import (
+	common_dto "wanderlust/internal/pkg/common/dto"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/utils"
+)
 
 func mapToCreateDiaryEntryResponseDto(v db.DiaryEntry) CreateDiaryEntryResponseDto {
 	return CreateDiaryEntryResponseDto{
@@ -15,7 +19,107 @@ func mapToCreateDiaryEntryResponseDto(v db.DiaryEntry) CreateDiaryEntryResponseD
 	}
 }
 
-func mapToGetDiaryEntryByIdResponseDto(v db.DiaryEntry) GetDiaryEntryByIdResponseDto {
-	_ = v
-	return GetDiaryEntryByIdResponseDto{}
+func mapToGetDiaryEntryByIdResponseDto(v GetDiaryEntryByIdDao) GetDiaryEntryByIdResponseDto {
+	friends := make([]common_dto.Profile, 0)
+
+	for _, friend := range v.Users {
+		friends = append(friends, mapToGetDiaryEntryByIdUserDto(friend.Profile))
+	}
+
+	locations := make([]DiaryLocationDto, 0)
+
+	for _, l := range v.Pois {
+		locations = append(locations, DiaryLocationDto{
+			Description: utils.TextOrNil(l.DiaryEntriesPoi.Description),
+			ListIndex:   l.DiaryEntriesPoi.ListIndex,
+			Poi: DiaryPoiDto{
+				ID:                 l.Poi.ID,
+				Name:               l.Poi.Name,
+				Phone:              utils.TextOrNil(l.Poi.Phone),
+				Description:        l.Poi.Description,
+				Website:            utils.TextOrNil(l.Poi.Website),
+				PriceLevel:         l.Poi.PriceLevel,
+				AccessibilityLevel: l.Poi.AccessibilityLevel,
+				TotalVotes:         l.Poi.TotalVotes,
+				TotalFavorites:     l.Poi.TotalFavorites,
+				TotalPoints:        l.Poi.TotalPoints,
+				CreatedAt:          l.Poi.CreatedAt.Time,
+				UpdatedAt:          l.Poi.UpdatedAt.Time,
+				CategoryID:         l.Poi.CategoryID,
+				Category: DiaryPoiCategoryDto{
+					ID:    l.Category.ID,
+					Name:  l.Category.Name,
+					Image: l.Category.Image,
+				},
+				AddressID: l.Poi.AddressID,
+				Address: DiaryPoiAddressDto{
+					ID:         l.Address.ID,
+					Line1:      l.Address.Line1,
+					Line2:      utils.TextOrNil(l.Address.Line2),
+					PostalCode: utils.TextOrNil(l.Address.PostalCode),
+					Lat:        l.Address.Lat,
+					Lng:        l.Address.Lng,
+					CityID:     l.Address.CityID,
+					City: DiaryPoiCityDto{
+						ID:             l.City.ID,
+						Name:           l.City.Name,
+						StateCode:      l.City.StateCode,
+						StateName:      l.City.StateName,
+						CountryCode:    l.City.CountryCode,
+						CountryName:    l.City.CountryName,
+						Latitude:       l.City.Latitude,
+						Longitude:      l.City.Longitude,
+						ImageUrl:       l.City.ImageUrl,
+						Description:    l.City.Description,
+						ImgLicense:     utils.TextOrNil(l.City.ImgLicense),
+						ImgLicenseLink: utils.TextOrNil(l.City.ImgLicenseLink),
+						ImgAttr:        utils.TextOrNil(l.City.ImgAttr),
+						ImgAttrLink:    utils.TextOrNil(l.City.ImgAttrLink),
+					},
+				},
+				FirstMedia: DiaryPoiMediaDto{
+					ID:         l.Medium.ID,
+					PoiID:      l.Medium.PoiID,
+					Url:        l.Medium.Url,
+					Alt:        l.Medium.Alt,
+					Caption:    utils.TextOrNil(l.Medium.Caption),
+					MediaOrder: l.Medium.MediaOrder,
+					CreatedAt:  l.Medium.CreatedAt.Time,
+				},
+			},
+		})
+	}
+
+	return GetDiaryEntryByIdResponseDto{
+		ID:               v.DiaryEntry.DiaryEntry.ID,
+		UserID:           v.DiaryEntry.DiaryEntry.UserID,
+		Title:            v.DiaryEntry.DiaryEntry.Title,
+		Description:      v.DiaryEntry.DiaryEntry.Description,
+		ShareWithFriends: v.DiaryEntry.DiaryEntry.ShareWithFriends,
+		Date:             v.DiaryEntry.DiaryEntry.Date.Time,
+		CreatedAt:        v.DiaryEntry.DiaryEntry.CreatedAt.Time,
+		UpdatedAt:        v.DiaryEntry.DiaryEntry.UpdatedAt.Time,
+		User:             mapToGetDiaryEntryByIdUserDto(v.DiaryEntry.Profile),
+		Friends:          friends,
+		Locations:        locations,
+	}
+}
+
+func mapToGetDiaryEntryByIdUserDto(v db.Profile) common_dto.Profile {
+	return common_dto.Profile{
+		ID:                v.ID,
+		Username:          v.Username,
+		FullName:          v.FullName,
+		IsBusinessAccount: v.IsBusinessAccount,
+		IsVerified:        v.IsVerified,
+		Bio:               utils.TextOrNil(v.Bio),
+		Pronouns:          utils.TextOrNil(v.Pronouns),
+		Website:           utils.TextOrNil(v.Website),
+		Phone:             utils.TextOrNil(v.Phone),
+		ProfileImage:      utils.TextOrNil(v.ProfileImage),
+		BannerImage:       utils.TextOrNil(v.BannerImage),
+		FollowersCount:    v.FollowersCount,
+		FollowingCount:    v.FollowingCount,
+		CreatedAt:         v.CreatedAt.Time,
+	}
 }
