@@ -163,6 +163,23 @@ type Poi struct {
 	UpdatedAt          pgtype.Timestamptz
 }
 
+type Profile struct {
+	ID                string
+	Username          string
+	FullName          string
+	IsBusinessAccount bool
+	IsVerified        bool
+	Bio               pgtype.Text
+	Pronouns          pgtype.Text
+	Website           pgtype.Text
+	Phone             pgtype.Text
+	ProfileImage      pgtype.Text
+	BannerImage       pgtype.Text
+	FollowersCount    int32
+	FollowingCount    int32
+	CreatedAt         pgtype.Timestamptz
+}
+
 type Session struct {
 	ID          string
 	UserID      string
