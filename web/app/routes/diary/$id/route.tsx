@@ -68,7 +68,11 @@ export default function Page() {
 
       <Separator className="my-2" />
 
-      <CollapsibleText text={entry.description} charLimit={1000} />
+      <CollapsibleText
+        text={entry.description}
+        charLimit={1000}
+        className="mt-4"
+      />
 
       <pre>{JSON.stringify(entry, null, 2)}</pre>
     </div>
