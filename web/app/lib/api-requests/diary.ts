@@ -26,3 +26,7 @@ export function createDiaryEntry(dto: CreateDiaryEntryRequestDto) {
     })
     .json<{ data: CreateDiaryEntryResponseDto }>();
 }
+
+export function changeDiarySharing(id: string) {
+  return api.patch(`diary/${id}/sharing`);
+}
