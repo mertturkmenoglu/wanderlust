@@ -87,3 +87,19 @@ func (h *handlers) getDiaryEntryById(c echo.Context) error {
 		Data: res,
 	})
 }
+
+func (h *handlers) changeSharing(c echo.Context) error {
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	err := h.service.changeSharing(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}

@@ -14,5 +14,6 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.GET("/:id", m.handlers.getDiaryEntryById, middlewares.IsAuth)
 		routes.POST("/", m.handlers.createNewDiaryEntry, middlewares.IsAuth, middlewares.ParseBody[CreateDiaryEntryRequestDto])
 		routes.POST("/media/:id", m.handlers.uploadDiaryMedia, middlewares.IsAuth, middlewares.Authz(authz.ActDiaryUploadMedia))
+		routes.PATCH("/:id/sharing", m.handlers.changeSharing, middlewares.IsAuth, middlewares.Authz(authz.ActDiaryChangeSharing))
 	}
 }

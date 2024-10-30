@@ -115,3 +115,7 @@ func (r *repository) getDiaryEntryById(id string) (GetDiaryEntryByIdDao, error) 
 		Pois:       pois,
 	}, nil
 }
+
+func (r *repository) changeSharing(id string) error {
+	return r.di.Db.Queries.ChangeShareWithFriends(context.Background(), id)
+}

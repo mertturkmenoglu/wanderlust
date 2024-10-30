@@ -84,3 +84,7 @@ func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, er
 
 	return v, nil
 }
+
+func (s *service) changeSharing(id string) error {
+	return s.repository.changeSharing(id)
+}
