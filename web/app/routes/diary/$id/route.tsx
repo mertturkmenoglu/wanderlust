@@ -4,12 +4,20 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
+import { GlobeIcon, LockIcon, Share2Icon } from "lucide-react";
 import { useContext } from "react";
+import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import CollapsibleText from "~/components/blocks/collapsible-text";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
+import { Switch } from "~/components/ui/switch";
 import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { AuthContext } from "~/providers/auth-provider";
@@ -51,6 +59,7 @@ export default function Page() {
   const { entry } = useLoaderData<typeof loader>();
   const auth = useContext(AuthContext);
   const isOwner = auth.user?.data?.id === entry.userId;
+  const friendsCountText = entry.friends.length === 1 ? "friend" : "friends";
 
   return (
     <div className="container mx-auto my-8">
@@ -62,7 +71,43 @@ export default function Page() {
             <div>Created by: {isOwner ? "You" : entry.user.fullName}</div>
             <div>{new Date(entry.createdAt).toLocaleDateString()}</div>
           </div>
-          <div className="text-xs text-muted-foreground mt-1"></div>
+        </div>
+
+        <div>
+          <Popover>
+            <PopoverTrigger>
+              <Share2Icon className="size-8 p-2 hover:bg-accent rounded" />
+              <span className="sr-only">Change share settings</span>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="max-w-96">
+              <div className="flex items-center gap-2">
+                {entry.shareWithFriends ? (
+                  <GlobeIcon className="size-6 text-primary" />
+                ) : (
+                  <LockIcon className="size-6 text-primary" />
+                )}
+                <div className="ml-2">
+                  <div className="text-sm">Share with friends</div>
+                  <div className="text-muted-foreground text-xs">
+                    {entry.shareWithFriends ? "Sharing" : "Private"}
+                  </div>
+                </div>
+                <Switch
+                  className="ml-auto"
+                  checked={entry.shareWithFriends}
+                  onCheckedChange={(v) => {
+                    toast.success(
+                      "Share settings updated: " + (v ? "Shared" : "Private")
+                    );
+                  }}
+                />
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                You {entry.shareWithFriends ? "are sharing" : "can share"} with{" "}
+                {entry.friends.length} {friendsCountText}.
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
