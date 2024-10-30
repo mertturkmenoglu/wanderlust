@@ -43,6 +43,7 @@ const (
 	ActListItemUpdate       AuthzAct = "list-item-update"
 	ActListItemDelete       AuthzAct = "list-item-delete"
 	ActDiaryUploadMedia     AuthzAct = "diary-upload-media"
+	ActDiaryChangeSharing   AuthzAct = "diary-change-sharing"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -86,4 +87,5 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActListItemUpdate:       NotImplemented,
 	ActListItemDelete:       NotImplemented,
 	ActDiaryUploadMedia:     FnDiaryUploadMedia,
+	ActDiaryChangeSharing: FnDiaryChangeSharing,
 }

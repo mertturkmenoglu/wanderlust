@@ -179,3 +179,29 @@ func FnDiaryUploadMedia(s *Authz, c echo.Context) (bool, error) {
 
 	return true, nil
 }
+
+func FnDiaryChangeSharing(s *Authz, c echo.Context) (bool, error) {
+	userId, ok := c.Get("user_id").(string)
+
+	if !ok {
+		return false, echo.ErrUnauthorized
+	}
+
+	id := c.Param("id")
+
+	if id == "" {
+		return false, echo.ErrBadRequest
+	}
+
+	diary, err := s.Db.Queries.GetDiaryEntryById(context.Background(), id)
+
+	if err != nil {
+		return false, err
+	}
+
+	if diary.DiaryEntry.UserID != userId {
+		return false, echo.ErrForbidden
+	}
+
+	return true, nil
+}
