@@ -8,6 +8,7 @@ import { useContext } from "react";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
+import CollapsibleText from "~/components/blocks/collapsible-text";
 import { Separator } from "~/components/ui/separator";
 import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
@@ -66,6 +67,8 @@ export default function Page() {
       </div>
 
       <Separator className="my-2" />
+
+      <CollapsibleText text={entry.description} charLimit={1000} />
 
       <pre>{JSON.stringify(entry, null, 2)}</pre>
     </div>
