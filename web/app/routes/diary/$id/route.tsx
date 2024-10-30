@@ -2,27 +2,19 @@ import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
-  useRevalidator,
   useRouteError,
 } from "@remix-run/react";
-import { useMutation } from "@tanstack/react-query";
-import { GlobeIcon, LockIcon, Share2Icon } from "lucide-react";
 import { useContext } from "react";
-import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import CollapsibleText from "~/components/blocks/collapsible-text";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
+
 import { Separator } from "~/components/ui/separator";
-import { Switch } from "~/components/ui/switch";
-import { changeDiarySharing, getDiaryEntryById } from "~/lib/api-requests";
+import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { AuthContext } from "~/providers/auth-provider";
+import SharePopover from "./components/share-popover";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -61,22 +53,6 @@ export default function Page() {
   const { entry } = useLoaderData<typeof loader>();
   const auth = useContext(AuthContext);
   const isOwner = auth.user?.data?.id === entry.userId;
-  const friendsCountText = entry.friends.length === 1 ? "friend" : "friends";
-  const revalidator = useRevalidator();
-
-  const shareMutation = useMutation({
-    mutationKey: ["entry", entry.id, "share"],
-    mutationFn: async () => {
-      return changeDiarySharing(entry.id);
-    },
-    onSuccess: () => {
-      revalidator.revalidate();
-      toast.success("Share settings updated");
-    },
-    onError: () => {
-      toast.error("Something went wrong");
-    },
-  });
 
   return (
     <div className="container mx-auto my-8">
@@ -91,38 +67,13 @@ export default function Page() {
         </div>
 
         <div>
-          <Popover>
-            <PopoverTrigger>
-              <Share2Icon className="size-8 p-2 hover:bg-accent rounded" />
-              <span className="sr-only">Change share settings</span>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="max-w-96">
-              <div className="flex items-center gap-2">
-                {entry.shareWithFriends ? (
-                  <GlobeIcon className="size-6 text-primary" />
-                ) : (
-                  <LockIcon className="size-6 text-primary" />
-                )}
-                <div className="ml-2">
-                  <div className="text-sm">Share with friends</div>
-                  <div className="text-muted-foreground text-xs">
-                    {entry.shareWithFriends ? "Sharing" : "Private"}
-                  </div>
-                </div>
-                <Switch
-                  className="ml-auto"
-                  checked={entry.shareWithFriends}
-                  onCheckedChange={() => {
-                    shareMutation.mutate();
-                  }}
-                />
-              </div>
-              <div className="mt-2 text-xs text-muted-foreground">
-                You {entry.shareWithFriends ? "are sharing" : "can share"} with{" "}
-                {entry.friends.length} {friendsCountText}.
-              </div>
-            </PopoverContent>
-          </Popover>
+          {isOwner && (
+            <SharePopover
+              id={entry.id}
+              friendsCount={entry.friends.length}
+              share={entry.shareWithFriends}
+            />
+          )}
         </div>
       </div>
 
