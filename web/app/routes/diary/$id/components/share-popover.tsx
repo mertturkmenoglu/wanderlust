@@ -2,6 +2,7 @@ import { useRevalidator } from "@remix-run/react";
 import { useMutation } from "@tanstack/react-query";
 import { GlobeIcon, LockIcon, Share2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "~/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -36,9 +37,11 @@ export default function SharePopover({ id, share, friendsCount }: Props) {
 
   return (
     <Popover>
-      <PopoverTrigger>
-        <Share2Icon className="size-8 p-2 hover:bg-accent rounded" />
-        <span className="sr-only">Change share settings</span>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Share2Icon className="size-4" />
+          <span className="sr-only">Change share settings</span>
+        </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="max-w-96">
         <div className="flex items-center gap-2">
