@@ -1,16 +1,24 @@
 import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import {
   isRouteErrorResponse,
+  Link,
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
+import { PencilIcon } from "lucide-react";
 import { useContext } from "react";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import CollapsibleText from "~/components/blocks/collapsible-text";
-
+import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { AuthContext } from "~/providers/auth-provider";
@@ -66,13 +74,40 @@ export default function Page() {
           </div>
         </div>
 
-        <div>
+        <div className="space-x-2">
           {isOwner && (
-            <SharePopover
-              id={entry.id}
-              friendsCount={entry.friends.length}
-              share={entry.shareWithFriends}
-            />
+            <>
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger tabIndex={-1}>
+                    <SharePopover
+                      id={entry.id}
+                      friendsCount={entry.friends.length}
+                      share={entry.shareWithFriends}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={8}>
+                    Share
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger tabIndex={-1}>
+                    <Button asChild variant="ghost" size="icon">
+                      <Link to={`/diary/${entry.id}/edit`}>
+                        <PencilIcon className="size-4" />
+                        <span className="sr-only">Edit diary entry</span>
+                      </Link>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={8}>
+                    Edit
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
           )}
         </div>
       </div>
