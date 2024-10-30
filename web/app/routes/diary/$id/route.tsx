@@ -2,8 +2,10 @@ import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import {
   isRouteErrorResponse,
   useLoaderData,
+  useRevalidator,
   useRouteError,
 } from "@remix-run/react";
+import { useMutation } from "@tanstack/react-query";
 import { GlobeIcon, LockIcon, Share2Icon } from "lucide-react";
 import { useContext } from "react";
 import { toast } from "sonner";
@@ -18,7 +20,7 @@ import {
 } from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
 import { Switch } from "~/components/ui/switch";
-import { getDiaryEntryById } from "~/lib/api-requests";
+import { changeDiarySharing, getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { AuthContext } from "~/providers/auth-provider";
 
@@ -60,6 +62,21 @@ export default function Page() {
   const auth = useContext(AuthContext);
   const isOwner = auth.user?.data?.id === entry.userId;
   const friendsCountText = entry.friends.length === 1 ? "friend" : "friends";
+  const revalidator = useRevalidator();
+
+  const shareMutation = useMutation({
+    mutationKey: ["entry", entry.id, "share"],
+    mutationFn: async () => {
+      return changeDiarySharing(entry.id);
+    },
+    onSuccess: () => {
+      revalidator.revalidate();
+      toast.success("Share settings updated");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
 
   return (
     <div className="container mx-auto my-8">
@@ -95,10 +112,8 @@ export default function Page() {
                 <Switch
                   className="ml-auto"
                   checked={entry.shareWithFriends}
-                  onCheckedChange={(v) => {
-                    toast.success(
-                      "Share settings updated: " + (v ? "Shared" : "Private")
-                    );
+                  onCheckedChange={() => {
+                    shareMutation.mutate();
                   }}
                 />
               </div>
