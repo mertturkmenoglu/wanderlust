@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const changeShareWithFriends = `-- name: ChangeShareWithFriends :exec
+UPDATE diary_entries
+SET share_with_friends = not share_with_friends
+WHERE id = $1
+`
+
+func (q *Queries) ChangeShareWithFriends(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, changeShareWithFriends, id)
+	return err
+}
+
 const createDiaryEntryPoi = `-- name: CreateDiaryEntryPoi :one
 INSERT INTO diary_entries_pois (
   diary_entry_id,

@@ -91,3 +91,8 @@ ORDER BY diary_entries_pois.list_index ASC;
 -- name: ListDiaryEntries :many
 SELECT * FROM diary_entries
 WHERE user_id = $1;
+
+-- name: ChangeShareWithFriends :exec
+UPDATE diary_entries
+SET share_with_friends = not share_with_friends
+WHERE id = $1;
