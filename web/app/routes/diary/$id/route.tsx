@@ -11,6 +11,8 @@ import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import CollapsibleText from "~/components/blocks/collapsible-text";
+import PoiCard from "~/components/blocks/poi-card";
+import UserCard from "~/components/blocks/user-card";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import {
@@ -131,7 +133,48 @@ export default function Page() {
         className="mt-4"
       />
 
-      <pre>{JSON.stringify(entry, null, 2)}</pre>
+      <Separator className="my-8" />
+
+      <div className="text-xl font-medium">Locations</div>
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {entry.locations.map((location) => (
+          <Link to={`/p/${location.poi.id}`}>
+            <PoiCard
+              poi={{
+                ...location.poi,
+                image: location.poi.firstMedia,
+              }}
+            />
+            <div className="mt-4 text-muted-foreground">
+              {location.description}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <Separator className="my-8" />
+
+      <div className="text-xl font-medium">Friends</div>
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {entry.friends.length === 0 && (
+          <div className="col-span-full">
+            <AppMessage
+              emptyMessage="You haven't added any friends."
+              showBackButton={false}
+              className="my-8"
+            />
+          </div>
+        )}
+        {entry.friends.map((f) => (
+          <Link to={`/u/${f.id}`}>
+            <UserCard
+              fullName={f.fullName}
+              image={f.profileImage}
+              username={f.username}
+            />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
