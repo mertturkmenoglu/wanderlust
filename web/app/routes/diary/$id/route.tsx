@@ -176,6 +176,16 @@ export default function Page() {
             </Link>
           ))}
         </div>
+
+        <Separator className="my-8" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {entry.media.map((media) => (
+            <div>
+              <img src={media.url} alt={media.alt} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
