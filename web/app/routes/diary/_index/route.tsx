@@ -75,8 +75,9 @@ export default function Page() {
                       {entry.title}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Created at:{" "}
-                      {new Date(entry.createdAt).toLocaleDateString()}
+                      {new Date(entry.date).toLocaleDateString("en-US", {
+                        dateStyle: "medium",
+                      })}
                     </div>
                   </div>
                 </div>
