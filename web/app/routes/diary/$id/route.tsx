@@ -68,9 +68,14 @@ export default function Page() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl tracking-tighter">{entry.title}</h2>
-          <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+          <div className="text-xs text-muted-foreground mt-1 flex items-center">
             <div>Created by: {isOwner ? "You" : entry.user.fullName}</div>
-            <div>{new Date(entry.createdAt).toLocaleDateString()}</div>
+            <div className="ml-1">
+              at{" "}
+              {new Date(entry.createdAt).toLocaleDateString("en-US", {
+                dateStyle: "medium",
+              })}
+            </div>
           </div>
         </div>
 
@@ -113,6 +118,12 @@ export default function Page() {
       </div>
 
       <Separator className="my-2" />
+
+      <div className="text-lg my-8 ml-auto text-end">
+        {new Date(entry.date).toLocaleDateString("en-US", {
+          dateStyle: "full",
+        })}
+      </div>
 
       <CollapsibleText
         text={entry.description}
