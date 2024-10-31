@@ -90,7 +90,8 @@ ORDER BY diary_entries_pois.list_index ASC;
 
 -- name: ListDiaryEntries :many
 SELECT * FROM diary_entries
-WHERE user_id = $1;
+WHERE user_id = $1
+ORDER BY date DESC;
 
 -- name: ChangeShareWithFriends :exec
 UPDATE diary_entries

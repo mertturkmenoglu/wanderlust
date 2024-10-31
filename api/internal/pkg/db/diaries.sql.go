@@ -425,6 +425,7 @@ func (q *Queries) GetLastMediaOrderOfEntry(ctx context.Context, diaryEntryID str
 const listDiaryEntries = `-- name: ListDiaryEntries :many
 SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
 WHERE user_id = $1
+ORDER BY date DESC
 `
 
 func (q *Queries) ListDiaryEntries(ctx context.Context, userID string) ([]DiaryEntry, error) {
