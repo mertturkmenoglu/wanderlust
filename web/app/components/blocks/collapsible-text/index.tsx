@@ -17,12 +17,18 @@ export default function CollapsibleText({
   const [showButton] = useState(() => text.length > charLimit);
   const shortText =
     text.length < charLimit ? text : text.slice(0, charLimit) + "...";
+  const displayText = showMore ? text : shortText;
+  const paragraphs = displayText.split("\n");
 
   return (
     <div className={cn(className)}>
-      <p className="mt-2 text-sm text-gray-500">
-        {showMore ? text : shortText}
-      </p>
+      <div className="mt-2 text-sm text-gray-500 flex flex-col">
+        {paragraphs.map((p, i) => (
+          <div key={i} className="mt-4 first:mt-0">
+            {p}
+          </div>
+        ))}
+      </div>
 
       {showButton && (
         <Button
