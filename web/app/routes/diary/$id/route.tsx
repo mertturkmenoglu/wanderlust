@@ -121,59 +121,61 @@ export default function Page() {
 
       <Separator className="my-2" />
 
-      <div className="text-lg my-8 ml-auto text-end">
-        {new Date(entry.date).toLocaleDateString("en-US", {
-          dateStyle: "full",
-        })}
-      </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-lg my-8 ml-auto text-end">
+          {new Date(entry.date).toLocaleDateString("en-US", {
+            dateStyle: "full",
+          })}
+        </div>
 
-      <CollapsibleText
-        text={entry.description}
-        charLimit={1000}
-        className="mt-4"
-      />
+        <CollapsibleText
+          text={entry.description}
+          charLimit={1000}
+          className="mt-4"
+        />
 
-      <Separator className="my-8" />
+        <Separator className="my-8" />
 
-      <div className="text-xl font-medium">Locations</div>
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {entry.locations.map((location) => (
-          <Link to={`/p/${location.poi.id}`}>
-            <PoiCard
-              poi={{
-                ...location.poi,
-                image: location.poi.firstMedia,
-              }}
-            />
-            <div className="mt-4 text-muted-foreground">
-              {location.description}
+        <div className="text-xl font-medium">Locations</div>
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {entry.locations.map((location) => (
+            <Link to={`/p/${location.poi.id}`}>
+              <PoiCard
+                poi={{
+                  ...location.poi,
+                  image: location.poi.firstMedia,
+                }}
+              />
+              <div className="mt-4 text-muted-foreground">
+                {location.description}
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <Separator className="my-8" />
+
+        <div className="text-xl font-medium">Friends</div>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {entry.friends.length === 0 && (
+            <div className="col-span-full">
+              <AppMessage
+                emptyMessage="You haven't added any friends."
+                showBackButton={false}
+                className="my-8"
+              />
             </div>
-          </Link>
-        ))}
-      </div>
-
-      <Separator className="my-8" />
-
-      <div className="text-xl font-medium">Friends</div>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {entry.friends.length === 0 && (
-          <div className="col-span-full">
-            <AppMessage
-              emptyMessage="You haven't added any friends."
-              showBackButton={false}
-              className="my-8"
-            />
-          </div>
-        )}
-        {entry.friends.map((f) => (
-          <Link to={`/u/${f.id}`}>
-            <UserCard
-              fullName={f.fullName}
-              image={f.profileImage}
-              username={f.username}
-            />
-          </Link>
-        ))}
+          )}
+          {entry.friends.map((f) => (
+            <Link to={`/u/${f.id}`}>
+              <UserCard
+                fullName={f.fullName}
+                image={f.profileImage}
+                username={f.username}
+              />
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
