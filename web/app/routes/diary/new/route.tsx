@@ -3,7 +3,6 @@ import { json, redirect, useBlocker, useLoaderData } from "@remix-run/react";
 import { Uppy } from "@uppy/core";
 import GoldenRetriever from "@uppy/golden-retriever";
 import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
-import XHRUpload from "@uppy/xhr-upload";
 import { useState } from "react";
 import BackLink from "~/components/blocks/back-link";
 import { getMe } from "~/lib/api";
@@ -99,13 +98,6 @@ export default function Page() {
     })
       .use(ImageEditor)
       .use(GoldenRetriever, { expires: 7 * 24 * 60 * 60 * 1000 })
-      .use(XHRUpload, {
-        endpoint: `${baseApiUrl}diary/media`,
-        withCredentials: true,
-        shouldRetry: () => false,
-        fieldName: "files",
-        limit: 5,
-      })
       .on("file-added", (file) => {
         console.log("file added", file);
       })
@@ -139,7 +131,7 @@ export default function Page() {
           {currentStep === 2 && <Step2 />}
           {currentStep === 3 && <Step3 />}
           {currentStep === 4 && <Step4 uppy={uppy} />}
-          {currentStep === 5 && <Step5 uppy={uppy} />}
+          {currentStep === 5 && <Step5 uppy={uppy} baseApiUrl={baseApiUrl} />}
 
           <Nav
             onNavigationChange={saveToLocalStorage}
