@@ -79,12 +79,30 @@ func (r *repository) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequ
 }
 
 func (r *repository) addMedia(id string, url string, fileInfo *sFileInfo) error {
+	order := fileInfo.mediaOrder
+
+	if order == -1 {
+		lastMediaOrder, err := r.di.Db.Queries.GetLastMediaOrderOfEntry(context.Background(), id)
+
+		if err != nil {
+			return err
+		}
+
+		ord, ok := lastMediaOrder.(int32)
+
+		if !ok {
+			return ErrMediaOrder
+		}
+
+		order = int16(ord) + 1
+	}
+
 	_, err := r.di.Db.Queries.CreateDiaryMedia(context.Background(), db.CreateDiaryMediaParams{
 		DiaryEntryID: id,
 		Url:          url,
 		Alt:          fileInfo.alt,
 		Caption:      utils.StrToText(fileInfo.caption),
-		MediaOrder:   fileInfo.mediaOrder,
+		MediaOrder:   order,
 	})
 
 	return err

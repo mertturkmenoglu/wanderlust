@@ -52,18 +52,30 @@ func (s *sImageUploader) GetSingleFile() (*sFileInfo, error) {
 
 	key := uuid.NewString()
 
+	caption := ""
+	alt := ""
+	order := -1
+
 	captionArr := s.mpf.Value["caption"]
 	altArr := s.mpf.Value["alt"]
 	orderArr := s.mpf.Value["order"]
 
-	if len(captionArr) != 1 || len(altArr) != 1 || len(orderArr) != 1 {
-		return nil, upload.ErrInvalidNumberOfFiles
+	if len(captionArr) == 1 {
+		caption = captionArr[0]
 	}
 
-	orderInt, err := strconv.Atoi(orderArr[0])
+	if len(altArr) == 1 {
+		alt = altArr[0]
+	}
 
-	if err != nil {
-		return nil, err
+	if len(orderArr) == 1 {
+		orderInt, err := strconv.Atoi(orderArr[0])
+
+		if err != nil {
+			return nil, err
+		}
+
+		order = orderInt
 	}
 
 	return &sFileInfo{
@@ -72,9 +84,9 @@ func (s *sImageUploader) GetSingleFile() (*sFileInfo, error) {
 		mime:       mime,
 		extension:  extension,
 		size:       f.Size,
-		caption:    captionArr[0],
-		alt:        altArr[0],
-		mediaOrder: int16(orderInt),
+		caption:    caption,
+		alt:        alt,
+		mediaOrder: int16(order),
 	}, nil
 }
 
