@@ -48,12 +48,23 @@ type GetDiaryEntryByIdResponseDto struct {
 	User             common_dto.Profile   `json:"user"`
 	Friends          []common_dto.Profile `json:"friends"`
 	Locations        []DiaryLocationDto   `json:"locations"`
+	Media            []DiaryMediaDto      `json:"media"`
 }
 
 type DiaryLocationDto struct {
 	Poi         DiaryPoiDto `json:"poi"`
 	Description *string     `json:"description"`
 	ListIndex   int32       `json:"listIndex"`
+}
+
+type DiaryMediaDto struct {
+	ID           int64     `json:"id"`
+	DiaryEntryID string    `json:"diaryEntryId"`
+	Url          string    `json:"url"`
+	Alt          string    `json:"alt"`
+	Caption      *string   `json:"caption"`
+	MediaOrder   int16     `json:"mediaOrder"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
 type DiaryPoiDto struct {

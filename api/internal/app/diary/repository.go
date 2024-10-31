@@ -109,10 +109,17 @@ func (r *repository) getDiaryEntryById(id string) (GetDiaryEntryByIdDao, error) 
 		return GetDiaryEntryByIdDao{}, err
 	}
 
+	media, err := r.di.Db.Queries.GetDiaryMedia(context.Background(), id)
+
+	if err != nil {
+		return GetDiaryEntryByIdDao{}, err
+	}
+
 	return GetDiaryEntryByIdDao{
 		DiaryEntry: entry,
 		Users:      users,
 		Pois:       pois,
+		Media:      media,
 	}, nil
 }
 

@@ -90,6 +90,20 @@ func mapToGetDiaryEntryByIdResponseDto(v GetDiaryEntryByIdDao) GetDiaryEntryById
 		})
 	}
 
+	media := make([]DiaryMediaDto, 0)
+
+	for _, m := range v.Media {
+		media = append(media, DiaryMediaDto{
+			ID:           m.ID,
+			DiaryEntryID: m.DiaryEntryID,
+			Url:          m.Url,
+			Alt:          m.Alt,
+			Caption:      utils.TextOrNil(m.Caption),
+			MediaOrder:   m.MediaOrder,
+			CreatedAt:    m.CreatedAt.Time,
+		})
+	}
+
 	return GetDiaryEntryByIdResponseDto{
 		ID:               v.DiaryEntry.DiaryEntry.ID,
 		UserID:           v.DiaryEntry.DiaryEntry.UserID,
@@ -102,6 +116,7 @@ func mapToGetDiaryEntryByIdResponseDto(v GetDiaryEntryByIdDao) GetDiaryEntryById
 		User:             mapToGetDiaryEntryByIdUserDto(v.DiaryEntry.Profile),
 		Friends:          friends,
 		Locations:        locations,
+		Media:            media,
 	}
 }
 
