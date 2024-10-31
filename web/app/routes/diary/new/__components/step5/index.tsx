@@ -139,8 +139,6 @@ export default function Step5({ baseApiUrl, uppy }: Props) {
       >
         Create Diary Entry
       </Button>
-
-      <pre>{JSON.stringify(form.formState.errors, null, 2)}</pre>
     </div>
   );
 }
