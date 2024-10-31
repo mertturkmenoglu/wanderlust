@@ -50,6 +50,12 @@ export function useSaveToLocalStorage(form: FormType) {
   const saveToLocalStorage = async () => {
     setSaveStatus("saving");
 
+    if (!form.formState.isValid) {
+      setSaveStatus("idle");
+      toast.error("Cannot save because values are invalid");
+      return;
+    }
+
     await new Promise((res) => setTimeout(res, 1000));
 
     localStorage.setItem(
