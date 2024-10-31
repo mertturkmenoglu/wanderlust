@@ -375,6 +375,40 @@ func (q *Queries) GetDiaryEntryUsers(ctx context.Context, diaryEntryID string) (
 	return items, nil
 }
 
+const getDiaryMedia = `-- name: GetDiaryMedia :many
+SELECT id, diary_entry_id, url, alt, caption, media_order, created_at FROM diary_media
+WHERE diary_entry_id = $1
+ORDER BY media_order ASC
+`
+
+func (q *Queries) GetDiaryMedia(ctx context.Context, diaryEntryID string) ([]DiaryMedium, error) {
+	rows, err := q.db.Query(ctx, getDiaryMedia, diaryEntryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []DiaryMedium
+	for rows.Next() {
+		var i DiaryMedium
+		if err := rows.Scan(
+			&i.ID,
+			&i.DiaryEntryID,
+			&i.Url,
+			&i.Alt,
+			&i.Caption,
+			&i.MediaOrder,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDiaryEntries = `-- name: ListDiaryEntries :many
 SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
 WHERE user_id = $1

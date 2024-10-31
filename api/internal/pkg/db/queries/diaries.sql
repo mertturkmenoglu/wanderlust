@@ -96,3 +96,8 @@ WHERE user_id = $1;
 UPDATE diary_entries
 SET share_with_friends = not share_with_friends
 WHERE id = $1;
+
+-- name: GetDiaryMedia :many
+SELECT * FROM diary_media
+WHERE diary_entry_id = $1
+ORDER BY media_order ASC;
