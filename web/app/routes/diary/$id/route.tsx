@@ -167,7 +167,7 @@ export default function Page() {
             </div>
           )}
           {entry.friends.map((f) => (
-            <Link to={`/u/${f.id}`}>
+            <Link to={`/u/${f.username}`}>
               <UserCard
                 fullName={f.fullName}
                 image={f.profileImage}
