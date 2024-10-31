@@ -409,6 +409,19 @@ func (q *Queries) GetDiaryMedia(ctx context.Context, diaryEntryID string) ([]Dia
 	return items, nil
 }
 
+const getLastMediaOrderOfEntry = `-- name: GetLastMediaOrderOfEntry :one
+SELECT COALESCE(MAX(media_order), 0)
+FROM diary_media
+WHERE diary_entry_id = $1
+`
+
+func (q *Queries) GetLastMediaOrderOfEntry(ctx context.Context, diaryEntryID string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, getLastMediaOrderOfEntry, diaryEntryID)
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
+}
+
 const listDiaryEntries = `-- name: ListDiaryEntries :many
 SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
 WHERE user_id = $1

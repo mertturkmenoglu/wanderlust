@@ -101,3 +101,8 @@ WHERE id = $1;
 SELECT * FROM diary_media
 WHERE diary_entry_id = $1
 ORDER BY media_order ASC;
+
+-- name: GetLastMediaOrderOfEntry :one
+SELECT COALESCE(MAX(media_order), 0)
+FROM diary_media
+WHERE diary_entry_id = $1;
