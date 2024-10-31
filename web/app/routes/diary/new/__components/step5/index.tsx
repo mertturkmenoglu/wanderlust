@@ -1,12 +1,19 @@
+import { useNavigate } from "@remix-run/react";
+import { useMutation } from "@tanstack/react-query";
 import Uppy, { Meta } from "@uppy/core";
 import { useUppyState } from "@uppy/react";
+import XHRUpload from "@uppy/xhr-upload";
 import { useFormContext } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
+import { createDiaryEntry } from "~/lib/api-requests";
+import { CreateDiaryEntryRequestDto } from "~/lib/dto";
 import { FormInput } from "../../schema";
 
 type Props = {
+  baseApiUrl: string;
   uppy: Uppy<Meta, Record<string, never>>;
 };
 
@@ -14,7 +21,7 @@ function strOrDefault(s: string, defaultValue: string): string {
   return s === "" ? defaultValue : s;
 }
 
-export default function Step5({ uppy }: Props) {
+export default function Step5({ baseApiUrl, uppy }: Props) {
   const form = useFormContext<FormInput>();
   const files = useUppyState(uppy, (s) => s.files);
   const fileCount = Object.keys(files).length;
@@ -29,6 +36,58 @@ export default function Step5({ uppy }: Props) {
     description.length > 256 ? description.slice(0, 256) + "..." : description;
 
   const canCreateEntry = form.formState.isValid;
+
+  const navigate = useNavigate();
+
+  const entryMutation = useMutation({
+    mutationKey: ["create-diary-entry"],
+    mutationFn: async () => {
+      const values = form.getValues();
+      const dto: CreateDiaryEntryRequestDto = {
+        date: values.date.toISOString(),
+        description: values.description,
+        shareWithFriends: values.shareWithFriends,
+        title: values.title,
+        friends: values.friends.map((f) => f.id),
+        locations: values.locations.map((l) => ({
+          id: l.id,
+          description: l.description === "" ? null : l.description,
+        })),
+      };
+      return createDiaryEntry(dto);
+    },
+    onSuccess: (res) => {
+      uploadMutation.mutate({ entryId: res.data.id });
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+
+  const uploadMutation = useMutation({
+    mutationKey: ["upload-diary-entry-media"],
+    mutationFn: async ({ entryId }: { entryId: string }) => {
+      const uppyWithXHR = uppy
+        .use(XHRUpload, {
+          endpoint: `${baseApiUrl}diary/media/${entryId}`,
+          withCredentials: true,
+          shouldRetry: () => false,
+          fieldName: "files",
+          limit: 1,
+        })
+        .on("complete", (res) => {
+          if (res.failed?.length === 0) {
+            toast.success("Created. Redirecting.");
+            localStorage.removeItem("diary-entry");
+            navigate("/diary");
+          }
+        })
+        .on("error", () => {
+          toast.error("Media upload failed");
+        });
+      await uppyWithXHR.upload();
+    },
+  });
 
   return (
     <div className="flex flex-col mx-auto max-w-xl mt-16">
@@ -71,9 +130,17 @@ export default function Step5({ uppy }: Props) {
         <Label htmlFor="share-with-friends">Share with friends</Label>
       </div>
 
-      <Button className="mt-4" disabled={!canCreateEntry}>
+      <Button
+        className="mt-4"
+        disabled={!canCreateEntry}
+        onClick={() => {
+          entryMutation.mutate();
+        }}
+      >
         Create Diary Entry
       </Button>
+
+      <pre>{JSON.stringify(form.formState.errors, null, 2)}</pre>
     </div>
   );
 }
