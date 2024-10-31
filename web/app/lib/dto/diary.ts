@@ -43,12 +43,23 @@ export type GetDiaryEntryByIdResponseDto = {
   user: Profile;
   friends: Profile[];
   locations: DiaryLocationDto[];
+  media: DiaryMediaDto[];
 };
 
 export type DiaryLocationDto = {
   poi: DiaryPoiDto;
   description: string | null;
   listIndex: number;
+};
+
+export type DiaryMediaDto = {
+  id: number;
+  diaryEntryId: string;
+  url: string;
+  alt: string;
+  caption: string | null;
+  mediaOrder: number;
+  createdAt: string;
 };
 
 export type DiaryPoiDto = {
