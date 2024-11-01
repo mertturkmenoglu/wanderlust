@@ -103,3 +103,8 @@ func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, er
 func (s *service) changeSharing(id string) error {
 	return s.repository.changeSharing(id)
 }
+
+func (s *service) invalidateDiaryEntryCache(id string) error {
+	key := cache.KeyBuilder(cache.KeyDiaryEntry, id)
+	return s.di.Cache.Del(key)
+}
