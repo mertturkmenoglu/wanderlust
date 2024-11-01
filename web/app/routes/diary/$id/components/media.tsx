@@ -1,9 +1,10 @@
 import { useLoaderData } from "@remix-run/react";
-import { loader } from "../route";
 import { useState } from "react";
-import { cn } from "~/lib/utils";
 import Lightbox from "yet-another-react-lightbox";
 import Captions from "yet-another-react-lightbox/plugins/captions";
+import AppMessage from "~/components/blocks/app-message";
+import { cn } from "~/lib/utils";
+import { loader } from "../route";
 
 export default function Media() {
   const { entry } = useLoaderData<typeof loader>();
@@ -16,6 +17,13 @@ export default function Media() {
       <div className="text-xl font-medium">Media</div>
 
       <div className="mt-4 grid grid-cols-3 gap-4">
+        {entry.media.length === 0 && (
+          <AppMessage
+            emptyMessage="No images"
+            showBackButton={false}
+            className="col-span-full"
+          />
+        )}
         {entry.media.map((m, i) => (
           <button
             key={m.url}
