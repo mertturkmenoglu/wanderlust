@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from "@remix-run/react";
-import { loader } from "../route";
 import AppMessage from "~/components/blocks/app-message";
 import UserCard from "~/components/blocks/user-card";
+import { loader } from "../route";
 
 export default function Friends() {
   const { entry } = useLoaderData<typeof loader>();
@@ -13,9 +13,9 @@ export default function Friends() {
         {entry.friends.length === 0 && (
           <div className="col-span-full">
             <AppMessage
-              emptyMessage="You haven't added any friends."
+              emptyMessage="No users"
               showBackButton={false}
-              className="my-8"
+              className=""
             />
           </div>
         )}
