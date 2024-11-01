@@ -131,7 +131,7 @@ export default function Page() {
         <CollapsibleText
           text={entry.description}
           charLimit={1000}
-          className="mt-4"
+          className="mt-4 text-justify"
         />
 
         <Separator className="my-8" />
