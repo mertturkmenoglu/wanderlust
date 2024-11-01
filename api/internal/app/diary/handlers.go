@@ -101,5 +101,7 @@ func (h *handlers) changeSharing(c echo.Context) error {
 		return err
 	}
 
+	_ = h.service.invalidateDiaryEntryCache(id)
+
 	return c.NoContent(http.StatusNoContent)
 }
