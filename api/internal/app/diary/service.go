@@ -3,6 +3,7 @@ package diary
 import (
 	"errors"
 	"mime/multipart"
+	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/upload"
 
 	"github.com/jackc/pgx/v5"
@@ -70,6 +71,18 @@ func (s *service) uploadMedia(id string, mpf *multipart.Form) (string, error) {
 }
 
 func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, error) {
+	key := cache.KeyBuilder(cache.KeyDiaryEntry, id)
+
+	if s.di.Cache.Has(key) {
+		var res GetDiaryEntryByIdResponseDto
+
+		err := s.di.Cache.ReadObj(key, &res)
+
+		if err == nil {
+			return res, nil
+		}
+	}
+
 	res, err := s.repository.getDiaryEntryById(id)
 
 	if err != nil {
@@ -81,6 +94,8 @@ func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, er
 	}
 
 	v := mapToGetDiaryEntryByIdResponseDto(res)
+
+	_ = s.di.Cache.SetObj(key, v, cache.TTLDiaryEntry)
 
 	return v, nil
 }
