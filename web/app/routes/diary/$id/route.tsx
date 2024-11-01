@@ -5,8 +5,11 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-import { PencilIcon } from "lucide-react";
-import { useContext } from "react";
+import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
+import leafletStyles from "leaflet/dist/leaflet.css?url";
+import { Grid2X2Icon, MapIcon, PencilIcon } from "lucide-react";
+import { useContext, useState } from "react";
+import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
@@ -15,6 +18,7 @@ import PoiCard from "~/components/blocks/poi-card";
 import UserCard from "~/components/blocks/user-card";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import {
   Tooltip,
   TooltipContent,
@@ -24,6 +28,7 @@ import {
 import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { AuthContext } from "~/providers/auth-provider";
+import { Map } from "./components/map.client";
 import SharePopover from "./components/share-popover";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -59,10 +64,21 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
   return [{ title: "Diary | Wanderlust" }];
 }
 
+export function links() {
+  return [
+    { rel: "stylesheet", href: leafletStyles },
+    { rel: "stylesheet", href: leafletIconCompatStyles },
+  ];
+}
+
+type LocationDisplayMode = "grid" | "map";
+
 export default function Page() {
   const { entry } = useLoaderData<typeof loader>();
   const auth = useContext(AuthContext);
   const isOwner = auth.user?.data?.id === entry.userId;
+  const [locationsDisplay, setLocationsDisplay] =
+    useState<LocationDisplayMode>("grid");
 
   return (
     <div className="container mx-auto my-8">
@@ -136,22 +152,55 @@ export default function Page() {
 
         <Separator className="my-8" />
 
-        <div className="text-xl font-medium">Locations</div>
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {entry.locations.map((location) => (
-            <Link to={`/p/${location.poi.id}`}>
-              <PoiCard
-                poi={{
-                  ...location.poi,
-                  image: location.poi.firstMedia,
-                }}
-              />
-              <div className="mt-4 text-muted-foreground">
-                {location.description}
-              </div>
-            </Link>
-          ))}
+        <div className="flex justify-between items-center">
+          <div className="text-xl font-medium">Locations</div>
+          <div>
+            <ToggleGroup
+              type="single"
+              value={locationsDisplay}
+              onValueChange={(v) => {
+                if (v) {
+                  setLocationsDisplay(v === "grid" ? v : "map");
+                }
+              }}
+            >
+              <ToggleGroupItem value="grid" aria-label="Toggle bold">
+                <Grid2X2Icon className="h-4 w-4" />
+                <span className="ml-1">Grid</span>
+              </ToggleGroupItem>
+              <ToggleGroupItem value="map" aria-label="Toggle italic">
+                <MapIcon className="h-4 w-4" />
+                <span className="ml-1">Map</span>
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
         </div>
+
+        {locationsDisplay === "grid" ? (
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {entry.locations.map((location) => (
+              <Link to={`/p/${location.poi.id}`}>
+                <PoiCard
+                  poi={{
+                    ...location.poi,
+                    image: location.poi.firstMedia,
+                  }}
+                />
+                <div className="mt-4 text-muted-foreground">
+                  {location.description}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div>
+            <ClientOnly
+              fallback={<div className="w-full h-[400px] bg-muted mt-4" />}
+            >
+              {() => <Map locations={entry.locations} />}
+            </ClientOnly>
+          </div>
+        )}
 
         <Separator className="my-8" />
 
