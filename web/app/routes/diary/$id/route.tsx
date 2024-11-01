@@ -11,6 +11,10 @@ import { Grid2X2Icon, MapIcon, PencilIcon } from "lucide-react";
 import { useContext, useState } from "react";
 import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
+import Lightbox from "yet-another-react-lightbox";
+import Captions from "yet-another-react-lightbox/plugins/captions";
+import yarlCaptionsStyles from "yet-another-react-lightbox/plugins/captions.css?url";
+import yarlStyles from "yet-another-react-lightbox/styles.css?url";
 import AppMessage from "~/components/blocks/app-message";
 import BackLink from "~/components/blocks/back-link";
 import CollapsibleText from "~/components/blocks/collapsible-text";
@@ -27,6 +31,7 @@ import {
 } from "~/components/ui/tooltip";
 import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
 import { Map } from "./components/map.client";
 import SharePopover from "./components/share-popover";
@@ -68,6 +73,8 @@ export function links() {
   return [
     { rel: "stylesheet", href: leafletStyles },
     { rel: "stylesheet", href: leafletIconCompatStyles },
+    { rel: "stylesheet", href: yarlStyles },
+    { rel: "stylesheet", href: yarlCaptionsStyles },
   ];
 }
 
@@ -79,6 +86,8 @@ export default function Page() {
   const isOwner = auth.user?.data?.id === entry.userId;
   const [locationsDisplay, setLocationsDisplay] =
     useState<LocationDisplayMode>("grid");
+  const [open, setOpen] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
 
   return (
     <div className="container mx-auto my-8">
@@ -228,13 +237,53 @@ export default function Page() {
 
         <Separator className="my-8" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {entry.media.map((media) => (
-            <div>
-              <img src={media.url} alt={media.alt} />
-            </div>
+        <div className="text-xl font-medium">Media</div>
+
+        <div className="mt-4 grid grid-cols-3 gap-4">
+          {entry.media.map((m, i) => (
+            <button
+              key={m.url}
+              className={cn("", {
+                "col-span-4": entry.media.length === 1,
+                "col-span-4 mx-auto": entry.media.length === 3 && i === 2,
+              })}
+              onClick={() => {
+                setImageIndex(() => {
+                  setOpen(true);
+                  return i;
+                });
+              }}
+            >
+              <img
+                src={m.url}
+                alt={m.alt}
+                className={cn("aspect-square object-contain")}
+              />
+            </button>
           ))}
         </div>
+
+        <Lightbox
+          open={open}
+          plugins={[Captions]}
+          close={() => setOpen(false)}
+          slides={entry.media.map((m) => ({
+            src: m.url,
+            description: m.caption ?? "",
+          }))}
+          carousel={{
+            finite: true,
+          }}
+          controller={{
+            closeOnBackdropClick: true,
+          }}
+          styles={{
+            container: {
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+            },
+          }}
+          index={imageIndex}
+        />
       </div>
     </div>
   );
