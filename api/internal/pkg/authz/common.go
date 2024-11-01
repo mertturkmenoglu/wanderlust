@@ -42,6 +42,7 @@ const (
 	ActListItemRead         AuthzAct = "list-item-read"
 	ActListItemUpdate       AuthzAct = "list-item-update"
 	ActListItemDelete       AuthzAct = "list-item-delete"
+	ActDiaryRead            AuthzAct = "diary-read"
 	ActDiaryUploadMedia     AuthzAct = "diary-upload-media"
 	ActDiaryChangeSharing   AuthzAct = "diary-change-sharing"
 )
@@ -86,6 +87,7 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActListItemRead:         NotImplemented,
 	ActListItemUpdate:       NotImplemented,
 	ActListItemDelete:       NotImplemented,
+	ActDiaryRead:            FnDiaryRead,
 	ActDiaryUploadMedia:     FnDiaryUploadMedia,
-	ActDiaryChangeSharing: FnDiaryChangeSharing,
+	ActDiaryChangeSharing:   FnDiaryChangeSharing,
 }

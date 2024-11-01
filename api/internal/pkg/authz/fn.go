@@ -205,3 +205,45 @@ func FnDiaryChangeSharing(s *Authz, c echo.Context) (bool, error) {
 
 	return true, nil
 }
+
+func FnDiaryRead(s *Authz, c echo.Context) (bool, error) {
+	userId, ok := c.Get("user_id").(string)
+
+	if !ok {
+		return false, echo.ErrUnauthorized
+	}
+
+	id := c.Param("id")
+
+	if id == "" {
+		return false, echo.ErrBadRequest
+	}
+
+	diary, err := s.Db.Queries.GetDiaryEntryById(context.Background(), id)
+
+	if err != nil {
+		return false, err
+	}
+
+	if diary.DiaryEntry.UserID == userId {
+		return true, nil
+	}
+
+	if !diary.DiaryEntry.ShareWithFriends {
+		return false, echo.ErrForbidden
+	}
+
+	users, err := s.Db.Queries.GetDiaryEntryUsers(context.Background(), id)
+
+	if err != nil {
+		return false, err
+	}
+
+	for _, user := range users {
+		if user.Profile.ID == userId {
+			return true, nil
+		}
+	}
+
+	return false, echo.ErrForbidden
+}
