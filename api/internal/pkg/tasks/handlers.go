@@ -6,6 +6,7 @@ import (
 	"wanderlust/internal/pkg/email"
 
 	"github.com/hibiken/asynq"
+	"github.com/minio/minio-go/v7"
 )
 
 func (ts *Tasks) HandleEmailForgotPasswordTask(_ context.Context, t *asynq.Task) error {
@@ -93,4 +94,24 @@ func (ts *Tasks) HandleVerifyEmailEmailTask(_ context.Context, t *asynq.Task) er
 			Url: p.Url,
 		},
 	})
+}
+
+func (ts *Tasks) HandleDeleteDiaryMediaTask(_ context.Context, t *asynq.Task) error {
+	p, err := parse[DeleteDiaryMediaPayload](t.Payload())
+
+	if err != nil {
+		return err
+	}
+
+	const bucket = "diaries"
+
+	for _, name := range p.ObjectNames {
+		err = ts.upload.Client.RemoveObject(context.Background(), bucket, name, minio.RemoveObjectOptions{})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

@@ -2,7 +2,7 @@ package tasks
 
 type Payload interface {
 	ForgotPasswordEmailPayload | WelcomeEmailPayload | NewLoginAlertEmailPayload |
-		PasswordResetEmailPayload | VerifyEmailEmailPayload
+		PasswordResetEmailPayload | VerifyEmailEmailPayload | DeleteDiaryMediaPayload
 }
 
 type (
@@ -30,5 +30,9 @@ type (
 	VerifyEmailEmailPayload struct {
 		Email string
 		Url   string
+	}
+
+	DeleteDiaryMediaPayload struct {
+		ObjectNames []string
 	}
 )

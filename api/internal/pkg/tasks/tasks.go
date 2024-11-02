@@ -5,6 +5,7 @@ import (
 	"log"
 	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/email"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/hibiken/asynq"
 )
@@ -12,17 +13,21 @@ import (
 type Tasks struct {
 	Client *asynq.Client
 	email  *email.EmailService
+	upload *upload.Upload
 	addr   string
+	config *config.Configuration
 }
 
-func New(cfg *config.Configuration, emailService *email.EmailService) *Tasks {
+func New(cfg *config.Configuration, emailService *email.EmailService, upload *upload.Upload) *Tasks {
 	addr := cfg.GetString(config.REDIS_ADDR)
 	return &Tasks{
 		Client: asynq.NewClient(asynq.RedisClientOpt{
 			Addr: addr,
 		}),
-		email: emailService,
-		addr:  addr,
+		email:  emailService,
+		upload: upload,
+		addr:   addr,
+		config: cfg,
 	}
 }
 
@@ -51,6 +56,7 @@ func (t *Tasks) registerHandlers(mux *asynq.ServeMux) {
 	mux.HandleFunc(TypeWelcomeEmail, t.HandleWelcomeEmailTask)
 	mux.HandleFunc(TypePasswordResetEmail, t.HandlePasswordResetEmailTask)
 	mux.HandleFunc(TypeVerifyEmailEmail, t.HandleVerifyEmailEmailTask)
+	mux.HandleFunc(TypeDeleteDiaryMedia, t.HandleDeleteDiaryMediaTask)
 }
 
 func (t *Tasks) Close() {

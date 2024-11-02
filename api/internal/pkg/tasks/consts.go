@@ -6,4 +6,5 @@ const (
 	TypeNewLoginAlertEmail  = "email:new-login-alert"
 	TypePasswordResetEmail  = "email:password-reset"
 	TypeVerifyEmailEmail    = "email:verify-email"
+	TypeDeleteDiaryMedia    = "diary:delete-media"
 )
