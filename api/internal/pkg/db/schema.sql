@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS diary_media (
   caption VARCHAR(255),
   media_order SMALLINT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  CONSTRAINT fk_diary_media_diary_entry FOREIGN KEY (diary_entry_id) REFERENCES diary_entries(id) ON DELETE SET DEFAULT
+  CONSTRAINT fk_diary_media_diary_entry FOREIGN KEY (diary_entry_id) REFERENCES diary_entries(id) ON DELETE CASCADE
 );
 
 CREATE OR REPLACE VIEW profile AS
