@@ -1,4 +1,7 @@
+import { useNavigate } from "@remix-run/react";
+import { useMutation } from "@tanstack/react-query";
 import { TrashIcon } from "lucide-react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +14,27 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
+import { deleteDiaryEntry } from "~/lib/api-requests";
 
-export default function DeleteDialog() {
+type Props = {
+  id: string;
+};
+
+export default function DeleteDialog({ id }: Props) {
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationKey: ["delete-diary-entry", id],
+    mutationFn: async () => deleteDiaryEntry(id),
+    onSuccess: () => {
+      toast.success("Diary entry deleted successfully.");
+      navigate("/diary");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -31,7 +53,11 @@ export default function DeleteDialog() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => {}}>Delete</AlertDialogAction>
+          <Button asChild variant="destructive">
+            <AlertDialogAction onClick={() => mutation.mutate()}>
+              Delete
+            </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
