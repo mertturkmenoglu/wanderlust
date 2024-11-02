@@ -105,3 +105,21 @@ func (h *handlers) changeSharing(c echo.Context) error {
 
 	return c.NoContent(http.StatusNoContent)
 }
+
+func (h *handlers) deleteDiaryEntry(c echo.Context) error {
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	err := h.service.deleteDiaryEntry(id)
+
+	if err != nil {
+		return err
+	}
+
+	_ = h.service.invalidateDiaryEntryCache(id)
+
+	return c.NoContent(http.StatusNoContent)
+}

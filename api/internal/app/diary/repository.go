@@ -127,7 +127,7 @@ func (r *repository) getDiaryEntryById(id string) (GetDiaryEntryByIdDao, error) 
 		return GetDiaryEntryByIdDao{}, err
 	}
 
-	media, err := r.di.Db.Queries.GetDiaryMedia(context.Background(), id)
+	media, err := r.getDiaryMedia(id)
 
 	if err != nil {
 		return GetDiaryEntryByIdDao{}, err
@@ -143,4 +143,12 @@ func (r *repository) getDiaryEntryById(id string) (GetDiaryEntryByIdDao, error) 
 
 func (r *repository) changeSharing(id string) error {
 	return r.di.Db.Queries.ChangeShareWithFriends(context.Background(), id)
+}
+
+func (r *repository) getDiaryMedia(id string) ([]db.DiaryMedium, error) {
+	return r.di.Db.Queries.GetDiaryMedia(context.Background(), id)
+}
+
+func (r *repository) deleteDiaryEntry(id string) error {
+	return r.di.Db.Queries.DeleteDiaryEntry(context.Background(), id)
 }
