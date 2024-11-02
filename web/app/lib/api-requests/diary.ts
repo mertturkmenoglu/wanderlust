@@ -30,3 +30,7 @@ export function createDiaryEntry(dto: CreateDiaryEntryRequestDto) {
 export function changeDiarySharing(id: string) {
   return api.patch(`diary/${id}/sharing`);
 }
+
+export function deleteDiaryEntry(id: string) {
+  return api.delete(`diary/${id}`);
+}
