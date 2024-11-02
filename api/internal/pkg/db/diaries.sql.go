@@ -180,6 +180,16 @@ func (q *Queries) CreateNewDiaryEntry(ctx context.Context, arg CreateNewDiaryEnt
 	return i, err
 }
 
+const deleteDiaryEntry = `-- name: DeleteDiaryEntry :exec
+DELETE FROM diary_entries
+WHERE id = $1
+`
+
+func (q *Queries) DeleteDiaryEntry(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteDiaryEntry, id)
+	return err
+}
+
 const getDiaryEntryById = `-- name: GetDiaryEntryById :one
 SELECT 
   diary_entries.id, diary_entries.user_id, diary_entries.title, diary_entries.description, diary_entries.share_with_friends, diary_entries.date, diary_entries.created_at, diary_entries.updated_at, 

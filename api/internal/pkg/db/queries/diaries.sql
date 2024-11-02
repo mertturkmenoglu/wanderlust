@@ -107,3 +107,7 @@ ORDER BY media_order ASC;
 SELECT COALESCE(MAX(media_order), 0)
 FROM diary_media
 WHERE diary_entry_id = $1;
+
+-- name: DeleteDiaryEntry :exec
+DELETE FROM diary_entries
+WHERE id = $1;
