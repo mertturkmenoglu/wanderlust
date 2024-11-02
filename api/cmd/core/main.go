@@ -78,6 +78,7 @@ func main() {
 func New() *core.Application {
 	cfg := config.GetConfiguration()
 	email := email.New(cfg)
+	uploadSvc := upload.New(cfg)
 	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
 
 	application := &core.Application{
@@ -92,8 +93,8 @@ func New() *core.Application {
 			Logger: logs.NewPTermLogger(),
 			Cache:  cache.New(cfg),
 			Email:  email,
-			Tasks:  tasks.New(cfg, email),
-			Upload: upload.New(cfg),
+			Tasks:  tasks.New(cfg, email, uploadSvc),
+			Upload: uploadSvc,
 		},
 	}
 
