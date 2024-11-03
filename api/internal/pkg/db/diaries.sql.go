@@ -22,6 +22,36 @@ func (q *Queries) ChangeShareWithFriends(ctx context.Context, id string) error {
 	return err
 }
 
+const countDiaryEntries = `-- name: CountDiaryEntries :one
+SELECT COUNT(*) FROM diary_entries
+WHERE user_id = $1
+`
+
+func (q *Queries) CountDiaryEntries(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countDiaryEntries, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countDiaryEntriesFilterByRange = `-- name: CountDiaryEntriesFilterByRange :one
+SELECT COUNT(*) FROM diary_entries
+WHERE user_id = $1 AND date <= $2 AND date >= $3
+`
+
+type CountDiaryEntriesFilterByRangeParams struct {
+	UserID string
+	Date   pgtype.Timestamptz
+	Date_2 pgtype.Timestamptz
+}
+
+func (q *Queries) CountDiaryEntriesFilterByRange(ctx context.Context, arg CountDiaryEntriesFilterByRangeParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countDiaryEntriesFilterByRange, arg.UserID, arg.Date, arg.Date_2)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createDiaryEntryPoi = `-- name: CreateDiaryEntryPoi :one
 INSERT INTO diary_entries_pois (
   diary_entry_id,
@@ -432,14 +462,73 @@ func (q *Queries) GetLastMediaOrderOfEntry(ctx context.Context, diaryEntryID str
 	return coalesce, err
 }
 
+const listAndFilterDiaryEntries = `-- name: ListAndFilterDiaryEntries :many
+SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
+WHERE user_id = $1 AND date <= $2 AND date >= $3
+ORDER BY date DESC
+OFFSET $4
+LIMIT $5
+`
+
+type ListAndFilterDiaryEntriesParams struct {
+	UserID string
+	Date   pgtype.Timestamptz
+	Date_2 pgtype.Timestamptz
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListAndFilterDiaryEntries(ctx context.Context, arg ListAndFilterDiaryEntriesParams) ([]DiaryEntry, error) {
+	rows, err := q.db.Query(ctx, listAndFilterDiaryEntries,
+		arg.UserID,
+		arg.Date,
+		arg.Date_2,
+		arg.Offset,
+		arg.Limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []DiaryEntry
+	for rows.Next() {
+		var i DiaryEntry
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Title,
+			&i.Description,
+			&i.ShareWithFriends,
+			&i.Date,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDiaryEntries = `-- name: ListDiaryEntries :many
 SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
 WHERE user_id = $1
 ORDER BY date DESC
+OFFSET $2
+LIMIT $3
 `
 
-func (q *Queries) ListDiaryEntries(ctx context.Context, userID string) ([]DiaryEntry, error) {
-	rows, err := q.db.Query(ctx, listDiaryEntries, userID)
+type ListDiaryEntriesParams struct {
+	UserID string
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListDiaryEntries(ctx context.Context, arg ListDiaryEntriesParams) ([]DiaryEntry, error) {
+	rows, err := q.db.Query(ctx, listDiaryEntries, arg.UserID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}

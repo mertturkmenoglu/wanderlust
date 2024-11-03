@@ -91,7 +91,24 @@ ORDER BY diary_entries_pois.list_index ASC;
 -- name: ListDiaryEntries :many
 SELECT * FROM diary_entries
 WHERE user_id = $1
-ORDER BY date DESC;
+ORDER BY date DESC
+OFFSET $2
+LIMIT $3;
+
+-- name: CountDiaryEntries :one
+SELECT COUNT(*) FROM diary_entries
+WHERE user_id = $1;
+
+-- name: ListAndFilterDiaryEntries :many
+SELECT * FROM diary_entries
+WHERE user_id = $1 AND date <= $2 AND date >= $3
+ORDER BY date DESC
+OFFSET $4
+LIMIT $5;
+
+-- name: CountDiaryEntriesFilterByRange :one
+SELECT COUNT(*) FROM diary_entries
+WHERE user_id = $1 AND date <= $2 AND date >= $3;
 
 -- name: ChangeShareWithFriends :exec
 UPDATE diary_entries
