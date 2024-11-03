@@ -52,7 +52,6 @@ export function useSaveToLocalStorage(form: FormType) {
 
     if (!form.formState.isValid) {
       setSaveStatus("idle");
-      toast.error("Cannot save because values are invalid");
       return;
     }
 
