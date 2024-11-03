@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import Uppy, { Meta } from "@uppy/core";
 import { useUppyState } from "@uppy/react";
 import XHRUpload from "@uppy/xhr-upload";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -25,6 +26,7 @@ export default function Step5({ baseApiUrl, uppy }: Props) {
   const form = useFormContext<FormInput>();
   const files = useUppyState(uppy, (s) => s.files);
   const fileCount = Object.keys(files).length;
+  const [share, setShare] = useState(form.getValues("shareWithFriends"));
 
   const description = form.watch("description");
   const title = form.watch("title");
@@ -127,7 +129,15 @@ export default function Step5({ baseApiUrl, uppy }: Props) {
       </div>
 
       <div className="flex items-center gap-2 mt-4">
-        <Checkbox {...form.register("shareWithFriends")} />
+        <Checkbox
+          checked={share}
+          onCheckedChange={() => {
+            setShare((prev) => {
+              form.setValue("shareWithFriends", !prev);
+              return !prev;
+            });
+          }}
+        />
         <Label htmlFor="share-with-friends">Share with friends</Label>
       </div>
 
