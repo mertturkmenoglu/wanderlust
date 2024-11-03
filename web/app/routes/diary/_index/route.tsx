@@ -58,7 +58,7 @@ function Layout({ date }: Props) {
   const isEmpty = query.data && query.data.pages[0].data.entries.length === 0;
   const loadMoreButtonText = useLoadMoreText(query);
 
-  if (query.isFetching) {
+  if (query.isPending) {
     return <Loading />;
   }
 
