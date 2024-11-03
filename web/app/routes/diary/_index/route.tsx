@@ -1,19 +1,27 @@
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { json, Link, useLoaderData } from "@remix-run/react";
-import { BookMarkedIcon, GlobeIcon, LockIcon, PlusIcon } from "lucide-react";
+import { json, Link } from "@remix-run/react";
+import React, { useState } from "react";
+import { DateRange } from "react-day-picker";
 import AppMessage from "~/components/blocks/app-message";
-import { buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { listDiaryEntries } from "~/lib/api";
+import { getMe } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
-import { cn } from "~/lib/utils";
+import EntryCard from "./components/entry-card";
+import Header from "./components/header";
+import Loading from "./components/loading";
+import { useDiaryEntriesQuery, useLoadMoreText } from "./hooks";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const Cookie = getCookiesFromRequest(request);
-    const res = await listDiaryEntries({ headers: { Cookie } });
+    const auth = await getMe({ headers: { Cookie } });
 
-    return json({ entries: res.data.entries });
+    if (!auth.data || auth.data.role !== "admin") {
+      throw redirect("/");
+    }
+
+    return json({ userId: auth.data.id });
   } catch (e) {
     throw redirect("/");
   }
@@ -28,64 +36,70 @@ export function meta() {
 }
 
 export default function Page() {
-  const { entries } = useLoaderData<typeof loader>();
+  const [date, setDate] = useState<DateRange | undefined>();
 
   return (
     <div className="container mx-auto my-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BookMarkedIcon className="size-8 text-primary " />
-          <h2 className="text-2xl">My Diary</h2>
-        </div>
-        <Link
-          to="/diary/new"
-          className={cn(
-            "flex items-center gap-2",
-            buttonVariants({ variant: "default" })
-          )}
-        >
-          <PlusIcon className="size-4" />
-          <div>New Entry</div>
-        </Link>
-      </div>
+      <Header date={date} setDate={setDate} />
 
       <Separator className="my-4" />
 
-      <div>
-        {entries.length === 0 ? (
-          <AppMessage
-            emptyMessage="You have no diary entries yet"
-            className="my-16"
-            showBackButton={false}
-          />
-        ) : (
-          <div className="flex flex-col gap-4">
-            {entries.map((entry) => (
-              <Link to={`/diary/${entry.id}`} key={entry.id} className="block">
-                <div className="flex items-center gap-4">
-                  <div>
-                    {entry.shareWithFriends ? (
-                      <GlobeIcon className="size-4" />
-                    ) : (
-                      <LockIcon className="size-4" />
-                    )}
-                  </div>
-                  <div>
-                    <div className="text-primary hover:underline">
-                      {entry.title}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(entry.date).toLocaleDateString("en-US", {
-                        dateStyle: "medium",
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+      <Layout date={date} />
+    </div>
+  );
+}
+
+type Props = {
+  date: DateRange | undefined;
+};
+
+function Layout({ date }: Props) {
+  const query = useDiaryEntriesQuery(date);
+  const isEmpty = query.data && query.data.pages[0].data.entries.length === 0;
+  const loadMoreButtonText = useLoadMoreText(query);
+
+  if (query.isFetching) {
+    return <Loading />;
+  }
+
+  if (isEmpty) {
+    return (
+      <AppMessage
+        emptyMessage="You have no entries yet"
+        showBackButton={false}
+      />
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex flex-col gap-4">
+        {query.data &&
+          query.data.pages.map((page, i) => (
+            <React.Fragment key={i}>
+              {page.data.entries.map((entry) => (
+                <Link
+                  to={`/diary/${entry.id}`}
+                  key={entry.id}
+                  className="block"
+                >
+                  <EntryCard entry={entry} />
+                </Link>
+              ))}
+            </React.Fragment>
+          ))}
       </div>
+
+      {query.hasNextPage && (
+        <div className="mt-4 flex justify-center">
+          <Button
+            onClick={() => query.fetchNextPage()}
+            disabled={!query.hasNextPage || query.isFetchingNextPage}
+          >
+            {loadMoreButtonText}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
