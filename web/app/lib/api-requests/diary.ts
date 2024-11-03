@@ -5,12 +5,30 @@ import {
   CreateDiaryEntryResponseDto,
   GetDiaryEntryByIdResponseDto,
   ListDiaryEntriesResponseDto,
+  Pagination,
 } from "../dto";
 
-export function listDiaryEntries(options?: Options) {
+export function listDiaryEntries(
+  page: number,
+  pageSize: number,
+  from?: string,
+  to?: string,
+  options?: Options
+) {
+  const q = new URLSearchParams();
+  q.append("page", "" + page);
+  q.append("pageSize", "" + pageSize);
+
+  if (from !== undefined && to !== undefined) {
+    q.append("from", from);
+    q.append("to", to);
+  }
+
+  const params = q.toString();
+
   return api
-    .get("diary/", options)
-    .json<{ data: ListDiaryEntriesResponseDto }>();
+    .get(`diary/?${params}`, options)
+    .json<{ data: ListDiaryEntriesResponseDto; pagination: Pagination }>();
 }
 
 export function getDiaryEntryById(id: string, options?: Options) {
