@@ -42,6 +42,7 @@ export default function Step5({ baseApiUrl, uppy }: Props) {
   const entryMutation = useMutation({
     mutationKey: ["create-diary-entry"],
     mutationFn: async () => {
+      form.reset(form.getValues());
       const values = form.getValues();
       const dto: CreateDiaryEntryRequestDto = {
         date: values.date.toISOString(),
