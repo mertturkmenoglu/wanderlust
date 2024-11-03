@@ -465,7 +465,7 @@ func (q *Queries) GetLastMediaOrderOfEntry(ctx context.Context, diaryEntryID str
 const listAndFilterDiaryEntries = `-- name: ListAndFilterDiaryEntries :many
 SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
 WHERE user_id = $1 AND date <= $2 AND date >= $3
-ORDER BY date DESC
+ORDER BY date DESC, created_at DESC
 OFFSET $4
 LIMIT $5
 `
@@ -516,7 +516,7 @@ func (q *Queries) ListAndFilterDiaryEntries(ctx context.Context, arg ListAndFilt
 const listDiaryEntries = `-- name: ListDiaryEntries :many
 SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
 WHERE user_id = $1
-ORDER BY date DESC
+ORDER BY date DESC, created_at DESC
 OFFSET $2
 LIMIT $3
 `
