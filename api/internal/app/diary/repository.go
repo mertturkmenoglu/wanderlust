@@ -9,8 +9,34 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func (r *repository) listDiaryEntries(userId string) ([]db.DiaryEntry, error) {
-	return r.di.Db.Queries.ListDiaryEntries(context.Background(), userId)
+func (r *repository) listDiaryEntries(userId string, params DiaryPaginationParams) ([]db.DiaryEntry, error) {
+	return r.di.Db.Queries.ListDiaryEntries(context.Background(), db.ListDiaryEntriesParams{
+		UserID: userId,
+		Offset: int32(params.Offset),
+		Limit:  int32(params.PageSize),
+	})
+}
+
+func (r *repository) countDiaryEntries(userId string) (int64, error) {
+	return r.di.Db.Queries.CountDiaryEntries(context.Background(), userId)
+}
+
+func (r *repository) listAndFilterDiaryEntries(userId string, params DiaryPaginationParams) ([]db.DiaryEntry, error) {
+	return r.di.Db.Queries.ListAndFilterDiaryEntries(context.Background(), db.ListAndFilterDiaryEntriesParams{
+		UserID: userId,
+		Offset: int32(params.Offset),
+		Limit:  int32(params.PageSize),
+		Date:   pgtype.Timestamptz{Time: *params.To, Valid: true},
+		Date_2: pgtype.Timestamptz{Time: *params.From, Valid: true},
+	})
+}
+
+func (r *repository) countDiaryEntriesFilterByRange(userId string, params DiaryPaginationParams) (int64, error) {
+	return r.di.Db.Queries.CountDiaryEntriesFilterByRange(context.Background(), db.CountDiaryEntriesFilterByRangeParams{
+		UserID: userId,
+		Date:   pgtype.Timestamptz{Time: *params.To, Valid: true},
+		Date_2: pgtype.Timestamptz{Time: *params.From, Valid: true},
+	})
 }
 
 func (r *repository) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequestDto) (db.DiaryEntry, error) {

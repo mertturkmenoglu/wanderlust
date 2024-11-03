@@ -11,16 +11,48 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *service) listDiaryEntries(userId string) (ListDiaryEntriesResponseDto, error) {
-	res, err := s.repository.listDiaryEntries(userId)
+func (s *service) listDiaryEntries(userId string, params DiaryPaginationParams) (ListDiaryEntriesResponseDto, int64, error) {
+	if params.From == nil && params.To == nil {
+		return s.listDiaryEntriesNoFilter(userId, params)
+	}
+
+	return s.listDiaryEntriesFilterByRange(userId, params)
+}
+
+func (s *service) listDiaryEntriesNoFilter(userId string, params DiaryPaginationParams) (ListDiaryEntriesResponseDto, int64, error) {
+	res, err := s.repository.listDiaryEntries(userId, params)
 
 	if err != nil {
-		return ListDiaryEntriesResponseDto{}, err
+		return ListDiaryEntriesResponseDto{}, 0, err
+	}
+
+	count, err := s.repository.countDiaryEntries(userId)
+
+	if err != nil {
+		return ListDiaryEntriesResponseDto{}, 0, err
 	}
 
 	v := mapToListDiaryEntriesResponseDto(res)
 
-	return v, nil
+	return v, count, nil
+}
+
+func (s *service) listDiaryEntriesFilterByRange(userId string, params DiaryPaginationParams) (ListDiaryEntriesResponseDto, int64, error) {
+	res, err := s.repository.listAndFilterDiaryEntries(userId, params)
+
+	if err != nil {
+		return ListDiaryEntriesResponseDto{}, 0, err
+	}
+
+	count, err := s.repository.countDiaryEntriesFilterByRange(userId, params)
+
+	if err != nil {
+		return ListDiaryEntriesResponseDto{}, 0, err
+	}
+
+	v := mapToListDiaryEntriesResponseDto(res)
+
+	return v, count, nil
 }
 
 func (s *service) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequestDto) (CreateDiaryEntryResponseDto, error) {
