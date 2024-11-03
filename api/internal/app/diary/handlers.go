@@ -3,6 +3,7 @@ package diary
 import (
 	"net/http"
 	"wanderlust/internal/pkg/core"
+	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/upload"
 
 	"github.com/labstack/echo/v4"
@@ -10,15 +11,21 @@ import (
 
 func (h *handlers) listDiaryEntries(c echo.Context) error {
 	userId := c.Get("user_id").(string)
-
-	res, err := h.service.listDiaryEntries(userId)
+	params, err := getPaginationParamsFromContext(c)
 
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
+	res, count, err := h.service.listDiaryEntries(userId, params)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.PaginatedResponse{
+		Data:       res,
+		Pagination: pagination.Compute(params.Params, count),
 	})
 }
 
