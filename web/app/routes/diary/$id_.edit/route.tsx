@@ -3,9 +3,11 @@ import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Separator } from "~/components/ui/separator";
-import { getDiaryEntryById } from "~/lib/api";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { getDiaryEntryById, getMe } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import DeleteDialog from "./components/delete-dialog";
+import TabInfo from "./components/tab-info";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -55,10 +57,22 @@ export default function Page() {
           <DeleteDialog id={entry.id} />
         </div>
       </div>
-
       <Separator className="my-2" />
 
-      <div>this is the diary entry edit page</div>
+      <Tabs defaultValue="info">
+        <TabsList>
+          <TabsTrigger value="info">Info</TabsTrigger>
+          <TabsTrigger value="locations">Locations</TabsTrigger>
+          <TabsTrigger value="friends">Friends</TabsTrigger>
+          <TabsTrigger value="media">Media</TabsTrigger>
+        </TabsList>
+        <TabsContent value="info">
+          <TabInfo />
+        </TabsContent>
+        <TabsContent value="locations">Locations</TabsContent>
+        <TabsContent value="friends">Friends</TabsContent>
+        <TabsContent value="media">Media</TabsContent>
+      </Tabs>
     </div>
   );
 }
