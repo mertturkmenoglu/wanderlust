@@ -13,11 +13,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     const Cookie = getCookiesFromRequest(request);
     const res = await getDiaryEntryById(params.id, { headers: { Cookie } });
+    const auth = await getMe({ headers: { Cookie } });
+
+    if (auth.data.id !== res.data.userId) {
+      throw json("You do not have permissions to edit this diary entry", {
+        status: 403,
+      });
+    }
+
     return json({ entry: res.data });
   } catch (e) {
     const status = (e as any)?.response?.status;
     if (status === 401 || status === 403) {
-      throw json("You do not have permissions to view this diary entry", {
+      throw json("You do not have permissions to edit this diary entry", {
         status: 403,
       });
     } else if (status === 404) {
