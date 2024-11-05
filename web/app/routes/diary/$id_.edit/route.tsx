@@ -8,6 +8,7 @@ import { getDiaryEntryById, getMe } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import DeleteDialog from "./components/delete-dialog";
 import TabInfo from "./components/tab-info";
+import TabLocations from "./components/tab-locations";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -69,7 +70,9 @@ export default function Page() {
         <TabsContent value="info">
           <TabInfo />
         </TabsContent>
-        <TabsContent value="locations">Locations</TabsContent>
+        <TabsContent value="locations">
+          <TabLocations />
+        </TabsContent>
         <TabsContent value="friends">Friends</TabsContent>
         <TabsContent value="media">Media</TabsContent>
       </Tabs>
