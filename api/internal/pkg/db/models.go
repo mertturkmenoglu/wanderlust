@@ -180,6 +180,23 @@ type Profile struct {
 	CreatedAt         pgtype.Timestamptz
 }
 
+type Review struct {
+	ID        string
+	PoiID     string
+	UserID    string
+	Content   string
+	Rating    int16
+	CreatedAt pgtype.Timestamptz
+	UpdatedAt pgtype.Timestamptz
+}
+
+type ReviewMedium struct {
+	ID         int64
+	ReviewID   string
+	Url        string
+	MediaOrder int16
+}
+
 type Session struct {
 	ID          string
 	UserID      string
