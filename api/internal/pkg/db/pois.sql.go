@@ -701,6 +701,33 @@ func (q *Queries) GetPopularPois(ctx context.Context) ([]GetPopularPoisRow, erro
 	return items, nil
 }
 
+const incrementTotalPoints = `-- name: IncrementTotalPoints :exec
+UPDATE pois
+SET total_points = total_points + $2
+WHERE id = $1
+`
+
+type IncrementTotalPointsParams struct {
+	ID          string
+	TotalPoints int32
+}
+
+func (q *Queries) IncrementTotalPoints(ctx context.Context, arg IncrementTotalPointsParams) error {
+	_, err := q.db.Exec(ctx, incrementTotalPoints, arg.ID, arg.TotalPoints)
+	return err
+}
+
+const incrementTotalVotes = `-- name: IncrementTotalVotes :exec
+UPDATE pois
+SET total_votes = total_votes + 1
+WHERE id = $1
+`
+
+func (q *Queries) IncrementTotalVotes(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, incrementTotalVotes, id)
+	return err
+}
+
 const peekPois = `-- name: PeekPois :many
 SELECT id, name, phone, description, address_id, website, price_level, accessibility_level, total_votes, total_points, total_favorites, category_id, open_times, created_at, updated_at FROM pois
 LIMIT 25

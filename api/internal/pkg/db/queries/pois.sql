@@ -175,3 +175,13 @@ FROM pois
 WHERE media.media_order = 1
 ORDER BY pois.created_at DESC
 LIMIT 25;
+
+-- name: IncrementTotalVotes :exec
+UPDATE pois
+SET total_votes = total_votes + 1
+WHERE id = $1;
+
+-- name: IncrementTotalPoints :exec
+UPDATE pois
+SET total_points = total_points + $2
+WHERE id = $1;

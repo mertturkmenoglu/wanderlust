@@ -20,3 +20,109 @@ func (q *Queries) CountPoiReviews(ctx context.Context, poiID string) (int64, err
 	err := row.Scan(&count)
 	return count, err
 }
+
+const createReview = `-- name: CreateReview :one
+INSERT INTO reviews (
+  id,
+  poi_id,
+  user_id,
+  content,
+  rating
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING id, poi_id, user_id, content, rating, created_at, updated_at
+`
+
+type CreateReviewParams struct {
+	ID      string
+	PoiID   string
+	UserID  string
+	Content string
+	Rating  int16
+}
+
+func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) (Review, error) {
+	row := q.db.QueryRow(ctx, createReview,
+		arg.ID,
+		arg.PoiID,
+		arg.UserID,
+		arg.Content,
+		arg.Rating,
+	)
+	var i Review
+	err := row.Scan(
+		&i.ID,
+		&i.PoiID,
+		&i.UserID,
+		&i.Content,
+		&i.Rating,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const lastReviewOfUserForPoi = `-- name: LastReviewOfUserForPoi :one
+SELECT id, poi_id, user_id, content, rating, created_at, updated_at FROM reviews
+WHERE poi_id = $1 AND user_id = $2
+ORDER BY created_at DESC
+LIMIT 1
+`
+
+type LastReviewOfUserForPoiParams struct {
+	PoiID  string
+	UserID string
+}
+
+func (q *Queries) LastReviewOfUserForPoi(ctx context.Context, arg LastReviewOfUserForPoiParams) (Review, error) {
+	row := q.db.QueryRow(ctx, lastReviewOfUserForPoi, arg.PoiID, arg.UserID)
+	var i Review
+	err := row.Scan(
+		&i.ID,
+		&i.PoiID,
+		&i.UserID,
+		&i.Content,
+		&i.Rating,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const setPreviousReviewRatings = `-- name: SetPreviousReviewRatings :exec
+UPDATE reviews
+SET rating = $3
+WHERE poi_id = $1 AND user_id = $2
+`
+
+type SetPreviousReviewRatingsParams struct {
+	PoiID  string
+	UserID string
+	Rating int16
+}
+
+func (q *Queries) SetPreviousReviewRatings(ctx context.Context, arg SetPreviousReviewRatingsParams) error {
+	_, err := q.db.Exec(ctx, setPreviousReviewRatings, arg.PoiID, arg.UserID, arg.Rating)
+	return err
+}
+
+const userReviewCountForPoi = `-- name: UserReviewCountForPoi :one
+SELECT COUNT(*) FROM reviews
+WHERE poi_id = $1 AND user_id = $2
+`
+
+type UserReviewCountForPoiParams struct {
+	PoiID  string
+	UserID string
+}
+
+func (q *Queries) UserReviewCountForPoi(ctx context.Context, arg UserReviewCountForPoiParams) (int64, error) {
+	row := q.db.QueryRow(ctx, userReviewCountForPoi, arg.PoiID, arg.UserID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
