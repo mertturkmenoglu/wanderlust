@@ -46,6 +46,9 @@ const (
 	ActDiaryUploadMedia     AuthzAct = "diary-upload-media"
 	ActDiaryChangeSharing   AuthzAct = "diary-change-sharing"
 	ActDiaryDelete          AuthzAct = "diary-delete"
+	ActReviewCreate         AuthzAct = "review-create"
+	ActReviewDelete         AuthzAct = "review-delete"
+	ActReviewUploadMedia    AuthzAct = "review-upload-media"
 )
 
 type AuthzFn func(s *Authz, c echo.Context) (bool, error)
@@ -92,4 +95,7 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActDiaryUploadMedia:     FnDiaryUploadMedia,
 	ActDiaryChangeSharing:   FnDiaryChangeSharing,
 	ActDiaryDelete:          FnDiaryDelete,
+	ActReviewCreate:         Identity,
+	ActReviewDelete:         NotImplemented,
+	ActReviewUploadMedia:    NotImplemented,
 }
