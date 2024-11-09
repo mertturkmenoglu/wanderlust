@@ -19,6 +19,7 @@ import (
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/app/lists"
 	"wanderlust/internal/app/pois"
+	"wanderlust/internal/app/reviews"
 	"wanderlust/internal/app/users"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/config"
@@ -111,6 +112,7 @@ func New() *core.Application {
 		health.New(),
 		lists.New(&application.SharedModules),
 		pois.New(&application.SharedModules),
+		reviews.New(&application.SharedModules),
 		users.New(&application.SharedModules),
 	}
 
