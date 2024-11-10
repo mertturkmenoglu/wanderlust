@@ -19,3 +19,4 @@
 - `0600-0649`: Lists module errors.
 - `0650-0699`: <Reserved>
 - `0700-0799`: Diary module errors.
+- `0800-0899`: Review module errors.
