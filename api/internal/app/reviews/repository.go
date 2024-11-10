@@ -82,3 +82,11 @@ func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db
 
 	return review, nil
 }
+
+func (r *repository) getReviewById(id string) (db.GetReviewByIdRow, error) {
+	return r.di.Db.Queries.GetReviewById(context.Background(), id)
+}
+
+func (r *repository) getReviewMedia(id string) ([]db.ReviewMedium, error) {
+	return r.di.Db.Queries.GetReviewMedia(context.Background(), id)
+}

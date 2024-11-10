@@ -8,7 +8,21 @@ import (
 )
 
 func (h *handlers) getReviewById(c echo.Context) error {
-	return echo.ErrNotImplemented
+	id := c.Param("id")
+
+	if id == "" {
+		return ErrIdRequired
+	}
+
+	res, err := h.service.getReviewById(id)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
 }
 
 func (h *handlers) createReview(c echo.Context) error {
