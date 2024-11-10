@@ -66,6 +66,98 @@ func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) (Rev
 	return i, err
 }
 
+const getReviewById = `-- name: GetReviewById :one
+SELECT
+  reviews.id, reviews.poi_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,
+  profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at,
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at
+FROM reviews
+LEFT JOIN profile ON profile.id = reviews.user_id
+LEFT JOIN pois ON reviews.poi_id = pois.id
+WHERE reviews.id = $1
+LIMIT 1
+`
+
+type GetReviewByIdRow struct {
+	Review  Review
+	Profile Profile
+	Poi     Poi
+}
+
+func (q *Queries) GetReviewById(ctx context.Context, id string) (GetReviewByIdRow, error) {
+	row := q.db.QueryRow(ctx, getReviewById, id)
+	var i GetReviewByIdRow
+	err := row.Scan(
+		&i.Review.ID,
+		&i.Review.PoiID,
+		&i.Review.UserID,
+		&i.Review.Content,
+		&i.Review.Rating,
+		&i.Review.CreatedAt,
+		&i.Review.UpdatedAt,
+		&i.Profile.ID,
+		&i.Profile.Username,
+		&i.Profile.FullName,
+		&i.Profile.IsBusinessAccount,
+		&i.Profile.IsVerified,
+		&i.Profile.Bio,
+		&i.Profile.Pronouns,
+		&i.Profile.Website,
+		&i.Profile.Phone,
+		&i.Profile.ProfileImage,
+		&i.Profile.BannerImage,
+		&i.Profile.FollowersCount,
+		&i.Profile.FollowingCount,
+		&i.Profile.CreatedAt,
+		&i.Poi.ID,
+		&i.Poi.Name,
+		&i.Poi.Phone,
+		&i.Poi.Description,
+		&i.Poi.AddressID,
+		&i.Poi.Website,
+		&i.Poi.PriceLevel,
+		&i.Poi.AccessibilityLevel,
+		&i.Poi.TotalVotes,
+		&i.Poi.TotalPoints,
+		&i.Poi.TotalFavorites,
+		&i.Poi.CategoryID,
+		&i.Poi.OpenTimes,
+		&i.Poi.CreatedAt,
+		&i.Poi.UpdatedAt,
+	)
+	return i, err
+}
+
+const getReviewMedia = `-- name: GetReviewMedia :many
+SELECT id, review_id, url, media_order FROM review_media
+WHERE review_id = $1
+`
+
+func (q *Queries) GetReviewMedia(ctx context.Context, reviewID string) ([]ReviewMedium, error) {
+	rows, err := q.db.Query(ctx, getReviewMedia, reviewID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ReviewMedium
+	for rows.Next() {
+		var i ReviewMedium
+		if err := rows.Scan(
+			&i.ID,
+			&i.ReviewID,
+			&i.Url,
+			&i.MediaOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const lastReviewOfUserForPoi = `-- name: LastReviewOfUserForPoi :one
 SELECT id, poi_id, user_id, content, rating, created_at, updated_at FROM reviews
 WHERE poi_id = $1 AND user_id = $2

@@ -31,3 +31,18 @@ LIMIT 1;
 UPDATE reviews
 SET rating = $3
 WHERE poi_id = $1 AND user_id = $2;
+
+-- name: GetReviewById :one
+SELECT
+  sqlc.embed(reviews),
+  sqlc.embed(profile),
+  sqlc.embed(pois)
+FROM reviews
+LEFT JOIN profile ON profile.id = reviews.user_id
+LEFT JOIN pois ON reviews.poi_id = pois.id
+WHERE reviews.id = $1
+LIMIT 1;
+
+-- name: GetReviewMedia :many
+SELECT * FROM review_media
+WHERE review_id = $1;
