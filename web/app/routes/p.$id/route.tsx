@@ -15,6 +15,7 @@ import FavoriteButton from "./components/favorite-button";
 import InformationTable from "./components/info-table";
 import MapContainer from "./components/map-container";
 import Menu from "./components/menu";
+import Reviews from "./components/reviews";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -88,7 +89,7 @@ export default function Page() {
       <Amenities amenities={poi.amenities} />
 
       <hr className="my-4" />
-      {/* <Reviews locationId={location.id} name={location.name} /> */}
+      <Reviews />
     </main>
   );
 }
