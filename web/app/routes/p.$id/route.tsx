@@ -1,6 +1,9 @@
 import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-
+import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
+import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
+import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
+import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
 import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
 import invariant from "tiny-invariant";
@@ -33,6 +36,10 @@ export function links() {
   return [
     { rel: "stylesheet", href: leafletStyles },
     { rel: "stylesheet", href: leafletIconCompatStyles },
+    { rel: "stylesheet", href: uppyCoreStyles },
+    { rel: "stylesheet", href: uppyDashboardStyles },
+    { rel: "stylesheet", href: uppyFileInputStyles },
+    { rel: "stylesheet", href: uppyImageEditorStyles },
   ];
 }
 
