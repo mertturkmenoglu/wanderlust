@@ -46,3 +46,47 @@ LIMIT 1;
 -- name: GetReviewMedia :many
 SELECT * FROM review_media
 WHERE review_id = $1;
+
+-- name: DeleteReview :exec
+DELETE FROM reviews
+WHERE id = $1;
+
+-- name: GetReviewsByPoiId :many
+SELECT 
+  sqlc.embed(reviews),
+  sqlc.embed(profile),
+  sqlc.embed(pois)
+FROM 
+    reviews
+JOIN 
+    profile ON reviews.user_id = profile.id
+JOIN 
+    pois ON reviews.poi_id = pois.id
+WHERE reviews.poi_id = $1
+ORDER BY reviews.created_at DESC
+OFFSET $2
+LIMIT $3;
+
+-- name: CountReviewsByPoiId :one
+SELECT COUNT(*) FROM reviews
+WHERE poi_id = $1;
+
+-- name: GetReviewMediaByReviewIds :many
+SELECT * FROM review_media
+WHERE review_id = ANY($1::TEXT[]);
+
+-- name: GetLastMediaOrderOfReview :one
+SELECT COALESCE(MAX(media_order), 0)
+FROM review_media
+WHERE review_id = $1;
+
+-- name: CreateReviewMedia :one
+INSERT INTO review_media (
+  review_id,
+  url,
+  media_order
+) VALUES (
+  $1,
+  $2,
+  $3
+) RETURNING *;
