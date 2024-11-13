@@ -1,4 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoaderData } from "@remix-run/react";
+import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { InstantSearch } from "react-instantsearch";
 import { ClientOnly } from "remix-utils/client-only";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Autocomplete } from "~/components/blocks/autocomplete";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -8,17 +16,9 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { InstantSearch } from "react-instantsearch";
-import { useSearchClient } from "~/hooks/use-search-client";
-import { Autocomplete } from "~/components/blocks/autocomplete";
-import { toast } from "sonner";
-import { Separator } from "~/components/ui/separator";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
-import { z } from "zod";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoaderData } from "@remix-run/react";
+import { Separator } from "~/components/ui/separator";
+import { useSearchClient } from "~/hooks/use-search-client";
 import { loader } from "../route";
 import ActionButton from "./action-button";
 import EditDialog from "./locations-edit-dialog";
@@ -54,7 +54,7 @@ export default function TabLocations() {
         state: l.poi.address.city.stateName,
         description: l.description ?? undefined,
       })),
-    }
+    },
   });
   const { fields, append, swap, remove } = useFieldArray({
     control: form.control,
@@ -62,7 +62,7 @@ export default function TabLocations() {
   });
 
   return (
-    <Card className="max-w-xl">
+    <Card>
       <CardHeader>
         <CardTitle>Edit Entry Locations</CardTitle>
         <CardDescription>

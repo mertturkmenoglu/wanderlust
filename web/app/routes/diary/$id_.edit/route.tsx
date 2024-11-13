@@ -60,17 +60,20 @@ export default function Page() {
       </div>
       <Separator className="my-2" />
 
-      <Tabs defaultValue="info">
+      <Tabs
+        defaultValue="info"
+        className="flex flex-col max-w-4xl items-center mx-auto"
+      >
         <TabsList>
           <TabsTrigger value="info">Info</TabsTrigger>
           <TabsTrigger value="locations">Locations</TabsTrigger>
           <TabsTrigger value="friends">Friends</TabsTrigger>
           <TabsTrigger value="media">Media</TabsTrigger>
         </TabsList>
-        <TabsContent value="info">
+        <TabsContent value="info" className="w-full">
           <TabInfo />
         </TabsContent>
-        <TabsContent value="locations">
+        <TabsContent value="locations" className="w-full">
           <TabLocations />
         </TabsContent>
         <TabsContent value="friends">Friends</TabsContent>

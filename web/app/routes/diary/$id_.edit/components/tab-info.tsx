@@ -49,7 +49,7 @@ export default function TabInfo() {
   });
 
   return (
-    <Card className="max-w-xl">
+    <Card className="">
       <CardHeader>
         <CardTitle>Edit Entry Info</CardTitle>
         <CardDescription>
@@ -57,7 +57,7 @@ export default function TabInfo() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="max-w-xl">
+        <form className="">
           <div className="">
             <Label htmlFor="title">Title</Label>
             <Input
