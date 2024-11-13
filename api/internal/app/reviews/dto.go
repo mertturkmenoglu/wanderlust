@@ -45,3 +45,7 @@ type ReviewMediaDto struct {
 	Url        string `json:"url"`
 	MediaOrder int16  `json:"mediaOrder"`
 }
+
+type GetReviewsByPoiIdResponseDto struct {
+	Reviews []GetReviewByIdResponseDto `json:"reviews"`
+}
