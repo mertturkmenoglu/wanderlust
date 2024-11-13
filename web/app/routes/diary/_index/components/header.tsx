@@ -18,7 +18,7 @@ type Props = {
 
 export default function Header({ date, setDate }: Props) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 items-center justify-between">
       <div className="flex items-center gap-2">
         <BookMarkedIcon className="size-8 text-primary " />
         <h2 className="text-2xl">My Diary</h2>
@@ -31,7 +31,7 @@ export default function Header({ date, setDate }: Props) {
               id="date"
               variant={"outline"}
               className={cn(
-                "w-[256px] justify-start text-left font-normal",
+                "w-[192px] sm:w-[256px] justify-start text-left font-normal",
                 !date && "text-muted-foreground"
               )}
             >
@@ -69,7 +69,7 @@ export default function Header({ date, setDate }: Props) {
           )}
         >
           <PlusIcon className="size-4" />
-          <div>New Entry</div>
+          <div className="sr-only sm:not-sr-only">New Entry</div>
         </Link>
       </div>
     </div>
