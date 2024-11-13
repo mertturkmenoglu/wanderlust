@@ -1,15 +1,14 @@
 import FormattedRating from "~/components/kit/formatted-rating";
 
+import { useLoaderData } from "@remix-run/react";
 import { Progress } from "~/components/ui/progress";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { GetPoiByIdResponseDto } from "~/lib/dto";
+import { loader } from "../route";
 import OpenHoursDialog from "./open-hours-dialog";
 
-type Props = {
-  poi: GetPoiByIdResponseDto;
-};
+export default function InformationTable() {
+  const { poi } = useLoaderData<typeof loader>();
 
-export default function InformationTable({ poi }: Props) {
   function calculateRating() {
     if (poi.totalVotes === 0) return 0;
     return poi.totalPoints / poi.totalVotes;
@@ -94,7 +93,7 @@ export default function InformationTable({ poi }: Props) {
         <TableRow>
           <TableCell className="px-0 font-medium"></TableCell>
           <TableCell className="mt-1 flex justify-end">
-            <OpenHoursDialog data={poi.openTimes} />
+            <OpenHoursDialog />
           </TableCell>
         </TableRow>
       </TableBody>

@@ -10,6 +10,7 @@ import invariant from "tiny-invariant";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import { getPoiById } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
 import Amenities from "./components/amenities";
 import BookmarkButton from "./components/bookmark-button";
 import Breadcrumb from "./components/breadcrumb";
@@ -22,9 +23,9 @@ import Reviews from "./components/reviews";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
-  const Cookie = request.headers.get("Cookie") ?? "";
-
-  const res = await getPoiById(params.id, { headers: { Cookie } });
+  const res = await getPoiById(params.id, {
+    headers: { Cookie: getCookiesFromRequest(request) },
+  });
 
   return json({
     poi: res.data,
@@ -55,17 +56,14 @@ export function meta({ data }: MetaArgs<typeof loader>) {
 }
 
 export default function Page() {
-  const { poi, meta } = useLoaderData<typeof loader>();
+  const { poi } = useLoaderData<typeof loader>();
 
   return (
     <main className="container mx-auto mt-8 md:mt-16">
-      <Breadcrumb
-        categoryId={poi.categoryId}
-        categoryName={poi.category.name}
-        poiName={poi.name}
-      />
+      <Breadcrumb />
+
       <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-32">
-        <Carousel media={poi.media} />
+        <Carousel />
 
         <div>
           <div className="flex items-center justify-between">
@@ -74,26 +72,26 @@ export default function Page() {
             </h2>
 
             <div className="flex items-center">
-              <FavoriteButton isFavorite={meta.isFavorite} poiId={poi.id} />
+              <FavoriteButton />
 
-              <BookmarkButton isBookmarked={meta.isBookmarked} poiId={poi.id} />
+              <BookmarkButton />
 
-              <Menu poiId={poi.id} />
+              <Menu />
             </div>
           </div>
 
           <p className="mt-2 text-sm text-primary">{poi.category.name}</p>
           <CollapsibleText text={poi.description} />
           <h2 className="mt-8 text-lg font-bold">Information</h2>
-          <InformationTable poi={poi} />
+          <InformationTable />
         </div>
       </div>
 
       <div className="w-full">
-        <MapContainer lat={poi.address.lat} lng={poi.address.lng} />
+        <MapContainer  />
       </div>
 
-      <Amenities amenities={poi.amenities} />
+      <Amenities />
 
       <hr className="my-4" />
       <Reviews />

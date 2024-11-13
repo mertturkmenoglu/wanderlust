@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import { EllipsisVertical, FlagIcon, Plus, Share2 } from "lucide-react";
 import { useContext, useState } from "react";
@@ -28,21 +28,19 @@ import {
 } from "~/components/ui/select";
 import { getListStatus } from "~/lib/api-requests";
 import { AuthContext } from "~/providers/auth-provider";
+import { loader } from "../route";
 import AddToListButton from "./add-to-list-button";
-
-type Props = {
-  poiId: string;
-};
 
 async function handleShareClick() {
   await navigator.clipboard.writeText(window.location.href);
   toast.success("Link copied to clipboard!");
 }
 
-export default function Menu({ poiId }: Props) {
+export default function Menu() {
+  const { poi } = useLoaderData<typeof loader>();
   const auth = useContext(AuthContext);
   const [listId, setListId] = useState<string | null>(null);
-  const query = useMyListsInfo(poiId);
+  const query = useMyListsInfo(poi.id);
 
   return (
     <Dialog>
@@ -93,7 +91,7 @@ export default function Menu({ poiId }: Props) {
               size="sm"
               asChild
             >
-              <Link to={`/report?id=${poiId}&type=poi`}>
+              <Link to={`/report?id=${poi.id}&type=poi`}>
                 <FlagIcon className="mr-2 size-4" />
                 Report
               </Link>
@@ -126,7 +124,7 @@ export default function Menu({ poiId }: Props) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <AddToListButton poiId={poiId} listId={listId} />
+          <AddToListButton poiId={poi.id} listId={listId} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

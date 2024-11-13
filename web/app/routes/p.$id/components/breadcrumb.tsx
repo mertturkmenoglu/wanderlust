@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -7,18 +7,12 @@ import {
   BreadcrumbSeparator,
   Breadcrumb as ShadcnBreadcrumb,
 } from "~/components/ui/breadcrumb";
+import { loader } from "../route";
 
-type Props = {
-  categoryId: number;
-  categoryName: string;
-  poiName: string;
-};
+export default function Breadcrumb() {
+  const { poi } = useLoaderData<typeof loader>();
+  const categoryLink = `/search?locations[refinementList][categoryId][0]=${poi.categoryId}`;
 
-export default function Breadcrumb({
-  categoryId,
-  categoryName,
-  poiName,
-}: Props) {
   return (
     <ShadcnBreadcrumb>
       <BreadcrumbList>
@@ -29,15 +23,13 @@ export default function Breadcrumb({
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink
-            href={`/search?locations[refinementList][categoryId][0]=${categoryId}`}
-          >
-            {categoryName}
+          <BreadcrumbLink href={categoryLink}>
+            {poi.category.name}
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage className="capitalize">{poiName}</BreadcrumbPage>
+          <BreadcrumbPage className="capitalize">{poi.name}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </ShadcnBreadcrumb>

@@ -1,12 +1,13 @@
+import { useLoaderData } from "@remix-run/react";
 import { ClientOnly } from "remix-utils/client-only";
+import { loader } from "../route";
 import { Map } from "./map.client";
 
-type Props = {
-  lat: number;
-  lng: number;
-};
+export default function MapContainer() {
+  const { poi } = useLoaderData<typeof loader>();
+  const lat = poi.address.lat;
+  const lng = poi.address.lng;
 
-export default function MapContainer({ lat, lng }: Props) {
   return (
     <>
       <h3 className="text-2xl font-bold">Location</h3>

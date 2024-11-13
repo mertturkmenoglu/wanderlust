@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoaderData } from "@remix-run/react";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import { Dashboard } from "@uppy/react";
@@ -28,6 +29,7 @@ import {
 } from "~/components/ui/collapsible";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { loader } from "../route";
 
 const schema = z.object({
   content: z.string().min(5).max(2048),
@@ -36,6 +38,7 @@ const schema = z.object({
 type FormInput = z.infer<typeof schema>;
 
 export default function CreateReviewDialog() {
+  const { poi } = useLoaderData<typeof loader>();
   const [rating, setRating] = useState(0);
   const form = useForm<FormInput>({
     resolver: zodResolver(schema),
@@ -78,7 +81,7 @@ export default function CreateReviewDialog() {
         <AlertDialogHeader>
           <AlertDialogTitle>Add a review</AlertDialogTitle>
           <AlertDialogDescription>
-            Add a review to Colosseum
+            Add a review to {poi.name}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="grid gap-4 py-2">

@@ -1,3 +1,4 @@
+import { useLoaderData } from "@remix-run/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BookmarkIcon } from "lucide-react";
 import { useContext, useState } from "react";
@@ -12,24 +13,30 @@ import {
 import { createBookmark, deleteBookmarkByPoiId } from "~/lib/api-requests";
 import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
+import { loader } from "../route";
 
-type Props = {
-  isBookmarked: boolean;
-  poiId: string;
-};
-
-export default function BookmarkButton({ isBookmarked, poiId }: Props) {
-  const [booked, setBooked] = useState(isBookmarked);
+export default function BookmarkButton() {
+  const { poi, meta } = useLoaderData<typeof loader>();
+  const [booked, setBooked] = useState(meta.isBookmarked);
   const qc = useQueryClient();
   const auth = useContext(AuthContext);
 
+  const onClick = () => {
+    if (!auth.user) {
+      toast.warning("You need to be signed in.");
+      return;
+    }
+
+    mutation.mutate();
+  };
+
   const mutation = useMutation({
-    mutationKey: ["bookmark", poiId],
+    mutationKey: ["bookmark", poi.id],
     mutationFn: async () => {
       if (booked) {
-        await deleteBookmarkByPoiId(poiId);
+        await deleteBookmarkByPoiId(poi.id);
       } else {
-        await createBookmark({ poiId });
+        await createBookmark({ poiId: poi.id });
       }
     },
     onSuccess: async () => {
@@ -47,17 +54,7 @@ export default function BookmarkButton({ isBookmarked, poiId }: Props) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (!auth.user) {
-                toast.warning("You need to be signed in.");
-                return;
-              }
-
-              mutation.mutate();
-            }}
-          >
+          <Button variant="ghost" onClick={onClick}>
             <BookmarkIcon
               className={cn("size-6 text-primary", {
                 "fill-primary": booked,
@@ -66,7 +63,7 @@ export default function BookmarkButton({ isBookmarked, poiId }: Props) {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          <p>{booked ? "Remove bookmark" : "Add to bookmarks"}</p>
+          <div>{booked ? "Remove bookmark" : "Add to bookmarks"}</div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -1,3 +1,4 @@
+import { useLoaderData } from "@remix-run/react";
 import {
   CarouselContent,
   CarouselItem,
@@ -5,13 +6,12 @@ import {
   CarouselPrevious,
   Carousel as ShadcnCarousel,
 } from "~/components/ui/carousel";
-import { Media } from "~/lib/dto";
+import { loader } from "../route";
 
-type Props = {
-  media: Media[];
-};
+export default function Carousel() {
+  const { poi } = useLoaderData<typeof loader>();
+  const media = poi.media;
 
-export default function Carousel({ media }: Props) {
   return (
     <ShadcnCarousel className="mx-auto flex h-min w-11/12 justify-center lg:w-full">
       <CarouselContent>

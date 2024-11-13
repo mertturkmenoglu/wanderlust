@@ -1,3 +1,4 @@
+import { useLoaderData } from "@remix-run/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart } from "lucide-react";
 import { useContext, useState } from "react";
@@ -12,24 +13,21 @@ import {
 import { createFavorite, deleteFavoriteByPoiId } from "~/lib/api-requests";
 import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
+import { loader } from "../route";
 
-type Props = {
-  isFavorite: boolean;
-  poiId: string;
-};
-
-export default function FavoriteButton({ isFavorite, poiId }: Props) {
-  const [fav, setFav] = useState(isFavorite);
+export default function FavoriteButton() {
+  const { poi, meta } = useLoaderData<typeof loader>();
+  const [fav, setFav] = useState(meta.isFavorite);
   const auth = useContext(AuthContext);
   const qc = useQueryClient();
 
   const mutation = useMutation({
-    mutationKey: ["favorites", poiId],
+    mutationKey: ["favorites", poi.id],
     mutationFn: async () => {
       if (fav) {
-        await deleteFavoriteByPoiId(poiId);
+        await deleteFavoriteByPoiId(poi.id);
       } else {
-        await createFavorite({ poiId });
+        await createFavorite({ poiId: poi.id });
       }
     },
     onSuccess: async () => {

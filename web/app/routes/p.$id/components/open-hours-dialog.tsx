@@ -1,3 +1,4 @@
+import { useLoaderData } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -7,10 +8,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { GetPoiByIdResponseDto } from "~/lib/dto";
-
-type Props = {
-  data: GetPoiByIdResponseDto["openTimes"];
-};
+import { loader } from "../route";
 
 function fmt(s: string): string {
   let a = s.split(", ")[1];
@@ -41,7 +39,8 @@ function keyToReadableDay(key: string): string {
   }
 }
 
-export default function OpenHoursDialog({ data }: Props) {
+export default function OpenHoursDialog() {
+  const { poi: { openTimes: data } } = useLoaderData<typeof loader>();
   const allKeys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
   const keys = allKeys.filter((k) => !!data[k]);
 
