@@ -90,3 +90,26 @@ INSERT INTO review_media (
   $2,
   $3
 ) RETURNING *;
+
+-- name: GetReviewsByUsername :many
+SELECT 
+  sqlc.embed(reviews),
+  sqlc.embed(profile),
+  sqlc.embed(pois)
+FROM 
+    reviews
+JOIN 
+    profile ON reviews.user_id = profile.id
+JOIN 
+    pois ON reviews.poi_id = pois.id
+WHERE profile.username = $1
+ORDER BY reviews.created_at DESC
+OFFSET $2
+LIMIT $3;
+
+-- name: CountReviewsByUsername :one
+SELECT COUNT(*) FROM reviews
+WHERE user_id = (
+  SELECT id FROM profile
+  WHERE username = $1
+);

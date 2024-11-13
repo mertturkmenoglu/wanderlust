@@ -33,6 +33,21 @@ func (q *Queries) CountReviewsByPoiId(ctx context.Context, poiID string) (int64,
 	return count, err
 }
 
+const countReviewsByUsername = `-- name: CountReviewsByUsername :one
+SELECT COUNT(*) FROM reviews
+WHERE user_id = (
+  SELECT id FROM profile
+  WHERE username = $1
+)
+`
+
+func (q *Queries) CountReviewsByUsername(ctx context.Context, username string) (int64, error) {
+	row := q.db.QueryRow(ctx, countReviewsByUsername, username)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createReview = `-- name: CreateReview :one
 INSERT INTO reviews (
   id,
@@ -291,6 +306,92 @@ func (q *Queries) GetReviewsByPoiId(ctx context.Context, arg GetReviewsByPoiIdPa
 	var items []GetReviewsByPoiIdRow
 	for rows.Next() {
 		var i GetReviewsByPoiIdRow
+		if err := rows.Scan(
+			&i.Review.ID,
+			&i.Review.PoiID,
+			&i.Review.UserID,
+			&i.Review.Content,
+			&i.Review.Rating,
+			&i.Review.CreatedAt,
+			&i.Review.UpdatedAt,
+			&i.Profile.ID,
+			&i.Profile.Username,
+			&i.Profile.FullName,
+			&i.Profile.IsBusinessAccount,
+			&i.Profile.IsVerified,
+			&i.Profile.Bio,
+			&i.Profile.Pronouns,
+			&i.Profile.Website,
+			&i.Profile.Phone,
+			&i.Profile.ProfileImage,
+			&i.Profile.BannerImage,
+			&i.Profile.FollowersCount,
+			&i.Profile.FollowingCount,
+			&i.Profile.CreatedAt,
+			&i.Poi.ID,
+			&i.Poi.Name,
+			&i.Poi.Phone,
+			&i.Poi.Description,
+			&i.Poi.AddressID,
+			&i.Poi.Website,
+			&i.Poi.PriceLevel,
+			&i.Poi.AccessibilityLevel,
+			&i.Poi.TotalVotes,
+			&i.Poi.TotalPoints,
+			&i.Poi.TotalFavorites,
+			&i.Poi.CategoryID,
+			&i.Poi.OpenTimes,
+			&i.Poi.CreatedAt,
+			&i.Poi.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getReviewsByUsername = `-- name: GetReviewsByUsername :many
+SELECT 
+  reviews.id, reviews.poi_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,
+  profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at,
+  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at
+FROM 
+    reviews
+JOIN 
+    profile ON reviews.user_id = profile.id
+JOIN 
+    pois ON reviews.poi_id = pois.id
+WHERE profile.username = $1
+ORDER BY reviews.created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type GetReviewsByUsernameParams struct {
+	Username string
+	Offset   int32
+	Limit    int32
+}
+
+type GetReviewsByUsernameRow struct {
+	Review  Review
+	Profile Profile
+	Poi     Poi
+}
+
+func (q *Queries) GetReviewsByUsername(ctx context.Context, arg GetReviewsByUsernameParams) ([]GetReviewsByUsernameRow, error) {
+	rows, err := q.db.Query(ctx, getReviewsByUsername, arg.Username, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetReviewsByUsernameRow
+	for rows.Next() {
+		var i GetReviewsByUsernameRow
 		if err := rows.Scan(
 			&i.Review.ID,
 			&i.Review.PoiID,
