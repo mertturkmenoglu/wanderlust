@@ -6,16 +6,12 @@ import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
 import { useState } from "react";
 import BackLink from "~/components/blocks/back-link";
 import { getMe } from "~/lib/api";
-import EntryTitle from "./__components/entry-title";
-import Nav from "./__components/nav";
-import Step1 from "./__components/step1";
-import Step2 from "./__components/step2";
-import Step3 from "./__components/step3";
-import Step4 from "./__components/step4";
-import Step5 from "./__components/step5";
-import Stepper from "./__components/stepper";
+import Step1 from "./components/step1";
+import Step2 from "./components/step2";
+import Step3 from "./components/step3";
+import Step4 from "./components/step4";
+import Step5 from "./components/step5";
 import { useNewDiaryEntryForm, useSaveToLocalStorage } from "./hooks";
-import { steps } from "./steps";
 
 import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
 import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
@@ -24,6 +20,7 @@ import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
 import { FormProvider, useFormState } from "react-hook-form";
 import AppMessage from "~/components/blocks/app-message";
 
+import { SaveIcon } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +30,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import UnsavedChanges from "./components/unsaved-tooltip";
 
 export async function clientLoader() {
   try {
@@ -86,8 +85,8 @@ export default function Page() {
   const { baseApiUrl } = useLoaderData<typeof clientLoader>();
   const form = useNewDiaryEntryForm();
   const state = useFormState(form);
-  const [currentStep, setCurrentStep] = useState(1);
-  const { saveToLocalStorage } = useSaveToLocalStorage(form);
+  const { saveStatus, saveText, saveToLocalStorage } =
+    useSaveToLocalStorage(form);
   const [uppy] = useState(() =>
     new Uppy({
       restrictions: {
@@ -118,26 +117,53 @@ export default function Page() {
         <div className="container mx-auto my-8">
           <BackLink href="/diary" text="Go back to your diary" />
 
-          <EntryTitle className="mt-8" />
+          <Tabs defaultValue="1" className="mt-8 max-w-xl mx-auto">
+            <div className="w-full flex">
+              <TabsList className="w-full">
+                <TabsTrigger value="1">Info</TabsTrigger>
+                <TabsTrigger value="2">Locations</TabsTrigger>
+                <TabsTrigger value="3">Friends</TabsTrigger>
+                <TabsTrigger value="4">Media</TabsTrigger>
+                <TabsTrigger value="5">Review</TabsTrigger>
+              </TabsList>
+            </div>
 
-          <Stepper
-            className="my-16 mx-auto"
-            currentStep={currentStep}
-            setCurrentStep={setCurrentStep}
-            steps={steps}
-          />
+            <div className="my-4 grid grid-cols-2 items-center">
+              <div>
+                {state.isDirty ? (
+                  <UnsavedChanges />
+                ) : saveStatus !== "idle" ? (
+                  <div>{saveText}</div>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <button
+                className="ml-auto px-4 py-2 hover:bg-muted rounded text-secondary-foreground text-sm flex items-center gap-2"
+                disabled={saveStatus !== "idle"}
+                onClick={() => saveToLocalStorage()}
+              >
+                <SaveIcon className="size-4" />
+                <span>{saveText}</span>
+              </button>
+            </div>
 
-          {currentStep === 1 && <Step1 />}
-          {currentStep === 2 && <Step2 />}
-          {currentStep === 3 && <Step3 />}
-          {currentStep === 4 && <Step4 uppy={uppy} />}
-          {currentStep === 5 && <Step5 uppy={uppy} baseApiUrl={baseApiUrl} />}
-
-          <Nav
-            onNavigationChange={saveToLocalStorage}
-            currentStep={currentStep}
-            setCurrentStep={setCurrentStep}
-          />
+            <TabsContent value="1">
+              <Step1 />
+            </TabsContent>
+            <TabsContent value="2">
+              <Step2 />
+            </TabsContent>
+            <TabsContent value="3">
+              <Step3 />
+            </TabsContent>
+            <TabsContent value="4">
+              <Step4 uppy={uppy} />
+            </TabsContent>
+            <TabsContent value="5">
+              <Step5 uppy={uppy} baseApiUrl={baseApiUrl} />
+            </TabsContent>
+          </Tabs>
         </div>
       </FormProvider>
       <DevTool control={form.control} />
