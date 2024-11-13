@@ -5,6 +5,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -18,28 +19,30 @@ export default function DeleteDialog() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="icon">
-          <TrashIcon className="size-3" />
-          <span className="sr-only">Delete</span>
+        <Button size="sm" variant="destructive">
+          <TrashIcon className="size-2 mr-2" />
+          <span>Delete draft</span>
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="sm:max-w-[425px]">
+      <AlertDialogContent className="sm:max-w-xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You will loose this draft. Are you sure you want to delete it?
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="grid gap-4 py-2">
-          You will loose this draft. Are you sure you want to delete it?
-        </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              localStorage.removeItem("diary-entry");
-              navigate("/diary");
-            }}
-          >
-            Delete Draft
-          </AlertDialogAction>
+          <Button asChild variant="destructive">
+            <AlertDialogAction
+              onClick={() => {
+                localStorage.removeItem("diary-entry");
+                navigate("/diary");
+              }}
+            >
+              Delete Draft
+            </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
