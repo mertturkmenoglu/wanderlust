@@ -11,12 +11,14 @@ export default function UnsavedChanges() {
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger>
-          <>
-            <TriangleAlertIcon className="size-4 mx-4 text-yellow-400" />
-            <span className="sr-only">You have unsaved changes.</span>
-          </>
+          <div className="flex items-center gap-2">
+            <TriangleAlertIcon className="size-4 text-yellow-400" />
+            <span className="text-xs text-muted-foreground">
+              You have unsaved changes.
+            </span>
+          </div>
         </TooltipTrigger>
-        <TooltipContent side="left" sideOffset={12}>
+        <TooltipContent side="bottom" sideOffset={12}>
           <div className="">You have unsaved changes.</div>
         </TooltipContent>
       </Tooltip>
