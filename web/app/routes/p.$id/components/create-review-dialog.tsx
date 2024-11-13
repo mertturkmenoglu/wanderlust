@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoaderData } from "@remix-run/react";
+import { useMutation } from "@tanstack/react-query";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import { Dashboard } from "@uppy/react";
@@ -7,6 +8,7 @@ import XHRUpload from "@uppy/xhr-upload";
 import { PlusIcon, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import InputError from "~/components/kit/input-error";
 import { Rating } from "~/components/kit/rating";
@@ -29,6 +31,7 @@ import {
 } from "~/components/ui/collapsible";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { createReview } from "~/lib/api-requests";
 import { loader } from "../route";
 
 const schema = z.object({
@@ -54,7 +57,7 @@ export default function CreateReviewDialog() {
     })
       .use(ImageEditor)
       .use(XHRUpload, {
-        endpoint: `pois/media`,
+        endpoint: `reviews/media`,
         withCredentials: true,
         shouldRetry: () => false,
         fieldName: "files",
@@ -63,11 +66,26 @@ export default function CreateReviewDialog() {
       .on("file-added", (file) => {
         console.log("file added", file);
       })
-
       .on("complete", () => {
         console.log("complete");
       })
   );
+
+  const create = useMutation({
+    mutationKey: ["create-review"],
+    mutationFn: async () =>
+      createReview({
+        content: form.getValues("content"),
+        poiId: poi.id,
+        rating: rating,
+      }),
+    onSuccess: () => {
+      toast.success("Review added.");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
 
   return (
     <AlertDialog>
@@ -114,7 +132,7 @@ export default function CreateReviewDialog() {
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="max-w-md sm:max-w-xl md:max-w-3xl">
+              <div className="max-w-md sm:max-w-xl md:max-w-3xl mt-2">
                 <Dashboard
                   uppy={uppy}
                   hideUploadButton={true}
@@ -128,16 +146,7 @@ export default function CreateReviewDialog() {
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() =>
-              alert(
-                JSON.stringify({
-                  content: form.getValues("content"),
-                  rating,
-                })
-              )
-            }
-          >
+          <AlertDialogAction onClick={() => create.mutate()}>
             Create
           </AlertDialogAction>
         </AlertDialogFooter>
