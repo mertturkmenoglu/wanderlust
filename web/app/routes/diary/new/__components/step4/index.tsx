@@ -8,11 +8,7 @@ type Props = {
 
 export default function Step4({ uppy }: Props) {
   return (
-    <div className="w-full mt-16 max-w-2xl mx-auto">
-      <div className="text-lg text-muted-foreground text-center">
-        Now let's add a couple of pictures
-      </div>
-
+    <div className="w-full mt-4 max-w-2xl mx-auto">
       <ClientOnly fallback={<div>Loading...</div>}>
         {() => (
           <>

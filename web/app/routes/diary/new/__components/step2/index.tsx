@@ -5,6 +5,7 @@ import { ClientOnly } from "remix-utils/client-only";
 import { toast } from "sonner";
 import { Autocomplete } from "~/components/blocks/autocomplete";
 import { Card } from "~/components/ui/card";
+import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
 import { useSearchClient } from "~/hooks/use-search-client";
@@ -21,10 +22,8 @@ export default function Step2() {
   });
 
   return (
-    <div className="w-full mt-16">
-      <div className="text-lg text-muted-foreground text-center">
-        Now let's add the locations you visited.
-      </div>
+    <div className="w-full mt-4">
+      <Label>Now let's add the locations you visited.</Label>
       <div className="max-w-xl mt-4 mx-auto">
         <ClientOnly fallback={<div>Loading...</div>}>
           {() => (
@@ -71,7 +70,7 @@ export default function Step2() {
               <h3 className="mt-8 text-lg font-bold tracking-tight">
                 Selected Locations
               </h3>
-              <ScrollArea className="h-[640px]">
+              <ScrollArea className="h-[384px]">
                 {fields.length === 0 && (
                   <div className="text-center text-sm text-muted-foreground my-8">
                     No locations selected

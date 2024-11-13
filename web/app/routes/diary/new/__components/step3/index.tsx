@@ -1,5 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { Label } from "~/components/ui/label";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { FormInput } from "../../schema";
 import SearchInput from "./search-input";
@@ -14,12 +15,12 @@ export default function Step3() {
   });
 
   return (
-    <div className="w-full mt-16">
-      <div className="text-lg text-muted-foreground text-center">
+    <div className="w-full mt-4">
+      <Label>
         Have you had any friends with you? Let's add them to your diary.
-      </div>
+      </Label>
 
-      <div className="max-w-xl mx-auto group mt-4">
+      <div className="max-w-xl mx-auto group mt-2">
         <SearchInput />
 
         <SearchResults
@@ -28,7 +29,7 @@ export default function Step3() {
         />
       </div>
 
-      <ScrollArea className="max-w-xl h-[512px] px-4 mt-4 mx-auto">
+      <ScrollArea className="max-w-xl h-[384px] px-4 mt-4 mx-auto">
         {fields.map((friend, i) => (
           <div key={friend.id} className="flex flex-col w-full mt-2 first:mt-0">
             <UserCard
