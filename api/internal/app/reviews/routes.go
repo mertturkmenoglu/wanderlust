@@ -12,9 +12,9 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 	{
 		routes.GET("/:id", m.handlers.getReviewById)
 		routes.POST("/", m.handlers.createReview, middlewares.ParseBody[CreateReviewRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActReviewCreate))
-		routes.DELETE("/", m.handlers.deleteReview, middlewares.IsAuth, middlewares.Authz(authz.ActReviewDelete))
+		routes.DELETE("/:id", m.handlers.deleteReview, middlewares.IsAuth, middlewares.Authz(authz.ActReviewDelete))
 		routes.GET("/user/:username", m.handlers.getReviewsByUsername)
 		routes.GET("/poi/:id", m.handlers.getReviewsByPoiId)
-		routes.POST("/media", m.handlers.uploadMedia, middlewares.IsAuth, middlewares.Authz(authz.ActReviewUploadMedia))
+		routes.POST("/:id/media", m.handlers.uploadMedia, middlewares.IsAuth, middlewares.Authz(authz.ActReviewUploadMedia))
 	}
 }
