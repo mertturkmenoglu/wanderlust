@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ErrIdRequired = errs.NewApiError(http.StatusBadRequest, "0800", errors.New("id is required"))
-	ErrNotFound   = errs.NewApiError(http.StatusNotFound, "0801", errors.New("review not found"))
-	ErrMediaOrder = errs.NewApiError(http.StatusInternalServerError, "0802", errors.New("media order cast error"))
+	ErrIdRequired       = errs.NewApiError(http.StatusBadRequest, "0800", errors.New("id is required"))
+	ErrNotFound         = errs.NewApiError(http.StatusNotFound, "0801", errors.New("review not found"))
+	ErrMediaOrder       = errs.NewApiError(http.StatusInternalServerError, "0802", errors.New("media order cast error"))
+	ErrUsernameRequired = errs.NewApiError(http.StatusBadRequest, "0803", errors.New("username is required"))
 )

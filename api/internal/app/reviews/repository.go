@@ -135,3 +135,15 @@ func (r *repository) addMedia(id string, url string) error {
 
 	return err
 }
+
+func (r *repository) getReviewsByUsername(username string, params pagination.Params) ([]db.GetReviewsByUsernameRow, error) {
+	return r.di.Db.Queries.GetReviewsByUsername(context.Background(), db.GetReviewsByUsernameParams{
+		Username: username,
+		Offset:   int32(params.Offset),
+		Limit:    int32(params.PageSize),
+	})
+}
+
+func (r *repository) countReviewsByUsername(username string) (int64, error) {
+	return r.di.Db.Queries.CountReviewsByUsername(context.Background(), username)
+}

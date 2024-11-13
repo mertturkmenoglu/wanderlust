@@ -108,6 +108,36 @@ func (s *service) getReviewsByPoiId(id string, params pagination.Params) (GetRev
 	return v, total, nil
 }
 
+func (s *service) getReviewsByUsername(username string, params pagination.Params) (GetReviewsByUsernameResponseDto, int64, error) {
+	res, err := s.repository.getReviewsByUsername(username, params)
+
+	if err != nil {
+		return GetReviewsByUsernameResponseDto{}, 0, err
+	}
+
+	total, err := s.repository.countReviewsByUsername(username)
+
+	if err != nil {
+		return GetReviewsByUsernameResponseDto{}, 0, err
+	}
+
+	reviewIds := make([]string, 0)
+
+	for _, r := range res {
+		reviewIds = append(reviewIds, r.Review.ID)
+	}
+
+	media, err := s.repository.getReviewMediaByReviewIds(reviewIds)
+
+	if err != nil {
+		return GetReviewsByUsernameResponseDto{}, 0, err
+	}
+
+	v := mapToGetReviewsByUsernameResponseDto(res, media)
+
+	return v, total, nil
+}
+
 func (s *service) uploadMedia(id string, mpf *multipart.Form) (string, error) {
 	uploader := sImageUploader{
 		mpf:    mpf,

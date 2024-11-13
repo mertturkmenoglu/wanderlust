@@ -49,3 +49,7 @@ type ReviewMediaDto struct {
 type GetReviewsByPoiIdResponseDto struct {
 	Reviews []GetReviewByIdResponseDto `json:"reviews"`
 }
+
+type GetReviewsByUsernameResponseDto struct {
+	Reviews []GetReviewByIdResponseDto `json:"reviews"`
+}

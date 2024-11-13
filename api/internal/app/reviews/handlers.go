@@ -59,7 +59,27 @@ func (h *handlers) deleteReview(c echo.Context) error {
 }
 
 func (h *handlers) getReviewsByUsername(c echo.Context) error {
-	return echo.ErrNotImplemented
+	username := c.Param("username")
+	params, err := pagination.GetParamsFromContext(c)
+
+	if username == "" {
+		return ErrUsernameRequired
+	}
+
+	if err != nil {
+		return err
+	}
+
+	res, total, err := h.service.getReviewsByUsername(username, params)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.PaginatedResponse{
+		Data:       res,
+		Pagination: pagination.Compute(params, total),
+	})
 }
 
 func (h *handlers) getReviewsByPoiId(c echo.Context) error {
