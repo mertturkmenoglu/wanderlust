@@ -273,3 +273,55 @@ func FnDiaryDelete(s *Authz, c echo.Context) (bool, error) {
 
 	return true, nil
 }
+
+func FnReviewDelete(s *Authz, c echo.Context) (bool, error) {
+	userId, ok := c.Get("user_id").(string)
+
+	if !ok {
+		return false, echo.ErrUnauthorized
+	}
+
+	id := c.Param("id")
+
+	if id == "" {
+		return false, echo.ErrBadRequest
+	}
+
+	review, err := s.Db.Queries.GetReviewById(context.Background(), id)
+
+	if err != nil {
+		return false, err
+	}
+
+	if review.Review.UserID != userId {
+		return false, echo.ErrForbidden
+	}
+
+	return true, nil
+}
+
+func FnReviewUploadMedia(s *Authz, c echo.Context) (bool, error) {
+	userId, ok := c.Get("user_id").(string)
+
+	if !ok {
+		return false, echo.ErrUnauthorized
+	}
+
+	id := c.Param("id")
+
+	if id == "" {
+		return false, echo.ErrBadRequest
+	}
+
+	review, err := s.Db.Queries.GetReviewById(context.Background(), id)
+
+	if err != nil {
+		return false, err
+	}
+
+	if review.Review.UserID != userId {
+		return false, echo.ErrForbidden
+	}
+
+	return true, nil
+}

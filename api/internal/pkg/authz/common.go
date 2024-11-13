@@ -96,6 +96,6 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActDiaryChangeSharing:   FnDiaryChangeSharing,
 	ActDiaryDelete:          FnDiaryDelete,
 	ActReviewCreate:         Identity,
-	ActReviewDelete:         NotImplemented,
-	ActReviewUploadMedia:    NotImplemented,
+	ActReviewDelete:         FnReviewDelete,
+	ActReviewUploadMedia:    FnReviewUploadMedia,
 }
