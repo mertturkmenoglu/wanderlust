@@ -61,3 +61,59 @@ func mapToGetReviewByIdResponseDto(review db.GetReviewByIdRow, media []db.Review
 		Media: mediaRes,
 	}
 }
+
+func mapToGetReviewsByPoiIdResponseDto(v []db.GetReviewsByPoiIdRow, media []db.ReviewMedium) GetReviewsByPoiIdResponseDto {
+	reviews := make([]GetReviewByIdResponseDto, 0)
+
+	for _, item := range v {
+		reviewMedia := make([]ReviewMediaDto, 0)
+
+		for _, m := range media {
+			if m.ReviewID != item.Review.ID {
+				continue
+			}
+
+			reviewMedia = append(reviewMedia, ReviewMediaDto{
+				ID:         m.ID,
+				ReviewID:   m.ReviewID,
+				Url:        m.Url,
+				MediaOrder: m.MediaOrder,
+			})
+		}
+
+		reviews = append(reviews, GetReviewByIdResponseDto{
+			ID:        item.Review.ID,
+			PoiID:     item.Review.PoiID,
+			UserID:    item.Review.UserID,
+			Content:   item.Review.Content,
+			Rating:    item.Review.Rating,
+			CreatedAt: item.Review.CreatedAt.Time,
+			UpdatedAt: item.Review.UpdatedAt.Time,
+			Poi: ReviewPoiDto{
+				ID:   item.Poi.ID,
+				Name: item.Poi.Name,
+			},
+			User: common_dto.Profile{
+				ID:                item.Profile.ID,
+				Username:          item.Profile.Username,
+				FullName:          item.Profile.FullName,
+				IsBusinessAccount: item.Profile.IsBusinessAccount,
+				IsVerified:        item.Profile.IsVerified,
+				Bio:               utils.TextOrNil(item.Profile.Bio),
+				Pronouns:          utils.TextOrNil(item.Profile.Pronouns),
+				Website:           utils.TextOrNil(item.Profile.Website),
+				Phone:             utils.TextOrNil(item.Profile.Phone),
+				ProfileImage:      utils.TextOrNil(item.Profile.ProfileImage),
+				BannerImage:       utils.TextOrNil(item.Profile.BannerImage),
+				FollowersCount:    item.Profile.FollowersCount,
+				FollowingCount:    item.Profile.FollowingCount,
+				CreatedAt:         item.Profile.CreatedAt.Time,
+			},
+			Media: reviewMedia,
+		})
+	}
+
+	return GetReviewsByPoiIdResponseDto{
+		Reviews: reviews,
+	}
+}
