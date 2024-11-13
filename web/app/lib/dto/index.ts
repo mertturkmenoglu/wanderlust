@@ -10,4 +10,5 @@ export * from "./diary";
 export * from "./favorites";
 export * from "./lists";
 export * from "./pois";
+export * from "./reviews";
 export * from "./users";
