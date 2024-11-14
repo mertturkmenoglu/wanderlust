@@ -3,6 +3,9 @@ import {
   CreateReviewRequestDto,
   CreateReviewResponseDto,
   GetReviewByIdResponseDto,
+  GetReviewsByPoiIdResponseDto,
+  GetReviewsByUsernameResponseDto,
+  Pagination,
 } from "../dto";
 
 export function getReviewById(id: string) {
@@ -19,4 +22,30 @@ export function createReview(dto: CreateReviewRequestDto) {
 
 export function deleteReview(id: string) {
   return api.delete(`reviews/${id}`);
+}
+
+export function getReviewsByPoiId(id: string, page: number, pageSize: number) {
+  return api
+    .get(`reviews/poi/${id}`, {
+      searchParams: {
+        page,
+        pageSize,
+      },
+    })
+    .json<{ data: GetReviewsByPoiIdResponseDto; pagination: Pagination }>();
+}
+
+export function getReviewsByUsername(
+  username: string,
+  page: number,
+  pageSize: number
+) {
+  return api
+    .get(`reviews/user/${username}`, {
+      searchParams: {
+        page,
+        pageSize,
+      },
+    })
+    .json<{ data: GetReviewsByUsernameResponseDto; pagination: Pagination }>();
 }

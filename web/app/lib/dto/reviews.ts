@@ -40,3 +40,11 @@ export type ReviewMediaDto = {
   url: string;
   mediaOrder: number;
 };
+
+export type GetReviewsByPoiIdResponseDto = {
+  reviews: GetReviewByIdResponseDto[];
+};
+
+export type GetReviewsByUsernameResponseDto = {
+  reviews: GetReviewByIdResponseDto[];
+};
