@@ -32,7 +32,7 @@ import {
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { createReview } from "~/lib/api-requests";
-import { loader } from "../route";
+import { loader } from "../../route";
 
 const schema = z.object({
   content: z.string().min(5).max(2048),
