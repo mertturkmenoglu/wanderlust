@@ -7,6 +7,7 @@ import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
 import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
 import invariant from "tiny-invariant";
+import yarlStyles from "yet-another-react-lightbox/styles.css?url";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import { getPoiById } from "~/lib/api";
@@ -19,7 +20,7 @@ import FavoriteButton from "./components/favorite-button";
 import InformationTable from "./components/info-table";
 import MapContainer from "./components/map-container";
 import Menu from "./components/menu";
-import Reviews from "./components/reviews";
+import Reviews from "./components/reviews/index";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -41,6 +42,7 @@ export function links() {
     { rel: "stylesheet", href: uppyDashboardStyles },
     { rel: "stylesheet", href: uppyFileInputStyles },
     { rel: "stylesheet", href: uppyImageEditorStyles },
+    { rel: "stylesheet", href: yarlStyles },
   ];
 }
 
@@ -88,7 +90,7 @@ export default function Page() {
       </div>
 
       <div className="w-full">
-        <MapContainer  />
+        <MapContainer />
       </div>
 
       <Amenities />
