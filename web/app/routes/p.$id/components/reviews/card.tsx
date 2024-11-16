@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import { FlagIcon } from "lucide-react";
 import { useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
@@ -78,10 +79,13 @@ export function ReviewCard({ review }: Props) {
       </CardContent>
       <CardFooter>
         <FormattedRating rating={review.rating} votes={1} />
-        <div className="text-xs text-muted-foreground flex items-center ml-auto">
+        <Link
+          to={`/report?type=review&id=${review.id}`}
+          className="text-xs text-muted-foreground flex items-center ml-auto hover:underline"
+        >
           <FlagIcon className="size-3" />
           <span className="ml-2">Report</span>
-        </div>
+        </Link>
       </CardFooter>
     </Card>
   );
