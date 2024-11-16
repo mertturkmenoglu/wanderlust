@@ -5,12 +5,13 @@ import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import { Dashboard } from "@uppy/react";
 import XHRUpload from "@uppy/xhr-upload";
-import { PlusIcon, UploadIcon } from "lucide-react";
+import { PencilIcon, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import InputError from "~/components/kit/input-error";
+import InputInfo from "~/components/kit/input-info";
 import { Rating } from "~/components/kit/rating";
 import {
   AlertDialog,
@@ -32,6 +33,7 @@ import {
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { createReview } from "~/lib/api-requests";
+import { lengthTracker } from "~/lib/form-utils";
 import { loader } from "../../route";
 
 const schema = z.object({
@@ -105,9 +107,9 @@ export default function CreateReviewDialog() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="default">
+        <Button variant="default" size="sm">
+          <PencilIcon className="size-4 mr-2" />
           <span>Add a review</span>
-          <PlusIcon className="size-4 ml-2" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="sm:max-w-4xl">
@@ -137,6 +139,7 @@ export default function CreateReviewDialog() {
               placeholder="Leave a review"
               {...form.register("content")}
             />
+            <InputInfo text={lengthTracker(form.watch("content"), 2048)} />
             <InputError error={form.formState.errors.content} />
           </div>
 
