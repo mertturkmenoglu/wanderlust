@@ -5,12 +5,14 @@ type Props = {
   rating: number;
   votes: number;
   starsClassName?: string;
+  showNumbers?: boolean;
 };
 
 export default function FormattedRating({
   rating,
   votes,
   starsClassName,
+  showNumbers = true,
 }: Props) {
   const id = useId();
   const fmt = new Intl.NumberFormat("en-US", {
@@ -30,10 +32,12 @@ export default function FormattedRating({
         disabled={true}
         starsClassName={starsClassName}
       />
-      <div className="flex items-center space-x-1">
-        <span className="font-bold">{rating.toFixed(1)}</span>
-        <span>({formattedRating})</span>
-      </div>
+      {showNumbers && (
+        <div className="flex items-center space-x-1">
+          <span className="font-bold">{rating.toFixed(1)}</span>
+          <span>({formattedRating})</span>
+        </div>
+      )}
     </div>
   );
 }
