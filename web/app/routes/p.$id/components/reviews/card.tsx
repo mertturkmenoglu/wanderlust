@@ -31,7 +31,7 @@ export function ReviewCard({ review }: Props) {
           <div className="text-xs text-primary tracking-tight">
             <span className="">@{review.user.username}</span>
           </div>
-          <div className="text-xs text-muted-foreground">{`${formatDistanceToNow(
+          <div className="text-xs text-muted-foreground mt-1">{`${formatDistanceToNow(
             review.createdAt
           )} ago`}</div>
         </div>
@@ -85,8 +85,13 @@ export function ReviewCard({ review }: Props) {
         />
       </div>
       <div className="mt-4 flex items-center justify-between">
-        <div>
-          <FormattedRating rating={review.rating} votes={1} />
+        <div className="flex items-center gap-2">
+          <FormattedRating
+            rating={review.rating}
+            votes={1}
+            showNumbers={false}
+          />
+          <span className="text-sm font-semibold">{review.rating}.0</span>
         </div>
         <Link
           to={`/report?type=review&id=${review.id}`}
