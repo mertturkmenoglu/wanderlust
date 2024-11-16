@@ -31,6 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return json({
     poi: res.data,
     meta: res.meta,
+    baseApiUrl: import.meta.env.VITE_API_URL ?? "",
   });
 }
 

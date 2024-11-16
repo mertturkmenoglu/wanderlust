@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoaderData } from "@remix-run/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import { Dashboard } from "@uppy/react";
@@ -41,35 +41,25 @@ const schema = z.object({
 type FormInput = z.infer<typeof schema>;
 
 export default function CreateReviewDialog() {
-  const { poi } = useLoaderData<typeof loader>();
+  const { poi, baseApiUrl } = useLoaderData<typeof loader>();
   const [rating, setRating] = useState(0);
+  const qc = useQueryClient();
+
   const form = useForm<FormInput>({
     resolver: zodResolver(schema),
   });
 
-  const [uppy] = useState(() =>
-    new Uppy({
+  const [uppy] = useState(() => {
+    const uppy = new Uppy({
       restrictions: {
         allowedFileTypes: [".jpg", ".jpeg", ".png"],
         maxNumberOfFiles: 10,
         maxFileSize: 5 * 1024 * 1024,
       },
-    })
-      .use(ImageEditor)
-      .use(XHRUpload, {
-        endpoint: `reviews/media`,
-        withCredentials: true,
-        shouldRetry: () => false,
-        fieldName: "files",
-        limit: 5,
-      })
-      .on("file-added", (file) => {
-        console.log("file added", file);
-      })
-      .on("complete", () => {
-        console.log("complete");
-      })
-  );
+    }).use(ImageEditor);
+
+    return uppy;
+  });
 
   const create = useMutation({
     mutationKey: ["create-review"],
@@ -79,11 +69,36 @@ export default function CreateReviewDialog() {
         poiId: poi.id,
         rating: rating,
       }),
-    onSuccess: () => {
-      toast.success("Review added.");
+    onSuccess: ({ data }) => {
+      mediaUpload.mutate(data.id);
     },
     onError: () => {
       toast.error("Something went wrong");
+    },
+  });
+
+  const mediaUpload = useMutation({
+    mutationKey: ["review-media-upload"],
+    mutationFn: async (reviewId: string) => {
+      const uppyWithXHR = uppy
+        .use(XHRUpload, {
+          endpoint: `${baseApiUrl}reviews/${reviewId}/media`,
+          withCredentials: true,
+          shouldRetry: () => false,
+          fieldName: "files",
+          limit: 5,
+        })
+        .on("complete", async (res) => {
+          if (res.failed?.length === 0) {
+            await qc.invalidateQueries({ queryKey: ["reviews", poi.id] });
+            toast.success("Review added.");
+          }
+        })
+        .on("error", () => {
+          toast.error("Media upload failed");
+        });
+
+      await uppyWithXHR.upload();
     },
   });
 
