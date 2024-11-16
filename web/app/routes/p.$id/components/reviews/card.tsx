@@ -1,19 +1,14 @@
 import { Link } from "@remix-run/react";
+import { formatDistanceToNow } from "date-fns";
 import { FlagIcon } from "lucide-react";
 import { useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
+import CollapsibleText from "~/components/blocks/collapsible-text";
 import UserImage from "~/components/blocks/user-image";
 import FormattedRating from "~/components/kit/formatted-rating";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
 import { GetReviewByIdResponseDto } from "~/lib/dto";
 import { ipx } from "~/lib/img-proxy";
+import { cn } from "~/lib/utils";
 import { Menu } from "./menu";
 
 type Props = {
@@ -25,20 +20,32 @@ export function ReviewCard({ review }: Props) {
   const [index, setIndex] = useState(0);
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center gap-4">
-        <UserImage className="size-16" src={review.user.profileImage ?? ""} />
+    <div>
+      <div className="flex flex-row items-center gap-4">
+        <UserImage
+          className="size-16 rounded-full"
+          src={review.user.profileImage ?? ""}
+        />
         <div>
-          <CardTitle>{review.user.fullName}</CardTitle>
-          <CardDescription>@{review.user.username}</CardDescription>
+          <div className="font-medium">{review.user.fullName}</div>
+          <div className="text-xs text-primary tracking-tight">
+            <span className="">@{review.user.username}</span>
+          </div>
+          <div className="text-xs text-muted-foreground">{`${formatDistanceToNow(
+            review.createdAt
+          )} ago`}</div>
         </div>
         <div className="ml-auto">
           <Menu review={review} />
         </div>
-      </CardHeader>
-      <CardContent>
-        <div>{review.content}</div>
-        <div className="grid grid-cols-2 max-w-48 gap-4">
+      </div>
+      <div className="mt-4">
+        <CollapsibleText text={review.content} charLimit={512} />
+        <div
+          className={cn("flex items-center gap-4", {
+            "mt-4": review.media.length > 0,
+          })}
+        >
           {review.media.map((m, i) => (
             <button
               key={m.url}
@@ -50,9 +57,9 @@ export function ReviewCard({ review }: Props) {
               }}
             >
               <img
-                src={ipx(m.url, "w_64")}
+                src={ipx(m.url, "w_96")}
                 alt=""
-                className="aspect-square object-contain"
+                className="aspect-square rounded"
               />
             </button>
           ))}
@@ -76,9 +83,11 @@ export function ReviewCard({ review }: Props) {
           }}
           index={index}
         />
-      </CardContent>
-      <CardFooter>
-        <FormattedRating rating={review.rating} votes={1} />
+      </div>
+      <div className="mt-4 flex items-center justify-between">
+        <div>
+          <FormattedRating rating={review.rating} votes={1} />
+        </div>
         <Link
           to={`/report?type=review&id=${review.id}`}
           className="text-xs text-muted-foreground flex items-center ml-auto hover:underline"
@@ -86,7 +95,7 @@ export function ReviewCard({ review }: Props) {
           <FlagIcon className="size-3" />
           <span className="ml-2">Report</span>
         </Link>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }
