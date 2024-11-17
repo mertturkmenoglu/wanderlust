@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import UserImage from "~/components/blocks/user-image";
 import { getUserFollowing } from "~/lib/api";
+import { userImage } from "~/lib/image-utils";
 import { ipx } from "~/lib/img-proxy";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -33,7 +34,7 @@ export default function Page() {
               className="flex gap-4 items-center hover:bg-muted p-2 rounded-md"
             >
               <UserImage
-                src={ipx(`http://${following.profileImage ?? ""}`, "w_512")}
+                src={ipx(userImage(following.profileImage), "w_512")}
                 className="size-32"
               />
               <div>
