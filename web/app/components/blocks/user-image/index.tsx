@@ -26,7 +26,7 @@ export default function UserImage({
   }, [imgRef]);
 
   return (
-    <Avatar className={cn("rounded-xl", className)}>
+    <Avatar className={cn("rounded-full", className)}>
       <AvatarImage
         src={src ?? ""}
         referrerPolicy="no-referrer"
@@ -35,7 +35,7 @@ export default function UserImage({
       <AvatarFallback
         delayMs={1000}
         className={cn(
-          "rounded-xl bg-gradient-to-br from-sky-600 via-cyan-500 to-teal-600 text-2xl font-semibold text-white",
+          "rounded-full bg-gradient-to-br from-sky-600 via-cyan-500 to-teal-600 text-2xl font-semibold text-white",
           fallbackClassName
         )}
       >
