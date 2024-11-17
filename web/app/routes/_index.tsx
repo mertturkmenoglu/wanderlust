@@ -58,7 +58,7 @@ export default function Page() {
           <Link
             to={`/cities/${city.id}/${city.name}`}
             key={city.id}
-            className="rounded-md"
+            className="rounded-md hover:underline decoration-primary decoration-2 underline-offset-4"
           >
             <img
               src={ipx(city.imageUrl, "w_600")}
