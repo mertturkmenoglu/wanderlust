@@ -20,7 +20,7 @@ export function ReviewCard({ review }: Props) {
   const [index, setIndex] = useState(0);
 
   return (
-    <div>
+    <div className="px-8">
       <div className="flex flex-row items-center gap-4">
         <UserImage
           className="size-16 rounded-full"
