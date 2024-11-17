@@ -94,6 +94,8 @@ export default function Page() {
         <MapContainer />
       </div>
 
+      <hr className="my-4" />
+
       <Amenities />
 
       <hr className="my-4" />
