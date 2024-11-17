@@ -1,18 +1,17 @@
 import { Link, useLoaderData } from "@remix-run/react";
 import { Grid2X2Icon, MapIcon } from "lucide-react";
 import { useState } from "react";
+import { ClientOnly } from "remix-utils/client-only";
+import PoiCard from "~/components/blocks/poi-card";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { loader } from "../route";
-import PoiCard from "~/components/blocks/poi-card";
-import { ClientOnly } from "remix-utils/client-only";
 import { Map } from "./map.client";
 
 type DisplayMode = "grid" | "map";
 
 export default function Locations() {
   const { entry } = useLoaderData<typeof loader>();
-  const [displayMode, setDisplayMode] =
-    useState<DisplayMode>("grid");
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("grid");
 
   return (
     <>
@@ -41,7 +40,7 @@ export default function Locations() {
       </div>
 
       {displayMode === "grid" ? (
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {entry.locations.map((location) => (
             <Link to={`/p/${location.poi.id}`}>
               <PoiCard

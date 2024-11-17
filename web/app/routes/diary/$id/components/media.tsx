@@ -27,10 +27,7 @@ export default function Media() {
         {entry.media.map((m, i) => (
           <button
             key={m.url}
-            className={cn("", {
-              "col-span-4": entry.media.length === 1,
-              "col-span-4 mx-auto": entry.media.length === 3 && i === 2,
-            })}
+            className={cn("max-w-fit", {})}
             onClick={() => {
               setImageIndex(() => {
                 setOpen(true);
@@ -41,7 +38,7 @@ export default function Media() {
             <img
               src={m.url}
               alt={m.alt}
-              className={cn("aspect-square object-contain")}
+              className={cn("aspect-square object-contain size-48 rounded-md")}
             />
           </button>
         ))}
