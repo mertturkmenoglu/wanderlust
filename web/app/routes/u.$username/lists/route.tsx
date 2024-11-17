@@ -25,10 +25,18 @@ export default function Page() {
   return (
     <div>
       {query.isLoading && (
-        <AppMessage emptyMessage="Loading..." showBackButton={false} />
+        <AppMessage
+          emptyMessage="Loading..."
+          showBackButton={false}
+          className="my-16"
+        />
       )}
       {query.data && query.data.pages[0].data.lists.length === 0 && (
-        <AppMessage emptyMessage="You have no lists yet" />
+        <AppMessage
+          emptyMessage="No lists yet"
+          showBackButton={false}
+          className="my-16"
+        />
       )}
       {query.data && (
         <div className="grid grid-cols-1 gap-4">
