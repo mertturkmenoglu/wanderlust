@@ -2,12 +2,9 @@ package reviews
 
 import (
 	"context"
-	"errors"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/utils"
-
-	"github.com/jackc/pgx/v5"
 )
 
 func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db.Review, error) {
@@ -22,13 +19,6 @@ func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db
 
 	qtx := r.di.Db.Queries.WithTx(tx)
 
-	lastReview, err := qtx.LastReviewOfUserForPoi(ctx, db.LastReviewOfUserForPoiParams{
-		PoiID:  dto.PoiID,
-		UserID: userId,
-	})
-
-	isFirstReview := err != nil && errors.Is(err, pgx.ErrNoRows)
-
 	review, err := qtx.CreateReview(ctx, db.CreateReviewParams{
 		ID:      utils.GenerateId(r.di.Flake),
 		PoiID:   dto.PoiID,
@@ -41,34 +31,9 @@ func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db
 		return db.Review{}, err
 	}
 
-	if isFirstReview {
-		err = qtx.IncrementTotalVotes(ctx, dto.PoiID)
-
-		if err != nil {
-			return db.Review{}, err
-		}
-	}
-
-	var diff int32 = 0
-	if !isFirstReview {
-		diff = int32(dto.Rating) - int32(lastReview.Rating)
-	} else {
-		diff = int32(dto.Rating)
-	}
-
 	err = qtx.IncrementTotalPoints(ctx, db.IncrementTotalPointsParams{
 		ID:          dto.PoiID,
-		TotalPoints: diff,
-	})
-
-	if err != nil {
-		return db.Review{}, err
-	}
-
-	err = qtx.SetPreviousReviewRatings(ctx, db.SetPreviousReviewRatingsParams{
-		UserID: userId,
-		Rating: dto.Rating,
-		PoiID:  dto.PoiID,
+		TotalPoints: int32(dto.Rating),
 	})
 
 	if err != nil {
