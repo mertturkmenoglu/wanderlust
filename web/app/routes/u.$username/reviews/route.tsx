@@ -2,7 +2,7 @@ import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import React from "react";
+import { useMemo } from "react";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import FormattedRating from "~/components/kit/formatted-rating";
@@ -25,6 +25,14 @@ export default function Page() {
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
 
+  const flat = useMemo(() => {
+    if (!query.data) {
+      return [];
+    }
+
+    return query.data.pages.flatMap((p) => p.data.reviews);
+  }, [query.data]);
+
   return (
     <div>
       {query.isLoading && (
@@ -34,7 +42,7 @@ export default function Page() {
           className="my-16"
         />
       )}
-      {query.data && query.data.pages[0].data.reviews.length === 0 && (
+      {query.data && flat.length === 0 && (
         <AppMessage
           emptyMessage="No reviews yet"
           showBackButton={false}
@@ -43,38 +51,30 @@ export default function Page() {
       )}
       {query.data && (
         <div className="grid grid-cols-1 gap-4">
-          {query.data.pages.map((page, i) => (
-            <React.Fragment key={i}>
-              {page.data.reviews.map((review) => (
-                <Link
-                  to={`/p/${review.poiId}`}
-                  key={review.id}
-                  className="block space-y-4"
-                >
-                  <div className="flex items-center gap-4 justify-between">
-                    <div className="flex items-center">
-                      Reviewed{" "}
-                      <span className="text-primary mx-4">
-                        {review.poi.name}
-                      </span>
-                      <FormattedRating
-                        rating={review.rating}
-                        votes={1}
-                        showNumbers={false}
-                        starsClassName="size-3"
-                      />
-                      <span className="ml-2 text-sm">
-                        {review.rating} stars
-                      </span>
-                    </div>
-                    <span className="">
-                      {formatDistanceToNow(review.createdAt)} ago
-                    </span>
-                  </div>
-                  <Separator />
-                </Link>
-              ))}
-            </React.Fragment>
+          {flat.map((review, j) => (
+            <Link
+              to={`/p/${review.poiId}`}
+              key={review.id}
+              className="block space-y-4"
+            >
+              <div className="flex items-center gap-4 justify-between">
+                <div className="flex items-center">
+                  Reviewed{" "}
+                  <span className="text-primary mx-4">{review.poi.name}</span>
+                  <FormattedRating
+                    rating={review.rating}
+                    votes={1}
+                    showNumbers={false}
+                    starsClassName="size-3"
+                  />
+                  <span className="ml-2 text-sm">{review.rating} stars</span>
+                </div>
+                <span className="">
+                  {formatDistanceToNow(review.createdAt)} ago
+                </span>
+              </div>
+              {j !== flat.length - 1 && <Separator />}
+            </Link>
           ))}
         </div>
       )}
