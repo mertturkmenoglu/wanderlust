@@ -1,5 +1,18 @@
 import { CreateMediaDto } from "./dto";
 
+export function userImage(s: string | null): string {
+  if (s == null) {
+    return "http://localhost:5173/profile.png";
+  }
+
+  if (s.startsWith("//")) {
+    // TODO: change protocol according to dev later
+    return "http:" + s;
+  }
+
+  return s;
+}
+
 export function getPreview(f: File): Promise<string> {
   return new Promise((res, rej) => {
     const reader = new FileReader();
