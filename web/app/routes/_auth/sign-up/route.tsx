@@ -27,7 +27,7 @@ export default function Page() {
   const mutation = useSignUpMutation();
 
   return (
-    <Card className="container mx-auto my-32 flex max-w-lg flex-col p-8">
+    <Card className="mx-auto my-32 flex max-w-lg flex-col p-8">
       <img
         src="/logo.png"
         alt="Wanderlust"

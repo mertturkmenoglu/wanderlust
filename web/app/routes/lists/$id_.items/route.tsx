@@ -75,7 +75,7 @@ export default function Page() {
   const { list } = useLoaderData<typeof loader>();
 
   return (
-    <div className="container mx-auto my-8">
+    <div className="max-w-7xl mx-auto my-8">
       <BackLink
         href={`/lists/${list.id}`}
         text="Go back to the edit list page"

@@ -46,7 +46,7 @@ export default function Page() {
   const { city } = useLoaderData<typeof loader>();
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="max-w-7xl mx-auto py-8">
       <CityBreadcrumb cityName={city.name} />
 
       <div className="grid grid-cols-5 gap-8 mt-8">

@@ -32,7 +32,7 @@ export default function Page() {
   const { cities, aggregation } = useLoaderData<typeof loader>();
 
   return (
-    <div className="container mx-auto">
+    <div className="max-w-7xl mx-auto">
       <ClientOnly fallback={<div className="my-12 h-16 bg-muted rounded" />}>
         {() => <Search />}
       </ClientOnly>

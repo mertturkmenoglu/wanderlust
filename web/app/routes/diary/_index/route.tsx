@@ -39,7 +39,7 @@ export default function Page() {
   const [date, setDate] = useState<DateRange | undefined>();
 
   return (
-    <div className="container mx-auto my-8">
+    <div className="max-w-7xl mx-auto my-8">
       <Header date={date} setDate={setDate} />
 
       <Separator className="my-4" />

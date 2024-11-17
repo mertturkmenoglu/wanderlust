@@ -16,7 +16,7 @@ export default function Page() {
   const { categories } = useLoaderData<typeof loader>();
 
   return (
-    <div className="container mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div className="flex items-baseline">
         <h2 className="mt-8 text-4xl font-bold">Browse by category</h2>
       </div>

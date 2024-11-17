@@ -65,12 +65,12 @@ export default function Page() {
   const { entry } = useLoaderData<typeof loader>();
 
   return (
-    <div className="container mx-auto my-8">
+    <div className="max-w-7xl mx-auto my-8">
       <Header />
 
       <Separator className="my-2" />
 
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto">
         <div className="text-lg my-8 ml-auto text-end">
           {new Date(entry.date).toLocaleDateString("en-US", {
             dateStyle: "full",

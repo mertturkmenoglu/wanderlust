@@ -62,7 +62,7 @@ export default function Page() {
   const { poi } = useLoaderData<typeof loader>();
 
   return (
-    <main className="container mx-auto mt-8 md:mt-16">
+    <main className="max-w-7xl mx-auto mt-8 md:mt-16">
       <Breadcrumb />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-32">

@@ -38,7 +38,7 @@ export default function Page() {
   });
 
   return (
-    <div className="container my-8 mx-auto">
+    <div className="max-w-7xl my-8 mx-auto">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl">My Lists</h2>
         <CreateListDialog />

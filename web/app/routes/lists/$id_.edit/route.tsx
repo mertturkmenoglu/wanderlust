@@ -111,7 +111,7 @@ export default function Page() {
   });
 
   return (
-    <div className="container mx-auto my-8">
+    <div className="max-w-7xl mx-auto my-8">
       <BackLink href={`/lists/${list.id}`} text="Go back to the list page" />
       <div className="flex justify-between items-center">
         <div>

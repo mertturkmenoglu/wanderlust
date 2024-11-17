@@ -95,7 +95,7 @@ export default function Page() {
   });
 
   return (
-    <div className="container mx-auto my-8">
+    <div className="max-w-7xl mx-auto my-8">
       <BackLink href="/lists" text="Go back to lists" />
       <div className="flex justify-between items-center gap-8">
         <div>

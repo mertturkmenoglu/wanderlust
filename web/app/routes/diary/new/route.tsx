@@ -60,7 +60,7 @@ export async function clientLoader() {
 
 export function HydrateFallback() {
   return (
-    <div className="container mx-auto my-32">
+    <div className="max-w-7xl mx-auto my-32">
       <AppMessage emptyMessage="Loading..." showBackButton={false} />
     </div>
   );
@@ -114,7 +114,7 @@ export default function Page() {
   return (
     <>
       <FormProvider {...form}>
-        <div className="container mx-auto my-8">
+        <div className="max-w-7xl mx-auto my-8">
           <BackLink href="/diary" text="Go back to your diary" />
 
           <Tabs defaultValue="1" className="mt-8 max-w-xl mx-auto">

@@ -36,7 +36,7 @@ export default function Page() {
   });
 
   return (
-    <div className="container mx-auto my-16">
+    <div className="max-w-7xl mx-auto my-16">
       <h2 className="text-2xl font-bold capitalize tracking-tight">
         Your Bookmarks
       </h2>

@@ -47,7 +47,7 @@ export default function Page() {
   const { entry } = useLoaderData<typeof loader>();
 
   return (
-    <div className="mx-auto container my-8">
+    <div className="mx-auto max-w-7xl my-8">
       <div className="flex items-center justify-between">
         <div>
           <BackLink href={`/diary/${entry.id}`} text="Go back to the diary" />

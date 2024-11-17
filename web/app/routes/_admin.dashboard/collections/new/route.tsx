@@ -28,7 +28,7 @@ export default function Page() {
       </h3>
 
       <form
-        className="container mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
+        className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="">
