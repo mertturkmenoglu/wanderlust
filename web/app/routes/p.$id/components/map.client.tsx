@@ -17,9 +17,9 @@ export function Map({ lat, lng }: Props) {
   }, []);
 
   return (
-    <div className="mt-8 w-full">
+    <div className="mt-4 w-full">
       {componentLoading ? (
-        <div className="bg-muted w-full h-[400px] mt-8"></div>
+        <div className="bg-muted w-full h-[400px] mt-4"></div>
       ) : (
         <MapContainer
           center={[lat, lng]}
