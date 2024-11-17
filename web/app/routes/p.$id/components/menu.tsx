@@ -99,21 +99,22 @@ export default function Menu() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DialogContent>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Select a list</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="max-w-[29rem]">
             {query.data && (
               <Select onValueChange={(v) => setListId(v)}>
                 <SelectTrigger className="mt-4">
                   <SelectValue placeholder="Select a list" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-w-[29rem]">
                   {query.data.data.statuses.map((listStatus) => (
                     <SelectItem
                       value={listStatus.id}
                       key={listStatus.id}
                       disabled={listStatus.includes}
+                      className="break-words"
                     >
                       {listStatus.name}
                     </SelectItem>
