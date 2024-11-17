@@ -47,7 +47,7 @@ export default function Page() {
       />
 
       <div className="flex items-baseline">
-        <h2 className=" text-4xl font-bold">Featured Cities</h2>
+        <h2 className="text-2xl font-semibold">Featured Cities</h2>
         <Button asChild variant="link">
           <Link to="/cities/list">See all</Link>
         </Button>
