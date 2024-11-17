@@ -32,11 +32,6 @@ export default function Tabs({ username, className }: Props) {
       href: `${base}/reviews`,
     },
     {
-      id: "routes/u.$username/diary/route",
-      label: "Diary",
-      href: `${base}/diary`,
-    },
-    {
       id: "routes/u.$username/lists/route",
       label: "Lists",
       href: `${base}/lists`,
