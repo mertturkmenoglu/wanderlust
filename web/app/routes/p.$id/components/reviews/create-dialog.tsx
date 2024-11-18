@@ -96,6 +96,9 @@ export default function CreateReviewDialog() {
             await qc.invalidateQueries({ queryKey: ["reviews", poi.id] });
             await qc.invalidateQueries({ queryKey: ["poi-ratings", poi.id] });
             revalidator.revalidate();
+            uppy.clear();
+            form.reset({ content: "" });
+            setRating(0);
             toast.success("Review added.");
           }
         })
