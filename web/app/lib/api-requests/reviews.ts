@@ -2,6 +2,7 @@ import api from "../api";
 import {
   CreateReviewRequestDto,
   CreateReviewResponseDto,
+  GetPoiRatingsResponseDto,
   GetReviewByIdResponseDto,
   GetReviewsByPoiIdResponseDto,
   GetReviewsByUsernameResponseDto,
@@ -48,4 +49,10 @@ export function getReviewsByUsername(
       },
     })
     .json<{ data: GetReviewsByUsernameResponseDto; pagination: Pagination }>();
+}
+
+export function getPoiRatings(id: string) {
+  return api
+    .get(`reviews/poi/${id}/ratings`)
+    .json<{ data: GetPoiRatingsResponseDto }>();
 }

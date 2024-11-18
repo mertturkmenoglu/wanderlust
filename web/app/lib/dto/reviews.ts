@@ -48,3 +48,8 @@ export type GetReviewsByPoiIdResponseDto = {
 export type GetReviewsByUsernameResponseDto = {
   reviews: GetReviewByIdResponseDto[];
 };
+
+export type GetPoiRatingsResponseDto = {
+  ratings: Record<number, number>;
+  totalVotes: number;
+};
