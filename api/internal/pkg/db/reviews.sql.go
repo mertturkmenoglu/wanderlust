@@ -146,6 +146,37 @@ func (q *Queries) GetLastMediaOrderOfReview(ctx context.Context, reviewID string
 	return coalesce, err
 }
 
+const getPoiRatings = `-- name: GetPoiRatings :many
+SELECT rating, COUNT(rating) FROM reviews
+WHERE poi_id = $1
+GROUP BY rating
+`
+
+type GetPoiRatingsRow struct {
+	Rating int16
+	Count  int64
+}
+
+func (q *Queries) GetPoiRatings(ctx context.Context, poiID string) ([]GetPoiRatingsRow, error) {
+	rows, err := q.db.Query(ctx, getPoiRatings, poiID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPoiRatingsRow
+	for rows.Next() {
+		var i GetPoiRatingsRow
+		if err := rows.Scan(&i.Rating, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getReviewById = `-- name: GetReviewById :one
 SELECT
   reviews.id, reviews.poi_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,

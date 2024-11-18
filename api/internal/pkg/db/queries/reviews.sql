@@ -113,3 +113,8 @@ WHERE user_id = (
   SELECT id FROM profile
   WHERE username = $1
 );
+
+-- name: GetPoiRatings :many
+SELECT rating, COUNT(rating) FROM reviews
+WHERE poi_id = $1
+GROUP BY rating;
