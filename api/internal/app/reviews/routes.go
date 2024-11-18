@@ -15,6 +15,7 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.DELETE("/:id", m.handlers.deleteReview, middlewares.IsAuth, middlewares.Authz(authz.ActReviewDelete))
 		routes.GET("/user/:username", m.handlers.getReviewsByUsername)
 		routes.GET("/poi/:id", m.handlers.getReviewsByPoiId)
+		routes.GET("/poi/:id/ratings", m.handlers.getPoiRatings)
 		routes.POST("/:id/media", m.handlers.uploadMedia, middlewares.IsAuth, middlewares.Authz(authz.ActReviewUploadMedia))
 	}
 }

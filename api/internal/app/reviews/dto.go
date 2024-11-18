@@ -53,3 +53,8 @@ type GetReviewsByPoiIdResponseDto struct {
 type GetReviewsByUsernameResponseDto struct {
 	Reviews []GetReviewByIdResponseDto `json:"reviews"`
 }
+
+type GetPoiRatingsResponseDto struct {
+	Ratings    map[int8]int64 `json:"ratings"`
+	TotalVotes int64          `json:"totalVotes"`
+}

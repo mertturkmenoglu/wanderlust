@@ -118,3 +118,7 @@ func (r *repository) getReviewsByUsername(username string, params pagination.Par
 func (r *repository) countReviewsByUsername(username string) (int64, error) {
 	return r.di.Db.Queries.CountReviewsByUsername(context.Background(), username)
 }
+
+func (r *repository) getPoiRatings(id string) ([]db.GetPoiRatingsRow, error) {
+	return r.di.Db.Queries.GetPoiRatings(context.Background(), id)
+}
