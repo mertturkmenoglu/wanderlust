@@ -1,8 +1,9 @@
 "use client";
 
-import { Link, useMatches } from "@remix-run/react";
+import { useMatches, useNavigate } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { cn } from "~/lib/utils";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   className?: string;
 };
 
-export default function Tabs({ username, className }: Props) {
+export default function UserTabs({ username, className }: Props) {
   const matches = useMatches();
   const lastMatch = matches[matches.length - 1];
 
@@ -44,29 +45,36 @@ export default function Tabs({ username, className }: Props) {
   ];
 
   const activeTab = tabs.find((tab) => tab.id === lastMatch.id);
+  const navigate = useNavigate();
 
   return (
     <div className={cn(className)}>
       <ScrollArea>
-        <ul className="mx-auto my-4 flex gap-2">
-          {tabs.map((tab) => (
-            <li key={tab.label}>
-              <Button
-                asChild
-                variant={activeTab?.id === tab.id ? "default" : "ghost"}
+        <Tabs
+          value={activeTab?.id}
+          onValueChange={(v) => {
+            const newTab = tabs.find((tab) => tab.id === v);
+            navigate(newTab?.href ?? "#");
+          }}
+          className="w-full my-4 bg-transparent"
+        >
+          <TabsList className="bg-transparent">
+            {tabs.map((t) => (
+              <TabsTrigger
+                key={t.id}
+                value={t.id}
+                className="bg-transparent !shadow-none first-of-type:pl-0 px-1"
               >
-                <Link
-                  to={tab.href}
-                  className={cn("", {
-                    "": activeTab?.id === tab.id,
-                  })}
+                <Button
+                  variant={activeTab?.id === t.id ? "default" : "ghost"}
+                  className=""
                 >
-                  {tab.label}
-                </Link>
-              </Button>
-            </li>
-          ))}
-        </ul>
+                  {t.label}
+                </Button>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
 
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

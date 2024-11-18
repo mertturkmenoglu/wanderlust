@@ -80,8 +80,6 @@ export default function Bio({ className }: Props) {
         />
       </div>
 
-      <hr className="mt-4 hidden sm:block" />
-
       <Tabs className="md:max-w-5xl" username={user.username} />
     </div>
   );
