@@ -61,7 +61,7 @@ export default function UpdateImage({
   const banner = useBannerMutation();
 
   return (
-    <div className="mt-4 max-w-xl flex gap-4 ml-auto">
+    <div className="max-w-xl flex gap-4 ml-auto">
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="link">Change {action} image</Button>

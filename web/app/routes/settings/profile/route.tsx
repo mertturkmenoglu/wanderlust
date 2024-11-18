@@ -62,7 +62,7 @@ export default function Page() {
         Profile
       </h2>
 
-      <div className="grid grid-cols-3 gap-4 md:gap-8 mt-4 items-center">
+      <div className="grid grid-cols-3 gap-4 mt-4 items-center">
         <Label>Profile Image</Label>
         <div className="col-span-2 flex">
           <UpdateImage
