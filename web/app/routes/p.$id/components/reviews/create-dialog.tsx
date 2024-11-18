@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useRevalidator } from "@remix-run/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
@@ -46,6 +46,7 @@ export default function CreateReviewDialog() {
   const { poi, baseApiUrl } = useLoaderData<typeof loader>();
   const [rating, setRating] = useState(0);
   const qc = useQueryClient();
+  const revalidator = useRevalidator();
 
   const form = useForm<FormInput>({
     resolver: zodResolver(schema),
@@ -93,6 +94,8 @@ export default function CreateReviewDialog() {
         .on("complete", async (res) => {
           if (res.failed?.length === 0) {
             await qc.invalidateQueries({ queryKey: ["reviews", poi.id] });
+            await qc.invalidateQueries({ queryKey: ["poi-ratings", poi.id] });
+            revalidator.revalidate();
             toast.success("Review added.");
           }
         })
