@@ -61,28 +61,10 @@ export default function UpdateImage({
   const banner = useBannerMutation();
 
   return (
-    <div className="mt-4 max-w-xl flex gap-4">
+    <div className="mt-4 max-w-xl flex gap-4 ml-auto">
       <Dialog>
         <DialogTrigger asChild>
-          <button className="relative group">
-            <img
-              src={preview}
-              alt={fullName}
-              className={cn("mt-4 rounded-md object-cover", {
-                "w-32 aspect-square": action === "profile",
-                "w-64 aspect-video": action === "banner",
-              })}
-            />
-            <div
-              className={cn(
-                "flex items-center justify-center absolute p-2 top-1/2 left-1/2 -translate-x-1/2",
-                "bg-primary/80 rounded-full gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-in-out"
-              )}
-            >
-              <UploadIcon className="size-4 text-white" />
-              <span className="text-xs text-white">Update</span>
-            </div>
-          </button>
+          <Button variant="link">Change {action} image</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
