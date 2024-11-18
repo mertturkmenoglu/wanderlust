@@ -40,6 +40,12 @@ func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db
 		return db.Review{}, err
 	}
 
+	err = qtx.IncrementTotalVotes(ctx, dto.PoiID)
+
+	if err != nil {
+		return db.Review{}, err
+	}
+
 	err = tx.Commit(ctx)
 
 	if err != nil {
