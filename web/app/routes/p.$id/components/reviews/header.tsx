@@ -1,7 +1,10 @@
 import { useLoaderData } from "@remix-run/react";
-import { StarIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { LoaderCircleIcon, StarIcon } from "lucide-react";
 import FormattedRating from "~/components/kit/formatted-rating";
 import { Progress } from "~/components/ui/progress";
+import { getPoiRatings } from "~/lib/api-requests";
+import { GetPoiRatingsResponseDto } from "~/lib/dto";
 import { computeRating } from "~/lib/rating";
 import { loader } from "../../route";
 import CreateReviewDialog from "./create-dialog";
@@ -14,6 +17,12 @@ export default function Header() {
     compactDisplay: "short",
     notation: "compact",
   });
+
+  const query = useQuery({
+    queryKey: ["poi-ratings", poi.id],
+    queryFn: async () => getPoiRatings(poi.id),
+  });
+
   return (
     <div className="bg-gradient-to-r from-accent/50 to-primary/10 p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
       <div>
@@ -36,16 +45,39 @@ export default function Header() {
         <CreateReviewDialog />
       </div>
 
-      <div className="lg:col-span-2 space-y-2">
-        {[5, 4, 3, 2, 1].map((i) => (
-          <div key={i} className="flex items-center text-right gap-2">
-            <div className="flex items-center gap-1 w-8 justify-end text-primary text-sm font-medium">
-              {i} <StarIcon className="size-3 fill-primary text-primary" />
-            </div>
-            <Progress value={i * 20} className="max-w-xs" />
+      {query.isLoading && (
+        <LoaderCircleIcon className="size-16 my-auto mx-auto animate-spin text-primary" />
+      )}
+
+      {query.data && <Ratings ratings={query.data.data} />}
+    </div>
+  );
+}
+
+type Props = {
+  ratings: GetPoiRatingsResponseDto;
+};
+
+function Ratings({ ratings }: Props) {
+  const entries = Object.entries(ratings.ratings).map(
+    (v) => [+v[0], v[1]] as const
+  );
+  const sorted = entries.sort((a, b) => b[0] - a[0]);
+
+  return (
+    <div className="lg:col-span-2 space-y-2">
+      {sorted.map(([rating, count]) => (
+        <div key={rating} className="flex items-center text-right gap-2">
+          <div className="flex items-center gap-1 w-8 justify-end text-primary text-sm font-medium">
+            {rating} <StarIcon className="size-3 fill-primary text-primary" />
           </div>
-        ))}
-      </div>
+          <Progress
+            value={(count * 100) / ratings.totalVotes}
+            className="max-w-xs"
+          />
+          <span className="text-xs text-primary tabular-nums">({count})</span>
+        </div>
+      ))}
     </div>
   );
 }
