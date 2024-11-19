@@ -26,6 +26,7 @@ var genOptions = []string{
 	"lists",
 	"list-items",
 	"media",
+	"media-many",
 	"point-of-interests",
 	"reviews",
 	"users",
@@ -42,7 +43,8 @@ var noCountNeeded = []string{
 	"amenities",
 	"categories",
 	"cities",
-	"media", // because we handle it on the handler level
+	"media",      // because we handle it on the handler level
+	"media-many", // because we handle it on the handler level
 }
 
 func GetDb() *db.Db {
@@ -118,6 +120,8 @@ func generateAndInsert(genType string, count int) error {
 		return fmt.Errorf("not implemented")
 	case "media":
 		return handleMedia()
+	case "media-many":
+		return handleMediaForManyPois()
 	case "point-of-interests":
 		return handlePois(count)
 	case "reviews":

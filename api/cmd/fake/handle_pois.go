@@ -7,9 +7,11 @@ import (
 	"wanderlust/internal/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/sony/sonyflake"
 )
 
 func handlePois(count int) error {
+	sf := sonyflake.NewSonyflake(sonyflake.Settings{})
 	step := 1000
 
 	if count < step {
@@ -45,9 +47,10 @@ func handlePois(count int) error {
 
 			idx := j % addressIdsLen
 			addressId := addressIds[idx]
+			totalVotes := int32(gofakeit.Number(1000, 10_000))
 
 			arg = append(arg, db.BatchCreatePoisParams{
-				ID:                 gofakeit.UUID(),
+				ID:                 utils.GenerateId(sf),
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
 				Description:        gofakeit.LoremIpsumSentence(32),
@@ -55,8 +58,8 @@ func handlePois(count int) error {
 				Website:            utils.StrToText(gofakeit.URL()),
 				PriceLevel:         int16(gofakeit.Number(1, 5)),
 				AccessibilityLevel: int16(gofakeit.Number(1, 5)),
-				TotalVotes:         int32(gofakeit.Number(1000, 10000)),
-				TotalPoints:        int32(gofakeit.Number(1000, 50000)),
+				TotalVotes:         totalVotes,
+				TotalPoints:        int32(gofakeit.Number(int(totalVotes), int(totalVotes)*5)),
 				TotalFavorites:     int32(gofakeit.Number(1000, 10000)),
 				CategoryID:         int16(gofakeit.Number(1, 23)),
 				OpenTimes:          ot,
@@ -73,63 +76,39 @@ func handlePois(count int) error {
 	return nil
 }
 
-type openTimes struct {
-	Day    string  `json:"day"`
-	Open   *string `json:"open"`
-	Close  *string `json:"close"`
-	Closed bool    `json:"closed"`
-}
-
 func genRandOpenTimes() ([]byte, error) {
-	hours := [7]openTimes{
-		genOpenTimesForDay("MON"),
-		genOpenTimesForDay("TUE"),
-		genOpenTimesForDay("WED"),
-		genOpenTimesForDay("THU"),
-		genOpenTimesForDay("FRI"),
-		genOpenTimesForDay("SAT"),
-		genOpenTimesForDay("SUN"),
-	}
-
 	v := map[string]any{
-		"openhours": hours,
+		"mon": genOpenTimesForDay(),
+		"tue": genOpenTimesForDay(),
+		"wed": genOpenTimesForDay(),
+		"thu": genOpenTimesForDay(),
+		"fri": genOpenTimesForDay(),
+		"sat": genOpenTimesForDay(),
+		"sun": genOpenTimesForDay(),
 	}
 
 	return json.Marshal(v)
 }
 
-func genOpenTimesForDay(day string) openTimes {
+func genOpenTimesForDay() map[string]string {
 	openings := []string{
-		"8:00",
-		"9:00",
-		"9:30",
-		"10:00",
-		"11:00",
+		"11/15/2024, 8:00:00 AM",
+		"11/15/2024, 9:00:00 AM",
+		"11/15/2024, 9:30:00 AM",
+		"11/15/2024, 10:00:00 AM",
+		"11/15/2024, 11:00:00 AM",
 	}
 
 	closings := []string{
-		"17:00",
-		"18:00",
-		"19:00",
-		"20:00",
-		"21:00",
+		"11/15/2024, 17:00:00 PM",
+		"11/15/2024, 18:00:00 PM",
+		"11/15/2024, 19:00:00 PM",
+		"11/15/2024, 20:00:00 PM",
+		"11/15/2024, 21:00:00 PM",
 	}
 
-	closed := gofakeit.Bool()
-
-	if closed {
-		return openTimes{
-			Day:    day,
-			Open:   nil,
-			Close:  nil,
-			Closed: true,
-		}
-	}
-
-	return openTimes{
-		Day:    day,
-		Open:   &openings[gofakeit.Number(0, len(openings)-1)],
-		Close:  &closings[gofakeit.Number(0, len(closings)-1)],
-		Closed: false,
+	return map[string]string{
+		"opensAt":  openings[gofakeit.Number(0, len(openings)-1)],
+		"closesAt": closings[gofakeit.Number(0, len(closings)-1)],
 	}
 }

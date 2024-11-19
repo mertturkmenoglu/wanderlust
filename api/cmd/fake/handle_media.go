@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/utils"
@@ -25,6 +27,42 @@ func handleMedia() error {
 		return err
 	}
 
+	return createMediaForPoi(poiId, count)
+}
+
+func handleMediaForManyPois() error {
+	path, _ := pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin POI ids")
+	f, err := os.Open(path)
+
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	i := 1
+
+	for scanner.Scan() {
+		if i%100 == 0 {
+			logger.Trace("inserting poi media", logger.Args("i", i))
+		}
+
+		id := scanner.Text()
+		n := gofakeit.IntRange(2, 10)
+		err := createMediaForPoi(id, n)
+
+		if err != nil {
+			return err
+		}
+
+		i++
+	}
+
+	return scanner.Err()
+}
+
+func createMediaForPoi(poiId string, count int) error {
 	for i := 0; i < count; i++ {
 		url := getRandomImageUrl()
 
