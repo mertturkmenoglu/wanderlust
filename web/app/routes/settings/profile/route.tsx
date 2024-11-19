@@ -44,11 +44,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Page() {
   const { profile } = useLoaderData<typeof loader>();
   const form = useProfileForm({
-    fullName: profile.fullName ?? undefined,
-    bio: profile.bio ?? undefined,
-    pronouns: profile.pronouns ?? undefined,
-    website: profile.website ?? undefined,
-    phone: profile.phone ?? undefined,
+    fullName: profile.fullName,
+    bio: profile.bio,
+    pronouns: profile.pronouns,
+    website: profile.website,
+    phone: profile.phone,
   });
   const mutation = useProfileMutation();
 
@@ -158,7 +158,7 @@ export default function Page() {
               return (
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value ?? undefined}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a pronoun" />
