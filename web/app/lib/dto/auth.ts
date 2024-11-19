@@ -8,6 +8,7 @@ export type GetMeResponseDto = {
   username: string;
   fullName: string;
   googleId: string | null;
+  facebookId: string | null;
   isEmailVerified: boolean;
   isOnboardingCompleted: boolean;
   isActive: boolean;
