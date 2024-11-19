@@ -63,6 +63,11 @@ function Ratings({ ratings }: Props) {
     (v) => [+v[0], v[1]] as const
   );
   const sorted = entries.sort((a, b) => b[0] - a[0]);
+  const fmt = Intl.NumberFormat("en-US", {
+    compactDisplay: "short",
+    style: "decimal",
+    notation: "compact",
+  });
 
   return (
     <div className="lg:col-span-2 space-y-2">
@@ -75,7 +80,9 @@ function Ratings({ ratings }: Props) {
             value={(count * 100) / ratings.totalVotes}
             className="max-w-xs"
           />
-          <span className="text-xs text-primary tabular-nums">({count})</span>
+          <span className="text-xs text-primary tabular-nums">
+            ({fmt.format(count)})
+          </span>
         </div>
       ))}
     </div>
