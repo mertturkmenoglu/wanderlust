@@ -41,6 +41,7 @@ var countOptions = []string{
 
 var noCountNeeded = []string{
 	"amenities",
+	"amenities-pois",
 	"categories",
 	"cities",
 	"media",      // because we handle it on the handler level
@@ -103,7 +104,7 @@ func generateAndInsert(genType string, count int) error {
 	case "amenities":
 		return handleAmenities()
 	case "amenities-pois":
-		return handleAmenitiesPois(count)
+		return handleAmenitiesPois()
 	case "bookmarks":
 		return fmt.Errorf("not implemented")
 	case "categories":

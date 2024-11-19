@@ -1,22 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"errors"
+	"os"
 	"wanderlust/internal/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/jackc/pgx/v5"
+	"github.com/pterm/pterm"
 )
 
-func handleAmenitiesPois(count int) error {
-	// Relatively low step value to avoid row collisions
-	step := 1000
-
-	if count < step {
-		step = count
-	}
-
+func handleAmenitiesPois() error {
 	ctx := context.Background()
 	d := GetDb()
 
@@ -26,31 +22,32 @@ func handleAmenitiesPois(count int) error {
 		return err
 	}
 
-	for i := 0; i < count; i += step {
-		logger.Trace("Inserting amenities-pois", logger.Args("index", i))
+	path, _ := pterm.DefaultInteractiveTextInput.Show("Enter path for the file that contains POI ids")
+	f, err := os.Open(path)
 
-		if i+step >= count {
-			step = count - i
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	i := 1
+
+	for scanner.Scan() {
+		if i%100 == 0 {
+			logger.Trace("inserting poi amenity", logger.Args("i", i))
 		}
 
-		arg := make([]db.BatchCreateAmenitiesPoisParams, 0, step)
-		poiIds, err := d.Queries.RandSelectPois(ctx, int32(step))
+		id := scanner.Text()
+		n := gofakeit.IntRange(2, 10)
+		arg := make([]db.BatchCreateAmenitiesPoisParams, 0)
 
-		if err != nil {
-			return err
-		}
-
-		poiIdsLen := len(poiIds)
-
-		for j := range step {
-			idx := j % poiIdsLen
-			poiId := poiIds[idx]
-
-			amenityId := amenities[gofakeit.Number(0, len(amenities)-1)].ID
-
+		for range n {
+			aid := amenities[gofakeit.Number(0, len(amenities)-1)].ID
 			arg = append(arg, db.BatchCreateAmenitiesPoisParams{
-				AmenityID: amenityId,
-				PoiID:     poiId,
+				AmenityID: aid,
+				PoiID:     id,
 			})
 		}
 
@@ -63,7 +60,9 @@ func handleAmenitiesPois(count int) error {
 				return err
 			}
 		}
+
+		i++
 	}
 
-	return nil
+	return scanner.Err()
 }
