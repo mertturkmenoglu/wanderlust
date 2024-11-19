@@ -74,3 +74,9 @@ func foo(id int32) (db.Squirrel, error) {
   return d.Queries.GetSquirrelById(context.Background(), id)
 }
 ```
+
+# Creating a Database Backup
+
+- Run this command: `docker exec postgres pg_dump -U postgres -C -f wlbak.dump -Fc wanderlust > wlbak.dump`
+- Check the Docker container -> Files -> wlbak.dump
+- You can right click to save it to your local machine (via Docker Desktop).
