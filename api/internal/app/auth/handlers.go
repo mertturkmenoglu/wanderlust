@@ -15,7 +15,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
 )
 
 func (h *handlers) OAuth(c echo.Context) error {
@@ -94,7 +93,8 @@ func (h *handlers) OAuthCallback(c echo.Context) error {
 	sess.Values["user_id"] = userId
 	sess.Values["session_id"] = sessionId
 	sess.Save(c.Request(), c.Response())
-	redirectUrl := viper.GetString(h.di.Config.GetString(config.OAUTH_REDIRECT))
+
+	redirectUrl := h.di.Config.GetString(config.OAUTH_REDIRECT)
 
 	// Redirect user to the frontend application
 	return c.Redirect(http.StatusTemporaryRedirect, redirectUrl)
