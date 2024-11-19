@@ -40,6 +40,7 @@ func handlePoiSync() error {
 	const step int64 = 10
 
 	for i = 0; i <= totalCount; i += step {
+		logger.Trace("syncing", logger.Args("i", i))
 		ids, err := d.Queries.GetPaginatedPoiIds(context.Background(), db.GetPaginatedPoiIdsParams{
 			Offset: int32(i),
 			Limit:  int32(step),
