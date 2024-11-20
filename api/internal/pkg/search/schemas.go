@@ -20,6 +20,10 @@ var schemas = []*tsapi.CollectionSchema{
 				Name: "name",
 				Type: "string",
 			},
+			{
+				Name: "location",
+				Type: "geopoint",
+			},
 		},
 	},
 }
