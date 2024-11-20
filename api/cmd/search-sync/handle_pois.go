@@ -58,8 +58,9 @@ func handlePoiSync() error {
 			}
 
 			_, err = searchService.Client.Collection(string(search.CollectionPois)).Documents().Upsert(context.Background(), map[string]any{
-				"name": poi.Poi.Name,
-				"poi":  poi,
+				"name":     poi.Poi.Name,
+				"poi":      poi,
+				"location": []float64{poi.Address.Lat, poi.Address.Lng},
 			})
 
 			if err != nil {
