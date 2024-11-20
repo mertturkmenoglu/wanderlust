@@ -1,7 +1,9 @@
 import { useLoaderData } from "@remix-run/react";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { LoaderCircleIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import AppMessage from "~/components/blocks/app-message";
+import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { getReviewsByPoiId } from "~/lib/api";
 import { loader } from "../../route";
@@ -9,11 +11,28 @@ import { ReviewCard } from "./card";
 
 export function Section() {
   const { poi } = useLoaderData<typeof loader>();
+  const [page, setPage] = useState(1);
 
-  const query = useQuery({
+  // const query = useQuery({
+  //   queryKey: ["reviews", poi.id],
+  //   queryFn: async () => getReviewsByPoiId(poi.id, 1, 25),
+  // });
+
+  const query = useInfiniteQuery({
     queryKey: ["reviews", poi.id],
-    queryFn: async () => getReviewsByPoiId(poi.id, 1, 25),
+    queryFn: ({ pageParam }) => getReviewsByPoiId(poi.id, pageParam, 10),
+    initialPageParam: page,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
+
+  const flat = useMemo(() => {
+    if (!query.data) {
+      return [];
+    }
+
+    return query.data.pages.flatMap((p) => p.data.reviews);
+  }, [query.data]);
 
   if (query.isLoading) {
     return (
@@ -31,7 +50,7 @@ export function Section() {
     );
   }
 
-  if (query.data && query.data.data.reviews.length === 0) {
+  if (query.data && flat.length === 0) {
     return (
       <AppMessage
         emptyMessage="There are no reviews yet."
@@ -47,12 +66,26 @@ export function Section() {
 
   return (
     <>
-      {query.data.data.reviews.map((review) => (
+      {flat.map((review) => (
         <>
           <ReviewCard review={review} key={review.id} />
           <Separator className="my-2" />
         </>
       ))}
+      {query.hasNextPage && (
+        <div className="mt-4 flex justify-center">
+          <Button
+            onClick={() => query.fetchNextPage()}
+            disabled={!query.hasNextPage || query.isFetchingNextPage}
+          >
+            {query.isFetchingNextPage
+              ? "Loading more..."
+              : query.hasNextPage
+              ? "Load More"
+              : "Nothing more to load"}
+          </Button>
+        </div>
+      )}
     </>
   );
 }
