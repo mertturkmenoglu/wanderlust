@@ -29,6 +29,7 @@ var genOptions = []string{
 	"media-many",
 	"point-of-interests",
 	"reviews",
+	"review-media",
 	"users",
 }
 
@@ -46,6 +47,8 @@ var noCountNeeded = []string{
 	"cities",
 	"media",      // because we handle it on the handler level
 	"media-many", // because we handle it on the handler level
+	"reviews",
+	"review-media",
 }
 
 func GetDb() *db.Db {
@@ -126,7 +129,9 @@ func generateAndInsert(genType string, count int) error {
 	case "point-of-interests":
 		return handlePois(count)
 	case "reviews":
-		return fmt.Errorf("not implemented")
+		return handleReviews()
+	case "review-media":
+		return handleReviewMedia()
 	case "users":
 		return handleUsers(count)
 	default:
