@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { GetPoiByIdResponseDto } from "~/lib/dto";
 import { loader } from "../route";
 
 function fmt(s: string): string {
@@ -40,14 +39,18 @@ function keyToReadableDay(key: string): string {
 }
 
 export default function OpenHoursDialog() {
-  const { poi: { openTimes: data } } = useLoaderData<typeof loader>();
+  const {
+    poi: { openTimes: data },
+  } = useLoaderData<typeof loader>();
   const allKeys = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
   const keys = allKeys.filter((k) => !!data[k]);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="link">See open hours</Button>
+        <Button variant="link" className="px-0">
+          See open hours
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg z-50">
         <DialogHeader>
