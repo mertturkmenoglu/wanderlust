@@ -20,6 +20,7 @@ import FavoriteButton from "./components/favorite-button";
 import InformationTable from "./components/info-table";
 import MapContainer from "./components/map-container";
 import Menu from "./components/menu";
+import NearbyPois from "./components/nearby-pois";
 import Reviews from "./components/reviews/index";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -32,6 +33,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     poi: res.data,
     meta: res.meta,
     baseApiUrl: import.meta.env.VITE_API_URL ?? "",
+    searchApiKey: import.meta.env.VITE_SEARCH_CLIENT_API_KEY ?? "",
+    searchApiUrl: import.meta.env.VITE_SEARCH_CLIENT_URL ?? "",
   });
 }
 
@@ -99,6 +102,11 @@ export default function Page() {
       <Amenities />
 
       <hr className="my-4" />
+
+      <NearbyPois />
+
+      <hr className="my-4" />
+
       <Reviews />
     </main>
   );
