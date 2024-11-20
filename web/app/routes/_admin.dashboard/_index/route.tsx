@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Separator } from "~/components/ui/separator";
 
 type ItemProps = {
   href: string;
@@ -18,73 +18,82 @@ function Item({ href, text }: ItemProps) {
 export default function Page() {
   return (
     <div className="flex w-full flex-col">
-      <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Amenities</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2">
-            <Item href="/dashboard/amenities" text="View" />
-            <Item href="/dashboard/amenities/new" text="New" />
-          </CardContent>
-        </Card>
+      <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <h3 className="text-lg font-bold">Amenities</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              <Item href="/dashboard/amenities" text="View" />
+            </li>
+            <li>
+              <Item href="/dashboard/amenities/new" text="New" />
+            </li>
+          </ul>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Categories</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2">
-            <Item href="/dashboard/categories" text="View" />
-            <Item href="/dashboard/categories/new" text="New" />
-          </CardContent>
-        </Card>
+        <div>
+          <h3 className="text-lg font-bold">Categories</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              <Item href="/dashboard/categories" text="View" />
+            </li>
+            <li>
+              <Item href="/dashboard/categories/new" text="New" />
+            </li>
+          </ul>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Cities</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2">
-            <Item href="/dashboard/cities" text="View" />
-            <Item href="/dashboard/cities/new" text="New" />
-          </CardContent>
-        </Card>
+        <Separator className="col-span-full" />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Point of Interests</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2">
-            <Item href="/dashboard/pois" text="View" />
-            <Item href="/dashboard/pois/drafts" text="Drafts" />
-          </CardContent>
-        </Card>
+        <div>
+          <h3 className="text-lg font-bold">Cities</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              <Item href="/dashboard/cities" text="View" />
+            </li>
+            <li>
+              <Item href="/dashboard/cities/new" text="New" />
+            </li>
+          </ul>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Users</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2">
-            <Item href="/dashboard/users" text="View" />
-            <Item href="/dashboard/users/verify" text="Make User Verified" />
-          </CardContent>
-        </Card>
+        <div>
+          <h3 className="text-lg font-bold">Point of Interests</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              <Item href="/dashboard/pois" text="View" />
+            </li>
+            <li>
+              <Item href="/dashboard/pois/drafts" text="Drafts" />
+            </li>
+          </ul>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Collections</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2">
-            <Item href="/dashboard/collections" text="View" />
-            <Item href="/dashboard/collections/new" text="New" />
-          </CardContent>
-        </Card>
+        <Separator className="col-span-full" />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Reports</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-row gap-2"></CardContent>
-        </Card>
+        <div>
+          <h3 className="text-lg font-bold">Users</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              <Item href="/dashboard/users" text="View" />
+            </li>
+            <li>
+              <Item href="/dashboard/users/verify" text="Make User Verified" />
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-bold">Collections</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              <Item href="/dashboard/collections" text="View" />
+            </li>
+            <li>
+              <Item href="/dashboard/collections/new" text="New" />
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
