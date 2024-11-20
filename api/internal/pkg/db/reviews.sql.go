@@ -9,6 +9,20 @@ import (
 	"context"
 )
 
+type BatchCreateReviewMediaParams struct {
+	ReviewID   string
+	Url        string
+	MediaOrder int16
+}
+
+type BatchCreateReviewsParams struct {
+	ID      string
+	PoiID   string
+	UserID  string
+	Content string
+	Rating  int16
+}
+
 const countPoiReviews = `-- name: CountPoiReviews :one
 SELECT COUNT(*) FROM reviews
 WHERE poi_id = $1

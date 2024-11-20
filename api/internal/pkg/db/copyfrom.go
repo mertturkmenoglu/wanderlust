@@ -123,6 +123,76 @@ func (q *Queries) BatchCreatePois(ctx context.Context, arg []BatchCreatePoisPara
 	return q.db.CopyFrom(ctx, []string{"pois"}, []string{"id", "name", "phone", "description", "address_id", "website", "price_level", "accessibility_level", "total_votes", "total_points", "total_favorites", "category_id", "open_times"}, &iteratorForBatchCreatePois{rows: arg})
 }
 
+// iteratorForBatchCreateReviewMedia implements pgx.CopyFromSource.
+type iteratorForBatchCreateReviewMedia struct {
+	rows                 []BatchCreateReviewMediaParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateReviewMedia) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateReviewMedia) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ReviewID,
+		r.rows[0].Url,
+		r.rows[0].MediaOrder,
+	}, nil
+}
+
+func (r iteratorForBatchCreateReviewMedia) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateReviewMedia(ctx context.Context, arg []BatchCreateReviewMediaParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"review_media"}, []string{"review_id", "url", "media_order"}, &iteratorForBatchCreateReviewMedia{rows: arg})
+}
+
+// iteratorForBatchCreateReviews implements pgx.CopyFromSource.
+type iteratorForBatchCreateReviews struct {
+	rows                 []BatchCreateReviewsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateReviews) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateReviews) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].PoiID,
+		r.rows[0].UserID,
+		r.rows[0].Content,
+		r.rows[0].Rating,
+	}, nil
+}
+
+func (r iteratorForBatchCreateReviews) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateReviews(ctx context.Context, arg []BatchCreateReviewsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"reviews"}, []string{"id", "poi_id", "user_id", "content", "rating"}, &iteratorForBatchCreateReviews{rows: arg})
+}
+
 // iteratorForBatchCreateUsers implements pgx.CopyFromSource.
 type iteratorForBatchCreateUsers struct {
 	rows                 []BatchCreateUsersParams

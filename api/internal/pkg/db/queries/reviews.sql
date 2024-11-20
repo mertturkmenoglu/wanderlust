@@ -17,6 +17,21 @@ INSERT INTO reviews (
   $5
 ) RETURNING *;
 
+-- name: BatchCreateReviews :copyfrom
+INSERT INTO reviews (
+  id,
+  poi_id,
+  user_id,
+  content,
+  rating
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+);
+
 -- name: UserReviewCountForPoi :one
 SELECT COUNT(*) FROM reviews
 WHERE poi_id = $1 AND user_id = $2;
@@ -90,6 +105,17 @@ INSERT INTO review_media (
   $2,
   $3
 ) RETURNING *;
+
+-- name: BatchCreateReviewMedia :copyfrom
+INSERT INTO review_media (
+  review_id,
+  url,
+  media_order
+) VALUES (
+  $1,
+  $2,
+  $3
+);
 
 -- name: GetReviewsByUsername :many
 SELECT 
