@@ -1,7 +1,7 @@
 import { useLoaderData } from "@remix-run/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { LoaderCircleIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
@@ -11,17 +11,11 @@ import { ReviewCard } from "./card";
 
 export function Section() {
   const { poi } = useLoaderData<typeof loader>();
-  const [page, setPage] = useState(1);
-
-  // const query = useQuery({
-  //   queryKey: ["reviews", poi.id],
-  //   queryFn: async () => getReviewsByPoiId(poi.id, 1, 25),
-  // });
 
   const query = useInfiniteQuery({
     queryKey: ["reviews", poi.id],
     queryFn: ({ pageParam }) => getReviewsByPoiId(poi.id, pageParam, 10),
-    initialPageParam: page,
+    initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
