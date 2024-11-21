@@ -71,7 +71,7 @@ export default function Page() {
 
       <div className="flex flex-row gap-2 w-min items-start mt-4">
         <Button variant="outline" asChild>
-          <Link to={`/collections/${collection.id}`}>Visit Page</Link>
+          <Link to={`/c/${collection.id}`}>Visit Page</Link>
         </Button>
 
         <Button variant="outline" asChild>
