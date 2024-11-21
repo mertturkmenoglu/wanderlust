@@ -84,7 +84,7 @@ type CollectionItemPoiCategoryDto struct {
 
 type CreateCollectionRequestDto struct {
 	Name        string `json:"name" validate:"min=1,max=128"`
-	Description string `json:"description" validate:"min=1,max=1024"`
+	Description string `json:"description" validate:"min=1,max=4096"`
 }
 
 type UpdateCollectionRequestDto struct {
