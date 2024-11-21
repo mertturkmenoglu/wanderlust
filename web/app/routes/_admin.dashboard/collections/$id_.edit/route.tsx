@@ -1,6 +1,7 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { SubmitHandler } from "react-hook-form";
+import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import InputError from "~/components/kit/input-error";
@@ -8,9 +9,9 @@ import InputInfo from "~/components/kit/input-info";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
 import { getCollectionById } from "~/lib/api";
 import { lengthTracker } from "~/lib/form-utils";
+import CustomEditor from "../custom-editor";
 import { useUpdateCollectionForm, useUpdateCollectionMutation } from "./hooks";
 import { FormInput } from "./schema";
 
@@ -61,14 +62,15 @@ export default function Page() {
 
         <div className="col-span-2">
           <Label htmlFor="desc">Description</Label>
-          <Textarea
-            id="desc"
-            placeholder="Description of the collection"
-            autoComplete="off"
-            rows={6}
-            {...form.register("description")}
-          />
-          <InputInfo text={lengthTracker(form.watch("description"), 1024)} />
+          <ClientOnly fallback={<></>}>
+            {() => (
+              <CustomEditor
+                value={form.watch("description")}
+                setValue={(md) => form.setValue("description", md)}
+              />
+            )}
+          </ClientOnly>
+          <InputInfo text={lengthTracker(form.watch("description"), 4096)} />
           <InputError error={form.formState.errors.description} />
         </div>
 
