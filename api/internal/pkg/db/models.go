@@ -72,6 +72,18 @@ type CollectionItem struct {
 	CreatedAt    pgtype.Timestamptz
 }
 
+type CollectionsCity struct {
+	CollectionID string
+	CityID       int32
+	Index        int32
+}
+
+type CollectionsPoi struct {
+	CollectionID string
+	PoiID        string
+	Index        int32
+}
+
 type DiaryEntriesPoi struct {
 	DiaryEntryID string
 	PoiID        string
