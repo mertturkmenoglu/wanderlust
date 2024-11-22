@@ -84,3 +84,41 @@ WHERE collection_id = $1 AND list_index > $2;
 -- name: DeleteAllCollectionItems :exec
 DELETE FROM collection_items
 WHERE collection_id = $1;
+
+-- name: CreateCollectionPoiRelation :exec
+INSERT INTO collections_pois (
+  collection_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+);
+
+-- name: CreateCollectionCityRelation :exec
+INSERT INTO collections_cities (
+  collection_id,
+  city_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+);
+
+-- name: RemoveCollectionPoiRelation :exec
+DELETE FROM collections_pois
+WHERE collection_id = $1 AND poi_id = $2;
+
+-- name: RemoveCollectionCityRelation :exec
+DELETE FROM collections_cities
+WHERE collection_id = $1 AND city_id = $2;
+
+-- name: GetCollectionIdsForPoi :many
+SELECT collection_id FROM collections_pois
+WHERE poi_id = $1;
+
+-- name: GetCollectionsIdsForCity :many
+SELECT collection_id FROM collections_cities
+WHERE city_id = $1;

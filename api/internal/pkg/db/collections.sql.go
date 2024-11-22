@@ -50,6 +50,29 @@ func (q *Queries) CreateCollection(ctx context.Context, arg CreateCollectionPara
 	return i, err
 }
 
+const createCollectionCityRelation = `-- name: CreateCollectionCityRelation :exec
+INSERT INTO collections_cities (
+  collection_id,
+  city_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+)
+`
+
+type CreateCollectionCityRelationParams struct {
+	CollectionID string
+	CityID       int32
+	Index        int32
+}
+
+func (q *Queries) CreateCollectionCityRelation(ctx context.Context, arg CreateCollectionCityRelationParams) error {
+	_, err := q.db.Exec(ctx, createCollectionCityRelation, arg.CollectionID, arg.CityID, arg.Index)
+	return err
+}
+
 const createCollectionItem = `-- name: CreateCollectionItem :one
 INSERT INTO collection_items (
   collection_id,
@@ -78,6 +101,29 @@ func (q *Queries) CreateCollectionItem(ctx context.Context, arg CreateCollection
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const createCollectionPoiRelation = `-- name: CreateCollectionPoiRelation :exec
+INSERT INTO collections_pois (
+  collection_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+)
+`
+
+type CreateCollectionPoiRelationParams struct {
+	CollectionID string
+	PoiID        string
+	Index        int32
+}
+
+func (q *Queries) CreateCollectionPoiRelation(ctx context.Context, arg CreateCollectionPoiRelationParams) error {
+	_, err := q.db.Exec(ctx, createCollectionPoiRelation, arg.CollectionID, arg.PoiID, arg.Index)
+	return err
 }
 
 const decrListIndexAfterDelete = `-- name: DecrListIndexAfterDelete :exec
@@ -147,6 +193,31 @@ func (q *Queries) GetCollectionById(ctx context.Context, id string) (Collection,
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getCollectionIdsForPoi = `-- name: GetCollectionIdsForPoi :many
+SELECT collection_id FROM collections_pois
+WHERE poi_id = $1
+`
+
+func (q *Queries) GetCollectionIdsForPoi(ctx context.Context, poiID string) ([]string, error) {
+	rows, err := q.db.Query(ctx, getCollectionIdsForPoi, poiID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var collection_id string
+		if err := rows.Scan(&collection_id); err != nil {
+			return nil, err
+		}
+		items = append(items, collection_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getCollectionItem = `-- name: GetCollectionItem :one
@@ -307,6 +378,31 @@ func (q *Queries) GetCollections(ctx context.Context, arg GetCollectionsParams) 
 	return items, nil
 }
 
+const getCollectionsIdsForCity = `-- name: GetCollectionsIdsForCity :many
+SELECT collection_id FROM collections_cities
+WHERE city_id = $1
+`
+
+func (q *Queries) GetCollectionsIdsForCity(ctx context.Context, cityID int32) ([]string, error) {
+	rows, err := q.db.Query(ctx, getCollectionsIdsForCity, cityID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var collection_id string
+		if err := rows.Scan(&collection_id); err != nil {
+			return nil, err
+		}
+		items = append(items, collection_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getLastIndexOfCollection = `-- name: GetLastIndexOfCollection :one
 SELECT COALESCE(MAX(list_index), 0)
 FROM collection_items
@@ -318,6 +414,36 @@ func (q *Queries) GetLastIndexOfCollection(ctx context.Context, collectionID str
 	var coalesce interface{}
 	err := row.Scan(&coalesce)
 	return coalesce, err
+}
+
+const removeCollectionCityRelation = `-- name: RemoveCollectionCityRelation :exec
+DELETE FROM collections_cities
+WHERE collection_id = $1 AND city_id = $2
+`
+
+type RemoveCollectionCityRelationParams struct {
+	CollectionID string
+	CityID       int32
+}
+
+func (q *Queries) RemoveCollectionCityRelation(ctx context.Context, arg RemoveCollectionCityRelationParams) error {
+	_, err := q.db.Exec(ctx, removeCollectionCityRelation, arg.CollectionID, arg.CityID)
+	return err
+}
+
+const removeCollectionPoiRelation = `-- name: RemoveCollectionPoiRelation :exec
+DELETE FROM collections_pois
+WHERE collection_id = $1 AND poi_id = $2
+`
+
+type RemoveCollectionPoiRelationParams struct {
+	CollectionID string
+	PoiID        string
+}
+
+func (q *Queries) RemoveCollectionPoiRelation(ctx context.Context, arg RemoveCollectionPoiRelationParams) error {
+	_, err := q.db.Exec(ctx, removeCollectionPoiRelation, arg.CollectionID, arg.PoiID)
+	return err
 }
 
 const updateCollection = `-- name: UpdateCollection :exec
