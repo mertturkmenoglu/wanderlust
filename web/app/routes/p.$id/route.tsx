@@ -6,7 +6,12 @@ import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
 import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
 import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
+import { useRef, useState } from "react";
 import invariant from "tiny-invariant";
+import Lightbox, { ThumbnailsRef } from "yet-another-react-lightbox";
+import Inline from "yet-another-react-lightbox/plugins/inline";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import yarlThumbnailStyles from "yet-another-react-lightbox/plugins/thumbnails.css?url";
 import yarlStyles from "yet-another-react-lightbox/styles.css?url";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
@@ -15,7 +20,6 @@ import { getCookiesFromRequest } from "~/lib/cookies";
 import Amenities from "./components/amenities";
 import BookmarkButton from "./components/bookmark-button";
 import Breadcrumb from "./components/breadcrumb";
-import Carousel from "./components/carousel";
 import FavoriteButton from "./components/favorite-button";
 import InformationTable from "./components/info-table";
 import MapContainer from "./components/map-container";
@@ -47,6 +51,7 @@ export function links() {
     { rel: "stylesheet", href: uppyFileInputStyles },
     { rel: "stylesheet", href: uppyImageEditorStyles },
     { rel: "stylesheet", href: yarlStyles },
+    { rel: "stylesheet", href: yarlThumbnailStyles },
   ];
 }
 
@@ -63,14 +68,83 @@ export function meta({ data }: MetaArgs<typeof loader>) {
 
 export default function Page() {
   const { poi } = useLoaderData<typeof loader>();
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const ref = useRef<ThumbnailsRef>(null);
+
+  const toggleOpen = (state: boolean) => () => setOpen(state);
+
+  const updateIndex = ({ index: current }: { index: number }) =>
+    setIndex(current);
 
   return (
     <main className="max-w-7xl mx-auto mt-8 md:mt-16">
       <Breadcrumb />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-32">
-        <Carousel />
+        <div className="h-min w-full lg:w-full">
+          <Lightbox
+            index={index}
+            slides={poi.media.map((m) => ({
+              src: m.url,
+            }))}
+            className=""
+            plugins={[Inline, Thumbnails]}
+            thumbnails={{
+              ref: ref,
+              vignette: false,
+              imageFit: "cover",
+              border: 0,
+              borderColor: "#FFF",
+            }}
+            on={{
+              view: updateIndex,
+              click: toggleOpen(true),
+            }}
+            carousel={{
+              padding: 0,
+              spacing: 0,
+              imageFit: "cover",
+            }}
+            styles={{
+              container: {
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+              },
+              thumbnailsContainer: {
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+              },
+              thumbnail: {
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+              },
+            }}
+            inline={{
+              className: "w-min h-min w-11/12 lg:w-full",
+              style: {
+                maxWidth: "900px",
+                aspectRatio: "1/1",
+                margin: "0 auto",
+              },
+            }}
+          />
 
+          <Lightbox
+            open={open}
+            close={toggleOpen(false)}
+            index={index}
+            slides={poi.media.map((m) => ({
+              src: m.url,
+            }))}
+            on={{ view: updateIndex }}
+            animation={{ fade: 0 }}
+            controller={{ closeOnPullDown: true, closeOnBackdropClick: true }}
+            styles={{
+              container: {
+                backgroundColor: "rgba(0, 0, 0, 0.8)",
+              },
+            }}
+          />
+        </div>
+        
         <div>
           <div className="flex items-center justify-between">
             <h2 className="line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
