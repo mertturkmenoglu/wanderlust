@@ -20,5 +20,15 @@ func (m *Module) RegisterRoutes(e *echo.Group) {
 		routes.POST("/:id/items", m.handlers.CreateCollectionItem, middlewares.ParseBody[CreateCollectionItemRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemCreate))
 		routes.DELETE("/:id/items/:poiId", m.handlers.DeleteCollectionItem, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemDelete))
 		routes.PATCH("/:id/items", m.handlers.UpdateCollectionItems, middlewares.ParseBody[UpdateCollectionItemsRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActCollectionItemUpdate))
+
+		routes.POST("/:id/poi/:poiId", m.handlers.CreateCollectionPoiRelation, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionPoiRelationCreate))
+		routes.POST("/:id/city/:cityId", m.handlers.CreateCollectionCityRelation, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionCityRelationCreate))
+		routes.DELETE("/:id/poi/:poiId", m.handlers.RemoveCollectionPoiRelation, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionPoiRelationDelete))
+		routes.DELETE("/:id/poi/:cityId", m.handlers.RemoveCollectionCityRelation, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionCityRelationDelete))
+
+		routes.GET("/poi/:id", m.handlers.GetCollectionsForPoi)
+		routes.GET("/city/:id", m.handlers.GetCollectionsForCity)
+		routes.GET("/poi/all", m.handlers.GetAllPoiCollections, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionPoiRelationRead))
+		routes.GET("/city/all", m.handlers.GetAllCityCollections, middlewares.IsAuth, middlewares.Authz(authz.ActCollectionCityRelationRead))
 	}
 }

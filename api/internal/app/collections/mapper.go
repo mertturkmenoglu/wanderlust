@@ -107,3 +107,31 @@ func mapToCreateCollectionItemResponseDto(item db.CollectionItem) CreateCollecti
 		CreatedAt:    item.CreatedAt.Time,
 	}
 }
+
+func mapToCollectionsPoiDto(v []db.CollectionsPoi) []CollectionsPoiDto {
+	arr := make([]CollectionsPoiDto, 0)
+
+	for _, el := range v {
+		arr = append(arr, CollectionsPoiDto{
+			CollectionID: el.CollectionID,
+			PoiID:        el.PoiID,
+			Index:        el.Index,
+		})
+	}
+
+	return arr
+}
+
+func mapToCollectionsCityDto(v []db.CollectionsCity) []CollectionsCityDto {
+	arr := make([]CollectionsCityDto, 0)
+
+	for _, el := range v {
+		arr = append(arr, CollectionsCityDto{
+			CollectionID: el.CollectionID,
+			CityID:       el.CityID,
+			Index:        el.Index,
+		})
+	}
+
+	return arr
+}

@@ -115,3 +115,15 @@ type NewOrderItem struct {
 	ListIndex int32  `json:"listIndex"`
 	PoiID     string `json:"poiId"`
 }
+
+type CollectionsCityDto struct {
+	CollectionID string `json:"collectionId"`
+	CityID       int32  `json:"cityId"`
+	Index        int32  `json:"index"`
+}
+
+type CollectionsPoiDto struct {
+	CollectionID string `json:"collectionId"`
+	PoiID        string `json:"poiId"`
+	Index        int32  `json:"index"`
+}
