@@ -1,6 +1,7 @@
 import { Options } from "ky";
 import api from "../api";
 import {
+  GetUserActivitiesResponseDto,
   GetUserFollowersResponseDto,
   GetUserFollowingResponseDto,
   GetUserProfileResponseDto,
@@ -56,4 +57,10 @@ export async function searchUserFollowing(searchUsername: string) {
   return api.get(`users/following/search?username=${searchUsername}`).json<{
     data: SearchUserFollowingResponseDto;
   }>();
+}
+
+export async function getUserActivities(username: string) {
+  return api
+    .get(`users/${username}/activities`)
+    .json<{ data: GetUserActivitiesResponseDto }>();
 }

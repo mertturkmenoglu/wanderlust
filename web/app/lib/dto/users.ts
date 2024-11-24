@@ -36,3 +36,7 @@ export type GetUserFollowingResponseDto = {
 export type SearchUserFollowingResponseDto = {
   friends: GetUserProfileResponseDto[];
 };
+
+export type GetUserActivitiesResponseDto = {
+  activities: Record<string, any>;
+};
