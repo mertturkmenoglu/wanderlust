@@ -92,6 +92,18 @@ export default function Page() {
             <li>
               <Item href="/dashboard/collections/new" text="New" />
             </li>
+            <li>
+              <Item
+                href="/dashboard/collections/relations/city"
+                text="City Relations"
+              />
+            </li>
+            <li>
+              <Item
+                href="/dashboard/collections/relations/poi"
+                text="Point of Interest Relations"
+              />
+            </li>
           </ul>
         </div>
       </div>
