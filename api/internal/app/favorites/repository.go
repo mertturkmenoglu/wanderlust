@@ -12,6 +12,16 @@ func (r *repository) createFavorite(poiId string, userId string) (db.Favorite, e
 	})
 }
 
+func (r *repository) getPoiNameById(poiId string) (string, error) {
+	poi, err := r.di.Db.Queries.GetPoiById(context.Background(), poiId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return poi.Poi.Name, nil
+}
+
 func (r *repository) deleteFavoriteByPoiId(poiId string, userId string) error {
 	return r.di.Db.Queries.DeleteFavoriteByPoiId(context.Background(), db.DeleteFavoriteByPoiIdParams{
 		PoiID:  poiId,

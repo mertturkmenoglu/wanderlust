@@ -2,6 +2,7 @@ package users
 
 import (
 	"net/http"
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/upload"
@@ -140,6 +141,7 @@ func (h *handlers) UpdateBannerImage(c echo.Context) error {
 func (h *handlers) FollowUser(c echo.Context) error {
 	username := c.Param("username")
 	userId := c.Get("user_id").(string)
+	authUser := c.Get("user").(db.User)
 
 	if username == "" {
 		return ErrUsernameNotProvided
@@ -161,6 +163,13 @@ func (h *handlers) FollowUser(c echo.Context) error {
 
 	if err != nil {
 		return err
+	}
+
+	if !isFollowing {
+		_ = h.di.Activities.Add(userId, activities.ActivityFollow, activities.FollowPayload{
+			ThisUsername:  authUser.Username,
+			OtherUsername: username,
+		})
 	}
 
 	return c.NoContent(http.StatusNoContent)
@@ -217,6 +226,24 @@ func (h *handlers) SearchUserFollowing(c echo.Context) error {
 	}
 
 	res, err := h.service.searchUserFollowing(userId, username)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, core.Response{
+		Data: res,
+	})
+}
+
+func (h *handlers) GetUserActivities(c echo.Context) error {
+	username := c.Param("username")
+
+	if username == "" {
+		return ErrUsernameNotProvided
+	}
+
+	res, err := h.service.getUserActivities(username)
 
 	if err != nil {
 		return err

@@ -42,3 +42,7 @@ type GetUserFollowingResponseDto struct {
 type SearchUserFollowingResponseDto struct {
 	Friends []GetUserProfileResponseDto `json:"friends"`
 }
+
+type GetUserActivitiesResponseDto struct {
+	Activities []map[string]any `json:"activities"`
+}

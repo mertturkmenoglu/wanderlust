@@ -55,6 +55,16 @@ func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db
 	return review, nil
 }
 
+func (r *repository) getPoiNameById(poiId string) (string, error) {
+	poi, err := r.di.Db.Queries.GetPoiById(context.Background(), poiId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return poi.Poi.Name, nil
+}
+
 func (r *repository) getReviewById(id string) (db.GetReviewByIdRow, error) {
 	return r.di.Db.Queries.GetReviewById(context.Background(), id)
 }

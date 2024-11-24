@@ -2,6 +2,7 @@ package reviews
 
 import (
 	"net/http"
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/upload"
@@ -35,6 +36,16 @@ func (h *handlers) createReview(c echo.Context) error {
 
 	if err != nil {
 		return err
+	}
+
+	poiName, err := h.service.getPoiNameById(dto.PoiID)
+
+	if err == nil {
+		_ = h.di.Activities.Add(userId, activities.ActivityReview, activities.ReviewPayload{
+			PoiName: poiName,
+			PoiId:   res.PoiID,
+			Rating:  res.Rating,
+		})
 	}
 
 	return c.JSON(http.StatusCreated, core.Response{

@@ -2,6 +2,7 @@ package favorites
 
 import (
 	"net/http"
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/pagination"
 
@@ -16,6 +17,15 @@ func (h *handlers) createFavorite(c echo.Context) error {
 
 	if err != nil {
 		return err
+	}
+
+	poiName, err := h.service.getPoiNameById(dto.PoiId)
+
+	if err == nil {
+		_ = h.di.Activities.Add(userId, activities.ActivityFavorite, activities.FavoritePayload{
+			PoiName: poiName,
+			PoiId:   dto.PoiId,
+		})
 	}
 
 	return c.JSON(http.StatusCreated, core.Response{

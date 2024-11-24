@@ -1,8 +1,11 @@
 package users
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
 	"mime/multipart"
+	"wanderlust/internal/pkg/cache"
 	errs "wanderlust/internal/pkg/core/errors"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/upload"
@@ -192,4 +195,37 @@ func (s *service) searchUserFollowing(userId string, username string) (SearchUse
 	v := mapToSearchUserFollowingResponseDto(res)
 
 	return v, nil
+}
+
+func (s *service) getUserActivities(username string) (GetUserActivitiesResponseDto, error) {
+	profile, err := s.repository.GetUserProfile(username)
+
+	if err != nil {
+		return GetUserActivitiesResponseDto{}, err
+	}
+
+	key := cache.KeyBuilder("activities", profile.ID)
+
+	res, err := s.di.Cache.Client.LRange(context.Background(), key, 0, 100).Result()
+
+	if err != nil {
+		return GetUserActivitiesResponseDto{}, err
+	}
+
+	out := make([]map[string]any, 0)
+
+	for _, s := range res {
+		var tmp map[string]any
+		err = json.Unmarshal([]byte(s), &tmp)
+
+		if err != nil {
+			return GetUserActivitiesResponseDto{}, err
+		}
+
+		out = append(out, tmp)
+	}
+
+	return GetUserActivitiesResponseDto{
+		Activities: out,
+	}, nil
 }

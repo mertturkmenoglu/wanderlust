@@ -12,6 +12,10 @@ func (s *service) createFavorite(poiId string, userId string) (CreateFavoriteRes
 	return v, nil
 }
 
+func (s *service) getPoiNameById(poiId string) (string, error) {
+	return s.repository.getPoiNameById(poiId)
+}
+
 func (s *service) deleteFavoriteByPoiId(poiId string, userId string) error {
 	return s.repository.deleteFavoriteByPoiId(poiId, userId)
 }

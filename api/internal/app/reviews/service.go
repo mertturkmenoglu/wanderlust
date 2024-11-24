@@ -24,6 +24,10 @@ func (s *service) createReview(userId string, dto CreateReviewRequestDto) (Creat
 	return v, nil
 }
 
+func (s *service) getPoiNameById(poiId string) (string, error) {
+	return s.repository.getPoiNameById(poiId)
+}
+
 func (s *service) getReviewById(id string) (GetReviewByIdResponseDto, error) {
 	review, err := s.repository.getReviewById(id)
 
