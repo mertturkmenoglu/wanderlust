@@ -21,6 +21,7 @@ import (
 	"wanderlust/internal/app/pois"
 	"wanderlust/internal/app/reviews"
 	"wanderlust/internal/app/users"
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/core"
@@ -81,6 +82,8 @@ func New() *core.Application {
 	email := email.New(cfg)
 	uploadSvc := upload.New(cfg)
 	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+	cacheSvc := cache.New(cfg)
+	activities := activities.NewActivity(cacheSvc)
 
 	application := &core.Application{
 		ServerConfiguration: core.ServerConfiguration{
@@ -88,14 +91,15 @@ func New() *core.Application {
 			PortString: fmt.Sprintf(":%d", cfg.GetInt(config.PORT)),
 		},
 		SharedModules: core.SharedModules{
-			Config: cfg,
-			Db:     db.NewDb(),
-			Flake:  flake,
-			Logger: logs.NewPTermLogger(),
-			Cache:  cache.New(cfg),
-			Email:  email,
-			Tasks:  tasks.New(cfg, email, uploadSvc),
-			Upload: uploadSvc,
+			Config:     cfg,
+			Db:         db.NewDb(),
+			Flake:      flake,
+			Logger:     logs.NewPTermLogger(),
+			Cache:      cacheSvc,
+			Email:      email,
+			Tasks:      tasks.New(cfg, email, uploadSvc),
+			Upload:     uploadSvc,
+			Activities: activities,
 		},
 	}
 
