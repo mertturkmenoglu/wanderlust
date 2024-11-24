@@ -1,6 +1,7 @@
 package core
 
 import (
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/db"
@@ -30,13 +31,14 @@ type ServerConfiguration struct {
 }
 
 type SharedModules struct {
-	Config *config.Configuration
-	Upload *upload.Upload
-	Flake  *sonyflake.Sonyflake
-	Db     *db.Db
-	Search *search.Search
-	Logger *pterm.Logger
-	Cache  *cache.Cache
-	Email  *email.EmailService
-	Tasks  *tasks.Tasks
+	Config     *config.Configuration
+	Upload     *upload.Upload
+	Flake      *sonyflake.Sonyflake
+	Db         *db.Db
+	Search     *search.Search
+	Logger     *pterm.Logger
+	Cache      *cache.Cache
+	Email      *email.EmailService
+	Tasks      *tasks.Tasks
+	Activities *activities.Activity
 }
