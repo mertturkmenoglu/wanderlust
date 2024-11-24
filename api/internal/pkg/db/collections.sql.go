@@ -178,6 +178,54 @@ func (q *Queries) DeleteCollectionItemAtIndex(ctx context.Context, arg DeleteCol
 	return err
 }
 
+const getAllCityCollections = `-- name: GetAllCityCollections :many
+SELECT collection_id, city_id, index FROM collections_cities
+`
+
+func (q *Queries) GetAllCityCollections(ctx context.Context) ([]CollectionsCity, error) {
+	rows, err := q.db.Query(ctx, getAllCityCollections)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CollectionsCity
+	for rows.Next() {
+		var i CollectionsCity
+		if err := rows.Scan(&i.CollectionID, &i.CityID, &i.Index); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAllPoiCollections = `-- name: GetAllPoiCollections :many
+SELECT collection_id, poi_id, index FROM collections_pois
+`
+
+func (q *Queries) GetAllPoiCollections(ctx context.Context) ([]CollectionsPoi, error) {
+	rows, err := q.db.Query(ctx, getAllPoiCollections)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CollectionsPoi
+	for rows.Next() {
+		var i CollectionsPoi
+		if err := rows.Scan(&i.CollectionID, &i.PoiID, &i.Index); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCollectionById = `-- name: GetCollectionById :one
 SELECT id, name, description, created_at FROM collections
 WHERE id = $1 LIMIT 1

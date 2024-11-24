@@ -122,3 +122,9 @@ WHERE poi_id = $1;
 -- name: GetCollectionsIdsForCity :many
 SELECT collection_id FROM collections_cities
 WHERE city_id = $1;
+
+-- name: GetAllCityCollections :many
+SELECT * FROM collections_cities;
+
+-- name: GetAllPoiCollections :many
+SELECT * FROM collections_pois;
