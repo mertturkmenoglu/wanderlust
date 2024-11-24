@@ -111,3 +111,15 @@ export type NewOrderItem = {
   listIndex: number;
   poiId: string;
 };
+
+export type CollectionsCityDto = {
+  collectionId: string;
+  cityId: number;
+  index: number;
+};
+
+export type CollectionsPoiDto = {
+  collectionId: string;
+  poiId: string;
+  index: number;
+};

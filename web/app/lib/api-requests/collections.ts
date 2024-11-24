@@ -1,6 +1,8 @@
 import { Options } from "ky";
 import api from "../api";
 import {
+  CollectionsCityDto,
+  CollectionsPoiDto,
   CreateCollectionItemRequestDto,
   CreateCollectionItemResponseDto,
   CreateCollectionRequestDto,
@@ -73,4 +75,40 @@ export function updateCollectionItems(
   return api.patch(`collections/${collectionId}/items`, {
     json: dto,
   });
+}
+
+export function createCollectionPoiRelation(id: string, poiId: string) {
+  return api.post(`collections/${id}/poi/${poiId}`);
+}
+
+export function createCollectionCityRelation(id: string, cityId: number) {
+  return api.post(`collections/${id}/city/${cityId}`);
+}
+
+export function removeCollectionPoiRelation(id: string, poiId: string) {
+  return api.delete(`collections/${id}/poi/${poiId}`);
+}
+
+export function removeCollectionCityRelation(id: string, cityId: number) {
+  return api.delete(`collections/${id}/city/${cityId}`);
+}
+
+export function getCollectionsForPoi(id: string) {
+  return api
+    .get(`collections/poi/${id}`)
+    .json<{ data: GetCollectionByIdResponseDto[] }>();
+}
+
+export function getCollectionsForCity(id: number) {
+  return api
+    .get(`collections/city/${id}`)
+    .json<{ data: GetCollectionByIdResponseDto[] }>();
+}
+
+export function getAllPoiCollections() {
+  return api.get(`collections/poi/all`).json<{ data: CollectionsPoiDto[] }>();
+}
+
+export function getAllCityCollections() {
+  return api.get(`collections/city/all`).json<{ data: CollectionsCityDto[] }>();
 }
