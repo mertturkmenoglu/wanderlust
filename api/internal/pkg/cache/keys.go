@@ -3,6 +3,7 @@ package cache
 const (
 	KeyHomeAggregations = "home-aggregations"
 	KeyDiaryEntry       = "diary-entry"
+	KeyCollectionGroup  = "collection-group"
 )
 
 func KeyBuilder(parts ...string) string {
