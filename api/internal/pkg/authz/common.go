@@ -37,6 +37,8 @@ const (
 	ActCollectionCityRelationDelete AuthzAct = "collection-city-relation-delete"
 	ActCollectionPoiRelationCreate  AuthzAct = "collection-poi-relation-create"
 	ActCollectionPoiRelationDelete  AuthzAct = "collection-poi-relation-delete"
+	ActCollectionPoiRelationRead    AuthzAct = "collection-poi-relation-read"
+	ActCollectionCityRelationRead   AuthzAct = "collection-city-relation-read"
 	ActListCreate                   AuthzAct = "list-create"
 	ActListRead                     AuthzAct = "list-read"
 	ActListUpdate                   AuthzAct = "list-update"
@@ -90,6 +92,8 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCollectionCityRelationDelete: IsAdmin,
 	ActCollectionPoiRelationCreate:  IsAdmin,
 	ActCollectionPoiRelationDelete:  IsAdmin,
+	ActCollectionPoiRelationRead:    IsAdmin,
+	ActCollectionCityRelationRead:   IsAdmin,
 	ActListCreate:                   Identity,
 	ActListRead:                     FnListRead,
 	ActListUpdate:                   FnListUpdate,
