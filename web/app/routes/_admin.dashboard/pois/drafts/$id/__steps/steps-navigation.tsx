@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button, buttonVariants } from "~/components/ui/button";
 

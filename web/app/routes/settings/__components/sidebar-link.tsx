@@ -1,4 +1,4 @@
-import { NavLink } from "@remix-run/react";
+import { NavLink } from "react-router";
 import { Item } from "./items";
 
 type SidebarLinkProps = Item;

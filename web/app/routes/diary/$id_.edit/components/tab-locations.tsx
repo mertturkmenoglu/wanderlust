@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { ArrowDownIcon, ArrowUpIcon, XIcon } from "lucide-react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { InstantSearch } from "react-instantsearch";

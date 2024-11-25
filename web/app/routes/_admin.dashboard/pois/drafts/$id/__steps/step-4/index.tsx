@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { useState } from "react";
 import { ClientOnly } from "remix-utils/client-only";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";

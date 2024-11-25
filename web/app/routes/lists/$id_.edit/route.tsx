@@ -1,13 +1,15 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
+  data,
   isRouteErrorResponse,
   Link,
+  LoaderFunctionArgs,
+  MetaArgs,
   useLoaderData,
   useNavigate,
   useRouteError,
-} from "@remix-run/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+} from "react-router";
 import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
@@ -30,24 +32,24 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     const list = await getListById(params.id, { headers: { Cookie } });
 
     if (!list.data) {
-      throw json("List not found", {
+      throw data("List not found", {
         status: 404,
       });
     }
 
     if (!auth.data) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     }
 
     if (list.data.userId !== auth.data.id) {
-      throw json("You do not have permission to edit this list", {
+      throw data("You do not have permission to edit this list", {
         status: 403,
       });
     }
 
-    return json({ list: list.data });
+    return { list: list.data };
   } catch (e) {
     let status = (e as any)?.response?.status;
 
@@ -56,19 +58,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }
 
     if (status === 401) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     } else if (status === 403) {
-      throw json("You do not have permissions to edit this list", {
+      throw data("You do not have permissions to edit this list", {
         status: 403,
       });
     } else if (status === 404) {
-      throw json("List not found", {
+      throw data("List not found", {
         status: 404,
       });
     } else {
-      throw json("Something went wrong", {
+      throw data("Something went wrong", {
         status: status ?? 500,
       });
     }

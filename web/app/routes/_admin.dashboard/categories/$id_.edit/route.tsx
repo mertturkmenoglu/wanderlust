@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import invariant from "tiny-invariant";
@@ -25,7 +25,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Category not found", { status: 404 });
   }
 
-  return json({ category });
+  return { category };
 }
 
 export default function Page() {

@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { LoaderCircleIcon, StarIcon } from "lucide-react";
 import FormattedRating from "~/components/kit/formatted-rating";

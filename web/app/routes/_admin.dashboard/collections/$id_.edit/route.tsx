@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import { SubmitHandler } from "react-hook-form";
 import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
@@ -18,7 +18,7 @@ import { FormInput } from "./schema";
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
   const collection = await getCollectionById(params.id);
-  return json({ collection: collection.data });
+  return { collection: collection.data };
 }
 
 export default function Page() {

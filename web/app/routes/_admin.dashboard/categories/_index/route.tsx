@@ -1,11 +1,10 @@
-import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 import { getCategories } from "~/lib/api";
 
 export async function loader() {
   const categories = await getCategories();
-  return json({ categories: categories.data.categories });
+  return { categories: categories.data.categories };
 }
 
 export default function Page() {

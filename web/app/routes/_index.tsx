@@ -1,16 +1,16 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, type MetaFunction } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
 import ActionBanner from "~/components/blocks/action-banner";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import TagNavigation from "~/components/blocks/tag-navigation";
 import VerticalBanner from "~/components/blocks/vertical-banner";
+import PoiGrid from "~/components/poi-grid";
+import Search from "~/components/search";
 import { Button } from "~/components/ui/button";
 import { getFeaturedCities, getHomeAggregation } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
-import PoiGrid from "./poi-grid";
-import Search from "./search";
+import type { Route } from "./+types/_index";
 
 export const meta: MetaFunction = () => {
   return [
@@ -25,11 +25,11 @@ export const meta: MetaFunction = () => {
 export const loader = async () => {
   const res = await getFeaturedCities();
   const aggregation = await getHomeAggregation();
-  return json({ cities: res.data.cities, aggregation: aggregation.data });
+  return { cities: res.data.cities, aggregation: aggregation.data };
 };
 
-export default function Page() {
-  const { cities, aggregation } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { cities, aggregation } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto">

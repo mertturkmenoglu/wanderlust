@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, MetaArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
 import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
 import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
@@ -29,17 +29,18 @@ import Reviews from "./components/reviews/index";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
+
   const res = await getPoiById(params.id, {
     headers: { Cookie: getCookiesFromRequest(request) },
   });
 
-  return json({
+  return {
     poi: res.data,
     meta: res.meta,
     baseApiUrl: import.meta.env.VITE_API_URL ?? "",
     searchApiKey: import.meta.env.VITE_SEARCH_CLIENT_API_KEY ?? "",
     searchApiUrl: import.meta.env.VITE_SEARCH_CLIENT_URL ?? "",
-  });
+  };
 }
 
 export function links() {
@@ -144,7 +145,7 @@ export default function Page() {
             }}
           />
         </div>
-        
+
         <div>
           <div className="flex items-center justify-between">
             <h2 className="line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">

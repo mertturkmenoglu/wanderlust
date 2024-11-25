@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import clsx from "clsx";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";

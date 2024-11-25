@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { Link } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { GlobeIcon, LockIcon } from "lucide-react";
 import React from "react";
@@ -18,7 +18,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       throw redirect("/");
     }
 
-    return json({ auth: auth.data });
+    return { auth: auth.data };
   } catch (e) {
     throw redirect("/");
   }

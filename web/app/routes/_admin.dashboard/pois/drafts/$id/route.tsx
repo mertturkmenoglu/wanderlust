@@ -1,17 +1,17 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useSearchParams } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Separator } from "~/components/ui/separator";
 import { getDraft } from "~/lib/api-requests";
-import DeleteDialog from "./delete-dialog";
-import StepsIndicator from "./steps-indicator";
 import Step1 from "./__steps/step-1";
 import Step2 from "./__steps/step-2";
 import Step3 from "./__steps/step-3";
 import Step4 from "./__steps/step-4";
 import Step5 from "./__steps/step-5";
 import Step6 from "./__steps/step-6";
+import DeleteDialog from "./delete-dialog";
+import StepsIndicator from "./steps-indicator";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   try {
     const Cookie = request.headers.get("Cookie") ?? "";
     const draft = await getDraft(params.id, { headers: { Cookie } });
-    return json({ draft: draft.data, baseApiUrl });
+    return { draft: draft.data, baseApiUrl };
   } catch (e) {
     throw new Response("Something went wrong", { status: 500 });
   }

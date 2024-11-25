@@ -1,4 +1,4 @@
-import { useNavigate } from "@remix-run/react";
+import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";

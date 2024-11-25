@@ -1,5 +1,4 @@
-import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import { citiesCols } from "~/components/blocks/dashboard/columns";
 import { DataTable } from "~/components/blocks/dashboard/data-table";
 import { Button } from "~/components/ui/button";
@@ -7,7 +6,7 @@ import { getCities } from "~/lib/api";
 
 export async function loader() {
   const cities = await getCities();
-  return json({ cities: cities.data.cities });
+  return { cities: cities.data.cities };
 }
 
 export default function Page() {

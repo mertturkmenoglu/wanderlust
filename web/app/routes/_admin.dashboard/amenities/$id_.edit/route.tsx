@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import { SubmitHandler } from "react-hook-form";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
@@ -22,7 +22,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Amenity not found", { status: 404 });
   }
 
-  return json({ amenity });
+  return { amenity };
 }
 
 export default function Page() {

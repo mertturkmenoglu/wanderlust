@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, MetaArgs } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import Markdown from "react-markdown";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
@@ -10,7 +10,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
 
   const collection = await getCollectionById(params.id);
-  return json({ collection: collection.data });
+  return { collection: collection.data };
 }
 
 export function meta({ data }: MetaArgs<typeof loader>) {

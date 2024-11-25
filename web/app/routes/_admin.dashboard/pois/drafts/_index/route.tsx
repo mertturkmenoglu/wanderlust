@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 import { getDrafts } from "~/lib/api-requests";
 
@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const Cookie = request.headers.get("Cookie") ?? "";
     const res = await getDrafts({ headers: { Cookie } });
-    return json({ drafts: res.data });
+    return { drafts: res.data };
   } catch (e) {
     throw new Response("Something went wrong", { status: 500 });
   }

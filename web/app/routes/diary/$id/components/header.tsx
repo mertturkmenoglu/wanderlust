@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import { PencilIcon } from "lucide-react";
 import { useContext } from "react";
 import BackLink from "~/components/blocks/back-link";

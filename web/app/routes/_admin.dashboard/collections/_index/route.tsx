@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { collectionsCols } from "~/components/blocks/dashboard/columns";
 import { DataTable } from "~/components/blocks/dashboard/data-table";
 import { Button } from "~/components/ui/button";
@@ -9,7 +9,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const Cookie = request.headers.get("Cookie") ?? "";
     const collections = await getCollections(1, 25, { headers: { Cookie } });
-    return json({ collections: collections.data.collections });
+    return { collections: collections.data.collections };
   } catch (e) {
     throw redirect("/");
   }

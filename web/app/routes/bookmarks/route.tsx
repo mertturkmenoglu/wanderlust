@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { Link } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
 import AppMessage from "~/components/blocks/app-message";
@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       throw redirect("/");
     }
 
-    return json({ isAuthenticated: true }); // I don't know what to return, just returning bool for now.
+    return { isAuthenticated: true }; // I don't know what to return, just returning bool for now.
   } catch (e) {
     throw redirect("/");
   }

@@ -1,10 +1,5 @@
-import {
-  json,
-  LoaderFunctionArgs,
-  type MetaFunction,
-  redirect,
-} from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { LoaderFunctionArgs, type MetaFunction, redirect } from "react-router";
+import { Outlet } from "react-router";
 import invariant from "tiny-invariant";
 import { getUserByUsername } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
@@ -17,7 +12,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     const res = await getUserByUsername(params.username, {
       headers: { Cookie },
     });
-    return json({ user: res.data, meta: res.meta });
+    return { user: res.data, meta: res.meta };
   } catch (e) {
     throw redirect("/");
   }

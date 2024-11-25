@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import UserImage from "~/components/blocks/user-image";
@@ -10,7 +10,7 @@ import { ipx } from "~/lib/img-proxy";
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.username, "username is required");
   const followers = await getUserFollowers(params.username);
-  return json({ followers: followers.data.followers });
+  return { followers: followers.data.followers };
 }
 export default function Page() {
   const { followers } = useLoaderData<typeof loader>();

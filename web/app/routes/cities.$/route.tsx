@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, json, type MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, type MetaFunction } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
 import Collection from "~/components/blocks/collection";
 import OverlayBanner from "~/components/blocks/overlay-banner";
@@ -25,7 +25,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const city = await getCityById(cityId);
 
-  return json({ city: city.data });
+  return { city: city.data };
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

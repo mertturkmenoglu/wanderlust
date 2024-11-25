@@ -1,10 +1,5 @@
-import {
-  json,
-  LoaderFunctionArgs,
-  redirect,
-  SerializeFrom,
-} from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect, SerializeFrom } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
@@ -22,7 +17,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const collection = await getCollectionById(params.id, {
       headers: { Cookie },
     });
-    return json({ collection: collection.data });
+    return { collection: collection.data };
   } catch (e) {
     throw redirect("/");
   }

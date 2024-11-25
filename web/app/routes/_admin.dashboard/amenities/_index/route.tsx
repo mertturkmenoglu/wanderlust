@@ -1,11 +1,10 @@
-import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import { Button } from "~/components/ui/button";
 import { getAmenities } from "~/lib/api";
 
 export async function loader() {
   const amenities = await getAmenities();
-  return json({ amenities: amenities.data.amenities });
+  return { amenities: amenities.data.amenities };
 }
 
 export default function Page() {

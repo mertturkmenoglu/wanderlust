@@ -3,7 +3,7 @@ import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
 } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 
 export default function Footer() {
   return (

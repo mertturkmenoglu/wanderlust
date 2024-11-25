@@ -1,9 +1,9 @@
 import { DevTool } from "@hookform/devtools";
-import { json, redirect, useBlocker, useLoaderData } from "@remix-run/react";
 import { Uppy } from "@uppy/core";
 import GoldenRetriever from "@uppy/golden-retriever";
 import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
 import { useState } from "react";
+import { data, redirect, useBlocker, useLoaderData } from "react-router";
 import BackLink from "~/components/blocks/back-link";
 import { getMe } from "~/lib/api";
 import Step1 from "./components/step1";
@@ -38,7 +38,7 @@ export async function clientLoader() {
     const auth = await getMe();
 
     if (!auth.data) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     }
@@ -48,14 +48,14 @@ export async function clientLoader() {
     if (status === 401) {
       throw redirect("/");
     } else {
-      throw json("Something went wrong", {
+      throw data("Something went wrong", {
         status: status ?? 500,
       });
     }
   }
 
   const baseApiUrl = import.meta.env.VITE_API_URL ?? "";
-  return json({ baseApiUrl });
+  return { baseApiUrl };
 }
 
 export function HydrateFallback() {

@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { GripVerticalIcon, LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -23,11 +23,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const collection = await getCollectionById(params.id, {
       headers: { Cookie },
     });
-    return json({
+    return {
       items: collection.data.items,
       collectionId: params.id,
       name: collection.data.name,
-    });
+    };
   } catch (e) {
     throw redirect("/");
   }

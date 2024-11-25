@@ -1,7 +1,7 @@
 "use client";
 
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Link, useRevalidator } from "@remix-run/react";
+import { Link, useRevalidator } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Spinner from "~/components/kit/spinner";

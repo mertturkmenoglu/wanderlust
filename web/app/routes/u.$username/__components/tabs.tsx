@@ -1,6 +1,6 @@
 "use client";
 
-import { useMatches, useNavigate } from "@remix-run/react";
+import { useMatches, useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";

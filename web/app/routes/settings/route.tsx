@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { Outlet } from "react-router";
 import { getMe } from "~/lib/api";
 import Sidebar from "./__components/sidebar";
 
@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       throw redirect("/");
     }
 
-    return json({ auth: auth.data });
+    return { auth: auth.data };
   } catch (e) {
     throw redirect("/");
   }

@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
@@ -13,7 +13,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.id, "id is required");
 
   const city = await getCityById(params.id);
-  return json({ city: city.data });
+  return { city: city.data };
 }
 
 export default function Page() {

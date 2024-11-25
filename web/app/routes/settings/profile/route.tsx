@@ -1,5 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { useLoaderData } from "react-router";
 import { Controller, SubmitHandler } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
@@ -35,7 +35,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const profile = await getUserByUsername(auth.data.username);
 
-    return json({ auth: auth.data, profile: profile.data });
+    return { auth: auth.data, profile: profile.data };
   } catch (e) {
     throw redirect("/");
   }

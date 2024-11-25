@@ -1,11 +1,13 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useRouteError,
-} from "@remix-run/react";
 import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
+import {
+  data,
+  isRouteErrorResponse,
+  LoaderFunctionArgs,
+  MetaArgs,
+  useLoaderData,
+  useRouteError,
+} from "react-router";
 import invariant from "tiny-invariant";
 import yarlCaptionsStyles from "yet-another-react-lightbox/plugins/captions.css?url";
 import yarlStyles from "yet-another-react-lightbox/styles.css?url";
@@ -25,17 +27,17 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   try {
     const Cookie = getCookiesFromRequest(request);
     const res = await getDiaryEntryById(params.id, { headers: { Cookie } });
-    return json({ entry: res.data });
+    return { entry: res.data };
   } catch (e) {
     const status = (e as any)?.response?.status;
     if (status === 401 || status === 403) {
-      throw json("You do not have permissions to view this diary entry", {
+      throw data("You do not have permissions to view this diary entry", {
         status: 403,
       });
     } else if (status === 404) {
-      throw json("Diary entry not found", { status: 404 });
+      throw data("Diary entry not found", { status: 404 });
     } else {
-      throw json("Something went wrong", { status: status ?? 500 });
+      throw data("Something went wrong", { status: status ?? 500 });
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Link, useParams } from "@remix-run/react";
+import { Link, useParams } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
 import AppMessage from "~/components/blocks/app-message";

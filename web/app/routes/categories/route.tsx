@@ -1,11 +1,10 @@
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { getCategories } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 
 export async function loader() {
   const res = await getCategories();
-  return json({ categories: res.data.categories });
+  return { categories: res.data.categories };
 }
 
 export function meta() {

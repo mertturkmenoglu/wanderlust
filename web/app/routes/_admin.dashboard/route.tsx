@@ -1,10 +1,5 @@
-import {
-  LoaderFunctionArgs,
-  MetaFunction,
-  json,
-  redirect,
-} from "@remix-run/node";
-import { Link, Outlet } from "@remix-run/react";
+import { LoaderFunctionArgs, MetaFunction, redirect } from "react-router";
+import { Link, Outlet } from "react-router";
 import { getMe } from "~/lib/api";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -16,7 +11,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       throw redirect("/");
     }
 
-    return json({ auth: auth.data });
+    return { auth: auth.data };
   } catch (e) {
     throw redirect("/");
   }

@@ -1,4 +1,4 @@
-import { useNavigate } from "@remix-run/react";
+import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import Uppy, { Meta } from "@uppy/core";
 import { useUppyState } from "@uppy/react";

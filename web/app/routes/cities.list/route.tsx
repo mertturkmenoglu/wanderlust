@@ -1,5 +1,5 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { type MetaFunction } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import { Button } from "~/components/ui/button";
 import { getCities } from "~/lib/api";
@@ -18,7 +18,7 @@ export const meta: MetaFunction = () => {
 
 export const loader = async () => {
   const res = await getCities();
-  return json({ groups: groupCitiesByCountry(res.data.cities) });
+  return { groups: groupCitiesByCountry(res.data.cities) };
 };
 
 export default function Page() {

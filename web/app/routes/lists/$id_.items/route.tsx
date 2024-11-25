@@ -1,5 +1,9 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import {
+  data,
+  LoaderFunctionArgs,
+  MetaArgs,
+  useLoaderData,
+} from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { getListById, getMe } from "~/lib/api-requests";
@@ -14,24 +18,24 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     const list = await getListById(params.id, { headers: { Cookie } });
 
     if (!list.data) {
-      throw json("List not found", {
+      throw data("List not found", {
         status: 404,
       });
     }
 
     if (!auth.data) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     }
 
     if (list.data.userId !== auth.data.id) {
-      throw json("You do not have permission to edit this list", {
+      throw data("You do not have permission to edit this list", {
         status: 403,
       });
     }
 
-    return json({ list: list.data });
+    return { list: list.data };
   } catch (e) {
     let status = (e as any)?.response?.status;
 
@@ -40,19 +44,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }
 
     if (status === 401) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     } else if (status === 403) {
-      throw json("You do not have permission to edit this list", {
+      throw data("You do not have permission to edit this list", {
         status: 403,
       });
     } else if (status === 404) {
-      throw json("List not found", {
+      throw data("List not found", {
         status: 404,
       });
     } else {
-      throw json("Something went wrong", {
+      throw data("Something went wrong", {
         status: status ?? 500,
       });
     }

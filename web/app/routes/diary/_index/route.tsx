@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { json, Link } from "@remix-run/react";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { Link } from "react-router";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
 import AppMessage from "~/components/blocks/app-message";
@@ -21,7 +21,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       throw redirect("/");
     }
 
-    return json({ userId: auth.data.id });
+    return { userId: auth.data.id };
   } catch (e) {
     throw redirect("/");
   }

@@ -1,5 +1,5 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
 import invariant from "tiny-invariant";
@@ -9,7 +9,7 @@ import { getPublicListsOfUser } from "~/lib/api-requests";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   invariant(params.username, "username is required");
-  return json({ username: params.username });
+  return { username: params.username };
 }
 
 export default function Page() {
