@@ -1,7 +1,5 @@
-"use client";
-
-import { useMatches, useNavigate } from "react-router";
-import { Button } from "~/components/ui/button";
+import { Link, useMatches } from "react-router";
+import { buttonVariants } from "~/components/ui/button";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { cn } from "~/lib/utils";
@@ -45,19 +43,11 @@ export default function UserTabs({ username, className }: Props) {
   ];
 
   const activeTab = tabs.find((tab) => tab.id === lastMatch.id);
-  const navigate = useNavigate();
 
   return (
     <div className={cn(className)}>
       <ScrollArea>
-        <Tabs
-          value={activeTab?.id}
-          onValueChange={(v) => {
-            const newTab = tabs.find((tab) => tab.id === v);
-            navigate(newTab?.href ?? "#");
-          }}
-          className="w-full my-4 bg-transparent"
-        >
+        <Tabs value={activeTab?.id} className="w-full my-4 bg-transparent">
           <TabsList className="bg-transparent">
             {tabs.map((t) => (
               <TabsTrigger
@@ -65,12 +55,14 @@ export default function UserTabs({ username, className }: Props) {
                 value={t.id}
                 className="bg-transparent !shadow-none first-of-type:pl-0 px-1"
               >
-                <Button
-                  variant={activeTab?.id === t.id ? "default" : "ghost"}
-                  className=""
+                <Link
+                  to={t.href}
+                  className={buttonVariants({
+                    variant: activeTab?.id === t.id ? "default" : "ghost",
+                  })}
                 >
                   {t.label}
-                </Button>
+                </Link>
               </TabsTrigger>
             ))}
           </TabsList>
