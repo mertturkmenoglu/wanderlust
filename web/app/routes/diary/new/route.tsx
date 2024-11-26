@@ -3,7 +3,7 @@ import { Uppy } from "@uppy/core";
 import GoldenRetriever from "@uppy/golden-retriever";
 import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
 import { useState } from "react";
-import { data, redirect, useBlocker, useLoaderData } from "react-router";
+import { data, redirect, useBlocker } from "react-router";
 import BackLink from "~/components/blocks/back-link";
 import { getMe } from "~/lib/api";
 import Step1 from "./components/step1";
@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import type { Route } from "./+types/route";
 import UnsavedChanges from "./components/unsaved-tooltip";
 
 export async function clientLoader() {
@@ -66,11 +67,11 @@ export function HydrateFallback() {
   );
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "New Diary Entry | Wanderlust" }];
 }
 
-export function links() {
+export function links(): Route.LinkDescriptors {
   return [
     { rel: "stylesheet", href: uppyCoreStyles },
     { rel: "stylesheet", href: uppyDashboardStyles },
@@ -79,10 +80,10 @@ export function links() {
   ];
 }
 
-clientLoader.hydrate = true;
+clientLoader.hydrate = true as const;
 
-export default function Page() {
-  const { baseApiUrl } = useLoaderData<typeof clientLoader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { baseApiUrl } = loaderData;
   const form = useNewDiaryEntryForm();
   const state = useFormState(form);
   const { saveStatus, saveText, saveToLocalStorage } =

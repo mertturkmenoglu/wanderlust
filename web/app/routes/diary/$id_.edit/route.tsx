@@ -1,21 +1,25 @@
-import { data, LoaderFunctionArgs, useLoaderData } from "react-router";
+import { data } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Separator } from "~/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { getDiaryEntryById, getMe } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import DeleteDialog from "./components/delete-dialog";
 import TabInfo from "./components/tab-info";
 import TabLocations from "./components/tab-locations";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const res = await getDiaryEntryById(params.id, { headers: { Cookie } });
-    const auth = await getMe({ headers: { Cookie } });
+    const res = await getDiaryEntryById(params.id, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (auth.data.id !== res.data.userId) {
       throw data("You do not have permissions to edit this diary entry", {
@@ -38,12 +42,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "Edit Diary Entry | Wanderlust" }];
 }
 
-export default function Page() {
-  const { entry } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { entry } = loaderData;
 
   return (
     <div className="mx-auto max-w-7xl my-8">

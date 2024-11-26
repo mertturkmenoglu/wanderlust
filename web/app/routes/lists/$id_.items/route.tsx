@@ -1,15 +1,11 @@
-import {
-  data,
-  LoaderFunctionArgs,
-  MetaArgs,
-  useLoaderData,
-} from "react-router";
+import { data } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { getListById, getMe } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   try {
@@ -63,7 +59,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 }
 
-export function meta({ data, error }: MetaArgs<typeof loader>) {
+export function meta({ data, error }: Route.MetaArgs): Route.MetaDescriptors {
   if (error) {
     return [{ title: "Error | Wanderlust" }];
   }
@@ -75,8 +71,8 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
   return [{ title: "Lists | Wanderlust" }];
 }
 
-export default function Page() {
-  const { list } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { list } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto my-8">

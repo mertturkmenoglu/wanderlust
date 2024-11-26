@@ -4,9 +4,6 @@ import {
   data,
   isRouteErrorResponse,
   Link,
-  LoaderFunctionArgs,
-  MetaArgs,
-  useLoaderData,
   useNavigate,
   useRouteError,
 } from "react-router";
@@ -22,14 +19,19 @@ import { Label } from "~/components/ui/label";
 import { getListById, getMe, updateList } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { cn } from "~/lib/utils";
+import type { Route } from "./+types/route";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const auth = await getMe({ headers: { Cookie } });
-    const list = await getListById(params.id, { headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
+
+    const list = await getListById(params.id, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!list.data) {
       throw data("List not found", {
@@ -77,7 +79,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 }
 
-export function meta({ data, error }: MetaArgs<typeof loader>) {
+export function meta({ data, error }: Route.MetaArgs): Route.MetaDescriptors {
   if (error) {
     return [{ title: "Error | Wanderlust" }];
   }
@@ -89,8 +91,8 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
   return [{ title: "Lists | Wanderlust" }];
 }
 
-export default function Page() {
-  const { list } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { list } = loaderData;
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [name, setName] = useState(list.name);

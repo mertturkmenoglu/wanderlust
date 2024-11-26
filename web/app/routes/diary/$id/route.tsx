@@ -1,13 +1,6 @@
 import leafletIconCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
-import {
-  data,
-  isRouteErrorResponse,
-  LoaderFunctionArgs,
-  MetaArgs,
-  useLoaderData,
-  useRouteError,
-} from "react-router";
+import { data, isRouteErrorResponse, useRouteError } from "react-router";
 import invariant from "tiny-invariant";
 import yarlCaptionsStyles from "yet-another-react-lightbox/plugins/captions.css?url";
 import yarlStyles from "yet-another-react-lightbox/styles.css?url";
@@ -16,17 +9,19 @@ import CollapsibleText from "~/components/blocks/collapsible-text";
 import { Separator } from "~/components/ui/separator";
 import { getDiaryEntryById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import Friends from "./components/friends";
 import Header from "./components/header";
 import Locations from "./components/locations";
 import Media from "./components/media";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const res = await getDiaryEntryById(params.id, { headers: { Cookie } });
+    const res = await getDiaryEntryById(params.id, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
     return { entry: res.data };
   } catch (e) {
     const status = (e as any)?.response?.status;
@@ -42,7 +37,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 }
 
-export function meta({ data, error }: MetaArgs<typeof loader>) {
+export function meta({ data, error }: Route.MetaArgs): Route.MetaDescriptors {
   if (error) {
     return [{ title: "Error | Wanderlust" }];
   }
@@ -54,7 +49,7 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
   return [{ title: "Diary | Wanderlust" }];
 }
 
-export function links() {
+export function links(): Route.LinkDescriptors {
   return [
     { rel: "stylesheet", href: leafletStyles },
     { rel: "stylesheet", href: leafletIconCompatStyles },
@@ -63,8 +58,8 @@ export function links() {
   ];
 }
 
-export default function Page() {
-  const { entry } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { entry } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto my-8">
