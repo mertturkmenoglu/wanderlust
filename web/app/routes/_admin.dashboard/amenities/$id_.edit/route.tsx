@@ -1,5 +1,3 @@
-import { LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
 import { SubmitHandler } from "react-hook-form";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
@@ -9,11 +7,13 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { getAmenities } from "~/lib/api";
+import type { Route } from "./+types/route";
 import { useUpdateAmenityForm, useUpdateAmenityMutation } from "./hooks";
 import { FormInput } from "./schema";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   const id = +params.id;
   const amenities = await getAmenities();
   const amenity = amenities.data.amenities.find((amenity) => amenity.id === id);
@@ -25,8 +25,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { amenity };
 }
 
-export default function Page() {
-  const { amenity } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { amenity } = loaderData;
   const form = useUpdateAmenityForm({
     name: amenity.name,
   });

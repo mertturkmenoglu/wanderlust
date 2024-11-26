@@ -16,6 +16,7 @@ type Props = {
 
 export default function DeleteDialog({ id }: Props) {
   const deleteMutation = useDeleteAmenityMutation(id);
+
   return (
     <Dialog>
       <DialogTrigger asChild>

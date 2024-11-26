@@ -1,4 +1,4 @@
-import { Link, type MetaFunction } from "react-router";
+import { Link } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
 import ActionBanner from "~/components/blocks/action-banner";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
@@ -12,7 +12,7 @@ import { getFeaturedCities, getHomeAggregation } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 import type { Route } from "./+types/_index";
 
-export const meta: MetaFunction = () => {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Wanderlust" },
     {
@@ -20,13 +20,13 @@ export const meta: MetaFunction = () => {
       content: "Inspiring explorations, one spark of Wanderlust!",
     },
   ];
-};
+}
 
-export const loader = async () => {
+export async function loader() {
   const res = await getFeaturedCities();
   const aggregation = await getHomeAggregation();
   return { cities: res.data.cities, aggregation: aggregation.data };
-};
+}
 
 export default function Page({ loaderData }: Route.ComponentProps) {
   const { cities, aggregation } = loaderData;

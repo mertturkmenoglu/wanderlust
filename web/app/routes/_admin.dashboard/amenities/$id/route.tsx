@@ -1,12 +1,12 @@
-import { LoaderFunctionArgs } from "react-router";
-import { Link, useLoaderData } from "react-router";
+import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
 import { getAmenities } from "~/lib/api";
+import type { Route } from "./+types/route";
 import DeleteDialog from "./delete-dialog";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
   const amenities = await getAmenities();
   const id = +params.id;
@@ -19,8 +19,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { amenity };
 }
 
-export default function Page() {
-  const { amenity } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { amenity } = loaderData;
 
   return (
     <div>
