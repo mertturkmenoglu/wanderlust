@@ -5,9 +5,10 @@ import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import type { Route } from "./+types/route";
 import { useForgotPasswordForm, useForgotPasswordMutation } from "./hooks";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Forgot Password | Wanderlust" },
     {

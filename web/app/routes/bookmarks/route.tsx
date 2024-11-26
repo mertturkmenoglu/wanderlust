@@ -1,16 +1,18 @@
-import { LoaderFunctionArgs, redirect } from "react-router";
-import { Link } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
+import { Link, redirect } from "react-router";
 import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { getMe, getUserBookmarks } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import BookmarkCard from "./components/bookmark-card";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data || auth.data.role !== "admin") {
       throw redirect("/");

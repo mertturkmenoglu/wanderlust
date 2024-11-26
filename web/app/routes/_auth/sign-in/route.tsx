@@ -11,10 +11,11 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
 import { AuthContext } from "~/providers/auth-provider";
+import type { Route } from "./+types/route";
 import { useLoginMutation, useSignInForm } from "./hooks";
 import { FormInput } from "./schema";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Sign In | Wanderlust" },
     {
