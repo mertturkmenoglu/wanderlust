@@ -27,7 +27,6 @@ export default function PoiGrid({
   loading = "eager",
 }: Props) {
   const title = getTitle(key);
-  console.log({ key, data });
   const sliced = data.slice(0, 6);
   const isEmpty = sliced.length === 0;
 
