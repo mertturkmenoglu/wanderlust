@@ -1,16 +1,17 @@
-import { Link, useLoaderData } from "react-router";
+import { Link } from "react-router";
 import { citiesCols } from "~/components/blocks/dashboard/columns";
 import { DataTable } from "~/components/blocks/dashboard/data-table";
 import { Button } from "~/components/ui/button";
 import { getCities } from "~/lib/api";
+import type { Route } from "./+types/route";
 
 export async function loader() {
   const cities = await getCities();
   return { cities: cities.data.cities };
 }
 
-export default function Page() {
-  const { cities } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { cities } = loaderData;
 
   return (
     <div>
