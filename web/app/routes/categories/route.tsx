@@ -1,18 +1,18 @@
-import { useLoaderData } from "react-router";
 import { getCategories } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
+import type { Route } from "./+types/route";
 
 export async function loader() {
   const res = await getCategories();
   return { categories: res.data.categories };
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "Categories | Wanderlust" }];
 }
 
-export default function Page() {
-  const { categories } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { categories } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto">

@@ -1,16 +1,16 @@
-import { LoaderFunctionArgs, type MetaFunction } from "react-router";
-import { Link, useLoaderData } from "react-router";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
+import { Link } from "react-router";
 import Collection from "~/components/blocks/collection";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import { Button } from "~/components/ui/button";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
+import type { Route } from "./+types/route";
 import CityBreadcrumb from "./components/city-breadcrumb";
 import ImageAttributionPopover from "./components/image-attribution-popover";
 import MapContainer from "./components/map-container";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export async function loader({ params }: Route.LoaderArgs) {
   let slug = params["*"];
 
   if (!slug) {
@@ -26,9 +26,9 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const city = await getCityById(cityId);
 
   return { city: city.data };
-};
+}
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
   return [
     { title: `${data?.city.name} | Wanderlust` },
     {
@@ -36,14 +36,14 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
       content: `Discover ${data?.city.name} with Wanderlust`,
     },
   ];
-};
+}
 
-export function links() {
+export function links(): Route.LinkDescriptors {
   return [{ rel: "stylesheet", href: leafletStyles }];
 }
 
-export default function Page() {
-  const { city } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { city } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto py-8">
