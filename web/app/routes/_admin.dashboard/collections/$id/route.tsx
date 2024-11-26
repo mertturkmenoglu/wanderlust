@@ -1,21 +1,22 @@
-import { LoaderFunctionArgs, redirect, SerializeFrom } from "react-router";
-import { Link, useLoaderData } from "react-router";
+import { Link, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { getCollectionById } from "~/lib/api-requests";
+import { getCookiesFromRequest } from "~/lib/cookies";
 import { GetCollectionByIdResponseDto } from "~/lib/dto";
 import { ipx } from "~/lib/img-proxy";
 import DeleteDialog from "../../__components/delete-dialog";
+import type { Route } from "./+types/route";
 import { useDeleteCollectionMutation } from "./hooks";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
     const collection = await getCollectionById(params.id, {
-      headers: { Cookie },
+      headers: { Cookie: getCookiesFromRequest(request) },
     });
     return { collection: collection.data };
   } catch (e) {
@@ -23,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 }
 
-function getImage(collection: SerializeFrom<GetCollectionByIdResponseDto>): {
+function getImage(collection: GetCollectionByIdResponseDto): {
   url: string;
   alt: string;
 } {
@@ -42,8 +43,8 @@ function getImage(collection: SerializeFrom<GetCollectionByIdResponseDto>): {
   };
 }
 
-export default function Page() {
-  const { collection } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { collection } = loaderData;
   const mutation = useDeleteCollectionMutation(collection.id);
   const img = getImage(collection);
 
