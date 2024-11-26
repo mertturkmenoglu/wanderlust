@@ -9,7 +9,9 @@ import type { Route } from "./+types/route";
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.username, "username is required");
+
   const following = await getUserFollowing(params.username);
+
   return { following: following.data.following };
 }
 

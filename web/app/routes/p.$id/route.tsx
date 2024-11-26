@@ -1,5 +1,3 @@
-import { LoaderFunctionArgs, MetaArgs } from "react-router";
-import { useLoaderData } from "react-router";
 import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
 import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
 import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
@@ -17,6 +15,7 @@ import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import { getPoiById } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import Amenities from "./components/amenities";
 import BookmarkButton from "./components/bookmark-button";
 import Breadcrumb from "./components/breadcrumb";
@@ -27,7 +26,7 @@ import Menu from "./components/menu";
 import NearbyPois from "./components/nearby-pois";
 import Reviews from "./components/reviews/index";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   const res = await getPoiById(params.id, {
@@ -43,7 +42,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export function links() {
+export function links(): Route.LinkDescriptors {
   return [
     { rel: "stylesheet", href: leafletStyles },
     { rel: "stylesheet", href: leafletIconCompatStyles },
@@ -56,7 +55,7 @@ export function links() {
   ];
 }
 
-export function meta({ data }: MetaArgs<typeof loader>) {
+export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
   if (!data) {
     return [{ title: "Poi Not Found " }];
   }
@@ -67,8 +66,8 @@ export function meta({ data }: MetaArgs<typeof loader>) {
   ];
 }
 
-export default function Page() {
-  const { poi } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { poi } = loaderData;
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const ref = useRef<ThumbnailsRef>(null);

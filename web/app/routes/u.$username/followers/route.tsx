@@ -1,19 +1,22 @@
-import { LoaderFunctionArgs } from "react-router";
-import { Link, useLoaderData } from "react-router";
+import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import UserImage from "~/components/blocks/user-image";
 import { getUserFollowers } from "~/lib/api-requests";
 import { userImage } from "~/lib/image-utils";
 import { ipx } from "~/lib/img-proxy";
+import type { Route } from "./+types/route";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.username, "username is required");
+
   const followers = await getUserFollowers(params.username);
+
   return { followers: followers.data.followers };
 }
-export default function Page() {
-  const { followers } = useLoaderData<typeof loader>();
+
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { followers } = loaderData;
 
   return (
     <div className="my-8">

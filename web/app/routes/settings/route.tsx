@@ -1,12 +1,14 @@
-import { LoaderFunctionArgs, redirect } from "react-router";
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
 import { getMe } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import Sidebar from "./__components/sidebar";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data) {
       throw redirect("/");
@@ -18,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "Settings | Wanderlust" }];
 }
 

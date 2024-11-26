@@ -1,5 +1,4 @@
-import { LoaderFunctionArgs, redirect } from "react-router";
-import { useLoaderData } from "react-router";
+import { redirect } from "react-router";
 import FacebookIcon from "~/components/icons/facebook";
 import GoogleIcon from "~/components/icons/google";
 import { Button } from "~/components/ui/button";
@@ -8,11 +7,13 @@ import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
 import { getMe, getUserByUsername } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data) {
       throw redirect("/");
@@ -26,8 +27,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-export default function Page() {
-  const { auth } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { auth } = loaderData;
 
   return (
     <div>
