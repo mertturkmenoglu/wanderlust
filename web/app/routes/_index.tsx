@@ -87,18 +87,11 @@ export default function Page({ loaderData }: Route.ComponentProps) {
         imgClassName="aspect-[3]"
       />
 
-      <PoiGrid
-        dataKey="featured"
-        data={aggregation.new}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="featured" data={aggregation.new} />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
         alt="Discover Around You Banner Image"
-        fetchPriority="low"
-        loading="lazy"
         content={
           <>
             <div className="text-center">
@@ -117,18 +110,11 @@ export default function Page({ loaderData }: Route.ComponentProps) {
         }
       />
 
-      <PoiGrid
-        dataKey="popular"
-        data={aggregation.popular}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="popular" data={aggregation.popular} />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
         alt="Trip Planner Banner Image"
-        fetchPriority="low"
-        loading="lazy"
         message={
           <div className="flex flex-col gap-4">
             <div className="text-2xl font-bold text-primary">
@@ -149,18 +135,11 @@ export default function Page({ loaderData }: Route.ComponentProps) {
         imgClassName=""
       />
 
-      <PoiGrid
-        dataKey="favorite"
-        data={aggregation.favorites}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="favorite" data={aggregation.favorites} />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
         alt="Events Banner Image"
-        fetchPriority="low"
-        loading="lazy"
         message={
           <div className="flex flex-col gap-4">
             <div className="text-2xl font-bold text-primary">
@@ -180,12 +159,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
         lefty={false}
       />
 
-      <PoiGrid
-        dataKey="new"
-        data={aggregation.new}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="new" data={aggregation.new} />
     </div>
   );
 }
