@@ -1,5 +1,5 @@
-import { useLoaderData } from "react-router";
 import { ExternalLinkIcon } from "lucide-react";
+import { useLoaderData } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
 import { Button } from "~/components/ui/button";
 import { loader } from "../route";
@@ -16,7 +16,11 @@ export default function MapContainer() {
       <div className="flex items-end justify-between">
         <h3 className="text-2xl font-bold">Location</h3>
         <Button variant="link" className="px-0" size="sm" asChild>
-          <a href={`https://www.google.com/maps/@${lat},${lng},${zoom}z`}>
+          <a
+            href={`https://www.google.com/maps/@${lat},${lng},${zoom}z`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <ExternalLinkIcon className="size-3" />
             <span className="ml-1">Open in Maps</span>
           </a>
