@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { useContext } from "react";
 import UserImage from "~/components/blocks/user-image";
 import { userImage } from "~/lib/image-utils";

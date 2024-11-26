@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import {
   ColumnDef,
   flexRender,

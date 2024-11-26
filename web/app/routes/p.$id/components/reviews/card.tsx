@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { formatDistanceToNow } from "date-fns";
 import { FlagIcon } from "lucide-react";
 import { useState } from "react";

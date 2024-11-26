@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { Controller, SubmitHandler } from "react-hook-form";
 import InputError from "~/components/kit/input-error";
 import { Checkbox } from "~/components/ui/checkbox";

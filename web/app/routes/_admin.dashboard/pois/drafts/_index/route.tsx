@@ -1,20 +1,23 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { getDrafts } from "~/lib/api-requests";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const res = await getDrafts({ headers: { Cookie } });
-    return json({ drafts: res.data });
+    const res = await getDrafts({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
+
+    return { drafts: res.data };
   } catch (e) {
     throw new Response("Something went wrong", { status: 500 });
   }
 }
 
-export default function Page() {
-  const { drafts } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { drafts } = loaderData;
 
   return (
     <div>

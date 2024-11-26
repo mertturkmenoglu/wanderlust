@@ -1,6 +1,7 @@
 import { Button } from "~/components/ui/button";
+import type { Route } from "./+types/route";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Privacy Policy | Wanderlust" },
     {

@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import { DashboardModal } from "@uppy/react";

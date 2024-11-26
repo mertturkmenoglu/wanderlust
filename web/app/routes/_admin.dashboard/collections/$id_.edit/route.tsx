@@ -1,5 +1,3 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { SubmitHandler } from "react-hook-form";
 import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
@@ -12,17 +10,19 @@ import { Label } from "~/components/ui/label";
 import { getCollectionById } from "~/lib/api";
 import { lengthTracker } from "~/lib/form-utils";
 import CustomEditor from "../custom-editor";
+import type { Route } from "./+types/route";
 import { useUpdateCollectionForm, useUpdateCollectionMutation } from "./hooks";
 import { FormInput } from "./schema";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   const collection = await getCollectionById(params.id);
-  return json({ collection: collection.data });
+  return { collection: collection.data };
 }
 
-export default function Page() {
-  const { collection } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { collection } = loaderData;
   const form = useUpdateCollectionForm(collection);
   const mutation = useUpdateCollectionMutation(collection.id);
 

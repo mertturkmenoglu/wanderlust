@@ -1,5 +1,3 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import invariant from "tiny-invariant";
@@ -12,18 +10,19 @@ import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
+import type { Route } from "./+types/route";
 import { useUpdateCityForm, useUpdateCityMutation } from "./hooks";
 import { FormInput } from "./schema";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   const city = await getCityById(params.id);
-  return json({ city: city.data });
+  return { city: city.data };
 }
 
-export default function Page() {
-  const { city } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { city } = loaderData;
   const [previewUrl, setPreviewUrl] = useState(city.imageUrl);
   const form = useUpdateCityForm(city);
   const mutation = useUpdateCityMutation(city.id);

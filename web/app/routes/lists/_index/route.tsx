@@ -1,30 +1,32 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link } from "@remix-run/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { GlobeIcon, LockIcon } from "lucide-react";
 import React from "react";
+import { Link, redirect } from "react-router";
 import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { getAllListsOfUser, getMe } from "~/lib/api-requests";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import CreateListDialog from "./create-list-dialog";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data) {
       throw redirect("/");
     }
 
-    return json({ auth: auth.data });
+    return { auth: true };
   } catch (e) {
     throw redirect("/");
   }
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "Lists | Wanderlust" }];
 }
 

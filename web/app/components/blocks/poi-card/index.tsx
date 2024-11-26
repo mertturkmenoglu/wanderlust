@@ -6,23 +6,14 @@ type Props = {
   poi: Pick<GetPoiByIdResponseDto, "id" | "name" | "category" | "address"> & {
     image: Pick<Media, "url" | "alt">;
   };
-} & React.HTMLAttributes<HTMLDivElement> &
-  Pick<React.ComponentProps<"img">, "fetchPriority" | "loading">;
+} & React.HTMLAttributes<HTMLDivElement>;
 
-export default function PoiCard({
-  poi,
-  className,
-  fetchPriority = "auto",
-  loading = "eager",
-  ...props
-}: Props) {
+export default function PoiCard({ poi, className, ...props }: Props) {
   return (
     <div key={poi.id} className={cn("group", className)} {...props}>
       <img
         src={ipx(poi.image.url, "w_512")}
         alt={poi.image.alt}
-        fetchPriority={fetchPriority}
-        loading={loading}
         className="aspect-video w-full rounded-md object-cover"
       />
 

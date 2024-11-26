@@ -1,33 +1,34 @@
-import { LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { json, Link } from "@remix-run/react";
 import React, { useState } from "react";
 import { DateRange } from "react-day-picker";
+import { Link, redirect } from "react-router";
 import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { getMe } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import EntryCard from "./components/entry-card";
 import Header from "./components/header";
 import Loading from "./components/loading";
 import { useDiaryEntriesQuery, useLoadMoreText } from "./hooks";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data || auth.data.role !== "admin") {
       throw redirect("/");
     }
 
-    return json({ userId: auth.data.id });
+    return { userId: auth.data.id };
   } catch (e) {
     throw redirect("/");
   }
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     {
       title: "Diary | Wanderlust",

@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import { Grid2X2Icon, MapIcon } from "lucide-react";
 import { useState } from "react";
 import { ClientOnly } from "remix-utils/client-only";

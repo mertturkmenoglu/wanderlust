@@ -1,6 +1,5 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { Controller, SubmitHandler } from "react-hook-form";
+import { redirect } from "react-router";
 import InputError from "~/components/kit/input-error";
 import InputInfo from "~/components/kit/input-info";
 import { Button } from "~/components/ui/button";
@@ -19,15 +18,17 @@ import { Separator } from "~/components/ui/separator";
 import { Textarea } from "~/components/ui/textarea";
 import { getMe, getUserByUsername } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import { useProfileForm, useProfileMutation } from "./hooks";
 import { pronounGroups } from "./pronouns";
 import { FormInput } from "./schema";
 import UpdateImage from "./update-image";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data) {
       throw redirect("/");
@@ -35,14 +36,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const profile = await getUserByUsername(auth.data.username);
 
-    return json({ auth: auth.data, profile: profile.data });
+    return { auth: auth.data, profile: profile.data };
   } catch (e) {
     throw redirect("/");
   }
 }
 
-export default function Page() {
-  const { profile } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { profile } = loaderData;
   const form = useProfileForm({
     fullName: profile.fullName,
     bio: profile.bio,

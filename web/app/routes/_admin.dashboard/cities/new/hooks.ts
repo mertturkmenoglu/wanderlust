@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@remix-run/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { createCity } from "~/lib/api";
 import { FormInput, schema } from "./schema";
@@ -18,7 +18,14 @@ export function useNewCityMutation() {
 
   return useMutation({
     mutationKey: ["city-create"],
-    mutationFn: async (data: FormInput) => createCity(data),
+    mutationFn: async (data: FormInput) =>
+      createCity({
+        ...data,
+        imageLicense: data.imageLicense ?? "",
+        imageLicenseLink: data.imageLicenseLink ?? "",
+        imageAttribute: data.imageAttribute ?? "",
+        imageAttributionLink: data.imageAttributionLink ?? "",
+      }),
     onSuccess: async () => {
       qc.invalidateQueries({ queryKey: ["cities"] });
       navigate(`/dashboard/cities`);

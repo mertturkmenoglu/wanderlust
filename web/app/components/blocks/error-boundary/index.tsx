@@ -1,12 +1,7 @@
 // Taken from Epic Stack
 // https://github.com/epicweb-dev/epic-stack/blob/main/app/components/error-boundary.tsx
 
-import {
-  type ErrorResponse,
-  isRouteErrorResponse,
-  useParams,
-  useRouteError,
-} from "@remix-run/react";
+import { type ErrorResponse, isRouteErrorResponse, useParams, useRouteError } from "react-router";
 import AppMessage from "../app-message";
 
 type StatusHandler = (info: {

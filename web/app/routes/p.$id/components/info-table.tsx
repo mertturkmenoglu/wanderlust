@@ -1,6 +1,6 @@
 import FormattedRating from "~/components/kit/formatted-rating";
 
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { Progress } from "~/components/ui/progress";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 import { loader } from "../route";

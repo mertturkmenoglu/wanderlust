@@ -1,19 +1,20 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
+import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { getPublicListsOfUser } from "~/lib/api-requests";
+import type { Route } from "./+types/route";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.username, "username is required");
-  return json({ username: params.username });
+  return { username: params.username };
 }
 
-export default function Page() {
-  const { username } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { username } = loaderData;
+
   const query = useInfiniteQuery({
     queryKey: ["public-lists", username],
     queryFn: ({ pageParam }) => getPublicListsOfUser(username, pageParam, 25),

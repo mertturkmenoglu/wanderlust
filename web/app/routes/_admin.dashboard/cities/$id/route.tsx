@@ -1,5 +1,4 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
@@ -7,17 +6,18 @@ import { Separator } from "~/components/ui/separator";
 import { getCityById } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 import DeleteDialog from "../../__components/delete-dialog";
+import type { Route } from "./+types/route";
 import { useDeleteCityMutation } from "./hooks";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   const city = await getCityById(params.id);
-  return json({ city: city.data });
+  return { city: city.data };
 }
 
-export default function Page() {
-  const { city } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { city } = loaderData;
   const mutation = useDeleteCityMutation(city.id);
 
   return (

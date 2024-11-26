@@ -1,12 +1,12 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "react-router";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import { Button } from "~/components/ui/button";
 import { getCities } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
+import type { Route } from "./+types/route";
 import { groupCitiesByCountry } from "./utils";
 
-export const meta: MetaFunction = () => {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Cities | Wanderlust" },
     {
@@ -14,15 +14,15 @@ export const meta: MetaFunction = () => {
       content: "Discover cities around the world",
     },
   ];
-};
+}
 
-export const loader = async () => {
+export async function loader() {
   const res = await getCities();
-  return json({ groups: groupCitiesByCountry(res.data.cities) });
-};
+  return { groups: groupCitiesByCountry(res.data.cities) };
+}
 
-export default function Page() {
-  const { groups } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { groups } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto">

@@ -1,20 +1,22 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import UserImage from "~/components/blocks/user-image";
 import { getUserFollowing } from "~/lib/api";
 import { userImage } from "~/lib/image-utils";
 import { ipx } from "~/lib/img-proxy";
+import type { Route } from "./+types/route";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.username, "username is required");
+
   const following = await getUserFollowing(params.username);
-  return json({ following: following.data.following });
+
+  return { following: following.data.following };
 }
 
-export default function Page() {
-  const { following } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { following } = loaderData;
 
   return (
     <div className="my-8">

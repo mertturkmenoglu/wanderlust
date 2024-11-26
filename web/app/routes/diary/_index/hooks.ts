@@ -33,5 +33,5 @@ export function useLoadMoreText(
     return "Load more";
   }
 
-  return "Nothin more to load";
+  return "Nothing more to load";
 }

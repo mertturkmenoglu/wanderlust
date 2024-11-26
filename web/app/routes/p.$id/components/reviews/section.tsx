@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { LoaderCircleIcon } from "lucide-react";
 import { useMemo } from "react";

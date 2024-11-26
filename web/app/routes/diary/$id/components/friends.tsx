@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "react-router";
 import AppMessage from "~/components/blocks/app-message";
 import UserCard from "~/components/blocks/user-card";
 import { loader } from "../route";

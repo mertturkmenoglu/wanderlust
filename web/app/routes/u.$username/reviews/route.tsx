@@ -1,20 +1,19 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { getReviewsByUsername } from "~/lib/api-requests";
+import { Route } from "./+types/route";
 import Card from "./components/card";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.username, "username is required");
-  return json({ username: params.username });
+  return { username: params.username };
 }
 
-export default function Page() {
-  const { username } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { username } = loaderData;
   const query = useInfiniteQuery({
     queryKey: ["reviews", username],
     queryFn: ({ pageParam }) => getReviewsByUsername(username, pageParam, 10),

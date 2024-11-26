@@ -1,13 +1,14 @@
-import { json, LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Button } from "~/components/ui/button";
 import { getCategories } from "~/lib/api";
+import type { Route } from "./+types/route";
 import DeleteDialog from "./delete-dialog";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   const id = +params.id;
   const categories = await getCategories();
   const category = categories.data.categories.find(
@@ -18,11 +19,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Category not found", { status: 404 });
   }
 
-  return json({ category });
+  return { category };
 }
 
-export default function Page() {
-  const { category } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { category } = loaderData;
 
   return (
     <div>

@@ -4,9 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
+import type { Route } from "./+types/route";
 import { faqData } from "./data";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Help Center | Wanderlust" },
     {

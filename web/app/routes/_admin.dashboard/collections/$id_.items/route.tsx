@@ -1,8 +1,7 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
 import { useMutation } from "@tanstack/react-query";
 import { GripVerticalIcon, LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, redirect } from "react-router";
 import { toast } from "sonner";
 import { createSwapy, SwapEventArray } from "swapy";
 import invariant from "tiny-invariant";
@@ -11,30 +10,33 @@ import BackLink from "~/components/blocks/back-link";
 import PoiCard from "~/components/blocks/poi-card";
 import { Button } from "~/components/ui/button";
 import { getCollectionById, updateCollectionItems } from "~/lib/api-requests";
+import { getCookiesFromRequest } from "~/lib/cookies";
 import { UpdateCollectionItemsRequestDto } from "~/lib/dto";
 import { cn } from "~/lib/utils";
+import type { Route } from "./+types/route";
 import AddItemDialog from "./add-item-dialog";
 import DeleteItemDialog from "./delete-item-dialog";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
     const collection = await getCollectionById(params.id, {
-      headers: { Cookie },
+      headers: { Cookie: getCookiesFromRequest(request) },
     });
-    return json({
+
+    return {
       items: collection.data.items,
       collectionId: params.id,
       name: collection.data.name,
-    });
+    };
   } catch (e) {
     throw redirect("/");
   }
 }
 
-export default function Page() {
-  const { items, collectionId, name } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { items, collectionId, name } = loaderData;
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [arr, setArr] = useState<SwapEventArray>([]);

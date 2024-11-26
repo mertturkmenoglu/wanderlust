@@ -1,9 +1,9 @@
 import { DevTool } from "@hookform/devtools";
-import { json, redirect, useBlocker, useLoaderData } from "@remix-run/react";
 import { Uppy } from "@uppy/core";
 import GoldenRetriever from "@uppy/golden-retriever";
 import ImageEditor from "@uppy/image-editor/lib/ImageEditor";
 import { useState } from "react";
+import { data, redirect, useBlocker } from "react-router";
 import BackLink from "~/components/blocks/back-link";
 import { getMe } from "~/lib/api";
 import Step1 from "./components/step1";
@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import type { Route } from "./+types/route";
 import UnsavedChanges from "./components/unsaved-tooltip";
 
 export async function clientLoader() {
@@ -38,7 +39,7 @@ export async function clientLoader() {
     const auth = await getMe();
 
     if (!auth.data) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     }
@@ -48,14 +49,14 @@ export async function clientLoader() {
     if (status === 401) {
       throw redirect("/");
     } else {
-      throw json("Something went wrong", {
+      throw data("Something went wrong", {
         status: status ?? 500,
       });
     }
   }
 
   const baseApiUrl = import.meta.env.VITE_API_URL ?? "";
-  return json({ baseApiUrl });
+  return { baseApiUrl };
 }
 
 export function HydrateFallback() {
@@ -66,11 +67,11 @@ export function HydrateFallback() {
   );
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "New Diary Entry | Wanderlust" }];
 }
 
-export function links() {
+export function links(): Route.LinkDescriptors {
   return [
     { rel: "stylesheet", href: uppyCoreStyles },
     { rel: "stylesheet", href: uppyDashboardStyles },
@@ -79,10 +80,10 @@ export function links() {
   ];
 }
 
-clientLoader.hydrate = true;
+clientLoader.hydrate = true as const;
 
-export default function Page() {
-  const { baseApiUrl } = useLoaderData<typeof clientLoader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { baseApiUrl } = loaderData;
   const form = useNewDiaryEntryForm();
   const state = useFormState(form);
   const { saveStatus, saveText, saveToLocalStorage } =

@@ -9,9 +9,10 @@ import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Separator } from "~/components/ui/separator";
+import type { Route } from "./+types/route";
 import { useSignUpForm, useSignUpMutation } from "./hooks";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Sign Up | Wanderlust" },
     {

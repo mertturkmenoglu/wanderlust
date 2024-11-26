@@ -1,18 +1,17 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import { useQuery } from "@tanstack/react-query";
 import { LoaderIcon } from "lucide-react";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
 import { getUserActivities } from "~/lib/api-requests";
+import { Route } from "./+types/route";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.username, "username is required");
-  return json({ username: params.username });
+  return { username: params.username };
 }
 
-export default function ActivitiesPage() {
-  const { username } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { username } = loaderData;
 
   const query = useQuery({
     queryKey: ["user-activities", username],

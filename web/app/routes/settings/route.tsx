@@ -1,24 +1,26 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { Outlet, redirect } from "react-router";
 import { getMe } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import Sidebar from "./__components/sidebar";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data) {
       throw redirect("/");
     }
 
-    return json({ auth: auth.data });
+    return { auth: auth.data };
   } catch (e) {
     throw redirect("/");
   }
 }
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [{ title: "Settings | Wanderlust" }];
 }
 

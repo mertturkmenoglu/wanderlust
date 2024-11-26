@@ -1,15 +1,17 @@
-import { json, LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, redirect } from "react-router";
 import { collectionsCols } from "~/components/blocks/dashboard/columns";
 import { DataTable } from "~/components/blocks/dashboard/data-table";
 import { Button } from "~/components/ui/button";
 import { getCollections } from "~/lib/api-requests";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const collections = await getCollections(1, 25, { headers: { Cookie } });
-    return json({ collections: collections.data.collections });
+    const collections = await getCollections(1, 25, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
+    return { collections: collections.data.collections };
   } catch (e) {
     throw redirect("/");
   }
@@ -23,8 +25,8 @@ function shortDescription(str: string) {
   return str;
 }
 
-export default function Page() {
-  const { collections } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { collections } = loaderData;
 
   return (
     <div>

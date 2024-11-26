@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoaderData, useRevalidator } from "@remix-run/react";
+import { useLoaderData, useRevalidator } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";

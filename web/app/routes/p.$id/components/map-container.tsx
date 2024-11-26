@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { ExternalLinkIcon } from "lucide-react";
 import { ClientOnly } from "remix-utils/client-only";
 import { Button } from "~/components/ui/button";

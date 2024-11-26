@@ -1,5 +1,5 @@
-import { Link } from "@remix-run/react";
 import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
@@ -9,11 +9,7 @@ type Props = {
   text?: string;
 };
 
-export default function BackLink({
-  href,
-  className,
-  text = "Go back",
-}: Readonly<Props>) {
+export default function BackLink({ href, className, text = "Go back" }: Props) {
   return (
     <Link to={href} className={cn(className)}>
       <Button variant="link" className="px-0" asChild>

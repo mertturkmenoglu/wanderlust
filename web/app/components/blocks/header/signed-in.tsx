@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { BellIcon, SendIcon } from "lucide-react";
 import {
   Tooltip,

@@ -1,11 +1,3 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import {
-  isRouteErrorResponse,
-  Link,
-  useLoaderData,
-  useNavigate,
-  useRouteError,
-} from "@remix-run/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   EllipsisVerticalIcon,
@@ -14,6 +6,13 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useContext } from "react";
+import {
+  data,
+  isRouteErrorResponse,
+  Link,
+  useNavigate,
+  useRouteError,
+} from "react-router";
 import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
@@ -40,29 +39,32 @@ import { Separator } from "~/components/ui/separator";
 import { deleteListById, getListById } from "~/lib/api-requests";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { AuthContext } from "~/providers/auth-provider";
+import type { Route } from "./+types/route";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const res = await getListById(params.id, { headers: { Cookie } });
-    return json({ list: res.data });
+    const res = await getListById(params.id, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
+
+    return { list: res.data };
   } catch (e) {
     const status = (e as any)?.response?.status;
     if (status === 401 || status === 403) {
-      throw json("You do not have permissions to view this list", {
+      throw data("You do not have permissions to view this list", {
         status: 403,
       });
     } else if (status === 404) {
-      throw json("List not found", { status: 404 });
+      throw data("List not found", { status: 404 });
     } else {
-      throw json("Something went wrong", { status: status ?? 500 });
+      throw data("Something went wrong", { status: status ?? 500 });
     }
   }
 }
 
-export function meta({ data, error }: MetaArgs<typeof loader>) {
+export function meta({ data, error }: Route.MetaArgs): Route.MetaDescriptors {
   if (error) {
     return [{ title: "Error | Wanderlust" }];
   }
@@ -74,8 +76,8 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
   return [{ title: "Lists | Wanderlust" }];
 }
 
-export default function Page() {
-  const { list } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { list } = loaderData;
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const qc = useQueryClient();

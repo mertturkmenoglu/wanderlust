@@ -1,18 +1,18 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "react-router";
 import { ClientOnly } from "remix-utils/client-only";
 import ActionBanner from "~/components/blocks/action-banner";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import OverlayBanner from "~/components/blocks/overlay-banner";
 import TagNavigation from "~/components/blocks/tag-navigation";
 import VerticalBanner from "~/components/blocks/vertical-banner";
+import PoiGrid from "~/components/poi-grid";
+import Search from "~/components/search";
 import { Button } from "~/components/ui/button";
 import { getFeaturedCities, getHomeAggregation } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
-import PoiGrid from "./poi-grid";
-import Search from "./search";
+import type { Route } from "./+types/_index";
 
-export const meta: MetaFunction = () => {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Wanderlust" },
     {
@@ -20,16 +20,16 @@ export const meta: MetaFunction = () => {
       content: "Inspiring explorations, one spark of Wanderlust!",
     },
   ];
-};
+}
 
-export const loader = async () => {
+export async function loader() {
   const res = await getFeaturedCities();
   const aggregation = await getHomeAggregation();
-  return json({ cities: res.data.cities, aggregation: aggregation.data });
-};
+  return { cities: res.data.cities, aggregation: aggregation.data };
+}
 
-export default function Page() {
-  const { cities, aggregation } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { cities, aggregation } = loaderData;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -87,18 +87,11 @@ export default function Page() {
         imgClassName="aspect-[3]"
       />
 
-      <PoiGrid
-        dataKey="featured"
-        data={aggregation.new}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="featured" data={aggregation.new} />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
         alt="Discover Around You Banner Image"
-        fetchPriority="low"
-        loading="lazy"
         content={
           <>
             <div className="text-center">
@@ -117,18 +110,11 @@ export default function Page() {
         }
       />
 
-      <PoiGrid
-        dataKey="popular"
-        data={aggregation.popular}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="popular" data={aggregation.popular} />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
         alt="Trip Planner Banner Image"
-        fetchPriority="low"
-        loading="lazy"
         message={
           <div className="flex flex-col gap-4">
             <div className="text-2xl font-bold text-primary">
@@ -149,18 +135,11 @@ export default function Page() {
         imgClassName=""
       />
 
-      <PoiGrid
-        dataKey="favorite"
-        data={aggregation.favorites}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="favorite" data={aggregation.favorites} />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
         alt="Events Banner Image"
-        fetchPriority="low"
-        loading="lazy"
         message={
           <div className="flex flex-col gap-4">
             <div className="text-2xl font-bold text-primary">
@@ -180,12 +159,7 @@ export default function Page() {
         lefty={false}
       />
 
-      <PoiGrid
-        dataKey="new"
-        data={aggregation.new}
-        fetchPriority="low"
-        loading="lazy"
-      />
+      <PoiGrid dataKey="new" data={aggregation.new} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useRevalidator } from "@remix-run/react";
+import { useRevalidator } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

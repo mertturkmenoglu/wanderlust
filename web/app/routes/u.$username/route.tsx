@@ -1,37 +1,34 @@
-import {
-  json,
-  LoaderFunctionArgs,
-  type MetaFunction,
-  redirect,
-} from "@remix-run/node";
-import { Outlet } from "@remix-run/react";
+import { Outlet, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import { getUserByUsername } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import Bio from "./__components/bio";
 
-export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.username, "username is missing");
+
   try {
-    const Cookie = getCookiesFromRequest(request);
     const res = await getUserByUsername(params.username, {
-      headers: { Cookie },
+      headers: {
+        Cookie: getCookiesFromRequest(request),
+      },
     });
-    return json({ user: res.data, meta: res.meta });
+    return { user: res.data, meta: res.meta };
   } catch (e) {
     throw redirect("/");
   }
-};
+}
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export function meta({ data }: Route.MetaArgs) {
   return [
     { title: `${data?.user.fullName} | Wanderlust` },
     {
       name: "description",
-      content: `${data?.user.fullName} Wanderlust account`,
+      content: `${data?.user.fullName} profile page`,
     },
   ];
-};
+}
 
 export default function Page() {
   return (

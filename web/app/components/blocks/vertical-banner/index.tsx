@@ -6,7 +6,7 @@ type Props = {
   imageClassName?: string;
   alt: string;
   content: React.ReactNode;
-} & Pick<React.ComponentProps<"img">, "fetchPriority" | "loading">;
+};
 
 export default function VerticalBanner({
   image,
@@ -14,8 +14,6 @@ export default function VerticalBanner({
   imageClassName,
   alt,
   content,
-  fetchPriority = "auto",
-  loading = "eager",
 }: Props) {
   return (
     <div
@@ -24,8 +22,6 @@ export default function VerticalBanner({
       <img
         src={image}
         alt={alt}
-        fetchPriority={fetchPriority}
-        loading={loading}
         className={cn("aspect-square size-80", imageClassName)}
       />
 

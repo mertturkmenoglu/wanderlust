@@ -1,7 +1,8 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
+import type { Route } from "./+types/route";
 
-export function meta() {
+export function meta(): Route.MetaDescriptors {
   return [
     { title: "Terms of Service | Wanderlust" },
     {
@@ -11,7 +12,7 @@ export function meta() {
   ];
 }
 
-export default function page() {
+export default function Page() {
   return (
     <div className="mx-auto my-16 max-w-2xl text-wrap">
       <h1 className="text-2xl font-bold text-center pb-3">

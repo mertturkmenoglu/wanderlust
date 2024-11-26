@@ -1,13 +1,12 @@
-import { json, LoaderFunctionArgs, MetaArgs } from "@remix-run/node";
-import {
-  isRouteErrorResponse,
-  Link,
-  useLoaderData,
-  useNavigate,
-  useRouteError,
-} from "@remix-run/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import {
+  data,
+  isRouteErrorResponse,
+  Link,
+  useNavigate,
+  useRouteError,
+} from "react-router";
 import { toast } from "sonner";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
@@ -20,34 +19,39 @@ import { Label } from "~/components/ui/label";
 import { getListById, getMe, updateList } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import { cn } from "~/lib/utils";
+import type { Route } from "./+types/route";
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
 
   try {
-    const Cookie = getCookiesFromRequest(request);
-    const auth = await getMe({ headers: { Cookie } });
-    const list = await getListById(params.id, { headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
+
+    const list = await getListById(params.id, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!list.data) {
-      throw json("List not found", {
+      throw data("List not found", {
         status: 404,
       });
     }
 
     if (!auth.data) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     }
 
     if (list.data.userId !== auth.data.id) {
-      throw json("You do not have permission to edit this list", {
+      throw data("You do not have permission to edit this list", {
         status: 403,
       });
     }
 
-    return json({ list: list.data });
+    return { list: list.data };
   } catch (e) {
     let status = (e as any)?.response?.status;
 
@@ -56,26 +60,26 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     }
 
     if (status === 401) {
-      throw json("You are not signed in", {
+      throw data("You are not signed in", {
         status: 401,
       });
     } else if (status === 403) {
-      throw json("You do not have permissions to edit this list", {
+      throw data("You do not have permissions to edit this list", {
         status: 403,
       });
     } else if (status === 404) {
-      throw json("List not found", {
+      throw data("List not found", {
         status: 404,
       });
     } else {
-      throw json("Something went wrong", {
+      throw data("Something went wrong", {
         status: status ?? 500,
       });
     }
   }
 }
 
-export function meta({ data, error }: MetaArgs<typeof loader>) {
+export function meta({ data, error }: Route.MetaArgs): Route.MetaDescriptors {
   if (error) {
     return [{ title: "Error | Wanderlust" }];
   }
@@ -87,8 +91,8 @@ export function meta({ data, error }: MetaArgs<typeof loader>) {
   return [{ title: "Lists | Wanderlust" }];
 }
 
-export default function Page() {
-  const { list } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { list } = loaderData;
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [name, setName] = useState(list.name);
