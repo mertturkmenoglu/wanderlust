@@ -1,5 +1,3 @@
-import { LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 import invariant from "tiny-invariant";
@@ -10,11 +8,13 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { getCategories } from "~/lib/api";
+import type { Route } from "./+types/route";
 import { useUpdateCategoryForm, useUpdateCategoryMutation } from "./hooks";
 import { FormInput } from "./schema";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   const id = +params.id;
   const categories = await getCategories();
   const category = categories.data.categories.find(
@@ -28,8 +28,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return { category };
 }
 
-export default function Page() {
-  const { category } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { category } = loaderData;
   const [previewUrl, setPreviewUrl] = useState(category.image);
   const form = useUpdateCategoryForm(category);
   const mutation = useUpdateCategoryMutation(category.id);
