@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
+import { useParagraphs } from "./hooks";
 
 type Props = {
   text: string;
@@ -15,10 +16,7 @@ export default function CollapsibleText({
 }: Props) {
   const [showMore, setShowMore] = useState(false);
   const [showButton] = useState(() => text.length > charLimit);
-  const shortText =
-    text.length < charLimit ? text : text.slice(0, charLimit) + "...";
-  const displayText = showMore ? text : shortText;
-  const paragraphs = displayText.split("\n");
+  const paragraphs = useParagraphs(text, charLimit, showMore);
 
   return (
     <div className={cn(className)}>
