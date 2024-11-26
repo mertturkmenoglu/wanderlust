@@ -1,3 +1,4 @@
+import type { Options } from "ky";
 import api from "../api";
 import {
   CreateBookmarkRequestDto,
@@ -18,8 +19,12 @@ export function deleteBookmarkByPoiId(poiId: string) {
   return api.delete(`bookmarks/${poiId}`);
 }
 
-export function getUserBookmarks(page: number, pageSize: number) {
-  return api.get(`bookmarks/?page=${page}&pageSize=${pageSize}`).json<{
+export function getUserBookmarks(
+  page: number,
+  pageSize: number,
+  options?: Options
+) {
+  return api.get(`bookmarks/?page=${page}&pageSize=${pageSize}`, options).json<{
     data: GetUserBookmarksResponseDto;
     pagination: Pagination;
   }>();
