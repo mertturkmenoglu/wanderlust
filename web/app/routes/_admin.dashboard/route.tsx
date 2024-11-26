@@ -1,11 +1,13 @@
-import { LoaderFunctionArgs, MetaFunction, redirect } from "react-router";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, redirect } from "react-router";
 import { getMe } from "~/lib/api";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const auth = await getMe({ headers: { Cookie } });
+    const auth = await getMe({
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
 
     if (!auth.data || auth.data.role !== "admin") {
       throw redirect("/");
@@ -17,9 +19,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-export const meta: MetaFunction = () => {
-  return [{ title: "Admin Dashboard | Wanderlust" }];
-};
+export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
+  return [
+    {
+      title: "Admin Dashboard | Wanderlust",
+    },
+  ];
+}
 
 export default function Page() {
   return (
