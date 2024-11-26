@@ -1,13 +1,24 @@
 import FormattedRating from "~/components/kit/formatted-rating";
 
+import { ExternalLinkIcon } from "lucide-react";
 import { useLoaderData } from "react-router";
 import { Progress } from "~/components/ui/progress";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 import { loader } from "../route";
 import OpenHoursDialog from "./open-hours-dialog";
 
+function useWebsiteHostname(s: string): [string, boolean] {
+  try {
+    const url = new URL(s);
+    return [url.hostname, true];
+  } catch (e) {
+    return ["", false];
+  }
+}
+
 export default function InformationTable() {
   const { poi } = useLoaderData<typeof loader>();
+  const [host, ok] = useWebsiteHostname(poi.website ?? "");
 
   function calculateRating() {
     if (poi.totalVotes === 0) return 0;
@@ -27,17 +38,18 @@ export default function InformationTable() {
           </TableCell>
         </TableRow>
 
-        {poi.website && (
+        {poi.website && ok && (
           <TableRow>
             <TableCell className="px-0 font-medium">Website</TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right flex items-center gap-1 justify-end">
               <a
                 href={poi.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-primary hover:underline inline-flex items-center gap-1"
               >
-                {poi.website}
+                <span>{host}</span>
+                <ExternalLinkIcon className="size-3" />
               </a>
             </TableCell>
           </TableRow>
