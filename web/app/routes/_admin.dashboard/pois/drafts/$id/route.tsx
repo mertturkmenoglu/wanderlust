@@ -1,9 +1,10 @@
-import { LoaderFunctionArgs } from "react-router";
-import { useLoaderData, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { Separator } from "~/components/ui/separator";
 import { getDraft } from "~/lib/api-requests";
+import { getCookiesFromRequest } from "~/lib/cookies";
+import type { Route } from "./+types/route";
 import Step1 from "./__steps/step-1";
 import Step2 from "./__steps/step-2";
 import Step3 from "./__steps/step-3";
@@ -13,20 +14,22 @@ import Step6 from "./__steps/step-6";
 import DeleteDialog from "./delete-dialog";
 import StepsIndicator from "./steps-indicator";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
   const baseApiUrl = import.meta.env.VITE_API_URL ?? "";
 
   try {
-    const Cookie = request.headers.get("Cookie") ?? "";
-    const draft = await getDraft(params.id, { headers: { Cookie } });
+    const draft = await getDraft(params.id, {
+      headers: { Cookie: getCookiesFromRequest(request) },
+    });
     return { draft: draft.data, baseApiUrl };
   } catch (e) {
     throw new Response("Something went wrong", { status: 500 });
   }
 }
-export default function Page() {
-  const { draft } = useLoaderData<typeof loader>();
+
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { draft } = loaderData;
   const [params] = useSearchParams();
   const step = params.get("step") ?? "1";
 

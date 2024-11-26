@@ -1,17 +1,17 @@
-import { LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
 import { getPoiById } from "~/lib/api";
+import type { Route } from "./+types/route";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");
+
   const poi = await getPoiById(params.id);
   return { poi: poi.data };
 }
 
-export default function Page() {
-  const { poi } = useLoaderData<typeof loader>();
+export default function Page({ loaderData }: Route.ComponentProps) {
+  const { poi } = loaderData;
 
   return (
     <div>
