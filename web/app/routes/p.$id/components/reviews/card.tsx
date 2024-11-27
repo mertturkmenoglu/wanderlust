@@ -1,7 +1,7 @@
-import { Link } from "react-router";
 import { formatDistanceToNow } from "date-fns";
 import { FlagIcon } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 import Lightbox from "yet-another-react-lightbox";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import UserImage from "~/components/blocks/user-image";
@@ -26,7 +26,7 @@ export function ReviewCard({ review }: Props) {
           className="size-16 rounded-full"
           src={review.user.profileImage ?? ""}
         />
-        <div>
+        <Link to={`/u/${review.user.username}`}>
           <div className="font-medium">{review.user.fullName}</div>
           <div className="text-xs text-primary tracking-tight">
             <span className="">@{review.user.username}</span>
@@ -34,7 +34,7 @@ export function ReviewCard({ review }: Props) {
           <div className="text-xs text-muted-foreground mt-1">{`${formatDistanceToNow(
             review.createdAt
           )} ago`}</div>
-        </div>
+        </Link>
         <div className="ml-auto">
           <Menu review={review} />
         </div>
