@@ -1,4 +1,3 @@
-import { useLoaderData } from "react-router";
 import {
   AccessibilityIcon,
   ArmchairIcon,
@@ -55,6 +54,7 @@ import {
   WindIcon,
   WineIcon,
 } from "lucide-react";
+import { Link, useLoaderData } from "react-router";
 import { loader } from "../route";
 
 type LucideIconType = typeof WifiIcon;
@@ -143,7 +143,12 @@ function Item({ id, name }: { id: number; name: string }) {
   return (
     <div className="flex items-center gap-2">
       <Icon className="size-4 min-h-4 min-w-4 text-primary" />
-      <span className="text-muted-foreground text-sm line-clamp-2">{name}</span>
+      <Link
+        to={`/search?pois[refinementList][poi.Amenities.Amenity.Name][0]=${name}`}
+        className="text-muted-foreground text-sm line-clamp-2 hover:text-primary hover:underline"
+      >
+        {name}
+      </Link>
     </div>
   );
 }
