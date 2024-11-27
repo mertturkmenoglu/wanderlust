@@ -24,6 +24,12 @@ var schemas = []*tsapi.CollectionSchema{
 				Name: "location",
 				Type: "geopoint",
 			},
+			{
+				Name:  "poi",
+				Type:  "object",
+				Facet: pointer.True(),
+				Index: pointer.True(),
+			},
 		},
 	},
 }
