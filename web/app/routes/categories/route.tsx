@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { getCategories } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 import type { Route } from "./+types/route";
@@ -22,8 +23,8 @@ export default function Page({ loaderData }: Route.ComponentProps) {
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         {categories.map((category) => (
-          <a
-            href={`/categories/${category.id}/${category.name}`}
+          <Link
+            to={`/search?pois[refinementList][poi.Category.Name][0]=${category.name}`}
             key={category.id}
             className="rounded-md"
           >
@@ -35,7 +36,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             <div className="mt-2 text-xl font-bold lg:text-base">
               {category.name}
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </div>
