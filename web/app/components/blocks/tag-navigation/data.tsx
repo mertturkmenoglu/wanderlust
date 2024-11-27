@@ -1,41 +1,49 @@
-import { Props as NavItemProps } from './item';
+import { Props as NavItemProps } from "./item";
 
 import {
-  BeefIcon,
+  BedIcon,
   BeerIcon,
-  CakeSliceIcon,
   CameraIcon,
   CoffeeIcon,
-  FlameIcon,
+  GraduationCapIcon,
   LandmarkIcon,
-  LeafIcon,
-  MountainIcon,
-  Music2Icon,
-  PaletteIcon,
-  PartyPopperIcon,
-  SaladIcon,
-  TentIcon,
-  WineIcon,
-} from 'lucide-react';
+  LibraryIcon,
+  MapPinnedIcon,
+  MartiniIcon,
+  MountainSnowIcon,
+  UtensilsIcon,
+} from "lucide-react";
 
-const base = 'search?locations[refinementList][tags][0]=';
+const base = "search?pois[refinementList][poi.Category.Name][0]=";
 
 const data = [
-  { href: `${base}trending`, text: 'Trending', icon: FlameIcon },
-  { href: `${base}coffee`, text: 'Coffee', icon: CoffeeIcon },
-  { href: `${base}bar`, text: 'Bars', icon: BeerIcon },
-  { href: `${base}landmark`, text: 'Landmarks', icon: LandmarkIcon },
-  { href: `${base}trekking`, text: 'Trekking', icon: MountainIcon },
-  { href: `${base}art`, text: 'Art', icon: PaletteIcon },
-  { href: `${base}party`, text: 'Parties', icon: PartyPopperIcon },
-  { href: `${base}vegan`, text: 'Vegan', icon: SaladIcon },
-  { href: `${base}camping`, text: 'Camping', icon: TentIcon },
-  { href: `${base}music`, text: 'Music', icon: Music2Icon },
-  { href: `${base}steakhouse`, text: 'Steakhouse', icon: BeefIcon },
-  { href: `${base}pattisery`, text: 'Pattiseries', icon: CakeSliceIcon },
-  { href: `${base}yoga`, text: 'Yoga', icon: LeafIcon },
-  { href: `${base}wine`, text: 'Wine', icon: WineIcon },
-  { href: `${base}photography`, text: 'Photography', icon: CameraIcon },
+  { href: `${base}Hotels`, text: "Hotels", icon: BedIcon },
+  { href: `${base}Coffee shops`, text: "Coffee", icon: CoffeeIcon },
+  { href: `${base}Bars & Clubs`, text: "Bars", icon: MartiniIcon },
+  { href: `${base}Breweries`, text: "Breweries", icon: BeerIcon },
+  { href: `${base}Museums`, text: "Museums", icon: LandmarkIcon },
+  { href: `${base}Photography spots`, text: "Photography", icon: CameraIcon },
+  { href: `${base}Restaurants`, text: "Restaurants", icon: UtensilsIcon },
+  {
+    href: `${base}Tourist Attractions`,
+    text: "Attractions",
+    icon: MapPinnedIcon,
+  },
+  {
+    href: `${base}Coworking spaces`,
+    text: "Work Spaces",
+    icon: GraduationCapIcon,
+  },
+  {
+    href: `${base}Bookstores`,
+    text: "Bookstores",
+    icon: LibraryIcon,
+  },
+  {
+    href: `${base}Natural landmarks`,
+    text: "Landmarks",
+    icon: MountainSnowIcon,
+  },
 ] satisfies NavItemProps[];
 
 export default data;
