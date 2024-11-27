@@ -38,5 +38,15 @@ export type SearchUserFollowingResponseDto = {
 };
 
 export type GetUserActivitiesResponseDto = {
-  activities: Record<string, any>;
+  activities: Activity[];
 };
+
+export type Activity = {
+  type: UserActivityType;
+  payload: Record<string, any>;
+};
+
+export type UserActivityType =
+  | "activity-favorite"
+  | "activity-follow"
+  | "activity-review";
