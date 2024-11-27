@@ -11,7 +11,7 @@ import { loader } from "../route";
 
 export default function Breadcrumb() {
   const { poi } = useLoaderData<typeof loader>();
-  const categoryLink = `/search?locations[refinementList][categoryId][0]=${poi.categoryId}`;
+  const categoryLink = `/search?pois[refinementList][poi.Category.Name][0]=${poi.category.name}`;
 
   return (
     <ShadcnBreadcrumb>
