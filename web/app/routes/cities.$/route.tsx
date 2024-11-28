@@ -82,6 +82,21 @@ export default function Page({ loaderData }: Route.ComponentProps) {
 
       <MapContainer lat={city.latitude} lng={city.longitude} />
 
+      <OverlayBanner
+        image="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        alt="Categories Banner Image"
+        message={
+          <div className="flex items-center gap-4">
+            <div>Plan a trip to {city.name}</div>
+            <Button asChild variant="default">
+              <Link to="/trips/planner">Start Planning</Link>
+            </Button>
+          </div>
+        }
+        className="my-8"
+        imgClassName="aspect-[3]"
+      />
+
       <Collection
         className="my-8"
         title="Curated Locations"
@@ -124,13 +139,17 @@ export default function Page({ loaderData }: Route.ComponentProps) {
       />
 
       <OverlayBanner
-        image="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        alt="Categories Banner Image"
+        image={city.imageUrl}
+        alt={`${city.name} image`}
         message={
           <div className="flex items-center gap-4">
-            <div>Plan a trip to {city.name}</div>
+            <div>See all locations in {city.name}</div>
             <Button asChild variant="default">
-              <Link to="/trips/planner">Start Planning</Link>
+              <Link
+                to={`/search?pois[refinementList][poi.City.Name][0]=${city.name}`}
+              >
+                Discover
+              </Link>
             </Button>
           </div>
         }
