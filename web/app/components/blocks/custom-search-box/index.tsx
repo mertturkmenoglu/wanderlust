@@ -62,7 +62,7 @@ export default function CustomSearchBox({
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
-          className="rounded-full"
+          className="rounded-md"
           placeholder="Search a location"
           spellCheck={false}
           maxLength={128}
@@ -71,12 +71,11 @@ export default function CustomSearchBox({
           onChange={(e) => {
             setQuery(e.currentTarget.value);
           }}
-          autoFocus
         />
 
-        <Button type="submit" className="rounded-full" size="icon">
-          <span className="sr-only">Search</span>
+        <Button type="submit" className="rounded" size="default">
           <SearchIcon className="size-4" />
+          <span className="md:ml-2 sr-only md:not-sr-only">Search</span>
         </Button>
       </form>
     </div>
