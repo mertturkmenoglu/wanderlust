@@ -1,11 +1,25 @@
 import { InstantSearch } from "react-instantsearch";
+import { useNavigate } from "react-router";
 import { Autocomplete } from "~/components/blocks/autocomplete";
 import { useSearchClient } from "~/hooks/use-search-client";
+import { cn } from "~/lib/utils";
 
-export default function Search() {
+type Props = {
+  className?: string;
+  onItemClicked?: () => void;
+};
+
+export default function Search({ className, onItemClicked }: Props) {
   const searchClient = useSearchClient();
+  const navigate = useNavigate();
+
   return (
-    <nav className="mx-auto my-12 flex items-center justify-center space-x-4">
+    <nav
+      className={cn(
+        "mx-auto my-12 flex items-center justify-center space-x-4 w-full",
+        className
+      )}
+    >
       <InstantSearch
         indexName="pois"
         searchClient={searchClient}
@@ -14,7 +28,16 @@ export default function Search() {
           preserveSharedStateOnUnmount: true,
         }}
       >
-        <Autocomplete />
+        <Autocomplete
+          showAdvancedSearch={false}
+          isCardClickable={true}
+          onCardClick={(v) => {
+            navigate(`/p/${v.id}`);
+            if (onItemClicked !== undefined) {
+              onItemClicked();
+            }
+          }}
+        />
       </InstantSearch>
     </nav>
   );
