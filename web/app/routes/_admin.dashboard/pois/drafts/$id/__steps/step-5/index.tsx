@@ -6,10 +6,7 @@ import XHR from "@uppy/xhr-upload";
 import { loader } from "../../route";
 import StepsNavigation from "../steps-navigation";
 
-import "@uppy/core/dist/style.min.css";
-import "@uppy/dashboard/dist/style.min.css";
-import "@uppy/file-input/dist/style.css";
-import "@uppy/image-editor/dist/style.min.css";
+
 
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";

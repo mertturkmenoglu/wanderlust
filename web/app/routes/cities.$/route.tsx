@@ -1,3 +1,4 @@
+import leafletCompatStyles from "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css?url";
 import leafletStyles from "leaflet/dist/leaflet.css?url";
 import { Link } from "react-router";
 import Collection from "~/components/blocks/collection";
@@ -39,7 +40,10 @@ export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
 }
 
 export function links(): Route.LinkDescriptors {
-  return [{ rel: "stylesheet", href: leafletStyles }];
+  return [
+    { rel: "stylesheet", href: leafletStyles },
+    { rel: "stylesheet", href: leafletCompatStyles },
+  ];
 }
 
 export default function Page({ loaderData }: Route.ComponentProps) {

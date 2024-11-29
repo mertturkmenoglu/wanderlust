@@ -1,3 +1,4 @@
+import mdxStyles from "@mdxeditor/editor/style.css?url";
 import { SubmitHandler } from "react-hook-form";
 import { ClientOnly } from "remix-utils/client-only";
 import BackLink from "~/components/blocks/back-link";
@@ -7,8 +8,13 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import CustomEditor from "../custom-editor";
+import type { Route } from "./+types/route";
 import { useNewCollectionForm, useNewCollectionMutation } from "./hooks";
 import { FormInput } from "./schema";
+
+export function links(): Route.LinkDescriptors {
+  return [{ rel: "stylesheet", href: mdxStyles }];
+}
 
 export default function Page() {
   const form = useNewCollectionForm();

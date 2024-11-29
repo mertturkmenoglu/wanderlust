@@ -1,3 +1,9 @@
+import uppyCoreStyles from "@uppy/core/dist/style.min.css?url";
+import uppyDashboardStyles from "@uppy/dashboard/dist/style.min.css?url";
+import uppyFileInputStyles from "@uppy/file-input/dist/style.css?url";
+import uppyImageEditorStyles from "@uppy/image-editor/dist/style.min.css?url";
+import reactDatepickerStyles from "react-datepicker/dist/react-datepicker.css?url";
+
 import { useSearchParams } from "react-router";
 import invariant from "tiny-invariant";
 import BackLink from "~/components/blocks/back-link";
@@ -26,6 +32,28 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   } catch (e) {
     throw new Response("Something went wrong", { status: 500 });
   }
+}
+
+export function links(): Route.LinkDescriptors {
+  return [
+    { rel: "stylesheet", href: reactDatepickerStyles },
+    {
+      rel: "stylesheet",
+      href: uppyCoreStyles,
+    },
+    {
+      rel: "stylesheet",
+      href: uppyDashboardStyles,
+    },
+    {
+      rel: "stylesheet",
+      href: uppyFileInputStyles,
+    },
+    {
+      rel: "stylesheet",
+      href: uppyImageEditorStyles,
+    },
+  ];
 }
 
 export default function Page({ loaderData }: Route.ComponentProps) {

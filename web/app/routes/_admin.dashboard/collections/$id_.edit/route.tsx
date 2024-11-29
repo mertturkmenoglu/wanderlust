@@ -1,3 +1,4 @@
+import mdxStyles from "@mdxeditor/editor/style.css?url";
 import { SubmitHandler } from "react-hook-form";
 import { ClientOnly } from "remix-utils/client-only";
 import invariant from "tiny-invariant";
@@ -13,6 +14,10 @@ import CustomEditor from "../custom-editor";
 import type { Route } from "./+types/route";
 import { useUpdateCollectionForm, useUpdateCollectionMutation } from "./hooks";
 import { FormInput } from "./schema";
+
+export function links(): Route.LinkDescriptors {
+  return [{ rel: "stylesheet", href: mdxStyles }];
+}
 
 export async function loader({ params }: Route.LoaderArgs) {
   invariant(params.id, "id is required");

@@ -1,5 +1,4 @@
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { Day, TData } from "./index";
 
 type Props = {
