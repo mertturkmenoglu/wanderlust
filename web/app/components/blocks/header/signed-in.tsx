@@ -49,7 +49,11 @@ export default function SignedInLinks() {
           }
         >
           {() => (
-            <Search className="px-4" onItemClicked={() => setOpen(false)} />
+            <Search
+              className="px-4"
+              onItemClicked={() => setOpen(false)}
+              showAdvancedSearch={false}
+            />
           )}
         </ClientOnly>
       </CommandDialog>
