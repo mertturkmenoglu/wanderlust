@@ -55,6 +55,9 @@ function getAccessibilityLevelLabel(x: number): string {
 }
 
 export default function RefinementList({ attribute, className }: Props) {
+  const limit = attribute === "poi.Category.Name" ? 10 : 5;
+  const showMoreLimit = attribute === "poi.Category.Name" ? 20 : 10;
+
   const {
     canToggleShowMore,
     items,
@@ -63,11 +66,11 @@ export default function RefinementList({ attribute, className }: Props) {
     searchForItems,
     toggleShowMore,
   } = useRefinementList({
-    attribute: attribute,
-    limit: attribute === "poi.Category.Name" ? 10 : 5,
+    attribute,
+    limit,
     operator: "or",
     showMore: true,
-    showMoreLimit: attribute === "poi.Category.Name" ? 20 : 10,
+    showMoreLimit,
     sortBy: ["isRefined", "name:asc", "count:desc"],
   });
 
@@ -126,8 +129,8 @@ export default function RefinementList({ attribute, className }: Props) {
   };
 
   return (
-    <div className={cn("my-2", className)}>
-      <div className="font-semibold tracking-tight">{title}</div>
+    <div className={cn("my-2 flex flex-col items-start", className)}>
+      <div className="font-semibold tracking-tight text-left">{title}</div>
       {showInput && (
         <Input
           type="search"
@@ -142,18 +145,20 @@ export default function RefinementList({ attribute, className }: Props) {
         />
       )}
       <ul
-        className={cn("space-y-2", {
+        className={cn("space-y-2 w-full", {
           "mt-2": !showInput,
         })}
       >
         {items.map((item) => (
-          <li key={item.label}>
-            <label className="flex items-center">
+          <li key={item.label} className="w-full">
+            <label className="flex items-center w-full">
               <Checkbox
                 checked={item.isRefined}
                 onCheckedChange={() => refine(item.value)}
               />
-              <span className="ml-2 text-sm capitalize">{getLabel(item)}</span>
+              <span className="ml-2 text-sm capitalize line-clamp-1 w-full text-left">
+                {getLabel(item)}
+              </span>
               <span className="ml-px text-sm text-muted-foreground">
                 {" "}
                 ({item.count})
@@ -162,7 +167,7 @@ export default function RefinementList({ attribute, className }: Props) {
           </li>
         ))}
       </ul>
-      {shouldRenderButton && (
+      {shouldRenderButton && items.length >= limit && (
         <Button
           variant="link"
           onClick={toggleShowMore}
