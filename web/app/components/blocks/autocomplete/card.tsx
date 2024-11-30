@@ -29,18 +29,18 @@ export default function Card({
       <img
         src={image}
         alt=""
-        className="aspect-video w-48 rounded-lg object-cover"
+        className="aspect-video w-24 md:w-48 rounded-lg object-cover"
       />
 
       <div>
-        <div className="line-clamp-1 text-lg font-semibold capitalize leading-none tracking-tight">
+        <div className="line-clamp-1 text-base md:text-lg font-semibold capitalize leading-none tracking-tight">
           {name}
         </div>
-        <div className="my-1 line-clamp-1 text-sm text-muted-foreground">
+        <div className="my-1 line-clamp-1 text-xs md:text-sm text-muted-foreground">
           {city} / {state}
         </div>
 
-        <div className="text-sm font-semibold leading-none tracking-tight text-primary">
+        <div className="text-xs line-clamp-1 md:text-sm font-semibold leading-none tracking-tight text-primary">
           {categoryName}
         </div>
       </div>
@@ -61,12 +61,12 @@ export default function Card({
               state,
             })
           }
-          className="flex gap-8 text-left"
+          className="flex gap-2 md:gap-8 text-left"
         >
           {innerContent}
         </button>
       ) : (
-        <Link to={`/p/${id}`} className="flex gap-8">
+        <Link to={`/p/${id}`} className="flex gap-2 md:gap-8">
           {innerContent}
         </Link>
       )}
