@@ -22,3 +22,28 @@ export function useSearchClient() {
 
   return searchClient;
 }
+
+export function useGeoSearchClient() {
+  const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
+    server: {
+      apiKey: "wanderlust",
+      nodes: [
+        {
+          host: "localhost",
+          port: 8108,
+          protocol: "http",
+        },
+      ],
+      numRetries: 8,
+      useServerSideSearchCache: true,
+    },
+    additionalSearchParameters: {
+      query_by: "name",
+    },
+    geoLocationField: "location",
+  });
+
+  const searchClient = typesenseInstantsearchAdapter.searchClient;
+
+  return searchClient;
+}
