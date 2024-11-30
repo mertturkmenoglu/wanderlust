@@ -7,9 +7,14 @@ import { cn } from "~/lib/utils";
 type Props = {
   className?: string;
   onItemClicked?: () => void;
+  showAdvancedSearch?: boolean;
 };
 
-export default function Search({ className, onItemClicked }: Props) {
+export default function Search({
+  className,
+  onItemClicked,
+  showAdvancedSearch = true,
+}: Props) {
   const searchClient = useSearchClient();
   const navigate = useNavigate();
 
@@ -29,7 +34,7 @@ export default function Search({ className, onItemClicked }: Props) {
         }}
       >
         <Autocomplete
-          showAdvancedSearch={false}
+          showAdvancedSearch={showAdvancedSearch}
           isCardClickable={true}
           onCardClick={(v) => {
             navigate(`/p/${v.id}`);
