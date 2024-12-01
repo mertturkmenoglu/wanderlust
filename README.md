@@ -4,11 +4,18 @@
 
 # Wanderlust
 
-An application to review, share, and discover points of interest.
+Welcome to Wanderlust, a travel and location discovery platform designed to inspire exploration and connection. With Wanderlust, you can:
 
-Discover new locations, get notified about upcoming events around you, find your friends, plan a trip together, and much more.
+- Explore cities and point of interest (POI) guides, curated with insider tips and recommendations.
+- Collect and organize POIs into favorites, bookmarks, and custom lists.
+- Follow fellow travelers, send messages, and stay up-to-date on their adventures.
+- Record your own trips with diary entries, complete with photos and memories.
+- Plan future trips using our intuitive trip planner tool.
+- Search and filter results using powerful facets and filters.
 
 It's open source and free.
+
+(Yes, AI wrote this section. Duh.)
 
 ## Requirements
 
