@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoaderData, useRevalidator } from "react-router";
+import { Link, useLoaderData, useRevalidator } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Uppy from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import { Dashboard } from "@uppy/react";
 import XHRUpload from "@uppy/xhr-upload";
 import { PencilIcon, UploadIcon } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,6 +35,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { createReview } from "~/lib/api-requests";
 import { lengthTracker } from "~/lib/form-utils";
 import { loader } from "../../route";
+import { AuthContext } from "~/providers/auth-provider";
 
 const schema = z.object({
   content: z.string().min(5).max(2048),
@@ -47,6 +48,8 @@ export default function CreateReviewDialog() {
   const [rating, setRating] = useState(0);
   const qc = useQueryClient();
   const revalidator = useRevalidator();
+  const auth = useContext(AuthContext);
+  const isAuthenticated = !auth.isLoading && auth.user;
 
   const form = useForm<FormInput>({
     resolver: zodResolver(schema),
@@ -109,6 +112,17 @@ export default function CreateReviewDialog() {
       await uppyWithXHR.upload();
     },
   });
+
+  if (!isAuthenticated) {
+    return (
+      <Button variant="default" size="sm" asChild>
+        <Link to="/sign-in">
+          <PencilIcon className="size-4 mr-2" />
+          <span>Add a review</span>
+        </Link>
+      </Button>
+    );
+  }
 
   return (
     <AlertDialog>
