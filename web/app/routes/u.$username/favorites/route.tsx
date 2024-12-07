@@ -5,6 +5,8 @@ import AppMessage from "~/components/blocks/app-message";
 import { Button } from "~/components/ui/button";
 import { getUserFavoritesByUsername } from "~/lib/api-requests";
 import FavoriteCard from "./favorite-card";
+import { LoaderCircleIcon } from "lucide-react";
+import { useLoadMoreText } from "~/hooks/use-load-more-text";
 
 export default function Page() {
   const params = useParams();
@@ -19,53 +21,60 @@ export default function Page() {
     enabled: username !== null,
   });
 
-  return (
-    <div>
-      {query.isLoading && (
+  const btnText = useLoadMoreText({
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
+  });
+
+  if (query.error) {
+    return (
+      <AppMessage
+        errorMessage="Something went wrong"
+        className="my-16"
+        showBackButton={false}
+      />
+    );
+  }
+
+  if (query.data) {
+    const pages = query.data.pages;
+    const isEmpty = pages[0].data.favorites.length === 0;
+    const flatten = pages.flatMap((p) => p.data.favorites);
+
+    if (isEmpty) {
+      return (
         <AppMessage
-          emptyMessage="Loading..."
+          emptyMessage="No favorites"
           showBackButton={false}
           className="my-16"
         />
-      )}
-      {query.data && query.data.pages[0].data.favorites.length === 0 && (
-        <AppMessage
-          emptyMessage="This user has no favorites yet"
-          showBackButton={false}
-          className="my-16"
-        />
-      )}
-      {query.data && (
+      );
+    }
+
+    return (
+      <>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {query.data.pages.map((page, i) => (
-            <React.Fragment key={i}>
-              {page.data.favorites.map((favorite) => (
-                <Link
-                  to={`/p/${favorite.poiId}`}
-                  key={favorite.poiId}
-                  className="block"
-                >
-                  <FavoriteCard favorite={favorite} />
-                </Link>
-              ))}
-            </React.Fragment>
+          {flatten.map((favorite) => (
+            <Link to={`/p/${favorite.poiId}`} key={favorite.poiId}>
+              <FavoriteCard favorite={favorite} />
+            </Link>
           ))}
         </div>
-      )}
-      {query.hasNextPage && (
-        <div className="mt-4 flex justify-center">
-          <Button
-            onClick={() => query.fetchNextPage()}
-            disabled={!query.hasNextPage || query.isFetchingNextPage}
-          >
-            {query.isFetchingNextPage
-              ? "Loading more..."
-              : query.hasNextPage
-              ? "Load More"
-              : "Nothing more to load"}
-          </Button>
-        </div>
-      )}
-    </div>
+        {query.hasNextPage && (
+          <div className="mt-4 flex justify-center">
+            <Button
+              onClick={() => query.fetchNextPage()}
+              disabled={!query.hasNextPage || query.isFetchingNextPage}
+            >
+              {btnText}
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <LoaderCircleIcon className="my-16 mx-auto size-8 text-primary animate-spin" />
   );
 }
