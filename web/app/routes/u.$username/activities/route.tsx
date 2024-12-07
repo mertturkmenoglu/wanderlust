@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { HeartIcon, LoaderIcon, PenIcon, UsersIcon } from "lucide-react";
+import { HeartIcon, LoaderCircleIcon, PenIcon, UsersIcon } from "lucide-react";
 import { Link } from "react-router";
 import invariant from "tiny-invariant";
 import AppMessage from "~/components/blocks/app-message";
@@ -53,7 +53,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <LoaderIcon className="my-16 mx-auto size-8 text-primary animate-spin" />
+    <LoaderCircleIcon className="my-16 mx-auto size-8 text-primary animate-spin" />
   );
 }
 
