@@ -1,19 +1,20 @@
 package amenities
 
-type GetAmenitiesResponseDto struct {
-	Amenities []GetAmenityByIdResponseDto `json:"amenities"`
+type ListAmenitiesDto struct {
+	Amenities []AmenityDto `json:"amenities"`
 }
-type GetAmenityByIdResponseDto struct {
+
+type AmenityDto struct {
 	ID   int32  `json:"id"`
 	Name string `json:"name"`
 }
 
-type UpdateAmenityRequestDto struct {
+type UpdateReqDto struct {
 	Name string `json:"name" validate:"required,min=1,max=64"`
 }
 
-type CreateAmenityRequestDto struct {
+type CreateReqDto struct {
 	Name string `json:"name" validate:"required,min=1,max=64"`
 }
 
-type CreateAmenityResponseDto = GetAmenityByIdResponseDto
+type CreateAmenityResDto = AmenityDto

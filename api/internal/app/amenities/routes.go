@@ -2,17 +2,18 @@ package amenities
 
 import (
 	"wanderlust/internal/pkg/authz"
-	"wanderlust/internal/pkg/middlewares"
+	mw "wanderlust/internal/pkg/middlewares"
 
 	"github.com/labstack/echo/v4"
 )
 
 func (m *Module) RegisterRoutes(e *echo.Group) {
-	routes := e.Group("/amenities")
+	h := m.handlers
+	r := e.Group("/amenities")
 	{
-		routes.GET("/", m.handlers.GetAmenities)
-		routes.PATCH("/:id", m.handlers.UpdateAmenity, middlewares.ParseBody[UpdateAmenityRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActAmenityUpdate))
-		routes.POST("/", m.handlers.CreateAmenity, middlewares.ParseBody[CreateAmenityRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActAmenityCreate))
-		routes.DELETE("/:id", m.handlers.DeleteAmenity, middlewares.IsAuth, middlewares.Authz(authz.ActAmenityDelete))
+		r.GET("/", h.List)
+		r.PATCH("/:id", h.Update, mw.ParseBody[UpdateReqDto], mw.IsAuth, mw.Authorize(authz.IsAdmin))
+		r.POST("/", h.Create, mw.ParseBody[CreateReqDto], mw.IsAuth, mw.Authorize(authz.IsAdmin))
+		r.DELETE("/:id", h.Remove, mw.IsAuth, mw.Authorize(authz.IsAdmin))
 	}
 }

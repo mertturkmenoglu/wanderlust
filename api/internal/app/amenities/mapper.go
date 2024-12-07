@@ -2,33 +2,33 @@ package amenities
 
 import "wanderlust/internal/pkg/db"
 
-func mapGetAmenitiesToDto(v []db.Amenity) GetAmenitiesResponseDto {
+func mapToListAmenitiesDto(v []db.Amenity) ListAmenitiesDto {
 	if v == nil {
-		return GetAmenitiesResponseDto{
-			Amenities: []GetAmenityByIdResponseDto{},
+		return ListAmenitiesDto{
+			Amenities: []AmenityDto{},
 		}
 	}
 
-	var amenities []GetAmenityByIdResponseDto
+	var amenities []AmenityDto
 
 	for _, amenity := range v {
-		amenities = append(amenities, mapGetAmenityByIdRowToDto(amenity))
+		amenities = append(amenities, mapToAmenityDto(amenity))
 	}
 
-	return GetAmenitiesResponseDto{
+	return ListAmenitiesDto{
 		Amenities: amenities,
 	}
 }
 
-func mapGetAmenityByIdRowToDto(v db.Amenity) GetAmenityByIdResponseDto {
-	return GetAmenityByIdResponseDto{
+func mapToAmenityDto(v db.Amenity) AmenityDto {
+	return AmenityDto{
 		ID:   int32(v.ID),
 		Name: v.Name,
 	}
 }
 
-func mapCreateAmenityResponseToDto(v db.Amenity) CreateAmenityResponseDto {
-	return CreateAmenityResponseDto{
+func mapToCreateAmenityResDto(v db.Amenity) CreateAmenityResDto {
+	return CreateAmenityResDto{
 		ID:   int32(v.ID),
 		Name: v.Name,
 	}

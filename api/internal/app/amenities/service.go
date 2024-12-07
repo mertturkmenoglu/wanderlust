@@ -1,39 +1,33 @@
 package amenities
 
-import "wanderlust/internal/pkg/db"
-
-func (s *service) getAmenities() ([]db.Amenity, error) {
-	res, err := s.repository.getAmenities()
+func (s *service) list() (ListAmenitiesDto, error) {
+	res, err := s.repository.list()
 
 	if err != nil {
-		return nil, err
+		return ListAmenitiesDto{}, err
 	}
 
-	return res, nil
-}
-
-func (s *service) updateAmenity(id int32, dto UpdateAmenityRequestDto) error {
-	err := s.repository.updateAmenity(id, dto)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *service) createAmenity(dto CreateAmenityRequestDto) (CreateAmenityResponseDto, error) {
-	res, err := s.repository.createAmenity(dto)
-
-	if err != nil {
-		return CreateAmenityResponseDto{}, err
-	}
-
-	v := mapCreateAmenityResponseToDto(res)
+	v := mapToListAmenitiesDto(res)
 
 	return v, nil
 }
 
-func (s *service) deleteAmenity(id int32) error {
-	return s.repository.deleteAmenity(id)
+func (s *service) update(id int32, dto UpdateReqDto) error {
+	return s.repository.update(id, dto)
+}
+
+func (s *service) create(dto CreateReqDto) (CreateAmenityResDto, error) {
+	res, err := s.repository.create(dto)
+
+	if err != nil {
+		return CreateAmenityResDto{}, err
+	}
+
+	v := mapToCreateAmenityResDto(res)
+
+	return v, nil
+}
+
+func (s *service) remove(id int32) error {
+	return s.repository.remove(id)
 }
