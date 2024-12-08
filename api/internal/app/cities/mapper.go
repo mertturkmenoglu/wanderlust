@@ -5,8 +5,8 @@ import (
 	"wanderlust/internal/pkg/utils"
 )
 
-func mapGetCityByIdRowToDto(v db.City) GetCityByIdResponseDto {
-	return GetCityByIdResponseDto{
+func mapToCityDto(v db.City) CityDto {
+	return CityDto{
 		ID:                   v.ID,
 		Name:                 v.Name,
 		StateCode:            v.StateCode,
@@ -24,32 +24,32 @@ func mapGetCityByIdRowToDto(v db.City) GetCityByIdResponseDto {
 	}
 }
 
-func mapGetCitiesToDto(v []db.City) GetCitiesResponseDto {
-	var cities []GetCityByIdResponseDto
+func mapToListDto(v []db.City) ListDto {
+	var cities []CityDto
 
 	for _, city := range v {
-		cities = append(cities, mapGetCityByIdRowToDto(city))
+		cities = append(cities, mapToCityDto(city))
 	}
 
-	return GetCitiesResponseDto{
+	return ListDto{
 		Cities: cities,
 	}
 }
 
-func mapGetFeaturedCitiesToDto(v []db.City) GetFeaturedCitiesResponseDto {
-	var cities []GetCityByIdResponseDto
+func mapToFeaturedDto(v []db.City) FeaturedDto {
+	var cities []CityDto
 
 	for _, city := range v {
-		cities = append(cities, mapGetCityByIdRowToDto(city))
+		cities = append(cities, mapToCityDto(city))
 	}
 
-	return GetFeaturedCitiesResponseDto{
+	return FeaturedDto{
 		Cities: cities,
 	}
 }
 
-func mapCreateCityResponseToDto(v db.City) CreateCityResponseDto {
-	return CreateCityResponseDto{
+func mapToCreateResDto(v db.City) CreateResDto {
+	return CreateResDto{
 		ID:                   int32(v.ID),
 		Name:                 v.Name,
 		StateCode:            v.StateCode,
@@ -67,8 +67,8 @@ func mapCreateCityResponseToDto(v db.City) CreateCityResponseDto {
 	}
 }
 
-func mapUpdateCityResponseToDto(v db.City) UpdateCityResponseDto {
-	return UpdateCityResponseDto{
+func mapToUpdateResDto(v db.City) UpdateResDto {
+	return UpdateResDto{
 		ID:                   int32(v.ID),
 		Name:                 v.Name,
 		StateCode:            v.StateCode,

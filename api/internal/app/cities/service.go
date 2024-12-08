@@ -3,40 +3,43 @@ package cities
 import (
 	"errors"
 	errs "wanderlust/internal/pkg/core/errors"
-	"wanderlust/internal/pkg/db"
 
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *service) getCityById(id int32) (db.City, error) {
-	res, err := s.repository.getCityById(id)
+func (s *service) get(id int32) (CityDto, error) {
+	res, err := s.repository.get(id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return db.City{}, ErrCityNotFound
+			return CityDto{}, ErrCityNotFound
 		}
 
-		return db.City{}, errs.InternalServerError
+		return CityDto{}, errs.InternalServerError
 	}
 
-	return res, nil
+	v := mapToCityDto(res)
+
+	return v, nil
 }
 
-func (s *service) getCities() ([]db.City, error) {
-	res, err := s.repository.getCities()
+func (s *service) list() (ListDto, error) {
+	res, err := s.repository.list()
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return []db.City{}, ErrCityNotFound
+			return ListDto{}, ErrCityNotFound
 		}
 
-		return []db.City{}, errs.InternalServerError
+		return ListDto{}, errs.InternalServerError
 	}
 
-	return res, nil
+	v := mapToListDto(res)
+
+	return v, nil
 }
 
-func (s *service) getFeaturedCities() ([]db.City, error) {
+func (s *service) featured() (FeaturedDto, error) {
 	featuredCitiesIds := []int32{
 		1106, // Salzburg
 		1108, // Vienna
@@ -51,43 +54,45 @@ func (s *service) getFeaturedCities() ([]db.City, error) {
 		6010, // Paris
 		7010, // Barcelona
 	}
-	res, err := s.repository.getFeaturedCities(featuredCitiesIds)
+	res, err := s.repository.featured(featuredCitiesIds)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return []db.City{}, ErrCityNotFound
+			return FeaturedDto{}, ErrCityNotFound
 		}
 
-		return []db.City{}, errs.InternalServerError
+		return FeaturedDto{}, errs.InternalServerError
 	}
 
-	return res, nil
-}
-
-func (s *service) createCity(dto CreateCityRequestDto) (CreateCityResponseDto, error) {
-	res, err := s.repository.createCity(dto)
-
-	if err != nil {
-		return CreateCityResponseDto{}, err
-	}
-
-	v := mapCreateCityResponseToDto(res)
+	v := mapToFeaturedDto(res)
 
 	return v, nil
 }
 
-func (s *service) updateCity(id int32, dto UpdateCityRequestDto) (UpdateCityResponseDto, error) {
-	res, err := s.repository.updateCity(id, dto)
+func (s *service) create(dto CreateReqDto) (CreateResDto, error) {
+	res, err := s.repository.create(dto)
 
 	if err != nil {
-		return UpdateCityResponseDto{}, err
+		return CreateResDto{}, err
 	}
 
-	v := mapUpdateCityResponseToDto(res)
+	v := mapToCreateResDto(res)
 
 	return v, nil
 }
 
-func (s *service) deleteCity(id int32) error {
-	return s.repository.deleteCity(id)
+func (s *service) update(id int32, dto UpdateReqDto) (UpdateResDto, error) {
+	res, err := s.repository.update(id, dto)
+
+	if err != nil {
+		return UpdateResDto{}, err
+	}
+
+	v := mapToUpdateResDto(res)
+
+	return v, nil
+}
+
+func (s *service) remove(id int32) error {
+	return s.repository.remove(id)
 }

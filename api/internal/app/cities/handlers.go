@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) GetCityById(c echo.Context) error {
+func (h *handlers) Get(c echo.Context) error {
 	idStr := c.Param("id")
 
 	if idStr == "" {
@@ -21,51 +21,45 @@ func (h *handlers) GetCityById(c echo.Context) error {
 		return ErrInvalidId
 	}
 
-	res, err := h.service.getCityById(int32(id))
+	res, err := h.service.get(int32(id))
 
 	if err != nil {
 		return err
 	}
 
-	v := mapGetCityByIdRowToDto(res)
-
 	return c.JSON(http.StatusOK, core.Response{
-		Data: v,
+		Data: res,
 	})
 }
 
-func (h *handlers) GetCities(c echo.Context) error {
-	res, err := h.service.getCities()
+func (h *handlers) List(c echo.Context) error {
+	res, err := h.service.list()
 
 	if err != nil {
 		return err
 	}
 
-	v := mapGetCitiesToDto(res)
-
 	return c.JSON(http.StatusOK, core.Response{
-		Data: v,
+		Data: res,
 	})
 }
 
-func (h *handlers) GetFeaturedCities(c echo.Context) error {
-	res, err := h.service.getFeaturedCities()
+func (h *handlers) Featured(c echo.Context) error {
+	res, err := h.service.featured()
 
 	if err != nil {
 		return err
 	}
 
-	v := mapGetFeaturedCitiesToDto(res)
-
 	return c.JSON(http.StatusOK, core.Response{
-		Data: v,
+		Data: res,
 	})
 }
 
-func (h *handlers) CreateCity(c echo.Context) error {
-	dto := c.Get("body").(CreateCityRequestDto)
+func (h *handlers) Create(c echo.Context) error {
+	dto := c.Get("body").(CreateReqDto)
 
-	res, err := h.service.createCity(dto)
+	res, err := h.service.create(dto)
 
 	if err != nil {
 		return err
@@ -76,7 +70,7 @@ func (h *handlers) CreateCity(c echo.Context) error {
 	})
 }
 
-func (h *handlers) DeleteCity(c echo.Context) error {
+func (h *handlers) Remove(c echo.Context) error {
 	id := c.Param("id")
 
 	if id == "" {
@@ -89,7 +83,7 @@ func (h *handlers) DeleteCity(c echo.Context) error {
 		return ErrInvalidId
 	}
 
-	err = h.service.deleteCity(int32(idInt))
+	err = h.service.remove(int32(idInt))
 
 	if err != nil {
 		return err
@@ -98,8 +92,8 @@ func (h *handlers) DeleteCity(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-func (h *handlers) UpdateCity(c echo.Context) error {
-	dto := c.Get("body").(UpdateCityRequestDto)
+func (h *handlers) Update(c echo.Context) error {
+	dto := c.Get("body").(UpdateReqDto)
 	id := c.Param("id")
 
 	if id == "" {
@@ -112,7 +106,7 @@ func (h *handlers) UpdateCity(c echo.Context) error {
 		return ErrInvalidId
 	}
 
-	res, err := h.service.updateCity(int32(idInt), dto)
+	res, err := h.service.update(int32(idInt), dto)
 
 	if err != nil {
 		return err

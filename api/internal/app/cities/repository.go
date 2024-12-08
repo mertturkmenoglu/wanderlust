@@ -6,19 +6,19 @@ import (
 	"wanderlust/internal/pkg/utils"
 )
 
-func (r *repository) getCityById(id int32) (db.City, error) {
+func (r *repository) get(id int32) (db.City, error) {
 	return r.di.Db.Queries.GetCityById(context.Background(), id)
 }
 
-func (r *repository) getCities() ([]db.City, error) {
+func (r *repository) list() ([]db.City, error) {
 	return r.di.Db.Queries.GetCities(context.Background())
 }
 
-func (r *repository) getFeaturedCities(cityIds []int32) ([]db.City, error) {
+func (r *repository) featured(cityIds []int32) ([]db.City, error) {
 	return r.di.Db.Queries.GetFeaturedCities(context.Background(), cityIds)
 }
 
-func (r *repository) createCity(dto CreateCityRequestDto) (db.City, error) {
+func (r *repository) create(dto CreateReqDto) (db.City, error) {
 	return r.di.Db.Queries.CreateCity(context.Background(), db.CreateCityParams{
 		ID:             dto.ID,
 		Name:           dto.Name,
@@ -37,7 +37,7 @@ func (r *repository) createCity(dto CreateCityRequestDto) (db.City, error) {
 	})
 }
 
-func (r *repository) updateCity(id int32, dto UpdateCityRequestDto) (db.City, error) {
+func (r *repository) update(id int32, dto UpdateReqDto) (db.City, error) {
 	return r.di.Db.Queries.UpdateCity(context.Background(), db.UpdateCityParams{
 		ID:             id,
 		Name:           dto.Name,
@@ -56,6 +56,6 @@ func (r *repository) updateCity(id int32, dto UpdateCityRequestDto) (db.City, er
 	})
 }
 
-func (r *repository) deleteCity(id int32) error {
+func (r *repository) remove(id int32) error {
 	return r.di.Db.Queries.DeleteCity(context.Background(), id)
 }

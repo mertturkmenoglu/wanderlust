@@ -1,6 +1,6 @@
 package cities
 
-type GetCityByIdResponseDto struct {
+type CityDto struct {
 	ID                   int32   `json:"id"`
 	Name                 string  `json:"name"`
 	StateCode            string  `json:"stateCode"`
@@ -17,15 +17,15 @@ type GetCityByIdResponseDto struct {
 	ImageAttributionLink *string `json:"imageAttributionLink"`
 }
 
-type GetCitiesResponseDto struct {
-	Cities []GetCityByIdResponseDto `json:"cities"`
+type ListDto struct {
+	Cities []CityDto `json:"cities"`
 }
 
-type GetFeaturedCitiesResponseDto struct {
-	Cities []GetCityByIdResponseDto `json:"cities"`
+type FeaturedDto struct {
+	Cities []CityDto `json:"cities"`
 }
 
-type CreateCityRequestDto struct {
+type CreateReqDto struct {
 	ID                   int32   `json:"id" validate:"required,min=1"`
 	Name                 string  `json:"name" validate:"required,min=1,max=64"`
 	StateCode            string  `json:"stateCode" validate:"required,min=1,max=16"`
@@ -42,9 +42,9 @@ type CreateCityRequestDto struct {
 	ImageAttributionLink string  `json:"imageAttributionLink" validate:"required,min=1,max=256"`
 }
 
-type CreateCityResponseDto = GetCityByIdResponseDto
+type CreateResDto = CityDto
 
-type UpdateCityRequestDto struct {
+type UpdateReqDto struct {
 	Name                 string  `json:"name" validate:"required,min=1,max=64"`
 	StateCode            string  `json:"stateCode" validate:"required,min=1,max=16"`
 	StateName            string  `json:"stateName" validate:"required,min=1,max=64"`
@@ -60,4 +60,4 @@ type UpdateCityRequestDto struct {
 	ImageAttributionLink *string `json:"imageAttributionLink" validate:"required,min=1,max=256"`
 }
 
-type UpdateCityResponseDto = GetCityByIdResponseDto
+type UpdateResDto = CityDto
