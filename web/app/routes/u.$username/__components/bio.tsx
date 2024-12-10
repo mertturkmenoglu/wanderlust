@@ -34,9 +34,9 @@ export default function Bio({ className }: Props) {
 
         <UserImage
           src={ipx(userImage(user.profileImage), "w_512")}
-          imgClassName="size-48 md:size-32 ring-4 ring-white"
-          fallbackClassName="size-48 md:size-32 ring-4 ring-white"
-          className="size-32 inset-x-0 mx-auto sm:mx-16 absolute -bottom-16 ring-4 ring-white"
+          imgClassName="size-48 md:size-32 ring-4 ring-white bg-white"
+          fallbackClassName="size-48 md:size-32 ring-4 ring-white bg-white"
+          className="size-32 inset-x-0 mx-auto sm:mx-16 absolute -bottom-16 ring-4 ring-white bg-white"
         />
       </div>
 
