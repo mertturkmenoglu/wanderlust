@@ -11,6 +11,16 @@ import { Button } from "~/components/ui/button";
 import { getFeaturedCities, getHomeAggregation } from "~/lib/api";
 import { ipx } from "~/lib/img-proxy";
 import type { Route } from "./+types/_index";
+import { useContext } from "react";
+import { AuthContext } from "~/providers/auth-provider";
+import QuickActions from "~/components/blocks/quick-actions";
+import { Skeleton } from "~/components/ui/skeleton";
+
+export async function loader() {
+  const res = await getFeaturedCities();
+  const aggregation = await getHomeAggregation();
+  return { cities: res.data.cities, aggregation: aggregation.data };
+}
 
 export function meta(): Route.MetaDescriptors {
   return [
@@ -22,14 +32,10 @@ export function meta(): Route.MetaDescriptors {
   ];
 }
 
-export async function loader() {
-  const res = await getFeaturedCities();
-  const aggregation = await getHomeAggregation();
-  return { cities: res.data.cities, aggregation: aggregation.data };
-}
-
 export default function Page({ loaderData }: Route.ComponentProps) {
   const { cities, aggregation } = loaderData;
+  const auth = useContext(AuthContext);
+  const isAuthenticated = !auth.isLoading && auth.user !== null;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -39,12 +45,18 @@ export default function Page({ loaderData }: Route.ComponentProps) {
 
       <TagNavigation />
 
-      <OverlayBanner
-        image="https://images.unsplash.com/photo-1524168272322-bf73616d9cb5?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        alt="Wanderlust Banner Image"
-        message="Inspiring explorations, one spark of Wanderlust!"
-        className="my-8"
-      />
+      {auth.isLoading ? (
+        <Skeleton className="w-full h-64 my-8" />
+      ) : isAuthenticated ? (
+        <QuickActions />
+      ) : (
+        <OverlayBanner
+          image="https://images.unsplash.com/photo-1524168272322-bf73616d9cb5?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Wanderlust Banner Image"
+          message="Inspiring explorations, one spark of Wanderlust!"
+          className="my-8"
+        />
+      )}
 
       <div className="flex items-baseline">
         <h2 className="text-2xl font-semibold">Featured Cities</h2>
