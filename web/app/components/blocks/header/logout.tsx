@@ -1,3 +1,4 @@
+import { LogOutIcon } from "lucide-react";
 import { useCallback } from "react";
 import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
 import api from "~/lib/api";
@@ -14,8 +15,12 @@ export default function Logout(): React.ReactElement {
   }, []);
 
   return (
-    <DropdownMenuItem className="hover:cursor-pointer" onClick={onClick}>
-      Log out
+    <DropdownMenuItem
+      className="cursor-pointer group focus:bg-destructive"
+      onClick={onClick}
+    >
+      <LogOutIcon className="size-4 group-focus:text-white" />
+      <span className="ml-2 group-focus:text-white">Log out</span>
     </DropdownMenuItem>
   );
 }
