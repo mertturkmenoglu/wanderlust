@@ -59,8 +59,6 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             <img
               src={ipx(city.imageUrl, "f_webp,w_1024")}
               alt=""
-              loading="eager"
-              fetchPriority="high"
               className="rounded-md object-cover aspect-video"
             />
 
