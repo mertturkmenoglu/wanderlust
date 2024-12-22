@@ -125,7 +125,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
               use and you can save your trips for later.
             </div>
             <Button asChild variant="default">
-              <Link to="/trip/planner" className="text-white">
+              <Link to="/trips/planner" className="text-white">
                 Go to Trip Planner
               </Link>
             </Button>
