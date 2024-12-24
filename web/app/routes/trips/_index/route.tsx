@@ -7,7 +7,7 @@ export default function Page() {
       <h2 className="mt-8 text-4xl font-bold text-center">
         Plan your next trip with
         <br />
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-primary">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-sky-600">
           Wanderlust
         </span>
       </h2>
