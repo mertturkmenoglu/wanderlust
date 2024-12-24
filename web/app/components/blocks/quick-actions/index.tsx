@@ -45,7 +45,7 @@ export default function QuickActions() {
       </div>
       <div className="text-base my-2">How can we help you today?</div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 mt-8 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 mt-8 gap-2 md:gap-4">
         <Card to="/trips/planner" Icon={MapIcon} text="Plan a trip" />
         <Card to="/nearby" Icon={MapPinHouseIcon} text="Discover Nearby" />
         <Card to="/diary" Icon={BookMarkedIcon} text="Diary" />
