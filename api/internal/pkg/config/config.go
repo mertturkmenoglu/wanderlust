@@ -26,7 +26,12 @@ func MustBootstrap() *Configuration {
 		*viper.New(),
 	}
 
-	c.SetConfigName("dev")
+	if os.Getenv("ENV") == "production" {
+		c.SetConfigName("prod")
+	} else {
+		c.SetConfigName("dev")
+	}
+
 	c.SetConfigType("yaml")
 	c.AddConfigPath("conf/")
 	c.AddConfigPath(".")
