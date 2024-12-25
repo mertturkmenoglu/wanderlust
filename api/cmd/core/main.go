@@ -47,16 +47,16 @@ func main() {
 	e := RegisterRoutes(app)
 	InitGlobalMiddlewares(e)
 
-	shouldRunMigrations := os.Getenv("RUN_MIGRATIONS")
-
-	if shouldRunMigrations == "1" {
+	if os.Getenv("RUN_MIGRATIONS") == "1" {
 		db.RunMigrations()
 	}
 
 	go app.SharedModules.Tasks.Run()
 	defer app.SharedModules.Tasks.Close()
 
-	tracing.InitPrometheus(e)
+	if os.Getenv("TRACING_ENABLED") == "1" {
+		tracing.InitPrometheus(e)
+	}
 
 	// Start the Echo server
 	go func() {
