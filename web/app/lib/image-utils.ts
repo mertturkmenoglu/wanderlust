@@ -13,7 +13,6 @@ export function userImage(s: string | null): string {
     return s;
   }
 
-  console.error("WINDOW UNDEFINED");
   if (s == null) {
     return "/profile.png";
   }
