@@ -5,32 +5,8 @@ import {
   MapPinHouseIcon,
 } from "lucide-react";
 import { useContext } from "react";
-import { Link } from "react-router";
-import { cn } from "~/lib/utils";
 import { AuthContext } from "~/providers/auth-provider";
-
-type Props = {
-  to: string;
-  Icon: typeof MapIcon;
-  text: string;
-};
-
-function Card({ to, Icon, text }: Props) {
-  return (
-    <div className="bg-yellow-400 rounded-md group">
-      <Link
-        to={to}
-        className={cn(
-          "bg-slate-50 p-4 rounded-md flex flex-col items-center justify-center gap-4 aspect-[3]",
-          "transition duration-200 group-hover:-translate-y-2 group-hover:translate-x-2"
-        )}
-      >
-        <Icon className="size-6" />
-        <span className="text-sm">{text}</span>
-      </Link>
-    </div>
-  );
-}
+import { Card } from "./card";
 
 export default function QuickActions() {
   const auth = useContext(AuthContext);
@@ -46,10 +22,10 @@ export default function QuickActions() {
       <div className="text-base my-2">How can we help you today?</div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 mt-8 gap-2 md:gap-4">
-        <Card to="/trips/planner" Icon={MapIcon} text="Plan a trip" />
+        <Card to="/trips" Icon={MapIcon} text="Trips" />
         <Card to="/nearby" Icon={MapPinHouseIcon} text="Discover Nearby" />
         <Card to="/diary" Icon={BookMarkedIcon} text="Diary" />
-        <Card to="/lists" Icon={ListIcon} text="MyLists" />
+        <Card to="/lists" Icon={ListIcon} text="My Lists" />
       </div>
     </div>
   );
