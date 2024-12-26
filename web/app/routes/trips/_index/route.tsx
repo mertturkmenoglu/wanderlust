@@ -1,4 +1,5 @@
-import SquirrelIcon from "~/components/icons/squirrel";
+import { MailsIcon, MapIcon, SearchIcon, SquarePlusIcon } from "lucide-react";
+import { Card } from "~/components/blocks/quick-actions/card";
 
 export default function Page() {
   return (
@@ -11,10 +12,17 @@ export default function Page() {
           Wanderlust
         </span>
       </h2>
-      <SquirrelIcon className="size-32 text-primary my-8" />
-      <div>New Trip</div>
-      <div>Discover Trips</div>
-      <div>My Trips</div>
+
+      <div className="mt-8 grid grid-cols-2 gap-2 md:gap-4 md:grid-cols-4 w-full">
+        <Card
+          to="/trips/planner"
+          Icon={SquarePlusIcon}
+          text="Plan a new trip"
+        />
+        <Card to="/trips/discover" Icon={SearchIcon} text="Discover trips" />
+        <Card to="/trips/my-trips" Icon={MapIcon} text="My Trips" />
+        <Card to="/trips/invites" Icon={MailsIcon} text="Invites" />
+      </div>
     </div>
   );
 }
