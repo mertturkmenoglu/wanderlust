@@ -4,6 +4,7 @@ import { listen } from "listhen";
 
 const ipx = createIPX({
   storage: ipxFSStorage({ dir: "./public" }),
+  maxAge: 60 * 60 * 24,
   httpStorage: ipxHttpStorage({
     domains: ["localhost:9000"],
     allowAllDomains: true,
