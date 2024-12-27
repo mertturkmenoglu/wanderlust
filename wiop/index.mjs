@@ -1,10 +1,5 @@
 import { createApp, toNodeListener } from "h3";
-import {
-  createIPX,
-  createIPXH3Handler,
-  ipxFSStorage,
-  ipxHttpStorage,
-} from "ipx";
+import { createIPX, createIPXH3Handler, ipxFSStorage, ipxHttpStorage } from "ipx";
 import { listen } from "listhen";
 
 const ipx = createIPX({
