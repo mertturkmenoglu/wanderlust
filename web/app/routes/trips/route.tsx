@@ -1,4 +1,4 @@
-import { Link, Outlet, redirect } from "react-router";
+import { Outlet, redirect } from "react-router";
 import { getMe } from "~/lib/api";
 import { getCookiesFromRequest } from "~/lib/cookies";
 import type { Route } from "./+types/route";
