@@ -1,0 +1,23 @@
+DROP TABLE IF EXISTS amenities_pois;
+
+DROP TABLE IF EXISTS amenities;
+
+DROP TABLE IF EXISTS pois;
+
+DROP TABLE IF EXISTS follows;
+
+DROP TABLE IF EXISTS cities;
+
+DROP TABLE IF EXISTS media;
+
+DROP TABLE IF EXISTS addresses;
+
+DROP TABLE IF EXISTS categories;
+
+DROP TABLE IF EXISTS sessions;
+
+DROP TABLE IF EXISTS users CASCADE;
+
+DROP FUNCTION IF EXISTS update_timestamp;
+
+DROP EXTENSION IF EXISTS "uuid-ossp";

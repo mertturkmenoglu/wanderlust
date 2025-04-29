@@ -1,0 +1,2 @@
+ALTER TABLE collections
+  ALTER COLUMN description TYPE VARCHAR(1024);
