@@ -5,3 +5,4 @@ tmp/
 typesense-data/
 data/*.csv
 *.out
+main
