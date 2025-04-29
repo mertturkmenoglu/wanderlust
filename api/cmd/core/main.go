@@ -26,7 +26,9 @@ func main() {
 		Version: "1.0.0",
 	}
 
-	health.Register(&api)
+	grp := huma.NewGroup(api, "/api/v2")
+
+	health.Register(grp)
 
 	e.Logger.Fatal(e.Start(":5000"))
 }
