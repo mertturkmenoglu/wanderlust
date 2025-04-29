@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -15,10 +15,10 @@ type Cache struct {
 	Context context.Context
 }
 
-func New(cfg *config.Configuration) *Cache {
-	url := cfg.GetString(config.REDIS_URL)
-
+func New() *Cache {
+	url := cfg.Get(cfg.REDIS_URL)
 	options, err := redis.ParseURL(url)
+
 	if err != nil {
 		panic(err)
 	}
