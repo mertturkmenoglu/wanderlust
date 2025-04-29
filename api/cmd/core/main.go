@@ -1,12 +1,17 @@
 package main
 
 import (
+	"time"
+	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/health"
+	"wanderlust/internal/pkg/cfg"
+	"wanderlust/internal/pkg/middlewares"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 var (
@@ -33,6 +38,8 @@ func main() {
 	}
 
 	e := echo.New()
+	InitGlobalMiddlewares(e)
+
 	api := humaecho.New(e, huma.DefaultConfig(API_NAME, API_VERSION))
 	api.OpenAPI().Info = &huma.Info{
 		Title:       API_NAME,
@@ -43,6 +50,27 @@ func main() {
 	grp := huma.NewGroup(api, API_PREFIX)
 
 	health.Register(grp)
+	auth.Register(grp)
+
+	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
+
+	}
 
 	e.Logger.Fatal(e.Start(":5000"))
+}
+
+func InitGlobalMiddlewares(e *echo.Echo) {
+	e.Use(middleware.Recover())
+
+	if cfg.Get(cfg.ENV) == "dev" {
+		e.Use(middleware.RequestID())
+		e.Use(middlewares.Cors())
+		e.Use(middlewares.PTermLogger)
+	}
+
+	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+		Timeout: 10 * time.Second,
+	}))
+	e.Use(middleware.Secure())
+	e.Use(middleware.BodyLimit("1MB"))
 }
