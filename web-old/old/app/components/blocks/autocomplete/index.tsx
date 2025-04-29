@@ -1,12 +1,12 @@
-import { Link } from "react-router";
-import { Button } from "~/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   useAutocomplete,
   UseAutocompleteProps,
-} from "~/hooks/use-autocomplete";
-import { ipx } from "~/lib/img-proxy";
+} from "@/hooks/use-autocomplete";
+import { ipx } from "@/lib/img-proxy";
 import CustomSearchBox from "../custom-search-box";
 import Card, { AutocompleteItemInfo } from "./card";
+import { Link } from "@tanstack/react-router";
 
 type Props = {
   showAdvancedSearch?: boolean;

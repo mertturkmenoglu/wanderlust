@@ -1,4 +1,4 @@
-import { cn } from "~/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   className?: string;
@@ -9,14 +9,7 @@ type Props = {
   lefty?: boolean;
 };
 
-export default function ActionBanner({
-  className,
-  image,
-  alt,
-  message,
-  imgClassName,
-  lefty = true,
-}: Props) {
+export default function ActionBanner({ className, image, alt, message, imgClassName, lefty = true }: Props) {
   return (
     <div
       className={cn(
