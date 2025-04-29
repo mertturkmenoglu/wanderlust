@@ -5,6 +5,7 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
 
@@ -25,6 +26,12 @@ var (
 )
 
 func main() {
+	err := godotenv.Load()
+
+	if err != nil {
+		panic("cannot load .env file: " + err.Error())
+	}
+
 	e := echo.New()
 	api := humaecho.New(e, huma.DefaultConfig(API_NAME, API_VERSION))
 	api.OpenAPI().Info = &huma.Info{
