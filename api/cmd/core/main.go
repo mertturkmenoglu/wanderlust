@@ -5,6 +5,7 @@ import (
 	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/pkg/cfg"
+	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/middlewares"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -53,7 +54,7 @@ func main() {
 	auth.Register(grp)
 
 	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
-
+		db.RunMigrations()
 	}
 
 	e.Logger.Fatal(e.Start(":5000"))
