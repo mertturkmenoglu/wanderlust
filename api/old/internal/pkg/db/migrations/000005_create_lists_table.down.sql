@@ -1,3 +1,0 @@
-DROP TABLE IF NOT EXISTS lists;
-
-DROP TABLE IF NOT EXISTS list_items;
