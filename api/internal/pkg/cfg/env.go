@@ -33,3 +33,20 @@ func GetInt(key EnvKey) int {
 
 	return intVal
 }
+
+// Retrieve a boolean environment variable by its key.
+func GetBool(key EnvKey) bool {
+	val, ok := os.LookupEnv(string(key))
+
+	if !ok {
+		panic("Environment variable " + string(key) + " is not set")
+	}
+
+	boolVal, err := strconv.ParseBool(val)
+
+	if err != nil {
+		panic("Environment variable " + string(key) + " is not a valid boolean")
+	}
+
+	return boolVal
+}
