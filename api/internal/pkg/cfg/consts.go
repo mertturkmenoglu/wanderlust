@@ -37,6 +37,7 @@ const (
 	PORT                             EnvKey = "PORT"
 	REDIS_ADDR                       EnvKey = "REDIS_ADDR"
 	REDIS_URL                        EnvKey = "REDIS_URL"
+	RUN_MIGRATIONS                   EnvKey = "RUN_MIGRATIONS"
 	SMTP_ADDR                        EnvKey = "SMTP_ADDR"
 	SMTP_HOST                        EnvKey = "SMTP_HOST"
 	SMTP_IDENTITY                    EnvKey = "SMTP_IDENTITY"
