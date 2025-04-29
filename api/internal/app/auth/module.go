@@ -70,14 +70,18 @@ func Register(grp *huma.Group) {
 		o.Description = "Reset the password of the user"
 	})
 
-	huma.Get(grp, "/{provider}", func(ctx context.Context, input *struct{}) (*struct{}, error) {
+	huma.Get(grp, "/{provider}", func(ctx context.Context, input *struct {
+		Provider string `path:"provider" enum:"google,facebook" example:"google" doc:"The OAuth provider"`
+	}) (*struct{}, error) {
 		return nil, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "Start OAuth Flow"
 		o.Description = "Start the OAuth flow for the given provider"
 	})
 
-	huma.Get(grp, "/{provider}/callback", func(ctx context.Context, input *struct{}) (*struct{}, error) {
+	huma.Get(grp, "/{provider}/callback", func(ctx context.Context, input *struct {
+		Provider string `path:"provider" enum:"google,facebook" example:"google" doc:"The OAuth provider"`
+	}) (*struct{}, error) {
 		return nil, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "OAuth Callback"
