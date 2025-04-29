@@ -8,12 +8,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func main() {
-	e := echo.New()
-	api := humaecho.New(e, huma.DefaultConfig("Wanderlust API", "2.0.0"))
-	api.OpenAPI().Info = &huma.Info{
-		Title: "Wanderlust API",
-		Description: `Welcome to Wanderlust, a travel and location discovery platform designed to inspire exploration and connection. With Wanderlust, you can:<br>
+var (
+	API_NAME        = "Wanderlust API"
+	API_VERSION     = "2.0.0"
+	API_DESCRIPTION = `Welcome to Wanderlust, a travel and location discovery platform designed to inspire exploration and connection. With Wanderlust, you can:<br>
 		<ul>
 			<li>Explore cities and point of interest (POI) guides, curated with insider tips and recommendations.</li>
 			<li>Collect and organize POIs into favorites, bookmarks, and custom lists.</li>
@@ -22,11 +20,20 @@ func main() {
 			<li>Plan future trips using our intuitive trip planner tool.</li>
 			<li>Search and filter results using powerful facets and filters.</li>
 		</ul>
-		It's open source and free.`,
-		Version: "1.0.0",
+		It's open source and free.`
+	API_PREFIX = "/api/v2"
+)
+
+func main() {
+	e := echo.New()
+	api := humaecho.New(e, huma.DefaultConfig(API_NAME, API_VERSION))
+	api.OpenAPI().Info = &huma.Info{
+		Title:       API_NAME,
+		Description: API_DESCRIPTION,
+		Version:     API_VERSION,
 	}
 
-	grp := huma.NewGroup(api, "/api/v2")
+	grp := huma.NewGroup(api, API_PREFIX)
 
 	health.Register(grp)
 
