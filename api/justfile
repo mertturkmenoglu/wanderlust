@@ -1,19 +1,15 @@
-# Build the application
 all: build
 
 build:
-	@echo "Building..."
-
+	@echo "=> Building..."
 	@go build -o main cmd/core/main.go
-
-# Run the application
-run:
-	@go run cmd/core/main.go
+	@echo "=> Build completed"
 
 # Clean the binary
 clean:
-	@echo "Cleaning..."
+	@echo "=> Removing binary..."
 	@rm -f main
+	@echo "=> Removed binary"
 
 # Live reload
 watch:
@@ -24,18 +20,20 @@ watch:
 		echo "Air is not installed. Run 'go install github.com/air-verse/air@latest' to install Air";\
 	fi
 
+# Run fake data generation script
 generate-fake-data:
 	@go run cmd/fake/*.go
 
+# Generate Go code from SQL schema
 sqlc-generate:
 	@sqlc generate -f ./conf/sqlc.yaml
 
+# Synchronize search index with the primary database
 search-sync:
 	@go run cmd/search-sync/*.go
 
+# Create a new migration
 create-migration:
 	@read -p "Give migration a name: " migrationname; \
 	migrate create -ext sql -dir internal/pkg/db/migrations -seq $$migrationname; \
 	echo "Created migration with name $$migrationname. Update sql files."
-
-.PHONY: all build run clean watch generate-fake-data sqlc-generate search-sync create-migration
