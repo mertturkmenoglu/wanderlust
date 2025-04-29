@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Latest Go version
-- make
+- Just: https://github.com/casey/just
 - Docker
 - sqlc: https://sqlc.dev/
 - go migration: https://github.com/golang-migrate/migrate
@@ -15,9 +15,9 @@
 - Create a `.env` file.
 - Copy the content of `.env.example` file to `.env` file.
 - Fill the missing values.
-- Run sqlc to generate latest database queries & types: `make sqlc-generate`
+- Run sqlc to generate latest database queries & types: `just sqlc-generate`
 - Run Docker containers: `docker compose up -d`
-- Run the development server: `make watch`
+- Run the development server: `just watch`
 - Server will run at port `5000`.
 
 ## Next Steps
