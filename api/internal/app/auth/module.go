@@ -26,352 +26,400 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Auth"}
 	})
 
-	huma.Get(grp, "/auth/me", func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
-		email := ctx.Value("email").(string)
-		user, err := s.getUserByEmail(email)
-
-		if err != nil {
-			return nil, huma.Error404NotFound("User not found")
-		}
-
-		return &dto.GetMeOutput{
-			Body: dto.GetMeOutputBody{
-				ID:                    user.ID,
-				Email:                 user.Email,
-				Username:              user.Username,
-				FullName:              user.FullName,
-				GoogleID:              utils.TextToStr(user.GoogleID),
-				FacebookID:            utils.TextToStr(user.FbID),
-				IsEmailVerified:       user.IsEmailVerified,
-				IsOnboardingCompleted: user.IsOnboardingCompleted,
-				IsActive:              user.IsActive,
-				IsBusinessAccount:     user.IsBusinessAccount,
-				IsVerified:            user.IsVerified,
-				Role:                  user.Role,
-				Bio:                   utils.TextToStr(user.Bio),
-				Pronouns:              utils.TextToStr(user.Pronouns),
-				Website:               utils.TextToStr(user.Website),
-				Phone:                 utils.TextToStr(user.Phone),
-				ProfileImage:          utils.TextToStr(user.ProfileImage),
-				BannerImage:           utils.TextToStr(user.BannerImage),
-				FollowersCount:        user.FollowersCount,
-				FollowingCount:        user.FollowingCount,
-				LastLogin:             user.LastLogin.Time,
-				CreatedAt:             user.CreatedAt.Time,
-				UpdatedAt:             user.UpdatedAt.Time,
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/auth/me",
+			DefaultStatus: http.StatusOK,
+			Summary:       "Get Current User",
+			Description:   "Get the current user information",
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
 			},
-		}, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Get Current User"
-		o.Description = "Get the current user information"
-		o.Middlewares = append(o.Middlewares, middlewares.IsAuth(grp.API))
-		o.Security = []map[string][]string{
-			{"BearerJWT": {}},
-		}
-	})
-
-	huma.Post(grp, "/auth/credentials/login", func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
-		user, dbErr := s.getUserByEmail(input.Body.Email)
-		var hashed = ""
-
-		if dbErr == nil {
-			hashed = user.PasswordHash.String
-		}
-
-		matched, verifyErr := hash.Verify(input.Body.Password, hashed)
-
-		// If the passwords don't match, or there's an error, return a generic error message.
-		if !matched || dbErr != nil || verifyErr != nil {
-			return nil, huma.Error400BadRequest("Invalid email or password")
-		}
-
-		jwt, err := tokens.Encode(tokens.Payload{
-			ID:       user.ID,
-			Username: user.Username,
-			Email:    user.Email,
-			Role:     user.Role,
-		}, time.Now().Add(7*24*time.Hour))
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to create JWT")
-		}
-
-		bearerToken := "Bearer " + jwt
-
-		return &dto.LoginOutput{
-			Authorization: bearerToken,
-			Body: dto.LoginOutputBody{
-				Token: bearerToken,
+			Security: []map[string][]string{
+				{"BearerJWT": {}},
 			},
-		}, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Login with Credentials"
-		o.Description = "Login with email and password"
-		o.DefaultStatus = 200
-	})
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
+			email := ctx.Value("email").(string)
+			user, err := s.getUserByEmail(email)
 
-	huma.Post(grp, "/auth/credentials/register", func(ctx context.Context, input *dto.RegisterInput) (*dto.RegisterOutput, error) {
-		err := s.checkIfEmailOrUsernameIsTaken(input.Body.Email, input.Body.Username)
+			if err != nil {
+				return nil, huma.Error404NotFound("User not found")
+			}
 
-		if err != nil {
-			return nil, huma.Error400BadRequest("Email or username already taken")
-		}
-
-		ok := isValidUsername(input.Body.Username)
-
-		if !ok {
-			return nil, huma.Error400BadRequest("Username must include only alphanumeric characters or underscore")
-		}
-
-		saved, err := s.createUserFromCredentialsInfo(input.Body)
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to create user")
-		}
-
-		return &dto.RegisterOutput{
-			Body: dto.RegisterOutputBody{
-				ID:        saved.ID,
-				Email:     saved.Email,
-				Username:  saved.Username,
-				FullName:  saved.FullName,
-				CreatedAt: saved.CreatedAt.Time,
-				UpdatedAt: saved.UpdatedAt.Time,
-			},
-		}, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Register with Credentials"
-		o.Description = "Register with email and password"
-		o.DefaultStatus = 201
-	})
-
-	huma.Post(grp, "/auth/verify-email/send", func(ctx context.Context, input *dto.SendVerificationEmailInput) (*struct{}, error) {
-		user, err := s.getUserByEmail(input.Body.Email)
-
-		if err != nil {
-			return nil, huma.Error400BadRequest("Invalid email")
-		}
-
-		if user.IsEmailVerified {
-			return nil, huma.Error400BadRequest("Email already verified")
-		}
-
-		code, err := random.DigitsString(6)
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to generate verification code")
-		}
-
-		key := "verify-email:" + code
-		err = s.app.Cache.Set(key, user.Email, time.Minute*15)
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
-		}
-
-		url := s.getEmailVerifyUrl(code)
-
-		_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
-			Email: user.Email,
-			Url:   url,
+			return &dto.GetMeOutput{
+				Body: dto.GetMeOutputBody{
+					ID:                    user.ID,
+					Email:                 user.Email,
+					Username:              user.Username,
+					FullName:              user.FullName,
+					GoogleID:              utils.TextToStr(user.GoogleID),
+					FacebookID:            utils.TextToStr(user.FbID),
+					IsEmailVerified:       user.IsEmailVerified,
+					IsOnboardingCompleted: user.IsOnboardingCompleted,
+					IsActive:              user.IsActive,
+					IsBusinessAccount:     user.IsBusinessAccount,
+					IsVerified:            user.IsVerified,
+					Role:                  user.Role,
+					Bio:                   utils.TextToStr(user.Bio),
+					Pronouns:              utils.TextToStr(user.Pronouns),
+					Website:               utils.TextToStr(user.Website),
+					Phone:                 utils.TextToStr(user.Phone),
+					ProfileImage:          utils.TextToStr(user.ProfileImage),
+					BannerImage:           utils.TextToStr(user.BannerImage),
+					FollowersCount:        user.FollowersCount,
+					FollowingCount:        user.FollowingCount,
+					LastLogin:             user.LastLogin.Time,
+					CreatedAt:             user.CreatedAt.Time,
+					UpdatedAt:             user.UpdatedAt.Time,
+				},
+			}, nil
 		})
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to enqueue verification email task")
-		}
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/auth/credentials/login",
+			DefaultStatus: http.StatusOK,
+			Summary:       "Login with Credentials",
+			Description:   "Login with email and password",
+		},
+		func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
+			user, dbErr := s.getUserByEmail(input.Body.Email)
+			var hashed = ""
 
-		return nil, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Send Verification Email"
-		o.Description = "Send verification email to the user"
-		o.DefaultStatus = http.StatusNoContent
-	})
+			if dbErr == nil {
+				hashed = user.PasswordHash.String
+			}
 
-	huma.Get(grp, "/auth/verify-email/verify", func(ctx context.Context, input *dto.VerifyEmailInput) (*struct{}, error) {
-		key := "verify-email:" + input.Code
+			matched, verifyErr := hash.Verify(input.Body.Password, hashed)
 
-		if !app.Cache.Has(key) {
-			return nil, huma.Error400BadRequest("Invalid or expired verification code")
-		}
+			// If the passwords don't match, or there's an error, return a generic error message.
+			if !matched || dbErr != nil || verifyErr != nil {
+				return nil, huma.Error400BadRequest("Invalid email or password")
+			}
 
-		email, err := app.Cache.Get(key)
+			jwt, err := tokens.Encode(tokens.Payload{
+				ID:       user.ID,
+				Username: user.Username,
+				Email:    user.Email,
+				Role:     user.Role,
+			}, time.Now().Add(7*24*time.Hour))
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to get verification code from cache")
-		}
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to create JWT")
+			}
 
-		user, err := s.getUserByEmail(email)
+			bearerToken := "Bearer " + jwt
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to get user by email")
-		}
+			return &dto.LoginOutput{
+				Authorization: bearerToken,
+				Body: dto.LoginOutputBody{
+					Token: bearerToken,
+				},
+			}, nil
+		},
+	)
 
-		if user.IsEmailVerified {
-			return nil, huma.Error400BadRequest("Email already verified")
-		}
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/auth/credentials/register",
+			Summary:       "Register with Credentials",
+			Description:   "Register with email and password",
+			DefaultStatus: http.StatusCreated,
+		},
+		func(ctx context.Context, input *dto.RegisterInput) (*dto.RegisterOutput, error) {
+			err := s.checkIfEmailOrUsernameIsTaken(input.Body.Email, input.Body.Username)
 
-		err = s.verifyUserEmail(user.ID)
+			if err != nil {
+				return nil, huma.Error400BadRequest("Email or username already taken")
+			}
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to verify email")
-		}
+			ok := isValidUsername(input.Body.Username)
 
-		return nil, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Verify Email"
-		o.Description = "Verify the email of the user"
-		o.DefaultStatus = http.StatusNoContent
-	})
+			if !ok {
+				return nil, huma.Error400BadRequest("Username must include only alphanumeric characters or underscore")
+			}
 
-	huma.Post(grp, "/auth/forgot-password/send", func(ctx context.Context, input *dto.SendForgotPasswordEmailInput) (*struct{}, error) {
-		user, err := s.getUserByEmail(input.Body.Email)
+			saved, err := s.createUserFromCredentialsInfo(input.Body)
 
-		if err != nil {
-			return nil, huma.Error400BadRequest("Invalid email")
-		}
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to create user")
+			}
 
-		code, err := random.DigitsString(6)
+			return &dto.RegisterOutput{
+				Body: dto.RegisterOutputBody{
+					ID:        saved.ID,
+					Email:     saved.Email,
+					Username:  saved.Username,
+					FullName:  saved.FullName,
+					CreatedAt: saved.CreatedAt.Time,
+					UpdatedAt: saved.UpdatedAt.Time,
+				},
+			}, nil
+		},
+	)
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to generate verification code")
-		}
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/auth/verify-email/send",
+			Summary:       "Send Verification Email",
+			Description:   "Send verification email to the user",
+			DefaultStatus: http.StatusNoContent,
+		},
+		func(ctx context.Context, input *dto.SendVerificationEmailInput) (*struct{}, error) {
+			user, err := s.getUserByEmail(input.Body.Email)
 
-		key := "forgot-password:" + code
-		err = s.app.Cache.Set(key, user.Email, time.Minute*15)
+			if err != nil {
+				return nil, huma.Error400BadRequest("Invalid email")
+			}
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
-		}
+			if user.IsEmailVerified {
+				return nil, huma.Error400BadRequest("Email already verified")
+			}
 
-		_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
-			Email: user.Email,
-			Code:  code,
-		})
+			code, err := random.DigitsString(6)
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to enqueue forgot password email task")
-		}
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to generate verification code")
+			}
 
-		return nil, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Send Forgot Password Email"
-		o.Description = "Send forgot password email to the user"
-		o.DefaultStatus = http.StatusNoContent
-	})
+			key := "verify-email:" + code
+			err = s.app.Cache.Set(key, user.Email, time.Minute*15)
 
-	huma.Post(grp, "/auth/forgot-password/reset", func(ctx context.Context, input *dto.ResetPasswordInput) (*struct{}, error) {
-		user, err := s.getUserByEmail(input.Body.Email)
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
+			}
 
-		if err != nil {
-			return nil, huma.Error400BadRequest("Invalid email")
-		}
+			url := s.getEmailVerifyUrl(code)
 
-		key := "forgot-password:" + input.Body.Code
-		cacheVal, err := s.app.Cache.Get(key)
-
-		if err != nil {
-			return nil, huma.Error400BadRequest("Invalid or expired verification code")
-		}
-
-		if cacheVal != user.Email {
-			return nil, huma.Error400BadRequest("Invalid or expired verification code")
-		}
-
-		err = s.updateUserPassword(user.ID, input.Body.NewPassword)
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to update password")
-		}
-
-		err = s.app.Cache.Del(key)
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to delete verification code from cache")
-		}
-
-		return nil, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Reset Password"
-		o.Description = "Reset the password of the user"
-		o.DefaultStatus = http.StatusNoContent
-	})
-
-	huma.Get(grp, "/auth/{provider}", func(ctx context.Context, input *dto.OAuthInput) (*dto.OAuthOutput, error) {
-		state, url, err := getOAuthStateAndRedirectUrl(input.Provider)
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to create OAuth state")
-		}
-
-		c := &http.Cookie{
-			Name:     "state",
-			Value:    state,
-			Path:     "/",
-			MaxAge:   int(time.Hour.Seconds()),
-			Secure:   false,
-			HttpOnly: true,
-		}
-
-		return &dto.OAuthOutput{
-			Status: http.StatusTemporaryRedirect,
-			Url:    url,
-			Cookie: c.String(),
-		}, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "Start OAuth Flow"
-		o.Description = "Start the OAuth flow for the given provider"
-		o.DefaultStatus = http.StatusTemporaryRedirect
-	})
-
-	huma.Get(grp, "/auth/{provider}/callback", func(ctx context.Context, input *dto.OAuthCallbackInput) (*dto.OAuthCallbackOutput, error) {
-		token, err := getOAuthToken(getOAuthTokenParams{
-			provider:    input.Provider,
-			state:       input.QueryState,
-			code:        input.Code,
-			cookieState: input.CookieState,
-		})
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to get OAuth token", &huma.ErrorDetail{
-				Message:  "Failed to get OAuth token",
-				Location: "OAuth",
-				Value:    err.Error(),
+			_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
+				Email: user.Email,
+				Url:   url,
 			})
-		}
 
-		userInfo, err := fetchUserInfo(input.Provider, token)
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to enqueue verification email task")
+			}
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to fetch user info", &huma.ErrorDetail{
-				Message:  "Failed to fetch user info",
-				Location: "OAuth",
-				Value:    err.Error(),
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/auth/verify-email/verify",
+			Summary:       "Verify Email",
+			Description:   "Verify the email of the user",
+			DefaultStatus: http.StatusNoContent,
+		},
+		func(ctx context.Context, input *dto.VerifyEmailInput) (*struct{}, error) {
+			key := "verify-email:" + input.Code
+
+			if !app.Cache.Has(key) {
+				return nil, huma.Error400BadRequest("Invalid or expired verification code")
+			}
+
+			email, err := app.Cache.Get(key)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to get verification code from cache")
+			}
+
+			user, err := s.getUserByEmail(email)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to get user by email")
+			}
+
+			if user.IsEmailVerified {
+				return nil, huma.Error400BadRequest("Email already verified")
+			}
+
+			err = s.verifyUserEmail(user.ID)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to verify email")
+			}
+
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/auth/forgot-password/send",
+			Summary:       "Send Forgot Password Email",
+			Description:   "Send forgot password email to the user",
+			DefaultStatus: http.StatusNoContent,
+		},
+		func(ctx context.Context, input *dto.SendForgotPasswordEmailInput) (*struct{}, error) {
+			user, err := s.getUserByEmail(input.Body.Email)
+
+			if err != nil {
+				return nil, huma.Error400BadRequest("Invalid email")
+			}
+
+			code, err := random.DigitsString(6)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to generate verification code")
+			}
+
+			key := "forgot-password:" + code
+			err = s.app.Cache.Set(key, user.Email, time.Minute*15)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
+			}
+
+			_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
+				Email: user.Email,
+				Code:  code,
 			})
-		}
 
-		_, err = s.getOrCreateUserFromOAuthUser(userInfo)
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to enqueue forgot password email task")
+			}
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to create user", &huma.ErrorDetail{
-				Message:  "Failed to create user",
-				Location: "OAuth",
-				Value:    err.Error(),
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/auth/forgot-password/reset",
+			Summary:       "Reset Password",
+			Description:   "Reset the password of the user",
+			DefaultStatus: http.StatusNoContent,
+		},
+		func(ctx context.Context, input *dto.ResetPasswordInput) (*struct{}, error) {
+			user, err := s.getUserByEmail(input.Body.Email)
+
+			if err != nil {
+				return nil, huma.Error400BadRequest("Invalid email")
+			}
+
+			key := "forgot-password:" + input.Body.Code
+			cacheVal, err := s.app.Cache.Get(key)
+
+			if err != nil {
+				return nil, huma.Error400BadRequest("Invalid or expired verification code")
+			}
+
+			if cacheVal != user.Email {
+				return nil, huma.Error400BadRequest("Invalid or expired verification code")
+			}
+
+			err = s.updateUserPassword(user.ID, input.Body.NewPassword)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to update password")
+			}
+
+			err = s.app.Cache.Del(key)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to delete verification code from cache")
+			}
+
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/auth/{provider}",
+			Summary:       "Start OAuth Flow",
+			Description:   "Start the OAuth flow for the given provider",
+			DefaultStatus: http.StatusTemporaryRedirect,
+		},
+		func(ctx context.Context, input *dto.OAuthInput) (*dto.OAuthOutput, error) {
+			state, url, err := getOAuthStateAndRedirectUrl(input.Provider)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to create OAuth state")
+			}
+
+			c := &http.Cookie{
+				Name:     "state",
+				Value:    state,
+				Path:     "/",
+				MaxAge:   int(time.Hour.Seconds()),
+				Secure:   false,
+				HttpOnly: true,
+			}
+
+			return &dto.OAuthOutput{
+				Status: http.StatusTemporaryRedirect,
+				Url:    url,
+				Cookie: c.String(),
+			}, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/auth/{provider}/callback",
+			Summary:       "OAuth Callback",
+			Description:   "Callback for the OAuth flow",
+			DefaultStatus: http.StatusTemporaryRedirect,
+		},
+		func(ctx context.Context, input *dto.OAuthCallbackInput) (*dto.OAuthCallbackOutput, error) {
+			token, err := getOAuthToken(getOAuthTokenParams{
+				provider:    input.Provider,
+				state:       input.QueryState,
+				code:        input.Code,
+				cookieState: input.CookieState,
 			})
-		}
 
-		return &dto.OAuthCallbackOutput{
-			SetCookie: http.Cookie{
-				Name:    "state",
-				Value:   "",
-				MaxAge:  -1,
-				Path:    "/",
-				Expires: time.Unix(0, 0),
-			},
-			Status: http.StatusTemporaryRedirect,
-			Url:    cfg.Get(cfg.API_AUTH_OAUTH_REDIRECT),
-		}, nil
-	}, func(o *huma.Operation) {
-		o.Summary = "OAuth Callback"
-		o.Description = "Callback for the OAuth flow"
-	})
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to get OAuth token", &huma.ErrorDetail{
+					Message:  "Failed to get OAuth token",
+					Location: "OAuth",
+					Value:    err.Error(),
+				})
+			}
+
+			userInfo, err := fetchUserInfo(input.Provider, token)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to fetch user info", &huma.ErrorDetail{
+					Message:  "Failed to fetch user info",
+					Location: "OAuth",
+					Value:    err.Error(),
+				})
+			}
+
+			_, err = s.getOrCreateUserFromOAuthUser(userInfo)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to create user", &huma.ErrorDetail{
+					Message:  "Failed to create user",
+					Location: "OAuth",
+					Value:    err.Error(),
+				})
+			}
+
+			return &dto.OAuthCallbackOutput{
+				SetCookie: http.Cookie{
+					Name:    "state",
+					Value:   "",
+					MaxAge:  -1,
+					Path:    "/",
+					Expires: time.Unix(0, 0),
+				},
+				Status: http.StatusTemporaryRedirect,
+				Url:    cfg.Get(cfg.API_AUTH_OAUTH_REDIRECT),
+			}, nil
+		},
+	)
 }
