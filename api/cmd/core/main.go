@@ -4,6 +4,7 @@ import (
 	"time"
 	"wanderlust/internal/app/amenities"
 	"wanderlust/internal/app/auth"
+	"wanderlust/internal/app/categories"
 	"wanderlust/internal/app/cities"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/pkg/cache"
@@ -71,6 +72,7 @@ func main() {
 
 	amenities.Register(grp, app)
 	auth.Register(grp, app)
+	categories.Register(grp, app)
 	cities.Register(grp, app)
 	health.Register(grp)
 
