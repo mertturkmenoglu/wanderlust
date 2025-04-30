@@ -108,12 +108,24 @@ type SendVerificationEmailInputBody struct {
 	Email string `json:"email" example:"john@example.com" doc:"Email of the user" minLength:"1" maxLength:"128" format:"email" required:"true"`
 }
 
-type SendForgotPasswordEmailRequestDto struct {
-	Email string `json:"email"`
+type VerifyEmailInput struct {
+	Code string `query:"code" doc:"Verification code" required:"true" example:"123456" minLength:"6" maxLength:"6"`
 }
 
-type ResetPasswordRequestDto struct {
-	Email       string `json:"email"`
-	Code        string `json:"code"`
-	NewPassword string `json:"newPassword"`
+type SendForgotPasswordEmailInput struct {
+	Body SendForgotPasswordEmailInputBody
+}
+
+type SendForgotPasswordEmailInputBody struct {
+	Email string `json:"email" example:"john@example.com" doc:"Email of the user" minLength:"1" maxLength:"128" format:"email" required:"true"`
+}
+
+type ResetPasswordInput struct {
+	Body ResetPasswordInputBody
+}
+
+type ResetPasswordInputBody struct {
+	Email       string `json:"email" example:"john@example.com" doc:"Email of the user" minLength:"1" maxLength:"128" format:"email" required:"true"`
+	Code        string `json:"code" example:"123456" doc:"Verification code" minLength:"6" maxLength:"6" required:"true"`
+	NewPassword string `json:"newPassword" example:"newpassword123" doc:"New password of the user" minLength:"6" maxLength:"128" required:"true"`
 }

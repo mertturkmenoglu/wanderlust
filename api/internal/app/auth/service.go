@@ -171,3 +171,24 @@ func (s *Service) getEmailVerifyUrl(code string) string {
 		code,
 	)
 }
+
+func (s *Service) verifyUserEmail(userId string) error {
+	return s.app.Db.Queries.UpdateUserIsEmailVerified(context.Background(), db.UpdateUserIsEmailVerifiedParams{
+		ID:              userId,
+		IsEmailVerified: true,
+	})
+}
+
+
+func (s *Service) updateUserPassword(userId string, plainPassword string) error {
+	hashed, err := hash.Hash(plainPassword)
+
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %v", err)
+	}
+
+	return s.app.Db.Queries.UpdateUserPassword(context.Background(), db.UpdateUserPasswordParams{
+		ID:           userId,
+		PasswordHash: pgtype.Text{String: hashed, Valid: true},
+	})
+}

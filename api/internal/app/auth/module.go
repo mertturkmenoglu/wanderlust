@@ -187,25 +187,113 @@ func Register(grp *huma.Group, app *core.Application) {
 		o.DefaultStatus = http.StatusNoContent
 	})
 
-	huma.Get(grp, "/auth/verify-email/verify", func(ctx context.Context, input *struct{}) (*struct{}, error) {
-		return nil, huma.Error501NotImplemented("Not implemented")
+	huma.Get(grp, "/auth/verify-email/verify", func(ctx context.Context, input *dto.VerifyEmailInput) (*struct{}, error) {
+		key := "verify-email:" + input.Code
+
+		if !app.Cache.Has(key) {
+			return nil, huma.Error400BadRequest("Invalid or expired verification code")
+		}
+
+		email, err := app.Cache.Get(key)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to get verification code from cache")
+		}
+
+		user, err := s.getUserByEmail(email)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to get user by email")
+		}
+
+		if user.IsEmailVerified {
+			return nil, huma.Error400BadRequest("Email already verified")
+		}
+
+		err = s.verifyUserEmail(user.ID)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to verify email")
+		}
+
+		return nil, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "Verify Email"
 		o.Description = "Verify the email of the user"
+		o.DefaultStatus = http.StatusNoContent
 	})
 
-	huma.Post(grp, "/auth/forgot-password/send", func(ctx context.Context, input *struct{}) (*struct{}, error) {
-		return nil, huma.Error501NotImplemented("Not implemented")
+	huma.Post(grp, "/auth/forgot-password/send", func(ctx context.Context, input *dto.SendForgotPasswordEmailInput) (*struct{}, error) {
+		user, err := s.getUserByEmail(input.Body.Email)
+
+		if err != nil {
+			return nil, huma.Error400BadRequest("Invalid email")
+		}
+
+		code, err := random.DigitsString(6)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to generate verification code")
+		}
+
+		key := "forgot-password:" + code
+		err = s.app.Cache.Set(key, user.Email, time.Minute*15)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
+		}
+
+		_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
+			Email: user.Email,
+			Code:  code,
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to enqueue forgot password email task")
+		}
+
+		return nil, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "Send Forgot Password Email"
 		o.Description = "Send forgot password email to the user"
+		o.DefaultStatus = http.StatusNoContent
 	})
 
-	huma.Post(grp, "/auth/forgot-password/reset", func(ctx context.Context, input *struct{}) (*struct{}, error) {
-		return nil, huma.Error501NotImplemented("Not implemented")
+	huma.Post(grp, "/auth/forgot-password/reset", func(ctx context.Context, input *dto.ResetPasswordInput) (*struct{}, error) {
+		user, err := s.getUserByEmail(input.Body.Email)
+
+		if err != nil {
+			return nil, huma.Error400BadRequest("Invalid email")
+		}
+
+		key := "forgot-password:" + input.Body.Code
+		cacheVal, err := s.app.Cache.Get(key)
+
+		if err != nil {
+			return nil, huma.Error400BadRequest("Invalid or expired verification code")
+		}
+
+		if cacheVal != user.Email {
+			return nil, huma.Error400BadRequest("Invalid or expired verification code")
+		}
+
+		err = s.updateUserPassword(user.ID, input.Body.NewPassword)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to update password")
+		}
+
+		err = s.app.Cache.Del(key)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to delete verification code from cache")
+		}
+
+		return nil, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "Reset Password"
 		o.Description = "Reset the password of the user"
+		o.DefaultStatus = http.StatusNoContent
 	})
 
 	huma.Get(grp, "/auth/{provider}", func(ctx context.Context, input *dto.OAuthInput) (*dto.OAuthOutput, error) {
