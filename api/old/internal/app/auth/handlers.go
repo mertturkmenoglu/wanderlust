@@ -12,41 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (s *handlers) SendVerificationEmail(c echo.Context) error {
-	body := c.Get("body").(SendVerificationEmailRequestDto)
-	user, err := s.service.getUserByEmail(body.Email)
-
-	if err != nil {
-		return ErrInvalidEmail
-	}
-
-	if user.IsEmailVerified {
-		return ErrEmailAlreadyVerified
-	}
-
-	code, err := random.DigitsString(6)
-
-	if err != nil {
-		return echo.ErrInternalServerError
-	}
-
-	key := fmt.Sprintf("verify-email:%s", code)
-	s.di.Cache.Set(key, body.Email, time.Minute*15)
-
-	url := s.service.getEmailVerifyUrl(code)
-
-	_, err = s.di.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
-		Email: body.Email,
-		Url:   url,
-	})
-
-	if err != nil {
-		return errs.InternalServerError
-	}
-
-	return c.NoContent(http.StatusOK)
-}
-
 func (s *handlers) VerifyEmail(c echo.Context) error {
 	code := c.QueryParam("code")
 

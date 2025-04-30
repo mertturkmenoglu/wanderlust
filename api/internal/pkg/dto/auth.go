@@ -100,8 +100,12 @@ type OAuthCallbackOutput struct {
 	Url       string `header:"Location"`
 }
 
-type SendVerificationEmailRequestDto struct {
-	Email string `json:"email"`
+type SendVerificationEmailInput struct {
+	Body SendVerificationEmailInputBody
+}
+
+type SendVerificationEmailInputBody struct {
+	Email string `json:"email" example:"john@example.com" doc:"Email of the user" minLength:"1" maxLength:"128" format:"email" required:"true"`
 }
 
 type SendForgotPasswordEmailRequestDto struct {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
@@ -161,4 +162,12 @@ func (s *Service) createUserFromOAuthUser(oauthUser *oauthUser) (*db.User, error
 	}
 
 	return &saved, nil
+}
+
+func (s *Service) getEmailVerifyUrl(code string) string {
+	return fmt.Sprintf(
+		"%s/api/v2/auth/verify-email/verify?code=%s",
+		cfg.Get(cfg.API_URL),
+		code,
+	)
 }

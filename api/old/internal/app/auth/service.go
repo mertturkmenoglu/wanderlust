@@ -18,15 +18,6 @@ func (s *service) createUserFromCredentialsInfo(dto RegisterRequestDto) (*db.Use
 	return user, nil
 }
 
-func (s *service) getEmailVerifyUrl(code string) string {
-	cfg := config.GetConfiguration()
-	return fmt.Sprintf(
-		"%s/api/auth/verify-email/verify?code=%s",
-		cfg.GetString(config.API_URL),
-		code,
-	)
-}
-
 func (s *service) verifyUserEmail(userId string) error {
 	return s.repository.verifyUserEmail(userId)
 }

@@ -9,6 +9,8 @@ import (
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/hash"
 	"wanderlust/internal/pkg/middlewares"
+	"wanderlust/internal/pkg/random"
+	"wanderlust/internal/pkg/tasks"
 	"wanderlust/internal/pkg/tokens"
 	"wanderlust/internal/pkg/utils"
 
@@ -143,11 +145,46 @@ func Register(grp *huma.Group, app *core.Application) {
 		o.DefaultStatus = 201
 	})
 
-	huma.Post(grp, "/auth/verify-email/send", func(ctx context.Context, input *struct{}) (*struct{}, error) {
-		return nil, huma.Error501NotImplemented("Not implemented")
+	huma.Post(grp, "/auth/verify-email/send", func(ctx context.Context, input *dto.SendVerificationEmailInput) (*struct{}, error) {
+		user, err := s.getUserByEmail(input.Body.Email)
+
+		if err != nil {
+			return nil, huma.Error400BadRequest("Invalid email")
+		}
+
+		if user.IsEmailVerified {
+			return nil, huma.Error400BadRequest("Email already verified")
+		}
+
+		code, err := random.DigitsString(6)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to generate verification code")
+		}
+
+		key := "verify-email:" + code
+		err = s.app.Cache.Set(key, user.Email, time.Minute*15)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
+		}
+
+		url := s.getEmailVerifyUrl(code)
+
+		_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
+			Email: user.Email,
+			Url:   url,
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to enqueue verification email task")
+		}
+
+		return nil, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "Send Verification Email"
 		o.Description = "Send verification email to the user"
+		o.DefaultStatus = http.StatusNoContent
 	})
 
 	huma.Get(grp, "/auth/verify-email/verify", func(ctx context.Context, input *struct{}) (*struct{}, error) {
