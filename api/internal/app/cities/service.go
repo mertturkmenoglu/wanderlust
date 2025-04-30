@@ -30,30 +30,7 @@ func (s *Service) list() (*dto.CitiesListOutput, error) {
 	cities := make([]dto.City, len(dbCities))
 
 	for i, dbCity := range dbCities {
-		cities[i] = dto.City{
-			ID:          dbCity.ID,
-			Name:        dbCity.Name,
-			Description: dbCity.Description,
-			State: dto.CityState{
-				Name: dbCity.StateName,
-				Code: dbCity.StateCode,
-			},
-			Country: dto.CityCountry{
-				Name: dbCity.CountryName,
-				Code: dbCity.CountryCode,
-			},
-			Image: dto.CityImage{
-				Url:             dbCity.ImageUrl,
-				License:         utils.TextToStr(dbCity.ImgLicense),
-				LicenseLink:     utils.TextToStr(dbCity.ImgLicenseLink),
-				Attribution:     utils.TextToStr(dbCity.ImgAttr),
-				AttributionLink: utils.TextToStr(dbCity.ImgAttrLink),
-			},
-			Coordinates: dto.CityCoordinates{
-				Latitude:  dbCity.Latitude,
-				Longitude: dbCity.Longitude,
-			},
-		}
+		cities[i] = mapToCity(dbCity)
 	}
 
 	return &dto.CitiesListOutput{
@@ -92,30 +69,7 @@ func (s *Service) featured() (*dto.CitiesFeaturedOutput, error) {
 	cities := make([]dto.City, len(dbFeaturedCities))
 
 	for i, dbCity := range dbFeaturedCities {
-		cities[i] = dto.City{
-			ID:          dbCity.ID,
-			Name:        dbCity.Name,
-			Description: dbCity.Description,
-			State: dto.CityState{
-				Name: dbCity.StateName,
-				Code: dbCity.StateCode,
-			},
-			Country: dto.CityCountry{
-				Name: dbCity.CountryName,
-				Code: dbCity.CountryCode,
-			},
-			Image: dto.CityImage{
-				Url:             dbCity.ImageUrl,
-				License:         utils.TextToStr(dbCity.ImgLicense),
-				LicenseLink:     utils.TextToStr(dbCity.ImgLicenseLink),
-				Attribution:     utils.TextToStr(dbCity.ImgAttr),
-				AttributionLink: utils.TextToStr(dbCity.ImgAttrLink),
-			},
-			Coordinates: dto.CityCoordinates{
-				Latitude:  dbCity.Latitude,
-				Longitude: dbCity.Longitude,
-			},
-		}
+		cities[i] = mapToCity(dbCity)
 	}
 
 	return &dto.CitiesFeaturedOutput{
@@ -136,33 +90,10 @@ func (s *Service) get(id int32) (*dto.GetCityByIdOutput, error) {
 		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	city := dto.GetCityByIdOutputBody{
-		ID:          res.ID,
-		Name:        res.Name,
-		Description: res.Description,
-		State: dto.CityState{
-			Name: res.StateName,
-			Code: res.StateCode,
-		},
-		Country: dto.CityCountry{
-			Name: res.CountryName,
-			Code: res.CountryCode,
-		},
-		Image: dto.CityImage{
-			Url:             res.ImageUrl,
-			License:         utils.TextToStr(res.ImgLicense),
-			LicenseLink:     utils.TextToStr(res.ImgLicenseLink),
-			Attribution:     utils.TextToStr(res.ImgAttr),
-			AttributionLink: utils.TextToStr(res.ImgAttrLink),
-		},
-		Coordinates: dto.CityCoordinates{
-			Latitude:  res.Latitude,
-			Longitude: res.Longitude,
-		},
-	}
-
 	return &dto.GetCityByIdOutput{
-		Body: city,
+		Body: dto.GetCityByIdOutputBody{
+			City: mapToCity(res),
+		},
 	}, nil
 }
 
@@ -192,33 +123,10 @@ func (s *Service) create(body dto.CreateCityInputBody) (*dto.CreateCityOutput, e
 		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	city := dto.CreateCityOutputBody{
-		ID:          dbCity.ID,
-		Name:        dbCity.Name,
-		Description: dbCity.Description,
-		State: dto.CityState{
-			Name: dbCity.StateName,
-			Code: dbCity.StateCode,
-		},
-		Country: dto.CityCountry{
-			Name: dbCity.CountryName,
-			Code: dbCity.CountryCode,
-		},
-		Image: dto.CityImage{
-			Url:             dbCity.ImageUrl,
-			License:         utils.TextToStr(dbCity.ImgLicense),
-			LicenseLink:     utils.TextToStr(dbCity.ImgLicenseLink),
-			Attribution:     utils.TextToStr(dbCity.ImgAttr),
-			AttributionLink: utils.TextToStr(dbCity.ImgAttrLink),
-		},
-		Coordinates: dto.CityCoordinates{
-			Latitude:  dbCity.Latitude,
-			Longitude: dbCity.Longitude,
-		},
-	}
-
 	return &dto.CreateCityOutput{
-		Body: city,
+		Body: dto.CreateCityOutputBody{
+			City: mapToCity(dbCity),
+		},
 	}, nil
 }
 
@@ -262,28 +170,9 @@ func (s *Service) update(id int32, body dto.UpdateCityInputBody) (*dto.UpdateCit
 		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	city := dto.UpdateCityOutputBody{
-		ID:          dbCity.ID,
-		Name:        dbCity.Name,
-		Description: dbCity.Description,
-		State: dto.CityState{
-			Name: dbCity.StateName,
-			Code: dbCity.StateCode,
-		},
-		Country: dto.CityCountry{
-			Name: dbCity.CountryName,
-			Code: dbCity.CountryCode,
-		},
-		Image: dto.CityImage{
-			Url:             dbCity.ImageUrl,
-			License:         utils.TextToStr(dbCity.ImgLicense),
-			LicenseLink:     utils.TextToStr(dbCity.ImgLicenseLink),
-			Attribution:     utils.TextToStr(dbCity.ImgAttr),
-			AttributionLink: utils.TextToStr(dbCity.ImgAttrLink),
-		},
-	}
-
 	return &dto.UpdateCityOutput{
-		Body: city,
+		Body: dto.UpdateCityOutputBody{
+			City: mapToCity(dbCity),
+		},
 	}, nil
 }
