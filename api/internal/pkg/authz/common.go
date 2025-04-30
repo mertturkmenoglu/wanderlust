@@ -7,15 +7,21 @@ type AuthzAct string
 type AuthzFn func(s *Authz, c huma.Context) (bool, error)
 
 const (
-	ActTest       AuthzAct = "test"
-	ActCityCreate AuthzAct = "city.create"
-	ActCityDelete AuthzAct = "city.delete"
-	ActCityUpdate AuthzAct = "city.update"
+	ActTest          AuthzAct = "test"
+	ActCityCreate    AuthzAct = "city.create"
+	ActCityDelete    AuthzAct = "city.delete"
+	ActCityUpdate    AuthzAct = "city.update"
+	ActAmenityUpdate AuthzAct = "amenity.update"
+	ActAmenityCreate AuthzAct = "amenity.create"
+	ActAmenityDelete AuthzAct = "amenity.delete"
 )
 
 var Fns = map[AuthzAct]AuthzFn{
-	ActTest:       Identity,
-	ActCityCreate: IsAdmin,
-	ActCityDelete: IsAdmin,
-	ActCityUpdate: IsAdmin,
+	ActTest:          Identity,
+	ActCityCreate:    IsAdmin,
+	ActCityDelete:    IsAdmin,
+	ActCityUpdate:    IsAdmin,
+	ActAmenityUpdate: IsAdmin,
+	ActAmenityCreate: IsAdmin,
+	ActAmenityDelete: IsAdmin,
 }
