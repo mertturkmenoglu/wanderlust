@@ -4,15 +4,22 @@ import (
 	"time"
 	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/health"
+	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/cfg"
+	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/email"
+	"wanderlust/internal/pkg/logs"
 	"wanderlust/internal/pkg/middlewares"
+	"wanderlust/internal/pkg/tasks"
+	"wanderlust/internal/pkg/upload"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/sony/sonyflake"
 )
 
 var (
@@ -41,7 +48,16 @@ func main() {
 	e := echo.New()
 	InitGlobalMiddlewares(e)
 
-	api := humaecho.New(e, huma.DefaultConfig(API_NAME, API_VERSION))
+	humaConfig := huma.DefaultConfig(API_NAME, API_VERSION)
+	humaConfig.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
+		"BearerJWT": {
+			Type:         "http",
+			Scheme:       "bearer",
+			BearerFormat: "JWT",
+		},
+	}
+
+	api := humaecho.New(e, humaConfig)
 	api.OpenAPI().Info = &huma.Info{
 		Title:       API_NAME,
 		Description: API_DESCRIPTION,
@@ -49,9 +65,10 @@ func main() {
 	}
 
 	grp := huma.NewGroup(api, API_PREFIX)
+	app := NewApplication()
 
 	health.Register(grp)
-	auth.Register(grp)
+	auth.Register(grp, app)
 
 	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
 		db.RunMigrations()
@@ -74,4 +91,19 @@ func InitGlobalMiddlewares(e *echo.Echo) {
 	}))
 	e.Use(middleware.Secure())
 	e.Use(middleware.BodyLimit("1MB"))
+}
+
+func NewApplication() *core.Application {
+	emailSvc := email.New()
+	uploadSvc := upload.New()
+
+	return &core.Application{
+		Db:     db.NewDb(),
+		Flake:  sonyflake.NewSonyflake(sonyflake.Settings{}),
+		Logger: logs.NewPTermLogger(),
+		Cache:  cache.New(),
+		Email:  emailSvc,
+		Tasks:  tasks.New(emailSvc, uploadSvc),
+		Upload: uploadSvc,
+	}
 }

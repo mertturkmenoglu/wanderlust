@@ -121,67 +121,6 @@ func (h *handlers) Logout(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-func (h *handlers) CredentialsLogin(c echo.Context) error {
-	sess := mustGetAuthSession(c)
-	body := c.Get("body").(LoginRequestDto)
-	user, dbErr := h.service.getUserByEmail(body.Email)
-	var hashed = ""
-
-	if dbErr == nil {
-		hashed = user.PasswordHash.String
-	}
-
-	matched, verifyErr := hash.Verify(body.Password, hashed)
-
-	// If the passwords don't match, or there's an error, return a generic error message.
-	if !matched || dbErr != nil || verifyErr != nil {
-		return ErrInvalidEmailOrPassword
-	}
-
-	sessionId := uuid.New().String()
-	err := h.service.createSession(sessionId, user.ID)
-
-	if err != nil {
-		return err
-	}
-
-	sess.Options = getAuthSessionOptions()
-	sess.Values["user_id"] = user.ID
-	sess.Values["session_id"] = sessionId
-	sess.Save(c.Request(), c.Response())
-
-	return c.NoContent(http.StatusOK)
-}
-
-func (h *handlers) CredentialsRegister(c echo.Context) error {
-	body := c.Get("body").(RegisterRequestDto)
-	err := h.service.checkIfEmailOrUsernameIsTaken(body.Email, body.Username)
-
-	if err != nil {
-		return err
-	}
-
-	// Check username characters
-	ok := isValidUsername(body.Username)
-
-	if !ok {
-		return ErrUsernameChars
-	}
-
-	_, err = h.service.createUserFromCredentialsInfo(body)
-
-	if err != nil {
-		return err
-	}
-
-	h.di.Tasks.CreateAndEnqueue(tasks.TypeWelcomeEmail, tasks.WelcomeEmailPayload{
-		Email: body.Email,
-		Name:  body.FullName,
-	})
-
-	return c.NoContent(http.StatusCreated)
-}
-
 func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	body := c.Get("body").(SendVerificationEmailRequestDto)
 	user, err := s.service.getUserByEmail(body.Email)
