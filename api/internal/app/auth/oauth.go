@@ -8,17 +8,16 @@ import (
 	"wanderlust/internal/pkg/random"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/facebook"
 	"golang.org/x/oauth2/google"
 )
 
 type getOAuthTokenParams struct {
-	provider string
-	sess     *sessions.Session
-	state    string
-	code     string
+	provider    string
+	state       string
+	cookieState string
+	code        string
 }
 
 type oauthUser struct {
@@ -86,17 +85,8 @@ func getFbOAuth2Config() *oauth2.Config {
 
 func getOAuthToken(params getOAuthTokenParams) (*oauth2.Token, error) {
 	cfg := getOAuthConfig(params.provider)
-	savedState, ok := params.sess.Values["state"].(string)
 
-	if !ok || savedState == "" {
-		return nil, huma.Error400BadRequest("Invalid state parameter", &huma.ErrorDetail{
-			Message:  "Invalid state parameter",
-			Location: "state",
-			Value:    savedState,
-		})
-	}
-
-	if params.state != savedState {
+	if params.state != params.cookieState {
 		return nil, huma.Error400BadRequest("State parameter mismatch", &huma.ErrorDetail{
 			Message:  "State parameter mismatch",
 			Location: "state",

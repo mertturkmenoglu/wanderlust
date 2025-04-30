@@ -4,122 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"wanderlust/internal/pkg/config"
-	"wanderlust/internal/pkg/core"
 	errs "wanderlust/internal/pkg/core/errors"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/hash"
 	"wanderlust/internal/pkg/random"
 	"wanderlust/internal/pkg/tasks"
 	"wanderlust/internal/pkg/utils"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
-
-func (h *handlers) OAuth(c echo.Context) error {
-	sess := mustGetAuthSession(c)
-	provider := c.Param("provider")
-
-	if provider != "google" && provider != "facebook" {
-		return ErrInvalidProvider
-	}
-
-	state, url, err := getOAuthStateAndRedirectUrl(c.Param("provider"))
-
-	// Random string generation could fail
-	if err != nil {
-		return ErrCreateOAuthState
-	}
-
-	// Save the state in the session
-	sess.Values["state"] = state
-	sess.Save(c.Request(), c.Response())
-
-	// Redirect the user to the provider's OAuth2 login page
-	return c.Redirect(http.StatusTemporaryRedirect, url)
-}
-
-func (h *handlers) OAuthCallback(c echo.Context) error {
-	sess := mustGetAuthSession(c)
-
-	provider := c.Param("provider")
-	code := c.QueryParam("code")
-	state := c.QueryParam("state")
-
-	if provider != "google" && provider != "facebook" {
-		return ErrInvalidProvider
-	}
-
-	token, err := getOAuthToken(getOAuthTokenParams{
-		provider: provider,
-		sess:     sess,
-		state:    state,
-		code:     code,
-	})
-
-	if err != nil {
-		return err
-	}
-
-	// Because this state string is used, it shouldn't be used again.
-	// So delete it from the session
-	delete(sess.Values, "state")
-	sess.Save(c.Request(), c.Response())
-
-	// Hit the Facebook or Google API to fetch user information
-	userInfo, err := fetchUserInfo(provider, token)
-
-	if err != nil {
-		return err
-	}
-
-	userId, err := h.service.getOrCreateUserId(userInfo)
-
-	if err != nil {
-		return err
-	}
-
-	// Create a new session for the user.
-	sessionId := uuid.New().String()
-	err = h.service.createSession(sessionId, userId)
-
-	if err != nil {
-		return err
-	}
-
-	// Save the session
-	sess.Options = getAuthSessionOptions()
-	sess.Values["user_id"] = userId
-	sess.Values["session_id"] = sessionId
-	sess.Save(c.Request(), c.Response())
-
-	redirectUrl := h.di.Config.GetString(config.OAUTH_REDIRECT)
-
-	// Redirect user to the frontend application
-	return c.Redirect(http.StatusTemporaryRedirect, redirectUrl)
-}
-
-func (h *handlers) GetMe(c echo.Context) error {
-	user := c.Get("user").(db.User)
-	res := mapGetMeResponseToDto(user)
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) Logout(c echo.Context) error {
-	sess := mustGetAuthSession(c)
-
-	// Delete the session and remove the cookie
-	delete(sess.Values, "user_id")
-	sess.Save(c.Request(), c.Response())
-	cookie := h.service.resetCookie()
-	c.SetCookie(cookie)
-
-	return c.NoContent(http.StatusNoContent)
-}
 
 func (s *handlers) SendVerificationEmail(c echo.Context) error {
 	body := c.Get("body").(SendVerificationEmailRequestDto)

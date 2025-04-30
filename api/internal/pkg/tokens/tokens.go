@@ -18,6 +18,7 @@ type Payload struct {
 var (
 	ErrorExpired      = errors.New("token is expired")
 	ErrorInvalidToken = errors.New("invalid token")
+	DefaultExpiry     = time.Hour * 24 * 7 // 7 days
 )
 
 type Claims struct {

@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"net/http"
 	"time"
 )
 
@@ -74,6 +75,29 @@ type GetMeOutputBody struct {
 	LastLogin             time.Time `json:"lastLogin" example:"2023-01-01T00:00:00Z" doc:"Last login date of the user"`
 	CreatedAt             time.Time `json:"createdAt" example:"2023-01-01T00:00:00Z" doc:"Creation date of the user"`
 	UpdatedAt             time.Time `json:"updatedAt" example:"2023-01-01T00:00:00Z" doc:"Last update date of the user"`
+}
+
+type OAuthInput struct {
+	Provider string `path:"provider" enum:"google,facebook" example:"google" doc:"The OAuth provider"`
+}
+
+type OAuthOutput struct {
+	Status int
+	Url    string `header:"Location"`
+	Cookie string `header:"Set-Cookie"`
+}
+
+type OAuthCallbackInput struct {
+	Provider    string `path:"provider" enum:"google,facebook" example:"google" doc:"The OAuth provider"`
+	Code        string `query:"code" doc:"Authorization code received from the OAuth provider"`
+	QueryState  string `query:"state" doc:"State of the OAuth request"`
+	CookieState string `cookie:"state" doc:"State of the OAuth request"`
+}
+
+type OAuthCallbackOutput struct {
+	SetCookie http.Cookie `header:"Set-Cookie"`
+	Status    int
+	Url       string `header:"Location"`
 }
 
 type SendVerificationEmailRequestDto struct {

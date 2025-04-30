@@ -2,7 +2,9 @@ package auth
 
 import (
 	"context"
+	"net/http"
 	"time"
+	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/hash"
@@ -22,9 +24,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Auth"}
 	})
 
-	grp.UseModifier(huma.PrefixModifier([]string{"/auth"}))
-
-	huma.Get(grp, "/me", func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
+	huma.Get(grp, "/auth/me", func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
 		email := ctx.Value("email").(string)
 		user, err := s.getUserByEmail(email)
 
@@ -68,7 +68,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		}
 	})
 
-	huma.Post(grp, "/credentials/login", func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
+	huma.Post(grp, "/auth/credentials/login", func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
 		user, dbErr := s.getUserByEmail(input.Body.Email)
 		var hashed = ""
 
@@ -108,7 +108,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		o.DefaultStatus = 200
 	})
 
-	huma.Post(grp, "/credentials/register", func(ctx context.Context, input *dto.RegisterInput) (*dto.RegisterOutput, error) {
+	huma.Post(grp, "/auth/credentials/register", func(ctx context.Context, input *dto.RegisterInput) (*dto.RegisterOutput, error) {
 		err := s.checkIfEmailOrUsernameIsTaken(input.Body.Email, input.Body.Username)
 
 		if err != nil {
@@ -143,47 +143,108 @@ func Register(grp *huma.Group, app *core.Application) {
 		o.DefaultStatus = 201
 	})
 
-	huma.Post(grp, "/verify-email/send", func(ctx context.Context, input *struct{}) (*struct{}, error) {
+	huma.Post(grp, "/auth/verify-email/send", func(ctx context.Context, input *struct{}) (*struct{}, error) {
 		return nil, huma.Error501NotImplemented("Not implemented")
 	}, func(o *huma.Operation) {
 		o.Summary = "Send Verification Email"
 		o.Description = "Send verification email to the user"
 	})
 
-	huma.Get(grp, "/verify-email/verify", func(ctx context.Context, input *struct{}) (*struct{}, error) {
+	huma.Get(grp, "/auth/verify-email/verify", func(ctx context.Context, input *struct{}) (*struct{}, error) {
 		return nil, huma.Error501NotImplemented("Not implemented")
 	}, func(o *huma.Operation) {
 		o.Summary = "Verify Email"
 		o.Description = "Verify the email of the user"
 	})
 
-	huma.Post(grp, "/forgot-password/send", func(ctx context.Context, input *struct{}) (*struct{}, error) {
+	huma.Post(grp, "/auth/forgot-password/send", func(ctx context.Context, input *struct{}) (*struct{}, error) {
 		return nil, huma.Error501NotImplemented("Not implemented")
 	}, func(o *huma.Operation) {
 		o.Summary = "Send Forgot Password Email"
 		o.Description = "Send forgot password email to the user"
 	})
 
-	huma.Post(grp, "/forgot-password/reset", func(ctx context.Context, input *struct{}) (*struct{}, error) {
+	huma.Post(grp, "/auth/forgot-password/reset", func(ctx context.Context, input *struct{}) (*struct{}, error) {
 		return nil, huma.Error501NotImplemented("Not implemented")
 	}, func(o *huma.Operation) {
 		o.Summary = "Reset Password"
 		o.Description = "Reset the password of the user"
 	})
 
-	huma.Get(grp, "/{provider}", func(ctx context.Context, input *struct {
-		Provider string `path:"provider" enum:"google,facebook" example:"google" doc:"The OAuth provider"`
-	}) (*struct{}, error) {
-		return nil, huma.Error501NotImplemented("Not implemented")
+	huma.Get(grp, "/auth/{provider}", func(ctx context.Context, input *dto.OAuthInput) (*dto.OAuthOutput, error) {
+		state, url, err := getOAuthStateAndRedirectUrl(input.Provider)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to create OAuth state")
+		}
+
+		c := &http.Cookie{
+			Name:     "state",
+			Value:    state,
+			Path:     "/",
+			MaxAge:   int(time.Hour.Seconds()),
+			Secure:   false,
+			HttpOnly: true,
+		}
+
+		return &dto.OAuthOutput{
+			Status: http.StatusTemporaryRedirect,
+			Url:    url,
+			Cookie: c.String(),
+		}, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "Start OAuth Flow"
 		o.Description = "Start the OAuth flow for the given provider"
+		o.DefaultStatus = http.StatusTemporaryRedirect
 	})
 
-	huma.Get(grp, "/{provider}/callback", func(ctx context.Context, input *struct {
-		Provider string `path:"provider" enum:"google,facebook" example:"google" doc:"The OAuth provider"`
-	}) (*struct{}, error) {
-		return nil, huma.Error501NotImplemented("Not implemented")
+	huma.Get(grp, "/auth/{provider}/callback", func(ctx context.Context, input *dto.OAuthCallbackInput) (*dto.OAuthCallbackOutput, error) {
+		token, err := getOAuthToken(getOAuthTokenParams{
+			provider:    input.Provider,
+			state:       input.QueryState,
+			code:        input.Code,
+			cookieState: input.CookieState,
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to get OAuth token", &huma.ErrorDetail{
+				Message:  "Failed to get OAuth token",
+				Location: "OAuth",
+				Value:    err.Error(),
+			})
+		}
+
+		userInfo, err := fetchUserInfo(input.Provider, token)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to fetch user info", &huma.ErrorDetail{
+				Message:  "Failed to fetch user info",
+				Location: "OAuth",
+				Value:    err.Error(),
+			})
+		}
+
+		_, err = s.getOrCreateUserFromOAuthUser(userInfo)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to create user", &huma.ErrorDetail{
+				Message:  "Failed to create user",
+				Location: "OAuth",
+				Value:    err.Error(),
+			})
+		}
+
+		return &dto.OAuthCallbackOutput{
+			SetCookie: http.Cookie{
+				Name:    "state",
+				Value:   "",
+				MaxAge:  -1,
+				Path:    "/",
+				Expires: time.Unix(0, 0),
+			},
+			Status: http.StatusTemporaryRedirect,
+			Url:    cfg.Get(cfg.API_AUTH_OAUTH_REDIRECT),
+		}, nil
 	}, func(o *huma.Operation) {
 		o.Summary = "OAuth Callback"
 		o.Description = "Callback for the OAuth flow"
