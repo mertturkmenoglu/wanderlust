@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 	"wanderlust/internal/app/auth"
+	"wanderlust/internal/app/cities"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/cfg"
@@ -69,6 +70,7 @@ func main() {
 
 	health.Register(grp)
 	auth.Register(grp, app)
+	cities.Register(grp, app)
 
 	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
 		db.RunMigrations()

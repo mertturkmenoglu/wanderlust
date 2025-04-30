@@ -36,9 +36,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
-			Security: []map[string][]string{
-				{"BearerJWT": {}},
-			},
+			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
 			email := ctx.Value("email").(string)
