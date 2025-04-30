@@ -6,5 +6,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  return <Button>Hello World</Button>;
+  return (
+    <div className="mx-auto bg-red-500 mt-8">
+      <Button>Hello World</Button>
+    </div>
+  );
 }

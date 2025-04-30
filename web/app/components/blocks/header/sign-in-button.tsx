@@ -1,6 +1,6 @@
-import { Link } from "react-router";
+import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { Button } from "~/components/ui/button";
 
 export default function SignInButton() {
   return (

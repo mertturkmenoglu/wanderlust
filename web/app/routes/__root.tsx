@@ -1,4 +1,5 @@
 import { DefaultCatchBoundary } from "@/components/blocks/default-catch-boundary";
+import Header from "@/components/blocks/header";
 import { NotFound } from "@/components/blocks/not-found";
 import appCss from "@/styles/app.css?url";
 import type { QueryClient } from "@tanstack/react-query";
@@ -49,6 +50,7 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
+      <Header />
       <Outlet />
     </RootDocument>
   );
@@ -60,7 +62,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="mx-4 md:mx-8 lg:mx-16 2xl:mx-32">
         {children}
         <TanStackRouterDevtools position="bottom-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" />
