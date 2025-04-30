@@ -68,7 +68,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodPatch,
 			Path:          "/categories/{id}",
 			Summary:       "Update Category",
-			Description:   "Update an category by id",
+			Description:   "Update a category by id",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -92,7 +92,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodDelete,
 			Path:          "/categories/{id}",
 			Summary:       "Delete Category",
-			Description:   "Delete an category by id",
+			Description:   "Delete a category by id",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
