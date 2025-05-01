@@ -60,6 +60,7 @@ func main() {
 			BearerFormat: "JWT",
 		},
 	}
+	huma.DefaultArrayNullable = false
 
 	api := humaecho.New(e, humaConfig)
 	api.OpenAPI().Info = &huma.Info{

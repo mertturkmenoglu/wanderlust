@@ -11,7 +11,7 @@ type ListCategoriesOutput struct {
 }
 
 type ListCategoriesOutputBody struct {
-	Categories []Category `json:"categories"`
+	Categories []Category `json:"categories" required:"true" nullable:"false"`
 }
 
 type CreateCategoryInput struct {
