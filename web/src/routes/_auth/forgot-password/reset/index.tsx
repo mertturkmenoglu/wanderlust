@@ -1,25 +1,28 @@
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
-import AuthLink from "~/components/blocks/auth/link";
-import InputError from "~/components/kit/input-error";
-import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import type { Route } from "./+types/route";
-import { usePasswordResetForm, usePasswordResetMutation } from "./hooks";
+import AuthLink from '@/components/blocks/auth/link';
+import InputError from '@/components/kit/input-error';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { fetchClient } from '@/lib/api';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useState } from 'react';
+import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
-export function meta(): Route.MetaDescriptors {
-  return [
-    { title: "Reset Password | Wanderlust" },
-    {
-      name: "description",
-      content: "Reset your Wanderlust account password",
-    },
-  ];
-}
+export const Route = createFileRoute('/_auth/forgot-password/reset/')({
+  component: RouteComponent,
+  beforeLoad: async () => {
+    const res = await fetchClient.GET('/api/v2/auth/me');
+    if (res.data !== undefined) {
+      throw redirect({
+        to: '/',
+      });
+    }
+  },
+});
 
-export default function Page() {
+function RouteComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const { formState, register, handleSubmit } = usePasswordResetForm();
   const mutation = usePasswordResetMutation();
@@ -46,7 +49,7 @@ export default function Page() {
           placeholder="Email"
           autoComplete="email"
           disabled={true}
-          {...register("email")}
+          {...register('email')}
         />
         <InputError error={formState.errors.email} />
         <div className="my-4"></div>
@@ -57,7 +60,7 @@ export default function Page() {
           id="code"
           placeholder="Code"
           autoComplete="off"
-          {...register("code")}
+          {...register('code')}
         />
         <InputError error={formState.errors.code} />
         <div className="my-4"></div>
@@ -65,12 +68,12 @@ export default function Page() {
         <Label htmlFor="new-password">New Password</Label>
         <div className="relative">
           <Input
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             id="password"
             placeholder="New Password"
             autoComplete="new-password"
             className="pr-10"
-            {...register("newPassword")}
+            {...register('newPassword')}
           />
           <Button
             variant="ghost"

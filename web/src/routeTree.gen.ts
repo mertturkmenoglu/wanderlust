@@ -23,9 +23,13 @@ import { Route as DiaryIndexImport } from './routes/diary/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
+import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
 import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
+import { Route as AuthOnboardingIndexImport } from './routes/_auth/onboarding/index'
+import { Route as AuthForgotPasswordIndexImport } from './routes/_auth/forgot-password/index'
 import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
+import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 
 // Create/Update Routes
 
@@ -101,6 +105,12 @@ const UUsernameIndexRoute = UUsernameIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthVerifyEmailIndexRoute = AuthVerifyEmailIndexImport.update({
+  id: '/_auth/verify-email/',
+  path: '/verify-email/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthSignUpIndexRoute = AuthSignUpIndexImport.update({
   id: '/_auth/sign-up/',
   path: '/sign-up/',
@@ -113,11 +123,30 @@ const AuthSignInIndexRoute = AuthSignInIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthOnboardingIndexRoute = AuthOnboardingIndexImport.update({
+  id: '/_auth/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexImport.update({
+  id: '/_auth/forgot-password/',
+  path: '/forgot-password/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const UUsernameFollowingIndexRoute = UUsernameFollowingIndexImport.update({
   id: '/u/$username/following/',
   path: '/u/$username/following/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const AuthForgotPasswordResetIndexRoute =
+  AuthForgotPasswordResetIndexImport.update({
+    id: '/_auth/forgot-password/reset/',
+    path: '/forgot-password/reset/',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -200,6 +229,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/forgot-password/': {
+      id: '/_auth/forgot-password/'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/onboarding/': {
+      id: '/_auth/onboarding/'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthOnboardingIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/_auth/sign-in/': {
       id: '/_auth/sign-in/'
       path: '/sign-in'
@@ -214,11 +257,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignUpIndexImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/verify-email/': {
+      id: '/_auth/verify-email/'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/u/$username/': {
       id: '/u/$username/'
       path: '/u/$username'
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/forgot-password/reset/': {
+      id: '/_auth/forgot-password/reset/'
+      path: '/forgot-password/reset'
+      fullPath: '/forgot-password/reset'
+      preLoaderRoute: typeof AuthForgotPasswordResetIndexImport
       parentRoute: typeof rootRoute
     }
     '/u/$username/following/': {
@@ -245,9 +302,13 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
+  '/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
+  '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
+  '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
 }
 
@@ -263,9 +324,13 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
+  '/forgot-password': typeof AuthForgotPasswordIndexRoute
+  '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
+  '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
+  '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
 }
 
@@ -282,9 +347,13 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/_auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
+  '/_auth/onboarding/': typeof AuthOnboardingIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
+  '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
+  '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
   '/u/$username/following/': typeof UUsernameFollowingIndexRoute
 }
 
@@ -302,9 +371,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/trips'
+    | '/forgot-password'
+    | '/onboarding'
     | '/sign-in'
     | '/sign-up'
+    | '/verify-email'
     | '/u/$username'
+    | '/forgot-password/reset'
     | '/u/$username/following'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -319,9 +392,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/trips'
+    | '/forgot-password'
+    | '/onboarding'
     | '/sign-in'
     | '/sign-up'
+    | '/verify-email'
     | '/u/$username'
+    | '/forgot-password/reset'
     | '/u/$username/following'
   id:
     | '__root__'
@@ -336,9 +413,13 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
+    | '/_auth/forgot-password/'
+    | '/_auth/onboarding/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
+    | '/_auth/verify-email/'
     | '/u/$username/'
+    | '/_auth/forgot-password/reset/'
     | '/u/$username/following/'
   fileRoutesById: FileRoutesById
 }
@@ -355,9 +436,13 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   TermsIndexRoute: typeof TermsIndexRoute
   TripsIndexRoute: typeof TripsIndexRoute
+  AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
+  AuthOnboardingIndexRoute: typeof AuthOnboardingIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
+  AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
   UUsernameIndexRoute: typeof UUsernameIndexRoute
+  AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
   UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
 }
 
@@ -373,9 +458,13 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   TermsIndexRoute: TermsIndexRoute,
   TripsIndexRoute: TripsIndexRoute,
+  AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
+  AuthOnboardingIndexRoute: AuthOnboardingIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
+  AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
   UUsernameIndexRoute: UUsernameIndexRoute,
+  AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
   UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
 }
 
@@ -400,9 +489,13 @@ export const routeTree = rootRoute
         "/settings/",
         "/terms/",
         "/trips/",
+        "/_auth/forgot-password/",
+        "/_auth/onboarding/",
         "/_auth/sign-in/",
         "/_auth/sign-up/",
+        "/_auth/verify-email/",
         "/u/$username/",
+        "/_auth/forgot-password/reset/",
         "/u/$username/following/"
       ]
     },
@@ -439,14 +532,26 @@ export const routeTree = rootRoute
     "/trips/": {
       "filePath": "trips/index.tsx"
     },
+    "/_auth/forgot-password/": {
+      "filePath": "_auth/forgot-password/index.tsx"
+    },
+    "/_auth/onboarding/": {
+      "filePath": "_auth/onboarding/index.tsx"
+    },
     "/_auth/sign-in/": {
       "filePath": "_auth/sign-in/index.tsx"
     },
     "/_auth/sign-up/": {
       "filePath": "_auth/sign-up/index.tsx"
     },
+    "/_auth/verify-email/": {
+      "filePath": "_auth/verify-email/index.tsx"
+    },
     "/u/$username/": {
       "filePath": "u/$username/index.tsx"
+    },
+    "/_auth/forgot-password/reset/": {
+      "filePath": "_auth/forgot-password/reset/index.tsx"
     },
     "/u/$username/following/": {
       "filePath": "u/$username/following/index.tsx"
