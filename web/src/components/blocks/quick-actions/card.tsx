@@ -1,6 +1,6 @@
-import { MapIcon } from "lucide-react";
-import { Link } from "react-router";
-import { cn } from "~/lib/utils";
+import { cn } from '@/lib/utils';
+import { Link } from '@tanstack/react-router';
+import { MapIcon } from 'lucide-react';
 
 type Props = {
   to: string;
@@ -14,8 +14,8 @@ export function Card({ to, Icon, text }: Props) {
       <Link
         to={to}
         className={cn(
-          "bg-slate-50 p-4 rounded-md flex flex-col items-center justify-center gap-4 aspect-[3]",
-          "transition duration-200 group-hover:-translate-y-2 group-hover:translate-x-2"
+          'bg-slate-50 p-4 rounded-md flex flex-col items-center justify-center gap-4 aspect-[3]',
+          'transition duration-200 group-hover:-translate-y-2 group-hover:translate-x-2',
         )}
       >
         <Icon className="size-6" />

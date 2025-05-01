@@ -1,4 +1,4 @@
-import { cn } from "~/lib/utils";
+import { cn } from '@/lib/utils';
 
 type Props = {
   image: string;
@@ -17,12 +17,12 @@ export default function VerticalBanner({
 }: Props) {
   return (
     <div
-      className={cn("mx-auto flex max-w-4xl flex-col items-center", className)}
+      className={cn('mx-auto flex max-w-4xl flex-col items-center', className)}
     >
       <img
         src={image}
         alt={alt}
-        className={cn("aspect-square size-80", imageClassName)}
+        className={cn('aspect-square size-80', imageClassName)}
       />
 
       <div>{content}</div>

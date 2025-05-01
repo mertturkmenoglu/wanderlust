@@ -1,5 +1,5 @@
-import { Card } from "~/components/ui/card";
-import { cn } from "~/lib/utils";
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 type Props = {
   className?: string;
@@ -15,9 +15,9 @@ export default function UserCard({
   className,
 }: Props) {
   return (
-    <Card className={cn("flex gap-4 p-2 items-center", className)}>
+    <Card className={cn('flex gap-4 p-2 items-center', className)}>
       <img
-        src={image ?? "/profile.png"}
+        src={image ?? '/profile.png'}
         className="aspect-square w-12 rounded-lg object-cover"
       />
 

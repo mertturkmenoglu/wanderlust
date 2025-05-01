@@ -1,4 +1,4 @@
-import { cn } from "~/lib/utils";
+import { cn } from '@/lib/utils';
 
 type Props = {
   className?: string;
@@ -18,15 +18,15 @@ export default function OverlayBanner({
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center rounded-md bg-black/90",
-        className
+        'relative flex items-center justify-center rounded-md bg-black/90',
+        className,
       )}
     >
       <img
         src={image}
         className={cn(
-          "aspect-[2] h-full rounded-md object-cover opacity-70 md:aspect-[5]",
-          imgClassName
+          'aspect-[2] h-full rounded-md object-cover opacity-70 md:aspect-[5]',
+          imgClassName,
         )}
         alt={alt}
       />

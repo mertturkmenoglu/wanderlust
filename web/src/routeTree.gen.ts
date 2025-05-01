@@ -24,7 +24,6 @@ import { Route as HelpIndexImport } from './routes/help/index'
 import { Route as DiaryIndexImport } from './routes/diary/index'
 import { Route as CategoriesIndexImport } from './routes/categories/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
-import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
 import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
@@ -114,12 +113,6 @@ const BookmarksIndexRoute = BookmarksIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const UUsernameIndexRoute = UUsernameIndexImport.update({
   id: '/u/$username/',
   path: '/u/$username/',
@@ -178,13 +171,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryImport
       parentRoute: typeof rootRoute
     }
     '/bookmarks/': {
@@ -334,7 +320,6 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
@@ -359,7 +344,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
@@ -385,7 +369,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/diary/': typeof DiaryIndexRoute
@@ -412,7 +395,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/demo/tanstack-query'
     | '/bookmarks'
     | '/categories'
     | '/diary'
@@ -436,7 +418,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/demo/tanstack-query'
     | '/bookmarks'
     | '/categories'
     | '/diary'
@@ -460,7 +441,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/demo/tanstack-query'
     | '/bookmarks/'
     | '/categories/'
     | '/diary/'
@@ -486,7 +466,6 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   DiaryIndexRoute: typeof DiaryIndexRoute
@@ -511,7 +490,6 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   DiaryIndexRoute: DiaryIndexRoute,
@@ -545,7 +523,6 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/demo/tanstack-query",
         "/bookmarks/",
         "/categories/",
         "/diary/",
@@ -570,9 +547,6 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/demo/tanstack-query": {
-      "filePath": "demo.tanstack-query.tsx"
     },
     "/bookmarks/": {
       "filePath": "bookmarks/index.tsx"

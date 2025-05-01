@@ -1,7 +1,6 @@
-
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
-import data from "./data";
-import NavItem from "./item";
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import data from './data';
+import NavItem from './item';
 
 export default function TagNavigation(): React.ReactElement {
   return (

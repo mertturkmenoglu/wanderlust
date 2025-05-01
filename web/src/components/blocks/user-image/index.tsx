@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { cn } from "~/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import { useEffect, useRef } from 'react';
 
 type Props = {
   className?: string;
@@ -15,31 +15,31 @@ export default function UserImage({
   imgClassName,
   fallbackClassName,
   src,
-  initials = "",
+  initials = '',
 }: Readonly<Props>) {
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     if (imgRef.current) {
-      imgRef.current.setAttribute("referrerpolicy", "no-referrer");
+      imgRef.current.setAttribute('referrerpolicy', 'no-referrer');
     }
   }, [imgRef]);
 
   return (
-    <Avatar className={cn("rounded-full", className)}>
+    <Avatar className={cn('rounded-full', className)}>
       <AvatarImage
-        src={src ?? ""}
+        src={src ?? ''}
         referrerPolicy="no-referrer"
-        className={cn("object-cover", imgClassName)}
+        className={cn('object-cover', imgClassName)}
       />
       <AvatarFallback
         delayMs={1000}
         className={cn(
-          "rounded-full bg-gradient-to-br from-sky-600 via-cyan-500 to-teal-600 text-2xl font-semibold text-white",
-          fallbackClassName
+          'rounded-full bg-gradient-to-br from-sky-600 via-cyan-500 to-teal-600 text-2xl font-semibold text-white',
+          fallbackClassName,
         )}
       >
-        {initials ?? ""}
+        {initials ?? ''}
       </AvatarFallback>
     </Avatar>
   );

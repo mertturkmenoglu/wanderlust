@@ -1,12 +1,12 @@
+import { AuthContext } from '@/providers/auth-provider';
 import {
   BookMarkedIcon,
   ListIcon,
   MapIcon,
   MapPinHouseIcon,
-} from "lucide-react";
-import { useContext } from "react";
-import { AuthContext } from "~/providers/auth-provider";
-import { Card } from "./card";
+} from 'lucide-react';
+import { useContext } from 'react';
+import { Card } from './card';
 
 export default function QuickActions() {
   const auth = useContext(AuthContext);
@@ -14,9 +14,9 @@ export default function QuickActions() {
   return (
     <div className="my-8">
       <div className="text-4xl">
-        Hello{" "}
+        Hello{' '}
         <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-sky-600 font-bold">
-          {auth.user?.data.fullName ?? ""}
+          {auth.user?.fullName ?? ''}
         </span>
       </div>
       <div className="text-base my-2">How can we help you today?</div>

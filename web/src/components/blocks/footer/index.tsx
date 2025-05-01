@@ -2,24 +2,32 @@ import {
   GitHubLogoIcon,
   LinkedInLogoIcon,
   TwitterLogoIcon,
-} from "@radix-ui/react-icons";
-import { Link } from "react-router";
+} from '@radix-ui/react-icons';
+import { Link } from '@tanstack/react-router';
 
 export default function Footer() {
   return (
     <footer className="my-20">
       <ul className="mb-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
         <li>
-          <Link to="/about">About</Link>
+          <Link to="." href="/about">
+            About
+          </Link>
         </li>
         <li>
-          <Link to="/blog">Blog</Link>
+          <Link to="." href="/blog">
+            Blog
+          </Link>
         </li>
         <li>
-          <Link to="/help">FAQ</Link>
+          <Link to="." href="/help">
+            FAQ
+          </Link>
         </li>
         <li>
-          <Link to="/contact-us">Contact Us</Link>
+          <Link to="." href="/contact-us">
+            Contact Us
+          </Link>
         </li>
         <li>
           <Link to="/privacy">Privacy</Link>
