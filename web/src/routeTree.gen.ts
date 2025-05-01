@@ -29,6 +29,7 @@ import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexImport } from './routes/trips/planner/index'
 import { Route as TripsMyTripsIndexImport } from './routes/trips/my-trips/index'
+import { Route as TripsInvitesIndexImport } from './routes/trips/invites/index'
 import { Route as TripsDiscoverIndexImport } from './routes/trips/discover/index'
 import { Route as TripsIdIndexImport } from './routes/trips/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
@@ -148,6 +149,12 @@ const TripsPlannerIndexRoute = TripsPlannerIndexImport.update({
 const TripsMyTripsIndexRoute = TripsMyTripsIndexImport.update({
   id: '/my-trips/',
   path: '/my-trips/',
+  getParentRoute: () => TripsRoute,
+} as any)
+
+const TripsInvitesIndexRoute = TripsInvitesIndexImport.update({
+  id: '/invites/',
+  path: '/invites/',
   getParentRoute: () => TripsRoute,
 } as any)
 
@@ -390,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsDiscoverIndexImport
       parentRoute: typeof TripsImport
     }
+    '/trips/invites/': {
+      id: '/trips/invites/'
+      path: '/invites'
+      fullPath: '/trips/invites'
+      preLoaderRoute: typeof TripsInvitesIndexImport
+      parentRoute: typeof TripsImport
+    }
     '/trips/my-trips/': {
       id: '/trips/my-trips/'
       path: '/my-trips'
@@ -434,6 +448,7 @@ interface TripsRouteChildren {
   TripsIndexRoute: typeof TripsIndexRoute
   TripsIdIndexRoute: typeof TripsIdIndexRoute
   TripsDiscoverIndexRoute: typeof TripsDiscoverIndexRoute
+  TripsInvitesIndexRoute: typeof TripsInvitesIndexRoute
   TripsMyTripsIndexRoute: typeof TripsMyTripsIndexRoute
   TripsPlannerIndexRoute: typeof TripsPlannerIndexRoute
 }
@@ -442,6 +457,7 @@ const TripsRouteChildren: TripsRouteChildren = {
   TripsIndexRoute: TripsIndexRoute,
   TripsIdIndexRoute: TripsIdIndexRoute,
   TripsDiscoverIndexRoute: TripsDiscoverIndexRoute,
+  TripsInvitesIndexRoute: TripsInvitesIndexRoute,
   TripsMyTripsIndexRoute: TripsMyTripsIndexRoute,
   TripsPlannerIndexRoute: TripsPlannerIndexRoute,
 }
@@ -473,6 +489,7 @@ export interface FileRoutesByFullPath {
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
+  '/trips/invites': typeof TripsInvitesIndexRoute
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
@@ -504,6 +521,7 @@ export interface FileRoutesByTo {
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
+  '/trips/invites': typeof TripsInvitesIndexRoute
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
@@ -537,6 +555,7 @@ export interface FileRoutesById {
   '/discover/events/': typeof DiscoverEventsIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
+  '/trips/invites/': typeof TripsInvitesIndexRoute
   '/trips/my-trips/': typeof TripsMyTripsIndexRoute
   '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
@@ -571,6 +590,7 @@ export interface FileRouteTypes {
     | '/discover/events'
     | '/trips/$id'
     | '/trips/discover'
+    | '/trips/invites'
     | '/trips/my-trips'
     | '/trips/planner'
     | '/u/$username'
@@ -601,6 +621,7 @@ export interface FileRouteTypes {
     | '/discover/events'
     | '/trips/$id'
     | '/trips/discover'
+    | '/trips/invites'
     | '/trips/my-trips'
     | '/trips/planner'
     | '/u/$username'
@@ -632,6 +653,7 @@ export interface FileRouteTypes {
     | '/discover/events/'
     | '/trips/$id/'
     | '/trips/discover/'
+    | '/trips/invites/'
     | '/trips/my-trips/'
     | '/trips/planner/'
     | '/u/$username/'
@@ -739,6 +761,7 @@ export const routeTree = rootRoute
         "/trips/",
         "/trips/$id/",
         "/trips/discover/",
+        "/trips/invites/",
         "/trips/my-trips/",
         "/trips/planner/"
       ]
@@ -810,6 +833,10 @@ export const routeTree = rootRoute
     },
     "/trips/discover/": {
       "filePath": "trips/discover/index.tsx",
+      "parent": "/trips"
+    },
+    "/trips/invites/": {
+      "filePath": "trips/invites/index.tsx",
       "parent": "/trips"
     },
     "/trips/my-trips/": {
