@@ -12,8 +12,19 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as TripsIndexImport } from './routes/trips/index'
+import { Route as TermsIndexImport } from './routes/terms/index'
+import { Route as SettingsIndexImport } from './routes/settings/index'
+import { Route as PrivacyIndexImport } from './routes/privacy/index'
+import { Route as NotificationsIndexImport } from './routes/notifications/index'
+import { Route as ListsIndexImport } from './routes/lists/index'
+import { Route as HelpIndexImport } from './routes/help/index'
+import { Route as DiaryIndexImport } from './routes/diary/index'
+import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
-import { Route as AuthSignInImport } from './routes/_auth/sign-in'
+import { Route as UUsernameIndexImport } from './routes/u/$username/index'
+import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
+import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
 
 // Create/Update Routes
 
@@ -23,15 +34,81 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const TripsIndexRoute = TripsIndexImport.update({
+  id: '/trips/',
+  path: '/trips/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TermsIndexRoute = TermsIndexImport.update({
+  id: '/terms/',
+  path: '/terms/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SettingsIndexRoute = SettingsIndexImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PrivacyIndexRoute = PrivacyIndexImport.update({
+  id: '/privacy/',
+  path: '/privacy/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NotificationsIndexRoute = NotificationsIndexImport.update({
+  id: '/notifications/',
+  path: '/notifications/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ListsIndexRoute = ListsIndexImport.update({
+  id: '/lists/',
+  path: '/lists/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const HelpIndexRoute = HelpIndexImport.update({
+  id: '/help/',
+  path: '/help/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DiaryIndexRoute = DiaryIndexImport.update({
+  id: '/diary/',
+  path: '/diary/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BookmarksIndexRoute = BookmarksIndexImport.update({
+  id: '/bookmarks/',
+  path: '/bookmarks/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthSignInRoute = AuthSignInImport.update({
-  id: '/_auth/sign-in',
-  path: '/sign-in',
+const UUsernameIndexRoute = UUsernameIndexImport.update({
+  id: '/u/$username/',
+  path: '/u/$username/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthSignInIndexRoute = AuthSignInIndexImport.update({
+  id: '/_auth/sign-in/',
+  path: '/sign-in/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const UUsernameFollowingIndexRoute = UUsernameFollowingIndexImport.update({
+  id: '/u/$username/following/',
+  path: '/u/$username/following/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,18 +123,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/sign-in': {
-      id: '/_auth/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof AuthSignInImport
-      parentRoute: typeof rootRoute
-    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
       fullPath: '/demo/tanstack-query'
       preLoaderRoute: typeof DemoTanstackQueryImport
+      parentRoute: typeof rootRoute
+    }
+    '/bookmarks/': {
+      id: '/bookmarks/'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/diary/': {
+      id: '/diary/'
+      path: '/diary'
+      fullPath: '/diary'
+      preLoaderRoute: typeof DiaryIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/help/': {
+      id: '/help/'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/lists/': {
+      id: '/lists/'
+      path: '/lists'
+      fullPath: '/lists'
+      preLoaderRoute: typeof ListsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/notifications/': {
+      id: '/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/privacy/': {
+      id: '/privacy/'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/terms/': {
+      id: '/terms/'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/trips/': {
+      id: '/trips/'
+      path: '/trips'
+      fullPath: '/trips'
+      preLoaderRoute: typeof TripsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/sign-in/': {
+      id: '/_auth/sign-in/'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/u/$username/': {
+      id: '/u/$username/'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/u/$username/following/': {
+      id: '/u/$username/following/'
+      path: '/u/$username/following'
+      fullPath: '/u/$username/following'
+      preLoaderRoute: typeof UUsernameFollowingIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -67,42 +221,140 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/sign-in': typeof AuthSignInRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/bookmarks': typeof BookmarksIndexRoute
+  '/diary': typeof DiaryIndexRoute
+  '/help': typeof HelpIndexRoute
+  '/lists': typeof ListsIndexRoute
+  '/notifications': typeof NotificationsIndexRoute
+  '/privacy': typeof PrivacyIndexRoute
+  '/settings': typeof SettingsIndexRoute
+  '/terms': typeof TermsIndexRoute
+  '/trips': typeof TripsIndexRoute
+  '/sign-in': typeof AuthSignInIndexRoute
+  '/u/$username': typeof UUsernameIndexRoute
+  '/u/$username/following': typeof UUsernameFollowingIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/sign-in': typeof AuthSignInRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/bookmarks': typeof BookmarksIndexRoute
+  '/diary': typeof DiaryIndexRoute
+  '/help': typeof HelpIndexRoute
+  '/lists': typeof ListsIndexRoute
+  '/notifications': typeof NotificationsIndexRoute
+  '/privacy': typeof PrivacyIndexRoute
+  '/settings': typeof SettingsIndexRoute
+  '/terms': typeof TermsIndexRoute
+  '/trips': typeof TripsIndexRoute
+  '/sign-in': typeof AuthSignInIndexRoute
+  '/u/$username': typeof UUsernameIndexRoute
+  '/u/$username/following': typeof UUsernameFollowingIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_auth/sign-in': typeof AuthSignInRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/bookmarks/': typeof BookmarksIndexRoute
+  '/diary/': typeof DiaryIndexRoute
+  '/help/': typeof HelpIndexRoute
+  '/lists/': typeof ListsIndexRoute
+  '/notifications/': typeof NotificationsIndexRoute
+  '/privacy/': typeof PrivacyIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/terms/': typeof TermsIndexRoute
+  '/trips/': typeof TripsIndexRoute
+  '/_auth/sign-in/': typeof AuthSignInIndexRoute
+  '/u/$username/': typeof UUsernameIndexRoute
+  '/u/$username/following/': typeof UUsernameFollowingIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/demo/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/demo/tanstack-query'
+    | '/bookmarks'
+    | '/diary'
+    | '/help'
+    | '/lists'
+    | '/notifications'
+    | '/privacy'
+    | '/settings'
+    | '/terms'
+    | '/trips'
+    | '/sign-in'
+    | '/u/$username'
+    | '/u/$username/following'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/demo/tanstack-query'
-  id: '__root__' | '/' | '/_auth/sign-in' | '/demo/tanstack-query'
+  to:
+    | '/'
+    | '/demo/tanstack-query'
+    | '/bookmarks'
+    | '/diary'
+    | '/help'
+    | '/lists'
+    | '/notifications'
+    | '/privacy'
+    | '/settings'
+    | '/terms'
+    | '/trips'
+    | '/sign-in'
+    | '/u/$username'
+    | '/u/$username/following'
+  id:
+    | '__root__'
+    | '/'
+    | '/demo/tanstack-query'
+    | '/bookmarks/'
+    | '/diary/'
+    | '/help/'
+    | '/lists/'
+    | '/notifications/'
+    | '/privacy/'
+    | '/settings/'
+    | '/terms/'
+    | '/trips/'
+    | '/_auth/sign-in/'
+    | '/u/$username/'
+    | '/u/$username/following/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthSignInRoute: typeof AuthSignInRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  BookmarksIndexRoute: typeof BookmarksIndexRoute
+  DiaryIndexRoute: typeof DiaryIndexRoute
+  HelpIndexRoute: typeof HelpIndexRoute
+  ListsIndexRoute: typeof ListsIndexRoute
+  NotificationsIndexRoute: typeof NotificationsIndexRoute
+  PrivacyIndexRoute: typeof PrivacyIndexRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+  TermsIndexRoute: typeof TermsIndexRoute
+  TripsIndexRoute: typeof TripsIndexRoute
+  AuthSignInIndexRoute: typeof AuthSignInIndexRoute
+  UUsernameIndexRoute: typeof UUsernameIndexRoute
+  UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthSignInRoute: AuthSignInRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  BookmarksIndexRoute: BookmarksIndexRoute,
+  DiaryIndexRoute: DiaryIndexRoute,
+  HelpIndexRoute: HelpIndexRoute,
+  ListsIndexRoute: ListsIndexRoute,
+  NotificationsIndexRoute: NotificationsIndexRoute,
+  PrivacyIndexRoute: PrivacyIndexRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+  TermsIndexRoute: TermsIndexRoute,
+  TripsIndexRoute: TripsIndexRoute,
+  AuthSignInIndexRoute: AuthSignInIndexRoute,
+  UUsernameIndexRoute: UUsernameIndexRoute,
+  UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +368,62 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_auth/sign-in",
-        "/demo/tanstack-query"
+        "/demo/tanstack-query",
+        "/bookmarks/",
+        "/diary/",
+        "/help/",
+        "/lists/",
+        "/notifications/",
+        "/privacy/",
+        "/settings/",
+        "/terms/",
+        "/trips/",
+        "/_auth/sign-in/",
+        "/u/$username/",
+        "/u/$username/following/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/_auth/sign-in": {
-      "filePath": "_auth/sign-in.tsx"
-    },
     "/demo/tanstack-query": {
       "filePath": "demo.tanstack-query.tsx"
+    },
+    "/bookmarks/": {
+      "filePath": "bookmarks/index.tsx"
+    },
+    "/diary/": {
+      "filePath": "diary/index.tsx"
+    },
+    "/help/": {
+      "filePath": "help/index.tsx"
+    },
+    "/lists/": {
+      "filePath": "lists/index.tsx"
+    },
+    "/notifications/": {
+      "filePath": "notifications/index.tsx"
+    },
+    "/privacy/": {
+      "filePath": "privacy/index.tsx"
+    },
+    "/settings/": {
+      "filePath": "settings/index.tsx"
+    },
+    "/terms/": {
+      "filePath": "terms/index.tsx"
+    },
+    "/trips/": {
+      "filePath": "trips/index.tsx"
+    },
+    "/_auth/sign-in/": {
+      "filePath": "_auth/sign-in/index.tsx"
+    },
+    "/u/$username/": {
+      "filePath": "u/$username/index.tsx"
+    },
+    "/u/$username/following/": {
+      "filePath": "u/$username/following/index.tsx"
     }
   }
 }

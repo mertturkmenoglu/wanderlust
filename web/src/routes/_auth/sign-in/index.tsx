@@ -8,15 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { fetchClient } from '@/lib/api';
-import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useLoginMutation, useSignInForm } from './-hooks';
 import type { FormInput } from './-schema';
 
-export const Route = createFileRoute('/_auth/sign-in')({
+export const Route = createFileRoute('/_auth/sign-in/')({
   component: RouteComponent,
   beforeLoad: async () => {
     const res = await fetchClient.GET('/api/v2/auth/me');
@@ -29,8 +28,6 @@ export const Route = createFileRoute('/_auth/sign-in')({
 });
 
 function RouteComponent() {
-  const auth = useContext(AuthContext);
-
   const [showPassword, setShowPassword] = useState(false);
   const { formState, register, handleSubmit } = useSignInForm();
   const mutation = useLoginMutation();
@@ -38,10 +35,6 @@ function RouteComponent() {
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     mutation.mutate(data);
   };
-
-  if (!auth.isLoading && auth.user !== null) {
-    window.location.href = '/';
-  }
 
   return (
     <Card className="mx-auto my-32 flex max-w-lg flex-col p-8">

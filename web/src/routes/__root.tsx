@@ -15,13 +15,13 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <AuthContextProvider>
-      <body className="mx-4 md:mx-8 lg:mx-16 2xl:mx-32">
+      <div>
         <Header />
         <Outlet />
         <TanStackRouterDevtools />
         <TanstackQueryLayout />
         <Toaster />
-      </body>
+      </div>
     </AuthContextProvider>
   ),
 });

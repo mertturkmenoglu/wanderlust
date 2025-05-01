@@ -19,11 +19,12 @@ export function useLoginMutation() {
   return useMutation({
     mutationKey: ['login'],
     mutationFn: async (data: FormInput) => {
-      await fetchClient.POST('/api/v2/auth/credentials/login', {
+      return await fetchClient.POST('/api/v2/auth/credentials/login', {
         body: data,
       });
     },
-    onSuccess: () => {
+    onSuccess: (d) => {
+      localStorage.setItem('token', d.data?.token.replace('Bearer ', '') ?? '');
       window.location.href = '/';
     },
     onError: async (e) => {
