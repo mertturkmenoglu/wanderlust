@@ -15,11 +15,14 @@ import { Route as IndexImport } from './routes/index'
 import { Route as TripsIndexImport } from './routes/trips/index'
 import { Route as TermsIndexImport } from './routes/terms/index'
 import { Route as SettingsIndexImport } from './routes/settings/index'
+import { Route as SearchIndexImport } from './routes/search/index'
+import { Route as ReportIndexImport } from './routes/report/index'
 import { Route as PrivacyIndexImport } from './routes/privacy/index'
 import { Route as NotificationsIndexImport } from './routes/notifications/index'
 import { Route as ListsIndexImport } from './routes/lists/index'
 import { Route as HelpIndexImport } from './routes/help/index'
 import { Route as DiaryIndexImport } from './routes/diary/index'
+import { Route as CategoriesIndexImport } from './routes/categories/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
@@ -57,6 +60,18 @@ const SettingsIndexRoute = SettingsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const SearchIndexRoute = SearchIndexImport.update({
+  id: '/search/',
+  path: '/search/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ReportIndexRoute = ReportIndexImport.update({
+  id: '/report/',
+  path: '/report/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PrivacyIndexRoute = PrivacyIndexImport.update({
   id: '/privacy/',
   path: '/privacy/',
@@ -84,6 +99,12 @@ const HelpIndexRoute = HelpIndexImport.update({
 const DiaryIndexRoute = DiaryIndexImport.update({
   id: '/diary/',
   path: '/diary/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CategoriesIndexRoute = CategoriesIndexImport.update({
+  id: '/categories/',
+  path: '/categories/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -173,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookmarksIndexImport
       parentRoute: typeof rootRoute
     }
+    '/categories/': {
+      id: '/categories/'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/diary/': {
       id: '/diary/'
       path: '/diary'
@@ -206,6 +234,20 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/report/': {
+      id: '/report/'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/search/': {
+      id: '/search/'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchIndexImport
       parentRoute: typeof rootRoute
     }
     '/settings/': {
@@ -294,11 +336,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/bookmarks': typeof BookmarksIndexRoute
+  '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
   '/help': typeof HelpIndexRoute
   '/lists': typeof ListsIndexRoute
   '/notifications': typeof NotificationsIndexRoute
   '/privacy': typeof PrivacyIndexRoute
+  '/report': typeof ReportIndexRoute
+  '/search': typeof SearchIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
@@ -316,11 +361,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/bookmarks': typeof BookmarksIndexRoute
+  '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
   '/help': typeof HelpIndexRoute
   '/lists': typeof ListsIndexRoute
   '/notifications': typeof NotificationsIndexRoute
   '/privacy': typeof PrivacyIndexRoute
+  '/report': typeof ReportIndexRoute
+  '/search': typeof SearchIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
@@ -339,11 +387,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/bookmarks/': typeof BookmarksIndexRoute
+  '/categories/': typeof CategoriesIndexRoute
   '/diary/': typeof DiaryIndexRoute
   '/help/': typeof HelpIndexRoute
   '/lists/': typeof ListsIndexRoute
   '/notifications/': typeof NotificationsIndexRoute
   '/privacy/': typeof PrivacyIndexRoute
+  '/report/': typeof ReportIndexRoute
+  '/search/': typeof SearchIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
@@ -363,11 +414,14 @@ export interface FileRouteTypes {
     | '/'
     | '/demo/tanstack-query'
     | '/bookmarks'
+    | '/categories'
     | '/diary'
     | '/help'
     | '/lists'
     | '/notifications'
     | '/privacy'
+    | '/report'
+    | '/search'
     | '/settings'
     | '/terms'
     | '/trips'
@@ -384,11 +438,14 @@ export interface FileRouteTypes {
     | '/'
     | '/demo/tanstack-query'
     | '/bookmarks'
+    | '/categories'
     | '/diary'
     | '/help'
     | '/lists'
     | '/notifications'
     | '/privacy'
+    | '/report'
+    | '/search'
     | '/settings'
     | '/terms'
     | '/trips'
@@ -405,11 +462,14 @@ export interface FileRouteTypes {
     | '/'
     | '/demo/tanstack-query'
     | '/bookmarks/'
+    | '/categories/'
     | '/diary/'
     | '/help/'
     | '/lists/'
     | '/notifications/'
     | '/privacy/'
+    | '/report/'
+    | '/search/'
     | '/settings/'
     | '/terms/'
     | '/trips/'
@@ -428,11 +488,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   BookmarksIndexRoute: typeof BookmarksIndexRoute
+  CategoriesIndexRoute: typeof CategoriesIndexRoute
   DiaryIndexRoute: typeof DiaryIndexRoute
   HelpIndexRoute: typeof HelpIndexRoute
   ListsIndexRoute: typeof ListsIndexRoute
   NotificationsIndexRoute: typeof NotificationsIndexRoute
   PrivacyIndexRoute: typeof PrivacyIndexRoute
+  ReportIndexRoute: typeof ReportIndexRoute
+  SearchIndexRoute: typeof SearchIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   TermsIndexRoute: typeof TermsIndexRoute
   TripsIndexRoute: typeof TripsIndexRoute
@@ -450,11 +513,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   BookmarksIndexRoute: BookmarksIndexRoute,
+  CategoriesIndexRoute: CategoriesIndexRoute,
   DiaryIndexRoute: DiaryIndexRoute,
   HelpIndexRoute: HelpIndexRoute,
   ListsIndexRoute: ListsIndexRoute,
   NotificationsIndexRoute: NotificationsIndexRoute,
   PrivacyIndexRoute: PrivacyIndexRoute,
+  ReportIndexRoute: ReportIndexRoute,
+  SearchIndexRoute: SearchIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   TermsIndexRoute: TermsIndexRoute,
   TripsIndexRoute: TripsIndexRoute,
@@ -481,11 +547,14 @@ export const routeTree = rootRoute
         "/",
         "/demo/tanstack-query",
         "/bookmarks/",
+        "/categories/",
         "/diary/",
         "/help/",
         "/lists/",
         "/notifications/",
         "/privacy/",
+        "/report/",
+        "/search/",
         "/settings/",
         "/terms/",
         "/trips/",
@@ -508,6 +577,9 @@ export const routeTree = rootRoute
     "/bookmarks/": {
       "filePath": "bookmarks/index.tsx"
     },
+    "/categories/": {
+      "filePath": "categories/index.tsx"
+    },
     "/diary/": {
       "filePath": "diary/index.tsx"
     },
@@ -522,6 +594,12 @@ export const routeTree = rootRoute
     },
     "/privacy/": {
       "filePath": "privacy/index.tsx"
+    },
+    "/report/": {
+      "filePath": "report/index.tsx"
+    },
+    "/search/": {
+      "filePath": "search/index.tsx"
     },
     "/settings/": {
       "filePath": "settings/index.tsx"

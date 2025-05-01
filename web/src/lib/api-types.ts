@@ -1256,7 +1256,7 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            cities: components["schemas"]["City"][] | null;
+            cities: components["schemas"]["City"][];
         };
         CitiesListOutputBody: {
             /**
@@ -1264,7 +1264,7 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            cities: components["schemas"]["City"][] | null;
+            cities: components["schemas"]["City"][];
         };
         City: {
             coordinates: components["schemas"]["CityCoordinates"];
@@ -1462,7 +1462,7 @@ export interface components {
             /** @description A human-readable explanation specific to this occurrence of the problem. */
             detail?: string;
             /** @description Optional list of individual error details */
-            errors?: components["schemas"]["ErrorDetail"][] | null;
+            errors?: components["schemas"]["ErrorDetail"][];
             /**
              * Format: uri
              * @description A URI reference that identifies the specific occurrence of the problem.
@@ -1598,7 +1598,7 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            amenities: components["schemas"]["Amenity"][] | null;
+            amenities: components["schemas"]["Amenity"][];
         };
         ListCategoriesOutputBody: {
             /**
@@ -1606,7 +1606,7 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            categories: components["schemas"]["Category"][] | null;
+            categories: components["schemas"]["Category"][];
         };
         LoginInputBody: {
             /**
@@ -1695,7 +1695,7 @@ export interface components {
              * @description ID of address of point of interest
              */
             addressId: number;
-            amenities: components["schemas"]["Amenity"][] | null;
+            amenities: components["schemas"]["Amenity"][];
             category: components["schemas"]["Category"];
             /**
              * Format: int32
@@ -1711,7 +1711,7 @@ export interface components {
             description: string;
             /** @description ID of point of interest */
             id: string;
-            media: components["schemas"]["Media"][] | null;
+            media: components["schemas"]["Media"][];
             /** @description Name of point of interest */
             name: string;
             openTimes: {
