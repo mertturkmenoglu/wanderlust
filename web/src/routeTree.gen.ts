@@ -23,6 +23,7 @@ import { Route as DiaryIndexImport } from './routes/diary/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
+import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
 import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
 
@@ -97,6 +98,12 @@ const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
 const UUsernameIndexRoute = UUsernameIndexImport.update({
   id: '/u/$username/',
   path: '/u/$username/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthSignUpIndexRoute = AuthSignUpIndexImport.update({
+  id: '/_auth/sign-up/',
+  path: '/sign-up/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -200,6 +207,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInIndexImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/sign-up/': {
+      id: '/_auth/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/u/$username/': {
       id: '/u/$username/'
       path: '/u/$username'
@@ -232,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
 }
@@ -249,6 +264,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
 }
@@ -267,6 +283,7 @@ export interface FileRoutesById {
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
+  '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/u/$username/following/': typeof UUsernameFollowingIndexRoute
 }
@@ -286,6 +303,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trips'
     | '/sign-in'
+    | '/sign-up'
     | '/u/$username'
     | '/u/$username/following'
   fileRoutesByTo: FileRoutesByTo
@@ -302,6 +320,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/trips'
     | '/sign-in'
+    | '/sign-up'
     | '/u/$username'
     | '/u/$username/following'
   id:
@@ -318,6 +337,7 @@ export interface FileRouteTypes {
     | '/terms/'
     | '/trips/'
     | '/_auth/sign-in/'
+    | '/_auth/sign-up/'
     | '/u/$username/'
     | '/u/$username/following/'
   fileRoutesById: FileRoutesById
@@ -336,6 +356,7 @@ export interface RootRouteChildren {
   TermsIndexRoute: typeof TermsIndexRoute
   TripsIndexRoute: typeof TripsIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
+  AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
   UUsernameIndexRoute: typeof UUsernameIndexRoute
   UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
 }
@@ -353,6 +374,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsIndexRoute: TermsIndexRoute,
   TripsIndexRoute: TripsIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
+  AuthSignUpIndexRoute: AuthSignUpIndexRoute,
   UUsernameIndexRoute: UUsernameIndexRoute,
   UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
 }
@@ -379,6 +401,7 @@ export const routeTree = rootRoute
         "/terms/",
         "/trips/",
         "/_auth/sign-in/",
+        "/_auth/sign-up/",
         "/u/$username/",
         "/u/$username/following/"
       ]
@@ -418,6 +441,9 @@ export const routeTree = rootRoute
     },
     "/_auth/sign-in/": {
       "filePath": "_auth/sign-in/index.tsx"
+    },
+    "/_auth/sign-up/": {
+      "filePath": "_auth/sign-up/index.tsx"
     },
     "/u/$username/": {
       "filePath": "u/$username/index.tsx"

@@ -1,28 +1,31 @@
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
-import AuthLegalText from "~/components/blocks/auth/legal-text";
-import AuthLink from "~/components/blocks/auth/link";
-import OAuthButton from "~/components/blocks/oauth-button";
-import InputError from "~/components/kit/input-error";
-import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Separator } from "~/components/ui/separator";
-import type { Route } from "./+types/route";
-import { useSignUpForm, useSignUpMutation } from "./hooks";
+import { fetchClient } from '@/lib/api';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useState } from 'react';
+import { useSignUpForm, useSignUpMutation } from './-hooks';
+import { Card } from '@/components/ui/card';
+import AuthLink from '@/components/blocks/auth/link';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import InputError from '@/components/kit/input-error';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import OAuthButton from '@/components/blocks/auth/oauth-button';
+import AuthLegalText from '@/components/blocks/auth/legal-text';
 
-export function meta(): Route.MetaDescriptors {
-  return [
-    { title: "Sign Up | Wanderlust" },
-    {
-      name: "description",
-      content: "Sign up to Wanderlust",
-    },
-  ];
-}
+export const Route = createFileRoute('/_auth/sign-up/')({
+  component: RouteComponent,
+  beforeLoad: async () => {
+    const res = await fetchClient.GET('/api/v2/auth/me');
+    if (res.data !== undefined) {
+      throw redirect({
+        to: '/',
+      });
+    }
+  },
+});
 
-export default function Page() {
+function RouteComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const { formState, register, handleSubmit } = useSignUpForm();
   const mutation = useSignUpMutation();
@@ -48,7 +51,7 @@ export default function Page() {
           id="full-name"
           placeholder="Your name"
           autoComplete="name"
-          {...register("fullName")}
+          {...register('fullName')}
         />
         <InputError error={formState.errors.fullName} />
         <div className="my-4"></div>
@@ -59,7 +62,7 @@ export default function Page() {
           id="email"
           placeholder="Email"
           autoComplete="email"
-          {...register("email")}
+          {...register('email')}
         />
         <InputError error={formState.errors.email} />
         <div className="my-4"></div>
@@ -70,7 +73,7 @@ export default function Page() {
           id="username"
           placeholder="Username"
           autoComplete="username"
-          {...register("username")}
+          {...register('username')}
         />
         <InputError error={formState.errors.email} />
         <div className="my-4"></div>
@@ -78,12 +81,12 @@ export default function Page() {
         <Label htmlFor="password">Password</Label>
         <div className="relative">
           <Input
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             id="password"
             placeholder="Password"
             autoComplete="new-password"
             className="pr-10"
-            {...register("password")}
+            {...register('password')}
           />
           <Button
             variant="ghost"
