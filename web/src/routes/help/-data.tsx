@@ -1,4 +1,4 @@
-import { Button } from "~/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 type FAQ = {
   title: string;
@@ -17,14 +17,14 @@ type FAQItem = {
 };
 
 export const faqData: FAQ = {
-  title: "Help Center",
-  subtitle: "How can we help you?",
+  title: 'Help Center',
+  subtitle: 'How can we help you?',
   groups: [
     {
-      title: "General Questions",
+      title: 'General Questions',
       items: [
         {
-          question: "What is Wanderlust?",
+          question: 'What is Wanderlust?',
           answer: (
             <div>
               Wanderlust is a platform for travelers to explore location
@@ -35,7 +35,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "How do I sign up for Wanderlust?",
+          question: 'How do I sign up for Wanderlust?',
           answer: (
             <div>
               To sign up, visit Wanderlust website and follow the on-screen
@@ -47,10 +47,10 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Using Wanderlust",
+      title: 'Using Wanderlust',
       items: [
         {
-          question: "How can I find information about a specific location?",
+          question: 'How can I find information about a specific location?',
           answer: (
             <div>
               Use the search bar at the top of the home screen to enter the name
@@ -61,7 +61,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "How do I add a location to my diary?",
+          question: 'How do I add a location to my diary?',
           answer: (
             <div>
               To add a location to your diary, navigate to the location&apos;s
@@ -71,7 +71,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "Can I plan a trip using Wanderlust?",
+          question: 'Can I plan a trip using Wanderlust?',
           answer: (
             <div>
               Yes, you can plan trips by selecting multiple locations and
@@ -84,10 +84,10 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Social Features",
+      title: 'Social Features',
       items: [
         {
-          question: "How do I connect with my friends on Wanderlust?",
+          question: 'How do I connect with my friends on Wanderlust?',
           answer: (
             <div>
               To connect with friends, go to the &quot;Friends&quot; tab and
@@ -109,10 +109,10 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Reviews and Ratings",
+      title: 'Reviews and Ratings',
       items: [
         {
-          question: "How do I leave a review for a location?",
+          question: 'How do I leave a review for a location?',
           answer: (
             <div>
               To leave a review, navigate to the location&apos;s page and scroll
@@ -123,7 +123,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "Can I edit or delete my review?",
+          question: 'Can I edit or delete my review?',
           answer: (
             <div>
               Yes, you can delete your review by going to your profile,
@@ -135,10 +135,10 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Events",
+      title: 'Events',
       items: [
         {
-          question: "How do I find upcoming events in a specific location?",
+          question: 'How do I find upcoming events in a specific location?',
           answer: (
             <div>
               To find upcoming events, go to the events page. You can also use
@@ -148,7 +148,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "Can I create an event on Wanderlust?",
+          question: 'Can I create an event on Wanderlust?',
           answer: (
             <div>
               Currently, only verified organizers can create events. If you are
@@ -160,15 +160,15 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Technical Support",
+      title: 'Technical Support',
       items: [
         {
-          question: "What should I do if I encounter a problem with the app?",
+          question: 'What should I do if I encounter a problem with the app?',
           answer: (
             <div>
               If you experience any issues with the app, please visit the
               &quot;Help & Support&quot; section in the app or contact our
-              support team directly via email at{" "}
+              support team directly via email at{' '}
               <Button variant="link" asChild className="px-0">
                 <a href="mailto:withwanderlustapp@proton.me">
                   withwanderlustapp [at] proton [dot] me
@@ -178,7 +178,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: " How can I report inappropriate content or behavior?",
+          question: ' How can I report inappropriate content or behavior?',
           answer: (
             <div>
               To report inappropriate content or behavior, tap the
@@ -191,10 +191,10 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Account Management",
+      title: 'Account Management',
       items: [
         {
-          question: "How do I reset my password?",
+          question: 'How do I reset my password?',
           answer: (
             <div>
               To reset your password, go to the login screen and tap
@@ -204,10 +204,10 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "How can I delete my account?",
+          question: 'How can I delete my account?',
           answer: (
             <div>
-              If you wish to delete your account, contact our team via email at{" "}
+              If you wish to delete your account, contact our team via email at{' '}
               <Button variant="link" asChild className="px-0">
                 <a href="mailto:withwanderlustapp@proton.me">
                   withwanderlustapp [at] proton [dot] me
@@ -221,10 +221,10 @@ export const faqData: FAQ = {
       ],
     },
     {
-      title: "Privacy and Security",
+      title: 'Privacy and Security',
       items: [
         {
-          question: "How is my personal information protected?",
+          question: 'How is my personal information protected?',
           answer: (
             <div>
               We take your privacy seriously and use advanced security measures
@@ -234,7 +234,7 @@ export const faqData: FAQ = {
           ),
         },
         {
-          question: "Can I control who sees my activity and diary entries?",
+          question: 'Can I control who sees my activity and diary entries?',
           answer: (
             <div>
               Yes, you can adjust your privacy settings in the
