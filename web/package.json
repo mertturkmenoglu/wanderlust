@@ -10,7 +10,8 @@
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",
-    "check": "prettier --write . && eslint --fix"
+    "check": "prettier --write . && eslint --fix",
+    "openapi": "npx openapi-typescript http://localhost:5000/openapi.yaml -o ./src/lib/api-types.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",
@@ -23,6 +24,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.476.0",
+    "openapi-fetch": "^0.13.5",
+    "openapi-react-query": "^0.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
@@ -37,6 +40,7 @@
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^26.0.0",
+    "openapi-typescript": "^7.6.1",
     "prettier": "^3.5.3",
     "typescript": "^5.7.2",
     "vite": "^6.1.0",
