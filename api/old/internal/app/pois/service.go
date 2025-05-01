@@ -28,23 +28,6 @@ func (s *service) peekPois() ([]db.Poi, error) {
 	return res, nil
 }
 
-func (s *service) getPoiById(id string) (GetPoiByIdResponseDto, error) {
-	dao, err := s.repository.GetPoiById(id)
-
-	if err != nil {
-		return GetPoiByIdResponseDto{}, err
-	}
-
-	return mapGetPoiByIdToDto(dao)
-}
-
-func (s *service) isFavorite(poiId string, userId string) bool {
-	return s.repository.isFavorite(poiId, userId)
-}
-
-func (s *service) isBookmarked(poiId string, userId string) bool {
-	return s.repository.isBookmarked(poiId, userId)
-}
 
 func (s *service) validateMediaUpload(mpf *multipart.Form) error {
 	v := ImageUploadValidator{

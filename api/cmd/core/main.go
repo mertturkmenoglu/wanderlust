@@ -7,6 +7,7 @@ import (
 	"wanderlust/internal/app/categories"
 	"wanderlust/internal/app/cities"
 	"wanderlust/internal/app/health"
+	"wanderlust/internal/app/pois"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/core"
@@ -75,6 +76,7 @@ func main() {
 	categories.Register(grp, app)
 	cities.Register(grp, app)
 	health.Register(grp)
+	pois.Register(grp, app)
 
 	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
 		db.RunMigrations()

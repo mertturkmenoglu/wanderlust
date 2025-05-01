@@ -6,63 +6,10 @@ import (
 	"errors"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/utils"
-
-	"github.com/jackc/pgx/v5"
 )
 
 func (r *Repository) peekPois() ([]db.Poi, error) {
 	return r.DI.Db.Queries.PeekPois(context.Background())
-}
-
-func (r *Repository) GetPoiById(id string) (GetPoiByIdDao, error) {
-	poi, err := r.DI.Db.Queries.GetPoiById(context.Background(), id)
-
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return GetPoiByIdDao{}, ErrNotFound
-		}
-
-		return GetPoiByIdDao{}, err
-	}
-
-	media, err := r.DI.Db.Queries.GetPoiMedia(context.Background(), id)
-
-	if err != nil {
-		return GetPoiByIdDao{}, err
-	}
-
-	amenities, err := r.DI.Db.Queries.GetPoiAmenities(context.Background(), id)
-
-	if err != nil {
-		return GetPoiByIdDao{}, err
-	}
-
-	return GetPoiByIdDao{
-		Poi:       poi.Poi,
-		Address:   poi.Address,
-		City:      poi.City,
-		Category:  poi.Category,
-		Media:     media,
-		Amenities: amenities,
-	}, nil
-}
-
-func (r *Repository) isFavorite(poiId string, userId string) bool {
-	_, err := r.DI.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
-		PoiID:  poiId,
-		UserID: userId,
-	})
-
-	return err == nil
-}
-
-func (r *Repository) isBookmarked(poiId string, userId string) bool {
-	_, err := r.DI.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
-		PoiID:  poiId,
-		UserID: userId,
-	})
-
-	return err == nil
 }
 
 func (r *Repository) publishDraft(draft map[string]any) error {
