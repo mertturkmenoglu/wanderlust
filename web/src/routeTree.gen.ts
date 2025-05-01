@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TripsImport } from './routes/trips'
 import { Route as IndexImport } from './routes/index'
 import { Route as TripsIndexImport } from './routes/trips/index'
 import { Route as TermsIndexImport } from './routes/terms/index'
@@ -27,6 +28,9 @@ import { Route as CategoriesIndexImport } from './routes/categories/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexImport } from './routes/trips/planner/index'
+import { Route as TripsMyTripsIndexImport } from './routes/trips/my-trips/index'
+import { Route as TripsDiscoverIndexImport } from './routes/trips/discover/index'
+import { Route as TripsIdIndexImport } from './routes/trips/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
 import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
@@ -39,6 +43,12 @@ import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forg
 
 // Create/Update Routes
 
+const TripsRoute = TripsImport.update({
+  id: '/trips',
+  path: '/trips',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -46,9 +56,9 @@ const IndexRoute = IndexImport.update({
 } as any)
 
 const TripsIndexRoute = TripsIndexImport.update({
-  id: '/trips/',
-  path: '/trips/',
-  getParentRoute: () => rootRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => TripsRoute,
 } as any)
 
 const TermsIndexRoute = TermsIndexImport.update({
@@ -130,9 +140,27 @@ const UUsernameIndexRoute = UUsernameIndexImport.update({
 } as any)
 
 const TripsPlannerIndexRoute = TripsPlannerIndexImport.update({
-  id: '/trips/planner/',
-  path: '/trips/planner/',
-  getParentRoute: () => rootRoute,
+  id: '/planner/',
+  path: '/planner/',
+  getParentRoute: () => TripsRoute,
+} as any)
+
+const TripsMyTripsIndexRoute = TripsMyTripsIndexImport.update({
+  id: '/my-trips/',
+  path: '/my-trips/',
+  getParentRoute: () => TripsRoute,
+} as any)
+
+const TripsDiscoverIndexRoute = TripsDiscoverIndexImport.update({
+  id: '/discover/',
+  path: '/discover/',
+  getParentRoute: () => TripsRoute,
+} as any)
+
+const TripsIdIndexRoute = TripsIdIndexImport.update({
+  id: '/$id/',
+  path: '/$id/',
+  getParentRoute: () => TripsRoute,
 } as any)
 
 const DiscoverEventsIndexRoute = DiscoverEventsIndexImport.update({
@@ -199,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/trips': {
+      id: '/trips'
+      path: '/trips'
+      fullPath: '/trips'
+      preLoaderRoute: typeof TripsImport
       parentRoute: typeof rootRoute
     }
     '/bookmarks/': {
@@ -287,10 +322,10 @@ declare module '@tanstack/react-router' {
     }
     '/trips/': {
       id: '/trips/'
-      path: '/trips'
-      fullPath: '/trips'
+      path: '/'
+      fullPath: '/trips/'
       preLoaderRoute: typeof TripsIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof TripsImport
     }
     '/_auth/forgot-password/': {
       id: '/_auth/forgot-password/'
@@ -341,12 +376,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverEventsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/trips/$id/': {
+      id: '/trips/$id/'
+      path: '/$id'
+      fullPath: '/trips/$id'
+      preLoaderRoute: typeof TripsIdIndexImport
+      parentRoute: typeof TripsImport
+    }
+    '/trips/discover/': {
+      id: '/trips/discover/'
+      path: '/discover'
+      fullPath: '/trips/discover'
+      preLoaderRoute: typeof TripsDiscoverIndexImport
+      parentRoute: typeof TripsImport
+    }
+    '/trips/my-trips/': {
+      id: '/trips/my-trips/'
+      path: '/my-trips'
+      fullPath: '/trips/my-trips'
+      preLoaderRoute: typeof TripsMyTripsIndexImport
+      parentRoute: typeof TripsImport
+    }
     '/trips/planner/': {
       id: '/trips/planner/'
-      path: '/trips/planner'
+      path: '/planner'
       fullPath: '/trips/planner'
       preLoaderRoute: typeof TripsPlannerIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof TripsImport
     }
     '/u/$username/': {
       id: '/u/$username/'
@@ -374,8 +430,27 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface TripsRouteChildren {
+  TripsIndexRoute: typeof TripsIndexRoute
+  TripsIdIndexRoute: typeof TripsIdIndexRoute
+  TripsDiscoverIndexRoute: typeof TripsDiscoverIndexRoute
+  TripsMyTripsIndexRoute: typeof TripsMyTripsIndexRoute
+  TripsPlannerIndexRoute: typeof TripsPlannerIndexRoute
+}
+
+const TripsRouteChildren: TripsRouteChildren = {
+  TripsIndexRoute: TripsIndexRoute,
+  TripsIdIndexRoute: TripsIdIndexRoute,
+  TripsDiscoverIndexRoute: TripsDiscoverIndexRoute,
+  TripsMyTripsIndexRoute: TripsMyTripsIndexRoute,
+  TripsPlannerIndexRoute: TripsPlannerIndexRoute,
+}
+
+const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/trips': typeof TripsRouteWithChildren
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
@@ -388,7 +463,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
-  '/trips': typeof TripsIndexRoute
+  '/trips/': typeof TripsIndexRoute
   '/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
@@ -396,6 +471,9 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/trips/$id': typeof TripsIdIndexRoute
+  '/trips/discover': typeof TripsDiscoverIndexRoute
+  '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
@@ -424,6 +502,9 @@ export interface FileRoutesByTo {
   '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/trips/$id': typeof TripsIdIndexRoute
+  '/trips/discover': typeof TripsDiscoverIndexRoute
+  '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
@@ -433,6 +514,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/trips': typeof TripsRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/diary/': typeof DiaryIndexRoute
@@ -453,6 +535,9 @@ export interface FileRoutesById {
   '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
+  '/trips/$id/': typeof TripsIdIndexRoute
+  '/trips/discover/': typeof TripsDiscoverIndexRoute
+  '/trips/my-trips/': typeof TripsMyTripsIndexRoute
   '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
@@ -463,6 +548,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/trips'
     | '/bookmarks'
     | '/categories'
     | '/diary'
@@ -475,7 +561,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/terms'
-    | '/trips'
+    | '/trips/'
     | '/forgot-password'
     | '/onboarding'
     | '/sign-in'
@@ -483,6 +569,9 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/cities/list'
     | '/discover/events'
+    | '/trips/$id'
+    | '/trips/discover'
+    | '/trips/my-trips'
     | '/trips/planner'
     | '/u/$username'
     | '/forgot-password/reset'
@@ -510,6 +599,9 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/cities/list'
     | '/discover/events'
+    | '/trips/$id'
+    | '/trips/discover'
+    | '/trips/my-trips'
     | '/trips/planner'
     | '/u/$username'
     | '/forgot-password/reset'
@@ -517,6 +609,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/trips'
     | '/bookmarks/'
     | '/categories/'
     | '/diary/'
@@ -537,6 +630,9 @@ export interface FileRouteTypes {
     | '/_auth/verify-email/'
     | '/cities/list/'
     | '/discover/events/'
+    | '/trips/$id/'
+    | '/trips/discover/'
+    | '/trips/my-trips/'
     | '/trips/planner/'
     | '/u/$username/'
     | '/_auth/forgot-password/reset/'
@@ -546,6 +642,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TripsRoute: typeof TripsRouteWithChildren
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   DiaryIndexRoute: typeof DiaryIndexRoute
@@ -558,7 +655,6 @@ export interface RootRouteChildren {
   SearchIndexRoute: typeof SearchIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   TermsIndexRoute: typeof TermsIndexRoute
-  TripsIndexRoute: typeof TripsIndexRoute
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthOnboardingIndexRoute: typeof AuthOnboardingIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
@@ -566,7 +662,6 @@ export interface RootRouteChildren {
   AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
-  TripsPlannerIndexRoute: typeof TripsPlannerIndexRoute
   UUsernameIndexRoute: typeof UUsernameIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
   UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
@@ -574,6 +669,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TripsRoute: TripsRouteWithChildren,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   DiaryIndexRoute: DiaryIndexRoute,
@@ -586,7 +682,6 @@ const rootRouteChildren: RootRouteChildren = {
   SearchIndexRoute: SearchIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   TermsIndexRoute: TermsIndexRoute,
-  TripsIndexRoute: TripsIndexRoute,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthOnboardingIndexRoute: AuthOnboardingIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
@@ -594,7 +689,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
-  TripsPlannerIndexRoute: TripsPlannerIndexRoute,
   UUsernameIndexRoute: UUsernameIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
   UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
@@ -611,6 +705,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/trips",
         "/bookmarks/",
         "/categories/",
         "/diary/",
@@ -623,7 +718,6 @@ export const routeTree = rootRoute
         "/search/",
         "/settings/",
         "/terms/",
-        "/trips/",
         "/_auth/forgot-password/",
         "/_auth/onboarding/",
         "/_auth/sign-in/",
@@ -631,7 +725,6 @@ export const routeTree = rootRoute
         "/_auth/verify-email/",
         "/cities/list/",
         "/discover/events/",
-        "/trips/planner/",
         "/u/$username/",
         "/_auth/forgot-password/reset/",
         "/u/$username/following/"
@@ -639,6 +732,16 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/trips": {
+      "filePath": "trips.tsx",
+      "children": [
+        "/trips/",
+        "/trips/$id/",
+        "/trips/discover/",
+        "/trips/my-trips/",
+        "/trips/planner/"
+      ]
     },
     "/bookmarks/": {
       "filePath": "bookmarks/index.tsx"
@@ -677,7 +780,8 @@ export const routeTree = rootRoute
       "filePath": "terms/index.tsx"
     },
     "/trips/": {
-      "filePath": "trips/index.tsx"
+      "filePath": "trips/index.tsx",
+      "parent": "/trips"
     },
     "/_auth/forgot-password/": {
       "filePath": "_auth/forgot-password/index.tsx"
@@ -700,8 +804,21 @@ export const routeTree = rootRoute
     "/discover/events/": {
       "filePath": "discover/events/index.tsx"
     },
+    "/trips/$id/": {
+      "filePath": "trips/$id/index.tsx",
+      "parent": "/trips"
+    },
+    "/trips/discover/": {
+      "filePath": "trips/discover/index.tsx",
+      "parent": "/trips"
+    },
+    "/trips/my-trips/": {
+      "filePath": "trips/my-trips/index.tsx",
+      "parent": "/trips"
+    },
     "/trips/planner/": {
-      "filePath": "trips/planner/index.tsx"
+      "filePath": "trips/planner/index.tsx",
+      "parent": "/trips"
     },
     "/u/$username/": {
       "filePath": "u/$username/index.tsx"
