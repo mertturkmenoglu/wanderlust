@@ -26,6 +26,7 @@ import { Route as HelpIndexImport } from './routes/help/index'
 import { Route as DiaryIndexImport } from './routes/diary/index'
 import { Route as CategoriesIndexImport } from './routes/categories/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
+import { Route as AdminDashboardImport } from './routes/_admin/dashboard'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexImport } from './routes/trips/planner/index'
 import { Route as TripsMyTripsIndexImport } from './routes/trips/my-trips/index'
@@ -40,6 +41,7 @@ import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
 import { Route as AuthOnboardingIndexImport } from './routes/_auth/onboarding/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/_auth/forgot-password/index'
+import { Route as AdminDashboardIndexImport } from './routes/_admin/dashboard/index'
 import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 
@@ -135,6 +137,12 @@ const BookmarksIndexRoute = BookmarksIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AdminDashboardRoute = AdminDashboardImport.update({
+  id: '/_admin/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const UUsernameIndexRoute = UUsernameIndexImport.update({
   id: '/u/$username/',
   path: '/u/$username/',
@@ -219,6 +227,12 @@ const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AdminDashboardIndexRoute = AdminDashboardIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminDashboardRoute,
+} as any)
+
 const UUsernameFollowingIndexRoute = UUsernameFollowingIndexImport.update({
   id: '/u/$username/following/',
   path: '/u/$username/following/',
@@ -248,6 +262,13 @@ declare module '@tanstack/react-router' {
       path: '/trips'
       fullPath: '/trips'
       preLoaderRoute: typeof TripsImport
+      parentRoute: typeof rootRoute
+    }
+    '/_admin/dashboard': {
+      id: '/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AdminDashboardImport
       parentRoute: typeof rootRoute
     }
     '/bookmarks/': {
@@ -340,6 +361,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/trips/'
       preLoaderRoute: typeof TripsIndexImport
       parentRoute: typeof TripsImport
+    }
+    '/_admin/dashboard/': {
+      id: '/_admin/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AdminDashboardIndexImport
+      parentRoute: typeof AdminDashboardImport
     }
     '/_auth/forgot-password/': {
       id: '/_auth/forgot-password/'
@@ -478,9 +506,22 @@ const TripsRouteChildren: TripsRouteChildren = {
 
 const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
 
+interface AdminDashboardRouteChildren {
+  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
+}
+
+const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
+  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
+}
+
+const AdminDashboardRouteWithChildren = AdminDashboardRoute._addFileChildren(
+  AdminDashboardRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/trips': typeof TripsRouteWithChildren
+  '/dashboard': typeof AdminDashboardRouteWithChildren
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
@@ -494,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/dashboard/': typeof AdminDashboardIndexRoute
   '/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
@@ -527,6 +569,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
+  '/dashboard': typeof AdminDashboardIndexRoute
   '/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
@@ -549,6 +592,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/trips': typeof TripsRouteWithChildren
+  '/_admin/dashboard': typeof AdminDashboardRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/diary/': typeof DiaryIndexRoute
@@ -562,6 +606,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/_admin/dashboard/': typeof AdminDashboardIndexRoute
   '/_auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/_auth/onboarding/': typeof AuthOnboardingIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
@@ -585,6 +630,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/trips'
+    | '/dashboard'
     | '/bookmarks'
     | '/categories'
     | '/diary'
@@ -598,6 +644,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/trips/'
+    | '/dashboard/'
     | '/forgot-password'
     | '/onboarding'
     | '/sign-in'
@@ -630,6 +677,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/trips'
+    | '/dashboard'
     | '/forgot-password'
     | '/onboarding'
     | '/sign-in'
@@ -650,6 +698,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/trips'
+    | '/_admin/dashboard'
     | '/bookmarks/'
     | '/categories/'
     | '/diary/'
@@ -663,6 +712,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
+    | '/_admin/dashboard/'
     | '/_auth/forgot-password/'
     | '/_auth/onboarding/'
     | '/_auth/sign-in/'
@@ -685,6 +735,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TripsRoute: typeof TripsRouteWithChildren
+  AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   DiaryIndexRoute: typeof DiaryIndexRoute
@@ -713,6 +764,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TripsRoute: TripsRouteWithChildren,
+  AdminDashboardRoute: AdminDashboardRouteWithChildren,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   DiaryIndexRoute: DiaryIndexRoute,
@@ -750,6 +802,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/trips",
+        "/_admin/dashboard",
         "/bookmarks/",
         "/categories/",
         "/diary/",
@@ -787,6 +840,12 @@ export const routeTree = rootRoute
         "/trips/invites/",
         "/trips/my-trips/",
         "/trips/planner/"
+      ]
+    },
+    "/_admin/dashboard": {
+      "filePath": "_admin/dashboard.tsx",
+      "children": [
+        "/_admin/dashboard/"
       ]
     },
     "/bookmarks/": {
@@ -828,6 +887,10 @@ export const routeTree = rootRoute
     "/trips/": {
       "filePath": "trips/index.tsx",
       "parent": "/trips"
+    },
+    "/_admin/dashboard/": {
+      "filePath": "_admin/dashboard/index.tsx",
+      "parent": "/_admin/dashboard"
     },
     "/_auth/forgot-password/": {
       "filePath": "_auth/forgot-password/index.tsx"

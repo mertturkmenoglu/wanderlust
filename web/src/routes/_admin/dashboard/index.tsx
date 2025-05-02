@@ -1,6 +1,10 @@
-import { Link } from "react-router";
-import { Button } from "~/components/ui/button";
-import { Separator } from "~/components/ui/separator";
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { createFileRoute, Link } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/_admin/dashboard/')({
+  component: RouteComponent,
+});
 
 type ItemProps = {
   href: string;
@@ -15,7 +19,7 @@ function Item({ href, text }: ItemProps) {
   );
 }
 
-export default function Page() {
+function RouteComponent() {
   return (
     <div className="flex w-full flex-col">
       <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
