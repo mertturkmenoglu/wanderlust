@@ -3,5 +3,5 @@ export function lengthTracker(s: string | undefined, max: number): string {
 }
 
 export function truncateWithEllipses(s: string, max: number): string {
-  return s.length > max ? s.slice(0, max) + "..." : s;
+  return s.length > max ? s.slice(0, max) + '...' : s;
 }

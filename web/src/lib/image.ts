@@ -1,5 +1,3 @@
-import { CreateMediaDto } from "./dto";
-
 export function userImage(s: string | null): string {
   if (globalThis.window !== undefined) {
     if (s === null) {
@@ -67,23 +65,5 @@ export function getImageDims(
       rej(err);
     };
     img.src = URL.createObjectURL(f);
-  });
-}
-
-export function mapImagesToMedia(
-  urls: string[],
-  files: File[],
-  dims: Array<{ width: number; height: number }>
-): CreateMediaDto[] {
-  return urls.map((url, i) => {
-    return {
-      type: "image",
-      url,
-      thumbnail: url,
-      alt: files[i].name,
-      caption: files[i].name,
-      width: dims[i].width,
-      height: dims[i].height,
-    };
   });
 }
