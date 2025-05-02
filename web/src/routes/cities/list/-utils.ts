@@ -1,10 +1,13 @@
-import { GetCityByIdResponseDto } from "~/lib/dto";
+import type { components } from '@/lib/api-types';
 
-export function groupCitiesByCountry(cities: GetCityByIdResponseDto[]) {
-  const countries = new Map<string, GetCityByIdResponseDto[]>();
+type TCity = components['schemas']['City'];
+type TCities = TCity[];
+
+export function groupCitiesByCountry(cities: TCities) {
+  const countries = new Map<string, TCity[]>();
 
   cities.forEach((city) => {
-    const country = city.countryName;
+    const country = city.country.name;
     if (!countries.has(country)) {
       countries.set(country, []);
     }
