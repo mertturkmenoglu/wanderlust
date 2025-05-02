@@ -19,7 +19,6 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Point of Interests"}
 	})
 
-	// routes.GET("/peek", m.handlers.PeekPois)
 	// routes.POST("/media", m.handlers.UploadMedia, middlewares.IsAuth, middlewares.Authz(authz.ActPoiMediaUpload))
 	// routes.DELETE("/media", m.handlers.DeleteMedia, middlewares.IsAuth, middlewares.Authz(authz.ActPoiMediaDelete))
 	// routes.POST("/drafts/new", m.handlers.CreateDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftCreate))

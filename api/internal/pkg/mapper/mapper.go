@@ -116,3 +116,27 @@ func ToOpenHours(dbOpenHours []byte) (map[string]dto.OpenHours, error) {
 
 	return times, err
 }
+
+func ToBookmarks(dbBookmarks []db.GetBookmarksByUserIdRow) []dto.Bookmark {
+	bookmarks := make([]dto.Bookmark, len(dbBookmarks))
+
+	for i, v := range dbBookmarks {
+		bookmarks[i] = dto.Bookmark{
+			ID:    v.Bookmark.ID,
+			PoiID: v.Bookmark.PoiID,
+			Poi: dto.BookmarkPoi{
+				ID:         v.Poi.ID,
+				Name:       v.Poi.Name,
+				AddressID:  v.Poi.AddressID,
+				Address:    ToAddress(v.Address, v.City),
+				CategoryID: v.Poi.CategoryID,
+				Category:   ToCategory(v.Category),
+				FirstMedia: ToMedia([]db.Medium{v.Medium})[0],
+			},
+			UserID:    v.Bookmark.UserID,
+			CreatedAt: v.Bookmark.CreatedAt.Time,
+		}
+	}
+
+	return bookmarks
+}
