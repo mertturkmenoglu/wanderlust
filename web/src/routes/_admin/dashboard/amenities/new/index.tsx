@@ -1,18 +1,25 @@
-import { SubmitHandler } from "react-hook-form";
-import InputError from "~/components/kit/input-error";
-import InputInfo from "~/components/kit/input-info";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { useNewAmenityForm, useNewAmenityMutation } from "./hooks";
-import { FormInput } from "./schema";
+import { createFileRoute } from '@tanstack/react-router';
+import type { SubmitHandler } from 'react-hook-form';
+import { useNewAmenityForm, useNewAmenityMutation } from './-hooks';
+import type { FormInput } from './-schema';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import InputInfo from '@/components/kit/input-info';
+import InputError from '@/components/kit/input-error';
+import { Button } from '@/components/ui/button';
 
-export default function Page() {
+export const Route = createFileRoute('/_admin/dashboard/amenities/new/')({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   const form = useNewAmenityForm();
   const mutation = useNewAmenityMutation();
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
+    mutation.mutate({
+      body: data,
+    });
   };
 
   return (
@@ -31,7 +38,7 @@ export default function Page() {
             id="name"
             placeholder="Name"
             autoComplete="off"
-            {...form.register("name")}
+            {...form.register('name')}
           />
           <InputInfo text="Name" />
           <InputError error={form.formState.errors.name} />

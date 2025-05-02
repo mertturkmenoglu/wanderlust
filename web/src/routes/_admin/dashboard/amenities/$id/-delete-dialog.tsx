@@ -1,4 +1,4 @@
-import { Button } from "~/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -7,15 +7,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-import { useDeleteAmenityMutation } from "./hooks";
+} from '@/components/ui/dialog';
+import { useDeleteAmenityMutation } from './-hooks';
 
 type Props = {
   id: number;
 };
 
 export default function DeleteDialog({ id }: Props) {
-  const deleteMutation = useDeleteAmenityMutation(id);
+  const deleteMutation = useDeleteAmenityMutation();
 
   return (
     <Dialog>
@@ -34,7 +34,15 @@ export default function DeleteDialog({ id }: Props) {
           <Button
             type="button"
             variant="destructive"
-            onClick={() => deleteMutation.mutate()}
+            onClick={() =>
+              deleteMutation.mutate({
+                params: {
+                  path: {
+                    id,
+                  },
+                },
+              })
+            }
           >
             Delete
           </Button>

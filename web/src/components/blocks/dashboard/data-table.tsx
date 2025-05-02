@@ -1,9 +1,19 @@
-"use client";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Link } from "@tanstack/react-router";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Link } from '@tanstack/react-router';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -11,7 +21,11 @@ interface DataTableProps<TData, TValue> {
   hrefPrefix?: string;
 }
 
-export function DataTable<TData, TValue>({ columns, data, hrefPrefix = "" }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  hrefPrefix = '',
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -27,7 +41,12 @@ export function DataTable<TData, TValue>({ columns, data, hrefPrefix = "" }: Dat
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 );
               })}
@@ -37,11 +56,21 @@ export function DataTable<TData, TValue>({ columns, data, hrefPrefix = "" }: Dat
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    <Link key={cell.id} to={`${hrefPrefix}/${row.getValue("id")}`}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <Link
+                      key={cell.id}
+                      to="."
+                      href={`${hrefPrefix}/${row.getValue('id')}`}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </Link>
                   </TableCell>
                 ))}
