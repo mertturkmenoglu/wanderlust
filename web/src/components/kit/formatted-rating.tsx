@@ -1,5 +1,5 @@
-import { useId } from "react";
-import { Rating } from "./rating";
+import { useId } from 'react';
+import { Rating } from './rating';
 
 type Props = {
   rating: number;
@@ -15,10 +15,10 @@ export default function FormattedRating({
   showNumbers = true,
 }: Props) {
   const id = useId();
-  const fmt = new Intl.NumberFormat("en-US", {
-    style: "decimal",
-    compactDisplay: "short",
-    notation: "compact",
+  const fmt = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
+    compactDisplay: 'short',
+    notation: 'compact',
   });
 
   const formattedRating = fmt.format(votes);

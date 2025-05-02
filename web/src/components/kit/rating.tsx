@@ -1,9 +1,7 @@
-"use client";
-
-import * as rating from "@zag-js/rating-group";
-import { normalizeProps, useMachine } from "@zag-js/react";
-import { Star } from "lucide-react";
-import { cn } from "~/lib/utils";
+import { cn } from '@/lib/utils';
+import * as rating from '@zag-js/rating-group';
+import { normalizeProps, useMachine } from '@zag-js/react';
+import { Star } from 'lucide-react';
 
 type Props = {
   defaultValue?: number;
@@ -20,17 +18,15 @@ export function Rating({
   disabled,
   starsClassName,
 }: Props) {
-  const [state, send] = useMachine(
-    rating.machine({
-      id,
-      allowHalf: false,
-      value: defaultValue,
-      disabled,
-      onValueChange: onChange,
-    })
-  );
+  const service = useMachine(rating.machine, {
+    id,
+    allowHalf: false,
+    value: defaultValue,
+    disabled,
+    onValueChange: onChange,
+  });
 
-  const api = rating.connect(state, send, normalizeProps);
+  const api = rating.connect(service, normalizeProps);
 
   return (
     <div {...api.getRootProps()}>
@@ -41,11 +37,11 @@ export function Rating({
             <span key={index} {...api.getItemProps({ index })}>
               <Star
                 className={cn(
-                  "text-primary size-4",
+                  'text-primary size-4',
                   {
-                    "fill-primary": state.highlighted,
+                    'fill-primary': state.highlighted,
                   },
-                  starsClassName
+                  starsClassName,
                 )}
               />
             </span>
