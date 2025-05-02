@@ -1,31 +1,36 @@
-import { Link } from "react-router";
-import invariant from "tiny-invariant";
-import BackLink from "~/components/blocks/back-link";
-import { Button } from "~/components/ui/button";
-import { Separator } from "~/components/ui/separator";
-import { getCityById } from "~/lib/api";
-import { ipx } from "~/lib/img-proxy";
-import DeleteDialog from "../../__components/delete-dialog";
-import type { Route } from "./+types/route";
-import { useDeleteCityMutation } from "./hooks";
+import BackLink from '@/components/blocks/back-link';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
+import { ipx } from '@/lib/ipx';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import DeleteDialog from '../../-delete-dialog';
+import { useDeleteCityMutation } from './-hooks';
 
-export async function loader({ params }: Route.LoaderArgs) {
-  invariant(params.id, "id is required");
+export const Route = createFileRoute('/_admin/dashboard/cities/$id/')({
+  component: RouteComponent,
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/cities/{id}', {
+        params: {
+          path: {
+            id: +params.id,
+          },
+        },
+      }),
+    ),
+});
 
-  const city = await getCityById(params.id);
-  return { city: city.data };
-}
-
-export default function Page({ loaderData }: Route.ComponentProps) {
-  const { city } = loaderData;
-  const mutation = useDeleteCityMutation(city.id);
+function RouteComponent() {
+  const city = Route.useLoaderData();
+  const mutation = useDeleteCityMutation();
 
   return (
     <>
       <BackLink href="/dashboard/cities" text="Go back to cities page" />
 
       <img
-        src={ipx(city.imageUrl, "w_512")}
+        src={ipx(city.image.url, 'w_512')}
         alt={city.name}
         className="mt-4 w-64 rounded-md aspect-video object-cover"
       />
@@ -34,14 +39,34 @@ export default function Page({ loaderData }: Route.ComponentProps) {
 
       <div className="flex flex-row gap-2 w-min items-start mt-4">
         <Button variant="outline" asChild>
-          <Link to={`/cities/${city.id}/${city.name}`}>Visit Page</Link>
+          <Link to="." href={`/cities/${city.id}/${city.name}`}>
+            Visit Page
+          </Link>
         </Button>
 
         <Button variant="outline" asChild>
-          <Link to={`/dashboard/cities/${city.id}/edit`}>Edit</Link>
+          <Link
+            to="/dashboard/cities/$id/edit"
+            params={{
+              id: `${city.id}`,
+            }}
+          >
+            Edit
+          </Link>
         </Button>
 
-        <DeleteDialog type="city" onClick={() => mutation.mutate()} />
+        <DeleteDialog
+          type="city"
+          onClick={() =>
+            mutation.mutate({
+              params: {
+                path: {
+                  id: city.id,
+                },
+              },
+            })
+          }
+        />
       </div>
 
       <Separator className="my-4 max-w-md" />
@@ -58,35 +83,35 @@ export default function Page({ loaderData }: Route.ComponentProps) {
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">State Code:</div>
-        <div>{city.stateCode}</div>
+        <div>{city.state.code}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">State Name:</div>
-        <div>{city.stateName}</div>
+        <div>{city.state.name}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">Country Code:</div>
-        <div>{city.countryCode}</div>
+        <div>{city.country.code}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">Country Name:</div>
-        <div>{city.countryName}</div>
+        <div>{city.country.name}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">Image License:</div>
-        <div>{city.imageLicense ?? "-"}</div>
+        <div>{city.image.license ?? '-'}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">Image License Link:</div>
-        <div>{city.imageLicenseLink ?? "-"}</div>
+        <div>{city.image.licenseLink ?? '-'}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">Image Attribution:</div>
-        <div>{city.imageAttribute ?? "-"}</div>
+        <div>{city.image.attribution ?? '-'}</div>
       </div>
       <div className="flex gap-2 mt-2">
         <div className="font-semibold">Image Attribution Link:</div>
-        <div>{city.imageAttributionLink ?? "-"}</div>
+        <div>{city.image.attributionLink ?? '-'}</div>
       </div>
     </>
   );
