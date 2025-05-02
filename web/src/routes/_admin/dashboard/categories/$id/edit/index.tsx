@@ -1,41 +1,50 @@
-import { useState } from "react";
-import { SubmitHandler } from "react-hook-form";
-import invariant from "tiny-invariant";
-import BackLink from "~/components/blocks/back-link";
-import InputError from "~/components/kit/input-error";
-import InputInfo from "~/components/kit/input-info";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { getCategories } from "~/lib/api";
-import type { Route } from "./+types/route";
-import { useUpdateCategoryForm, useUpdateCategoryMutation } from "./hooks";
-import { FormInput } from "./schema";
+import AppMessage from '@/components/blocks/app-message';
+import BackLink from '@/components/blocks/back-link';
+import InputError from '@/components/kit/input-error';
+import InputInfo from '@/components/kit/input-info';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { api } from '@/lib/api';
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+import { useUpdateCategoryForm, useUpdateCategoryMutation } from './-hooks';
+import type { FormInput } from './-schema';
 
-export async function loader({ params }: Route.LoaderArgs) {
-  invariant(params.id, "id is required");
+export const Route = createFileRoute('/_admin/dashboard/categories/$id/edit/')({
+  component: RouteComponent,
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/categories/'),
+    ),
+});
 
-  const id = +params.id;
-  const categories = await getCategories();
-  const category = categories.data.categories.find(
-    (category) => category.id === id
-  );
+function RouteComponent() {
+  const { categories } = Route.useLoaderData();
+  const { id } = Route.useParams();
+
+  const category = categories.find((category) => category.id === +id);
 
   if (!category) {
-    throw new Response("Category not found", { status: 404 });
+    return (
+      <AppMessage errorMessage="Category not found" showBackButton={false} />
+    );
   }
 
-  return { category };
-}
-
-export default function Page({ loaderData }: Route.ComponentProps) {
-  const { category } = loaderData;
   const [previewUrl, setPreviewUrl] = useState(category.image);
   const form = useUpdateCategoryForm(category);
   const mutation = useUpdateCategoryMutation(category.id);
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
+    mutation.mutate({
+      params: {
+        path: {
+          id: category.id,
+        },
+      },
+      body: data,
+    });
   };
 
   return (
@@ -68,7 +77,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             id="name"
             placeholder="Name"
             autoComplete="off"
-            {...form.register("name")}
+            {...form.register('name')}
           />
           <InputInfo text="Name of the amenity" />
           <InputError error={form.formState.errors.name} />
@@ -81,7 +90,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             id="image"
             placeholder="https://example.com/image.jpg"
             autoComplete="off"
-            {...form.register("image")}
+            {...form.register('image')}
           />
           <InputInfo text="Image URL for the category" />
           <InputError error={form.formState.errors.image} />
@@ -89,7 +98,7 @@ export default function Page({ loaderData }: Route.ComponentProps) {
             type="button"
             variant="link"
             className="px-0"
-            onClick={() => setPreviewUrl(form.watch("image"))}
+            onClick={() => setPreviewUrl(form.watch('image'))}
           >
             Preview
           </Button>

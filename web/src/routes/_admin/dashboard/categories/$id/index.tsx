@@ -1,29 +1,28 @@
-import { Link } from "react-router";
-import invariant from "tiny-invariant";
-import BackLink from "~/components/blocks/back-link";
-import { Button } from "~/components/ui/button";
-import { getCategories } from "~/lib/api";
-import type { Route } from "./+types/route";
-import DeleteDialog from "./delete-dialog";
+import AppMessage from '@/components/blocks/app-message';
+import BackLink from '@/components/blocks/back-link';
+import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import DeleteDialog from './-delete-dialog';
 
-export async function loader({ params }: Route.LoaderArgs) {
-  invariant(params.id, "id is required");
+export const Route = createFileRoute('/_admin/dashboard/categories/$id/')({
+  component: RouteComponent,
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/categories/'),
+    ),
+});
 
-  const id = +params.id;
-  const categories = await getCategories();
-  const category = categories.data.categories.find(
-    (category) => category.id === id
-  );
+function RouteComponent() {
+  const { categories } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const category = categories.find((category) => category.id === +id);
 
   if (!category) {
-    throw new Response("Category not found", { status: 404 });
+    return (
+      <AppMessage errorMessage="Category not found" showBackButton={false} />
+    );
   }
-
-  return { category };
-}
-
-export default function Page({ loaderData }: Route.ComponentProps) {
-  const { category } = loaderData;
 
   return (
     <div>
@@ -34,7 +33,14 @@ export default function Page({ loaderData }: Route.ComponentProps) {
       <div className="flex items-end gap-4">
         <h2 className="text-4xl font-bold mt-8">{category.name}</h2>
         <Button variant="link" className="px-0" asChild>
-          <Link to={`/dashboard/categories/${category.id}/edit`}>Edit</Link>
+          <Link
+            to="/dashboard/categories/$id/edit"
+            params={{
+              id,
+            }}
+          >
+            Edit
+          </Link>
         </Button>
         <DeleteDialog id={category.id} />
       </div>

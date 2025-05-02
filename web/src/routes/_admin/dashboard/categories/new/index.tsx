@@ -1,21 +1,20 @@
-import { useState } from "react";
-import { SubmitHandler } from "react-hook-form";
-import InputError from "~/components/kit/input-error";
-import InputInfo from "~/components/kit/input-info";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { useNewCategoryForm, useNewCategoryMutation } from "./hooks";
-import { FormInput } from "./schema";
+import InputError from '@/components/kit/input-error';
+import InputInfo from '@/components/kit/input-info';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { useNewCategoryForm, useNewCategoryMutation } from './-hooks';
 
-export default function Page() {
-  const [previewUrl, setPreviewUrl] = useState("");
+export const Route = createFileRoute('/_admin/dashboard/categories/new/')({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const [previewUrl, setPreviewUrl] = useState('');
   const form = useNewCategoryForm();
   const mutation = useNewCategoryMutation();
-
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
-  };
 
   return (
     <div>
@@ -23,7 +22,7 @@ export default function Page() {
         Create New Category
       </h3>
 
-      {previewUrl !== "" && (
+      {previewUrl !== '' && (
         <img
           src={previewUrl}
           alt="Preview"
@@ -33,7 +32,11 @@ export default function Page() {
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) =>
+          mutation.mutate({
+            body: data,
+          }),
+        )}
       >
         <div className="">
           <Label htmlFor="id">ID</Label>
@@ -42,7 +45,7 @@ export default function Page() {
             id="id"
             placeholder="ID of the category"
             autoComplete="off"
-            {...form.register("id", { valueAsNumber: true })}
+            {...form.register('id', { valueAsNumber: true })}
           />
           <InputInfo text="ID of the category" />
           <InputError error={form.formState.errors.id} />
@@ -55,7 +58,7 @@ export default function Page() {
             id="name"
             placeholder="Name"
             autoComplete="off"
-            {...form.register("name")}
+            {...form.register('name')}
           />
           <InputInfo text="Name" />
           <InputError error={form.formState.errors.name} />
@@ -68,7 +71,7 @@ export default function Page() {
             id="image"
             placeholder="https://example.com/image.jpg"
             autoComplete="off"
-            {...form.register("image")}
+            {...form.register('image')}
           />
           <InputInfo text="Image URL for the category" />
           <InputError error={form.formState.errors.image} />
@@ -76,7 +79,7 @@ export default function Page() {
             type="button"
             variant="link"
             className="px-0"
-            onClick={() => setPreviewUrl(form.watch("image"))}
+            onClick={() => setPreviewUrl(form.watch('image'))}
           >
             Preview
           </Button>
