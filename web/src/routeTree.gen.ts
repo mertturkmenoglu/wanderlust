@@ -32,6 +32,7 @@ import { Route as TripsMyTripsIndexImport } from './routes/trips/my-trips/index'
 import { Route as TripsInvitesIndexImport } from './routes/trips/invites/index'
 import { Route as TripsDiscoverIndexImport } from './routes/trips/discover/index'
 import { Route as TripsIdIndexImport } from './routes/trips/$id/index'
+import { Route as PIdIndexImport } from './routes/p/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
 import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
@@ -168,6 +169,12 @@ const TripsIdIndexRoute = TripsIdIndexImport.update({
   id: '/$id/',
   path: '/$id/',
   getParentRoute: () => TripsRoute,
+} as any)
+
+const PIdIndexRoute = PIdIndexImport.update({
+  id: '/p/$id/',
+  path: '/p/$id/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const DiscoverEventsIndexRoute = DiscoverEventsIndexImport.update({
@@ -383,6 +390,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverEventsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/p/$id/': {
+      id: '/p/$id/'
+      path: '/p/$id'
+      fullPath: '/p/$id'
+      preLoaderRoute: typeof PIdIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/trips/$id/': {
       id: '/trips/$id/'
       path: '/$id'
@@ -487,6 +501,7 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/p/$id': typeof PIdIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
   '/trips/invites': typeof TripsInvitesIndexRoute
@@ -519,6 +534,7 @@ export interface FileRoutesByTo {
   '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/p/$id': typeof PIdIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
   '/trips/invites': typeof TripsInvitesIndexRoute
@@ -553,6 +569,7 @@ export interface FileRoutesById {
   '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
+  '/p/$id/': typeof PIdIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
   '/trips/invites/': typeof TripsInvitesIndexRoute
@@ -588,6 +605,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/cities/list'
     | '/discover/events'
+    | '/p/$id'
     | '/trips/$id'
     | '/trips/discover'
     | '/trips/invites'
@@ -619,6 +637,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/cities/list'
     | '/discover/events'
+    | '/p/$id'
     | '/trips/$id'
     | '/trips/discover'
     | '/trips/invites'
@@ -651,6 +670,7 @@ export interface FileRouteTypes {
     | '/_auth/verify-email/'
     | '/cities/list/'
     | '/discover/events/'
+    | '/p/$id/'
     | '/trips/$id/'
     | '/trips/discover/'
     | '/trips/invites/'
@@ -684,6 +704,7 @@ export interface RootRouteChildren {
   AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
+  PIdIndexRoute: typeof PIdIndexRoute
   UUsernameIndexRoute: typeof UUsernameIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
   UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
@@ -711,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
+  PIdIndexRoute: PIdIndexRoute,
   UUsernameIndexRoute: UUsernameIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
   UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
@@ -747,6 +769,7 @@ export const routeTree = rootRoute
         "/_auth/verify-email/",
         "/cities/list/",
         "/discover/events/",
+        "/p/$id/",
         "/u/$username/",
         "/_auth/forgot-password/reset/",
         "/u/$username/following/"
@@ -826,6 +849,9 @@ export const routeTree = rootRoute
     },
     "/discover/events/": {
       "filePath": "discover/events/index.tsx"
+    },
+    "/p/$id/": {
+      "filePath": "p/$id/index.tsx"
     },
     "/trips/$id/": {
       "filePath": "trips/$id/index.tsx",

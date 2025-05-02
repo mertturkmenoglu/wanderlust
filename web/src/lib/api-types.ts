@@ -653,6 +653,153 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/bookmarks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Bookmarks
+         * @description Get a list of bookmarks for the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserBookmarksOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Bookmark
+         * @description Create a bookmark for a point of interest
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateBookmarkInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateBookmarkOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/bookmarks/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Bookmark
+         * @description Delete a bookmark for a point of interest
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/categories/": {
         parameters: {
             query?: never;
@@ -1143,6 +1290,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/pois/peek": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Peek Point of Interests
+         * @description Get 25 pois
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PeekPoisOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/pois/{id}": {
         parameters: {
             query?: never;
@@ -1237,6 +1432,42 @@ export interface components {
              */
             id: number;
             /** @description Name of the amenity */
+            name: string;
+        };
+        Bookmark: {
+            /**
+             * Format: date-time
+             * @description Created at time of bookmark
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of bookmark
+             */
+            id: number;
+            poi: components["schemas"]["BookmarkPoi"];
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
+        BookmarkPoi: {
+            address: components["schemas"]["Address"];
+            /**
+             * Format: int32
+             * @description ID of address of point of interest
+             */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /**
+             * Format: int32
+             * @description ID of category of point of interest
+             */
+            categoryId: number;
+            firstMedia: components["schemas"]["Media"];
+            /** @description ID of point of interest */
+            id: string;
+            /** @description Name of point of interest */
             name: string;
         };
         Category: {
@@ -1339,6 +1570,36 @@ export interface components {
             id: number;
             /** @description Name of the amenity */
             name: string;
+        };
+        CreateBookmarkInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description ID of point of interest */
+            poiId: string;
+        };
+        CreateBookmarkOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Created at time of bookmark
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of bookmark
+             */
+            id: number;
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
         };
         CreateCategoryInputBody: {
             /**
@@ -1583,6 +1844,15 @@ export interface components {
             Meta: components["schemas"]["GetPoiByIdMeta"];
             Poi: components["schemas"]["Poi"];
         };
+        GetUserBookmarksOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            bookmarks: components["schemas"]["Bookmark"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
         HealthOutputBody: {
             /**
              * Format: uri
@@ -1682,6 +1952,40 @@ export interface components {
             closesAt: string;
             /** @description Opening time of POI in 24H format */
             opensAt: string;
+        };
+        PaginationInfo: {
+            /** @description Has next page */
+            hasNext: boolean;
+            /** @description Has previous page */
+            hasPrevious: boolean;
+            /**
+             * Format: int64
+             * @description Page number
+             */
+            page: number;
+            /**
+             * Format: int64
+             * @description Page size
+             */
+            pageSize: number;
+            /**
+             * Format: int64
+             * @description Total pages
+             */
+            totalPages: number;
+            /**
+             * Format: int64
+             * @description Total records
+             */
+            totalRecords: number;
+        };
+        PeekPoisOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pois: components["schemas"]["Poi"][];
         };
         Poi: {
             /**
