@@ -44,8 +44,10 @@ import { Route as AuthForgotPasswordIndexImport } from './routes/_auth/forgot-pa
 import { Route as AdminDashboardIndexImport } from './routes/_admin/dashboard/index'
 import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
+import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardCategoriesIndexImport } from './routes/_admin/dashboard/categories/index'
 import { Route as AdminDashboardAmenitiesIndexImport } from './routes/_admin/dashboard/amenities/index'
+import { Route as AdminDashboardUsersVerifyIndexImport } from './routes/_admin/dashboard/users/verify/index'
 import { Route as AdminDashboardCategoriesNewIndexImport } from './routes/_admin/dashboard/categories/new/index'
 import { Route as AdminDashboardCategoriesIdIndexImport } from './routes/_admin/dashboard/categories/$id/index'
 import { Route as AdminDashboardAmenitiesNewIndexImport } from './routes/_admin/dashboard/amenities/new/index'
@@ -254,6 +256,12 @@ const AuthForgotPasswordResetIndexRoute =
     getParentRoute: () => rootRoute,
   } as any)
 
+const AdminDashboardUsersIndexRoute = AdminDashboardUsersIndexImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AdminDashboardRoute,
+} as any)
+
 const AdminDashboardCategoriesIndexRoute =
   AdminDashboardCategoriesIndexImport.update({
     id: '/categories/',
@@ -265,6 +273,13 @@ const AdminDashboardAmenitiesIndexRoute =
   AdminDashboardAmenitiesIndexImport.update({
     id: '/amenities/',
     path: '/amenities/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardUsersVerifyIndexRoute =
+  AdminDashboardUsersVerifyIndexImport.update({
+    id: '/users/verify/',
+    path: '/users/verify/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
@@ -545,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardCategoriesIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/users/': {
+      id: '/_admin/dashboard/users/'
+      path: '/users'
+      fullPath: '/dashboard/users'
+      preLoaderRoute: typeof AdminDashboardUsersIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_auth/forgot-password/reset/': {
       id: '/_auth/forgot-password/reset/'
       path: '/forgot-password/reset'
@@ -585,6 +607,13 @@ declare module '@tanstack/react-router' {
       path: '/categories/new'
       fullPath: '/dashboard/categories/new'
       preLoaderRoute: typeof AdminDashboardCategoriesNewIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
+    '/_admin/dashboard/users/verify/': {
+      id: '/_admin/dashboard/users/verify/'
+      path: '/users/verify'
+      fullPath: '/dashboard/users/verify'
+      preLoaderRoute: typeof AdminDashboardUsersVerifyIndexImport
       parentRoute: typeof AdminDashboardImport
     }
     '/_admin/dashboard/amenities/$id/edit/': {
@@ -630,10 +659,12 @@ interface AdminDashboardRouteChildren {
   AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
   AdminDashboardAmenitiesIndexRoute: typeof AdminDashboardAmenitiesIndexRoute
   AdminDashboardCategoriesIndexRoute: typeof AdminDashboardCategoriesIndexRoute
+  AdminDashboardUsersIndexRoute: typeof AdminDashboardUsersIndexRoute
   AdminDashboardAmenitiesIdIndexRoute: typeof AdminDashboardAmenitiesIdIndexRoute
   AdminDashboardAmenitiesNewIndexRoute: typeof AdminDashboardAmenitiesNewIndexRoute
   AdminDashboardCategoriesIdIndexRoute: typeof AdminDashboardCategoriesIdIndexRoute
   AdminDashboardCategoriesNewIndexRoute: typeof AdminDashboardCategoriesNewIndexRoute
+  AdminDashboardUsersVerifyIndexRoute: typeof AdminDashboardUsersVerifyIndexRoute
   AdminDashboardAmenitiesIdEditIndexRoute: typeof AdminDashboardAmenitiesIdEditIndexRoute
   AdminDashboardCategoriesIdEditIndexRoute: typeof AdminDashboardCategoriesIdEditIndexRoute
 }
@@ -642,10 +673,12 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardIndexRoute: AdminDashboardIndexRoute,
   AdminDashboardAmenitiesIndexRoute: AdminDashboardAmenitiesIndexRoute,
   AdminDashboardCategoriesIndexRoute: AdminDashboardCategoriesIndexRoute,
+  AdminDashboardUsersIndexRoute: AdminDashboardUsersIndexRoute,
   AdminDashboardAmenitiesIdIndexRoute: AdminDashboardAmenitiesIdIndexRoute,
   AdminDashboardAmenitiesNewIndexRoute: AdminDashboardAmenitiesNewIndexRoute,
   AdminDashboardCategoriesIdIndexRoute: AdminDashboardCategoriesIdIndexRoute,
   AdminDashboardCategoriesNewIndexRoute: AdminDashboardCategoriesNewIndexRoute,
+  AdminDashboardUsersVerifyIndexRoute: AdminDashboardUsersVerifyIndexRoute,
   AdminDashboardAmenitiesIdEditIndexRoute:
     AdminDashboardAmenitiesIdEditIndexRoute,
   AdminDashboardCategoriesIdEditIndexRoute:
@@ -690,12 +723,14 @@ export interface FileRoutesByFullPath {
   '/u/$username': typeof UUsernameIndexRoute
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
+  '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
   '/dashboard/amenities/$id': typeof AdminDashboardAmenitiesIdIndexRoute
   '/dashboard/amenities/new': typeof AdminDashboardAmenitiesNewIndexRoute
   '/dashboard/categories/$id': typeof AdminDashboardCategoriesIdIndexRoute
   '/dashboard/categories/new': typeof AdminDashboardCategoriesNewIndexRoute
+  '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
 }
@@ -732,12 +767,14 @@ export interface FileRoutesByTo {
   '/u/$username': typeof UUsernameIndexRoute
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
+  '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
   '/dashboard/amenities/$id': typeof AdminDashboardAmenitiesIdIndexRoute
   '/dashboard/amenities/new': typeof AdminDashboardAmenitiesNewIndexRoute
   '/dashboard/categories/$id': typeof AdminDashboardCategoriesIdIndexRoute
   '/dashboard/categories/new': typeof AdminDashboardCategoriesNewIndexRoute
+  '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
 }
@@ -777,12 +814,14 @@ export interface FileRoutesById {
   '/u/$username/': typeof UUsernameIndexRoute
   '/_admin/dashboard/amenities/': typeof AdminDashboardAmenitiesIndexRoute
   '/_admin/dashboard/categories/': typeof AdminDashboardCategoriesIndexRoute
+  '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
   '/u/$username/following/': typeof UUsernameFollowingIndexRoute
   '/_admin/dashboard/amenities/$id/': typeof AdminDashboardAmenitiesIdIndexRoute
   '/_admin/dashboard/amenities/new/': typeof AdminDashboardAmenitiesNewIndexRoute
   '/_admin/dashboard/categories/$id/': typeof AdminDashboardCategoriesIdIndexRoute
   '/_admin/dashboard/categories/new/': typeof AdminDashboardCategoriesNewIndexRoute
+  '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
   '/_admin/dashboard/amenities/$id/edit/': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
 }
@@ -823,12 +862,14 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/dashboard/amenities'
     | '/dashboard/categories'
+    | '/dashboard/users'
     | '/forgot-password/reset'
     | '/u/$username/following'
     | '/dashboard/amenities/$id'
     | '/dashboard/amenities/new'
     | '/dashboard/categories/$id'
     | '/dashboard/categories/new'
+    | '/dashboard/users/verify'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -864,12 +905,14 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/dashboard/amenities'
     | '/dashboard/categories'
+    | '/dashboard/users'
     | '/forgot-password/reset'
     | '/u/$username/following'
     | '/dashboard/amenities/$id'
     | '/dashboard/amenities/new'
     | '/dashboard/categories/$id'
     | '/dashboard/categories/new'
+    | '/dashboard/users/verify'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
   id:
@@ -907,12 +950,14 @@ export interface FileRouteTypes {
     | '/u/$username/'
     | '/_admin/dashboard/amenities/'
     | '/_admin/dashboard/categories/'
+    | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
     | '/u/$username/following/'
     | '/_admin/dashboard/amenities/$id/'
     | '/_admin/dashboard/amenities/new/'
     | '/_admin/dashboard/categories/$id/'
     | '/_admin/dashboard/categories/new/'
+    | '/_admin/dashboard/users/verify/'
     | '/_admin/dashboard/amenities/$id/edit/'
     | '/_admin/dashboard/categories/$id/edit/'
   fileRoutesById: FileRoutesById
@@ -1034,10 +1079,12 @@ export const routeTree = rootRoute
         "/_admin/dashboard/",
         "/_admin/dashboard/amenities/",
         "/_admin/dashboard/categories/",
+        "/_admin/dashboard/users/",
         "/_admin/dashboard/amenities/$id/",
         "/_admin/dashboard/amenities/new/",
         "/_admin/dashboard/categories/$id/",
         "/_admin/dashboard/categories/new/",
+        "/_admin/dashboard/users/verify/",
         "/_admin/dashboard/amenities/$id/edit/",
         "/_admin/dashboard/categories/$id/edit/"
       ]
@@ -1141,6 +1188,10 @@ export const routeTree = rootRoute
       "filePath": "_admin/dashboard/categories/index.tsx",
       "parent": "/_admin/dashboard"
     },
+    "/_admin/dashboard/users/": {
+      "filePath": "_admin/dashboard/users/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
     "/_auth/forgot-password/reset/": {
       "filePath": "_auth/forgot-password/reset/index.tsx"
     },
@@ -1161,6 +1212,10 @@ export const routeTree = rootRoute
     },
     "/_admin/dashboard/categories/new/": {
       "filePath": "_admin/dashboard/categories/new/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/users/verify/": {
+      "filePath": "_admin/dashboard/users/verify/index.tsx",
       "parent": "/_admin/dashboard"
     },
     "/_admin/dashboard/amenities/$id/edit/": {
