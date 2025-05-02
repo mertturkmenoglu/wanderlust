@@ -68,4 +68,23 @@ func Register(grp *huma.Group, app *core.Application) {
 			}, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/pois/peek",
+			Summary:       "Peek Point of Interests",
+			Description:   "Get 25 pois",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.PeekPoisOutput, error) {
+			res, err := s.peekPois()
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

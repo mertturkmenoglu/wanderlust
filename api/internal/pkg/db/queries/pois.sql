@@ -185,3 +185,42 @@ WHERE id = $1;
 UPDATE pois
 SET total_points = total_points + $2
 WHERE id = $1;
+
+-- name: GetPoisByIdsPopulated :many
+SELECT
+  sqlc.embed(pois),
+  sqlc.embed(addr),
+  sqlc.embed(c),
+  sqlc.embed(cat),
+  media_agg.media,
+  amenities_agg.amenities
+FROM public.pois
+JOIN public.addresses addr ON pois.address_id = addr.id
+JOIN public.cities c ON addr.city_id = c.id
+JOIN public.categories cat ON pois.category_id = cat.id
+
+-- LATERAL join for media
+LEFT JOIN LATERAL (
+  SELECT json_agg(jsonb_build_object(
+    'id', m.id,
+    'url', m.url,
+    'alt', m.alt,
+    'caption', m.caption,
+    'media_order', m.media_order
+  ) ORDER BY m.media_order) AS media
+  FROM public.media m
+  WHERE m.poi_id = pois.id
+) media_agg ON true
+
+-- LATERAL join for amenities
+LEFT JOIN LATERAL (
+  SELECT json_agg(jsonb_build_object(
+    'id', a.id,
+    'name', a.name
+  )) AS amenities
+  FROM public.amenities_pois ap
+  JOIN public.amenities a ON ap.amenity_id = a.id
+  WHERE ap.poi_id = pois.id
+) amenities_agg ON true
+
+WHERE pois.id = ANY($1::TEXT[]);

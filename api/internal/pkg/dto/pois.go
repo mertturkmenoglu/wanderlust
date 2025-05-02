@@ -73,3 +73,11 @@ type GetPoiByIdMeta struct {
 	IsFavorite   bool
 	IsBookmarked bool
 }
+
+type PeekPoisOutput struct {
+	Body PeekPoisOutputBody
+}
+
+type PeekPoisOutputBody struct {
+	Pois []Poi `json:"pois"`
+}

@@ -7,7 +7,7 @@ import (
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
-	"wanderlust/internal/pkg/utils"
+	"wanderlust/internal/pkg/mapper"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -17,117 +17,57 @@ type Service struct {
 	app *core.Application
 }
 
+func (s *Service) getPoisByIds(ids []string) ([]dto.Poi, error) {
+	dbPois, err := s.app.Db.Queries.GetPoisByIdsPopulated(context.Background(), ids)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get point of interests")
+	}
+
+	pois := make([]dto.Poi, len(dbPois))
+
+	for i, dbPoi := range dbPois {
+		var dbAmenities []db.GetPoiAmenitiesRow
+		err = json.Unmarshal(dbPoi.Amenities, &dbAmenities)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to unmarshal amenities")
+		}
+
+		amenities := mapper.FromGetPoiAmenitiesRowToAmenities(dbAmenities)
+
+		var dbMedia []db.Medium
+		err = json.Unmarshal(dbPoi.Media, &dbMedia)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to unmarshal media")
+		}
+
+		media := mapper.ToMedia(dbMedia)
+		openHours, err := mapper.ToOpenHours(dbPoi.Poi.OpenTimes)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to unmarshal open times")
+		}
+
+		pois[i] = mapper.ToPoi(dbPoi.Poi, dbPoi.Category, dbPoi.Address, dbPoi.City, amenities, openHours, media)
+	}
+
+	return pois, nil
+}
+
 func (s *Service) getPoiById(id string) (*dto.Poi, error) {
-	dbPoi, err := s.app.Db.Queries.GetPoiById(context.Background(), id)
+	res, err := s.getPoisByIds([]string{id})
 
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("point of interest not found")
-		}
-
-		return nil, huma.Error500InternalServerError("failed to get point of interest")
+		return nil, err
 	}
 
-	dbMedia, err := s.app.Db.Queries.GetPoiMedia(context.Background(), id)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to get point of interest media")
+	if len(res) != 1 {
+		return nil, huma.Error404NotFound("point of interest not found")
 	}
 
-	dbAmenities, err := s.app.Db.Queries.GetPoiAmenities(context.Background(), id)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to get point of interest amenities")
-	}
-
-	amenities := make([]dto.Amenity, len(dbAmenities))
-
-	for i, a := range dbAmenities {
-		amenities[i] = dto.Amenity{
-			ID:   a.Amenity.ID,
-			Name: a.Amenity.Name,
-		}
-	}
-
-	media := make([]dto.Media, len(dbMedia))
-
-	for i, m := range dbMedia {
-		media[i] = dto.Media{
-			ID:         m.ID,
-			PoiID:      dbPoi.Poi.ID,
-			Url:        m.Url,
-			Alt:        m.Alt,
-			Caption:    utils.TextToStr(m.Caption),
-			MediaOrder: m.MediaOrder,
-			CreatedAt:  m.CreatedAt.Time,
-		}
-	}
-
-	var times map[string]dto.OpenHours
-
-	err = json.Unmarshal(dbPoi.Poi.OpenTimes, &times)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to unmarshal open times")
-	}
-
-	return &dto.Poi{
-		ID:                 dbPoi.Poi.ID,
-		Name:               dbPoi.Poi.Name,
-		Phone:              utils.TextToStr(dbPoi.Poi.Phone),
-		Description:        dbPoi.Poi.Description,
-		AddressID:          dbPoi.Poi.AddressID,
-		Website:            utils.TextToStr(dbPoi.Poi.Website),
-		PriceLevel:         dbPoi.Poi.PriceLevel,
-		AccessibilityLevel: dbPoi.Poi.AccessibilityLevel,
-		TotalVotes:         dbPoi.Poi.TotalVotes,
-		TotalPoints:        dbPoi.Poi.TotalPoints,
-		TotalFavorites:     dbPoi.Poi.TotalFavorites,
-		CategoryID:         dbPoi.Poi.CategoryID,
-		Category: dto.Category{
-			ID:    dbPoi.Category.ID,
-			Name:  dbPoi.Category.Name,
-			Image: dbPoi.Category.Image,
-		},
-		Amenities: amenities,
-		OpenTimes: times,
-		Media:     media,
-		Address: dto.Address{
-			ID:     dbPoi.Address.ID,
-			CityID: dbPoi.Address.CityID,
-			City: dto.City{
-				ID:   dbPoi.City.ID,
-				Name: dbPoi.City.Name,
-				State: dto.CityState{
-					Code: dbPoi.City.StateCode,
-					Name: dbPoi.City.StateName,
-				},
-				Country: dto.CityCountry{
-					Code: dbPoi.City.CountryCode,
-					Name: dbPoi.City.CountryName,
-				},
-				Image: dto.CityImage{
-					Url:             dbPoi.City.ImageUrl,
-					License:         utils.TextToStr(dbPoi.City.ImgLicense),
-					LicenseLink:     utils.TextToStr(dbPoi.City.ImgLicenseLink),
-					AttributionLink: utils.TextToStr(dbPoi.City.ImgAttrLink),
-					Attribution:     utils.TextToStr(dbPoi.City.ImgAttr),
-				},
-				Coordinates: dto.CityCoordinates{
-					Latitude:  dbPoi.City.Latitude,
-					Longitude: dbPoi.City.Longitude,
-				},
-				Description: dbPoi.City.Description,
-			},
-			Line1:      dbPoi.Address.Line1,
-			Line2:      utils.TextToStr(dbPoi.Address.Line2),
-			PostalCode: utils.TextToStr(dbPoi.Address.PostalCode),
-			Lat:        dbPoi.Address.Lat,
-			Lng:        dbPoi.Address.Lng,
-		},
-		CreatedAt: dbPoi.Poi.CreatedAt.Time,
-		UpdatedAt: dbPoi.Poi.UpdatedAt.Time,
-	}, nil
+	return &res[0], nil
 }
 
 func (s *Service) isFavorite(poiId string, userId string) bool {
@@ -146,4 +86,34 @@ func (s *Service) isBookmarked(poiId string, userId string) bool {
 	})
 
 	return err == nil
+}
+
+func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
+	dbRes, err := s.app.Db.Queries.PeekPois(context.Background())
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("pois not found")
+		}
+
+		return nil, huma.Error500InternalServerError("failed to peek pois")
+	}
+
+	ids := make([]string, len(dbRes))
+
+	for i, v := range dbRes {
+		ids[i] = v.ID
+	}
+
+	res, err := s.getPoisByIds(ids)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.PeekPoisOutput{
+		Body: dto.PeekPoisOutputBody{
+			Pois: res,
+		},
+	}, nil
 }
