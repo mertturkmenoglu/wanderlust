@@ -7,6 +7,7 @@ import (
 	"wanderlust/internal/app/bookmarks"
 	"wanderlust/internal/app/categories"
 	"wanderlust/internal/app/cities"
+	"wanderlust/internal/app/favorites"
 	"wanderlust/internal/app/health"
 	"wanderlust/internal/app/pois"
 	"wanderlust/internal/pkg/cache"
@@ -78,6 +79,7 @@ func main() {
 	bookmarks.Register(grp, app)
 	categories.Register(grp, app)
 	cities.Register(grp, app)
+	favorites.Register(grp, app)
 	health.Register(grp)
 	pois.Register(grp, app)
 

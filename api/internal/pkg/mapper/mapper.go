@@ -140,3 +140,27 @@ func ToBookmarks(dbBookmarks []db.GetBookmarksByUserIdRow) []dto.Bookmark {
 
 	return bookmarks
 }
+
+func ToFavorites(dbFavorites []db.GetFavoritesByUserIdRow) []dto.Favorite {
+	favorites := make([]dto.Favorite, len(dbFavorites))
+
+	for i, v := range dbFavorites {
+		favorites[i] = dto.Favorite{
+			ID:    v.Favorite.ID,
+			PoiID: v.Favorite.PoiID,
+			Poi: dto.FavoritePoi{
+				ID:         v.Poi.ID,
+				Name:       v.Poi.Name,
+				AddressID:  v.Poi.AddressID,
+				Address:    ToAddress(v.Address, v.City),
+				CategoryID: v.Poi.CategoryID,
+				Category:   ToCategory(v.Category),
+				FirstMedia: ToMedia([]db.Medium{v.Medium})[0],
+			},
+			UserID:    v.Favorite.UserID,
+			CreatedAt: v.Favorite.CreatedAt.Time,
+		}
+	}
+
+	return favorites
+}
