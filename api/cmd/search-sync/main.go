@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"wanderlust/internal/pkg/config"
 
+	"github.com/joho/godotenv"
 	"github.com/pterm/pterm"
 )
 
@@ -14,7 +14,11 @@ var generationOptions = []string{
 }
 
 func main() {
-	_ = config.GetConfiguration()
+	err := godotenv.Load()
+
+	if err != nil {
+		panic("cannot load .env file: " + err.Error())
+	}
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
@@ -27,7 +31,7 @@ func main() {
 
 	logger.Info("Syncing database with Typesense", logger.Args("type", genType))
 
-	err := doSync(genType)
+	err = doSync(genType)
 
 	if err != nil {
 		logger.Fatal("Encountered error. Terminating.", logger.Args("error", err.Error()))

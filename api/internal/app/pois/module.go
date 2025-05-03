@@ -12,7 +12,7 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		App: app,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {

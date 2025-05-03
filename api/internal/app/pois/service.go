@@ -14,11 +14,11 @@ import (
 )
 
 type Service struct {
-	app *core.Application
+	App *core.Application
 }
 
-func (s *Service) getPoisByIds(ids []string) ([]dto.Poi, error) {
-	dbPois, err := s.app.Db.Queries.GetPoisByIdsPopulated(context.Background(), ids)
+func (s *Service) GetPoisByIds(ids []string) ([]dto.Poi, error) {
+	dbPois, err := s.App.Db.Queries.GetPoisByIdsPopulated(context.Background(), ids)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("failed to get point of interests")
@@ -57,7 +57,7 @@ func (s *Service) getPoisByIds(ids []string) ([]dto.Poi, error) {
 }
 
 func (s *Service) getPoiById(id string) (*dto.Poi, error) {
-	res, err := s.getPoisByIds([]string{id})
+	res, err := s.GetPoisByIds([]string{id})
 
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (s *Service) getPoiById(id string) (*dto.Poi, error) {
 }
 
 func (s *Service) isFavorite(poiId string, userId string) bool {
-	_, err := s.app.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
+	_, err := s.App.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -80,7 +80,7 @@ func (s *Service) isFavorite(poiId string, userId string) bool {
 }
 
 func (s *Service) isBookmarked(poiId string, userId string) bool {
-	_, err := s.app.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
+	_, err := s.App.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -89,7 +89,7 @@ func (s *Service) isBookmarked(poiId string, userId string) bool {
 }
 
 func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
-	dbRes, err := s.app.Db.Queries.PeekPois(context.Background())
+	dbRes, err := s.App.Db.Queries.PeekPois(context.Background())
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -105,7 +105,7 @@ func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
 		ids[i] = v.ID
 	}
 
-	res, err := s.getPoisByIds(ids)
+	res, err := s.GetPoisByIds(ids)
 
 	if err != nil {
 		return nil, err
