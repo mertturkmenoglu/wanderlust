@@ -4,6 +4,54 @@
  */
 
 export interface paths {
+    "/api/v2/aggregator/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Home Aggregation
+         * @description Get home aggregation
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HomeAggregatorOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/amenities/": {
         parameters: {
             query?: never;
@@ -1242,6 +1290,218 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/favorites/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Favorites
+         * @description Get a list of favorites for the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFavoritesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Favorite
+         * @description Create a favorite for a point of interest
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateFavoriteInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateFavoriteOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/favorites/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Favorite
+         * @description Delete a favorite for a point of interest
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/favorites/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Favorites by Username
+         * @description Get a list of favorites for the given username
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFavoritesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/health": {
         parameters: {
             query?: never;
@@ -1706,6 +1966,36 @@ export interface components {
             name: string;
             state: components["schemas"]["CityState"];
         };
+        CreateFavoriteInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description ID of point of interest */
+            poiId: string;
+        };
+        CreateFavoriteOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Created at time of favorite
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of favorite
+             */
+            id: number;
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
         ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
             location?: string;
@@ -1742,6 +2032,42 @@ export interface components {
              * @default about:blank
              */
             type: string;
+        };
+        Favorite: {
+            /**
+             * Format: date-time
+             * @description Created at time of favorite
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of favorite
+             */
+            id: number;
+            poi: components["schemas"]["FavoritePoi"];
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
+        FavoritePoi: {
+            address: components["schemas"]["Address"];
+            /**
+             * Format: int32
+             * @description ID of address of point of interest
+             */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /**
+             * Format: int32
+             * @description ID of category of point of interest
+             */
+            categoryId: number;
+            firstMedia: components["schemas"]["Media"];
+            /** @description ID of point of interest */
+            id: string;
+            /** @description Name of point of interest */
+            name: string;
         };
         GetCityByIdOutputBody: {
             /**
@@ -1832,8 +2158,8 @@ export interface components {
             website?: string | null;
         };
         GetPoiByIdMeta: {
-            IsBookmarked: boolean;
-            IsFavorite: boolean;
+            isBookmarked: boolean;
+            isFavorite: boolean;
         };
         GetPoiByIdOutputBody: {
             /**
@@ -1841,8 +2167,8 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            Meta: components["schemas"]["GetPoiByIdMeta"];
-            Poi: components["schemas"]["Poi"];
+            meta: components["schemas"]["GetPoiByIdMeta"];
+            poi: components["schemas"]["Poi"];
         };
         GetUserBookmarksOutputBody: {
             /**
@@ -1853,6 +2179,15 @@ export interface components {
             bookmarks: components["schemas"]["Bookmark"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
+        GetUserFavoritesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            favorites: components["schemas"]["Favorite"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
         HealthOutputBody: {
             /**
              * Format: uri
@@ -1861,6 +2196,28 @@ export interface components {
             readonly $schema?: string;
             /** @description Health message of the API */
             message: string;
+        };
+        HomeAggregatorOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            favorites: components["schemas"]["HomeAggregatorPoi"][];
+            featured: components["schemas"]["HomeAggregatorPoi"][];
+            new: components["schemas"]["HomeAggregatorPoi"][];
+            popular: components["schemas"]["HomeAggregatorPoi"][];
+        };
+        HomeAggregatorPoi: {
+            address: components["schemas"]["Address"];
+            /** Format: int32 */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /** Format: int32 */
+            categoryId: number;
+            id: string;
+            media: components["schemas"]["Media"];
+            name: string;
         };
         ListAmenitiesOutputBody: {
             /**
