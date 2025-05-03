@@ -36,6 +36,7 @@ import { Route as TripsIdIndexImport } from './routes/trips/$id/index'
 import { Route as PIdIndexImport } from './routes/p/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
+import { Route as CitiesSplatIndexImport } from './routes/cities/$/index'
 import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
 import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
@@ -208,6 +209,12 @@ const DiscoverEventsIndexRoute = DiscoverEventsIndexImport.update({
 const CitiesListIndexRoute = CitiesListIndexImport.update({
   id: '/cities/list/',
   path: '/cities/list/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CitiesSplatIndexRoute = CitiesSplatIndexImport.update({
+  id: '/cities/$/',
+  path: '/cities/$/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -514,6 +521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthVerifyEmailIndexImport
       parentRoute: typeof rootRoute
     }
+    '/cities/$/': {
+      id: '/cities/$/'
+      path: '/cities/$'
+      fullPath: '/cities/$'
+      preLoaderRoute: typeof CitiesSplatIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/cities/list/': {
       id: '/cities/list/'
       path: '/cities/list'
@@ -779,6 +793,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/verify-email': typeof AuthVerifyEmailIndexRoute
+  '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/p/$id': typeof PIdIndexRoute
@@ -827,6 +842,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/verify-email': typeof AuthVerifyEmailIndexRoute
+  '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/p/$id': typeof PIdIndexRoute
@@ -878,6 +894,7 @@ export interface FileRoutesById {
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
+  '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
   '/p/$id/': typeof PIdIndexRoute
@@ -930,6 +947,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify-email'
+    | '/cities/$'
     | '/cities/list'
     | '/discover/events'
     | '/p/$id'
@@ -977,6 +995,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify-email'
+    | '/cities/$'
     | '/cities/list'
     | '/discover/events'
     | '/p/$id'
@@ -1026,6 +1045,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
     | '/_auth/verify-email/'
+    | '/cities/$/'
     | '/cities/list/'
     | '/discover/events/'
     | '/p/$id/'
@@ -1075,6 +1095,7 @@ export interface RootRouteChildren {
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
   AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
+  CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
@@ -1104,6 +1125,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
   AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
+  CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
@@ -1142,6 +1164,7 @@ export const routeTree = rootRoute
         "/_auth/sign-in/",
         "/_auth/sign-up/",
         "/_auth/verify-email/",
+        "/cities/$/",
         "/cities/list/",
         "/discover/events/",
         "/p/$id/",
@@ -1242,6 +1265,9 @@ export const routeTree = rootRoute
     },
     "/_auth/verify-email/": {
       "filePath": "_auth/verify-email/index.tsx"
+    },
+    "/cities/$/": {
+      "filePath": "cities/$/index.tsx"
     },
     "/cities/list/": {
       "filePath": "cities/list/index.tsx"
