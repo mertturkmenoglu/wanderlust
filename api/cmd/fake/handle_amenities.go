@@ -1,8 +1,6 @@
 package main
 
-import (
-	"context"
-)
+import "context"
 
 func handleAmenities() error {
 	list := []string{
