@@ -21,15 +21,15 @@ watch:
 	fi
 
 # Run fake data generation script
-generate-fake-data:
+fake:
 	@go run cmd/fake/*.go
 
 # Generate Go code from SQL schema
-sqlc-generate:
+sqlc:
 	@sqlc generate -f ./conf/sqlc.yaml
 
 # Synchronize search index with the primary database
-search-sync:
+search:
 	@go run cmd/search-sync/*.go
 
 # Create a new migration
