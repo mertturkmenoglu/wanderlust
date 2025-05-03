@@ -65,13 +65,13 @@ type GetPoiByIdOutput struct {
 }
 
 type GetPoiByIdOutputBody struct {
-	Poi  Poi
-	Meta GetPoiByIdMeta
+	Poi  Poi            `json:"poi"`
+	Meta GetPoiByIdMeta `json:"meta"`
 }
 
 type GetPoiByIdMeta struct {
-	IsFavorite   bool
-	IsBookmarked bool
+	IsFavorite   bool `json:"isFavorite"`
+	IsBookmarked bool `json:"isBookmarked"`
 }
 
 type PeekPoisOutput struct {
