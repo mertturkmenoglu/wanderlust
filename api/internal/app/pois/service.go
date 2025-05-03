@@ -27,20 +27,26 @@ func (s *Service) GetPoisByIds(ids []string) ([]dto.Poi, error) {
 	pois := make([]dto.Poi, len(dbPois))
 
 	for i, dbPoi := range dbPois {
-		var dbAmenities []db.GetPoiAmenitiesRow
-		err = json.Unmarshal(dbPoi.Amenities, &dbAmenities)
+		var dbAmenities []db.GetPoiAmenitiesRow = []db.GetPoiAmenitiesRow{}
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("failed to unmarshal amenities")
+		if len(dbPoi.Amenities) != 0 {
+			err = json.Unmarshal(dbPoi.Amenities, &dbAmenities)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("failed to unmarshal amenities")
+			}
 		}
 
 		amenities := mapper.FromGetPoiAmenitiesRowToAmenities(dbAmenities)
 
-		var dbMedia []db.Medium
-		err = json.Unmarshal(dbPoi.Media, &dbMedia)
+		var dbMedia []db.Medium = []db.Medium{}
 
-		if err != nil {
-			return nil, huma.Error500InternalServerError("failed to unmarshal media")
+		if len(dbPoi.Media) != 0 {
+			err = json.Unmarshal(dbPoi.Media, &dbMedia)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("failed to unmarshal media")
+			}
 		}
 
 		media := mapper.ToMedia(dbMedia)
