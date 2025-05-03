@@ -164,3 +164,55 @@ func ToFavorites(dbFavorites []db.GetFavoritesByUserIdRow) []dto.Favorite {
 
 	return favorites
 }
+
+func FromPoiToHomeAggregatorPoi(p dto.Poi) dto.HomeAggregatorPoi {
+	return dto.HomeAggregatorPoi{
+		ID:         p.ID,
+		Name:       p.Name,
+		AddressID:  p.AddressID,
+		Address:    p.Address,
+		CategoryID: p.CategoryID,
+		Category:   p.Category,
+		FirstMedia: p.Media[0],
+	}
+}
+
+func ToHomeAggregatorOutput(news []db.GetNewPoisRow, populars []db.GetPopularPoisRow, featured []db.GetFeaturedPoisRow, favorites []db.GetFavoritePoisRow) dto.HomeAggregatorOutput {
+	newsArr := make([]dto.HomeAggregatorPoi, len(news))
+	popularArr := make([]dto.HomeAggregatorPoi, len(populars))
+	featuredArr := make([]dto.HomeAggregatorPoi, len(featured))
+	favoritesArr := make([]dto.HomeAggregatorPoi, len(favorites))
+
+	for i, v := range news {
+		media := ToMedia([]db.Medium{v.Medium})
+		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
+		newsArr[i] = FromPoiToHomeAggregatorPoi(p)
+	}
+
+	for i, v := range populars {
+		media := ToMedia([]db.Medium{v.Medium})
+		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
+		popularArr[i] = FromPoiToHomeAggregatorPoi(p)
+	}
+
+	for i, v := range featured {
+		media := ToMedia([]db.Medium{v.Medium})
+		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
+		featuredArr[i] = FromPoiToHomeAggregatorPoi(p)
+	}
+
+	for i, v := range favorites {
+		media := ToMedia([]db.Medium{v.Medium})
+		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
+		favoritesArr[i] = FromPoiToHomeAggregatorPoi(p)
+	}
+
+	return dto.HomeAggregatorOutput{
+		Body: dto.HomeAggregatorOutputBody{
+			New:       newsArr,
+			Popular:   popularArr,
+			Featured:  featuredArr,
+			Favorites: favoritesArr,
+		},
+	}
+}

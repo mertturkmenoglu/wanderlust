@@ -10,6 +10,7 @@ const (
 	API_AUTH_SESSION_MAX_AGE         EnvKey = "API_AUTH_SESSION_MAX_AGE"
 	API_AUTH_SESSION_PATH            EnvKey = "API_AUTH_SESSION_PATH"
 	API_AUTH_SIGN_KEY                EnvKey = "API_AUTH_SIGN_KEY"
+	API_DOCS_TYPE                    EnvKey = "API_DOCS_TYPE"
 	API_LOGGER_TYPE                  EnvKey = "API_LOGGER_TYPE"
 	API_SEARCH_API_KEY               EnvKey = "API_SEARCH_API_KEY"
 	API_SEARCH_SERVER_URL            EnvKey = "API_SEARCH_SERVER_URL"

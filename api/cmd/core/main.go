@@ -1,7 +1,9 @@
 package main
 
 import (
+	"net/http"
 	"time"
+	"wanderlust/internal/app/aggregator"
 	"wanderlust/internal/app/amenities"
 	"wanderlust/internal/app/auth"
 	"wanderlust/internal/app/bookmarks"
@@ -41,7 +43,23 @@ var (
 			<li>Search and filter results using powerful facets and filters.</li>
 		</ul>
 		It's open source and free.`
-	API_PREFIX = "/api/v2"
+	API_PREFIX           = "/api/v2"
+	API_DOCS_SCALAR_HTML = `<!doctype html>
+		<html>
+		<head>
+			<title>API Reference</title>
+			<meta charset="utf-8" />
+			<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1" />
+		</head>
+		<body>
+			<script
+			id="api-reference"
+			data-url="/openapi.json"></script>
+			<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+		</body>
+		</html>`
 )
 
 func main() {
@@ -74,6 +92,7 @@ func main() {
 	grp := huma.NewGroup(api, API_PREFIX)
 	app := NewApplication()
 
+	aggregator.Register(grp, app)
 	amenities.Register(grp, app)
 	auth.Register(grp, app)
 	bookmarks.Register(grp, app)
@@ -85,6 +104,13 @@ func main() {
 
 	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
 		db.RunMigrations()
+	}
+
+	if cfg.Get(cfg.API_DOCS_TYPE) == "scalar" {
+		e.GET("/docs", func(c echo.Context) error {
+			c.Response().Header().Set("Content-Type", "text/html")
+			return c.String(http.StatusOK, API_DOCS_SCALAR_HTML)
+		})
 	}
 
 	e.Logger.Fatal(e.Start(":5000"))
