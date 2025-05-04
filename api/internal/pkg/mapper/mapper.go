@@ -236,6 +236,25 @@ func ToProfile(dbProfile db.GetUserProfileByUsernameRow) dto.Profile {
 	}
 }
 
+func FromUserToProfile(dbUser db.User) dto.Profile {
+	return dto.Profile{
+		ID:                dbUser.ID,
+		Username:          dbUser.Username,
+		FullName:          dbUser.FullName,
+		IsBusinessAccount: dbUser.IsBusinessAccount,
+		IsVerified:        dbUser.IsVerified,
+		Bio:               utils.TextToStr(dbUser.Bio),
+		Pronouns:          utils.TextToStr(dbUser.Pronouns),
+		Website:           utils.TextToStr(dbUser.Website),
+		Phone:             utils.TextToStr(dbUser.Phone),
+		ProfileImage:      utils.TextToStr(dbUser.ProfileImage),
+		BannerImage:       utils.TextToStr(dbUser.BannerImage),
+		FollowersCount:    dbUser.FollowersCount,
+		FollowingCount:    dbUser.FollowingCount,
+		CreatedAt:         dbUser.CreatedAt.Time,
+	}
+}
+
 func ToFollowers(dbFollowers []db.GetUserFollowersRow) []dto.Profile {
 	followers := make([]dto.Profile, len(dbFollowers))
 

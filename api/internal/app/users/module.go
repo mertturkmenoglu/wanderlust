@@ -172,4 +172,53 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/users/follow/{username}",
+			Summary:       "Follow User",
+			Description:   "Follow or unfollow user by username",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.FollowUserInput) (*dto.FollowUserOutput, error) {
+			userId := ctx.Value("userId").(string)
+			thisUsername := ctx.Value("username").(string)
+			res, err := s.changeFollow(userId, thisUsername, input.Username)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/users/profile",
+			Summary:       "Update User Profile",
+			Description:   "Update user profile of the current user",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateUserProfileInput) (*dto.UpdateUserProfileOutput, error) {
+			userId := ctx.Value("userId").(string)
+			res, err := s.updateProfile(userId, input.Body)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

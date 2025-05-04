@@ -1,6 +1,7 @@
 package core
 
 import (
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/email"
@@ -12,11 +13,12 @@ import (
 )
 
 type Application struct {
-	Db     *db.Db
-	Flake  *sonyflake.Sonyflake
-	Logger *pterm.Logger
-	Cache  *cache.Cache
-	Email  *email.EmailService
-	Tasks  *tasks.Tasks
-	Upload *upload.Upload
+	Activities *activities.Activity
+	Db         *db.Db
+	Flake      *sonyflake.Sonyflake
+	Logger     *pterm.Logger
+	Cache      *cache.Cache
+	Email      *email.EmailService
+	Tasks      *tasks.Tasks
+	Upload     *upload.Upload
 }

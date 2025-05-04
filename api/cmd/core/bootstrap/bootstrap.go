@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"net/http"
 	"time"
+	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/core"
@@ -47,15 +48,17 @@ func InitGlobalMiddlewares(e *echo.Echo) {
 func NewApplication() *core.Application {
 	emailSvc := email.New()
 	uploadSvc := upload.New()
+	cacheSvc := cache.New()
 
 	return &core.Application{
-		Db:     db.NewDb(),
-		Flake:  sonyflake.NewSonyflake(sonyflake.Settings{}),
-		Logger: logs.NewPTermLogger(),
-		Cache:  cache.New(),
-		Email:  emailSvc,
-		Tasks:  tasks.New(emailSvc, uploadSvc),
-		Upload: uploadSvc,
+		Activities: activities.NewActivity(cacheSvc),
+		Db:         db.NewDb(),
+		Flake:      sonyflake.NewSonyflake(sonyflake.Settings{}),
+		Logger:     logs.NewPTermLogger(),
+		Cache:      cacheSvc,
+		Email:      emailSvc,
+		Tasks:      tasks.New(emailSvc, uploadSvc),
+		Upload:     uploadSvc,
 	}
 }
 
