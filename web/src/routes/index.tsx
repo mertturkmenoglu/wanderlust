@@ -1,6 +1,7 @@
 import ActionBanner from '@/components/blocks/action-banner';
 import OverlayBanner from '@/components/blocks/overlay-banner';
 import QuickActions from '@/components/blocks/quick-actions';
+import Search from '@/components/blocks/search';
 import TagNavigation from '@/components/blocks/tag-navigation';
 import VerticalBanner from '@/components/blocks/vertical-banner';
 import { Button } from '@/components/ui/button';
@@ -19,9 +20,7 @@ function App() {
 
   return (
     <div className="mx-auto max-w-7xl mt-8">
-      {/* <ClientOnly fallback={<div className="my-12 h-16 bg-muted rounded" />}>
-        {() => <Search />}
-      </ClientOnly> */}
+      <Search />
 
       <TagNavigation />
 

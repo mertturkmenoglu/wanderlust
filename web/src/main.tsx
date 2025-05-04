@@ -7,6 +7,7 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 
+import 'instantsearch.css/themes/reset.css';
 import 'leaflet/dist/leaflet.css';
 import reportWebVitals from './reportWebVitals.ts';
 import './styles.css';

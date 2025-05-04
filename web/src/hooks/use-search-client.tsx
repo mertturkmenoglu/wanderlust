@@ -1,21 +1,21 @@
-import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
+import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter';
 
 export function useSearchClient() {
   const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     server: {
-      apiKey: "wanderlust",
+      apiKey: 'wanderlust',
       nodes: [
         {
-          host: "localhost",
+          host: 'localhost',
           port: 8108,
-          protocol: "http",
+          protocol: 'http',
         },
       ],
       numRetries: 8,
       useServerSideSearchCache: true,
     },
     additionalSearchParameters: {
-      query_by: "name",
+      query_by: 'name',
     },
   });
   const searchClient = typesenseInstantsearchAdapter.searchClient;
@@ -26,21 +26,21 @@ export function useSearchClient() {
 export function useGeoSearchClient() {
   const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     server: {
-      apiKey: "wanderlust",
+      apiKey: 'wanderlust',
       nodes: [
         {
-          host: "localhost",
+          host: 'localhost',
           port: 8108,
-          protocol: "http",
+          protocol: 'http',
         },
       ],
       numRetries: 8,
       useServerSideSearchCache: true,
     },
     additionalSearchParameters: {
-      query_by: "name",
+      query_by: 'name',
     },
-    geoLocationField: "location",
+    geoLocationField: 'location',
   });
 
   const searchClient = typesenseInstantsearchAdapter.searchClient;

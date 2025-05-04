@@ -1,4 +1,3 @@
-import { usePagination } from "react-instantsearch";
 import {
   Pagination,
   PaginationContent,
@@ -7,7 +6,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "~/components/ui/pagination";
+} from '@/components/ui/pagination';
+import { usePagination } from 'react-instantsearch';
 
 export default function SearchPagination() {
   const {
@@ -29,7 +29,7 @@ export default function SearchPagination() {
           {!isFirstPage && (
             <PaginationItem>
               <PaginationPrevious
-                to={createURL(previousPageIndex)}
+                href={createURL(previousPageIndex)}
                 onClick={() => refine(previousPageIndex)}
                 aria-disabled={isFirstPage}
               />
@@ -43,7 +43,7 @@ export default function SearchPagination() {
           {pages.map((page) => (
             <PaginationItem key={page}>
               <PaginationLink
-                to={createURL(page)}
+                href={createURL(page)}
                 onClick={() => refine(page)}
                 aria-label={`Page ${page + 1}`}
                 isActive={currentRefinement === page}
@@ -60,7 +60,7 @@ export default function SearchPagination() {
           {!isLastPage && (
             <PaginationItem>
               <PaginationNext
-                to={createURL(nextPageIndex)}
+                href={createURL(nextPageIndex)}
                 onClick={() => refine(nextPageIndex)}
                 aria-disabled={isLastPage}
               />

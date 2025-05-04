@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   useAutocomplete,
-  UseAutocompleteProps,
-} from "@/hooks/use-autocomplete";
-import { ipx } from "@/lib/img-proxy";
-import CustomSearchBox from "../custom-search-box";
-import Card, { AutocompleteItemInfo } from "./card";
-import { Link } from "@tanstack/react-router";
+  type UseAutocompleteProps,
+} from '@/hooks/use-autocomplete';
+import { ipx } from '@/lib/ipx';
+import { Link } from '@tanstack/react-router';
+import CustomSearchBox from '../custom-search-box';
+import Card, { type AutocompleteItemInfo } from './card';
 
 type Props = {
   showAdvancedSearch?: boolean;
@@ -23,16 +23,16 @@ export function Autocomplete({
   ...props
 }: Props) {
   const { indices, currentRefinement } = useAutocomplete(props);
-  const hits = indices[0].hits;
+  const hits = indices[0]?.hits ?? [];
 
-  const showDropdown = currentRefinement !== "";
+  const showDropdown = currentRefinement !== '';
   const isEmptyResult = hits.length === 0;
 
   return (
     <div className="w-full">
       {showAdvancedSearch && (
         <div className="text-sm leading-none tracking-tight">
-          Need more power? Try our{" "}
+          Need more power? Try our{' '}
           <Button variant="link" className="px-0 underline" asChild>
             <Link to="/search">Advanced Search</Link>
           </Button>
@@ -47,7 +47,7 @@ export function Autocomplete({
             <Card
               key={hit.poi.Poi.ID}
               id={hit.poi.Poi.ID}
-              image={ipx(hit.poi.Media[0].Url, "w_512")}
+              image={ipx(hit.poi.Media[0].Url, 'w_512')}
               name={hit.poi.Poi.Name}
               categoryName={hit.poi.Category.Name}
               city={hit.poi.City.Name}
@@ -59,7 +59,12 @@ export function Autocomplete({
 
           {!isEmptyResult && showAllResultsButton && (
             <Button asChild variant="link">
-              <Link to={`/search?locations%5Bquery%5D=${currentRefinement}`}>
+              <Link
+                to="/search"
+                search={{
+                  'locations[query]': currentRefinement,
+                }}
+              >
                 See all results
               </Link>
             </Button>

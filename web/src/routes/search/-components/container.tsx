@@ -1,9 +1,9 @@
 import { FilterIcon } from "lucide-react";
 import React from "react";
 import { useCurrentRefinements } from "react-instantsearch";
-import CustomSearchBox from "~/components/blocks/custom-search-box";
-import { Button } from "~/components/ui/button";
-import { ScrollArea } from "~/components/ui/scroll-area";
+import CustomSearchBox from "@/components/blocks/custom-search-box";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "~/components/ui/sheet";
+} from "@/components/ui/sheet";
 import Filters from "./filters";
 import Results from "./results";
 

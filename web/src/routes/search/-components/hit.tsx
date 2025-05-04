@@ -1,4 +1,4 @@
-import Card from "~/components/blocks/autocomplete/card";
+import Card from '@/components/blocks/autocomplete/card';
 
 type Props = {
   hit: {
@@ -39,7 +39,7 @@ export default function Hit({ hit }: Readonly<Props>) {
       id={hit.poi.Poi.ID}
       name={hit.name}
       categoryName={hit.poi.Category.Name}
-      image={hit.poi.Media[0].Url}
+      image={hit.poi.Media[0]?.Url ?? ''}
       city={hit.poi.City.Name}
       state={hit.poi.City.StateName}
       isCardClickable={false}

@@ -6,7 +6,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select';
+} from '@/components/ui/select';
 import { useCallback } from 'react';
 import { useHitsPerPage } from 'react-instantsearch';
 

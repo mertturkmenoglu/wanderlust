@@ -1,14 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SearchIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { UseSearchBoxProps, useSearchBox } from "react-instantsearch";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { SearchIcon } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { type UseSearchBoxProps, useSearchBox } from 'react-instantsearch';
 
 type Props = {
   isSearchOnType?: boolean;
 } & UseSearchBoxProps;
 
-export default function CustomSearchBox({ isSearchOnType = false, ...props }: Props) {
+export default function CustomSearchBox({
+  isSearchOnType = false,
+  ...props
+}: Props) {
   const { query, refine } = useSearchBox(props);
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,14 +46,14 @@ export default function CustomSearchBox({ isSearchOnType = false, ...props }: Pr
           e.preventDefault();
           e.stopPropagation();
 
-          setQuery("");
+          setQuery('');
 
           if (inputRef.current) {
             inputRef.current.focus();
           }
 
           if (!isSearchOnType) {
-            refine("");
+            refine('');
           }
         }}
       >

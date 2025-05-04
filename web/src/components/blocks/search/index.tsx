@@ -1,8 +1,8 @@
-import { InstantSearch } from "react-instantsearch";
-import { useNavigate } from "react-router";
-import { Autocomplete } from "~/components/blocks/autocomplete";
-import { useSearchClient } from "~/hooks/use-search-client";
-import { cn } from "~/lib/utils";
+import { Autocomplete } from '@/components/blocks/autocomplete';
+import { useSearchClient } from '@/hooks/use-search-client';
+import { cn } from '@/lib/utils';
+import { useNavigate } from '@tanstack/react-router';
+import { InstantSearch } from 'react-instantsearch';
 
 type Props = {
   className?: string;
@@ -21,8 +21,8 @@ export default function Search({
   return (
     <nav
       className={cn(
-        "mx-auto my-12 flex items-center justify-center space-x-4 w-full",
-        className
+        'mx-auto my-12 flex items-center justify-center space-x-4 w-full',
+        className,
       )}
     >
       <InstantSearch
@@ -37,7 +37,12 @@ export default function Search({
           showAdvancedSearch={showAdvancedSearch}
           isCardClickable={true}
           onCardClick={(v) => {
-            navigate(`/p/${v.id}`);
+            navigate({
+              to: '/p/$id',
+              params: {
+                id: v.id,
+              },
+            });
             if (onItemClicked !== undefined) {
               onItemClicked();
             }
