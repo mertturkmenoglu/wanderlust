@@ -1,34 +1,17 @@
-import { redirect } from "react-router";
-import FacebookIcon from "~/components/icons/facebook";
-import GoogleIcon from "~/components/icons/google";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Separator } from "~/components/ui/separator";
-import { getMe, getUserByUsername } from "~/lib/api";
-import { getCookiesFromRequest } from "~/lib/cookies";
-import type { Route } from "./+types/route";
+import FacebookIcon from '@/components/icons/facebook';
+import GoogleIcon from '@/components/icons/google';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { createFileRoute } from '@tanstack/react-router';
 
-export async function loader({ request }: Route.LoaderArgs) {
-  try {
-    const auth = await getMe({
-      headers: { Cookie: getCookiesFromRequest(request) },
-    });
+export const Route = createFileRoute('/settings/account/')({
+  component: RouteComponent,
+});
 
-    if (!auth.data) {
-      throw redirect("/");
-    }
-
-    const profile = await getUserByUsername(auth.data.username);
-
-    return { auth: auth.data, profile: profile.data };
-  } catch (e) {
-    throw redirect("/");
-  }
-}
-
-export default function Page({ loaderData }: Route.ComponentProps) {
-  const { auth } = loaderData;
+function RouteComponent() {
+  const { auth } = Route.useRouteContext();
 
   return (
     <div>
