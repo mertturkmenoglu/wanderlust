@@ -5,12 +5,10 @@ import (
 	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/upload"
 	"wanderlust/internal/pkg/utils"
 
 	"github.com/labstack/echo/v4"
 )
-
 
 func (h *handlers) MakeUserVerified(c echo.Context) error {
 	username := c.Param("username")
@@ -83,83 +81,4 @@ func (h *handlers) FollowUser(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
-}
-
-func (h *handlers) GetUserFollowers(c echo.Context) error {
-	username := c.Param("username")
-
-	if username == "" {
-		return ErrUsernameNotProvided
-	}
-
-	res, err := h.service.getUserFollowers(username)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) GetUserFollowing(c echo.Context) error {
-	username := c.Param("username")
-
-	if username == "" {
-		return ErrUsernameNotProvided
-	}
-
-	res, err := h.service.getUserFollowing(username)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) SearchUserFollowing(c echo.Context) error {
-	userId := c.Get("user_id").(string)
-	username := c.QueryParam("username")
-
-	if username == "" {
-		return ErrUsernameNotProvided
-	}
-
-	ok := utils.IsValidUsername(username)
-
-	if !ok {
-		return ErrInvalidUsername
-	}
-
-	res, err := h.service.searchUserFollowing(userId, username)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) GetUserActivities(c echo.Context) error {
-	username := c.Param("username")
-
-	if username == "" {
-		return ErrUsernameNotProvided
-	}
-
-	res, err := h.service.getUserActivities(username)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
 }

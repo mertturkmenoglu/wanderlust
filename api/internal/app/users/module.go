@@ -3,18 +3,13 @@ package users
 import (
 	"context"
 	"net/http"
+	"wanderlust/internal/pkg/authz"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/middlewares"
 
 	"github.com/danielgtaylor/huma/v2"
 )
-
-// routes.GET("/:username/activities", m.handlers.GetUserActivities)
-// routes.GET("/following/search", m.handlers.SearchUserFollowing, middlewares.IsAuth)
-// routes.POST("/:username/make-verified", m.handlers.MakeUserVerified)
-// routes.PATCH("/profile", m.handlers.UpdateUserProfile, middlewares.ParseBody[UpdateUserProfileRequestDto], middlewares.IsAuth)
-// routes.POST("/follow/:username", m.handlers.FollowUser, middlewares.IsAuth)
 
 func Register(grp *huma.Group, app *core.Application) {
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -102,6 +97,73 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 		func(ctx context.Context, input *dto.GetUserFollowingInput) (*dto.GetUserFollowingOutput, error) {
 			res, err := s.getFollowing(input.Username)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/users/{username}/activities",
+			Summary:       "Get User Activities",
+			Description:   "Get user activities by username",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetUserActivitiesInput) (*dto.GetUserActivitiesOutput, error) {
+			res, err := s.getActivities(input.Username)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/users/following/search",
+			Summary:       "Search User Following",
+			Description:   "Search user following by username",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.SearchUserFollowingInput) (*dto.SearchUserFollowingOutput, error) {
+			userId := ctx.Value("userId").(string)
+			res, err := s.searchFollowing(userId, input.Username)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/users/{username}/make-verified",
+			Summary:       "Make User Verified",
+			Description:   "Make user verified by username",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActUserMakeVerified),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.MakeUserVerifiedInput) (*dto.MakeUserVerifiedOutput, error) {
+			res, err := s.makeVerified(input.Username)
 
 			if err != nil {
 				return nil, err

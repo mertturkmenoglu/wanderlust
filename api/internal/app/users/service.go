@@ -2,7 +2,9 @@ package users
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
@@ -160,6 +162,86 @@ func (s *Service) getFollowing(username string) (*dto.GetUserFollowingOutput, er
 	return &dto.GetUserFollowingOutput{
 		Body: dto.GetUserFollowingOutputBody{
 			Following: mapper.ToFollowing(res),
+		},
+	}, nil
+}
+
+func (s *Service) getActivities(username string) (*dto.GetUserActivitiesOutput, error) {
+	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(context.Background(), username)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("user not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get user activities")
+	}
+
+	key := cache.KeyBuilder("activities", dbProfile.ID)
+
+	res, err := s.app.Cache.Client.LRange(context.Background(), key, 0, 100).Result()
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get user activities")
+	}
+
+	out := make([]map[string]any, 0)
+
+	for _, s := range res {
+		var tmp map[string]any
+		err = json.Unmarshal([]byte(s), &tmp)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to unmarshal activities")
+		}
+
+		out = append(out, tmp)
+	}
+
+	return &dto.GetUserActivitiesOutput{
+		Body: dto.GetUserActivitiesOutputBody{
+			Activities: out,
+		},
+	}, nil
+}
+
+func (s *Service) searchFollowing(userId string, username string) (*dto.SearchUserFollowingOutput, error) {
+	res, err := s.app.Db.Queries.SearchUserFollowing(context.Background(), db.SearchUserFollowingParams{
+		FollowerID: userId,
+		Username:   fmt.Sprintf("%%%s%%", username),
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to search user following")
+	}
+
+	return &dto.SearchUserFollowingOutput{
+		Body: dto.SearchUserFollowingOutputBody{
+			Friends: mapper.FromSearchToFollowing(res),
+		},
+	}, nil
+}
+
+func (s *Service) makeVerified(username string) (*dto.MakeUserVerifiedOutput, error) {
+	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(context.Background(), username)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("user not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get user profile")
+	}
+
+	err = s.app.Db.Queries.MakeUserVerified(context.Background(), dbProfile.ID)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to make user verified")
+	}
+
+	return &dto.MakeUserVerifiedOutput{
+		Body: dto.MakeUserVerifiedOutputBody{
+			IsVerified: true,
 		},
 	}, nil
 }

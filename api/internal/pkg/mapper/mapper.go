@@ -285,3 +285,28 @@ func ToFollowing(dbFollowing []db.GetUserFollowingRow) []dto.Profile {
 
 	return following
 }
+
+func FromSearchToFollowing(dbFollowing []db.SearchUserFollowingRow) []dto.Profile {
+	following := make([]dto.Profile, len(dbFollowing))
+
+	for i, v := range dbFollowing {
+		following[i] = ToProfile(db.GetUserProfileByUsernameRow{
+			ID:                v.User.ID,
+			Username:          v.User.Username,
+			FullName:          v.User.FullName,
+			IsBusinessAccount: v.User.IsBusinessAccount,
+			IsVerified:        v.User.IsVerified,
+			Bio:               v.User.Bio,
+			Pronouns:          v.User.Pronouns,
+			Website:           v.User.Website,
+			Phone:             v.User.Phone,
+			ProfileImage:      v.User.ProfileImage,
+			BannerImage:       v.User.BannerImage,
+			FollowersCount:    v.User.FollowersCount,
+			FollowingCount:    v.User.FollowingCount,
+			CreatedAt:         v.User.CreatedAt,
+		})
+	}
+
+	return following
+}

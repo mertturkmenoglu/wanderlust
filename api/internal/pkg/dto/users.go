@@ -77,3 +77,39 @@ type GetUserFollowingOutput struct {
 type GetUserFollowingOutputBody struct {
 	Following []Profile `json:"following"`
 }
+
+type GetUserActivitiesInput struct {
+	Username string `path:"username" validate:"required" doc:"Username of the user" example:"johndoe"`
+}
+
+type GetUserActivitiesOutput struct {
+	Body GetUserActivitiesOutputBody
+}
+
+type GetUserActivitiesOutputBody struct {
+	Activities []map[string]any `json:"activities"`
+}
+
+type SearchUserFollowingInput struct {
+	Username string `path:"username" validate:"required" doc:"Username of the user" example:"johndoe"`
+}
+
+type SearchUserFollowingOutput struct {
+	Body SearchUserFollowingOutputBody
+}
+
+type SearchUserFollowingOutputBody struct {
+	Friends []Profile `json:"friends"`
+}
+
+type MakeUserVerifiedInput struct {
+	Username string `path:"username" validate:"required" doc:"Username of the user" example:"johndoe"`
+}
+
+type MakeUserVerifiedOutput struct {
+	Body MakeUserVerifiedOutputBody
+}
+
+type MakeUserVerifiedOutputBody struct {
+	IsVerified bool `json:"isVerified"`
+}
