@@ -3,13 +3,12 @@ module wanderlust
 go 1.23.0
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
-	github.com/gorilla/sessions v1.4.0
 	github.com/hibiken/asynq v0.24.1
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
-	github.com/labstack/echo-contrib v0.17.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/minio/minio-go/v7 v7.0.76
 	github.com/pterm/pterm v0.12.80
@@ -17,7 +16,6 @@ require (
 	github.com/sony/sonyflake v1.2.0
 	github.com/typesense/typesense-go/v2 v2.0.0
 	golang.org/x/crypto v0.31.0
-	golang.org/x/time v0.5.0
 )
 
 require (
@@ -31,17 +29,11 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.5 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
-	github.com/go-playground/locales v0.14.1 // indirect
-	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/gookit/color v1.5.4 // indirect
-	github.com/gorilla/context v1.1.2 // indirect
-	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -50,7 +42,6 @@ require (
 	github.com/klauspost/compress v1.17.10 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
-	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -71,6 +62,7 @@ require (
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
 )
@@ -78,7 +70,6 @@ require (
 require (
 	github.com/brianvoe/gofakeit/v7 v7.0.4
 	github.com/danielgtaylor/huma/v2 v2.32.0
-	github.com/go-playground/validator/v10 v10.22.1
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/spf13/cast v1.6.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
