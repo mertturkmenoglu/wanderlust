@@ -1,3 +1,4 @@
+import AppMessage from '@/components/blocks/app-message';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/u/$username/activities/')({
@@ -5,5 +6,5 @@ export const Route = createFileRoute('/u/$username/activities/')({
 });
 
 function RouteComponent() {
-  return <div>Hello "/u/$username/activities/"!</div>;
+  return <AppMessage emptyMessage="In progress" showBackButton={false} />;
 }

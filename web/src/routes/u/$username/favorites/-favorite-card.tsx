@@ -4,19 +4,19 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { GetFavoriteByIdResponseDto } from "~/lib/dto";
+} from '@/components/ui/card';
+import type { components } from '@/lib/api-types';
 
 type Props = {
-  favorite: GetFavoriteByIdResponseDto;
+  favorite: components['schemas']['Favorite'];
 };
 
 export default function FavoriteCard({ favorite: { poi } }: Props) {
   return (
     <Card className="group flex flex-col md:flex-row">
       <img
-        src={poi.media.url}
-        alt={poi.media.alt}
+        src={poi.firstMedia.url}
+        alt={poi.firstMedia.alt}
         className="aspect-video w-full rounded-t-md object-cover md:w-32 md:rounded-none md:rounded-l-md lg:w-32 2xl:w-64"
       />
 
@@ -24,7 +24,7 @@ export default function FavoriteCard({ favorite: { poi } }: Props) {
         <CardHeader>
           <CardTitle className="line-clamp-1 capitalize">{poi.name}</CardTitle>
           <CardDescription className="line-clamp-1">
-            {poi.address.city.name} / {poi.address.city.countryName}
+            {poi.address.city.name} / {poi.address.city.country.name}
           </CardDescription>
         </CardHeader>
 
