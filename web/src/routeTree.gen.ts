@@ -35,6 +35,7 @@ import { Route as TripsMyTripsIndexImport } from './routes/trips/my-trips/index'
 import { Route as TripsInvitesIndexImport } from './routes/trips/invites/index'
 import { Route as TripsDiscoverIndexImport } from './routes/trips/discover/index'
 import { Route as TripsIdIndexImport } from './routes/trips/$id/index'
+import { Route as SettingsProfileIndexImport } from './routes/settings/profile/index'
 import { Route as SettingsAccountIndexImport } from './routes/settings/account/index'
 import { Route as PIdIndexImport } from './routes/p/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
@@ -212,6 +213,12 @@ const TripsIdIndexRoute = TripsIdIndexImport.update({
   id: '/$id/',
   path: '/$id/',
   getParentRoute: () => TripsRoute,
+} as any)
+
+const SettingsProfileIndexRoute = SettingsProfileIndexImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => SettingsRoute,
 } as any)
 
 const SettingsAccountIndexRoute = SettingsAccountIndexImport.update({
@@ -626,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAccountIndexImport
       parentRoute: typeof SettingsImport
     }
+    '/settings/profile/': {
+      id: '/settings/profile/'
+      path: '/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof SettingsProfileIndexImport
+      parentRoute: typeof SettingsImport
+    }
     '/trips/$id/': {
       id: '/trips/$id/'
       path: '/$id'
@@ -823,11 +837,13 @@ declare module '@tanstack/react-router' {
 interface SettingsRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsAccountIndexRoute: typeof SettingsAccountIndexRoute
+  SettingsProfileIndexRoute: typeof SettingsProfileIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsAccountIndexRoute: SettingsAccountIndexRoute,
+  SettingsProfileIndexRoute: SettingsProfileIndexRoute,
 }
 
 const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
@@ -950,6 +966,7 @@ export interface FileRoutesByFullPath {
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
+  '/settings/profile': typeof SettingsProfileIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
   '/trips/invites': typeof TripsInvitesIndexRoute
@@ -1005,6 +1022,7 @@ export interface FileRoutesByTo {
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
+  '/settings/profile': typeof SettingsProfileIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
   '/trips/invites': typeof TripsInvitesIndexRoute
@@ -1065,6 +1083,7 @@ export interface FileRoutesById {
   '/discover/events/': typeof DiscoverEventsIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
+  '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
   '/trips/invites/': typeof TripsInvitesIndexRoute
@@ -1126,6 +1145,7 @@ export interface FileRouteTypes {
     | '/discover/events'
     | '/p/$id'
     | '/settings/account'
+    | '/settings/profile'
     | '/trips/$id'
     | '/trips/discover'
     | '/trips/invites'
@@ -1180,6 +1200,7 @@ export interface FileRouteTypes {
     | '/discover/events'
     | '/p/$id'
     | '/settings/account'
+    | '/settings/profile'
     | '/trips/$id'
     | '/trips/discover'
     | '/trips/invites'
@@ -1238,6 +1259,7 @@ export interface FileRouteTypes {
     | '/discover/events/'
     | '/p/$id/'
     | '/settings/account/'
+    | '/settings/profile/'
     | '/trips/$id/'
     | '/trips/discover/'
     | '/trips/invites/'
@@ -1371,7 +1393,8 @@ export const routeTree = rootRoute
       "filePath": "settings.tsx",
       "children": [
         "/settings/",
-        "/settings/account/"
+        "/settings/account/",
+        "/settings/profile/"
       ]
     },
     "/trips": {
@@ -1491,6 +1514,10 @@ export const routeTree = rootRoute
     },
     "/settings/account/": {
       "filePath": "settings/account/index.tsx",
+      "parent": "/settings"
+    },
+    "/settings/profile/": {
+      "filePath": "settings/profile/index.tsx",
       "parent": "/settings"
     },
     "/trips/$id/": {

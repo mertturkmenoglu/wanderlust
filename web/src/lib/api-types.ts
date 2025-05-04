@@ -2645,9 +2645,9 @@ export interface components {
              */
             readonly $schema?: string;
             /** @description Banner image of the user */
-            bannerImage?: string | null;
+            bannerImage: string | null;
             /** @description Bio of the user */
-            bio?: string | null;
+            bio: string | null;
             /**
              * Format: date-time
              * @description Creation date of the user
@@ -2656,7 +2656,7 @@ export interface components {
             /** @description Email of the user */
             email: string;
             /** @description Facebook ID of the user */
-            facebookId?: string | null;
+            facebookId: string | null;
             /**
              * Format: int32
              * @description Number of followers
@@ -2670,7 +2670,7 @@ export interface components {
             /** @description Full name of the user */
             fullName: string;
             /** @description Google ID of the user */
-            googleId?: string | null;
+            googleId: string | null;
             /** @description ID of the user */
             id: string;
             /** @description Is the user active */
@@ -2689,11 +2689,11 @@ export interface components {
              */
             lastLogin: string;
             /** @description Phone number of the user */
-            phone?: string | null;
+            phone: string | null;
             /** @description Profile image of the user */
-            profileImage?: string | null;
+            profileImage: string | null;
             /** @description Pronouns of the user */
-            pronouns?: string | null;
+            pronouns: string | null;
             /** @description Role of the user */
             role: string;
             /**
@@ -2704,7 +2704,7 @@ export interface components {
             /** @description Username of the user */
             username: string;
             /** @description Website of the user */
-            website?: string | null;
+            website: string | null;
         };
         GetPoiByIdMeta: {
             isBookmarked: boolean;
