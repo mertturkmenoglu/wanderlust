@@ -4,6 +4,7 @@ const (
 	KeyHomeAggregations = "home-aggregations"
 	KeyDiaryEntry       = "diary-entry"
 	KeyCollectionGroup  = "collection-group"
+	KeyImageUpload      = "image-upload"
 )
 
 func KeyBuilder(parts ...string) string {

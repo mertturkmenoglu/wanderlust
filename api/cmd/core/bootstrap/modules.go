@@ -9,6 +9,7 @@ import (
 	"wanderlust/internal/app/cities"
 	"wanderlust/internal/app/favorites"
 	"wanderlust/internal/app/health"
+	"wanderlust/internal/app/images"
 	"wanderlust/internal/app/pois"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -26,5 +27,6 @@ func RegisterRoutes(api *huma.API) {
 	cities.Register(grp, app)
 	favorites.Register(grp, app)
 	health.Register(grp)
+	images.Register(grp, app)
 	pois.Register(grp, app)
 }
