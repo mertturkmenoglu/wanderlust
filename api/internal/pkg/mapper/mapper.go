@@ -216,3 +216,72 @@ func ToHomeAggregatorOutput(news []db.GetNewPoisRow, populars []db.GetPopularPoi
 		},
 	}
 }
+
+func ToProfile(dbProfile db.GetUserProfileByUsernameRow) dto.Profile {
+	return dto.Profile{
+		ID:                dbProfile.ID,
+		Username:          dbProfile.Username,
+		FullName:          dbProfile.FullName,
+		IsBusinessAccount: dbProfile.IsBusinessAccount,
+		IsVerified:        dbProfile.IsVerified,
+		Bio:               utils.TextToStr(dbProfile.Bio),
+		Pronouns:          utils.TextToStr(dbProfile.Pronouns),
+		Website:           utils.TextToStr(dbProfile.Website),
+		Phone:             utils.TextToStr(dbProfile.Phone),
+		ProfileImage:      utils.TextToStr(dbProfile.ProfileImage),
+		BannerImage:       utils.TextToStr(dbProfile.BannerImage),
+		FollowersCount:    dbProfile.FollowersCount,
+		FollowingCount:    dbProfile.FollowingCount,
+		CreatedAt:         dbProfile.CreatedAt.Time,
+	}
+}
+
+func ToFollowers(dbFollowers []db.GetUserFollowersRow) []dto.Profile {
+	followers := make([]dto.Profile, len(dbFollowers))
+
+	for i, v := range dbFollowers {
+		followers[i] = ToProfile(db.GetUserProfileByUsernameRow{
+			ID:                v.User.ID,
+			Username:          v.User.Username,
+			FullName:          v.User.FullName,
+			IsBusinessAccount: v.User.IsBusinessAccount,
+			IsVerified:        v.User.IsVerified,
+			Bio:               v.User.Bio,
+			Pronouns:          v.User.Pronouns,
+			Website:           v.User.Website,
+			Phone:             v.User.Phone,
+			ProfileImage:      v.User.ProfileImage,
+			BannerImage:       v.User.BannerImage,
+			FollowersCount:    v.User.FollowersCount,
+			FollowingCount:    v.User.FollowingCount,
+			CreatedAt:         v.User.CreatedAt,
+		})
+	}
+
+	return followers
+}
+
+func ToFollowing(dbFollowing []db.GetUserFollowingRow) []dto.Profile {
+	following := make([]dto.Profile, len(dbFollowing))
+
+	for i, v := range dbFollowing {
+		following[i] = ToProfile(db.GetUserProfileByUsernameRow{
+			ID:                v.User.ID,
+			Username:          v.User.Username,
+			FullName:          v.User.FullName,
+			IsBusinessAccount: v.User.IsBusinessAccount,
+			IsVerified:        v.User.IsVerified,
+			Bio:               v.User.Bio,
+			Pronouns:          v.User.Pronouns,
+			Website:           v.User.Website,
+			Phone:             v.User.Phone,
+			ProfileImage:      v.User.ProfileImage,
+			BannerImage:       v.User.BannerImage,
+			FollowersCount:    v.User.FollowersCount,
+			FollowingCount:    v.User.FollowingCount,
+			CreatedAt:         v.User.CreatedAt,
+		})
+	}
+
+	return following
+}
