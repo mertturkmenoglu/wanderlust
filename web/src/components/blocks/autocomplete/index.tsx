@@ -45,13 +45,13 @@ export function Autocomplete({
         <div className="my-2 rounded-lg border border-border">
           {hits.slice(0, 5).map((hit) => (
             <Card
-              key={hit.poi.Poi.ID}
-              id={hit.poi.Poi.ID}
-              image={ipx(hit.poi.Media[0].Url, 'w_512')}
-              name={hit.poi.Poi.Name}
-              categoryName={hit.poi.Category.Name}
-              city={hit.poi.City.Name}
-              state={hit.poi.City.StateName}
+              key={hit.poi.id}
+              id={hit.poi.id}
+              image={ipx(hit.poi.media[0].url, 'w_512')}
+              name={hit.poi.name}
+              categoryName={hit.poi.category.name}
+              city={hit.poi.address.city.name}
+              state={hit.poi.address.city.state.name}
               isCardClickable={isCardClickable}
               onCardClick={onCardClick}
             />

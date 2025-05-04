@@ -1,7 +1,7 @@
-import { XIcon } from "lucide-react";
-import { useClearRefinements } from "react-instantsearch";
-import { Button } from "@/components/ui/button";
-import RefinementList from "./refinement-list";
+import { Button } from '@/components/ui/button';
+import { XIcon } from 'lucide-react';
+import { useClearRefinements } from 'react-instantsearch';
+import RefinementList from './refinement-list';
 
 export default function Filters() {
   const { canRefine, refine } = useClearRefinements();
@@ -29,19 +29,19 @@ export default function Filters() {
         </div>
       </div>
 
-      <RefinementList attribute="poi.Category.Name" />
+      <RefinementList attribute="poi.category.name" />
 
-      <RefinementList attribute="poi.Amenities.Amenity.Name" />
+      {/* <RefinementList attribute="poi.amenities.amenity.name" /> */}
 
-      <RefinementList attribute="poi.Poi.PriceLevel" />
+      <RefinementList attribute="poi.priceLevel" />
 
-      <RefinementList attribute="poi.Poi.AccessibilityLevel" />
+      <RefinementList attribute="poi.accessibilityLevel" />
 
-      <RefinementList attribute="poi.City.StateName" />
+      <RefinementList attribute="poi.address.city.state.name" />
 
-      <RefinementList attribute="poi.City.Name" />
+      <RefinementList attribute="poi.address.city.name" />
 
-      <RefinementList attribute="poi.City.CountryName" />
+      <RefinementList attribute="poi.address.city.country.name" />
     </>
   );
 }

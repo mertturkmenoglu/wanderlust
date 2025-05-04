@@ -6,29 +6,28 @@ type Props = {
     location: [number, number];
     name: string;
     poi: {
-      Address: unknown;
-      Amenities: unknown[];
-      Category: {
-        ID: number;
-        Image: string;
-        Name: string;
+      address: {
+        city: {
+          id: number;
+          name: string;
+          country: {
+            name: string;
+          };
+          state: {
+            name: string;
+          };
+        };
       };
-      City: {
-        ID: number;
-        Name: string;
-        CountryName: string;
-        StateName: string;
-      };
-      Media: Array<{
-        ID: number;
-        Url: string;
-      }>;
-      Poi: {
-        ID: string;
+      amenities: unknown[];
+      category: {
+        id: number;
+        image: string;
         name: string;
-        CategoryID: number;
-        AddressID: number;
       };
+      media: Array<{
+        id: number;
+        url: string;
+      }>;
     };
   };
 };
@@ -36,12 +35,12 @@ type Props = {
 export default function Hit({ hit }: Readonly<Props>) {
   return (
     <Card
-      id={hit.poi.Poi.ID}
+      id={hit.id}
       name={hit.name}
-      categoryName={hit.poi.Category.Name}
-      image={hit.poi.Media[0]?.Url ?? ''}
-      city={hit.poi.City.Name}
-      state={hit.poi.City.StateName}
+      categoryName={hit.poi.category.name}
+      image={hit.poi.media[0]?.url ?? ''}
+      city={hit.poi.address.city.name}
+      state={hit.poi.address.city.state.name}
       isCardClickable={false}
     />
   );

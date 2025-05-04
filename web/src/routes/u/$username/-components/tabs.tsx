@@ -43,7 +43,6 @@ export default function UserTabs({ username, className }: Props) {
   ];
 
   const activeTab = tabs.find((tab) => tab.id === lastMatch.routeId);
-  console.log({ activeTab, matches, lastMatch });
 
   return (
     <div className={cn(className)}>
