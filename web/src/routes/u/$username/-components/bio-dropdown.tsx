@@ -1,12 +1,12 @@
-import { Link } from "react-router";
-import { EllipsisVertical, FlagIcon } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
+import { Link } from '@tanstack/react-router';
+import { EllipsisVertical, FlagIcon } from 'lucide-react';
 
 type Props = {
   userId: string;
@@ -32,7 +32,13 @@ export default function BioDropdown({ userId }: Props) {
             size="sm"
             asChild
           >
-            <Link to={`/report?id=${userId}&type=user`}>
+            <Link
+              to="/report"
+              search={{
+                id: userId,
+                type: 'user',
+              }}
+            >
               <FlagIcon className="mr-2 size-4" />
               Report
             </Link>

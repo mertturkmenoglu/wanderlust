@@ -1,12 +1,9 @@
-"use client";
-
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { Link, useRevalidator } from "react-router";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import Spinner from "~/components/kit/spinner";
-import { Button } from "~/components/ui/button";
-import { follow } from "~/lib/api-requests";
+import Spinner from '@/components/kit/spinner';
+import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
+import { ReloadIcon } from '@radix-ui/react-icons';
+import { Link } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 type Props = {
   loading: boolean;
@@ -21,22 +18,24 @@ export default function ActionButtons({
   isFollowing,
   username,
 }: Props) {
-  const revalidator = useRevalidator();
-
-  const mutation = useMutation({
-    mutationKey: ["follow", username],
-    mutationFn: async () => follow(username),
-    onSettled: async () => {
-      toast.success(isFollowing ? "Unfollowed" : "Followed");
-      revalidator.revalidate();
+  const mutation = api.useMutation('post', '/api/v2/users/follow/{username}', {
+    onSettled: () => {
+      toast.success(isFollowing ? 'Unfollowed' : 'Followed');
+      window.location.reload();
     },
     onError: () => {
-      toast.error("Something went wrong");
+      toast.error('Something went wrong');
     },
   });
 
   async function handleFollowClick() {
-    mutation.mutate();
+    mutation.mutate({
+      params: {
+        path: {
+          username,
+        },
+      },
+    });
   }
 
   if (loading) {
@@ -55,11 +54,11 @@ export default function ActionButtons({
         </Button>
       ) : (
         <Button
-          variant={isFollowing ? "outline" : "default"}
+          variant={isFollowing ? 'outline' : 'default'}
           onClick={handleFollowClick}
           disabled={mutation.isPending}
         >
-          {isFollowing ? "Following" : "Follow"}
+          {isFollowing ? 'Following' : 'Follow'}
           {mutation.isPending && (
             <ReloadIcon className="ml-2 size-4 animate-spin" />
           )}

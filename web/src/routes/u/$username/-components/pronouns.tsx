@@ -1,4 +1,4 @@
-import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 
 type Props = {
   pronouns: string;

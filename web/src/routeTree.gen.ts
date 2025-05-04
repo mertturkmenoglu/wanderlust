@@ -26,6 +26,7 @@ import { Route as HelpIndexImport } from './routes/help/index'
 import { Route as DiaryIndexImport } from './routes/diary/index'
 import { Route as CategoriesIndexImport } from './routes/categories/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
+import { Route as UUsernameImport } from './routes/u/$username'
 import { Route as AdminDashboardImport } from './routes/_admin/dashboard'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexImport } from './routes/trips/planner/index'
@@ -43,7 +44,12 @@ import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
 import { Route as AuthOnboardingIndexImport } from './routes/_auth/onboarding/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/_auth/forgot-password/index'
 import { Route as AdminDashboardIndexImport } from './routes/_admin/dashboard/index'
+import { Route as UUsernameReviewsIndexImport } from './routes/u/$username/reviews/index'
+import { Route as UUsernameListsIndexImport } from './routes/u/$username/lists/index'
 import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
+import { Route as UUsernameFollowersIndexImport } from './routes/u/$username/followers/index'
+import { Route as UUsernameFavoritesIndexImport } from './routes/u/$username/favorites/index'
+import { Route as UUsernameActivitiesIndexImport } from './routes/u/$username/activities/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashboard/cities/index'
@@ -152,6 +158,12 @@ const BookmarksIndexRoute = BookmarksIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const UUsernameRoute = UUsernameImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AdminDashboardRoute = AdminDashboardImport.update({
   id: '/_admin/dashboard',
   path: '/dashboard',
@@ -159,9 +171,9 @@ const AdminDashboardRoute = AdminDashboardImport.update({
 } as any)
 
 const UUsernameIndexRoute = UUsernameIndexImport.update({
-  id: '/u/$username/',
-  path: '/u/$username/',
-  getParentRoute: () => rootRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => UUsernameRoute,
 } as any)
 
 const TripsPlannerIndexRoute = TripsPlannerIndexImport.update({
@@ -254,10 +266,40 @@ const AdminDashboardIndexRoute = AdminDashboardIndexImport.update({
   getParentRoute: () => AdminDashboardRoute,
 } as any)
 
+const UUsernameReviewsIndexRoute = UUsernameReviewsIndexImport.update({
+  id: '/reviews/',
+  path: '/reviews/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+
+const UUsernameListsIndexRoute = UUsernameListsIndexImport.update({
+  id: '/lists/',
+  path: '/lists/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+
 const UUsernameFollowingIndexRoute = UUsernameFollowingIndexImport.update({
-  id: '/u/$username/following/',
-  path: '/u/$username/following/',
-  getParentRoute: () => rootRoute,
+  id: '/following/',
+  path: '/following/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+
+const UUsernameFollowersIndexRoute = UUsernameFollowersIndexImport.update({
+  id: '/followers/',
+  path: '/followers/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+
+const UUsernameFavoritesIndexRoute = UUsernameFavoritesIndexImport.update({
+  id: '/favorites/',
+  path: '/favorites/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+
+const UUsernameActivitiesIndexRoute = UUsernameActivitiesIndexImport.update({
+  id: '/activities/',
+  path: '/activities/',
+  getParentRoute: () => UUsernameRoute,
 } as any)
 
 const AuthForgotPasswordResetIndexRoute =
@@ -386,6 +428,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AdminDashboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameImport
       parentRoute: typeof rootRoute
     }
     '/bookmarks/': {
@@ -586,10 +635,10 @@ declare module '@tanstack/react-router' {
     }
     '/u/$username/': {
       id: '/u/$username/'
-      path: '/u/$username'
-      fullPath: '/u/$username'
+      path: '/'
+      fullPath: '/u/$username/'
       preLoaderRoute: typeof UUsernameIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof UUsernameImport
     }
     '/_admin/dashboard/amenities/': {
       id: '/_admin/dashboard/amenities/'
@@ -626,12 +675,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordResetIndexImport
       parentRoute: typeof rootRoute
     }
+    '/u/$username/activities/': {
+      id: '/u/$username/activities/'
+      path: '/activities'
+      fullPath: '/u/$username/activities'
+      preLoaderRoute: typeof UUsernameActivitiesIndexImport
+      parentRoute: typeof UUsernameImport
+    }
+    '/u/$username/favorites/': {
+      id: '/u/$username/favorites/'
+      path: '/favorites'
+      fullPath: '/u/$username/favorites'
+      preLoaderRoute: typeof UUsernameFavoritesIndexImport
+      parentRoute: typeof UUsernameImport
+    }
+    '/u/$username/followers/': {
+      id: '/u/$username/followers/'
+      path: '/followers'
+      fullPath: '/u/$username/followers'
+      preLoaderRoute: typeof UUsernameFollowersIndexImport
+      parentRoute: typeof UUsernameImport
+    }
     '/u/$username/following/': {
       id: '/u/$username/following/'
-      path: '/u/$username/following'
+      path: '/following'
       fullPath: '/u/$username/following'
       preLoaderRoute: typeof UUsernameFollowingIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof UUsernameImport
+    }
+    '/u/$username/lists/': {
+      id: '/u/$username/lists/'
+      path: '/lists'
+      fullPath: '/u/$username/lists'
+      preLoaderRoute: typeof UUsernameListsIndexImport
+      parentRoute: typeof UUsernameImport
+    }
+    '/u/$username/reviews/': {
+      id: '/u/$username/reviews/'
+      path: '/reviews'
+      fullPath: '/u/$username/reviews'
+      preLoaderRoute: typeof UUsernameReviewsIndexImport
+      parentRoute: typeof UUsernameImport
     }
     '/_admin/dashboard/amenities/$id/': {
       id: '/_admin/dashboard/amenities/$id/'
@@ -770,10 +854,35 @@ const AdminDashboardRouteWithChildren = AdminDashboardRoute._addFileChildren(
   AdminDashboardRouteChildren,
 )
 
+interface UUsernameRouteChildren {
+  UUsernameIndexRoute: typeof UUsernameIndexRoute
+  UUsernameActivitiesIndexRoute: typeof UUsernameActivitiesIndexRoute
+  UUsernameFavoritesIndexRoute: typeof UUsernameFavoritesIndexRoute
+  UUsernameFollowersIndexRoute: typeof UUsernameFollowersIndexRoute
+  UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
+  UUsernameListsIndexRoute: typeof UUsernameListsIndexRoute
+  UUsernameReviewsIndexRoute: typeof UUsernameReviewsIndexRoute
+}
+
+const UUsernameRouteChildren: UUsernameRouteChildren = {
+  UUsernameIndexRoute: UUsernameIndexRoute,
+  UUsernameActivitiesIndexRoute: UUsernameActivitiesIndexRoute,
+  UUsernameFavoritesIndexRoute: UUsernameFavoritesIndexRoute,
+  UUsernameFollowersIndexRoute: UUsernameFollowersIndexRoute,
+  UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
+  UUsernameListsIndexRoute: UUsernameListsIndexRoute,
+  UUsernameReviewsIndexRoute: UUsernameReviewsIndexRoute,
+}
+
+const UUsernameRouteWithChildren = UUsernameRoute._addFileChildren(
+  UUsernameRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/trips': typeof TripsRouteWithChildren
   '/dashboard': typeof AdminDashboardRouteWithChildren
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
@@ -802,13 +911,18 @@ export interface FileRoutesByFullPath {
   '/trips/invites': typeof TripsInvitesIndexRoute
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
-  '/u/$username': typeof UUsernameIndexRoute
+  '/u/$username/': typeof UUsernameIndexRoute
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
+  '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
+  '/u/$username/followers': typeof UUsernameFollowersIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
+  '/u/$username/lists': typeof UUsernameListsIndexRoute
+  '/u/$username/reviews': typeof UUsernameReviewsIndexRoute
   '/dashboard/amenities/$id': typeof AdminDashboardAmenitiesIdIndexRoute
   '/dashboard/amenities/new': typeof AdminDashboardAmenitiesNewIndexRoute
   '/dashboard/categories/$id': typeof AdminDashboardCategoriesIdIndexRoute
@@ -857,7 +971,12 @@ export interface FileRoutesByTo {
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
+  '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
+  '/u/$username/followers': typeof UUsernameFollowersIndexRoute
   '/u/$username/following': typeof UUsernameFollowingIndexRoute
+  '/u/$username/lists': typeof UUsernameListsIndexRoute
+  '/u/$username/reviews': typeof UUsernameReviewsIndexRoute
   '/dashboard/amenities/$id': typeof AdminDashboardAmenitiesIdIndexRoute
   '/dashboard/amenities/new': typeof AdminDashboardAmenitiesNewIndexRoute
   '/dashboard/categories/$id': typeof AdminDashboardCategoriesIdIndexRoute
@@ -875,6 +994,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/trips': typeof TripsRouteWithChildren
   '/_admin/dashboard': typeof AdminDashboardRouteWithChildren
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/diary/': typeof DiaryIndexRoute
@@ -909,7 +1029,12 @@ export interface FileRoutesById {
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
+  '/u/$username/activities/': typeof UUsernameActivitiesIndexRoute
+  '/u/$username/favorites/': typeof UUsernameFavoritesIndexRoute
+  '/u/$username/followers/': typeof UUsernameFollowersIndexRoute
   '/u/$username/following/': typeof UUsernameFollowingIndexRoute
+  '/u/$username/lists/': typeof UUsernameListsIndexRoute
+  '/u/$username/reviews/': typeof UUsernameReviewsIndexRoute
   '/_admin/dashboard/amenities/$id/': typeof AdminDashboardAmenitiesIdIndexRoute
   '/_admin/dashboard/amenities/new/': typeof AdminDashboardAmenitiesNewIndexRoute
   '/_admin/dashboard/categories/$id/': typeof AdminDashboardCategoriesIdIndexRoute
@@ -928,6 +1053,7 @@ export interface FileRouteTypes {
     | '/'
     | '/trips'
     | '/dashboard'
+    | '/u/$username'
     | '/bookmarks'
     | '/categories'
     | '/diary'
@@ -956,13 +1082,18 @@ export interface FileRouteTypes {
     | '/trips/invites'
     | '/trips/my-trips'
     | '/trips/planner'
-    | '/u/$username'
+    | '/u/$username/'
     | '/dashboard/amenities'
     | '/dashboard/categories'
     | '/dashboard/cities'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/u/$username/activities'
+    | '/u/$username/favorites'
+    | '/u/$username/followers'
     | '/u/$username/following'
+    | '/u/$username/lists'
+    | '/u/$username/reviews'
     | '/dashboard/amenities/$id'
     | '/dashboard/amenities/new'
     | '/dashboard/categories/$id'
@@ -1010,7 +1141,12 @@ export interface FileRouteTypes {
     | '/dashboard/cities'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/u/$username/activities'
+    | '/u/$username/favorites'
+    | '/u/$username/followers'
     | '/u/$username/following'
+    | '/u/$username/lists'
+    | '/u/$username/reviews'
     | '/dashboard/amenities/$id'
     | '/dashboard/amenities/new'
     | '/dashboard/categories/$id'
@@ -1026,6 +1162,7 @@ export interface FileRouteTypes {
     | '/'
     | '/trips'
     | '/_admin/dashboard'
+    | '/u/$username'
     | '/bookmarks/'
     | '/categories/'
     | '/diary/'
@@ -1060,7 +1197,12 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/cities/'
     | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
+    | '/u/$username/activities/'
+    | '/u/$username/favorites/'
+    | '/u/$username/followers/'
     | '/u/$username/following/'
+    | '/u/$username/lists/'
+    | '/u/$username/reviews/'
     | '/_admin/dashboard/amenities/$id/'
     | '/_admin/dashboard/amenities/new/'
     | '/_admin/dashboard/categories/$id/'
@@ -1078,6 +1220,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TripsRoute: typeof TripsRouteWithChildren
   AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
+  UUsernameRoute: typeof UUsernameRouteWithChildren
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   DiaryIndexRoute: typeof DiaryIndexRoute
@@ -1099,15 +1242,14 @@ export interface RootRouteChildren {
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
-  UUsernameIndexRoute: typeof UUsernameIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
-  UUsernameFollowingIndexRoute: typeof UUsernameFollowingIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TripsRoute: TripsRouteWithChildren,
   AdminDashboardRoute: AdminDashboardRouteWithChildren,
+  UUsernameRoute: UUsernameRouteWithChildren,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   DiaryIndexRoute: DiaryIndexRoute,
@@ -1129,9 +1271,7 @@ const rootRouteChildren: RootRouteChildren = {
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
-  UUsernameIndexRoute: UUsernameIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
-  UUsernameFollowingIndexRoute: UUsernameFollowingIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -1147,6 +1287,7 @@ export const routeTree = rootRoute
         "/",
         "/trips",
         "/_admin/dashboard",
+        "/u/$username",
         "/bookmarks/",
         "/categories/",
         "/diary/",
@@ -1168,9 +1309,7 @@ export const routeTree = rootRoute
         "/cities/list/",
         "/discover/events/",
         "/p/$id/",
-        "/u/$username/",
-        "/_auth/forgot-password/reset/",
-        "/u/$username/following/"
+        "/_auth/forgot-password/reset/"
       ]
     },
     "/": {
@@ -1205,6 +1344,18 @@ export const routeTree = rootRoute
         "/_admin/dashboard/amenities/$id/edit/",
         "/_admin/dashboard/categories/$id/edit/",
         "/_admin/dashboard/cities/$id/edit/"
+      ]
+    },
+    "/u/$username": {
+      "filePath": "u/$username.tsx",
+      "children": [
+        "/u/$username/",
+        "/u/$username/activities/",
+        "/u/$username/favorites/",
+        "/u/$username/followers/",
+        "/u/$username/following/",
+        "/u/$username/lists/",
+        "/u/$username/reviews/"
       ]
     },
     "/bookmarks/": {
@@ -1299,7 +1450,8 @@ export const routeTree = rootRoute
       "parent": "/trips"
     },
     "/u/$username/": {
-      "filePath": "u/$username/index.tsx"
+      "filePath": "u/$username/index.tsx",
+      "parent": "/u/$username"
     },
     "/_admin/dashboard/amenities/": {
       "filePath": "_admin/dashboard/amenities/index.tsx",
@@ -1320,8 +1472,29 @@ export const routeTree = rootRoute
     "/_auth/forgot-password/reset/": {
       "filePath": "_auth/forgot-password/reset/index.tsx"
     },
+    "/u/$username/activities/": {
+      "filePath": "u/$username/activities/index.tsx",
+      "parent": "/u/$username"
+    },
+    "/u/$username/favorites/": {
+      "filePath": "u/$username/favorites/index.tsx",
+      "parent": "/u/$username"
+    },
+    "/u/$username/followers/": {
+      "filePath": "u/$username/followers/index.tsx",
+      "parent": "/u/$username"
+    },
     "/u/$username/following/": {
-      "filePath": "u/$username/following/index.tsx"
+      "filePath": "u/$username/following/index.tsx",
+      "parent": "/u/$username"
+    },
+    "/u/$username/lists/": {
+      "filePath": "u/$username/lists/index.tsx",
+      "parent": "/u/$username"
+    },
+    "/u/$username/reviews/": {
+      "filePath": "u/$username/reviews/index.tsx",
+      "parent": "/u/$username"
     },
     "/_admin/dashboard/amenities/$id/": {
       "filePath": "_admin/dashboard/amenities/$id/index.tsx",

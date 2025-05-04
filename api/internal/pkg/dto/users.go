@@ -8,12 +8,12 @@ type Profile struct {
 	FullName          string    `json:"fullName" example:"John Doe" doc:"Full name of user"`
 	IsBusinessAccount bool      `json:"isBusinessAccount" example:"false" doc:"Is user a business account"`
 	IsVerified        bool      `json:"isVerified" example:"false" doc:"Is user verified"`
-	Bio               *string   `json:"bio" required:"false" example:"Lorem ipsum" doc:"Bio of user"`
-	Pronouns          *string   `json:"pronouns" required:"false" example:"he/him" doc:"Pronouns of user"`
-	Website           *string   `json:"website" required:"false" example:"https://example.com" doc:"Website of user"`
-	Phone             *string   `json:"phone" required:"false" example:"+1234567890" doc:"Phone number of user"`
-	ProfileImage      *string   `json:"profileImage" required:"false" example:"https://example.com/profile.jpg" doc:"Profile image of user"`
-	BannerImage       *string   `json:"bannerImage" required:"false" example:"https://example.com/banner.jpg" doc:"Banner image of user"`
+	Bio               *string   `json:"bio" required:"true" example:"Lorem ipsum" doc:"Bio of user"`
+	Pronouns          *string   `json:"pronouns" required:"true" example:"he/him" doc:"Pronouns of user"`
+	Website           *string   `json:"website" required:"true" example:"https://example.com" doc:"Website of user"`
+	Phone             *string   `json:"phone" required:"true" example:"+1234567890" doc:"Phone number of user"`
+	ProfileImage      *string   `json:"profileImage" required:"true" example:"https://example.com/profile.jpg" doc:"Profile image of user"`
+	BannerImage       *string   `json:"bannerImage" required:"true" example:"https://example.com/banner.jpg" doc:"Banner image of user"`
 	FollowersCount    int32     `json:"followersCount" example:"100" doc:"Number of followers"`
 	FollowingCount    int32     `json:"followingCount" example:"50" doc:"Number of following"`
 	CreatedAt         time.Time `json:"createdAt" example:"2023-01-01T00:00:00Z" doc:"Created at time of user"`

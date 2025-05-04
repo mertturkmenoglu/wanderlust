@@ -4,7 +4,7 @@ type Props = {
 };
 
 export default function Banner({
-  userBannerImage = "https://i.imgur.com/EwvUEmR.jpg",
+  userBannerImage = 'https://i.imgur.com/EwvUEmR.jpg',
   children,
 }: Props) {
   return (

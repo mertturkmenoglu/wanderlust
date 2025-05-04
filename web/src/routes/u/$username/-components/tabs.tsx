@@ -1,8 +1,8 @@
-import { Link, useMatches } from "react-router";
-import { buttonVariants } from "~/components/ui/button";
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { cn } from "~/lib/utils";
+import { buttonVariants } from '@/components/ui/button';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
+import { Link, useMatches } from '@tanstack/react-router';
 
 type Props = {
   username: string;
@@ -19,30 +19,31 @@ export default function UserTabs({ username, className }: Props) {
 
   const base = `/u/${username}`;
   const tabs = [
-    { id: "routes/u.$username/route", label: "Profile", href: `${base}` },
+    { id: '/u/$username/', label: 'Profile', href: `${base}` },
     {
-      id: "routes/u.$username/activities/route",
-      label: "Activities",
+      id: '/u/$username/activities/',
+      label: 'Activities',
       href: `${base}/activities`,
     },
     {
-      id: "routes/u.$username/reviews/route",
-      label: "Reviews",
+      id: '/u/$username/reviews/',
+      label: 'Reviews',
       href: `${base}/reviews`,
     },
     {
-      id: "routes/u.$username/lists/route",
-      label: "Lists",
+      id: '/u/$username/lists/',
+      label: 'Lists',
       href: `${base}/lists`,
     },
     {
-      id: "routes/u.$username/favorites/route",
-      label: "Favorites",
+      id: '/u/$username/favorites/',
+      label: 'Favorites',
       href: `${base}/favorites`,
     },
   ];
 
-  const activeTab = tabs.find((tab) => tab.id === lastMatch.id);
+  const activeTab = tabs.find((tab) => tab.id === lastMatch.routeId);
+  console.log({ activeTab, matches, lastMatch });
 
   return (
     <div className={cn(className)}>
@@ -58,7 +59,7 @@ export default function UserTabs({ username, className }: Props) {
                 <Link
                   to={t.href}
                   className={buttonVariants({
-                    variant: activeTab?.id === t.id ? "default" : "ghost",
+                    variant: activeTab?.id === t.id ? 'default' : 'ghost',
                   })}
                 >
                   {t.label}

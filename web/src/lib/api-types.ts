@@ -1550,6 +1550,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/images/upload/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Presigned URL
+         * @description Get a presigned URL for uploading an image
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @example default */
+                    bucket: "default" | "profile-images" | "banner-images" | "pois" | "reviews" | "diaries";
+                    /** @example png */
+                    fileExt: "jpg" | "png" | "webp" | "jpeg";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PresignedUrlOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/pois/peek": {
         parameters: {
             query?: never;
@@ -1646,6 +1699,494 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/follow/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Follow User
+         * @description Follow or unfollow user by username
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FollowUserOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/following/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search User Following
+         * @description Search user following by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SearchUserFollowingOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/image/{type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update User Image
+         * @description Update the profile image or the banner image of the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Type of image
+                     * @example profile
+                     */
+                    type: "profile" | "banner";
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUserProfileImageInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateUserProfileImageOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update User Profile
+         * @description Update user profile of the current user
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUserProfileInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateUserProfileOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/users/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Profile
+         * @description Get a user profile by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserProfileOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Activities
+         * @description Get user activities by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserActivitiesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/followers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Followers
+         * @description Get user followers by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFollowersOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/following": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Following
+         * @description Get user following by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFollowingOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/make-verified": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make User Verified
+         * @description Make user verified by username
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MakeUserVerifiedOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -2069,6 +2610,14 @@ export interface components {
             /** @description Name of point of interest */
             name: string;
         };
+        FollowUserOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isFollowing: boolean;
+        };
         GetCityByIdOutputBody: {
             /**
              * Format: uri
@@ -2170,6 +2719,16 @@ export interface components {
             meta: components["schemas"]["GetPoiByIdMeta"];
             poi: components["schemas"]["Poi"];
         };
+        GetUserActivitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            activities: {
+                [key: string]: unknown;
+            }[];
+        };
         GetUserBookmarksOutputBody: {
             /**
              * Format: uri
@@ -2187,6 +2746,34 @@ export interface components {
             readonly $schema?: string;
             favorites: components["schemas"]["Favorite"][];
             pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetUserFollowersOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            followers: components["schemas"]["Profile"][];
+        };
+        GetUserFollowingOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            following: components["schemas"]["Profile"][];
+        };
+        GetUserProfileOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            meta: components["schemas"]["GetUserProfileOutputMeta"];
+            profile: components["schemas"]["Profile"];
+        };
+        GetUserProfileOutputMeta: {
+            isFollowing: boolean;
         };
         HealthOutputBody: {
             /**
@@ -2257,6 +2844,14 @@ export interface components {
             readonly $schema?: string;
             /** @description JWT token for the user */
             token: string;
+        };
+        MakeUserVerifiedOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isVerified: boolean;
         };
         Media: {
             /** @description Alt of media of point of interest */
@@ -2408,6 +3003,62 @@ export interface components {
             /** @description Website of point of interest */
             website: string | null;
         };
+        PresignedUrlOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Bucket of image */
+            bucket: string;
+            /** @description File extension of image */
+            fileExtension: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /** @description URL of image upload endpoint */
+            url: string;
+        };
+        Profile: {
+            /** @description Banner image of user */
+            bannerImage: string | null;
+            /** @description Bio of user */
+            bio: string | null;
+            /**
+             * Format: date-time
+             * @description Created at time of user
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description Number of followers
+             */
+            followersCount: number;
+            /**
+             * Format: int32
+             * @description Number of following
+             */
+            followingCount: number;
+            /** @description Full name of user */
+            fullName: string;
+            /** @description ID of user */
+            id: string;
+            /** @description Is user a business account */
+            isBusinessAccount: boolean;
+            /** @description Is user verified */
+            isVerified: boolean;
+            /** @description Phone number of user */
+            phone: string | null;
+            /** @description Profile image of user */
+            profileImage: string | null;
+            /** @description Pronouns of user */
+            pronouns: string | null;
+            /** @description Username of user */
+            username: string;
+            /** @description Website of user */
+            website: string | null;
+        };
         RegisterInputBody: {
             /**
              * Format: uri
@@ -2466,6 +3117,14 @@ export interface components {
             email: string;
             /** @description New password of the user */
             newPassword: string;
+        };
+        SearchUserFollowingOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            friends: components["schemas"]["Profile"][];
         };
         SendForgotPasswordEmailInputBody: {
             /**
@@ -2608,6 +3267,54 @@ export interface components {
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
+        };
+        UpdateUserProfileImageInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+        };
+        UpdateUserProfileImageOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description URL of image upload endpoint */
+            url: string;
+        };
+        UpdateUserProfileInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Bio of the user */
+            bio?: string | null;
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description Phone number of the user */
+            phone?: string | null;
+            /** @description Pronouns of the user */
+            pronouns?: string | null;
+            /**
+             * Format: uri
+             * @description Website of the user
+             */
+            website?: string | null;
+        };
+        UpdateUserProfileOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            profile: components["schemas"]["Profile"];
         };
     };
     responses: never;
