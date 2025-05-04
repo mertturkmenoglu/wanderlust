@@ -1,21 +1,38 @@
 import ActionBanner from '@/components/blocks/action-banner';
 import OverlayBanner from '@/components/blocks/overlay-banner';
+import PoiGrid from '@/components/blocks/poi-grid';
 import QuickActions from '@/components/blocks/quick-actions';
 import Search from '@/components/blocks/search';
 import TagNavigation from '@/components/blocks/tag-navigation';
 import VerticalBanner from '@/components/blocks/vertical-banner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
+import { ipx } from '@/lib/ipx';
 import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useContext } from 'react';
 
 export const Route = createFileRoute('/')({
   component: App,
+  loader: async ({ context }) => {
+    const q1 = await context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/aggregator/home'),
+    );
+    const q2 = await context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/cities/featured'),
+    );
+
+    return { aggregations: q1, cities: q2 };
+  },
 });
 
 function App() {
   const auth = useContext(AuthContext);
+  const {
+    aggregations,
+    cities: { cities },
+  } = Route.useLoaderData();
   const isAuthenticated = !auth.isLoading && auth.user !== null;
 
   return (
@@ -44,15 +61,16 @@ function App() {
         </Button>
       </div>
 
-      {/* <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         {cities.map((city) => (
           <Link
-            to={`/cities/${city.id}/${city.name}`}
+            to="."
+            href={`/cities/${city.id}/${city.name}`}
             key={city.id}
             className="rounded-md hover:underline decoration-primary decoration-2 underline-offset-4"
           >
             <img
-              src={ipx(city.imageUrl, 'w_600')}
+              src={ipx(city.image.url, 'w_600')}
               alt=""
               className="aspect-video w-full rounded-md object-cover"
             />
@@ -61,7 +79,7 @@ function App() {
             </div>
           </Link>
         ))}
-      </div> */}
+      </div>
 
       <OverlayBanner
         image="https://images.unsplash.com/photo-1607388510015-c632e99da586?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -78,7 +96,7 @@ function App() {
         imgClassName="aspect-[3]"
       />
 
-      {/* <PoiGrid dataKey="featured" data={aggregation.new} /> */}
+      <PoiGrid dataKey="featured" data={aggregations.new} />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
@@ -101,7 +119,7 @@ function App() {
         }
       />
 
-      {/* <PoiGrid dataKey="popular" data={aggregation.popular} /> */}
+      <PoiGrid dataKey="popular" data={aggregations.popular} />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
@@ -126,7 +144,7 @@ function App() {
         imgClassName=""
       />
 
-      {/* <PoiGrid dataKey="favorite" data={aggregation.favorites} /> */}
+      <PoiGrid dataKey="favorite" data={aggregations.favorites} />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
@@ -150,7 +168,7 @@ function App() {
         lefty={false}
       />
 
-      {/* <PoiGrid dataKey="new" data={aggregation.new} /> */}
+      <PoiGrid dataKey="new" data={aggregations.new} />
     </div>
   );
 }
