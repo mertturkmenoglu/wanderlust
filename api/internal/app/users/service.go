@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/core"
@@ -31,6 +32,7 @@ func (s *Service) updateImage(userId string, updateType string, input dto.Update
 		bucket = upload.BUCKET_BANNER_IMAGES
 	}
 
+	// Check if the user uploaded the image and it exists on S3
 	_, err := s.app.Upload.Client.GetObject(
 		context.Background(),
 		string(bucket),
@@ -42,10 +44,12 @@ func (s *Service) updateImage(userId string, updateType string, input dto.Update
 		return nil, err
 	}
 
+	// Check if user uploaded the correct file using cached information
 	if !s.app.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
 		return nil, huma.Error400BadRequest("Invalid file")
 	}
 
+	// Delete cached information
 	err = s.app.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID))
 
 	if err != nil {
@@ -55,6 +59,17 @@ func (s *Service) updateImage(userId string, updateType string, input dto.Update
 	endpoint := s.app.Upload.Client.EndpointURL().String()
 	url := endpoint + "/" + string(bucket) + "/" + input.FileName
 
+	// Get previous profile/banner image information from the database
+	dbUser, err := s.app.Db.Queries.GetUserById(context.Background(), userId)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get user by id")
+	}
+
+	prevBannerImage := utils.TextToStr(dbUser.BannerImage)
+	prevProfileImage := utils.TextToStr(dbUser.ProfileImage)
+
+	// Update database
 	if updateType == "banner" {
 		err = s.app.Db.Queries.UpdateUserBannerImage(context.Background(), db.UpdateUserBannerImageParams{
 			ID:          userId,
@@ -69,6 +84,24 @@ func (s *Service) updateImage(userId string, updateType string, input dto.Update
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to update profile image")
+	}
+
+	// Delete previous image from S3
+	removePrefix := endpoint + "/" + string(bucket) + "/"
+	objectName := ""
+
+	if updateType == "banner" && prevBannerImage != nil {
+		after, _ := strings.CutPrefix(*prevBannerImage, removePrefix)
+		objectName = after
+	} else if updateType == "profile" && prevProfileImage != nil {
+		after, _ := strings.CutPrefix(*prevProfileImage, removePrefix)
+		objectName = after
+	}
+
+	err = s.app.Upload.Client.RemoveObject(context.Background(), string(bucket), objectName, minio.RemoveObjectOptions{})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to delete previous profile image")
 	}
 
 	return &dto.UpdateUserProfileImageOutput{
