@@ -5,9 +5,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { AuthContext } from '@/providers/auth-provider';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { Heart } from 'lucide-react';
 import { useContext, useState } from 'react';
@@ -18,26 +18,24 @@ export default function FavoriteButton() {
   const { poi, meta } = route.useLoaderData();
   const [fav, setFav] = useState(meta.isFavorite);
   const auth = useContext(AuthContext);
-  const qc = useQueryClient();
 
-  const mutation = useMutation({
-    mutationKey: ['favorites', poi.id],
-    mutationFn: async () => {
-      // if (fav) {
-      //   await deleteFavoriteByPoiId(poi.id);
-      // } else {
-      //   await createFavorite({ poiId: poi.id });
-      // }
-      toast.error(`Not implemented ${poi.id}`);
-    },
-    onSuccess: async () => {
-      const prev = fav;
+  const createMutation = api.useMutation('post', '/api/v2/favorites/', {
+    onSuccess: () => {
       setFav((prev) => !prev);
-      await qc.invalidateQueries({ queryKey: ['favorites'] });
-      toast.success(prev ? 'Removed from favorites' : 'Added to favorites');
+      toast.success('Added to favorites');
     },
     onError: () => {
-      toast.error('Something went wrong');
+      toast.error('Failed to add to favorites');
+    },
+  });
+
+  const deleteMutation = api.useMutation('delete', '/api/v2/favorites/{id}', {
+    onSuccess: () => {
+      setFav((prev) => !prev);
+      toast.success('Removed from favorites');
+    },
+    onError: () => {
+      toast.error('Failed to remove from favorites');
     },
   });
 
@@ -53,7 +51,23 @@ export default function FavoriteButton() {
                 return;
               }
 
-              mutation.mutate();
+              if (fav) {
+                deleteMutation.mutate({
+                  params: {
+                    path: {
+                      id: poi.id,
+                    },
+                  },
+                });
+
+                return;
+              }
+
+              createMutation.mutate({
+                body: {
+                  poiId: poi.id,
+                },
+              });
             }}
           >
             <Heart

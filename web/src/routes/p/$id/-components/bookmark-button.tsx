@@ -5,9 +5,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { AuthContext } from '@/providers/auth-provider';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { BookmarkIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
@@ -17,7 +17,6 @@ export default function BookmarkButton() {
   const route = getRouteApi('/p/$id/');
   const { poi, meta } = route.useLoaderData();
   const [booked, setBooked] = useState(meta.isBookmarked);
-  const qc = useQueryClient();
   const auth = useContext(AuthContext);
 
   const onClick = () => {
@@ -26,27 +25,42 @@ export default function BookmarkButton() {
       return;
     }
 
-    mutation.mutate();
+    if (booked) {
+      deleteMutation.mutate({
+        params: {
+          path: {
+            id: poi.id,
+          },
+        },
+      });
+
+      return;
+    }
+
+    createMutation.mutate({
+      body: {
+        poiId: poi.id,
+      },
+    });
   };
 
-  const mutation = useMutation({
-    mutationKey: ['bookmark', poi.id],
-    mutationFn: async () => {
-      // if (booked) {
-      //   await deleteBookmarkByPoiId(poi.id);
-      // } else {
-      //   await createBookmark({ poiId: poi.id });
-      // }
-      toast.error(`Not implemented ${poi.id}`);
-    },
-    onSuccess: async () => {
-      const prev = booked;
+  const createMutation = api.useMutation('post', '/api/v2/bookmarks/', {
+    onSuccess: () => {
       setBooked((prev) => !prev);
-      await qc.invalidateQueries({ queryKey: ['bookmarks'] });
-      toast.success(prev ? 'Bookmark removed' : 'Bookmark added');
+      toast.success('Bookmark added');
     },
     onError: () => {
-      toast.error('Something went wrong');
+      toast.error('Failed to add bookmark');
+    },
+  });
+
+  const deleteMutation = api.useMutation('delete', '/api/v2/bookmarks/{id}', {
+    onSuccess: () => {
+      setBooked((prev) => !prev);
+      toast.success('Bookmark removed');
+    },
+    onError: () => {
+      toast.error('Failed to remove bookmark');
     },
   });
 

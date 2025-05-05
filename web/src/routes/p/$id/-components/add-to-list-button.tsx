@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 import { toast } from 'sonner';
 
 type Props = {
@@ -18,7 +18,16 @@ export default function AddToListButton({ poiId, listId }: Props) {
         if (!listId) {
           return;
         }
-        mutation.mutate({ poiId, listId });
+        mutation.mutate({
+          params: {
+            path: {
+              id: listId,
+            },
+          },
+          body: {
+            poiId,
+          },
+        });
       }}
       disabled={listId === null}
     >
@@ -27,30 +36,13 @@ export default function AddToListButton({ poiId, listId }: Props) {
   );
 }
 
-type Data = {
-  poiId: string;
-  listId: string;
-};
-
 export function useAddToList() {
-  const qc = useQueryClient();
-
-  const mutation = useMutation({
-    mutationKey: ['add-to-list'],
-    mutationFn: async ({ poiId, listId }: Data) => {
-      toast.error(`Not implemented ${poiId} ${listId}`);
-      // return createListItem(listId, poiId);
-    },
-    onSuccess: async () => {
-      await qc.invalidateQueries({
-        queryKey: ['my-lists-info'],
-      });
+  return api.useMutation('post', '/api/v2/lists/{id}/items', {
+    onSuccess: () => {
       toast.success('Added to the list');
     },
-    onError: (e) => {
-      toast.error(`Cannot add to the list: ${e.message}`);
+    onError: () => {
+      toast.error('Failed to add to the list');
     },
   });
-
-  return mutation;
 }
