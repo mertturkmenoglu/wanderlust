@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/mapper"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -120,6 +122,94 @@ func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
 	return &dto.PeekPoisOutput{
 		Body: dto.PeekPoisOutputBody{
 			Pois: res,
+		},
+	}, nil
+}
+
+func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
+	id := utils.GenerateId(s.App.Flake)
+	draft := map[string]any{
+		"id": id,
+		"v":  2,
+	}
+
+	v, err := json.Marshal(draft)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create draft")
+	}
+
+	err = s.App.Cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to set draft")
+	}
+
+	_, err = s.App.Cache.Client.LPush(context.Background(), "poi-drafts", id).Result()
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to record draft")
+	}
+
+	return &dto.CreatePoiDraftOutput{
+		Body: dto.CreatePoiDraftOutputBody{
+			Draft: draft,
+		},
+	}, nil
+}
+
+func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
+	ids, err := s.App.Cache.Client.LRange(context.Background(), "poi-drafts", 0, -1).Result()
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get drafts")
+	}
+
+	var drafts []map[string]any
+
+	for _, id := range ids {
+		v, err := s.App.Cache.Get("poi-draft:" + id)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to get draft")
+		}
+
+		var draft map[string]any
+
+		err = json.Unmarshal([]byte(v), &draft)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to unmarshal draft")
+		}
+
+		drafts = append(drafts, draft)
+	}
+
+	return &dto.GetAllPoiDraftsOutput{
+		Body: dto.GetAllPoiDraftsOutputBody{
+			Drafts: drafts,
+		},
+	}, nil
+}
+
+func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
+	v, err := s.App.Cache.Get("poi-draft:" + id)
+
+	if err != nil {
+		return nil, huma.Error404NotFound("draft not found")
+	}
+
+	var draft map[string]any
+
+	err = json.Unmarshal([]byte(v), &draft)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to unmarshal draft")
+	}
+
+	return &dto.GetPoiDraftOutput{
+		Body: dto.GetPoiDraftOutputBody{
+			Draft: draft,
 		},
 	}, nil
 }

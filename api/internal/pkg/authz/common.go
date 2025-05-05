@@ -26,6 +26,8 @@ const (
 	ActListItemDelete   AuthzAct = "list.item.delete"
 	ActListItemUpdate   AuthzAct = "list.item.update"
 	ActUserMakeVerified AuthzAct = "user.make-verified"
+	ActPoiDraftCreate   AuthzAct = "poi.draft.create"
+	ActPoiDraftRead     AuthzAct = "poi.draft.read"
 )
 
 var Fns = map[AuthzAct]AuthzFn{
@@ -46,4 +48,6 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActListDelete:       FnListDelete,
 	ActListItemCreate:   FnListItemCreate,
 	ActListItemDelete:   NotImplemented,
+	ActPoiDraftCreate:   IsAdmin,
+	ActPoiDraftRead:     IsAdmin,
 }

@@ -81,3 +81,31 @@ type PeekPoisOutput struct {
 type PeekPoisOutputBody struct {
 	Pois []Poi `json:"pois"`
 }
+
+type CreatePoiDraftOutput struct {
+	Body CreatePoiDraftOutputBody
+}
+
+type CreatePoiDraftOutputBody struct {
+	Draft map[string]any `json:"draft"`
+}
+
+type GetAllPoiDraftsOutput struct {
+	Body GetAllPoiDraftsOutputBody
+}
+
+type GetAllPoiDraftsOutputBody struct {
+	Drafts []map[string]any `json:"drafts"`
+}
+
+type GetPoiDraftInput struct {
+	ID string `path:"id" required:"true" validate:"required" doc:"ID of draft" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+}
+
+type GetPoiDraftOutput struct {
+	Body GetPoiDraftOutputBody
+}
+
+type GetPoiDraftOutputBody struct {
+	Draft map[string]any `json:"draft"`
+}

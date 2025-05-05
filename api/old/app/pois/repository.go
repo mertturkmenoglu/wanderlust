@@ -8,10 +8,6 @@ import (
 	"wanderlust/internal/pkg/utils"
 )
 
-func (r *Repository) peekPois() ([]db.Poi, error) {
-	return r.DI.Db.Queries.PeekPois(context.Background())
-}
-
 func (r *Repository) publishDraft(draft map[string]any) error {
 	ctx := context.Background()
 	tx, err := r.DI.Db.Pool.Begin(ctx)

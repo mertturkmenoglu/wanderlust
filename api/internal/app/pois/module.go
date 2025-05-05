@@ -3,6 +3,7 @@ package pois
 import (
 	"context"
 	"net/http"
+	"wanderlust/internal/pkg/authz"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/middlewares"
@@ -86,4 +87,77 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/pois/drafts",
+			Summary:       "Create Draft",
+			Description:   "Create a new draft",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftCreate),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.CreatePoiDraftOutput, error) {
+			res, err := s.createDraft()
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/pois/drafts",
+			Summary:       "Get All Drafts",
+			Description:   "Get all drafts",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftRead),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetAllPoiDraftsOutput, error) {
+			res, err := s.getDrafts()
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/pois/drafts/{id}",
+			Summary:       "Get Draft by ID",
+			Description:   "Get a draft by id",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftRead),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.GetPoiDraftInput) (*dto.GetPoiDraftOutput, error) {
+			res, err := s.getDraft(input.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
 }

@@ -8,66 +8,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) PeekPois(c echo.Context) error {
-	res, err := h.service.peekPois()
-
-	if err != nil {
-		return err
-	}
-
-	v, err := mapPeekPoisToDto(res)
-
-	if err != nil {
-		return ErrUnmarshal
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: v,
-	})
-}
-
-func (h *handlers) CreateDraft(c echo.Context) error {
-	res, err := h.service.createDraft()
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusCreated, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) GetDrafts(c echo.Context) error {
-	res, err := h.service.getDrafts()
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) GetDraft(c echo.Context) error {
-	id := c.Param("id")
-
-	if id == "" {
-		return ErrIdRequired
-	}
-
-	res, err := h.service.getDraft(id)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
 func (h *handlers) DeleteDraft(c echo.Context) error {
 	id := c.Param("id")
 

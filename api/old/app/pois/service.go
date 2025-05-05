@@ -3,31 +3,11 @@ package pois
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"mime/multipart"
 	"strings"
 	"time"
-	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/upload"
-
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 )
-
-func (s *service) peekPois() ([]db.Poi, error) {
-	res, err := s.repository.peekPois()
-
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return []db.Poi{}, nil
-		}
-
-		return []db.Poi{}, err
-	}
-
-	return res, nil
-}
-
 
 func (s *service) validateMediaUpload(mpf *multipart.Form) error {
 	v := ImageUploadValidator{
@@ -124,82 +104,6 @@ func (s *service) uploadMedia(mpf *multipart.Form) (sUploadResult, error) {
 	}
 
 	return uploadResult, nil
-}
-
-func (s *service) createDraft() (map[string]any, error) {
-	id := uuid.New().String()
-	draft := map[string]any{
-		"id": id,
-		"v":  1,
-	}
-
-	v, err := json.Marshal(draft)
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.di.Cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
-
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = s.di.Cache.Client.LPush(context.Background(), "poi-drafts", id).Result()
-
-	if err != nil {
-		return nil, err
-	}
-
-	return draft, nil
-}
-
-func (s *service) getDrafts() ([]map[string]any, error) {
-	ids, err := s.di.Cache.Client.LRange(context.Background(), "poi-drafts", 0, -1).Result()
-
-	if err != nil {
-		return nil, err
-	}
-
-	var drafts []map[string]any
-
-	for _, id := range ids {
-		v, err := s.di.Cache.Get("poi-draft:" + id)
-
-		if err != nil {
-			return nil, err
-		}
-
-		var draft map[string]any
-
-		err = json.Unmarshal([]byte(v), &draft)
-
-		if err != nil {
-			return nil, err
-		}
-
-		drafts = append(drafts, draft)
-	}
-
-	return drafts, nil
-}
-
-func (s *service) getDraft(id string) (map[string]any, error) {
-	v, err := s.di.Cache.Get("poi-draft:" + id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var draft map[string]any
-
-	err = json.Unmarshal([]byte(v), &draft)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return draft, nil
 }
 
 func (s *service) deleteDraft(id string) error {
