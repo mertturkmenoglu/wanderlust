@@ -329,3 +329,77 @@ func FromSearchToFollowing(dbFollowing []db.SearchUserFollowingRow) []dto.Profil
 
 	return following
 }
+
+func ToList(dbList db.List, dbUser db.User) dto.List {
+	return dto.List{
+		ID:     dbList.ID,
+		Name:   dbList.Name,
+		UserID: dbList.UserID,
+		User: dto.ListUser{
+			ID:           dbUser.ID,
+			Username:     dbUser.Username,
+			FullName:     dbUser.FullName,
+			ProfileImage: utils.TextToStr(dbUser.ProfileImage),
+		},
+		Items:     []dto.ListItem{},
+		IsPublic:  dbList.IsPublic,
+		CreatedAt: dbList.CreatedAt.Time,
+		UpdatedAt: dbList.UpdatedAt.Time,
+	}
+}
+
+func ToGetAllLists(dbLists []db.List, dbUser db.User) []dto.List {
+	lists := make([]dto.List, len(dbLists))
+
+	for i, v := range dbLists {
+		lists[i] = ToList(v, dbUser)
+	}
+
+	return lists
+}
+
+func ToListWithItems(dbList db.GetListByIdRow, dbItems []db.GetListItemsRow) dto.List {
+	items := make([]dto.ListItem, len(dbItems))
+
+	for i, v := range dbItems {
+		items[i] = ToListItem(v)
+	}
+
+	return dto.List{
+		ID:     dbList.List.ID,
+		Name:   dbList.List.Name,
+		UserID: dbList.List.UserID,
+		User: dto.ListUser{
+			ID:           dbList.User.ID,
+			Username:     dbList.User.Username,
+			FullName:     dbList.User.FullName,
+			ProfileImage: utils.TextToStr(dbList.User.ProfileImage),
+		},
+		Items:     items,
+		IsPublic:  dbList.List.IsPublic,
+		CreatedAt: dbList.List.CreatedAt.Time,
+		UpdatedAt: dbList.List.UpdatedAt.Time,
+	}
+}
+
+func ToListItem(dbListItem db.GetListItemsRow) dto.ListItem {
+	return dto.ListItem{
+		ListID:    dbListItem.ListItem.ListID,
+		PoiID:     dbListItem.ListItem.PoiID,
+		ListIndex: dbListItem.ListItem.ListIndex,
+		CreatedAt: dbListItem.ListItem.CreatedAt.Time,
+		Poi: dto.ListItemPoi{
+			ID:         dbListItem.Poi.ID,
+			Name:       dbListItem.Poi.Name,
+			AddressID:  dbListItem.Poi.AddressID,
+			Address:    ToAddress(dbListItem.Address, dbListItem.City),
+			CategoryID: dbListItem.Poi.CategoryID,
+			Category: dto.Category{
+				ID:    dbListItem.Category.ID,
+				Name:  dbListItem.Category.Name,
+				Image: dbListItem.Category.Image,
+			},
+			FirstMedia: ToMedia([]db.Medium{dbListItem.Medium})[0],
+		},
+	}
+}

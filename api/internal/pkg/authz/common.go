@@ -7,16 +7,24 @@ type AuthzAct string
 type AuthzFn func(s *Authz, c huma.Context) (bool, error)
 
 const (
-	ActTest             AuthzAct = "test"
-	ActCityCreate       AuthzAct = "city.create"
-	ActCityDelete       AuthzAct = "city.delete"
-	ActCityUpdate       AuthzAct = "city.update"
+	ActTest AuthzAct = "test"
+
 	ActAmenityUpdate    AuthzAct = "amenity.update"
 	ActAmenityCreate    AuthzAct = "amenity.create"
 	ActAmenityDelete    AuthzAct = "amenity.delete"
 	ActCategoryCreate   AuthzAct = "category.create"
 	ActCategoryDelete   AuthzAct = "category.delete"
 	ActCategoryUpdate   AuthzAct = "category.update"
+	ActCityCreate       AuthzAct = "city.create"
+	ActCityDelete       AuthzAct = "city.delete"
+	ActCityUpdate       AuthzAct = "city.update"
+	ActListRead         AuthzAct = "list.read"
+	ActListStatusRead   AuthzAct = "list.status.read"
+	ActListUpdate       AuthzAct = "list.update"
+	ActListDelete       AuthzAct = "list.delete"
+	ActListItemCreate   AuthzAct = "list.item.create"
+	ActListItemDelete   AuthzAct = "list.item.delete"
+	ActListItemUpdate   AuthzAct = "list.item.update"
 	ActUserMakeVerified AuthzAct = "user.make-verified"
 )
 
