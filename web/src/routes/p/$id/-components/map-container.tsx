@@ -1,12 +1,11 @@
-import { ExternalLinkIcon } from "lucide-react";
-import { useLoaderData } from "react-router";
-import { ClientOnly } from "remix-utils/client-only";
-import { Button } from "~/components/ui/button";
-import { loader } from "../route";
-import { Map } from "./map.client";
+import { Button } from '@/components/ui/button';
+import { getRouteApi } from '@tanstack/react-router';
+import { ExternalLinkIcon } from 'lucide-react';
+import { Map } from './map.client';
 
 export default function MapContainer() {
-  const { poi } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/p/$id/');
+  const { poi } = route.useLoaderData();
   const lat = poi.address.lat;
   const lng = poi.address.lng;
   const zoom = 17;
@@ -26,9 +25,7 @@ export default function MapContainer() {
           </a>
         </Button>
       </div>
-      <ClientOnly fallback={<div className="w-full h-[400px] bg-muted mt-4" />}>
-        {() => <Map lat={lat} lng={lng} />}
-      </ClientOnly>
+      <Map lat={lat} lng={lng} />
     </>
   );
 }

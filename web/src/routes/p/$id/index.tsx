@@ -1,9 +1,150 @@
+import CollapsibleText from '@/components/blocks/collapsible-text';
+import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
+import { useRef, useState } from 'react';
+import Lightbox, { type ThumbnailsRef } from 'yet-another-react-lightbox';
+import Inline from 'yet-another-react-lightbox/plugins/inline';
+import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
+import Amenities from './-components/amenities';
+import BookmarkButton from './-components/bookmark-button';
+import Breadcrumb from './-components/breadcrumb';
+import FavoriteButton from './-components/favorite-button';
+import InformationTable from './-components/info-table';
+import MapContainer from './-components/map-container';
+import Menu from './-components/menu';
+import NearbyPois from './-components/nearby-pois';
 
 export const Route = createFileRoute('/p/$id/')({
   component: RouteComponent,
+  loader: ({ context, params }) => {
+    return context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/pois/{id}', {
+        params: {
+          path: {
+            id: params.id,
+          },
+        },
+      }),
+    );
+  },
 });
 
 function RouteComponent() {
-  return <div>Hello "/p/$id/"!</div>;
+  const { poi } = Route.useLoaderData();
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+  const ref = useRef<ThumbnailsRef>(null);
+
+  const toggleOpen = (state: boolean) => () => setOpen(state);
+
+  const updateIndex = ({ index: current }: { index: number }) =>
+    setIndex(current);
+
+  return (
+    <main className="max-w-7xl mx-auto mt-8 md:mt-16">
+      <Breadcrumb />
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-32">
+        <div className="h-min w-full lg:w-full">
+          <Lightbox
+            index={index}
+            slides={poi.media.map((m) => ({
+              src: m.url,
+            }))}
+            className=""
+            plugins={[Inline, Thumbnails]}
+            thumbnails={{
+              ref: ref,
+              vignette: false,
+              imageFit: 'cover',
+              border: 0,
+              borderColor: '#FFF',
+            }}
+            on={{
+              view: updateIndex,
+              click: toggleOpen(true),
+            }}
+            carousel={{
+              padding: 0,
+              spacing: 0,
+              imageFit: 'cover',
+            }}
+            styles={{
+              container: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              },
+              thumbnailsContainer: {
+                backgroundColor: 'rgba(0, 0, 0, 0.0)',
+              },
+              thumbnail: {
+                backgroundColor: 'rgba(0, 0, 0, 0.0)',
+              },
+            }}
+            inline={{
+              className: 'w-min h-min w-11/12 lg:w-full',
+              style: {
+                maxWidth: '900px',
+                aspectRatio: '1/1',
+                margin: '0 auto',
+              },
+            }}
+          />
+
+          <Lightbox
+            open={open}
+            close={toggleOpen(false)}
+            index={index}
+            slides={poi.media.map((m) => ({
+              src: m.url,
+            }))}
+            on={{ view: updateIndex }}
+            animation={{ fade: 0 }}
+            controller={{ closeOnPullDown: true, closeOnBackdropClick: true }}
+            styles={{
+              container: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              },
+            }}
+          />
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between">
+            <h2 className="line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
+              {poi.name}
+            </h2>
+
+            <div className="flex items-center">
+              <FavoriteButton />
+
+              <BookmarkButton />
+
+              <Menu />
+            </div>
+          </div>
+
+          <p className="mt-2 text-sm text-primary">{poi.category.name}</p>
+          <CollapsibleText text={poi.description} />
+          <h2 className="mt-8 text-lg font-bold">Information</h2>
+          <InformationTable />
+        </div>
+      </div>
+
+      <div className="w-full">
+        <MapContainer />
+      </div>
+
+      <hr className="my-4" />
+
+      <Amenities />
+
+      <hr className="my-4" />
+
+      <NearbyPois />
+
+      <hr className="my-4" />
+
+      {/* <Reviews /> */}
+    </main>
+  );
 }

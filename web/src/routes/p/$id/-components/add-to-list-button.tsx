@@ -1,7 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
-import { createListItem } from "~/lib/api";
+import { Button } from '@/components/ui/button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 type Props = {
   poiId: string;
@@ -37,14 +36,16 @@ export function useAddToList() {
   const qc = useQueryClient();
 
   const mutation = useMutation({
-    mutationKey: ["add-to-list"],
-    mutationFn: async ({ poiId, listId }: Data) =>
-      createListItem(listId, poiId),
+    mutationKey: ['add-to-list'],
+    mutationFn: async ({ poiId, listId }: Data) => {
+      toast.error(`Not implemented ${poiId} ${listId}`);
+      // return createListItem(listId, poiId);
+    },
     onSuccess: async () => {
       await qc.invalidateQueries({
-        queryKey: ["my-lists-info"],
+        queryKey: ['my-lists-info'],
       });
-      toast.success("Added to the list");
+      toast.success('Added to the list');
     },
     onError: (e) => {
       toast.error(`Cannot add to the list: ${e.message}`);

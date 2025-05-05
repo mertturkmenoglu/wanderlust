@@ -1,24 +1,23 @@
-import FormattedRating from "~/components/kit/formatted-rating";
-
-import { ExternalLinkIcon } from "lucide-react";
-import { useLoaderData } from "react-router";
-import { Progress } from "~/components/ui/progress";
-import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { loader } from "../route";
-import OpenHoursDialog from "./open-hours-dialog";
+import FormattedRating from '@/components/kit/formatted-rating';
+import { Progress } from '@/components/ui/progress';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { getRouteApi } from '@tanstack/react-router';
+import { ExternalLinkIcon } from 'lucide-react';
+import OpenHoursDialog from './open-hours-dialog';
 
 function useWebsiteHostname(s: string): [string, boolean] {
   try {
     const url = new URL(s);
     return [url.hostname, true];
   } catch (e) {
-    return ["", false];
+    return ['', false];
   }
 }
 
 export default function InformationTable() {
-  const { poi } = useLoaderData<typeof loader>();
-  const [host, ok] = useWebsiteHostname(poi.website ?? "");
+  const route = getRouteApi('/p/$id/');
+  const { poi } = route.useLoaderData();
+  const [host, ok] = useWebsiteHostname(poi.website ?? '');
 
   function calculateRating() {
     if (poi.totalVotes === 0) return 0;
@@ -76,8 +75,8 @@ export default function InformationTable() {
             <br />
             {poi.address.line2}
             <br />
-            {poi.address.city.name}, {poi.address.city.stateName} /{" "}
-            {poi.address.city.countryName}
+            {poi.address.city.name}, {poi.address.city.state.name} /{' '}
+            {poi.address.city.country.name}
             <br />
             {poi.address.postalCode}
           </TableCell>

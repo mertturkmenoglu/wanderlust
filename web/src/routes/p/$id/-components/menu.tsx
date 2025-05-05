@@ -1,9 +1,4 @@
-import { Link, useLoaderData } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { EllipsisVertical, FlagIcon, Plus, Share2 } from "lucide-react";
-import { useContext, useState } from "react";
-import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -12,32 +7,36 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { getListStatus } from "~/lib/api-requests";
-import { AuthContext } from "~/providers/auth-provider";
-import { loader } from "../route";
-import AddToListButton from "./add-to-list-button";
+} from '@/components/ui/select';
+import { AuthContext } from '@/providers/auth-provider';
+import { useQuery } from '@tanstack/react-query';
+import { getRouteApi, Link } from '@tanstack/react-router';
+import { EllipsisVertical, FlagIcon, Plus, Share2 } from 'lucide-react';
+import { useContext, useState } from 'react';
+import { toast } from 'sonner';
+import AddToListButton from './add-to-list-button';
 
 async function handleShareClick() {
   await navigator.clipboard.writeText(window.location.href);
-  toast.success("Link copied to clipboard!");
+  toast.success('Link copied to clipboard!');
 }
 
 export default function Menu() {
-  const { poi } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/p/$id/');
+  const { poi } = route.useLoaderData();
   const auth = useContext(AuthContext);
   const [listId, setListId] = useState<string | null>(null);
   const query = useMyListsInfo(poi.id);
@@ -91,7 +90,13 @@ export default function Menu() {
               size="sm"
               asChild
             >
-              <Link to={`/report?id=${poi.id}&type=poi`}>
+              <Link
+                to="/report"
+                search={{
+                  id: poi.id,
+                  type: 'poi',
+                }}
+              >
                 <FlagIcon className="mr-2 size-4" />
                 Report
               </Link>
@@ -137,8 +142,12 @@ export function useMyListsInfo(poiId: string) {
   const isSignedIn = !!auth.user;
 
   const query = useQuery({
-    queryKey: ["my-lists-info", poiId],
-    queryFn: async () => getListStatus(poiId),
+    queryKey: ['my-lists-info', poiId],
+    queryFn: async () => ({
+      data: {
+        statuses: [] as Array<{ id: string; name: string; includes: boolean }>,
+      },
+    }) /*getListStatus(poiId),*/,
     enabled: isSignedIn,
   });
 

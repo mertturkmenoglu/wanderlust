@@ -1,25 +1,25 @@
-import { useLoaderData } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { LoaderCircleIcon, StarIcon } from "lucide-react";
-import FormattedRating from "~/components/kit/formatted-rating";
-import { Progress } from "~/components/ui/progress";
-import { getPoiRatings } from "~/lib/api-requests";
-import { GetPoiRatingsResponseDto } from "~/lib/dto";
-import { computeRating } from "~/lib/rating";
-import { loader } from "../../route";
-import CreateReviewDialog from "./create-dialog";
+import { useQuery } from '@tanstack/react-query';
+import { LoaderCircleIcon, StarIcon } from 'lucide-react';
+import { useLoaderData } from 'react-router';
+import FormattedRating from '~/components/kit/formatted-rating';
+import { Progress } from '~/components/ui/progress';
+import { getPoiRatings } from '~/lib/api-requests';
+import { GetPoiRatingsResponseDto } from '~/lib/dto';
+import { computeRating } from '~/lib/rating';
+import { loader } from '../../../../../../../web-old/old/app/routes/p.$id/route';
+import CreateReviewDialog from './create-dialog';
 
 export default function Header() {
   const { poi } = useLoaderData<typeof loader>();
   const rating = computeRating(poi.totalPoints, poi.totalVotes);
-  const fmt = Intl.NumberFormat("en-US", {
-    style: "decimal",
-    compactDisplay: "short",
-    notation: "compact",
+  const fmt = Intl.NumberFormat('en-US', {
+    style: 'decimal',
+    compactDisplay: 'short',
+    notation: 'compact',
   });
 
   const query = useQuery({
-    queryKey: ["poi-ratings", poi.id],
+    queryKey: ['poi-ratings', poi.id],
     queryFn: async () => getPoiRatings(poi.id),
   });
 
@@ -60,13 +60,13 @@ type Props = {
 
 function Ratings({ ratings }: Props) {
   const entries = Object.entries(ratings.ratings).map(
-    (v) => [+v[0], v[1]] as const
+    (v) => [+v[0], v[1]] as const,
   );
   const sorted = entries.sort((a, b) => b[0] - a[0]);
-  const fmt = Intl.NumberFormat("en-US", {
-    compactDisplay: "short",
-    style: "decimal",
-    notation: "compact",
+  const fmt = Intl.NumberFormat('en-US', {
+    compactDisplay: 'short',
+    style: 'decimal',
+    notation: 'compact',
   });
 
   return (

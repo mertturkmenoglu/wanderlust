@@ -1,78 +1,53 @@
-import { Link, useLoaderData } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import ky from "ky";
-import { LoaderCircleIcon } from "lucide-react";
-import AppMessage from "~/components/blocks/app-message";
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
-import { ipx } from "~/lib/img-proxy";
-import { loader } from "../route";
+import AppMessage from '@/components/blocks/app-message';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { ipx } from '@/lib/ipx';
+import { type Props as THit } from '@/routes/search/-components/hit';
+import { useQuery } from '@tanstack/react-query';
+import { getRouteApi, Link } from '@tanstack/react-router';
+import { LoaderCircleIcon } from 'lucide-react';
 
 type SearchResponse = {
   found: number;
   hits: Array<{
-    document: {
-      id: string;
-      location: [number, number];
-      name: string;
-      poi: {
-        Amenities: Array<{
-          Amenity: {
-            ID: number;
-            Name: string;
-          };
-        }>;
-        Category: {
-          ID: number;
-          Name: string;
-        };
-        City: {
-          CountryName: string;
-          Name: string;
-          StateName: string;
-        };
-        Media: Array<{
-          MediaOrder: number;
-          Url: string;
-        }>;
-        Poi: {
-          ID: string;
-        };
-      };
-    };
+    document: THit['hit'];
   }>;
   out_of: number;
   page: number;
 };
 
 export default function NearbyPois() {
+  const route = getRouteApi('/p/$id/');
   const {
     poi: {
       id,
       address: { lat, lng },
     },
-    searchApiKey,
-    searchApiUrl,
-  } = useLoaderData<typeof loader>();
+  } = route.useLoaderData();
+  const searchApiKey = import.meta.env.VITE_SEARCH_CLIENT_API_KEY ?? '';
+  const searchApiUrl = import.meta.env.VITE_SEARCH_CLIENT_URL ?? '';
 
   const query = useQuery({
-    queryKey: ["poi-nearby", id],
+    queryKey: ['poi-nearby', id],
     queryFn: async () => {
       const sp = new URLSearchParams();
-      sp.append("q", "*");
-      sp.append("query_by", "name");
-      sp.append("filter_by", `location:(${lat},${lng},50 km)`);
+      sp.append('q', '*');
+      sp.append('query_by', 'name');
+      sp.append('filter_by', `location:(${lat},${lng},50 km)`);
       const qs = sp.toString();
-      const res = await ky
-        .get(`${searchApiUrl}/collections/pois/documents/search?${qs}`, {
+      const res = await fetch(
+        `${searchApiUrl}/collections/pois/documents/search?${qs}`,
+        {
           headers: {
-            "X-TYPESENSE-API-KEY": searchApiKey,
+            'X-TYPESENSE-API-KEY': searchApiKey,
           },
-        })
-        .json<SearchResponse>();
-
-      return res;
+        },
+      );
+      const data = (await res.json()) as SearchResponse;
+      return data;
     },
   });
+
+  console.log({ abc: query.data?.hits });
 
   if (query.data) {
     return (
@@ -81,10 +56,15 @@ export default function NearbyPois() {
         <ScrollArea>
           <div className="flex gap-8 my-4">
             {query.data.hits.slice(0, 6).map(({ document: p }) => (
-              <Link to={`/p/${p.poi.Poi.ID}`}>
+              <Link
+                to="/p/$id"
+                params={{
+                  id: p.id,
+                }}
+              >
                 <div key={p.id} className="group w-[256px]">
                   <img
-                    src={ipx(p.poi.Media[0].Url, "w_512")}
+                    src={ipx(p.poi.media[0]?.url ?? '', 'w_512')}
                     alt=""
                     className="aspect-video w-full rounded-md object-cover"
                   />
@@ -94,14 +74,15 @@ export default function NearbyPois() {
                       {p.name}
                     </div>
                     <div className="line-clamp-1 text-sm text-muted-foreground">
-                      {p.poi.City.Name} / {p.poi.City.CountryName}
+                      {p.poi.address.city.name} /{' '}
+                      {p.poi.address.city.country.name}
                     </div>
                   </div>
 
                   <div>
                     <div className="flex-1 space-y-2">
                       <div className="text-sm text-primary">
-                        {p.poi.Category.Name}
+                        {p.poi.category.name}
                       </div>
                     </div>
                   </div>

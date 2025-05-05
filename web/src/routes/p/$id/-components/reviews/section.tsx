@@ -1,19 +1,19 @@
-import { useLoaderData } from "react-router";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { LoaderCircleIcon } from "lucide-react";
-import { useMemo } from "react";
-import AppMessage from "~/components/blocks/app-message";
-import { Button } from "~/components/ui/button";
-import { Separator } from "~/components/ui/separator";
-import { getReviewsByPoiId } from "~/lib/api";
-import { loader } from "../../route";
-import { ReviewCard } from "./card";
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { LoaderCircleIcon } from 'lucide-react';
+import { useMemo } from 'react';
+import { useLoaderData } from 'react-router';
+import AppMessage from '~/components/blocks/app-message';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { getReviewsByPoiId } from '~/lib/api';
+import { loader } from '../../../../../../../web-old/old/app/routes/p.$id/route';
+import { ReviewCard } from './card';
 
 export function Section() {
   const { poi } = useLoaderData<typeof loader>();
 
   const query = useInfiniteQuery({
-    queryKey: ["reviews", poi.id],
+    queryKey: ['reviews', poi.id],
     queryFn: ({ pageParam }) => getReviewsByPoiId(poi.id, pageParam, 10),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
@@ -73,10 +73,10 @@ export function Section() {
             disabled={!query.hasNextPage || query.isFetchingNextPage}
           >
             {query.isFetchingNextPage
-              ? "Loading more..."
+              ? 'Loading more...'
               : query.hasNextPage
-              ? "Load More"
-              : "Nothing more to load"}
+                ? 'Load More'
+                : 'Nothing more to load'}
           </Button>
         </div>
       )}

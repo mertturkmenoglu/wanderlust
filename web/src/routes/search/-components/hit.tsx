@@ -1,6 +1,6 @@
 import Card from '@/components/blocks/autocomplete/card';
 
-type Props = {
+export type Props = {
   hit: {
     id: string;
     location: [number, number];

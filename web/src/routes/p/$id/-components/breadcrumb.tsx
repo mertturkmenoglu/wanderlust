@@ -1,4 +1,3 @@
-import { Link, useLoaderData } from "react-router";
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -6,11 +5,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Breadcrumb as ShadcnBreadcrumb,
-} from "~/components/ui/breadcrumb";
-import { loader } from "../route";
+} from '@/components/ui/breadcrumb';
+import { getRouteApi, Link } from '@tanstack/react-router';
 
 export default function Breadcrumb() {
-  const { poi } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/p/$id/');
+  const { poi } = route.useLoaderData();
   const categoryLink = `/search?pois[refinementList][poi.Category.Name][0]=${poi.category.name}`;
 
   return (

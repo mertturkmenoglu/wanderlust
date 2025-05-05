@@ -9,8 +9,6 @@ import invariant from "tiny-invariant";
 import Lightbox, { ThumbnailsRef } from "yet-another-react-lightbox";
 import Inline from "yet-another-react-lightbox/plugins/inline";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import yarlThumbnailStyles from "yet-another-react-lightbox/plugins/thumbnails.css?url";
-import yarlStyles from "yet-another-react-lightbox/styles.css?url";
 import CollapsibleText from "~/components/blocks/collapsible-text";
 import { GeneralErrorBoundary } from "~/components/blocks/error-boundary";
 import { getPoiById } from "~/lib/api";
@@ -50,8 +48,6 @@ export function links(): Route.LinkDescriptors {
     { rel: "stylesheet", href: uppyDashboardStyles },
     { rel: "stylesheet", href: uppyFileInputStyles },
     { rel: "stylesheet", href: uppyImageEditorStyles },
-    { rel: "stylesheet", href: yarlStyles },
-    { rel: "stylesheet", href: yarlThumbnailStyles },
   ];
 }
 

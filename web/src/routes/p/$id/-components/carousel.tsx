@@ -1,15 +1,15 @@
-import { useLoaderData } from "react-router";
 import {
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
   Carousel as ShadcnCarousel,
-} from "~/components/ui/carousel";
-import { loader } from "../route";
+} from '@/components/ui/carousel';
+import { getRouteApi } from '@tanstack/react-router';
 
 export default function Carousel() {
-  const { poi } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/p/$id/');
+  const { poi } = route.useLoaderData();
   const media = poi.media;
 
   return (

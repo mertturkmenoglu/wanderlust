@@ -1,18 +1,18 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useLoaderData, useRevalidator } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Uppy from "@uppy/core";
-import ImageEditor from "@uppy/image-editor";
-import { Dashboard } from "@uppy/react";
-import XHRUpload from "@uppy/xhr-upload";
-import { PencilIcon, UploadIcon } from "lucide-react";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import InputError from "~/components/kit/input-error";
-import InputInfo from "~/components/kit/input-info";
-import { Rating } from "~/components/kit/rating";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Uppy from '@uppy/core';
+import ImageEditor from '@uppy/image-editor';
+import { Dashboard } from '@uppy/react';
+import XHRUpload from '@uppy/xhr-upload';
+import { PencilIcon, UploadIcon } from 'lucide-react';
+import { useContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useLoaderData, useRevalidator } from 'react-router';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import InputError from '~/components/kit/input-error';
+import InputInfo from '~/components/kit/input-info';
+import { Rating } from '~/components/kit/rating';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,19 +23,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { Button } from "~/components/ui/button";
+} from '~/components/ui/alert-dialog';
+import { Button } from '~/components/ui/button';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
-import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
-import { createReview } from "~/lib/api-requests";
-import { lengthTracker } from "~/lib/form-utils";
-import { loader } from "../../route";
-import { AuthContext } from "~/providers/auth-provider";
+} from '~/components/ui/collapsible';
+import { Label } from '~/components/ui/label';
+import { Textarea } from '~/components/ui/textarea';
+import { createReview } from '~/lib/api-requests';
+import { lengthTracker } from '~/lib/form-utils';
+import { AuthContext } from '~/providers/auth-provider';
+import { loader } from '../../../../../../../web-old/old/app/routes/p.$id/route';
 
 const schema = z.object({
   content: z.string().min(5).max(2048),
@@ -58,7 +58,7 @@ export default function CreateReviewDialog() {
   const [uppy] = useState(() => {
     const uppy = new Uppy({
       restrictions: {
-        allowedFileTypes: [".jpg", ".jpeg", ".png"],
+        allowedFileTypes: ['.jpg', '.jpeg', '.png'],
         maxNumberOfFiles: 10,
         maxFileSize: 5 * 1024 * 1024,
       },
@@ -68,10 +68,10 @@ export default function CreateReviewDialog() {
   });
 
   const create = useMutation({
-    mutationKey: ["create-review"],
+    mutationKey: ['create-review'],
     mutationFn: async () =>
       createReview({
-        content: form.getValues("content"),
+        content: form.getValues('content'),
         poiId: poi.id,
         rating: rating,
       }),
@@ -79,34 +79,34 @@ export default function CreateReviewDialog() {
       mediaUpload.mutate(data.id);
     },
     onError: () => {
-      toast.error("Something went wrong");
+      toast.error('Something went wrong');
     },
   });
 
   const mediaUpload = useMutation({
-    mutationKey: ["review-media-upload"],
+    mutationKey: ['review-media-upload'],
     mutationFn: async (reviewId: string) => {
       const uppyWithXHR = uppy
         .use(XHRUpload, {
           endpoint: `${baseApiUrl}reviews/${reviewId}/media`,
           withCredentials: true,
           shouldRetry: () => false,
-          fieldName: "files",
+          fieldName: 'files',
           limit: 5,
         })
-        .on("complete", async (res) => {
+        .on('complete', async (res) => {
           if (res.failed?.length === 0) {
-            await qc.invalidateQueries({ queryKey: ["reviews", poi.id] });
-            await qc.invalidateQueries({ queryKey: ["poi-ratings", poi.id] });
+            await qc.invalidateQueries({ queryKey: ['reviews', poi.id] });
+            await qc.invalidateQueries({ queryKey: ['poi-ratings', poi.id] });
             revalidator.revalidate();
             uppy.clear();
-            form.reset({ content: "" });
+            form.reset({ content: '' });
             setRating(0);
-            toast.success("Review added.");
+            toast.success('Review added.');
           }
         })
-        .on("error", () => {
-          toast.error("Media upload failed");
+        .on('error', () => {
+          toast.error('Media upload failed');
         });
 
       await uppyWithXHR.upload();
@@ -157,9 +157,9 @@ export default function CreateReviewDialog() {
               id="content"
               rows={5}
               placeholder="Leave a review"
-              {...form.register("content")}
+              {...form.register('content')}
             />
-            <InputInfo text={lengthTracker(form.watch("content"), 2048)} />
+            <InputInfo text={lengthTracker(form.watch('content'), 2048)} />
             <InputError error={form.formState.errors.content} />
           </div>
 
@@ -176,7 +176,7 @@ export default function CreateReviewDialog() {
                   hideUploadButton={true}
                   hideCancelButton={true}
                   height={384}
-                  note={"Maximum 4 images. Limit 5 MB."}
+                  note={'Maximum 4 images. Limit 5 MB.'}
                 />
               </div>
             </CollapsibleContent>
