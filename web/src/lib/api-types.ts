@@ -1603,6 +1603,462 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/lists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Lists of User
+         * @description Get all lists of the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllListsOfUserOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create List
+         * @description Create a new list
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateListInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateListOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/status/{poiId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check if List Includes POI
+         * @description Check if list includes given poi id
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    poiId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetListStatusesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/user/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Public Lists of User
+         * @description Get public lists of user with username
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetPublicListsOfUserOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get List by ID
+         * @description Get a list by id
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetListByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete List
+         * @description Delete a list by id
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update List
+         * @description Update a list by id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateListInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateListOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/lists/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create List Item
+         * @description Add an item to a list by its id
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateListItemInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateListItemOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update List Items
+         * @description Update the items of a list
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/lists/{id}/items/{poiId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove List Item
+         * @description Remove a POI from a list
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/pois/peek": {
         parameters: {
             query?: never;
@@ -2537,6 +2993,52 @@ export interface components {
             /** @description ID of user */
             userId: string;
         };
+        CreateListInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isPublic: boolean;
+            name: string;
+        };
+        CreateListItemInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poiId: string;
+        };
+        CreateListItemOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Created at time of list item
+             */
+            createdAt: string;
+            /** @description ID of the list */
+            listId: string;
+            /**
+             * Format: int32
+             * @description Index of the POI in the list
+             */
+            listIndex: number;
+            /** @description ID of the POI */
+            poiId: string;
+        };
+        CreateListOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
+        };
         ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
             location?: string;
@@ -2618,6 +3120,15 @@ export interface components {
             readonly $schema?: string;
             isFollowing: boolean;
         };
+        GetAllListsOfUserOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            lists: components["schemas"]["List"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
         GetCityByIdOutputBody: {
             /**
              * Format: uri
@@ -2637,6 +3148,22 @@ export interface components {
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
+        };
+        GetListByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
+        };
+        GetListStatusesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            statuses: components["schemas"]["ListStatus"][];
         };
         GetMeOutputBody: {
             /**
@@ -2718,6 +3245,15 @@ export interface components {
             readonly $schema?: string;
             meta: components["schemas"]["GetPoiByIdMeta"];
             poi: components["schemas"]["Poi"];
+        };
+        GetPublicListsOfUserOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            lists: components["schemas"]["List"][];
+            pagination: components["schemas"]["PaginationInfo"];
         };
         GetUserActivitiesOutputBody: {
             /**
@@ -2806,6 +3342,28 @@ export interface components {
             media: components["schemas"]["Media"];
             name: string;
         };
+        List: {
+            /**
+             * Format: date-time
+             * @description Date and time when the list was created
+             */
+            createdAt: string;
+            /** @description ID of the list */
+            id: string;
+            /** @description Whether the list is public or not */
+            isPublic: boolean;
+            items: components["schemas"]["ListItem"][];
+            /** @description Name of the list */
+            name: string;
+            /**
+             * Format: date-time
+             * @description Date and time when the list was last updated
+             */
+            updatedAt: string;
+            user: components["schemas"]["ListUser"];
+            /** @description ID of the user that owns the list */
+            userId: string;
+        };
         ListAmenitiesOutputBody: {
             /**
              * Format: uri
@@ -2821,6 +3379,44 @@ export interface components {
              */
             readonly $schema?: string;
             categories: components["schemas"]["Category"][];
+        };
+        ListItem: {
+            /** Format: date-time */
+            createdAt: string;
+            listId: string;
+            /** Format: int32 */
+            listIndex: number;
+            poi: components["schemas"]["ListItemPoi"];
+            poiId: string;
+        };
+        ListItemPoi: {
+            address: components["schemas"]["Address"];
+            /** Format: int32 */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /** Format: int32 */
+            categoryId: number;
+            firstMedia: components["schemas"]["Media"];
+            id: string;
+            name: string;
+        };
+        ListStatus: {
+            /** @description ID of the list */
+            id: string;
+            /** @description Whether the POI is included in the list */
+            includes: boolean;
+            /** @description Name of the list */
+            name: string;
+        };
+        ListUser: {
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description ID of the user */
+            id: string;
+            /** @description Profile image of the user */
+            profileImage: string | null;
+            /** @description Username of the user */
+            username: string;
         };
         LoginInputBody: {
             /**
@@ -3267,6 +3863,23 @@ export interface components {
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
+        };
+        UpdateListInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isPublic: boolean;
+            name: string;
+        };
+        UpdateListOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
         };
         UpdateUserProfileImageInputBody: {
             /**
