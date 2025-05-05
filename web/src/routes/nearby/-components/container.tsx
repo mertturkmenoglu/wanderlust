@@ -1,15 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import "leaflet-defaulticon-compatibility";
-import { LoaderCircleIcon } from "lucide-react";
-import { MapContainer, TileLayer } from "react-leaflet";
-import AppMessage from "~/components/blocks/app-message";
-import GeoSearch from "./geo-search.client";
+import AppMessage from '@/components/blocks/app-message';
+import { useQuery } from '@tanstack/react-query';
+import { LoaderCircleIcon } from 'lucide-react';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import GeoSearch from './geo-search';
 
 export default function Container() {
   const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
 
   const query = useQuery({
-    queryKey: ["geolocation-permission"],
+    queryKey: ['geolocation-permission'],
     queryFn: async () => {
       return new Promise<[number, number]>((res, rej) => {
         navigator.geolocation.getCurrentPosition(
@@ -21,7 +20,7 @@ export default function Container() {
           },
           {
             timeout: 100_000,
-          }
+          },
         );
       });
     },
@@ -49,7 +48,7 @@ export default function Container() {
       className="mt-4"
       scrollWheelZoom={true}
       style={{
-        height: "600px",
+        height: '600px',
       }}
     >
       <TileLayer
