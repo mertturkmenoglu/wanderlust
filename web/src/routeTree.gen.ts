@@ -54,6 +54,8 @@ import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/fol
 import { Route as UUsernameFollowersIndexImport } from './routes/u/$username/followers/index'
 import { Route as UUsernameFavoritesIndexImport } from './routes/u/$username/favorites/index'
 import { Route as UUsernameActivitiesIndexImport } from './routes/u/$username/activities/index'
+import { Route as ListsIdItemsIndexImport } from './routes/lists/$id/items/index'
+import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashboard/cities/index'
@@ -328,6 +330,18 @@ const UUsernameActivitiesIndexRoute = UUsernameActivitiesIndexImport.update({
   id: '/activities/',
   path: '/activities/',
   getParentRoute: () => UUsernameRoute,
+} as any)
+
+const ListsIdItemsIndexRoute = ListsIdItemsIndexImport.update({
+  id: '/lists/$id/items/',
+  path: '/lists/$id/items/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ListsIdEditIndexRoute = ListsIdEditIndexImport.update({
+  id: '/lists/$id/edit/',
+  path: '/lists/$id/edit/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthForgotPasswordResetIndexRoute =
@@ -731,6 +745,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordResetIndexImport
       parentRoute: typeof rootRoute
     }
+    '/lists/$id/edit/': {
+      id: '/lists/$id/edit/'
+      path: '/lists/$id/edit'
+      fullPath: '/lists/$id/edit'
+      preLoaderRoute: typeof ListsIdEditIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/lists/$id/items/': {
+      id: '/lists/$id/items/'
+      path: '/lists/$id/items'
+      fullPath: '/lists/$id/items'
+      preLoaderRoute: typeof ListsIdItemsIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/u/$username/activities/': {
       id: '/u/$username/activities/'
       path: '/activities'
@@ -993,6 +1021,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/lists/$id/edit': typeof ListsIdEditIndexRoute
+  '/lists/$id/items': typeof ListsIdItemsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
   '/u/$username/followers': typeof UUsernameFollowersIndexRoute
@@ -1050,6 +1080,8 @@ export interface FileRoutesByTo {
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/lists/$id/edit': typeof ListsIdEditIndexRoute
+  '/lists/$id/items': typeof ListsIdItemsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
   '/u/$username/followers': typeof UUsernameFollowersIndexRoute
@@ -1112,6 +1144,8 @@ export interface FileRoutesById {
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
+  '/lists/$id/edit/': typeof ListsIdEditIndexRoute
+  '/lists/$id/items/': typeof ListsIdItemsIndexRoute
   '/u/$username/activities/': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites/': typeof UUsernameFavoritesIndexRoute
   '/u/$username/followers/': typeof UUsernameFollowersIndexRoute
@@ -1175,6 +1209,8 @@ export interface FileRouteTypes {
     | '/dashboard/cities'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/lists/$id/edit'
+    | '/lists/$id/items'
     | '/u/$username/activities'
     | '/u/$username/favorites'
     | '/u/$username/followers'
@@ -1231,6 +1267,8 @@ export interface FileRouteTypes {
     | '/dashboard/cities'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/lists/$id/edit'
+    | '/lists/$id/items'
     | '/u/$username/activities'
     | '/u/$username/favorites'
     | '/u/$username/followers'
@@ -1291,6 +1329,8 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/cities/'
     | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
+    | '/lists/$id/edit/'
+    | '/lists/$id/items/'
     | '/u/$username/activities/'
     | '/u/$username/favorites/'
     | '/u/$username/followers/'
@@ -1338,6 +1378,8 @@ export interface RootRouteChildren {
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
+  ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
+  ListsIdItemsIndexRoute: typeof ListsIdItemsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1368,6 +1410,8 @@ const rootRouteChildren: RootRouteChildren = {
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
+  ListsIdEditIndexRoute: ListsIdEditIndexRoute,
+  ListsIdItemsIndexRoute: ListsIdItemsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -1406,7 +1450,9 @@ export const routeTree = rootRoute
         "/discover/events/",
         "/lists/$id/",
         "/p/$id/",
-        "/_auth/forgot-password/reset/"
+        "/_auth/forgot-password/reset/",
+        "/lists/$id/edit/",
+        "/lists/$id/items/"
       ]
     },
     "/": {
@@ -1588,6 +1634,12 @@ export const routeTree = rootRoute
     },
     "/_auth/forgot-password/reset/": {
       "filePath": "_auth/forgot-password/reset/index.tsx"
+    },
+    "/lists/$id/edit/": {
+      "filePath": "lists/$id/edit/index.tsx"
+    },
+    "/lists/$id/items/": {
+      "filePath": "lists/$id/items/index.tsx"
     },
     "/u/$username/activities/": {
       "filePath": "u/$username/activities/index.tsx",

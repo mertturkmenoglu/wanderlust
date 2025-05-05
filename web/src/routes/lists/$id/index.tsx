@@ -113,7 +113,10 @@ function RouteComponent() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Link
-                      to={`/lists/${list.id}/edit`}
+                      to="/lists/$id/edit"
+                      params={{
+                        id: list.id,
+                      }}
                       className="flex items-center gap-2 w-full"
                     >
                       <PencilIcon className="size-3" />
