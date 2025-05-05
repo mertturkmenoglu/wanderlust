@@ -38,6 +38,7 @@ import { Route as TripsIdIndexImport } from './routes/trips/$id/index'
 import { Route as SettingsProfileIndexImport } from './routes/settings/profile/index'
 import { Route as SettingsAccountIndexImport } from './routes/settings/account/index'
 import { Route as PIdIndexImport } from './routes/p/$id/index'
+import { Route as ListsIdIndexImport } from './routes/lists/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexImport } from './routes/cities/$/index'
@@ -230,6 +231,12 @@ const SettingsAccountIndexRoute = SettingsAccountIndexImport.update({
 const PIdIndexRoute = PIdIndexImport.update({
   id: '/p/$id/',
   path: '/p/$id/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ListsIdIndexRoute = ListsIdIndexImport.update({
+  id: '/lists/$id/',
+  path: '/lists/$id/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -619,6 +626,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverEventsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/lists/$id/': {
+      id: '/lists/$id/'
+      path: '/lists/$id'
+      fullPath: '/lists/$id'
+      preLoaderRoute: typeof ListsIdIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/p/$id/': {
       id: '/p/$id/'
       path: '/p/$id'
@@ -964,6 +978,7 @@ export interface FileRoutesByFullPath {
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
   '/settings/profile': typeof SettingsProfileIndexRoute
@@ -1020,6 +1035,7 @@ export interface FileRoutesByTo {
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
   '/settings/profile': typeof SettingsProfileIndexRoute
@@ -1081,6 +1097,7 @@ export interface FileRoutesById {
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
+  '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
@@ -1143,6 +1160,7 @@ export interface FileRouteTypes {
     | '/cities/$'
     | '/cities/list'
     | '/discover/events'
+    | '/lists/$id'
     | '/p/$id'
     | '/settings/account'
     | '/settings/profile'
@@ -1198,6 +1216,7 @@ export interface FileRouteTypes {
     | '/cities/$'
     | '/cities/list'
     | '/discover/events'
+    | '/lists/$id'
     | '/p/$id'
     | '/settings/account'
     | '/settings/profile'
@@ -1257,6 +1276,7 @@ export interface FileRouteTypes {
     | '/cities/$/'
     | '/cities/list/'
     | '/discover/events/'
+    | '/lists/$id/'
     | '/p/$id/'
     | '/settings/account/'
     | '/settings/profile/'
@@ -1315,6 +1335,7 @@ export interface RootRouteChildren {
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
+  ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
 }
@@ -1344,6 +1365,7 @@ const rootRouteChildren: RootRouteChildren = {
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
+  ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
 }
@@ -1382,6 +1404,7 @@ export const routeTree = rootRoute
         "/cities/$/",
         "/cities/list/",
         "/discover/events/",
+        "/lists/$id/",
         "/p/$id/",
         "/_auth/forgot-password/reset/"
       ]
@@ -1508,6 +1531,9 @@ export const routeTree = rootRoute
     },
     "/discover/events/": {
       "filePath": "discover/events/index.tsx"
+    },
+    "/lists/$id/": {
+      "filePath": "lists/$id/index.tsx"
     },
     "/p/$id/": {
       "filePath": "p/$id/index.tsx"
