@@ -11,6 +11,12 @@ func Authz(api huma.API, key authz.AuthzAct) func(ctx huma.Context, next func(hu
 	return func(ctx huma.Context, next func(huma.Context)) {
 		az := authz.New(getDb())
 		fn := authz.Fns[key]
+
+		if fn == nil {
+			huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
+			return
+		}
+
 		isAuthorized, err := fn(az, ctx)
 
 		if err != nil {

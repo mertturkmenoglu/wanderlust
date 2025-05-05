@@ -40,4 +40,10 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCategoryDelete:   IsAdmin,
 	ActCategoryUpdate:   IsAdmin,
 	ActUserMakeVerified: IsAdmin,
+	ActListRead:         FnListRead,
+	ActListStatusRead:   Identity,
+	ActListUpdate:       FnListUpdate,
+	ActListDelete:       FnListDelete,
+	ActListItemCreate:   FnListItemCreate,
+	ActListItemDelete:   NotImplemented,
 }
