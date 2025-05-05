@@ -6,7 +6,7 @@ import { Progress } from '~/components/ui/progress';
 import { getPoiRatings } from '~/lib/api-requests';
 import { GetPoiRatingsResponseDto } from '~/lib/dto';
 import { computeRating } from '~/lib/rating';
-import { loader } from '../../../../../../../web-old/old/app/routes/p.$id/route';
+import { loader } from '../../../../../../old/app/routes/p.$id/route';
 import CreateReviewDialog from './create-dialog';
 
 export default function Header() {

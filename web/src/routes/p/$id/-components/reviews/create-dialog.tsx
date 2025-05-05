@@ -35,7 +35,7 @@ import { Textarea } from '~/components/ui/textarea';
 import { createReview } from '~/lib/api-requests';
 import { lengthTracker } from '~/lib/form-utils';
 import { AuthContext } from '~/providers/auth-provider';
-import { loader } from '../../../../../../../web-old/old/app/routes/p.$id/route';
+import { loader } from '../../../../../../old/app/routes/p.$id/route';
 
 const schema = z.object({
   content: z.string().min(5).max(2048),

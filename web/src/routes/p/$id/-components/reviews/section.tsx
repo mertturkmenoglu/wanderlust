@@ -6,7 +6,7 @@ import AppMessage from '~/components/blocks/app-message';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { getReviewsByPoiId } from '~/lib/api';
-import { loader } from '../../../../../../../web-old/old/app/routes/p.$id/route';
+import { loader } from '../../../../../../old/app/routes/p.$id/route';
 import { ReviewCard } from './card';
 
 export function Section() {
