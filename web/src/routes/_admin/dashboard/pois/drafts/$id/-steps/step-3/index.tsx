@@ -1,26 +1,27 @@
-import { useLoaderData } from "react-router";
-import { Controller, SubmitHandler } from "react-hook-form";
-import InputError from "~/components/kit/input-error";
-import { Checkbox } from "~/components/ui/checkbox";
-import { Label } from "~/components/ui/label";
-import { useAmenities } from "~/hooks/use-amenities";
-import { loader } from "../../route";
-import StepsNavigation from "../steps-navigation";
-import { useUpdateDraftMutation } from "../use-update-draft";
-import { useStep3Form } from "./hooks";
-import { FormInput } from "./schema";
+import InputError from '@/components/kit/input-error';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { api } from '@/lib/api';
+import { getRouteApi } from '@tanstack/react-router';
+import { Controller, type SubmitHandler } from 'react-hook-form';
+import StepsNavigation from '../steps-navigation';
+import { useUpdateDraftMutation } from '../use-update-draft';
+import { useStep3Form } from './hooks';
+import type { FormInput } from './schema';
 
 export default function Step3() {
-  const { draft } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/_admin/dashboard/pois/drafts/$id/');
+  const { draft: d } = route.useLoaderData();
+  let draft = d as any;
   const form = useStep3Form(draft);
-  const mutation = useUpdateDraftMutation<FormInput>(draft, "3");
-  const qAmenities = useAmenities();
+  const mutation = useUpdateDraftMutation<FormInput>(draft, 3);
+  const qAmenities = api.useQuery('get', '/api/v2/amenities/');
 
-  if (!qAmenities.data || !qAmenities.data.data.amenities) {
+  if (!qAmenities.data || !qAmenities.data.amenities) {
     return <></>;
   }
 
-  const amenities = qAmenities.data.data.amenities;
+  const amenities = qAmenities.data.amenities;
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     mutation.mutate(data);
@@ -58,8 +59,8 @@ export default function Step3() {
                                     ])
                                   : field.onChange(
                                       field.value?.filter(
-                                        (value) => value !== amenity.id
-                                      )
+                                        (value) => value !== amenity.id,
+                                      ),
                                     );
                               }}
                             />
