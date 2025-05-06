@@ -22,9 +22,6 @@ func Register(grp *huma.Group, app *core.Application) {
 
 	// routes.POST("/media", m.handlers.UploadMedia, middlewares.IsAuth, middlewares.Authz(authz.ActPoiMediaUpload))
 	// routes.DELETE("/media", m.handlers.DeleteMedia, middlewares.IsAuth, middlewares.Authz(authz.ActPoiMediaDelete))
-	// routes.POST("/drafts/new", m.handlers.CreateDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftCreate))
-	// routes.GET("/drafts", m.handlers.GetDrafts, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftCreate))
-	// routes.GET("/drafts/:id", m.handlers.GetDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftRead))
 	// routes.DELETE("/drafts/:id", m.handlers.DeleteDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftDelete))
 	// routes.PATCH("/drafts/:id", m.handlers.UpdateDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftUpdate))
 	// routes.POST("/drafts/:id/publish", m.handlers.PublishDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftPublish))
