@@ -58,6 +58,7 @@ import { Route as ListsIdItemsIndexImport } from './routes/lists/$id/items/index
 import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
+import { Route as AdminDashboardPoisIndexImport } from './routes/_admin/dashboard/pois/index'
 import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashboard/cities/index'
 import { Route as AdminDashboardCategoriesIndexImport } from './routes/_admin/dashboard/categories/index'
 import { Route as AdminDashboardAmenitiesIndexImport } from './routes/_admin/dashboard/amenities/index'
@@ -354,6 +355,12 @@ const AuthForgotPasswordResetIndexRoute =
 const AdminDashboardUsersIndexRoute = AdminDashboardUsersIndexImport.update({
   id: '/users/',
   path: '/users/',
+  getParentRoute: () => AdminDashboardRoute,
+} as any)
+
+const AdminDashboardPoisIndexRoute = AdminDashboardPoisIndexImport.update({
+  id: '/pois/',
+  path: '/pois/',
   getParentRoute: () => AdminDashboardRoute,
 } as any)
 
@@ -731,6 +738,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardCitiesIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/pois/': {
+      id: '/_admin/dashboard/pois/'
+      path: '/pois'
+      fullPath: '/dashboard/pois'
+      preLoaderRoute: typeof AdminDashboardPoisIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_admin/dashboard/users/': {
       id: '/_admin/dashboard/users/'
       path: '/users'
@@ -917,6 +931,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardAmenitiesIndexRoute: typeof AdminDashboardAmenitiesIndexRoute
   AdminDashboardCategoriesIndexRoute: typeof AdminDashboardCategoriesIndexRoute
   AdminDashboardCitiesIndexRoute: typeof AdminDashboardCitiesIndexRoute
+  AdminDashboardPoisIndexRoute: typeof AdminDashboardPoisIndexRoute
   AdminDashboardUsersIndexRoute: typeof AdminDashboardUsersIndexRoute
   AdminDashboardAmenitiesIdIndexRoute: typeof AdminDashboardAmenitiesIdIndexRoute
   AdminDashboardAmenitiesNewIndexRoute: typeof AdminDashboardAmenitiesNewIndexRoute
@@ -935,6 +950,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardAmenitiesIndexRoute: AdminDashboardAmenitiesIndexRoute,
   AdminDashboardCategoriesIndexRoute: AdminDashboardCategoriesIndexRoute,
   AdminDashboardCitiesIndexRoute: AdminDashboardCitiesIndexRoute,
+  AdminDashboardPoisIndexRoute: AdminDashboardPoisIndexRoute,
   AdminDashboardUsersIndexRoute: AdminDashboardUsersIndexRoute,
   AdminDashboardAmenitiesIdIndexRoute: AdminDashboardAmenitiesIdIndexRoute,
   AdminDashboardAmenitiesNewIndexRoute: AdminDashboardAmenitiesNewIndexRoute,
@@ -1019,6 +1035,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
+  '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
@@ -1078,6 +1095,7 @@ export interface FileRoutesByTo {
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
+  '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
@@ -1142,6 +1160,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/amenities/': typeof AdminDashboardAmenitiesIndexRoute
   '/_admin/dashboard/categories/': typeof AdminDashboardCategoriesIndexRoute
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
+  '/_admin/dashboard/pois/': typeof AdminDashboardPoisIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
@@ -1207,6 +1226,7 @@ export interface FileRouteTypes {
     | '/dashboard/amenities'
     | '/dashboard/categories'
     | '/dashboard/cities'
+    | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
     | '/lists/$id/edit'
@@ -1265,6 +1285,7 @@ export interface FileRouteTypes {
     | '/dashboard/amenities'
     | '/dashboard/categories'
     | '/dashboard/cities'
+    | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
     | '/lists/$id/edit'
@@ -1327,6 +1348,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/amenities/'
     | '/_admin/dashboard/categories/'
     | '/_admin/dashboard/cities/'
+    | '/_admin/dashboard/pois/'
     | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
     | '/lists/$id/edit/'
@@ -1484,6 +1506,7 @@ export const routeTree = rootRoute
         "/_admin/dashboard/amenities/",
         "/_admin/dashboard/categories/",
         "/_admin/dashboard/cities/",
+        "/_admin/dashboard/pois/",
         "/_admin/dashboard/users/",
         "/_admin/dashboard/amenities/$id/",
         "/_admin/dashboard/amenities/new/",
@@ -1626,6 +1649,10 @@ export const routeTree = rootRoute
     },
     "/_admin/dashboard/cities/": {
       "filePath": "_admin/dashboard/cities/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/pois/": {
+      "filePath": "_admin/dashboard/pois/index.tsx",
       "parent": "/_admin/dashboard"
     },
     "/_admin/dashboard/users/": {
