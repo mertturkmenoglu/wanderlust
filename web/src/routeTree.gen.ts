@@ -63,6 +63,7 @@ import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashbo
 import { Route as AdminDashboardCategoriesIndexImport } from './routes/_admin/dashboard/categories/index'
 import { Route as AdminDashboardAmenitiesIndexImport } from './routes/_admin/dashboard/amenities/index'
 import { Route as AdminDashboardUsersVerifyIndexImport } from './routes/_admin/dashboard/users/verify/index'
+import { Route as AdminDashboardPoisDraftsIndexImport } from './routes/_admin/dashboard/pois/drafts/index'
 import { Route as AdminDashboardPoisIdIndexImport } from './routes/_admin/dashboard/pois/$id/index'
 import { Route as AdminDashboardCitiesNewIndexImport } from './routes/_admin/dashboard/cities/new/index'
 import { Route as AdminDashboardCitiesIdIndexImport } from './routes/_admin/dashboard/cities/$id/index'
@@ -70,6 +71,7 @@ import { Route as AdminDashboardCategoriesNewIndexImport } from './routes/_admin
 import { Route as AdminDashboardCategoriesIdIndexImport } from './routes/_admin/dashboard/categories/$id/index'
 import { Route as AdminDashboardAmenitiesNewIndexImport } from './routes/_admin/dashboard/amenities/new/index'
 import { Route as AdminDashboardAmenitiesIdIndexImport } from './routes/_admin/dashboard/amenities/$id/index'
+import { Route as AdminDashboardPoisDraftsIdIndexImport } from './routes/_admin/dashboard/pois/drafts/$id/index'
 import { Route as AdminDashboardPoisIdEditIndexImport } from './routes/_admin/dashboard/pois/$id/edit/index'
 import { Route as AdminDashboardCitiesIdEditIndexImport } from './routes/_admin/dashboard/cities/$id/edit/index'
 import { Route as AdminDashboardCategoriesIdEditIndexImport } from './routes/_admin/dashboard/categories/$id/edit/index'
@@ -393,6 +395,13 @@ const AdminDashboardUsersVerifyIndexRoute =
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
+const AdminDashboardPoisDraftsIndexRoute =
+  AdminDashboardPoisDraftsIndexImport.update({
+    id: '/pois/drafts/',
+    path: '/pois/drafts/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
 const AdminDashboardPoisIdIndexRoute = AdminDashboardPoisIdIndexImport.update({
   id: '/pois/$id/',
   path: '/pois/$id/',
@@ -438,6 +447,13 @@ const AdminDashboardAmenitiesIdIndexRoute =
   AdminDashboardAmenitiesIdIndexImport.update({
     id: '/amenities/$id/',
     path: '/amenities/$id/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardPoisDraftsIdIndexRoute =
+  AdminDashboardPoisDraftsIdIndexImport.update({
+    id: '/pois/drafts/$id/',
+    path: '/pois/drafts/$id/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
@@ -879,6 +895,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardPoisIdIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/pois/drafts/': {
+      id: '/_admin/dashboard/pois/drafts/'
+      path: '/pois/drafts'
+      fullPath: '/dashboard/pois/drafts'
+      preLoaderRoute: typeof AdminDashboardPoisDraftsIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_admin/dashboard/users/verify/': {
       id: '/_admin/dashboard/users/verify/'
       path: '/users/verify'
@@ -912,6 +935,13 @@ declare module '@tanstack/react-router' {
       path: '/pois/$id/edit'
       fullPath: '/dashboard/pois/$id/edit'
       preLoaderRoute: typeof AdminDashboardPoisIdEditIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
+    '/_admin/dashboard/pois/drafts/$id/': {
+      id: '/_admin/dashboard/pois/drafts/$id/'
+      path: '/pois/drafts/$id'
+      fullPath: '/dashboard/pois/drafts/$id'
+      preLoaderRoute: typeof AdminDashboardPoisDraftsIdIndexImport
       parentRoute: typeof AdminDashboardImport
     }
   }
@@ -969,11 +999,13 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCitiesIdIndexRoute: typeof AdminDashboardCitiesIdIndexRoute
   AdminDashboardCitiesNewIndexRoute: typeof AdminDashboardCitiesNewIndexRoute
   AdminDashboardPoisIdIndexRoute: typeof AdminDashboardPoisIdIndexRoute
+  AdminDashboardPoisDraftsIndexRoute: typeof AdminDashboardPoisDraftsIndexRoute
   AdminDashboardUsersVerifyIndexRoute: typeof AdminDashboardUsersVerifyIndexRoute
   AdminDashboardAmenitiesIdEditIndexRoute: typeof AdminDashboardAmenitiesIdEditIndexRoute
   AdminDashboardCategoriesIdEditIndexRoute: typeof AdminDashboardCategoriesIdEditIndexRoute
   AdminDashboardCitiesIdEditIndexRoute: typeof AdminDashboardCitiesIdEditIndexRoute
   AdminDashboardPoisIdEditIndexRoute: typeof AdminDashboardPoisIdEditIndexRoute
+  AdminDashboardPoisDraftsIdIndexRoute: typeof AdminDashboardPoisDraftsIdIndexRoute
 }
 
 const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
@@ -990,6 +1022,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardCitiesIdIndexRoute: AdminDashboardCitiesIdIndexRoute,
   AdminDashboardCitiesNewIndexRoute: AdminDashboardCitiesNewIndexRoute,
   AdminDashboardPoisIdIndexRoute: AdminDashboardPoisIdIndexRoute,
+  AdminDashboardPoisDraftsIndexRoute: AdminDashboardPoisDraftsIndexRoute,
   AdminDashboardUsersVerifyIndexRoute: AdminDashboardUsersVerifyIndexRoute,
   AdminDashboardAmenitiesIdEditIndexRoute:
     AdminDashboardAmenitiesIdEditIndexRoute,
@@ -997,6 +1030,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
     AdminDashboardCategoriesIdEditIndexRoute,
   AdminDashboardCitiesIdEditIndexRoute: AdminDashboardCitiesIdEditIndexRoute,
   AdminDashboardPoisIdEditIndexRoute: AdminDashboardPoisIdEditIndexRoute,
+  AdminDashboardPoisDraftsIdIndexRoute: AdminDashboardPoisDraftsIdIndexRoute,
 }
 
 const AdminDashboardRouteWithChildren = AdminDashboardRoute._addFileChildren(
@@ -1086,11 +1120,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/cities/$id': typeof AdminDashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof AdminDashboardCitiesNewIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
+  '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
+  '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -1148,11 +1184,13 @@ export interface FileRoutesByTo {
   '/dashboard/cities/$id': typeof AdminDashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof AdminDashboardCitiesNewIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
+  '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
+  '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -1215,11 +1253,13 @@ export interface FileRoutesById {
   '/_admin/dashboard/cities/$id/': typeof AdminDashboardCitiesIdIndexRoute
   '/_admin/dashboard/cities/new/': typeof AdminDashboardCitiesNewIndexRoute
   '/_admin/dashboard/pois/$id/': typeof AdminDashboardPoisIdIndexRoute
+  '/_admin/dashboard/pois/drafts/': typeof AdminDashboardPoisDraftsIndexRoute
   '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
   '/_admin/dashboard/amenities/$id/edit/': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/_admin/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
   '/_admin/dashboard/pois/$id/edit/': typeof AdminDashboardPoisIdEditIndexRoute
+  '/_admin/dashboard/pois/drafts/$id/': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1283,11 +1323,13 @@ export interface FileRouteTypes {
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
     | '/dashboard/pois/$id'
+    | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
     | '/dashboard/pois/$id/edit'
+    | '/dashboard/pois/drafts/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1344,11 +1386,13 @@ export interface FileRouteTypes {
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
     | '/dashboard/pois/$id'
+    | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
     | '/dashboard/pois/$id/edit'
+    | '/dashboard/pois/drafts/$id'
   id:
     | '__root__'
     | '/'
@@ -1409,11 +1453,13 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/cities/$id/'
     | '/_admin/dashboard/cities/new/'
     | '/_admin/dashboard/pois/$id/'
+    | '/_admin/dashboard/pois/drafts/'
     | '/_admin/dashboard/users/verify/'
     | '/_admin/dashboard/amenities/$id/edit/'
     | '/_admin/dashboard/categories/$id/edit/'
     | '/_admin/dashboard/cities/$id/edit/'
     | '/_admin/dashboard/pois/$id/edit/'
+    | '/_admin/dashboard/pois/drafts/$id/'
   fileRoutesById: FileRoutesById
 }
 
@@ -1560,11 +1606,13 @@ export const routeTree = rootRoute
         "/_admin/dashboard/cities/$id/",
         "/_admin/dashboard/cities/new/",
         "/_admin/dashboard/pois/$id/",
+        "/_admin/dashboard/pois/drafts/",
         "/_admin/dashboard/users/verify/",
         "/_admin/dashboard/amenities/$id/edit/",
         "/_admin/dashboard/categories/$id/edit/",
         "/_admin/dashboard/cities/$id/edit/",
-        "/_admin/dashboard/pois/$id/edit/"
+        "/_admin/dashboard/pois/$id/edit/",
+        "/_admin/dashboard/pois/drafts/$id/"
       ]
     },
     "/u/$username": {
@@ -1767,6 +1815,10 @@ export const routeTree = rootRoute
       "filePath": "_admin/dashboard/pois/$id/index.tsx",
       "parent": "/_admin/dashboard"
     },
+    "/_admin/dashboard/pois/drafts/": {
+      "filePath": "_admin/dashboard/pois/drafts/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
     "/_admin/dashboard/users/verify/": {
       "filePath": "_admin/dashboard/users/verify/index.tsx",
       "parent": "/_admin/dashboard"
@@ -1785,6 +1837,10 @@ export const routeTree = rootRoute
     },
     "/_admin/dashboard/pois/$id/edit/": {
       "filePath": "_admin/dashboard/pois/$id/edit/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/pois/drafts/$id/": {
+      "filePath": "_admin/dashboard/pois/drafts/$id/index.tsx",
       "parent": "/_admin/dashboard"
     }
   }
