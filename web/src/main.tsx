@@ -9,6 +9,7 @@ import { routeTree } from './routeTree.gen';
 
 import 'instantsearch.css/themes/reset.css';
 import 'leaflet/dist/leaflet.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
 import reportWebVitals from './reportWebVitals.ts';
