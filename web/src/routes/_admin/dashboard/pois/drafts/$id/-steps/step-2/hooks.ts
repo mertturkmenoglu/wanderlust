@@ -1,9 +1,8 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Draft } from "~/lib/dto";
-import { FormInput, schema } from "./schema";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { type FormInput, schema } from './schema';
 
-export function useStep2Form(draft: Draft) {
+export function useStep2Form(draft: any) {
   return useForm<FormInput>({
     resolver: zodResolver(schema),
     defaultValues: {

@@ -1,34 +1,35 @@
-import { useLoaderData } from "react-router";
-import { Controller, SubmitHandler } from "react-hook-form";
-import InputError from "~/components/kit/input-error";
-import InputInfo from "~/components/kit/input-info";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import InputError from '@/components/kit/input-error';
+import InputInfo from '@/components/kit/input-info';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { useCities } from "~/hooks/use-cities";
-import { loader } from "../../route";
-import StepsNavigation from "../steps-navigation";
-import { useUpdateDraftMutation } from "../use-update-draft";
-import { useStep2Form } from "./hooks";
-import { FormInput } from "./schema";
+} from '@/components/ui/select';
+import { api } from '@/lib/api';
+import { getRouteApi } from '@tanstack/react-router';
+import { Controller, type SubmitHandler } from 'react-hook-form';
+import StepsNavigation from '../steps-navigation';
+import { useUpdateDraftMutation } from '../use-update-draft';
+import { useStep2Form } from './hooks';
+import type { FormInput } from './schema';
 
 export default function Step2() {
-  const { draft } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/_admin/dashboard/pois/drafts/$id/');
+  const { draft: d } = route.useLoaderData();
+  let draft = d as any;
   const form = useStep2Form(draft);
-  const qCities = useCities();
-  const mutation = useUpdateDraftMutation<FormInput>(draft, "2");
+  const qCities = api.useQuery('get', '/api/v2/cities/');
+  const mutation = useUpdateDraftMutation<FormInput>(draft, 2);
 
-  if (!qCities.data || !qCities.data.data.cities) {
+  if (!qCities.data || !qCities.data.cities) {
     return <></>;
   }
 
-  const cities = qCities.data.data.cities;
+  const cities = qCities.data.cities;
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     mutation.mutate(data);
@@ -53,13 +54,13 @@ export default function Step2() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="city">
+                  <SelectTrigger id="city" className="w-full">
                     <SelectValue placeholder="Select a city" />
                   </SelectTrigger>
                   <SelectContent>
                     {cities.map((city) => (
                       <SelectItem key={city.id} value={city.id.toString()}>
-                        {city.name}, {city.stateName}, {city.countryName}
+                        {city.name}, {city.state.name}, {city.country.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -78,7 +79,7 @@ export default function Step2() {
             id="postal-code"
             placeholder="Postal Code"
             autoComplete="postal-code"
-            {...form.register("address.postalCode")}
+            {...form.register('address.postalCode')}
           />
           <InputInfo text="Postal code" />
           <InputError error={form.formState.errors.address?.postalCode} />
@@ -91,7 +92,7 @@ export default function Step2() {
             id="line1"
             placeholder="Address line 1"
             autoComplete="address-line1"
-            {...form.register("address.line1")}
+            {...form.register('address.line1')}
           />
           <InputInfo text="Address line 1" />
           <InputError error={form.formState.errors.address?.line1} />
@@ -104,7 +105,7 @@ export default function Step2() {
             id="line2"
             placeholder="Address line 2"
             autoComplete="address-line2"
-            {...form.register("address.line2")}
+            {...form.register('address.line2')}
           />
           <InputInfo text="Address line 2" />
           <InputError error={form.formState.errors.address?.line2} />
@@ -118,7 +119,7 @@ export default function Step2() {
             placeholder="Latitude"
             autoComplete="off"
             step="any"
-            {...form.register("address.lat", { valueAsNumber: true })}
+            {...form.register('address.lat', { valueAsNumber: true })}
           />
           <InputInfo text="Latitude" />
           <InputError error={form.formState.errors.address?.lat} />
@@ -132,7 +133,7 @@ export default function Step2() {
             placeholder="Longitude"
             step="any"
             autoComplete="off"
-            {...form.register("address.lng", { valueAsNumber: true })}
+            {...form.register('address.lng', { valueAsNumber: true })}
           />
           <InputInfo text="Longitude" />
           <InputError error={form.formState.errors.address?.lng} />

@@ -6,6 +6,7 @@ import { z } from 'zod';
 import DeleteDialog from './-delete-dialog';
 import StepsIndicator from './-steps-indicator';
 import Step1 from './-steps/step-1';
+import Step2 from './-steps/step-2';
 
 const schema = z.object({
   step: z.number().min(1).max(6).catch(1),
@@ -60,11 +61,11 @@ function RouteComponent() {
       <StepsIndicator draftId={draft.id as string} />
 
       {step === 1 && <Step1 />}
-      {/* {step === 2 && <Step2 />}
-      {step === 3 && <Step3 />}
-      {step === 4 && <Step4 />}
-      {step === 5 && <Step5 />}
-      {step === 6 && <Step6 />} */}
+      {step === 2 && <Step2 />}
+      {/* {step === 3 && <Step3 />} */}
+      {/* {step === 4 && <Step4 />} */}
+      {/* {step === 5 && <Step5 />} */}
+      {/* {step === 6 && <Step6 />} */}
     </div>
   );
 }
