@@ -157,4 +157,27 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/pois/drafts/{id}",
+			Summary:       "Update Draft by ID",
+			Description:   "Update a draft by id",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftCreate),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdatePoiDraftInput) (*dto.UpdatePoiDraftOutput, error) {
+			res, err := s.updateDraft(input.ID, input.Body)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

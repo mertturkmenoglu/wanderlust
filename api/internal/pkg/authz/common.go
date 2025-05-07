@@ -28,6 +28,7 @@ const (
 	ActUserMakeVerified AuthzAct = "user.make-verified"
 	ActPoiDraftCreate   AuthzAct = "poi.draft.create"
 	ActPoiDraftRead     AuthzAct = "poi.draft.read"
+	ActPoiDraftUpdate   AuthzAct = "poi.draft.update"
 )
 
 var Fns = map[AuthzAct]AuthzFn{
@@ -50,4 +51,5 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActListItemDelete:   NotImplemented,
 	ActPoiDraftCreate:   IsAdmin,
 	ActPoiDraftRead:     IsAdmin,
+	ActPoiDraftUpdate:   IsAdmin,
 }

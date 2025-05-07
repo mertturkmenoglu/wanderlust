@@ -24,28 +24,6 @@ func (h *handlers) DeleteDraft(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
-func (h *handlers) UpdateDraft(c echo.Context) error {
-	id := c.Param("id")
-
-	if id == "" {
-		return ErrIdRequired
-	}
-
-	var body map[string]any
-
-	if err := c.Bind(&body); err != nil {
-		return echo.ErrBadRequest
-	}
-
-	err := h.service.updateDraft(id, body)
-
-	if err != nil {
-		return err
-	}
-
-	return c.NoContent(http.StatusNoContent)
-}
-
 func (h *handlers) UploadMedia(c echo.Context) error {
 	err := c.Request().ParseMultipartForm(maxMemory)
 

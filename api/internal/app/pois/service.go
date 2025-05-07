@@ -213,3 +213,23 @@ func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
 		},
 	}, nil
 }
+
+func (s *Service) updateDraft(id string, body dto.UpdatePoiDraftInputBody) (*dto.UpdatePoiDraftOutput, error) {
+	v, err := json.Marshal(body.Values)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to marshal draft")
+	}
+
+	err = s.App.Cache.Set("poi-draft:"+id, string(v), 0)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to set draft")
+	}
+
+	return &dto.UpdatePoiDraftOutput{
+		Body: dto.UpdatePoiDraftOutputBody{
+			Draft: body.Values,
+		},
+	}, nil
+}

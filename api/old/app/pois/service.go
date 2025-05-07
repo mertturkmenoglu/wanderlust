@@ -2,10 +2,8 @@ package pois
 
 import (
 	"context"
-	"encoding/json"
 	"mime/multipart"
 	"strings"
-	"time"
 	"wanderlust/internal/pkg/upload"
 )
 
@@ -114,22 +112,6 @@ func (s *service) deleteDraft(id string) error {
 	}
 
 	return s.di.Cache.Del("poi-draft:" + id)
-}
-
-func (s *service) updateDraft(id string, body map[string]any) error {
-	v, err := json.Marshal(body)
-
-	if err != nil {
-		return err
-	}
-
-	err = s.di.Cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *service) publishDraft(id string) error {

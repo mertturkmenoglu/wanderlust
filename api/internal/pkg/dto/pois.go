@@ -109,3 +109,20 @@ type GetPoiDraftOutput struct {
 type GetPoiDraftOutputBody struct {
 	Draft map[string]any `json:"draft"`
 }
+
+type UpdatePoiDraftInput struct {
+	ID   string `path:"id" required:"true" validate:"required" doc:"ID of draft" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	Body UpdatePoiDraftInputBody
+}
+
+type UpdatePoiDraftInputBody struct {
+	Values map[string]any `json:"values"`
+}
+
+type UpdatePoiDraftOutput struct {
+	Body UpdatePoiDraftOutputBody
+}
+
+type UpdatePoiDraftOutputBody struct {
+	Draft map[string]any `json:"draft"`
+}
