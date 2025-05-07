@@ -23,7 +23,7 @@ export default function Step2() {
   let draft = d as any;
   const form = useStep2Form(draft);
   const qCities = api.useQuery('get', '/api/v2/cities/');
-  const mutation = useUpdateDraftMutation<FormInput>(draft, 2);
+  const mutation = useUpdateDraftMutation(draft, 2);
 
   if (!qCities.data || !qCities.data.cities) {
     return <></>;
@@ -32,7 +32,19 @@ export default function Step2() {
   const cities = qCities.data.cities;
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
+    mutation.mutate({
+      params: {
+        path: {
+          id: draft.id as string,
+        },
+      },
+      body: {
+        values: {
+          ...draft,
+          ...data,
+        },
+      },
+    });
   };
 
   return (

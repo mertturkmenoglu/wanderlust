@@ -1,25 +1,24 @@
+import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 type TStep = 1 | 2 | 3 | 4 | 5;
 type Draft = components['schemas']['GetPoiDraftOutputBody']['draft'];
 
-export function useUpdateDraftMutation<TForm>(draft: Draft, step: TStep) {
+export function useUpdateDraftMutation(draft: Draft, step: TStep) {
   const navigate = useNavigate();
+  const router = useRouter();
+  const qc = useQueryClient();
 
-  return useMutation({
-    mutationKey: ['poi-draft', draft.id, 'step', step],
-    mutationFn: async (data: TForm) => {
-      // updateDraft(draft.id, {
-      //   ...draft,
-      //   ...data,
-      // }),
-      console.log(data);
-    },
-    onSuccess: () => {
+  return api.useMutation('patch', '/api/v2/pois/drafts/{id}', {
+    onSuccess: async () => {
       toast.success('Draft updated');
+      await router.invalidate();
+      await qc.invalidateQueries();
+      await qc.refetchQueries();
+
       navigate({
         to: '/dashboard/pois/drafts/$id',
         params: {

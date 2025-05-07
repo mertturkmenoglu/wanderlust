@@ -23,7 +23,7 @@ export default function Step1() {
   const { draft } = route.useLoaderData();
   const form = useStep1Form(draft);
   const qCategories = api.useQuery('get', '/api/v2/categories/');
-  const mutation = useUpdateDraftMutation<FormInput>(draft, 1);
+  const mutation = useUpdateDraftMutation(draft, 1);
 
   if (!qCategories.data || !qCategories.data.categories) {
     return <></>;
@@ -32,7 +32,19 @@ export default function Step1() {
   const categories = qCategories.data.categories;
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
+    mutation.mutate({
+      params: {
+        path: {
+          id: draft.id as string,
+        },
+      },
+      body: {
+        values: {
+          ...draft,
+          ...data,
+        },
+      },
+    });
   };
 
   return (
@@ -66,7 +78,7 @@ export default function Step1() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="category">
+                  <SelectTrigger id="category" className="w-full">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -139,7 +151,7 @@ export default function Step1() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="accessibility-level">
+                  <SelectTrigger id="accessibility-level" className="w-full">
                     <SelectValue placeholder="Accessibility Level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -171,7 +183,7 @@ export default function Step1() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="price-level">
+                  <SelectTrigger id="price-level" className="w-full">
                     <SelectValue placeholder="Price Level" />
                   </SelectTrigger>
                   <SelectContent>

@@ -14,7 +14,7 @@ export default function Step3() {
   const { draft: d } = route.useLoaderData();
   let draft = d as any;
   const form = useStep3Form(draft);
-  const mutation = useUpdateDraftMutation<FormInput>(draft, 3);
+  const mutation = useUpdateDraftMutation(draft, 3);
   const qAmenities = api.useQuery('get', '/api/v2/amenities/');
 
   if (!qAmenities.data || !qAmenities.data.amenities) {
@@ -24,7 +24,19 @@ export default function Step3() {
   const amenities = qAmenities.data.amenities;
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate(data);
+    mutation.mutate({
+      params: {
+        path: {
+          id: draft.id as string,
+        },
+      },
+      body: {
+        values: {
+          ...draft,
+          ...data,
+        },
+      },
+    });
   };
 
   return (

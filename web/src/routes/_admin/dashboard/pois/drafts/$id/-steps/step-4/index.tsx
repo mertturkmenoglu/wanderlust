@@ -75,7 +75,7 @@ export default function Step4() {
   const route = getRouteApi('/_admin/dashboard/pois/drafts/$id/');
   const { draft: d } = route.useLoaderData();
   let draft = d as any;
-  const mutation = useUpdateDraftMutation<TData>(draft, 4);
+  const mutation = useUpdateDraftMutation(draft, 4);
 
   const [days, setDays] = useState<Day[]>(() => {
     if (draft.days) {
@@ -120,7 +120,20 @@ export default function Step4() {
         onSubmit={(e) => {
           e.preventDefault();
           const tmp: string[] = days.map((day) => day.id);
-          mutation.mutate({ days: tmp, hours });
+          mutation.mutate({
+            params: {
+              path: {
+                id: draft.id as string,
+              },
+            },
+            body: {
+              values: {
+                ...draft,
+                days: tmp,
+                hours,
+              },
+            },
+          });
         }}
       >
         <div className="col-span-2">
