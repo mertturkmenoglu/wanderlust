@@ -2,29 +2,12 @@ package reviews
 
 import (
 	"net/http"
-	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/upload"
 
 	"github.com/labstack/echo/v4"
 )
-
-func (h *handlers) deleteReview(c echo.Context) error {
-	id := c.Param("id")
-
-	if id == "" {
-		return ErrIdRequired
-	}
-
-	err := h.service.deleteReview(id)
-
-	if err != nil {
-		return err
-	}
-
-	return c.NoContent(http.StatusNoContent)
-}
 
 func (h *handlers) getReviewsByUsername(c echo.Context) error {
 	username := c.Param("username")

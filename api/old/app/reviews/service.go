@@ -1,49 +1,10 @@
 package reviews
 
 import (
-	"context"
-	"errors"
 	"mime/multipart"
-	"strings"
 	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/upload"
-
-	"github.com/jackc/pgx/v5"
-	"github.com/minio/minio-go/v7"
 )
-
-
-func (s *service) deleteReview(id string) error {
-	media, err := s.repository.getReviewMedia(id)
-
-	if err != nil {
-		return err
-	}
-
-	err = s.repository.deleteReview(id)
-
-	if err != nil {
-		return err
-	}
-
-	bucketName := "reviews"
-
-	for _, m := range media {
-		_, after, found := strings.Cut(m.Url, "reviews/")
-
-		if !found {
-			continue
-		}
-
-		err = s.di.Upload.Client.RemoveObject(context.Background(), bucketName, after, minio.RemoveObjectOptions{})
-
-		if err != nil {
-			s.di.Logger.Error("error deleting review media", s.di.Logger.Args("error", err))
-		}
-	}
-
-	return nil
-}
 
 func (s *service) getReviewsByPoiId(id string, params pagination.Params) (GetReviewsByPoiIdResponseDto, int64, error) {
 	res, err := s.repository.getReviewsByPoiId(id, params)

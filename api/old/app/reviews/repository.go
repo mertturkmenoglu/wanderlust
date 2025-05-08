@@ -10,10 +10,6 @@ func (r *repository) getReviewMedia(id string) ([]db.ReviewMedium, error) {
 	return r.di.Db.Queries.GetReviewMedia(context.Background(), id)
 }
 
-func (r *repository) deleteReview(id string) error {
-	return r.di.Db.Queries.DeleteReview(context.Background(), id)
-}
-
 func (r *repository) getReviewsByPoiId(id string, params pagination.Params) ([]db.GetReviewsByPoiIdRow, error) {
 	return r.di.Db.Queries.GetReviewsByPoiId(context.Background(), db.GetReviewsByPoiIdParams{
 		PoiID:  id,
