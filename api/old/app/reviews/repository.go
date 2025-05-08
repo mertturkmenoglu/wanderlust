@@ -4,70 +4,7 @@ import (
 	"context"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/pagination"
-	"wanderlust/internal/pkg/utils"
 )
-
-func (r *repository) createReview(userId string, dto CreateReviewRequestDto) (db.Review, error) {
-	ctx := context.Background()
-	tx, err := r.di.Db.Pool.Begin(ctx)
-
-	if err != nil {
-		return db.Review{}, err
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := r.di.Db.Queries.WithTx(tx)
-
-	review, err := qtx.CreateReview(ctx, db.CreateReviewParams{
-		ID:      utils.GenerateId(r.di.Flake),
-		PoiID:   dto.PoiID,
-		UserID:  userId,
-		Content: dto.Content,
-		Rating:  dto.Rating,
-	})
-
-	if err != nil {
-		return db.Review{}, err
-	}
-
-	err = qtx.IncrementTotalPoints(ctx, db.IncrementTotalPointsParams{
-		ID:          dto.PoiID,
-		TotalPoints: int32(dto.Rating),
-	})
-
-	if err != nil {
-		return db.Review{}, err
-	}
-
-	err = qtx.IncrementTotalVotes(ctx, dto.PoiID)
-
-	if err != nil {
-		return db.Review{}, err
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		return db.Review{}, err
-	}
-
-	return review, nil
-}
-
-func (r *repository) getPoiNameById(poiId string) (string, error) {
-	poi, err := r.di.Db.Queries.GetPoiById(context.Background(), poiId)
-
-	if err != nil {
-		return "", err
-	}
-
-	return poi.Poi.Name, nil
-}
-
-func (r *repository) getReviewById(id string) (db.GetReviewByIdRow, error) {
-	return r.di.Db.Queries.GetReviewById(context.Background(), id)
-}
 
 func (r *repository) getReviewMedia(id string) ([]db.ReviewMedium, error) {
 	return r.di.Db.Queries.GetReviewMedia(context.Background(), id)

@@ -10,8 +10,6 @@ import (
 func (m *Module) RegisterRoutes(e *echo.Group) {
 	routes := e.Group("/reviews")
 	{
-		routes.GET("/:id", m.handlers.getReviewById)
-		routes.POST("/", m.handlers.createReview, middlewares.ParseBody[CreateReviewRequestDto], middlewares.IsAuth, middlewares.Authz(authz.ActReviewCreate))
 		routes.DELETE("/:id", m.handlers.deleteReview, middlewares.IsAuth, middlewares.Authz(authz.ActReviewDelete))
 		routes.GET("/user/:username", m.handlers.getReviewsByUsername)
 		routes.GET("/poi/:id", m.handlers.getReviewsByPoiId)

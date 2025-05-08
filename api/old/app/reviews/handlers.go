@@ -10,49 +10,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) getReviewById(c echo.Context) error {
-	id := c.Param("id")
-
-	if id == "" {
-		return ErrIdRequired
-	}
-
-	res, err := h.service.getReviewById(id)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}
-
-func (h *handlers) createReview(c echo.Context) error {
-	userId := c.Get("user_id").(string)
-	dto := c.Get("body").(CreateReviewRequestDto)
-
-	res, err := h.service.createReview(userId, dto)
-
-	if err != nil {
-		return err
-	}
-
-	poiName, err := h.service.getPoiNameById(dto.PoiID)
-
-	if err == nil {
-		_ = h.di.Activities.Add(userId, activities.ActivityReview, activities.ReviewPayload{
-			PoiName: poiName,
-			PoiId:   res.PoiID,
-			Rating:  res.Rating,
-		})
-	}
-
-	return c.JSON(http.StatusCreated, core.Response{
-		Data: res,
-	})
-}
-
 func (h *handlers) deleteReview(c echo.Context) error {
 	id := c.Param("id")
 
