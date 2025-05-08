@@ -180,4 +180,29 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/pois/drafts/{id}/media",
+			Summary:       "Upload Media for a Draft",
+			Description:   "Upload media for a draft",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftCreate),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UploadPoiMediaInput) (*dto.UpdatePoiDraftOutput, error) {
+			userId := ctx.Value("userId").(string)
+			res, err := s.uploadMedia(userId, input.ID, input.Body)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

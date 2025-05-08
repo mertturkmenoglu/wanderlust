@@ -4,15 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
+	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/mapper"
+	"wanderlust/internal/pkg/upload"
 	"wanderlust/internal/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/minio/minio-go/v7"
 )
 
 type Service struct {
@@ -233,3 +237,121 @@ func (s *Service) updateDraft(id string, body dto.UpdatePoiDraftInputBody) (*dto
 		},
 	}, nil
 }
+
+func (s *Service) uploadMedia(userId string, id string, input dto.UploadPoiMediaInputBody) (*dto.UpdatePoiDraftOutput, error) {
+	bucket := upload.BUCKET_POIS
+
+	// Check if the file is uploaded
+	_, err := s.App.Upload.Client.GetObject(
+		context.Background(),
+		string(bucket),
+		input.FileName,
+		minio.GetObjectOptions{},
+	)
+
+	if err != nil {
+		return nil, huma.Error400BadRequest("file not uploaded")
+	}
+
+	// Check if user uploaded the correct file using cached information
+	if !s.App.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
+		return nil, huma.Error400BadRequest("incorrect file")
+	}
+
+	// delete cached information
+	err = s.App.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, id, input.ID))
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to delete cached information")
+	}
+
+	endpoint := s.App.Upload.Client.EndpointURL().String()
+	url := endpoint + "/" + string(bucket) + "/" + input.FileName
+
+	draft, err := s.getDraft(id)
+
+	if err != nil {
+		return nil, huma.Error404NotFound("draft not found")
+	}
+
+	media, has := draft.Body.Draft["media"]
+
+	if !has {
+		media = make([]any, 0)
+	}
+
+	parts := strings.Split(input.FileName, ".")
+	extension := parts[len(parts)-1]
+
+	draft.Body.Draft["media"] = append(media.([]any), map[string]any{
+		"type":      "image",
+		"url":       url,
+		"fileName":  input.FileName,
+		"alt":       input.Alt,
+		"caption":   input.Caption,
+		"extension": extension,
+	})
+
+	res, err := s.updateDraft(id, dto.UpdatePoiDraftInputBody{
+		Values: draft.Body.Draft,
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to update draft")
+	}
+
+	return res, nil
+}
+
+// func (s *Service) deleteImage(id string, input dto.UpdateUserProfileImageInputBody) error {
+// 	bucket := upload.BUCKET_POIS
+// 	endpoint := s.App.Upload.Client.EndpointURL().String()
+// 	url := endpoint + "/" + string(bucket) + "/" + input.FileName
+
+// 	err := s.App.Upload.Client.RemoveObject(
+// 		context.Background(),
+// 		string(bucket),
+// 		input.FileName,
+// 		minio.RemoveObjectOptions{},
+// 	)
+
+// 	if err != nil {
+// 		return nil, huma.Error500InternalServerError("failed to delete image")
+// 	}
+
+// 	draft, err := s.getDraft(id)
+
+// 	if err != nil {
+// 		return huma.Error404NotFound("draft not found")
+// 	}
+
+// 	media, has := draft.Body.Draft["media"]
+
+// 	if !has {
+// 		return huma.Error404NotFound("media not found")
+// 	}
+
+// 	newMedia := make([]interface{}, 0)
+
+// 	for _, m := range media.([]interface{}) {
+// 		u := m.(map[string]interface{})["url"].(string)
+
+// 		if u != url {
+// 			continue
+// 		}
+
+// 		newMedia = append(newMedia, m)
+// 	}
+
+// 	draft.Body.Draft["media"] = newMedia
+
+// 	res, err := s.updateDraft(id, dto.UpdatePoiDraftInputBody{
+// 		Values: draft.Body.Draft,
+// 	})
+
+// 	if err != nil {
+// 		return huma.Error500InternalServerError("failed to update draft")
+// 	}
+
+// 	return res, nil
+// }
