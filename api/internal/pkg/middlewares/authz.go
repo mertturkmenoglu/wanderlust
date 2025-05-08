@@ -20,6 +20,13 @@ func Authz(api huma.API, key authz.AuthzAct) func(ctx huma.Context, next func(hu
 		isAuthorized, err := fn(az, ctx)
 
 		if err != nil {
+			v, ok := err.(huma.StatusError)
+
+			if ok {
+				huma.WriteErr(api, ctx, v.GetStatus(), v.Error())
+				return
+			}
+
 			huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
 			return
 		}
