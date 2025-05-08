@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { getRouteApi } from '@tanstack/react-router';
 import type { CellContext, ColumnDef } from '@tanstack/react-table';
@@ -100,8 +101,8 @@ export type Props = {
 
 function ActionsComponent({ ctx: { row, table } }: Props) {
   const route = getRouteApi('/_admin/dashboard/pois/drafts/$id/');
-  const ctx = route.useRouteContext();
-  const qc = ctx.queryClient;
+  const qc = route.useRouteContext().queryClient;
+  const invalidator = useInvalidator();
   const { draft: d } = route.useLoaderData();
   let draft = d as any;
 
@@ -115,8 +116,8 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
     '/api/v2/pois/drafts/{id}',
     {
       onSuccess: async () => {
+        await invalidator.invalidate();
         toast.success('Image updated');
-        window.location.reload();
       },
       onError: (err) => {
         toast.error(err.title ?? 'Something went wrong');
