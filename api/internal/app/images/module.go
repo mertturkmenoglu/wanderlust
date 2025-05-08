@@ -40,7 +40,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				return nil, huma.Error500InternalServerError("failed to get presigned URL")
 			}
 
-			err = app.Cache.SetObj(cache.KeyBuilder(cache.KeyImageUpload, userId, res.Body.Id), res.Body, cache.TTLImageUploadUrl)
+			err = app.Cache.SetObj(cache.KeyBuilder(cache.KeyImageUpload, userId, res.Body.Id), res.Body, 0)
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("failed to save presigned URL to cache")
