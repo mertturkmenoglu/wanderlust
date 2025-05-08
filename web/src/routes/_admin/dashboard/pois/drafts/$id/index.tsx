@@ -9,6 +9,7 @@ import Step1 from './-steps/step-1';
 import Step2 from './-steps/step-2';
 import Step3 from './-steps/step-3';
 import Step4 from './-steps/step-4';
+import Step5 from './-steps/step-5';
 import Step6 from './-steps/step-6';
 
 const schema = z.object({
@@ -67,7 +68,7 @@ function RouteComponent() {
       {step === 2 && <Step2 />}
       {step === 3 && <Step3 />}
       {step === 4 && <Step4 />}
-      {/* {step === 5 && <Step5 />} */}
+      {step === 5 && <Step5 />}
       {step === 6 && <Step6 />}
     </div>
   );
