@@ -33,17 +33,15 @@ func (s *Service) GetPoisByIds(ids []string) ([]dto.Poi, error) {
 	pois := make([]dto.Poi, len(dbPois))
 
 	for i, dbPoi := range dbPois {
-		var dbAmenities []db.GetPoiAmenitiesRow = []db.GetPoiAmenitiesRow{}
+		var amenities []dto.Amenity = []dto.Amenity{}
 
 		if len(dbPoi.Amenities) != 0 {
-			err = json.Unmarshal(dbPoi.Amenities, &dbAmenities)
+			err = json.Unmarshal(dbPoi.Amenities, &amenities)
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("failed to unmarshal amenities")
 			}
 		}
-
-		amenities := mapper.FromGetPoiAmenitiesRowToAmenities(dbAmenities)
 
 		var dbMedia []db.Medium = []db.Medium{}
 
