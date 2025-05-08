@@ -438,7 +438,11 @@ func ToReview(dbReview db.GetReviewsByIdsPopulatedRow) dto.Review {
 }
 
 func ToReviewMedia(dbReviewMediaBytes []byte) []dto.ReviewMedia {
-	media := []dto.ReviewMedia{}
+	if len(dbReviewMediaBytes) == 0 {
+		return []dto.ReviewMedia{}
+	}
+
+	media := make([]dto.ReviewMedia, 0)
 	err := json.Unmarshal(dbReviewMediaBytes, &media)
 
 	if err != nil {
