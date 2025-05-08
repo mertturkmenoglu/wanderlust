@@ -2544,6 +2544,392 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/reviews/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Review
+         * @description Create a review
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateReviewInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateReviewOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/poi/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reviews by POI ID
+         * @description Get reviews by POI ID
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewsByPoiIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/poi/{id}/ratings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get POI ratings
+         * @description Get ratings for a POI
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetRatingsByPoiIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/user/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reviews by Username
+         * @description Get reviews by username
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewsByUsernameOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Review by ID
+         * @description Get a review by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of review
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Review
+         * @description Delete a review
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of review
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateReviewOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media for a Review
+         * @description Upload media for a review
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadReviewMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UploadReviewMediaOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/users/follow/{username}": {
         parameters: {
             query?: never;
@@ -3432,6 +3818,30 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        CreateReviewInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Content of the review */
+            content: string;
+            /** @description ID of point of interest */
+            poiId: string;
+            /**
+             * Format: int32
+             * @description Rating of the review
+             */
+            rating: number;
+        };
+        CreateReviewOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            review: components["schemas"]["Review"];
+        };
         ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
             location?: string;
@@ -3667,6 +4077,44 @@ export interface components {
             readonly $schema?: string;
             lists: components["schemas"]["List"][];
             pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetRatingsByPoiIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            ratings: {
+                [key: string]: number;
+            };
+            /** Format: int64 */
+            totalVotes: number;
+        };
+        GetReviewByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            review: components["schemas"]["Review"];
+        };
+        GetReviewsByPoiIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pagination: components["schemas"]["PaginationInfo"];
+            reviews: components["schemas"]["Review"][];
+        };
+        GetReviewsByUsernameOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pagination: components["schemas"]["PaginationInfo"];
+            reviews: components["schemas"]["Review"][];
         };
         GetUserActivitiesOutputBody: {
             /**
@@ -4136,6 +4584,56 @@ export interface components {
             /** @description New password of the user */
             newPassword: string;
         };
+        Review: {
+            /** @description Content of the review */
+            content: string;
+            /**
+             * Format: date-time
+             * @description Created at time of review
+             */
+            createdAt: string;
+            /** @description ID of review */
+            id: string;
+            media: components["schemas"]["ReviewMedia"][];
+            poi: components["schemas"]["ReviewPoi"];
+            /** @description ID of point of interest */
+            poiId: string;
+            /**
+             * Format: int32
+             * @description Rating of the review
+             */
+            rating: number;
+            /**
+             * Format: date-time
+             * @description Updated at time of review
+             */
+            updatedAt: string;
+            user: components["schemas"]["Profile"];
+            /** @description ID of user */
+            userId: string;
+        };
+        ReviewMedia: {
+            /**
+             * Format: int64
+             * @description ID of media of review
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description Media order of media of review
+             */
+            mediaOrder: number;
+            /** @description ID of review */
+            reviewId: string;
+            /** @description URL of media of review */
+            url: string;
+        };
+        ReviewPoi: {
+            /** @description ID of point of interest */
+            id: string;
+            /** @description Name of point of interest */
+            name: string;
+        };
         SearchUserFollowingOutputBody: {
             /**
              * Format: uri
@@ -4390,6 +4888,30 @@ export interface components {
              * @description Size of media of point of interest
              */
             size: number;
+        };
+        UploadReviewMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /**
+             * Format: int32
+             * @description Size of media of point of interest
+             */
+            size: number;
+        };
+        UploadReviewMediaOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            review: components["schemas"]["Review"];
         };
     };
     responses: never;
