@@ -361,3 +361,55 @@ func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput
 
 	return res, nil
 }
+
+func (s *Service) deleteDraft(id string) error {
+	draft, err := s.getDraft(id)
+
+	if err != nil {
+		return huma.Error404NotFound("draft not found")
+	}
+
+	media, has := draft.Body.Draft["media"]
+
+	if has {
+		mediaCast, ok := media.([]any)
+
+		if !ok {
+			return huma.Error500InternalServerError("failed to cast media")
+		}
+
+		for _, m := range mediaCast {
+			img, ok := m.(map[string]any)
+
+			if !ok {
+				return huma.Error500InternalServerError("failed to cast img")
+			}
+
+			err = s.App.Upload.Client.RemoveObject(
+				context.Background(),
+				string(upload.BUCKET_POIS),
+				img["fileName"].(string),
+				minio.RemoveObjectOptions{},
+			)
+
+			if err != nil {
+				return huma.Error500InternalServerError("failed to delete image")
+			}
+		}
+
+	}
+
+	err = s.App.Cache.Del("poi-draft:" + id)
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to delete draft")
+	}
+
+	_, err = s.App.Cache.Client.LRem(context.Background(), "poi-drafts", 1, id).Result()
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to delete draft from list")
+	}
+
+	return nil
+}

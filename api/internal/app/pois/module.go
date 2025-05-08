@@ -20,12 +20,6 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Point of Interests"}
 	})
 
-	// routes.POST("/media", m.handlers.UploadMedia, middlewares.IsAuth, middlewares.Authz(authz.ActPoiMediaUpload))
-	// routes.DELETE("/media", m.handlers.DeleteMedia, middlewares.IsAuth, middlewares.Authz(authz.ActPoiMediaDelete))
-	// routes.DELETE("/drafts/:id", m.handlers.DeleteDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftDelete))
-	// routes.PATCH("/drafts/:id", m.handlers.UpdateDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftUpdate))
-	// routes.POST("/drafts/:id/publish", m.handlers.PublishDraft, middlewares.IsAuth, middlewares.Authz(authz.ActPoiDraftPublish))
-
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -227,6 +221,30 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/pois/drafts/{id}",
+			Summary:       "Delete Draft",
+			Description:   "Delete a draft",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftCreate),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeletePoiDraftInput) (*struct{}, error) {
+			err := s.deleteDraft(input.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, nil
 		},
 	)
 }

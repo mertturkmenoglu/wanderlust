@@ -144,3 +144,7 @@ type DeletePoiMediaInput struct {
 	ID    string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976"`
 	Index int32  `path:"index" validate:"required" doc:"Index of media" example:"0" min:"0" max:"10"`
 }
+
+type DeletePoiDraftInput struct {
+	ID string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976"`
+}
