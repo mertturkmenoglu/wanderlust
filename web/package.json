@@ -39,6 +39,7 @@
     "@tanstack/react-router-devtools": "^1.114.3",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/router-plugin": "^1.114.3",
+    "@zag-js/file-upload": "^1.12.0",
     "@zag-js/rating-group": "^1.12.0",
     "@zag-js/react": "^1.12.0",
     "class-variance-authority": "^0.7.1",
