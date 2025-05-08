@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useMutation } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
@@ -9,18 +9,14 @@ export default function Step6() {
   const { draft } = route.useLoaderData();
   const navigate = useNavigate();
 
-  const mutation = useMutation({
-    mutationKey: ['publish-draft', draft.id],
-    mutationFn: async () => {
-      // publishDraft(draft.id);
-      toast.error('Not implemented');
-    },
-    onSuccess: () => {
-      navigate({ to: '/dashboard/pois/drafts' });
+  const mutation = api.useMutation('post', '/api/v2/pois/drafts/{id}/publish', {
+    onSuccess: async () => {
       toast.success('Draft published');
+      await navigate({ to: '/dashboard/pois/drafts' });
+      window.location.reload();
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (err) => {
+      toast.error(err.title ?? 'Something went wrong');
     },
   });
 
@@ -33,7 +29,18 @@ export default function Step6() {
         Review and publish your draft.
       </div>
 
-      <Button onClick={() => mutation.mutate()} className="my-8">
+      <Button
+        onClick={() =>
+          mutation.mutate({
+            params: {
+              path: {
+                id: draft.id as any,
+              },
+            },
+          })
+        }
+        className="my-8"
+      >
         Publish
       </Button>
 
