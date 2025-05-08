@@ -8,11 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { fetchClient } from '@/lib/api';
-import { TrashIcon } from 'lucide-react';
+import { TrashIcon, UploadIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { useUpdateDraftMutation } from '../use-update-draft';
 import { useUpload } from './hooks';
 
 type Props = {
@@ -25,7 +27,6 @@ export default function UploadDialog({ draft }: Props) {
   const [alt, setAlt] = useState('');
   const [caption, setCaption] = useState('');
   let f = api.acceptedFiles[0];
-  const mutation = useUpdateDraftMutation(draft, 3);
 
   useEffect(() => {
     if (!f) {
@@ -37,168 +38,177 @@ export default function UploadDialog({ draft }: Props) {
     setPreview(preview);
   }, [f]);
 
+  const upload = async () => {
+    if (!f) {
+      toast.error('No file selected');
+      return;
+    }
+
+    let ext = f.name.split('.').at(-1);
+
+    if (!ext) {
+      toast.error('Invalid file');
+      return;
+    }
+
+    if (ext !== 'jpg' && ext !== 'jpeg' && ext !== 'png') {
+      toast.error('Invalid file type');
+      return;
+    }
+
+    let res = await fetchClient.GET('/api/v2/images/upload/', {
+      params: {
+        query: {
+          bucket: 'pois',
+          fileExt: ext,
+        },
+      },
+    });
+
+    if (res.error) {
+      toast.error(res.error.title ?? 'Something went wrong');
+      return;
+    }
+
+    let uploadRes = await fetch(res.data.url, {
+      method: 'PUT',
+      body: f,
+    });
+
+    if (!uploadRes.ok) {
+      toast.error('Something went wrong');
+      return;
+    }
+
+    let updateRes = await fetchClient.POST('/api/v2/pois/drafts/{id}/media', {
+      params: {
+        path: {
+          id: draft.id,
+        },
+      },
+      body: {
+        id: res.data.id,
+        alt: alt,
+        caption: caption,
+        fileName: res.data.fileName,
+        size: 0,
+      },
+    });
+
+    if (updateRes.error) {
+      toast.error(updateRes.error.title ?? 'Something went wrong');
+      return;
+    }
+
+    toast.success('Media uploaded');
+    window.location.reload();
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild className="col-span-2 cursor-pointer">
-        <Button variant="secondary">Upload</Button>
+        <Button variant="default">
+          <UploadIcon className="size-4" />
+          <span>Upload</span>
+        </Button>
       </DialogTrigger>
       <DialogContent className="!max-w-xl">
         <DialogHeader>
           <DialogTitle>Upload Media</DialogTitle>
         </DialogHeader>
-        {!f && (
-          <div className="text-sm text-muted-foreground border border-dashed border-border rounded-md p-8 flex flex-col gap-4 items-center justify-center text-center">
-            <div {...api.getRootProps()} className="cursor-pointer">
-              <div {...api.getDropzoneProps()}>
-                <input {...api.getHiddenInputProps()} />
-                <span>Drag your file here (or)</span>
-              </div>
-
+        {!f ? (
+          <div
+            className="text-sm text-muted-foreground text-center cursor-pointer flex flex-col gap-2"
+            {...api.getRootProps()}
+          >
+            <div
+              {...api.getDropzoneProps()}
+              className="border border-dashed border-border rounded-md p-8 py-32"
+            >
+              <input {...api.getHiddenInputProps()} />
+              <span>Drag your file here</span>
+              <div className="text-xs my-2">(or)</div>
               <button {...api.getTriggerProps()} className="cursor-pointer">
                 Choose file
               </button>
             </div>
           </div>
-        )}
-
-        <ul {...api.getItemGroupProps()} className="">
-          {api.acceptedFiles.map((file) => (
-            <li
-              key={file.name}
-              {...api.getItemProps({ file })}
-              className="flex flex-col gap-4 items-center"
+        ) : (
+          <div {...api.getItemGroupProps()} className="">
+            <div
+              key={f.name}
+              {...api.getItemProps({ file: f })}
+              className="flex flex-col gap-2 items-center"
             >
               <img
-                src={preview ?? ''}
+                src={preview ?? null}
                 alt=""
-                className="w-48 rounded-md object-cover"
+                className="w-full rounded-md object-cover"
               />
-              <div className="flex items-center gap-2">
-                <div {...api.getItemNameProps({ file })}>{file.name}</div>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="cursor-pointer"
-                  {...api.getItemDeleteTriggerProps({ file })}
-                >
-                  <TrashIcon className="size-3" />
-                </Button>
+              <div
+                {...api.getItemNameProps({ file: f })}
+                className="text-sm text-muted-foreground"
+              >
+                {f.name}
               </div>
-            </li>
-          ))}
-        </ul>
+              <Button
+                variant="destructive"
+                size="default"
+                className="cursor-pointer w-full"
+                {...api.getItemDeleteTriggerProps({ file: f })}
+              >
+                <TrashIcon className="size-3" />
+                <span>Delete</span>
+              </Button>
+            </div>
+          </div>
+        )}
 
         {f && (
           <div>
-            <div className="flex gap-4 items-center">
-              <label htmlFor="alt" className="text-sm font-medium">
-                Alt Text
-              </label>
-              <input
-                type="text"
-                id="alt"
-                placeholder="Alt text"
-                value={alt}
-                onChange={(e) => setAlt(e.target.value)}
-              />
+            <Separator className="" />
+            <div className="flex gap-4 items-center mt-4">
+              <div className="flex flex-col gap-1 w-full">
+                <Label htmlFor="alt">Alt Text</Label>
+                <Input
+                  type="text"
+                  id="alt"
+                  placeholder="Describe the image for accessibility tools (Optional)"
+                  value={alt}
+                  onChange={(e) => setAlt(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="flex gap-4 items-center">
-              <label htmlFor="caption" className="text-sm font-medium">
-                Caption
-              </label>
-              <input
-                type="text"
-                id="caption"
-                placeholder="Caption"
-                value={caption}
-                onChange={(e) => setCaption(e.target.value)}
-              />
+
+            <div className="flex gap-4 items-center mt-4">
+              <div className="flex flex-col gap-1 w-full">
+                <Label htmlFor="caption">Caption</Label>
+                <Input
+                  type="text"
+                  id="caption"
+                  placeholder="Caption for the image (Optional)"
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                />
+              </div>
             </div>
           </div>
         )}
 
         <DialogFooter className="sm:justify-end">
-          <Button
-            type="button"
-            variant="default"
-            onClick={async () => {
-              let f = api.acceptedFiles[0];
-
-              if (!f) {
-                toast.error('No file selected');
-                return;
-              }
-
-              let ext = f.name.split('.').at(-1);
-
-              if (!ext) {
-                toast.error('Invalid file');
-                return;
-              }
-
-              if (ext !== 'jpg' && ext !== 'jpeg' && ext !== 'png') {
-                toast.error('Invalid file type');
-                return;
-              }
-
-              let res = await fetchClient.GET('/api/v2/images/upload/', {
-                params: {
-                  query: {
-                    bucket: 'pois',
-                    fileExt: ext,
-                  },
-                },
-              });
-
-              if (res.error) {
-                toast.error(res.error.title ?? 'Something went wrong');
-                return;
-              }
-
-              let uploadRes = await fetch(res.data.url, {
-                method: 'PUT',
-                body: f,
-              });
-
-              if (!uploadRes.ok) {
-                toast.error('Something went wrong');
-                return;
-              }
-
-              let updateRes = await fetchClient.POST(
-                '/api/v2/pois/drafts/{id}/media',
-                {
-                  params: {
-                    path: {
-                      id: draft.id,
-                    },
-                  },
-                  body: {
-                    id: res.data.id,
-                    alt: alt,
-                    caption: caption,
-                    fileName: res.data.fileName,
-                    size: 0,
-                  },
-                },
-              );
-
-              if (updateRes.error) {
-                toast.error(updateRes.error.title ?? 'Something went wrong');
-                return;
-              }
-
-              toast.success('Media uploaded');
-              window.location.reload();
-            }}
-          >
-            Upload
-          </Button>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" variant="ghost">
               Close
             </Button>
           </DialogClose>
+          <Button
+            type="button"
+            variant="default"
+            onClick={upload}
+            disabled={!f}
+          >
+            Upload
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

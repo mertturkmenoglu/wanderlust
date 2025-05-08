@@ -16,11 +16,10 @@ export default function Step5() {
   return (
     <div>
       <div className="container mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2">
-        <div className="col-span-2">
+        <div className="col-span-2 flex items-center justify-between">
           <h3 className="text-2xl font-bold tracking-tight">Uploaded</h3>
+          <UploadDialog draft={draft} />
         </div>
-
-        <UploadDialog draft={draft} />
 
         <div className="col-span-2 space-y-8">
           {media.map(
