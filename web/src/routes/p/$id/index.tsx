@@ -1,4 +1,5 @@
 import CollapsibleText from '@/components/blocks/collapsible-text';
+import { ErrorComponent } from '@/components/blocks/error-component';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
@@ -28,6 +29,7 @@ export const Route = createFileRoute('/p/$id/')({
       }),
     );
   },
+  errorComponent: ErrorComponent,
 });
 
 function RouteComponent() {
