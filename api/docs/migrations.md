@@ -6,7 +6,7 @@
 
 ## Running
 
-- Run `make create-migration` command.
+- Run `just create-migration` command.
 - It will ask for a file name. Enter a valid and meaningful name for your migration. Example: `create_users_table`
 - Go Migrate will create up and down SQL files inside the `internal/pkg/db/migrations` folder.
 - Example file names:

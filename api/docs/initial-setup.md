@@ -16,7 +16,7 @@
 - Setup environment variables:
   - Using Infisical CLI (recommended, read `infisical.md`), or
   - Manually (create `.env` => copy from `.env.example` and fill)
-- Run sqlc to generate latest database queries & types: `just sqlc-generate`
+- Run sqlc to generate latest database queries & types: `just sqlc`
 - Run Docker containers: `docker compose up -d`
 - Run the development server: `just watch`
 - Server will run at port `5000`.
@@ -28,4 +28,3 @@ Follow these steps in this specific order:
 - Read `database.md` file.
 - Read `fake.md` file.
 - Read `search-sync.md` file.
-- Read `swagger.md` file.

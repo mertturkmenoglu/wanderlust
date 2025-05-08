@@ -8,7 +8,7 @@ This script will sync your database resources with Typesense.
 
 ## Running
 
-- Run `make search-sync` command.
+- Run `just search` command.
 - Follow the on screen instructions to start the synchronization.
 - First you must select the type of resource you want to sync.
 - Script will start and read data from database and try to upsert it to Typesense.
