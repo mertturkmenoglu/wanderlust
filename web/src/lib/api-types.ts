@@ -2235,6 +2235,64 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/pois/drafts/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media for a Draft
+         * @description Upload media for a draft
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadPoiMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/pois/peek": {
         parameters: {
             query?: never;
@@ -4154,6 +4212,26 @@ export interface components {
              */
             readonly $schema?: string;
             profile: components["schemas"]["Profile"];
+        };
+        UploadPoiMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Alt of media of point of interest */
+            alt: string;
+            /** @description Caption of media of point of interest */
+            caption: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /**
+             * Format: int32
+             * @description Size of media of point of interest
+             */
+            size: number;
         };
     };
     responses: never;
