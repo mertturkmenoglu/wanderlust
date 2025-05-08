@@ -248,3 +248,34 @@ func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.
 		},
 	}, nil
 }
+
+func (s *Service) getRatings(id string) (*dto.GetRatingsByPoiIdOutput, error) {
+	dbRes, err := s.app.Db.Queries.GetPoiRatings(context.Background(), id)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Reviews not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get reviews")
+	}
+
+	ratings := make(map[int8]int64)
+	var totalVotes int64 = 0
+
+	for i := range 5 {
+		ratings[int8(i+1)] = 0
+	}
+
+	for _, v := range dbRes {
+		ratings[int8(v.Rating)] = v.Count
+		totalVotes += v.Count
+	}
+
+	return &dto.GetRatingsByPoiIdOutput{
+		Body: dto.GetRatingsByPoiIdOutputBody{
+			Ratings:    ratings,
+			TotalVotes: totalVotes,
+		},
+	}, nil
+}

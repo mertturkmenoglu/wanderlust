@@ -88,3 +88,16 @@ type GetReviewsByPoiIdOutputBody struct {
 	Reviews    []Review       `json:"reviews"`
 	Pagination PaginationInfo `json:"pagination"`
 }
+
+type GetRatingsByPoiIdInput struct {
+	ID string `path:"id" validate:"required" doc:"ID of point of interest" example:"7323488942953598976"`
+}
+
+type GetRatingsByPoiIdOutput struct {
+	Body GetRatingsByPoiIdOutputBody
+}
+
+type GetRatingsByPoiIdOutputBody struct {
+	Ratings    map[int8]int64 `json:"ratings"`
+	TotalVotes int64          `json:"totalVotes"`
+}

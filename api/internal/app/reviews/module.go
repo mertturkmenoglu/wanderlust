@@ -123,4 +123,23 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/reviews/poi/{id}/ratings",
+			Summary:       "Get POI ratings",
+			Description:   "Get ratings for a POI",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetRatingsByPoiIdInput) (*dto.GetRatingsByPoiIdOutput, error) {
+			res, err := s.getRatings(input.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
