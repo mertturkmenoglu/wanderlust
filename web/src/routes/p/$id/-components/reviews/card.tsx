@@ -1,18 +1,18 @@
-import { formatDistanceToNow } from "date-fns";
-import { FlagIcon } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
-import Lightbox from "yet-another-react-lightbox";
-import CollapsibleText from "~/components/blocks/collapsible-text";
-import UserImage from "~/components/blocks/user-image";
-import FormattedRating from "~/components/kit/formatted-rating";
-import { GetReviewByIdResponseDto } from "~/lib/dto";
-import { ipx } from "~/lib/img-proxy";
-import { cn } from "~/lib/utils";
-import { Menu } from "./menu";
+import CollapsibleText from '@/components/blocks/collapsible-text';
+import UserImage from '@/components/blocks/user-image';
+import FormattedRating from '@/components/kit/formatted-rating';
+import type { components } from '@/lib/api-types';
+import { ipx } from '@/lib/ipx';
+import { cn } from '@/lib/utils';
+import { Link } from '@tanstack/react-router';
+import { formatDistanceToNow } from 'date-fns';
+import { FlagIcon } from 'lucide-react';
+import { useState } from 'react';
+import Lightbox from 'yet-another-react-lightbox';
+import { Menu } from './menu';
 
 type Props = {
-  review: GetReviewByIdResponseDto;
+  review: components['schemas']['Review'];
 };
 
 export function ReviewCard({ review }: Props) {
@@ -24,15 +24,20 @@ export function ReviewCard({ review }: Props) {
       <div className="flex flex-row items-center gap-4">
         <UserImage
           className="size-16 rounded-full"
-          src={review.user.profileImage ?? ""}
+          src={review.user.profileImage ?? ''}
         />
-        <Link to={`/u/${review.user.username}`}>
+        <Link
+          to="/u/$username"
+          params={{
+            username: review.user.username,
+          }}
+        >
           <div className="font-medium">{review.user.fullName}</div>
           <div className="text-xs text-primary tracking-tight">
             <span className="">@{review.user.username}</span>
           </div>
           <div className="text-xs text-muted-foreground mt-1">{`${formatDistanceToNow(
-            review.createdAt
+            review.createdAt,
           )} ago`}</div>
         </Link>
         <div className="ml-auto">
@@ -42,8 +47,8 @@ export function ReviewCard({ review }: Props) {
       <div className="mt-4">
         <CollapsibleText text={review.content} charLimit={512} />
         <div
-          className={cn("flex items-center gap-4", {
-            "mt-4": review.media.length > 0,
+          className={cn('flex items-center gap-4', {
+            'mt-4': review.media.length > 0,
           })}
         >
           {review.media.map((m, i) => (
@@ -57,7 +62,7 @@ export function ReviewCard({ review }: Props) {
               }}
             >
               <img
-                src={ipx(m.url, "w_96")}
+                src={ipx(m.url, 'w_96')}
                 alt=""
                 className="aspect-square rounded"
               />
@@ -78,7 +83,7 @@ export function ReviewCard({ review }: Props) {
           }}
           styles={{
             container: {
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
             },
           }}
           index={index}
@@ -94,7 +99,11 @@ export function ReviewCard({ review }: Props) {
           <span className="text-sm font-semibold">{review.rating}.0</span>
         </div>
         <Link
-          to={`/report?type=review&id=${review.id}`}
+          to="/report"
+          search={{
+            type: 'review',
+            id: review.id,
+          }}
           className="text-xs text-muted-foreground flex items-center ml-auto hover:underline"
         >
           <FlagIcon className="size-3" />

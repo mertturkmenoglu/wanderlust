@@ -13,6 +13,7 @@ import InformationTable from './-components/info-table';
 import MapContainer from './-components/map-container';
 import Menu from './-components/menu';
 import NearbyPois from './-components/nearby-pois';
+import Reviews from './-components/reviews';
 
 export const Route = createFileRoute('/p/$id/')({
   component: RouteComponent,
@@ -144,7 +145,7 @@ function RouteComponent() {
 
       <hr className="my-4" />
 
-      {/* <Reviews /> */}
+      <Reviews />
     </main>
   );
 }

@@ -1,8 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from "lucide-react";
-import { useContext } from "react";
-import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,31 +6,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { deleteReview } from "~/lib/api-requests";
-import { GetReviewByIdResponseDto } from "~/lib/dto";
-import { AuthContext } from "~/providers/auth-provider";
+} from '@/components/ui/dropdown-menu';
+import { api } from '@/lib/api';
+import type { components } from '@/lib/api-types';
+import { AuthContext } from '@/providers/auth-provider';
+import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from 'lucide-react';
+import { useContext } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
-  review: GetReviewByIdResponseDto;
+  review: components['schemas']['Review'];
 };
 
 export function Menu({ review }: Props) {
   const auth = useContext(AuthContext);
-  const isOwner = auth.user?.data.id === review.userId;
-  const qc = useQueryClient();
+  const isOwner = auth.user?.id === review.userId;
 
-  const mutation = useMutation({
-    mutationKey: ["delete-review", review.id],
-    mutationFn: async () => deleteReview(review.id),
+  const mutation = api.useMutation('delete', '/api/v2/reviews/{id}', {
     onSuccess: () => {
-      toast.success("Review deleted");
-      qc.invalidateQueries({
-        queryKey: ["reviews", review.poiId],
-      });
+      toast.success('Review deleted');
+      window.location.reload();
     },
-    onError: () => {
-      toast.error("Something went wrong");
+    onError: (err) => {
+      toast.error(err.title ?? 'Something went wrong');
     },
   });
 
@@ -57,7 +51,17 @@ export function Menu({ review }: Props) {
           <>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => mutation.mutate()}>
+            <DropdownMenuItem
+              onClick={() =>
+                mutation.mutate({
+                  params: {
+                    path: {
+                      id: review.id,
+                    },
+                  },
+                })
+              }
+            >
               Delete
               <DropdownMenuShortcut>
                 <TrashIcon className="size-3" />

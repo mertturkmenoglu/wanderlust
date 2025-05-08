@@ -1,16 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
+import FormattedRating from '@/components/kit/formatted-rating';
+import { Progress } from '@/components/ui/progress';
+import { api } from '@/lib/api';
+import type { components } from '@/lib/api-types';
+import { computeRating } from '@/lib/rating';
+import { getRouteApi } from '@tanstack/react-router';
 import { LoaderCircleIcon, StarIcon } from 'lucide-react';
-import { useLoaderData } from 'react-router';
-import FormattedRating from '~/components/kit/formatted-rating';
-import { Progress } from '~/components/ui/progress';
-import { getPoiRatings } from '~/lib/api-requests';
-import { GetPoiRatingsResponseDto } from '~/lib/dto';
-import { computeRating } from '~/lib/rating';
-import { loader } from '../../../../../../old/app/routes/p.$id/route';
 import CreateReviewDialog from './create-dialog';
 
 export default function Header() {
-  const { poi } = useLoaderData<typeof loader>();
+  const route = getRouteApi('/p/$id/');
+  const { poi } = route.useLoaderData();
   const rating = computeRating(poi.totalPoints, poi.totalVotes);
   const fmt = Intl.NumberFormat('en-US', {
     style: 'decimal',
@@ -18,9 +17,12 @@ export default function Header() {
     notation: 'compact',
   });
 
-  const query = useQuery({
-    queryKey: ['poi-ratings', poi.id],
-    queryFn: async () => getPoiRatings(poi.id),
+  const query = api.useQuery('get', '/api/v2/reviews/poi/{id}/ratings', {
+    params: {
+      path: {
+        id: poi.id,
+      },
+    },
   });
 
   return (
@@ -49,13 +51,13 @@ export default function Header() {
         <LoaderCircleIcon className="size-16 my-auto mx-auto animate-spin text-primary" />
       )}
 
-      {query.data && <Ratings ratings={query.data.data} />}
+      {query.data && <Ratings ratings={query.data} />}
     </div>
   );
 }
 
 type Props = {
-  ratings: GetPoiRatingsResponseDto;
+  ratings: components['schemas']['GetRatingsByPoiIdOutputBody'];
 };
 
 function Ratings({ ratings }: Props) {
