@@ -403,3 +403,47 @@ func ToListItem(dbListItem db.GetListItemsRow) dto.ListItem {
 		},
 	}
 }
+
+func ToReview(dbReview db.GetReviewsByIdsPopulatedRow) dto.Review {
+	return dto.Review{
+		ID:        dbReview.Review.ID,
+		PoiID:     dbReview.Poi.ID,
+		UserID:    dbReview.Profile.ID,
+		Content:   dbReview.Review.Content,
+		Rating:    dbReview.Review.Rating,
+		CreatedAt: dbReview.Review.CreatedAt.Time,
+		UpdatedAt: dbReview.Review.UpdatedAt.Time,
+		Poi: dto.ReviewPoi{
+			ID:   dbReview.Poi.ID,
+			Name: dbReview.Poi.Name,
+		},
+		User: dto.Profile{
+			ID:                dbReview.Profile.ID,
+			Username:          dbReview.Profile.Username,
+			FullName:          dbReview.Profile.FullName,
+			IsBusinessAccount: dbReview.Profile.IsBusinessAccount,
+			IsVerified:        dbReview.Profile.IsVerified,
+			Bio:               utils.TextToStr(dbReview.Profile.Bio),
+			Pronouns:          utils.TextToStr(dbReview.Profile.Pronouns),
+			Website:           utils.TextToStr(dbReview.Profile.Website),
+			Phone:             utils.TextToStr(dbReview.Profile.Phone),
+			ProfileImage:      utils.TextToStr(dbReview.Profile.ProfileImage),
+			BannerImage:       utils.TextToStr(dbReview.Profile.BannerImage),
+			FollowersCount:    dbReview.Profile.FollowersCount,
+			FollowingCount:    dbReview.Profile.FollowingCount,
+			CreatedAt:         dbReview.Profile.CreatedAt.Time,
+		},
+		Media: ToReviewMedia(dbReview.Media),
+	}
+}
+
+func ToReviewMedia(dbReviewMediaBytes []byte) []dto.ReviewMedia {
+	media := []dto.ReviewMedia{}
+	err := json.Unmarshal(dbReviewMediaBytes, &media)
+
+	if err != nil {
+		return nil
+	}
+
+	return media
+}

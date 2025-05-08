@@ -1,0 +1,40 @@
+package dto
+
+import "time"
+
+type Review struct {
+	ID        string        `json:"id" example:"7323488942953598976" doc:"ID of review"`
+	PoiID     string        `json:"poiId" example:"7323488942953598976" doc:"ID of point of interest"`
+	UserID    string        `json:"userId" example:"7323488942953598976" doc:"ID of user"`
+	Content   string        `json:"content" example:"Lorem ipsum dolor sit amet" doc:"Content of the review"`
+	Rating    int16         `json:"rating" example:"1" doc:"Rating of the review"`
+	CreatedAt time.Time     `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of review"`
+	UpdatedAt time.Time     `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"Updated at time of review"`
+	Poi       ReviewPoi     `json:"poi"`
+	User      Profile       `json:"user"`
+	Media     []ReviewMedia `json:"media"`
+}
+
+type ReviewPoi struct {
+	ID   string `json:"id" example:"7323488942953598976" doc:"ID of point of interest"`
+	Name string `json:"name" example:"The Great Wall of China" doc:"Name of point of interest"`
+}
+
+type ReviewMedia struct {
+	ID         int64  `json:"id" example:"1234" doc:"ID of media of review"`
+	ReviewID   string `json:"reviewId" example:"7323488942953598976" doc:"ID of review"`
+	Url        string `json:"url" example:"https://example.com/media.jpg" doc:"URL of media of review"`
+	MediaOrder int16  `json:"mediaOrder" example:"1" doc:"Media order of media of review"`
+}
+
+type GetReviewByIdInput struct {
+	ID string `path:"id" validate:"required" doc:"ID of review" example:"7323488942953598976"`
+}
+
+type GetReviewByIdOutput struct {
+	Body GetReviewByIdOutputBody
+}
+
+type GetReviewByIdOutputBody struct {
+	Review Review `json:"review"`
+}
