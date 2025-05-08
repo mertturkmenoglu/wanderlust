@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useMutation } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 import { useNavigate } from '@tanstack/react-router';
 import { TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -20,20 +20,16 @@ type Props = {
 export default function DeleteDialog({ id }: Props) {
   const navigate = useNavigate();
 
-  // TODO: implement delete mutation
-  const deleteMutation = useMutation({
-    mutationKey: ['delete-poi-draft', id],
-    mutationFn: async () => {
-      toast.error('Not implemented');
-    },
-    onSuccess: () => {
+  const mutation = api.useMutation('delete', '/api/v2/pois/drafts/{id}', {
+    onSuccess: async () => {
       toast.success('Draft deleted');
-      navigate({
+      await navigate({
         to: '/dashboard/pois/drafts',
       });
+      window.location.reload();
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (err) => {
+      toast.error(err.title ?? 'Something went wrong');
     },
   });
 
@@ -56,7 +52,15 @@ export default function DeleteDialog({ id }: Props) {
           <Button
             type="button"
             variant="destructive"
-            onClick={() => deleteMutation.mutate()}
+            onClick={() =>
+              mutation.mutate({
+                params: {
+                  path: {
+                    id,
+                  },
+                },
+              })
+            }
           >
             Delete
           </Button>

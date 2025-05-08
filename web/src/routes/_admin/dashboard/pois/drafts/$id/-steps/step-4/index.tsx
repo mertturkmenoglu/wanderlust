@@ -93,7 +93,7 @@ export default function Step4() {
     <div>
       <ToggleGroup
         type="multiple"
-        className="mt-8"
+        className="mt-8 mx-auto"
         defaultValue={days.map((day) => day.id)}
         onValueChange={(v) => {
           setDays([...allDays.filter((d) => v.includes(d.id))]);
