@@ -126,3 +126,16 @@ type UpdatePoiDraftOutput struct {
 type UpdatePoiDraftOutputBody struct {
 	Draft map[string]any `json:"draft"`
 }
+
+type UploadPoiMediaInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	Body UploadPoiMediaInputBody
+}
+
+type UploadPoiMediaInputBody struct {
+	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
+	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
+	Alt      string `json:"alt" example:"Media of point of interest" doc:"Alt of media of point of interest" required:"true"`
+	Caption  string `json:"caption" example:"Media of point of interest" doc:"Caption of media of point of interest" required:"true"`
+	Size     int32  `json:"size" example:"1024" doc:"Size of media of point of interest" required:"true"`
+}
