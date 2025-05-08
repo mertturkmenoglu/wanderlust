@@ -110,12 +110,27 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
   const [alt, setAlt] = useState(media.alt);
   const [caption, setCaption] = useState(media.caption);
 
-  const mutation = api.useMutation(
+  const updateMutation = api.useMutation(
     'patch',
     '/api/v2/pois/drafts/{id}',
     {
       onSuccess: async () => {
         toast.success('Image updated');
+        window.location.reload();
+      },
+      onError: (err) => {
+        toast.error(err.title ?? 'Something went wrong');
+      },
+    },
+    qc,
+  );
+
+  const deleteMutation = api.useMutation(
+    'delete',
+    '/api/v2/pois/drafts/{id}/media/{index}',
+    {
+      onSuccess: async () => {
+        toast.success('Image deleted');
         window.location.reload();
       },
       onError: (err) => {
@@ -160,7 +175,7 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
               m[row.index - 1] = m[row.index];
               m[row.index] = tmp;
 
-              mutation.mutate({
+              updateMutation.mutate({
                 params: {
                   path: {
                     id: draft.id,
@@ -187,7 +202,7 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
               m[row.index + 1] = m[row.index];
               m[row.index] = tmp;
 
-              mutation.mutate({
+              updateMutation.mutate({
                 params: {
                   path: {
                     id: draft.id,
@@ -205,7 +220,19 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
             <ChevronDownIcon className="size-4" />
             Move Down
           </DropdownMenuItem>
-          <DropdownMenuItem variant="destructive">
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => {
+              deleteMutation.mutate({
+                params: {
+                  path: {
+                    id: draft.id,
+                    index: row.index,
+                  },
+                },
+              });
+            }}
+          >
             <Trash2Icon className="size-4" />
             Delete Image
           </DropdownMenuItem>
@@ -257,7 +284,7 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
                 fileName: media.fileName,
               });
 
-              mutation.mutate({
+              updateMutation.mutate({
                 params: {
                   path: {
                     id: draft.id,
