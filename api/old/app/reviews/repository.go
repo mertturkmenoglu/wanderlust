@@ -28,7 +28,3 @@ func (r *repository) addMedia(id string, url string) error {
 
 	return err
 }
-
-func (r *repository) getPoiRatings(id string) ([]db.GetPoiRatingsRow, error) {
-	return r.di.Db.Queries.GetPoiRatings(context.Background(), id)
-}

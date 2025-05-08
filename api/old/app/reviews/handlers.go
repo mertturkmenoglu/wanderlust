@@ -40,21 +40,3 @@ func (h *handlers) uploadMedia(c echo.Context) error {
 		},
 	})
 }
-
-func (h *handlers) getPoiRatings(c echo.Context) error {
-	id := c.Param("id")
-
-	if id == "" {
-		return ErrIdRequired
-	}
-
-	res, err := h.service.getPoiRatings(id)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.Response{
-		Data: res,
-	})
-}

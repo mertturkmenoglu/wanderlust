@@ -33,28 +33,3 @@ func (s *service) uploadMedia(id string, mpf *multipart.Form) (string, error) {
 
 	return url, nil
 }
-
-func (s *service) getPoiRatings(id string) (GetPoiRatingsResponseDto, error) {
-	res, err := s.repository.getPoiRatings(id)
-
-	if err != nil {
-		return GetPoiRatingsResponseDto{}, err
-	}
-
-	ratings := make(map[int8]int64)
-	var totalVotes int64 = 0
-
-	for i := range 5 {
-		ratings[int8(i+1)] = 0
-	}
-
-	for _, r := range res {
-		ratings[int8(r.Rating)] = r.Count
-		totalVotes += r.Count
-	}
-
-	return GetPoiRatingsResponseDto{
-		Ratings:    ratings,
-		TotalVotes: totalVotes,
-	}, nil
-}
