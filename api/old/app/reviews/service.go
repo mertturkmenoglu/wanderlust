@@ -2,39 +2,8 @@ package reviews
 
 import (
 	"mime/multipart"
-	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/upload"
 )
-
-func (s *service) getReviewsByPoiId(id string, params pagination.Params) (GetReviewsByPoiIdResponseDto, int64, error) {
-	res, err := s.repository.getReviewsByPoiId(id, params)
-
-	if err != nil {
-		return GetReviewsByPoiIdResponseDto{}, 0, err
-	}
-
-	total, err := s.repository.countReviewsByPoiId(id)
-
-	if err != nil {
-		return GetReviewsByPoiIdResponseDto{}, 0, err
-	}
-
-	reviewIds := make([]string, 0)
-
-	for _, r := range res {
-		reviewIds = append(reviewIds, r.Review.ID)
-	}
-
-	media, err := s.repository.getReviewMediaByReviewIds(reviewIds)
-
-	if err != nil {
-		return GetReviewsByPoiIdResponseDto{}, 0, err
-	}
-
-	v := mapToGetReviewsByPoiIdResponseDto(res, media)
-
-	return v, total, nil
-}
 
 func (s *service) uploadMedia(id string, mpf *multipart.Form) (string, error) {
 	uploader := sImageUploader{
