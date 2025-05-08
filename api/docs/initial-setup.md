@@ -25,6 +25,11 @@
 
 Follow these steps in this specific order:
 
+- Read `infisical.md` file.
+- Read `justfile.md` file.
 - Read `database.md` file.
+- Read `migrations.md` file.
 - Read `fake.md` file.
 - Read `search-sync.md` file.
+- Read `openapi.md` file.
+- Read `minio.md` file.
