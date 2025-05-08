@@ -238,13 +238,37 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeletePoiDraftInput) (*struct{}, error) {
-			err := s.deleteDraft(input.ID)
+			err := s.deleteDraft(input.ID, true)
 
 			if err != nil {
 				return nil, err
 			}
 
 			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/pois/drafts/{id}/publish",
+			Summary:       "Publish Draft",
+			Description:   "Publish a draft",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftCreate),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.PublishPoiDraftInput) (*dto.PublishPoiDraftOutput, error) {
+			res, err := s.publishDraft(input.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
 		},
 	)
 }

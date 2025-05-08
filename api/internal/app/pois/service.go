@@ -362,7 +362,7 @@ func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput
 	return res, nil
 }
 
-func (s *Service) deleteDraft(id string) error {
+func (s *Service) deleteDraft(id string, deleteMedia bool) error {
 	draft, err := s.getDraft(id)
 
 	if err != nil {
@@ -371,7 +371,7 @@ func (s *Service) deleteDraft(id string) error {
 
 	media, has := draft.Body.Draft["media"]
 
-	if has {
+	if has && deleteMedia {
 		mediaCast, ok := media.([]any)
 
 		if !ok {
@@ -412,4 +412,147 @@ func (s *Service) deleteDraft(id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) publishDraft(id string) (*dto.PublishPoiDraftOutput, error) {
+	draft, err := s.getDraft(id)
+
+	if err != nil {
+		return nil, huma.Error404NotFound("draft not found")
+	}
+
+	res, err := s.saveDraftToDatabase(draft.Body.Draft)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to publish draft")
+	}
+
+	err = s.deleteDraft(id, false)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to delete draft")
+	}
+
+	return res, nil
+}
+
+func (s *Service) saveDraftToDatabase(draft map[string]any) (*dto.PublishPoiDraftOutput, error) {
+	ctx := context.Background()
+	tx, err := s.App.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.App.Db.Queries.WithTx(tx)
+
+	address, ok := draft["address"].(map[string]any)
+
+	if !ok {
+		return nil, huma.Error500InternalServerError("failed to cast address")
+	}
+
+	cityId, ok := address["cityId"].(float64)
+
+	if !ok {
+		return nil, huma.Error500InternalServerError("failed to cast cityId")
+	}
+
+	addr, err := qtx.CreateAddress(ctx, db.CreateAddressParams{
+		CityID:     (int32)(cityId),
+		Line1:      address["line1"].(string),
+		Line2:      utils.StrToText(address["line2"].(string)),
+		PostalCode: utils.StrToText(address["postalCode"].(string)),
+		Lat:        address["lat"].(float64),
+		Lng:        address["lng"].(float64),
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create address")
+	}
+
+	hoursbytes, err := json.Marshal(draft["hours"])
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to marshal hours")
+	}
+
+	poi, err := qtx.CreateOnePoi(ctx, db.CreateOnePoiParams{
+		ID:                 utils.GenerateId(s.App.Flake),
+		Name:               draft["name"].(string),
+		Phone:              utils.StrToText(draft["phone"].(string)),
+		Description:        draft["description"].(string),
+		AddressID:          addr.ID,
+		Website:            utils.StrToText(draft["website"].(string)),
+		PriceLevel:         (int16)(draft["priceLevel"].(float64)),
+		AccessibilityLevel: (int16)(draft["accessibilityLevel"].(float64)),
+		TotalVotes:         0,
+		TotalPoints:        0,
+		TotalFavorites:     0,
+		CategoryID:         (int16)(draft["categoryId"].(float64)),
+		OpenTimes:          hoursbytes,
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create poi")
+	}
+
+	_, has := draft["amenities"]
+
+	if has {
+		amenitiesIds := draft["amenities"].([]any)
+
+		for _, amenityId := range amenitiesIds {
+			_, err = qtx.CreateOneAmenitiesPois(ctx, db.CreateOneAmenitiesPoisParams{
+				AmenityID: int32(amenityId.(float64)),
+				PoiID:     poi.ID,
+			})
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("failed to create amenity poi connection")
+			}
+		}
+	}
+
+	for i, media := range draft["media"].([]any) {
+		mediaMap := media.(map[string]any)
+
+		maybeAlt, ok := mediaMap["url"].(string)
+
+		if !ok {
+			maybeAlt = ""
+		}
+
+		maybeCaption, ok := mediaMap["caption"].(string)
+
+		if !ok {
+			maybeCaption = ""
+		}
+
+		_, err = qtx.CreatePoiMedia(ctx, db.CreatePoiMediaParams{
+			PoiID:      poi.ID,
+			Url:        mediaMap["url"].(string),
+			Alt:        maybeAlt,
+			Caption:    utils.StrToText(maybeCaption),
+			MediaOrder: int16(i),
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to create media")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to commit transaction")
+	}
+
+	return &dto.PublishPoiDraftOutput{
+		Body: dto.PublishPoiDraftOutputBody{
+			ID: poi.ID,
+		},
+	}, nil
 }
