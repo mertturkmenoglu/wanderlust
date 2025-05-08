@@ -50,7 +50,7 @@ export default function Step2() {
   return (
     <div>
       <form
-        className="mt-8 grid grid-cols-1 gap-4 px-0 max-w-5xl mx-auto md:grid-cols-2"
+        className="mt-8 grid grid-cols-1 gap-4 px-0 mx-auto md:grid-cols-2"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="">

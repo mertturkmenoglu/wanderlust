@@ -46,7 +46,6 @@ export default function Step3() {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="col-span-2">
-          <Label htmlFor="amenities">Amenities</Label>
           <Controller
             name="amenities"
             control={form.control}
