@@ -38,3 +38,21 @@ type GetReviewByIdOutput struct {
 type GetReviewByIdOutputBody struct {
 	Review Review `json:"review"`
 }
+
+type CreateReviewInput struct {
+	Body CreateReviewInputBody
+}
+
+type CreateReviewInputBody struct {
+	PoiID   string `json:"poiId" example:"7323488942953598976" doc:"ID of point of interest" minLength:"1" maxLength:"32"`
+	Content string `json:"content" example:"Lorem ipsum dolor sit amet" doc:"Content of the review" minLength:"5" maxLength:"2048"`
+	Rating  int16  `json:"rating" example:"1" doc:"Rating of the review" min:"1" max:"5"`
+}
+
+type CreateReviewOutput struct {
+	Body CreateReviewOutputBody
+}
+
+type CreateReviewOutputBody struct {
+	Review Review `json:"review"`
+}

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/dto"
+	"wanderlust/internal/pkg/middlewares"
 
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -28,6 +29,30 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 		func(ctx context.Context, input *dto.GetReviewByIdInput) (*dto.GetReviewByIdOutput, error) {
 			res, err := s.get(input.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/reviews/",
+			Summary:       "Create Review",
+			Description:   "Create a review",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateReviewInput) (*dto.CreateReviewOutput, error) {
+			userId := ctx.Value("userId").(string)
+			res, err := s.create(userId, input.Body)
 
 			if err != nil {
 				return nil, err
