@@ -151,13 +151,56 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
               Edit Image
             </DrawerTrigger>
           </DropdownMenuItem>
-          <DropdownMenuItem variant="default" disabled={row.index === 0}>
+          <DropdownMenuItem
+            variant="default"
+            disabled={row.index === 0}
+            onClick={() => {
+              let m = draft.media ? [...draft.media] : [];
+              let tmp = m[row.index - 1];
+              m[row.index - 1] = m[row.index];
+              m[row.index] = tmp;
+
+              mutation.mutate({
+                params: {
+                  path: {
+                    id: draft.id,
+                  },
+                },
+                body: {
+                  values: {
+                    ...draft,
+                    media: m,
+                  },
+                },
+              });
+            }}
+          >
             <ChevronUpIcon className="size-4" />
             Move Up
           </DropdownMenuItem>
           <DropdownMenuItem
             variant="default"
             disabled={row.index === lastIndex}
+            onClick={() => {
+              let m = draft.media ? [...draft.media] : [];
+              let tmp = m[row.index + 1];
+              m[row.index + 1] = m[row.index];
+              m[row.index] = tmp;
+
+              mutation.mutate({
+                params: {
+                  path: {
+                    id: draft.id,
+                  },
+                },
+                body: {
+                  values: {
+                    ...draft,
+                    media: m,
+                  },
+                },
+              });
+            }}
           >
             <ChevronDownIcon className="size-4" />
             Move Down
