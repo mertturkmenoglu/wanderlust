@@ -104,4 +104,23 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/reviews/poi/{id}",
+			Summary:       "Get Reviews by POI ID",
+			Description:   "Get reviews by POI ID",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetReviewsByPoiIdInput) (*dto.GetReviewsByPoiIdOutput, error) {
+			res, err := s.getByPoiID(input.ID, input.PaginationQueryParams)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

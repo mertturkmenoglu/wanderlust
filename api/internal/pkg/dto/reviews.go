@@ -74,3 +74,17 @@ type GetReviewsByUsernameOutputBody struct {
 	Reviews    []Review       `json:"reviews"`
 	Pagination PaginationInfo `json:"pagination"`
 }
+
+type GetReviewsByPoiIdInput struct {
+	ID string `path:"id" validate:"required" doc:"ID of point of interest" example:"7323488942953598976"`
+	PaginationQueryParams
+}
+
+type GetReviewsByPoiIdOutput struct {
+	Body GetReviewsByPoiIdOutputBody
+}
+
+type GetReviewsByPoiIdOutputBody struct {
+	Reviews    []Review       `json:"reviews"`
+	Pagination PaginationInfo `json:"pagination"`
+}

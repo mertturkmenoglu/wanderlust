@@ -207,3 +207,44 @@ func (s *Service) getByUsername(username string, params dto.PaginationQueryParam
 		},
 	}, nil
 }
+
+func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.GetReviewsByPoiIdOutput, error) {
+	dbRes, err := s.app.Db.Queries.GetReviewsByPoiId(context.Background(), db.GetReviewsByPoiIdParams{
+		PoiID:  id,
+		Offset: int32(pagination.GetOffset(params)),
+		Limit:  int32(params.PageSize),
+	})
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Reviews not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get reviews")
+	}
+
+	ids := make([]string, len(dbRes))
+
+	for i, v := range dbRes {
+		ids[i] = v.Review.ID
+	}
+
+	reviews, err := s.getMany(ids)
+
+	if err != nil {
+		return nil, err
+	}
+
+	count, err := s.app.Db.Queries.CountReviewsByPoiId(context.Background(), id)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get reviews count")
+	}
+
+	return &dto.GetReviewsByPoiIdOutput{
+		Body: dto.GetReviewsByPoiIdOutputBody{
+			Reviews:    reviews,
+			Pagination: pagination.Compute(params, count),
+		},
+	}, nil
+}
