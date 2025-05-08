@@ -32,7 +32,6 @@ func NotImplemented(s *Authz, c huma.Context) (bool, error) {
 	return false, huma.Error501NotImplemented("not implemented")
 }
 
-
 func FnListRead(s *Authz, c huma.Context) (bool, error) {
 	listId := c.Param("id")
 
