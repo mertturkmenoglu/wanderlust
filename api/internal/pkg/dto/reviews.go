@@ -56,3 +56,7 @@ type CreateReviewOutput struct {
 type CreateReviewOutputBody struct {
 	Review Review `json:"review"`
 }
+
+type DeleteReviewInput struct {
+	ID string `path:"id" validate:"required" doc:"ID of review" example:"7323488942953598976"`
+}

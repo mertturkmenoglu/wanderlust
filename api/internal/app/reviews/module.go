@@ -61,4 +61,28 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/reviews/{id}",
+			Summary:       "Delete Review",
+			Description:   "Delete a review",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeleteReviewInput) (*dto.CreateReviewOutput, error) {
+			userId := ctx.Value("userId").(string)
+			err := s.remove(userId, input.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
 }

@@ -3,15 +3,18 @@ package reviews
 import (
 	"context"
 	"errors"
+	"strings"
 	"wanderlust/internal/pkg/activities"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/mapper"
+	"wanderlust/internal/pkg/upload"
 	"wanderlust/internal/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/minio/minio-go/v7"
 )
 
 type Service struct {
@@ -120,4 +123,45 @@ func (s *Service) create(userId string, body dto.CreateReviewInputBody) (*dto.Cr
 			Review: r,
 		},
 	}, nil
+}
+
+func (s *Service) remove(userId string, id string) error {
+	reviewRes, err := s.get(id)
+
+	if err != nil {
+		return err
+	}
+
+	r := reviewRes.Body.Review
+
+	if r.UserID != userId {
+		return huma.Error403Forbidden("You do not have permission to delete this review")
+	}
+
+	err = s.app.Db.Queries.DeleteReview(context.Background(), id)
+
+	if err != nil {
+		return huma.Error500InternalServerError("Failed to delete review")
+	}
+
+	for _, m := range r.Media {
+		_, after, found := strings.Cut(m.Url, "reviews/")
+
+		if !found {
+			continue
+		}
+
+		err = s.app.Upload.Client.RemoveObject(
+			context.Background(),
+			string(upload.BUCKET_REVIEWS),
+			after,
+			minio.RemoveObjectOptions{},
+		)
+
+		if err != nil {
+			s.app.Logger.Error("error deleting review media", s.app.Logger.Args("error", err))
+		}
+	}
+
+	return nil
 }
