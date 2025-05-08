@@ -9,6 +9,7 @@ import (
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/mapper"
+	"wanderlust/internal/pkg/pagination"
 	"wanderlust/internal/pkg/upload"
 	"wanderlust/internal/pkg/utils"
 
@@ -164,4 +165,45 @@ func (s *Service) remove(userId string, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) getByUsername(username string, params dto.PaginationQueryParams) (*dto.GetReviewsByUsernameOutput, error) {
+	dbRes, err := s.app.Db.Queries.GetReviewsByUsername(context.Background(), db.GetReviewsByUsernameParams{
+		Username: username,
+		Offset:   int32(pagination.GetOffset(params)),
+		Limit:    int32(params.PageSize),
+	})
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Reviews not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get reviews")
+	}
+
+	ids := make([]string, len(dbRes))
+
+	for i, v := range dbRes {
+		ids[i] = v.Review.ID
+	}
+
+	reviews, err := s.getMany(ids)
+
+	if err != nil {
+		return nil, err
+	}
+
+	count, err := s.app.Db.Queries.CountReviewsByUsername(context.Background(), username)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get reviews count")
+	}
+
+	return &dto.GetReviewsByUsernameOutput{
+		Body: dto.GetReviewsByUsernameOutputBody{
+			Reviews:    reviews,
+			Pagination: pagination.Compute(params, count),
+		},
+	}, nil
 }

@@ -60,3 +60,17 @@ type CreateReviewOutputBody struct {
 type DeleteReviewInput struct {
 	ID string `path:"id" validate:"required" doc:"ID of review" example:"7323488942953598976"`
 }
+
+type GetReviewsByUsernameInput struct {
+	Username string `path:"username" validate:"required" doc:"Username of the user" example:"johndoe" minLength:"1" maxLength:"32"`
+	PaginationQueryParams
+}
+
+type GetReviewsByUsernameOutput struct {
+	Body GetReviewsByUsernameOutputBody
+}
+
+type GetReviewsByUsernameOutputBody struct {
+	Reviews    []Review       `json:"reviews"`
+	Pagination PaginationInfo `json:"pagination"`
+}

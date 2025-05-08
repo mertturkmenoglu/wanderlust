@@ -85,4 +85,23 @@ func Register(grp *huma.Group, app *core.Application) {
 			return nil, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/reviews/user/{username}",
+			Summary:       "Get Reviews by Username",
+			Description:   "Get reviews by username",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetReviewsByUsernameInput) (*dto.GetReviewsByUsernameOutput, error) {
+			res, err := s.getByUsername(input.Username, input.PaginationQueryParams)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
