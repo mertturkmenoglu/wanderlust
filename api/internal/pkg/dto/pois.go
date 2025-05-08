@@ -139,3 +139,8 @@ type UploadPoiMediaInputBody struct {
 	Caption  string `json:"caption" example:"Media of point of interest" doc:"Caption of media of point of interest" required:"true"`
 	Size     int32  `json:"size" example:"1024" doc:"Size of media of point of interest" required:"true"`
 }
+
+type DeletePoiMediaInput struct {
+	ID    string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976"`
+	Index int32  `path:"index" validate:"required" doc:"Index of media" example:"0" min:"0" max:"10"`
+}

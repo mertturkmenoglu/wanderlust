@@ -303,55 +303,61 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadPoiMedia
 	return res, nil
 }
 
-// func (s *Service) deleteImage(id string, input dto.UpdateUserProfileImageInputBody) error {
-// 	bucket := upload.BUCKET_POIS
-// 	endpoint := s.App.Upload.Client.EndpointURL().String()
-// 	url := endpoint + "/" + string(bucket) + "/" + input.FileName
+func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput, error) {
+	draft, err := s.getDraft(id)
 
-// 	err := s.App.Upload.Client.RemoveObject(
-// 		context.Background(),
-// 		string(bucket),
-// 		input.FileName,
-// 		minio.RemoveObjectOptions{},
-// 	)
+	if err != nil {
+		return nil, huma.Error404NotFound("draft not found")
+	}
 
-// 	if err != nil {
-// 		return nil, huma.Error500InternalServerError("failed to delete image")
-// 	}
+	media, has := draft.Body.Draft["media"]
 
-// 	draft, err := s.getDraft(id)
+	if !has {
+		return nil, huma.Error404NotFound("media not found")
+	}
 
-// 	if err != nil {
-// 		return huma.Error404NotFound("draft not found")
-// 	}
+	mediaCast, ok := media.([]any)
 
-// 	media, has := draft.Body.Draft["media"]
+	if !ok {
+		return nil, huma.Error500InternalServerError("failed to cast media")
+	}
 
-// 	if !has {
-// 		return huma.Error404NotFound("media not found")
-// 	}
+	m := mediaCast[int(index)]
 
-// 	newMedia := make([]interface{}, 0)
+	img, ok := m.(map[string]any)
 
-// 	for _, m := range media.([]interface{}) {
-// 		u := m.(map[string]interface{})["url"].(string)
+	if !ok {
+		return nil, huma.Error500InternalServerError("failed to cast img")
+	}
 
-// 		if u != url {
-// 			continue
-// 		}
+	err = s.App.Upload.Client.RemoveObject(
+		context.Background(),
+		string(upload.BUCKET_POIS),
+		img["fileName"].(string),
+		minio.RemoveObjectOptions{},
+	)
 
-// 		newMedia = append(newMedia, m)
-// 	}
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to delete image")
+	}
 
-// 	draft.Body.Draft["media"] = newMedia
+	newMedia := make([]any, 0)
 
-// 	res, err := s.updateDraft(id, dto.UpdatePoiDraftInputBody{
-// 		Values: draft.Body.Draft,
-// 	})
+	for i, m := range mediaCast {
+		if i != int(index) {
+			newMedia = append(newMedia, m)
+		}
+	}
 
-// 	if err != nil {
-// 		return huma.Error500InternalServerError("failed to update draft")
-// 	}
+	draft.Body.Draft["media"] = newMedia
 
-// 	return res, nil
-// }
+	res, err := s.updateDraft(id, dto.UpdatePoiDraftInputBody{
+		Values: draft.Body.Draft,
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to update draft")
+	}
+
+	return res, nil
+}

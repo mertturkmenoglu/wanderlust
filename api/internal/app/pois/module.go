@@ -205,4 +205,28 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/pois/drafts/{id}/media/{index}",
+			Summary:       "Delete Draft Media",
+			Description:   "Delete a draft media by index",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActPoiDraftCreate),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeletePoiMediaInput) (*dto.UpdatePoiDraftOutput, error) {
+			res, err := s.deleteMedia(input.ID, input.Index)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
