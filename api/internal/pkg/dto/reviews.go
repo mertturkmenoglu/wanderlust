@@ -101,3 +101,22 @@ type GetRatingsByPoiIdOutputBody struct {
 	Ratings    map[int8]int64 `json:"ratings"`
 	TotalVotes int64          `json:"totalVotes"`
 }
+
+type UploadReviewMediaInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	Body UploadReviewMediaInputBody
+}
+
+type UploadReviewMediaInputBody struct {
+	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
+	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
+	Size     int32  `json:"size" example:"1024" doc:"Size of media of point of interest" required:"true"`
+}
+
+type UploadReviewMediaOutput struct {
+	Body UploadReviewMediaOutputBody
+}
+
+type UploadReviewMediaOutputBody struct {
+	Review Review `json:"review"`
+}

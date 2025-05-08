@@ -142,4 +142,28 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/reviews/{id}/media",
+			Summary:       "Upload Media for a Review",
+			Description:   "Upload media for a review",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UploadReviewMediaInput) (*dto.UploadReviewMediaOutput, error) {
+			userId := ctx.Value("userId").(string)
+			res, err := s.uploadMedia(userId, input.ID, input.Body)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

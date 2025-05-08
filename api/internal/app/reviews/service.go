@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 	"wanderlust/internal/pkg/activities"
+	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
@@ -276,6 +277,83 @@ func (s *Service) getRatings(id string) (*dto.GetRatingsByPoiIdOutput, error) {
 		Body: dto.GetRatingsByPoiIdOutputBody{
 			Ratings:    ratings,
 			TotalVotes: totalVotes,
+		},
+	}, nil
+}
+
+func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMediaInputBody) (*dto.UploadReviewMediaOutput, error) {
+	review, err := s.get(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if review.Body.Review.UserID != userId {
+		return nil, huma.Error403Forbidden("You do not have permission to upload media for this review")
+	}
+
+	bucket := upload.BUCKET_REVIEWS
+
+	// Check if the file is uploaded
+	_, err = s.app.Upload.Client.GetObject(
+		context.Background(),
+		string(bucket),
+		input.FileName,
+		minio.GetObjectOptions{},
+	)
+
+	if err != nil {
+		return nil, huma.Error400BadRequest("file not uploaded")
+	}
+
+	// Check if user uploaded the correct file using cached information
+	if !s.app.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
+		return nil, huma.Error400BadRequest("incorrect file")
+	}
+
+	// delete cached information
+	err = s.app.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID))
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to delete cached information")
+	}
+
+	endpoint := s.app.Upload.Client.EndpointURL().String()
+	url := endpoint + "/" + string(bucket) + "/" + input.FileName
+
+	lastOrder, err := s.app.Db.Queries.GetLastMediaOrderOfReview(context.Background(), id)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get last media order")
+	}
+
+	ord, ok := lastOrder.(int32)
+
+	if !ok {
+		return nil, huma.Error500InternalServerError("Failed to cast last media order")
+	}
+
+	order := int16(ord) + 1
+
+	_, err = s.app.Db.Queries.CreateReviewMedia(context.Background(), db.CreateReviewMediaParams{
+		ReviewID:   id,
+		Url:        url,
+		MediaOrder: order,
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to create review media")
+	}
+
+	rev, err := s.get(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.UploadReviewMediaOutput{
+		Body: dto.UploadReviewMediaOutputBody{
+			Review: rev.Body.Review,
 		},
 	}, nil
 }
