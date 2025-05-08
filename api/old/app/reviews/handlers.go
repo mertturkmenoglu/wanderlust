@@ -9,30 +9,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) getReviewsByUsername(c echo.Context) error {
-	username := c.Param("username")
-	params, err := pagination.GetParamsFromContext(c)
-
-	if username == "" {
-		return ErrUsernameRequired
-	}
-
-	if err != nil {
-		return err
-	}
-
-	res, total, err := h.service.getReviewsByUsername(username, params)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, core.PaginatedResponse{
-		Data:       res,
-		Pagination: pagination.Compute(params, total),
-	})
-}
-
 func (h *handlers) getReviewsByPoiId(c echo.Context) error {
 	id := c.Param("id")
 	params, err := pagination.GetParamsFromContext(c)
