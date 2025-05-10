@@ -125,3 +125,23 @@ type UpdateCollectionItemsOutput struct {
 type UpdateCollectionItemsOutputBody struct {
 	Collection Collection `json:"collection"`
 }
+
+type CreateCollectionPoiRelationInput struct {
+	CollectionID string `path:"id" doc:"ID of collection" example:"7323488942953598976"`
+	PoiID        string `path:"poiId" doc:"ID of point of interest" example:"7323488942953598976"`
+}
+
+type CreateCollectionCityRelationInput struct {
+	CollectionID string `path:"id" doc:"ID of collection" example:"7323488942953598976"`
+	CityID       int32  `path:"cityId" doc:"ID of city" example:"1"`
+}
+
+type RemoveCollectionPoiRelationInput struct {
+	CollectionID string `path:"id" doc:"ID of collection" example:"7323488942953598976"`
+	PoiID        string `path:"poiId" doc:"ID of point of interest" example:"7323488942953598976"`
+}
+
+type RemoveCollectionCityRelationInput struct {
+	CollectionID string `path:"id" doc:"ID of collection" example:"7323488942953598976"`
+	CityID       int32  `path:"cityId" doc:"ID of city" example:"1"`
+}

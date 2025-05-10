@@ -206,4 +206,101 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/collections/{id}/poi/{poiId}",
+			Summary:       "Create Collection POI Relation",
+			Description:   "Create collection POI relation",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateCollectionPoiRelationInput) (*struct{}, error) {
+			err := s.createPoiRelation(input.CollectionID, input.PoiID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/collections/{id}/poi/{cityId}",
+			Summary:       "Create Collection City Relation",
+			Description:   "Create collection city relation",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateCollectionCityRelationInput) (*struct{}, error) {
+			err := s.createCityRelation(input.CollectionID, input.CityID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/collections/{id}/poi/{poiId}",
+			Summary:       "Delete Collection POI Relation",
+			Description:   "Delete collection POI relation",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.RemoveCollectionPoiRelationInput) (*struct{}, error) {
+			err := s.removePoiRelation(input.CollectionID, input.PoiID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/collections/{id}/poi/{city}",
+			Summary:       "Delete Collection city Relation",
+			Description:   "Delete collection city relation",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.RemoveCollectionCityRelationInput) (*struct{}, error) {
+			err := s.removeCityRelation(input.CollectionID, input.CityID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
+
 }

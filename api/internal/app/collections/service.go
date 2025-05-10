@@ -309,3 +309,57 @@ func (s *Service) updateItems(collectionId string, body dto.UpdateCollectionItem
 		},
 	}, nil
 }
+
+func (s *Service) createPoiRelation(collectionId string, poiId string) error {
+	err := s.app.Db.Queries.CreateCollectionPoiRelation(context.Background(), db.CreateCollectionPoiRelationParams{
+		CollectionID: collectionId,
+		PoiID:        poiId,
+		Index:        0,
+	})
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to create collection POI relation")
+	}
+
+	return nil
+}
+
+func (s *Service) createCityRelation(collectionId string, cityId int32) error {
+	err := s.app.Db.Queries.CreateCollectionCityRelation(context.Background(), db.CreateCollectionCityRelationParams{
+		CollectionID: collectionId,
+		CityID:       cityId,
+		Index:        0,
+	})
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to create collection city relation")
+	}
+
+	return nil
+}
+
+func (s *Service) removePoiRelation(collectionId string, poiId string) error {
+	err := s.app.Db.Queries.RemoveCollectionPoiRelation(context.Background(), db.RemoveCollectionPoiRelationParams{
+		CollectionID: collectionId,
+		PoiID:        poiId,
+	})
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to remove collection POI relation")
+	}
+
+	return nil
+}
+
+func (s *Service) removeCityRelation(collectionId string, cityId int32) error {
+	err := s.app.Db.Queries.RemoveCollectionCityRelation(context.Background(), db.RemoveCollectionCityRelationParams{
+		CollectionID: collectionId,
+		CityID:       cityId,
+	})
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to remove collection city relation")
+	}
+
+	return nil
+}
