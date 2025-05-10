@@ -7,6 +7,7 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 
+import '@mdxeditor/editor/style.css';
 import 'instantsearch.css/themes/reset.css';
 import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
