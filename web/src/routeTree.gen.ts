@@ -42,6 +42,7 @@ import { Route as ListsIdIndexImport } from './routes/lists/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexImport } from './routes/cities/$/index'
+import { Route as CIdIndexImport } from './routes/c/$id/index'
 import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
 import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
@@ -262,6 +263,12 @@ const CitiesListIndexRoute = CitiesListIndexImport.update({
 const CitiesSplatIndexRoute = CitiesSplatIndexImport.update({
   id: '/cities/$/',
   path: '/cities/$/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CIdIndexRoute = CIdIndexImport.update({
+  id: '/c/$id/',
+  path: '/c/$id/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -655,6 +662,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-email'
       fullPath: '/verify-email'
       preLoaderRoute: typeof AuthVerifyEmailIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/c/$id/': {
+      id: '/c/$id/'
+      path: '/c/$id'
+      fullPath: '/c/$id'
+      preLoaderRoute: typeof CIdIndexImport
       parentRoute: typeof rootRoute
     }
     '/cities/$/': {
@@ -1086,6 +1100,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/verify-email': typeof AuthVerifyEmailIndexRoute
+  '/c/$id': typeof CIdIndexRoute
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
@@ -1150,6 +1165,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/verify-email': typeof AuthVerifyEmailIndexRoute
+  '/c/$id': typeof CIdIndexRoute
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
@@ -1219,6 +1235,7 @@ export interface FileRoutesById {
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
+  '/c/$id/': typeof CIdIndexRoute
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
@@ -1289,6 +1306,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify-email'
+    | '/c/$id'
     | '/cities/$'
     | '/cities/list'
     | '/discover/events'
@@ -1352,6 +1370,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/verify-email'
+    | '/c/$id'
     | '/cities/$'
     | '/cities/list'
     | '/discover/events'
@@ -1419,6 +1438,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
     | '/_auth/verify-email/'
+    | '/c/$id/'
     | '/cities/$/'
     | '/cities/list/'
     | '/discover/events/'
@@ -1485,6 +1505,7 @@ export interface RootRouteChildren {
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
   AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
+  CIdIndexRoute: typeof CIdIndexRoute
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
@@ -1517,6 +1538,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
   AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
+  CIdIndexRoute: CIdIndexRoute,
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
@@ -1558,6 +1580,7 @@ export const routeTree = rootRoute
         "/_auth/sign-in/",
         "/_auth/sign-up/",
         "/_auth/verify-email/",
+        "/c/$id/",
         "/cities/$/",
         "/cities/list/",
         "/discover/events/",
@@ -1686,6 +1709,9 @@ export const routeTree = rootRoute
     },
     "/_auth/verify-email/": {
       "filePath": "_auth/verify-email/index.tsx"
+    },
+    "/c/$id/": {
+      "filePath": "c/$id/index.tsx"
     },
     "/cities/$/": {
       "filePath": "cities/$/index.tsx"
