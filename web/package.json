@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@mdxeditor/editor": "^3.32.2",
     "@radix-ui/react-accordion": "^1.2.8",
     "@radix-ui/react-alert-dialog": "^1.1.13",
     "@radix-ui/react-avatar": "^1.1.7",
@@ -91,6 +92,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "es5-ext",
       "esbuild",
       "typesense-instantsearch-adapter",
       "unrs-resolver"
