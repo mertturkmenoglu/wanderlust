@@ -62,12 +62,15 @@ import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardPoisIndexImport } from './routes/_admin/dashboard/pois/index'
+import { Route as AdminDashboardCollectionsIndexImport } from './routes/_admin/dashboard/collections/index'
 import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashboard/cities/index'
 import { Route as AdminDashboardCategoriesIndexImport } from './routes/_admin/dashboard/categories/index'
 import { Route as AdminDashboardAmenitiesIndexImport } from './routes/_admin/dashboard/amenities/index'
 import { Route as AdminDashboardUsersVerifyIndexImport } from './routes/_admin/dashboard/users/verify/index'
 import { Route as AdminDashboardPoisDraftsIndexImport } from './routes/_admin/dashboard/pois/drafts/index'
 import { Route as AdminDashboardPoisIdIndexImport } from './routes/_admin/dashboard/pois/$id/index'
+import { Route as AdminDashboardCollectionsNewIndexImport } from './routes/_admin/dashboard/collections/new/index'
+import { Route as AdminDashboardCollectionsIdIndexImport } from './routes/_admin/dashboard/collections/$id/index'
 import { Route as AdminDashboardCitiesNewIndexImport } from './routes/_admin/dashboard/cities/new/index'
 import { Route as AdminDashboardCitiesIdIndexImport } from './routes/_admin/dashboard/cities/$id/index'
 import { Route as AdminDashboardCategoriesNewIndexImport } from './routes/_admin/dashboard/categories/new/index'
@@ -76,6 +79,8 @@ import { Route as AdminDashboardAmenitiesNewIndexImport } from './routes/_admin/
 import { Route as AdminDashboardAmenitiesIdIndexImport } from './routes/_admin/dashboard/amenities/$id/index'
 import { Route as AdminDashboardPoisDraftsIdIndexImport } from './routes/_admin/dashboard/pois/drafts/$id/index'
 import { Route as AdminDashboardPoisIdEditIndexImport } from './routes/_admin/dashboard/pois/$id/edit/index'
+import { Route as AdminDashboardCollectionsIdItemsIndexImport } from './routes/_admin/dashboard/collections/$id/items/index'
+import { Route as AdminDashboardCollectionsIdEditIndexImport } from './routes/_admin/dashboard/collections/$id/edit/index'
 import { Route as AdminDashboardCitiesIdEditIndexImport } from './routes/_admin/dashboard/cities/$id/edit/index'
 import { Route as AdminDashboardCategoriesIdEditIndexImport } from './routes/_admin/dashboard/categories/$id/edit/index'
 import { Route as AdminDashboardAmenitiesIdEditIndexImport } from './routes/_admin/dashboard/amenities/$id/edit/index'
@@ -389,6 +394,13 @@ const AdminDashboardPoisIndexRoute = AdminDashboardPoisIndexImport.update({
   getParentRoute: () => AdminDashboardRoute,
 } as any)
 
+const AdminDashboardCollectionsIndexRoute =
+  AdminDashboardCollectionsIndexImport.update({
+    id: '/collections/',
+    path: '/collections/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
 const AdminDashboardCitiesIndexRoute = AdminDashboardCitiesIndexImport.update({
   id: '/cities/',
   path: '/cities/',
@@ -428,6 +440,20 @@ const AdminDashboardPoisIdIndexRoute = AdminDashboardPoisIdIndexImport.update({
   path: '/pois/$id/',
   getParentRoute: () => AdminDashboardRoute,
 } as any)
+
+const AdminDashboardCollectionsNewIndexRoute =
+  AdminDashboardCollectionsNewIndexImport.update({
+    id: '/collections/new/',
+    path: '/collections/new/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardCollectionsIdIndexRoute =
+  AdminDashboardCollectionsIdIndexImport.update({
+    id: '/collections/$id/',
+    path: '/collections/$id/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
 
 const AdminDashboardCitiesNewIndexRoute =
   AdminDashboardCitiesNewIndexImport.update({
@@ -482,6 +508,20 @@ const AdminDashboardPoisIdEditIndexRoute =
   AdminDashboardPoisIdEditIndexImport.update({
     id: '/pois/$id/edit/',
     path: '/pois/$id/edit/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardCollectionsIdItemsIndexRoute =
+  AdminDashboardCollectionsIdItemsIndexImport.update({
+    id: '/collections/$id/items/',
+    path: '/collections/$id/items/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardCollectionsIdEditIndexRoute =
+  AdminDashboardCollectionsIdEditIndexImport.update({
+    id: '/collections/$id/edit/',
+    path: '/collections/$id/edit/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
@@ -811,6 +851,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardCitiesIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/collections/': {
+      id: '/_admin/dashboard/collections/'
+      path: '/collections'
+      fullPath: '/dashboard/collections'
+      preLoaderRoute: typeof AdminDashboardCollectionsIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_admin/dashboard/pois/': {
       id: '/_admin/dashboard/pois/'
       path: '/pois'
@@ -930,6 +977,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardCitiesNewIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/collections/$id/': {
+      id: '/_admin/dashboard/collections/$id/'
+      path: '/collections/$id'
+      fullPath: '/dashboard/collections/$id'
+      preLoaderRoute: typeof AdminDashboardCollectionsIdIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
+    '/_admin/dashboard/collections/new/': {
+      id: '/_admin/dashboard/collections/new/'
+      path: '/collections/new'
+      fullPath: '/dashboard/collections/new'
+      preLoaderRoute: typeof AdminDashboardCollectionsNewIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_admin/dashboard/pois/$id/': {
       id: '/_admin/dashboard/pois/$id/'
       path: '/pois/$id'
@@ -970,6 +1031,20 @@ declare module '@tanstack/react-router' {
       path: '/cities/$id/edit'
       fullPath: '/dashboard/cities/$id/edit'
       preLoaderRoute: typeof AdminDashboardCitiesIdEditIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
+    '/_admin/dashboard/collections/$id/edit/': {
+      id: '/_admin/dashboard/collections/$id/edit/'
+      path: '/collections/$id/edit'
+      fullPath: '/dashboard/collections/$id/edit'
+      preLoaderRoute: typeof AdminDashboardCollectionsIdEditIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
+    '/_admin/dashboard/collections/$id/items/': {
+      id: '/_admin/dashboard/collections/$id/items/'
+      path: '/collections/$id/items'
+      fullPath: '/dashboard/collections/$id/items'
+      preLoaderRoute: typeof AdminDashboardCollectionsIdItemsIndexImport
       parentRoute: typeof AdminDashboardImport
     }
     '/_admin/dashboard/pois/$id/edit/': {
@@ -1032,6 +1107,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardAmenitiesIndexRoute: typeof AdminDashboardAmenitiesIndexRoute
   AdminDashboardCategoriesIndexRoute: typeof AdminDashboardCategoriesIndexRoute
   AdminDashboardCitiesIndexRoute: typeof AdminDashboardCitiesIndexRoute
+  AdminDashboardCollectionsIndexRoute: typeof AdminDashboardCollectionsIndexRoute
   AdminDashboardPoisIndexRoute: typeof AdminDashboardPoisIndexRoute
   AdminDashboardUsersIndexRoute: typeof AdminDashboardUsersIndexRoute
   AdminDashboardAmenitiesIdIndexRoute: typeof AdminDashboardAmenitiesIdIndexRoute
@@ -1040,12 +1116,16 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCategoriesNewIndexRoute: typeof AdminDashboardCategoriesNewIndexRoute
   AdminDashboardCitiesIdIndexRoute: typeof AdminDashboardCitiesIdIndexRoute
   AdminDashboardCitiesNewIndexRoute: typeof AdminDashboardCitiesNewIndexRoute
+  AdminDashboardCollectionsIdIndexRoute: typeof AdminDashboardCollectionsIdIndexRoute
+  AdminDashboardCollectionsNewIndexRoute: typeof AdminDashboardCollectionsNewIndexRoute
   AdminDashboardPoisIdIndexRoute: typeof AdminDashboardPoisIdIndexRoute
   AdminDashboardPoisDraftsIndexRoute: typeof AdminDashboardPoisDraftsIndexRoute
   AdminDashboardUsersVerifyIndexRoute: typeof AdminDashboardUsersVerifyIndexRoute
   AdminDashboardAmenitiesIdEditIndexRoute: typeof AdminDashboardAmenitiesIdEditIndexRoute
   AdminDashboardCategoriesIdEditIndexRoute: typeof AdminDashboardCategoriesIdEditIndexRoute
   AdminDashboardCitiesIdEditIndexRoute: typeof AdminDashboardCitiesIdEditIndexRoute
+  AdminDashboardCollectionsIdEditIndexRoute: typeof AdminDashboardCollectionsIdEditIndexRoute
+  AdminDashboardCollectionsIdItemsIndexRoute: typeof AdminDashboardCollectionsIdItemsIndexRoute
   AdminDashboardPoisIdEditIndexRoute: typeof AdminDashboardPoisIdEditIndexRoute
   AdminDashboardPoisDraftsIdIndexRoute: typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1055,6 +1135,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardAmenitiesIndexRoute: AdminDashboardAmenitiesIndexRoute,
   AdminDashboardCategoriesIndexRoute: AdminDashboardCategoriesIndexRoute,
   AdminDashboardCitiesIndexRoute: AdminDashboardCitiesIndexRoute,
+  AdminDashboardCollectionsIndexRoute: AdminDashboardCollectionsIndexRoute,
   AdminDashboardPoisIndexRoute: AdminDashboardPoisIndexRoute,
   AdminDashboardUsersIndexRoute: AdminDashboardUsersIndexRoute,
   AdminDashboardAmenitiesIdIndexRoute: AdminDashboardAmenitiesIdIndexRoute,
@@ -1063,6 +1144,9 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardCategoriesNewIndexRoute: AdminDashboardCategoriesNewIndexRoute,
   AdminDashboardCitiesIdIndexRoute: AdminDashboardCitiesIdIndexRoute,
   AdminDashboardCitiesNewIndexRoute: AdminDashboardCitiesNewIndexRoute,
+  AdminDashboardCollectionsIdIndexRoute: AdminDashboardCollectionsIdIndexRoute,
+  AdminDashboardCollectionsNewIndexRoute:
+    AdminDashboardCollectionsNewIndexRoute,
   AdminDashboardPoisIdIndexRoute: AdminDashboardPoisIdIndexRoute,
   AdminDashboardPoisDraftsIndexRoute: AdminDashboardPoisDraftsIndexRoute,
   AdminDashboardUsersVerifyIndexRoute: AdminDashboardUsersVerifyIndexRoute,
@@ -1071,6 +1155,10 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardCategoriesIdEditIndexRoute:
     AdminDashboardCategoriesIdEditIndexRoute,
   AdminDashboardCitiesIdEditIndexRoute: AdminDashboardCitiesIdEditIndexRoute,
+  AdminDashboardCollectionsIdEditIndexRoute:
+    AdminDashboardCollectionsIdEditIndexRoute,
+  AdminDashboardCollectionsIdItemsIndexRoute:
+    AdminDashboardCollectionsIdItemsIndexRoute,
   AdminDashboardPoisIdEditIndexRoute: AdminDashboardPoisIdEditIndexRoute,
   AdminDashboardPoisDraftsIdIndexRoute: AdminDashboardPoisDraftsIdIndexRoute,
 }
@@ -1147,6 +1235,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
+  '/dashboard/collections': typeof AdminDashboardCollectionsIndexRoute
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
@@ -1164,12 +1253,16 @@ export interface FileRoutesByFullPath {
   '/dashboard/categories/new': typeof AdminDashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id': typeof AdminDashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof AdminDashboardCitiesNewIndexRoute
+  '/dashboard/collections/$id': typeof AdminDashboardCollectionsIdIndexRoute
+  '/dashboard/collections/new': typeof AdminDashboardCollectionsNewIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
+  '/dashboard/collections/$id/edit': typeof AdminDashboardCollectionsIdEditIndexRoute
+  '/dashboard/collections/$id/items': typeof AdminDashboardCollectionsIdItemsIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
   '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1214,6 +1307,7 @@ export interface FileRoutesByTo {
   '/dashboard/amenities': typeof AdminDashboardAmenitiesIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
+  '/dashboard/collections': typeof AdminDashboardCollectionsIndexRoute
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
@@ -1231,12 +1325,16 @@ export interface FileRoutesByTo {
   '/dashboard/categories/new': typeof AdminDashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id': typeof AdminDashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof AdminDashboardCitiesNewIndexRoute
+  '/dashboard/collections/$id': typeof AdminDashboardCollectionsIdIndexRoute
+  '/dashboard/collections/new': typeof AdminDashboardCollectionsNewIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
+  '/dashboard/collections/$id/edit': typeof AdminDashboardCollectionsIdEditIndexRoute
+  '/dashboard/collections/$id/items': typeof AdminDashboardCollectionsIdItemsIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
   '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1286,6 +1384,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/amenities/': typeof AdminDashboardAmenitiesIndexRoute
   '/_admin/dashboard/categories/': typeof AdminDashboardCategoriesIndexRoute
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
+  '/_admin/dashboard/collections/': typeof AdminDashboardCollectionsIndexRoute
   '/_admin/dashboard/pois/': typeof AdminDashboardPoisIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
@@ -1303,12 +1402,16 @@ export interface FileRoutesById {
   '/_admin/dashboard/categories/new/': typeof AdminDashboardCategoriesNewIndexRoute
   '/_admin/dashboard/cities/$id/': typeof AdminDashboardCitiesIdIndexRoute
   '/_admin/dashboard/cities/new/': typeof AdminDashboardCitiesNewIndexRoute
+  '/_admin/dashboard/collections/$id/': typeof AdminDashboardCollectionsIdIndexRoute
+  '/_admin/dashboard/collections/new/': typeof AdminDashboardCollectionsNewIndexRoute
   '/_admin/dashboard/pois/$id/': typeof AdminDashboardPoisIdIndexRoute
   '/_admin/dashboard/pois/drafts/': typeof AdminDashboardPoisDraftsIndexRoute
   '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
   '/_admin/dashboard/amenities/$id/edit/': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/_admin/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
+  '/_admin/dashboard/collections/$id/edit/': typeof AdminDashboardCollectionsIdEditIndexRoute
+  '/_admin/dashboard/collections/$id/items/': typeof AdminDashboardCollectionsIdItemsIndexRoute
   '/_admin/dashboard/pois/$id/edit/': typeof AdminDashboardPoisIdEditIndexRoute
   '/_admin/dashboard/pois/drafts/$id/': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1359,6 +1462,7 @@ export interface FileRouteTypes {
     | '/dashboard/amenities'
     | '/dashboard/categories'
     | '/dashboard/cities'
+    | '/dashboard/collections'
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
@@ -1376,12 +1480,16 @@ export interface FileRouteTypes {
     | '/dashboard/categories/new'
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
+    | '/dashboard/collections/$id'
+    | '/dashboard/collections/new'
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
+    | '/dashboard/collections/$id/edit'
+    | '/dashboard/collections/$id/items'
     | '/dashboard/pois/$id/edit'
     | '/dashboard/pois/drafts/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -1425,6 +1533,7 @@ export interface FileRouteTypes {
     | '/dashboard/amenities'
     | '/dashboard/categories'
     | '/dashboard/cities'
+    | '/dashboard/collections'
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
@@ -1442,12 +1551,16 @@ export interface FileRouteTypes {
     | '/dashboard/categories/new'
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
+    | '/dashboard/collections/$id'
+    | '/dashboard/collections/new'
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
+    | '/dashboard/collections/$id/edit'
+    | '/dashboard/collections/$id/items'
     | '/dashboard/pois/$id/edit'
     | '/dashboard/pois/drafts/$id'
   id:
@@ -1495,6 +1608,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/amenities/'
     | '/_admin/dashboard/categories/'
     | '/_admin/dashboard/cities/'
+    | '/_admin/dashboard/collections/'
     | '/_admin/dashboard/pois/'
     | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
@@ -1512,12 +1626,16 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/categories/new/'
     | '/_admin/dashboard/cities/$id/'
     | '/_admin/dashboard/cities/new/'
+    | '/_admin/dashboard/collections/$id/'
+    | '/_admin/dashboard/collections/new/'
     | '/_admin/dashboard/pois/$id/'
     | '/_admin/dashboard/pois/drafts/'
     | '/_admin/dashboard/users/verify/'
     | '/_admin/dashboard/amenities/$id/edit/'
     | '/_admin/dashboard/categories/$id/edit/'
     | '/_admin/dashboard/cities/$id/edit/'
+    | '/_admin/dashboard/collections/$id/edit/'
+    | '/_admin/dashboard/collections/$id/items/'
     | '/_admin/dashboard/pois/$id/edit/'
     | '/_admin/dashboard/pois/drafts/$id/'
   fileRoutesById: FileRoutesById
@@ -1666,6 +1784,7 @@ export const routeTree = rootRoute
         "/_admin/dashboard/amenities/",
         "/_admin/dashboard/categories/",
         "/_admin/dashboard/cities/",
+        "/_admin/dashboard/collections/",
         "/_admin/dashboard/pois/",
         "/_admin/dashboard/users/",
         "/_admin/dashboard/amenities/$id/",
@@ -1674,12 +1793,16 @@ export const routeTree = rootRoute
         "/_admin/dashboard/categories/new/",
         "/_admin/dashboard/cities/$id/",
         "/_admin/dashboard/cities/new/",
+        "/_admin/dashboard/collections/$id/",
+        "/_admin/dashboard/collections/new/",
         "/_admin/dashboard/pois/$id/",
         "/_admin/dashboard/pois/drafts/",
         "/_admin/dashboard/users/verify/",
         "/_admin/dashboard/amenities/$id/edit/",
         "/_admin/dashboard/categories/$id/edit/",
         "/_admin/dashboard/cities/$id/edit/",
+        "/_admin/dashboard/collections/$id/edit/",
+        "/_admin/dashboard/collections/$id/items/",
         "/_admin/dashboard/pois/$id/edit/",
         "/_admin/dashboard/pois/drafts/$id/"
       ]
@@ -1824,6 +1947,10 @@ export const routeTree = rootRoute
       "filePath": "_admin/dashboard/cities/index.tsx",
       "parent": "/_admin/dashboard"
     },
+    "/_admin/dashboard/collections/": {
+      "filePath": "_admin/dashboard/collections/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
     "/_admin/dashboard/pois/": {
       "filePath": "_admin/dashboard/pois/index.tsx",
       "parent": "/_admin/dashboard"
@@ -1889,6 +2016,14 @@ export const routeTree = rootRoute
       "filePath": "_admin/dashboard/cities/new/index.tsx",
       "parent": "/_admin/dashboard"
     },
+    "/_admin/dashboard/collections/$id/": {
+      "filePath": "_admin/dashboard/collections/$id/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/collections/new/": {
+      "filePath": "_admin/dashboard/collections/new/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
     "/_admin/dashboard/pois/$id/": {
       "filePath": "_admin/dashboard/pois/$id/index.tsx",
       "parent": "/_admin/dashboard"
@@ -1911,6 +2046,14 @@ export const routeTree = rootRoute
     },
     "/_admin/dashboard/cities/$id/edit/": {
       "filePath": "_admin/dashboard/cities/$id/edit/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/collections/$id/edit/": {
+      "filePath": "_admin/dashboard/collections/$id/edit/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/collections/$id/items/": {
+      "filePath": "_admin/dashboard/collections/$id/items/index.tsx",
       "parent": "/_admin/dashboard"
     },
     "/_admin/dashboard/pois/$id/edit/": {
