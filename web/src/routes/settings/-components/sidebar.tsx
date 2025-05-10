@@ -6,7 +6,7 @@ export default function Sidebar() {
   const parentRoute = getRouteApi('/settings');
   const { auth } = parentRoute.useRouteContext();
 
-  const showDashboardLink = auth.role === 'admin';
+  const showDashboardLink = auth.user?.role === 'admin';
   const filtered = items.filter((x) => x.href !== '/dashboard');
   const links = showDashboardLink ? items : filtered;
 
