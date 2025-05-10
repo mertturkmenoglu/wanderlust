@@ -12,6 +12,7 @@ import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
+import Spinner from './components/kit/spinner.tsx';
 import AuthContextProvider, {
   AuthContext,
 } from './providers/auth-provider.tsx';
@@ -48,6 +49,14 @@ function App() {
 
 function InnerApp() {
   const auth = useContext(AuthContext);
+
+  if (auth.isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner className="fill-primary text-gray-200 size-12 animate-spin" />
+      </div>
+    );
+  }
 
   return <RouterProvider router={router} context={{ auth }} />;
 }
