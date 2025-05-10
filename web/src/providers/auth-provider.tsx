@@ -1,9 +1,10 @@
 import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
+import { useQuery } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 import React, { useEffect, useMemo } from 'react';
 
-type AuthContextState = {
+export type AuthContextState = {
   isLoading: boolean;
   user: components['schemas']['GetMeOutputBody'] | null;
 };
@@ -16,7 +17,22 @@ export const AuthContext = React.createContext<AuthContextState>({
 export default function AuthContextProvider({
   children,
 }: Readonly<PropsWithChildren>) {
-  const query = api.useQuery('get', '/api/v2/auth/me', {}, { retry: false });
+  const query = useQuery(
+    api.queryOptions(
+      'get',
+      '/api/v2/auth/me',
+      {},
+      {
+        retry: false,
+        cacheTime: Infinity,
+        refetchInterval: Infinity,
+        staleTime: Infinity,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+      },
+    ),
+  );
 
   const v = useMemo(() => {
     return {
