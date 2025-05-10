@@ -79,6 +79,8 @@ import { Route as AdminDashboardAmenitiesNewIndexImport } from './routes/_admin/
 import { Route as AdminDashboardAmenitiesIdIndexImport } from './routes/_admin/dashboard/amenities/$id/index'
 import { Route as AdminDashboardPoisDraftsIdIndexImport } from './routes/_admin/dashboard/pois/drafts/$id/index'
 import { Route as AdminDashboardPoisIdEditIndexImport } from './routes/_admin/dashboard/pois/$id/edit/index'
+import { Route as AdminDashboardCollectionsRelationsPoiIndexImport } from './routes/_admin/dashboard/collections/relations/poi/index'
+import { Route as AdminDashboardCollectionsRelationsCityIndexImport } from './routes/_admin/dashboard/collections/relations/city/index'
 import { Route as AdminDashboardCollectionsIdItemsIndexImport } from './routes/_admin/dashboard/collections/$id/items/index'
 import { Route as AdminDashboardCollectionsIdEditIndexImport } from './routes/_admin/dashboard/collections/$id/edit/index'
 import { Route as AdminDashboardCitiesIdEditIndexImport } from './routes/_admin/dashboard/cities/$id/edit/index'
@@ -508,6 +510,20 @@ const AdminDashboardPoisIdEditIndexRoute =
   AdminDashboardPoisIdEditIndexImport.update({
     id: '/pois/$id/edit/',
     path: '/pois/$id/edit/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardCollectionsRelationsPoiIndexRoute =
+  AdminDashboardCollectionsRelationsPoiIndexImport.update({
+    id: '/collections/relations/poi/',
+    path: '/collections/relations/poi/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardCollectionsRelationsCityIndexRoute =
+  AdminDashboardCollectionsRelationsCityIndexImport.update({
+    id: '/collections/relations/city/',
+    path: '/collections/relations/city/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
@@ -1047,6 +1063,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardCollectionsIdItemsIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/collections/relations/city/': {
+      id: '/_admin/dashboard/collections/relations/city/'
+      path: '/collections/relations/city'
+      fullPath: '/dashboard/collections/relations/city'
+      preLoaderRoute: typeof AdminDashboardCollectionsRelationsCityIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
+    '/_admin/dashboard/collections/relations/poi/': {
+      id: '/_admin/dashboard/collections/relations/poi/'
+      path: '/collections/relations/poi'
+      fullPath: '/dashboard/collections/relations/poi'
+      preLoaderRoute: typeof AdminDashboardCollectionsRelationsPoiIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_admin/dashboard/pois/$id/edit/': {
       id: '/_admin/dashboard/pois/$id/edit/'
       path: '/pois/$id/edit'
@@ -1126,6 +1156,8 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCitiesIdEditIndexRoute: typeof AdminDashboardCitiesIdEditIndexRoute
   AdminDashboardCollectionsIdEditIndexRoute: typeof AdminDashboardCollectionsIdEditIndexRoute
   AdminDashboardCollectionsIdItemsIndexRoute: typeof AdminDashboardCollectionsIdItemsIndexRoute
+  AdminDashboardCollectionsRelationsCityIndexRoute: typeof AdminDashboardCollectionsRelationsCityIndexRoute
+  AdminDashboardCollectionsRelationsPoiIndexRoute: typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   AdminDashboardPoisIdEditIndexRoute: typeof AdminDashboardPoisIdEditIndexRoute
   AdminDashboardPoisDraftsIdIndexRoute: typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1159,6 +1191,10 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
     AdminDashboardCollectionsIdEditIndexRoute,
   AdminDashboardCollectionsIdItemsIndexRoute:
     AdminDashboardCollectionsIdItemsIndexRoute,
+  AdminDashboardCollectionsRelationsCityIndexRoute:
+    AdminDashboardCollectionsRelationsCityIndexRoute,
+  AdminDashboardCollectionsRelationsPoiIndexRoute:
+    AdminDashboardCollectionsRelationsPoiIndexRoute,
   AdminDashboardPoisIdEditIndexRoute: AdminDashboardPoisIdEditIndexRoute,
   AdminDashboardPoisDraftsIdIndexRoute: AdminDashboardPoisDraftsIdIndexRoute,
 }
@@ -1263,6 +1299,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
   '/dashboard/collections/$id/edit': typeof AdminDashboardCollectionsIdEditIndexRoute
   '/dashboard/collections/$id/items': typeof AdminDashboardCollectionsIdItemsIndexRoute
+  '/dashboard/collections/relations/city': typeof AdminDashboardCollectionsRelationsCityIndexRoute
+  '/dashboard/collections/relations/poi': typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
   '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1335,6 +1373,8 @@ export interface FileRoutesByTo {
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
   '/dashboard/collections/$id/edit': typeof AdminDashboardCollectionsIdEditIndexRoute
   '/dashboard/collections/$id/items': typeof AdminDashboardCollectionsIdItemsIndexRoute
+  '/dashboard/collections/relations/city': typeof AdminDashboardCollectionsRelationsCityIndexRoute
+  '/dashboard/collections/relations/poi': typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
   '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1412,6 +1452,8 @@ export interface FileRoutesById {
   '/_admin/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
   '/_admin/dashboard/collections/$id/edit/': typeof AdminDashboardCollectionsIdEditIndexRoute
   '/_admin/dashboard/collections/$id/items/': typeof AdminDashboardCollectionsIdItemsIndexRoute
+  '/_admin/dashboard/collections/relations/city/': typeof AdminDashboardCollectionsRelationsCityIndexRoute
+  '/_admin/dashboard/collections/relations/poi/': typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   '/_admin/dashboard/pois/$id/edit/': typeof AdminDashboardPoisIdEditIndexRoute
   '/_admin/dashboard/pois/drafts/$id/': typeof AdminDashboardPoisDraftsIdIndexRoute
 }
@@ -1490,6 +1532,8 @@ export interface FileRouteTypes {
     | '/dashboard/cities/$id/edit'
     | '/dashboard/collections/$id/edit'
     | '/dashboard/collections/$id/items'
+    | '/dashboard/collections/relations/city'
+    | '/dashboard/collections/relations/poi'
     | '/dashboard/pois/$id/edit'
     | '/dashboard/pois/drafts/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -1561,6 +1605,8 @@ export interface FileRouteTypes {
     | '/dashboard/cities/$id/edit'
     | '/dashboard/collections/$id/edit'
     | '/dashboard/collections/$id/items'
+    | '/dashboard/collections/relations/city'
+    | '/dashboard/collections/relations/poi'
     | '/dashboard/pois/$id/edit'
     | '/dashboard/pois/drafts/$id'
   id:
@@ -1636,6 +1682,8 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/cities/$id/edit/'
     | '/_admin/dashboard/collections/$id/edit/'
     | '/_admin/dashboard/collections/$id/items/'
+    | '/_admin/dashboard/collections/relations/city/'
+    | '/_admin/dashboard/collections/relations/poi/'
     | '/_admin/dashboard/pois/$id/edit/'
     | '/_admin/dashboard/pois/drafts/$id/'
   fileRoutesById: FileRoutesById
@@ -1803,6 +1851,8 @@ export const routeTree = rootRoute
         "/_admin/dashboard/cities/$id/edit/",
         "/_admin/dashboard/collections/$id/edit/",
         "/_admin/dashboard/collections/$id/items/",
+        "/_admin/dashboard/collections/relations/city/",
+        "/_admin/dashboard/collections/relations/poi/",
         "/_admin/dashboard/pois/$id/edit/",
         "/_admin/dashboard/pois/drafts/$id/"
       ]
@@ -2054,6 +2104,14 @@ export const routeTree = rootRoute
     },
     "/_admin/dashboard/collections/$id/items/": {
       "filePath": "_admin/dashboard/collections/$id/items/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/collections/relations/city/": {
+      "filePath": "_admin/dashboard/collections/relations/city/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/collections/relations/poi/": {
+      "filePath": "_admin/dashboard/collections/relations/poi/index.tsx",
       "parent": "/_admin/dashboard"
     },
     "/_admin/dashboard/pois/$id/edit/": {
