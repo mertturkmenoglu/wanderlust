@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 	"time"
+	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
@@ -335,4 +336,83 @@ func (s *Service) remove(userId string, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) uploadMedia(userId string, id string, body dto.UploadDiaryMediaInputBody) (*dto.UploadDiaryMediaOutput, error) {
+	entry, err := s.get(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if entry.UserID != userId {
+		return nil, huma.Error403Forbidden("you are not authorized to upload media for this diary entry")
+	}
+
+	bucket := upload.BUCKET_DIARIES
+
+	// Check if the file is uploaded
+	_, err = s.app.Upload.Client.GetObject(
+		context.Background(),
+		string(bucket),
+		body.FileName,
+		minio.GetObjectOptions{},
+	)
+
+	if err != nil {
+		return nil, huma.Error400BadRequest("file not uploaded")
+	}
+
+	// Check if user uploaded the correct file using cached information
+	if !s.app.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID)) {
+		return nil, huma.Error400BadRequest("incorrect file")
+	}
+
+	// delete cached information
+	err = s.app.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID))
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to delete cached information")
+	}
+
+	endpoint := s.app.Upload.Client.EndpointURL().String()
+	url := endpoint + "/" + string(bucket) + "/" + body.FileName
+
+	lastOrder, err := s.app.Db.Queries.GetLastMediaOrderOfEntry(context.Background(), id)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get last media order")
+	}
+
+	ord, ok := lastOrder.(int32)
+
+	if !ok {
+		return nil, huma.Error500InternalServerError("Failed to cast last media order")
+	}
+
+	order := int16(ord) + 1
+
+	_, err = s.app.Db.Queries.CreateDiaryMedia(context.Background(), db.CreateDiaryMediaParams{
+		DiaryEntryID: id,
+		Url:          url,
+		Alt:          body.FileName,
+		Caption:      utils.StrToText(body.FileName),
+		MediaOrder:   order,
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to create diary media")
+	}
+
+	entryRes, err := s.get(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.UploadDiaryMediaOutput{
+		Body: dto.UploadDiaryMediaOutputBody{
+			Entry: *entryRes,
+		},
+	}, nil
 }

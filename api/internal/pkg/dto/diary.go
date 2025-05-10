@@ -97,3 +97,22 @@ type CreateDiaryEntryOutputBody struct {
 type DeleteDiaryEntryInput struct {
 	ID string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
 }
+
+type UploadDiaryMediaInput struct {
+	ID   string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
+	Body UploadDiaryMediaInputBody
+}
+
+type UploadDiaryMediaInputBody struct {
+	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
+	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
+	Size     int32  `json:"size" example:"1024" doc:"Size of media of point of interest" required:"true"`
+}
+
+type UploadDiaryMediaOutput struct {
+	Body UploadDiaryMediaOutputBody
+}
+
+type UploadDiaryMediaOutputBody struct {
+	Entry DiaryEntry `json:"entry"`
+}

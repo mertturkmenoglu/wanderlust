@@ -138,4 +138,28 @@ func Register(grp *huma.Group, app *core.Application) {
 			return nil, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/diary/{id}/media",
+			Summary:       "Upload Media to a Diary Entry",
+			Description:   "Add media to a diary entry",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UploadDiaryMediaInput) (*dto.UploadDiaryMediaOutput, error) {
+			userId := ctx.Value("userId").(string)
+			res, err := s.uploadMedia(userId, input.ID, input.Body)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
