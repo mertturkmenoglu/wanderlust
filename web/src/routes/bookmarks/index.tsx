@@ -8,7 +8,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
-import { api, fetchClient } from '@/lib/api';
+import { api } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
@@ -22,10 +22,8 @@ export const bookmarksSearchSchema = z.object({
 
 export const Route = createFileRoute('/bookmarks/')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-
-    if (!res.response.ok) {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (!auth.user) {
       throw redirect({
         to: '/sign-in',
       });

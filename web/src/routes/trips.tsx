@@ -1,18 +1,13 @@
-import { fetchClient } from '@/lib/api';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/trips')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-
-    if (res.data === undefined || res.error !== undefined) {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (!auth.user) {
       throw redirect({
         to: '/',
       });
     }
-
-    return res.data;
   },
 });
 

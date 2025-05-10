@@ -1,17 +1,14 @@
-import { fetchClient } from '@/lib/api';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import Sidebar from './settings/-components/sidebar';
 
 export const Route = createFileRoute('/settings')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-    if (res.data === undefined) {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (!auth.user) {
       throw redirect({
         to: '/sign-in',
       });
     }
-    return { auth: res.data };
   },
 });
 

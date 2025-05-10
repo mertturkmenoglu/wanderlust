@@ -1,4 +1,3 @@
-import { fetchClient } from '@/lib/api';
 import {
   createFileRoute,
   Link,
@@ -8,10 +7,8 @@ import {
 
 export const Route = createFileRoute('/_admin/dashboard')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-
-    if (!res.response.ok || res.data?.role !== 'admin') {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (!auth.user || auth.user.role !== 'admin') {
       throw redirect({
         to: '/',
       });

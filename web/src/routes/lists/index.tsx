@@ -1,7 +1,7 @@
 import AppMessage from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { api, fetchClient } from '@/lib/api';
+import { api } from '@/lib/api';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { GlobeIcon, LockIcon } from 'lucide-react';
 import React from 'react';
@@ -9,16 +9,12 @@ import CreateListDialog from './-create-list-dialog';
 
 export const Route = createFileRoute('/lists/')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-
-    if (res.error) {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (!auth.user) {
       throw redirect({
         to: '/sign-in',
       });
     }
-
-    return res;
   },
 });
 

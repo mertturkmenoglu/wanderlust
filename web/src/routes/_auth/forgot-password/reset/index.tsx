@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { fetchClient } from '@/lib/api';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -12,9 +11,8 @@ import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/forgot-password/reset/')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-    if (res.data !== undefined) {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (auth.user) {
       throw redirect({
         to: '/',
       });
