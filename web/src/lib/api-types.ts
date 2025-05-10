@@ -1342,7 +1342,43 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
+        /**
+         * Create Diary Entry
+         * @description Create a diary entry
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateDiaryEntryInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateDiaryEntryOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -1397,6 +1433,100 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        /**
+         * Delete Diary Entry
+         * @description Delete a diary entry
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media to a Diary Entry
+         * @description Add media to a diary entry
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadDiaryMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UploadDiaryMediaOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -3897,6 +4027,41 @@ export interface components {
             name: string;
             state: components["schemas"]["CityState"];
         };
+        CreateDiaryEntryInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date
+             * @description The date of the diary entry
+             */
+            date: string;
+            /** @description The description of the diary entry */
+            description: string;
+            /** @description The IDs of the friends */
+            friends: string[];
+            locations: components["schemas"]["CreateDiaryEntryLocation"][];
+            /** @description Whether the diary entry is shared with friends or not */
+            shareWithFriends: boolean;
+            /** @description The title of the diary entry */
+            title: string;
+        };
+        CreateDiaryEntryLocation: {
+            /** @description The description of the location */
+            description?: string | null;
+            /** @description The ID of the point of interest */
+            id: string;
+        };
+        CreateDiaryEntryOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
+        };
         CreateFavoriteInputBody: {
             /**
              * Format: uri
@@ -5116,6 +5281,30 @@ export interface components {
              */
             readonly $schema?: string;
             profile: components["schemas"]["Profile"];
+        };
+        UploadDiaryMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /**
+             * Format: int32
+             * @description Size of media of point of interest
+             */
+            size: number;
+        };
+        UploadDiaryMediaOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
         };
         UploadPoiMediaInputBody: {
             /**
