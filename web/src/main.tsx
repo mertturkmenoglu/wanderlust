@@ -1,5 +1,5 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { StrictMode } from 'react';
+import { StrictMode, useContext } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import * as TanstackQuery from './integrations/tanstack-query/root-provider';
@@ -12,6 +12,9 @@ import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
+import AuthContextProvider, {
+  AuthContext,
+} from './providers/auth-provider.tsx';
 import reportWebVitals from './reportWebVitals.ts';
 import './styles.css';
 
@@ -20,6 +23,7 @@ const router = createRouter({
   routeTree,
   context: {
     ...TanstackQuery.getContext(),
+    auth: undefined!,
   },
   defaultPreload: false,
   scrollRestoration: true,
@@ -34,6 +38,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+function App() {
+  return (
+    <AuthContextProvider>
+      <InnerApp />
+    </AuthContextProvider>
+  );
+}
+
+function InnerApp() {
+  const auth = useContext(AuthContext);
+
+  return <RouterProvider router={router} context={{ auth }} />;
+}
+
 // Render the app
 const rootElement = document.getElementById('app');
 if (rootElement && !rootElement.innerHTML) {
@@ -41,7 +59,7 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <TanstackQuery.Provider>
-        <RouterProvider router={router} />
+        <App />
       </TanstackQuery.Provider>
     </StrictMode>,
   );
