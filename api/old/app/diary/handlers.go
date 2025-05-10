@@ -8,21 +8,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) createNewDiaryEntry(c echo.Context) error {
-	userId := c.Get("user_id").(string)
-	dto := c.Get("body").(CreateDiaryEntryRequestDto)
-
-	res, err := h.service.createNewDiaryEntry(userId, dto)
-
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusCreated, core.Response{
-		Data: res,
-	})
-}
-
 func (h *handlers) uploadDiaryMedia(c echo.Context) error {
 	id := c.Param("id")
 
@@ -54,22 +39,4 @@ func (h *handlers) uploadDiaryMedia(c echo.Context) error {
 			"url": res,
 		},
 	})
-}
-
-func (h *handlers) deleteDiaryEntry(c echo.Context) error {
-	id := c.Param("id")
-
-	if id == "" {
-		return ErrIdRequired
-	}
-
-	err := h.service.deleteDiaryEntry(id)
-
-	if err != nil {
-		return err
-	}
-
-	_ = h.service.invalidateDiaryEntryCache(id)
-
-	return c.NoContent(http.StatusNoContent)
 }
