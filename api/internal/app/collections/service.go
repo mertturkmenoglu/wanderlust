@@ -9,6 +9,7 @@ import (
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/mapper"
 	"wanderlust/internal/pkg/pagination"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -110,6 +111,7 @@ func (s *Service) getById(id string) (*dto.GetCollectionByIdOutput, error) {
 
 func (s *Service) create(body dto.CreateCollectionInputBody) (*dto.CreateCollectionOutput, error) {
 	dbRes, err := s.app.Db.Queries.CreateCollection(context.Background(), db.CreateCollectionParams{
+		ID:          utils.GenerateId(s.app.Flake),
 		Name:        body.Name,
 		Description: body.Description,
 	})
