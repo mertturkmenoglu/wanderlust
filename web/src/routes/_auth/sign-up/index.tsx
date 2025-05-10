@@ -1,23 +1,21 @@
-import { fetchClient } from '@/lib/api';
+import AuthLegalText from '@/components/blocks/auth/legal-text';
+import AuthLink from '@/components/blocks/auth/link';
+import OAuthButton from '@/components/blocks/auth/oauth-button';
+import InputError from '@/components/kit/input-error';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useSignUpForm, useSignUpMutation } from './-hooks';
-import { Card } from '@/components/ui/card';
-import AuthLink from '@/components/blocks/auth/link';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import InputError from '@/components/kit/input-error';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import OAuthButton from '@/components/blocks/auth/oauth-button';
-import AuthLegalText from '@/components/blocks/auth/legal-text';
 
 export const Route = createFileRoute('/_auth/sign-up/')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    const res = await fetchClient.GET('/api/v2/auth/me');
-    if (res.data !== undefined) {
+  beforeLoad: async ({ context: { auth } }) => {
+    if (auth.user) {
       throw redirect({
         to: '/',
       });
