@@ -2,6 +2,7 @@ package diary
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/dto"
@@ -32,6 +33,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetDiaryEntriesInput) (*dto.GetDiaryEntriesOutput, error) {
+			fmt.Println("WE ARE HEREEEEEEEEEEEE")
 			userId := ctx.Value("userId").(string)
 			res, err := s.list(userId, input.PaginationQueryParams, input.DiaryDateFilterQueryParams)
 

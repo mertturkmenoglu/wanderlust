@@ -39,8 +39,8 @@ type GetDiaryEntriesInput struct {
 }
 
 type DiaryDateFilterQueryParams struct {
-	From *string `json:"from,omitempty" format:"date" example:"2023-01-01" doc:"Start date of the date range"`
-	To   *string `json:"to,omitempty" format:"date" example:"2024-01-01" doc:"End date of the date range"`
+	From string `query:"from,omitempty" example:"2023-01-01" doc:"Start date of the date range" required:"false"`
+	To   string `query:"to,omitempty" example:"2024-01-01" doc:"End date of the date range" required:"false"`
 }
 
 type GetDiaryEntriesOutput struct {

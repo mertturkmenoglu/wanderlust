@@ -114,7 +114,7 @@ func (s *Service) changeSharing(userId string, id string) error {
 }
 
 func (s *Service) list(userId string, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
-	if filterParams.From != nil && filterParams.To != nil {
+	if filterParams.From != "" && filterParams.To != "" {
 		return s.filterAndList(userId, params, filterParams)
 	}
 
@@ -163,13 +163,13 @@ func (s *Service) listAll(userId string, params dto.PaginationQueryParams) (*dto
 }
 
 func (s *Service) filterAndList(userId string, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
-	to, err := time.Parse(time.RFC3339, *filterParams.To)
+	to, err := time.Parse(time.DateOnly, filterParams.To)
 
 	if err != nil {
 		return nil, huma.Error422UnprocessableEntity("invalid date format parameter to")
 	}
 
-	from, err := time.Parse(time.RFC3339, *filterParams.From)
+	from, err := time.Parse(time.DateOnly, filterParams.From)
 
 	if err != nil {
 		return nil, huma.Error422UnprocessableEntity("invalid date format parameter from")
