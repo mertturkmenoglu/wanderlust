@@ -9,7 +9,7 @@ import { getCookiesFromRequest } from "~/lib/cookies";
 import type { Route } from "./+types/route";
 import EntryCard from "./components/entry-card";
 import Header from "./components/header";
-import Loading from "./components/loading";
+import Loading from "../../../../../src/routes/diary/-components/loading";
 import { useDiaryEntriesQuery, useLoadMoreText } from "./hooks";
 
 export async function loader({ request }: Route.LoaderArgs) {
