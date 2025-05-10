@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countCollections = `-- name: CountCollections :one
@@ -415,6 +417,76 @@ func (q *Queries) GetCollections(ctx context.Context, arg GetCollectionsParams) 
 			&i.Name,
 			&i.Description,
 			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCollectionsByIdsPopulated = `-- name: GetCollectionsByIdsPopulated :many
+SELECT
+  col.id, col.name, col.description, col.created_at,
+  COALESCE(json_agg(DISTINCT jsonb_build_object(
+    'index', ci.list_index,
+    'created_at', ci.created_at,
+    'poi', to_jsonb(poi.*),
+    'poiCategory', to_jsonb(cat.*),
+    'poiAddress', to_jsonb(addr.*),
+    'poiCity', to_jsonb(cities.*),
+    'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
+    'poiMedia', COALESCE(poi_media.media, '[]')
+  )) FILTER (WHERE ci.collection_id IS NOT NULL), '[]') AS items
+FROM collections col
+LEFT JOIN collection_items ci ON ci.collection_id = col.id
+LEFT JOIN pois poi ON poi.id = ci.poi_id
+LEFT JOIN categories cat ON cat.id = poi.category_id
+LEFT JOIN addresses addr ON addr.id = poi.address_id
+LEFT JOIN cities ON cities.id = addr.city_id
+LEFT JOIN LATERAL (
+  SELECT json_agg(to_jsonb(a.*)) AS amenities
+  FROM amenities_pois pa
+  JOIN amenities a ON a.id = pa.amenity_id
+  WHERE pa.poi_id = poi.id
+) AS poi_amenities ON TRUE
+LEFT JOIN LATERAL (
+  SELECT json_agg(to_jsonb(pm.*)) AS media
+  FROM media pm
+  WHERE pm.poi_id = poi.id
+) AS poi_media ON TRUE
+
+WHERE col.id = ANY($1::TEXT[])
+
+GROUP BY col.id
+`
+
+type GetCollectionsByIdsPopulatedRow struct {
+	ID          string
+	Name        string
+	Description string
+	CreatedAt   pgtype.Timestamptz
+	Items       interface{}
+}
+
+func (q *Queries) GetCollectionsByIdsPopulated(ctx context.Context, dollar_1 []string) ([]GetCollectionsByIdsPopulatedRow, error) {
+	rows, err := q.db.Query(ctx, getCollectionsByIdsPopulated, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCollectionsByIdsPopulatedRow
+	for rows.Next() {
+		var i GetCollectionsByIdsPopulatedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.Items,
 		); err != nil {
 			return nil, err
 		}

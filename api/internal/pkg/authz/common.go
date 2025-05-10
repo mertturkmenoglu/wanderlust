@@ -29,6 +29,7 @@ const (
 	ActPoiDraftCreate   AuthzAct = "poi.draft.create"
 	ActPoiDraftRead     AuthzAct = "poi.draft.read"
 	ActPoiDraftUpdate   AuthzAct = "poi.draft.update"
+	ActCollectionCRUD   AuthzAct = "collection.crud"
 )
 
 var Fns = map[AuthzAct]AuthzFn{
@@ -52,4 +53,5 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActPoiDraftCreate:   IsAdmin,
 	ActPoiDraftRead:     IsAdmin,
 	ActPoiDraftUpdate:   IsAdmin,
+	ActCollectionCRUD:   IsAdmin,
 }
