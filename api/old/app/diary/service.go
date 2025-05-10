@@ -1,59 +1,11 @@
 package diary
 
 import (
-	"errors"
 	"mime/multipart"
 	"strings"
-	"wanderlust/internal/pkg/cache"
 	"wanderlust/internal/pkg/tasks"
 	"wanderlust/internal/pkg/upload"
-
-	"github.com/jackc/pgx/v5"
 )
-
-func (s *service) listDiaryEntries(userId string, params DiaryPaginationParams) (ListDiaryEntriesResponseDto, int64, error) {
-	if params.From == nil && params.To == nil {
-		return s.listDiaryEntriesNoFilter(userId, params)
-	}
-
-	return s.listDiaryEntriesFilterByRange(userId, params)
-}
-
-func (s *service) listDiaryEntriesNoFilter(userId string, params DiaryPaginationParams) (ListDiaryEntriesResponseDto, int64, error) {
-	res, err := s.repository.listDiaryEntries(userId, params)
-
-	if err != nil {
-		return ListDiaryEntriesResponseDto{}, 0, err
-	}
-
-	count, err := s.repository.countDiaryEntries(userId)
-
-	if err != nil {
-		return ListDiaryEntriesResponseDto{}, 0, err
-	}
-
-	v := mapToListDiaryEntriesResponseDto(res)
-
-	return v, count, nil
-}
-
-func (s *service) listDiaryEntriesFilterByRange(userId string, params DiaryPaginationParams) (ListDiaryEntriesResponseDto, int64, error) {
-	res, err := s.repository.listAndFilterDiaryEntries(userId, params)
-
-	if err != nil {
-		return ListDiaryEntriesResponseDto{}, 0, err
-	}
-
-	count, err := s.repository.countDiaryEntriesFilterByRange(userId, params)
-
-	if err != nil {
-		return ListDiaryEntriesResponseDto{}, 0, err
-	}
-
-	v := mapToListDiaryEntriesResponseDto(res)
-
-	return v, count, nil
-}
 
 func (s *service) createNewDiaryEntry(userId string, dto CreateDiaryEntryRequestDto) (CreateDiaryEntryResponseDto, error) {
 	res, err := s.repository.createNewDiaryEntry(userId, dto)
@@ -102,45 +54,6 @@ func (s *service) uploadMedia(id string, mpf *multipart.Form) (string, error) {
 	}
 
 	return url, nil
-}
-
-func (s *service) getDiaryEntryById(id string) (GetDiaryEntryByIdResponseDto, error) {
-	key := cache.KeyBuilder(cache.KeyDiaryEntry, id)
-
-	if s.di.Cache.Has(key) {
-		var res GetDiaryEntryByIdResponseDto
-
-		err := s.di.Cache.ReadObj(key, &res)
-
-		if err == nil {
-			return res, nil
-		}
-	}
-
-	res, err := s.repository.getDiaryEntryById(id)
-
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return GetDiaryEntryByIdResponseDto{}, ErrDiaryEntryNotFound
-		}
-
-		return GetDiaryEntryByIdResponseDto{}, err
-	}
-
-	v := mapToGetDiaryEntryByIdResponseDto(res)
-
-	_ = s.di.Cache.SetObj(key, v, cache.TTLDiaryEntry)
-
-	return v, nil
-}
-
-func (s *service) changeSharing(id string) error {
-	return s.repository.changeSharing(id)
-}
-
-func (s *service) invalidateDiaryEntryCache(id string) error {
-	key := cache.KeyBuilder(cache.KeyDiaryEntry, id)
-	return s.di.Cache.Del(key)
 }
 
 func (s *service) deleteDiaryEntry(id string) error {
