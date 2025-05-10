@@ -234,7 +234,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/collections/{id}/poi/{cityId}",
+			Path:          "/collections/{id}/city/{cityId}",
 			Summary:       "Create Collection City Relation",
 			Description:   "Create collection city relation",
 			DefaultStatus: http.StatusCreated,
@@ -282,7 +282,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
-			Path:          "/collections/{id}/poi/{city}",
+			Path:          "/collections/{id}/city/{cityId}",
 			Summary:       "Delete Collection city Relation",
 			Description:   "Delete collection city relation",
 			DefaultStatus: http.StatusNoContent,
