@@ -5,58 +5,6 @@ import (
 	"wanderlust/internal/pkg/cache"
 )
 
-func (s *service) createCollectionPoiRelation(id string, poiId string) error {
-	err := s.repository.createCollectionPoiRelation(id, poiId)
-
-	if err != nil {
-		return err
-	}
-
-	key := cache.KeyBuilder(cache.KeyCollectionGroup, "poi", poiId)
-	_ = s.di.Cache.Del(key)
-
-	return nil
-}
-
-func (s *service) createCollectionCityRelation(id string, cityId int32) error {
-	err := s.repository.createCollectionCityRelation(id, cityId)
-
-	if err != nil {
-		return err
-	}
-
-	key := cache.KeyBuilder(cache.KeyCollectionGroup, "city", fmt.Sprintf("%d", cityId))
-	_ = s.di.Cache.Del(key)
-
-	return nil
-}
-
-func (s *service) removeCollectionPoiRelation(id string, poiId string) error {
-	err := s.repository.removeCollectionPoiRelation(id, poiId)
-
-	if err != nil {
-		return err
-	}
-
-	key := cache.KeyBuilder(cache.KeyCollectionGroup, "poi", poiId)
-	_ = s.di.Cache.Del(key)
-
-	return nil
-}
-
-func (s *service) removeCollectionCityRelation(id string, cityId int32) error {
-	err := s.repository.removeCollectionCityRelation(id, cityId)
-
-	if err != nil {
-		return err
-	}
-
-	key := cache.KeyBuilder(cache.KeyCollectionGroup, "city", fmt.Sprintf("%d", cityId))
-	_ = s.di.Cache.Del(key)
-
-	return nil
-}
-
 func (s *service) getCollectionsForPoi(id string) ([]GetCollectionByIdResponseDto, error) {
 	key := cache.KeyBuilder(cache.KeyCollectionGroup, "poi", id)
 
