@@ -1721,6 +1721,104 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/collections/{id}/city/{cityId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Collection City Relation
+         * @description Create collection city relation
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of city
+                     * @example 1
+                     */
+                    cityId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        /**
+         * Delete Collection city Relation
+         * @description Delete collection city relation
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of city
+                     * @example 1
+                     */
+                    cityId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/collections/{id}/items": {
         parameters: {
             query?: never;
@@ -1878,120 +1976,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/collections/{id}/poi/{cityId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Create Collection City Relation
-         * @description Create collection city relation
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of collection
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description ID of city
-                     * @example 1
-                     */
-                    cityId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/collections/{id}/poi/{city}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Collection city Relation
-         * @description Delete collection city relation
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of collection
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description ID of city
-                     * @example 1
-                     */
-                    cityId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v2/collections/{id}/poi/{poiId}": {
         parameters: {
             query?: never;
@@ -2114,6 +2098,16 @@ export interface paths {
                      * @example 20
                      */
                     pageSize?: number;
+                    /**
+                     * @description Start date of the date range
+                     * @example 2023-01-01
+                     */
+                    from?: string;
+                    /**
+                     * @description End date of the date range
+                     * @example 2024-01-01
+                     */
+                    to?: string;
                 };
                 header?: never;
                 path?: never;
