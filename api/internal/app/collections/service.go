@@ -363,3 +363,95 @@ func (s *Service) removeCityRelation(collectionId string, cityId int32) error {
 
 	return nil
 }
+
+func (s *Service) getCollectionsForPoi(poiId string) (*dto.GetCollectionsForPoiOutput, error) {
+	collectionIds, err := s.app.Db.Queries.GetCollectionIdsForPoi(context.Background(), poiId)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get collections for poi")
+	}
+
+	res, err := s.getMany(collectionIds)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get collections for poi")
+	}
+
+	return &dto.GetCollectionsForPoiOutput{
+		Body: dto.GetCollectionsForPoiOutputBody{
+			Collections: res,
+		},
+	}, nil
+}
+
+func (s *Service) getCollectionsForCity(cityId int32) (*dto.GetCollectionsForCityOutput, error) {
+	collectionIds, err := s.app.Db.Queries.GetCollectionsIdsForCity(context.Background(), cityId)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get collections for city")
+	}
+
+	res, err := s.getMany(collectionIds)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get collections for city")
+	}
+
+	return &dto.GetCollectionsForCityOutput{
+		Body: dto.GetCollectionsForCityOutputBody{
+			Collections: res,
+		},
+	}, nil
+}
+
+func (s *Service) getAllPoiCollections() (*dto.GetAllPoiCollectionsOutput, error) {
+	res, err := s.app.Db.Queries.GetAllPoiCollections(context.Background())
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get all POI collections")
+	}
+
+	ids := make([]string, len(res))
+
+	for i, v := range res {
+		ids[i] = v.CollectionID
+	}
+
+	collections, err := s.getMany(ids)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get all POI collections")
+	}
+
+	return &dto.GetAllPoiCollectionsOutput{
+		Body: dto.GetAllPoiCollectionsOutputBody{
+			Collections: collections,
+		},
+	}, nil
+}
+
+func (s *Service) getAllCityCollections() (*dto.GetAllCityCollectionsOutput, error) {
+	res, err := s.app.Db.Queries.GetAllCityCollections(context.Background())
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get all city collections")
+	}
+
+	ids := make([]string, len(res))
+
+	for i, v := range res {
+		ids[i] = v.CollectionID
+	}
+
+	collections, err := s.getMany(ids)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get all city collections")
+	}
+
+	return &dto.GetAllCityCollectionsOutput{
+		Body: dto.GetAllCityCollectionsOutputBody{
+			Collections: collections,
+		},
+	}, nil
+}

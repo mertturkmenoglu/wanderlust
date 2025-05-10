@@ -303,4 +303,90 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/collections/poi/{id}",
+			Summary:       "Get Collections For a POI",
+			Description:   "Get collections for a POI",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetCollectionsForPoiInput) (*dto.GetCollectionsForPoiOutput, error) {
+			res, err := s.getCollectionsForPoi(input.PoiID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/collections/city/{id}",
+			Summary:       "Get Collections For a City",
+			Description:   "Get collections for a city",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetCollectionsForCityInput) (*dto.GetCollectionsForCityOutput, error) {
+			res, err := s.getCollectionsForCity(input.CityID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/collections/poi/all",
+			Summary:       "Get All POI Collections",
+			Description:   "Get all POI collections",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetAllPoiCollectionsOutput, error) {
+			res, err := s.getAllPoiCollections()
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/collections/city/all",
+			Summary:       "Get All City Collections",
+			Description:   "Get all city collections",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetAllCityCollectionsOutput, error) {
+			res, err := s.getAllCityCollections()
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
 }

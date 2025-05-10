@@ -145,3 +145,43 @@ type RemoveCollectionCityRelationInput struct {
 	CollectionID string `path:"id" doc:"ID of collection" example:"7323488942953598976"`
 	CityID       int32  `path:"cityId" doc:"ID of city" example:"1"`
 }
+
+type GetCollectionsForPoiInput struct {
+	PoiID string `path:"id" doc:"ID of point of interest" example:"7323488942953598976"`
+}
+
+type GetCollectionsForPoiOutput struct {
+	Body GetCollectionsForPoiOutputBody
+}
+
+type GetCollectionsForPoiOutputBody struct {
+	Collections []Collection `json:"collections"`
+}
+
+type GetCollectionsForCityInput struct {
+	CityID int32 `path:"id" doc:"ID of city" example:"1"`
+}
+
+type GetCollectionsForCityOutput struct {
+	Body GetCollectionsForCityOutputBody
+}
+
+type GetCollectionsForCityOutputBody struct {
+	Collections []Collection `json:"collections"`
+}
+
+type GetAllPoiCollectionsOutput struct {
+	Body GetAllPoiCollectionsOutputBody
+}
+
+type GetAllPoiCollectionsOutputBody struct {
+	Collections []Collection `json:"collections"`
+}
+
+type GetAllCityCollectionsOutput struct {
+	Body GetAllCityCollectionsOutputBody
+}
+
+type GetAllCityCollectionsOutputBody struct {
+	Collections []Collection `json:"collections"`
+}
