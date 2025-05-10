@@ -3,16 +3,20 @@ package diary
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/dto"
 	"wanderlust/internal/pkg/mapper"
 	"wanderlust/internal/pkg/pagination"
+	"wanderlust/internal/pkg/upload"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/minio/minio-go/v7"
 )
 
 type Service struct {
@@ -214,4 +218,121 @@ func (s *Service) filterAndList(userId string, params dto.PaginationQueryParams,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
+}
+
+func (s *Service) create(userId string, body dto.CreateDiaryEntryInputBody) (*dto.CreateDiaryEntryOutput, error) {
+	t, err := time.Parse(time.DateOnly, body.Date)
+
+	if err != nil {
+		return nil, huma.Error422UnprocessableEntity("invalid date format")
+	}
+
+	ctx := context.Background()
+	tx, err := s.app.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create diary entry")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.app.Db.Queries.WithTx(tx)
+
+	entry, err := qtx.CreateNewDiaryEntry(ctx, db.CreateNewDiaryEntryParams{
+		ID:               utils.GenerateId(s.app.Flake),
+		UserID:           userId,
+		Title:            body.Title,
+		Description:      body.Description,
+		ShareWithFriends: body.ShareWithFriends,
+		Date:             pgtype.Timestamptz{Time: t, Valid: true},
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create diary entry")
+	}
+
+	for i, poi := range body.Locations {
+		_, err = qtx.CreateDiaryEntryPoi(ctx, db.CreateDiaryEntryPoiParams{
+			DiaryEntryID: entry.ID,
+			PoiID:        poi.ID,
+			Description:  utils.NilStrToText(poi.Description),
+			ListIndex:    int32(i + 1),
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to create diary entry poi")
+		}
+	}
+
+	for i, friendID := range body.Friends {
+		_, err = qtx.CreateDiaryEntryUser(ctx, db.CreateDiaryEntryUserParams{
+			DiaryEntryID: entry.ID,
+			UserID:       friendID,
+			ListIndex:    int32(i + 1),
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to create diary entry user")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create diary entry")
+	}
+
+	entryRes, err := s.get(entry.ID)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get diary entry")
+	}
+
+	return &dto.CreateDiaryEntryOutput{
+		Body: dto.CreateDiaryEntryOutputBody{
+			Entry: *entryRes,
+		},
+	}, nil
+}
+
+func (s *Service) remove(userId string, id string) error {
+	entry, err := s.get(id)
+
+	if err != nil {
+		return err
+	}
+
+	if entry.UserID != userId {
+		return huma.Error403Forbidden("you are not authorized to delete this diary entry")
+	}
+
+	err = s.app.Db.Queries.DeleteDiaryEntry(context.Background(), id)
+
+	if err != nil {
+		return huma.Error500InternalServerError("failed to delete diary entry")
+	}
+
+	bucket := upload.BUCKET_DIARIES
+
+	for _, m := range entry.Media {
+		_, after, found := strings.Cut(m.Url, "diaries/")
+
+		if !found {
+			continue
+		}
+
+		err = s.app.Upload.Client.RemoveObject(
+			context.Background(),
+			string(bucket),
+			after,
+			minio.RemoveObjectOptions{},
+		)
+
+		if err != nil {
+			s.app.Logger.Error("error deleting diary media, cannot remove object from bucket", s.app.Logger.Args("url", m.Url))
+			continue
+		}
+	}
+
+	return nil
 }

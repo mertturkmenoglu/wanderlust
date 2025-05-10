@@ -67,3 +67,33 @@ type GetDiaryEntryByIdOutputBody struct {
 type ChangeDiaryEntySharingInput struct {
 	ID string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
 }
+
+type CreateDiaryEntryInput struct {
+	Body CreateDiaryEntryInputBody
+}
+
+type CreateDiaryEntryInputBody struct {
+	Title            string                     `json:"title" required:"true" example:"My diary entry" doc:"The title of the diary entry" minLength:"1" maxLength:"128"`
+	Description      string                     `json:"description" required:"true" example:"My diary entry description" doc:"The description of the diary entry" minLength:"1" maxLength:"4096"`
+	Date             string                     `json:"date" required:"true" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" format:"date"`
+	ShareWithFriends bool                       `json:"shareWithFriends" required:"true" example:"true" doc:"Whether the diary entry is shared with friends or not"`
+	Friends          []string                   `json:"friends" required:"true" example:"[\"7323488942953598976\"]" doc:"The IDs of the friends"`
+	Locations        []CreateDiaryEntryLocation `json:"locations"`
+}
+
+type CreateDiaryEntryLocation struct {
+	ID          string  `json:"id" required:"true" example:"7323488942953598976" doc:"The ID of the point of interest"`
+	Description *string `json:"description" example:"My location description" doc:"The description of the location" required:"false" minLength:"1" maxLength:"256"`
+}
+
+type CreateDiaryEntryOutput struct {
+	Body CreateDiaryEntryOutputBody
+}
+
+type CreateDiaryEntryOutputBody struct {
+	Entry DiaryEntry `json:"entry"`
+}
+
+type DeleteDiaryEntryInput struct {
+	ID string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
+}
