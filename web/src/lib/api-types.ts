@@ -1290,6 +1290,171 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/diary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Diary Entries
+         * @description List diary entries for the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetDiaryEntriesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Diary Entry
+         * @description Get a diary entry by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetDiaryEntryByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}/sharing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change Diary Entry Sharing
+         * @description Change the sharing of a diary entry
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/favorites/": {
         parameters: {
             query?: never;
@@ -3842,6 +4007,72 @@ export interface components {
             readonly $schema?: string;
             review: components["schemas"]["Review"];
         };
+        DiaryEntry: {
+            /**
+             * Format: date-time
+             * @description The created at time of the diary entry
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description The date of the diary entry
+             */
+            date: string;
+            /** @description The description of the diary entry */
+            description: string;
+            friends: components["schemas"]["Profile"][];
+            /** @description The ID of the diary entry */
+            id: string;
+            locations: components["schemas"]["DiaryLocation"][];
+            media: components["schemas"]["DiaryMedia"][];
+            /** @description Whether the diary entry is shared with friends or not */
+            shareWithFriends: boolean;
+            /** @description The title of the diary entry */
+            title: string;
+            /**
+             * Format: date-time
+             * @description The updated at time of the diary entry
+             */
+            updatedAt: string;
+            user: components["schemas"]["Profile"];
+            /** @description The ID of the user */
+            userId: string;
+        };
+        DiaryLocation: {
+            /** @description The description of the location */
+            description: string | null;
+            /**
+             * Format: int32
+             * @description The list index of the location
+             */
+            listIndex: number;
+            poi: components["schemas"]["Poi"];
+        };
+        DiaryMedia: {
+            /** @description The alt text of the media */
+            alt: string;
+            /** @description The caption of the media */
+            caption: string | null;
+            /**
+             * Format: date-time
+             * @description The created at time of the media
+             */
+            createdAt: string;
+            /** @description The ID of the diary entry */
+            diaryEntryId: string;
+            /**
+             * Format: int64
+             * @description The ID of the media
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description The media order of the media
+             */
+            mediaOrder: number;
+            /** @description The URL of the media */
+            url: string;
+        };
         ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
             location?: string;
@@ -3961,6 +4192,23 @@ export interface components {
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
+        };
+        GetDiaryEntriesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entries: components["schemas"]["DiaryEntry"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetDiaryEntryByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
         };
         GetListByIdOutputBody: {
             /**
