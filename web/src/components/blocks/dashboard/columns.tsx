@@ -30,7 +30,9 @@ export type City = {
   id: number;
   name: string;
   stateName: string;
+  stateCode: string;
   countryName: string;
+  countryCode: string;
 };
 
 export const citiesCols: ColumnDef<City>[] = [
@@ -47,8 +49,16 @@ export const citiesCols: ColumnDef<City>[] = [
     header: 'State',
   },
   {
+    accessorKey: 'stateCode',
+    header: 'State Code',
+  },
+  {
     accessorKey: 'countryName',
     header: 'Country',
+  },
+  {
+    accessorKey: 'countryCode',
+    header: 'Country Code',
   },
 ];
 
