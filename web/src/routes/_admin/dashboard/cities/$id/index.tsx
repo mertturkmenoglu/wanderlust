@@ -8,9 +8,9 @@ import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import DashboardActions from '../../-dashboard-actions';
-import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
-import DeleteDialog from '../../-delete-dialog';
+import DashboardActions from '../../../../../components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
+import DeleteDialog from '../../../../../components/blocks/dashboard/delete-dialog';
 
 export const Route = createFileRoute('/_admin/dashboard/cities/$id/')({
   component: RouteComponent,

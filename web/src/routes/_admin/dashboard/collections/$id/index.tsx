@@ -6,7 +6,7 @@ import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import DeleteDialog from '../../-delete-dialog';
+import DeleteDialog from '../../../../../components/blocks/dashboard/delete-dialog';
 
 export const Route = createFileRoute('/_admin/dashboard/collections/$id/')({
   component: RouteComponent,

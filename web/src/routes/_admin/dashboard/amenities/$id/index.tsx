@@ -5,8 +5,8 @@ import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import DashboardActions from '../../-dashboard-actions';
-import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
+import DashboardActions from '../../../../../components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
 import DeleteDialog from './-delete-dialog';
 
 export const Route = createFileRoute('/_admin/dashboard/amenities/$id/')({

@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
+import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
 
 const schema = z.object({
   id: z.number().min(1),
