@@ -1,9 +1,12 @@
-import BackLink from '@/components/blocks/back-link';
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import DeleteDialog from '@/components/blocks/dashboard/delete-dialog';
 import { Separator } from '@/components/ui/separator';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { z } from 'zod';
-import DeleteDialog from './-delete-dialog';
 import StepsIndicator from './-steps-indicator';
 import Step1 from './-steps/step-1';
 import Step2 from './-steps/step-2';
@@ -48,21 +51,60 @@ function RouteComponent() {
   const { draft } = Route.useLoaderData();
   const { step } = Route.useSearch();
   const name = getDraftName(draft);
+  const navigate = useNavigate();
+  const invalidator = useInvalidator();
+
+  const mutation = api.useMutation('delete', '/api/v2/pois/drafts/{id}', {
+    onSuccess: async () => {
+      toast.success('Draft deleted');
+      await invalidator.invalidate();
+      await navigate({
+        to: '/dashboard/pois/drafts',
+      });
+    },
+    onError: (err) => {
+      toast.error(err.title ?? 'Something went wrong');
+    },
+  });
 
   return (
     <div className="mx-auto">
-      <BackLink
-        href="/dashboard/pois/drafts"
-        text="Go back to the drafts page"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Point of Interests', href: '/dashboard/pois' },
+          {
+            name: 'Drafts',
+            href: '/dashboard/pois/drafts',
+          },
+          {
+            name: name,
+            href: `/dashboard/pois/drafts/${draft.id}`,
+          },
+        ]}
       />
-      <div className="flex items-end gap-8 mt-4">
-        <h2 className="text-4xl font-bold tracking-tight">{name}</h2>
-        <DeleteDialog id={draft.id as string} />
+
+      <Separator className="my-2" />
+
+      <DashboardActions>
+        <div className="flex items-center gap-2">
+          <DeleteDialog
+            type="draft"
+            onClick={() =>
+              mutation.mutate({
+                params: {
+                  path: {
+                    id: draft.id as string,
+                  },
+                },
+              })
+            }
+          />
+        </div>
+      </DashboardActions>
+
+      <div className="mt-4">
+        <StepsIndicator draftId={draft.id as string} />
       </div>
-
-      <Separator className="my-4" />
-
-      <StepsIndicator draftId={draft.id as string} />
 
       {step === 1 && <Step1 />}
       {step === 2 && <Step2 />}

@@ -42,6 +42,27 @@ export const poisCols: ColumnDef<Poi>[] = [
   },
 ];
 
+export type PoiDraft = {
+  id: string;
+  name: string;
+  v: number;
+};
+
+export const poisDraftsCols: ColumnDef<PoiDraft>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+  },
+  {
+    accessorKey: 'v',
+    header: 'Version',
+  },
+];
+
 export type City = {
   id: number;
   name: string;

@@ -1,4 +1,5 @@
-import BackLink from '@/components/blocks/back-link';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 
@@ -22,10 +23,22 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink
-        href={`/dashboard/pois/${poi.id}`}
-        text="Go back to point of interest details"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Point of Interests', href: '/dashboard/pois' },
+          {
+            name: poi.name,
+            href: `/dashboard/pois/${poi.id}`,
+          },
+          {
+            name: 'Edit',
+            href: `/dashboard/pois/${poi.id}/edit`,
+          },
+        ]}
       />
+
+      <Separator className="my-2" />
+
       <div>This is the edit page for point of interest {poi.id}</div>
       <div>
         <pre className="max-w-xl break-words flex-wrap text-wrap whitespace-pre-wrap">

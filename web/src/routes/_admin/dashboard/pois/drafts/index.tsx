@@ -1,6 +1,14 @@
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import {
+  poisDraftsCols,
+  type PoiDraft,
+} from '@/components/blocks/dashboard/columns';
+import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_admin/dashboard/pois/drafts/')({
@@ -38,40 +46,44 @@ function RouteComponent() {
 
   return (
     <div>
-      <div className="flex gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">Drafts</h2>
-        <Button
-          variant="link"
-          className="px-0"
-          onClick={() => {
-            mutation.mutate({});
-          }}
-        >
-          New Draft
-        </Button>
-      </div>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Point of Interests', href: '/dashboard/pois' },
+          {
+            name: 'Drafts',
+            href: '/dashboard/pois/drafts',
+          },
+        ]}
+      />
 
-      <div className="">
-        {(drafts ?? []).map((draft) => (
-          <Link
-            to="/dashboard/pois/drafts/$id"
-            params={{
-              id: `${draft.id as number}`,
+      <Separator className="my-2" />
+
+      <DashboardActions>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              mutation.mutate({});
             }}
-            key={(draft.id as string) ?? ''}
           >
-            <div className="flex flex-col">
-              <div className="font-semibold text-primary">
-                {(draft.name as string | null | undefined) ??
-                  (draft.id as string)}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Version: {draft.v as number}
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            New Draft
+          </Button>
+        </div>
+      </DashboardActions>
+
+      <DataTable
+        columns={poisDraftsCols}
+        filterColumnId="name"
+        data={
+          (drafts ?? []).map((draft) => ({
+            id: draft.id,
+            name: draft.name ?? '-',
+            v: draft.v,
+          })) as PoiDraft[]
+        }
+        hrefPrefix="/dashboard/pois/drafts"
+      />
     </div>
   );
 }
