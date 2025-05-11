@@ -13,23 +13,25 @@ type Props = {
 
 export default function FavoriteCard({ favorite: { poi } }: Props) {
   return (
-    <Card className="group flex flex-col md:flex-row">
+    <Card className="group flex flex-col md:flex-row py-0">
       <img
         src={poi.firstMedia.url}
         alt={poi.firstMedia.alt}
         className="aspect-video w-full rounded-t-md object-cover md:w-32 md:rounded-none md:rounded-l-md lg:w-32 2xl:w-64"
       />
 
-      <div>
-        <CardHeader>
-          <CardTitle className="line-clamp-1 capitalize">{poi.name}</CardTitle>
+      <div className="py-6 w-full">
+        <CardHeader className="w-full">
+          <CardTitle className="line-clamp-1 capitalize" title={poi.name}>
+            {poi.name}
+          </CardTitle>
           <CardDescription className="line-clamp-1">
             {poi.address.city.name} / {poi.address.city.country.name}
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
-          <p className="line-clamp-1 text-sm leading-none">
+        <CardContent className="mt-4">
+          <p className="line-clamp-1 text-sm leading-none text-primary">
             {poi.category.name}
           </p>
         </CardContent>
