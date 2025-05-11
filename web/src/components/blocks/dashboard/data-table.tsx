@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   filterColumnId: string;
   hrefPrefix?: string;
+  hrefColumnId?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
   data,
   filterColumnId,
   hrefPrefix,
+  hrefColumnId = 'id',
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -137,7 +139,7 @@ export function DataTable<TData, TValue>({
                         <Link
                           key={cell.id}
                           to="."
-                          href={`${hrefPrefix}/${row.getValue('id')}`}
+                          href={`${hrefPrefix}/${row.getValue(hrefColumnId)}`}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
