@@ -1,3 +1,4 @@
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
 
 const schema = z.object({
   id: z.number().min(1),

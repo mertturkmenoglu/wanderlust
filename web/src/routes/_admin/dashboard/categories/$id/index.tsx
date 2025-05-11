@@ -1,14 +1,15 @@
-import AppMessage from '@/components/blocks/app-message';
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
+import DeleteDialog from '@/components/blocks/dashboard/delete-dialog';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { createFileRoute, Link } from '@tanstack/react-router';
-import DashboardActions from '../../../../../components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
-import DeleteDialog from './-delete-dialog';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_admin/dashboard/categories/$id/')({
   component: RouteComponent,
@@ -21,13 +22,20 @@ export const Route = createFileRoute('/_admin/dashboard/categories/$id/')({
 function RouteComponent() {
   const { categories } = Route.useLoaderData();
   const { id } = Route.useParams();
-  const category = categories.find((category) => category.id === +id);
+  const category = categories.find((category) => category.id === +id)!;
+  const navigate = useNavigate();
+  const invalidator = useInvalidator();
 
-  if (!category) {
-    return (
-      <AppMessage errorMessage="Category not found" showBackButton={false} />
-    );
-  }
+  const deleteMutation = api.useMutation('delete', '/api/v2/categories/{id}', {
+    onSuccess: async () => {
+      toast.success('Category deleted');
+      await invalidator.invalidate();
+      await navigate({ to: '/dashboard/categories' });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div>
@@ -57,7 +65,12 @@ function RouteComponent() {
             Edit
           </Link>
 
-          <DeleteDialog id={category.id} />
+          <DeleteDialog
+            type="category"
+            onClick={() =>
+              deleteMutation.mutate({ params: { path: { id: category.id } } })
+            }
+          />
         </div>
       </DashboardActions>
 
