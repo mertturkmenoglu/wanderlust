@@ -62,7 +62,7 @@ function RouteComponent() {
               id,
             }}
             className={cn(
-              buttonVariants({ variant: 'default', size: 'sm' }),
+              buttonVariants({ variant: 'outline', size: 'sm' }),
               '',
             )}
           >

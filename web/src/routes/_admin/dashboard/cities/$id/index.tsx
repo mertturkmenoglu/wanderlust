@@ -62,7 +62,7 @@ function RouteComponent() {
             params={{
               _splat: `${city.id}`,
             }}
-            className={cn(buttonVariants({ variant: 'default', size: 'sm' }))}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
           >
             Visit Page
           </Link>
@@ -72,7 +72,7 @@ function RouteComponent() {
             params={{
               id: `${city.id}`,
             }}
-            className={cn(buttonVariants({ variant: 'default', size: 'sm' }))}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
           >
             Edit
           </Link>

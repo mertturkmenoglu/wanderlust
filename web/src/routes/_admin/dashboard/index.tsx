@@ -1,3 +1,4 @@
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -39,25 +40,31 @@ function Item({ href, text, icon: Icon }: ItemProps) {
 
 function RouteComponent() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4 mb-96">
-      <div className="col-span-full text-center text-2xl font-medium">
-        Admin Dashboard
+    <div>
+      <DashboardBreadcrumb items={[{ name: 'Home', href: '/dashboard' }]} />
+
+      <Separator className="my-2" />
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4 mb-96">
+        <Item
+          href="/dashboard/amenities"
+          text="Amenities"
+          icon={ComponentIcon}
+        />
+        <Item href="/dashboard/categories" text="Categories" icon={TagIcon} />
+        <Item href="/dashboard/cities" text="Cities" icon={MapIcon} />
+        <Item
+          href="/dashboard/pois"
+          text="Points of Interest"
+          icon={MapPinnedIcon}
+        />
+        <Item href="/dashboard/users" text="Users" icon={UsersIcon} />
+        <Item
+          href="/dashboard/collections"
+          text="Collections"
+          icon={LibraryIcon}
+        />
       </div>
-      <Separator className="col-span-full" />
-      <Item href="/dashboard/amenities" text="Amenities" icon={ComponentIcon} />
-      <Item href="/dashboard/categories" text="Categories" icon={TagIcon} />
-      <Item href="/dashboard/cities" text="Cities" icon={MapIcon} />
-      <Item
-        href="/dashboard/pois"
-        text="Points of Interest"
-        icon={MapPinnedIcon}
-      />
-      <Item href="/dashboard/users" text="Users" icon={UsersIcon} />
-      <Item
-        href="/dashboard/collections"
-        text="Collections"
-        icon={LibraryIcon}
-      />
     </div>
   );
 }
