@@ -33,7 +33,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterColumnId: string;
-  hrefPrefix: string;
+  hrefPrefix?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -133,16 +133,25 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      <Link
-                        key={cell.id}
-                        to="."
-                        href={`${hrefPrefix}/${row.getValue('id')}`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </Link>
+                      {hrefPrefix !== undefined ? (
+                        <Link
+                          key={cell.id}
+                          to="."
+                          href={`${hrefPrefix}/${row.getValue('id')}`}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </Link>
+                      ) : (
+                        <>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </>
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>

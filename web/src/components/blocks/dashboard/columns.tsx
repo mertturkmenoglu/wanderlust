@@ -1,5 +1,21 @@
 import { type ColumnDef } from '@tanstack/react-table';
 
+export type KeyValueCols = {
+  k: string;
+  v: string;
+};
+
+export const keyValueCols: ColumnDef<KeyValueCols>[] = [
+  {
+    accessorKey: 'k',
+    header: 'Key',
+  },
+  {
+    accessorKey: 'v',
+    header: 'Value',
+  },
+];
+
 export type Poi = {
   id: string;
   name: string;
