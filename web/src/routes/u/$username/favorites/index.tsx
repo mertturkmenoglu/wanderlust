@@ -20,12 +20,22 @@ function RouteComponent() {
         path: {
           username,
         },
+        query: {
+          pageSize: 10,
+        },
       },
     },
     {
       initialPageParam: 1,
-      getNextPageParam: (lastPage) =>
-        lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
+      getNextPageParam: (lastPage) => {
+        console.log({ lastPage });
+        if (!lastPage.pagination.hasNext) {
+          return null;
+        }
+        return lastPage.pagination.page + 1;
+      },
+      pageParamName: 'page',
+      retry: false,
       enabled: username !== null,
     },
   );
@@ -76,7 +86,9 @@ function RouteComponent() {
         {query.hasNextPage && (
           <div className="mt-4 flex justify-center">
             <Button
-              onClick={() => query.fetchNextPage()}
+              onClick={() => {
+                query.fetchNextPage();
+              }}
               disabled={!query.hasNextPage || query.isFetchingNextPage}
             >
               {btnText}
