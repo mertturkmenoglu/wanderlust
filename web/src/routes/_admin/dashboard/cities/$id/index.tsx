@@ -1,4 +1,9 @@
 import BackLink from '@/components/blocks/back-link';
+import {
+  keyValueCols,
+  type KeyValueCols,
+} from '@/components/blocks/dashboard/columns';
+import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
@@ -73,46 +78,54 @@ function RouteComponent() {
 
       <h3 className="mt-4 text-lg font-bold tracking-tight">Short Info</h3>
 
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">City Id:</div>
-        <div>{city.id}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">City Name:</div>
-        <div>{city.name}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">State Code:</div>
-        <div>{city.state.code}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">State Name:</div>
-        <div>{city.state.name}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Country Code:</div>
-        <div>{city.country.code}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Country Name:</div>
-        <div>{city.country.name}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Image License:</div>
-        <div>{city.image.license ?? '-'}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Image License Link:</div>
-        <div>{city.image.licenseLink ?? '-'}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Image Attribution:</div>
-        <div>{city.image.attribution ?? '-'}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Image Attribution Link:</div>
-        <div>{city.image.attributionLink ?? '-'}</div>
-      </div>
+      <DataTable
+        columns={keyValueCols}
+        filterColumnId="key"
+        data={
+          [
+            {
+              k: 'ID',
+              v: city.id,
+            },
+            {
+              k: 'Name',
+              v: city.name,
+            },
+            {
+              k: 'State Code',
+              v: city.state.code,
+            },
+            {
+              k: 'State Name',
+              v: city.state.name,
+            },
+            {
+              k: 'Country Code',
+              v: city.country.code,
+            },
+            {
+              k: 'Country Name',
+              v: city.country.name,
+            },
+            {
+              k: 'Image License',
+              v: city.image.license ?? '-',
+            },
+            {
+              k: 'Image License Link',
+              v: city.image.licenseLink ?? '-',
+            },
+            {
+              k: 'Image Attribution',
+              v: city.image.attribution ?? '-',
+            },
+            {
+              k: 'Image Attribution Link',
+              v: city.image.attributionLink ?? '-',
+            },
+          ] as KeyValueCols[]
+        }
+      />
     </>
   );
 }
