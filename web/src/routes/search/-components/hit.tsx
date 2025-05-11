@@ -6,6 +6,7 @@ export type Props = {
     location: [number, number];
     name: string;
     poi: {
+      id: string;
       address: {
         city: {
           id: number;
@@ -35,7 +36,7 @@ export type Props = {
 export default function Hit({ hit }: Readonly<Props>) {
   return (
     <Card
-      id={hit.id}
+      id={hit.poi.id}
       name={hit.name}
       categoryName={hit.poi.category.name}
       image={hit.poi.media[0]?.url ?? ''}
