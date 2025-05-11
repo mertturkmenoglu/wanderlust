@@ -16,8 +16,8 @@ import { z } from 'zod';
 import BookmarkCard from './-card';
 
 export const bookmarksSearchSchema = z.object({
-  page: z.number().min(1).max(100).default(1),
-  pageSize: z.number().min(1).max(100).default(10),
+  page: z.number().min(1).max(100).default(1).catch(1),
+  pageSize: z.number().min(1).max(100).multipleOf(10).default(10).catch(10),
 });
 
 export const Route = createFileRoute('/bookmarks/')({
@@ -60,14 +60,21 @@ function RouteComponent() {
 function Bookmarks() {
   const { page, pageSize } = Route.useSearch();
   const query = useQuery(
-    api.queryOptions('get', '/api/v2/bookmarks/', {
-      params: {
-        query: {
-          page: page,
-          pageSize: pageSize,
+    api.queryOptions(
+      'get',
+      '/api/v2/bookmarks/',
+      {
+        params: {
+          query: {
+            page: page,
+            pageSize: pageSize,
+          },
         },
       },
-    }),
+      {
+        retry: false,
+      },
+    ),
   );
 
   const nums = usePaginationNumbers(
@@ -77,7 +84,10 @@ function Bookmarks() {
 
   if (query.error) {
     return (
-      <AppMessage errorMessage="Something went wrong" showBackButton={false} />
+      <AppMessage
+        errorMessage={query.error.title ?? 'Something went wrong'}
+        showBackButton={false}
+      />
     );
   }
 
@@ -125,9 +135,10 @@ function Bookmarks() {
                 </PaginationItem>
               ))}
 
-              <PaginationItem>
+              <PaginationItem aria-disabled={!pagination.hasNext}>
                 <PaginationNext
                   href={`?page=${pagination.hasNext ? page + 1 : page}`}
+                  aria-disabled={!pagination.hasNext}
                 />
               </PaginationItem>
             </PaginationContent>
