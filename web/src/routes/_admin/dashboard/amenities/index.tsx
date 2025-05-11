@@ -1,4 +1,7 @@
 import AppMessage from '@/components/blocks/app-message';
+import BackLink from '@/components/blocks/back-link';
+import { keyValueCols } from '@/components/blocks/dashboard/columns';
+import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -17,7 +20,15 @@ function RouteComponent() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold tracking-tight">Amenities</h2>
+      <BackLink href="/dashboard" text="Go back to dashboard" />
+
+      <div className="flex items-baseline gap-8 mt-4">
+        <h3 className="text-lg font-bold tracking-tight">Amenities</h3>
+        <Button asChild variant="link" className="px-0">
+          <Link to="/dashboard/amenities/new">New Amenity</Link>
+        </Button>
+      </div>
+
       {amenities.length === 0 && (
         <AppMessage
           emptyMessage="No amenities found"
@@ -25,20 +36,17 @@ function RouteComponent() {
           className="mt-8"
         />
       )}
-      <div className="grid grid-cols-4 gap-4 mt-8">
-        {amenities.map((amenity) => (
-          <Link
-            to={`/dashboard/amenities/$id`}
-            key={amenity.id}
-            params={{
-              id: `${amenity.id}`,
-            }}
-          >
-            <Button asChild variant="link" className="p-0">
-              <div className="font-bold">{amenity.name}</div>
-            </Button>
-          </Link>
-        ))}
+      <div className="">
+        <DataTable
+          columns={keyValueCols}
+          filterColumnId="name"
+          data={amenities.map((a) => ({
+            k: `${a.id}`,
+            v: a.name,
+          }))}
+          hrefPrefix="/dashboard/amenities"
+          hrefColumnId="k"
+        />
       </div>
     </div>
   );

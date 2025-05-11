@@ -1,3 +1,7 @@
+import AppMessage from '@/components/blocks/app-message';
+import BackLink from '@/components/blocks/back-link';
+import { keyValueCols } from '@/components/blocks/dashboard/columns';
+import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -15,21 +19,33 @@ function RouteComponent() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold tracking-tight">Categories</h2>
-      <div className="grid grid-cols-4 gap-4 mt-8">
-        {categories.map((category) => (
-          <Link
-            to="/dashboard/categories/$id"
-            params={{
-              id: `${category.id}`,
-            }}
-            key={category.id}
-          >
-            <Button asChild variant="link" className="p-0">
-              <div className="font-bold text-wrap">{category.name}</div>
-            </Button>
-          </Link>
-        ))}
+      <BackLink href="/dashboard" text="Go back to dashboard" />
+
+      <div className="flex items-baseline gap-8 mt-4">
+        <h3 className="text-lg font-bold tracking-tight">Categories</h3>
+        <Button asChild variant="link" className="px-0">
+          <Link to="/dashboard/categories/new">New Category</Link>
+        </Button>
+      </div>
+
+      {categories.length === 0 && (
+        <AppMessage
+          emptyMessage="No amenities found"
+          showBackButton={false}
+          className="mt-8"
+        />
+      )}
+      <div className="">
+        <DataTable
+          columns={keyValueCols}
+          filterColumnId="name"
+          data={categories.map((c) => ({
+            k: `${c.id}`,
+            v: c.name,
+          }))}
+          hrefPrefix="/dashboard/categories"
+          hrefColumnId="k"
+        />
       </div>
     </div>
   );
