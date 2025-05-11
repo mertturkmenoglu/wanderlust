@@ -1,12 +1,13 @@
-import BackLink from '@/components/blocks/back-link';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import type { SubmitHandler } from 'react-hook-form';
+import DashboardBreadcrumb from '../../../-dashboard-breadcrumb';
 import { useUpdateAmenityForm, useUpdateAmenityMutation } from './-hooks';
 import type { FormInput } from './-schema';
 
@@ -22,6 +23,7 @@ function RouteComponent() {
   const { amenities } = Route.useLoaderData();
   const { id } = Route.useParams();
   const amenity = amenities.find((amenity) => amenity.id === +id);
+  const navigate = useNavigate();
 
   if (!amenity) {
     throw new Response('Amenity not found', { status: 404 });
@@ -46,10 +48,21 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink
-        href={`/dashboard/amenities/${amenity.id}`}
-        text="Go back to amenity details"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Amenities', href: '/dashboard/amenities' },
+          {
+            name: amenity.name,
+            href: `/dashboard/amenities/${amenity.id}`,
+          },
+          {
+            name: 'Edit',
+            href: `/dashboard/amenities/${amenity.id}/edit`,
+          },
+        ]}
       />
+      <Separator className="my-2" />
+
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
         onSubmit={form.handleSubmit(onSubmit)}
@@ -68,8 +81,23 @@ function RouteComponent() {
         </div>
         <div></div>
 
-        <div>
+        <div className="flex items-center gap-2">
           <Button type="submit">Update</Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: `/dashboard/amenities/$id`,
+                params: {
+                  id,
+                },
+              });
+            }}
+          >
+            Cancel
+          </Button>
         </div>
       </form>
     </div>

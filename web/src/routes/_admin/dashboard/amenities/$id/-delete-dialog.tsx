@@ -20,7 +20,9 @@ export default function DeleteDialog({ id }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive">Delete</Button>
+        <Button variant="destructive" size="sm">
+          Delete
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

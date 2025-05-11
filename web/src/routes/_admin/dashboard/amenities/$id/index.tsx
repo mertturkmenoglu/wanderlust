@@ -1,7 +1,12 @@
-import BackLink from '@/components/blocks/back-link';
-import { Button } from '@/components/ui/button';
+import { keyValueCols } from '@/components/blocks/dashboard/columns';
+import { DataTable } from '@/components/blocks/dashboard/data-table';
+import { buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import DashboardActions from '../../-dashboard-actions';
+import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
 import DeleteDialog from './-delete-dialog';
 
 export const Route = createFileRoute('/_admin/dashboard/amenities/$id/')({
@@ -23,29 +28,50 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink href="/dashboard/amenities" text="Go back to amenities page" />
-      <div className="flex items-end gap-4">
-        <h2 className="text-4xl font-bold mt-8">{amenity.name}</h2>
-        <Button variant="link" className="px-0" asChild>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Amenities', href: '/dashboard/amenities' },
+          {
+            name: amenity.name,
+            href: `/dashboard/amenities/${amenity.id}`,
+          },
+        ]}
+      />
+      <Separator className="my-2" />
+
+      <DashboardActions>
+        <div className="flex items-center gap-2 mt-4">
           <Link
             to="/dashboard/amenities/$id/edit"
             params={{
               id,
             }}
+            className={cn(
+              buttonVariants({ variant: 'default', size: 'sm' }),
+              '',
+            )}
           >
             Edit
           </Link>
-        </Button>
-        <DeleteDialog id={amenity.id} />
-      </div>
-      <div className="flex gap-2 mt-4">
-        <div className="font-semibold">ID:</div>
-        <div>{amenity.id}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Name:</div>
-        <div>{amenity.name}</div>
-      </div>
+
+          <DeleteDialog id={amenity.id} />
+        </div>
+      </DashboardActions>
+
+      <DataTable
+        columns={keyValueCols}
+        filterColumnId="k"
+        data={[
+          {
+            k: 'ID',
+            v: `${amenity.id}`,
+          },
+          {
+            k: 'Name',
+            v: amenity.name,
+          },
+        ]}
+      />
     </div>
   );
 }
