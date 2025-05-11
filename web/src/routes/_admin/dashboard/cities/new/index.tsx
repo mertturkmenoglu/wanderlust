@@ -10,11 +10,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
 
 const schema = z.object({
   id: z.number().min(1),

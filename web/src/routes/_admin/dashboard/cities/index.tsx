@@ -1,3 +1,5 @@
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { citiesCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { buttonVariants } from '@/components/ui/button';
@@ -5,8 +7,6 @@ import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import DashboardActions from '../../../../components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '../../../../components/blocks/dashboard/breadcrumb';
 
 export const Route = createFileRoute('/_admin/dashboard/cities/')({
   component: RouteComponent,

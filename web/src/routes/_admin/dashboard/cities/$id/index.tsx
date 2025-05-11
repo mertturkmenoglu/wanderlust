@@ -1,5 +1,8 @@
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
+import DeleteDialog from '@/components/blocks/dashboard/delete-dialog';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -8,9 +11,6 @@ import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import DashboardActions from '../../../../../components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '../../../../../components/blocks/dashboard/breadcrumb';
-import DeleteDialog from '../../../../../components/blocks/dashboard/delete-dialog';
 
 export const Route = createFileRoute('/_admin/dashboard/cities/$id/')({
   component: RouteComponent,
