@@ -1,12 +1,14 @@
+import InputError from '@/components/kit/input-error';
+import InputInfo from '@/components/kit/input-info';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
 import type { SubmitHandler } from 'react-hook-form';
+import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
 import { useNewAmenityForm, useNewAmenityMutation } from './-hooks';
 import type { FormInput } from './-schema';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import InputInfo from '@/components/kit/input-info';
-import InputError from '@/components/kit/input-error';
-import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/_admin/dashboard/amenities/new/')({
   component: RouteComponent,
@@ -24,6 +26,17 @@ function RouteComponent() {
 
   return (
     <div>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Amenities', href: '/dashboard/amenities' },
+          {
+            name: 'New',
+            href: '/dashboard/amenities/new',
+          },
+        ]}
+      />
+      <Separator className="my-2" />
+
       <h3 className="mb-8 text-lg font-bold tracking-tight">
         Create New Amenity
       </h3>

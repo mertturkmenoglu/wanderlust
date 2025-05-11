@@ -1,10 +1,12 @@
-import AppMessage from '@/components/blocks/app-message';
-import BackLink from '@/components/blocks/back-link';
 import { keyValueCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import DashboardActions from '../-dashboard-actions';
+import DashboardBreadcrumb from '../-dashboard-breadcrumb';
 
 export const Route = createFileRoute('/_admin/dashboard/amenities/')({
   component: RouteComponent,
@@ -20,22 +22,20 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink href="/dashboard" text="Go back to dashboard" />
+      <DashboardBreadcrumb
+        items={[{ name: 'Amenities', href: '/dashboard/amenities' }]}
+      />
+      <Separator className="my-2" />
 
-      <div className="flex items-baseline gap-8 mt-4">
-        <h3 className="text-lg font-bold tracking-tight">Amenities</h3>
-        <Button asChild variant="link" className="px-0">
-          <Link to="/dashboard/amenities/new">New Amenity</Link>
-        </Button>
-      </div>
+      <DashboardActions>
+        <Link
+          to="/dashboard/amenities/new"
+          className={cn(buttonVariants({ variant: 'link' }), 'px-0')}
+        >
+          New Amenity
+        </Link>
+      </DashboardActions>
 
-      {amenities.length === 0 && (
-        <AppMessage
-          emptyMessage="No amenities found"
-          showBackButton={false}
-          className="mt-8"
-        />
-      )}
       <div className="">
         <DataTable
           columns={keyValueCols}
