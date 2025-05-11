@@ -59,6 +59,7 @@ import { Route as UUsernameFavoritesIndexImport } from './routes/u/$username/fav
 import { Route as UUsernameActivitiesIndexImport } from './routes/u/$username/activities/index'
 import { Route as ListsIdItemsIndexImport } from './routes/lists/$id/items/index'
 import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
+import { Route as DiaryIdEditIndexImport } from './routes/diary/$id/edit/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardPoisIndexImport } from './routes/_admin/dashboard/pois/index'
@@ -374,6 +375,12 @@ const ListsIdItemsIndexRoute = ListsIdItemsIndexImport.update({
 const ListsIdEditIndexRoute = ListsIdEditIndexImport.update({
   id: '/lists/$id/edit/',
   path: '/lists/$id/edit/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DiaryIdEditIndexRoute = DiaryIdEditIndexImport.update({
+  id: '/diary/$id/edit/',
+  path: '/diary/$id/edit/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -895,6 +902,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordResetIndexImport
       parentRoute: typeof rootRoute
     }
+    '/diary/$id/edit/': {
+      id: '/diary/$id/edit/'
+      path: '/diary/$id/edit'
+      fullPath: '/diary/$id/edit'
+      preLoaderRoute: typeof DiaryIdEditIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/lists/$id/edit/': {
       id: '/lists/$id/edit/'
       path: '/lists/$id/edit'
@@ -1275,6 +1289,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/lists/$id/items': typeof ListsIdItemsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
@@ -1349,6 +1364,7 @@ export interface FileRoutesByTo {
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/lists/$id/items': typeof ListsIdItemsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
@@ -1428,6 +1444,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/pois/': typeof AdminDashboardPoisIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
+  '/diary/$id/edit/': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
   '/lists/$id/items/': typeof ListsIdItemsIndexRoute
   '/u/$username/activities/': typeof UUsernameActivitiesIndexRoute
@@ -1508,6 +1525,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/diary/$id/edit'
     | '/lists/$id/edit'
     | '/lists/$id/items'
     | '/u/$username/activities'
@@ -1581,6 +1599,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/diary/$id/edit'
     | '/lists/$id/edit'
     | '/lists/$id/items'
     | '/u/$username/activities'
@@ -1658,6 +1677,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/pois/'
     | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
+    | '/diary/$id/edit/'
     | '/lists/$id/edit/'
     | '/lists/$id/items/'
     | '/u/$username/activities/'
@@ -1720,6 +1740,7 @@ export interface RootRouteChildren {
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
+  DiaryIdEditIndexRoute: typeof DiaryIdEditIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
   ListsIdItemsIndexRoute: typeof ListsIdItemsIndexRoute
 }
@@ -1755,6 +1776,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
+  DiaryIdEditIndexRoute: DiaryIdEditIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
   ListsIdItemsIndexRoute: ListsIdItemsIndexRoute,
 }
@@ -1799,6 +1821,7 @@ export const routeTree = rootRoute
         "/lists/$id/",
         "/p/$id/",
         "/_auth/forgot-password/reset/",
+        "/diary/$id/edit/",
         "/lists/$id/edit/",
         "/lists/$id/items/"
       ]
@@ -2011,6 +2034,9 @@ export const routeTree = rootRoute
     },
     "/_auth/forgot-password/reset/": {
       "filePath": "_auth/forgot-password/reset/index.tsx"
+    },
+    "/diary/$id/edit/": {
+      "filePath": "diary/$id/edit/index.tsx"
     },
     "/lists/$id/edit/": {
       "filePath": "lists/$id/edit/index.tsx"
