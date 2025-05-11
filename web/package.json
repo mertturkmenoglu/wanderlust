@@ -76,6 +76,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.4.0",
     "@tanstack/eslint-config": "^0.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
