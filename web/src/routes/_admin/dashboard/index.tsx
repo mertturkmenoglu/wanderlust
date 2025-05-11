@@ -1,3 +1,4 @@
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import {
@@ -38,7 +39,11 @@ function Item({ href, text, icon: Icon }: ItemProps) {
 
 function RouteComponent() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-96">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4 mb-96">
+      <div className="col-span-full text-center text-2xl font-medium">
+        Admin Dashboard
+      </div>
+      <Separator className="col-span-full" />
       <Item href="/dashboard/amenities" text="Amenities" icon={ComponentIcon} />
       <Item href="/dashboard/categories" text="Categories" icon={TagIcon} />
       <Item href="/dashboard/cities" text="Cities" icon={MapIcon} />
