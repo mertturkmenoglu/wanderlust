@@ -4,26 +4,38 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import type { SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
-import { useNewAmenityForm, useNewAmenityMutation } from './-hooks';
-import type { FormInput } from './-schema';
+
+const schema = z.object({
+  name: z.string().min(1).max(64),
+});
 
 export const Route = createFileRoute('/_admin/dashboard/amenities/new/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const form = useNewAmenityForm();
-  const mutation = useNewAmenityMutation();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate({
-      body: data,
-    });
-  };
+  const form = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const mutation = api.useMutation('post', '/api/v2/amenities/', {
+    onSuccess: () => {
+      toast.success('Amenity created');
+      navigate({ to: '/dashboard/amenities' });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div>
@@ -40,7 +52,11 @@ function RouteComponent() {
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            body: data,
+          });
+        })}
       >
         <div className="">
           <Label htmlFor="name">Name</Label>

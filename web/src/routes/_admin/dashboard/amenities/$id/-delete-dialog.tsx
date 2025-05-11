@@ -8,14 +8,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useDeleteAmenityMutation } from './-hooks';
+import { api } from '@/lib/api';
+import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 type Props = {
   id: number;
 };
 
 export default function DeleteDialog({ id }: Props) {
-  const deleteMutation = useDeleteAmenityMutation();
+  const navigate = useNavigate();
+  const deleteMutation = api.useMutation('delete', '/api/v2/amenities/{id}', {
+    onSuccess: () => {
+      toast.success('Amenity deleted');
+      navigate({ to: '/dashboard/amenities' });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <Dialog>
