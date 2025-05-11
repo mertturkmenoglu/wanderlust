@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 
 type Props = {
-  type: 'city' | 'collection';
+  type: 'city' | 'collection' | 'amenity' | 'category';
   onClick: () => void;
 };
 
