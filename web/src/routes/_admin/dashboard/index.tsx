@@ -1,5 +1,6 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_admin/dashboard/')({
@@ -13,19 +14,26 @@ type ItemProps = {
 
 function Item({ href, text }: ItemProps) {
   return (
-    <Button asChild variant="link" className="px-0">
-      <Link to={href}>{text}</Link>
-    </Button>
+    <Link
+      to={href}
+      className={cn(
+        buttonVariants({ variant: 'link' }),
+        'border border-border w-44 h-16',
+      )}
+    >
+      <span className="text-balance text-center">{text}</span>
+    </Link>
   );
 }
 
 function RouteComponent() {
   return (
     <div className="flex w-full flex-col">
-      <div className="my-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="my-8 grid grid-cols-1 gap-4">
         <div>
-          <h3 className="text-lg font-bold">Amenities</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="text-xl font-bold">Amenities</h3>
+          <Separator />
+          <ul className="flex items-center gap-4 mt-4 flex-wrap">
             <li>
               <Item href="/dashboard/amenities" text="View" />
             </li>
@@ -36,8 +44,9 @@ function RouteComponent() {
         </div>
 
         <div>
-          <h3 className="text-lg font-bold">Categories</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="text-xl font-bold">Categories</h3>
+          <Separator />
+          <ul className="flex items-center gap-4 mt-4 flex-wrap">
             <li>
               <Item href="/dashboard/categories" text="View" />
             </li>
@@ -47,11 +56,10 @@ function RouteComponent() {
           </ul>
         </div>
 
-        <Separator className="col-span-full" />
-
         <div>
-          <h3 className="text-lg font-bold">Cities</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="text-xl font-bold">Cities</h3>
+          <Separator />
+          <ul className="flex items-center gap-4 mt-4 flex-wrap">
             <li>
               <Item href="/dashboard/cities" text="View" />
             </li>
@@ -62,8 +70,9 @@ function RouteComponent() {
         </div>
 
         <div>
-          <h3 className="text-lg font-bold">Point of Interests</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="text-xl font-bold">Point of Interests</h3>
+          <Separator />
+          <ul className="flex items-center gap-4 mt-4 flex-wrap">
             <li>
               <Item href="/dashboard/pois" text="View" />
             </li>
@@ -73,11 +82,10 @@ function RouteComponent() {
           </ul>
         </div>
 
-        <Separator className="col-span-full" />
-
         <div>
-          <h3 className="text-lg font-bold">Users</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="text-xl font-bold">Users</h3>
+          <Separator />
+          <ul className="flex items-center gap-4 mt-4 flex-wrap">
             <li>
               <Item href="/dashboard/users" text="View" />
             </li>
@@ -88,8 +96,9 @@ function RouteComponent() {
         </div>
 
         <div>
-          <h3 className="text-lg font-bold">Collections</h3>
-          <ul className="list-disc list-inside">
+          <h3 className="text-xl font-bold">Collections</h3>
+          <Separator />
+          <ul className="flex items-center gap-4 mt-4 flex-wrap">
             <li>
               <Item href="/dashboard/collections" text="View" />
             </li>
