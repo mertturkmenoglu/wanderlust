@@ -1,17 +1,36 @@
-import BackLink from '@/components/blocks/back-link';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
-import { createFileRoute } from '@tanstack/react-router';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
-import { useUpdateCityForm, useUpdateCityMutation } from './-hooks';
-import type { FormInput } from './-schema';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import DashboardBreadcrumb from '../../../-dashboard-breadcrumb';
+
+const schema = z.object({
+  name: z.string().min(1).max(64),
+  stateCode: z.string().min(1).max(16),
+  stateName: z.string().min(1).max(64),
+  countryCode: z.string().length(2),
+  countryName: z.string().min(1).max(64),
+  imageUrl: z.string().min(1).max(256),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  description: z.string().min(1).max(1024),
+  imageLicense: z.string().min(1).max(32).nullable(),
+  imageLicenseLink: z.string().min(1).max(256).nullable(),
+  imageAttribute: z.string().min(1).max(256).nullable(),
+  imageAttributionLink: z.string().min(1).max(256).nullable(),
+});
 
 export const Route = createFileRoute('/_admin/dashboard/cities/$id/edit/')({
   component: RouteComponent,
@@ -30,46 +49,61 @@ export const Route = createFileRoute('/_admin/dashboard/cities/$id/edit/')({
 function RouteComponent() {
   const city = Route.useLoaderData();
   const [previewUrl, setPreviewUrl] = useState(city.image.url);
-  const form = useUpdateCityForm({
-    ...city,
-    imageAttribute: city.image.attribution,
-    imageAttributionLink: city.image.attributionLink,
-    imageLicense: city.image.license,
-    imageLicenseLink: city.image.licenseLink,
-    latitude: city.coordinates.latitude,
-    longitude: city.coordinates.longitude,
-    stateCode: city.state.code,
-    stateName: city.state.name,
-    countryCode: city.country.code,
-    countryName: city.country.name,
-    imageUrl: city.image.url,
+  const navigate = useNavigate();
+  const invalidator = useInvalidator();
+
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      ...city,
+      imageAttribute: city.image.attribution,
+      imageAttributionLink: city.image.attributionLink,
+      imageLicense: city.image.license,
+      imageLicenseLink: city.image.licenseLink,
+      latitude: city.coordinates.latitude,
+      longitude: city.coordinates.longitude,
+      stateCode: city.state.code,
+      stateName: city.state.name,
+      countryCode: city.country.code,
+      countryName: city.country.name,
+      imageUrl: city.image.url,
+    },
   });
 
-  const mutation = useUpdateCityMutation(city.id);
-
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate({
-      params: {
-        path: {
-          id: city.id,
+  const mutation = api.useMutation('patch', '/api/v2/cities/{id}', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      await navigate({
+        to: '/dashboard/cities/$id',
+        params: {
+          id: `${city.id}`,
         },
-      },
-      body: {
-        ...data,
-        imageLicense: data.imageLicense ?? '',
-        imageLicenseLink: data.imageLicenseLink ?? '',
-        imageAttribute: data.imageAttribute ?? '',
-        imageAttributionLink: data.imageAttributionLink ?? '',
-      },
-    });
-  };
+      });
+
+      toast.success('City updated');
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div>
-      <BackLink
-        href={`/dashboard/cities/${city.id}`}
-        text="Go back to city details"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Cities', href: '/dashboard/cities' },
+          {
+            name: city.name,
+            href: `/dashboard/cities/${city.id}`,
+          },
+          {
+            name: 'Edit',
+            href: `/dashboard/categories/${city.id}/edit`,
+          },
+        ]}
       />
+
+      <Separator className="my-2" />
 
       <img
         src={ipx(previewUrl, 'w_512')}
@@ -79,7 +113,22 @@ function RouteComponent() {
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            params: {
+              path: {
+                id: city.id,
+              },
+            },
+            body: {
+              ...data,
+              imageLicense: data.imageLicense ?? '',
+              imageLicenseLink: data.imageLicenseLink ?? '',
+              imageAttribute: data.imageAttribute ?? '',
+              imageAttributionLink: data.imageAttributionLink ?? '',
+            },
+          });
+        })}
       >
         <div className="">
           <Label htmlFor="id">ID</Label>
@@ -271,7 +320,22 @@ function RouteComponent() {
           <InputError error={form.formState.errors.description} />
         </div>
 
-        <div>
+        <div className="flex items-center justify-end gap-2 col-span-full">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: '/dashboard/cities/$id',
+                params: {
+                  id: `${city.id}`,
+                },
+              });
+            }}
+          >
+            Cancel
+          </Button>
           <Button type="submit">Update</Button>
         </div>
       </form>
