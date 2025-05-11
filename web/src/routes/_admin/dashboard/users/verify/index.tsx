@@ -1,8 +1,11 @@
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
-// import { useVerifyUserMutation } from './-hooks';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_admin/dashboard/users/verify/')({
   component: RouteComponent,
@@ -10,13 +13,31 @@ export const Route = createFileRoute('/_admin/dashboard/users/verify/')({
 
 function RouteComponent() {
   const [username, setUsername] = useState('');
-  // const mutation = useVerifyUserMutation();
+  const mutation = api.useMutation(
+    'post',
+    '/api/v2/users/{username}/make-verified',
+    {
+      onSuccess: () => {
+        toast.success('User is now verified');
+      },
+      onError: (err) => {
+        toast.error(err.title ?? 'Something went wrong');
+      },
+    },
+  );
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-bold tracking-tight">
-        Make User Verified
-      </h3>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Users', href: '/dashboard/users' },
+          {
+            name: 'Verify',
+            href: '/dashboard/users/verify',
+          },
+        ]}
+      />
+      <Separator className="my-2" />
 
       <Input
         type="text"
@@ -27,10 +48,15 @@ function RouteComponent() {
       />
 
       <Button
-        // onClick={() => {
-        //   mutation.mutate(username);
-        // }}
-        disabled
+        onClick={() => {
+          mutation.mutate({
+            params: {
+              path: {
+                username,
+              },
+            },
+          });
+        }}
         className="mt-4"
       >
         Make User Verified

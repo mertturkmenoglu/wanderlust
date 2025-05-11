@@ -1,5 +1,9 @@
 import AppMessage from '@/components/blocks/app-message';
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_admin/dashboard/users/')({
@@ -8,14 +12,26 @@ export const Route = createFileRoute('/_admin/dashboard/users/')({
 
 function RouteComponent() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <AppMessage emptyMessage="In progress" showBackButton={false} />
-      <Link
-        to="/dashboard/users/verify"
-        className={buttonVariants({ variant: 'link' })}
-      >
-        Make User Verified
-      </Link>
+    <div>
+      <DashboardBreadcrumb
+        items={[{ name: 'Users', href: '/dashboard/users' }]}
+      />
+      <Separator className="my-2" />
+
+      <DashboardActions>
+        <Link
+          to="/dashboard/users/verify"
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+        >
+          Make User Verified
+        </Link>
+      </DashboardActions>
+
+      <AppMessage
+        emptyMessage="In progress"
+        showBackButton={false}
+        className="mt-4"
+      />
     </div>
   );
 }
