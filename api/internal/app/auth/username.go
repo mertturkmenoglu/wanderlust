@@ -26,7 +26,7 @@ func generateUsernameFromEmail(db *db.Db, email string) (string, error) {
 
 		if !isValidUsername(validLocalPart) {
 			// Username is not valid
-			return "", ErrUsernameChars.Err
+			return "", fmt.Errorf("username %s is not valid", validLocalPart)
 		}
 
 		// Username is valid and there is no user
@@ -47,13 +47,13 @@ func generateUsernameFromEmail(db *db.Db, email string) (string, error) {
 
 	if !isValidUsername(newStr) {
 		// Username is not valid
-		return "", ErrUsernameChars.Err
+		return "", fmt.Errorf("username %s is not valid", newStr)
 	}
 
 	_, err = db.Queries.GetUserByUsername(context.Background(), newStr)
 
 	if err != nil {
-		return "", ErrUsernameTaken.Err
+		return "", fmt.Errorf("username %s is already taken", newStr)
 	}
 
 	return newStr, nil

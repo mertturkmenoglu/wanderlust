@@ -1,7 +1,5 @@
 node_modules
-
-/.cache
-/build
-.env
-
-.react-router/
+.DS_Store
+dist
+dist-ssr
+*.local

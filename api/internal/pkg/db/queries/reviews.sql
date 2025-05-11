@@ -144,3 +144,26 @@ WHERE user_id = (
 SELECT rating, COUNT(rating) FROM reviews
 WHERE poi_id = $1
 GROUP BY rating;
+
+-- name: GetReviewsByIdsPopulated :many
+SELECT
+  sqlc.embed(reviews),
+  sqlc.embed(profile),
+  sqlc.embed(pois),
+  media_agg.media
+FROM
+  reviews
+LEFT JOIN profile ON reviews.user_id = profile.id
+LEFT JOIN pois ON reviews.poi_id = pois.id
+LEFT JOIN LATERAL (
+  SELECT json_agg(jsonb_build_object(
+    'id', m.id,
+    'url', m.url,
+    'review_id', m.review_id,
+    'media_order', m.media_order
+  ) ORDER BY m.media_order) AS media
+  FROM review_media m
+  WHERE m.review_id = reviews.id
+) media_agg ON true
+WHERE reviews.id = ANY($1::TEXT[])
+ORDER BY reviews.created_at DESC;

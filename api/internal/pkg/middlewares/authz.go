@@ -1,98 +1,41 @@
 package middlewares
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 	"wanderlust/internal/pkg/authz"
-	api_errors "wanderlust/internal/pkg/core/errors"
 
-	"github.com/labstack/echo/v4"
+	"github.com/danielgtaylor/huma/v2"
 )
 
-func Authz(key authz.AuthzAct) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			az := authz.New(getDb())
-			fn := authz.Fns[key]
-			isAuthorized, err := fn(az, c)
+func Authz(api huma.API, key authz.AuthzAct) func(ctx huma.Context, next func(huma.Context)) {
+	return func(ctx huma.Context, next func(huma.Context)) {
+		az := authz.New(getDb())
+		fn := authz.Fns[key]
 
-			if err != nil {
-				var echoErr *echo.HTTPError
-
-				if errors.As(err, &echoErr) {
-					return c.JSON(echoErr.Code, api_errors.ErrorResponse{
-						Errors: []api_errors.ErrorDto{
-							{
-								Status: "0000",
-								Code:   fmt.Sprintf("%d", echoErr.Code),
-								Title:  echoErr.Message.(string),
-								Detail: echoErr.Error(),
-							},
-						},
-					})
-				}
-
-				return c.JSON(http.StatusInternalServerError, echo.Map{
-					"errors": []echo.Map{
-						{
-							"status": "0000",
-							"code":   "500",
-							"title":  fmt.Sprintf("An error happened: %v", err.Error()),
-							"detail": fmt.Sprintf("An error happened: %v", err.Error()),
-						},
-					},
-				})
-			}
-
-			if !isAuthorized {
-				return echo.NewHTTPError(http.StatusForbidden, "unauthorized to perform this action")
-			}
-
-			return next(c)
+		if fn == nil {
+			huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
+			return
 		}
-	}
-}
 
-func Authorize(fn authz.AuthzFn) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			az := authz.New(getDb())
-			isAuthorized, err := fn(az, c)
+		isAuthorized, err := fn(az, ctx)
 
-			if err != nil {
-				var echoErr *echo.HTTPError
+		if err != nil {
+			v, ok := err.(huma.StatusError)
 
-				if errors.As(err, &echoErr) {
-					return c.JSON(echoErr.Code, api_errors.ErrorResponse{
-						Errors: []api_errors.ErrorDto{
-							{
-								Status: "0000",
-								Code:   fmt.Sprintf("%d", echoErr.Code),
-								Title:  echoErr.Message.(string),
-								Detail: echoErr.Error(),
-							},
-						},
-					})
-				}
-
-				return c.JSON(http.StatusInternalServerError, echo.Map{
-					"errors": []echo.Map{
-						{
-							"status": "0000",
-							"code":   "500",
-							"title":  fmt.Sprintf("An error happened: %v", err.Error()),
-							"detail": fmt.Sprintf("An error happened: %v", err.Error()),
-						},
-					},
-				})
+			if ok {
+				huma.WriteErr(api, ctx, v.GetStatus(), v.Error())
+				return
 			}
 
-			if !isAuthorized {
-				return echo.NewHTTPError(http.StatusForbidden, "unauthorized to perform this action")
-			}
-
-			return next(c)
+			huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
+			return
 		}
+
+		if !isAuthorized {
+			huma.WriteErr(api, ctx, http.StatusForbidden, "unauthorized to perform this action")
+			return
+		}
+
+		next(ctx)
 	}
 }

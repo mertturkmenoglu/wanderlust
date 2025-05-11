@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/smtp"
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 
 	jwEmail "github.com/jordan-wright/email"
 )
@@ -17,15 +17,15 @@ type EmailService struct {
 	auth      smtp.Auth
 }
 
-func New(cfg *config.Configuration) *EmailService {
+func New() *EmailService {
 	var (
-		from      = cfg.GetString(config.EMAIL_NAME)
-		fromEmail = cfg.GetString(config.EMAIL_FROM)
-		addr      = cfg.GetString(config.SMTP_ADDR)
-		identity  = cfg.GetString(config.SMTP_IDENTITY)
-		username  = cfg.GetString(config.SMTP_USERNAME)
-		password  = cfg.GetString(config.SMTP_PASSWORD)
-		host      = cfg.GetString(config.SMTP_HOST)
+		from      = cfg.Get(cfg.EMAIL_NAME)
+		fromEmail = cfg.Get(cfg.EMAIL_FROM)
+		addr      = cfg.Get(cfg.SMTP_ADDR)
+		identity  = cfg.Get(cfg.SMTP_IDENTITY)
+		username  = cfg.Get(cfg.SMTP_USERNAME)
+		password  = cfg.Get(cfg.SMTP_PASSWORD)
+		host      = cfg.Get(cfg.SMTP_HOST)
 	)
 
 	auth := smtp.PlainAuth(identity, username, password, host)

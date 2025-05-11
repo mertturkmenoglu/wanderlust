@@ -6,7 +6,7 @@
 
 ## Running
 
-- Run `make generate-fake-data` command.
+- Run `just fake` command.
 - Follow the on screen instructions to generate fake data.
 - First you must select the type of fake data you want to generate.
 - Example types:
@@ -46,7 +46,7 @@
 ## Example Workflow
 
 - Let's say you want to generate fake data for `users` type.
-- Run `make generate-fake-data`.
+- Run `just fake`.
 - Select `users` type.
 - Select how many users to generate.
   - For example, if you select `1000`, script will generate 1000 users and insert them to the database.

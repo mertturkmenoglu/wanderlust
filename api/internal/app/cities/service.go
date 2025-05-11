@@ -1,45 +1,46 @@
 package cities
 
 import (
+	"context"
 	"errors"
-	errs "wanderlust/internal/pkg/core/errors"
+	"wanderlust/internal/pkg/core"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/dto"
+	"wanderlust/internal/pkg/utils"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *service) get(id int32) (CityDto, error) {
-	res, err := s.repository.get(id)
+type Service struct {
+	app *core.Application
+}
+
+func (s *Service) list() (*dto.CitiesListOutput, error) {
+	dbCities, err := s.app.Db.Queries.GetCities(context.Background())
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return CityDto{}, ErrCityNotFound
+			return nil, huma.Error404NotFound("No cities found")
 		}
 
-		return CityDto{}, errs.InternalServerError
+		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	v := mapToCityDto(res)
+	cities := make([]dto.City, len(dbCities))
 
-	return v, nil
-}
-
-func (s *service) list() (ListDto, error) {
-	res, err := s.repository.list()
-
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return ListDto{}, ErrCityNotFound
-		}
-
-		return ListDto{}, errs.InternalServerError
+	for i, dbCity := range dbCities {
+		cities[i] = mapToCity(dbCity)
 	}
 
-	v := mapToListDto(res)
-
-	return v, nil
+	return &dto.CitiesListOutput{
+		Body: dto.CitiesListOutputBody{
+			Cities: cities,
+		},
+	}, nil
 }
 
-func (s *service) featured() (FeaturedDto, error) {
+func (s *Service) featured() (*dto.CitiesFeaturedOutput, error) {
 	featuredCitiesIds := []int32{
 		1106, // Salzburg
 		1108, // Vienna
@@ -54,45 +55,124 @@ func (s *service) featured() (FeaturedDto, error) {
 		6010, // Paris
 		7010, // Barcelona
 	}
-	res, err := s.repository.featured(featuredCitiesIds)
+
+	dbFeaturedCities, err := s.app.Db.Queries.GetFeaturedCities(context.Background(), featuredCitiesIds)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return FeaturedDto{}, ErrCityNotFound
+			return nil, huma.Error404NotFound("No featured cities found")
 		}
 
-		return FeaturedDto{}, errs.InternalServerError
+		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	v := mapToFeaturedDto(res)
+	cities := make([]dto.City, len(dbFeaturedCities))
 
-	return v, nil
+	for i, dbCity := range dbFeaturedCities {
+		cities[i] = mapToCity(dbCity)
+	}
+
+	return &dto.CitiesFeaturedOutput{
+		Body: dto.CitiesFeaturedOutputBody{
+			Cities: cities,
+		},
+	}, nil
 }
 
-func (s *service) create(dto CreateReqDto) (CreateResDto, error) {
-	res, err := s.repository.create(dto)
+func (s *Service) get(id int32) (*dto.GetCityByIdOutput, error) {
+	res, err := s.app.Db.Queries.GetCityById(context.Background(), id)
 
 	if err != nil {
-		return CreateResDto{}, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("City not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	v := mapToCreateResDto(res)
-
-	return v, nil
+	return &dto.GetCityByIdOutput{
+		Body: dto.GetCityByIdOutputBody{
+			City: mapToCity(res),
+		},
+	}, nil
 }
 
-func (s *service) update(id int32, dto UpdateReqDto) (UpdateResDto, error) {
-	res, err := s.repository.update(id, dto)
+func (s *Service) create(body dto.CreateCityInputBody) (*dto.CreateCityOutput, error) {
+	dbCity, err := s.app.Db.Queries.CreateCity(context.Background(), db.CreateCityParams{
+		ID:             body.ID,
+		Name:           body.Name,
+		StateCode:      body.StateCode,
+		StateName:      body.StateName,
+		CountryCode:    body.CountryCode,
+		CountryName:    body.CountryName,
+		ImageUrl:       body.ImageUrl,
+		Latitude:       body.Latitude,
+		Longitude:      body.Longitude,
+		Description:    body.Description,
+		ImgLicense:     utils.StrToText(body.ImageLicense),
+		ImgLicenseLink: utils.StrToText(body.ImageLicenseLink),
+		ImgAttr:        utils.StrToText(body.ImageAttribution),
+		ImgAttrLink:    utils.StrToText(body.ImageAttributionLink),
+	})
 
 	if err != nil {
-		return UpdateResDto{}, err
+		if errors.Is(err, pgx.ErrTooManyRows) {
+			return nil, huma.Error400BadRequest("City already exists")
+		}
+
+		return nil, huma.Error500InternalServerError("Internal server error")
 	}
 
-	v := mapToUpdateResDto(res)
-
-	return v, nil
+	return &dto.CreateCityOutput{
+		Body: dto.CreateCityOutputBody{
+			City: mapToCity(dbCity),
+		},
+	}, nil
 }
 
-func (s *service) remove(id int32) error {
-	return s.repository.remove(id)
+func (s *Service) remove(id int32) error {
+	err := s.app.Db.Queries.DeleteCity(context.Background(), id)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return huma.Error404NotFound("City not found")
+		}
+
+		return huma.Error500InternalServerError("Internal server error")
+	}
+
+	return nil
+}
+
+func (s *Service) update(id int32, body dto.UpdateCityInputBody) (*dto.UpdateCityOutput, error) {
+	dbCity, err := s.app.Db.Queries.UpdateCity(context.Background(), db.UpdateCityParams{
+		ID:             id,
+		Name:           body.Name,
+		StateCode:      body.StateCode,
+		StateName:      body.StateName,
+		CountryCode:    body.CountryCode,
+		CountryName:    body.CountryName,
+		ImageUrl:       body.ImageUrl,
+		Latitude:       body.Latitude,
+		Longitude:      body.Longitude,
+		Description:    body.Description,
+		ImgLicense:     utils.StrToText(body.ImageLicense),
+		ImgLicenseLink: utils.StrToText(body.ImageLicenseLink),
+		ImgAttr:        utils.StrToText(body.ImageAttribution),
+		ImgAttrLink:    utils.StrToText(body.ImageAttributionLink),
+	})
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("City not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Internal server error")
+	}
+
+	return &dto.UpdateCityOutput{
+		Body: dto.UpdateCityOutputBody{
+			City: mapToCity(dbCity),
+		},
+	}, nil
 }

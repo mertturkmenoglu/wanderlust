@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 )
 
 type databaseConfigVariables struct {
@@ -15,15 +15,13 @@ type databaseConfigVariables struct {
 }
 
 func getVariables() databaseConfigVariables {
-	cfg := config.GetConfiguration()
-
 	return databaseConfigVariables{
-		user:     cfg.GetString(config.DB_USER),
-		password: cfg.GetString(config.DB_PASSWORD),
-		host:     cfg.GetString(config.DB_HOST),
-		name:     cfg.GetString(config.DB_NAME),
-		port:     cfg.GetInt(config.DB_PORT),
-		timezone: cfg.GetString(config.DB_TIMEZONE),
+		user:     cfg.Get(cfg.DB_USER),
+		password: cfg.Get(cfg.DB_PASSWORD),
+		host:     cfg.Get(cfg.DB_HOST),
+		name:     cfg.Get(cfg.DB_NAME),
+		port:     cfg.GetInt(cfg.DB_PORT),
+		timezone: cfg.Get(cfg.DB_TIMEZONE),
 	}
 }
 

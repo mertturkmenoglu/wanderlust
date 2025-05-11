@@ -1,7 +1,7 @@
 package search
 
 import (
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 
 	"github.com/typesense/typesense-go/v2/typesense"
 )
@@ -10,15 +10,10 @@ type Search struct {
 	Client *typesense.Client
 }
 
-func New(cfg *config.Configuration) *Search {
-	var (
-		serverUrl = cfg.GetString(config.SEARCH_SERVER_URL)
-		apiKey    = cfg.GetString(config.SEARCH_API_KEY)
-	)
-
+func New() *Search {
 	client := typesense.NewClient(
-		typesense.WithServer(serverUrl),
-		typesense.WithAPIKey(apiKey),
+		typesense.WithServer(cfg.Get(cfg.API_SEARCH_SERVER_URL)),
+		typesense.WithAPIKey(cfg.Get(cfg.API_SEARCH_API_KEY)),
 	)
 
 	search := Search{

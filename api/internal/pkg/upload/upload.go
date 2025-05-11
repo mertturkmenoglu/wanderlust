@@ -3,7 +3,7 @@ package upload
 import (
 	"context"
 	"log"
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -16,14 +16,13 @@ type Upload struct {
 	location string
 }
 
-func New(cfg *config.Configuration) *Upload {
+func New() *Upload {
 	var (
-		endpoint          = cfg.GetString(config.MINIO_ENDPOINT)
-		id                = cfg.GetString(config.MINIO_USER)
-		secret            = cfg.GetString(config.MINIO_PASSWORD)
-		buckets           = cfg.GetStringSlice(config.MINIO_BUCKETS)
-		autocreateBuckets = cfg.GetBool(config.MINIO_AUTOCREATE_BUCKETS)
-		location          = cfg.GetString(config.MINIO_LOCATION)
+		endpoint          = cfg.Get(cfg.MINIO_ENDPOINT)
+		id                = cfg.Get(cfg.MINIO_USER)
+		secret            = cfg.Get(cfg.MINIO_PASSWORD)
+		autocreateBuckets = cfg.GetBool(cfg.MINIO_AUTOCREATE_BUCKETS)
+		location          = cfg.Get(cfg.MINIO_LOCATION)
 	)
 
 	client, err := minio.New(endpoint, &minio.Options{
@@ -37,7 +36,7 @@ func New(cfg *config.Configuration) *Upload {
 	up := &Upload{
 		Client:   client,
 		Context:  context.Background(),
-		buckets:  buckets,
+		buckets:  Buckets,
 		location: location,
 	}
 

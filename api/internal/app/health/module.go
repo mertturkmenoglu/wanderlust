@@ -1,20 +1,32 @@
 package health
 
-import "wanderlust/internal/pkg/core"
+import (
+	"context"
+	"net/http"
+	"wanderlust/internal/pkg/dto"
 
-type Module struct {
-	handlers *handlers
-}
+	"github.com/danielgtaylor/huma/v2"
+)
 
-var _ core.AppModule = (*Module)(nil)
+func Register(grp *huma.Group) {
+	grp.UseSimpleModifier(func(op *huma.Operation) {
+		op.Tags = []string{"Health"}
+	})
 
-type handlers struct {
-}
-
-func New() *Module {
-	handlers := &handlers{}
-
-	return &Module{
-		handlers: handlers,
-	}
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/health",
+			Summary:       "Get Health",
+			Description:   "A simple health check mechanism to verify that the API is operational",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.HealthInput) (*dto.HealthOutput, error) {
+			return &dto.HealthOutput{
+				Body: dto.HealthOutputBody{
+					Message: "OK",
+				},
+			}, nil
+		},
+	)
 }

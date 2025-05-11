@@ -3,7 +3,7 @@ package tasks
 import (
 	"encoding/json"
 	"log"
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/email"
 	"wanderlust/internal/pkg/upload"
 
@@ -15,11 +15,10 @@ type Tasks struct {
 	email  *email.EmailService
 	upload *upload.Upload
 	addr   string
-	config *config.Configuration
 }
 
-func New(cfg *config.Configuration, emailService *email.EmailService, upload *upload.Upload) *Tasks {
-	addr := cfg.GetString(config.REDIS_ADDR)
+func New(emailService *email.EmailService, upload *upload.Upload) *Tasks {
+	addr := cfg.Get(cfg.REDIS_ADDR)
 	return &Tasks{
 		Client: asynq.NewClient(asynq.RedisClientOpt{
 			Addr: addr,
@@ -27,7 +26,6 @@ func New(cfg *config.Configuration, emailService *email.EmailService, upload *up
 		email:  emailService,
 		upload: upload,
 		addr:   addr,
-		config: cfg,
 	}
 }
 

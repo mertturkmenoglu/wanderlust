@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
-	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/db"
 
+	"github.com/joho/godotenv"
 	"github.com/pterm/pterm"
 )
 
@@ -59,7 +59,11 @@ func GetDb() *db.Db {
 }
 
 func main() {
-	_ = config.GetConfiguration()
+	err := godotenv.Load()
+
+	if err != nil {
+		panic("cannot load .env file: " + err.Error())
+	}
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
@@ -90,7 +94,7 @@ func main() {
 
 	logger.Info("Generating data", logger.Args("count", n, "type", genType))
 
-	err := generateAndInsert(genType, int(n))
+	err = generateAndInsert(genType, int(n))
 
 	if err != nil {
 		logger.Fatal("Encountered error. Terminating", logger.Args("error", err.Error()))
@@ -113,7 +117,7 @@ func generateAndInsert(genType string, count int) error {
 	case "categories":
 		return handleCategories()
 	case "cities":
-		return handleCities()
+		return fmt.Errorf("not implemented")
 	case "favorites":
 		return fmt.Errorf("not implemented")
 	case "follows":

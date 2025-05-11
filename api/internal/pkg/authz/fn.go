@@ -4,15 +4,15 @@ import (
 	"context"
 	"errors"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
-	"github.com/labstack/echo/v4"
 )
 
-func IsAdmin(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
+func IsAdmin(s *Authz, c huma.Context) (bool, error) {
+	userId, ok := c.Context().Value("userId").(string)
 
 	if !ok {
-		return false, echo.ErrInternalServerError
+		return false, huma.Error401Unauthorized("unauthorized")
 	}
 
 	res, err := s.Db.Queries.IsAdmin(context.Background(), userId)
@@ -24,26 +24,26 @@ func IsAdmin(s *Authz, c echo.Context) (bool, error) {
 	return res, nil
 }
 
-func Identity(s *Authz, c echo.Context) (bool, error) {
+func Identity(s *Authz, c huma.Context) (bool, error) {
 	return true, nil
 }
 
-func NotImplemented(s *Authz, c echo.Context) (bool, error) {
-	return false, echo.ErrNotImplemented
+func NotImplemented(s *Authz, c huma.Context) (bool, error) {
+	return false, huma.Error501NotImplemented("not implemented")
 }
 
-func FnListRead(s *Authz, c echo.Context) (bool, error) {
+func FnListRead(s *Authz, c huma.Context) (bool, error) {
 	listId := c.Param("id")
 
 	if listId == "" {
-		return false, echo.ErrBadRequest
+		return false, huma.Error400BadRequest("invalid list id")
 	}
 
 	list, err := s.Db.Queries.GetListById(context.Background(), listId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return false, echo.ErrNotFound
+			return false, huma.Error404NotFound("list not found")
 		}
 
 		return false, err
@@ -53,275 +53,103 @@ func FnListRead(s *Authz, c echo.Context) (bool, error) {
 		return true, nil
 	}
 
-	userId, ok := c.Get("user_id").(string)
+	userId, ok := c.Context().Value("userId").(string)
 
 	if !ok {
-		return false, echo.ErrUnauthorized
+		return false, huma.Error401Unauthorized("unauthorized")
 	}
 
 	if list.User.ID == userId {
 		return true, nil
 	}
 
-	return false, echo.ErrForbidden
+	return false, huma.Error403Forbidden("forbidden")
 }
 
-func FnListDelete(s *Authz, c echo.Context) (bool, error) {
+func FnListDelete(s *Authz, c huma.Context) (bool, error) {
 	listId := c.Param("id")
 
 	if listId == "" {
-		return false, echo.ErrBadRequest
+		return false, huma.Error400BadRequest("invalid list id")
 	}
 
 	list, err := s.Db.Queries.GetListById(context.Background(), listId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return false, echo.ErrNotFound
+			return false, huma.Error404NotFound("list not found")
 		}
 		return false, err
 	}
 
-	userId, ok := c.Get("user_id").(string)
+	userId, ok := c.Context().Value("userId").(string)
 
 	if !ok {
-		return false, echo.ErrUnauthorized
+		return false, huma.Error401Unauthorized("unauthorized")
 	}
 
 	if list.User.ID == userId {
 		return true, nil
 	}
 
-	return false, echo.ErrForbidden
+	return false, huma.Error403Forbidden("forbidden")
 }
 
-func FnListUpdate(s *Authz, c echo.Context) (bool, error) {
+func FnListUpdate(s *Authz, c huma.Context) (bool, error) {
 	listId := c.Param("id")
 
 	if listId == "" {
-		return false, echo.ErrBadRequest
+		return false, huma.Error400BadRequest("invalid list id")
 	}
 
 	list, err := s.Db.Queries.GetListById(context.Background(), listId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return false, echo.ErrNotFound
+			return false, huma.Error404NotFound("list not found")
 		}
 		return false, err
 	}
 
-	userId, ok := c.Get("user_id").(string)
+	userId, ok := c.Context().Value("userId").(string)
 
 	if !ok {
-		return false, echo.ErrUnauthorized
+		return false, huma.Error401Unauthorized("unauthorized")
 	}
 
 	if list.User.ID == userId {
 		return true, nil
 	}
 
-	return false, echo.ErrForbidden
+	return false, huma.Error403Forbidden("forbidden")
 }
 
-func FnListItemCreate(s *Authz, c echo.Context) (bool, error) {
+func FnListItemCreate(s *Authz, c huma.Context) (bool, error) {
 	listId := c.Param("id")
 
 	if listId == "" {
-		return false, echo.ErrBadRequest
+		return false, huma.Error400BadRequest("invalid list id")
 	}
 
 	list, err := s.Db.Queries.GetListById(context.Background(), listId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return false, echo.ErrNotFound
+			return false, huma.Error404NotFound("list not found")
 		}
 
 		return false, err
 	}
 
-	userId, ok := c.Get("user_id").(string)
+	userId, ok := c.Context().Value("userId").(string)
 
 	if !ok {
-		return false, echo.ErrUnauthorized
+		return false, huma.Error401Unauthorized("unauthorized")
 	}
 
 	if list.User.ID == userId {
 		return true, nil
 	}
 
-	return false, echo.ErrForbidden
-}
-
-func FnDiaryUploadMedia(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
-
-	if !ok {
-		return false, echo.ErrUnauthorized
-	}
-
-	id := c.Param("id")
-
-	if id == "" {
-		return false, echo.ErrBadRequest
-	}
-
-	diary, err := s.Db.Queries.GetDiaryEntryById(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	if diary.DiaryEntry.UserID != userId {
-		return false, echo.ErrForbidden
-	}
-
-	return true, nil
-}
-
-func FnDiaryChangeSharing(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
-
-	if !ok {
-		return false, echo.ErrUnauthorized
-	}
-
-	id := c.Param("id")
-
-	if id == "" {
-		return false, echo.ErrBadRequest
-	}
-
-	diary, err := s.Db.Queries.GetDiaryEntryById(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	if diary.DiaryEntry.UserID != userId {
-		return false, echo.ErrForbidden
-	}
-
-	return true, nil
-}
-
-func FnDiaryRead(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
-
-	if !ok {
-		return false, echo.ErrUnauthorized
-	}
-
-	id := c.Param("id")
-
-	if id == "" {
-		return false, echo.ErrBadRequest
-	}
-
-	diary, err := s.Db.Queries.GetDiaryEntryById(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	if diary.DiaryEntry.UserID == userId {
-		return true, nil
-	}
-
-	if !diary.DiaryEntry.ShareWithFriends {
-		return false, echo.ErrForbidden
-	}
-
-	users, err := s.Db.Queries.GetDiaryEntryUsers(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	for _, user := range users {
-		if user.Profile.ID == userId {
-			return true, nil
-		}
-	}
-
-	return false, echo.ErrForbidden
-}
-
-func FnDiaryDelete(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
-
-	if !ok {
-		return false, echo.ErrUnauthorized
-	}
-
-	id := c.Param("id")
-
-	if id == "" {
-		return false, echo.ErrBadRequest
-	}
-
-	diary, err := s.Db.Queries.GetDiaryEntryById(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	if diary.DiaryEntry.UserID != userId {
-		return false, echo.ErrForbidden
-	}
-
-	return true, nil
-}
-
-func FnReviewDelete(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
-
-	if !ok {
-		return false, echo.ErrUnauthorized
-	}
-
-	id := c.Param("id")
-
-	if id == "" {
-		return false, echo.ErrBadRequest
-	}
-
-	review, err := s.Db.Queries.GetReviewById(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	if review.Review.UserID != userId {
-		return false, echo.ErrForbidden
-	}
-
-	return true, nil
-}
-
-func FnReviewUploadMedia(s *Authz, c echo.Context) (bool, error) {
-	userId, ok := c.Get("user_id").(string)
-
-	if !ok {
-		return false, echo.ErrUnauthorized
-	}
-
-	id := c.Param("id")
-
-	if id == "" {
-		return false, echo.ErrBadRequest
-	}
-
-	review, err := s.Db.Queries.GetReviewById(context.Background(), id)
-
-	if err != nil {
-		return false, err
-	}
-
-	if review.Review.UserID != userId {
-		return false, echo.ErrForbidden
-	}
-
-	return true, nil
+	return false, huma.Error403Forbidden("forbidden")
 }

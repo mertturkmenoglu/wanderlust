@@ -4,20 +4,20 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"wanderlust/internal/pkg/config"
+	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/random"
 
-	"github.com/gorilla/sessions"
+	"github.com/danielgtaylor/huma/v2"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/facebook"
 	"golang.org/x/oauth2/google"
 )
 
 type getOAuthTokenParams struct {
-	provider string
-	sess     *sessions.Session
-	state    string
-	code     string
+	provider    string
+	state       string
+	cookieState string
+	code        string
 }
 
 type oauthUser struct {
@@ -64,24 +64,20 @@ func getOAuthConfig(provider string) *oauth2.Config {
 }
 
 func getGoogleOAuth2Config() *oauth2.Config {
-	cfg := config.GetConfiguration()
-
 	return &oauth2.Config{
-		ClientID:     cfg.GetString(config.GOOGLE_CLIENT_ID),
-		ClientSecret: cfg.GetString(config.GOOGLE_CLIENT_SECRET),
-		RedirectURL:  cfg.GetString(config.GOOGLE_CALLBACK),
+		ClientID:     cfg.Get(cfg.GOOGLE_CLIENT_ID),
+		ClientSecret: cfg.Get(cfg.GOOGLE_CLIENT_SECRET),
+		RedirectURL:  cfg.Get(cfg.API_AUTH_GOOGLE_CALLBACK),
 		Scopes:       []string{"profile", "email"},
 		Endpoint:     google.Endpoint,
 	}
 }
 
 func getFbOAuth2Config() *oauth2.Config {
-	cfg := config.GetConfiguration()
-
 	return &oauth2.Config{
-		ClientID:     cfg.GetString(config.FB_CLIENT_ID),
-		ClientSecret: cfg.GetString(config.FB_CLIENT_SECRET),
-		RedirectURL:  cfg.GetString(config.FB_CALLBACK),
+		ClientID:     cfg.Get(cfg.FACEBOOK_CLIENT_ID),
+		ClientSecret: cfg.Get(cfg.FACEBOOK_CLIENT_SECRET),
+		RedirectURL:  cfg.Get(cfg.API_AUTH_FACEBOOK_CALLBACK),
 		Scopes:       []string{"public_profile", "email"},
 		Endpoint:     facebook.Endpoint,
 	}
@@ -89,21 +85,24 @@ func getFbOAuth2Config() *oauth2.Config {
 
 func getOAuthToken(params getOAuthTokenParams) (*oauth2.Token, error) {
 	cfg := getOAuthConfig(params.provider)
-	savedState, ok := params.sess.Values["state"].(string)
 
-	if !ok || savedState == "" {
-		return nil, ErrInvalidSessionState
-	}
-
-	if params.state != savedState {
-		return nil, ErrInvalidStateParameter
+	if params.state != params.cookieState {
+		return nil, huma.Error400BadRequest("State parameter mismatch", &huma.ErrorDetail{
+			Message:  "State parameter mismatch",
+			Location: "state",
+			Value:    params.state,
+		})
 	}
 
 	// Exchange the code for a token
 	token, err := cfg.Exchange(context.Background(), params.code)
 
 	if err != nil {
-		return nil, ErrOAuthTokenExchange
+		return nil, huma.Error500InternalServerError("Failed to exchange code for token", &huma.ErrorDetail{
+			Message:  "Failed to exchange code for token",
+			Location: "code",
+			Value:    params.code,
+		})
 	}
 
 	return token, nil
@@ -127,7 +126,11 @@ func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, error) {
 	res, err := client.Get(endpoint)
 
 	if err != nil {
-		return nil, ErrOAuthFailedUserFetch
+		return nil, huma.Error500InternalServerError("Failed to fetch user info", &huma.ErrorDetail{
+			Message:  "Failed to fetch user info",
+			Location: "user_info",
+			Value:    endpoint,
+		})
 	}
 
 	defer res.Body.Close()
@@ -138,13 +141,21 @@ func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, error) {
 	case "google":
 		googleUser := googleUser{}
 		if err := json.NewDecoder(res.Body).Decode(&googleUser); err != nil {
-			return nil, ErrOAuthInvalidUserResp
+			return nil, huma.Error500InternalServerError("Failed to parse user info", &huma.ErrorDetail{
+				Message:  "Failed to parse user info",
+				Location: "user_info",
+				Value:    endpoint,
+			})
 		}
 		mapGoogleUserToOAuthUser(&userInfo, &googleUser)
 	case "facebook":
 		fbUser := fbUser{}
 		if err := json.NewDecoder(res.Body).Decode(&fbUser); err != nil {
-			return nil, ErrOAuthInvalidUserResp
+			return nil, huma.Error500InternalServerError("Failed to parse user info", &huma.ErrorDetail{
+				Message:  "Failed to parse user info",
+				Location: "user_info",
+				Value:    endpoint,
+			})
 		}
 		mapFbUserToOAuthUser(&userInfo, &fbUser)
 	default:

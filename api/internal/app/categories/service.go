@@ -1,41 +1,111 @@
 package categories
 
-import "wanderlust/internal/pkg/db"
+import (
+	"context"
+	"errors"
+	"wanderlust/internal/pkg/core"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/dto"
 
-func (s *service) getCategories() ([]db.Category, error) {
-	res, err := s.repository.getCategories()
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/jackc/pgx/v5"
+)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+type Service struct {
+	app *core.Application
 }
 
-func (s *service) createCategory(dto CreateCategoryRequestDto) (CreateCategoryResponseDto, error) {
-	res, err := s.repository.createCategory(dto)
+func (s *Service) list() (*dto.ListCategoriesOutput, error) {
+	res, err := s.app.Db.Queries.GetCategories(context.Background())
 
 	if err != nil {
-		return CreateCategoryResponseDto{}, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("no categories found")
+		}
+
+		return nil, huma.Error500InternalServerError("failed to get all categories")
 	}
 
-	v := mapCreateCategoryResponseToDto(res)
+	categories := make([]dto.Category, len(res))
 
-	return v, nil
+	for i, category := range res {
+		categories[i] = dto.Category{
+			ID:    category.ID,
+			Name:  category.Name,
+			Image: category.Image,
+		}
+	}
+
+	return &dto.ListCategoriesOutput{
+		Body: dto.ListCategoriesOutputBody{
+			Categories: categories,
+		},
+	}, nil
 }
 
-func (s *service) deleteCategory(id int16) error {
-	return s.repository.deleteCategory(id)
-}
-
-func (s *service) updateCategory(id int16, dto UpdateCategoryRequestDto) (UpdateCategoryResponseDto, error) {
-	res, err := s.repository.updateCategory(id, dto)
+func (s *Service) create(body dto.CreateCategoryInputBody) (*dto.CreateCategoryOutput, error) {
+	res, err := s.app.Db.Queries.CreateCategory(context.Background(), db.CreateCategoryParams{
+		ID:    body.ID,
+		Name:  body.Name,
+		Image: body.Image,
+	})
 
 	if err != nil {
-		return UpdateCategoryResponseDto{}, err
+		if errors.Is(err, pgx.ErrTooManyRows) {
+			return nil, huma.Error422UnprocessableEntity("category already exists")
+		}
+
+		return nil, huma.Error500InternalServerError("failed to create category")
 	}
 
-	v := mapUpdateCategoryResponseToDto(res)
+	return &dto.CreateCategoryOutput{
+		Body: dto.CreateCategoryOutputBody{
+			Category: dto.Category{
+				ID:    res.ID,
+				Name:  res.Name,
+				Image: res.Image,
+			},
+		},
+	}, nil
 
-	return v, nil
+}
+
+func (s *Service) update(id int16, body dto.UpdateCategoryInputBody) (*dto.UpdateCategoryOutput, error) {
+	dbCategory, err := s.app.Db.Queries.UpdateCategory(context.Background(), db.UpdateCategoryParams{
+		ID:    id,
+		Name:  body.Name,
+		Image: body.Image,
+	})
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("category not found")
+		}
+
+		return nil, huma.Error500InternalServerError("failed to update category")
+	}
+
+	return &dto.UpdateCategoryOutput{
+		Body: dto.UpdateCategoryOutputBody{
+			Category: dto.Category{
+				ID:    dbCategory.ID,
+				Name:  dbCategory.Name,
+				Image: dbCategory.Image,
+			},
+		},
+	}, nil
+}
+
+func (s *Service) remove(id int16) error {
+	err := s.app.Db.Queries.DeleteCategory(context.Background(), id)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return huma.Error404NotFound("category not found")
+		}
+
+		return huma.Error500InternalServerError("failed to delete category")
+	}
+
+	return nil
 }

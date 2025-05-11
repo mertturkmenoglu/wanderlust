@@ -1,45 +1,40 @@
 package aggregator
 
 import (
+	"context"
+	"net/http"
 	"wanderlust/internal/pkg/core"
+	"wanderlust/internal/pkg/dto"
+
+	"github.com/danielgtaylor/huma/v2"
 )
 
-type Module struct {
-	handlers *handlers
-}
-
-var _ core.AppModule = (*Module)(nil)
-
-type handlers struct {
-	service *service
-	di      *core.SharedModules
-}
-
-type service struct {
-	repository *repository
-	di         *core.SharedModules
-}
-
-type repository struct {
-	di *core.SharedModules
-}
-
-func New(di *core.SharedModules) *Module {
-	repository := &repository{
-		di: di,
+func Register(grp *huma.Group, app *core.Application) {
+	s := Service{
+		app: app,
 	}
 
-	service := &service{
-		repository: repository,
-		di:         di,
-	}
+	grp.UseSimpleModifier(func(op *huma.Operation) {
+		op.Tags = []string{"Aggregations"}
+	})
 
-	handlers := &handlers{
-		service: service,
-		di:      di,
-	}
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/aggregator/home",
+			Summary:       "Get Home Aggregation",
+			Description:   "Get home aggregation",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.HomeAggregatorOutput, error) {
+			res, err := s.getHomeAggregation()
 
-	return &Module{
-		handlers: handlers,
-	}
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
 }

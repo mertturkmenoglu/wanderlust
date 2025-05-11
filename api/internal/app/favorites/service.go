@@ -1,49 +1,111 @@
 package favorites
 
-func (s *service) createFavorite(poiId string, userId string) (CreateFavoriteResponseDto, error) {
-	res, err := s.repository.createFavorite(poiId, userId)
+import (
+	"context"
+	"errors"
+	"wanderlust/internal/pkg/core"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/dto"
+	"wanderlust/internal/pkg/mapper"
+	"wanderlust/internal/pkg/pagination"
 
-	if err != nil {
-		return CreateFavoriteResponseDto{}, err
-	}
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/jackc/pgx/v5"
+)
 
-	v := mapCreateFavoriteResponseToDto(res)
-
-	return v, nil
+type Service struct {
+	app *core.Application
 }
 
-func (s *service) getPoiNameById(poiId string) (string, error) {
-	return s.repository.getPoiNameById(poiId)
-}
-
-func (s *service) deleteFavoriteByPoiId(poiId string, userId string) error {
-	return s.repository.deleteFavoriteByPoiId(poiId, userId)
-}
-
-func (s *service) getUserFavorites(userId string, offset int, limit int) (GetUserFavoritesResponseDto, int64, error) {
-	res, err := s.repository.getUserFavorites(userId, offset, limit)
+func (s *Service) create(poiId string, userId string) (*dto.CreateFavoriteOutput, error) {
+	res, err := s.app.Db.Queries.CreateFavorite(context.Background(), db.CreateFavoriteParams{
+		PoiID:  poiId,
+		UserID: userId,
+	})
 
 	if err != nil {
-		return GetUserFavoritesResponseDto{}, 0, err
+		if errors.Is(err, pgx.ErrTooManyRows) {
+			return nil, huma.Error422UnprocessableEntity("poi already favorited")
+		}
+
+		return nil, err
 	}
 
-	count, err := s.repository.countUserFavorites(userId)
-
-	if err != nil {
-		return GetUserFavoritesResponseDto{}, 0, err
-	}
-
-	v := mapGetUserFavoritessResponseToDto(res)
-
-	return v, count, nil
+	return &dto.CreateFavoriteOutput{
+		Body: dto.CreateFavoriteOutputBody{
+			ID:        res.ID,
+			PoiID:     res.PoiID,
+			UserID:    res.UserID,
+			CreatedAt: res.CreatedAt.Time,
+		},
+	}, nil
 }
 
-func (s *service) getUserFavoritesByUsername(username string, offset int, limit int) (GetUserFavoritesResponseDto, int64, error) {
-	userId, err := s.repository.getUserIdByUsername(username)
+func (s *Service) remove(userId string, poiId string) error {
+	return s.app.Db.Queries.DeleteFavoriteByPoiId(context.Background(), db.DeleteFavoriteByPoiIdParams{
+		PoiID:  poiId,
+		UserID: userId,
+	})
+}
+
+func (s *Service) get(userId string, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
+	offset := pagination.GetOffset(params)
+	res, err := s.app.Db.Queries.GetFavoritesByUserId(context.Background(), db.GetFavoritesByUserIdParams{
+		UserID: userId,
+		Offset: int32(offset),
+		Limit:  int32(params.PageSize),
+	})
 
 	if err != nil {
-		return GetUserFavoritesResponseDto{}, 0, err
+		return nil, err
 	}
 
-	return s.getUserFavorites(userId, offset, limit)
+	count, err := s.app.Db.Queries.CountUserFavorites(context.Background(), userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.GetUserFavoritesOutput{
+		Body: dto.GetUserFavoritesOutputBody{
+			Favorites:  mapper.ToFavorites(res),
+			Pagination: pagination.Compute(params, count),
+		},
+	}, nil
+}
+
+func (s *Service) getByUsername(username string, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
+	user, err := s.app.Db.Queries.GetUserByUsername(context.Background(), username)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("user not found")
+		}
+
+		return nil, err
+	}
+
+	offset := pagination.GetOffset(params)
+	res, err := s.app.Db.Queries.GetFavoritesByUserId(context.Background(), db.GetFavoritesByUserIdParams{
+		UserID: user.ID,
+		Offset: int32(offset),
+		Limit:  int32(params.PageSize),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	count, err := s.app.Db.Queries.CountUserFavorites(context.Background(), user.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.GetUserFavoritesOutput{
+		Body: dto.GetUserFavoritesOutputBody{
+			Favorites:  mapper.ToFavorites(res),
+			Pagination: pagination.Compute(params, count),
+		},
+	}, nil
 }

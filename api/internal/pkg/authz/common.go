@@ -1,113 +1,57 @@
 package authz
 
-import "github.com/labstack/echo/v4"
+import "github.com/danielgtaylor/huma/v2"
 
 type AuthzAct string
 
+type AuthzFn func(s *Authz, c huma.Context) (bool, error)
+
 const (
-	ActAmenityCreate                AuthzAct = "amenity-create"
-	ActAmenityUpdate                AuthzAct = "amenity-update"
-	ActAmenityDelete                AuthzAct = "amenity-delete"
-	ActBookmarkCreate               AuthzAct = "bookmark-create"
-	ActBookmarkRead                 AuthzAct = "bookmark-read"
-	ActBookmarkDelete               AuthzAct = "bookmark-delete"
-	ActCategoryCreate               AuthzAct = "category-create"
-	ActCategoryUpdate               AuthzAct = "category-update"
-	ActCategoryDelete               AuthzAct = "category-delete"
-	ActCityCreate                   AuthzAct = "city-create"
-	ActCityUpdate                   AuthzAct = "city-update"
-	ActCityDelete                   AuthzAct = "city-delete"
-	ActMakeUserVerified             AuthzAct = "make-user-verified"
-	ActPoiMediaUpload               AuthzAct = "poi-media-upload"
-	ActPoiMediaDelete               AuthzAct = "poi-media-delete"
-	ActPoiDraftCreate               AuthzAct = "poi-draft-create"
-	ActPoiDraftRead                 AuthzAct = "poi-draft-read"
-	ActPoiDraftUpdate               AuthzAct = "poi-draft-update"
-	ActPoiDraftDelete               AuthzAct = "poi-draft-delete"
-	ActPoiDraftPublish              AuthzAct = "poi-draft-publish"
-	ActCollectionCreate             AuthzAct = "collection-create"
-	ActCollectionRead               AuthzAct = "collection-read"
-	ActCollectionUpdate             AuthzAct = "collection-update"
-	ActCollectionDelete             AuthzAct = "collection-delete"
-	ActCollectionItemCreate         AuthzAct = "collection-item-create"
-	ActCollectionItemRead           AuthzAct = "collection-item-read"
-	ActCollectionItemUpdate         AuthzAct = "collection-item-update"
-	ActCollectionItemDelete         AuthzAct = "collection-item-delete"
-	ActCollectionCityRelationCreate AuthzAct = "collection-city-relation-create"
-	ActCollectionCityRelationDelete AuthzAct = "collection-city-relation-delete"
-	ActCollectionPoiRelationCreate  AuthzAct = "collection-poi-relation-create"
-	ActCollectionPoiRelationDelete  AuthzAct = "collection-poi-relation-delete"
-	ActCollectionPoiRelationRead    AuthzAct = "collection-poi-relation-read"
-	ActCollectionCityRelationRead   AuthzAct = "collection-city-relation-read"
-	ActListCreate                   AuthzAct = "list-create"
-	ActListRead                     AuthzAct = "list-read"
-	ActListUpdate                   AuthzAct = "list-update"
-	ActListDelete                   AuthzAct = "list-delete"
-	ActListStatus                   AuthzAct = "list-status"
-	ActListItemCreate               AuthzAct = "list-item-create"
-	ActListItemRead                 AuthzAct = "list-item-read"
-	ActListItemUpdate               AuthzAct = "list-item-update"
-	ActListItemDelete               AuthzAct = "list-item-delete"
-	ActDiaryRead                    AuthzAct = "diary-read"
-	ActDiaryUploadMedia             AuthzAct = "diary-upload-media"
-	ActDiaryChangeSharing           AuthzAct = "diary-change-sharing"
-	ActDiaryDelete                  AuthzAct = "diary-delete"
-	ActReviewCreate                 AuthzAct = "review-create"
-	ActReviewDelete                 AuthzAct = "review-delete"
-	ActReviewUploadMedia            AuthzAct = "review-upload-media"
+	ActTest AuthzAct = "test"
+
+	ActAmenityUpdate    AuthzAct = "amenity.update"
+	ActAmenityCreate    AuthzAct = "amenity.create"
+	ActAmenityDelete    AuthzAct = "amenity.delete"
+	ActCategoryCreate   AuthzAct = "category.create"
+	ActCategoryDelete   AuthzAct = "category.delete"
+	ActCategoryUpdate   AuthzAct = "category.update"
+	ActCityCreate       AuthzAct = "city.create"
+	ActCityDelete       AuthzAct = "city.delete"
+	ActCityUpdate       AuthzAct = "city.update"
+	ActListRead         AuthzAct = "list.read"
+	ActListStatusRead   AuthzAct = "list.status.read"
+	ActListUpdate       AuthzAct = "list.update"
+	ActListDelete       AuthzAct = "list.delete"
+	ActListItemCreate   AuthzAct = "list.item.create"
+	ActListItemDelete   AuthzAct = "list.item.delete"
+	ActListItemUpdate   AuthzAct = "list.item.update"
+	ActUserMakeVerified AuthzAct = "user.make-verified"
+	ActPoiDraftCreate   AuthzAct = "poi.draft.create"
+	ActPoiDraftRead     AuthzAct = "poi.draft.read"
+	ActPoiDraftUpdate   AuthzAct = "poi.draft.update"
+	ActCollectionCRUD   AuthzAct = "collection.crud"
 )
 
-type AuthzFn func(s *Authz, c echo.Context) (bool, error)
-
 var Fns = map[AuthzAct]AuthzFn{
-	ActAmenityCreate:                IsAdmin,
-	ActAmenityUpdate:                IsAdmin,
-	ActAmenityDelete:                IsAdmin,
-	ActBookmarkCreate:               Identity,
-	ActBookmarkRead:                 Identity,
-	ActBookmarkDelete:               Identity,
-	ActCategoryCreate:               IsAdmin,
-	ActCategoryUpdate:               IsAdmin,
-	ActCategoryDelete:               IsAdmin,
-	ActCityCreate:                   IsAdmin,
-	ActCityUpdate:                   IsAdmin,
-	ActCityDelete:                   IsAdmin,
-	ActMakeUserVerified:             IsAdmin,
-	ActPoiMediaUpload:               IsAdmin,
-	ActPoiMediaDelete:               IsAdmin,
-	ActPoiDraftCreate:               IsAdmin,
-	ActPoiDraftRead:                 IsAdmin,
-	ActPoiDraftUpdate:               IsAdmin,
-	ActPoiDraftDelete:               IsAdmin,
-	ActPoiDraftPublish:              IsAdmin,
-	ActCollectionCreate:             IsAdmin,
-	ActCollectionRead:               IsAdmin,
-	ActCollectionUpdate:             IsAdmin,
-	ActCollectionDelete:             IsAdmin,
-	ActCollectionItemCreate:         IsAdmin,
-	ActCollectionItemRead:           IsAdmin,
-	ActCollectionItemUpdate:         IsAdmin,
-	ActCollectionItemDelete:         IsAdmin,
-	ActCollectionCityRelationCreate: IsAdmin,
-	ActCollectionCityRelationDelete: IsAdmin,
-	ActCollectionPoiRelationCreate:  IsAdmin,
-	ActCollectionPoiRelationDelete:  IsAdmin,
-	ActCollectionPoiRelationRead:    IsAdmin,
-	ActCollectionCityRelationRead:   IsAdmin,
-	ActListCreate:                   Identity,
-	ActListRead:                     FnListRead,
-	ActListUpdate:                   FnListUpdate,
-	ActListDelete:                   FnListDelete,
-	ActListStatus:                   Identity,
-	ActListItemCreate:               FnListItemCreate,
-	ActListItemRead:                 NotImplemented,
-	ActListItemUpdate:               NotImplemented,
-	ActListItemDelete:               NotImplemented,
-	ActDiaryRead:                    FnDiaryRead,
-	ActDiaryUploadMedia:             FnDiaryUploadMedia,
-	ActDiaryChangeSharing:           FnDiaryChangeSharing,
-	ActDiaryDelete:                  FnDiaryDelete,
-	ActReviewCreate:                 Identity,
-	ActReviewDelete:                 FnReviewDelete,
-	ActReviewUploadMedia:            FnReviewUploadMedia,
+	ActTest:             Identity,
+	ActCityCreate:       IsAdmin,
+	ActCityDelete:       IsAdmin,
+	ActCityUpdate:       IsAdmin,
+	ActAmenityUpdate:    IsAdmin,
+	ActAmenityCreate:    IsAdmin,
+	ActAmenityDelete:    IsAdmin,
+	ActCategoryCreate:   IsAdmin,
+	ActCategoryDelete:   IsAdmin,
+	ActCategoryUpdate:   IsAdmin,
+	ActUserMakeVerified: IsAdmin,
+	ActListRead:         FnListRead,
+	ActListStatusRead:   Identity,
+	ActListUpdate:       FnListUpdate,
+	ActListDelete:       FnListDelete,
+	ActListItemCreate:   FnListItemCreate,
+	ActListItemDelete:   NotImplemented,
+	ActPoiDraftCreate:   IsAdmin,
+	ActPoiDraftRead:     IsAdmin,
+	ActPoiDraftUpdate:   IsAdmin,
+	ActCollectionCRUD:   IsAdmin,
 }

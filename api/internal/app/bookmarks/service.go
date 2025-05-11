@@ -1,35 +1,75 @@
 package bookmarks
 
-func (s *service) createBookmark(poiId string, userId string) (CreateBookmarkResponseDto, error) {
-	res, err := s.repository.createBookmark(poiId, userId)
+import (
+	"context"
+	"errors"
+	"wanderlust/internal/pkg/core"
+	"wanderlust/internal/pkg/db"
+	"wanderlust/internal/pkg/dto"
+	"wanderlust/internal/pkg/mapper"
+	"wanderlust/internal/pkg/pagination"
 
-	if err != nil {
-		return CreateBookmarkResponseDto{}, err
-	}
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/jackc/pgx/v5"
+)
 
-	v := mapCreateBookmarkResponseToDto(res)
-
-	return v, nil
+type Service struct {
+	app *core.Application
 }
 
-func (s *service) deleteBookmarkByPoiId(poiId string, userId string) error {
-	return s.repository.deleteBookmarkByPoiId(poiId, userId)
+func (s *Service) create(poiId string, userId string) (*dto.CreateBookmarkOutput, error) {
+	res, err := s.app.Db.Queries.CreateBookmark(context.Background(), db.CreateBookmarkParams{
+		PoiID:  poiId,
+		UserID: userId,
+	})
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrTooManyRows) {
+			return nil, huma.Error422UnprocessableEntity("poi already bookmarked")
+		}
+
+		return nil, err
+	}
+
+	return &dto.CreateBookmarkOutput{
+		Body: dto.CreateBookmarkOutputBody{
+			ID:        res.ID,
+			PoiID:     res.PoiID,
+			UserID:    res.UserID,
+			CreatedAt: res.CreatedAt.Time,
+		},
+	}, nil
 }
 
-func (s *service) getUserBookmarks(userId string, offset int, limit int) (GetUserBookmarksResponseDto, int64, error) {
-	res, err := s.repository.getUserBookmarks(userId, offset, limit)
+func (s *Service) remove(userId string, poiId string) error {
+	return s.app.Db.Queries.DeleteBookmarkByPoiId(context.Background(), db.DeleteBookmarkByPoiIdParams{
+		PoiID:  poiId,
+		UserID: userId,
+	})
+}
+
+func (s *Service) get(userId string, params dto.PaginationQueryParams) (*dto.GetUserBookmarksOutput, error) {
+	offset := pagination.GetOffset(params)
+	res, err := s.app.Db.Queries.GetBookmarksByUserId(context.Background(), db.GetBookmarksByUserIdParams{
+		UserID: userId,
+		Offset: int32(offset),
+		Limit:  int32(params.PageSize),
+	})
 
 	if err != nil {
-		return GetUserBookmarksResponseDto{}, 0, err
+		return nil, err
 	}
 
-	count, err := s.repository.countUserBookmarks(userId)
+	count, err := s.app.Db.Queries.CountUserBookmarks(context.Background(), userId)
 
 	if err != nil {
-		return GetUserBookmarksResponseDto{}, 0, err
+		return nil, err
 	}
 
-	v := mapGetUserBookmarksResponseToDto(res)
-
-	return v, count, nil
+	return &dto.GetUserBookmarksOutput{
+		Body: dto.GetUserBookmarksOutputBody{
+			Bookmarks:  mapper.ToBookmarks(res),
+			Pagination: pagination.Compute(params, count),
+		},
+	}, nil
 }

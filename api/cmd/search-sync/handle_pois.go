@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"wanderlust/internal/app/pois"
-	"wanderlust/internal/pkg/config"
 	"wanderlust/internal/pkg/core"
 	"wanderlust/internal/pkg/db"
 	"wanderlust/internal/pkg/search"
@@ -27,16 +26,13 @@ func handlePoiSync() error {
 		return err
 	}
 
-	repo := pois.Repository{
-		DI: &core.SharedModules{
-			Flake: flake,
+	searchService := search.New()
+	s := pois.Service{
+		App: &core.Application{
 			Db:    d,
+			Flake: flake,
 		},
 	}
-
-	cfg := config.GetConfiguration()
-	searchService := search.New(cfg)
-
 	const step int64 = 10
 
 	for i = 0; i <= totalCount; i += step {
@@ -51,14 +47,16 @@ func handlePoiSync() error {
 		}
 
 		for _, id := range ids {
-			poi, err := repo.GetPoiById(id)
+			pois, err := s.GetPoisByIds([]string{id})
 
 			if err != nil {
 				return err
 			}
 
+			poi := pois[0]
+
 			_, err = searchService.Client.Collection(string(search.CollectionPois)).Documents().Upsert(context.Background(), map[string]any{
-				"name":     poi.Poi.Name,
+				"name":     poi.Name,
 				"poi":      poi,
 				"location": []float64{poi.Address.Lat, poi.Address.Lng},
 			})

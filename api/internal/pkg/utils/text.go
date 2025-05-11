@@ -3,7 +3,7 @@ package utils
 import "github.com/jackc/pgx/v5/pgtype"
 
 // Convert a pgtype.Text to a nillable string
-func TextOrNil(v pgtype.Text) *string {
+func TextToStr(v pgtype.Text) *string {
 	if v.Valid {
 		return &v.String
 	}
