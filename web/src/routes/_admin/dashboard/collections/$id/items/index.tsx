@@ -1,7 +1,8 @@
 import AppMessage from '@/components/blocks/app-message';
-import BackLink from '@/components/blocks/back-link';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import PoiCard from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -74,12 +75,21 @@ function RouteComponent() {
 
   return (
     <>
-      <BackLink
-        href={`/dashboard/collections/${id}`}
-        text="Go back to collection details page"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Collections', href: '/dashboard/collections' },
+          {
+            name: collection.name,
+            href: `/dashboard/collections/${collection.id}`,
+          },
+          {
+            name: 'Items',
+            href: `/dashboard/collections/${collection.id}/items`,
+          },
+        ]}
       />
 
-      <h2 className="text-4xl font-bold mt-4">{name} Items</h2>
+      <Separator className="my-2" />
 
       <div className="flex flex-row gap-2 w-min items-start mt-4">
         {!isEditMode && (

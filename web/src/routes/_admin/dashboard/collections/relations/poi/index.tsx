@@ -1,4 +1,5 @@
 import AppMessage from '@/components/blocks/app-message';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
@@ -45,12 +47,19 @@ function RouteComponent() {
   );
 
   return (
-    <div className="space-y-16">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold">
-          Collections - Point of Interests Relations
-        </h3>
+    <div>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Collections', href: '/dashboard/collections' },
+          {
+            name: 'Collection - POI Relations',
+            href: '/dashboard/collections/relations/poi',
+          },
+        ]}
+      />
 
+      <Separator className="my-2" />
+      <div className="flex items-center justify-between">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button>

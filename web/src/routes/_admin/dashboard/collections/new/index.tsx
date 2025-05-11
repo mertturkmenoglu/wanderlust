@@ -1,14 +1,15 @@
-import BackLink from '@/components/blocks/back-link';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import CustomEditor from '../-custom-editor';
@@ -43,25 +44,27 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
-    mutation.mutate({
-      body: data,
-    });
-  };
-
   return (
     <div>
-      <BackLink
-        href="/dashboard/collections"
-        text="Go back to collections page"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Collections', href: '/dashboard/collections' },
+          {
+            name: 'New',
+            href: '/dashboard/collections/new',
+          },
+        ]}
       />
-      <h3 className="mb-8 text-lg font-bold tracking-tight">
-        Create New Collection
-      </h3>
+
+      <Separator className="my-2" />
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            body: data,
+          });
+        })}
       >
         <div className="">
           <Label htmlFor="name">Name</Label>
@@ -89,7 +92,19 @@ function RouteComponent() {
           <InputError error={form.formState.errors.description} />
         </div>
 
-        <div>
+        <div className="flex items-center justify-end gap-2 col-span-full">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: '/dashboard/collections',
+              });
+            }}
+          >
+            Cancel
+          </Button>
           <Button type="submit">Create</Button>
         </div>
       </form>

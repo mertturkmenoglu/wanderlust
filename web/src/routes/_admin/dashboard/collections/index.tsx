@@ -1,8 +1,11 @@
-import BackLink from '@/components/blocks/back-link';
+import DashboardActions from '@/components/blocks/dashboard/actions';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { collectionsCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_admin/dashboard/collections/')({
@@ -27,24 +30,36 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink href="/dashboard" text="Go back to dashboard" />
+      <DashboardBreadcrumb
+        items={[{ name: 'Collections', href: '/dashboard/collections' }]}
+      />
 
-      <div className="flex items-baseline gap-8 mt-4">
-        <h3 className="text-lg font-bold tracking-tight">Collections</h3>
-        <Button asChild variant="link" className="px-0">
-          <Link to="/dashboard/collections/new">New Collection</Link>
-        </Button>
-      </div>
+      <Separator className="my-2" />
 
-      <div className="flex items-baseline gap-8 mt-4">
-        <Button asChild variant="link" className="px-0">
-          <Link to="/dashboard/collections/relations/poi">POI Relations</Link>
-        </Button>
+      <DashboardActions>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/dashboard/collections/new"
+            className={cn(buttonVariants({ variant: 'link' }), 'px-0')}
+          >
+            New Collection
+          </Link>
 
-        <Button asChild variant="link" className="px-0">
-          <Link to="/dashboard/collections/relations/city">City Relations</Link>
-        </Button>
-      </div>
+          <Link
+            to="/dashboard/collections/relations/poi"
+            className={cn(buttonVariants({ variant: 'link' }), 'px-0')}
+          >
+            POI Relations
+          </Link>
+
+          <Link
+            to="/dashboard/collections/relations/city"
+            className={cn(buttonVariants({ variant: 'link' }), 'px-0')}
+          >
+            City Relations
+          </Link>
+        </div>
+      </DashboardActions>
 
       <DataTable
         columns={collectionsCols}

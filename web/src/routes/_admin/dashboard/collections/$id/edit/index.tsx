@@ -1,9 +1,10 @@
-import BackLink from '@/components/blocks/back-link';
+import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { lengthTracker } from '@/lib/form';
@@ -77,10 +78,21 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink
-        href={`/dashboard/collections/${collection.id}`}
-        text="Go back to collection details"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Collections', href: '/dashboard/collections' },
+          {
+            name: collection.name,
+            href: `/dashboard/collections/${collection.id}`,
+          },
+          {
+            name: 'Edit',
+            href: `/dashboard/collections/${collection.id}/edit`,
+          },
+        ]}
       />
+
+      <Separator className="my-2" />
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
@@ -115,7 +127,19 @@ function RouteComponent() {
           <InputError error={form.formState.errors.description} />
         </div>
 
-        <div>
+        <div className="flex items-center justify-end gap-2 col-span-full">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: `/dashboard/collections/${collection.id}`,
+              });
+            }}
+          >
+            Cancel
+          </Button>
           <Button type="submit">Update</Button>
         </div>
       </form>
