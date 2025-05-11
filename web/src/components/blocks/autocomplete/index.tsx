@@ -62,7 +62,7 @@ export function Autocomplete({
               <Link
                 to="/search"
                 search={{
-                  'locations[query]': currentRefinement,
+                  'pois[query]': currentRefinement,
                 }}
               >
                 See all results
