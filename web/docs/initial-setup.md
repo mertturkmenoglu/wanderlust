@@ -14,3 +14,9 @@
 - Generate TypeScript definitions from OpenAPI spec: `pnpm openapi`
 - Run the development server: `pnpm dev`
 - Server will run at port `3000`.
+
+## Next Steps
+
+Follow these steps in this specific order:
+
+- Read `type-gen.md` file.
