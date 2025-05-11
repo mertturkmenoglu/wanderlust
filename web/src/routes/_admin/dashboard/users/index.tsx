@@ -1,5 +1,6 @@
 import AppMessage from '@/components/blocks/app-message';
-import { createFileRoute } from '@tanstack/react-router';
+import { buttonVariants } from '@/components/ui/button';
+import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_admin/dashboard/users/')({
   component: RouteComponent,
@@ -7,8 +8,14 @@ export const Route = createFileRoute('/_admin/dashboard/users/')({
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center gap-4">
       <AppMessage emptyMessage="In progress" showBackButton={false} />
+      <Link
+        to="/dashboard/users/verify"
+        className={buttonVariants({ variant: 'link' })}
+      >
+        Make User Verified
+      </Link>
     </div>
   );
 }
