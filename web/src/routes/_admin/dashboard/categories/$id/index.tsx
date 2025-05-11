@@ -1,8 +1,13 @@
 import AppMessage from '@/components/blocks/app-message';
-import BackLink from '@/components/blocks/back-link';
-import { Button } from '@/components/ui/button';
+import { keyValueCols } from '@/components/blocks/dashboard/columns';
+import { DataTable } from '@/components/blocks/dashboard/data-table';
+import { buttonVariants } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import DashboardActions from '../../-dashboard-actions';
+import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
 import DeleteDialog from './-delete-dialog';
 
 export const Route = createFileRoute('/_admin/dashboard/categories/$id/')({
@@ -26,42 +31,60 @@ function RouteComponent() {
 
   return (
     <div>
-      <BackLink
-        href="/dashboard/categories"
-        text="Go back to categories page"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Categories', href: '/dashboard/categories' },
+          {
+            name: category.name,
+            href: `/dashboard/categories/${category.id}`,
+          },
+        ]}
       />
-      <div className="flex items-end gap-4">
-        <h2 className="text-4xl font-bold mt-8">{category.name}</h2>
-        <Button variant="link" className="px-0" asChild>
+      <Separator className="my-2" />
+
+      <DashboardActions>
+        <div className="flex items-center gap-2 mt-4">
           <Link
             to="/dashboard/categories/$id/edit"
             params={{
               id,
             }}
+            className={cn(
+              buttonVariants({ variant: 'default', size: 'sm' }),
+              '',
+            )}
           >
             Edit
           </Link>
-        </Button>
-        <DeleteDialog id={category.id} />
-      </div>
+
+          <DeleteDialog id={category.id} />
+        </div>
+      </DashboardActions>
+
       <img
         src={category.image}
         alt={category.name}
         className="mt-8 w-64 rounded-md aspect-video object-cover"
       />
 
-      <div className="flex gap-2 mt-4">
-        <div className="font-semibold">Category Id:</div>
-        <div>{category.id}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Category Name:</div>
-        <div>{category.name}</div>
-      </div>
-      <div className="flex gap-2 mt-2">
-        <div className="font-semibold">Image URL:</div>
-        <div>{category.image}</div>
-      </div>
+      <DataTable
+        columns={keyValueCols}
+        filterColumnId="k"
+        data={[
+          {
+            k: 'ID',
+            v: `${category.id}`,
+          },
+          {
+            k: 'Name',
+            v: category.name,
+          },
+          {
+            k: 'Image URL',
+            v: category.image,
+          },
+        ]}
+      />
     </div>
   );
 }

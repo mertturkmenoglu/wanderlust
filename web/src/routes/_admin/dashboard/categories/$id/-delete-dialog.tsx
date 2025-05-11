@@ -8,19 +8,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useDeleteCategoryMutation } from './-hooks';
+import { api } from '@/lib/api';
+import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
 type Props = {
   id: number;
 };
 
 export default function DeleteDialog({ id }: Props) {
-  const deleteMutation = useDeleteCategoryMutation();
+  const navigate = useNavigate();
+
+  const deleteMutation = api.useMutation('delete', '/api/v2/categories/{id}', {
+    onSuccess: () => {
+      toast.success('Category deleted');
+      navigate({ to: '/dashboard/categories' });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive">Delete</Button>
+        <Button variant="destructive" size="sm">
+          Delete
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

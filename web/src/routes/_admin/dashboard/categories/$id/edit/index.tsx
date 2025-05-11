@@ -1,16 +1,22 @@
-import AppMessage from '@/components/blocks/app-message';
-import BackLink from '@/components/blocks/back-link';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
-import { createFileRoute } from '@tanstack/react-router';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
-import { useUpdateCategoryForm, useUpdateCategoryMutation } from './-hooks';
-import type { FormInput } from './-schema';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import DashboardBreadcrumb from '../../../-dashboard-breadcrumb';
+
+const schema = z.object({
+  name: z.string().min(1).max(64),
+  image: z.string().min(1).max(256),
+});
 
 export const Route = createFileRoute('/_admin/dashboard/categories/$id/edit/')({
   component: RouteComponent,
@@ -23,36 +29,42 @@ export const Route = createFileRoute('/_admin/dashboard/categories/$id/edit/')({
 function RouteComponent() {
   const { categories } = Route.useLoaderData();
   const { id } = Route.useParams();
-
-  const category = categories.find((category) => category.id === +id);
-
-  if (!category) {
-    return (
-      <AppMessage errorMessage="Category not found" showBackButton={false} />
-    );
-  }
-
+  const navigate = useNavigate();
+  const category = categories.find((category) => category.id === +id)!;
   const [previewUrl, setPreviewUrl] = useState(category.image);
-  const form = useUpdateCategoryForm(category);
-  const mutation = useUpdateCategoryMutation(category.id);
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate({
-      params: {
-        path: {
-          id: category.id,
-        },
-      },
-      body: data,
-    });
-  };
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: category,
+  });
+
+  const mutation = api.useMutation('patch', '/api/v2/categories/{id}', {
+    onSuccess: async () => {
+      toast.success('Category updated');
+      navigate({ to: `/dashboard/categories/${id}`, reloadDocument: true });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div>
-      <BackLink
-        href={`/dashboard/categories/${category.id}`}
-        text="Go back to category details"
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Categories', href: '/dashboard/categories' },
+          {
+            name: category.name,
+            href: `/dashboard/categories/${category.id}`,
+          },
+          {
+            name: 'Edit',
+            href: `/dashboard/categories/${category.id}/edit`,
+          },
+        ]}
       />
+
+      <Separator className="my-2" />
 
       <img
         src={previewUrl}
@@ -62,7 +74,16 @@ function RouteComponent() {
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            params: {
+              path: {
+                id: category.id,
+              },
+            },
+            body: data,
+          });
+        })}
       >
         <div className="">
           <Label htmlFor="id">ID</Label>
@@ -106,8 +127,23 @@ function RouteComponent() {
 
         <div></div>
 
-        <div>
+        <div className="flex items-center gap-2">
           <Button type="submit">Update</Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: `/dashboard/categories/$id`,
+                params: {
+                  id,
+                },
+              });
+            }}
+          >
+            Cancel
+          </Button>
         </div>
       </form>
     </div>

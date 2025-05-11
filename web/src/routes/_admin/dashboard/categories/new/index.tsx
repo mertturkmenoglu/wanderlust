@@ -3,9 +3,21 @@ import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createFileRoute } from '@tanstack/react-router';
+import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import { useNewCategoryForm, useNewCategoryMutation } from './-hooks';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
+
+const schema = z.object({
+  id: z.number().min(1),
+  name: z.string().min(1),
+  image: z.string().min(1),
+});
 
 export const Route = createFileRoute('/_admin/dashboard/categories/new/')({
   component: RouteComponent,
@@ -13,14 +25,34 @@ export const Route = createFileRoute('/_admin/dashboard/categories/new/')({
 
 function RouteComponent() {
   const [previewUrl, setPreviewUrl] = useState('');
-  const form = useNewCategoryForm();
-  const mutation = useNewCategoryMutation();
+  const navigate = useNavigate();
+
+  const form = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const mutation = api.useMutation('post', '/api/v2/categories/', {
+    onSuccess: () => {
+      toast.success('Category created');
+      navigate({ to: '/dashboard/categories' });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div>
-      <h3 className="mb-8 text-lg font-bold tracking-tight">
-        Create New Category
-      </h3>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Categories', href: '/dashboard/categories' },
+          {
+            name: 'New',
+            href: '/dashboard/categories/new',
+          },
+        ]}
+      />
+      <Separator className="my-2" />
 
       {previewUrl !== '' && (
         <img
@@ -87,8 +119,20 @@ function RouteComponent() {
 
         <div></div>
 
-        <div className="mt-8">
+        <div className="flex items-center gap-2">
           <Button type="submit">Create</Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: '/dashboard/categories',
+              });
+            }}
+          >
+            Cancel
+          </Button>
         </div>
       </form>
     </div>
