@@ -1,4 +1,3 @@
-import BackLink from '@/components/blocks/back-link';
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
@@ -6,12 +5,33 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ipx } from '@/lib/ipx';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useNewCityForm, useNewCityMutation } from './-hooks';
-import type { FormInput } from './-schema';
+
+import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import DashboardBreadcrumb from '../../-dashboard-breadcrumb';
+
+const schema = z.object({
+  id: z.number().min(1),
+  name: z.string().min(1).max(64),
+  stateCode: z.string().min(1).max(16),
+  stateName: z.string().min(1).max(64),
+  countryCode: z.string().length(2),
+  countryName: z.string().min(1).max(64),
+  imageUrl: z.string().min(1).max(256),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  description: z.string().min(1).max(1024),
+  imageLicense: z.string().min(1).max(32).nullable(),
+  imageLicenseLink: z.string().min(1).max(256).nullable(),
+  imageAttribute: z.string().min(1).max(256).nullable(),
+  imageAttributionLink: z.string().min(1).max(256).nullable(),
+});
 
 export const Route = createFileRoute('/_admin/dashboard/cities/new/')({
   component: RouteComponent,
@@ -19,25 +39,35 @@ export const Route = createFileRoute('/_admin/dashboard/cities/new/')({
 
 function RouteComponent() {
   const [previewUrl, setPreviewUrl] = useState('');
-  const form = useNewCityForm();
-  const mutation = useNewCityMutation();
+  const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate({
-      body: {
-        ...data,
-        imageLicense: data.imageLicense ?? '',
-        imageLicenseLink: data.imageLicenseLink ?? '',
-        imageAttribute: data.imageAttribute ?? '',
-        imageAttributionLink: data.imageAttributionLink ?? '',
-      },
-    });
-  };
+  const form = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const mutation = api.useMutation('post', '/api/v2/cities/', {
+    onSuccess: () => {
+      toast.success('City created');
+      navigate({ to: '/dashboard/cities', reloadDocument: true });
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div>
-      <BackLink href="/dashboard/cities" text="Go back to cities page" />
-      <h3 className="mb-8 text-lg font-bold tracking-tight">Create New City</h3>
+      <DashboardBreadcrumb
+        items={[
+          { name: 'Cities', href: '/dashboard/cities' },
+          {
+            name: 'New',
+            href: '/dashboard/cities/new',
+          },
+        ]}
+      />
+
+      <Separator className="my-2" />
 
       {previewUrl !== '' && (
         <img
@@ -49,7 +79,17 @@ function RouteComponent() {
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            body: {
+              ...data,
+              imageLicense: data.imageLicense ?? '',
+              imageLicenseLink: data.imageLicenseLink ?? '',
+              imageAttribute: data.imageAttribute ?? '',
+              imageAttributionLink: data.imageAttributionLink ?? '',
+            },
+          });
+        })}
       >
         <div className="">
           <Label htmlFor="id">ID</Label>
@@ -60,7 +100,7 @@ function RouteComponent() {
             autoComplete="off"
             {...form.register('id', { valueAsNumber: true })}
           />
-          <InputInfo text="ID of the city" />
+          <InputInfo text="ID of the city (e.g. 8012)" />
           <InputError error={form.formState.errors.id} />
         </div>
 
@@ -144,6 +184,7 @@ function RouteComponent() {
             type="button"
             variant="link"
             className="px-0"
+            disabled={previewUrl === ''}
             onClick={() => setPreviewUrl(form.watch('imageUrl'))}
           >
             Preview
@@ -276,7 +317,19 @@ function RouteComponent() {
           <InputError error={form.formState.errors.description} />
         </div>
 
-        <div>
+        <div className="flex items-center justify-end gap-2 col-span-full">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate({
+                to: '/dashboard/cities',
+              });
+            }}
+          >
+            Cancel
+          </Button>
           <Button type="submit">Create</Button>
         </div>
       </form>
