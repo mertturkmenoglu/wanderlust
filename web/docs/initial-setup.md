@@ -9,7 +9,8 @@
 
 - Install dependencies: `pnpm install`
 - Setup environment variables:
-  - Copy `.env.example` to `.env` and fill
+  - Using Infisical CLI (recommended, read `infisical.md`), or
+  - Manually (create `.env` => copy from `.env.example` and fill)
 - Make sure the API is running.
 - Make sure the image proxy server (wiop) is running.
 - Generate TypeScript definitions from OpenAPI spec: `pnpm openapi`
@@ -20,5 +21,6 @@
 
 Follow these steps in this specific order:
 
+- Read `infisical.md` file.
 - Read `type-gen.md` file.
 - Read `ipx.md` file.
