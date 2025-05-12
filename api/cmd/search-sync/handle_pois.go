@@ -34,6 +34,7 @@ func handlePoiSync() error {
 		},
 	}
 	const step int64 = 10
+	ctx := context.Background()
 
 	for i = 0; i <= totalCount; i += step {
 		logger.Trace("syncing", logger.Args("i", i))
@@ -47,7 +48,7 @@ func handlePoiSync() error {
 		}
 
 		for _, id := range ids {
-			pois, err := s.GetPoisByIds([]string{id})
+			pois, err := s.GetPoisByIds(ctx, []string{id})
 
 			if err != nil {
 				return err
