@@ -59,9 +59,9 @@ export default function CreateListDialog() {
             <Input
               type="text"
               id="name"
-              placeholder="Name"
+              placeholder="My Favorite Places"
               autoComplete="off"
-              className="w-full"
+              className="w-full mt-1"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -69,13 +69,13 @@ export default function CreateListDialog() {
               }}
             />
             {showErr && (
-              <div className="text-sm text-destructive">
+              <div className="text-xs text-destructive mt-1">
                 Name length should be between 1 and 128 characters
               </div>
             )}
           </div>
 
-          <div className="w-full">
+          <div className="w-full flex">
             <Checkbox
               id="is-public"
               checked={isPublic}
@@ -83,10 +83,10 @@ export default function CreateListDialog() {
                 setIsPublic(c === true);
               }}
             />
-            <Label htmlFor="is-public" className="ml-2">
-              Public list
-            </Label>
-            <InputInfo text="If you make your list public, other users can see it." />
+            <div className="ml-2">
+              <Label htmlFor="is-public">Public list</Label>
+              <InputInfo text="If you make your list public, other users can see it." />
+            </div>
           </div>
         </div>
         <DialogFooter className="sm:justify-end">
