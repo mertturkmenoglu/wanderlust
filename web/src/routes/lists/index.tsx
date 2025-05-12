@@ -1,6 +1,7 @@
 import AppMessage from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { api } from '@/lib/api';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { GlobeIcon, LockIcon } from 'lucide-react';
@@ -22,13 +23,30 @@ function RouteComponent() {
   const query = api.useInfiniteQuery(
     'get',
     '/api/v2/lists/',
-    {},
+    {
+      params: {
+        query: {
+          pageSize: 20,
+        },
+      },
+    },
     {
       initialPageParam: 1,
-      getNextPageParam: (lastPage) =>
-        lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.pagination.hasNext) {
+          return null;
+        }
+        return lastPage.pagination.page + 1;
+      },
+      pageParamName: 'page',
+      retry: false,
     },
   );
+
+  const btnText = useLoadMoreText({
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
+  });
 
   return (
     <div className="max-w-7xl my-8 mx-auto">
@@ -88,11 +106,7 @@ function RouteComponent() {
             onClick={() => query.fetchNextPage()}
             disabled={!query.hasNextPage || query.isFetchingNextPage}
           >
-            {query.isFetchingNextPage
-              ? 'Loading more...'
-              : query.hasNextPage
-                ? 'Load More'
-                : 'Nothing more to load'}
+            {btnText}
           </Button>
         </div>
       )}
