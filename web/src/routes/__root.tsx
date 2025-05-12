@@ -1,8 +1,6 @@
 import Footer from '@/components/blocks/footer';
 import Header from '@/components/blocks/header';
-import AuthContextProvider, {
-  type AuthContextState,
-} from '@/providers/auth-provider';
+import { type AuthContextState } from '@/providers/auth-provider';
 import type { QueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -24,17 +22,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     const search = useSearch({ strict: false });
 
     return (
-      <AuthContextProvider>
-        <div>
-          <Header />
-          <Outlet />
-          <Footer />
-          <TanStackRouterDevtools />
-          <TanstackQueryLayout />
-          {search.signInModal && <SignInModal />}
-          <Toaster position="bottom-center" richColors />
-        </div>
-      </AuthContextProvider>
+      <div>
+        <Header />
+        <Outlet />
+        <Footer />
+        <TanStackRouterDevtools />
+        <TanstackQueryLayout />
+        {search.signInModal && <SignInModal />}
+        <Toaster position="bottom-center" richColors />
+      </div>
     );
   },
 });
