@@ -16,13 +16,27 @@ import (
 	"wanderlust/internal/app/pois"
 	"wanderlust/internal/app/reviews"
 	"wanderlust/internal/app/users"
+	"wanderlust/internal/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func RegisterRoutes(api *huma.API) {
 	grp := huma.NewGroup(*api, API_PREFIX)
 	app := NewApplication()
+
+	grp.UseMiddleware(func(ctx huma.Context, next func(huma.Context)) {
+		oid := ctx.Operation().OperationID
+		if oid == "" {
+			oid = ctx.Operation().Summary
+		}
+		sp := utils.NewSpan(ctx.Context(), oid)
+		defer sp.End()
+
+		sp.SetAttributes(attribute.String("operation-id", oid))
+		next(ctx)
+	})
 
 	aggregator.Register(grp, app)
 	amenities.Register(grp, app)
