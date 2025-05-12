@@ -33,6 +33,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Summary:       "Get Current User",
 			Description:   "Get the current user information",
+			OperationID:   "auth-get-me",
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
@@ -40,7 +41,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
 			email := ctx.Value("email").(string)
-			user, err := s.getUserByEmail(email)
+			user, err := s.getUserByEmail(ctx, email)
 
 			if err != nil {
 				return nil, huma.Error404NotFound("User not found")
@@ -84,7 +85,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Login with email and password",
 		},
 		func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
-			user, dbErr := s.getUserByEmail(input.Body.Email)
+			user, dbErr := s.getUserByEmail(ctx, input.Body.Email)
 			var hashed = ""
 
 			if dbErr == nil {
@@ -169,7 +170,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.SendVerificationEmailInput) (*struct{}, error) {
-			user, err := s.getUserByEmail(input.Body.Email)
+			user, err := s.getUserByEmail(ctx, input.Body.Email)
 
 			if err != nil {
 				return nil, huma.Error400BadRequest("Invalid email")
@@ -228,7 +229,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				return nil, huma.Error500InternalServerError("Failed to get verification code from cache")
 			}
 
-			user, err := s.getUserByEmail(email)
+			user, err := s.getUserByEmail(ctx, email)
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to get user by email")
@@ -257,7 +258,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.SendForgotPasswordEmailInput) (*struct{}, error) {
-			user, err := s.getUserByEmail(input.Body.Email)
+			user, err := s.getUserByEmail(ctx, input.Body.Email)
 
 			if err != nil {
 				return nil, huma.Error400BadRequest("Invalid email")
@@ -298,7 +299,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.ResetPasswordInput) (*struct{}, error) {
-			user, err := s.getUserByEmail(input.Body.Email)
+			user, err := s.getUserByEmail(ctx, input.Body.Email)
 
 			if err != nil {
 				return nil, huma.Error400BadRequest("Invalid email")
