@@ -13,8 +13,12 @@ import { toast } from 'sonner';
 
 export const Route = createFileRoute('/lists/$id/edit/')({
   component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    if (!context.auth.user) {
+      throw new Error('You are not signed in');
+    }
+  },
   loader: async ({ params }) => {
-    const auth = await fetchClient.GET('/api/v2/auth/me');
     const list = await fetchClient.GET('/api/v2/lists/{id}', {
       params: {
         path: {
@@ -23,21 +27,15 @@ export const Route = createFileRoute('/lists/$id/edit/')({
       },
     });
 
-    if (auth.error) {
-      throw new Error('Not signed in');
-    }
-
     if (list.error) {
       if (list.error.status === 404) {
         throw new Error('List not found');
-      }
-
-      if (list.error.status === 401) {
+      } else if (list.error.status === 401) {
         throw new Error('You are not signed in');
-      }
-
-      if (list.error.status === 403) {
+      } else if (list.error.status === 403) {
         throw new Error('You do not have permission to update this list');
+      } else {
+        throw new Error('Something went wrong');
       }
     }
 
