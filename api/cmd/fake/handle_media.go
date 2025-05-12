@@ -14,7 +14,7 @@ import (
 )
 
 func getRandomImageUrl() string {
-	return fmt.Sprintf("https://loremflickr.com/960/720?lock=%d", gofakeit.IntRange(1, 10_000))
+	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", gofakeit.IntRange(1, 1084))
 }
 
 func handleMedia() error {
