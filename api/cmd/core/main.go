@@ -9,10 +9,15 @@ import (
 )
 
 func main() {
+	bootstrap.LoadEnv()
+
+	tracingShutdown := bootstrap.InitTracer()
+	defer tracingShutdown()
+
 	e := echo.New()
+
 	humaConfig := huma.DefaultConfig(bootstrap.API_NAME, bootstrap.API_VERSION)
 
-	bootstrap.LoadEnv()
 	bootstrap.InitGlobalMiddlewares(e)
 	bootstrap.SetupOpenApiSecurityConfig(&humaConfig)
 

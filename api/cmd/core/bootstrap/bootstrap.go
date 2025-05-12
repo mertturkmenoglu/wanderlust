@@ -1,7 +1,9 @@
 package bootstrap
 
 import (
+	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 	"wanderlust/internal/pkg/activities"
@@ -22,7 +24,12 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sony/sonyflake"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 )
 
 func LoadEnv() {
@@ -129,4 +136,28 @@ func ScalarDocs(e *echo.Echo) {
 func StartServer(e *echo.Echo) {
 	portString := ":" + cfg.Get(cfg.PORT)
 	e.Logger.Fatal(e.Start(portString))
+}
+
+func InitTracer() func() {
+	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.Get(cfg.JAEGER_ENDPOINT))))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tp := trace.NewTracerProvider(
+		trace.WithBatcher(exp),
+		trace.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceName("wanderlust"),
+		)),
+	)
+
+	otel.SetTracerProvider(tp)
+
+	return func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+	}
 }
