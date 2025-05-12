@@ -1,6 +1,24 @@
-import { getRouteApi } from '@tanstack/react-router';
-import { items } from './items';
-import SidebarLink from './sidebar-link';
+import { getRouteApi, Link } from '@tanstack/react-router';
+
+type Item = {
+  text: string;
+  href: string;
+};
+
+const items = [
+  {
+    text: 'Account',
+    href: '/settings/account',
+  },
+  {
+    text: 'Profile',
+    href: '/settings/profile',
+  },
+  {
+    text: 'Dashboard',
+    href: '/dashboard',
+  },
+] as const satisfies Item[];
 
 export default function Sidebar() {
   const parentRoute = getRouteApi('/settings');
@@ -13,7 +31,16 @@ export default function Sidebar() {
   return (
     <nav className="grid gap-4 text-sm text-muted-foreground">
       {links.map((el) => (
-        <SidebarLink text={el.text} href={el.href} key={el.href} />
+        <Link
+          to={el.href}
+          activeProps={{
+            className: 'font-semibold text-primary',
+          }}
+          className="hover:underline"
+          key={el.href}
+        >
+          {el.text}
+        </Link>
       ))}
     </nav>
   );
