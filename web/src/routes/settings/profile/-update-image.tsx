@@ -20,18 +20,6 @@ type Props = {
   action: 'profile' | 'banner';
 };
 
-function useImageMutation() {
-  return api.useMutation('post', '/api/v2/users/image/{type}', {
-    onSuccess: () => {
-      toast.success('Image updated');
-      window.location.reload();
-    },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
-  });
-}
-
 export default function UpdateImage({
   image,
   fallbackImage,
@@ -42,7 +30,15 @@ export default function UpdateImage({
     image === null ? fallbackImage : image,
   );
   const [file, setFile] = useState<File | null>(null);
-  const mutation = useImageMutation();
+  const mutation = api.useMutation('post', '/api/v2/users/image/{type}', {
+    onSuccess: () => {
+      toast.success('Image updated');
+      window.location.reload();
+    },
+    onError: () => {
+      toast.error('Something went wrong');
+    },
+  });
 
   return (
     <div className="max-w-xl flex gap-4 ml-auto">
@@ -160,7 +156,7 @@ export default function UpdateImage({
                   },
                 });
               }}
-              disabled={!file}
+              disabled={!file || mutation.isPending}
             >
               Update
             </Button>

@@ -14,12 +14,22 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
-import { Controller, type SubmitHandler } from 'react-hook-form';
-import { useProfileForm, useProfileMutation } from './-hooks';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import { pronounGroups } from './-pronouns';
-import type { FormInput } from './-schema';
 import UpdateImage from './-update-image';
+
+export const schema = z.object({
+  fullName: z.string().min(1).max(128),
+  bio: z.string().max(255).nullable(),
+  pronouns: z.string().max(32).nullable(),
+  website: z.string().max(255).url().nullable(),
+  phone: z.string().max(32).nullable(),
+});
 
 export const Route = createFileRoute('/settings/profile/')({
   component: RouteComponent,
@@ -27,21 +37,27 @@ export const Route = createFileRoute('/settings/profile/')({
 
 function RouteComponent() {
   const { auth } = Route.useRouteContext();
+  const user = auth.user!;
 
-  const form = useProfileForm({
-    fullName: auth.fullName,
-    bio: auth.bio ?? '',
-    pronouns: auth.pronouns ?? '',
-    website: auth.website ?? '',
-    phone: auth.phone ?? '',
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      fullName: user.fullName,
+      bio: user.bio ?? '',
+      pronouns: user.pronouns ?? '',
+      website: user.website ?? '',
+      phone: user.phone ?? '',
+    },
   });
-  const mutation = useProfileMutation();
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate({
-      body: data,
-    });
-  };
+  const mutation = api.useMutation('patch', '/api/v2/users/profile', {
+    onSuccess: () => {
+      window.location.reload();
+    },
+    onError: (err) => {
+      toast.error(err.title ?? 'Failed to update profile');
+    },
+  });
 
   return (
     <div>
@@ -53,8 +69,8 @@ function RouteComponent() {
         <Label>Profile Image</Label>
         <div className="col-span-2 flex">
           <UpdateImage
-            fullName={auth.fullName}
-            image={auth.profileImage}
+            fullName={user.fullName}
+            image={user.profileImage}
             fallbackImage="/profile.png"
             action="profile"
           />
@@ -63,8 +79,8 @@ function RouteComponent() {
         <Label>Banner Image</Label>
         <div className="col-span-2 flex">
           <UpdateImage
-            fullName={auth.fullName}
-            image={auth.bannerImage}
+            fullName={user.fullName}
+            image={user.bannerImage}
             fallbackImage="https://i.imgur.com/EwvUEmR.jpg"
             action="banner"
           />
@@ -74,7 +90,11 @@ function RouteComponent() {
       <Separator className="my-4" />
 
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            body: data,
+          });
+        })}
         className="mt-4 grid grid-cols-3 gap-4 md:gap-8"
       >
         <Label htmlFor="name" className="mt-2">
