@@ -217,6 +217,59 @@ type Session struct {
 	ExpiresAt   pgtype.Timestamptz
 }
 
+type Trip struct {
+	ID              string
+	OwnerID         string
+	Status          string
+	VisibilityLevel string
+	StartAt         pgtype.Timestamptz
+	EndAt           pgtype.Timestamptz
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+}
+
+type TripsAmenity struct {
+	TripID    string
+	AmenityID int32
+}
+
+type TripsComment struct {
+	ID        string
+	TripID    string
+	FromID    string
+	Content   string
+	CreatedAt pgtype.Timestamptz
+}
+
+type TripsDay struct {
+	ID          int32
+	TripID      string
+	Date        pgtype.Timestamptz
+	Description string
+}
+
+type TripsDaysLocation struct {
+	DayID int32
+	PoiID string
+}
+
+type TripsInvite struct {
+	ID        string
+	TripID    string
+	FromID    string
+	ToID      string
+	SentAt    pgtype.Timestamptz
+	ExpiresAt pgtype.Timestamptz
+	Role      string
+}
+
+type TripsParticipant struct {
+	ID     string
+	TripID string
+	UserID string
+	Role   string
+}
+
 type User struct {
 	ID                    string
 	Email                 string
