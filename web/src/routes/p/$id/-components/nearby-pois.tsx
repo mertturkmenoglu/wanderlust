@@ -47,8 +47,6 @@ export default function NearbyPois() {
     },
   });
 
-  console.log({ abc: query.data?.hits });
-
   if (query.data) {
     return (
       <div className="mt-4 lg:px-8">
