@@ -21,8 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { api } from '@/lib/api';
 import { AuthContext } from '@/providers/auth-provider';
-import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { EllipsisVertical, FlagIcon, Plus, Share2 } from 'lucide-react';
 import { useContext, useState } from 'react';
@@ -107,14 +107,14 @@ export default function Menu() {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Select a list</DialogTitle>
-          <DialogDescription className="max-w-[29rem]">
+          <DialogDescription className="w-full">
             {query.data && (
               <Select onValueChange={(v) => setListId(v)}>
-                <SelectTrigger className="mt-4">
+                <SelectTrigger className="mt-4 w-full">
                   <SelectValue placeholder="Select a list" />
                 </SelectTrigger>
-                <SelectContent className="max-w-[29rem]">
-                  {query.data.data.statuses.map((listStatus) => (
+                <SelectContent className="w-full max-h-96">
+                  {query.data.statuses.map((listStatus) => (
                     <SelectItem
                       value={listStatus.id}
                       key={listStatus.id}
@@ -139,17 +139,19 @@ export default function Menu() {
 
 export function useMyListsInfo(poiId: string) {
   const auth = useContext(AuthContext);
-  const isSignedIn = !!auth.user;
 
-  const query = useQuery({
-    queryKey: ['my-lists-info', poiId],
-    queryFn: async () => ({
-      data: {
-        statuses: [] as Array<{ id: string; name: string; includes: boolean }>,
+  return api.useQuery(
+    'get',
+    '/api/v2/lists/status/{poiId}',
+    {
+      params: {
+        path: {
+          poiId,
+        },
       },
-    }) /*getListStatus(poiId),*/,
-    enabled: isSignedIn,
-  });
-
-  return query;
+    },
+    {
+      enabled: !!auth.user,
+    },
+  );
 }
