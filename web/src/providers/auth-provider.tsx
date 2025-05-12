@@ -2,7 +2,7 @@ import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
 import { useQuery } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 
 export type AuthContextState = {
   isLoading: boolean;
@@ -34,28 +34,41 @@ export default function AuthContextProvider({
     ),
   );
 
-  const v = useMemo(() => {
-    return {
-      isLoading: query.isLoading,
-      user: query.data || null,
-    };
-  }, [query.data, query.isLoading]);
-
   useEffect(() => {
     const path = window.location.pathname;
 
-    if (v.user !== null) {
-      if (!v.user.isOnboardingCompleted && path !== '/onboarding') {
+    if (query.data) {
+      if (!query.data.isOnboardingCompleted && path !== '/onboarding') {
         window.location.href = '/onboarding';
-      } else if (
-        !v.user.isEmailVerified &&
+        return;
+      }
+
+      if (
+        !query.data.isEmailVerified &&
         path !== '/onboarding' &&
         path !== '/verify-email'
       ) {
         window.location.href = '/verify-email';
       }
-    }
-  }, [v.user]);
 
-  return <AuthContext.Provider value={v}>{children}</AuthContext.Provider>;
+      if (query.data.isOnboardingCompleted && path === '/onboarding') {
+        window.location.href = '/';
+      }
+
+      if (query.data.isEmailVerified && path === '/verify-email') {
+        window.location.href = '/';
+      }
+    }
+  }, [query.data]);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoading: query.isLoading,
+        user: query.data || null,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
