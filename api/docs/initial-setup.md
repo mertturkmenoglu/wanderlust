@@ -38,3 +38,4 @@ Now you should be able to run the project locally and have some ideas about the 
 
 - Read `project-structure.md` file.
 - Read `architecture.md` file.
+- Read `abbreviations.md` file.
