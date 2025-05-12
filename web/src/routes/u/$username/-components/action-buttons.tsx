@@ -1,5 +1,6 @@
 import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { Link } from '@tanstack/react-router';
@@ -18,13 +19,15 @@ export default function ActionButtons({
   isFollowing,
   username,
 }: Props) {
+  const invalidator = useInvalidator();
+
   const mutation = api.useMutation('post', '/api/v2/users/follow/{username}', {
-    onSettled: () => {
+    onSettled: async () => {
+      await invalidator.invalidate();
       toast.success(isFollowing ? 'Unfollowed' : 'Followed');
-      window.location.reload();
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (err) => {
+      toast.error(err.title ?? 'Something went wrong');
     },
   });
 
