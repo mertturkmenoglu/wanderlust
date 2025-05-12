@@ -19,13 +19,15 @@ type Service struct {
 	app *core.Application
 }
 
-func (s *Service) getUserByEmail(email string) (db.User, error) {
+func (s *Service) getUserByEmail(ctx context.Context, email string) (db.User, error) {
+	sp := utils.NewSpan(ctx, utils.GetFnName())
+	defer sp.End()
 	return s.app.Db.Queries.GetUserByEmail(context.Background(), email)
 }
 
 func (s *Service) checkIfEmailOrUsernameIsTaken(email, username string) error {
 	// Check if email is taken
-	dbUser, err := s.getUserByEmail(email)
+	dbUser, err := s.getUserByEmail(context.Background(), email)
 
 	if err == nil && dbUser.Email != "" {
 		return fmt.Errorf("email %s is already taken", email)
@@ -97,7 +99,7 @@ func (s *Service) getOrCreateUserFromOAuthUser(user *oauthUser) (*db.User, error
 	// credentials login and now they logged in with OAuth.
 	// Check if the user registered with the same email address
 	// they have in their OAuth profile. If so, merge accounts.
-	dbUser, err = s.getUserByEmail(user.email)
+	dbUser, err = s.getUserByEmail(context.Background(), user.email)
 
 	if err == nil && dbUser.ID != "" {
 		// Merge accounts
@@ -178,7 +180,6 @@ func (s *Service) verifyUserEmail(userId string) error {
 		IsEmailVerified: true,
 	})
 }
-
 
 func (s *Service) updateUserPassword(userId string, plainPassword string) error {
 	hashed, err := hash.Hash(plainPassword)
