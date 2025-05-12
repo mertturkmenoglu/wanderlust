@@ -69,10 +69,10 @@ export function Section() {
   return (
     <>
       {flat.map((review) => (
-        <>
-          <ReviewCard review={review} key={review.id} />
+        <div key={review.id}>
+          <ReviewCard review={review} />
           <Separator className="my-2" />
-        </>
+        </div>
       ))}
       {query.hasNextPage && (
         <div className="mt-4 flex justify-center">
