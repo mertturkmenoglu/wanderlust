@@ -59,10 +59,11 @@ export default function NearbyPois() {
               <Link
                 to="/p/$id"
                 params={{
-                  id: p.id,
+                  id: p.poi.id,
                 }}
+                key={p.poi.id}
               >
-                <div key={p.id} className="group w-[256px]">
+                <div className="group w-[256px]">
                   <img
                     src={ipx(p.poi.media[0]?.url ?? '', 'w_512')}
                     alt=""
