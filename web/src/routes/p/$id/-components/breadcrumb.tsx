@@ -23,8 +23,8 @@ export default function Breadcrumb() {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href={categoryLink}>
-            {poi.category.name}
+          <BreadcrumbLink asChild>
+            <Link to={categoryLink}>{poi.category.name}</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
