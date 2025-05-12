@@ -4,9 +4,12 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"wanderlust/internal/pkg/cfg"
 	"wanderlust/internal/pkg/tokens"
 
 	"github.com/danielgtaylor/huma/v2"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 )
 
 func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
@@ -44,6 +47,17 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 		ctx = huma.WithValue(ctx, "email", claims.Email)
 		ctx = huma.WithValue(ctx, "username", claims.Username)
 		ctx = huma.WithValue(ctx, "role", claims.Role)
+
+		if cfg.Get(cfg.ENV) == "dev" {
+			tracer := otel.Tracer("")
+			_, sp := tracer.Start(ctx.Context(), "authn-middleware")
+			defer sp.End()
+
+			sp.SetAttributes(attribute.String("userId", claims.ID))
+			sp.SetAttributes(attribute.String("email", claims.Email))
+			sp.SetAttributes(attribute.String("username", claims.Username))
+			sp.SetAttributes(attribute.String("role", claims.Role))
+		}
 
 		next(ctx)
 	}
