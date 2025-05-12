@@ -1,6 +1,6 @@
 package main
 
-import "wanderlust/internal/pkg/db"
+import "wanderlust/pkg/db"
 
 var database *db.Db
 

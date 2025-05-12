@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"wanderlust/internal/pkg/db"
+	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/jackc/pgx/v5/pgtype"

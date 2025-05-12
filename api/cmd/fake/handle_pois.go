@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/utils"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/sony/sonyflake"

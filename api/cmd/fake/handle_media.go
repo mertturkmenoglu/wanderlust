@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/utils"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/pterm/pterm"

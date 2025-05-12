@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
-	"wanderlust/internal/pkg/db"
+	"wanderlust/pkg/db"
 
 	"github.com/joho/godotenv"
 	"github.com/pterm/pterm"

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"context"
 	"os"
-	"wanderlust/internal/pkg/db"
+	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/pterm/pterm"

@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"wanderlust/internal/app/pois"
-	"wanderlust/internal/pkg/core"
-	"wanderlust/internal/pkg/db"
-	"wanderlust/internal/pkg/search"
+	"wanderlust/app/pois"
+	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/search"
 
 	"github.com/sony/sonyflake"
 )

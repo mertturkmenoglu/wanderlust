@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"wanderlust/internal/pkg/db"
+	"wanderlust/pkg/db"
 )
 
 type category struct {
