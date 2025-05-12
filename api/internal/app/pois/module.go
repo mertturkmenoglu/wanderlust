@@ -33,8 +33,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 		func(ctx context.Context, input *dto.GetPoiByIdInput) (*dto.GetPoiByIdOutput, error) {
 			userId := ctx.Value("userId").(string)
-
-			res, err := s.getPoiById(input.ID)
+			res, err := s.getPoiById(ctx, input.ID)
 
 			if err != nil {
 				return nil, err

@@ -17,14 +17,20 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/minio/minio-go/v7"
+	"go.opentelemetry.io/otel"
 )
 
 type Service struct {
 	App *core.Application
 }
 
-func (s *Service) GetPoisByIds(ids []string) ([]dto.Poi, error) {
+func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, error) {
+	tracer := otel.Tracer("")
+	_, sp := tracer.Start(ctx, utils.GetFnName())
+
 	dbPois, err := s.App.Db.Queries.GetPoisByIdsPopulated(context.Background(), ids)
+
+	sp.End()
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("failed to get point of interests")
@@ -66,8 +72,20 @@ func (s *Service) GetPoisByIds(ids []string) ([]dto.Poi, error) {
 	return pois, nil
 }
 
-func (s *Service) getPoiById(id string) (*dto.Poi, error) {
-	res, err := s.GetPoisByIds([]string{id})
+func (s *Service) getPoiById(ctx context.Context, id string) (*dto.Poi, error) {
+	sp := utils.NewSpan(ctx, utils.GetFnName())
+	defer sp.End()
+
+	if s.App.Cache.Has(cache.KeyBuilder("poi", id)) {
+		var res dto.Poi
+		err := s.App.Cache.ReadObj(cache.KeyBuilder("poi", id), res)
+
+		if err == nil {
+			return &res, nil
+		}
+	}
+
+	res, err := s.GetPoisByIds(ctx, []string{id})
 
 	if err != nil {
 		return nil, err
@@ -76,6 +94,8 @@ func (s *Service) getPoiById(id string) (*dto.Poi, error) {
 	if len(res) != 1 {
 		return nil, huma.Error404NotFound("point of interest not found")
 	}
+
+	s.App.Cache.SetObj(cache.KeyBuilder("poi", id), res[0], time.Hour*24*90)
 
 	return &res[0], nil
 }
@@ -115,7 +135,7 @@ func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
 		ids[i] = v.ID
 	}
 
-	res, err := s.GetPoisByIds(ids)
+	res, err := s.GetPoisByIds(context.Background(), ids)
 
 	if err != nil {
 		return nil, err
