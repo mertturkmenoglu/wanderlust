@@ -33,3 +33,7 @@ Follow these steps in this specific order:
 - Read `search-sync.md` file.
 - Read `openapi.md` file.
 - Read `minio.md` file.
+
+Now you should be able to run the project locally and have some ideas about the services. To continue:
+
+- Read `project-structure.md` file.
