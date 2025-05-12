@@ -15,6 +15,7 @@ import (
 	"wanderlust/app/lists"
 	"wanderlust/app/pois"
 	"wanderlust/app/reviews"
+	"wanderlust/app/trips"
 	"wanderlust/app/users"
 	"wanderlust/pkg/utils"
 
@@ -52,5 +53,6 @@ func RegisterRoutes(api *huma.API) {
 	lists.Register(grp, app)
 	pois.Register(grp, app)
 	reviews.Register(grp, app)
+	trips.Register(grp, app)
 	users.Register(grp, app)
 }
