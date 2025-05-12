@@ -51,7 +51,7 @@ function App() {
 function InnerApp() {
   const auth = useContext(AuthContext);
 
-  if (auth.isLoading) {
+  if (auth.isLoading && !auth.user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Spinner className="fill-primary text-gray-200 size-12 animate-spin" />
