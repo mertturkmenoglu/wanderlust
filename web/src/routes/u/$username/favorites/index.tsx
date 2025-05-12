@@ -28,7 +28,6 @@ function RouteComponent() {
     {
       initialPageParam: 1,
       getNextPageParam: (lastPage) => {
-        console.log({ lastPage });
         if (!lastPage.pagination.hasNext) {
           return null;
         }
