@@ -18,7 +18,6 @@ import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import { pronounGroups } from './-pronouns';
 import UpdateImage from './-update-image';
