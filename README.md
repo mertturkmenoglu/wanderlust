@@ -22,7 +22,7 @@ It's open source and free.
 - Docker
 - Go
 - sqlc
-- GNU Make
+- Just
 - Air
 - Go Migrate
 - Node.js
