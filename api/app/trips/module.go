@@ -42,6 +42,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
+			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetTripByIdInput) (*dto.GetTripByIdOutput, error) {
 			res, err := s.getTripById(ctx, input.ID)
