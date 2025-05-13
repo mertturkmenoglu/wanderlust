@@ -3,26 +3,26 @@ package dto
 import "time"
 
 type Trip struct {
-	ID                 string              `json:"id"`
-	OwnerID            string              `json:"ownerId"`
+	ID                 string              `json:"id" example:"7323488942953598976" doc:"Trip ID"`
+	OwnerID            string              `json:"ownerId" example:"7323488942953598976" doc:"Owner User ID"`
 	Owner              TripUser            `json:"owner"`
-	Status             TripStatus          `json:"status"`
-	VisibilityLevel    TripVisibilityLevel `json:"visibilityLevel"`
-	StartAt            time.Time           `json:"startAt"`
-	EndAt              time.Time           `json:"endAt"`
+	Status             TripStatus          `json:"status" example:"draft" doc:"Status of the trip"`
+	VisibilityLevel    TripVisibilityLevel `json:"visibilityLevel" example:"friends" doc:"Visibility level of the trip"`
+	StartAt            time.Time           `json:"startAt" example:"2023-05-01T00:00:00Z" doc:"Start datetime of the trip"`
+	EndAt              time.Time           `json:"endAt" example:"2023-05-01T00:00:00Z" doc:"End datetime of the trip"`
 	Days               []TripDay           `json:"days"`
 	Participants       []TripUser          `json:"participants"`
 	RequestedAmenities []Amenity           `json:"requestedAmenities"`
 	Comments           []TripComment       `json:"comments"`
-	CreatedAt          time.Time           `json:"createdAt"`
-	UpdatedAt          time.Time           `json:"updatedAt"`
+	CreatedAt          time.Time           `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of trip"`
+	UpdatedAt          time.Time           `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"Updated at time of trip"`
 }
 
 type TripUser struct {
-	ID           string `json:"id"`
-	FullName     string `json:"fullName"`
-	Username     string `json:"username"`
-	ProfileImage string `json:"profileImage"`
+	ID           string `json:"id" example:"7323488942953598976" doc:"User ID"`
+	FullName     string `json:"fullName" example:"John Doe" doc:"User full name"`
+	Username     string `json:"username" example:"johndoe" doc:"Username"`
+	ProfileImage string `json:"profileImage" example:"http://example.com/image.png" doc:"Profile image URL of the user"`
 }
 
 type TripStatus string
@@ -49,32 +49,32 @@ const (
 )
 
 type TripInvite struct {
-	ID        string    `json:"id"`
+	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of invite"`
 	From      TripUser  `json:"from"`
 	To        TripUser  `json:"to"`
-	SentAt    time.Time `json:"sentAt"`
-	ExpiresAt time.Time `json:"expiresAt"`
-	Role      TripRole  `json:"role"`
+	SentAt    time.Time `json:"sentAt" example:"2023-05-01T00:00:00Z" doc:"Sent at time of invite"`
+	ExpiresAt time.Time `json:"expiresAt" example:"2023-05-01T00:00:00Z" doc:"Expires at time of invite"`
+	Role      TripRole  `json:"role" example:"participant" doc:"Role of invite"`
 }
 
 type TripComment struct {
-	ID        string    `json:"id"`
+	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of comment"`
 	From      TripUser  `json:"from"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"createdAt"`
+	Content   string    `json:"content" example:"This is a comment" doc:"Content of comment"`
+	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of the comment"`
 }
 
 type TripDay struct {
-	TripID      string         `json:"tripId"`
-	DayNo       int32          `json:"dayNo"`
-	Description string         `json:"description"`
+	TripID      string         `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
+	DayNo       int32          `json:"dayNo" example:"3" doc:"Day number"`
+	Description string         `json:"description" example:"Lorem ipsum" doc:"Description of the day"`
 	Locations   []TripLocation `json:"locations"`
 }
 
 type TripLocation struct {
-	TripID string `json:"tripId"`
-	DayNo  int32  `json:"dayNo"`
-	PoiID  string `json:"poiId"`
+	TripID string `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
+	DayNo  int32  `json:"dayNo" example:"3" doc:"Day number"`
+	PoiID  string `json:"poiId" example:"7323488942953598976" doc:"Point of Interest ID"`
 	Poi    Poi    `json:"poi"`
 }
 
