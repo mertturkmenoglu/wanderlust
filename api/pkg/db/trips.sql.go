@@ -11,6 +11,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BatchCreateTripsParams struct {
+	ID              string
+	OwnerID         string
+	Status          string
+	VisibilityLevel string
+	StartAt         pgtype.Timestamptz
+	EndAt           pgtype.Timestamptz
+}
+
 const createTrip = `-- name: CreateTrip :one
 INSERT INTO trips (
   id,
@@ -79,4 +88,129 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getTripsByIdsPopulated = `-- name: GetTripsByIdsPopulated :many
+SELECT
+  trips.id, trips.owner_id, trips.status, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
+  jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  ) AS owner,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  ))
+  FROM trips_participants tp
+  JOIN profile par ON par.id = tp.user_id
+  WHERE tp.trip_id = trips.id
+  ) as participants,
+  (SELECT json_agg(to_jsonb(am.*))
+  FROM trips_amenities ta
+  JOIN amenities am ON am.id = ta.amenity_id
+  WHERE ta.trip_id = trips.id
+  ) AS amenities,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', tc.id,
+    'from', jsonb_build_object(
+      'id', profile.id,
+      'fullName', profile.full_name,
+      'username', profile.username,
+      'profileImage', profile.profile_image
+    ),
+    'content', tc.content,
+    'createdAt', tc.created_at
+  ))
+  FROM trips_comments tc
+  JOIN profile ON profile.id = tc.from_id
+  WHERE tc.trip_id = trips.id
+  ) AS comments,
+  (SELECT json_agg(to_jsonb(td.*))
+  FROM trips_days td
+  WHERE td.trip_id = trips.id
+  ) AS days,
+  (SELECT json_agg(to_jsonb(tdl.*))
+  FROM trips_days_locations tdl
+  WHERE tdl.day_id in (SELECT id FROM trips_days WHERE trip_id = trips.id)
+  ) AS locations,
+  COALESCE(json_agg(DISTINCT jsonb_build_object(
+    'poi', to_jsonb(poi.*),
+    'poiCategory', to_jsonb(cat.*),
+    'poiAddress', to_jsonb(addr.*),
+    'poiCity', to_jsonb(cities.*),
+    'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
+    'poiMedia', COALESCE(poi_media.media, '[]')
+  )) FILTER (WHERE trips_days_locations.poi_id IS NOT NULL), '[]') AS ps
+FROM trips
+LEFT JOIN users u ON u.id = trips.owner_id
+LEFT JOIN trips_days ON trips_days.trip_id = trips.id
+LEFT JOIN trips_days_locations ON trips_days_locations.day_id = trips_days.id
+LEFT JOIN pois poi ON poi.id = trips_days_locations.poi_id
+LEFT JOIN categories cat ON cat.id = poi.category_id
+LEFT JOIN addresses addr ON addr.id = poi.address_id
+LEFT JOIN cities ON cities.id = addr.city_id
+LEFT JOIN LATERAL (
+  SELECT json_agg(to_jsonb(a.*)) AS amenities
+  FROM amenities_pois pa
+  JOIN amenities a ON a.id = pa.amenity_id
+  WHERE pa.poi_id = poi.id
+) AS poi_amenities ON TRUE
+LEFT JOIN LATERAL (
+  SELECT json_agg(to_jsonb(pm.*)) AS media
+  FROM media pm
+  WHERE pm.poi_id = poi.id
+) AS poi_media ON TRUE
+WHERE trips.id = ANY($1::TEXT[])
+GROUP BY trips.id, u.id
+`
+
+type GetTripsByIdsPopulatedRow struct {
+	Trip         Trip
+	Owner        []byte
+	Participants []byte
+	Amenities    []byte
+	Comments     []byte
+	Days         []byte
+	Locations    []byte
+	Ps           interface{}
+}
+
+func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string) ([]GetTripsByIdsPopulatedRow, error) {
+	rows, err := q.db.Query(ctx, getTripsByIdsPopulated, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTripsByIdsPopulatedRow
+	for rows.Next() {
+		var i GetTripsByIdsPopulatedRow
+		if err := rows.Scan(
+			&i.Trip.ID,
+			&i.Trip.OwnerID,
+			&i.Trip.Status,
+			&i.Trip.VisibilityLevel,
+			&i.Trip.StartAt,
+			&i.Trip.EndAt,
+			&i.Trip.CreatedAt,
+			&i.Trip.UpdatedAt,
+			&i.Owner,
+			&i.Participants,
+			&i.Amenities,
+			&i.Comments,
+			&i.Days,
+			&i.Locations,
+			&i.Ps,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
