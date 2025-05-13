@@ -10,8 +10,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// Get Trip By ID
-// Get My Trips
 // Get Invites
 // Create Trip
 // Invite Participants
@@ -54,4 +52,51 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/trips/",
+			Summary:       "Get My Trips",
+			Description:   "Get all trips for the current user",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetAllTripsOutput, error) {
+			res, err := s.getAllTrips(ctx)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/trips/invites",
+			Summary:       "Get My Invites",
+			Description:   "Get all invites for the current user",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetMyTripInvitesOutput, error) {
+			res, err := s.getMyInvites(ctx)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
 }

@@ -2,6 +2,7 @@ package trips
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
@@ -15,8 +16,8 @@ type Service struct {
 	app *core.Application
 }
 
-func (s *Service) getMany(ids []string) ([]dto.Trip, error) {
-	res, err := s.app.Db.Queries.GetTripsByIdsPopulated(context.Background(), ids)
+func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
+	res, err := s.app.Db.Queries.GetTripsByIdsPopulated(ctx, ids)
 
 	if err != nil {
 		return nil, err
@@ -37,8 +38,8 @@ func (s *Service) getMany(ids []string) ([]dto.Trip, error) {
 	return trips, nil
 }
 
-func (s *Service) get(id string) (*dto.Trip, error) {
-	res, err := s.getMany([]string{id})
+func (s *Service) get(ctx context.Context, id string) (*dto.Trip, error) {
+	res, err := s.getMany(ctx, []string{id})
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -56,7 +57,7 @@ func (s *Service) get(id string) (*dto.Trip, error) {
 }
 
 func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdOutput, error) {
-	trip, err := s.get(id)
+	trip, err := s.get(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -72,6 +73,28 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 	return &dto.GetTripByIdOutput{
 		Body: dto.GetTripByIdOutputBody{
 			Trip: *trip,
+		},
+	}, nil
+}
+
+func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, error) {
+	userId := ctx.Value("userId").(string)
+
+	tripIds, err := s.app.Db.Queries.GetAllTripsIds(ctx, userId)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get trips")
+	}
+
+	trips, err := s.getMany(ctx, tripIds)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.GetAllTripsOutput{
+		Body: dto.GetAllTripsOutputBody{
+			Trips: trips,
 		},
 	}, nil
 }
@@ -92,4 +115,53 @@ func (s *Service) canRead(trip *dto.Trip, userId string) bool {
 	default:
 		return false
 	}
+}
+
+func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput, error) {
+	userId := ctx.Value("userId").(string)
+
+	dbInvites, err := s.app.Db.Queries.GetInvitesByToUserId(ctx, userId)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	invites := make([]dto.TripInvite, len(dbInvites))
+
+	for i, dbInvite := range dbInvites {
+		var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+
+		if dbInvite.TripsInvite.Role == "participant" {
+			role = dto.TRIP_ROLE_PARTICIPANT
+		} else if dbInvite.TripsInvite.Role == "editor" {
+			role = dto.TRIP_ROLE_EDITOR
+		} else {
+			return nil, huma.Error500InternalServerError("Failed to get invites")
+		}
+
+		var fromUser dto.TripUser
+
+		err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to get invites")
+		}
+
+		invites[i] = dto.TripInvite{
+			ID:   dbInvite.TripsInvite.ID,
+			From: fromUser,
+			To: dto.TripUser{
+				ID: dbInvite.TripsInvite.ToID,
+			},
+			SentAt:    dbInvite.TripsInvite.SentAt.Time,
+			ExpiresAt: dbInvite.TripsInvite.ExpiresAt.Time,
+			Role:      role,
+		}
+	}
+
+	return &dto.GetMyTripInvitesOutput{
+		Body: dto.GetMyTripInvitesOutputBody{
+			Invites: make([]dto.Trip, len(dbInvites)),
+		},
+	}, nil
 }
