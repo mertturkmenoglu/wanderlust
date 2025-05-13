@@ -13,6 +13,7 @@ This document describes the project structure of the Wanderlust API.
 │   ...
 │   ...
 │
+├── assets (Static assets)
 ├── cmd (Runnables)
 │   ├── core (Core Web API Server)
 │   ├── fake (Fake Data Generator)
