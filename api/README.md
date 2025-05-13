@@ -10,7 +10,12 @@
 - Go Air: https://github.com/air-verse/air
 - Infisical: https://infisical.com/docs/documentation/getting-started/introduction
 
-## Steps
+## Setup
+
+- Run `just setup` to setup the project.
+- Run `just watch` to start the server.
+
+or you can follow these steps for manual setup:
 
 - Install dependencies: `go mod download`
 - Setup environment variables:
