@@ -126,6 +126,7 @@ func RunMigrations() {
 
 func ScalarDocs(e *echo.Echo) {
 	if cfg.Get(cfg.API_DOCS_TYPE) == "scalar" {
+		e.Static("/", "assets")
 		e.GET("/docs", func(c echo.Context) error {
 			c.Response().Header().Set("Content-Type", "text/html")
 			return c.String(http.StatusOK, API_DOCS_SCALAR_HTML)
