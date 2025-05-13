@@ -1,3 +1,4 @@
+-- Active: 1747132253857@@127.0.0.1@5432@wanderlust@public
 CREATE TABLE IF NOT EXISTS trips (
   id TEXT PRIMARY KEY,
   owner_id TEXT NOT NULL,
@@ -58,30 +59,26 @@ CREATE INDEX IF NOT EXISTS idx_trips_comments_trip ON trips_comments(trip_id);
 CREATE INDEX IF NOT EXISTS idx_trips_comments_from ON trips_comments(from_id);
 
 CREATE TABLE IF NOT EXISTS trips_days (
-  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   trip_id TEXT NOT NULL,
-  date TIMESTAMPTZ NOT NULL,
+  day_no INT NOT NULL,
   description VARCHAR(255) NOT NULL,
+  PRIMARY KEY (trip_id, day_no),
   CONSTRAINT
     fk_trips_days_trip FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_trips_days_trip ON trips_days(trip_id);
-
 CREATE TABLE IF NOT EXISTS trips_days_locations (
-  day_id INT NOT NULL,
+  trip_id TEXT NOT NULL,
+  day_no INT NOT NULL,
   poi_id TEXT NOT NULL,
+  PRIMARY KEY (trip_id, day_no, poi_id),
   CONSTRAINT
-    fk_trips_days_locations_day FOREIGN KEY (day_id) REFERENCES trips_days(id) ON DELETE CASCADE,
+    fk_trips_days_locations_days FOREIGN KEY (trip_id, day_no) REFERENCES trips_days(trip_id, day_no) ON DELETE CASCADE,
   CONSTRAINT
     fk_trips_days_locations_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_trips_days_locations_day ON trips_days_locations(day_id);
-
 CREATE INDEX IF NOT EXISTS idx_trips_days_locations_poi ON trips_days_locations(poi_id);
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_trips_days_locations_unique ON trips_days_locations(day_id, poi_id);
 
 CREATE TABLE IF NOT EXISTS trips_amenities (
   trip_id TEXT NOT NULL,

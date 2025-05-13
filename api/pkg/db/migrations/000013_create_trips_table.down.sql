@@ -14,15 +14,9 @@ DROP INDEX IF EXISTS idx_trips_amenities_trip;
 
 DROP TABLE IF EXISTS trips_amenities;
 
-DROP INDEX IF EXISTS idx_trips_days_locations_unique;
-
 DROP INDEX IF EXISTS idx_trips_days_locations_poi;
 
-DROP INDEX IF EXISTS idx_trips_days_locations_day;
-
 DROP TABLE IF EXISTS trips_days_locations;
-
-DROP INDEX IF EXISTS idx_trips_days_trip;
 
 DROP TABLE IF EXISTS trips_days;
 
