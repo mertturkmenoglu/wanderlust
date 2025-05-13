@@ -31,12 +31,10 @@ It's open source and free.
 ## Installation and Running
 
 - Check each subproject's README file.
-- After you complete setup of every project, you can download concurrently:
-  - `pnpm add -g concurrently`
-- Then, make the `run.sh` to be runnable:
-  - `chmod +x ./run.sh`
-- Then, you can run `run.sh` to run all projects at the same time:
-  - `./run.sh`
+- You can run them separately (preferred) or you can use `run.sh` to run all projects at the same time:
+  - First, download concurrently: `pnpm add -g concurrently`
+  - Then, make the `run.sh` to be runnable: `chmod +x ./run.sh`
+  - Then, you can run `run.sh` to run all projects at the same time: `./run.sh`
 
 ## License
 
