@@ -36,8 +36,5 @@ export function usePasswordResetMutation() {
         window.location.href = '/sign-in';
       }, redirectTimeout);
     },
-    onError: () => {
-      toast.error('Something went wrong. Cannot reset your password.');
-    },
   });
 }

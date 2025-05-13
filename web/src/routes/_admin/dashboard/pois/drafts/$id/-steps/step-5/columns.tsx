@@ -119,9 +119,6 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
         await invalidator.invalidate();
         toast.success('Image updated');
       },
-      onError: (err) => {
-        toast.error(err.title ?? 'Something went wrong');
-      },
     },
     qc,
   );
@@ -133,9 +130,6 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
       onSuccess: async () => {
         toast.success('Image deleted');
         window.location.reload();
-      },
-      onError: (err) => {
-        toast.error(err.title ?? 'Something went wrong');
       },
     },
     qc,

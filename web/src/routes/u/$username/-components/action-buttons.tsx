@@ -26,9 +26,6 @@ export default function ActionButtons({
       await invalidator.invalidate();
       toast.success(isFollowing ? 'Unfollowed' : 'Followed');
     },
-    onError: (err) => {
-      toast.error(err.title ?? 'Something went wrong');
-    },
   });
 
   async function handleFollowClick() {

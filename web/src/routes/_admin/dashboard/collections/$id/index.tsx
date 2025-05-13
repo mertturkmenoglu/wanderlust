@@ -39,9 +39,6 @@ function RouteComponent() {
         to: '/dashboard/collections',
       });
     },
-    onError: async (e) => {
-      toast.error(e.title ?? 'Something went wrong');
-    },
   });
 
   const img = collection.items[0]?.poi.media[0] ?? { url: '', alt: '' };

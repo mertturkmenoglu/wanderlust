@@ -43,9 +43,6 @@ function RouteComponent() {
       toast.success('Category updated');
       navigate({ to: `/dashboard/categories/${id}`, reloadDocument: true });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

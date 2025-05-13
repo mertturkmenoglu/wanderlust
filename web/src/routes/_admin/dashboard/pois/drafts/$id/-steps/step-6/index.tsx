@@ -15,9 +15,6 @@ export default function Step6() {
       await navigate({ to: '/dashboard/pois/drafts' });
       window.location.reload();
     },
-    onError: (err) => {
-      toast.error(err.title ?? 'Something went wrong');
-    },
   });
 
   return (

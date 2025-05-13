@@ -45,9 +45,6 @@ function RouteComponent() {
       toast.success('Collection items updated');
       setIsEditMode(false);
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   // useEffect(() => {

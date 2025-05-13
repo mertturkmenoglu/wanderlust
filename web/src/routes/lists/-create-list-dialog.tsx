@@ -36,9 +36,6 @@ export default function CreateListDialog() {
         },
       });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

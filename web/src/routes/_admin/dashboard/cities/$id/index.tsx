@@ -37,9 +37,6 @@ function RouteComponent() {
       await navigate({ to: '/dashboard/cities' });
       toast.success('City deleted');
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

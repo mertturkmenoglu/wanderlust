@@ -36,9 +36,6 @@ function RouteComponent() {
       toast.success('Category created');
       navigate({ to: '/dashboard/categories' });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

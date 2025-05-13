@@ -29,8 +29,5 @@ export function useUpdateDraftMutation(draft: Draft, step: TStep) {
         },
       });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 }

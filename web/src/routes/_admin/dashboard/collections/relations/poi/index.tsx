@@ -40,9 +40,6 @@ function RouteComponent() {
         await invalidator.invalidate();
         toast.success('Relation added');
       },
-      onError: (e) => {
-        toast.error(e.title ?? 'Something went wrong');
-      },
     },
   );
 
@@ -121,9 +118,6 @@ function Content() {
   //     onSuccess: async () => {
   //       toast.success('Relation removed');
   //       await invalidator.invalidate();
-  //     },
-  //     onError: (e) => {
-  //       toast.error(e.title ?? 'Something went wrong');
   //     },
   //   },
   // );

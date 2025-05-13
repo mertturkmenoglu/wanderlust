@@ -34,9 +34,6 @@ export default function DeleteItemDialog({
         toast.success('Item removed from collection');
         await invalidator.invalidate();
       },
-      onError: (e) => {
-        toast.error(e.title ?? 'Something went wrong');
-      },
     },
   );
 

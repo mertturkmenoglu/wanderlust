@@ -37,8 +37,5 @@ export function useLoginMutation() {
       });
       window.location.reload();
     },
-    onError: async (e) => {
-      toast.error(e.message);
-    },
   });
 }

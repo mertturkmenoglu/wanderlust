@@ -32,9 +32,6 @@ function RouteComponent() {
       await invalidator.invalidate();
       await navigate({ to: '/dashboard/amenities' });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   if (!amenity) {

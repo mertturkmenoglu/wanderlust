@@ -72,9 +72,6 @@ function RouteComponent() {
       });
       toast.success('List updated');
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

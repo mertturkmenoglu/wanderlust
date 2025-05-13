@@ -49,18 +49,12 @@ export default function BookmarkButton() {
       setBooked((prev) => !prev);
       toast.success('Bookmark added');
     },
-    onError: () => {
-      toast.error('Failed to add bookmark');
-    },
   });
 
   const deleteMutation = api.useMutation('delete', '/api/v2/bookmarks/{id}', {
     onSuccess: () => {
       setBooked((prev) => !prev);
       toast.success('Bookmark removed');
-    },
-    onError: () => {
-      toast.error('Failed to remove bookmark');
     },
   });
 

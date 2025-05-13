@@ -82,9 +82,6 @@ function RouteComponent() {
 
       toast.success('City updated');
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

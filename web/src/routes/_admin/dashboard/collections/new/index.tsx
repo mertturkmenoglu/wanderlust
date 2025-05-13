@@ -39,9 +39,6 @@ function RouteComponent() {
         to: '/dashboard/collections',
       });
     },
-    onError: async (e) => {
-      toast.error(e.title ?? 'Something went wrong');
-    },
   });
 
   return (

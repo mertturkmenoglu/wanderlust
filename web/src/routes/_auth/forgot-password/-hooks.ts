@@ -31,8 +31,5 @@ export function useForgotPasswordMutation() {
       window.sessionStorage.setItem('forgot-password-email', variables.email);
       navigate({ to: '/forgot-password/reset' });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 }

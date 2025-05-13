@@ -62,9 +62,6 @@ function RouteComponent() {
         to: '/dashboard/pois/drafts',
       });
     },
-    onError: (err) => {
-      toast.error(err.title ?? 'Something went wrong');
-    },
   });
 
   return (

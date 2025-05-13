@@ -46,9 +46,6 @@ function RouteComponent() {
       toast.success('Amenity updated');
       navigate({ to: `/dashboard/amenities/${id}` });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

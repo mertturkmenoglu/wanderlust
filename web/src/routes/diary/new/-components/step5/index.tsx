@@ -50,9 +50,6 @@ export default function Step5() {
     onSuccess: () => {
       // uploadMutation.mutate({ entryId: res.data.id });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   const uploadMutation = useMutation({

@@ -60,9 +60,6 @@ function RouteComponent() {
         },
       });
     },
-    onError: (e) => {
-      toast.error(e.title ?? 'Something went wrong');
-    },
   });
 
   const onSubmit: SubmitHandler<FormInput> = async (data) => {

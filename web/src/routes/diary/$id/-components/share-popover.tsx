@@ -25,9 +25,6 @@ export default function SharePopover({ id, share, friendsCount }: Props) {
       await invalidator.invalidate();
       toast.success('Share settings updated');
     },
-    onError: (e) => {
-      toast.error(e.title ?? 'Something went wrong');
-    },
   });
 
   return (

@@ -69,9 +69,6 @@ function RouteComponent() {
         to: '/lists',
       });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

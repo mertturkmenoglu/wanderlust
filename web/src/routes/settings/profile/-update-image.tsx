@@ -35,9 +35,6 @@ export default function UpdateImage({
       toast.success('Image updated');
       window.location.reload();
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

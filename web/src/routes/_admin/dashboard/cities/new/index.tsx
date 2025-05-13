@@ -50,9 +50,6 @@ function RouteComponent() {
       toast.success('City created');
       navigate({ to: '/dashboard/cities', reloadDocument: true });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

@@ -50,9 +50,6 @@ export default function AddItemDialog({ collectionId, open, setOpen }: Props) {
       await invalidator.invalidate();
       setOpen(false);
     },
-    onError: (e) => {
-      toast.error(e.title ?? 'Something went wrong');
-    },
   });
 
   useEffect(() => {

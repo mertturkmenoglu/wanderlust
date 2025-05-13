@@ -54,9 +54,6 @@ function RouteComponent() {
     onSuccess: () => {
       window.location.reload();
     },
-    onError: (err) => {
-      toast.error(err.title ?? 'Failed to update profile');
-    },
   });
 
   return (

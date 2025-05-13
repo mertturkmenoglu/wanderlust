@@ -28,8 +28,5 @@ export function useSignUpMutation() {
     onSuccess: () => {
       window.location.href = '/sign-in';
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 }

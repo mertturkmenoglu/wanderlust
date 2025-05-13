@@ -27,9 +27,6 @@ export function Menu({ review }: Props) {
       toast.success('Review deleted');
       window.location.reload();
     },
-    onError: (err) => {
-      toast.error(err.title ?? 'Something went wrong');
-    },
   });
 
   return (

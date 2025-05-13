@@ -39,9 +39,6 @@ function RouteComponent() {
         },
       });
     },
-    onError: () => {
-      toast.error('Something went wrong');
-    },
   });
 
   return (

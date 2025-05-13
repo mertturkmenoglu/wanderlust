@@ -20,9 +20,6 @@ function RouteComponent() {
       onSuccess: () => {
         toast.success('User is now verified');
       },
-      onError: (err) => {
-        toast.error(err.title ?? 'Something went wrong');
-      },
     },
   );
 

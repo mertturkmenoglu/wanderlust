@@ -24,18 +24,12 @@ export default function FavoriteButton() {
       setFav((prev) => !prev);
       toast.success('Added to favorites');
     },
-    onError: () => {
-      toast.error('Failed to add to favorites');
-    },
   });
 
   const deleteMutation = api.useMutation('delete', '/api/v2/favorites/{id}', {
     onSuccess: () => {
       setFav((prev) => !prev);
       toast.success('Removed from favorites');
-    },
-    onError: () => {
-      toast.error('Failed to remove from favorites');
     },
   });
 

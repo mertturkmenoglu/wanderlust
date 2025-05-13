@@ -41,8 +41,5 @@ export function useAddToList() {
     onSuccess: () => {
       toast.success('Added to the list');
     },
-    onError: () => {
-      toast.error('Failed to add to the list');
-    },
   });
 }
