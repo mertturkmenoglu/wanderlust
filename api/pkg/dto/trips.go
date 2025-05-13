@@ -44,7 +44,6 @@ const (
 type TripRole string
 
 const (
-	TRIP_ROLE_OWNER       TripRole = "owner"
 	TRIP_ROLE_PARTICIPANT TripRole = "participant"
 	TRIP_ROLE_EDITOR      TripRole = "editor"
 )
@@ -89,4 +88,20 @@ type GetTripByIdOutput struct {
 
 type GetTripByIdOutputBody struct {
 	Trip Trip `json:"trip"`
+}
+
+type GetAllTripsOutput struct {
+	Body GetAllTripsOutputBody
+}
+
+type GetAllTripsOutputBody struct {
+	Trips []Trip `json:"trips"`
+}
+
+type GetMyTripInvitesOutput struct {
+	Body GetMyTripInvitesOutputBody
+}
+
+type GetMyTripInvitesOutputBody struct {
+	Invites []Trip `json:"invites"`
 }
