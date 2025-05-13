@@ -36,3 +36,9 @@ This document describes the project structure of the Wanderlust API.
 │   └── utils (Utility functions)
 └── templates (Email templates)
 ```
+
+## Notes
+
+- Most important directories are `app` and `pkg`.
+- If it's related to routing (or you can call it handlers, controllers, etc.), it goes to `app`.
+- If it's meant to be used by other packages and by application code (`app`), it goes to `pkg`.
