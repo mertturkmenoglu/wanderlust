@@ -45,10 +45,10 @@ SELECT
     'profileImage', u.profile_image
   ) AS owner,
   (SELECT json_agg(DISTINCT jsonb_build_object(
-    'id', u.id,
-    'fullName', u.full_name,
-    'username', u.username,
-    'profileImage', u.profile_image
+    'id', par.id,
+    'fullName', par.full_name,
+    'username', par.username,
+    'profileImage', par.profile_image
   ))
   FROM trips_participants tp
   JOIN profile par ON par.id = tp.user_id
@@ -74,13 +74,21 @@ SELECT
   JOIN profile ON profile.id = tc.from_id
   WHERE tc.trip_id = trips.id
   ) AS comments,
-  (SELECT json_agg(to_jsonb(td.*))
+  (SELECT json_agg(jsonb_build_object(
+    'tripId', td.trip_id,
+    'dayNo', td.day_no,
+    'description', td.description
+  ))
   FROM trips_days td
   WHERE td.trip_id = trips.id
   ) AS days,
-  (SELECT json_agg(to_jsonb(tdl.*))
+  (SELECT json_agg(jsonb_build_object(
+    'tripId', tdl.trip_id,
+    'dayNo', tdl.day_no,
+    'poiId', tdl.poi_id
+  ))
   FROM trips_days_locations tdl
-  WHERE tdl.day_id in (SELECT id FROM trips_days WHERE trip_id = trips.id)
+  WHERE tdl.trip_id = trips.id
   ) AS locations,
   COALESCE(json_agg(DISTINCT jsonb_build_object(
     'poi', to_jsonb(poi.*),
@@ -93,7 +101,7 @@ SELECT
 FROM trips
 LEFT JOIN users u ON u.id = trips.owner_id
 LEFT JOIN trips_days ON trips_days.trip_id = trips.id
-LEFT JOIN trips_days_locations ON trips_days_locations.day_id = trips_days.id
+LEFT JOIN trips_days_locations ON trips_days_locations.trip_id = trips.id AND trips_days_locations.day_no = trips_days.day_no
 LEFT JOIN pois poi ON poi.id = trips_days_locations.poi_id
 LEFT JOIN categories cat ON cat.id = poi.category_id
 LEFT JOIN addresses addr ON addr.id = poi.address_id
