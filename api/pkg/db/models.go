@@ -242,15 +242,15 @@ type TripsComment struct {
 }
 
 type TripsDay struct {
-	ID          int32
 	TripID      string
-	Date        pgtype.Timestamptz
+	DayNo       int32
 	Description string
 }
 
 type TripsDaysLocation struct {
-	DayID int32
-	PoiID string
+	TripID string
+	DayNo  int32
+	PoiID  string
 }
 
 type TripsInvite struct {
