@@ -73,11 +73,10 @@ type TripDay struct {
 }
 
 type TripLocation struct {
-	TripID      string `json:"tripId"`
-	DayNo       int32  `json:"dayNo"`
-	Description string `json:"description"`
-	PoiID       string `json:"poiId"`
-	Poi         Poi    `json:"poi"`
+	TripID string `json:"tripId"`
+	DayNo  int32  `json:"dayNo"`
+	PoiID  string `json:"poiId"`
+	Poi    Poi    `json:"poi"`
 }
 
 type GetTripByIdInput struct {
