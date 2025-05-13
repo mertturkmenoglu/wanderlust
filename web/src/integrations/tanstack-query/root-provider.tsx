@@ -1,3 +1,4 @@
+import { isApiError } from '@/lib/api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -7,13 +8,32 @@ const queryClient = new QueryClient({
       gcTime: Infinity,
       staleTime: Infinity,
       refetchOnWindowFocus: false,
+      retry: (count, error) => {
+        if (isApiError(error)) {
+          if (
+            error.status === 401 ||
+            error.status === 403 ||
+            error.status === 404
+          ) {
+            return false;
+          }
+
+          return count < 3;
+        }
+
+        return count < 3;
+      },
     },
     mutations: {
       onError: (err) => {
-        toast.error((err as any).title ?? 'Something went wrong', {
-          description: (err as any).detail ?? 'Unknown error',
-          descriptionClassName: 'capitalize',
-        });
+        if (isApiError(err)) {
+          toast.error(err.title ?? 'Something went wrong', {
+            description: err.detail ?? 'Unknown error',
+            descriptionClassName: 'capitalize',
+          });
+        } else {
+          toast.error('Something went wrong');
+        }
       },
     },
   },
