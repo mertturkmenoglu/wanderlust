@@ -119,3 +119,22 @@ LEFT JOIN LATERAL (
 ) AS poi_media ON TRUE
 WHERE trips.id = ANY($1::TEXT[])
 GROUP BY trips.id, u.id;
+
+-- name: GetAllTripsIds :many
+SELECT DISTINCT trips.id
+FROM trips
+LEFT JOIN trips_participants tp ON tp.trip_id = trips.id
+WHERE trips.owner_id = $1 OR tp.user_id = $1;
+
+-- name: GetInvitesByToUserId :many
+SELECT
+  sqlc.embed(invites),
+  jsonb_build_object(
+    'id', p.id,
+    'fullName', p.full_name,
+    'username', p.username,
+    'profileImage', p.profile_image
+  ) AS fromUser
+FROM trips_invites invites
+JOIN profile p ON p.id = invites.from_id
+WHERE invites.to_id = $1;

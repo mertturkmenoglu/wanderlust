@@ -70,6 +70,81 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 	return i, err
 }
 
+const getAllTripsIds = `-- name: GetAllTripsIds :many
+SELECT DISTINCT trips.id
+FROM trips
+LEFT JOIN trips_participants tp ON tp.trip_id = trips.id
+WHERE trips.owner_id = $1 OR tp.user_id = $1
+`
+
+func (q *Queries) GetAllTripsIds(ctx context.Context, ownerID string) ([]string, error) {
+	rows, err := q.db.Query(ctx, getAllTripsIds, ownerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getInvitesByToUserId = `-- name: GetInvitesByToUserId :many
+SELECT
+  invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.role,
+  jsonb_build_object(
+    'id', p.id,
+    'fullName', p.full_name,
+    'username', p.username,
+    'profileImage', p.profile_image
+  ) AS fromUser
+FROM trips_invites invites
+JOIN profile p ON p.id = invites.from_id
+WHERE invites.to_id = $1
+`
+
+type GetInvitesByToUserIdRow struct {
+	TripsInvite TripsInvite
+	Fromuser    []byte
+}
+
+func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetInvitesByToUserIdRow, error) {
+	rows, err := q.db.Query(ctx, getInvitesByToUserId, toID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetInvitesByToUserIdRow
+	for rows.Next() {
+		var i GetInvitesByToUserIdRow
+		if err := rows.Scan(
+			&i.TripsInvite.ID,
+			&i.TripsInvite.TripID,
+			&i.TripsInvite.FromID,
+			&i.TripsInvite.ToID,
+			&i.TripsInvite.SentAt,
+			&i.TripsInvite.ExpiresAt,
+			&i.TripsInvite.Role,
+			&i.Fromuser,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTripById = `-- name: GetTripById :one
 SELECT id, owner_id, status, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
 `
