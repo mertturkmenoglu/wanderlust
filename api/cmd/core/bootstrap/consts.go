@@ -17,17 +17,27 @@ var (
 	API_DOCS_SCALAR_HTML = `<!doctype html>
 		<html>
 		<head>
-			<title>API Reference</title>
+			<title>Wanderlust API Docs</title>
 			<meta charset="utf-8" />
 			<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1" />
+    		<link rel="icon" href="favicon.ico" />
 		</head>
 		<body>
-			<script
-			id="api-reference"
-			data-url="/openapi.json"></script>
+			<div id="app"></div>
 			<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+			<script>
+				Scalar.createApiReference('#app', {
+					url: '/openapi.json',
+					persistAuth: true,
+					hideClientButton: true,
+					authentication: {
+						preferredSecurityScheme: 'BearerJWT',
+					},
+					favicon: '/favicon.ico',
+				})
+			</script>
 		</body>
 		</html>`
 )
