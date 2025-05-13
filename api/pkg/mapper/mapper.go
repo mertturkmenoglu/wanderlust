@@ -892,3 +892,92 @@ func ToCollection(dbCollection db.GetCollectionsByIdsPopulatedRow) (dto.Collecti
 		Items:       items,
 	}, nil
 }
+
+func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
+	var status dto.TripStatus = dto.TRIP_STATUS_DRAFT
+
+	if dbTrip.Trip.Status == "active" {
+		status = dto.TRIP_STATUS_ACTIVE
+	} else if dbTrip.Trip.Status == "canceled" {
+		status = dto.TRIP_STATUS_CANCELED
+	} else if dbTrip.Trip.Status == "draft" {
+		status = dto.TRIP_STATUS_DRAFT
+	} else {
+		return dto.Trip{}, fmt.Errorf("invalid status: %s", dbTrip.Trip.Status)
+	}
+
+	var visibility dto.TripVisibilityLevel = dto.TRIP_VISIBILITY_LEVEL_PRIVATE
+
+	if dbTrip.Trip.VisibilityLevel == "public" {
+		visibility = dto.TRIP_VISIBILITY_LEVEL_PUBLIC
+	} else if dbTrip.Trip.VisibilityLevel == "friends" {
+		visibility = dto.TRIP_VISIBILITY_LEVEL_FRIENDS
+	} else if dbTrip.Trip.VisibilityLevel == "private" {
+		visibility = dto.TRIP_VISIBILITY_LEVEL_PRIVATE
+	} else {
+		return dto.Trip{}, fmt.Errorf("invalid visibility level: %s", dbTrip.Trip.VisibilityLevel)
+	}
+
+	var owner dto.TripUser
+
+	if len(dbTrip.Owner) == 0 {
+		return dto.Trip{}, fmt.Errorf("failed to get owner")
+	}
+
+	err := json.Unmarshal(dbTrip.Owner, &owner)
+
+	if err != nil {
+		return dto.Trip{}, fmt.Errorf("failed to unmarshal owner: %v", err)
+	}
+
+	var amenities []dto.Amenity
+
+	if len(dbTrip.Amenities) != 0 {
+		err := json.Unmarshal(dbTrip.Amenities, &amenities)
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to unmarshal amenities: %v", err)
+		}
+	} else {
+		amenities = make([]dto.Amenity, 0)
+	}
+
+	var participants []dto.TripUser
+
+	if len(dbTrip.Participants) != 0 {
+		err := json.Unmarshal(dbTrip.Participants, &participants)
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to unmarshal participants: %v", err)
+		}
+	} else {
+		participants = make([]dto.TripUser, 0)
+	}
+
+	var comments []dto.TripComment
+
+	if len(dbTrip.Comments) != 0 {
+		err := json.Unmarshal(dbTrip.Comments, &comments)
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to unmarshal comments: %v", err)
+		}
+	} else {
+		comments = make([]dto.TripComment, 0)
+	}
+
+	return dto.Trip{
+		ID:                 dbTrip.Trip.ID,
+		OwnerID:            dbTrip.Trip.OwnerID,
+		Status:             status,
+		VisibilityLevel:    visibility,
+		StartAt:            dbTrip.Trip.StartAt.Time,
+		EndAt:              dbTrip.Trip.EndAt.Time,
+		CreatedAt:          dbTrip.Trip.CreatedAt.Time,
+		UpdatedAt:          dbTrip.Trip.UpdatedAt.Time,
+		Owner:              owner,
+		RequestedAmenities: amenities,
+		Participants:       participants,
+		Comments:           comments,
+	}, nil
+}
