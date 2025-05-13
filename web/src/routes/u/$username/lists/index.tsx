@@ -18,12 +18,18 @@ function RouteComponent() {
         path: {
           username,
         },
+        query: {
+          pageSize: 10,
+        },
       },
     },
     {
       initialPageParam: 1,
       getNextPageParam: (lastPage) =>
         lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
+      pageParamName: 'page',
+      retry: false,
+      enabled: username !== '',
     },
   );
 
