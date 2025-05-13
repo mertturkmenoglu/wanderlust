@@ -44,8 +44,11 @@ function RouteComponent() {
             <h3 className="text-2xl font-bold">{group[0]}</h3>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {group[1].map((city) => (
-                <a
-                  href={`/cities/${city.id}/${city.name}`}
+                <Link
+                  to="/cities/$"
+                  params={{
+                    _splat: `${city.id}/${city.name}`,
+                  }}
                   key={city.id}
                   className="rounded-md"
                 >
@@ -57,7 +60,7 @@ function RouteComponent() {
                   <div className="mt-2 text-xl font-bold lg:text-base">
                     {city.name}
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           </div>

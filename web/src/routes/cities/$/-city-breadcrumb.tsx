@@ -6,6 +6,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { Link } from '@tanstack/react-router';
 
 type Props = {
   cityName: string;
@@ -16,11 +17,15 @@ export default function CityBreadcrumb({ cityName }: Props) {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Discover</BreadcrumbLink>
+          <BreadcrumbLink asChild>
+            <Link to="/">Discover</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/cities/list">Cities</BreadcrumbLink>
+          <BreadcrumbLink asChild>
+            <Link to="/cities/list">Cities</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
