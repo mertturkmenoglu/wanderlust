@@ -966,6 +966,235 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		comments = make([]dto.TripComment, 0)
 	}
 
+	var tripDays []dto.TripDay
+
+	if len(dbTrip.Days) != 0 {
+		err := json.Unmarshal(dbTrip.Days, &tripDays)
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to unmarshal trip days: %v", err)
+		}
+	} else {
+		tripDays = make([]dto.TripDay, 0)
+	}
+
+	type Location struct {
+		DayNo  int32  `json:"dayNo"`
+		PoiID  string `json:"poiId"`
+		TripID string `json:"tripId"`
+	}
+
+	var locations []Location
+
+	if len(dbTrip.Locations) != 0 {
+		err := json.Unmarshal(dbTrip.Locations, &locations)
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to unmarshal locations: %v", err)
+		}
+	} else {
+		locations = make([]Location, 0)
+	}
+
+	ps, ok := dbTrip.Ps.([]any)
+
+	if !ok {
+		return dto.Trip{}, fmt.Errorf("failed to convert ps to []any")
+	}
+
+	pois := make([]dto.Poi, 0)
+
+	for _, p := range ps {
+		cast := p.(map[string]any)
+
+		poi := cast["poi"].(map[string]any)
+		openTimes := poi["open_times"].(map[string]any)
+
+		openHours := make(map[string]dto.OpenHours)
+
+		for k, v := range openTimes {
+			openCast := v.(map[string]any)
+
+			openHours[k] = dto.OpenHours{
+				OpensAt:  openCast["opensAt"].(string),
+				ClosesAt: openCast["closesAt"].(string),
+			}
+		}
+
+		var poiPhone, poiWebsite string
+
+		if poi["phone"] != nil {
+			poiPhone = poi["phone"].(string)
+		}
+
+		if poi["website"] != nil {
+			poiWebsite = poi["website"].(string)
+		}
+
+		updatedAt, err := time.Parse(time.RFC3339, poi["updated_at"].(string))
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to parse time: %w", err)
+		}
+
+		createdAt, err := time.Parse(time.RFC3339, poi["created_at"].(string))
+
+		if err != nil {
+			return dto.Trip{}, fmt.Errorf("failed to parse time: %w", err)
+		}
+
+		poiCategory := cast["poiCategory"].(map[string]any)
+		poiAddress := cast["poiAddress"].(map[string]any)
+		poiCity := cast["poiCity"].(map[string]any)
+		poiAmenities := cast["poiAmenities"].([]any)
+		poiMedia := cast["poiMedia"].([]any)
+
+		var line2, postalCode string
+		var imgLicense, imgLicenseLink, imgAttr, imgAttrLink string
+
+		if poiAddress["line2"] != nil {
+			line2 = poiAddress["line2"].(string)
+		}
+
+		if poiAddress["postal_code"] != nil {
+			postalCode = poiAddress["postal_code"].(string)
+		}
+
+		if poiCity["img_license"] != nil {
+			imgLicense = poiCity["img_license"].(string)
+		}
+
+		if poiCity["img_license_link"] != nil {
+			imgLicenseLink = poiCity["img_license_link"].(string)
+		}
+
+		if poiCity["img_attr"] != nil {
+			imgAttr = poiCity["img_attr"].(string)
+		}
+
+		if poiCity["img_attr_link"] != nil {
+			imgAttrLink = poiCity["img_attr_link"].(string)
+		}
+
+		amenities := make([]dto.Amenity, len(poiAmenities))
+
+		for i, a := range poiAmenities {
+			cast := a.(map[string]any)
+			amenities[i] = dto.Amenity{
+				ID:   int32(cast["id"].(float64)),
+				Name: cast["name"].(string),
+			}
+		}
+
+		poiMedias := make([]dto.Media, len(poiMedia))
+
+		for i, m := range poiMedia {
+			cast := m.(map[string]any)
+			var cap string
+
+			if cast["caption"] != nil {
+				cap = cast["caption"].(string)
+			}
+
+			createdAt, err := time.Parse(time.RFC3339, cast["created_at"].(string))
+
+			if err != nil {
+				return dto.Trip{}, fmt.Errorf("failed to parse time: %w", err)
+			}
+
+			poiMedias[i] = dto.Media{
+				ID:         int64(cast["id"].(float64)),
+				PoiID:      cast["poi_id"].(string),
+				Url:        cast["url"].(string),
+				Alt:        cast["alt"].(string),
+				Caption:    &cap,
+				MediaOrder: int16(cast["media_order"].(float64)),
+				CreatedAt:  createdAt,
+			}
+		}
+
+		pois = append(pois, dto.Poi{
+			ID:                 poi["id"].(string),
+			Name:               poi["name"].(string),
+			Description:        poi["description"].(string),
+			Phone:              &poiPhone,
+			Website:            &poiWebsite,
+			PriceLevel:         int16(poi["price_level"].(float64)),
+			AccessibilityLevel: int16(poi["accessibility_level"].(float64)),
+			TotalVotes:         int32(poi["total_votes"].(float64)),
+			TotalPoints:        int32(poi["total_points"].(float64)),
+			TotalFavorites:     int32(poi["total_favorites"].(float64)),
+			UpdatedAt:          updatedAt,
+			CreatedAt:          createdAt,
+			AddressID:          int32(poi["address_id"].(float64)),
+			CategoryID:         int16(poi["category_id"].(float64)),
+			Category: dto.Category{
+				ID:    int16(poiCategory["id"].(float64)),
+				Name:  poiCategory["name"].(string),
+				Image: poiCategory["image"].(string),
+			},
+			Address: dto.Address{
+				ID:         int32(poiAddress["id"].(float64)),
+				CityID:     int32(poiAddress["city_id"].(float64)),
+				Line1:      poiAddress["line1"].(string),
+				Line2:      &line2,
+				PostalCode: &postalCode,
+				Lat:        poiAddress["lat"].(float64),
+				Lng:        poiAddress["lng"].(float64),
+				City: dto.City{
+					ID:   int32(poiCity["id"].(float64)),
+					Name: poiCity["name"].(string),
+					State: dto.CityState{
+						Code: poiCity["state_code"].(string),
+						Name: poiCity["state_name"].(string),
+					},
+					Country: dto.CityCountry{
+						Code: poiCity["country_code"].(string),
+						Name: poiCity["country_name"].(string),
+					},
+					Description: poiCity["description"].(string),
+					Coordinates: dto.CityCoordinates{
+						Latitude:  poiCity["latitude"].(float64),
+						Longitude: poiCity["longitude"].(float64),
+					},
+					Image: dto.CityImage{
+						Url:             poiCity["image_url"].(string),
+						License:         &imgLicense,
+						LicenseLink:     &imgLicenseLink,
+						Attribution:     &imgAttr,
+						AttributionLink: &imgAttrLink,
+					},
+				},
+			},
+			Amenities: amenities,
+			Media:     poiMedias,
+			OpenTimes: openHours,
+		})
+	}
+
+	for i, day := range tripDays {
+		tripDays[i].Locations = make([]dto.TripLocation, 0)
+
+		for _, loc := range locations {
+			if loc.DayNo == day.DayNo {
+				var poi *dto.Poi = nil
+
+				for _, p := range pois {
+					if p.ID == loc.PoiID {
+						poi = &p
+					}
+				}
+
+				tripDays[i].Locations = append(tripDays[i].Locations, dto.TripLocation{
+					TripID: loc.TripID,
+					DayNo:  loc.DayNo,
+					PoiID:  loc.PoiID,
+					Poi:    *poi,
+				})
+			}
+		}
+	}
+
 	return dto.Trip{
 		ID:                 dbTrip.Trip.ID,
 		OwnerID:            dbTrip.Trip.OwnerID,
@@ -979,5 +1208,6 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		RequestedAmenities: amenities,
 		Participants:       participants,
 		Comments:           comments,
+		Days:               tripDays,
 	}, nil
 }
