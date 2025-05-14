@@ -446,35 +446,7 @@ export interface paths {
          * Get Current User
          * @description Get the current user information
          */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetMeOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
+        get: operations["auth-get-me"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4019,6 +3991,156 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Trips
+         * @description Get all trips for the current user
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllTripsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Invites
+         * @description Get all invites for the current user
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetMyTripInvitesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trip
+         * @description Get a trip by its ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/users/follow/{username}": {
         parameters: {
             query?: never;
@@ -5212,6 +5334,14 @@ export interface components {
                 [key: string]: unknown;
             }[];
         };
+        GetAllTripsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trips: components["schemas"]["Trip"][];
+        };
         GetCityByIdOutputBody: {
             /**
              * Format: uri
@@ -5366,6 +5496,14 @@ export interface components {
             /** @description Website of the user */
             website: string | null;
         };
+        GetMyTripInvitesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            invites: components["schemas"]["Trip"][];
+        };
         GetPoiByIdMeta: {
             isBookmarked: boolean;
             isFavorite: boolean;
@@ -5435,6 +5573,14 @@ export interface components {
             readonly $schema?: string;
             pagination: components["schemas"]["PaginationInfo"];
             reviews: components["schemas"]["Review"][];
+        };
+        GetTripByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trip: components["schemas"]["Trip"];
         };
         GetUserActivitiesOutputBody: {
             /**
@@ -5991,6 +6137,87 @@ export interface components {
              */
             email: string;
         };
+        Trip: {
+            comments: components["schemas"]["TripComment"][];
+            /**
+             * Format: date-time
+             * @description Created at time of trip
+             */
+            createdAt: string;
+            days: components["schemas"]["TripDay"][];
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /** @description Trip ID */
+            id: string;
+            owner: components["schemas"]["TripUser"];
+            /** @description Owner User ID */
+            ownerId: string;
+            participants: components["schemas"]["TripUser"][];
+            requestedAmenities: components["schemas"]["Amenity"][];
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
+            /** @description Status of the trip */
+            status: string;
+            /**
+             * Format: date-time
+             * @description Updated at time of trip
+             */
+            updatedAt: string;
+            /** @description Visibility level of the trip */
+            visibilityLevel: string;
+        };
+        TripComment: {
+            /** @description Content of comment */
+            content: string;
+            /**
+             * Format: date-time
+             * @description Created at time of the comment
+             */
+            createdAt: string;
+            from: components["schemas"]["TripUser"];
+            /** @description ID of comment */
+            id: string;
+        };
+        TripDay: {
+            /**
+             * Format: int32
+             * @description Day number
+             */
+            dayNo: number;
+            /** @description Description of the day */
+            description: string;
+            locations: components["schemas"]["TripLocation"][];
+            /** @description Trip ID */
+            tripId: string;
+        };
+        TripLocation: {
+            /**
+             * Format: int32
+             * @description Day number
+             */
+            dayNo: number;
+            poi: components["schemas"]["Poi"];
+            /** @description Point of Interest ID */
+            poiId: string;
+            /** @description Trip ID */
+            tripId: string;
+        };
+        TripUser: {
+            /** @description User full name */
+            fullName: string;
+            /** @description User ID */
+            id: string;
+            /** @description Profile image URL of the user */
+            profileImage: string;
+            /** @description Username */
+            username: string;
+        };
         UpdateAmenityInputBody: {
             /**
              * Format: uri
@@ -6305,4 +6532,34 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export interface operations {
+    "auth-get-me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetMeOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+}
