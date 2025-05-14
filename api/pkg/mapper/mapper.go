@@ -1,12 +1,16 @@
 package mapper
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/utils"
+
+	"github.com/danielgtaylor/huma/v2"
 )
 
 func ToAddress(dbAddress db.Address, dbCity db.City) dto.Address {
@@ -55,6 +59,46 @@ func ToCategory(dbCategory db.Category) dto.Category {
 		Name:  dbCategory.Name,
 		Image: dbCategory.Image,
 	}
+}
+
+func FromDbPoisToPois(ctx context.Context, dbPois []db.GetPoisByIdsPopulatedRow) ([]dto.Poi, error) {
+	_, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	pois := make([]dto.Poi, len(dbPois))
+
+	for i, dbPoi := range dbPois {
+		var amenities []dto.Amenity = []dto.Amenity{}
+
+		if len(dbPoi.Amenities) != 0 {
+			err := json.Unmarshal(dbPoi.Amenities, &amenities)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("failed to unmarshal amenities")
+			}
+		}
+
+		var dbMedia []db.Medium = []db.Medium{}
+
+		if len(dbPoi.Media) != 0 {
+			err := json.Unmarshal(dbPoi.Media, &dbMedia)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("failed to unmarshal media")
+			}
+		}
+
+		media := ToMedia(dbMedia)
+		openHours, err := ToOpenHours(dbPoi.Poi.OpenTimes)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("failed to unmarshal open times")
+		}
+
+		pois[i] = ToPoi(dbPoi.Poi, dbPoi.Category, dbPoi.Address, dbPoi.City, amenities, openHours, media)
+	}
+
+	return pois, nil
 }
 
 func ToPoi(dbPoi db.Poi, dbCategory db.Category, dbAddress db.Address, dbCity db.City, amenities []dto.Amenity, times map[string]dto.OpenHours, media []dto.Media) dto.Poi {
@@ -165,58 +209,6 @@ func ToFavorites(dbFavorites []db.GetFavoritesByUserIdRow) []dto.Favorite {
 	}
 
 	return favorites
-}
-
-func FromPoiToHomeAggregatorPoi(p dto.Poi) dto.HomeAggregatorPoi {
-	return dto.HomeAggregatorPoi{
-		ID:         p.ID,
-		Name:       p.Name,
-		AddressID:  p.AddressID,
-		Address:    p.Address,
-		CategoryID: p.CategoryID,
-		Category:   p.Category,
-		FirstMedia: p.Media[0],
-	}
-}
-
-func ToHomeAggregatorOutput(news []db.GetNewPoisRow, populars []db.GetPopularPoisRow, featured []db.GetFeaturedPoisRow, favorites []db.GetFavoritePoisRow) dto.HomeAggregatorOutput {
-	newsArr := make([]dto.HomeAggregatorPoi, len(news))
-	popularArr := make([]dto.HomeAggregatorPoi, len(populars))
-	featuredArr := make([]dto.HomeAggregatorPoi, len(featured))
-	favoritesArr := make([]dto.HomeAggregatorPoi, len(favorites))
-
-	for i, v := range news {
-		media := ToMedia([]db.Medium{v.Medium})
-		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
-		newsArr[i] = FromPoiToHomeAggregatorPoi(p)
-	}
-
-	for i, v := range populars {
-		media := ToMedia([]db.Medium{v.Medium})
-		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
-		popularArr[i] = FromPoiToHomeAggregatorPoi(p)
-	}
-
-	for i, v := range featured {
-		media := ToMedia([]db.Medium{v.Medium})
-		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
-		featuredArr[i] = FromPoiToHomeAggregatorPoi(p)
-	}
-
-	for i, v := range favorites {
-		media := ToMedia([]db.Medium{v.Medium})
-		p := ToPoi(v.Poi, v.Category, v.Address, v.City, nil, nil, media)
-		favoritesArr[i] = FromPoiToHomeAggregatorPoi(p)
-	}
-
-	return dto.HomeAggregatorOutput{
-		Body: dto.HomeAggregatorOutputBody{
-			New:       newsArr,
-			Popular:   popularArr,
-			Featured:  featuredArr,
-			Favorites: favoritesArr,
-		},
-	}
 }
 
 func ToProfile(dbProfile db.GetUserProfileByUsernameRow) dto.Profile {
