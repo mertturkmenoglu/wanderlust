@@ -109,6 +109,10 @@ func (s *Service) canRead(trip *dto.Trip, userId string) bool {
 	case dto.TRIP_VISIBILITY_LEVEL_PUBLIC:
 		return true
 	case dto.TRIP_VISIBILITY_LEVEL_FRIENDS:
+		if trip.OwnerID == userId {
+			return true
+		}
+
 		for _, friend := range trip.Participants {
 			if friend.ID == userId {
 				return true
