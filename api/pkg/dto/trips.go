@@ -106,3 +106,20 @@ type GetMyTripInvitesOutput struct {
 type GetMyTripInvitesOutputBody struct {
 	Invites []Trip `json:"invites"`
 }
+
+type CreateTripInput struct {
+	Body CreateTripInputBody
+}
+
+type CreateTripInputBody struct {
+	Title      string `json:"title" example:"My Awesome Trip" doc:"Title of the trip" minLength:"1" maxLength:"128"`
+	Visibility string `json:"visibility" example:"friends" doc:"Visibility level of the trip" enum:"public,private,friends"`
+}
+
+type CreateTripOutput struct {
+	Body CreateTripOutputBody
+}
+
+type CreateTripOutputBody struct {
+	Trip Trip `json:"trip"`
+}
