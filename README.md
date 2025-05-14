@@ -31,10 +31,9 @@ It's open source and free.
 ## Installation and Running
 
 - Check each subproject's README file.
-- You can run them separately (preferred) or you can use `run.sh` to run all projects at the same time:
-  - First, download concurrently: `pnpm add -g concurrently`
-  - Then, make the `run.sh` to be runnable: `chmod +x ./run.sh`
-  - Then, you can run `run.sh` to run all projects at the same time: `./run.sh`
+- Make sure you have all the requirements installed.
+- Run `just setup` to setup the project.
+- Run `just watch` to start the server.
 
 ## License
 
