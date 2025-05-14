@@ -1,28 +1,31 @@
+default:
+	just --list
+
 all: build
 
-build:
-	@echo "=> Building..."
-	@go build -o main cmd/core/main.go
-	@echo "=> Build completed"
+@build:
+	echo "=> Building..."
+	go build -o main cmd/core/main.go
+	echo "=> Build completed"
 
 # Setup the project
-setup:
-	@echo "=> Setting up the project..."
-	@go mod download
-	@just env-pull
-	@just sqlc
-	@just docker
-	@echo "=> Setup completed. Run 'just watch' to start the server."
+@setup:
+	echo "=> Setting up the project..."
+	go mod download
+	just env-pull
+	just sqlc
+	just docker
+	echo "=> Setup completed. Run 'just watch' to start the server."
 
 # Clean the binary
-clean:
-	@echo "=> Removing binary..."
-	@rm -f main
-	@echo "=> Removed binary"
+@clean:
+	echo "=> Removing binary..."
+	rm -f main
+	echo "=> Removed binary"
 
 # Live reload
-watch:
-	@if command -v air > /dev/null; then \
+@watch:
+	if command -v air > /dev/null; then \
 		RUN_MIGRATIONS=1 air -c conf/.air.toml; \
 		echo "Watching...";\
 	else \
@@ -30,45 +33,45 @@ watch:
 	fi
 
 # Up the Docker containers
-docker:
-	@if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then \
+@docker:
+	if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then \
 		docker compose up -d; \
 	else \
 		echo "Docker is not installed or not running. Start Docker and run this command again."; \
 	fi
 
 # Run fake data generation script
-fake:
-	@go run cmd/fake/*.go
+@fake:
+	go run cmd/fake/*.go
 
 # Generate Go code from SQL schema
-sqlc:
-	@sqlc generate -f ./conf/sqlc.yaml
+@sqlc:
+	sqlc generate -f ./conf/sqlc.yaml
 
 # Synchronize search index with the primary database
-search:
-	@go run cmd/search-sync/*.go
+@search:
+	go run cmd/search-sync/*.go
 
 # Create a new migration
-create-migration:
-	@read -p "Give migration a name: " migrationname; \
+@create-migration:
+	read -p "Give migration a name: " migrationname; \
 	migrate create -ext sql -dir pkg/db/migrations -seq $$migrationname; \
 	echo "Created migration with name $$migrationname. Update sql files."
 
 # Create example .env file
-env-example:
-	@echo "=> Creating example .env file..."
-	@infisical secrets generate-example-env > .env.example
-	@echo "=> Created example .env file"
+@env-example:
+	echo "=> Creating example .env file..."
+	infisical secrets generate-example-env > .env.example
+	echo "=> Created example .env file"
 
 # Pull secrets from Infisical and export secrets to .env file
-env-pull:
-	@echo "=> Exporting secrets to .env file..."
-	@infisical export > .env
-	@echo "=> Exported secrets to .env file"
+@env-pull:
+	echo "=> Exporting secrets to .env file..."
+	infisical export > .env
+	echo "=> Exported secrets to .env file"
 
 # Push secrets from .env file to Infisical
-env-push:
-	@echo "=> Pushing secrets to Infisical..."
-	@infisical secrets set --file="./.env"
-	@echo "=> Pushed secrets to Infisical"
+@env-push:
+	echo "=> Pushing secrets to Infisical..."
+	infisical secrets set --file="./.env"
+	echo "=> Pushed secrets to Infisical"
