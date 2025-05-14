@@ -260,6 +260,35 @@ func (q *Queries) GetFavoritePois(ctx context.Context) ([]GetFavoritePoisRow, er
 	return items, nil
 }
 
+const getFavoritePoisIds = `-- name: GetFavoritePoisIds :many
+SELECT 
+  id 
+FROM 
+  pois 
+ORDER BY total_favorites DESC 
+LIMIT 25
+`
+
+func (q *Queries) GetFavoritePoisIds(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, getFavoritePoisIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getFeaturedPois = `-- name: GetFeaturedPois :many
 SELECT 
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
@@ -352,6 +381,36 @@ func (q *Queries) GetFeaturedPois(ctx context.Context) ([]GetFeaturedPoisRow, er
 	return items, nil
 }
 
+const getFeaturedPoisIds = `-- name: GetFeaturedPoisIds :many
+SELECT 
+  id 
+FROM 
+  pois
+WHERE total_votes != 0
+ORDER BY total_points / total_votes DESC, total_votes DESC
+LIMIT 25
+`
+
+func (q *Queries) GetFeaturedPoisIds(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, getFeaturedPoisIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getNewPois = `-- name: GetNewPois :many
 SELECT 
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
@@ -437,6 +496,35 @@ func (q *Queries) GetNewPois(ctx context.Context) ([]GetNewPoisRow, error) {
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getNewPoisIds = `-- name: GetNewPoisIds :many
+SELECT 
+  id 
+FROM 
+  pois
+ORDER BY created_at DESC
+LIMIT 25
+`
+
+func (q *Queries) GetNewPoisIds(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, getNewPoisIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -805,6 +893,35 @@ func (q *Queries) GetPopularPois(ctx context.Context) ([]GetPopularPoisRow, erro
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPopularPoisIds = `-- name: GetPopularPoisIds :many
+SELECT 
+  id 
+FROM 
+  pois
+ORDER BY total_votes DESC
+LIMIT 25
+`
+
+func (q *Queries) GetPopularPoisIds(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, getPopularPoisIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

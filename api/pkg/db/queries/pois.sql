@@ -112,6 +112,14 @@ INSERT INTO media (
   $5
 ) RETURNING *;
 
+-- name: GetFavoritePoisIds :many
+SELECT 
+  id 
+FROM 
+  pois 
+ORDER BY total_favorites DESC 
+LIMIT 25;
+
 -- name: GetFavoritePois :many
 SELECT
   sqlc.embed(pois),
@@ -144,6 +152,15 @@ WHERE total_votes != 0 AND media.media_order = 1
 ORDER BY total_points / total_votes DESC, total_votes DESC
 LIMIT 25;
 
+-- name: GetFeaturedPoisIds :many
+SELECT 
+  id 
+FROM 
+  pois
+WHERE total_votes != 0
+ORDER BY total_points / total_votes DESC, total_votes DESC
+LIMIT 25;
+
 -- name: GetPopularPois :many
 SELECT
   sqlc.embed(pois),
@@ -157,6 +174,14 @@ FROM pois
   LEFT JOIN cities ON addresses.city_id = cities.id
   LEFT JOIN media ON media.poi_id = pois.id
 WHERE media.media_order = 1
+ORDER BY total_votes DESC
+LIMIT 25;
+
+-- name: GetPopularPoisIds :many
+SELECT 
+  id 
+FROM 
+  pois
 ORDER BY total_votes DESC
 LIMIT 25;
 
@@ -174,6 +199,14 @@ FROM pois
   LEFT JOIN media ON media.poi_id = pois.id
 WHERE media.media_order = 1
 ORDER BY pois.created_at DESC
+LIMIT 25;
+
+-- name: GetNewPoisIds :many
+SELECT 
+  id 
+FROM 
+  pois
+ORDER BY created_at DESC
 LIMIT 25;
 
 -- name: IncrementTotalVotes :exec
