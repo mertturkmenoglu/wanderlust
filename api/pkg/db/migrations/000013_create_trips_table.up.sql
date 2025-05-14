@@ -1,8 +1,8 @@
--- Active: 1747132253857@@127.0.0.1@5432@wanderlust@public
 CREATE TABLE IF NOT EXISTS trips (
   id TEXT PRIMARY KEY,
   owner_id TEXT NOT NULL,
   status VARCHAR(16) NOT NULL,
+  title VARCHAR(128) NOT NULL,
   visibility_level VARCHAR(16) NOT NULL,
   start_at TIMESTAMPTZ NOT NULL,
   end_at TIMESTAMPTZ NOT NULL,

@@ -221,6 +221,7 @@ type Trip struct {
 	ID              string
 	OwnerID         string
 	Status          string
+	Title           string
 	VisibilityLevel string
 	StartAt         pgtype.Timestamptz
 	EndAt           pgtype.Timestamptz

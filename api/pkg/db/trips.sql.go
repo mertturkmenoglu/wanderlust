@@ -35,7 +35,7 @@ INSERT INTO trips (
   $4,
   $5,
   $6
-) RETURNING id, owner_id, status, visibility_level, start_at, end_at, created_at, updated_at
+) RETURNING id, owner_id, status, title, visibility_level, start_at, end_at, created_at, updated_at
 `
 
 type CreateTripParams struct {
@@ -61,6 +61,7 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 		&i.ID,
 		&i.OwnerID,
 		&i.Status,
+		&i.Title,
 		&i.VisibilityLevel,
 		&i.StartAt,
 		&i.EndAt,
@@ -146,7 +147,7 @@ func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetI
 }
 
 const getTripById = `-- name: GetTripById :one
-SELECT id, owner_id, status, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
+SELECT id, owner_id, status, title, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
 `
 
 func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
@@ -156,6 +157,7 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 		&i.ID,
 		&i.OwnerID,
 		&i.Status,
+		&i.Title,
 		&i.VisibilityLevel,
 		&i.StartAt,
 		&i.EndAt,
@@ -167,7 +169,7 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 
 const getTripsByIdsPopulated = `-- name: GetTripsByIdsPopulated :many
 SELECT
-  trips.id, trips.owner_id, trips.status, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
+  trips.id, trips.owner_id, trips.status, trips.title, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
   jsonb_build_object(
     'id', u.id,
     'fullName', u.full_name,
@@ -275,6 +277,7 @@ func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string)
 			&i.Trip.ID,
 			&i.Trip.OwnerID,
 			&i.Trip.Status,
+			&i.Trip.Title,
 			&i.Trip.VisibilityLevel,
 			&i.Trip.StartAt,
 			&i.Trip.EndAt,
