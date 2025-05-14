@@ -1,6 +1,7 @@
-import { Card } from '@/components/blocks/quick-actions/card';
-import { createFileRoute } from '@tanstack/react-router';
-import { MailsIcon, MapIcon, SearchIcon, SquarePlusIcon } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
+import { CreateDialog } from './-create-dialog';
 
 export const Route = createFileRoute('/trips/')({
   component: RouteComponent,
@@ -18,15 +19,44 @@ function RouteComponent() {
         </span>
       </h2>
 
-      <div className="mt-8 grid grid-cols-2 gap-2 md:gap-4 md:grid-cols-4 w-full">
-        <Card
-          to="/trips/planner"
-          Icon={SquarePlusIcon}
-          text="Plan a new trip"
-        />
-        <Card to="/trips/discover" Icon={SearchIcon} text="Discover trips" />
-        <Card to="/trips/my-trips" Icon={MapIcon} text="My Trips" />
-        <Card to="/trips/invites" Icon={MailsIcon} text="Invites" />
+      <div className="mt-16 grid grid-cols-2 gap-2 md:gap-8 max-w-md">
+        <CreateDialog />
+
+        <Link
+          to="/trips/my-trips"
+          className={buttonVariants({
+            variant: 'ghost',
+            size: 'lg',
+            className: 'flex items-center gap-2',
+          })}
+        >
+          <MapIcon className="mr-2 size-4" />
+          My Trips
+        </Link>
+
+        <Link
+          to="/trips/discover"
+          className={buttonVariants({
+            variant: 'ghost',
+            size: 'lg',
+            className: 'flex items-center gap-2',
+          })}
+        >
+          <SearchIcon className="mr-2 size-4" />
+          Discover
+        </Link>
+
+        <Link
+          to="/trips/invites"
+          className={buttonVariants({
+            variant: 'ghost',
+            size: 'lg',
+            className: 'flex items-center gap-2',
+          })}
+        >
+          <MailsIcon className="mr-2 size-4" />
+          Invites
+        </Link>
       </div>
     </div>
   );
