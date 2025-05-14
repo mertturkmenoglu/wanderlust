@@ -1,10 +1,19 @@
+import { ErrorComponent } from '@/components/blocks/error-component';
 import { buttonVariants } from '@/components/ui/button';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
 import { CreateDialog } from './-create-dialog';
 
 export const Route = createFileRoute('/trips/')({
   component: RouteComponent,
+  beforeLoad: ({ context }) => {
+    if (!context.auth.user) {
+      throw redirect({
+        to: '/sign-in',
+      });
+    }
+  },
+  errorComponent: ErrorComponent,
 });
 
 function RouteComponent() {
