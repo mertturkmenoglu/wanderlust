@@ -6,6 +6,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -90,6 +91,32 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetMyTripInvitesOutput, error) {
 			res, err := s.getMyInvites(ctx)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/trips/",
+			Summary:       "Create Trip",
+			Description:   "Create a new trip",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateTripInput) (*dto.CreateTripOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
 				return nil, err

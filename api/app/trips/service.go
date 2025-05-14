@@ -4,12 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
+	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Service struct {
@@ -162,6 +167,41 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 	return &dto.GetMyTripInvitesOutput{
 		Body: dto.GetMyTripInvitesOutputBody{
 			Invites: make([]dto.Trip, len(dbInvites)),
+		},
+	}, nil
+}
+
+func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dto.CreateTripOutput, error) {
+	_, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	startAt := time.Now().Add(time.Hour * 24 * 7)
+	endAt := startAt.Add(time.Hour * 24 * 7)
+
+	dbRes, err := s.app.Db.Queries.CreateTrip(ctx, db.CreateTripParams{
+		ID:              utils.GenerateId(s.app.Flake),
+		OwnerID:         userId,
+		Title:           body.Title,
+		VisibilityLevel: body.Visibility,
+		Status:          "draft",
+		StartAt:         pgtype.Timestamptz{Time: startAt, Valid: true},
+		EndAt:           pgtype.Timestamptz{Time: endAt, Valid: true},
+	})
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to create trip")
+	}
+
+	res, err := s.get(ctx, dbRes.ID)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("failed to get trip")
+	}
+
+	return &dto.CreateTripOutput{
+		Body: dto.CreateTripOutputBody{
+			Trip: *res,
 		},
 	}, nil
 }
