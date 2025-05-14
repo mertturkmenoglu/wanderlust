@@ -19,9 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useInvalidator } from '@/hooks/use-invalidator';
+import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import { SquarePlusIcon } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const visibility = ['public', 'friends', 'private'] as const;
@@ -56,8 +60,21 @@ const schema = z.object({
 });
 
 export function CreateDialog() {
+  const navigate = useNavigate();
+  const invalidator = useInvalidator();
+
   const form = useForm({
     resolver: zodResolver(schema),
+  });
+
+  const mutation = api.useMutation('post', '/api/v2/trips/', {
+    onSuccess: async (res) => {
+      toast.success('Trip created');
+      await invalidator.invalidate();
+      await navigate({
+        to: `/trips/${res.trip.id}`,
+      });
+    },
   });
 
   return (
@@ -68,20 +85,21 @@ export function CreateDialog() {
           Create trip
         </Button>
       </DialogTrigger>
-      <DialogContent className="">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Plan your next trip</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2 text-sm w-full">
           <form
             onSubmit={form.handleSubmit((data) => {
-              console.log(data);
+              mutation.mutate({
+                body: data,
+              });
             })}
             className="w-full"
           >
             <div className="mt-4">
               <Label htmlFor="title">Title</Label>
-              bruh
               <Input
                 type="text"
                 id="title"
@@ -131,18 +149,19 @@ export function CreateDialog() {
               />
               <InputError error={form.formState.errors.visibility} />
             </div>
+
+            <DialogFooter className="mt-4">
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Close
+                </Button>
+              </DialogClose>
+              <Button type="submit" variant="default">
+                Create
+              </Button>
+            </DialogFooter>
           </form>
         </div>
-        <DialogFooter className="">
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              Close
-            </Button>
-          </DialogClose>
-          <Button type="submit" variant="default">
-            Create
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
