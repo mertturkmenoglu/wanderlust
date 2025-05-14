@@ -20,6 +20,7 @@ import {
   UsersIcon,
 } from 'lucide-react';
 import Logout from './logout';
+import { useShortName } from './use-short-name';
 
 type Props = {
   fullName: string;
@@ -27,9 +28,11 @@ type Props = {
 };
 
 export default function MenuContent({ fullName, username }: Readonly<Props>) {
+  const shortName = useShortName(fullName, 25);
+
   return (
     <DropdownMenuContent className="w-56" align="end">
-      <DropdownMenuLabel>{fullName}</DropdownMenuLabel>
+      <DropdownMenuLabel>{shortName}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuItem
