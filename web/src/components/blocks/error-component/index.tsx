@@ -13,6 +13,10 @@ export function ErrorComponent({ error }: ErrorComponentProps) {
       return error.status ?? 500;
     }
 
+    if (error.name === 'Not Found') {
+      return 404;
+    }
+
     return 500;
   }, [error]);
 
@@ -39,12 +43,12 @@ export function ErrorComponent({ error }: ErrorComponentProps) {
           <div className="text-sky-600 text-2xl font-bold">Error {code}</div>
           <div className="text-sky-600 text-6xl font-bold mt-4">{message}</div>
           <div className="text-xl mt-8">
-            Something squirrely happened somewhere!
+            Something squirrelly happened somewhere!
           </div>
           <div>You can try to refresh the page or go to the homepage.</div>
           <Link
             to="/"
-            className="rounded bg-sky-600 text-white px-8 py-2 mt-8 hover:bg-sky-700 flex font-bold text-lg"
+            className="rounded bg-sky-600 text-white px-4 py-2 mt-8 hover:bg-sky-500 flex font-bold text-lg focus:ring-2 focus:ring-sky-500 focus:outline-none focus:ring-offset-2"
           >
             Country roads take me home
           </Link>
