@@ -1190,6 +1190,7 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 	return dto.Trip{
 		ID:                 dbTrip.Trip.ID,
 		OwnerID:            dbTrip.Trip.OwnerID,
+		Title:              dbTrip.Trip.Title,
 		Status:             status,
 		VisibilityLevel:    visibility,
 		StartAt:            dbTrip.Trip.StartAt.Time,

@@ -6,6 +6,7 @@ type Trip struct {
 	ID                 string              `json:"id" example:"7323488942953598976" doc:"Trip ID"`
 	OwnerID            string              `json:"ownerId" example:"7323488942953598976" doc:"Owner User ID"`
 	Owner              TripUser            `json:"owner"`
+	Title              string              `json:"title" example:"My Awesome Trip" doc:"Title of the trip"`
 	Status             TripStatus          `json:"status" example:"draft" doc:"Status of the trip"`
 	VisibilityLevel    TripVisibilityLevel `json:"visibilityLevel" example:"friends" doc:"Visibility level of the trip"`
 	StartAt            time.Time           `json:"startAt" example:"2023-05-01T00:00:00Z" doc:"Start datetime of the trip"`
