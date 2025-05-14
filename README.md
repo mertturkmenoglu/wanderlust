@@ -19,21 +19,24 @@ It's open source and free.
 
 ## Requirements
 
-- Docker
-- Go
-- sqlc
-- Just
-- Air
-- Go Migrate
-- Node.js
-- pnpm
+- Docker (https://docs.docker.com/desktop/setup/install/linux/ubuntu/)
+- Go (https://go.dev/dl/)
+- sqlc (https://sqlc.dev/)
+- Just (https://github.com/casey/just)
+- Air (https://github.com/air-verse/air)
+- Go Migrate (https://github.com/golang-migrate/migrate)
+- Node.js (https://nodejs.org/en/download)
+- pnpm (https://pnpm.io/installation)
+- Infisical CLI (https://infisical.com/docs/documentation/getting-started/introduction)
 
 ## Installation and Running
 
 - Check each subproject's README file.
 - Make sure you have all the requirements installed.
+  - Login to Infisical.
+  - Start Docker service or Docker Desktop.
 - Run `just setup` to setup the project.
-- Run `just watch` to start the server.
+- Run `just watch` to start the servers.
 
 ## License
 
