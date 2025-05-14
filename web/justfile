@@ -1,0 +1,20 @@
+default:
+  just --list
+
+# Live reload
+@watch:
+  pnpm dev
+
+# Setup the project
+@setup:
+  echo "=> Setting up the project..."
+  pnpm install
+  pnpm run env-pull
+  echo "=> Setup completed. Run 'just watch' to start the server."
+
+# Type generation
+[confirm('Is API up and running? [y/N]')]
+@typegen:
+  echo "=> Generating types..."
+  pnpm run openapi
+  echo "=> Type generation completed"
