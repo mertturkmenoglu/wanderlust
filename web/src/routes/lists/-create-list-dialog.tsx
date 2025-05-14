@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
@@ -25,11 +26,13 @@ export default function CreateListDialog() {
   const isErr = name.length > 128 || name.length < 1;
   const showErr = isDirty && isErr;
   const navigate = useNavigate();
+  const invalidator = useInvalidator();
 
   const mutation = api.useMutation('post', '/api/v2/lists/', {
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       toast.success('List created');
-      navigate({
+      await invalidator.invalidate();
+      await navigate({
         to: '/lists/$id',
         params: {
           id: res.list.id,
