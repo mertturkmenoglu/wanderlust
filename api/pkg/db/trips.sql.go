@@ -15,6 +15,7 @@ type BatchCreateTripsParams struct {
 	ID              string
 	OwnerID         string
 	Status          string
+	Title           string
 	VisibilityLevel string
 	StartAt         pgtype.Timestamptz
 	EndAt           pgtype.Timestamptz
@@ -24,6 +25,7 @@ const createTrip = `-- name: CreateTrip :one
 INSERT INTO trips (
   id,
   owner_id,
+  title,
   status,
   visibility_level,
   start_at,
@@ -34,13 +36,15 @@ INSERT INTO trips (
   $3,
   $4,
   $5,
-  $6
+  $6,
+  $7
 ) RETURNING id, owner_id, status, title, visibility_level, start_at, end_at, created_at, updated_at
 `
 
 type CreateTripParams struct {
 	ID              string
 	OwnerID         string
+	Title           string
 	Status          string
 	VisibilityLevel string
 	StartAt         pgtype.Timestamptz
@@ -51,6 +55,7 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 	row := q.db.QueryRow(ctx, createTrip,
 		arg.ID,
 		arg.OwnerID,
+		arg.Title,
 		arg.Status,
 		arg.VisibilityLevel,
 		arg.StartAt,

@@ -2,6 +2,7 @@
 INSERT INTO trips (
   id,
   owner_id,
+  title,
   status,
   visibility_level,
   start_at,
@@ -12,7 +13,8 @@ INSERT INTO trips (
   $3,
   $4,
   $5,
-  $6
+  $6,
+  $7
 ) RETURNING *;
 
 -- name: BatchCreateTrips :copyfrom
@@ -20,6 +22,7 @@ INSERT INTO trips (
   id,
   owner_id,
   status,
+  title,
   visibility_level,
   start_at,
   end_at
@@ -29,7 +32,8 @@ INSERT INTO trips (
   $3,
   $4,
   $5,
-  $6
+  $6,
+  $7
 );
 
 -- name: GetTripById :one

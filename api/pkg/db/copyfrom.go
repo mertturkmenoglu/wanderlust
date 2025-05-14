@@ -216,6 +216,7 @@ func (r iteratorForBatchCreateTrips) Values() ([]interface{}, error) {
 		r.rows[0].ID,
 		r.rows[0].OwnerID,
 		r.rows[0].Status,
+		r.rows[0].Title,
 		r.rows[0].VisibilityLevel,
 		r.rows[0].StartAt,
 		r.rows[0].EndAt,
@@ -227,7 +228,7 @@ func (r iteratorForBatchCreateTrips) Err() error {
 }
 
 func (q *Queries) BatchCreateTrips(ctx context.Context, arg []BatchCreateTripsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "status", "visibility_level", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "status", "title", "visibility_level", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
 }
 
 // iteratorForBatchCreateUsers implements pgx.CopyFromSource.
