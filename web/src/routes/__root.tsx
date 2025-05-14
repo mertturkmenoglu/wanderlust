@@ -1,3 +1,4 @@
+import { ErrorComponent } from '@/components/blocks/error-component';
 import Footer from '@/components/blocks/footer';
 import Header from '@/components/blocks/header';
 import { type AuthContextState } from '@/providers/auth-provider';
@@ -31,6 +32,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         {search.signInModal && <SignInModal />}
         <Toaster position="bottom-center" richColors />
       </div>
+    );
+  },
+  errorComponent: ErrorComponent,
+  notFoundComponent: () => {
+    return (
+      <ErrorComponent
+        error={{ name: 'Not Found', message: 'Page not found' }}
+        reset={() => {}}
+      />
     );
   },
 });
