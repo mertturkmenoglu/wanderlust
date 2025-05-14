@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -27,7 +28,10 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.HomeAggregatorOutput, error) {
-			res, err := s.getHomeAggregation()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getHomeAggregation(ctx)
 
 			if err != nil {
 				return nil, err
