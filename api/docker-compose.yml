@@ -1,12 +1,12 @@
 name: wanderlust
 
 services:
-  redis:
-    container_name: redis
+  wl-redis:
+    container_name: wl-redis
     image: redis:7.4.0-alpine
     restart: always
     networks:
-      - redisnet
+      - wl-redisnet
     ports:
       - "6379:6379"
     healthcheck:
@@ -15,8 +15,8 @@ services:
       timeout: 5s
       retries: 3
 
-  postgres:
-    container_name: postgres
+  wl-postgres:
+    container_name: wl-postgres
     image: postgres:16.4-alpine
     restart: always
     ports:
@@ -26,15 +26,15 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: wanderlust
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - wl-pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 3
 
-  minio:
-    container_name: minio
+  wl-minio:
+    container_name: wl-minio
     restart: always
     ports:
       - 9000:9000
@@ -47,8 +47,8 @@ services:
     image: quay.io/minio/minio
     command: server /data --console-address ":9001"
 
-  typesense:
-    container_name: typesense
+  wl-typesense:
+    container_name: wl-typesense
     image: typesense/typesense:26.0
     restart: always
     ports:
@@ -57,19 +57,19 @@ services:
       - ./tmp/typesense-data:/data
     command: "--data-dir /data --api-key=wanderlust --enable-cors"
     networks:
-      - searchnet
+      - wl-searchnet
 
-  typesense-dashboard:
-    container_name: typesense-dashboard
+  wl-typesense-dashboard:
+    container_name: wl-typesense-dashboard
     restart: always
     ports:
       - 3006:80
     image: ghcr.io/bfritscher/typesense-dashboard:latest
     networks:
-      - searchnet
+      - wl-searchnet
 
-  inbucket:
-    container_name: inbucket
+  wl-inbucket:
+    container_name: wl-inbucket
     restart: always
     ports:
       - 10000:9000
@@ -77,33 +77,34 @@ services:
       - 1100:1100
     image: inbucket/inbucket
 
-  asynqmon:
+  wl-asynqmon:
     image: hibiken/asynqmon
     restart: always
     networks:
-      - redisnet
+      - wl-redisnet
     ports:
       - "8080:8080"
     environment:
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: redis://wl-redis:6379
     depends_on:
-      - redis
+      - wl-redis
 
-  jaeger:
-    container_name: jaeger
+  wl-jaeger:
+    container_name: wl-jaeger
+    restart: always
     environment:
-        - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
     ports:
-        - 6831:6831/udp
-        - 16686:16686
-        - 14268:14268
-        - 14250:14250
-        - 9411:9411
+      - 6831:6831/udp
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 9411:9411
     image: jaegertracing/all-in-one:latest
 
 networks:
-  redisnet:
-  searchnet:
+  wl-redisnet:
+  wl-searchnet:
 
 volumes:
-  pg_data:
+  wl-pg_data:
