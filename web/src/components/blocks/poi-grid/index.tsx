@@ -4,7 +4,7 @@ import { Link } from '@tanstack/react-router';
 
 type Props = {
   dataKey: 'new' | 'popular' | 'featured' | 'favorite';
-  data: components['schemas']['HomeAggregatorPoi'][];
+  data: components['schemas']['Poi'][];
 };
 
 function getTitle(type: Props['dataKey']) {
@@ -40,8 +40,8 @@ export default function PoiGrid({ dataKey: key, data }: Props) {
                 poi={{
                   ...poi,
                   image: {
-                    url: poi.media.url,
-                    alt: poi.media.alt,
+                    url: poi.media[0]?.url ?? '',
+                    alt: poi.media[0]?.alt ?? '',
                   },
                 }}
               />
