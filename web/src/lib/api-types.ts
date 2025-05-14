@@ -4032,7 +4032,43 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
+        /**
+         * Create Trip
+         * @description Create a new trip
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateTripInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateTripOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -5152,6 +5188,28 @@ export interface components {
             readonly $schema?: string;
             review: components["schemas"]["Review"];
         };
+        CreateTripInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Title of the trip */
+            title: string;
+            /**
+             * @description Visibility level of the trip
+             * @enum {string}
+             */
+            visibility: "public" | "private" | "friends";
+        };
+        CreateTripOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trip: components["schemas"]["Trip"];
+        };
         DiaryEntry: {
             /**
              * Format: date-time
@@ -5653,21 +5711,10 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            favorites: components["schemas"]["HomeAggregatorPoi"][];
-            featured: components["schemas"]["HomeAggregatorPoi"][];
-            new: components["schemas"]["HomeAggregatorPoi"][];
-            popular: components["schemas"]["HomeAggregatorPoi"][];
-        };
-        HomeAggregatorPoi: {
-            address: components["schemas"]["Address"];
-            /** Format: int32 */
-            addressId: number;
-            category: components["schemas"]["Category"];
-            /** Format: int32 */
-            categoryId: number;
-            id: string;
-            media: components["schemas"]["Media"];
-            name: string;
+            favorites: components["schemas"]["Poi"][];
+            featured: components["schemas"]["Poi"][];
+            new: components["schemas"]["Poi"][];
+            popular: components["schemas"]["Poi"][];
         };
         List: {
             /**
@@ -6164,6 +6211,8 @@ export interface components {
             startAt: string;
             /** @description Status of the trip */
             status: string;
+            /** @description Title of the trip */
+            title: string;
             /**
              * Format: date-time
              * @description Updated at time of trip
