@@ -1,0 +1,12 @@
+default:
+  just --list
+
+# Live reload
+@watch:
+  pnpm start
+
+# Setup the project
+@setup:
+  echo "=> Setting up the project..."
+  pnpm install
+  echo "=> Setup completed. Run 'just watch' to start the server."
