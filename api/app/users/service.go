@@ -93,15 +93,21 @@ func (s *Service) updateImage(userId string, updateType string, input dto.Update
 	if updateType == "banner" && prevBannerImage != nil {
 		after, _ := strings.CutPrefix(*prevBannerImage, removePrefix)
 		objectName = after
+
+		err = s.app.Upload.Client.RemoveObject(context.Background(), string(bucket), objectName, minio.RemoveObjectOptions{})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to delete previous profile image")
+		}
 	} else if updateType == "profile" && prevProfileImage != nil {
 		after, _ := strings.CutPrefix(*prevProfileImage, removePrefix)
 		objectName = after
-	}
 
-	err = s.app.Upload.Client.RemoveObject(context.Background(), string(bucket), objectName, minio.RemoveObjectOptions{})
+		err = s.app.Upload.Client.RemoveObject(context.Background(), string(bucket), objectName, minio.RemoveObjectOptions{})
 
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to delete previous profile image")
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to delete previous profile image")
+		}
 	}
 
 	return &dto.UpdateUserProfileImageOutput{
