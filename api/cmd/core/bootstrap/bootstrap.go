@@ -15,8 +15,8 @@ import (
 	"wanderlust/pkg/logs"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tasks"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
-	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/joho/godotenv"
@@ -52,7 +52,7 @@ func InitGlobalMiddlewares(e *echo.Echo) {
 		e.Use(middlewares.Cors())
 		e.Use(middlewares.PTermLogger)
 		e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-			sp := utils.NewSpan(c.Request().Context(), "Request and Response Dump")
+			_, sp := tracing.NewSpanWithName(c.Request().Context(), "Request and Response Dump")
 			defer sp.End()
 
 			paramNames := c.ParamNames()

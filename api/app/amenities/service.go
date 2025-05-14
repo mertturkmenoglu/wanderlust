@@ -6,6 +6,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -15,8 +16,11 @@ type Service struct {
 	app *core.Application
 }
 
-func (s *Service) list() (*dto.ListAmenitiesOutput, error) {
-	res, err := s.app.Db.Queries.GetAllAmenities(context.Background())
+func (s *Service) list(ctx context.Context) (*dto.ListAmenitiesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.app.Db.Queries.GetAllAmenities(ctx)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -42,8 +46,11 @@ func (s *Service) list() (*dto.ListAmenitiesOutput, error) {
 	}, nil
 }
 
-func (s *Service) create(body dto.CreateAmenityInputBody) (*dto.CreateAmenityOutput, error) {
-	res, err := s.app.Db.Queries.CreateAmenity(context.Background(), body.Name)
+func (s *Service) create(ctx context.Context, body dto.CreateAmenityInputBody) (*dto.CreateAmenityOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.app.Db.Queries.CreateAmenity(ctx, body.Name)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrTooManyRows) {
@@ -64,8 +71,11 @@ func (s *Service) create(body dto.CreateAmenityInputBody) (*dto.CreateAmenityOut
 
 }
 
-func (s *Service) update(id int32, body dto.UpdateAmenityInputBody) (*dto.UpdateAmenityOutput, error) {
-	err := s.app.Db.Queries.UpdateAmenity(context.Background(), db.UpdateAmenityParams{
+func (s *Service) update(ctx context.Context, id int32, body dto.UpdateAmenityInputBody) (*dto.UpdateAmenityOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	err := s.app.Db.Queries.UpdateAmenity(ctx, db.UpdateAmenityParams{
 		ID:   id,
 		Name: body.Name,
 	})
@@ -88,8 +98,11 @@ func (s *Service) update(id int32, body dto.UpdateAmenityInputBody) (*dto.Update
 	}, nil
 }
 
-func (s *Service) remove(id int32) error {
-	err := s.app.Db.Queries.DeleteAmenity(context.Background(), id)
+func (s *Service) remove(ctx context.Context, id int32) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	err := s.app.Db.Queries.DeleteAmenity(ctx, id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
