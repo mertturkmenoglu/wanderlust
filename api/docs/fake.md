@@ -33,15 +33,35 @@
 - Data generation of some types may depend on other items and how many are there in the database.
 - For example, creating `amenities-pois` type requires `amenities` and `pois` types to be generated first.
 - To prevent frustration, here's a recommended order for generating different types of data (and how many to generate):
-  - Addresses (100K)
   - Amenities
   - Categories
-  - Countries
-  - States
-  - Cities
+  - Cities (Run `pkg/db/seed/cities.sql` manually)
+  - Addresses (100K)
   - Users (100K)
   - Points of Interests (100K)
-  - Amenities-Pois (100K)
+  - Amenities-Pois
+  - Point of Interests Media
+
+## Getting IDs
+
+- For some types, you will be asked to enter a file that contains IDs of the objects you want to generate fake data for.
+- For example, if you want to generate fake data for amenities-pois, you will be asked to enter a file that contains IDs of POIs.
+- The file should contain one ID per line.
+- Example: If you have created POIs in the database, you can get the IDs by running this command:
+
+```bash
+docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM pois" -o /home/file.txt
+```
+
+- This will create a file called `file.txt` in Docker container's home directory.
+- Open Docker Desktop, click on the container, and click on "Files" tab.
+- Navigate to `/home` directory.
+- Right click on the `file.txt` file and select "Save".
+- Select the location where you want to save the file.
+- This file will **NOT** be in the correct format.
+- Open this file in a text editor and alter the file to have one ID per line (and nothing else).
+- Save the file.
+- Now you can use this file as input for the script.
 
 ## Example Workflow
 
