@@ -1,5 +1,8 @@
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
+import { Breadcrumb } from '../-breadcrumb';
+import { TripCard } from './-components/card';
 
 export const Route = createFileRoute('/trips/my-trips/')({
   component: RouteComponent,
@@ -15,7 +18,15 @@ function RouteComponent() {
 
   return (
     <div>
-      <pre>{JSON.stringify(trips, null, 2)}</pre>
+      <Breadcrumb items={[{ name: 'My Trips', href: '/trips/my-trips' }]} />
+      <div className="mt-8">
+        {trips.map((trip, i) => (
+          <div key={trip.id}>
+            <TripCard trip={trip} />
+            {i !== trips.length - 1 && <Separator className="my-1" />}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
