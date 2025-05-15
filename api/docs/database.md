@@ -8,14 +8,14 @@
 - Or, you can run `just watch` to run the app with auto migration option enabled.
 - Generate Go files from your schema and query files: `just sqlc`.
 
-# Updating the database & models & queries
+## Updating the database & models & queries
 
 - Run `just create-migrations`, give migration a name, and check `internal/pkg/db/migrations` folder for the generated migration file.
 - Fill `.down.sql` and `.up.sql` files with the SQL statements to migrate the database.
 - Go to `internal/db/queries` folder and create/update the query file.
 - Run `just sqlc` to generate Go files from the schema and query files.
 
-# Example Workflow
+## Example Workflow
 
 - Let's say you want to create a new table called `squirrels`.
 - First, you need to create a new migration:
@@ -72,8 +72,25 @@ func foo(id int32) (db.Squirrel, error) {
 }
 ```
 
-# Creating a Database Backup
+## Creating a Database Backup
 
 - Run this command: `docker exec postgres pg_dump -U postgres -C -f wlbak.dump -Fc wanderlust > wlbak.dump`
 - Check the Docker container -> Files -> wlbak.dump
 - You can right click to save it to your local machine (via Docker Desktop).
+
+## Writing Query Results to a File
+
+- Sometimes you may want to write the result of a query to a file.
+- You can do this by running the following command:
+
+```bash
+docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM pois" -o /home/file.txt
+```
+
+- This command will run the query and write the result to a file called `file.txt` in the Docker container's home directory.
+- To see the file, follow these steps:
+  - Open Docker Desktop, click on the container (`wl-postgres`).
+  - Click on the "Files" tab.
+  - Navigate to `/home` directory.
+  - Right click on the `file.txt` file and select "Save".
+  - Select the location where you want to save the file.
