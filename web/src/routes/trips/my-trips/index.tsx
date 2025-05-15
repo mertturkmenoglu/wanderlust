@@ -1,3 +1,4 @@
+import AppMessage from '@/components/blocks/app-message';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
@@ -26,6 +27,14 @@ function RouteComponent() {
             {i !== trips.length - 1 && <Separator className="my-1" />}
           </div>
         ))}
+        {trips.length === 0 && (
+          <AppMessage
+            emptyMessage="You haven't created or joined any trips yet"
+            backLink="/trips"
+            backLinkText="Go to Trips page"
+            className="my-16"
+          />
+        )}
       </div>
     </div>
   );
