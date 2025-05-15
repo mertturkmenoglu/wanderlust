@@ -11,9 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// Get Invites
-// Create Trip
-// Invite Participants
 // Accept/Decline Invite
 // Edit Trip
 // Delete Trip
@@ -75,6 +72,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.getInvitesByTripId(ctx, input.TripID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/trips/{id}/invite",
+			Summary:       "Invite Participants",
+			Description:   "Invite participants to a trip",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateTripInviteInput) (*dto.CreateTripInviteOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.createInvite(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)

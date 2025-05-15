@@ -324,3 +324,85 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		},
 	}, nil
 }
+
+func (s *Service) createInvite(ctx context.Context, tripId string, body dto.CreateTripInviteInputBody) (*dto.CreateTripInviteOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canRead(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canCreateInvite(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to invite users to this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	sentAt := time.Now()
+	expiresAt := sentAt.Add(time.Hour * 24 * 7)
+
+	dbRes, err := s.app.Db.Queries.CreateTripInvite(ctx, db.CreateTripInviteParams{
+		ID:     utils.GenerateId(s.app.Flake),
+		TripID: tripId,
+		FromID: userId,
+		ToID:   body.ToID,
+		Role:   body.Role,
+		SentAt: pgtype.Timestamptz{
+			Time:  sentAt,
+			Valid: true,
+		},
+		ExpiresAt: pgtype.Timestamptz{
+			Time:  expiresAt,
+			Valid: true,
+		},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("failed to create invite")
+	}
+
+	res, err := s.getInvitesByTripId(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	for _, invite := range res.Body.Invites {
+		if invite.ID == dbRes.ID {
+			return &dto.CreateTripInviteOutput{
+				Body: dto.CreateTripInviteOutputBody{
+					Invite: invite,
+				},
+			}, nil
+		}
+	}
+
+	return nil, huma.Error500InternalServerError("Failed to get invites")
+}
+
+func (s *Service) canCreateInvite(trip *dto.Trip, userId string) bool {
+	if trip.OwnerID == userId {
+		return true
+	}
+
+	for _, p := range trip.Participants {
+		if p.ID == userId && p.Role == "editor" {
+			return true
+		}
+	}
+
+	return false
+}
