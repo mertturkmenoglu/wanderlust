@@ -83,17 +83,28 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 }
 
 func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	userId := ctx.Value("userId").(string)
 
-	tripIds, err := s.app.Db.Queries.GetAllTripsIds(ctx, userId)
+	rows, err := s.app.Db.Queries.GetAllTripsIds(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get trips")
+	}
+
+	tripIds := make([]string, len(rows))
+
+	for i, row := range rows {
+		tripIds[i] = row.ID
 	}
 
 	trips, err := s.getMany(ctx, tripIds)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
