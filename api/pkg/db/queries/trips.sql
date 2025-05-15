@@ -166,3 +166,22 @@ JOIN profile pfrom ON pfrom.id = invites.from_id
 JOIN profile pto ON pto.id = invites.to_id
 WHERE invites.trip_id = $1
 ORDER BY invites.sent_at DESC;
+
+-- name: CreateTripInvite :one
+INSERT INTO trips_invites (
+  id,
+  trip_id,
+  from_id,
+  to_id,
+  sent_at,
+  expires_at,
+  role
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7
+) RETURNING *;
