@@ -52,7 +52,8 @@ SELECT
     'id', par.id,
     'fullName', par.full_name,
     'username', par.username,
-    'profileImage', par.profile_image
+    'profileImage', par.profile_image,
+    'role', tp.role
   ))
   FROM trips_participants tp
   JOIN profile par ON par.id = tp.user_id
