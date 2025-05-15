@@ -61,6 +61,33 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
+			Path:          "/trips/{tripId}/invites",
+			Summary:       "Get Invites for a Trip",
+			Description:   "Get all invites for a trip",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.GetTripInvitesByTripIdInput) (*dto.GetTripInvitesByTripIdOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getInvitesByTripId(ctx, input.TripID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
 			Path:          "/trips/",
 			Summary:       "Get My Trips",
 			Description:   "Get all trips for the current user",
