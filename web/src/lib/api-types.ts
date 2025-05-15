@@ -4177,6 +4177,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/{id}/invite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Invite Participants
+         * @description Invite participants to a trip
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateTripInviteInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateTripInviteOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/trips/{tripId}/invites": {
         parameters: {
             query?: never;
@@ -5255,6 +5313,28 @@ export interface components {
              * @enum {string}
              */
             visibility: "public" | "private" | "friends";
+        };
+        CreateTripInviteInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * @description Role of invite
+             * @enum {string}
+             */
+            role: "participant" | "editor";
+            /** @description User ID */
+            toId: string;
+        };
+        CreateTripInviteOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            invite: components["schemas"]["TripInvite"];
         };
         CreateTripOutputBody: {
             /**
@@ -6346,6 +6426,11 @@ export interface components {
             id: string;
             /** @description Profile image URL of the user */
             profileImage: string;
+            /**
+             * @description Role of the user
+             * @enum {string}
+             */
+            role: "participant" | "editor";
             /** @description Username */
             username: string;
         };
