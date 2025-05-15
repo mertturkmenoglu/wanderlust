@@ -24,6 +24,7 @@ type TripUser struct {
 	FullName     string `json:"fullName" example:"John Doe" doc:"User full name"`
 	Username     string `json:"username" example:"johndoe" doc:"Username"`
 	ProfileImage string `json:"profileImage" example:"http://example.com/image.png" doc:"Profile image URL of the user"`
+	Role         string `json:"role" example:"participant" doc:"Role of the user" enum:"participant,editor"`
 }
 
 type TripStatus string
@@ -135,4 +136,22 @@ type CreateTripOutput struct {
 
 type CreateTripOutputBody struct {
 	Trip Trip `json:"trip"`
+}
+
+type CreateTripInviteInput struct {
+	ID   string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	Body CreateTripInviteInputBody
+}
+
+type CreateTripInviteInputBody struct {
+	ToID string `json:"toId" example:"7323488942953598976" doc:"User ID"`
+	Role string `json:"role" example:"participant" doc:"Role of invite" enum:"participant,editor"`
+}
+
+type CreateTripInviteOutput struct {
+	Body CreateTripInviteOutputBody
+}
+
+type CreateTripInviteOutputBody struct {
+	Invite TripInvite `json:"invite"`
 }
