@@ -125,10 +125,11 @@ WHERE trips.id = ANY($1::TEXT[])
 GROUP BY trips.id, u.id;
 
 -- name: GetAllTripsIds :many
-SELECT DISTINCT trips.id
+SELECT DISTINCT trips.id, trips.created_at
 FROM trips
 LEFT JOIN trips_participants tp ON tp.trip_id = trips.id
-WHERE trips.owner_id = $1 OR tp.user_id = $1;
+WHERE trips.owner_id = $1 OR tp.user_id = $1
+ORDER BY trips.created_at DESC;
 
 -- name: GetInvitesByToUserId :many
 SELECT
@@ -141,4 +142,5 @@ SELECT
   ) AS fromUser
 FROM trips_invites invites
 JOIN profile p ON p.id = invites.from_id
-WHERE invites.to_id = $1;
+WHERE invites.to_id = $1
+ORDER BY invites.sent_at DESC;
