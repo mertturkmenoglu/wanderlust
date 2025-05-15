@@ -77,25 +77,31 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 }
 
 const getAllTripsIds = `-- name: GetAllTripsIds :many
-SELECT DISTINCT trips.id
+SELECT DISTINCT trips.id, trips.created_at
 FROM trips
 LEFT JOIN trips_participants tp ON tp.trip_id = trips.id
 WHERE trips.owner_id = $1 OR tp.user_id = $1
+ORDER BY trips.created_at DESC
 `
 
-func (q *Queries) GetAllTripsIds(ctx context.Context, ownerID string) ([]string, error) {
+type GetAllTripsIdsRow struct {
+	ID        string
+	CreatedAt pgtype.Timestamptz
+}
+
+func (q *Queries) GetAllTripsIds(ctx context.Context, ownerID string) ([]GetAllTripsIdsRow, error) {
 	rows, err := q.db.Query(ctx, getAllTripsIds, ownerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []GetAllTripsIdsRow
 	for rows.Next() {
-		var id string
-		if err := rows.Scan(&id); err != nil {
+		var i GetAllTripsIdsRow
+		if err := rows.Scan(&i.ID, &i.CreatedAt); err != nil {
 			return nil, err
 		}
-		items = append(items, id)
+		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -115,6 +121,7 @@ SELECT
 FROM trips_invites invites
 JOIN profile p ON p.id = invites.from_id
 WHERE invites.to_id = $1
+ORDER BY invites.sent_at DESC
 `
 
 type GetInvitesByToUserIdRow struct {
