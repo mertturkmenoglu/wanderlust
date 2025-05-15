@@ -158,6 +158,64 @@ func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetI
 	return items, nil
 }
 
+const getInvitesByTripId = `-- name: GetInvitesByTripId :many
+SELECT
+  invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.role,
+  jsonb_build_object(
+    'id', pfrom.id,
+    'fullName', pfrom.full_name,
+    'username', pfrom.username,
+    'profileImage', pfrom.profile_image
+  ) AS fromUser,
+  jsonb_build_object(
+    'id', pto.id,
+    'fullName', pto.full_name,
+    'username', pto.username,
+    'profileImage', pto.profile_image
+  ) AS toUser
+FROM trips_invites invites
+JOIN profile pfrom ON pfrom.id = invites.from_id
+JOIN profile pto ON pto.id = invites.to_id
+WHERE invites.trip_id = $1
+ORDER BY invites.sent_at DESC
+`
+
+type GetInvitesByTripIdRow struct {
+	TripsInvite TripsInvite
+	Fromuser    []byte
+	Touser      []byte
+}
+
+func (q *Queries) GetInvitesByTripId(ctx context.Context, tripID string) ([]GetInvitesByTripIdRow, error) {
+	rows, err := q.db.Query(ctx, getInvitesByTripId, tripID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetInvitesByTripIdRow
+	for rows.Next() {
+		var i GetInvitesByTripIdRow
+		if err := rows.Scan(
+			&i.TripsInvite.ID,
+			&i.TripsInvite.TripID,
+			&i.TripsInvite.FromID,
+			&i.TripsInvite.ToID,
+			&i.TripsInvite.SentAt,
+			&i.TripsInvite.ExpiresAt,
+			&i.TripsInvite.Role,
+			&i.Fromuser,
+			&i.Touser,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTripById = `-- name: GetTripById :one
 SELECT id, owner_id, status, title, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
 `

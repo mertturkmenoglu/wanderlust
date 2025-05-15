@@ -144,3 +144,24 @@ FROM trips_invites invites
 JOIN profile p ON p.id = invites.from_id
 WHERE invites.to_id = $1
 ORDER BY invites.sent_at DESC;
+
+-- name: GetInvitesByTripId :many
+SELECT
+  sqlc.embed(invites),
+  jsonb_build_object(
+    'id', pfrom.id,
+    'fullName', pfrom.full_name,
+    'username', pfrom.username,
+    'profileImage', pfrom.profile_image
+  ) AS fromUser,
+  jsonb_build_object(
+    'id', pto.id,
+    'fullName', pto.full_name,
+    'username', pto.username,
+    'profileImage', pto.profile_image
+  ) AS toUser
+FROM trips_invites invites
+JOIN profile pfrom ON pfrom.id = invites.from_id
+JOIN profile pto ON pto.id = invites.to_id
+WHERE invites.trip_id = $1
+ORDER BY invites.sent_at DESC;
