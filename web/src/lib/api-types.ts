@@ -4177,6 +4177,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/{tripId}/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Invites for a Trip
+         * @description Get all invites for a trip
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripInvitesByTripIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/users/follow/{username}": {
         parameters: {
             query?: never;
@@ -5560,7 +5614,7 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            invites: components["schemas"]["Trip"][];
+            invites: components["schemas"]["TripInvite"][];
         };
         GetPoiByIdMeta: {
             isBookmarked: boolean;
@@ -5639,6 +5693,14 @@ export interface components {
              */
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
+        };
+        GetTripInvitesByTripIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            invites: components["schemas"]["TripInvite"][];
         };
         GetUserActivitiesOutputBody: {
             /**
@@ -6242,6 +6304,26 @@ export interface components {
             /** @description Description of the day */
             description: string;
             locations: components["schemas"]["TripLocation"][];
+            /** @description Trip ID */
+            tripId: string;
+        };
+        TripInvite: {
+            /**
+             * Format: date-time
+             * @description Expires at time of invite
+             */
+            expiresAt: string;
+            from: components["schemas"]["TripUser"];
+            /** @description ID of invite */
+            id: string;
+            /** @description Role of invite */
+            role: string;
+            /**
+             * Format: date-time
+             * @description Sent at time of invite
+             */
+            sentAt: string;
+            to: components["schemas"]["TripUser"];
             /** @description Trip ID */
             tripId: string;
         };
