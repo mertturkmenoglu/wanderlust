@@ -26,7 +26,7 @@ function RouteComponent() {
     <div>
       <Breadcrumb
         items={[
-          { name: 'Detail', href: '/trips' },
+          { name: 'Detail', href: '/trips/my-trips' },
           { name: trip.title, href: `/trips/${trip.id}` },
         ]}
       />
