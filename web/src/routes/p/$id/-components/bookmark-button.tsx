@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { AuthContext } from '@/providers/auth-provider';
@@ -18,6 +19,23 @@ export default function BookmarkButton() {
   const { poi, meta } = route.useLoaderData();
   const [booked, setBooked] = useState(meta.isBookmarked);
   const auth = useContext(AuthContext);
+  const invalidator = useInvalidator();
+
+  const createMutation = api.useMutation('post', '/api/v2/bookmarks/', {
+    onSuccess: async () => {
+      setBooked((prev) => !prev);
+      await invalidator.invalidate();
+      toast.success('Bookmark added');
+    },
+  });
+
+  const deleteMutation = api.useMutation('delete', '/api/v2/bookmarks/{id}', {
+    onSuccess: async () => {
+      setBooked((prev) => !prev);
+      await invalidator.invalidate();
+      toast.success('Bookmark removed');
+    },
+  });
 
   const onClick = () => {
     if (!auth.user) {
@@ -43,20 +61,6 @@ export default function BookmarkButton() {
       },
     });
   };
-
-  const createMutation = api.useMutation('post', '/api/v2/bookmarks/', {
-    onSuccess: () => {
-      setBooked((prev) => !prev);
-      toast.success('Bookmark added');
-    },
-  });
-
-  const deleteMutation = api.useMutation('delete', '/api/v2/bookmarks/{id}', {
-    onSuccess: () => {
-      setBooked((prev) => !prev);
-      toast.success('Bookmark removed');
-    },
-  });
 
   return (
     <TooltipProvider>

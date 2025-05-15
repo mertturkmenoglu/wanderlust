@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -8,7 +9,13 @@ type Props = {
 };
 
 export default function AddToListButton({ poiId, listId }: Props) {
-  const mutation = useAddToList();
+  const invalidator = useInvalidator();
+  const mutation = api.useMutation('post', '/api/v2/lists/{id}/items', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      toast.success('Added to the list');
+    },
+  });
 
   return (
     <Button
@@ -34,12 +41,4 @@ export default function AddToListButton({ poiId, listId }: Props) {
       Add to list
     </Button>
   );
-}
-
-export function useAddToList() {
-  return api.useMutation('post', '/api/v2/lists/{id}/items', {
-    onSuccess: () => {
-      toast.success('Added to the list');
-    },
-  });
 }
