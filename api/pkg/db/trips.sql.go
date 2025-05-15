@@ -76,6 +76,59 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 	return i, err
 }
 
+const createTripInvite = `-- name: CreateTripInvite :one
+INSERT INTO trips_invites (
+  id,
+  trip_id,
+  from_id,
+  to_id,
+  sent_at,
+  expires_at,
+  role
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7
+) RETURNING id, trip_id, from_id, to_id, sent_at, expires_at, role
+`
+
+type CreateTripInviteParams struct {
+	ID        string
+	TripID    string
+	FromID    string
+	ToID      string
+	SentAt    pgtype.Timestamptz
+	ExpiresAt pgtype.Timestamptz
+	Role      string
+}
+
+func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInviteParams) (TripsInvite, error) {
+	row := q.db.QueryRow(ctx, createTripInvite,
+		arg.ID,
+		arg.TripID,
+		arg.FromID,
+		arg.ToID,
+		arg.SentAt,
+		arg.ExpiresAt,
+		arg.Role,
+	)
+	var i TripsInvite
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.FromID,
+		&i.ToID,
+		&i.SentAt,
+		&i.ExpiresAt,
+		&i.Role,
+	)
+	return i, err
+}
+
 const getAllTripsIds = `-- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at
 FROM trips
@@ -250,7 +303,8 @@ SELECT
     'id', par.id,
     'fullName', par.full_name,
     'username', par.username,
-    'profileImage', par.profile_image
+    'profileImage', par.profile_image,
+    'role', tp.role
   ))
   FROM trips_participants tp
   JOIN profile par ON par.id = tp.user_id
