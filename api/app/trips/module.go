@@ -44,9 +44,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetTripByIdInput) (*dto.GetTripByIdOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
 			res, err := s.getTripById(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -67,9 +71,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetAllTripsOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
 			res, err := s.getAllTrips(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -90,9 +98,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetMyTripInvitesOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
 			res, err := s.getMyInvites(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -119,6 +131,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

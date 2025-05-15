@@ -22,9 +22,13 @@ type Service struct {
 }
 
 func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	res, err := s.app.Db.Queries.GetTripsByIdsPopulated(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -34,6 +38,7 @@ func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error)
 		v, err := mapper.ToTrip(t)
 
 		if err != nil {
+			sp.RecordError(err)
 			return nil, err
 		}
 
@@ -44,9 +49,14 @@ func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error)
 }
 
 func (s *Service) get(ctx context.Context, id string) (*dto.Trip, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	res, err := s.getMany(ctx, []string{id})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Trip not found")
 		}
@@ -55,16 +65,22 @@ func (s *Service) get(ctx context.Context, id string) (*dto.Trip, error) {
 	}
 
 	if len(res) == 0 {
-		return nil, huma.Error404NotFound("Trip not found")
+		err = huma.Error404NotFound("Trip not found")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	return &res[0], nil
 }
 
 func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	trip, err := s.get(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -72,7 +88,9 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 
 	// Check authorization rules
 	if !s.canRead(trip, userId) {
-		return nil, huma.Error403Forbidden("You are not authorized to access this trip")
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	return &dto.GetTripByIdOutput{
@@ -138,11 +156,15 @@ func (s *Service) canRead(trip *dto.Trip, userId string) bool {
 }
 
 func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	userId := ctx.Value("userId").(string)
 
 	dbInvites, err := s.app.Db.Queries.GetInvitesByToUserId(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get invites")
 	}
 
@@ -156,7 +178,9 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 		} else if dbInvite.TripsInvite.Role == "editor" {
 			role = dto.TRIP_ROLE_EDITOR
 		} else {
-			return nil, huma.Error500InternalServerError("Failed to get invites")
+			err = huma.Error500InternalServerError("Failed to get invites")
+			sp.RecordError(err)
+			return nil, err
 		}
 
 		var fromUser dto.TripUser
@@ -164,6 +188,7 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 		err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
 
 		if err != nil {
+			sp.RecordError(err)
 			return nil, huma.Error500InternalServerError("Failed to get invites")
 		}
 
@@ -187,7 +212,7 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 }
 
 func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dto.CreateTripOutput, error) {
-	_, sp := tracing.NewSpan(ctx)
+	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
@@ -205,12 +230,14 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("failed to create trip")
 	}
 
 	res, err := s.get(ctx, dbRes.ID)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("failed to get trip")
 	}
 
