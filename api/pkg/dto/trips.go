@@ -51,6 +51,7 @@ const (
 
 type TripInvite struct {
 	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of invite"`
+	TripID    string    `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
 	From      TripUser  `json:"from"`
 	To        TripUser  `json:"to"`
 	SentAt    time.Time `json:"sentAt" example:"2023-05-01T00:00:00Z" doc:"Sent at time of invite"`
@@ -91,6 +92,18 @@ type GetTripByIdOutputBody struct {
 	Trip Trip `json:"trip"`
 }
 
+type GetTripInvitesByTripIdInput struct {
+	TripID string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+}
+
+type GetTripInvitesByTripIdOutput struct {
+	Body GetTripInvitesByTripIdOutputBody
+}
+
+type GetTripInvitesByTripIdOutputBody struct {
+	Invites []TripInvite `json:"invites"`
+}
+
 type GetAllTripsOutput struct {
 	Body GetAllTripsOutputBody
 }
@@ -104,7 +117,7 @@ type GetMyTripInvitesOutput struct {
 }
 
 type GetMyTripInvitesOutputBody struct {
-	Invites []Trip `json:"invites"`
+	Invites []TripInvite `json:"invites"`
 }
 
 type CreateTripInput struct {
