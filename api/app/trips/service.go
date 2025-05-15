@@ -193,8 +193,9 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 		}
 
 		invites[i] = dto.TripInvite{
-			ID:   dbInvite.TripsInvite.ID,
-			From: fromUser,
+			ID:     dbInvite.TripsInvite.ID,
+			TripID: dbInvite.TripsInvite.TripID,
+			From:   fromUser,
 			To: dto.TripUser{
 				ID: dbInvite.TripsInvite.ToID,
 			},
@@ -206,7 +207,7 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 
 	return &dto.GetMyTripInvitesOutput{
 		Body: dto.GetMyTripInvitesOutputBody{
-			Invites: make([]dto.Trip, len(dbInvites)),
+			Invites: invites,
 		},
 	}, nil
 }
