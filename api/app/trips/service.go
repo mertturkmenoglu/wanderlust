@@ -248,3 +248,79 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 		},
 	}, nil
 }
+
+func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.GetTripInvitesByTripIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Trip not found")
+	}
+
+	if !s.canRead(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	dbInvites, err := s.app.Db.Queries.GetInvitesByTripId(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	invites := make([]dto.TripInvite, len(dbInvites))
+
+	for i, dbInvite := range dbInvites {
+		var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+
+		if dbInvite.TripsInvite.Role == "participant" {
+			role = dto.TRIP_ROLE_PARTICIPANT
+		} else if dbInvite.TripsInvite.Role == "editor" {
+			role = dto.TRIP_ROLE_EDITOR
+		} else {
+			err = huma.Error500InternalServerError("Failed to get invites")
+			sp.RecordError(err)
+			return nil, err
+		}
+
+		var fromUser dto.TripUser
+
+		err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to get invites")
+		}
+
+		var toUser dto.TripUser
+
+		err = json.Unmarshal(dbInvite.Touser, &toUser)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to get invites")
+		}
+
+		invites[i] = dto.TripInvite{
+			ID:        dbInvite.TripsInvite.ID,
+			TripID:    dbInvite.TripsInvite.TripID,
+			From:      fromUser,
+			To:        toUser,
+			SentAt:    dbInvite.TripsInvite.SentAt.Time,
+			ExpiresAt: dbInvite.TripsInvite.ExpiresAt.Time,
+			Role:      role,
+		}
+	}
+
+	return &dto.GetTripInvitesByTripIdOutput{
+		Body: dto.GetTripInvitesByTripIdOutputBody{
+			Invites: invites,
+		},
+	}, nil
+}
