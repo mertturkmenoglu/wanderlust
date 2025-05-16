@@ -4,17 +4,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
 import { Link } from '@tanstack/react-router';
 import { CalendarIcon, CheckIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
   invite: components['schemas']['TripInvite'];
 };
 
 export function InviteCard({ invite }: Props) {
+  const invalidator = useInvalidator();
   const [open, setOpen] = useState(false);
 
   const query = api.useQuery(
@@ -30,6 +33,18 @@ export function InviteCard({ invite }: Props) {
     },
     {
       enabled: false,
+    },
+  );
+
+  const mutation = api.useMutation(
+    'post',
+    '/api/v2/trips/{tripId}/invites/{inviteId}/{action}',
+    {
+      onSuccess: async ({ accepted }) => {
+        toast.success(accepted ? 'Invite accepted' : 'Invite declined');
+        setOpen(false);
+        await invalidator.invalidate();
+      },
     },
   );
 
@@ -102,12 +117,39 @@ export function InviteCard({ invite }: Props) {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Button size="sm" className="">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      mutation.mutate({
+                        params: {
+                          path: {
+                            action: 'accept',
+                            inviteId: invite.id,
+                            tripId: invite.tripId,
+                          },
+                        },
+                      });
+                    }}
+                  >
                     <CheckIcon className="size-4" />
                     Accept
                   </Button>
 
-                  <Button size="sm" variant="destructive">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => {
+                      mutation.mutate({
+                        params: {
+                          path: {
+                            action: 'decline',
+                            inviteId: invite.id,
+                            tripId: invite.tripId,
+                          },
+                        },
+                      });
+                    }}
+                  >
                     <XIcon className="size-4" />
                     Decline
                   </Button>
