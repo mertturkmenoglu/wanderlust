@@ -66,3 +66,17 @@ func (s *Service) canRead(trip *dto.Trip, userId string) bool {
 		return false
 	}
 }
+
+func (s *Service) canCreateComment(trip *dto.Trip, userId string) bool {
+	if trip.OwnerID == userId {
+		return true
+	}
+
+	for _, p := range trip.Participants {
+		if p.ID == userId {
+			return true
+		}
+	}
+
+	return false
+}
