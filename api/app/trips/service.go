@@ -2,7 +2,6 @@ package trips
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"time"
 	"wanderlust/pkg/core"
@@ -171,38 +170,14 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 	invites := make([]dto.TripInvite, len(dbInvites))
 
 	for i, dbInvite := range dbInvites {
-		var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+		res, err := mapper.FromToUserRowToTripInvite(dbInvite)
 
-		if dbInvite.TripsInvite.Role == "participant" {
-			role = dto.TRIP_ROLE_PARTICIPANT
-		} else if dbInvite.TripsInvite.Role == "editor" {
-			role = dto.TRIP_ROLE_EDITOR
-		} else {
-			err = huma.Error500InternalServerError("Failed to get invites")
+		if err != nil {
 			sp.RecordError(err)
 			return nil, err
 		}
 
-		var fromUser dto.TripUser
-
-		err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to get invites")
-		}
-
-		invites[i] = dto.TripInvite{
-			ID:     dbInvite.TripsInvite.ID,
-			TripID: dbInvite.TripsInvite.TripID,
-			From:   fromUser,
-			To: dto.TripUser{
-				ID: dbInvite.TripsInvite.ToID,
-			},
-			SentAt:    dbInvite.TripsInvite.SentAt.Time,
-			ExpiresAt: dbInvite.TripsInvite.ExpiresAt.Time,
-			Role:      role,
-		}
+		invites[i] = res
 	}
 
 	return &dto.GetMyTripInvitesOutput{
@@ -277,45 +252,14 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 	invites := make([]dto.TripInvite, len(dbInvites))
 
 	for i, dbInvite := range dbInvites {
-		var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+		res, err := mapper.FromTripRowToTripInvite(dbInvite)
 
-		if dbInvite.TripsInvite.Role == "participant" {
-			role = dto.TRIP_ROLE_PARTICIPANT
-		} else if dbInvite.TripsInvite.Role == "editor" {
-			role = dto.TRIP_ROLE_EDITOR
-		} else {
-			err = huma.Error500InternalServerError("Failed to get invites")
+		if err != nil {
 			sp.RecordError(err)
 			return nil, err
 		}
 
-		var fromUser dto.TripUser
-
-		err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to get invites")
-		}
-
-		var toUser dto.TripUser
-
-		err = json.Unmarshal(dbInvite.Touser, &toUser)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to get invites")
-		}
-
-		invites[i] = dto.TripInvite{
-			ID:        dbInvite.TripsInvite.ID,
-			TripID:    dbInvite.TripsInvite.TripID,
-			From:      fromUser,
-			To:        toUser,
-			SentAt:    dbInvite.TripsInvite.SentAt.Time,
-			ExpiresAt: dbInvite.TripsInvite.ExpiresAt.Time,
-			Role:      role,
-		}
+		invites[i] = res
 	}
 
 	return &dto.GetTripInvitesByTripIdOutput{
