@@ -11,6 +11,44 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addParticipantToTrip = `-- name: AddParticipantToTrip :one
+INSERT INTO trips_participants (
+  id,
+  user_id,
+  trip_id,
+  role
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING id, trip_id, user_id, role
+`
+
+type AddParticipantToTripParams struct {
+	ID     string
+	UserID string
+	TripID string
+	Role   string
+}
+
+func (q *Queries) AddParticipantToTrip(ctx context.Context, arg AddParticipantToTripParams) (TripsParticipant, error) {
+	row := q.db.QueryRow(ctx, addParticipantToTrip,
+		arg.ID,
+		arg.UserID,
+		arg.TripID,
+		arg.Role,
+	)
+	var i TripsParticipant
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.UserID,
+		&i.Role,
+	)
+	return i, err
+}
+
 type BatchCreateTripsParams struct {
 	ID              string
 	OwnerID         string
@@ -127,6 +165,15 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 		&i.Role,
 	)
 	return i, err
+}
+
+const deleteInvite = `-- name: DeleteInvite :exec
+DELETE FROM trips_invites WHERE id = $1
+`
+
+func (q *Queries) DeleteInvite(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteInvite, id)
+	return err
 }
 
 const getAllTripsIds = `-- name: GetAllTripsIds :many

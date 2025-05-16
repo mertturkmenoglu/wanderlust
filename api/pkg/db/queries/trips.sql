@@ -185,3 +185,19 @@ INSERT INTO trips_invites (
   $6,
   $7
 ) RETURNING *;
+
+-- name: DeleteInvite :exec
+DELETE FROM trips_invites WHERE id = $1;
+
+-- name: AddParticipantToTrip :one
+INSERT INTO trips_participants (
+  id,
+  user_id,
+  trip_id,
+  role
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING *;
