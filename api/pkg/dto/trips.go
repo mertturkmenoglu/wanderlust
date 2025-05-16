@@ -60,6 +60,13 @@ type TripInvite struct {
 	Role      TripRole  `json:"role" example:"participant" doc:"Role of invite"`
 }
 
+type TripInviteDetail struct {
+	TripInvite
+	TripTitle string    `json:"tripTitle" example:"My Awesome Trip" doc:"Title of the trip"`
+	StartAt   time.Time `json:"startAt" example:"2023-05-01T00:00:00Z" doc:"Start datetime of the trip"`
+	EndAt     time.Time `json:"endAt" example:"2023-05-01T00:00:00Z" doc:"End datetime of the trip"`
+}
+
 type TripComment struct {
 	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of comment"`
 	From      TripUser  `json:"from"`
@@ -154,4 +161,17 @@ type CreateTripInviteOutput struct {
 
 type CreateTripInviteOutputBody struct {
 	Invite TripInvite `json:"invite"`
+}
+
+type GetTripInviteDetailsInput struct {
+	TripID   string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	InviteID string `path:"inviteId" example:"7323488942953598976" required:"true" doc:"Invite ID"`
+}
+
+type GetTripInviteDetailsOutput struct {
+	Body GetTripInviteDetailsOutputBody
+}
+
+type GetTripInviteDetailsOutputBody struct {
+	InviteDetail TripInviteDetail `json:"inviteDetail"`
 }
