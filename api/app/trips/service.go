@@ -271,6 +271,12 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 		return nil, err
 	}
 
+	if trip.VisibilityLevel == dto.TRIP_VISIBILITY_LEVEL_PRIVATE {
+		err = huma.Error400BadRequest("You cannot invite users to a private trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
 	sentAt := time.Now()
 	expiresAt := sentAt.Add(time.Hour * 24 * 7)
 
