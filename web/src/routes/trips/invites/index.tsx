@@ -1,6 +1,7 @@
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { Breadcrumb } from '../-breadcrumb';
+import { InviteCard } from './-card';
 
 export const Route = createFileRoute('/trips/invites/')({
   component: RouteComponent,
@@ -17,7 +18,11 @@ function RouteComponent() {
   return (
     <div>
       <Breadcrumb items={[{ name: 'My Invites', href: '/trips/invites' }]} />
-      <pre className="mt-8">{JSON.stringify(invites, null, 2)}</pre>
+      <div className="my-4 mb-96">
+        {invites.map((invite) => (
+          <InviteCard invite={invite} key={invite.id} />
+        ))}
+      </div>
     </div>
   );
 }
