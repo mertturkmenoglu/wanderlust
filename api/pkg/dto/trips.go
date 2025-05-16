@@ -175,3 +175,17 @@ type GetTripInviteDetailsOutput struct {
 type GetTripInviteDetailsOutputBody struct {
 	InviteDetail TripInviteDetail `json:"inviteDetail"`
 }
+
+type TripInviteActionInput struct {
+	TripID   string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	InviteID string `path:"inviteId" example:"7323488942953598976" required:"true" doc:"Invite ID"`
+	Action   string `path:"action" example:"accept" required:"true" doc:"Action to perform on the invite" enum:"accept,decline"`
+}
+
+type TripInviteActionOutput struct {
+	Body TripInviteActionOutputBody
+}
+
+type TripInviteActionOutputBody struct {
+	Accepted bool `json:"accepted"`
+}
