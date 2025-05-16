@@ -11,13 +11,25 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// Accept/Decline Invite
-// Edit Trip
-// Delete Trip
-// Create/Update/Delete Comment
-// Create/Update/Delete Amenity
-// Add/Update/Delete Location
-// Edit Trip Details
+// + GET /trips/:id
+// + GET /trips/:id/invites
+// + POST /trips/:id/invite
+// + GET /trips/
+// + GET /trips/invites
+// + POST /trips/
+// GET /trips/:tripId/invites/:inviteId (Get Invite Details)
+// POST /trips/:tripId/invites/:inviteId/:action (Accept/Decline Invite)
+// DELETE /trips/:tripId/participants/:userId (Remove Participant)
+// PATCH /trips/:tripId (Edit Trip)
+// DELETE /trips/:tripId (Delete Trip)
+// POST /trips/:id/comments (Create Comment)
+// GET /trips/:id/comments (Get Comments)
+// PATCH /trips/:id/comments/:commentId  (Edit Comment)
+// DELETE /trips/:id/comments/:commentId (Delete Comment)
+// PATCH /trips/:id/amenities (create-update-delete) (CRUD Amenities)
+// POST /trips/:id/locations (Add Location)
+// PATCH /trips/:id/locations/:locationId (Update Location)
+// DELETE /trips/:id/locations/:locationId (Delete Location)
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
