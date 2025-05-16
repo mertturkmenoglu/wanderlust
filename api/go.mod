@@ -12,6 +12,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.76
 	github.com/pterm/pterm v0.12.80
 	github.com/redis/go-redis/v9 v9.6.1
+	github.com/samber/slog-echo v1.16.1
 	github.com/sony/sonyflake v1.2.0
 	github.com/typesense/typesense-go/v2 v2.0.0
 	go.opentelemetry.io/otel v1.35.0
@@ -58,6 +59,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
+	github.com/samber/lo v1.49.1 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
