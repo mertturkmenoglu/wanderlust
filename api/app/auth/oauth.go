@@ -65,9 +65,9 @@ func getOAuthConfig(provider string) *oauth2.Config {
 
 func getGoogleOAuth2Config() *oauth2.Config {
 	return &oauth2.Config{
-		ClientID:     cfg.Get(cfg.GOOGLE_CLIENT_ID),
-		ClientSecret: cfg.Get(cfg.GOOGLE_CLIENT_SECRET),
-		RedirectURL:  cfg.Get(cfg.API_AUTH_GOOGLE_CALLBACK),
+		ClientID:     cfg.Env.GoogleClientID,
+		ClientSecret: cfg.Env.GoogleClientSecret,
+		RedirectURL:  cfg.Env.GoogleCallback,
 		Scopes:       []string{"profile", "email"},
 		Endpoint:     google.Endpoint,
 	}
@@ -75,9 +75,9 @@ func getGoogleOAuth2Config() *oauth2.Config {
 
 func getFbOAuth2Config() *oauth2.Config {
 	return &oauth2.Config{
-		ClientID:     cfg.Get(cfg.FACEBOOK_CLIENT_ID),
-		ClientSecret: cfg.Get(cfg.FACEBOOK_CLIENT_SECRET),
-		RedirectURL:  cfg.Get(cfg.API_AUTH_FACEBOOK_CALLBACK),
+		ClientID:     cfg.Env.FacebookClientID,
+		ClientSecret: cfg.Env.FacebookClientSecret,
+		RedirectURL:  cfg.Env.FacebookCallback,
 		Scopes:       []string{"public_profile", "email"},
 		Endpoint:     facebook.Endpoint,
 	}

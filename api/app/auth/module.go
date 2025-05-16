@@ -417,7 +417,7 @@ func Register(grp *huma.Group, app *core.Application) {
 					Expires: time.Unix(0, 0),
 				},
 				Status: http.StatusTemporaryRedirect,
-				Url:    cfg.Get(cfg.API_AUTH_OAUTH_REDIRECT),
+				Url:    cfg.Env.OauthRedirect,
 			}, nil
 		},
 	)

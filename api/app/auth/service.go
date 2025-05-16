@@ -169,7 +169,7 @@ func (s *Service) createUserFromOAuthUser(oauthUser *oauthUser) (*db.User, error
 func (s *Service) getEmailVerifyUrl(code string) string {
 	return fmt.Sprintf(
 		"%s/api/v2/auth/verify-email/verify?code=%s",
-		cfg.Get(cfg.API_URL),
+		cfg.Env.URL,
 		code,
 	)
 }

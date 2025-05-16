@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -38,12 +39,14 @@ func LoadEnv() {
 	if err != nil {
 		panic("cannot load .env file: " + err.Error())
 	}
+
+	cfg.InitConfigurationStruct()
 }
 
 func InitGlobalMiddlewares(e *echo.Echo) {
 	e.Use(middleware.Recover())
 
-	if cfg.Get(cfg.ENV) == "dev" {
+	if cfg.Env.Env == "dev" {
 		e.Use(otelecho.Middleware("wanderlust", otelecho.WithSkipper(func(c echo.Context) bool {
 			return c.Request().Method == http.MethodOptions
 		})))
@@ -119,13 +122,13 @@ func SetupOpenApiDocs(api *huma.API) {
 }
 
 func RunMigrations() {
-	if cfg.Get(cfg.RUN_MIGRATIONS) == "1" {
+	if cfg.Env.RunMigrations == "1" {
 		db.RunMigrations()
 	}
 }
 
 func ScalarDocs(e *echo.Echo) {
-	if cfg.Get(cfg.API_DOCS_TYPE) == "scalar" {
+	if cfg.Env.DocsType == "scalar" {
 		e.Static("/", "assets")
 		e.GET("/docs", func(c echo.Context) error {
 			c.Response().Header().Set("Content-Type", "text/html")
@@ -135,12 +138,12 @@ func ScalarDocs(e *echo.Echo) {
 }
 
 func StartServer(e *echo.Echo) {
-	portString := ":" + cfg.Get(cfg.PORT)
+	portString := fmt.Sprintf(":%d", cfg.Env.Port)
 	e.Logger.Fatal(e.Start(portString))
 }
 
 func InitTracer() func() {
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.Get(cfg.JAEGER_ENDPOINT))))
+	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.Env.JaegerEndpoint)))
 
 	if err != nil {
 		log.Fatal(err)
