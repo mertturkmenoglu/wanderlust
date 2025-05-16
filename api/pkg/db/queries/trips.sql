@@ -207,3 +207,18 @@ DELETE FROM trips_participants WHERE trip_id = $1 AND user_id = $2;
 
 -- name: DeleteTrip :exec
 DELETE FROM trips WHERE id = $1;
+
+-- name: CreateTripComment :one
+INSERT INTO trips_comments (
+  id,
+  trip_id,
+  from_id,
+  content,
+  created_at
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING *;

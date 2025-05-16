@@ -114,6 +114,49 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 	return i, err
 }
 
+const createTripComment = `-- name: CreateTripComment :one
+INSERT INTO trips_comments (
+  id,
+  trip_id,
+  from_id,
+  content,
+  created_at
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING id, trip_id, from_id, content, created_at
+`
+
+type CreateTripCommentParams struct {
+	ID        string
+	TripID    string
+	FromID    string
+	Content   string
+	CreatedAt pgtype.Timestamptz
+}
+
+func (q *Queries) CreateTripComment(ctx context.Context, arg CreateTripCommentParams) (TripsComment, error) {
+	row := q.db.QueryRow(ctx, createTripComment,
+		arg.ID,
+		arg.TripID,
+		arg.FromID,
+		arg.Content,
+		arg.CreatedAt,
+	)
+	var i TripsComment
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.FromID,
+		&i.Content,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const createTripInvite = `-- name: CreateTripInvite :one
 INSERT INTO trips_invites (
   id,
