@@ -69,6 +69,7 @@ type TripInviteDetail struct {
 
 type TripComment struct {
 	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of comment"`
+	TripID    string    `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
 	From      TripUser  `json:"from"`
 	Content   string    `json:"content" example:"This is a comment" doc:"Content of comment"`
 	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of the comment"`
@@ -202,4 +203,21 @@ type DeleteTripParticipantInput struct {
 
 type DeleteTripInput struct {
 	ID string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+}
+
+type CreateTripCommentInput struct {
+	ID   string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	Body CreateTripCommentInputBody
+}
+
+type CreateTripCommentInputBody struct {
+	Content string `json:"content" example:"This is a comment" doc:"Content of comment" minLength:"1" maxLength:"255"`
+}
+
+type CreateTripCommentOutput struct {
+	Body CreateTripCommentOutputBody
+}
+
+type CreateTripCommentOutputBody struct {
+	Comment TripComment `json:"comment"`
 }
