@@ -4289,6 +4289,170 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/{tripId}/invites/{inviteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trip Invite Details
+         * @description Get a trip invite details by its ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Invite ID
+                     * @example 7323488942953598976
+                     */
+                    inviteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripInviteDetailsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Remove Invite
+         * @description Remove an invite by its ID
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Invite ID
+                     * @example 7323488942953598976
+                     */
+                    inviteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/invites/{inviteId}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept/Decline Trip Invite
+         * @description Accept/Decline a trip invite by its ID
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Invite ID
+                     * @example 7323488942953598976
+                     */
+                    inviteId: string;
+                    /**
+                     * @description Action to perform on the invite
+                     * @example accept
+                     */
+                    action: "accept" | "decline";
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TripInviteActionOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/users/follow/{username}": {
         parameters: {
             query?: never;
@@ -5774,6 +5938,14 @@ export interface components {
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
         };
+        GetTripInviteDetailsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            inviteDetail: components["schemas"]["TripInviteDetail"];
+        };
         GetTripInvitesByTripIdOutputBody: {
             /**
              * Format: uri
@@ -6406,6 +6578,46 @@ export interface components {
             to: components["schemas"]["TripUser"];
             /** @description Trip ID */
             tripId: string;
+        };
+        TripInviteActionOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            accepted: boolean;
+        };
+        TripInviteDetail: {
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /**
+             * Format: date-time
+             * @description Expires at time of invite
+             */
+            expiresAt: string;
+            from: components["schemas"]["TripUser"];
+            /** @description ID of invite */
+            id: string;
+            /** @description Role of invite */
+            role: string;
+            /**
+             * Format: date-time
+             * @description Sent at time of invite
+             */
+            sentAt: string;
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
+            to: components["schemas"]["TripUser"];
+            /** @description Trip ID */
+            tripId: string;
+            /** @description Title of the trip */
+            tripTitle: string;
         };
         TripLocation: {
             /**
