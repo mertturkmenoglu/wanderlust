@@ -350,3 +350,68 @@ func (s *Service) canCreateInvite(trip *dto.Trip, userId string) bool {
 
 	return false
 }
+
+func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId string) (*dto.GetTripInviteDetailsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbInvites, err := s.app.Db.Queries.GetInvitesByTripId(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Invite not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	var dbInvite *db.GetInvitesByTripIdRow = nil
+
+	for _, inv := range dbInvites {
+		if inv.TripsInvite.ID == inviteId {
+			dbInvite = &inv
+			break
+		}
+	}
+
+	if dbInvite == nil {
+		err = huma.Error404NotFound("Invite not found")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Trip not found")
+	}
+
+	inviteDto, err := mapper.FromTripRowToTripInvite(*dbInvite)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if inviteDto.To.ID != userId {
+		err = huma.Error403Forbidden("You are not authorized to access this invite")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.GetTripInviteDetailsOutput{
+		Body: dto.GetTripInviteDetailsOutputBody{
+			InviteDetail: dto.TripInviteDetail{
+				TripInvite: inviteDto,
+				TripTitle:  trip.Title,
+				StartAt:    trip.StartAt,
+				EndAt:      trip.EndAt,
+			},
+		},
+	}, nil
+}
