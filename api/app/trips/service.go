@@ -519,3 +519,68 @@ func (s *Service) removeInvite(ctx context.Context, tripId string, inviteId stri
 
 	return nil
 }
+
+func (s *Service) removeParticipant(ctx context.Context, tripId string, participantId string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	if !s.canRead(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return err
+	}
+
+	if !s.canRemoveParticipant(trip, userId, participantId) {
+		err = huma.Error403Forbidden("You are not authorized to remove this participant")
+		sp.RecordError(err)
+		return err
+	}
+
+	err = s.app.Db.Queries.DeleteParticipant(ctx, db.DeleteParticipantParams{
+		TripID: tripId,
+		UserID: participantId,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete participant")
+	}
+
+	return nil
+}
+
+func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participantId string) bool {
+	// You cannot remove the owner
+	if participantId == trip.OwnerID {
+		return false
+	}
+
+	// You can remove yourself regardless of the role
+	if userId == participantId {
+		return true
+	}
+
+	// Owner can remove anyone except themselves
+	if trip.OwnerID == userId {
+		return true
+	}
+
+	// If the action user is an editor, they can remove anyone except the owner and themselves
+	for _, p := range trip.Participants {
+		if p.ID == userId && p.Role == "editor" {
+			return true
+		}
+	}
+
+	// By default, you cannot remove anyone
+	return false
+}
