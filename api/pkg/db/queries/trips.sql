@@ -201,3 +201,6 @@ INSERT INTO trips_participants (
   $3,
   $4
 ) RETURNING *;
+
+-- name: DeleteParticipant :exec
+DELETE FROM trips_participants WHERE trip_id = $1 AND user_id = $2;

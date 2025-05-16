@@ -176,6 +176,20 @@ func (q *Queries) DeleteInvite(ctx context.Context, id string) error {
 	return err
 }
 
+const deleteParticipant = `-- name: DeleteParticipant :exec
+DELETE FROM trips_participants WHERE trip_id = $1 AND user_id = $2
+`
+
+type DeleteParticipantParams struct {
+	TripID string
+	UserID string
+}
+
+func (q *Queries) DeleteParticipant(ctx context.Context, arg DeleteParticipantParams) error {
+	_, err := q.db.Exec(ctx, deleteParticipant, arg.TripID, arg.UserID)
+	return err
+}
+
 const getAllTripsIds = `-- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at
 FROM trips
