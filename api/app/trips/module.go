@@ -19,7 +19,7 @@ import (
 // + POST /trips/
 // + GET /trips/:tripId/invites/:inviteId (Get Invite Details)
 // + POST /trips/:tripId/invites/:inviteId/:action (Accept/Decline Invite)
-// DELETE /trips/:tripId/invites/:inviteId (Delete Invite)
+// + DELETE /trips/:tripId/invites/:inviteId (Delete Invite)
 // DELETE /trips/:tripId/participants/:userId (Remove Participant)
 // PATCH /trips/:tripId (Edit Trip)
 // DELETE /trips/:tripId (Delete Trip)
@@ -254,6 +254,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/trips/{tripId}/invites/{inviteId}",
+			Summary:       "Remove Invite",
+			Description:   "Remove an invite by its ID",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeleteTripInviteInput) (*struct{}, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removeInvite(ctx, input.TripID, input.InviteID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return nil, nil
 		},
 	)
 }

@@ -189,3 +189,8 @@ type TripInviteActionOutput struct {
 type TripInviteActionOutputBody struct {
 	Accepted bool `json:"accepted"`
 }
+
+type DeleteTripInviteInput struct {
+	TripID   string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	InviteID string `path:"inviteId" example:"7323488942953598976" required:"true" doc:"Invite ID"`
+}

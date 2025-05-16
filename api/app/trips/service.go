@@ -490,3 +490,32 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 		},
 	}, nil
 }
+
+func (s *Service) removeInvite(ctx context.Context, tripId string, inviteId string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	if !s.canCreateInvite(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to remove this invite")
+		sp.RecordError(err)
+		return err
+	}
+
+	err = s.app.Db.Queries.DeleteInvite(ctx, inviteId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete invite")
+	}
+
+	return nil
+}
