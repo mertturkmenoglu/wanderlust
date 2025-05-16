@@ -17,7 +17,7 @@ import (
 // + GET /trips/
 // + GET /trips/invites
 // + POST /trips/
-// GET /trips/:tripId/invites/:inviteId (Get Invite Details)
+// + GET /trips/:tripId/invites/:inviteId (Get Invite Details)
 // POST /trips/:tripId/invites/:inviteId/:action (Accept/Decline Invite)
 // DELETE /trips/:tripId/participants/:userId (Remove Participant)
 // PATCH /trips/:tripId (Edit Trip)
@@ -202,4 +202,30 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/trips/{tripId}/invites/{inviteId}",
+			Summary:       "Get Trip Invite Details",
+			Description:   "Get a trip invite details by its ID",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.GetTripInviteDetailsInput) (*dto.GetTripInviteDetailsOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getInviteDetail(ctx, input.TripID, input.InviteID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
