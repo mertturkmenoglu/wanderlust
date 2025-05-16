@@ -123,7 +123,8 @@ LEFT JOIN LATERAL (
   WHERE pm.poi_id = poi.id
 ) AS poi_media ON TRUE
 WHERE trips.id = ANY($1::TEXT[])
-GROUP BY trips.id, u.id;
+GROUP BY trips.id, u.id
+ORDER BY trips.created_at DESC;
 
 -- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at

@@ -488,6 +488,7 @@ LEFT JOIN LATERAL (
 ) AS poi_media ON TRUE
 WHERE trips.id = ANY($1::TEXT[])
 GROUP BY trips.id, u.id
+ORDER BY trips.created_at DESC
 `
 
 type GetTripsByIdsPopulatedRow struct {
