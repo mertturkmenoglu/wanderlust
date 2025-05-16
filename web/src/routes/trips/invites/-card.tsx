@@ -43,7 +43,7 @@ export function InviteCard({ invite }: Props) {
         setOpen(open);
       }}
     >
-      <div className="rounded">
+      <div className="rounded bg-primary/5 p-4">
         <div className="flex items-center gap-4 justify-between">
           <div>
             <Link

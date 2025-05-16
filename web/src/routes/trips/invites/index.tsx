@@ -18,7 +18,7 @@ function RouteComponent() {
   return (
     <div>
       <Breadcrumb items={[{ name: 'My Invites', href: '/trips/invites' }]} />
-      <div className="my-4 mb-96">
+      <div className="my-4 mb-96 space-y-4">
         {invites.map((invite) => (
           <InviteCard invite={invite} key={invite.id} />
         ))}
