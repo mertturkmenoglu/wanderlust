@@ -2,10 +2,11 @@ package bootstrap
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
@@ -15,18 +16,18 @@ import (
 	"wanderlust/pkg/email"
 	"wanderlust/pkg/logs"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/random"
 	"wanderlust/pkg/tasks"
-	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	slogecho "github.com/samber/slog-echo"
 	"github.com/sony/sonyflake"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -44,9 +45,26 @@ func LoadEnv() {
 }
 
 func InitGlobalMiddlewares(e *echo.Echo) {
-	e.Use(middleware.Recover())
+	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
+		LogErrorFunc: func(c echo.Context, err error, stack []byte) error {
+			f, _ := os.Create("tmp/" + random.FromLetters(16) + ".log")
+			defer f.Close()
+
+			f.Write([]byte(err.Error()))
+			f.Write(stack)
+			log.Println(err)
+
+			return err
+		},
+	}))
 
 	if cfg.Env.Env == "dev" {
+		logFile, err := os.OpenFile("tmp/application.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		e.Use(otelecho.Middleware("wanderlust", otelecho.WithSkipper(func(c echo.Context) bool {
 			return c.Request().Method == http.MethodOptions
 		})))
@@ -54,28 +72,15 @@ func InitGlobalMiddlewares(e *echo.Echo) {
 		e.Use(middleware.RequestID())
 		e.Use(middlewares.Cors())
 		e.Use(middlewares.PTermLogger)
-		e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-			_, sp := tracing.NewSpanWithName(c.Request().Context(), "Request and Response Dump")
-			defer sp.End()
-
-			paramNames := c.ParamNames()
-			params := make(map[string]any, 0)
-
-			for _, paramName := range paramNames {
-				params[paramName] = c.Param(paramName)
-			}
-
-			paramsBytes, err := json.Marshal(params)
-
-			if err != nil {
-				sp.RecordError(err)
-			}
-
-			sp.SetAttributes(attribute.String("Request Body", string(reqBody)))
-			sp.SetAttributes(attribute.String("Request Params", string(paramsBytes)))
-			sp.SetAttributes(attribute.String("Request Query", c.QueryString()))
-			sp.SetAttributes(attribute.Int("Response Status", c.Response().Status))
-			sp.SetAttributes(attribute.String("Response Body", string(resBody)))
+		e.Use(slogecho.NewWithConfig(slog.New(slog.NewJSONHandler(logFile, nil)), slogecho.Config{
+			WithSpanID:         true,
+			WithTraceID:        true,
+			WithRequestID:      true,
+			WithRequestBody:    true,
+			WithRequestHeader:  true,
+			WithUserAgent:      true,
+			WithResponseBody:   true,
+			WithResponseHeader: true,
 		}))
 	}
 
