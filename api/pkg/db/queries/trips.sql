@@ -204,3 +204,6 @@ INSERT INTO trips_participants (
 
 -- name: DeleteParticipant :exec
 DELETE FROM trips_participants WHERE trip_id = $1 AND user_id = $2;
+
+-- name: DeleteTrip :exec
+DELETE FROM trips WHERE id = $1;

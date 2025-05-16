@@ -190,6 +190,15 @@ func (q *Queries) DeleteParticipant(ctx context.Context, arg DeleteParticipantPa
 	return err
 }
 
+const deleteTrip = `-- name: DeleteTrip :exec
+DELETE FROM trips WHERE id = $1
+`
+
+func (q *Queries) DeleteTrip(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteTrip, id)
+	return err
+}
+
 const getAllTripsIds = `-- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at
 FROM trips
