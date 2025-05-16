@@ -194,3 +194,8 @@ type DeleteTripInviteInput struct {
 	TripID   string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
 	InviteID string `path:"inviteId" example:"7323488942953598976" required:"true" doc:"Invite ID"`
 }
+
+type DeleteTripParticipantInput struct {
+	TripID        string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	ParticipantID string `path:"participantId" example:"7323488942953598976" required:"true" doc:"Participant User ID"`
+}
