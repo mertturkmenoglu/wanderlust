@@ -28,6 +28,7 @@ It's open source and free.
 - Node.js (https://nodejs.org/en/download)
 - pnpm (https://pnpm.io/installation)
 - Infisical CLI (https://infisical.com/docs/documentation/getting-started/introduction)
+- Concurrently (https://www.npmjs.com/package/concurrently)
 
 ## Installation and Running
 
