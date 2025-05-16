@@ -18,14 +18,13 @@ type Tasks struct {
 }
 
 func New(emailService *email.EmailService, upload *upload.Upload) *Tasks {
-	addr := cfg.Get(cfg.REDIS_ADDR)
 	return &Tasks{
 		Client: asynq.NewClient(asynq.RedisClientOpt{
-			Addr: addr,
+			Addr: cfg.Env.RedisAddr,
 		}),
 		email:  emailService,
 		upload: upload,
-		addr:   addr,
+		addr:   cfg.Env.RedisAddr,
 	}
 }
 

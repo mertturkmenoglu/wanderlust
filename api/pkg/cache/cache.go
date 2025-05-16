@@ -16,8 +16,7 @@ type Cache struct {
 }
 
 func New() *Cache {
-	url := cfg.Get(cfg.REDIS_URL)
-	options, err := redis.ParseURL(url)
+	options, err := redis.ParseURL(cfg.Env.RedisURL)
 
 	if err != nil {
 		panic(err)

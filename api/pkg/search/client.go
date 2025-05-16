@@ -12,8 +12,8 @@ type Search struct {
 
 func New() *Search {
 	client := typesense.NewClient(
-		typesense.WithServer(cfg.Get(cfg.API_SEARCH_SERVER_URL)),
-		typesense.WithAPIKey(cfg.Get(cfg.API_SEARCH_API_KEY)),
+		typesense.WithServer(cfg.Env.SearchServerURL),
+		typesense.WithAPIKey(cfg.Env.SearchAPIKey),
 	)
 
 	search := Search{

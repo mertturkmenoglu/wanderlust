@@ -18,11 +18,11 @@ type Upload struct {
 
 func New() *Upload {
 	var (
-		endpoint          = cfg.Get(cfg.MINIO_ENDPOINT)
-		id                = cfg.Get(cfg.MINIO_USER)
-		secret            = cfg.Get(cfg.MINIO_PASSWORD)
-		autocreateBuckets = cfg.GetBool(cfg.MINIO_AUTOCREATE_BUCKETS)
-		location          = cfg.Get(cfg.MINIO_LOCATION)
+		endpoint          = cfg.Env.MinioEndpoint
+		id                = cfg.Env.MinioUser
+		secret            = cfg.Env.MinioPassword
+		autocreateBuckets = cfg.Env.MinioAutocreateBuckets
+		location          = cfg.Env.MinioLocation
 	)
 
 	client, err := minio.New(endpoint, &minio.Options{

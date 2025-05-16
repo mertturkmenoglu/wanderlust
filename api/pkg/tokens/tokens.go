@@ -31,7 +31,7 @@ type Claims struct {
 
 // Produce a JWT from the payload that expires at the given time.
 func Encode(payload Payload, expiresAt time.Time) (string, error) {
-	secretKey := cfg.Get(cfg.JWT_SECRET)
+	secretKey := cfg.Env.JWTSecret
 	now := time.Now()
 
 	// Create new claims from custom values and registered claims
@@ -61,7 +61,7 @@ func Encode(payload Payload, expiresAt time.Time) (string, error) {
 
 // Decodes given JWT formatted tokenString into Claims
 func Decode(tokenString string) (*Claims, error) {
-	secretKey := cfg.Get(cfg.JWT_SECRET)
+	secretKey := cfg.Env.JWTSecret
 
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil

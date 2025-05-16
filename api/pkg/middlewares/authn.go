@@ -48,7 +48,7 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 		ctx = huma.WithValue(ctx, "username", claims.Username)
 		ctx = huma.WithValue(ctx, "role", claims.Role)
 
-		if cfg.Get(cfg.ENV) == "dev" {
+		if cfg.Env.Env == "dev" {
 			tracer := otel.Tracer("")
 			_, sp := tracer.Start(ctx.Context(), "authn-middleware")
 			defer sp.End()

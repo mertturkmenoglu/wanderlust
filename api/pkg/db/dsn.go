@@ -16,12 +16,12 @@ type databaseConfigVariables struct {
 
 func getVariables() databaseConfigVariables {
 	return databaseConfigVariables{
-		user:     cfg.Get(cfg.DB_USER),
-		password: cfg.Get(cfg.DB_PASSWORD),
-		host:     cfg.Get(cfg.DB_HOST),
-		name:     cfg.Get(cfg.DB_NAME),
-		port:     cfg.GetInt(cfg.DB_PORT),
-		timezone: cfg.Get(cfg.DB_TIMEZONE),
+		user:     cfg.Env.DBUser,
+		password: cfg.Env.DBPassword,
+		host:     cfg.Env.DBHost,
+		name:     cfg.Env.DBName,
+		port:     cfg.Env.DBPort,
+		timezone: cfg.Env.DBTimezone,
 	}
 }
 

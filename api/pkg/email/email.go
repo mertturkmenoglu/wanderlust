@@ -19,13 +19,13 @@ type EmailService struct {
 
 func New() *EmailService {
 	var (
-		from      = cfg.Get(cfg.EMAIL_NAME)
-		fromEmail = cfg.Get(cfg.EMAIL_FROM)
-		addr      = cfg.Get(cfg.SMTP_ADDR)
-		identity  = cfg.Get(cfg.SMTP_IDENTITY)
-		username  = cfg.Get(cfg.SMTP_USERNAME)
-		password  = cfg.Get(cfg.SMTP_PASSWORD)
-		host      = cfg.Get(cfg.SMTP_HOST)
+		from      = cfg.Env.EmailName
+		fromEmail = cfg.Env.EmailFrom
+		addr      = cfg.Env.SMTPAddr
+		identity  = cfg.Env.SMTPIdentity
+		username  = cfg.Env.SMTPUsername
+		password  = cfg.Env.SMTPPassword
+		host      = cfg.Env.SMTPHost
 	)
 
 	auth := smtp.PlainAuth(identity, username, password, host)
