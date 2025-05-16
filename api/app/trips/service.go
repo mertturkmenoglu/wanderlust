@@ -584,3 +584,32 @@ func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participan
 	// By default, you cannot remove anyone
 	return false
 }
+
+func (s *Service) removeTrip(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	if trip.OwnerID != userId {
+		err = huma.Error403Forbidden("You are not authorized to delete this trip")
+		sp.RecordError(err)
+		return err
+	}
+
+	err = s.app.Db.Queries.DeleteTrip(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete trip")
+	}
+
+	return nil
+}
