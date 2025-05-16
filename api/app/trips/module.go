@@ -18,7 +18,8 @@ import (
 // + GET /trips/invites
 // + POST /trips/
 // + GET /trips/:tripId/invites/:inviteId (Get Invite Details)
-// POST /trips/:tripId/invites/:inviteId/:action (Accept/Decline Invite)
+// + POST /trips/:tripId/invites/:inviteId/:action (Accept/Decline Invite)
+// DELETE /trips/:tripId/invites/:inviteId (Delete Invite)
 // DELETE /trips/:tripId/participants/:userId (Remove Participant)
 // PATCH /trips/:tripId (Edit Trip)
 // DELETE /trips/:tripId (Delete Trip)
@@ -219,6 +220,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.getInviteDetail(ctx, input.TripID, input.InviteID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/trips/{tripId}/invites/{inviteId}/{action}",
+			Summary:       "Accept/Decline Trip Invite",
+			Description:   "Accept/Decline a trip invite by its ID",
+			DefaultStatus: http.StatusAccepted,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.TripInviteActionInput) (*dto.TripInviteActionOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.acceptOrDeclineInvite(ctx, input.TripID, input.InviteID, input.Action)
 
 			if err != nil {
 				sp.RecordError(err)

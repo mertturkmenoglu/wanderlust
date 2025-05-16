@@ -415,3 +415,78 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 		},
 	}, nil
 }
+
+func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, inviteId string, action string) (*dto.TripInviteActionOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	inviteDetail, err := s.getInviteDetail(ctx, tripId, inviteId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	tx, err := s.app.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.app.Db.Queries.WithTx(tx)
+
+	if action == "accept" {
+		err = qtx.DeleteInvite(ctx, inviteId)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to delete invite")
+		}
+
+		_, err = qtx.AddParticipantToTrip(ctx, db.AddParticipantToTripParams{
+			ID:     utils.GenerateId(s.app.Flake),
+			UserID: userId,
+			TripID: tripId,
+			Role:   string(inviteDetail.Body.InviteDetail.Role),
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to add participant to trip")
+		}
+	} else if action == "decline" {
+		err = qtx.DeleteInvite(ctx, inviteId)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to delete invite")
+		}
+	} else {
+		err = huma.Error400BadRequest("Invalid action")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	var accepted bool = true
+
+	if action == "decline" {
+		accepted = false
+	}
+
+	return &dto.TripInviteActionOutput{
+		Body: dto.TripInviteActionOutputBody{
+			Accepted: accepted,
+		},
+	}, nil
+}
