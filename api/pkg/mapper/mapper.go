@@ -1204,3 +1204,73 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		Days:               tripDays,
 	}, nil
 }
+
+func FromToUserRowToTripInvite(dbTripInvite db.GetInvitesByToUserIdRow) (dto.TripInvite, error) {
+	var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+
+	if dbTripInvite.TripsInvite.Role == "participant" {
+		role = dto.TRIP_ROLE_PARTICIPANT
+	} else if dbTripInvite.TripsInvite.Role == "editor" {
+		role = dto.TRIP_ROLE_EDITOR
+	} else {
+		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	var fromUser dto.TripUser
+
+	err := json.Unmarshal(dbTripInvite.Fromuser, &fromUser)
+
+	if err != nil {
+		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	return dto.TripInvite{
+		ID:     dbTripInvite.TripsInvite.ID,
+		TripID: dbTripInvite.TripsInvite.TripID,
+		From:   fromUser,
+		To: dto.TripUser{
+			ID: dbTripInvite.TripsInvite.ToID,
+		},
+		SentAt:    dbTripInvite.TripsInvite.SentAt.Time,
+		ExpiresAt: dbTripInvite.TripsInvite.ExpiresAt.Time,
+		Role:      role,
+	}, nil
+}
+
+func FromTripRowToTripInvite(dbInvite db.GetInvitesByTripIdRow) (dto.TripInvite, error) {
+	var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+
+	if dbInvite.TripsInvite.Role == "participant" {
+		role = dto.TRIP_ROLE_PARTICIPANT
+	} else if dbInvite.TripsInvite.Role == "editor" {
+		role = dto.TRIP_ROLE_EDITOR
+	} else {
+		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	var fromUser dto.TripUser
+
+	err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
+
+	if err != nil {
+		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	var toUser dto.TripUser
+
+	err = json.Unmarshal(dbInvite.Touser, &toUser)
+
+	if err != nil {
+		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	}
+
+	return dto.TripInvite{
+		ID:        dbInvite.TripsInvite.ID,
+		TripID:    dbInvite.TripsInvite.TripID,
+		From:      fromUser,
+		To:        toUser,
+		SentAt:    dbInvite.TripsInvite.SentAt.Time,
+		ExpiresAt: dbInvite.TripsInvite.ExpiresAt.Time,
+		Role:      role,
+	}, nil
+}
