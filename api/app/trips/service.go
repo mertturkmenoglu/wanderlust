@@ -132,28 +132,6 @@ func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, erro
 	}, nil
 }
 
-func (s *Service) canRead(trip *dto.Trip, userId string) bool {
-	switch trip.VisibilityLevel {
-	case dto.TRIP_VISIBILITY_LEVEL_PUBLIC:
-		return true
-	case dto.TRIP_VISIBILITY_LEVEL_FRIENDS:
-		if trip.OwnerID == userId {
-			return true
-		}
-
-		for _, friend := range trip.Participants {
-			if friend.ID == userId {
-				return true
-			}
-		}
-		return false
-	case dto.TRIP_VISIBILITY_LEVEL_PRIVATE:
-		return trip.OwnerID == userId
-	default:
-		return false
-	}
-}
-
 func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
@@ -335,20 +313,6 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 	}
 
 	return nil, huma.Error500InternalServerError("Failed to get invites")
-}
-
-func (s *Service) canCreateInvite(trip *dto.Trip, userId string) bool {
-	if trip.OwnerID == userId {
-		return true
-	}
-
-	for _, p := range trip.Participants {
-		if p.ID == userId && p.Role == "editor" {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId string) (*dto.GetTripInviteDetailsOutput, error) {
@@ -556,33 +520,6 @@ func (s *Service) removeParticipant(ctx context.Context, tripId string, particip
 	}
 
 	return nil
-}
-
-func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participantId string) bool {
-	// You cannot remove the owner
-	if participantId == trip.OwnerID {
-		return false
-	}
-
-	// You can remove yourself regardless of the role
-	if userId == participantId {
-		return true
-	}
-
-	// Owner can remove anyone except themselves
-	if trip.OwnerID == userId {
-		return true
-	}
-
-	// If the action user is an editor, they can remove anyone except the owner and themselves
-	for _, p := range trip.Participants {
-		if p.ID == userId && p.Role == "editor" {
-			return true
-		}
-	}
-
-	// By default, you cannot remove anyone
-	return false
 }
 
 func (s *Service) removeTrip(ctx context.Context, id string) error {

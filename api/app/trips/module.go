@@ -11,17 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// + GET /trips/:id
-// + GET /trips/:id/invites
-// + POST /trips/:id/invite
-// + GET /trips/
-// + GET /trips/invites
-// + POST /trips/
-// + GET /trips/:tripId/invites/:inviteId (Get Invite Details)
-// + POST /trips/:tripId/invites/:inviteId/:action (Accept/Decline Invite)
-// + DELETE /trips/:tripId/invites/:inviteId (Delete Invite)
-// + DELETE /trips/:tripId/participants/:userId (Remove Participant)
-// + DELETE /trips/:tripId (Delete Trip)
 // GET /trips/:id/comments (Get Comments)
 // POST /trips/:id/comments (Create Comment)
 // PATCH /trips/:id/comments/:commentId  (Edit Comment)
