@@ -1,3 +1,9 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { components } from '@/lib/api-types';
 import { AuthContext } from '@/providers/auth-provider';
 import { Link } from '@tanstack/react-router';
@@ -31,13 +37,28 @@ export function TripCard({ trip }: Props) {
         </div>
       </div>
       <div>
-        {trip.visibilityLevel === 'public' ? (
-          <GlobeIcon className="size-5 text-primary" />
-        ) : trip.visibilityLevel === 'friends' ? (
-          <UsersIcon className="size-5 text-primary" />
-        ) : (
-          <LockIcon className="size-5 text-primary" />
-        )}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {trip.visibilityLevel === 'public' ? (
+                <GlobeIcon className="size-5 text-primary" />
+              ) : trip.visibilityLevel === 'friends' ? (
+                <UsersIcon className="size-5 text-primary" />
+              ) : (
+                <LockIcon className="size-5 text-primary" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {trip.visibilityLevel === 'public'
+                  ? 'Everyone can see this trip'
+                  : trip.visibilityLevel === 'friends'
+                    ? 'Only participants can see this trip'
+                    : 'Only you can see this trip'}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </Link>
   );
