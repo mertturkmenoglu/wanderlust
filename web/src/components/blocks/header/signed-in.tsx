@@ -8,6 +8,7 @@ import {
 import { Link, useLocation } from '@tanstack/react-router';
 import { BellIcon, SearchIcon, SendIcon } from 'lucide-react';
 import { useState } from 'react';
+import Search from '../search';
 
 const hideSearchPaths = ['/', '/search'];
 
@@ -38,11 +39,11 @@ export default function SignedInLinks() {
       )}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
-        {/* <Search
+        <Search
           className="px-4"
           onItemClicked={() => setOpen(false)}
           showAdvancedSearch={false}
-        /> */}
+        />
       </CommandDialog>
 
       <TooltipProvider delayDuration={300}>
