@@ -12,7 +12,6 @@ import (
 )
 
 // GET /trips/:id/comments (Get Comments)
-// POST /trips/:id/comments (Create Comment)
 // PATCH /trips/:id/comments/:commentId  (Edit Comment)
 // DELETE /trips/:id/comments/:commentId (Delete Comment)
 // PATCH /trips/:id/amenities (create-update-delete) (CRUD Amenities)
@@ -324,6 +323,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			return nil, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/trips/{id}/comments/",
+			Summary:       "Create Comment",
+			Description:   "Create a comment for a trip",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateTripCommentInput) (*dto.CreateTripCommentOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.createComment(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
 		},
 	)
 }

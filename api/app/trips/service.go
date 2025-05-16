@@ -550,3 +550,51 @@ func (s *Service) removeTrip(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (s *Service) createComment(ctx context.Context, tripId string, body dto.CreateTripCommentInputBody) (*dto.CreateTripCommentOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canCreateComment(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to create a comment")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	res, err := s.app.Db.Queries.CreateTripComment(ctx, db.CreateTripCommentParams{
+		ID:      utils.GenerateId(s.app.Flake),
+		TripID:  tripId,
+		FromID:  userId,
+		Content: body.Content,
+		CreatedAt: pgtype.Timestamptz{
+			Time:  time.Now(),
+			Valid: true,
+		},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create comment")
+	}
+
+	return &dto.CreateTripCommentOutput{
+		Body: dto.CreateTripCommentOutputBody{
+			Comment: dto.TripComment{
+				ID:        res.ID,
+				TripID:    tripId,
+				From:      dto.TripUser{ID: userId},
+				Content:   body.Content,
+				CreatedAt: res.CreatedAt.Time,
+			},
+		},
+	}, nil
+}
