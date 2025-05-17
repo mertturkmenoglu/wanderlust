@@ -1274,3 +1274,21 @@ func FromTripRowToTripInvite(dbInvite db.GetInvitesByTripIdRow) (dto.TripInvite,
 		Role:      role,
 	}, nil
 }
+
+func ToTripComment(dbComment db.GetTripCommentsRow) (dto.TripComment, error) {
+	var user dto.TripUser
+
+	err := json.Unmarshal(dbComment.User, &user)
+
+	if err != nil {
+		return dto.TripComment{}, err
+	}
+
+	return dto.TripComment{
+		ID:        dbComment.ID,
+		TripID:    dbComment.TripID,
+		Content:   dbComment.Content,
+		CreatedAt: dbComment.CreatedAt.Time,
+		From:      user,
+	}, nil
+}
