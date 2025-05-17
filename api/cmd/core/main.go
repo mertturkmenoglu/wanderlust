@@ -21,6 +21,7 @@ func main() {
 	defer tracingShutdown()
 
 	e := echo.New()
+	e.HideBanner = true
 
 	humaConfig := huma.DefaultConfig(bootstrap.API_NAME, bootstrap.API_VERSION)
 
