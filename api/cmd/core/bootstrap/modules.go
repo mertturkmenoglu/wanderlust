@@ -21,11 +21,12 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"go.opentelemetry.io/otel/attribute"
+	"go.uber.org/zap"
 )
 
-func RegisterRoutes(api *huma.API) {
+func RegisterRoutes(api *huma.API, logger *zap.Logger) {
 	grp := huma.NewGroup(*api, API_PREFIX)
-	app := NewApplication()
+	app := NewApplication(logger)
 
 	grp.UseMiddleware(func(ctx huma.Context, next func(huma.Context)) {
 		oid := ctx.Operation().OperationID
