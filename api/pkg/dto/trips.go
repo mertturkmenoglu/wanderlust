@@ -221,3 +221,17 @@ type CreateTripCommentOutput struct {
 type CreateTripCommentOutputBody struct {
 	Comment TripComment `json:"comment"`
 }
+
+type GetTripCommentsInput struct {
+	ID string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	PaginationQueryParams
+}
+
+type GetTripCommentsOutput struct {
+	Body GetTripCommentsOutputBody
+}
+
+type GetTripCommentsOutputBody struct {
+	Comments   []TripComment  `json:"comments"`
+	Pagination PaginationInfo `json:"pagination"`
+}
