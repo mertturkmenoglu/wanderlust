@@ -11,7 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// DELETE /trips/:id/comments/:commentId (Delete Comment)
 // PATCH /trips/:id/amenities (create-update-delete) (CRUD Amenities)
 // PATCH /trips/:tripId (Edit Trip)
 // POST /trips/:id/locations (Add Location)
@@ -402,6 +401,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/trips/{tripId}/comments/{commentId}",
+			Summary:       "Delete Trip Comment",
+			Description:   "Delete a trip comment",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeleteTripCommentInput) (*struct{}, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removeComment(ctx, input.TripID, input.CommentID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return nil, nil
 		},
 	)
 }

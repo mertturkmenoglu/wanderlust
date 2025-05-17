@@ -739,3 +739,44 @@ func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommen
 		},
 	}, nil
 }
+
+func (s *Service) removeComment(ctx context.Context, tripId string, commentId string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	comment, err := s.getCommentById(ctx, commentId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	if !s.canDeleteComment(trip, comment, userId) {
+		err = huma.Error403Forbidden("You are not authorized to delete this comment")
+		sp.RecordError(err)
+		return err
+	}
+
+	err = s.app.Db.Queries.DeleteTripComment(ctx, commentId)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return huma.Error404NotFound("Comment not found")
+		}
+
+		return huma.Error500InternalServerError("Failed to delete comment")
+	}
+
+	return nil
+}

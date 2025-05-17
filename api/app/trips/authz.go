@@ -90,3 +90,25 @@ func (s *Service) canUpdateComment(comment *dto.TripComment, userId string) bool
 	// Only the owner can update the comment
 	return comment.From.ID == userId
 }
+
+func (s *Service) canDeleteComment(trip *dto.Trip, comment *dto.TripComment, userId string) bool {
+	// Trip owner can delete any comment
+	if trip.OwnerID == userId {
+		return true
+	}
+
+	// Trip editor can delete any comment
+	// Trip participant can delete their own comment
+	for _, p := range trip.Participants {
+		if p.ID == userId && p.Role == "editor" {
+			return true
+		}
+
+		if p.ID == comment.From.ID {
+			return true
+		}
+	}
+
+	// Otherwise, this user cannot delete the comment
+	return false
+}
