@@ -14,7 +14,9 @@ func main() {
 	bootstrap.LoadEnv()
 
 	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
-	tracingShutdown := bootstrap.InitTracer(logger)
+	defer logger.Sync()
+
+	tracingShutdown := bootstrap.InitTracer()
 
 	defer tracingShutdown()
 
