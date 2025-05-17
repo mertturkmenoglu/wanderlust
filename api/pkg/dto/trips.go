@@ -253,3 +253,8 @@ type UpdateTripCommentOutput struct {
 type UpdateTripCommentOutputBody struct {
 	Comment TripComment `json:"comment"`
 }
+
+type DeleteTripCommentInput struct {
+	TripID    string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	CommentID string `path:"commentId" example:"7323488942953598976" required:"true" doc:"Comment ID"`
+}
