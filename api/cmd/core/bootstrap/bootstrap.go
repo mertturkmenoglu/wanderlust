@@ -1,12 +1,8 @@
 package bootstrap
 
 import (
-	"context"
 	"fmt"
-	"log"
-	"log/slog"
 	"net/http"
-	"os"
 	"time"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
@@ -14,24 +10,18 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/email"
-	"wanderlust/pkg/logs"
 	"wanderlust/pkg/middlewares"
-	"wanderlust/pkg/random"
 	"wanderlust/pkg/tasks"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	slogecho "github.com/samber/slog-echo"
 	"github.com/sony/sonyflake"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/jaeger"
-	"go.opentelemetry.io/otel/sdk/resource"
-	"go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	"go.uber.org/zap"
 )
 
 func LoadEnv() {
@@ -44,27 +34,10 @@ func LoadEnv() {
 	cfg.InitConfigurationStruct()
 }
 
-func InitGlobalMiddlewares(e *echo.Echo) {
-	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
-		LogErrorFunc: func(c echo.Context, err error, stack []byte) error {
-			f, _ := os.Create("tmp/" + random.FromLetters(16) + ".log")
-			defer f.Close()
-
-			f.Write([]byte(err.Error()))
-			f.Write(stack)
-			log.Println(err)
-
-			return err
-		},
-	}))
+func InitGlobalMiddlewares(e *echo.Echo, logger *zap.Logger) {
+	e.Use(middlewares.CustomRecovery())
 
 	if cfg.Env.Env == "dev" {
-		logFile, err := os.OpenFile("tmp/application.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		e.Use(otelecho.Middleware("wanderlust", otelecho.WithSkipper(func(c echo.Context) bool {
 			return c.Request().Method == http.MethodOptions
 		})))
@@ -72,16 +45,7 @@ func InitGlobalMiddlewares(e *echo.Echo) {
 		e.Use(middleware.RequestID())
 		e.Use(middlewares.Cors())
 		e.Use(middlewares.PTermLogger)
-		e.Use(slogecho.NewWithConfig(slog.New(slog.NewJSONHandler(logFile, nil)), slogecho.Config{
-			WithSpanID:         true,
-			WithTraceID:        true,
-			WithRequestID:      true,
-			WithRequestBody:    true,
-			WithRequestHeader:  true,
-			WithUserAgent:      true,
-			WithResponseBody:   true,
-			WithResponseHeader: true,
-		}))
+		e.Use(middlewares.CustomBodyDump(logger))
 	}
 
 	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
@@ -91,7 +55,7 @@ func InitGlobalMiddlewares(e *echo.Echo) {
 	e.Use(middleware.BodyLimit("1MB"))
 }
 
-func NewApplication() *core.Application {
+func NewApplication(logger *zap.Logger) *core.Application {
 	emailSvc := email.New()
 	uploadSvc := upload.New()
 	cacheSvc := cache.New()
@@ -100,7 +64,7 @@ func NewApplication() *core.Application {
 		Activities: activities.NewActivity(cacheSvc),
 		Db:         db.NewDb(),
 		Flake:      sonyflake.NewSonyflake(sonyflake.Settings{}),
-		Logger:     logs.NewPTermLogger(),
+		Log:        logger,
 		Cache:      cacheSvc,
 		Email:      emailSvc,
 		Tasks:      tasks.New(emailSvc, uploadSvc),
@@ -147,26 +111,6 @@ func StartServer(e *echo.Echo) {
 	e.Logger.Fatal(e.Start(portString))
 }
 
-func InitTracer() func() {
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.Env.JaegerEndpoint)))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tp := trace.NewTracerProvider(
-		trace.WithBatcher(exp),
-		trace.WithResource(resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceName("wanderlust"),
-		)),
-	)
-
-	otel.SetTracerProvider(tp)
-
-	return func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Fatal(err)
-		}
-	}
+func InitTracer(logger *zap.Logger) func() {
+	return tracing.Init(logger)
 }
