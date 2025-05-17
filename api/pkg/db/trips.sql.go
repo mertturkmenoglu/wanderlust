@@ -403,6 +403,48 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 	return i, err
 }
 
+const getTripCommentById = `-- name: GetTripCommentById :one
+SELECT
+  tc.id,
+  tc.trip_id,
+  tc.from_id,
+  tc.content,
+  tc.created_at,
+  (SELECT jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  )) AS user
+FROM
+  trips_comments tc
+LEFT JOIN users u ON u.id = tc.from_id
+WHERE tc.id = $1
+`
+
+type GetTripCommentByIdRow struct {
+	ID        string
+	TripID    string
+	FromID    string
+	Content   string
+	CreatedAt pgtype.Timestamptz
+	User      []byte
+}
+
+func (q *Queries) GetTripCommentById(ctx context.Context, id string) (GetTripCommentByIdRow, error) {
+	row := q.db.QueryRow(ctx, getTripCommentById, id)
+	var i GetTripCommentByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.FromID,
+		&i.Content,
+		&i.CreatedAt,
+		&i.User,
+	)
+	return i, err
+}
+
 const getTripComments = `-- name: GetTripComments :many
 SELECT
   tc.id,
@@ -613,4 +655,30 @@ func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string)
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateTripComment = `-- name: UpdateTripComment :one
+UPDATE trips_comments 
+SET content = $2 
+WHERE id = $1 AND trip_id = $3
+RETURNING id, trip_id, from_id, content, created_at
+`
+
+type UpdateTripCommentParams struct {
+	ID      string
+	Content string
+	TripID  string
+}
+
+func (q *Queries) UpdateTripComment(ctx context.Context, arg UpdateTripCommentParams) (TripsComment, error) {
+	row := q.db.QueryRow(ctx, updateTripComment, arg.ID, arg.Content, arg.TripID)
+	var i TripsComment
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.FromID,
+		&i.Content,
+		&i.CreatedAt,
+	)
+	return i, err
 }

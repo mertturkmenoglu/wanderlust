@@ -248,3 +248,27 @@ LIMIT $3;
 
 -- name: GetTripCommentsCount :one
 SELECT COUNT(*) FROM trips_comments WHERE trip_id = $1;
+
+-- name: UpdateTripComment :one
+UPDATE trips_comments 
+SET content = $2 
+WHERE id = $1 AND trip_id = $3
+RETURNING *;
+
+-- name: GetTripCommentById :one
+SELECT
+  tc.id,
+  tc.trip_id,
+  tc.from_id,
+  tc.content,
+  tc.created_at,
+  (SELECT jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  )) AS user
+FROM
+  trips_comments tc
+LEFT JOIN users u ON u.id = tc.from_id
+WHERE tc.id = $1;
