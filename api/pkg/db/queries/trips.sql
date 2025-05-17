@@ -272,3 +272,6 @@ FROM
   trips_comments tc
 LEFT JOIN users u ON u.id = tc.from_id
 WHERE tc.id = $1;
+
+-- name: DeleteTripComment :exec
+DELETE FROM trips_comments WHERE id = $1;

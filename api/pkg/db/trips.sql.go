@@ -242,6 +242,15 @@ func (q *Queries) DeleteTrip(ctx context.Context, id string) error {
 	return err
 }
 
+const deleteTripComment = `-- name: DeleteTripComment :exec
+DELETE FROM trips_comments WHERE id = $1
+`
+
+func (q *Queries) DeleteTripComment(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteTripComment, id)
+	return err
+}
+
 const getAllTripsIds = `-- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at
 FROM trips
