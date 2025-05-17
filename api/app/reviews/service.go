@@ -17,6 +17,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/minio/minio-go/v7"
+	"go.uber.org/zap"
 )
 
 type Service struct {
@@ -161,7 +162,13 @@ func (s *Service) remove(userId string, id string) error {
 		)
 
 		if err != nil {
-			s.app.Logger.Error("error deleting review media", s.app.Logger.Args("error", err))
+			s.app.Log.Debug("error deleting review media",
+				zap.String("bucket", string(upload.BUCKET_REVIEWS)),
+				zap.String("object", after),
+				zap.String("url", m.Url),
+				zap.Error(err),
+			)
+			continue
 		}
 	}
 

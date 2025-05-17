@@ -18,6 +18,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/minio/minio-go/v7"
+	"go.uber.org/zap"
 )
 
 type Service struct {
@@ -330,7 +331,12 @@ func (s *Service) remove(userId string, id string) error {
 		)
 
 		if err != nil {
-			s.app.Logger.Error("error deleting diary media, cannot remove object from bucket", s.app.Logger.Args("url", m.Url))
+			s.app.Log.Debug("error deleting diary media, cannot remove object from bucket",
+				zap.String("bucket", string(bucket)),
+				zap.String("object", after),
+				zap.String("url", m.Url),
+				zap.Error(err),
+			)
 			continue
 		}
 	}
