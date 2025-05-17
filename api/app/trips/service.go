@@ -8,6 +8,7 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
+	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/utils"
 
@@ -601,6 +602,70 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 				Content:   body.Content,
 				CreatedAt: res.CreatedAt.Time,
 			},
+		},
+	}, nil
+}
+
+func (s *Service) getComments(ctx context.Context, tripId string, params dto.PaginationQueryParams) (*dto.GetTripCommentsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canRead(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canReadComment(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip's comments")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	dbComments, err := s.app.Db.Queries.GetTripComments(ctx, db.GetTripCommentsParams{
+		TripID: tripId,
+		Offset: int32(pagination.GetOffset(params)),
+		Limit:  int32(params.PageSize),
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get comments")
+	}
+
+	comments := make([]dto.TripComment, len(dbComments))
+
+	for i, dbComment := range dbComments {
+		res, err := mapper.ToTripComment(dbComment)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to get comment")
+		}
+
+		comments[i] = res
+	}
+
+	count, err := s.app.Db.Queries.GetTripCommentsCount(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get comments count")
+	}
+
+	return &dto.GetTripCommentsOutput{
+		Body: dto.GetTripCommentsOutputBody{
+			Comments:   comments,
+			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
 }
