@@ -111,6 +111,6 @@ func StartServer(e *echo.Echo) {
 	e.Logger.Fatal(e.Start(portString))
 }
 
-func InitTracer(logger *zap.Logger) func() {
-	return tracing.Init(logger)
+func InitTracer() func() {
+	return tracing.Init()
 }
