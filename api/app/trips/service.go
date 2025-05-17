@@ -669,3 +669,73 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 		},
 	}, nil
 }
+
+func (s *Service) getCommentById(ctx context.Context, id string) (*dto.TripComment, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	comment, err := s.app.Db.Queries.GetTripCommentById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Comment not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get comment")
+	}
+
+	res, err := mapper.FromSingleDbTripCommentToTripComment(comment)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get comment")
+	}
+
+	return &res, nil
+}
+
+func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommentInput) (*dto.UpdateTripCommentOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	comment, err := s.getCommentById(ctx, input.CommentID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canUpdateComment(comment, userId) {
+		err = huma.Error403Forbidden("You are not authorized to update this comment")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	_, err = s.app.Db.Queries.UpdateTripComment(ctx, db.UpdateTripCommentParams{
+		ID:      input.CommentID,
+		TripID:  input.TripID,
+		Content: input.Body.Content,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update comment")
+	}
+
+	updatedComment, err := s.getCommentById(ctx, input.CommentID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get comment")
+	}
+
+	return &dto.UpdateTripCommentOutput{
+		Body: dto.UpdateTripCommentOutputBody{
+			Comment: *updatedComment,
+		},
+	}, nil
+}

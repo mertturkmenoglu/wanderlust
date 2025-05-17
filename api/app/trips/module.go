@@ -11,8 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// GET /trips/:id/comments (Get Comments)
-// PATCH /trips/:id/comments/:commentId  (Edit Comment)
 // DELETE /trips/:id/comments/:commentId (Delete Comment)
 // PATCH /trips/:id/amenities (create-update-delete) (CRUD Amenities)
 // PATCH /trips/:tripId (Edit Trip)
@@ -370,6 +368,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.getComments(ctx, input.ID, input.PaginationQueryParams)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/trips/{tripId}/comments/{commentId}",
+			Summary:       "Update Trip Comment",
+			Description:   "Update a comment for a trip",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateTripCommentInput) (*dto.UpdateTripCommentOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateComment(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
