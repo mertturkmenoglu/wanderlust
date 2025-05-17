@@ -39,14 +39,22 @@ func PTermLogger(next echo.HandlerFunc) echo.HandlerFunc {
 			params[name] = c.Param(name)
 		}
 
-		logger.Info("Request", logger.Args(
+		args := logger.Args(
 			"method", method,
 			"status", status,
 			"path", path,
 			"latency", latencyHumanReadable,
 			"params", params,
 			"queryParams", qparams,
-		))
+		)
+
+		if res.Status >= 500 {
+			logger.Error("Server Error", args)
+		} else if res.Status >= 400 {
+			logger.Error("Request Error", args)
+		} else {
+			logger.Info("Request", args)
+		}
 
 		return err
 	}
