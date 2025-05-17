@@ -10,15 +10,17 @@ import (
 
 	"github.com/pterm/pterm"
 	"github.com/sony/sonyflake"
+	"go.uber.org/zap"
 )
 
 type Application struct {
 	Activities *activities.Activity
 	Db         *db.Db
 	Flake      *sonyflake.Sonyflake
-	Logger     *pterm.Logger
 	Cache      *cache.Cache
 	Email      *email.EmailService
+	Log        *zap.Logger
+	PLog       *pterm.Logger
 	Tasks      *tasks.Tasks
 	Upload     *upload.Upload
 }
