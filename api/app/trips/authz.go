@@ -80,3 +80,8 @@ func (s *Service) canCreateComment(trip *dto.Trip, userId string) bool {
 
 	return false
 }
+
+func (s *Service) canReadComment(trip *dto.Trip, userId string) bool {
+	// Comment read privileges are the same as trip read privileges
+	return s.canRead(trip, userId)
+}
