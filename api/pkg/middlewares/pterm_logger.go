@@ -12,6 +12,7 @@ import (
 func PTermLogger(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		logger := pterm.DefaultLogger.WithLevel(pterm.LogLevelTrace)
+		logger.TimeFormat = time.TimeOnly
 		req := c.Request()
 		res := c.Response()
 		start := time.Now()
@@ -23,12 +24,29 @@ func PTermLogger(next echo.HandlerFunc) echo.HandlerFunc {
 
 		stop := time.Now()
 		method := getMethodWithColor(req.Method)
-		uri := req.RequestURI
+		path := c.Path()
 		status := getStatusWithColor(res.Status)
 		latencyHumanReadable := stop.Sub(start).String()
 
-		msg := fmt.Sprintf("%s %s %s %s", method, uri, status, latencyHumanReadable)
-		logger.Info(msg)
+		params := make(map[string]string, 0)
+		qparams := make(map[string][]string, 0)
+
+		for q := range c.QueryParams() {
+			qparams[q] = c.QueryParams()[q]
+		}
+
+		for _, name := range c.ParamNames() {
+			params[name] = c.Param(name)
+		}
+
+		logger.Info("Request", logger.Args(
+			"method", method,
+			"status", status,
+			"path", path,
+			"latency", latencyHumanReadable,
+			"params", params,
+			"queryParams", qparams,
+		))
 
 		return err
 	}
