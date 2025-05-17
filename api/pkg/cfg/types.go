@@ -34,6 +34,11 @@ type TEnv struct {
 	MinioLocation            string `key:"MINIO_LOCATION"`
 	MinioPassword            string `key:"MINIO_PASSWORD"`
 	MinioUser                string `key:"MINIO_USER"`
+	OtlpEndpoint             string `key:"OTLP_ENDPOINT"`
+	OtlpWriterEndpoint       string `key:"OTLP_WRITER_ENDPOINT"`
+	OtlpTraceURLPath         string `key:"OTLP_TRACE_URL_PATH"`
+	OtlpMetricsURLPath       string `key:"OTLP_METRICS_URL_PATH"`
+	OtlpAuthToken            string `key:"OTLP_AUTH_TOKEN"`
 	Port                     int    `key:"PORT"`
 	RedisAddr                string `key:"REDIS_ADDR"`
 	RedisURL                 string `key:"REDIS_URL"`
