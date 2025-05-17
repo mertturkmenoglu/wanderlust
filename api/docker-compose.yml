@@ -103,6 +103,19 @@ services:
       - 9411:9411
     image: jaegertracing/all-in-one:latest
 
+  wl-openobserve:
+    container_name: wl-openobserve
+    restart: always
+    volumes:
+      - ./tmp/zodata:/data
+    environment:
+      - ZO_DATA_DIR=/data
+      - ZO_ROOT_USER_EMAIL=wanderlust@example.com
+      - ZO_ROOT_USER_PASSWORD=wanderlust
+    ports:
+      - 5080:5080
+    image: public.ecr.aws/zinclabs/openobserve:latest
+
 networks:
   wl-redisnet:
   wl-searchnet:
