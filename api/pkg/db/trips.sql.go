@@ -403,6 +403,82 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 	return i, err
 }
 
+const getTripComments = `-- name: GetTripComments :many
+SELECT
+  tc.id,
+  tc.trip_id,
+  tc.from_id,
+  tc.content,
+  tc.created_at,
+  (SELECT jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  )) AS user
+FROM
+  trips_comments tc
+LEFT JOIN users u ON u.id = tc.from_id
+WHERE
+  tc.trip_id = $1
+ORDER BY tc.created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type GetTripCommentsParams struct {
+	TripID string
+	Offset int32
+	Limit  int32
+}
+
+type GetTripCommentsRow struct {
+	ID        string
+	TripID    string
+	FromID    string
+	Content   string
+	CreatedAt pgtype.Timestamptz
+	User      []byte
+}
+
+func (q *Queries) GetTripComments(ctx context.Context, arg GetTripCommentsParams) ([]GetTripCommentsRow, error) {
+	rows, err := q.db.Query(ctx, getTripComments, arg.TripID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTripCommentsRow
+	for rows.Next() {
+		var i GetTripCommentsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.TripID,
+			&i.FromID,
+			&i.Content,
+			&i.CreatedAt,
+			&i.User,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTripCommentsCount = `-- name: GetTripCommentsCount :one
+SELECT COUNT(*) FROM trips_comments WHERE trip_id = $1
+`
+
+func (q *Queries) GetTripCommentsCount(ctx context.Context, tripID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getTripCommentsCount, tripID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getTripsByIdsPopulated = `-- name: GetTripsByIdsPopulated :many
 SELECT
   trips.id, trips.owner_id, trips.status, trips.title, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,

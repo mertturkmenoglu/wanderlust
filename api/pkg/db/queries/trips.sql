@@ -223,3 +223,28 @@ INSERT INTO trips_comments (
   $4,
   $5
 ) RETURNING *;
+
+-- name: GetTripComments :many
+SELECT
+  tc.id,
+  tc.trip_id,
+  tc.from_id,
+  tc.content,
+  tc.created_at,
+  (SELECT jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  )) AS user
+FROM
+  trips_comments tc
+LEFT JOIN users u ON u.id = tc.from_id
+WHERE
+  tc.trip_id = $1
+ORDER BY tc.created_at DESC
+OFFSET $2
+LIMIT $3;
+
+-- name: GetTripCommentsCount :one
+SELECT COUNT(*) FROM trips_comments WHERE trip_id = $1;
