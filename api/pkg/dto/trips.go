@@ -235,3 +235,21 @@ type GetTripCommentsOutputBody struct {
 	Comments   []TripComment  `json:"comments"`
 	Pagination PaginationInfo `json:"pagination"`
 }
+
+type UpdateTripCommentInput struct {
+	TripID    string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	CommentID string `path:"commentId" example:"7323488942953598976" required:"true" doc:"Comment ID"`
+	Body      UpdateTripCommentInputBody
+}
+
+type UpdateTripCommentInputBody struct {
+	Content string `json:"content" example:"This is a comment" doc:"Content of comment" minLength:"1" maxLength:"255"`
+}
+
+type UpdateTripCommentOutput struct {
+	Body UpdateTripCommentOutputBody
+}
+
+type UpdateTripCommentOutputBody struct {
+	Comment TripComment `json:"comment"`
+}
