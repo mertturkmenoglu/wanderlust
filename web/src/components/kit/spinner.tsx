@@ -1,16 +1,14 @@
-import clsx from "clsx";
+import { cn } from '@/lib/utils';
 
-export type SpinnerProps = React.ComponentProps<"svg">;
+export type SpinnerProps = React.ComponentProps<'svg'>;
 
 export default function Spinner({ className, ...props }: SpinnerProps) {
   return (
     <svg
-      className={clsx(
-        "animate-spin",
-        {
-          "h-4 w-4 fill-primary text-gray-200": !className,
-        },
-        className
+      className={cn(
+        'animate-spin',
+        'size-4 fill-primary text-gray-200',
+        className,
       )}
       viewBox="0 0 100 100"
       fill="none"
