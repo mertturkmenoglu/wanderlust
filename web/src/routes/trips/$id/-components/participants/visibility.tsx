@@ -5,7 +5,7 @@ import { getRouteApi } from '@tanstack/react-router';
 import { GlobeIcon, LockIcon, UsersIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-export function VisibilitySection() {
+export function VisibilityContainer() {
   const route = getRouteApi('/trips/$id/');
   const { trip } = route.useLoaderData();
   const [value, setValue] = useState(trip.visibilityLevel);
