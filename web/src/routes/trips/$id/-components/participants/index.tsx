@@ -1,5 +1,4 @@
 import AppMessage from '@/components/blocks/app-message';
-import UserImage from '@/components/blocks/user-image';
 import Spinner from '@/components/kit/spinner';
 import {
   AlertDialog,
@@ -16,13 +15,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api } from '@/lib/api';
-import { userImage } from '@/lib/image';
-import { ipx } from '@/lib/ipx';
-import { cn } from '@/lib/utils';
 import { useDebouncedValue } from '@tanstack/react-pacer';
-import { getRouteApi, Link } from '@tanstack/react-router';
+import { getRouteApi } from '@tanstack/react-router';
 import { GlobeIcon, LockIcon, PlusIcon, UsersIcon, XIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { Item } from './item';
 
 export function ParticipantsDialog() {
   const [open, setOpen] = useState(false);
@@ -82,7 +79,7 @@ function ParticipantsSection() {
 
   return (
     <ScrollArea className="h-[200px]">
-      <Card
+      <Item
         image={trip.owner.profileImage}
         name={trip.owner.fullName}
         role="Owner"
@@ -90,7 +87,7 @@ function ParticipantsSection() {
       />
 
       {trip.participants.map((p) => (
-        <Card
+        <Item
           key={p.id}
           image={p.profileImage}
           name={p.fullName}
@@ -167,7 +164,7 @@ function ShowInvites() {
   return (
     <ScrollArea className="h-[200px]">
       {invites?.map((invite) => (
-        <Card
+        <Item
           key={invite.id}
           image={invite.to.profileImage}
           name={invite.to.fullName}
@@ -238,7 +235,7 @@ function ShowSearch() {
         ) : (
           <ScrollArea className="h-[200px]">
             {users?.map((user) => (
-              <Card
+              <Item
                 key={user.id}
                 image={user.profileImage ?? ''}
                 name={user.fullName}
@@ -331,50 +328,5 @@ function VisibilitySection() {
         Save
       </Button>
     </div>
-  );
-}
-
-type Props = {
-  image: string;
-  name: string;
-  username: string;
-  role: string;
-  className?: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
-};
-
-function Card({ image, name, username, role, className, onClick }: Props) {
-  return (
-    <Link
-      to="/u/$username"
-      params={{
-        username,
-      }}
-      className={cn('flex items-center gap-4', className)}
-    >
-      <UserImage
-        src={ipx(userImage(image), 'w_512')}
-        imgClassName="size-16"
-        fallbackClassName="size-16 rounded-md"
-        className="size-16 rounded-md"
-      />
-
-      <div>
-        <div className="text-xl font-bold">{name}</div>
-        <div className="text-xs text-primary">@{username}</div>
-      </div>
-
-      <div className="ml-auto">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={onClick}
-          disabled={onClick === undefined}
-          className="capitalize"
-        >
-          {role}
-        </Button>
-      </div>
-    </Link>
   );
 }
