@@ -4184,7 +4184,56 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get Trip Comments
+         * @description Get comments for a trip
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripCommentsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         put?: never;
         /**
          * Create Comment
@@ -4343,6 +4392,110 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/comments/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Trip Comment
+         * @description Delete a trip comment
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Comment ID
+                     * @example 7323488942953598976
+                     */
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Trip Comment
+         * @description Update a comment for a trip
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Comment ID
+                     * @example 7323488942953598976
+                     */
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripCommentInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripCommentOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/v2/trips/{tripId}/invites": {
@@ -6122,6 +6275,15 @@ export interface components {
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
         };
+        GetTripCommentsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            comments: components["schemas"]["TripComment"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
         GetTripInviteDetailsOutputBody: {
             /**
              * Format: uri
@@ -7021,6 +7183,23 @@ export interface components {
             draft: {
                 [key: string]: unknown;
             };
+        };
+        UpdateTripCommentInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Content of comment */
+            content: string;
+        };
+        UpdateTripCommentOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            comment: components["schemas"]["TripComment"];
         };
         UpdateUserProfileImageInputBody: {
             /**
