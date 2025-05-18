@@ -14,12 +14,12 @@ import {
   ActivityIcon,
   ClockFadingIcon,
   ClockIcon,
-  ConciergeBellIcon,
   EyeIcon,
   PenIcon,
   ReplyIcon,
   UsersIcon,
 } from 'lucide-react';
+import { AmenitiesDialog } from './amenities';
 
 type Props = {
   className?: string;
@@ -85,7 +85,7 @@ export function UserColumn({ className }: Props) {
       <TooltipProvider>
         <div className="flex items-center gap-4 mt-4">
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button variant="ghost" size="icon">
                 <UsersIcon className="size-4" />
               </Button>
@@ -95,15 +95,13 @@ export function UserColumn({ className }: Props) {
 
           <Tooltip>
             <TooltipTrigger>
-              <Button variant="ghost" size="icon">
-                <ConciergeBellIcon className="size-4" />
-              </Button>
+              <AmenitiesDialog />
             </TooltipTrigger>
             <TooltipContent side="bottom">Requested Amenities</TooltipContent>
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button variant="ghost" size="icon">
                 <ReplyIcon className="size-4" />
               </Button>
@@ -112,7 +110,7 @@ export function UserColumn({ className }: Props) {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button variant="ghost" size="icon">
                 <PenIcon className="size-4" />
               </Button>
