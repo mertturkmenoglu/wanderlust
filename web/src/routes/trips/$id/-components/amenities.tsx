@@ -39,8 +39,9 @@ export function AmenitiesDialog() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" className="w-full flex justify-start">
           <ConciergeBellIcon className="size-4" />
+          <span className="">Amenities</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="md:min-w-3xl lg:min-w-4xl xl:min-w-7xl">

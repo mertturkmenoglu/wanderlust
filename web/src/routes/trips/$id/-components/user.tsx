@@ -1,11 +1,5 @@
 import UserImage from '@/components/blocks/user-image';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
@@ -82,43 +76,24 @@ export function UserColumn({ className }: Props) {
         </div>
       </div>
 
-      <TooltipProvider>
-        <div className="flex items-center gap-4 mt-4">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <UsersIcon className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Participants</TooltipContent>
-          </Tooltip>
+      <div className="flex flex-col mt-4 text-left items-start w-full pr-2 -ml-2">
+        <Button variant="ghost" className="w-full flex justify-start">
+          <UsersIcon className="size-4" />
+          <span>Participants</span>
+        </Button>
 
-          <Tooltip>
-            <TooltipTrigger>
-              <AmenitiesDialog />
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Requested Amenities</TooltipContent>
-          </Tooltip>
+        <AmenitiesDialog />
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <ReplyIcon className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Comments</TooltipContent>
-          </Tooltip>
+        <Button variant="ghost" className="w-full flex justify-start">
+          <ReplyIcon className="size-4" />
+          <span>Comments</span>
+        </Button>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <PenIcon className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Edit</TooltipContent>
-          </Tooltip>
-        </div>
-      </TooltipProvider>
+        <Button variant="ghost" className="w-full flex justify-start">
+          <PenIcon className="size-4" />
+          <span>Edit</span>
+        </Button>
+      </div>
     </div>
   );
 }
