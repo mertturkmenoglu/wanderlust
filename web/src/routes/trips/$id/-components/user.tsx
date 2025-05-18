@@ -11,9 +11,9 @@ import {
   EyeIcon,
   PenIcon,
   ReplyIcon,
-  UsersIcon,
 } from 'lucide-react';
 import { AmenitiesDialog } from './amenities';
+import { ParticipantsDialog } from './participants';
 
 type Props = {
   className?: string;
@@ -77,10 +77,7 @@ export function UserColumn({ className }: Props) {
       </div>
 
       <div className="flex flex-col mt-4 text-left items-start w-full pr-2 -ml-2">
-        <Button variant="ghost" className="w-full flex justify-start">
-          <UsersIcon className="size-4" />
-          <span>Participants</span>
-        </Button>
+        <ParticipantsDialog />
 
         <AmenitiesDialog />
 
