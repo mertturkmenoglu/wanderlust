@@ -47,59 +47,59 @@ export function AmenitiesDialog() {
       <AlertDialogContent className="md:min-w-3xl lg:min-w-4xl xl:min-w-7xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Requested Amenities</AlertDialogTitle>
-          <form
-            className="grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-            onSubmit={form.handleSubmit((data) => {
-              console.log(data);
-            })}
-          >
-            <div className="col-span-2">
-              <Controller
-                name="amenities"
-                control={form.control}
-                render={() => {
-                  return (
-                    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mt-2">
-                      {amenities.map((amenity) => (
-                        <Controller
-                          key={amenity.id}
-                          control={form.control}
-                          name="amenities"
-                          render={({ field }) => {
-                            return (
-                              <div className="flex items-center gap-1">
-                                <Checkbox
-                                  checked={field.value?.includes(amenity.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([
-                                          ...(field.value ?? []),
-                                          amenity.id,
-                                        ])
-                                      : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== amenity.id,
-                                          ),
-                                        );
-                                  }}
-                                />
-
-                                <Label className="font-normal">
-                                  {amenity.name}
-                                </Label>
-                              </div>
-                            );
-                          }}
-                        />
-                      ))}
-                    </div>
-                  );
-                }}
-              />
-              <InputError error={form.formState.errors.amenities?.root} />
-            </div>
-          </form>
         </AlertDialogHeader>
+        <form
+          className="grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
+          onSubmit={form.handleSubmit((data) => {
+            console.log(data);
+          })}
+        >
+          <div className="col-span-2">
+            <Controller
+              name="amenities"
+              control={form.control}
+              render={() => {
+                return (
+                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 mt-2">
+                    {amenities.map((amenity) => (
+                      <Controller
+                        key={amenity.id}
+                        control={form.control}
+                        name="amenities"
+                        render={({ field }) => {
+                          return (
+                            <div className="flex items-center gap-1">
+                              <Checkbox
+                                checked={field.value?.includes(amenity.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([
+                                        ...(field.value ?? []),
+                                        amenity.id,
+                                      ])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== amenity.id,
+                                        ),
+                                      );
+                                }}
+                              />
+
+                              <Label className="font-normal">
+                                {amenity.name}
+                              </Label>
+                            </div>
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
+                );
+              }}
+            />
+            <InputError error={form.formState.errors.amenities?.root} />
+          </div>
+        </form>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction>Save</AlertDialogAction>
