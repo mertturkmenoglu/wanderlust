@@ -2,8 +2,8 @@ import { ErrorComponent } from '@/components/blocks/error-component';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { Breadcrumb } from '../-breadcrumb';
-import { DetailColumn } from './-detail-column';
-import { UserColumn } from './-user-column';
+import { DetailColumn } from './-components/details';
+import { UserColumn } from './-components/user';
 
 export const Route = createFileRoute('/trips/$id/')({
   component: RouteComponent,
