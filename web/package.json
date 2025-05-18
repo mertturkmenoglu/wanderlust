@@ -58,7 +58,7 @@
     "instantsearch.js": "^4.78.2",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
-    "lucide-react": "^0.476.0",
+    "lucide-react": "^0.511.0",
     "openapi-fetch": "^0.13.5",
     "openapi-react-query": "^0.3.1",
     "react": "^19.0.0",
