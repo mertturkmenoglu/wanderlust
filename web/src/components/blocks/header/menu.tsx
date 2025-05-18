@@ -13,7 +13,8 @@ type Props = {
 };
 
 export default function Menu({ auth }: Readonly<Props>) {
-  const shortName = useShortName(auth.fullName);
+  const firstName = auth.fullName.split(' ')[0] ?? '';
+  const shortName = useShortName(firstName, 20);
 
   return (
     <div>
