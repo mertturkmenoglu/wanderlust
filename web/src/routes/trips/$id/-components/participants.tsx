@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -21,8 +22,9 @@ import { api } from '@/lib/api';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
+import { useDebouncedValue } from '@tanstack/react-pacer';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { GlobeIcon, LockIcon, UsersIcon, XIcon } from 'lucide-react';
+import { GlobeIcon, LockIcon, PlusIcon, UsersIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export function ParticipantsDialog() {
@@ -110,8 +112,32 @@ function ParticipantsSection() {
 }
 
 function InvitesSection() {
+  const [isSearchMode, setIsSearchMode] = useState(false);
+
+  return (
+    <div>
+      <Button
+        variant="link"
+        size="sm"
+        className="mx-auto flex items-center gap-2"
+        onClick={() => setIsSearchMode(!isSearchMode)}
+      >
+        {isSearchMode ? (
+          <UsersIcon className="size-4" />
+        ) : (
+          <PlusIcon className="size-4" />
+        )}
+        <span>{isSearchMode ? 'See invites' : 'Invite users'}</span>
+      </Button>
+      {isSearchMode ? <ShowSearch /> : <ShowInvites />}
+    </div>
+  );
+}
+
+function ShowInvites() {
   const route = getRouteApi('/trips/$id/');
   const { trip } = route.useLoaderData();
+
   const invitesQuery = api.useQuery('get', '/api/v2/trips/{tripId}/invites', {
     params: {
       path: {
@@ -148,7 +174,7 @@ function InvitesSection() {
 
   return (
     <ScrollArea className="h-[200px]">
-      {invites.map((invite) => (
+      {invites?.map((invite) => (
         <Card
           key={invite.id}
           image={invite.to.profileImage}
@@ -159,6 +185,84 @@ function InvitesSection() {
         />
       ))}
     </ScrollArea>
+  );
+}
+
+function ShowSearch() {
+  const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebouncedValue(search, {
+    wait: 500,
+  });
+
+  const searchQuery = api.useQuery(
+    'get',
+    '/api/v2/users/{username}/following/search',
+    {
+      params: {
+        path: {
+          username: debouncedSearch,
+        },
+      },
+    },
+    {
+      enabled: debouncedSearch.length > 1,
+    },
+  );
+
+  if (searchQuery.isFetching) {
+    return <Spinner className="my-8 mx-auto size-8" />;
+  }
+
+  if (searchQuery.isError) {
+    return (
+      <AppMessage
+        errorMessage="Failed to search users"
+        showBackButton={false}
+        className="mt-8"
+      />
+    );
+  }
+
+  const users = searchQuery.data?.friends ?? [];
+
+  return (
+    <div>
+      <div className="min-h-[200px]">
+        <Label className="my-1">Invite a new user to this trip</Label>
+        <Input
+          placeholder="Search"
+          className="mt-2 w-full"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {users.length === 0 ? (
+          <AppMessage
+            emptyMessage={
+              search.length > 1 ? 'No users found' : 'Search by username'
+            }
+            showBackButton={false}
+            className="mt-8"
+          />
+        ) : (
+          <ScrollArea className="h-[200px]">
+            {users?.map((user) => (
+              <Card
+                key={user.id}
+                image={user.profileImage ?? ''}
+                name={user.fullName}
+                role={'Invite'}
+                username={user.username}
+                className="mt-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert('invite');
+                }}
+              />
+            ))}
+          </ScrollArea>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -211,9 +315,10 @@ type Props = {
   username: string;
   role: string;
   className?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
-function Card({ image, name, username, role, className }: Props) {
+function Card({ image, name, username, role, className, onClick }: Props) {
   return (
     <Link
       to="/u/$username"
@@ -235,7 +340,13 @@ function Card({ image, name, username, role, className }: Props) {
       </div>
 
       <div className="ml-auto">
-        <Button variant="secondary" size="sm" disabled className="capitalize">
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onClick}
+          disabled={onClick === undefined}
+          className="capitalize"
+        >
           {role}
         </Button>
       </div>
