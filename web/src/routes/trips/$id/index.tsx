@@ -2,6 +2,8 @@ import { ErrorComponent } from '@/components/blocks/error-component';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { Breadcrumb } from '../-breadcrumb';
+import { DetailColumn } from './-detail-column';
+import { UserColumn } from './-user-column';
 
 export const Route = createFileRoute('/trips/$id/')({
   component: RouteComponent,
@@ -31,7 +33,11 @@ function RouteComponent() {
         ]}
       />
 
-      <pre className="mt-8">{JSON.stringify(trip, null, 2)}</pre>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-8 my-8">
+        <UserColumn className="w-full col-span-full md:col-span-1 md:border-r border-border" />
+
+        <DetailColumn className="w-full col-span-full md:col-span-3" />
+      </div>
     </div>
   );
 }
