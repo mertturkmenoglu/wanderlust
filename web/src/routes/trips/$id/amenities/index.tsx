@@ -18,7 +18,7 @@ function RouteComponent() {
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
-    <div>
+    <div className="mt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ConciergeBellIcon className="size-5" />
