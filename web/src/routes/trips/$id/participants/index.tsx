@@ -15,7 +15,7 @@ function RouteComponent() {
   const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
 
   return (
-    <div>
+    <div className="mt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <UsersIcon className="size-5 mr-2" />
