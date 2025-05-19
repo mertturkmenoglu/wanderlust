@@ -58,6 +58,10 @@ import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/fol
 import { Route as UUsernameFollowersIndexImport } from './routes/u/$username/followers/index'
 import { Route as UUsernameFavoritesIndexImport } from './routes/u/$username/favorites/index'
 import { Route as UUsernameActivitiesIndexImport } from './routes/u/$username/activities/index'
+import { Route as TripsIdParticipantsIndexImport } from './routes/trips/$id/participants/index'
+import { Route as TripsIdEditIndexImport } from './routes/trips/$id/edit/index'
+import { Route as TripsIdCommentsIndexImport } from './routes/trips/$id/comments/index'
+import { Route as TripsIdAmenitiesIndexImport } from './routes/trips/$id/amenities/index'
 import { Route as ListsIdItemsIndexImport } from './routes/lists/$id/items/index'
 import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
 import { Route as DiaryIdEditIndexImport } from './routes/diary/$id/edit/index'
@@ -371,6 +375,30 @@ const UUsernameActivitiesIndexRoute = UUsernameActivitiesIndexImport.update({
   id: '/activities/',
   path: '/activities/',
   getParentRoute: () => UUsernameRoute,
+} as any)
+
+const TripsIdParticipantsIndexRoute = TripsIdParticipantsIndexImport.update({
+  id: '/participants/',
+  path: '/participants/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+
+const TripsIdEditIndexRoute = TripsIdEditIndexImport.update({
+  id: '/edit/',
+  path: '/edit/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+
+const TripsIdCommentsIndexRoute = TripsIdCommentsIndexImport.update({
+  id: '/comments/',
+  path: '/comments/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+
+const TripsIdAmenitiesIndexRoute = TripsIdAmenitiesIndexImport.update({
+  id: '/amenities/',
+  path: '/amenities/',
+  getParentRoute: () => TripsIdRoute,
 } as any)
 
 const ListsIdItemsIndexRoute = ListsIdItemsIndexImport.update({
@@ -937,6 +965,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListsIdItemsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/trips/$id/amenities/': {
+      id: '/trips/$id/amenities/'
+      path: '/amenities'
+      fullPath: '/trips/$id/amenities'
+      preLoaderRoute: typeof TripsIdAmenitiesIndexImport
+      parentRoute: typeof TripsIdImport
+    }
+    '/trips/$id/comments/': {
+      id: '/trips/$id/comments/'
+      path: '/comments'
+      fullPath: '/trips/$id/comments'
+      preLoaderRoute: typeof TripsIdCommentsIndexImport
+      parentRoute: typeof TripsIdImport
+    }
+    '/trips/$id/edit/': {
+      id: '/trips/$id/edit/'
+      path: '/edit'
+      fullPath: '/trips/$id/edit'
+      preLoaderRoute: typeof TripsIdEditIndexImport
+      parentRoute: typeof TripsIdImport
+    }
+    '/trips/$id/participants/': {
+      id: '/trips/$id/participants/'
+      path: '/participants'
+      fullPath: '/trips/$id/participants'
+      preLoaderRoute: typeof TripsIdParticipantsIndexImport
+      parentRoute: typeof TripsIdImport
+    }
     '/u/$username/activities/': {
       id: '/u/$username/activities/'
       path: '/activities'
@@ -1142,10 +1198,18 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 interface TripsIdRouteChildren {
   TripsIdIndexRoute: typeof TripsIdIndexRoute
+  TripsIdAmenitiesIndexRoute: typeof TripsIdAmenitiesIndexRoute
+  TripsIdCommentsIndexRoute: typeof TripsIdCommentsIndexRoute
+  TripsIdEditIndexRoute: typeof TripsIdEditIndexRoute
+  TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
 }
 
 const TripsIdRouteChildren: TripsIdRouteChildren = {
   TripsIdIndexRoute: TripsIdIndexRoute,
+  TripsIdAmenitiesIndexRoute: TripsIdAmenitiesIndexRoute,
+  TripsIdCommentsIndexRoute: TripsIdCommentsIndexRoute,
+  TripsIdEditIndexRoute: TripsIdEditIndexRoute,
+  TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
 }
 
 const TripsIdRouteWithChildren =
@@ -1318,6 +1382,10 @@ export interface FileRoutesByFullPath {
   '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/lists/$id/items': typeof ListsIdItemsIndexRoute
+  '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
+  '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
+  '/trips/$id/edit': typeof TripsIdEditIndexRoute
+  '/trips/$id/participants': typeof TripsIdParticipantsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
   '/u/$username/followers': typeof UUsernameFollowersIndexRoute
@@ -1393,6 +1461,10 @@ export interface FileRoutesByTo {
   '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/lists/$id/items': typeof ListsIdItemsIndexRoute
+  '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
+  '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
+  '/trips/$id/edit': typeof TripsIdEditIndexRoute
+  '/trips/$id/participants': typeof TripsIdParticipantsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
   '/u/$username/followers': typeof UUsernameFollowersIndexRoute
@@ -1474,6 +1546,10 @@ export interface FileRoutesById {
   '/diary/$id/edit/': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
   '/lists/$id/items/': typeof ListsIdItemsIndexRoute
+  '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
+  '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
+  '/trips/$id/edit/': typeof TripsIdEditIndexRoute
+  '/trips/$id/participants/': typeof TripsIdParticipantsIndexRoute
   '/u/$username/activities/': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites/': typeof UUsernameFavoritesIndexRoute
   '/u/$username/followers/': typeof UUsernameFollowersIndexRoute
@@ -1556,6 +1632,10 @@ export interface FileRouteTypes {
     | '/diary/$id/edit'
     | '/lists/$id/edit'
     | '/lists/$id/items'
+    | '/trips/$id/amenities'
+    | '/trips/$id/comments'
+    | '/trips/$id/edit'
+    | '/trips/$id/participants'
     | '/u/$username/activities'
     | '/u/$username/favorites'
     | '/u/$username/followers'
@@ -1630,6 +1710,10 @@ export interface FileRouteTypes {
     | '/diary/$id/edit'
     | '/lists/$id/edit'
     | '/lists/$id/items'
+    | '/trips/$id/amenities'
+    | '/trips/$id/comments'
+    | '/trips/$id/edit'
+    | '/trips/$id/participants'
     | '/u/$username/activities'
     | '/u/$username/favorites'
     | '/u/$username/followers'
@@ -1709,6 +1793,10 @@ export interface FileRouteTypes {
     | '/diary/$id/edit/'
     | '/lists/$id/edit/'
     | '/lists/$id/items/'
+    | '/trips/$id/amenities/'
+    | '/trips/$id/comments/'
+    | '/trips/$id/edit/'
+    | '/trips/$id/participants/'
     | '/u/$username/activities/'
     | '/u/$username/favorites/'
     | '/u/$username/followers/'
@@ -1913,7 +2001,11 @@ export const routeTree = rootRoute
       "filePath": "trips/$id.tsx",
       "parent": "/trips",
       "children": [
-        "/trips/$id/"
+        "/trips/$id/",
+        "/trips/$id/amenities/",
+        "/trips/$id/comments/",
+        "/trips/$id/edit/",
+        "/trips/$id/participants/"
       ]
     },
     "/u/$username": {
@@ -2079,6 +2171,22 @@ export const routeTree = rootRoute
     },
     "/lists/$id/items/": {
       "filePath": "lists/$id/items/index.tsx"
+    },
+    "/trips/$id/amenities/": {
+      "filePath": "trips/$id/amenities/index.tsx",
+      "parent": "/trips/$id"
+    },
+    "/trips/$id/comments/": {
+      "filePath": "trips/$id/comments/index.tsx",
+      "parent": "/trips/$id"
+    },
+    "/trips/$id/edit/": {
+      "filePath": "trips/$id/edit/index.tsx",
+      "parent": "/trips/$id"
+    },
+    "/trips/$id/participants/": {
+      "filePath": "trips/$id/participants/index.tsx",
+      "parent": "/trips/$id"
     },
     "/u/$username/activities/": {
       "filePath": "u/$username/activities/index.tsx",
