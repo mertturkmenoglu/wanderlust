@@ -222,6 +222,7 @@ type Trip struct {
 	OwnerID         string
 	Status          string
 	Title           string
+	Description     string
 	VisibilityLevel string
 	StartAt         pgtype.Timestamptz
 	EndAt           pgtype.Timestamptz
@@ -229,12 +230,12 @@ type Trip struct {
 	UpdatedAt       pgtype.Timestamptz
 }
 
-type TripsAmenity struct {
+type TripAmenity struct {
 	TripID    string
 	AmenityID int32
 }
 
-type TripsComment struct {
+type TripComment struct {
 	ID        string
 	TripID    string
 	FromID    string
@@ -242,29 +243,26 @@ type TripsComment struct {
 	CreatedAt pgtype.Timestamptz
 }
 
-type TripsDay struct {
-	TripID      string
-	DayNo       int32
-	Description string
+type TripInvite struct {
+	ID              string
+	TripID          string
+	FromID          string
+	ToID            string
+	SentAt          pgtype.Timestamptz
+	ExpiresAt       pgtype.Timestamptz
+	TripTitle       string
+	TripDescription string
+	Role            string
 }
 
-type TripsDaysLocation struct {
-	TripID string
-	DayNo  int32
-	PoiID  string
+type TripLocation struct {
+	TripID        string
+	ScheduledTime pgtype.Timestamptz
+	PoiID         string
+	Description   string
 }
 
-type TripsInvite struct {
-	ID        string
-	TripID    string
-	FromID    string
-	ToID      string
-	SentAt    pgtype.Timestamptz
-	ExpiresAt pgtype.Timestamptz
-	Role      string
-}
-
-type TripsParticipant struct {
+type TripParticipant struct {
 	ID     string
 	TripID string
 	UserID string

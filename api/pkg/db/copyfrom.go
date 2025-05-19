@@ -223,7 +223,7 @@ func (r iteratorForBatchCreateTripAmenities) Err() error {
 }
 
 func (q *Queries) BatchCreateTripAmenities(ctx context.Context, arg []BatchCreateTripAmenitiesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"trips_amenities"}, []string{"trip_id", "amenity_id"}, &iteratorForBatchCreateTripAmenities{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"trip_amenities"}, []string{"trip_id", "amenity_id"}, &iteratorForBatchCreateTripAmenities{rows: arg})
 }
 
 // iteratorForBatchCreateTrips implements pgx.CopyFromSource.
@@ -249,6 +249,7 @@ func (r iteratorForBatchCreateTrips) Values() ([]interface{}, error) {
 		r.rows[0].ID,
 		r.rows[0].OwnerID,
 		r.rows[0].Status,
+		r.rows[0].Description,
 		r.rows[0].Title,
 		r.rows[0].VisibilityLevel,
 		r.rows[0].StartAt,
@@ -261,7 +262,7 @@ func (r iteratorForBatchCreateTrips) Err() error {
 }
 
 func (q *Queries) BatchCreateTrips(ctx context.Context, arg []BatchCreateTripsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "status", "title", "visibility_level", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "status", "description", "title", "visibility_level", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
 }
 
 // iteratorForBatchCreateUsers implements pgx.CopyFromSource.

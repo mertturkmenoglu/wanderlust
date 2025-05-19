@@ -3,6 +3,7 @@ INSERT INTO trips (
   id,
   owner_id,
   title,
+  description,
   status,
   visibility_level,
   start_at,
@@ -14,7 +15,8 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7
+  $7,
+  $8
 ) RETURNING *;
 
 -- name: BatchCreateTrips :copyfrom
@@ -22,6 +24,7 @@ INSERT INTO trips (
   id,
   owner_id,
   status,
+  description,
   title,
   visibility_level,
   start_at,
@@ -33,7 +36,8 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7
+  $7,
+  $8
 );
 
 -- name: GetTripById :one
@@ -55,30 +59,23 @@ SELECT
     'profileImage', par.profile_image,
     'role', tp.role
   ))
-  FROM trips_participants tp
+  FROM trip_participants tp
   JOIN profile par ON par.id = tp.user_id
   WHERE tp.trip_id = trips.id
-  ) as participants,
+  ) AS participants,
   (SELECT json_agg(to_jsonb(am.*))
-  FROM trips_amenities ta
+  FROM trip_amenities ta
   JOIN amenities am ON am.id = ta.amenity_id
   WHERE ta.trip_id = trips.id
   ) AS amenities,
   (SELECT json_agg(jsonb_build_object(
-    'tripId', td.trip_id,
-    'dayNo', td.day_no,
-    'description', td.description
+    'tripId', tlocations.trip_id,
+    'scheduledTime', tlocations.scheduled_time,
+    'poiId', tlocations.poi_id,
+    'description', tlocations.description
   ))
-  FROM trips_days td
-  WHERE td.trip_id = trips.id
-  ) AS days,
-  (SELECT json_agg(jsonb_build_object(
-    'tripId', tdl.trip_id,
-    'dayNo', tdl.day_no,
-    'poiId', tdl.poi_id
-  ))
-  FROM trips_days_locations tdl
-  WHERE tdl.trip_id = trips.id
+  FROM trip_locations tlocations
+  WHERE tlocations.trip_id = trips.id
   ) AS locations,
   COALESCE(json_agg(DISTINCT jsonb_build_object(
     'poi', to_jsonb(poi.*),
@@ -87,12 +84,11 @@ SELECT
     'poiCity', to_jsonb(cities.*),
     'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
     'poiMedia', COALESCE(poi_media.media, '[]')
-  )) FILTER (WHERE trips_days_locations.poi_id IS NOT NULL), '[]') AS ps
+  )) FILTER (WHERE trip_locations.poi_id IS NOT NULL), '[]') AS ps
 FROM trips
 LEFT JOIN users u ON u.id = trips.owner_id
-LEFT JOIN trips_days ON trips_days.trip_id = trips.id
-LEFT JOIN trips_days_locations ON trips_days_locations.trip_id = trips.id AND trips_days_locations.day_no = trips_days.day_no
-LEFT JOIN pois poi ON poi.id = trips_days_locations.poi_id
+LEFT JOIN trip_locations ON trip_locations.trip_id = trips.id
+LEFT JOIN pois poi ON poi.id = trip_locations.poi_id
 LEFT JOIN categories cat ON cat.id = poi.category_id
 LEFT JOIN addresses addr ON addr.id = poi.address_id
 LEFT JOIN cities ON cities.id = addr.city_id
@@ -114,7 +110,7 @@ ORDER BY trips.created_at DESC;
 -- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at
 FROM trips
-LEFT JOIN trips_participants tp ON tp.trip_id = trips.id
+LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
 WHERE trips.owner_id = $1 OR tp.user_id = $1
 ORDER BY trips.created_at DESC;
 
@@ -127,7 +123,7 @@ SELECT
     'username', p.username,
     'profileImage', p.profile_image
   ) AS fromUser
-FROM trips_invites invites
+FROM trip_invites invites
 JOIN profile p ON p.id = invites.from_id
 WHERE invites.to_id = $1
 ORDER BY invites.sent_at DESC;
@@ -147,20 +143,22 @@ SELECT
     'username', pto.username,
     'profileImage', pto.profile_image
   ) AS toUser
-FROM trips_invites invites
+FROM trip_invites invites
 JOIN profile pfrom ON pfrom.id = invites.from_id
 JOIN profile pto ON pto.id = invites.to_id
 WHERE invites.trip_id = $1
 ORDER BY invites.sent_at DESC;
 
 -- name: CreateTripInvite :one
-INSERT INTO trips_invites (
+INSERT INTO trip_invites (
   id,
   trip_id,
   from_id,
   to_id,
   sent_at,
   expires_at,
+  trip_title,
+  trip_description,
   role
 ) VALUES (
   $1,
@@ -169,14 +167,16 @@ INSERT INTO trips_invites (
   $4,
   $5,
   $6,
-  $7
+  $7,
+  $8,
+  $9
 ) RETURNING *;
 
 -- name: DeleteInvite :exec
-DELETE FROM trips_invites WHERE id = $1;
+DELETE FROM trip_invites WHERE id = $1;
 
 -- name: AddParticipantToTrip :one
-INSERT INTO trips_participants (
+INSERT INTO trip_participants (
   id,
   user_id,
   trip_id,
@@ -189,13 +189,13 @@ INSERT INTO trips_participants (
 ) RETURNING *;
 
 -- name: DeleteParticipant :exec
-DELETE FROM trips_participants WHERE trip_id = $1 AND user_id = $2;
+DELETE FROM trip_participants WHERE trip_id = $1 AND user_id = $2;
 
 -- name: DeleteTrip :exec
 DELETE FROM trips WHERE id = $1;
 
 -- name: CreateTripComment :one
-INSERT INTO trips_comments (
+INSERT INTO trip_comments (
   id,
   trip_id,
   from_id,
@@ -211,11 +211,7 @@ INSERT INTO trips_comments (
 
 -- name: GetTripComments :many
 SELECT
-  tc.id,
-  tc.trip_id,
-  tc.from_id,
-  tc.content,
-  tc.created_at,
+  sqlc.embed(tc),
   (SELECT jsonb_build_object(
     'id', u.id,
     'fullName', u.full_name,
@@ -223,7 +219,7 @@ SELECT
     'profileImage', u.profile_image
   )) AS user
 FROM
-  trips_comments tc
+  trip_comments tc
 LEFT JOIN users u ON u.id = tc.from_id
 WHERE
   tc.trip_id = $1
@@ -232,21 +228,17 @@ OFFSET $2
 LIMIT $3;
 
 -- name: GetTripCommentsCount :one
-SELECT COUNT(*) FROM trips_comments WHERE trip_id = $1;
+SELECT COUNT(*) FROM trip_comments WHERE trip_id = $1;
 
 -- name: UpdateTripComment :one
-UPDATE trips_comments 
+UPDATE trip_comments 
 SET content = $2 
 WHERE id = $1 AND trip_id = $3
 RETURNING *;
 
 -- name: GetTripCommentById :one
 SELECT
-  tc.id,
-  tc.trip_id,
-  tc.from_id,
-  tc.content,
-  tc.created_at,
+  sqlc.embed(tc),
   (SELECT jsonb_build_object(
     'id', u.id,
     'fullName', u.full_name,
@@ -254,18 +246,18 @@ SELECT
     'profileImage', u.profile_image
   )) AS user
 FROM
-  trips_comments tc
+  trip_comments tc
 LEFT JOIN users u ON u.id = tc.from_id
 WHERE tc.id = $1;
 
 -- name: DeleteTripComment :exec
-DELETE FROM trips_comments WHERE id = $1;
+DELETE FROM trip_comments WHERE id = $1;
 
 -- name: DeleteTripAllAmenities :exec
-DELETE FROM trips_amenities WHERE trip_id = $1;
+DELETE FROM trip_amenities WHERE trip_id = $1;
 
 -- name: BatchCreateTripAmenities :copyfrom
-INSERT INTO trips_amenities (
+INSERT INTO trip_amenities (
   trip_id,
   amenity_id
 ) VALUES (
