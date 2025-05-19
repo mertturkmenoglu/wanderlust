@@ -10,7 +10,7 @@ type Props = {
 
 export function Item({ comment }: Props) {
   return (
-    <div className="border-t border-border py-4">
+    <div className="not-first:border-t border-border py-4">
       <div className="flex items-start gap-4">
         <UserImage
           src={ipx(userImage(comment.from.profileImage), 'w_512')}

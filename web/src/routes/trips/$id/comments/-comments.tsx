@@ -1,13 +1,17 @@
-import AppMessage from "@/components/blocks/app-message";
-import Spinner from "@/components/kit/spinner";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useLoadMoreText } from "@/hooks/use-load-more-text";
-import { api } from "@/lib/api";
-import { getRouteApi } from "@tanstack/react-router";
-import { Item } from "./item";
-import { Button } from "@/components/ui/button";
+import AppMessage from '@/components/blocks/app-message';
+import Spinner from '@/components/kit/spinner';
+import { Button } from '@/components/ui/button';
+import { useLoadMoreText } from '@/hooks/use-load-more-text';
+import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
+import { getRouteApi } from '@tanstack/react-router';
+import { Item } from './-item';
 
-export function Results() {
+type Props = {
+  className?: string;
+};
+
+export function Comments({ className }: Props) {
   const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
 
@@ -77,7 +81,7 @@ export function Results() {
   }
 
   return (
-    <ScrollArea className="h-[600px]">
+    <div className={cn(className)}>
       {flatten.map((comment) => (
         <Item key={comment.id} comment={comment} />
       ))}
@@ -94,6 +98,6 @@ export function Results() {
           </Button>
         </div>
       )}
-    </ScrollArea>
+    </div>
   );
 }
