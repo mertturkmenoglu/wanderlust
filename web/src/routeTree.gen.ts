@@ -72,6 +72,7 @@ import { Route as AdminDashboardCollectionsIndexImport } from './routes/_admin/d
 import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashboard/cities/index'
 import { Route as AdminDashboardCategoriesIndexImport } from './routes/_admin/dashboard/categories/index'
 import { Route as AdminDashboardAmenitiesIndexImport } from './routes/_admin/dashboard/amenities/index'
+import { Route as TripsIdParticipantsInvitesIndexImport } from './routes/trips/$id/participants/invites/index'
 import { Route as AdminDashboardUsersVerifyIndexImport } from './routes/_admin/dashboard/users/verify/index'
 import { Route as AdminDashboardPoisDraftsIndexImport } from './routes/_admin/dashboard/pois/drafts/index'
 import { Route as AdminDashboardPoisIdIndexImport } from './routes/_admin/dashboard/pois/$id/index'
@@ -463,6 +464,13 @@ const AdminDashboardAmenitiesIndexRoute =
     id: '/amenities/',
     path: '/amenities/',
     getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const TripsIdParticipantsInvitesIndexRoute =
+  TripsIdParticipantsInvitesIndexImport.update({
+    id: '/participants/invites/',
+    path: '/participants/invites/',
+    getParentRoute: () => TripsIdRoute,
   } as any)
 
 const AdminDashboardUsersVerifyIndexRoute =
@@ -1112,6 +1120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardUsersVerifyIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/trips/$id/participants/invites/': {
+      id: '/trips/$id/participants/invites/'
+      path: '/participants/invites'
+      fullPath: '/trips/$id/participants/invites'
+      preLoaderRoute: typeof TripsIdParticipantsInvitesIndexImport
+      parentRoute: typeof TripsIdImport
+    }
     '/_admin/dashboard/amenities/$id/edit/': {
       id: '/_admin/dashboard/amenities/$id/edit/'
       path: '/amenities/$id/edit'
@@ -1202,6 +1217,7 @@ interface TripsIdRouteChildren {
   TripsIdCommentsIndexRoute: typeof TripsIdCommentsIndexRoute
   TripsIdEditIndexRoute: typeof TripsIdEditIndexRoute
   TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
+  TripsIdParticipantsInvitesIndexRoute: typeof TripsIdParticipantsInvitesIndexRoute
 }
 
 const TripsIdRouteChildren: TripsIdRouteChildren = {
@@ -1210,6 +1226,7 @@ const TripsIdRouteChildren: TripsIdRouteChildren = {
   TripsIdCommentsIndexRoute: TripsIdCommentsIndexRoute,
   TripsIdEditIndexRoute: TripsIdEditIndexRoute,
   TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
+  TripsIdParticipantsInvitesIndexRoute: TripsIdParticipantsInvitesIndexRoute,
 }
 
 const TripsIdRouteWithChildren =
@@ -1403,6 +1420,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
+  '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -1482,6 +1500,7 @@ export interface FileRoutesByTo {
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
+  '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -1567,6 +1586,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/pois/$id/': typeof AdminDashboardPoisIdIndexRoute
   '/_admin/dashboard/pois/drafts/': typeof AdminDashboardPoisDraftsIndexRoute
   '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
+  '/trips/$id/participants/invites/': typeof TripsIdParticipantsInvitesIndexRoute
   '/_admin/dashboard/amenities/$id/edit/': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/_admin/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -1653,6 +1673,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
+    | '/trips/$id/participants/invites'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
@@ -1731,6 +1752,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
+    | '/trips/$id/participants/invites'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
@@ -1814,6 +1836,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/pois/$id/'
     | '/_admin/dashboard/pois/drafts/'
     | '/_admin/dashboard/users/verify/'
+    | '/trips/$id/participants/invites/'
     | '/_admin/dashboard/amenities/$id/edit/'
     | '/_admin/dashboard/categories/$id/edit/'
     | '/_admin/dashboard/cities/$id/edit/'
@@ -2005,7 +2028,8 @@ export const routeTree = rootRoute
         "/trips/$id/amenities/",
         "/trips/$id/comments/",
         "/trips/$id/edit/",
-        "/trips/$id/participants/"
+        "/trips/$id/participants/",
+        "/trips/$id/participants/invites/"
       ]
     },
     "/u/$username": {
@@ -2255,6 +2279,10 @@ export const routeTree = rootRoute
     "/_admin/dashboard/users/verify/": {
       "filePath": "_admin/dashboard/users/verify/index.tsx",
       "parent": "/_admin/dashboard"
+    },
+    "/trips/$id/participants/invites/": {
+      "filePath": "trips/$id/participants/invites/index.tsx",
+      "parent": "/trips/$id"
     },
     "/_admin/dashboard/amenities/$id/edit/": {
       "filePath": "_admin/dashboard/amenities/$id/edit/index.tsx",
