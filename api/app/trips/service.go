@@ -178,6 +178,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 		ID:              utils.GenerateId(s.app.Flake),
 		OwnerID:         userId,
 		Title:           body.Title,
+		Description:     "",
 		VisibilityLevel: body.Visibility,
 		Status:          "draft",
 		StartAt:         pgtype.Timestamptz{Time: startAt, Valid: true},
@@ -295,6 +296,8 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 			Time:  expiresAt,
 			Valid: true,
 		},
+		TripTitle:       trip.Title,
+		TripDescription: trip.Description,
 	})
 
 	if err != nil {
@@ -341,7 +344,7 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 	var dbInvite *db.GetInvitesByTripIdRow = nil
 
 	for _, inv := range dbInvites {
-		if inv.TripsInvite.ID == inviteId {
+		if inv.TripInvite.ID == inviteId {
 			dbInvite = &inv
 			break
 		}
