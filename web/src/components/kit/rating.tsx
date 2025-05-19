@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import * as rating from '@zag-js/rating-group';
 import { normalizeProps, useMachine } from '@zag-js/react';
-import { Star } from 'lucide-react';
+import { StarIcon } from 'lucide-react';
 
 type Props = {
   defaultValue?: number;
@@ -35,7 +35,7 @@ export function Rating({
           const state = api.getItemState({ index });
           return (
             <span key={index} {...api.getItemProps({ index })}>
-              <Star
+              <StarIcon
                 className={cn(
                   'text-primary size-4',
                   {
