@@ -3,7 +3,7 @@ import { getRouteApi } from '@tanstack/react-router';
 import { Item } from './item';
 
 export function ParticipantsContainer() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
 
   return (

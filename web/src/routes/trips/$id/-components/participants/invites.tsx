@@ -37,7 +37,7 @@ export function InvitesContainer() {
 }
 
 function ShowInvites() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
 
   const invitesQuery = api.useQuery('get', '/api/v2/trips/{tripId}/invites', {
@@ -91,7 +91,7 @@ function ShowInvites() {
 }
 
 function ShowSearch() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
 
   const invalidator = useInvalidator();

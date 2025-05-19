@@ -21,7 +21,7 @@ type Props = {
 };
 
 export function UserColumn({ className }: Props) {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
   const { auth } = route.useRouteContext();
   const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');

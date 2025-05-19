@@ -17,7 +17,7 @@ import { ParticipantsContainer } from './participants';
 import { VisibilityContainer } from './visibility';
 
 export function ParticipantsDialog() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
   const { auth } = route.useRouteContext();
   const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');

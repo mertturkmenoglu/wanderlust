@@ -8,7 +8,7 @@ import { Item } from "./item";
 import { Button } from "@/components/ui/button";
 
 export function Results() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
 
   const query = api.useInfiniteQuery(

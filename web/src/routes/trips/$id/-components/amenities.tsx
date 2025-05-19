@@ -28,7 +28,7 @@ const schema = z.object({
 });
 
 export function AmenitiesDialog() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
   const query = api.useQuery('get', '/api/v2/amenities/');
   const amenities = query.data?.amenities ?? [];

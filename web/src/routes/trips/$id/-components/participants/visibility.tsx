@@ -6,7 +6,7 @@ import { GlobeIcon, LockIcon, UsersIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 export function VisibilityContainer() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
   const [value, setValue] = useState(trip.visibilityLevel);
   const isChanged = value !== trip.visibilityLevel;

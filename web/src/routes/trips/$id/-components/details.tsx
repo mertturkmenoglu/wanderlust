@@ -7,7 +7,7 @@ type Props = {
 };
 
 export function DetailColumn({ className }: Props) {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
 
   return (

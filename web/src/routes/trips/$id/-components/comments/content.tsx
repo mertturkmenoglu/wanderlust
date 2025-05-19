@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { Results } from './results';
 
 export function Content() {
-  const route = getRouteApi('/trips/$id/');
+  const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
   const [content, setContent] = useState('');
   const invalidator = useInvalidator();

@@ -28,6 +28,7 @@ import { Route as DiaryIndexImport } from './routes/diary/index'
 import { Route as CategoriesIndexImport } from './routes/categories/index'
 import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as UUsernameImport } from './routes/u/$username'
+import { Route as TripsIdImport } from './routes/trips/$id'
 import { Route as AdminDashboardImport } from './routes/_admin/dashboard'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexImport } from './routes/trips/planner/index'
@@ -192,6 +193,12 @@ const UUsernameRoute = UUsernameImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const TripsIdRoute = TripsIdImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => TripsRoute,
+} as any)
+
 const AdminDashboardRoute = AdminDashboardImport.update({
   id: '/_admin/dashboard',
   path: '/dashboard',
@@ -229,9 +236,9 @@ const TripsDiscoverIndexRoute = TripsDiscoverIndexImport.update({
 } as any)
 
 const TripsIdIndexRoute = TripsIdIndexImport.update({
-  id: '/$id/',
-  path: '/$id/',
-  getParentRoute: () => TripsRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => TripsIdRoute,
 } as any)
 
 const SettingsProfileIndexRoute = SettingsProfileIndexImport.update({
@@ -601,6 +608,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardImport
       parentRoute: typeof rootRoute
     }
+    '/trips/$id': {
+      id: '/trips/$id'
+      path: '/$id'
+      fullPath: '/trips/$id'
+      preLoaderRoute: typeof TripsIdImport
+      parentRoute: typeof TripsImport
+    }
     '/u/$username': {
       id: '/u/$username'
       path: '/u/$username'
@@ -813,10 +827,10 @@ declare module '@tanstack/react-router' {
     }
     '/trips/$id/': {
       id: '/trips/$id/'
-      path: '/$id'
-      fullPath: '/trips/$id'
+      path: '/'
+      fullPath: '/trips/$id/'
       preLoaderRoute: typeof TripsIdIndexImport
-      parentRoute: typeof TripsImport
+      parentRoute: typeof TripsIdImport
     }
     '/trips/discover/': {
       id: '/trips/discover/'
@@ -1126,9 +1140,20 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
-interface TripsRouteChildren {
-  TripsIndexRoute: typeof TripsIndexRoute
+interface TripsIdRouteChildren {
   TripsIdIndexRoute: typeof TripsIdIndexRoute
+}
+
+const TripsIdRouteChildren: TripsIdRouteChildren = {
+  TripsIdIndexRoute: TripsIdIndexRoute,
+}
+
+const TripsIdRouteWithChildren =
+  TripsIdRoute._addFileChildren(TripsIdRouteChildren)
+
+interface TripsRouteChildren {
+  TripsIdRoute: typeof TripsIdRouteWithChildren
+  TripsIndexRoute: typeof TripsIndexRoute
   TripsDiscoverIndexRoute: typeof TripsDiscoverIndexRoute
   TripsInvitesIndexRoute: typeof TripsInvitesIndexRoute
   TripsMyTripsIndexRoute: typeof TripsMyTripsIndexRoute
@@ -1136,8 +1161,8 @@ interface TripsRouteChildren {
 }
 
 const TripsRouteChildren: TripsRouteChildren = {
+  TripsIdRoute: TripsIdRouteWithChildren,
   TripsIndexRoute: TripsIndexRoute,
-  TripsIdIndexRoute: TripsIdIndexRoute,
   TripsDiscoverIndexRoute: TripsDiscoverIndexRoute,
   TripsInvitesIndexRoute: TripsInvitesIndexRoute,
   TripsMyTripsIndexRoute: TripsMyTripsIndexRoute,
@@ -1246,6 +1271,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/dashboard': typeof AdminDashboardRouteWithChildren
+  '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
@@ -1276,7 +1302,7 @@ export interface FileRoutesByFullPath {
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
   '/settings/profile': typeof SettingsProfileIndexRoute
-  '/trips/$id': typeof TripsIdIndexRoute
+  '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
   '/trips/invites': typeof TripsInvitesIndexRoute
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
@@ -1401,6 +1427,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/_admin/dashboard': typeof AdminDashboardRouteWithChildren
+  '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
@@ -1482,6 +1509,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/trips'
     | '/dashboard'
+    | '/trips/$id'
     | '/u/$username'
     | '/bookmarks'
     | '/categories'
@@ -1512,7 +1540,7 @@ export interface FileRouteTypes {
     | '/p/$id'
     | '/settings/account'
     | '/settings/profile'
-    | '/trips/$id'
+    | '/trips/$id/'
     | '/trips/discover'
     | '/trips/invites'
     | '/trips/my-trips'
@@ -1634,6 +1662,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/trips'
     | '/_admin/dashboard'
+    | '/trips/$id'
     | '/u/$username'
     | '/bookmarks/'
     | '/categories/'
@@ -1840,8 +1869,8 @@ export const routeTree = rootRoute
     "/trips": {
       "filePath": "trips.tsx",
       "children": [
+        "/trips/$id",
         "/trips/",
-        "/trips/$id/",
         "/trips/discover/",
         "/trips/invites/",
         "/trips/my-trips/",
@@ -1878,6 +1907,13 @@ export const routeTree = rootRoute
         "/_admin/dashboard/collections/relations/poi/",
         "/_admin/dashboard/pois/$id/edit/",
         "/_admin/dashboard/pois/drafts/$id/"
+      ]
+    },
+    "/trips/$id": {
+      "filePath": "trips/$id.tsx",
+      "parent": "/trips",
+      "children": [
+        "/trips/$id/"
       ]
     },
     "/u/$username": {
@@ -1986,7 +2022,7 @@ export const routeTree = rootRoute
     },
     "/trips/$id/": {
       "filePath": "trips/$id/index.tsx",
-      "parent": "/trips"
+      "parent": "/trips/$id"
     },
     "/trips/discover/": {
       "filePath": "trips/discover/index.tsx",
