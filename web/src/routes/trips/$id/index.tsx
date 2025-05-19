@@ -1,10 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { DetailColumn } from './-components/details';
+import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/trips/$id/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <DetailColumn className="w-full col-span-full md:col-span-3" />;
+  const route = getRouteApi('/trips/$id');
+  const { trip } = route.useLoaderData();
+
+  return (
+    <div className="">
+      <pre className="mt-8">{JSON.stringify(trip, null, 2)}</pre>
+    </div>
+  );
 }
