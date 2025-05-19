@@ -112,3 +112,19 @@ func (s *Service) canDeleteComment(trip *dto.Trip, comment *dto.TripComment, use
 	// Otherwise, this user cannot delete the comment
 	return false
 }
+
+func (s *Service) canManageAmenities(trip *dto.Trip, userId string) bool {
+	// Owner can manage amenities
+	if trip.OwnerID == userId {
+		return true
+	}
+
+	// If the action user is an editor, they can manage amenities.
+	for _, p := range trip.Participants {
+		if p.ID == userId && p.Role == "editor" {
+			return true
+		}
+	}
+
+	return false
+}
