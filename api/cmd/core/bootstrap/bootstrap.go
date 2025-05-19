@@ -10,6 +10,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/email"
+	"wanderlust/pkg/logs"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/tracing"
@@ -69,6 +70,7 @@ func NewApplication(logger *zap.Logger) *core.Application {
 		Email:      emailSvc,
 		Tasks:      tasks.New(emailSvc, uploadSvc),
 		Upload:     uploadSvc,
+		PLog:       logs.NewPTermLogger(),
 	}
 }
 
