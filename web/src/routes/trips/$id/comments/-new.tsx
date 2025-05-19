@@ -34,7 +34,7 @@ export function NewComment({ className }: Props) {
   return (
     <div className={cn(className)}>
       <Label className="text-xs">New Comment</Label>
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2 mt-1">
         <Input
           placeholder="Add a comment"
           className="w-full"
