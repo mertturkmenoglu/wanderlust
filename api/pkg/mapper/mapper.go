@@ -885,29 +885,43 @@ func ToCollection(dbCollection db.GetCollectionsByIdsPopulatedRow) (dto.Collecti
 	}, nil
 }
 
-func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
-	var status dto.TripStatus = dto.TRIP_STATUS_DRAFT
+func ToTripStatus(dbStatus string) (dto.TripStatus, error) {
+	switch dbStatus {
+	case "active":
+		return dto.TRIP_STATUS_ACTIVE, nil
+	case "canceled":
+		return dto.TRIP_STATUS_CANCELED, nil
+	case "draft":
+		return dto.TRIP_STATUS_DRAFT, nil
+	default:
+		return "", fmt.Errorf("invalid status: %s", dbStatus)
+	}
+}
 
-	if dbTrip.Trip.Status == "active" {
-		status = dto.TRIP_STATUS_ACTIVE
-	} else if dbTrip.Trip.Status == "canceled" {
-		status = dto.TRIP_STATUS_CANCELED
-	} else if dbTrip.Trip.Status == "draft" {
-		status = dto.TRIP_STATUS_DRAFT
-	} else {
-		return dto.Trip{}, fmt.Errorf("invalid status: %s", dbTrip.Trip.Status)
+func ToTripVisibilityLevel(dbVisibility string) (dto.TripVisibilityLevel, error) {
+	switch dbVisibility {
+	case "public":
+		return dto.TRIP_VISIBILITY_LEVEL_PUBLIC, nil
+	case "friends":
+		return dto.TRIP_VISIBILITY_LEVEL_FRIENDS, nil
+	case "private":
+		return dto.TRIP_VISIBILITY_LEVEL_PRIVATE, nil
+	default:
+		return "", fmt.Errorf("invalid visibility level: %s", dbVisibility)
+	}
+}
+
+func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
+	status, err := ToTripStatus(dbTrip.Trip.Status)
+
+	if err != nil {
+		return dto.Trip{}, err
 	}
 
-	var visibility dto.TripVisibilityLevel = dto.TRIP_VISIBILITY_LEVEL_PRIVATE
+	visibility, err := ToTripVisibilityLevel(dbTrip.Trip.VisibilityLevel)
 
-	if dbTrip.Trip.VisibilityLevel == "public" {
-		visibility = dto.TRIP_VISIBILITY_LEVEL_PUBLIC
-	} else if dbTrip.Trip.VisibilityLevel == "friends" {
-		visibility = dto.TRIP_VISIBILITY_LEVEL_FRIENDS
-	} else if dbTrip.Trip.VisibilityLevel == "private" {
-		visibility = dto.TRIP_VISIBILITY_LEVEL_PRIVATE
-	} else {
-		return dto.Trip{}, fmt.Errorf("invalid visibility level: %s", dbTrip.Trip.VisibilityLevel)
+	if err != nil {
+		return dto.Trip{}, err
 	}
 
 	var owner dto.TripUser
@@ -916,7 +930,7 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		return dto.Trip{}, fmt.Errorf("failed to get owner")
 	}
 
-	err := json.Unmarshal(dbTrip.Owner, &owner)
+	err = json.Unmarshal(dbTrip.Owner, &owner)
 
 	if err != nil {
 		return dto.Trip{}, fmt.Errorf("failed to unmarshal owner: %v", err)
@@ -946,34 +960,23 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		participants = make([]dto.TripUser, 0)
 	}
 
-	var tripDays []dto.TripDay
-
-	if len(dbTrip.Days) != 0 {
-		err := json.Unmarshal(dbTrip.Days, &tripDays)
-
-		if err != nil {
-			return dto.Trip{}, fmt.Errorf("failed to unmarshal trip days: %v", err)
-		}
-	} else {
-		tripDays = make([]dto.TripDay, 0)
-	}
-
 	type Location struct {
-		DayNo  int32  `json:"dayNo"`
-		PoiID  string `json:"poiId"`
-		TripID string `json:"tripId"`
+		TripID        string    `json:"tripId"`
+		ScheduledTime time.Time `json:"scheduledTime"`
+		Description   string    `json:"description"`
+		PoiID         string    `json:"poiId"`
 	}
 
-	var locations []Location
+	var dbLocations []Location
 
 	if len(dbTrip.Locations) != 0 {
-		err := json.Unmarshal(dbTrip.Locations, &locations)
+		err := json.Unmarshal(dbTrip.Locations, &dbLocations)
 
 		if err != nil {
 			return dto.Trip{}, fmt.Errorf("failed to unmarshal locations: %v", err)
 		}
 	} else {
-		locations = make([]Location, 0)
+		dbLocations = make([]Location, 0)
 	}
 
 	ps, ok := dbTrip.Ps.([]any)
@@ -1152,33 +1155,35 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		})
 	}
 
-	for i, day := range tripDays {
-		tripDays[i].Locations = make([]dto.TripLocation, 0)
+	locations := make([]dto.TripLocation, 0)
 
-		for _, loc := range locations {
-			if loc.DayNo == day.DayNo {
-				var poi *dto.Poi = nil
+	for _, dbLocation := range dbLocations {
+		var poi *dto.Poi = nil
 
-				for _, p := range pois {
-					if p.ID == loc.PoiID {
-						poi = &p
-					}
-				}
-
-				tripDays[i].Locations = append(tripDays[i].Locations, dto.TripLocation{
-					TripID: loc.TripID,
-					DayNo:  loc.DayNo,
-					PoiID:  loc.PoiID,
-					Poi:    *poi,
-				})
+		for _, p := range pois {
+			if p.ID == dbLocation.PoiID {
+				poi = &p
 			}
 		}
+
+		if poi == nil {
+			continue
+		}
+
+		locations = append(locations, dto.TripLocation{
+			TripID:        dbLocation.TripID,
+			ScheduledTime: dbLocation.ScheduledTime,
+			Description:   dbLocation.Description,
+			PoiID:         dbLocation.PoiID,
+			Poi:           *poi,
+		})
 	}
 
 	return dto.Trip{
 		ID:                 dbTrip.Trip.ID,
 		OwnerID:            dbTrip.Trip.OwnerID,
 		Title:              dbTrip.Trip.Title,
+		Description:        dbTrip.Trip.Description,
 		Status:             status,
 		VisibilityLevel:    visibility,
 		StartAt:            dbTrip.Trip.StartAt.Time,
@@ -1188,56 +1193,63 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		Owner:              owner,
 		RequestedAmenities: amenities,
 		Participants:       participants,
-		Days:               tripDays,
+		Locations:          locations,
 	}, nil
+}
+
+func ToTripInviteRole(dbRole string) (dto.TripRole, error) {
+	switch dbRole {
+	case "participant":
+		return dto.TRIP_ROLE_PARTICIPANT, nil
+	case "editor":
+		return dto.TRIP_ROLE_EDITOR, nil
+	default:
+		return "", fmt.Errorf("invalid role: %s", dbRole)
+	}
 }
 
 func FromToUserRowToTripInvite(dbTripInvite db.GetInvitesByToUserIdRow) (dto.TripInvite, error) {
 	var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
 
-	if dbTripInvite.TripsInvite.Role == "participant" {
-		role = dto.TRIP_ROLE_PARTICIPANT
-	} else if dbTripInvite.TripsInvite.Role == "editor" {
-		role = dto.TRIP_ROLE_EDITOR
-	} else {
-		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	role, err := ToTripInviteRole(dbTripInvite.TripInvite.Role)
+
+	if err != nil {
+		return dto.TripInvite{}, err
 	}
 
 	var fromUser dto.TripUser
 
-	err := json.Unmarshal(dbTripInvite.Fromuser, &fromUser)
+	err = json.Unmarshal(dbTripInvite.Fromuser, &fromUser)
 
 	if err != nil {
 		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
 	}
 
 	return dto.TripInvite{
-		ID:     dbTripInvite.TripsInvite.ID,
-		TripID: dbTripInvite.TripsInvite.TripID,
+		ID:     dbTripInvite.TripInvite.ID,
+		TripID: dbTripInvite.TripInvite.TripID,
 		From:   fromUser,
 		To: dto.TripUser{
-			ID: dbTripInvite.TripsInvite.ToID,
+			ID: dbTripInvite.TripInvite.ToID,
 		},
-		SentAt:    dbTripInvite.TripsInvite.SentAt.Time,
-		ExpiresAt: dbTripInvite.TripsInvite.ExpiresAt.Time,
-		Role:      role,
+		SentAt:          dbTripInvite.TripInvite.SentAt.Time,
+		ExpiresAt:       dbTripInvite.TripInvite.ExpiresAt.Time,
+		Role:            role,
+		TripTitle:       dbTripInvite.TripInvite.TripTitle,
+		TripDescription: dbTripInvite.TripInvite.TripDescription,
 	}, nil
 }
 
 func FromTripRowToTripInvite(dbInvite db.GetInvitesByTripIdRow) (dto.TripInvite, error) {
-	var role dto.TripRole = dto.TRIP_ROLE_PARTICIPANT
+	role, err := ToTripInviteRole(dbInvite.TripInvite.Role)
 
-	if dbInvite.TripsInvite.Role == "participant" {
-		role = dto.TRIP_ROLE_PARTICIPANT
-	} else if dbInvite.TripsInvite.Role == "editor" {
-		role = dto.TRIP_ROLE_EDITOR
-	} else {
-		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
+	if err != nil {
+		return dto.TripInvite{}, err
 	}
 
 	var fromUser dto.TripUser
 
-	err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
+	err = json.Unmarshal(dbInvite.Fromuser, &fromUser)
 
 	if err != nil {
 		return dto.TripInvite{}, huma.Error500InternalServerError("Failed to get invites")
@@ -1252,13 +1264,15 @@ func FromTripRowToTripInvite(dbInvite db.GetInvitesByTripIdRow) (dto.TripInvite,
 	}
 
 	return dto.TripInvite{
-		ID:        dbInvite.TripsInvite.ID,
-		TripID:    dbInvite.TripsInvite.TripID,
-		From:      fromUser,
-		To:        toUser,
-		SentAt:    dbInvite.TripsInvite.SentAt.Time,
-		ExpiresAt: dbInvite.TripsInvite.ExpiresAt.Time,
-		Role:      role,
+		ID:              dbInvite.TripInvite.ID,
+		TripID:          dbInvite.TripInvite.TripID,
+		From:            fromUser,
+		To:              toUser,
+		SentAt:          dbInvite.TripInvite.SentAt.Time,
+		ExpiresAt:       dbInvite.TripInvite.ExpiresAt.Time,
+		Role:            role,
+		TripTitle:       dbInvite.TripInvite.TripTitle,
+		TripDescription: dbInvite.TripInvite.TripDescription,
 	}, nil
 }
 
@@ -1272,10 +1286,10 @@ func ToTripComment(dbComment db.GetTripCommentsRow) (dto.TripComment, error) {
 	}
 
 	return dto.TripComment{
-		ID:        dbComment.ID,
-		TripID:    dbComment.TripID,
-		Content:   dbComment.Content,
-		CreatedAt: dbComment.CreatedAt.Time,
+		ID:        dbComment.TripComment.ID,
+		TripID:    dbComment.TripComment.TripID,
+		Content:   dbComment.TripComment.Content,
+		CreatedAt: dbComment.TripComment.CreatedAt.Time,
 		From:      user,
 	}, nil
 }
@@ -1290,10 +1304,10 @@ func FromSingleDbTripCommentToTripComment(dbComment db.GetTripCommentByIdRow) (d
 	}
 
 	return dto.TripComment{
-		ID:        dbComment.ID,
-		TripID:    dbComment.TripID,
-		Content:   dbComment.Content,
-		CreatedAt: dbComment.CreatedAt.Time,
+		ID:        dbComment.TripComment.ID,
+		TripID:    dbComment.TripComment.TripID,
+		Content:   dbComment.TripComment.Content,
+		CreatedAt: dbComment.TripComment.CreatedAt.Time,
 		From:      user,
 	}, nil
 }
