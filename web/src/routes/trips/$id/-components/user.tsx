@@ -1,5 +1,6 @@
 import UserImage from '@/components/blocks/user-image';
 import { Button } from '@/components/ui/button';
+import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,8 @@ type Props = {
 export function UserColumn({ className }: Props) {
   const route = getRouteApi('/trips/$id/');
   const { trip } = route.useLoaderData();
+  const { auth } = route.useRouteContext();
+  const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
 
   return (
     <div className={cn(className)}>
@@ -83,10 +86,12 @@ export function UserColumn({ className }: Props) {
 
         <CommentsDialog />
 
-        <Button variant="ghost" className="w-full flex justify-start">
-          <PenIcon className="size-4" />
-          <span>Edit</span>
-        </Button>
+        {isPrivileged && (
+          <Button variant="ghost" className="w-full flex justify-start">
+            <PenIcon className="size-4" />
+            <span>Edit</span>
+          </Button>
+        )}
       </div>
     </div>
   );
