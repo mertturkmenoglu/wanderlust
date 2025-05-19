@@ -10,9 +10,9 @@ import {
   ClockIcon,
   EyeIcon,
   PenIcon,
-  ReplyIcon,
 } from 'lucide-react';
 import { AmenitiesDialog } from './amenities';
+import { CommentsDialog } from './comments';
 import { ParticipantsDialog } from './participants';
 
 type Props = {
@@ -81,10 +81,7 @@ export function UserColumn({ className }: Props) {
 
         <AmenitiesDialog />
 
-        <Button variant="ghost" className="w-full flex justify-start">
-          <ReplyIcon className="size-4" />
-          <span>Comments</span>
-        </Button>
+        <CommentsDialog />
 
         <Button variant="ghost" className="w-full flex justify-start">
           <PenIcon className="size-4" />
