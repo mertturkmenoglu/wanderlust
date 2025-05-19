@@ -3,6 +3,7 @@ package trips
 import (
 	"context"
 	"errors"
+	"sync"
 	"time"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
@@ -30,7 +31,7 @@ func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error)
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.app.Db.Queries.GetTripsByIdsPopulated(ctx, ids)
+	res, err := s.db.GetTripsByIdsPopulated(ctx, ids)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -111,7 +112,7 @@ func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, erro
 
 	userId := ctx.Value("userId").(string)
 
-	rows, err := s.app.Db.Queries.GetAllTripsIds(ctx, userId)
+	rows, err := s.db.GetAllTripsIds(ctx, userId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -144,7 +145,7 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 
 	userId := ctx.Value("userId").(string)
 
-	dbInvites, err := s.app.Db.Queries.GetInvitesByToUserId(ctx, userId)
+	dbInvites, err := s.db.GetInvitesByToUserId(ctx, userId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -164,12 +165,23 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 		invites[i] = res
 	}
 
-	for _, invite := range invites {
-		if invite.ExpiresAt.Before(time.Now()) {
-			err = s.app.Db.Queries.DeleteInvite(ctx, invite.ID)
-			s.app.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
+	s.wg.Add(1)
+
+	go func() {
+		defer s.wg.Done()
+
+		// Create a new context to avoid race conditions with the request context
+		ctx := context.Background()
+
+		for _, invite := range invites {
+			if invite.ExpiresAt.Before(time.Now()) {
+				err = s.db.DeleteInvite(ctx, invite.ID)
+				if err != nil {
+					s.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
+				}
+			}
 		}
-	}
+	}()
 
 	return &dto.GetMyTripInvitesOutput{
 		Body: dto.GetMyTripInvitesOutputBody{
@@ -184,8 +196,8 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 
 	userId := ctx.Value("userId").(string)
 
-	dbRes, err := s.app.Db.Queries.CreateTrip(ctx, db.CreateTripParams{
-		ID:              utils.GenerateId(s.app.Flake),
+	dbRes, err := s.db.CreateTrip(ctx, db.CreateTripParams{
+		ID:              utils.GenerateId(s.Flake),
 		OwnerID:         userId,
 		Title:           body.Title,
 		Description:     body.Description,
@@ -232,7 +244,7 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		return nil, err
 	}
 
-	dbInvites, err := s.app.Db.Queries.GetInvitesByTripId(ctx, tripId)
+	dbInvites, err := s.db.GetInvitesByTripId(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -252,12 +264,23 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		invites[i] = res
 	}
 
-	for _, invite := range invites {
-		if invite.ExpiresAt.Before(time.Now()) {
-			err = s.app.Db.Queries.DeleteInvite(ctx, invite.ID)
-			s.app.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
+	s.wg.Add(1)
+
+	go func() {
+		defer s.wg.Done()
+
+		// Create a new context to avoid race conditions with the request context
+		ctx := context.Background()
+
+		for _, invite := range invites {
+			if invite.ExpiresAt.Before(time.Now()) {
+				err = s.db.DeleteInvite(ctx, invite.ID)
+				if err != nil {
+					s.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
+				}
+			}
 		}
-	}
+	}()
 
 	return &dto.GetTripInvitesByTripIdOutput{
 		Body: dto.GetTripInvitesByTripIdOutputBody{
@@ -299,8 +322,8 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 	sentAt := time.Now()
 	expiresAt := sentAt.Add(time.Hour * 24 * 7)
 
-	dbRes, err := s.app.Db.Queries.CreateTripInvite(ctx, db.CreateTripInviteParams{
-		ID:     utils.GenerateId(s.app.Flake),
+	dbRes, err := s.db.CreateTripInvite(ctx, db.CreateTripInviteParams{
+		ID:     utils.GenerateId(s.Flake),
 		TripID: tripId,
 		FromID: userId,
 		ToID:   body.ToID,
@@ -346,7 +369,7 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbInvites, err := s.app.Db.Queries.GetInvitesByTripId(ctx, tripId)
+	dbInvites, err := s.db.GetInvitesByTripId(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -396,7 +419,7 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 	}
 
 	if inviteDto.ExpiresAt.Before(time.Now()) {
-		err = s.app.Db.Queries.DeleteInvite(ctx, inviteId)
+		err = s.db.DeleteInvite(ctx, inviteId)
 
 		if err != nil {
 			sp.RecordError(err)
@@ -432,7 +455,7 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 	userId := ctx.Value("userId").(string)
 
 	if inviteDetail.Body.InviteDetail.ExpiresAt.Before(time.Now()) {
-		err = s.app.Db.Queries.DeleteInvite(ctx, inviteId)
+		err = s.db.DeleteInvite(ctx, inviteId)
 
 		if err != nil {
 			sp.RecordError(err)
@@ -442,7 +465,7 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 		return nil, huma.Error410Gone("Invite expired")
 	}
 
-	tx, err := s.app.Db.Pool.Begin(ctx)
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to create transaction")
@@ -450,7 +473,7 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	if action == "accept" {
 		err = qtx.DeleteInvite(ctx, inviteId)
@@ -461,7 +484,7 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 		}
 
 		_, err = qtx.AddParticipantToTrip(ctx, db.AddParticipantToTripParams{
-			ID:     utils.GenerateId(s.app.Flake),
+			ID:     utils.GenerateId(s.Flake),
 			UserID: userId,
 			TripID: tripId,
 			Role:   string(inviteDetail.Body.InviteDetail.Role),
@@ -523,7 +546,7 @@ func (s *Service) removeInvite(ctx context.Context, tripId string, inviteId stri
 		return err
 	}
 
-	err = s.app.Db.Queries.DeleteInvite(ctx, inviteId)
+	err = s.db.DeleteInvite(ctx, inviteId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -558,7 +581,7 @@ func (s *Service) removeParticipant(ctx context.Context, tripId string, particip
 		return err
 	}
 
-	err = s.app.Db.Queries.DeleteParticipant(ctx, db.DeleteParticipantParams{
+	err = s.db.DeleteParticipant(ctx, db.DeleteParticipantParams{
 		TripID: tripId,
 		UserID: participantId,
 	})
@@ -590,7 +613,7 @@ func (s *Service) removeTrip(ctx context.Context, id string) error {
 		return err
 	}
 
-	err = s.app.Db.Queries.DeleteTrip(ctx, id)
+	err = s.db.DeleteTrip(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -619,8 +642,8 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 		return nil, err
 	}
 
-	res, err := s.app.Db.Queries.CreateTripComment(ctx, db.CreateTripCommentParams{
-		ID:      utils.GenerateId(s.app.Flake),
+	res, err := s.db.CreateTripComment(ctx, db.CreateTripCommentParams{
+		ID:      utils.GenerateId(s.Flake),
 		TripID:  tripId,
 		FromID:  userId,
 		Content: body.Content,
@@ -673,7 +696,7 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 		return nil, err
 	}
 
-	dbComments, err := s.app.Db.Queries.GetTripComments(ctx, db.GetTripCommentsParams{
+	dbComments, err := s.db.GetTripComments(ctx, db.GetTripCommentsParams{
 		TripID: tripId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
@@ -697,7 +720,7 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 		comments[i] = res
 	}
 
-	count, err := s.app.Db.Queries.GetTripCommentsCount(ctx, tripId)
+	count, err := s.db.GetTripCommentsCount(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -716,7 +739,7 @@ func (s *Service) getCommentById(ctx context.Context, id string) (*dto.TripComme
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	comment, err := s.app.Db.Queries.GetTripCommentById(ctx, id)
+	comment, err := s.db.GetTripCommentById(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -757,7 +780,7 @@ func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommen
 		return nil, err
 	}
 
-	_, err = s.app.Db.Queries.UpdateTripComment(ctx, db.UpdateTripCommentParams{
+	_, err = s.db.UpdateTripComment(ctx, db.UpdateTripCommentParams{
 		ID:      input.CommentID,
 		TripID:  input.TripID,
 		Content: input.Body.Content,
@@ -808,7 +831,7 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 		return err
 	}
 
-	err = s.app.Db.Queries.DeleteTripComment(ctx, commentId)
+	err = s.db.DeleteTripComment(ctx, commentId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -841,7 +864,7 @@ func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.U
 		return nil, err
 	}
 
-	tx, err := s.app.Db.Pool.Begin(ctx)
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -850,7 +873,7 @@ func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.U
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	err = qtx.DeleteTripAllAmenities(ctx, tripId)
 
