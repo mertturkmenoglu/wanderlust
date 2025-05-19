@@ -6903,7 +6903,6 @@ export interface components {
             email: string;
         };
         Trip: {
-            comments: components["schemas"]["TripComment"][];
             /**
              * Format: date-time
              * @description Created at time of trip
