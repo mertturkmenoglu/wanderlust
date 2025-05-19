@@ -5865,6 +5865,18 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
+            /** @description Description of the trip */
+            description: string;
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
             /** @description Title of the trip */
             title: string;
             /**
