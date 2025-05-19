@@ -64,21 +64,6 @@ SELECT
   JOIN amenities am ON am.id = ta.amenity_id
   WHERE ta.trip_id = trips.id
   ) AS amenities,
-  (SELECT json_agg(DISTINCT jsonb_build_object(
-    'id', tc.id,
-    'from', jsonb_build_object(
-      'id', profile.id,
-      'fullName', profile.full_name,
-      'username', profile.username,
-      'profileImage', profile.profile_image
-    ),
-    'content', tc.content,
-    'createdAt', tc.created_at
-  ))
-  FROM trips_comments tc
-  JOIN profile ON profile.id = tc.from_id
-  WHERE tc.trip_id = trips.id
-  ) AS comments,
   (SELECT json_agg(jsonb_build_object(
     'tripId', td.trip_id,
     'dayNo', td.day_no,
