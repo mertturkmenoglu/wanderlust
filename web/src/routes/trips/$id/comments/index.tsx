@@ -9,7 +9,7 @@ export const Route = createFileRoute('/trips/$id/comments/')({
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="mt-4">
       <div className="flex items-center">
         <ReplyIcon className="size-5 mr-2" />
         <div className="font-medium">Comments</div>
