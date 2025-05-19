@@ -1,8 +1,8 @@
 import AppMessage from '@/components/blocks/app-message';
+import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
-import { Breadcrumb } from '../-breadcrumb';
 import { TripCard } from './-components/card';
 
 export const Route = createFileRoute('/trips/my-trips/')({

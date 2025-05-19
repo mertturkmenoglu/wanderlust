@@ -1,8 +1,8 @@
 import AppMessage from '@/components/blocks/app-message';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
-import { Breadcrumb } from '../-breadcrumb';
 import { InviteCard } from './-card';
+import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 
 export const Route = createFileRoute('/trips/invites/')({
   component: RouteComponent,

@@ -1,8 +1,8 @@
 import { ErrorComponent } from '@/components/blocks/error-component';
+import { CreateDialog } from '@/components/blocks/trips/create-dialog';
 import { buttonVariants } from '@/components/ui/button';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
-import { CreateDialog } from './-create-dialog';
 
 export const Route = createFileRoute('/trips/')({
   component: RouteComponent,

@@ -2,7 +2,7 @@ import { ErrorComponent } from '@/components/blocks/error-component';
 import { api } from '@/lib/api';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { UserColumn } from './$id/-components/user';
-import { Breadcrumb } from './-breadcrumb';
+import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 
 export const Route = createFileRoute('/trips/$id')({
   component: RouteComponent,
