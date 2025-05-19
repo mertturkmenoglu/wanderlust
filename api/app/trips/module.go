@@ -430,4 +430,31 @@ func Register(grp *huma.Group, app *core.Application) {
 			return nil, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/trips/{tripId}/amenities",
+			Summary:       "Manage Trip Amenities",
+			Description:   "Manage trip amenities by trip id",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateTripAmenitiesInput) (*dto.UpdateTripAmenitiesOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateAmenities(ctx, input.TripID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
