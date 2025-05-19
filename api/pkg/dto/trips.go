@@ -258,3 +258,20 @@ type DeleteTripCommentInput struct {
 	TripID    string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
 	CommentID string `path:"commentId" example:"7323488942953598976" required:"true" doc:"Comment ID"`
 }
+
+type UpdateTripAmenitiesInput struct {
+	TripID string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	Body   UpdateTripAmenitiesInputBody
+}
+
+type UpdateTripAmenitiesInputBody struct {
+	AmenityIds []int32 `json:"amenityIds" example:"[7323488942953598976]" doc:"Amenities IDs" minItems:"1" maxItems:"50" uniqueItems:"true"`
+}
+
+type UpdateTripAmenitiesOutput struct {
+	Body UpdateTripAmenitiesOutputBody
+}
+
+type UpdateTripAmenitiesOutputBody struct {
+	Amenities []Amenity `json:"amenities"`
+}
