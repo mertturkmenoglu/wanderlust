@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { useDebouncedValue } from '@tanstack/react-pacer';
 import { getRouteApi } from '@tanstack/react-router';
 import { PlusIcon, UsersIcon } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Item } from './item';
 
 export function InvitesContainer() {
@@ -89,6 +91,10 @@ function ShowInvites() {
 }
 
 function ShowSearch() {
+  const route = getRouteApi('/trips/$id/');
+  const { trip } = route.useLoaderData();
+
+  const invalidator = useInvalidator();
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, {
     wait: 500,
@@ -108,6 +114,14 @@ function ShowSearch() {
       enabled: debouncedSearch.length > 1,
     },
   );
+
+  const inviteMutation = api.useMutation('post', '/api/v2/trips/{id}/invite', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      toast.success('Invite sent successfully');
+      setSearch('');
+    },
+  });
 
   if (searchQuery.isFetching) {
     return <Spinner className="my-8 mx-auto size-8" />;
@@ -155,7 +169,17 @@ function ShowSearch() {
                 className="mt-2"
                 onClick={(e) => {
                   e.preventDefault();
-                  alert('invite');
+                  inviteMutation.mutate({
+                    params: {
+                      path: {
+                        id: trip.id,
+                      },
+                    },
+                    body: {
+                      toId: user.id,
+                      role: 'participant',
+                    },
+                  });
                 }}
               />
             ))}
