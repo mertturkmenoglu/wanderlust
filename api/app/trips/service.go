@@ -171,18 +171,16 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-	startAt := time.Now().Add(time.Hour * 24 * 7)
-	endAt := startAt.Add(time.Hour * 24 * 7)
 
 	dbRes, err := s.app.Db.Queries.CreateTrip(ctx, db.CreateTripParams{
 		ID:              utils.GenerateId(s.app.Flake),
 		OwnerID:         userId,
 		Title:           body.Title,
-		Description:     "",
+		Description:     body.Description,
 		VisibilityLevel: body.Visibility,
 		Status:          "draft",
-		StartAt:         pgtype.Timestamptz{Time: startAt, Valid: true},
-		EndAt:           pgtype.Timestamptz{Time: endAt, Valid: true},
+		StartAt:         pgtype.Timestamptz{Time: body.StartAt, Valid: true},
+		EndAt:           pgtype.Timestamptz{Time: body.EndAt, Valid: true},
 	})
 
 	if err != nil {
