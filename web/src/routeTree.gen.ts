@@ -84,6 +84,7 @@ import { Route as AdminDashboardCategoriesNewIndexImport } from './routes/_admin
 import { Route as AdminDashboardCategoriesIdIndexImport } from './routes/_admin/dashboard/categories/$id/index'
 import { Route as AdminDashboardAmenitiesNewIndexImport } from './routes/_admin/dashboard/amenities/new/index'
 import { Route as AdminDashboardAmenitiesIdIndexImport } from './routes/_admin/dashboard/amenities/$id/index'
+import { Route as TripsIdParticipantsInvitesNewIndexImport } from './routes/trips/$id/participants/invites/new/index'
 import { Route as AdminDashboardPoisDraftsIdIndexImport } from './routes/_admin/dashboard/pois/drafts/$id/index'
 import { Route as AdminDashboardPoisIdEditIndexImport } from './routes/_admin/dashboard/pois/$id/edit/index'
 import { Route as AdminDashboardCollectionsRelationsPoiIndexImport } from './routes/_admin/dashboard/collections/relations/poi/index'
@@ -547,6 +548,13 @@ const AdminDashboardAmenitiesIdIndexRoute =
     id: '/amenities/$id/',
     path: '/amenities/$id/',
     getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const TripsIdParticipantsInvitesNewIndexRoute =
+  TripsIdParticipantsInvitesNewIndexImport.update({
+    id: '/participants/invites/new/',
+    path: '/participants/invites/new/',
+    getParentRoute: () => TripsIdRoute,
   } as any)
 
 const AdminDashboardPoisDraftsIdIndexRoute =
@@ -1190,6 +1198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardPoisDraftsIdIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/trips/$id/participants/invites/new/': {
+      id: '/trips/$id/participants/invites/new/'
+      path: '/participants/invites/new'
+      fullPath: '/trips/$id/participants/invites/new'
+      preLoaderRoute: typeof TripsIdParticipantsInvitesNewIndexImport
+      parentRoute: typeof TripsIdImport
+    }
   }
 }
 
@@ -1218,6 +1233,7 @@ interface TripsIdRouteChildren {
   TripsIdEditIndexRoute: typeof TripsIdEditIndexRoute
   TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
   TripsIdParticipantsInvitesIndexRoute: typeof TripsIdParticipantsInvitesIndexRoute
+  TripsIdParticipantsInvitesNewIndexRoute: typeof TripsIdParticipantsInvitesNewIndexRoute
 }
 
 const TripsIdRouteChildren: TripsIdRouteChildren = {
@@ -1227,6 +1243,8 @@ const TripsIdRouteChildren: TripsIdRouteChildren = {
   TripsIdEditIndexRoute: TripsIdEditIndexRoute,
   TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
   TripsIdParticipantsInvitesIndexRoute: TripsIdParticipantsInvitesIndexRoute,
+  TripsIdParticipantsInvitesNewIndexRoute:
+    TripsIdParticipantsInvitesNewIndexRoute,
 }
 
 const TripsIdRouteWithChildren =
@@ -1430,6 +1448,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/collections/relations/poi': typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
   '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
+  '/trips/$id/participants/invites/new': typeof TripsIdParticipantsInvitesNewIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -1510,6 +1529,7 @@ export interface FileRoutesByTo {
   '/dashboard/collections/relations/poi': typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   '/dashboard/pois/$id/edit': typeof AdminDashboardPoisIdEditIndexRoute
   '/dashboard/pois/drafts/$id': typeof AdminDashboardPoisDraftsIdIndexRoute
+  '/trips/$id/participants/invites/new': typeof TripsIdParticipantsInvitesNewIndexRoute
 }
 
 export interface FileRoutesById {
@@ -1596,6 +1616,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/collections/relations/poi/': typeof AdminDashboardCollectionsRelationsPoiIndexRoute
   '/_admin/dashboard/pois/$id/edit/': typeof AdminDashboardPoisIdEditIndexRoute
   '/_admin/dashboard/pois/drafts/$id/': typeof AdminDashboardPoisDraftsIdIndexRoute
+  '/trips/$id/participants/invites/new/': typeof TripsIdParticipantsInvitesNewIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1683,6 +1704,7 @@ export interface FileRouteTypes {
     | '/dashboard/collections/relations/poi'
     | '/dashboard/pois/$id/edit'
     | '/dashboard/pois/drafts/$id'
+    | '/trips/$id/participants/invites/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1762,6 +1784,7 @@ export interface FileRouteTypes {
     | '/dashboard/collections/relations/poi'
     | '/dashboard/pois/$id/edit'
     | '/dashboard/pois/drafts/$id'
+    | '/trips/$id/participants/invites/new'
   id:
     | '__root__'
     | '/'
@@ -1846,6 +1869,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/collections/relations/poi/'
     | '/_admin/dashboard/pois/$id/edit/'
     | '/_admin/dashboard/pois/drafts/$id/'
+    | '/trips/$id/participants/invites/new/'
   fileRoutesById: FileRoutesById
 }
 
@@ -2029,7 +2053,8 @@ export const routeTree = rootRoute
         "/trips/$id/comments/",
         "/trips/$id/edit/",
         "/trips/$id/participants/",
-        "/trips/$id/participants/invites/"
+        "/trips/$id/participants/invites/",
+        "/trips/$id/participants/invites/new/"
       ]
     },
     "/u/$username": {
@@ -2319,6 +2344,10 @@ export const routeTree = rootRoute
     "/_admin/dashboard/pois/drafts/$id/": {
       "filePath": "_admin/dashboard/pois/drafts/$id/index.tsx",
       "parent": "/_admin/dashboard"
+    },
+    "/trips/$id/participants/invites/new/": {
+      "filePath": "trips/$id/participants/invites/new/index.tsx",
+      "parent": "/trips/$id"
     }
   }
 }
