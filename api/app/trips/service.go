@@ -15,11 +15,15 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
 
 type Service struct {
-	app *core.Application
+	core.Application
+	wg   *sync.WaitGroup
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
 func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
