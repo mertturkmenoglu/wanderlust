@@ -8,6 +8,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
+import { getRouteApi } from '@tanstack/react-router';
 import { UsersIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { InvitesContainer } from './invites';
@@ -15,6 +17,12 @@ import { ParticipantsContainer } from './participants';
 import { VisibilityContainer } from './visibility';
 
 export function ParticipantsDialog() {
+  const route = getRouteApi('/trips/$id/');
+  const { trip } = route.useLoaderData();
+  const { auth } = route.useRouteContext();
+  const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
+  const isOwner = trip.ownerId === auth.user?.id;
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -48,18 +56,24 @@ export function ParticipantsDialog() {
         <Tabs defaultValue="participants" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="participants">Participants</TabsTrigger>
-            <TabsTrigger value="invites">Invites</TabsTrigger>
-            <TabsTrigger value="visibility">Visibility</TabsTrigger>
+            {isPrivileged && <TabsTrigger value="invites">Invites</TabsTrigger>}
+            {isOwner && (
+              <TabsTrigger value="visibility">Visibility</TabsTrigger>
+            )}
           </TabsList>
           <TabsContent value="participants">
             <ParticipantsContainer />
           </TabsContent>
-          <TabsContent value="invites">
-            <InvitesContainer />
-          </TabsContent>
-          <TabsContent value="visibility">
-            <VisibilityContainer />
-          </TabsContent>
+          {isPrivileged && (
+            <TabsContent value="invites">
+              <InvitesContainer />
+            </TabsContent>
+          )}
+          {isOwner && (
+            <TabsContent value="visibility">
+              <VisibilityContainer />
+            </TabsContent>
+          )}
         </Tabs>
       </AlertDialogContent>
     </AlertDialog>
