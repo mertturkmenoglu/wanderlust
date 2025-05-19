@@ -946,18 +946,6 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		participants = make([]dto.TripUser, 0)
 	}
 
-	var comments []dto.TripComment
-
-	if len(dbTrip.Comments) != 0 {
-		err := json.Unmarshal(dbTrip.Comments, &comments)
-
-		if err != nil {
-			return dto.Trip{}, fmt.Errorf("failed to unmarshal comments: %v", err)
-		}
-	} else {
-		comments = make([]dto.TripComment, 0)
-	}
-
 	var tripDays []dto.TripDay
 
 	if len(dbTrip.Days) != 0 {
@@ -1200,7 +1188,6 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		Owner:              owner,
 		RequestedAmenities: amenities,
 		Participants:       participants,
-		Comments:           comments,
 		Days:               tripDays,
 	}, nil
 }
