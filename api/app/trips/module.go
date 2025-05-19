@@ -11,7 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// PATCH /trips/:id/amenities (create-update-delete) (CRUD Amenities)
 // PATCH /trips/:tripId (Edit Trip)
 // POST /trips/:id/locations (Add Location)
 // PATCH /trips/:id/locations/:locationId (Update Location)
