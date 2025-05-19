@@ -94,3 +94,41 @@ docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM poi
   - Navigate to `/home` directory.
   - Right click on the `file.txt` file and select "Save".
   - Select the location where you want to save the file.
+
+## Using Transactions
+
+- Here's an example of how to use transactions:
+
+```go
+func foo(ctx context.Context, d *db.Db) error {
+  tx, err := d.Pool.Begin(ctx)
+
+	if err != nil {
+    return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := d.Queries.WithTx(tx)
+
+	err = qtx.SomeQuery(ctx, "FOO")
+
+	if err != nil {
+    return err
+	}
+
+  err = qtx.AnotherQuery(ctx, "BAR")
+
+	if err != nil {
+    return err
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+    return err
+	}
+
+  return nil
+}
+```
