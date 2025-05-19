@@ -12,8 +12,8 @@ import {
   ClockIcon,
   ConciergeBellIcon,
   EyeIcon,
-  PenIcon,
   ReplyIcon,
+  Settings2Icon,
   TextQuoteIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -93,7 +93,7 @@ const icons: Record<TripLinkProps['to'], typeof ActivityIcon> = {
   participants: UsersIcon,
   amenities: ConciergeBellIcon,
   comments: ReplyIcon,
-  edit: PenIcon,
+  edit: Settings2Icon,
 };
 
 function TripLink({ to, id }: TripLinkProps) {
