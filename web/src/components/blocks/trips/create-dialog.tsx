@@ -19,10 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
+import { isBefore } from 'date-fns';
 import { SquarePlusIcon } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -54,10 +56,44 @@ const visibilityOptions: Array<{
   },
 ];
 
-const schema = z.object({
-  title: z.string().min(1).max(128),
-  visibility: z.enum(visibility),
-});
+const schema = z
+  .object({
+    title: z.string().min(1).max(128),
+    description: z.string().min(0).max(1024),
+    startAt: z.string(),
+    endAt: z.string(),
+    visibility: z.enum(visibility),
+  })
+  .superRefine((data, ctx) => {
+    if (!isBefore(data.startAt, data.endAt)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.invalid_date,
+        message: 'Start date must be before end date',
+        path: ['startAt'],
+        fatal: true,
+      });
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.invalid_date,
+        message: 'Start date must be before end date',
+        path: ['endAt'],
+        fatal: true,
+      });
+
+      return z.NEVER;
+    }
+
+    if (isBefore(data.startAt, new Date())) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Start date must be in the future',
+        path: ['startAt'],
+        fatal: true,
+      });
+
+      return z.NEVER;
+    }
+  });
 
 export function CreateDialog() {
   const navigate = useNavigate();
@@ -92,8 +128,13 @@ export function CreateDialog() {
         <div className="flex items-center space-x-2 text-sm w-full">
           <form
             onSubmit={form.handleSubmit((data) => {
+              console.log(data);
               mutation.mutate({
-                body: data,
+                body: {
+                  ...data,
+                  startAt: new Date(data.startAt).toISOString(),
+                  endAt: new Date(data.endAt).toISOString(),
+                },
               });
             })}
             className="w-full"
@@ -109,6 +150,18 @@ export function CreateDialog() {
                 {...form.register('title')}
               />
               <InputError error={form.formState.errors.title} />
+            </div>
+
+            <div className="mt-4">
+              <Label htmlFor="desc">Description</Label>
+              <Textarea
+                id="desc"
+                placeholder="You can add a description for you trip."
+                autoComplete="off"
+                className="mt-1"
+                {...form.register('description')}
+              />
+              <InputError error={form.formState.errors.description} />
             </div>
 
             <div className="mt-4">
@@ -148,6 +201,29 @@ export function CreateDialog() {
                 }}
               />
               <InputError error={form.formState.errors.visibility} />
+            </div>
+
+            <div className="mt-4">
+              <Label htmlFor="startAt">Start Date</Label>
+              <Input
+                id="startAt"
+                type="datetime-local"
+                className="mt-1"
+                {...form.register('startAt')}
+              />
+              <InputError error={form.formState.errors.startAt} />
+            </div>
+
+            <div className="mt-4">
+              <Label htmlFor="endAt">End Date</Label>
+              <Input
+                id="endAt"
+                type="datetime-local"
+                placeholder='Format: "YYYY-MM-DD"'
+                className="mt-1"
+                {...form.register('endAt')}
+              />
+              <InputError error={form.formState.errors.endAt} />
             </div>
 
             <DialogFooter className="mt-4">
