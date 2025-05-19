@@ -14,7 +14,6 @@ type Trip struct {
 	Days               []TripDay           `json:"days"`
 	Participants       []TripUser          `json:"participants"`
 	RequestedAmenities []Amenity           `json:"requestedAmenities"`
-	Comments           []TripComment       `json:"comments"`
 	CreatedAt          time.Time           `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of trip"`
 	UpdatedAt          time.Time           `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"Updated at time of trip"`
 }
