@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
-import { Settings2Icon, XIcon } from 'lucide-react';
+import { ConciergeBellIcon, Settings2Icon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { EditAmenities } from './-edit';
 import { ViewAmenities } from './-view';
@@ -20,7 +20,10 @@ function RouteComponent() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="font-medium">Requested Amenities</div>
+        <div className="flex items-center gap-2">
+          <ConciergeBellIcon className="size-5" />
+          <div className="font-medium">Requested Amenities</div>
+        </div>
         {isPrivileged && (
           <Button
             variant="ghost"
