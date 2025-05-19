@@ -4394,6 +4394,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/{tripId}/amenities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Manage Trip Amenities
+         * @description Manage trip amenities by trip id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripAmenitiesInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripAmenitiesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/trips/{tripId}/comments/{commentId}": {
         parameters: {
             query?: never;
@@ -7183,6 +7241,23 @@ export interface components {
             draft: {
                 [key: string]: unknown;
             };
+        };
+        UpdateTripAmenitiesInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Amenities IDs */
+            amenityIds: number[];
+        };
+        UpdateTripAmenitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            amenities: components["schemas"]["Amenity"][];
         };
         UpdateTripCommentInputBody: {
             /**
