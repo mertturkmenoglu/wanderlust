@@ -780,3 +780,76 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 
 	return nil
 }
+
+func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.UpdateTripAmenitiesInputBody) (*dto.UpdateTripAmenitiesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canManageAmenities(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to manage this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.app.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update amenities")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.app.Db.Queries.WithTx(tx)
+
+	err = qtx.DeleteTripAllAmenities(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update amenities")
+	}
+
+	batch := make([]db.BatchCreateTripAmenitiesParams, len(body.AmenityIds))
+
+	for i, id := range body.AmenityIds {
+		batch[i] = db.BatchCreateTripAmenitiesParams{
+			TripID:    tripId,
+			AmenityID: id,
+		}
+	}
+
+	_, err = qtx.BatchCreateTripAmenities(ctx, batch)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update amenities")
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update amenities")
+	}
+
+	trip, err = s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get trip")
+	}
+
+	return &dto.UpdateTripAmenitiesOutput{
+		Body: dto.UpdateTripAmenitiesOutputBody{
+			Amenities: trip.RequestedAmenities,
+		},
+	}, nil
+}
