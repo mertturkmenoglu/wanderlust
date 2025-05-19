@@ -25,6 +25,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Trips"}
 	})
 
+	// Get Trip
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -52,6 +53,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Get Invites for a Trip
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -79,6 +81,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Invite Participants
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
@@ -106,6 +109,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Get My Trips
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -133,6 +137,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Get My Invites
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -160,6 +165,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Create Trip
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
@@ -187,6 +193,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Get Trip Invite Details
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -214,6 +221,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Accept/Decline Trip Invite
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
@@ -241,6 +249,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Remove Invite
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
@@ -268,6 +277,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Remove Participant
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
@@ -295,6 +305,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Delete Trip
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
@@ -322,6 +333,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Create Comment
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
@@ -349,6 +361,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Get Trip Comments
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -376,6 +389,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Update Trip Comment
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
@@ -403,6 +417,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Delete Trip Comment
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
@@ -430,6 +445,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Update Trip Amenities
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
