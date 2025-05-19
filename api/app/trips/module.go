@@ -3,6 +3,7 @@ package trips
 import (
 	"context"
 	"net/http"
+	"sync"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
@@ -18,7 +19,10 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		*app,
+		&sync.WaitGroup{},
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
