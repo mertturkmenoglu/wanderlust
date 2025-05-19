@@ -1,8 +1,9 @@
 import { ErrorComponent } from '@/components/blocks/error-component';
+import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
+import { TripInfo } from '@/components/blocks/trips/trip-info';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { UserColumn } from './$id/-components/user';
-import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 
 export const Route = createFileRoute('/trips/$id')({
   component: RouteComponent,
@@ -33,10 +34,19 @@ function RouteComponent() {
       />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-8 my-8">
-        <UserColumn className="w-full col-span-full md:col-span-1 md:border-r border-border" />
+        <TripInfo className="w-full col-span-full md:col-span-1 md:border-r border-border" />
 
         <div className="w-full col-span-full md:col-span-3">
-          <Outlet />
+          <div className="">
+            <div className="text-2xl">{trip.title}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              Created by: {trip.owner.fullName}
+            </div>
+
+            <Separator className="my-2" />
+
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>
