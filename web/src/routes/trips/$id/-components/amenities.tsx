@@ -12,11 +12,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getRouteApi } from '@tanstack/react-router';
 import { ConciergeBellIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -28,6 +32,8 @@ export function AmenitiesDialog() {
   const { trip } = route.useLoaderData();
   const query = api.useQuery('get', '/api/v2/amenities/');
   const amenities = query.data?.amenities ?? [];
+  const [open, setOpen] = useState(false);
+  const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -36,8 +42,21 @@ export function AmenitiesDialog() {
     },
   });
 
+  const mutation = api.useMutation(
+    'patch',
+    '/api/v2/trips/{tripId}/amenities',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        setOpen(false);
+        form.reset();
+        toast.success('Amenities updated successfully');
+      },
+    },
+  );
+
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button variant="ghost" className="w-full flex justify-start">
           <ConciergeBellIcon className="size-4" />
@@ -48,10 +67,20 @@ export function AmenitiesDialog() {
         <AlertDialogHeader>
           <AlertDialogTitle>Requested Amenities</AlertDialogTitle>
         </AlertDialogHeader>
+        <Separator />
         <form
           className="grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
           onSubmit={form.handleSubmit((data) => {
-            console.log(data);
+            mutation.mutate({
+              params: {
+                path: {
+                  tripId: trip.id,
+                },
+              },
+              body: {
+                amenityIds: data.amenities ?? [],
+              },
+            });
           })}
         >
           <div className="col-span-2">
@@ -99,11 +128,22 @@ export function AmenitiesDialog() {
             />
             <InputError error={form.formState.errors.amenities?.root} />
           </div>
+
+          <AlertDialogFooter className="justify-end col-span-full">
+            <AlertDialogCancel
+              disabled={mutation.isPending}
+              onClick={() => {
+                form.reset();
+                setOpen(false);
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction type="submit" disabled={mutation.isPending}>
+              Save
+            </AlertDialogAction>
+          </AlertDialogFooter>
         </form>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Save</AlertDialogAction>
-        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
