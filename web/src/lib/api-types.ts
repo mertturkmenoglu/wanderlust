@@ -6908,7 +6908,8 @@ export interface components {
              * @description Created at time of trip
              */
             createdAt: string;
-            days: components["schemas"]["TripDay"][];
+            /** @description Description of the trip */
+            description: string;
             /**
              * Format: date-time
              * @description End datetime of the trip
@@ -6916,6 +6917,7 @@ export interface components {
             endAt: string;
             /** @description Trip ID */
             id: string;
+            locations: components["schemas"]["TripLocation"][];
             owner: components["schemas"]["TripUser"];
             /** @description Owner User ID */
             ownerId: string;
@@ -6952,18 +6954,6 @@ export interface components {
             /** @description Trip ID */
             tripId: string;
         };
-        TripDay: {
-            /**
-             * Format: int32
-             * @description Day number
-             */
-            dayNo: number;
-            /** @description Description of the day */
-            description: string;
-            locations: components["schemas"]["TripLocation"][];
-            /** @description Trip ID */
-            tripId: string;
-        };
         TripInvite: {
             /**
              * Format: date-time
@@ -6981,8 +6971,12 @@ export interface components {
              */
             sentAt: string;
             to: components["schemas"]["TripUser"];
+            /** @description Description of the trip */
+            tripDescription: string;
             /** @description Trip ID */
             tripId: string;
+            /** @description Title of the trip */
+            tripTitle: string;
         };
         TripInviteActionOutputBody: {
             /**
@@ -7019,20 +7013,24 @@ export interface components {
              */
             startAt: string;
             to: components["schemas"]["TripUser"];
+            /** @description Description of the trip */
+            tripDescription: string;
             /** @description Trip ID */
             tripId: string;
             /** @description Title of the trip */
             tripTitle: string;
         };
         TripLocation: {
-            /**
-             * Format: int32
-             * @description Day number
-             */
-            dayNo: number;
+            /** @description Description of the location */
+            description: string;
             poi: components["schemas"]["Poi"];
             /** @description Point of Interest ID */
             poiId: string;
+            /**
+             * Format: date-time
+             * @description Scheduled time of the location
+             */
+            scheduledTime: string;
             /** @description Trip ID */
             tripId: string;
         };
