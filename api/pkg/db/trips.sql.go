@@ -49,6 +49,11 @@ func (q *Queries) AddParticipantToTrip(ctx context.Context, arg AddParticipantTo
 	return i, err
 }
 
+type BatchCreateTripAmenitiesParams struct {
+	TripID    string
+	AmenityID int32
+}
+
 type BatchCreateTripsParams struct {
 	ID              string
 	OwnerID         string
@@ -239,6 +244,15 @@ DELETE FROM trips WHERE id = $1
 
 func (q *Queries) DeleteTrip(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteTrip, id)
+	return err
+}
+
+const deleteTripAllAmenities = `-- name: DeleteTripAllAmenities :exec
+DELETE FROM trips_amenities WHERE trip_id = $1
+`
+
+func (q *Queries) DeleteTripAllAmenities(ctx context.Context, tripID string) error {
+	_, err := q.db.Exec(ctx, deleteTripAllAmenities, tripID)
 	return err
 }
 

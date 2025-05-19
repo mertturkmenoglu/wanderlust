@@ -275,3 +275,15 @@ WHERE tc.id = $1;
 
 -- name: DeleteTripComment :exec
 DELETE FROM trips_comments WHERE id = $1;
+
+-- name: DeleteTripAllAmenities :exec
+DELETE FROM trips_amenities WHERE trip_id = $1;
+
+-- name: BatchCreateTripAmenities :copyfrom
+INSERT INTO trips_amenities (
+  trip_id,
+  amenity_id
+) VALUES (
+  $1,
+  $2
+);

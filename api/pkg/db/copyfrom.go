@@ -193,6 +193,39 @@ func (q *Queries) BatchCreateReviews(ctx context.Context, arg []BatchCreateRevie
 	return q.db.CopyFrom(ctx, []string{"reviews"}, []string{"id", "poi_id", "user_id", "content", "rating"}, &iteratorForBatchCreateReviews{rows: arg})
 }
 
+// iteratorForBatchCreateTripAmenities implements pgx.CopyFromSource.
+type iteratorForBatchCreateTripAmenities struct {
+	rows                 []BatchCreateTripAmenitiesParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateTripAmenities) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateTripAmenities) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].TripID,
+		r.rows[0].AmenityID,
+	}, nil
+}
+
+func (r iteratorForBatchCreateTripAmenities) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateTripAmenities(ctx context.Context, arg []BatchCreateTripAmenitiesParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"trips_amenities"}, []string{"trip_id", "amenity_id"}, &iteratorForBatchCreateTripAmenities{rows: arg})
+}
+
 // iteratorForBatchCreateTrips implements pgx.CopyFromSource.
 type iteratorForBatchCreateTrips struct {
 	rows                 []BatchCreateTripsParams
