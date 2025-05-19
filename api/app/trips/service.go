@@ -15,6 +15,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"go.uber.org/zap"
 )
 
 type Service struct {
@@ -159,6 +160,13 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 		invites[i] = res
 	}
 
+	for _, invite := range invites {
+		if invite.ExpiresAt.Before(time.Now()) {
+			err = s.app.Db.Queries.DeleteInvite(ctx, invite.ID)
+			s.app.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
+		}
+	}
+
 	return &dto.GetMyTripInvitesOutput{
 		Body: dto.GetMyTripInvitesOutputBody{
 			Invites: invites,
@@ -238,6 +246,13 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		}
 
 		invites[i] = res
+	}
+
+	for _, invite := range invites {
+		if invite.ExpiresAt.Before(time.Now()) {
+			err = s.app.Db.Queries.DeleteInvite(ctx, invite.ID)
+			s.app.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
+		}
 	}
 
 	return &dto.GetTripInvitesByTripIdOutput{
@@ -376,6 +391,17 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 		return nil, err
 	}
 
+	if inviteDto.ExpiresAt.Before(time.Now()) {
+		err = s.app.Db.Queries.DeleteInvite(ctx, inviteId)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Invite expired and failed to delete invite")
+		}
+
+		return nil, huma.Error410Gone("Invite expired")
+	}
+
 	return &dto.GetTripInviteDetailsOutput{
 		Body: dto.GetTripInviteDetailsOutputBody{
 			InviteDetail: dto.TripInviteDetail{
@@ -400,6 +426,17 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 	}
 
 	userId := ctx.Value("userId").(string)
+
+	if inviteDetail.Body.InviteDetail.ExpiresAt.Before(time.Now()) {
+		err = s.app.Db.Queries.DeleteInvite(ctx, inviteId)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Invite expired and failed to delete invite")
+		}
+
+		return nil, huma.Error410Gone("Invite expired")
+	}
 
 	tx, err := s.app.Db.Pool.Begin(ctx)
 
