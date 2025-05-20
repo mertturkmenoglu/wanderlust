@@ -56,7 +56,10 @@ function App() {
 
       <div className="flex items-baseline">
         <h2 className="text-2xl font-semibold">Featured Cities</h2>
-        <Button asChild variant="link">
+        <Button
+          asChild
+          variant="link"
+        >
           <Link to="/cities/list">See all</Link>
         </Button>
       </div>
@@ -87,7 +90,10 @@ function App() {
         message={
           <div className="flex items-center gap-4">
             <div>Discover the world around you</div>
-            <Button asChild variant="default">
+            <Button
+              asChild
+              variant="default"
+            >
               <Link to="/categories">See categories</Link>
             </Button>
           </div>
@@ -96,7 +102,10 @@ function App() {
         imgClassName="aspect-[3]"
       />
 
-      <PoiGrid dataKey="featured" data={aggregations.new} />
+      <PoiGrid
+        dataKey="featured"
+        data={aggregations.new}
+      />
 
       <VerticalBanner
         image="https://i.imgur.com/Y3ujIqE.jpg"
@@ -111,7 +120,12 @@ function App() {
                 Find new places to explore and enjoy with your friends and
                 family.
               </p>
-              <Button asChild size="lg" variant="secondary" className="mt-8">
+              <Button
+                asChild
+                size="lg"
+                variant="secondary"
+                className="mt-8"
+              >
                 <Link to="/nearby">Start Exploring</Link>
               </Button>
             </div>
@@ -119,7 +133,10 @@ function App() {
         }
       />
 
-      <PoiGrid dataKey="popular" data={aggregations.popular} />
+      <PoiGrid
+        dataKey="popular"
+        data={aggregations.popular}
+      />
 
       <ActionBanner
         image="https://i.imgur.com/mWzmPRv.jpg"
@@ -133,8 +150,14 @@ function App() {
               Plan your next trip with our trip planner tool. It&apos;s easy to
               use and you can save your trips for later.
             </div>
-            <Button asChild variant="default">
-              <Link to="/trips/planner" className="text-white">
+            <Button
+              asChild
+              variant="default"
+            >
+              <Link
+                to="/trips/planner"
+                className="text-white"
+              >
                 Go to Trip Planner
               </Link>
             </Button>
@@ -144,7 +167,10 @@ function App() {
         imgClassName=""
       />
 
-      <PoiGrid dataKey="favorite" data={aggregations.favorites} />
+      <PoiGrid
+        dataKey="favorite"
+        data={aggregations.favorites}
+      />
 
       <ActionBanner
         image="https://i.imgur.com/CNtFbZT.jpg"
@@ -158,7 +184,10 @@ function App() {
               Check out the upcoming events in your area. You can also add your
               own events to the list.
             </div>
-            <Button asChild variant="secondary">
+            <Button
+              asChild
+              variant="secondary"
+            >
               <Link to="/discover/events">See events</Link>
             </Button>
           </div>
@@ -168,7 +197,10 @@ function App() {
         lefty={false}
       />
 
-      <PoiGrid dataKey="new" data={aggregations.new} />
+      <PoiGrid
+        dataKey="new"
+        data={aggregations.new}
+      />
     </div>
   );
 }

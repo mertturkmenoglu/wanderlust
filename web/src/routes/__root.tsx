@@ -30,7 +30,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         <TanStackRouterDevtools />
         <TanstackQueryLayout />
         {search.signInModal && <SignInModal />}
-        <Toaster position="bottom-center" richColors />
+        <Toaster
+          position="bottom-center"
+          richColors
+        />
       </div>
     );
   },

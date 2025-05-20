@@ -59,7 +59,12 @@ function InnerApp() {
     );
   }
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return (
+    <RouterProvider
+      router={router}
+      context={{ auth }}
+    />
+  );
 }
 
 // Render the app
