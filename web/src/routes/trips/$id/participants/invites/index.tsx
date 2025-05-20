@@ -25,16 +25,25 @@ function RouteComponent() {
   });
 
   if (invitesQuery.isPending) {
-    return <Spinner className="my-8 mx-auto size-8" />;
+    return (
+      <div>
+        <Header />
+        <Spinner className="my-8 mx-auto size-8" />;
+      </div>
+    );
   }
 
   if (invitesQuery.isError) {
     return (
-      <AppMessage
-        errorMessage="Failed to load invites"
-        showBackButton={false}
-        className="mt-8"
-      />
+      <div>
+        <Header />
+
+        <AppMessage
+          errorMessage="Failed to load invites"
+          showBackButton={false}
+          className="mt-8"
+        />
+      </div>
     );
   }
 
@@ -42,11 +51,15 @@ function RouteComponent() {
 
   if (invites.length === 0) {
     return (
-      <AppMessage
-        emptyMessage="No invites yet"
-        showBackButton={false}
-        className="mt-8"
-      />
+      <div>
+        <Header />
+
+        <AppMessage
+          emptyMessage="No invites yet"
+          showBackButton={false}
+          className="mt-8"
+        />
+      </div>
     );
   }
 
