@@ -24,14 +24,20 @@ function RouteComponent() {
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4 mt-4">
-        <InfoCard type="participants" count={trip.participants.length} />
+        <InfoCard
+          type="participants"
+          count={trip.participants.length}
+        />
 
         <InfoCard
           type="days"
           count={differenceInDays(trip.endAt, trip.startAt)}
         />
 
-        <InfoCard type="locations" count={trip.locations.length} />
+        <InfoCard
+          type="locations"
+          count={trip.locations.length}
+        />
       </div>
     </div>
   );

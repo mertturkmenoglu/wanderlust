@@ -19,7 +19,10 @@ export const Route = createFileRoute('/trips/')({
 function RouteComponent() {
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <img src="/trip.png" className="size-64" />
+      <img
+        src="/trip.png"
+        className="size-64"
+      />
       <h2 className="mt-8 text-4xl font-bold text-center">
         Plan your next trip with
         <br />

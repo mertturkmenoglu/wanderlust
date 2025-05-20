@@ -72,13 +72,19 @@ export function Item({
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <Badge variant="secondary" className="capitalize">
+        <Badge
+          variant="secondary"
+          className="capitalize"
+        >
           {role}
         </Badge>
         {isPrivileged && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+              >
                 <Settings2Icon className="size-4" />
                 <span className="sr-only">Edit</span>
               </Button>
