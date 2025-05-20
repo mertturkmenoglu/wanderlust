@@ -97,7 +97,10 @@ function RouteComponent() {
               setOpen={setAddItemOpen}
             />
 
-            <Button variant="outline" onClick={() => setIsEditMode(true)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditMode(true)}
+            >
               Edit
             </Button>
           </>

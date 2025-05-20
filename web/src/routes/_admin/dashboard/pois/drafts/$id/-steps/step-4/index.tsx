@@ -151,7 +151,10 @@ export default function Step4() {
           </div>
         </div>
 
-        <StepsNavigation draftId={draft.id} step={4} />
+        <StepsNavigation
+          draftId={draft.id}
+          step={4}
+        />
       </form>
     </div>
   );

@@ -78,7 +78,10 @@ export default function Step1() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="category" className="w-full">
+                  <SelectTrigger
+                    id="category"
+                    className="w-full"
+                  >
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -151,12 +154,18 @@ export default function Step1() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="accessibility-level" className="w-full">
+                  <SelectTrigger
+                    id="accessibility-level"
+                    className="w-full"
+                  >
                     <SelectValue placeholder="Accessibility Level" />
                   </SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3, 4, 5].map((level) => (
-                      <SelectItem key={level} value={level.toString()}>
+                      <SelectItem
+                        key={level}
+                        value={level.toString()}
+                      >
                         {level}
                       </SelectItem>
                     ))}
@@ -183,12 +192,18 @@ export default function Step1() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="price-level" className="w-full">
+                  <SelectTrigger
+                    id="price-level"
+                    className="w-full"
+                  >
                     <SelectValue placeholder="Price Level" />
                   </SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3, 4, 5].map((level) => (
-                      <SelectItem key={level} value={level.toString()}>
+                      <SelectItem
+                        key={level}
+                        value={level.toString()}
+                      >
                         {level}
                       </SelectItem>
                     ))}

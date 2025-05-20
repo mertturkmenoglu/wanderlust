@@ -128,7 +128,12 @@ function Content() {
 
   if (query.data) {
     if (query.data.collections.length === 0) {
-      return <AppMessage emptyMessage="No data" showBackButton={false} />;
+      return (
+        <AppMessage
+          emptyMessage="No data"
+          showBackButton={false}
+        />
+      );
     }
 
     return (

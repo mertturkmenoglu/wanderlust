@@ -63,7 +63,10 @@ export default function AddItemDialog({ collectionId, open, setOpen }: Props) {
   }, [query.isSuccess, query.isError]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DialogTrigger asChild>
         <Button variant="default">Add Item</Button>
       </DialogTrigger>
@@ -119,7 +122,10 @@ export default function AddItemDialog({ collectionId, open, setOpen }: Props) {
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant="secondary"
+            >
               Close
             </Button>
           </DialogClose>

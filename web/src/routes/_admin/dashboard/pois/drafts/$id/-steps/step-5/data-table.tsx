@@ -77,7 +77,10 @@ export function DataTable<TData, TValue>({
         <UploadDialog draft={draft} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-2">
+            <Button
+              variant="outline"
+              className="ml-2"
+            >
               <Settings2Icon className="size-4" />
               View
             </Button>

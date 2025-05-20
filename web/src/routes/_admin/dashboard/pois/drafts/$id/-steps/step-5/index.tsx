@@ -15,10 +15,17 @@ export default function Step5() {
     <div>
       <div className="container mx-0 mt-4 grid grid-cols-1 gap-4 px-0 md:grid-cols-2">
         <div className="col-span-2">
-          <DataTable columns={columns} data={[...media]} draft={draft} />
+          <DataTable
+            columns={columns}
+            data={[...media]}
+            draft={draft}
+          />
         </div>
 
-        <StepsNavigation draftId={draft.id} step={5} />
+        <StepsNavigation
+          draftId={draft.id}
+          step={5}
+        />
       </div>
     </div>
   );

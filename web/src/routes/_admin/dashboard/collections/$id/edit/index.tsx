@@ -97,7 +97,12 @@ function RouteComponent() {
       >
         <div className="">
           <Label htmlFor="id">ID</Label>
-          <Input type="text" id="id" value={collection.id} disabled />
+          <Input
+            type="text"
+            id="id"
+            value={collection.id}
+            disabled
+          />
           <InputInfo text="You cannot change the ID of the collection" />
         </div>
 

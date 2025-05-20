@@ -51,14 +51,26 @@ function RouteComponent() {
           text="Amenities"
           icon={ComponentIcon}
         />
-        <Item href="/dashboard/categories" text="Categories" icon={TagIcon} />
-        <Item href="/dashboard/cities" text="Cities" icon={MapIcon} />
+        <Item
+          href="/dashboard/categories"
+          text="Categories"
+          icon={TagIcon}
+        />
+        <Item
+          href="/dashboard/cities"
+          text="Cities"
+          icon={MapIcon}
+        />
         <Item
           href="/dashboard/pois"
           text="Points of Interest"
           icon={MapPinnedIcon}
         />
-        <Item href="/dashboard/users" text="Users" icon={UsersIcon} />
+        <Item
+          href="/dashboard/users"
+          text="Users"
+          icon={UsersIcon}
+        />
         <Item
           href="/dashboard/collections"
           text="Collections"

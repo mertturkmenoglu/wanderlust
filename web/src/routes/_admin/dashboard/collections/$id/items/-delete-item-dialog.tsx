@@ -40,7 +40,10 @@ export default function DeleteItemDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive" size="icon">
+        <Button
+          variant="destructive"
+          size="icon"
+        >
           <TrashIcon className="size-4" />
         </Button>
       </DialogTrigger>
@@ -56,7 +59,10 @@ export default function DeleteItemDialog({
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant="secondary"
+            >
               Close
             </Button>
           </DialogClose>

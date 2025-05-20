@@ -69,7 +69,11 @@ export const columns: ColumnDef<PoiMedia>[] = [
     header: 'Image',
     enableSorting: false,
     cell: ({ row }) => (
-      <img src={row.original.url} alt={row.original.alt} className="w-16" />
+      <img
+        src={row.original.url}
+        alt={row.original.alt}
+        className="w-16"
+      />
     ),
   },
   {
@@ -139,7 +143,10 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
     <Drawer direction="right">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary" className="h-8 w-8 p-0">
+          <Button
+            variant="secondary"
+            className="h-8 w-8 p-0"
+          >
             <span className="sr-only">Open menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -238,7 +245,11 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
           <DrawerTitle>Edit Image</DrawerTitle>
         </DrawerHeader>
         <div className="p-4">
-          <img src={media.url} alt={media.alt} className="" />
+          <img
+            src={media.url}
+            alt={media.alt}
+            className=""
+          />
 
           <div className="flex gap-4 items-center mt-4">
             <div className="flex flex-col gap-1 w-full">
@@ -297,7 +308,10 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
             Update
           </Button>
           <DrawerClose className="w-full">
-            <Button variant="outline" className="w-full">
+            <Button
+              variant="outline"
+              className="w-full"
+            >
               Cancel
             </Button>
           </DrawerClose>

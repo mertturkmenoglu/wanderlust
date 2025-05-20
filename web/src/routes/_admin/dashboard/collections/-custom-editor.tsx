@@ -14,7 +14,7 @@ import {
   listsPlugin,
   tablePlugin,
   toolbarPlugin,
-} from "@mdxeditor/editor";
+} from '@mdxeditor/editor';
 
 type Props = {
   value: string | undefined;
@@ -25,22 +25,22 @@ export default function CustomEditor({ value, setValue }: Props) {
   return (
     <MDXEditor
       className="prose w-full col-span-full"
-      markdown={value ?? ""}
+      markdown={value ?? ''}
       onChange={(md) => setValue(md)}
       plugins={[
         headingsPlugin(),
         diffSourcePlugin({
-          viewMode: "source",
+          viewMode: 'source',
         }),
         listsPlugin(),
         linkPlugin(),
         tablePlugin(),
         linkDialogPlugin(),
         toolbarPlugin({
-          toolbarClassName: "my-classname",
+          toolbarClassName: 'my-classname',
           toolbarContents: () => (
             <>
-              {" "}
+              {' '}
               <BoldItalicUnderlineToggles />
               <BlockTypeSelect />
               <CreateLink />

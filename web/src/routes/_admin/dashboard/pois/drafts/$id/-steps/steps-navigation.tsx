@@ -29,7 +29,11 @@ export default function StepsNavigation({ draftId, step }: Props) {
 
       <div className="flex justify-start">
         {step !== 5 && (
-          <Button variant="default" size="icon" type="submit">
+          <Button
+            variant="default"
+            size="icon"
+            type="submit"
+          >
             <ChevronRightIcon className="size-4" />
           </Button>
         )}

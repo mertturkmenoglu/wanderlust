@@ -66,12 +66,18 @@ export default function Step2() {
                     field.value ? field.value.toString() : undefined
                   }
                 >
-                  <SelectTrigger id="city" className="w-full">
+                  <SelectTrigger
+                    id="city"
+                    className="w-full"
+                  >
                     <SelectValue placeholder="Select a city" />
                   </SelectTrigger>
                   <SelectContent>
                     {cities.map((city) => (
-                      <SelectItem key={city.id} value={city.id.toString()}>
+                      <SelectItem
+                        key={city.id}
+                        value={city.id.toString()}
+                      >
                         {city.name}, {city.state.name}, {city.country.name}
                       </SelectItem>
                     ))}
@@ -151,7 +157,10 @@ export default function Step2() {
           <InputError error={form.formState.errors.address?.lng} />
         </div>
 
-        <StepsNavigation draftId={draft.id} step={2} />
+        <StepsNavigation
+          draftId={draft.id}
+          step={2}
+        />
       </form>
     </div>
   );

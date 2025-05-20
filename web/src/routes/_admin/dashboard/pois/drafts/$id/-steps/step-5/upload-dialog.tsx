@@ -106,7 +106,10 @@ export default function UploadDialog({ draft }: Props) {
 
   return (
     <Dialog>
-      <DialogTrigger asChild className="col-span-2 cursor-pointer">
+      <DialogTrigger
+        asChild
+        className="col-span-2 cursor-pointer"
+      >
         <Button variant="default">
           <UploadIcon className="size-4" />
           <span>Upload</span>
@@ -128,13 +131,19 @@ export default function UploadDialog({ draft }: Props) {
               <input {...api.getHiddenInputProps()} />
               <span>Drag your file here</span>
               <div className="text-xs my-2">(or)</div>
-              <button {...api.getTriggerProps()} className="cursor-pointer">
+              <button
+                {...api.getTriggerProps()}
+                className="cursor-pointer"
+              >
                 Choose file
               </button>
             </div>
           </div>
         ) : (
-          <div {...api.getItemGroupProps()} className="">
+          <div
+            {...api.getItemGroupProps()}
+            className=""
+          >
             <div
               key={f.name}
               {...api.getItemProps({ file: f })}
@@ -197,7 +206,10 @@ export default function UploadDialog({ draft }: Props) {
 
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="ghost">
+            <Button
+              type="button"
+              variant="ghost"
+            >
               Close
             </Button>
           </DialogClose>

@@ -91,7 +91,10 @@ export default function Step3() {
           <InputError error={form.formState.errors.amenities?.root} />
         </div>
 
-        <StepsNavigation draftId={draft.id} step={3} />
+        <StepsNavigation
+          draftId={draft.id}
+          step={3}
+        />
       </form>
     </div>
   );
