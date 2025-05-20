@@ -4532,6 +4532,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/{id}/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Location to Trip
+         * @description Add a location to a trip
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateTripLocationInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateTripLocationOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/trips/{tripId}/comments/{commentId}": {
         parameters: {
             query?: never;
@@ -5932,6 +5990,30 @@ export interface components {
              */
             readonly $schema?: string;
             invite: components["schemas"]["TripInvite"];
+        };
+        CreateTripLocationInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the location */
+            description?: string | null;
+            /** @description Point of Interest ID */
+            poiId: string;
+            /**
+             * Format: date-time
+             * @description Scheduled time of the location visit
+             */
+            scheduledTime: string;
+        };
+        CreateTripLocationOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            location: components["schemas"]["TripLocation"];
         };
         CreateTripOutputBody: {
             /**
