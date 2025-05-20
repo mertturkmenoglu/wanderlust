@@ -60,6 +60,7 @@ import { Route as UUsernameFollowersIndexImport } from './routes/u/$username/fol
 import { Route as UUsernameFavoritesIndexImport } from './routes/u/$username/favorites/index'
 import { Route as UUsernameActivitiesIndexImport } from './routes/u/$username/activities/index'
 import { Route as TripsIdParticipantsIndexImport } from './routes/trips/$id/participants/index'
+import { Route as TripsIdLocationsIndexImport } from './routes/trips/$id/locations/index'
 import { Route as TripsIdEditIndexImport } from './routes/trips/$id/edit/index'
 import { Route as TripsIdCommentsIndexImport } from './routes/trips/$id/comments/index'
 import { Route as TripsIdAmenitiesIndexImport } from './routes/trips/$id/amenities/index'
@@ -389,6 +390,12 @@ const UUsernameActivitiesIndexRoute = UUsernameActivitiesIndexImport.update({
 const TripsIdParticipantsIndexRoute = TripsIdParticipantsIndexImport.update({
   id: '/participants/',
   path: '/participants/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+
+const TripsIdLocationsIndexRoute = TripsIdLocationsIndexImport.update({
+  id: '/locations/',
+  path: '/locations/',
   getParentRoute: () => TripsIdRoute,
 } as any)
 
@@ -1016,6 +1023,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdEditIndexImport
       parentRoute: typeof TripsIdImport
     }
+    '/trips/$id/locations/': {
+      id: '/trips/$id/locations/'
+      path: '/locations'
+      fullPath: '/trips/$id/locations'
+      preLoaderRoute: typeof TripsIdLocationsIndexImport
+      parentRoute: typeof TripsIdImport
+    }
     '/trips/$id/participants/': {
       id: '/trips/$id/participants/'
       path: '/participants'
@@ -1245,6 +1259,7 @@ interface TripsIdRouteChildren {
   TripsIdAmenitiesIndexRoute: typeof TripsIdAmenitiesIndexRoute
   TripsIdCommentsIndexRoute: typeof TripsIdCommentsIndexRoute
   TripsIdEditIndexRoute: typeof TripsIdEditIndexRoute
+  TripsIdLocationsIndexRoute: typeof TripsIdLocationsIndexRoute
   TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
   TripsIdParticipantsInvitesIndexRoute: typeof TripsIdParticipantsInvitesIndexRoute
   TripsIdParticipantsInvitesNewIndexRoute: typeof TripsIdParticipantsInvitesNewIndexRoute
@@ -1255,6 +1270,7 @@ const TripsIdRouteChildren: TripsIdRouteChildren = {
   TripsIdAmenitiesIndexRoute: TripsIdAmenitiesIndexRoute,
   TripsIdCommentsIndexRoute: TripsIdCommentsIndexRoute,
   TripsIdEditIndexRoute: TripsIdEditIndexRoute,
+  TripsIdLocationsIndexRoute: TripsIdLocationsIndexRoute,
   TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
   TripsIdParticipantsInvitesIndexRoute: TripsIdParticipantsInvitesIndexRoute,
   TripsIdParticipantsInvitesNewIndexRoute:
@@ -1435,6 +1451,7 @@ export interface FileRoutesByFullPath {
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
+  '/trips/$id/locations': typeof TripsIdLocationsIndexRoute
   '/trips/$id/participants': typeof TripsIdParticipantsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
@@ -1517,6 +1534,7 @@ export interface FileRoutesByTo {
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
+  '/trips/$id/locations': typeof TripsIdLocationsIndexRoute
   '/trips/$id/participants': typeof TripsIdParticipantsIndexRoute
   '/u/$username/activities': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites': typeof UUsernameFavoritesIndexRoute
@@ -1605,6 +1623,7 @@ export interface FileRoutesById {
   '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit/': typeof TripsIdEditIndexRoute
+  '/trips/$id/locations/': typeof TripsIdLocationsIndexRoute
   '/trips/$id/participants/': typeof TripsIdParticipantsIndexRoute
   '/u/$username/activities/': typeof UUsernameActivitiesIndexRoute
   '/u/$username/favorites/': typeof UUsernameFavoritesIndexRoute
@@ -1694,6 +1713,7 @@ export interface FileRouteTypes {
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
+    | '/trips/$id/locations'
     | '/trips/$id/participants'
     | '/u/$username/activities'
     | '/u/$username/favorites'
@@ -1775,6 +1795,7 @@ export interface FileRouteTypes {
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
+    | '/trips/$id/locations'
     | '/trips/$id/participants'
     | '/u/$username/activities'
     | '/u/$username/favorites'
@@ -1861,6 +1882,7 @@ export interface FileRouteTypes {
     | '/trips/$id/amenities/'
     | '/trips/$id/comments/'
     | '/trips/$id/edit/'
+    | '/trips/$id/locations/'
     | '/trips/$id/participants/'
     | '/u/$username/activities/'
     | '/u/$username/favorites/'
@@ -2075,6 +2097,7 @@ export const routeTree = rootRoute
         "/trips/$id/amenities/",
         "/trips/$id/comments/",
         "/trips/$id/edit/",
+        "/trips/$id/locations/",
         "/trips/$id/participants/",
         "/trips/$id/participants/invites/",
         "/trips/$id/participants/invites/new/"
@@ -2257,6 +2280,10 @@ export const routeTree = rootRoute
     },
     "/trips/$id/edit/": {
       "filePath": "trips/$id/edit/index.tsx",
+      "parent": "/trips/$id"
+    },
+    "/trips/$id/locations/": {
+      "filePath": "trips/$id/locations/index.tsx",
       "parent": "/trips/$id"
     },
     "/trips/$id/participants/": {
