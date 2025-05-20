@@ -1,10 +1,10 @@
 export function userImage(s: string | null): string {
   if (globalThis.window !== undefined) {
     if (s === null) {
-      return window.location.origin + "/profile.png";
+      return window.location.origin + '/profile.png';
     }
 
-    if (s.startsWith("//")) {
+    if (s.startsWith('//')) {
       return window.location.protocol + s;
     }
 
@@ -12,12 +12,12 @@ export function userImage(s: string | null): string {
   }
 
   if (s == null) {
-    return "/profile.png";
+    return '/profile.png';
   }
 
-  if (s.startsWith("//")) {
+  if (s.startsWith('//')) {
     // TODO: change protocol according to dev later
-    return "https:" + s;
+    return 'https:' + s;
   }
 
   return s;
@@ -39,7 +39,7 @@ export function getPreview(f: File): Promise<string> {
 }
 
 export async function getDims(
-  files: File[]
+  files: File[],
 ): Promise<Array<{ width: number; height: number }>> {
   const dims: Array<{ width: number; height: number }> = [];
   for (const f of files) {
@@ -47,14 +47,14 @@ export async function getDims(
       const dim = await getImageDims(f);
       dims.push(dim);
     } catch (e) {
-      console.error("Failed to get image dimensions", e);
+      console.error('Failed to get image dimensions', e);
     }
   }
   return dims;
 }
 
 export function getImageDims(
-  f: File
+  f: File,
 ): Promise<{ width: number; height: number }> {
   return new Promise((res, rej) => {
     const img = new Image();
