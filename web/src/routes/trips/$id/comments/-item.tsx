@@ -149,11 +149,13 @@ export function Item({ comment, isPrivileged }: Props) {
                   </DropdownMenuItem>
                 )}
 
-                {isPrivileged && (
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onClick={(e) => {
-                      e.preventDefault();
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (
+                      confirm('Are you sure you want to delete this comment?')
+                    ) {
                       deleteCommentMutation.mutate({
                         params: {
                           path: {
@@ -162,12 +164,12 @@ export function Item({ comment, isPrivileged }: Props) {
                           },
                         },
                       });
-                    }}
-                  >
-                    <Trash2Icon className="size-4" />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-                )}
+                    }
+                  }}
+                >
+                  <Trash2Icon className="size-4" />
+                  <span>Delete</span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
