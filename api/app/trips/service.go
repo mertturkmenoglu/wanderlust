@@ -3,6 +3,7 @@ package trips
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 	"time"
 	"wanderlust/pkg/core"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
@@ -1023,4 +1025,84 @@ func (s *Service) updateTrip(ctx context.Context, id string, body dto.UpdateTrip
 	}
 
 	return nil, nil
+}
+
+func (s *Service) createTripLocation(ctx context.Context, tripId string, body dto.CreateTripLocationInputBody) (*dto.CreateTripLocationOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canCreateLocation(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to create a location for this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if body.ScheduledTime.Before(trip.StartAt) {
+		err = huma.Error400BadRequest("Scheduled time must be after the trip start time")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if body.ScheduledTime.After(trip.EndAt) {
+		err = huma.Error400BadRequest("Scheduled time must be before the trip end time")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	var description = ""
+
+	if body.Description != nil {
+		description = *body.Description
+	}
+
+	res, err := s.db.CreateTripLocation(ctx, db.CreateTripLocationParams{
+		TripID: tripId,
+		PoiID:  body.PoiID,
+		ScheduledTime: pgtype.Timestamptz{
+			Time:  body.ScheduledTime,
+			Valid: true,
+		},
+		Description: description,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+
+		pgErr, ok := err.(*pgconn.PgError)
+
+		if !ok {
+			return nil, huma.Error500InternalServerError("Failed to create location")
+		}
+
+		if pgErr.Code == db.FOREIGN_KEY_VIOLATION {
+			return nil, huma.Error404NotFound(fmt.Sprintf("Point of Interest with the ID %s not found", body.PoiID))
+		}
+
+		if pgErr.Code == db.UNIQUE_VIOLATION {
+			return nil, huma.Error400BadRequest(fmt.Sprintf("Location with the Point of Interest ID %s already exists", body.PoiID))
+		}
+
+		return nil, huma.Error400BadRequest("Failed to create location")
+	}
+
+	return &dto.CreateTripLocationOutput{
+		Body: dto.CreateTripLocationOutputBody{
+			Location: dto.TripLocation{
+				TripID:        tripId,
+				ScheduledTime: res.ScheduledTime.Time,
+				Description:   res.Description,
+				PoiID:         res.PoiID,
+				Poi:           dto.Poi{},
+			},
+		},
+	}, nil
 }
