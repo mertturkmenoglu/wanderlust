@@ -9,11 +9,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useInvalidator } from '@/hooks/use-invalidator';
+import { api } from '@/lib/api';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import { KeySquareIcon, Settings2Icon, UserMinusIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Props = {
   image: string;
@@ -22,6 +25,8 @@ type Props = {
   role: string;
   isPrivileged: boolean;
   className?: string;
+  id: string;
+  tripId: string;
 };
 
 export function Item({
@@ -31,7 +36,21 @@ export function Item({
   role,
   isPrivileged,
   className,
+  id,
+  tripId,
 }: Props) {
+  const invalidator = useInvalidator();
+  const removeParticipantMutation = api.useMutation(
+    'delete',
+    '/api/v2/trips/{tripId}/participants/{participantId}',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Participant removed');
+      },
+    },
+  );
+
   return (
     <Link
       to="/u/$username"
@@ -72,7 +91,20 @@ export function Item({
                 <span>Change Role</span>
               </DropdownMenuItem>
 
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={(e) => {
+                  e.preventDefault();
+                  removeParticipantMutation.mutate({
+                    params: {
+                      path: {
+                        participantId: id,
+                        tripId,
+                      },
+                    },
+                  });
+                }}
+              >
                 <UserMinusIcon className="size-4" />
                 <span>Remove</span>
               </DropdownMenuItem>

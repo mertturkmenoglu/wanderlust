@@ -42,6 +42,8 @@ function RouteComponent() {
           role="Owner"
           isPrivileged={false}
           username={trip.owner.username}
+          id={trip.owner.id}
+          tripId={trip.id}
         />
 
         {trip.participants.map((p) => (
@@ -52,6 +54,8 @@ function RouteComponent() {
             role={p.role}
             username={p.username}
             isPrivileged={isPrivileged}
+            id={p.id}
+            tripId={trip.id}
             className="mt-2"
           />
         ))}
