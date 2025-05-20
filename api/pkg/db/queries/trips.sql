@@ -264,3 +264,28 @@ INSERT INTO trip_amenities (
   $1,
   $2
 );
+
+-- name: UpdateTrip :one
+UPDATE trips
+SET
+  title = $2,
+  description = $3,
+  visibility_level = $4,
+  start_at = $5,
+  end_at = $6
+WHERE id = $1
+RETURNING *;
+
+-- name: MoveDanglingLocations :exec
+UPDATE trip_locations
+SET scheduled_time = $1
+WHERE trip_id = $2 AND (scheduled_time < $3 OR scheduled_time > $4);
+
+-- name: DeleteTripAllParticipants :exec
+DELETE FROM trip_participants WHERE trip_id = $1;
+
+-- name: DeleteTripAllComments :exec
+DELETE FROM trip_comments WHERE trip_id = $1;
+
+-- name: DeleteTripAllInvites :exec
+DELETE FROM trip_invites WHERE trip_id = $1;

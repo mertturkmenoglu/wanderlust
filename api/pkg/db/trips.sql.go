@@ -272,6 +272,33 @@ func (q *Queries) DeleteTripAllAmenities(ctx context.Context, tripID string) err
 	return err
 }
 
+const deleteTripAllComments = `-- name: DeleteTripAllComments :exec
+DELETE FROM trip_comments WHERE trip_id = $1
+`
+
+func (q *Queries) DeleteTripAllComments(ctx context.Context, tripID string) error {
+	_, err := q.db.Exec(ctx, deleteTripAllComments, tripID)
+	return err
+}
+
+const deleteTripAllInvites = `-- name: DeleteTripAllInvites :exec
+DELETE FROM trip_invites WHERE trip_id = $1
+`
+
+func (q *Queries) DeleteTripAllInvites(ctx context.Context, tripID string) error {
+	_, err := q.db.Exec(ctx, deleteTripAllInvites, tripID)
+	return err
+}
+
+const deleteTripAllParticipants = `-- name: DeleteTripAllParticipants :exec
+DELETE FROM trip_participants WHERE trip_id = $1
+`
+
+func (q *Queries) DeleteTripAllParticipants(ctx context.Context, tripID string) error {
+	_, err := q.db.Exec(ctx, deleteTripAllParticipants, tripID)
+	return err
+}
+
 const deleteTripComment = `-- name: DeleteTripComment :exec
 DELETE FROM trip_comments WHERE id = $1
 `
@@ -657,6 +684,75 @@ func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string)
 		return nil, err
 	}
 	return items, nil
+}
+
+const moveDanglingLocations = `-- name: MoveDanglingLocations :exec
+UPDATE trip_locations
+SET scheduled_time = $1
+WHERE trip_id = $2 AND (scheduled_time < $3 OR scheduled_time > $4)
+`
+
+type MoveDanglingLocationsParams struct {
+	ScheduledTime   pgtype.Timestamptz
+	TripID          string
+	ScheduledTime_2 pgtype.Timestamptz
+	ScheduledTime_3 pgtype.Timestamptz
+}
+
+func (q *Queries) MoveDanglingLocations(ctx context.Context, arg MoveDanglingLocationsParams) error {
+	_, err := q.db.Exec(ctx, moveDanglingLocations,
+		arg.ScheduledTime,
+		arg.TripID,
+		arg.ScheduledTime_2,
+		arg.ScheduledTime_3,
+	)
+	return err
+}
+
+const updateTrip = `-- name: UpdateTrip :one
+UPDATE trips
+SET
+  title = $2,
+  description = $3,
+  visibility_level = $4,
+  start_at = $5,
+  end_at = $6
+WHERE id = $1
+RETURNING id, owner_id, status, title, description, visibility_level, start_at, end_at, created_at, updated_at
+`
+
+type UpdateTripParams struct {
+	ID              string
+	Title           string
+	Description     string
+	VisibilityLevel string
+	StartAt         pgtype.Timestamptz
+	EndAt           pgtype.Timestamptz
+}
+
+func (q *Queries) UpdateTrip(ctx context.Context, arg UpdateTripParams) (Trip, error) {
+	row := q.db.QueryRow(ctx, updateTrip,
+		arg.ID,
+		arg.Title,
+		arg.Description,
+		arg.VisibilityLevel,
+		arg.StartAt,
+		arg.EndAt,
+	)
+	var i Trip
+	err := row.Scan(
+		&i.ID,
+		&i.OwnerID,
+		&i.Status,
+		&i.Title,
+		&i.Description,
+		&i.VisibilityLevel,
+		&i.StartAt,
+		&i.EndAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const updateTripComment = `-- name: UpdateTripComment :one
