@@ -17,6 +17,10 @@ func (s *Service) isPrivilegedUser(trip *dto.Trip, userId string) bool {
 	return false
 }
 
+func (s *Service) canCreateInvite(trip *dto.Trip, userId string) bool {
+	return s.isPrivilegedUser(trip, userId)
+}
+
 func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participantId string) bool {
 	// You cannot remove the owner
 	if participantId == trip.OwnerID {
@@ -113,22 +117,14 @@ func (s *Service) canDeleteComment(trip *dto.Trip, comment *dto.TripComment, use
 }
 
 func (s *Service) canManageAmenities(trip *dto.Trip, userId string) bool {
-	// Owner can manage amenities
-	if trip.OwnerID == userId {
-		return true
-	}
-
-	// If the action user is an editor, they can manage amenities.
-	for _, p := range trip.Participants {
-		if p.ID == userId && p.Role == "editor" {
-			return true
-		}
-	}
-
-	return false
+	return s.isPrivilegedUser(trip, userId)
 }
 
 func (s *Service) canUpdateTrip(trip *dto.Trip, userId string) bool {
 	// Currently, only the owner can update the trip
 	return trip.OwnerID == userId
+}
+
+func (s *Service) canCreateLocation(trip *dto.Trip, userId string) bool {
+	return s.isPrivilegedUser(trip, userId)
 }
