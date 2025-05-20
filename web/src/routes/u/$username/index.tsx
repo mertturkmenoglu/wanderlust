@@ -6,5 +6,10 @@ export const Route = createFileRoute('/u/$username/')({
 });
 
 function RouteComponent() {
-  return <AppMessage emptyMessage="In progress" showBackButton={false} />;
+  return (
+    <AppMessage
+      emptyMessage="In progress"
+      showBackButton={false}
+    />
+  );
 }

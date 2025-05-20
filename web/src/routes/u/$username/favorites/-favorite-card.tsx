@@ -22,7 +22,10 @@ export default function FavoriteCard({ favorite: { poi } }: Props) {
 
       <div className="py-6 w-full">
         <CardHeader className="w-full">
-          <CardTitle className="line-clamp-1 capitalize" title={poi.name}>
+          <CardTitle
+            className="line-clamp-1 capitalize"
+            title={poi.name}
+          >
             {poi.name}
           </CardTitle>
           <CardDescription className="line-clamp-1">

@@ -74,7 +74,11 @@ function RouteComponent() {
         <li>
           <span className="font-bold">5. Privacy Policy</span>: Your use of the
           Service is also governed by our Privacy Policy, which can be found
-          <Button variant="link" asChild className="p-1">
+          <Button
+            variant="link"
+            asChild
+            className="p-1"
+          >
             <Link to="/privacy">here</Link>
           </Button>
           and is incorporated by reference into these Terms.
@@ -104,7 +108,11 @@ function RouteComponent() {
         <li>
           <span className="font-bold">10. Contact Information</span>: For
           questions about these Terms or the Service, please contact us at
-          <Button variant="link" asChild className="p-1">
+          <Button
+            variant="link"
+            asChild
+            className="p-1"
+          >
             <a href="mailto:withwanderlustapp@proton.me">
               withwanderlustapp [at] proton [dot] me
             </a>

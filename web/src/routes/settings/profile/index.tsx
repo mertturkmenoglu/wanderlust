@@ -93,7 +93,10 @@ function RouteComponent() {
         })}
         className="mt-4 grid grid-cols-3 gap-4 md:gap-8"
       >
-        <Label htmlFor="name" className="mt-2">
+        <Label
+          htmlFor="name"
+          className="mt-2"
+        >
           Full Name
         </Label>
         <div className="col-span-2">
@@ -107,7 +110,10 @@ function RouteComponent() {
           <InputError error={form.formState.errors.fullName} />
         </div>
 
-        <Label htmlFor="bio" className="mt-2">
+        <Label
+          htmlFor="bio"
+          className="mt-2"
+        >
           Bio
         </Label>
         <div className="col-span-2">
@@ -122,7 +128,10 @@ function RouteComponent() {
           <InputError error={form.formState.errors.bio} />
         </div>
 
-        <Label htmlFor="phone" className="mt-2">
+        <Label
+          htmlFor="phone"
+          className="mt-2"
+        >
           Phone
         </Label>
         <div className="col-span-2">
@@ -136,7 +145,10 @@ function RouteComponent() {
           <InputError error={form.formState.errors.phone} />
         </div>
 
-        <Label htmlFor="website" className="mt-2">
+        <Label
+          htmlFor="website"
+          className="mt-2"
+        >
           Website
         </Label>
         <div className="col-span-2">
@@ -150,7 +162,10 @@ function RouteComponent() {
           <InputError error={form.formState.errors.website} />
         </div>
 
-        <Label htmlFor="pronouns" className="mt-2">
+        <Label
+          htmlFor="pronouns"
+          className="mt-2"
+        >
           Pronouns
         </Label>
         <div className="col-span-2">
@@ -171,7 +186,10 @@ function RouteComponent() {
                       <SelectGroup key={pgroup.label}>
                         <SelectLabel>{pgroup.label}</SelectLabel>
                         {pgroup.options.map((p) => (
-                          <SelectItem key={p.value} value={p.value}>
+                          <SelectItem
+                            key={p.value}
+                            value={p.value}
+                          >
                             {p.label}
                           </SelectItem>
                         ))}

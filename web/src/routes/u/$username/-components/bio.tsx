@@ -83,7 +83,10 @@ export default function Bio({ className }: Props) {
         />
       </div>
 
-      <Tabs className="md:max-w-5xl" username={profile.username} />
+      <Tabs
+        className="md:max-w-5xl"
+        username={profile.username}
+      />
     </div>
   );
 }

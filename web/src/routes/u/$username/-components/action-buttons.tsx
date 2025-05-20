@@ -49,7 +49,10 @@ export default function ActionButtons({
   return (
     <>
       {isThisUser ? (
-        <Button asChild variant="outline">
+        <Button
+          asChild
+          variant="outline"
+        >
           <Link to="/settings">Settings</Link>
         </Button>
       ) : (

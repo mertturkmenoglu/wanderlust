@@ -23,7 +23,10 @@ export default function Followers({
 
   return (
     <div className={cn('mt-4 flex items-center gap-2', className)}>
-      <Button variant="ghost" asChild>
+      <Button
+        variant="ghost"
+        asChild
+      >
         <Link
           to="/u/$username/followers"
           params={{
@@ -35,7 +38,10 @@ export default function Followers({
         </Link>
       </Button>
 
-      <Button variant="ghost" asChild>
+      <Button
+        variant="ghost"
+        asChild
+      >
         <Link
           to="/u/$username/following"
           params={{

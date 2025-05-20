@@ -47,7 +47,10 @@ export default function UserTabs({ username, className }: Props) {
   return (
     <div className={cn(className)}>
       <ScrollArea>
-        <Tabs value={activeTab?.id} className="w-full my-4 bg-transparent">
+        <Tabs
+          value={activeTab?.id}
+          className="w-full my-4 bg-transparent"
+        >
           <TabsList className="bg-transparent">
             {tabs.map((t) => (
               <TabsTrigger
