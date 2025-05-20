@@ -2,6 +2,7 @@ import AppMessage from '@/components/blocks/app-message';
 import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
+import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
@@ -14,6 +15,8 @@ type Props = {
 export function Comments({ className }: Props) {
   const route = getRouteApi('/trips/$id');
   const { trip } = route.useLoaderData();
+  const { auth } = route.useRouteContext();
+  const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
 
   const query = api.useInfiniteQuery(
     'get',
@@ -83,10 +86,7 @@ export function Comments({ className }: Props) {
   return (
     <div className={cn(className)}>
       {flatten.map((comment) => (
-        <Item
-          key={comment.id}
-          comment={comment}
-        />
+        <Item key={comment.id} comment={comment} isPrivileged={isPrivileged} />
       ))}
 
       {query.hasNextPage && (
