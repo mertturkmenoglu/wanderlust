@@ -76,7 +76,10 @@ function RouteComponent() {
 
   return (
     <div className="max-w-7xl mx-auto my-8">
-      <BackLink href={`/lists/${list.id}`} text="Go back to the list page" />
+      <BackLink
+        href={`/lists/${list.id}`}
+        text="Go back to the list page"
+      />
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl tracking-tighter">Editing: {list.name}</h2>
@@ -127,7 +130,10 @@ function RouteComponent() {
                 setIsPublic(c === true);
               }}
             />
-            <Label htmlFor="is-public" className="ml-2">
+            <Label
+              htmlFor="is-public"
+              className="ml-2"
+            >
               Public list
             </Label>
             <InputInfo text="If you make your list public, other users can see it." />

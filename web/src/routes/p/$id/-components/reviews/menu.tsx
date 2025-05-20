@@ -36,7 +36,10 @@ export function Menu({ review }: Props) {
           <EllipsisVerticalIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end">
+      <DropdownMenuContent
+        className="w-56"
+        align="end"
+      >
         <DropdownMenuItem>
           Report
           <DropdownMenuShortcut>

@@ -36,7 +36,10 @@ export default function Container() {
 
   if (query.error) {
     return (
-      <AppMessage errorMessage={query.error.message} showBackButton={false} />
+      <AppMessage
+        errorMessage={query.error.message}
+        showBackButton={false}
+      />
     );
   }
 

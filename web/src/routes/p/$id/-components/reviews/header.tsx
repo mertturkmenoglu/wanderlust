@@ -74,7 +74,10 @@ function Ratings({ ratings }: Props) {
   return (
     <div className="lg:col-span-2 space-y-2">
       {sorted.map(([rating, count]) => (
-        <div key={rating} className="flex items-center text-right gap-2">
+        <div
+          key={rating}
+          className="flex items-center text-right gap-2"
+        >
           <div className="flex items-center gap-1 w-8 justify-end text-primary text-sm font-medium">
             {rating} <StarIcon className="size-3 fill-primary text-primary" />
           </div>

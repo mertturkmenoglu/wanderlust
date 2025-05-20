@@ -1,7 +1,7 @@
-import "leaflet-defaulticon-compatibility";
-import { useEffect, useState } from "react";
+import 'leaflet-defaulticon-compatibility';
+import { useEffect, useState } from 'react';
 
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer } from 'react-leaflet';
 
 type Props = {
   lat: number;
@@ -27,13 +27,16 @@ export function Map({ lat, lng }: Props) {
           minZoom={4}
           scrollWheelZoom={true}
           style={{
-            height: "400px",
-            marginTop: "16px",
+            height: '400px',
+            marginTop: '16px',
             zIndex: 0,
-            width: "100%",
+            width: '100%',
           }}
         >
-          <TileLayer attribution="" url={url} />
+          <TileLayer
+            attribution=""
+            url={url}
+          />
         </MapContainer>
       )}
     </div>

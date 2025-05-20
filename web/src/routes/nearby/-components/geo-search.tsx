@@ -18,7 +18,10 @@ export default function GeoSearch(props: UseGeoSearchProps) {
   return (
     <>
       {items.map((item) => (
-        <Marker key={item.objectID} position={item._geoloc}>
+        <Marker
+          key={item.objectID}
+          position={item._geoloc}
+        >
           <Popup>
             <Link
               to="/p/$id"

@@ -1,7 +1,7 @@
-import { Hits } from "react-instantsearch";
-import Hit from "./hit";
-import HitsPerPage from "./hits-per-page";
-import Pagination from "./pagination";
+import { Hits } from 'react-instantsearch';
+import Hit from './hit';
+import HitsPerPage from './hits-per-page';
+import Pagination from './pagination';
 
 export default function Results() {
   return (

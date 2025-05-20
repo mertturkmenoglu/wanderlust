@@ -1,5 +1,5 @@
-import Header from "./header";
-import { Section } from "./section";
+import Header from './header';
+import { Section } from './section';
 
 export default function Reviews() {
   return (

@@ -58,7 +58,10 @@ function RouteComponent() {
       <Separator className="my-4" />
 
       {query.isLoading && (
-        <AppMessage emptyMessage="Loading..." showBackButton={false} />
+        <AppMessage
+          emptyMessage="Loading..."
+          showBackButton={false}
+        />
       )}
       {query.data && query.data.pages[0]?.lists.length === 0 && (
         <AppMessage emptyMessage="You have no lists yet" />

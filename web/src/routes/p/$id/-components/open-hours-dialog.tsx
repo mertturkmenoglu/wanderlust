@@ -58,7 +58,10 @@ export default function OpenHoursDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="link" className="px-0">
+        <Button
+          variant="link"
+          className="px-0"
+        >
           See open hours
         </Button>
       </DialogTrigger>
@@ -68,7 +71,10 @@ export default function OpenHoursDialog() {
         </DialogHeader>
         <div className="flex flex-col space-y-2 text-sm">
           {allKeys.map((key) => (
-            <div key={key} className="grid grid-cols-2">
+            <div
+              key={key}
+              className="grid grid-cols-2"
+            >
               <div className="font-semibold">{keyToReadableDay(key)}</div>
               <div className="text-right">
                 {keys.includes(key)

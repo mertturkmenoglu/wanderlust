@@ -150,7 +150,10 @@ export default function RefinementList({ attribute, className }: Props) {
         })}
       >
         {items.map((item) => (
-          <li key={item.label} className="w-full">
+          <li
+            key={item.label}
+            className="w-full"
+          >
             <label className="flex items-center w-full">
               <Checkbox
                 checked={item.isRefined}

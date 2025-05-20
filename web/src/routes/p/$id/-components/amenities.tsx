@@ -130,7 +130,13 @@ export default function Amenities() {
         {isEmpty ? (
           <EmptyState />
         ) : (
-          amenities.map(({ id, name }) => <Item key={id} id={id} name={name} />)
+          amenities.map(({ id, name }) => (
+            <Item
+              key={id}
+              id={id}
+              name={name}
+            />
+          ))
         )}
       </div>
     </div>

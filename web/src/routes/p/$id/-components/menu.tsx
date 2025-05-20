@@ -44,7 +44,10 @@ export default function Menu() {
   return (
     <Dialog>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild className="block">
+        <DropdownMenuTrigger
+          asChild
+          className="block"
+        >
           <Button
             className="flex items-center justify-center rounded-full"
             variant="ghost"
@@ -54,7 +57,10 @@ export default function Menu() {
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-48 space-y-2 p-2" align="end">
+        <DropdownMenuContent
+          className="w-48 space-y-2 p-2"
+          align="end"
+        >
           {!!auth.user && (
             <DialogTrigger asChild>
               <DropdownMenuItem className="cursor-pointer p-0">
@@ -130,7 +136,10 @@ export default function Menu() {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <AddToListButton poiId={poi.id} listId={listId} />
+          <AddToListButton
+            poiId={poi.id}
+            listId={listId}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

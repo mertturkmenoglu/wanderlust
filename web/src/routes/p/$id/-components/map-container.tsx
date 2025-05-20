@@ -14,7 +14,12 @@ export default function MapContainer() {
     <>
       <div className="flex items-end justify-between">
         <h3 className="text-2xl font-bold">Location</h3>
-        <Button variant="link" className="px-0" size="sm" asChild>
+        <Button
+          variant="link"
+          className="px-0"
+          size="sm"
+          asChild
+        >
           <a
             href={`https://www.google.com/maps/@${lat},${lng},${zoom}z`}
             target="_blank"
@@ -25,7 +30,10 @@ export default function MapContainer() {
           </a>
         </Button>
       </div>
-      <Map lat={lat} lng={lng} />
+      <Map
+        lat={lat}
+        lng={lng}
+      />
     </>
   );
 }

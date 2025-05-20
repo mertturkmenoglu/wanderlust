@@ -44,7 +44,10 @@ export default function CreateListDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default" className="space-x-2">
+        <Button
+          variant="default"
+          className="space-x-2"
+        >
           <PlusIcon className="size-4" />
           <span>New List</span>
         </Button>
@@ -91,7 +94,10 @@ export default function CreateListDialog() {
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant="secondary"
+            >
               Cancel
             </Button>
           </DialogClose>

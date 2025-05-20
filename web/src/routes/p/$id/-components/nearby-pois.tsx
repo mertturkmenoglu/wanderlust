@@ -89,7 +89,10 @@ export default function NearbyPois() {
               </Link>
             ))}
           </div>
-          <ScrollBar orientation="horizontal" className="mt-8" />
+          <ScrollBar
+            orientation="horizontal"
+            className="mt-8"
+          />
         </ScrollArea>
       </div>
     );
@@ -97,7 +100,10 @@ export default function NearbyPois() {
 
   if (query.error) {
     return (
-      <AppMessage errorMessage="Something went wrong" showBackButton={false} />
+      <AppMessage
+        errorMessage="Something went wrong"
+        showBackButton={false}
+      />
     );
   }
 

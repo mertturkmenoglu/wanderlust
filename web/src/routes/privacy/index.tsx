@@ -121,7 +121,11 @@ function RouteComponent() {
             <span className="font-bold">8. Contact Information</span>: If you
             have any questions or concerns about this Privacy Policy, please
             contact us at
-            <Button variant="link" asChild className="p-1">
+            <Button
+              variant="link"
+              asChild
+              className="p-1"
+            >
               <a href="mailto:withwanderlustapp@proton.me">
                 withwanderlustapp [at] proton [dot] me
               </a>

@@ -169,7 +169,11 @@ export const faqData: FAQ = {
               If you experience any issues with the app, please visit the
               &quot;Help & Support&quot; section in the app or contact our
               support team directly via email at{' '}
-              <Button variant="link" asChild className="px-0">
+              <Button
+                variant="link"
+                asChild
+                className="px-0"
+              >
                 <a href="mailto:withwanderlustapp@proton.me">
                   withwanderlustapp [at] proton [dot] me
                 </a>
@@ -208,7 +212,11 @@ export const faqData: FAQ = {
           answer: (
             <div>
               If you wish to delete your account, contact our team via email at{' '}
-              <Button variant="link" asChild className="px-0">
+              <Button
+                variant="link"
+                asChild
+                className="px-0"
+              >
                 <a href="mailto:withwanderlustapp@proton.me">
                   withwanderlustapp [at] proton [dot] me
                 </a>

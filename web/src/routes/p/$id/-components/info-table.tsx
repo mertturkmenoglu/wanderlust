@@ -85,7 +85,10 @@ export default function InformationTable() {
         <TableRow>
           <TableCell className="px-0 font-medium">Price level</TableCell>
           <TableCell className="mt-1 flex justify-end">
-            <Progress value={poi.priceLevel * 19.8} className="max-w-32" />
+            <Progress
+              value={poi.priceLevel * 19.8}
+              className="max-w-32"
+            />
           </TableCell>
         </TableRow>
 

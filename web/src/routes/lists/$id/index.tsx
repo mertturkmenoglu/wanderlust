@@ -73,7 +73,10 @@ function RouteComponent() {
 
   return (
     <div className="max-w-7xl mx-auto my-8">
-      <BackLink href="/lists" text="Go back to lists" />
+      <BackLink
+        href="/lists"
+        text="Go back to lists"
+      />
       <div className="flex justify-between items-center gap-8">
         <div>
           <h2 className="text-2xl tracking-tighter">{list.name}</h2>
@@ -144,7 +147,10 @@ function RouteComponent() {
             </div>
             <DialogFooter className="">
               <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button
+                  type="button"
+                  variant="secondary"
+                >
                   Cancel
                 </Button>
               </DialogClose>

@@ -45,7 +45,10 @@ export function ReviewCard({ review }: Props) {
         </div>
       </div>
       <div className="mt-4">
-        <CollapsibleText text={review.content} charLimit={512} />
+        <CollapsibleText
+          text={review.content}
+          charLimit={512}
+        />
         <div
           className={cn('flex items-center gap-4', {
             'mt-4': review.media.length > 0,

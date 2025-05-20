@@ -28,9 +28,16 @@ function RouteComponent() {
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight mt-8">
               {group.title}
             </h4>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+            >
               {group.items.map((item) => (
-                <AccordionItem value={item.question} key={item.question}>
+                <AccordionItem
+                  value={item.question}
+                  key={item.question}
+                >
                   <AccordionTrigger>{item.question}</AccordionTrigger>
                   <AccordionContent>{item.answer}</AccordionContent>
                 </AccordionItem>

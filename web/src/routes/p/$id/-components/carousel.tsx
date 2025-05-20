@@ -16,7 +16,10 @@ export default function Carousel() {
     <ShadcnCarousel className="mx-auto flex h-min w-11/12 justify-center lg:w-full">
       <CarouselContent>
         {media.map((media, index) => (
-          <CarouselItem key={index} className="mx-auto flex justify-center">
+          <CarouselItem
+            key={index}
+            className="mx-auto flex justify-center"
+          >
             <div className="flex h-[512px] flex-col items-center justify-center overflow-hidden rounded-lg lg:w-full">
               <img
                 className="rounded-lg object-cover h-[96%]"

@@ -26,7 +26,7 @@ export default function HitsPerPage() {
     (v: string) => {
       refine(+v);
     },
-    [refine]
+    [refine],
   );
 
   return (

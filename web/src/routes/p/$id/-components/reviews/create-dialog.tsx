@@ -69,7 +69,11 @@ export default function CreateReviewDialog() {
 
   if (!isAuthenticated) {
     return (
-      <Button variant="default" size="sm" asChild>
+      <Button
+        variant="default"
+        size="sm"
+        asChild
+      >
         <Link to="/sign-in">
           <PencilIcon className="size-4 mr-2" />
           <span>Add a review</span>
@@ -81,7 +85,10 @@ export default function CreateReviewDialog() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="default" size="sm">
+        <Button
+          variant="default"
+          size="sm"
+        >
           <PencilIcon className="size-4 mr-2" />
           <span>Add a review</span>
         </Button>

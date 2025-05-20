@@ -1,9 +1,9 @@
-import { FilterIcon } from "lucide-react";
-import React from "react";
-import { useCurrentRefinements } from "react-instantsearch";
-import CustomSearchBox from "@/components/blocks/custom-search-box";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { FilterIcon } from 'lucide-react';
+import React from 'react';
+import { useCurrentRefinements } from 'react-instantsearch';
+import CustomSearchBox from '@/components/blocks/custom-search-box';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Sheet,
   SheetContent,
@@ -11,9 +11,9 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import Filters from "./filters";
-import Results from "./results";
+} from '@/components/ui/sheet';
+import Filters from './filters';
+import Results from './results';
 
 const MemoizedFilters = React.memo(function MFilters() {
   return <Filters />;
@@ -33,7 +33,10 @@ export default function Container() {
 
       <div className="my-8 flex gap-8 flex-col md:flex-row">
         <Sheet>
-          <SheetTrigger className="md:hidden" asChild>
+          <SheetTrigger
+            className="md:hidden"
+            asChild
+          >
             <Button variant="secondary">
               <FilterIcon className="size-4" />
               <span className="ml-2">Filters ({refinementCount})</span>
