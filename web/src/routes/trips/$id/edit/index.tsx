@@ -11,11 +11,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useInvalidator } from '@/hooks/use-invalidator';
+import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
 import { formatDate } from 'date-fns';
 import { AlertTriangleIcon } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { DeleteButton } from './-delete-button';
 import { asVisibility, schema, visibilityOptions } from './-schema';
 
@@ -28,6 +31,7 @@ const datetimeFormat = "yyyy-MM-dd'T'HH:mm";
 function RouteComponent() {
   const rootRoute = getRouteApi('/trips/$id');
   const { trip } = rootRoute.useLoaderData();
+  const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -40,11 +44,31 @@ function RouteComponent() {
     },
   });
 
+  const updateTripMutation = api.useMutation('patch', '/api/v2/trips/{id}', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      toast.success('Trip updated');
+    },
+  });
+
   return (
     <div>
       <form
         onSubmit={form.handleSubmit((data) => {
-          console.log(data);
+          updateTripMutation.mutate({
+            params: {
+              path: {
+                id: trip.id,
+              },
+            },
+            body: {
+              title: data.title,
+              description: data.description,
+              visibilityLevel: data.visibility,
+              startAt: new Date(data.startAt).toISOString(),
+              endAt: new Date(data.endAt).toISOString(),
+            },
+          });
         })}
         className="w-full flex flex-col"
       >
@@ -142,7 +166,13 @@ function RouteComponent() {
             If you change start or end date, we will automatically move the
             locations to the new date range.
           </div>
-          <Button size="sm" variant="ghost" className="ml-auto" asChild>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            asChild
+          >
             <Link
               to="/trips/$id"
               params={{
@@ -152,7 +182,7 @@ function RouteComponent() {
               Cancel
             </Link>
           </Button>
-          <Button size="sm" variant="default" className="ml-2">
+          <Button type="submit" size="sm" variant="default" className="ml-2">
             Save
           </Button>
         </div>
