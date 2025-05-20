@@ -11,7 +11,10 @@ export default function InputError({ error, className, ...props }: Props) {
   }
 
   return (
-    <div className={cn('mt-1 text-xs text-red-500', className)} {...props}>
+    <div
+      className={cn('mt-1 text-xs text-red-500', className)}
+      {...props}
+    >
       {error.message}
     </div>
   );

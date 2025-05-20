@@ -30,11 +30,17 @@ export function Rating({
 
   return (
     <div {...api.getRootProps()}>
-      <div {...api.getControlProps()} className="flex">
+      <div
+        {...api.getControlProps()}
+        className="flex"
+      >
         {api.items.map((index) => {
           const state = api.getItemState({ index });
           return (
-            <span key={index} {...api.getItemProps({ index })}>
+            <span
+              key={index}
+              {...api.getItemProps({ index })}
+            >
               <StarIcon
                 className={cn(
                   'text-primary size-4',
@@ -48,7 +54,10 @@ export function Rating({
           );
         })}
       </div>
-      <input {...api.getHiddenInputProps()} data-testid="hidden-input" />
+      <input
+        {...api.getHiddenInputProps()}
+        data-testid="hidden-input"
+      />
     </div>
   );
 }
