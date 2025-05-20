@@ -16,10 +16,10 @@ function RouteComponent() {
   const { auth } = route.useRouteContext();
   const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
 
-  const invitesQuery = api.useQuery('get', '/api/v2/trips/{tripId}/invites', {
+  const invitesQuery = api.useQuery('get', '/api/v2/trips/{id}/invites', {
     params: {
       path: {
-        tripId: trip.id,
+        id: trip.id,
       },
     },
   });
