@@ -2,13 +2,12 @@ package trips
 
 import "wanderlust/pkg/dto"
 
-func (s *Service) canCreateInvite(trip *dto.Trip, userId string) bool {
-	// Owner can invite anyone
+// Check if the action user is the trip owner or an editor.
+func (s *Service) isPrivilegedUser(trip *dto.Trip, userId string) bool {
 	if trip.OwnerID == userId {
 		return true
 	}
 
-	// If the action user is an editor, they can invite.
 	for _, p := range trip.Participants {
 		if p.ID == userId && p.Role == "editor" {
 			return true
