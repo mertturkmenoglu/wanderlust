@@ -116,10 +116,7 @@ export function CreateDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="lg"
-        >
+        <Button variant="ghost" size="lg">
           <SquarePlusIcon className="mr-2 size-4" />
           Create trip
         </Button>
@@ -131,7 +128,6 @@ export function CreateDialog() {
         <div className="flex items-center space-x-2 text-sm w-full">
           <form
             onSubmit={form.handleSubmit((data) => {
-              console.log(data);
               mutation.mutate({
                 body: {
                   ...data,
@@ -180,18 +176,12 @@ export function CreateDialog() {
                         onValueChange={field.onChange}
                         defaultValue={field.value ?? undefined}
                       >
-                        <SelectTrigger
-                          id="visibility"
-                          className="mt-1 w-full"
-                        >
+                        <SelectTrigger id="visibility" className="mt-1 w-full">
                           <SelectValue placeholder="Select a visibility" />
                         </SelectTrigger>
                         <SelectContent>
                           {visibilityOptions.map((op) => (
-                            <SelectItem
-                              key={op.value}
-                              value={op.value}
-                            >
+                            <SelectItem key={op.value} value={op.value}>
                               {op.label}
                             </SelectItem>
                           ))}
@@ -237,17 +227,11 @@ export function CreateDialog() {
 
             <DialogFooter className="mt-4">
               <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                >
+                <Button type="button" variant="outline">
                   Close
                 </Button>
               </DialogClose>
-              <Button
-                type="submit"
-                variant="default"
-              >
+              <Button type="submit" variant="default">
                 Create
               </Button>
             </DialogFooter>
