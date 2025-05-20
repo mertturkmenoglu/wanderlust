@@ -28,16 +28,18 @@ export function Header() {
             <span>Participants</span>
           </Link>
 
-          <Link
-            to="/trips/$id/participants/invites/new"
-            params={{
-              id: trip.id,
-            }}
-            className={buttonVariants({ variant: 'ghost', size: 'sm' })}
-          >
-            <UserPlusIcon className="size-4" />
-            <span>Invite User</span>
-          </Link>
+          {trip.visibilityLevel !== 'private' && (
+            <Link
+              to="/trips/$id/participants/invites/new"
+              params={{
+                id: trip.id,
+              }}
+              className={buttonVariants({ variant: 'ghost', size: 'sm' })}
+            >
+              <UserPlusIcon className="size-4" />
+              <span>Invite User</span>
+            </Link>
+          )}
         </div>
       )}
     </div>

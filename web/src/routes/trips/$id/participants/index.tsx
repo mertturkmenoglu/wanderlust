@@ -21,7 +21,7 @@ function RouteComponent() {
           <UsersIcon className="size-5 mr-2" />
           <div className="font-medium">Participants</div>
         </div>
-        {isPrivileged && (
+        {isPrivileged && trip.visibilityLevel !== 'private' && (
           <Link
             to="/trips/$id/participants/invites"
             params={{
