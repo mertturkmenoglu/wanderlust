@@ -77,6 +77,8 @@ function RouteComponent() {
             role={`As: ${invite.role}`}
             isPrivileged={isPrivileged}
             className="mt-2"
+            id={invite.id}
+            tripId={trip.id}
           />
         ))}
       </div>
