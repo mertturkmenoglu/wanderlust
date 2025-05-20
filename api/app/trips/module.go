@@ -12,7 +12,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// PATCH /trips/:tripId (Edit Trip)
 // POST /trips/:id/locations (Add Location)
 // PATCH /trips/:id/locations/:locationId (Update Location)
 // DELETE /trips/:id/locations/:locationId (Delete Location)
@@ -467,6 +466,34 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.updateAmenities(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Edit Trip
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/trips/{id}",
+			Summary:       "Update Trip",
+			Description:   "Update a trip",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateTripInput) (*dto.UpdateTripOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateTrip(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
