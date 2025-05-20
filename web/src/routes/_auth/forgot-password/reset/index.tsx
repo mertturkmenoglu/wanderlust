@@ -34,7 +34,11 @@ function RouteComponent() {
       />
       <h2 className="mt-4 text-xl font-bold">Reset Password</h2>
       <div className="text-sm text-muted-foreground">
-        Already have an account? <AuthLink href="/sign-in" text="Sign In" />
+        Already have an account?{' '}
+        <AuthLink
+          href="/sign-in"
+          text="Sign In"
+        />
       </div>
       <form
         onSubmit={handleSubmit((data) => mutation.mutate(data))}
@@ -95,7 +99,11 @@ function RouteComponent() {
           <div className="my-4"></div>
         </div>
 
-        <Button variant="default" className="w-full" type="submit">
+        <Button
+          variant="default"
+          className="w-full"
+          type="submit"
+        >
           Reset Your Password
         </Button>
       </form>

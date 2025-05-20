@@ -37,7 +37,11 @@ function RouteComponent() {
       />
       <h2 className="mt-4 text-xl font-bold">Create Your Wanderlust Account</h2>
       <div className="text-sm text-muted-foreground">
-        Already have an account? <AuthLink href="/sign-in" text="Sign In" />
+        Already have an account?{' '}
+        <AuthLink
+          href="/sign-in"
+          text="Sign In"
+        />
       </div>
       <form
         onSubmit={handleSubmit((_data) => mutation.mutate(_data))}
@@ -108,15 +112,25 @@ function RouteComponent() {
           <div className="my-4"></div>
         </div>
 
-        <Button variant="default" className="w-full" type="submit">
+        <Button
+          variant="default"
+          className="w-full"
+          type="submit"
+        >
           Sign Up
         </Button>
 
         <Separator className="my-4" />
 
         <div className="space-y-4">
-          <OAuthButton provider="google" text="Sign up with Google" />
-          <OAuthButton provider="facebook" text="Sign up with Facebook" />
+          <OAuthButton
+            provider="google"
+            text="Sign up with Google"
+          />
+          <OAuthButton
+            provider="facebook"
+            text="Sign up with Facebook"
+          />
         </div>
 
         <div className="mt-4 text-center">

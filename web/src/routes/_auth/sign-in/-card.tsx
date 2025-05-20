@@ -41,9 +41,16 @@ export function SignInCard({ isModal }: Props) {
       />
       <h2 className="mt-4 text-xl font-bold">Sign in to Wanderlust</h2>
       <div className="text-sm text-muted-foreground">
-        Don&apos;t have an account? <AuthLink href="/sign-up" text="Sign Up" />
+        Don&apos;t have an account?{' '}
+        <AuthLink
+          href="/sign-up"
+          text="Sign Up"
+        />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 w-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-4 w-full"
+      >
         <Label htmlFor="email">Email</Label>
         <Input
           type="email"
@@ -94,15 +101,25 @@ export function SignInCard({ isModal }: Props) {
 
         <div className="my-4"></div>
 
-        <Button variant="default" className="w-full" type="submit">
+        <Button
+          variant="default"
+          className="w-full"
+          type="submit"
+        >
           Sign In
         </Button>
 
         <Separator className="my-4" />
 
         <div className="space-y-4">
-          <OAuthButton provider="google" text="Sign in with Google" />
-          <OAuthButton provider="facebook" text="Sign in with Facebook" />
+          <OAuthButton
+            provider="google"
+            text="Sign in with Google"
+          />
+          <OAuthButton
+            provider="facebook"
+            text="Sign in with Facebook"
+          />
         </div>
 
         <div className="mt-4 text-center">

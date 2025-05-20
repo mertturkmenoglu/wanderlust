@@ -32,7 +32,11 @@ function RouteComponent() {
       />
       <h2 className="mt-4 text-xl font-bold">Forgot Password</h2>
       <div className="text-sm text-muted-foreground">
-        Already have an account? <AuthLink href="/sign-in" text="Sign In" />
+        Already have an account?{' '}
+        <AuthLink
+          href="/sign-in"
+          text="Sign In"
+        />
       </div>
       <form
         onSubmit={handleSubmit((data) => mutation.mutate(data))}
@@ -50,7 +54,11 @@ function RouteComponent() {
         <InputError error={formState.errors.email} />
         <div className="my-4"></div>
 
-        <Button variant="default" className="w-full" type="submit">
+        <Button
+          variant="default"
+          className="w-full"
+          type="submit"
+        >
           Send Code
         </Button>
       </form>
