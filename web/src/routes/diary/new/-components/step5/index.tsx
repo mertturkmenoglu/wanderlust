@@ -71,7 +71,10 @@ export default function Step5() {
           <div>Locations:</div>
           <ul>
             {locations.map((l) => (
-              <li key={l.id} className="list-disc list-outside">
+              <li
+                key={l.id}
+                className="list-disc list-outside"
+              >
                 {l.name}
               </li>
             ))}
@@ -80,7 +83,10 @@ export default function Step5() {
           <div>Friends:</div>
           <ul>
             {friends.map((f) => (
-              <li key={f.id} className="list-disc list-outside">
+              <li
+                key={f.id}
+                className="list-disc list-outside"
+              >
                 {f.fullName}
               </li>
             ))}

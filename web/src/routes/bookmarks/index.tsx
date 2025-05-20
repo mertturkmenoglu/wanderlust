@@ -129,7 +129,10 @@ function Bookmarks() {
 
               {nums.map((x) => (
                 <PaginationItem key={`pagination-${x}`}>
-                  <PaginationLink isActive={x === page} href={`?page=${x}`}>
+                  <PaginationLink
+                    isActive={x === page}
+                    href={`?page=${x}`}
+                  >
                     {x}
                   </PaginationLink>
                 </PaginationItem>

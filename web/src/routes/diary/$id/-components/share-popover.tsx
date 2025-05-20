@@ -30,12 +30,18 @@ export default function SharePopover({ id, share, friendsCount }: Props) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button
+          variant="ghost"
+          size="icon"
+        >
           <Share2Icon className="size-4" />
           <span className="sr-only">Change share settings</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="max-w-96">
+      <PopoverContent
+        align="end"
+        className="max-w-96"
+      >
         <div className="flex items-center gap-2">
           {share ? (
             <GlobeIcon className="size-6 text-primary" />

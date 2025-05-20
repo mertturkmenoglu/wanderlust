@@ -40,7 +40,10 @@ export function Map({ locations }: Props) {
             width: '100%',
           }}
         >
-          <TileLayer attribution="" url={url} />
+          <TileLayer
+            attribution=""
+            url={url}
+          />
           {locations.map((location) => (
             <Marker
               key={location.poi.id}

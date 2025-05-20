@@ -9,7 +9,10 @@ export default function SearchInput() {
 
   return (
     <div className="flex flex-col mx-auto group">
-      <label htmlFor="friend-search" className="sr-only">
+      <label
+        htmlFor="friend-search"
+        className="sr-only"
+      >
         Search your friends
       </label>
       <div className="relative">

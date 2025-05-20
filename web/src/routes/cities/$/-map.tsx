@@ -24,7 +24,10 @@ export default function Map({ latitude, longitude }: Props) {
             width: '100%',
           }}
         >
-          <TileLayer attribution="" url={url} />
+          <TileLayer
+            attribution=""
+            url={url}
+          />
         </MapContainer>
       </div>
     </>

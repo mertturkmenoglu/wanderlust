@@ -20,7 +20,10 @@ export default function Header() {
 
   return (
     <>
-      <BackLink href="/diary" text="Go back to the diary" />
+      <BackLink
+        href="/diary"
+        text="Go back to the diary"
+      />
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl tracking-tighter">{entry.title}</h2>
@@ -47,7 +50,10 @@ export default function Header() {
                       share={entry.shareWithFriends}
                     />
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={8}>
+                  <TooltipContent
+                    side="bottom"
+                    sideOffset={8}
+                  >
                     Share
                   </TooltipContent>
                 </Tooltip>
@@ -56,7 +62,11 @@ export default function Header() {
               <TooltipProvider delayDuration={300}>
                 <Tooltip>
                   <TooltipTrigger tabIndex={-1}>
-                    <Button asChild variant="ghost" size="icon">
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="icon"
+                    >
                       <Link
                         to="/diary/$id/edit"
                         params={{
@@ -68,7 +78,10 @@ export default function Header() {
                       </Link>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={8}>
+                  <TooltipContent
+                    side="bottom"
+                    sideOffset={8}
+                  >
                     Edit
                   </TooltipContent>
                 </Tooltip>

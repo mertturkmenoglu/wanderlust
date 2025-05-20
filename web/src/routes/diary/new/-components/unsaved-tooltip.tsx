@@ -18,7 +18,10 @@ export default function UnsavedChanges() {
             </span>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom" sideOffset={12}>
+        <TooltipContent
+          side="bottom"
+          sideOffset={12}
+        >
           <div className="">You have unsaved changes.</div>
         </TooltipContent>
       </Tooltip>

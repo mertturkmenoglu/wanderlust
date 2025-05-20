@@ -19,7 +19,10 @@ export default function DeleteDialog() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="sm" variant="destructive">
+        <Button
+          size="sm"
+          variant="destructive"
+        >
           <TrashIcon className="size-4" />
           <span>Delete draft</span>
         </Button>
@@ -33,7 +36,10 @@ export default function DeleteDialog() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Button asChild variant="destructive">
+          <Button
+            asChild
+            variant="destructive"
+          >
             <AlertDialogAction
               onClick={() => {
                 localStorage.removeItem('diary-entry');

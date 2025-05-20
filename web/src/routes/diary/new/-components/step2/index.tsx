@@ -74,7 +74,10 @@ export default function Step2() {
               </div>
             )}
             {fields.map((l, i) => (
-              <div key={l.id} className="flex flex-col">
+              <div
+                key={l.id}
+                className="flex flex-col"
+              >
                 <Card className="mt-4 flex gap-8 p-4 flex-1">
                   <img
                     src={l.image}
@@ -97,7 +100,11 @@ export default function Step2() {
                 </Card>
 
                 <div className="ml-auto mt-1">
-                  <EditDialog form={form} name={l.name} index={i} />
+                  <EditDialog
+                    form={form}
+                    name={l.name}
+                    index={i}
+                  />
 
                   <ActionButton
                     disabled={i === 0}

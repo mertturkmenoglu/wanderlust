@@ -79,7 +79,10 @@ function RouteComponent() {
         message={
           <div className="flex items-center gap-4">
             <div>Plan a trip to {city.name}</div>
-            <Button asChild variant="default">
+            <Button
+              asChild
+              variant="default"
+            >
               <Link to="/trips/planner">Start Planning</Link>
             </Button>
           </div>
@@ -92,8 +95,14 @@ function RouteComponent() {
         className="my-8"
         title="Curated Locations"
         actions={
-          <Button asChild variant="link">
-            <Link to="." href={`/collections/city/curated/${city.id}`}>
+          <Button
+            asChild
+            variant="link"
+          >
+            <Link
+              to="."
+              href={`/collections/city/curated/${city.id}`}
+            >
               See more
             </Link>
           </Button>
@@ -137,7 +146,10 @@ function RouteComponent() {
         message={
           <div className="flex items-center gap-4">
             <div>See all locations in {city.name}</div>
-            <Button asChild variant="default">
+            <Button
+              asChild
+              variant="default"
+            >
               <Link
                 to="."
                 href={`/search?pois[refinementList][poi.City.Name][0]=${city.name}`}
@@ -155,8 +167,14 @@ function RouteComponent() {
         className="my-8"
         title="Users Favorites"
         actions={
-          <Button asChild variant="link">
-            <Link to="." href={`/collections/city/curated/${city.id}`}>
+          <Button
+            asChild
+            variant="link"
+          >
+            <Link
+              to="."
+              href={`/collections/city/curated/${city.id}`}
+            >
               See more
             </Link>
           </Button>
@@ -199,8 +217,14 @@ function RouteComponent() {
         className="my-8"
         title="Popular Tourist Attractions"
         actions={
-          <Button asChild variant="link">
-            <Link to="." href={`/collections/city/curated/${city.id}`}>
+          <Button
+            asChild
+            variant="link"
+          >
+            <Link
+              to="."
+              href={`/collections/city/curated/${city.id}`}
+            >
               See more
             </Link>
           </Button>

@@ -25,7 +25,10 @@ function RouteComponent() {
 
   return (
     <div className="max-w-7xl mx-auto my-8">
-      <Header date={date} setDate={setDate} />
+      <Header
+        date={date}
+        setDate={setDate}
+      />
 
       <Separator className="my-4" />
 

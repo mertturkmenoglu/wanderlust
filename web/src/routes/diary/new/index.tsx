@@ -42,9 +42,15 @@ function InnerContent() {
 
   return (
     <div className="max-w-7xl mx-auto my-8">
-      <BackLink href="/diary" text="Go back to your diary" />
+      <BackLink
+        href="/diary"
+        text="Go back to your diary"
+      />
 
-      <Tabs defaultValue="1" className="mt-8 max-w-xl mx-auto">
+      <Tabs
+        defaultValue="1"
+        className="mt-8 max-w-xl mx-auto"
+      >
         <div className="w-full flex">
           <TabsList className="w-full">
             <TabsTrigger value="1">Info</TabsTrigger>

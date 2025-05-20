@@ -25,7 +25,10 @@ function RouteComponent() {
         message={
           <div className="flex items-center gap-4">
             <div>Discover the world around you</div>
-            <Button asChild variant="default">
+            <Button
+              asChild
+              variant="default"
+            >
               <Link to="/categories">See categories</Link>
             </Button>
           </div>
@@ -40,7 +43,10 @@ function RouteComponent() {
 
       <div className="my-8">
         {groups.map((group) => (
-          <div key={group[0]} className="my-8">
+          <div
+            key={group[0]}
+            className="my-8"
+          >
             <h3 className="text-2xl font-bold">{group[0]}</h3>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {group[1].map((city) => (

@@ -13,13 +13,19 @@ export default function ImageAttributes({
 }: Props) {
   return (
     <>
-      <a href={licenseLink ?? '#'} className="block text-sm">
+      <a
+        href={licenseLink ?? '#'}
+        className="block text-sm"
+      >
         License:{' '}
         <span className="text-muted-foreground hover:underline">
           {license ?? '-'}
         </span>
       </a>
-      <a href={attributionLink ?? '#'} className="block text-sm break-all">
+      <a
+        href={attributionLink ?? '#'}
+        className="block text-sm break-all"
+      >
         Attribution:{' '}
         <span className="text-muted-foreground hover:underline">
           {attribute ?? '-'}

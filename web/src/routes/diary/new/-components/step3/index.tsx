@@ -31,7 +31,10 @@ export default function Step3() {
 
       <ScrollArea className="max-w-xl h-[384px] px-4 mt-4 mx-auto">
         {fields.map((friend, i) => (
-          <div key={friend.id} className="flex flex-col w-full mt-2 first:mt-0">
+          <div
+            key={friend.id}
+            className="flex flex-col w-full mt-2 first:mt-0"
+          >
             <UserCard
               fullName={friend.fullName}
               username={friend.username}

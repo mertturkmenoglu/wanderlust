@@ -44,7 +44,10 @@ export default function EditDialog({ form, name, index }: Props) {
         </DialogHeader>
         <div className="grid gap-4 py-2">
           <div className="">
-            <Label htmlFor="description" className="text-right">
+            <Label
+              htmlFor="description"
+              className="text-right"
+            >
               Description
             </Label>
             <Textarea

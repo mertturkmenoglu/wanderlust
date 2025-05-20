@@ -26,11 +26,17 @@ export default function Locations() {
               }
             }}
           >
-            <ToggleGroupItem value="grid" aria-label="Toggle bold">
+            <ToggleGroupItem
+              value="grid"
+              aria-label="Toggle bold"
+            >
               <Grid2X2Icon className="h-4 w-4" />
               <span className="ml-1">Grid</span>
             </ToggleGroupItem>
-            <ToggleGroupItem value="map" aria-label="Toggle italic">
+            <ToggleGroupItem
+              value="map"
+              aria-label="Toggle italic"
+            >
               <MapIcon className="h-4 w-4" />
               <span className="ml-1">Map</span>
             </ToggleGroupItem>
