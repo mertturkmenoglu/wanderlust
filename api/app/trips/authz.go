@@ -128,3 +128,8 @@ func (s *Service) canManageAmenities(trip *dto.Trip, userId string) bool {
 
 	return false
 }
+
+func (s *Service) canUpdateTrip(trip *dto.Trip, userId string) bool {
+	// Currently, only the owner can update the trip
+	return trip.OwnerID == userId
+}
