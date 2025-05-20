@@ -102,7 +102,7 @@ type GetTripByIdOutputBody struct {
 }
 
 type GetTripInvitesByTripIdInput struct {
-	TripID string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	ID string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
 }
 
 type GetTripInvitesByTripIdOutput struct {
@@ -283,8 +283,8 @@ type DeleteTripCommentInput struct {
 }
 
 type UpdateTripAmenitiesInput struct {
-	TripID string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
-	Body   UpdateTripAmenitiesInputBody
+	ID   string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	Body UpdateTripAmenitiesInputBody
 }
 
 type UpdateTripAmenitiesInputBody struct {

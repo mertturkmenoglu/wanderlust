@@ -61,7 +61,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/trips/{tripId}/invites",
+			Path:          "/trips/{id}/invites",
 			Summary:       "Get Invites for a Trip",
 			Description:   "Get all invites for a trip",
 			DefaultStatus: http.StatusOK,
@@ -74,7 +74,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getInvitesByTripId(ctx, input.TripID)
+			res, err := s.getInvitesByTripId(ctx, input.ID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -313,7 +313,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
-			Path:          "/trips/{tripId}",
+			Path:          "/trips/{id}",
 			Summary:       "Delete Trip",
 			Description:   "Delete a trip",
 			DefaultStatus: http.StatusNoContent,
@@ -453,7 +453,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
-			Path:          "/trips/{tripId}/amenities",
+			Path:          "/trips/{id}/amenities",
 			Summary:       "Manage Trip Amenities",
 			Description:   "Manage trip amenities by trip id",
 			DefaultStatus: http.StatusCreated,
@@ -466,7 +466,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.updateAmenities(ctx, input.TripID, input.Body)
+			res, err := s.updateAmenities(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
