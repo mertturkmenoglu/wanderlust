@@ -64,14 +64,23 @@ export function Item({ image, name, username, className, userId }: Props) {
 
       <CollapsibleContent>
         <div className="mt-4">
-          <RadioGroup value={role} onValueChange={setRole}>
+          <RadioGroup
+            value={role}
+            onValueChange={setRole}
+          >
             <div>Select a Role:</div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="participant" id="option-participant" />
+              <RadioGroupItem
+                value="participant"
+                id="option-participant"
+              />
               <Label htmlFor="option-participant">Participant</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="editor" id="option-editor" />
+              <RadioGroupItem
+                value="editor"
+                id="option-editor"
+              />
               <Label htmlFor="option-editor">Editor</Label>
             </div>
           </RadioGroup>

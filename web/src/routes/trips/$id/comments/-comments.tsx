@@ -83,7 +83,10 @@ export function Comments({ className }: Props) {
   return (
     <div className={cn(className)}>
       {flatten.map((comment) => (
-        <Item key={comment.id} comment={comment} />
+        <Item
+          key={comment.id}
+          comment={comment}
+        />
       ))}
 
       {query.hasNextPage && (
