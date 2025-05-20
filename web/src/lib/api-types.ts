@@ -4,7429 +4,7499 @@
  */
 
 export interface paths {
-  '/api/v2/aggregator/home': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Home Aggregation
-     * @description Get home aggregation
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['HomeAggregatorOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/amenities/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Amenities
-     * @description Get all amenities
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ListAmenitiesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Amenity
-     * @description Create a new amenity
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateAmenityInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateAmenityOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/amenities/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Amenity
-     * @description Delete an amenity by id
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of the amenity
-           * @example 15
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update Amenity
-     * @description Update an amenity by id
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of the amenity
-           * @example 15
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateAmenityInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateAmenityOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/auth/credentials/login': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Login with Credentials
-     * @description Login with email and password
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['LoginInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            Authorization?: string;
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['LoginOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/credentials/register': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Register with Credentials
-     * @description Register with email and password
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['RegisterInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['RegisterOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/forgot-password/reset': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Reset Password
-     * @description Reset the password of the user
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['ResetPasswordInputBody'];
-        };
-      };
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/forgot-password/send': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Send Forgot Password Email
-     * @description Send forgot password email to the user
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['SendForgotPasswordEmailInputBody'];
-        };
-      };
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/me': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Current User
-     * @description Get the current user information
-     */
-    get: operations['auth-get-me'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/verify-email/send': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Send Verification Email
-     * @description Send verification email to the user
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['SendVerificationEmailInputBody'];
-        };
-      };
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/verify-email/verify': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Verify Email
-     * @description Verify the email of the user
-     */
-    get: {
-      parameters: {
-        query: {
-          /**
-           * @description Verification code
-           * @example 123456
-           */
-          code: string;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/{provider}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Start OAuth Flow
-     * @description Start the OAuth flow for the given provider
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description The OAuth provider
-           * @example google
-           */
-          provider: 'google' | 'facebook';
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Temporary Redirect */
-        307: {
-          headers: {
-            Location?: string;
-            'Set-Cookie'?: string;
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/auth/{provider}/callback': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * OAuth Callback
-     * @description Callback for the OAuth flow
-     */
-    get: {
-      parameters: {
-        query?: {
-          /** @description Authorization code received from the OAuth provider */
-          code?: string;
-          /** @description State of the OAuth request */
-          state?: string;
-        };
-        header?: never;
-        path: {
-          /**
-           * @description The OAuth provider
-           * @example google
-           */
-          provider: 'google' | 'facebook';
-        };
-        cookie?: {
-          /** @description State of the OAuth request */
-          state?: string;
-        };
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Temporary Redirect */
-        307: {
-          headers: {
-            Location?: string;
-            'Set-Cookie'?: string;
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/bookmarks/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Bookmarks
-     * @description Get a list of bookmarks for the current user
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserBookmarksOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Bookmark
-     * @description Create a bookmark for a point of interest
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateBookmarkInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateBookmarkOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/bookmarks/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Bookmark
-     * @description Delete a bookmark for a point of interest
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/categories/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Categories
-     * @description Get all categories
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['ListCategoriesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Category
-     * @description Create a new category
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateCategoryInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateCategoryOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/categories/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Category
-     * @description Delete a category by id
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of the category
-           * @example 4
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update Category
-     * @description Update a category by id
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of the category
-           * @example 4
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateCategoryInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateCategoryOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/cities/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List cities
-     * @description List cities
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CitiesListOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create city
-     * @description Create a new city
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateCityInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateCityOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/cities/featured': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Featured cities
-     * @description Get featured cities
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CitiesFeaturedOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/cities/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get city
-     * @description Get city by ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description City ID
-           * @example 8102
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetCityByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete city
-     * @description Delete city by ID
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description City ID
-           * @example 8102
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update city
-     * @description Update city by ID
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description City ID
-           * @example 8102
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateCityInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateCityOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/collections/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Collections
-     * @description List all collections
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetCollectionsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Collection
-     * @description Create a collection
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateCollectionInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateCollectionOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/city/all': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get All City Collections
-     * @description Get all city collections
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetAllCityCollectionsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/city/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Collections For a City
-     * @description Get collections for a city
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of city
-           * @example 1
-           */
-          id: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetCollectionsForCityOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/poi/all': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get All POI Collections
-     * @description Get all POI collections
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetAllPoiCollectionsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/poi/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Collections For a POI
-     * @description Get collections for a POI
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetCollectionsForPoiOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Collection by ID
-     * @description Get a collection by ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetCollectionByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete Collection
-     * @description Delete a collection by id
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update Collection
-     * @description Update a collection by id
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateCollectionInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateCollectionOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/collections/{id}/city/{cityId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create Collection City Relation
-     * @description Create collection city relation
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-          /**
-           * @description ID of city
-           * @example 1
-           */
-          cityId: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    /**
-     * Delete Collection city Relation
-     * @description Delete collection city relation
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-          /**
-           * @description ID of city
-           * @example 1
-           */
-          cityId: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/{id}/items': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create Collection Item
-     * @description Add an item to a collection
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateCollectionItemInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateCollectionItemOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update Collection Items
-     * @description Update the items of a collection
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateCollectionItemsInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateCollectionItemsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/collections/{id}/items/{index}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Collection Item
-     * @description Delete a collection item by index
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-          /**
-           * @description Index of collection item
-           * @example 1
-           */
-          index: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/collections/{id}/poi/{poiId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create Collection POI Relation
-     * @description Create collection POI relation
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          poiId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    /**
-     * Delete Collection POI Relation
-     * @description Delete collection POI relation
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of collection
-           * @example 7323488942953598976
-           */
-          id: string;
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          poiId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/diary/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Diary Entries
-     * @description List diary entries for the current user
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-          /**
-           * @description Start date of the date range
-           * @example 2023-01-01
-           */
-          from?: string;
-          /**
-           * @description End date of the date range
-           * @example 2024-01-01
-           */
-          to?: string;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetDiaryEntriesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Diary Entry
-     * @description Create a diary entry
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateDiaryEntryInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateDiaryEntryOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/diary/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Diary Entry
-     * @description Get a diary entry by ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of diary entry
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetDiaryEntryByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete Diary Entry
-     * @description Delete a diary entry
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of diary entry
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/diary/{id}/media': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Upload Media to a Diary Entry
-     * @description Add media to a diary entry
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of diary entry
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UploadDiaryMediaInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UploadDiaryMediaOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/diary/{id}/sharing': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Change Diary Entry Sharing
-     * @description Change the sharing of a diary entry
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of diary entry
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/favorites/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Favorites
-     * @description Get a list of favorites for the current user
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserFavoritesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Favorite
-     * @description Create a favorite for a point of interest
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateFavoriteInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateFavoriteOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/favorites/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Favorite
-     * @description Delete a favorite for a point of interest
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/favorites/{username}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Favorites by Username
-     * @description Get a list of favorites for the given username
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserFavoritesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/health': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Health
-     * @description A simple health check mechanism to verify that the API is operational
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['HealthOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/images/upload/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Presigned URL
-     * @description Get a presigned URL for uploading an image
-     */
-    get: {
-      parameters: {
-        query: {
-          /** @example default */
-          bucket:
-            | 'default'
-            | 'profile-images'
-            | 'banner-images'
-            | 'pois'
-            | 'reviews'
-            | 'diaries';
-          /** @example png */
-          fileExt: 'jpg' | 'png' | 'webp' | 'jpeg';
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['PresignedUrlOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/lists/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get All Lists of User
-     * @description Get all lists of the current user
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetAllListsOfUserOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create List
-     * @description Create a new list
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateListInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateListOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/lists/status/{poiId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Check if List Includes POI
-     * @description Check if list includes given poi id
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          poiId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetListStatusesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/lists/user/{username}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Public Lists of User
-     * @description Get public lists of user with username
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path: {
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetPublicListsOfUserOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/lists/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get List by ID
-     * @description Get a list by id
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetListByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete List
-     * @description Delete a list by id
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update List
-     * @description Update a list by id
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateListInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateListOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/lists/{id}/items': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create List Item
-     * @description Add an item to a list by its id
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateListItemInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateListItemOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update List Items
-     * @description Update the items of a list
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/lists/{id}/items/{poiId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Remove List Item
-     * @description Remove a POI from a list
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/pois/drafts': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get All Drafts
-     * @description Get all drafts
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetAllPoiDraftsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Draft
-     * @description Create a new draft
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreatePoiDraftOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/pois/drafts/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Draft by ID
-     * @description Get a draft by id
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetPoiDraftOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete Draft
-     * @description Delete a draft
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update Draft by ID
-     * @description Update a draft by id
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdatePoiDraftInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdatePoiDraftOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/pois/drafts/{id}/media': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Upload Media for a Draft
-     * @description Upload media for a draft
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UploadPoiMediaInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdatePoiDraftOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/pois/drafts/{id}/media/{index}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Draft Media
-     * @description Delete a draft media by index
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-          /**
-           * @description Index of media
-           * @example 0
-           */
-          index: number;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdatePoiDraftOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/pois/drafts/{id}/publish': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Publish Draft
-     * @description Publish a draft
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['PublishPoiDraftOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/pois/peek': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Peek Point of Interests
-     * @description Get 25 pois
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['PeekPoisOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/pois/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Point of Interest
-     * @description Get a point of interest by ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetPoiByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/reviews/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create Review
-     * @description Create a review
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateReviewInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateReviewOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/reviews/poi/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Reviews by POI ID
-     * @description Get reviews by POI ID
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path: {
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetReviewsByPoiIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/reviews/poi/{id}/ratings': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get POI ratings
-     * @description Get ratings for a POI
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of point of interest
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetRatingsByPoiIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/reviews/user/{username}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Reviews by Username
-     * @description Get reviews by username
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetReviewsByUsernameOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/reviews/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Review by ID
-     * @description Get a review by ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of review
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetReviewByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete Review
-     * @description Delete a review
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of review
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateReviewOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/reviews/{id}/media': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Upload Media for a Review
-     * @description Upload media for a review
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description ID of draft
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UploadReviewMediaInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UploadReviewMediaOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get My Trips
-     * @description Get all trips for the current user
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetAllTripsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Trip
-     * @description Create a new trip
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateTripInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateTripOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/invites': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get My Invites
-     * @description Get all invites for the current user
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetMyTripInvitesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Trip
-     * @description Get a trip by its ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetTripByIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Delete Trip
-     * @description Delete a trip
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{id}/amenities': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Manage Trip Amenities
-     * @description Manage trip amenities by trip id
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateTripAmenitiesInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateTripAmenitiesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/trips/{id}/comments/': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Trip Comments
-     * @description Get comments for a trip
-     */
-    get: {
-      parameters: {
-        query?: {
-          /**
-           * @description Page number
-           * @example 2
-           */
-          page?: number;
-          /**
-           * @description Page size
-           * @example 20
-           */
-          pageSize?: number;
-        };
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetTripCommentsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    /**
-     * Create Comment
-     * @description Create a comment for a trip
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateTripCommentInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateTripCommentOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{id}/invite': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Invite Participants
-     * @description Invite participants to a trip
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['CreateTripInviteInputBody'];
-        };
-      };
-      responses: {
-        /** @description Created */
-        201: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['CreateTripInviteOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{id}/invites': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Invites for a Trip
-     * @description Get all invites for a trip
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          id: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetTripInvitesByTripIdOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{tripId}/comments/{commentId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete Trip Comment
-     * @description Delete a trip comment
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          tripId: string;
-          /**
-           * @description Comment ID
-           * @example 7323488942953598976
-           */
-          commentId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    /**
-     * Update Trip Comment
-     * @description Update a comment for a trip
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          tripId: string;
-          /**
-           * @description Comment ID
-           * @example 7323488942953598976
-           */
-          commentId: string;
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateTripCommentInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateTripCommentOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/trips/{tripId}/invites/{inviteId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Trip Invite Details
-     * @description Get a trip invite details by its ID
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          tripId: string;
-          /**
-           * @description Invite ID
-           * @example 7323488942953598976
-           */
-          inviteId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetTripInviteDetailsOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    /**
-     * Remove Invite
-     * @description Remove an invite by its ID
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          tripId: string;
-          /**
-           * @description Invite ID
-           * @example 7323488942953598976
-           */
-          inviteId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{tripId}/invites/{inviteId}/{action}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Accept/Decline Trip Invite
-     * @description Accept/Decline a trip invite by its ID
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          tripId: string;
-          /**
-           * @description Invite ID
-           * @example 7323488942953598976
-           */
-          inviteId: string;
-          /**
-           * @description Action to perform on the invite
-           * @example accept
-           */
-          action: 'accept' | 'decline';
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Accepted */
-        202: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['TripInviteActionOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/trips/{tripId}/participants/{participantId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Remove Participant
-     * @description Remove a participant from a trip
-     */
-    delete: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Trip ID
-           * @example 7323488942953598976
-           */
-          tripId: string;
-          /**
-           * @description Participant User ID
-           * @example 7323488942953598976
-           */
-          participantId: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description No Content */
-        204: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/follow/{username}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Follow User
-     * @description Follow or unfollow user by username
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['FollowUserOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/image/{type}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Update User Image
-     * @description Update the profile image or the banner image of the user
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Type of image
-           * @example profile
-           */
-          type: 'profile' | 'banner';
-        };
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateUserProfileImageInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateUserProfileImageOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/profile': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update User Profile
-     * @description Update user profile of the current user
-     */
-    patch: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody: {
-        content: {
-          'application/json': components['schemas']['UpdateUserProfileInputBody'];
-        };
-      };
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['UpdateUserProfileOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    trace?: never;
-  };
-  '/api/v2/users/{username}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Profile
-     * @description Get a user profile by username
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserProfileOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/{username}/activities': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Activities
-     * @description Get user activities by username
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserActivitiesOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/{username}/followers': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Followers
-     * @description Get user followers by username
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserFollowersOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/{username}/following': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get User Following
-     * @description Get user following by username
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['GetUserFollowingOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/{username}/following/search': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Search User Following
-     * @description Search user following by username
-     */
-    get: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['SearchUserFollowingOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/api/v2/users/{username}/make-verified': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Make User Verified
-     * @description Make user verified by username
-     */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path: {
-          /**
-           * @description Username of the user
-           * @example johndoe
-           */
-          username: string;
-        };
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description OK */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/json': components['schemas']['MakeUserVerifiedOutputBody'];
-          };
-        };
-        /** @description Error */
-        default: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            'application/problem+json': components['schemas']['ErrorModel'];
-          };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/api/v2/aggregator/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Home Aggregation
+         * @description Get home aggregation
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HomeAggregatorOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/amenities/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Amenities
+         * @description Get all amenities
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListAmenitiesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Amenity
+         * @description Create a new amenity
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateAmenityInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateAmenityOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/amenities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Amenity
+         * @description Delete an amenity by id
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the amenity
+                     * @example 15
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Amenity
+         * @description Update an amenity by id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the amenity
+                     * @example 15
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateAmenityInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateAmenityOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/auth/credentials/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Login with Credentials
+         * @description Login with email and password
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["LoginInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        Authorization?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/credentials/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register with Credentials
+         * @description Register with email and password
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RegisterInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RegisterOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/forgot-password/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset Password
+         * @description Reset the password of the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ResetPasswordInputBody"];
+                };
+            };
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/forgot-password/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Forgot Password Email
+         * @description Send forgot password email to the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SendForgotPasswordEmailInputBody"];
+                };
+            };
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Current User
+         * @description Get the current user information
+         */
+        get: operations["auth-get-me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/verify-email/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Verification Email
+         * @description Send verification email to the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SendVerificationEmailInputBody"];
+                };
+            };
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/verify-email/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify Email
+         * @description Verify the email of the user
+         */
+        get: {
+            parameters: {
+                query: {
+                    /**
+                     * @description Verification code
+                     * @example 123456
+                     */
+                    code: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Start OAuth Flow
+         * @description Start the OAuth flow for the given provider
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description The OAuth provider
+                     * @example google
+                     */
+                    provider: "google" | "facebook";
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Temporary Redirect */
+                307: {
+                    headers: {
+                        Location?: string;
+                        "Set-Cookie"?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/{provider}/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * OAuth Callback
+         * @description Callback for the OAuth flow
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Authorization code received from the OAuth provider */
+                    code?: string;
+                    /** @description State of the OAuth request */
+                    state?: string;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description The OAuth provider
+                     * @example google
+                     */
+                    provider: "google" | "facebook";
+                };
+                cookie?: {
+                    /** @description State of the OAuth request */
+                    state?: string;
+                };
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Temporary Redirect */
+                307: {
+                    headers: {
+                        Location?: string;
+                        "Set-Cookie"?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/bookmarks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Bookmarks
+         * @description Get a list of bookmarks for the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserBookmarksOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Bookmark
+         * @description Create a bookmark for a point of interest
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateBookmarkInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateBookmarkOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/bookmarks/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Bookmark
+         * @description Delete a bookmark for a point of interest
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/categories/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Categories
+         * @description Get all categories
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ListCategoriesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Category
+         * @description Create a new category
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCategoryInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateCategoryOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/categories/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Category
+         * @description Delete a category by id
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the category
+                     * @example 4
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Category
+         * @description Update a category by id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the category
+                     * @example 4
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateCategoryInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateCategoryOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/cities/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List cities
+         * @description List cities
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CitiesListOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create city
+         * @description Create a new city
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCityInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateCityOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/cities/featured": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Featured cities
+         * @description Get featured cities
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CitiesFeaturedOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/cities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get city
+         * @description Get city by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description City ID
+                     * @example 8102
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetCityByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete city
+         * @description Delete city by ID
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description City ID
+                     * @example 8102
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update city
+         * @description Update city by ID
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description City ID
+                     * @example 8102
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateCityInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateCityOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/collections/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Collections
+         * @description List all collections
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetCollectionsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Collection
+         * @description Create a collection
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCollectionInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateCollectionOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/city/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All City Collections
+         * @description Get all city collections
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllCityCollectionsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/city/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Collections For a City
+         * @description Get collections for a city
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of city
+                     * @example 1
+                     */
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetCollectionsForCityOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/poi/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All POI Collections
+         * @description Get all POI collections
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllPoiCollectionsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/poi/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Collections For a POI
+         * @description Get collections for a POI
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetCollectionsForPoiOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Collection by ID
+         * @description Get a collection by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetCollectionByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Collection
+         * @description Delete a collection by id
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Collection
+         * @description Update a collection by id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateCollectionInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateCollectionOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/collections/{id}/city/{cityId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Collection City Relation
+         * @description Create collection city relation
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of city
+                     * @example 1
+                     */
+                    cityId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        /**
+         * Delete Collection city Relation
+         * @description Delete collection city relation
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of city
+                     * @example 1
+                     */
+                    cityId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Collection Item
+         * @description Add an item to a collection
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateCollectionItemInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateCollectionItemOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Collection Items
+         * @description Update the items of a collection
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateCollectionItemsInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateCollectionItemsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/collections/{id}/items/{index}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Collection Item
+         * @description Delete a collection item by index
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description Index of collection item
+                     * @example 1
+                     */
+                    index: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/collections/{id}/poi/{poiId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Collection POI Relation
+         * @description Create collection POI relation
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    poiId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        /**
+         * Delete Collection POI Relation
+         * @description Delete collection POI relation
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of collection
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    poiId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Diary Entries
+         * @description List diary entries for the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description Start date of the date range
+                     * @example 2023-01-01
+                     */
+                    from?: string;
+                    /**
+                     * @description End date of the date range
+                     * @example 2024-01-01
+                     */
+                    to?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetDiaryEntriesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Diary Entry
+         * @description Create a diary entry
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateDiaryEntryInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateDiaryEntryOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Diary Entry
+         * @description Get a diary entry by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetDiaryEntryByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Diary Entry
+         * @description Delete a diary entry
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media to a Diary Entry
+         * @description Add media to a diary entry
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadDiaryMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UploadDiaryMediaOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}/sharing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change Diary Entry Sharing
+         * @description Change the sharing of a diary entry
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/favorites/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Favorites
+         * @description Get a list of favorites for the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFavoritesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Favorite
+         * @description Create a favorite for a point of interest
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateFavoriteInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateFavoriteOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/favorites/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Favorite
+         * @description Delete a favorite for a point of interest
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/favorites/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Favorites by Username
+         * @description Get a list of favorites for the given username
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFavoritesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Health
+         * @description A simple health check mechanism to verify that the API is operational
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HealthOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/images/upload/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Presigned URL
+         * @description Get a presigned URL for uploading an image
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @example default */
+                    bucket: "default" | "profile-images" | "banner-images" | "pois" | "reviews" | "diaries";
+                    /** @example png */
+                    fileExt: "jpg" | "png" | "webp" | "jpeg";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PresignedUrlOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Lists of User
+         * @description Get all lists of the current user
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllListsOfUserOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create List
+         * @description Create a new list
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateListInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateListOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/status/{poiId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check if List Includes POI
+         * @description Check if list includes given poi id
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    poiId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetListStatusesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/user/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Public Lists of User
+         * @description Get public lists of user with username
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetPublicListsOfUserOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/lists/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get List by ID
+         * @description Get a list by id
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetListByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete List
+         * @description Delete a list by id
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update List
+         * @description Update a list by id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateListInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateListOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/lists/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create List Item
+         * @description Add an item to a list by its id
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateListItemInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateListItemOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update List Items
+         * @description Update the items of a list
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/lists/{id}/items/{poiId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove List Item
+         * @description Remove a POI from a list
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Drafts
+         * @description Get all drafts
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllPoiDraftsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Draft
+         * @description Create a new draft
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreatePoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/drafts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Draft by ID
+         * @description Get a draft by id
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetPoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Draft
+         * @description Delete a draft
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Draft by ID
+         * @description Update a draft by id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdatePoiDraftInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/pois/drafts/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media for a Draft
+         * @description Upload media for a draft
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadPoiMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/drafts/{id}/media/{index}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Draft Media
+         * @description Delete a draft media by index
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description Index of media
+                     * @example 0
+                     */
+                    index: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/drafts/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish Draft
+         * @description Publish a draft
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublishPoiDraftOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/peek": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Peek Point of Interests
+         * @description Get 25 pois
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PeekPoisOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Point of Interest
+         * @description Get a point of interest by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetPoiByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Review
+         * @description Create a review
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateReviewInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateReviewOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/poi/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reviews by POI ID
+         * @description Get reviews by POI ID
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewsByPoiIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/poi/{id}/ratings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get POI ratings
+         * @description Get ratings for a POI
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetRatingsByPoiIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/user/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reviews by Username
+         * @description Get reviews by username
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewsByUsernameOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Review by ID
+         * @description Get a review by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of review
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Review
+         * @description Delete a review
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of review
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateReviewOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reviews/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media for a Review
+         * @description Upload media for a review
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of draft
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadReviewMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UploadReviewMediaOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Trips
+         * @description Get all trips for the current user
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetAllTripsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Trip
+         * @description Create a new trip
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateTripInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateTripOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get My Invites
+         * @description Get all invites for the current user
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetMyTripInvitesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trip
+         * @description Get a trip by its ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Delete Trip
+         * @description Delete a trip
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Trip
+         * @description Update a trip
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/trips/{id}/amenities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Manage Trip Amenities
+         * @description Manage trip amenities by trip id
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripAmenitiesInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripAmenitiesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/trips/{id}/comments/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trip Comments
+         * @description Get comments for a trip
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripCommentsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Comment
+         * @description Create a comment for a trip
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateTripCommentInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateTripCommentOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{id}/invite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Invite Participants
+         * @description Invite participants to a trip
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateTripInviteInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateTripInviteOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{id}/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Invites for a Trip
+         * @description Get all invites for a trip
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripInvitesByTripIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/comments/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Trip Comment
+         * @description Delete a trip comment
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Comment ID
+                     * @example 7323488942953598976
+                     */
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Trip Comment
+         * @description Update a comment for a trip
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Comment ID
+                     * @example 7323488942953598976
+                     */
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripCommentInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripCommentOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/invites/{inviteId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Trip Invite Details
+         * @description Get a trip invite details by its ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Invite ID
+                     * @example 7323488942953598976
+                     */
+                    inviteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetTripInviteDetailsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /**
+         * Remove Invite
+         * @description Remove an invite by its ID
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Invite ID
+                     * @example 7323488942953598976
+                     */
+                    inviteId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/invites/{inviteId}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept/Decline Trip Invite
+         * @description Accept/Decline a trip invite by its ID
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Invite ID
+                     * @example 7323488942953598976
+                     */
+                    inviteId: string;
+                    /**
+                     * @description Action to perform on the invite
+                     * @example accept
+                     */
+                    action: "accept" | "decline";
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TripInviteActionOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/participants/{participantId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove Participant
+         * @description Remove a participant from a trip
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Participant User ID
+                     * @example 7323488942953598976
+                     */
+                    participantId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/follow/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Follow User
+         * @description Follow or unfollow user by username
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["FollowUserOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/image/{type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update User Image
+         * @description Update the profile image or the banner image of the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Type of image
+                     * @example profile
+                     */
+                    type: "profile" | "banner";
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUserProfileImageInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateUserProfileImageOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update User Profile
+         * @description Update user profile of the current user
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUserProfileInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateUserProfileOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/users/{username}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Profile
+         * @description Get a user profile by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserProfileOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Activities
+         * @description Get user activities by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserActivitiesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/followers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Followers
+         * @description Get user followers by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFollowersOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/following": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get User Following
+         * @description Get user following by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetUserFollowingOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/following/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search User Following
+         * @description Search user following by username
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SearchUserFollowingOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/users/{username}/make-verified": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make User Verified
+         * @description Make user verified by username
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Username of the user
+                     * @example johndoe
+                     */
+                    username: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["MakeUserVerifiedOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    Address: {
-      city: components['schemas']['City'];
-      /**
-       * Format: int32
-       * @description ID of city of address of point of interest
-       */
-      cityId: number;
-      /**
-       * Format: int32
-       * @description ID of address of point of interest
-       */
-      id: number;
-      /**
-       * Format: double
-       * @description Latitude of address of point of interest
-       */
-      lat: number;
-      /** @description Line 1 of address of point of interest */
-      line1: string;
-      /** @description Line 2 of address of point of interest */
-      line2: string | null;
-      /**
-       * Format: double
-       * @description Longitude of address of point of interest
-       */
-      lng: number;
-      /** @description Postal code of address of point of interest */
-      postalCode: string | null;
-    };
-    Amenity: {
-      /**
-       * Format: int32
-       * @description ID of the amenity
-       */
-      id: number;
-      /** @description Name of the amenity */
-      name: string;
-    };
-    Bookmark: {
-      /**
-       * Format: date-time
-       * @description Created at time of bookmark
-       */
-      createdAt: string;
-      /**
-       * Format: int32
-       * @description ID of bookmark
-       */
-      id: number;
-      poi: components['schemas']['BookmarkPoi'];
-      /** @description ID of point of interest */
-      poiId: string;
-      /** @description ID of user */
-      userId: string;
-    };
-    BookmarkPoi: {
-      address: components['schemas']['Address'];
-      /**
-       * Format: int32
-       * @description ID of address of point of interest
-       */
-      addressId: number;
-      category: components['schemas']['Category'];
-      /**
-       * Format: int32
-       * @description ID of category of point of interest
-       */
-      categoryId: number;
-      firstMedia: components['schemas']['Media'];
-      /** @description ID of point of interest */
-      id: string;
-      /** @description Name of point of interest */
-      name: string;
-    };
-    Category: {
-      /**
-       * Format: int32
-       * @description ID of the category
-       */
-      id: number;
-      /** @description Image URL */
-      image: string;
-      /** @description Name of the category */
-      name: string;
-    };
-    CitiesFeaturedOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      cities: components['schemas']['City'][];
-    };
-    CitiesListOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      cities: components['schemas']['City'][];
-    };
-    City: {
-      coordinates: components['schemas']['CityCoordinates'];
-      country: components['schemas']['CityCountry'];
-      /** @description City description */
-      description: string;
-      /**
-       * Format: int32
-       * @description City ID
-       */
-      id: number;
-      image: components['schemas']['CityImage'];
-      /** @description City name */
-      name: string;
-      state: components['schemas']['CityState'];
-    };
-    CityCoordinates: {
-      /**
-       * Format: double
-       * @description Latitude
-       */
-      latitude: number;
-      /**
-       * Format: double
-       * @description Longitude
-       */
-      longitude: number;
-    };
-    CityCountry: {
-      /** @description Country code */
-      code: string;
-      /** @description Country name */
-      name: string;
-    };
-    CityImage: {
-      /** @description Image attribution */
-      attribution: string | null;
-      /** @description Image attribution link */
-      attributionLink: string | null;
-      /** @description Image license */
-      license: string | null;
-      /** @description Image license link */
-      licenseLink: string | null;
-      /** @description Image URL */
-      url: string;
-    };
-    CityState: {
-      /** @description State code */
-      code: string;
-      /** @description State name */
-      name: string;
-    };
-    Collection: {
-      /** @description Created at time of collection */
-      createdAt: string;
-      /** @description Description of collection */
-      description: string;
-      /** @description ID of collection */
-      id: string;
-      items: components['schemas']['CollectionItem'][];
-      /** @description Name of collection */
-      name: string;
-    };
-    CollectionItem: {
-      /** @description ID of collection */
-      collectionId: string;
-      /**
-       * Format: date-time
-       * @description Created at time of collection item
-       */
-      createdAt: string;
-      /**
-       * Format: int32
-       * @description Index of collection item in the list
-       */
-      listIndex: number;
-      poi: components['schemas']['Poi'];
-      /** @description ID of point of interest */
-      poiId: string;
-    };
-    CreateAmenityInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Name of the amenity */
-      name: string;
-    };
-    CreateAmenityOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: int32
-       * @description ID of the amenity
-       */
-      id: number;
-      /** @description Name of the amenity */
-      name: string;
-    };
-    CreateBookmarkInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description ID of point of interest */
-      poiId: string;
-    };
-    CreateBookmarkOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: date-time
-       * @description Created at time of bookmark
-       */
-      createdAt: string;
-      /**
-       * Format: int32
-       * @description ID of bookmark
-       */
-      id: number;
-      /** @description ID of point of interest */
-      poiId: string;
-      /** @description ID of user */
-      userId: string;
-    };
-    CreateCategoryInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: int32
-       * @description ID of the category
-       */
-      id: number;
-      /**
-       * Format: uri
-       * @description Image URL
-       */
-      image: string;
-      /** @description Name of the category */
-      name: string;
-    };
-    CreateCategoryOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: int32
-       * @description ID of the category
-       */
-      id: number;
-      /** @description Image URL */
-      image: string;
-      /** @description Name of the category */
-      name: string;
-    };
-    CreateCityInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Country code */
-      countryCode: string;
-      /** @description Country name */
-      countryName: string;
-      /** @description City description */
-      description: string;
-      /**
-       * Format: int32
-       * @description City ID
-       */
-      id: number;
-      /** @description Image attribution */
-      imageAttribute: string;
-      /** @description Image attribution link */
-      imageAttributionLink: string;
-      /** @description Image license */
-      imageLicense: string;
-      /**
-       * Format: uri
-       * @description Image license link
-       */
-      imageLicenseLink: string;
-      /**
-       * Format: uri
-       * @description Image URL
-       */
-      imageUrl: string;
-      /**
-       * Format: double
-       * @description Latitude
-       */
-      latitude: number;
-      /**
-       * Format: double
-       * @description Longitude
-       */
-      longitude: number;
-      /** @description City name */
-      name: string;
-      /** @description State code */
-      stateCode: string;
-      /** @description State name */
-      stateName: string;
-    };
-    CreateCityOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      coordinates: components['schemas']['CityCoordinates'];
-      country: components['schemas']['CityCountry'];
-      /** @description City description */
-      description: string;
-      /**
-       * Format: int32
-       * @description City ID
-       */
-      id: number;
-      image: components['schemas']['CityImage'];
-      /** @description City name */
-      name: string;
-      state: components['schemas']['CityState'];
-    };
-    CreateCollectionInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Description of the collection */
-      description: string;
-      /** @description Name of the collection */
-      name: string;
-    };
-    CreateCollectionItemInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description ID of point of interest */
-      poiId: string;
-    };
-    CreateCollectionItemOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collection: components['schemas']['Collection'];
-    };
-    CreateCollectionOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collection: components['schemas']['Collection'];
-    };
-    CreateDiaryEntryInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: date
-       * @description The date of the diary entry
-       */
-      date: string;
-      /** @description The description of the diary entry */
-      description: string;
-      /** @description The IDs of the friends */
-      friends: string[];
-      locations: components['schemas']['CreateDiaryEntryLocation'][];
-      /** @description Whether the diary entry is shared with friends or not */
-      shareWithFriends: boolean;
-      /** @description The title of the diary entry */
-      title: string;
-    };
-    CreateDiaryEntryLocation: {
-      /** @description The description of the location */
-      description?: string | null;
-      /** @description The ID of the point of interest */
-      id: string;
-    };
-    CreateDiaryEntryOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      entry: components['schemas']['DiaryEntry'];
-    };
-    CreateFavoriteInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description ID of point of interest */
-      poiId: string;
-    };
-    CreateFavoriteOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: date-time
-       * @description Created at time of favorite
-       */
-      createdAt: string;
-      /**
-       * Format: int32
-       * @description ID of favorite
-       */
-      id: number;
-      /** @description ID of point of interest */
-      poiId: string;
-      /** @description ID of user */
-      userId: string;
-    };
-    CreateListInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      isPublic: boolean;
-      name: string;
-    };
-    CreateListItemInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      poiId: string;
-    };
-    CreateListItemOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: date-time
-       * @description Created at time of list item
-       */
-      createdAt: string;
-      /** @description ID of the list */
-      listId: string;
-      /**
-       * Format: int32
-       * @description Index of the POI in the list
-       */
-      listIndex: number;
-      /** @description ID of the POI */
-      poiId: string;
-    };
-    CreateListOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      list: components['schemas']['List'];
-    };
-    CreatePoiDraftOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      draft: {
-        [key: string]: unknown;
-      };
-    };
-    CreateReviewInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Content of the review */
-      content: string;
-      /** @description ID of point of interest */
-      poiId: string;
-      /**
-       * Format: int32
-       * @description Rating of the review
-       */
-      rating: number;
-    };
-    CreateReviewOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      review: components['schemas']['Review'];
-    };
-    CreateTripCommentInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Content of comment */
-      content: string;
-    };
-    CreateTripCommentOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      comment: components['schemas']['TripComment'];
-    };
-    CreateTripInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Description of the trip */
-      description: string;
-      /**
-       * Format: date-time
-       * @description End datetime of the trip
-       */
-      endAt: string;
-      /**
-       * Format: date-time
-       * @description Start datetime of the trip
-       */
-      startAt: string;
-      /** @description Title of the trip */
-      title: string;
-      /**
-       * @description Visibility level of the trip
-       * @enum {string}
-       */
-      visibility: 'public' | 'private' | 'friends';
-    };
-    CreateTripInviteInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * @description Role of invite
-       * @enum {string}
-       */
-      role: 'participant' | 'editor';
-      /** @description User ID */
-      toId: string;
-    };
-    CreateTripInviteOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      invite: components['schemas']['TripInvite'];
-    };
-    CreateTripOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      trip: components['schemas']['Trip'];
-    };
-    DiaryEntry: {
-      /**
-       * Format: date-time
-       * @description The created at time of the diary entry
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description The date of the diary entry
-       */
-      date: string;
-      /** @description The description of the diary entry */
-      description: string;
-      friends: components['schemas']['Profile'][];
-      /** @description The ID of the diary entry */
-      id: string;
-      locations: components['schemas']['DiaryLocation'][];
-      media: components['schemas']['DiaryMedia'][];
-      /** @description Whether the diary entry is shared with friends or not */
-      shareWithFriends: boolean;
-      /** @description The title of the diary entry */
-      title: string;
-      /**
-       * Format: date-time
-       * @description The updated at time of the diary entry
-       */
-      updatedAt: string;
-      user: components['schemas']['Profile'];
-      /** @description The ID of the user */
-      userId: string;
-    };
-    DiaryLocation: {
-      /** @description The description of the location */
-      description: string | null;
-      /**
-       * Format: int32
-       * @description The list index of the location
-       */
-      listIndex: number;
-      poi: components['schemas']['Poi'];
-    };
-    DiaryMedia: {
-      /** @description The alt text of the media */
-      alt: string;
-      /** @description The caption of the media */
-      caption: string | null;
-      /**
-       * Format: date-time
-       * @description The created at time of the media
-       */
-      createdAt: string;
-      /** @description The ID of the diary entry */
-      diaryEntryId: string;
-      /**
-       * Format: int64
-       * @description The ID of the media
-       */
-      id: number;
-      /**
-       * Format: int32
-       * @description The media order of the media
-       */
-      mediaOrder: number;
-      /** @description The URL of the media */
-      url: string;
-    };
-    ErrorDetail: {
-      /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
-      location?: string;
-      /** @description Error message text */
-      message?: string;
-      /** @description The value at the given location */
-      value?: unknown;
-    };
-    ErrorModel: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description A human-readable explanation specific to this occurrence of the problem. */
-      detail?: string;
-      /** @description Optional list of individual error details */
-      errors?: components['schemas']['ErrorDetail'][];
-      /**
-       * Format: uri
-       * @description A URI reference that identifies the specific occurrence of the problem.
-       */
-      instance?: string;
-      /**
-       * Format: int64
-       * @description HTTP status code
-       */
-      status?: number;
-      /** @description A short, human-readable summary of the problem type. This value should not change between occurrences of the error. */
-      title?: string;
-      /**
-       * Format: uri
-       * @description A URI reference to human-readable documentation for the error.
-       * @default about:blank
-       */
-      type: string;
-    };
-    Favorite: {
-      /**
-       * Format: date-time
-       * @description Created at time of favorite
-       */
-      createdAt: string;
-      /**
-       * Format: int32
-       * @description ID of favorite
-       */
-      id: number;
-      poi: components['schemas']['FavoritePoi'];
-      /** @description ID of point of interest */
-      poiId: string;
-      /** @description ID of user */
-      userId: string;
-    };
-    FavoritePoi: {
-      address: components['schemas']['Address'];
-      /**
-       * Format: int32
-       * @description ID of address of point of interest
-       */
-      addressId: number;
-      category: components['schemas']['Category'];
-      /**
-       * Format: int32
-       * @description ID of category of point of interest
-       */
-      categoryId: number;
-      firstMedia: components['schemas']['Media'];
-      /** @description ID of point of interest */
-      id: string;
-      /** @description Name of point of interest */
-      name: string;
-    };
-    FollowUserOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      isFollowing: boolean;
-    };
-    GetAllCityCollectionsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collections: components['schemas']['Collection'][];
-    };
-    GetAllListsOfUserOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      lists: components['schemas']['List'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetAllPoiCollectionsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collections: components['schemas']['Collection'][];
-    };
-    GetAllPoiDraftsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      drafts: {
-        [key: string]: unknown;
-      }[];
-    };
-    GetAllTripsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      trips: components['schemas']['Trip'][];
-    };
-    GetCityByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      coordinates: components['schemas']['CityCoordinates'];
-      country: components['schemas']['CityCountry'];
-      /** @description City description */
-      description: string;
-      /**
-       * Format: int32
-       * @description City ID
-       */
-      id: number;
-      image: components['schemas']['CityImage'];
-      /** @description City name */
-      name: string;
-      state: components['schemas']['CityState'];
-    };
-    GetCollectionByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collection: components['schemas']['Collection'];
-    };
-    GetCollectionsForCityOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collections: components['schemas']['Collection'][];
-    };
-    GetCollectionsForPoiOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collections: components['schemas']['Collection'][];
-    };
-    GetCollectionsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collections: components['schemas']['Collection'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetDiaryEntriesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      entries: components['schemas']['DiaryEntry'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetDiaryEntryByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      entry: components['schemas']['DiaryEntry'];
-    };
-    GetListByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      list: components['schemas']['List'];
-    };
-    GetListStatusesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      statuses: components['schemas']['ListStatus'][];
-    };
-    GetMeOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Banner image of the user */
-      bannerImage: string | null;
-      /** @description Bio of the user */
-      bio: string | null;
-      /**
-       * Format: date-time
-       * @description Creation date of the user
-       */
-      createdAt: string;
-      /** @description Email of the user */
-      email: string;
-      /** @description Facebook ID of the user */
-      facebookId: string | null;
-      /**
-       * Format: int32
-       * @description Number of followers
-       */
-      followersCount: number;
-      /**
-       * Format: int32
-       * @description Number of following
-       */
-      followingCount: number;
-      /** @description Full name of the user */
-      fullName: string;
-      /** @description Google ID of the user */
-      googleId: string | null;
-      /** @description ID of the user */
-      id: string;
-      /** @description Is the user active */
-      isActive: boolean;
-      /** @description Is the user a business account */
-      isBusinessAccount: boolean;
-      /** @description Is the email verified */
-      isEmailVerified: boolean;
-      /** @description Is the onboarding completed */
-      isOnboardingCompleted: boolean;
-      /** @description Is the user verified */
-      isVerified: boolean;
-      /**
-       * Format: date-time
-       * @description Last login date of the user
-       */
-      lastLogin: string;
-      /** @description Phone number of the user */
-      phone: string | null;
-      /** @description Profile image of the user */
-      profileImage: string | null;
-      /** @description Pronouns of the user */
-      pronouns: string | null;
-      /** @description Role of the user */
-      role: string;
-      /**
-       * Format: date-time
-       * @description Last update date of the user
-       */
-      updatedAt: string;
-      /** @description Username of the user */
-      username: string;
-      /** @description Website of the user */
-      website: string | null;
-    };
-    GetMyTripInvitesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      invites: components['schemas']['TripInvite'][];
-    };
-    GetPoiByIdMeta: {
-      isBookmarked: boolean;
-      isFavorite: boolean;
-    };
-    GetPoiByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      meta: components['schemas']['GetPoiByIdMeta'];
-      poi: components['schemas']['Poi'];
-    };
-    GetPoiDraftOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      draft: {
-        [key: string]: unknown;
-      };
-    };
-    GetPublicListsOfUserOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      lists: components['schemas']['List'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetRatingsByPoiIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      ratings: {
-        [key: string]: number;
-      };
-      /** Format: int64 */
-      totalVotes: number;
-    };
-    GetReviewByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      review: components['schemas']['Review'];
-    };
-    GetReviewsByPoiIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      pagination: components['schemas']['PaginationInfo'];
-      reviews: components['schemas']['Review'][];
-    };
-    GetReviewsByUsernameOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      pagination: components['schemas']['PaginationInfo'];
-      reviews: components['schemas']['Review'][];
-    };
-    GetTripByIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      trip: components['schemas']['Trip'];
-    };
-    GetTripCommentsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      comments: components['schemas']['TripComment'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetTripInviteDetailsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      inviteDetail: components['schemas']['TripInviteDetail'];
-    };
-    GetTripInvitesByTripIdOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      invites: components['schemas']['TripInvite'][];
-    };
-    GetUserActivitiesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      activities: {
-        [key: string]: unknown;
-      }[];
-    };
-    GetUserBookmarksOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      bookmarks: components['schemas']['Bookmark'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetUserFavoritesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      favorites: components['schemas']['Favorite'][];
-      pagination: components['schemas']['PaginationInfo'];
-    };
-    GetUserFollowersOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      followers: components['schemas']['Profile'][];
-    };
-    GetUserFollowingOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      following: components['schemas']['Profile'][];
-    };
-    GetUserProfileOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      meta: components['schemas']['GetUserProfileOutputMeta'];
-      profile: components['schemas']['Profile'];
-    };
-    GetUserProfileOutputMeta: {
-      isFollowing: boolean;
-    };
-    HealthOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Health message of the API */
-      message: string;
-    };
-    HomeAggregatorOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      favorites: components['schemas']['Poi'][];
-      featured: components['schemas']['Poi'][];
-      new: components['schemas']['Poi'][];
-      popular: components['schemas']['Poi'][];
-    };
-    List: {
-      /**
-       * Format: date-time
-       * @description Date and time when the list was created
-       */
-      createdAt: string;
-      /** @description ID of the list */
-      id: string;
-      /** @description Whether the list is public or not */
-      isPublic: boolean;
-      items: components['schemas']['ListItem'][];
-      /** @description Name of the list */
-      name: string;
-      /**
-       * Format: date-time
-       * @description Date and time when the list was last updated
-       */
-      updatedAt: string;
-      user: components['schemas']['ListUser'];
-      /** @description ID of the user that owns the list */
-      userId: string;
-    };
-    ListAmenitiesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      amenities: components['schemas']['Amenity'][];
-    };
-    ListCategoriesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      categories: components['schemas']['Category'][];
-    };
-    ListItem: {
-      /** Format: date-time */
-      createdAt: string;
-      listId: string;
-      /** Format: int32 */
-      listIndex: number;
-      poi: components['schemas']['ListItemPoi'];
-      poiId: string;
-    };
-    ListItemPoi: {
-      address: components['schemas']['Address'];
-      /** Format: int32 */
-      addressId: number;
-      category: components['schemas']['Category'];
-      /** Format: int32 */
-      categoryId: number;
-      firstMedia: components['schemas']['Media'];
-      id: string;
-      name: string;
-    };
-    ListStatus: {
-      /** @description ID of the list */
-      id: string;
-      /** @description Whether the POI is included in the list */
-      includes: boolean;
-      /** @description Name of the list */
-      name: string;
-    };
-    ListUser: {
-      /** @description Full name of the user */
-      fullName: string;
-      /** @description ID of the user */
-      id: string;
-      /** @description Profile image of the user */
-      profileImage: string | null;
-      /** @description Username of the user */
-      username: string;
-    };
-    LoginInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: email
-       * @description Email of the user
-       */
-      email: string;
-      /** @description Password of the user */
-      password: string;
-    };
-    LoginOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description JWT token for the user */
-      token: string;
-    };
-    MakeUserVerifiedOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      isVerified: boolean;
-    };
-    Media: {
-      /** @description Alt of media of point of interest */
-      alt: string;
-      /** @description Caption of media of point of interest */
-      caption: string | null;
-      /**
-       * Format: date-time
-       * @description Created at time of media of point of interest
-       */
-      createdAt: string;
-      /** @description Extension of media of point of interest */
-      extension: string;
-      /**
-       * Format: int64
-       * @description File size of media of point of interest
-       */
-      fileSize: number;
-      /**
-       * Format: int32
-       * @description Height of media of point of interest
-       */
-      height: number;
-      /**
-       * Format: int64
-       * @description ID of media of point of interest
-       */
-      id: number;
-      /**
-       * Format: int32
-       * @description Media order of media of point of interest
-       */
-      mediaOrder: number;
-      /** @description Mime type of media of point of interest */
-      mimeType: string;
-      /** @description ID of point of interest */
-      poiId: string;
-      /** @description Thumbnail of media of point of interest */
-      thumbnail: string;
-      /** @description URL of media of point of interest */
-      url: string;
-      /**
-       * Format: int32
-       * @description Width of media of point of interest
-       */
-      width: number;
-    };
-    NewOrderItem: {
-      /** Format: int32 */
-      listIndex: number;
-      poiId: string;
-    };
-    OpenHours: {
-      /** @description Closing time of POI in 24H format */
-      closesAt: string;
-      /** @description Opening time of POI in 24H format */
-      opensAt: string;
-    };
-    PaginationInfo: {
-      /** @description Has next page */
-      hasNext: boolean;
-      /** @description Has previous page */
-      hasPrevious: boolean;
-      /**
-       * Format: int64
-       * @description Page number
-       */
-      page: number;
-      /**
-       * Format: int64
-       * @description Page size
-       */
-      pageSize: number;
-      /**
-       * Format: int64
-       * @description Total pages
-       */
-      totalPages: number;
-      /**
-       * Format: int64
-       * @description Total records
-       */
-      totalRecords: number;
-    };
-    PeekPoisOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      pois: components['schemas']['Poi'][];
-    };
-    Poi: {
-      /**
-       * Format: int32
-       * @description Accessibility level of point of interest
-       */
-      accessibilityLevel: number;
-      address: components['schemas']['Address'];
-      /**
-       * Format: int32
-       * @description ID of address of point of interest
-       */
-      addressId: number;
-      amenities: components['schemas']['Amenity'][];
-      category: components['schemas']['Category'];
-      /**
-       * Format: int32
-       * @description ID of category of point of interest
-       */
-      categoryId: number;
-      /**
-       * Format: date-time
-       * @description Created at time of point of interest
-       */
-      createdAt: string;
-      /** @description Description of point of interest */
-      description: string;
-      /** @description ID of point of interest */
-      id: string;
-      media: components['schemas']['Media'][];
-      /** @description Name of point of interest */
-      name: string;
-      openTimes: {
-        [key: string]: components['schemas']['OpenHours'];
-      };
-      /** @description Phone number of point of interest */
-      phone: string | null;
-      /**
-       * Format: int32
-       * @description Price level of point of interest
-       */
-      priceLevel: number;
-      /**
-       * Format: int32
-       * @description Total favorites of point of interest
-       */
-      totalFavorites: number;
-      /**
-       * Format: int32
-       * @description Total points of point of interest
-       */
-      totalPoints: number;
-      /**
-       * Format: int32
-       * @description Total votes of point of interest
-       */
-      totalVotes: number;
-      /**
-       * Format: date-time
-       * @description Updated at time of point of interest
-       */
-      updatedAt: string;
-      /** @description Website of point of interest */
-      website: string | null;
-    };
-    PresignedUrlOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Bucket of image */
-      bucket: string;
-      /** @description File extension of image */
-      fileExtension: string;
-      /** @description File name of image */
-      fileName: string;
-      /** @description ID of image */
-      id: string;
-      /** @description URL of image upload endpoint */
-      url: string;
-    };
-    Profile: {
-      /** @description Banner image of user */
-      bannerImage: string | null;
-      /** @description Bio of user */
-      bio: string | null;
-      /**
-       * Format: date-time
-       * @description Created at time of user
-       */
-      createdAt: string;
-      /**
-       * Format: int32
-       * @description Number of followers
-       */
-      followersCount: number;
-      /**
-       * Format: int32
-       * @description Number of following
-       */
-      followingCount: number;
-      /** @description Full name of user */
-      fullName: string;
-      /** @description ID of user */
-      id: string;
-      /** @description Is user a business account */
-      isBusinessAccount: boolean;
-      /** @description Is user verified */
-      isVerified: boolean;
-      /** @description Phone number of user */
-      phone: string | null;
-      /** @description Profile image of user */
-      profileImage: string | null;
-      /** @description Pronouns of user */
-      pronouns: string | null;
-      /** @description Username of user */
-      username: string;
-      /** @description Website of user */
-      website: string | null;
-    };
-    PublishPoiDraftOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description ID of draft */
-      id: string;
-    };
-    RegisterInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: email
-       * @description Email of the user
-       */
-      email: string;
-      /** @description Full name of the user */
-      fullName: string;
-      /** @description Password of the user */
-      password: string;
-      /** @description Username of the user */
-      username: string;
-    };
-    RegisterOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: date-time
-       * @description Creation date of the user
-       */
-      createdAt: string;
-      /** @description Email of the user */
-      email: string;
-      /** @description Full name of the user */
-      fullName: string;
-      /** @description ID of the user */
-      id: string;
-      /**
-       * Format: date-time
-       * @description Last update date of the user
-       */
-      updatedAt: string;
-      /** @description Username of the user */
-      username: string;
-    };
-    ResetPasswordInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Verification code */
-      code: string;
-      /**
-       * Format: email
-       * @description Email of the user
-       */
-      email: string;
-      /** @description New password of the user */
-      newPassword: string;
-    };
-    Review: {
-      /** @description Content of the review */
-      content: string;
-      /**
-       * Format: date-time
-       * @description Created at time of review
-       */
-      createdAt: string;
-      /** @description ID of review */
-      id: string;
-      media: components['schemas']['ReviewMedia'][];
-      poi: components['schemas']['ReviewPoi'];
-      /** @description ID of point of interest */
-      poiId: string;
-      /**
-       * Format: int32
-       * @description Rating of the review
-       */
-      rating: number;
-      /**
-       * Format: date-time
-       * @description Updated at time of review
-       */
-      updatedAt: string;
-      user: components['schemas']['Profile'];
-      /** @description ID of user */
-      userId: string;
-    };
-    ReviewMedia: {
-      /**
-       * Format: int64
-       * @description ID of media of review
-       */
-      id: number;
-      /**
-       * Format: int32
-       * @description Media order of media of review
-       */
-      mediaOrder: number;
-      /** @description ID of review */
-      reviewId: string;
-      /** @description URL of media of review */
-      url: string;
-    };
-    ReviewPoi: {
-      /** @description ID of point of interest */
-      id: string;
-      /** @description Name of point of interest */
-      name: string;
-    };
-    SearchUserFollowingOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      friends: components['schemas']['Profile'][];
-    };
-    SendForgotPasswordEmailInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: email
-       * @description Email of the user
-       */
-      email: string;
-    };
-    SendVerificationEmailInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: email
-       * @description Email of the user
-       */
-      email: string;
-    };
-    Trip: {
-      /**
-       * Format: date-time
-       * @description Created at time of trip
-       */
-      createdAt: string;
-      /** @description Description of the trip */
-      description: string;
-      /**
-       * Format: date-time
-       * @description End datetime of the trip
-       */
-      endAt: string;
-      /** @description Trip ID */
-      id: string;
-      locations: components['schemas']['TripLocation'][];
-      owner: components['schemas']['TripUser'];
-      /** @description Owner User ID */
-      ownerId: string;
-      participants: components['schemas']['TripUser'][];
-      requestedAmenities: components['schemas']['Amenity'][];
-      /**
-       * Format: date-time
-       * @description Start datetime of the trip
-       */
-      startAt: string;
-      /** @description Status of the trip */
-      status: string;
-      /** @description Title of the trip */
-      title: string;
-      /**
-       * Format: date-time
-       * @description Updated at time of trip
-       */
-      updatedAt: string;
-      /** @description Visibility level of the trip */
-      visibilityLevel: string;
-    };
-    TripComment: {
-      /** @description Content of comment */
-      content: string;
-      /**
-       * Format: date-time
-       * @description Created at time of the comment
-       */
-      createdAt: string;
-      from: components['schemas']['TripUser'];
-      /** @description ID of comment */
-      id: string;
-      /** @description Trip ID */
-      tripId: string;
-    };
-    TripInvite: {
-      /**
-       * Format: date-time
-       * @description Expires at time of invite
-       */
-      expiresAt: string;
-      from: components['schemas']['TripUser'];
-      /** @description ID of invite */
-      id: string;
-      /** @description Role of invite */
-      role: string;
-      /**
-       * Format: date-time
-       * @description Sent at time of invite
-       */
-      sentAt: string;
-      to: components['schemas']['TripUser'];
-      /** @description Description of the trip */
-      tripDescription: string;
-      /** @description Trip ID */
-      tripId: string;
-      /** @description Title of the trip */
-      tripTitle: string;
-    };
-    TripInviteActionOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      accepted: boolean;
-    };
-    TripInviteDetail: {
-      /**
-       * Format: date-time
-       * @description End datetime of the trip
-       */
-      endAt: string;
-      /**
-       * Format: date-time
-       * @description Expires at time of invite
-       */
-      expiresAt: string;
-      from: components['schemas']['TripUser'];
-      /** @description ID of invite */
-      id: string;
-      /** @description Role of invite */
-      role: string;
-      /**
-       * Format: date-time
-       * @description Sent at time of invite
-       */
-      sentAt: string;
-      /**
-       * Format: date-time
-       * @description Start datetime of the trip
-       */
-      startAt: string;
-      to: components['schemas']['TripUser'];
-      /** @description Description of the trip */
-      tripDescription: string;
-      /** @description Trip ID */
-      tripId: string;
-      /** @description Title of the trip */
-      tripTitle: string;
-    };
-    TripLocation: {
-      /** @description Description of the location */
-      description: string;
-      poi: components['schemas']['Poi'];
-      /** @description Point of Interest ID */
-      poiId: string;
-      /**
-       * Format: date-time
-       * @description Scheduled time of the location
-       */
-      scheduledTime: string;
-      /** @description Trip ID */
-      tripId: string;
-    };
-    TripUser: {
-      /** @description User full name */
-      fullName: string;
-      /** @description User ID */
-      id: string;
-      /** @description Profile image URL of the user */
-      profileImage: string;
-      /**
-       * @description Role of the user
-       * @enum {string}
-       */
-      role: 'participant' | 'editor';
-      /** @description Username */
-      username: string;
-    };
-    UpdateAmenityInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Name of the amenity */
-      name: string;
-    };
-    UpdateAmenityOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: int32
-       * @description ID of the amenity
-       */
-      id: number;
-      /** @description Name of the amenity */
-      name: string;
-    };
-    UpdateCategoryInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: uri
-       * @description Image URL
-       */
-      image: string;
-      /** @description Name of the category */
-      name: string;
-    };
-    UpdateCategoryOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /**
-       * Format: int32
-       * @description ID of the category
-       */
-      id: number;
-      /** @description Image URL */
-      image: string;
-      /** @description Name of the category */
-      name: string;
-    };
-    UpdateCityInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Country code */
-      countryCode: string;
-      /** @description Country name */
-      countryName: string;
-      /** @description City description */
-      description: string;
-      /** @description Image attribution */
-      imageAttribute: string;
-      /** @description Image attribution link */
-      imageAttributionLink: string;
-      /** @description Image license */
-      imageLicense: string;
-      /**
-       * Format: uri
-       * @description Image license link
-       */
-      imageLicenseLink: string;
-      /**
-       * Format: uri
-       * @description Image URL
-       */
-      imageUrl: string;
-      /**
-       * Format: double
-       * @description Latitude
-       */
-      latitude: number;
-      /**
-       * Format: double
-       * @description Longitude
-       */
-      longitude: number;
-      /** @description City name */
-      name: string;
-      /** @description State code */
-      stateCode: string;
-      /** @description State name */
-      stateName: string;
-    };
-    UpdateCityOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      coordinates: components['schemas']['CityCoordinates'];
-      country: components['schemas']['CityCountry'];
-      /** @description City description */
-      description: string;
-      /**
-       * Format: int32
-       * @description City ID
-       */
-      id: number;
-      image: components['schemas']['CityImage'];
-      /** @description City name */
-      name: string;
-      state: components['schemas']['CityState'];
-    };
-    UpdateCollectionInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Description of the collection */
-      description: string;
-      /** @description Name of the collection */
-      name: string;
-    };
-    UpdateCollectionItemsInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      newOrder: components['schemas']['NewOrderItem'][];
-    };
-    UpdateCollectionItemsOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collection: components['schemas']['Collection'];
-    };
-    UpdateCollectionOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      collection: components['schemas']['Collection'];
-    };
-    UpdateListInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      isPublic: boolean;
-      name: string;
-    };
-    UpdateListOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      list: components['schemas']['List'];
-    };
-    UpdatePoiDraftInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      values: {
-        [key: string]: unknown;
-      };
-    };
-    UpdatePoiDraftOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      draft: {
-        [key: string]: unknown;
-      };
-    };
-    UpdateTripAmenitiesInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Amenities IDs */
-      amenityIds: number[];
-    };
-    UpdateTripAmenitiesOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      amenities: components['schemas']['Amenity'][];
-    };
-    UpdateTripCommentInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Content of comment */
-      content: string;
-    };
-    UpdateTripCommentOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      comment: components['schemas']['TripComment'];
-    };
-    UpdateUserProfileImageInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description File name of image */
-      fileName: string;
-      /** @description ID of image */
-      id: string;
-    };
-    UpdateUserProfileImageOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description URL of image upload endpoint */
-      url: string;
-    };
-    UpdateUserProfileInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Bio of the user */
-      bio?: string | null;
-      /** @description Full name of the user */
-      fullName: string;
-      /** @description Phone number of the user */
-      phone?: string | null;
-      /** @description Pronouns of the user */
-      pronouns?: string | null;
-      /**
-       * Format: uri
-       * @description Website of the user
-       */
-      website?: string | null;
-    };
-    UpdateUserProfileOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      profile: components['schemas']['Profile'];
-    };
-    UploadDiaryMediaInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description File name of image */
-      fileName: string;
-      /** @description ID of image */
-      id: string;
-      /**
-       * Format: int32
-       * @description Size of media of point of interest
-       */
-      size: number;
-    };
-    UploadDiaryMediaOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      entry: components['schemas']['DiaryEntry'];
-    };
-    UploadPoiMediaInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description Alt of media of point of interest */
-      alt: string;
-      /** @description Caption of media of point of interest */
-      caption: string;
-      /** @description File name of image */
-      fileName: string;
-      /** @description ID of image */
-      id: string;
-      /**
-       * Format: int32
-       * @description Size of media of point of interest
-       */
-      size: number;
-    };
-    UploadReviewMediaInputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      /** @description File name of image */
-      fileName: string;
-      /** @description ID of image */
-      id: string;
-      /**
-       * Format: int32
-       * @description Size of media of point of interest
-       */
-      size: number;
-    };
-    UploadReviewMediaOutputBody: {
-      /**
-       * Format: uri
-       * @description A URL to the JSON Schema for this object.
-       */
-      readonly $schema?: string;
-      review: components['schemas']['Review'];
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    schemas: {
+        Address: {
+            city: components["schemas"]["City"];
+            /**
+             * Format: int32
+             * @description ID of city of address of point of interest
+             */
+            cityId: number;
+            /**
+             * Format: int32
+             * @description ID of address of point of interest
+             */
+            id: number;
+            /**
+             * Format: double
+             * @description Latitude of address of point of interest
+             */
+            lat: number;
+            /** @description Line 1 of address of point of interest */
+            line1: string;
+            /** @description Line 2 of address of point of interest */
+            line2: string | null;
+            /**
+             * Format: double
+             * @description Longitude of address of point of interest
+             */
+            lng: number;
+            /** @description Postal code of address of point of interest */
+            postalCode: string | null;
+        };
+        Amenity: {
+            /**
+             * Format: int32
+             * @description ID of the amenity
+             */
+            id: number;
+            /** @description Name of the amenity */
+            name: string;
+        };
+        Bookmark: {
+            /**
+             * Format: date-time
+             * @description Created at time of bookmark
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of bookmark
+             */
+            id: number;
+            poi: components["schemas"]["BookmarkPoi"];
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
+        BookmarkPoi: {
+            address: components["schemas"]["Address"];
+            /**
+             * Format: int32
+             * @description ID of address of point of interest
+             */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /**
+             * Format: int32
+             * @description ID of category of point of interest
+             */
+            categoryId: number;
+            firstMedia: components["schemas"]["Media"];
+            /** @description ID of point of interest */
+            id: string;
+            /** @description Name of point of interest */
+            name: string;
+        };
+        Category: {
+            /**
+             * Format: int32
+             * @description ID of the category
+             */
+            id: number;
+            /** @description Image URL */
+            image: string;
+            /** @description Name of the category */
+            name: string;
+        };
+        CitiesFeaturedOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            cities: components["schemas"]["City"][];
+        };
+        CitiesListOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            cities: components["schemas"]["City"][];
+        };
+        City: {
+            coordinates: components["schemas"]["CityCoordinates"];
+            country: components["schemas"]["CityCountry"];
+            /** @description City description */
+            description: string;
+            /**
+             * Format: int32
+             * @description City ID
+             */
+            id: number;
+            image: components["schemas"]["CityImage"];
+            /** @description City name */
+            name: string;
+            state: components["schemas"]["CityState"];
+        };
+        CityCoordinates: {
+            /**
+             * Format: double
+             * @description Latitude
+             */
+            latitude: number;
+            /**
+             * Format: double
+             * @description Longitude
+             */
+            longitude: number;
+        };
+        CityCountry: {
+            /** @description Country code */
+            code: string;
+            /** @description Country name */
+            name: string;
+        };
+        CityImage: {
+            /** @description Image attribution */
+            attribution: string | null;
+            /** @description Image attribution link */
+            attributionLink: string | null;
+            /** @description Image license */
+            license: string | null;
+            /** @description Image license link */
+            licenseLink: string | null;
+            /** @description Image URL */
+            url: string;
+        };
+        CityState: {
+            /** @description State code */
+            code: string;
+            /** @description State name */
+            name: string;
+        };
+        Collection: {
+            /** @description Created at time of collection */
+            createdAt: string;
+            /** @description Description of collection */
+            description: string;
+            /** @description ID of collection */
+            id: string;
+            items: components["schemas"]["CollectionItem"][];
+            /** @description Name of collection */
+            name: string;
+        };
+        CollectionItem: {
+            /** @description ID of collection */
+            collectionId: string;
+            /**
+             * Format: date-time
+             * @description Created at time of collection item
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description Index of collection item in the list
+             */
+            listIndex: number;
+            poi: components["schemas"]["Poi"];
+            /** @description ID of point of interest */
+            poiId: string;
+        };
+        CreateAmenityInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Name of the amenity */
+            name: string;
+        };
+        CreateAmenityOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description ID of the amenity
+             */
+            id: number;
+            /** @description Name of the amenity */
+            name: string;
+        };
+        CreateBookmarkInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description ID of point of interest */
+            poiId: string;
+        };
+        CreateBookmarkOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Created at time of bookmark
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of bookmark
+             */
+            id: number;
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
+        CreateCategoryInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description ID of the category
+             */
+            id: number;
+            /**
+             * Format: uri
+             * @description Image URL
+             */
+            image: string;
+            /** @description Name of the category */
+            name: string;
+        };
+        CreateCategoryOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description ID of the category
+             */
+            id: number;
+            /** @description Image URL */
+            image: string;
+            /** @description Name of the category */
+            name: string;
+        };
+        CreateCityInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Country code */
+            countryCode: string;
+            /** @description Country name */
+            countryName: string;
+            /** @description City description */
+            description: string;
+            /**
+             * Format: int32
+             * @description City ID
+             */
+            id: number;
+            /** @description Image attribution */
+            imageAttribute: string;
+            /** @description Image attribution link */
+            imageAttributionLink: string;
+            /** @description Image license */
+            imageLicense: string;
+            /**
+             * Format: uri
+             * @description Image license link
+             */
+            imageLicenseLink: string;
+            /**
+             * Format: uri
+             * @description Image URL
+             */
+            imageUrl: string;
+            /**
+             * Format: double
+             * @description Latitude
+             */
+            latitude: number;
+            /**
+             * Format: double
+             * @description Longitude
+             */
+            longitude: number;
+            /** @description City name */
+            name: string;
+            /** @description State code */
+            stateCode: string;
+            /** @description State name */
+            stateName: string;
+        };
+        CreateCityOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            coordinates: components["schemas"]["CityCoordinates"];
+            country: components["schemas"]["CityCountry"];
+            /** @description City description */
+            description: string;
+            /**
+             * Format: int32
+             * @description City ID
+             */
+            id: number;
+            image: components["schemas"]["CityImage"];
+            /** @description City name */
+            name: string;
+            state: components["schemas"]["CityState"];
+        };
+        CreateCollectionInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the collection */
+            description: string;
+            /** @description Name of the collection */
+            name: string;
+        };
+        CreateCollectionItemInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description ID of point of interest */
+            poiId: string;
+        };
+        CreateCollectionItemOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collection: components["schemas"]["Collection"];
+        };
+        CreateCollectionOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collection: components["schemas"]["Collection"];
+        };
+        CreateDiaryEntryInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date
+             * @description The date of the diary entry
+             */
+            date: string;
+            /** @description The description of the diary entry */
+            description: string;
+            /** @description The IDs of the friends */
+            friends: string[];
+            locations: components["schemas"]["CreateDiaryEntryLocation"][];
+            /** @description Whether the diary entry is shared with friends or not */
+            shareWithFriends: boolean;
+            /** @description The title of the diary entry */
+            title: string;
+        };
+        CreateDiaryEntryLocation: {
+            /** @description The description of the location */
+            description?: string | null;
+            /** @description The ID of the point of interest */
+            id: string;
+        };
+        CreateDiaryEntryOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
+        };
+        CreateFavoriteInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description ID of point of interest */
+            poiId: string;
+        };
+        CreateFavoriteOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Created at time of favorite
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of favorite
+             */
+            id: number;
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
+        CreateListInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isPublic: boolean;
+            name: string;
+        };
+        CreateListItemInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poiId: string;
+        };
+        CreateListItemOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Created at time of list item
+             */
+            createdAt: string;
+            /** @description ID of the list */
+            listId: string;
+            /**
+             * Format: int32
+             * @description Index of the POI in the list
+             */
+            listIndex: number;
+            /** @description ID of the POI */
+            poiId: string;
+        };
+        CreateListOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
+        };
+        CreatePoiDraftOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            draft: {
+                [key: string]: unknown;
+            };
+        };
+        CreateReviewInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Content of the review */
+            content: string;
+            /** @description ID of point of interest */
+            poiId: string;
+            /**
+             * Format: int32
+             * @description Rating of the review
+             */
+            rating: number;
+        };
+        CreateReviewOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            review: components["schemas"]["Review"];
+        };
+        CreateTripCommentInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Content of comment */
+            content: string;
+        };
+        CreateTripCommentOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            comment: components["schemas"]["TripComment"];
+        };
+        CreateTripInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the trip */
+            description: string;
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
+            /** @description Title of the trip */
+            title: string;
+            /**
+             * @description Visibility level of the trip
+             * @enum {string}
+             */
+            visibility: "public" | "private" | "friends";
+        };
+        CreateTripInviteInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * @description Role of invite
+             * @enum {string}
+             */
+            role: "participant" | "editor";
+            /** @description User ID */
+            toId: string;
+        };
+        CreateTripInviteOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            invite: components["schemas"]["TripInvite"];
+        };
+        CreateTripOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trip: components["schemas"]["Trip"];
+        };
+        DiaryEntry: {
+            /**
+             * Format: date-time
+             * @description The created at time of the diary entry
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description The date of the diary entry
+             */
+            date: string;
+            /** @description The description of the diary entry */
+            description: string;
+            friends: components["schemas"]["Profile"][];
+            /** @description The ID of the diary entry */
+            id: string;
+            locations: components["schemas"]["DiaryLocation"][];
+            media: components["schemas"]["DiaryMedia"][];
+            /** @description Whether the diary entry is shared with friends or not */
+            shareWithFriends: boolean;
+            /** @description The title of the diary entry */
+            title: string;
+            /**
+             * Format: date-time
+             * @description The updated at time of the diary entry
+             */
+            updatedAt: string;
+            user: components["schemas"]["Profile"];
+            /** @description The ID of the user */
+            userId: string;
+        };
+        DiaryLocation: {
+            /** @description The description of the location */
+            description: string | null;
+            /**
+             * Format: int32
+             * @description The list index of the location
+             */
+            listIndex: number;
+            poi: components["schemas"]["Poi"];
+        };
+        DiaryMedia: {
+            /** @description The alt text of the media */
+            alt: string;
+            /** @description The caption of the media */
+            caption: string | null;
+            /**
+             * Format: date-time
+             * @description The created at time of the media
+             */
+            createdAt: string;
+            /** @description The ID of the diary entry */
+            diaryEntryId: string;
+            /**
+             * Format: int64
+             * @description The ID of the media
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description The media order of the media
+             */
+            mediaOrder: number;
+            /** @description The URL of the media */
+            url: string;
+        };
+        ErrorDetail: {
+            /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
+            location?: string;
+            /** @description Error message text */
+            message?: string;
+            /** @description The value at the given location */
+            value?: unknown;
+        };
+        ErrorModel: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description A human-readable explanation specific to this occurrence of the problem. */
+            detail?: string;
+            /** @description Optional list of individual error details */
+            errors?: components["schemas"]["ErrorDetail"][];
+            /**
+             * Format: uri
+             * @description A URI reference that identifies the specific occurrence of the problem.
+             */
+            instance?: string;
+            /**
+             * Format: int64
+             * @description HTTP status code
+             */
+            status?: number;
+            /** @description A short, human-readable summary of the problem type. This value should not change between occurrences of the error. */
+            title?: string;
+            /**
+             * Format: uri
+             * @description A URI reference to human-readable documentation for the error.
+             * @default about:blank
+             */
+            type: string;
+        };
+        Favorite: {
+            /**
+             * Format: date-time
+             * @description Created at time of favorite
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description ID of favorite
+             */
+            id: number;
+            poi: components["schemas"]["FavoritePoi"];
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description ID of user */
+            userId: string;
+        };
+        FavoritePoi: {
+            address: components["schemas"]["Address"];
+            /**
+             * Format: int32
+             * @description ID of address of point of interest
+             */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /**
+             * Format: int32
+             * @description ID of category of point of interest
+             */
+            categoryId: number;
+            firstMedia: components["schemas"]["Media"];
+            /** @description ID of point of interest */
+            id: string;
+            /** @description Name of point of interest */
+            name: string;
+        };
+        FollowUserOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isFollowing: boolean;
+        };
+        GetAllCityCollectionsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collections: components["schemas"]["Collection"][];
+        };
+        GetAllListsOfUserOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            lists: components["schemas"]["List"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetAllPoiCollectionsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collections: components["schemas"]["Collection"][];
+        };
+        GetAllPoiDraftsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            drafts: {
+                [key: string]: unknown;
+            }[];
+        };
+        GetAllTripsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trips: components["schemas"]["Trip"][];
+        };
+        GetCityByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            coordinates: components["schemas"]["CityCoordinates"];
+            country: components["schemas"]["CityCountry"];
+            /** @description City description */
+            description: string;
+            /**
+             * Format: int32
+             * @description City ID
+             */
+            id: number;
+            image: components["schemas"]["CityImage"];
+            /** @description City name */
+            name: string;
+            state: components["schemas"]["CityState"];
+        };
+        GetCollectionByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collection: components["schemas"]["Collection"];
+        };
+        GetCollectionsForCityOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collections: components["schemas"]["Collection"][];
+        };
+        GetCollectionsForPoiOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collections: components["schemas"]["Collection"][];
+        };
+        GetCollectionsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collections: components["schemas"]["Collection"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetDiaryEntriesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entries: components["schemas"]["DiaryEntry"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetDiaryEntryByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
+        };
+        GetListByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
+        };
+        GetListStatusesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            statuses: components["schemas"]["ListStatus"][];
+        };
+        GetMeOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Banner image of the user */
+            bannerImage: string | null;
+            /** @description Bio of the user */
+            bio: string | null;
+            /**
+             * Format: date-time
+             * @description Creation date of the user
+             */
+            createdAt: string;
+            /** @description Email of the user */
+            email: string;
+            /** @description Facebook ID of the user */
+            facebookId: string | null;
+            /**
+             * Format: int32
+             * @description Number of followers
+             */
+            followersCount: number;
+            /**
+             * Format: int32
+             * @description Number of following
+             */
+            followingCount: number;
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description Google ID of the user */
+            googleId: string | null;
+            /** @description ID of the user */
+            id: string;
+            /** @description Is the user active */
+            isActive: boolean;
+            /** @description Is the user a business account */
+            isBusinessAccount: boolean;
+            /** @description Is the email verified */
+            isEmailVerified: boolean;
+            /** @description Is the onboarding completed */
+            isOnboardingCompleted: boolean;
+            /** @description Is the user verified */
+            isVerified: boolean;
+            /**
+             * Format: date-time
+             * @description Last login date of the user
+             */
+            lastLogin: string;
+            /** @description Phone number of the user */
+            phone: string | null;
+            /** @description Profile image of the user */
+            profileImage: string | null;
+            /** @description Pronouns of the user */
+            pronouns: string | null;
+            /** @description Role of the user */
+            role: string;
+            /**
+             * Format: date-time
+             * @description Last update date of the user
+             */
+            updatedAt: string;
+            /** @description Username of the user */
+            username: string;
+            /** @description Website of the user */
+            website: string | null;
+        };
+        GetMyTripInvitesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            invites: components["schemas"]["TripInvite"][];
+        };
+        GetPoiByIdMeta: {
+            isBookmarked: boolean;
+            isFavorite: boolean;
+        };
+        GetPoiByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            meta: components["schemas"]["GetPoiByIdMeta"];
+            poi: components["schemas"]["Poi"];
+        };
+        GetPoiDraftOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            draft: {
+                [key: string]: unknown;
+            };
+        };
+        GetPublicListsOfUserOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            lists: components["schemas"]["List"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetRatingsByPoiIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            ratings: {
+                [key: string]: number;
+            };
+            /** Format: int64 */
+            totalVotes: number;
+        };
+        GetReviewByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            review: components["schemas"]["Review"];
+        };
+        GetReviewsByPoiIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pagination: components["schemas"]["PaginationInfo"];
+            reviews: components["schemas"]["Review"][];
+        };
+        GetReviewsByUsernameOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pagination: components["schemas"]["PaginationInfo"];
+            reviews: components["schemas"]["Review"][];
+        };
+        GetTripByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trip: components["schemas"]["Trip"];
+        };
+        GetTripCommentsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            comments: components["schemas"]["TripComment"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetTripInviteDetailsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            inviteDetail: components["schemas"]["TripInviteDetail"];
+        };
+        GetTripInvitesByTripIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            invites: components["schemas"]["TripInvite"][];
+        };
+        GetUserActivitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            activities: {
+                [key: string]: unknown;
+            }[];
+        };
+        GetUserBookmarksOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            bookmarks: components["schemas"]["Bookmark"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetUserFavoritesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            favorites: components["schemas"]["Favorite"][];
+            pagination: components["schemas"]["PaginationInfo"];
+        };
+        GetUserFollowersOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            followers: components["schemas"]["Profile"][];
+        };
+        GetUserFollowingOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            following: components["schemas"]["Profile"][];
+        };
+        GetUserProfileOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            meta: components["schemas"]["GetUserProfileOutputMeta"];
+            profile: components["schemas"]["Profile"];
+        };
+        GetUserProfileOutputMeta: {
+            isFollowing: boolean;
+        };
+        HealthOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Health message of the API */
+            message: string;
+        };
+        HomeAggregatorOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            favorites: components["schemas"]["Poi"][];
+            featured: components["schemas"]["Poi"][];
+            new: components["schemas"]["Poi"][];
+            popular: components["schemas"]["Poi"][];
+        };
+        List: {
+            /**
+             * Format: date-time
+             * @description Date and time when the list was created
+             */
+            createdAt: string;
+            /** @description ID of the list */
+            id: string;
+            /** @description Whether the list is public or not */
+            isPublic: boolean;
+            items: components["schemas"]["ListItem"][];
+            /** @description Name of the list */
+            name: string;
+            /**
+             * Format: date-time
+             * @description Date and time when the list was last updated
+             */
+            updatedAt: string;
+            user: components["schemas"]["ListUser"];
+            /** @description ID of the user that owns the list */
+            userId: string;
+        };
+        ListAmenitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            amenities: components["schemas"]["Amenity"][];
+        };
+        ListCategoriesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            categories: components["schemas"]["Category"][];
+        };
+        ListItem: {
+            /** Format: date-time */
+            createdAt: string;
+            listId: string;
+            /** Format: int32 */
+            listIndex: number;
+            poi: components["schemas"]["ListItemPoi"];
+            poiId: string;
+        };
+        ListItemPoi: {
+            address: components["schemas"]["Address"];
+            /** Format: int32 */
+            addressId: number;
+            category: components["schemas"]["Category"];
+            /** Format: int32 */
+            categoryId: number;
+            firstMedia: components["schemas"]["Media"];
+            id: string;
+            name: string;
+        };
+        ListStatus: {
+            /** @description ID of the list */
+            id: string;
+            /** @description Whether the POI is included in the list */
+            includes: boolean;
+            /** @description Name of the list */
+            name: string;
+        };
+        ListUser: {
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description ID of the user */
+            id: string;
+            /** @description Profile image of the user */
+            profileImage: string | null;
+            /** @description Username of the user */
+            username: string;
+        };
+        LoginInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: email
+             * @description Email of the user
+             */
+            email: string;
+            /** @description Password of the user */
+            password: string;
+        };
+        LoginOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description JWT token for the user */
+            token: string;
+        };
+        MakeUserVerifiedOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isVerified: boolean;
+        };
+        Media: {
+            /** @description Alt of media of point of interest */
+            alt: string;
+            /** @description Caption of media of point of interest */
+            caption: string | null;
+            /**
+             * Format: date-time
+             * @description Created at time of media of point of interest
+             */
+            createdAt: string;
+            /** @description Extension of media of point of interest */
+            extension: string;
+            /**
+             * Format: int64
+             * @description File size of media of point of interest
+             */
+            fileSize: number;
+            /**
+             * Format: int32
+             * @description Height of media of point of interest
+             */
+            height: number;
+            /**
+             * Format: int64
+             * @description ID of media of point of interest
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description Media order of media of point of interest
+             */
+            mediaOrder: number;
+            /** @description Mime type of media of point of interest */
+            mimeType: string;
+            /** @description ID of point of interest */
+            poiId: string;
+            /** @description Thumbnail of media of point of interest */
+            thumbnail: string;
+            /** @description URL of media of point of interest */
+            url: string;
+            /**
+             * Format: int32
+             * @description Width of media of point of interest
+             */
+            width: number;
+        };
+        NewOrderItem: {
+            /** Format: int32 */
+            listIndex: number;
+            poiId: string;
+        };
+        OpenHours: {
+            /** @description Closing time of POI in 24H format */
+            closesAt: string;
+            /** @description Opening time of POI in 24H format */
+            opensAt: string;
+        };
+        PaginationInfo: {
+            /** @description Has next page */
+            hasNext: boolean;
+            /** @description Has previous page */
+            hasPrevious: boolean;
+            /**
+             * Format: int64
+             * @description Page number
+             */
+            page: number;
+            /**
+             * Format: int64
+             * @description Page size
+             */
+            pageSize: number;
+            /**
+             * Format: int64
+             * @description Total pages
+             */
+            totalPages: number;
+            /**
+             * Format: int64
+             * @description Total records
+             */
+            totalRecords: number;
+        };
+        PeekPoisOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pois: components["schemas"]["Poi"][];
+        };
+        Poi: {
+            /**
+             * Format: int32
+             * @description Accessibility level of point of interest
+             */
+            accessibilityLevel: number;
+            address: components["schemas"]["Address"];
+            /**
+             * Format: int32
+             * @description ID of address of point of interest
+             */
+            addressId: number;
+            amenities: components["schemas"]["Amenity"][];
+            category: components["schemas"]["Category"];
+            /**
+             * Format: int32
+             * @description ID of category of point of interest
+             */
+            categoryId: number;
+            /**
+             * Format: date-time
+             * @description Created at time of point of interest
+             */
+            createdAt: string;
+            /** @description Description of point of interest */
+            description: string;
+            /** @description ID of point of interest */
+            id: string;
+            media: components["schemas"]["Media"][];
+            /** @description Name of point of interest */
+            name: string;
+            openTimes: {
+                [key: string]: components["schemas"]["OpenHours"];
+            };
+            /** @description Phone number of point of interest */
+            phone: string | null;
+            /**
+             * Format: int32
+             * @description Price level of point of interest
+             */
+            priceLevel: number;
+            /**
+             * Format: int32
+             * @description Total favorites of point of interest
+             */
+            totalFavorites: number;
+            /**
+             * Format: int32
+             * @description Total points of point of interest
+             */
+            totalPoints: number;
+            /**
+             * Format: int32
+             * @description Total votes of point of interest
+             */
+            totalVotes: number;
+            /**
+             * Format: date-time
+             * @description Updated at time of point of interest
+             */
+            updatedAt: string;
+            /** @description Website of point of interest */
+            website: string | null;
+        };
+        PresignedUrlOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Bucket of image */
+            bucket: string;
+            /** @description File extension of image */
+            fileExtension: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /** @description URL of image upload endpoint */
+            url: string;
+        };
+        Profile: {
+            /** @description Banner image of user */
+            bannerImage: string | null;
+            /** @description Bio of user */
+            bio: string | null;
+            /**
+             * Format: date-time
+             * @description Created at time of user
+             */
+            createdAt: string;
+            /**
+             * Format: int32
+             * @description Number of followers
+             */
+            followersCount: number;
+            /**
+             * Format: int32
+             * @description Number of following
+             */
+            followingCount: number;
+            /** @description Full name of user */
+            fullName: string;
+            /** @description ID of user */
+            id: string;
+            /** @description Is user a business account */
+            isBusinessAccount: boolean;
+            /** @description Is user verified */
+            isVerified: boolean;
+            /** @description Phone number of user */
+            phone: string | null;
+            /** @description Profile image of user */
+            profileImage: string | null;
+            /** @description Pronouns of user */
+            pronouns: string | null;
+            /** @description Username of user */
+            username: string;
+            /** @description Website of user */
+            website: string | null;
+        };
+        PublishPoiDraftOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description ID of draft */
+            id: string;
+        };
+        RegisterInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: email
+             * @description Email of the user
+             */
+            email: string;
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description Password of the user */
+            password: string;
+            /** @description Username of the user */
+            username: string;
+        };
+        RegisterOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description Creation date of the user
+             */
+            createdAt: string;
+            /** @description Email of the user */
+            email: string;
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description ID of the user */
+            id: string;
+            /**
+             * Format: date-time
+             * @description Last update date of the user
+             */
+            updatedAt: string;
+            /** @description Username of the user */
+            username: string;
+        };
+        ResetPasswordInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Verification code */
+            code: string;
+            /**
+             * Format: email
+             * @description Email of the user
+             */
+            email: string;
+            /** @description New password of the user */
+            newPassword: string;
+        };
+        Review: {
+            /** @description Content of the review */
+            content: string;
+            /**
+             * Format: date-time
+             * @description Created at time of review
+             */
+            createdAt: string;
+            /** @description ID of review */
+            id: string;
+            media: components["schemas"]["ReviewMedia"][];
+            poi: components["schemas"]["ReviewPoi"];
+            /** @description ID of point of interest */
+            poiId: string;
+            /**
+             * Format: int32
+             * @description Rating of the review
+             */
+            rating: number;
+            /**
+             * Format: date-time
+             * @description Updated at time of review
+             */
+            updatedAt: string;
+            user: components["schemas"]["Profile"];
+            /** @description ID of user */
+            userId: string;
+        };
+        ReviewMedia: {
+            /**
+             * Format: int64
+             * @description ID of media of review
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description Media order of media of review
+             */
+            mediaOrder: number;
+            /** @description ID of review */
+            reviewId: string;
+            /** @description URL of media of review */
+            url: string;
+        };
+        ReviewPoi: {
+            /** @description ID of point of interest */
+            id: string;
+            /** @description Name of point of interest */
+            name: string;
+        };
+        SearchUserFollowingOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            friends: components["schemas"]["Profile"][];
+        };
+        SendForgotPasswordEmailInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: email
+             * @description Email of the user
+             */
+            email: string;
+        };
+        SendVerificationEmailInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: email
+             * @description Email of the user
+             */
+            email: string;
+        };
+        Trip: {
+            /**
+             * Format: date-time
+             * @description Created at time of trip
+             */
+            createdAt: string;
+            /** @description Description of the trip */
+            description: string;
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /** @description Trip ID */
+            id: string;
+            locations: components["schemas"]["TripLocation"][];
+            owner: components["schemas"]["TripUser"];
+            /** @description Owner User ID */
+            ownerId: string;
+            participants: components["schemas"]["TripUser"][];
+            requestedAmenities: components["schemas"]["Amenity"][];
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
+            /** @description Status of the trip */
+            status: string;
+            /** @description Title of the trip */
+            title: string;
+            /**
+             * Format: date-time
+             * @description Updated at time of trip
+             */
+            updatedAt: string;
+            /** @description Visibility level of the trip */
+            visibilityLevel: string;
+        };
+        TripComment: {
+            /** @description Content of comment */
+            content: string;
+            /**
+             * Format: date-time
+             * @description Created at time of the comment
+             */
+            createdAt: string;
+            from: components["schemas"]["TripUser"];
+            /** @description ID of comment */
+            id: string;
+            /** @description Trip ID */
+            tripId: string;
+        };
+        TripInvite: {
+            /**
+             * Format: date-time
+             * @description Expires at time of invite
+             */
+            expiresAt: string;
+            from: components["schemas"]["TripUser"];
+            /** @description ID of invite */
+            id: string;
+            /** @description Role of invite */
+            role: string;
+            /**
+             * Format: date-time
+             * @description Sent at time of invite
+             */
+            sentAt: string;
+            to: components["schemas"]["TripUser"];
+            /** @description Description of the trip */
+            tripDescription: string;
+            /** @description Trip ID */
+            tripId: string;
+            /** @description Title of the trip */
+            tripTitle: string;
+        };
+        TripInviteActionOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            accepted: boolean;
+        };
+        TripInviteDetail: {
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /**
+             * Format: date-time
+             * @description Expires at time of invite
+             */
+            expiresAt: string;
+            from: components["schemas"]["TripUser"];
+            /** @description ID of invite */
+            id: string;
+            /** @description Role of invite */
+            role: string;
+            /**
+             * Format: date-time
+             * @description Sent at time of invite
+             */
+            sentAt: string;
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
+            to: components["schemas"]["TripUser"];
+            /** @description Description of the trip */
+            tripDescription: string;
+            /** @description Trip ID */
+            tripId: string;
+            /** @description Title of the trip */
+            tripTitle: string;
+        };
+        TripLocation: {
+            /** @description Description of the location */
+            description: string;
+            poi: components["schemas"]["Poi"];
+            /** @description Point of Interest ID */
+            poiId: string;
+            /**
+             * Format: date-time
+             * @description Scheduled time of the location
+             */
+            scheduledTime: string;
+            /** @description Trip ID */
+            tripId: string;
+        };
+        TripUser: {
+            /** @description User full name */
+            fullName: string;
+            /** @description User ID */
+            id: string;
+            /** @description Profile image URL of the user */
+            profileImage: string;
+            /**
+             * @description Role of the user
+             * @enum {string}
+             */
+            role: "participant" | "editor";
+            /** @description Username */
+            username: string;
+        };
+        UpdateAmenityInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Name of the amenity */
+            name: string;
+        };
+        UpdateAmenityOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description ID of the amenity
+             */
+            id: number;
+            /** @description Name of the amenity */
+            name: string;
+        };
+        UpdateCategoryInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: uri
+             * @description Image URL
+             */
+            image: string;
+            /** @description Name of the category */
+            name: string;
+        };
+        UpdateCategoryOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description ID of the category
+             */
+            id: number;
+            /** @description Image URL */
+            image: string;
+            /** @description Name of the category */
+            name: string;
+        };
+        UpdateCityInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Country code */
+            countryCode: string;
+            /** @description Country name */
+            countryName: string;
+            /** @description City description */
+            description: string;
+            /** @description Image attribution */
+            imageAttribute: string;
+            /** @description Image attribution link */
+            imageAttributionLink: string;
+            /** @description Image license */
+            imageLicense: string;
+            /**
+             * Format: uri
+             * @description Image license link
+             */
+            imageLicenseLink: string;
+            /**
+             * Format: uri
+             * @description Image URL
+             */
+            imageUrl: string;
+            /**
+             * Format: double
+             * @description Latitude
+             */
+            latitude: number;
+            /**
+             * Format: double
+             * @description Longitude
+             */
+            longitude: number;
+            /** @description City name */
+            name: string;
+            /** @description State code */
+            stateCode: string;
+            /** @description State name */
+            stateName: string;
+        };
+        UpdateCityOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            coordinates: components["schemas"]["CityCoordinates"];
+            country: components["schemas"]["CityCountry"];
+            /** @description City description */
+            description: string;
+            /**
+             * Format: int32
+             * @description City ID
+             */
+            id: number;
+            image: components["schemas"]["CityImage"];
+            /** @description City name */
+            name: string;
+            state: components["schemas"]["CityState"];
+        };
+        UpdateCollectionInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the collection */
+            description: string;
+            /** @description Name of the collection */
+            name: string;
+        };
+        UpdateCollectionItemsInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            newOrder: components["schemas"]["NewOrderItem"][];
+        };
+        UpdateCollectionItemsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collection: components["schemas"]["Collection"];
+        };
+        UpdateCollectionOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            collection: components["schemas"]["Collection"];
+        };
+        UpdateListInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            isPublic: boolean;
+            name: string;
+        };
+        UpdateListOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
+        };
+        UpdatePoiDraftInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            values: {
+                [key: string]: unknown;
+            };
+        };
+        UpdatePoiDraftOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            draft: {
+                [key: string]: unknown;
+            };
+        };
+        UpdateTripAmenitiesInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Amenities IDs */
+            amenityIds: number[];
+        };
+        UpdateTripAmenitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            amenities: components["schemas"]["Amenity"][];
+        };
+        UpdateTripCommentInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Content of comment */
+            content: string;
+        };
+        UpdateTripCommentOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            comment: components["schemas"]["TripComment"];
+        };
+        UpdateTripInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Trip description */
+            description: string;
+            /**
+             * Format: date-time
+             * @description End datetime of the trip
+             */
+            endAt: string;
+            /**
+             * Format: date-time
+             * @description Start datetime of the trip
+             */
+            startAt: string;
+            /** @description Trip title */
+            title: string;
+            /**
+             * @description Trip visibility level
+             * @enum {string}
+             */
+            visibilityLevel: "public" | "friends" | "private";
+        };
+        UpdateTripOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            trip: components["schemas"]["Trip"];
+        };
+        UpdateUserProfileImageInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+        };
+        UpdateUserProfileImageOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description URL of image upload endpoint */
+            url: string;
+        };
+        UpdateUserProfileInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Bio of the user */
+            bio?: string | null;
+            /** @description Full name of the user */
+            fullName: string;
+            /** @description Phone number of the user */
+            phone?: string | null;
+            /** @description Pronouns of the user */
+            pronouns?: string | null;
+            /**
+             * Format: uri
+             * @description Website of the user
+             */
+            website?: string | null;
+        };
+        UpdateUserProfileOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            profile: components["schemas"]["Profile"];
+        };
+        UploadDiaryMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /**
+             * Format: int32
+             * @description Size of media of point of interest
+             */
+            size: number;
+        };
+        UploadDiaryMediaOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
+        };
+        UploadPoiMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Alt of media of point of interest */
+            alt: string;
+            /** @description Caption of media of point of interest */
+            caption: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /**
+             * Format: int32
+             * @description Size of media of point of interest
+             */
+            size: number;
+        };
+        UploadReviewMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+            /**
+             * Format: int32
+             * @description Size of media of point of interest
+             */
+            size: number;
+        };
+        UploadReviewMediaOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            review: components["schemas"]["Review"];
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  'auth-get-me': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "auth-get-me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GetMeOutputBody"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['GetMeOutputBody'];
-        };
-      };
-      /** @description Error */
-      default: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/problem+json': components['schemas']['ErrorModel'];
-        };
-      };
-    };
-  };
 }
