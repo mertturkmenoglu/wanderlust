@@ -4,7 +4,7 @@ services:
   wl-redis:
     container_name: wl-redis
     image: redis:7.4.0-alpine
-    restart: always
+    restart: unless-stopped
     networks:
       - wl-redisnet
     ports:
@@ -18,7 +18,7 @@ services:
   wl-postgres:
     container_name: wl-postgres
     image: postgres:16.4-alpine
-    restart: always
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -36,7 +36,7 @@ services:
 
   wl-minio:
     container_name: wl-minio
-    restart: always
+    restart: unless-stopped
     ports:
       - 9000:9000
       - 9001:9001
@@ -51,7 +51,7 @@ services:
   wl-typesense:
     container_name: wl-typesense
     image: typesense/typesense:26.0
-    restart: always
+    restart: unless-stopped
     ports:
       - "8108:8108"
     volumes:
@@ -62,7 +62,7 @@ services:
 
   wl-typesense-dashboard:
     container_name: wl-typesense-dashboard
-    restart: always
+    restart: unless-stopped
     ports:
       - 3006:80
     image: ghcr.io/bfritscher/typesense-dashboard:latest
@@ -71,7 +71,7 @@ services:
 
   wl-inbucket:
     container_name: wl-inbucket
-    restart: always
+    restart: unless-stopped
     ports:
       - 10000:9000
       - 2500:2500
@@ -79,8 +79,9 @@ services:
     image: inbucket/inbucket
 
   wl-asynqmon:
+    container_name: wl-asynqmon
     image: hibiken/asynqmon
-    restart: always
+    restart: unless-stopped
     networks:
       - wl-redisnet
     ports:
@@ -92,7 +93,7 @@ services:
 
   wl-openobserve:
     container_name: wl-openobserve
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./tmp/zodata:/data
     environment:
