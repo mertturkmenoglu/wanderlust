@@ -1,3 +1,4 @@
+import { WipComponent } from '@/components/blocks/wip';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/notifications/')({
@@ -5,5 +6,5 @@ export const Route = createFileRoute('/notifications/')({
 });
 
 function RouteComponent() {
-  return <div>Hello "/notifications/"!</div>;
+  return <WipComponent />;
 }

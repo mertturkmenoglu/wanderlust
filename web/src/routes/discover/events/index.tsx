@@ -1,3 +1,4 @@
+import { WipComponent } from '@/components/blocks/wip';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/discover/events/')({
@@ -5,5 +6,5 @@ export const Route = createFileRoute('/discover/events/')({
 });
 
 function RouteComponent() {
-  return <div>Hello "/discover/events/"!</div>;
+  return <WipComponent />;
 }

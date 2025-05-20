@@ -1,4 +1,4 @@
-import AppMessage from '@/components/blocks/app-message';
+import { WipComponent } from '@/components/blocks/wip';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/report/')({
@@ -6,10 +6,5 @@ export const Route = createFileRoute('/report/')({
 });
 
 function RouteComponent() {
-  return (
-    <AppMessage
-      emptyMessage="We are working on reporting feature. Check later."
-      className="my-32"
-    />
-  );
+  return <WipComponent />;
 }
