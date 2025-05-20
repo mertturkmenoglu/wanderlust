@@ -7,7 +7,10 @@ export default function TagNavigation(): React.ReactElement {
     <ScrollArea>
       <ul className="flex items-center justify-center space-x-4">
         {data.map((item) => (
-          <NavItem {...item} key={item.href} />
+          <NavItem
+            {...item}
+            key={item.href}
+          />
         ))}
       </ul>
 

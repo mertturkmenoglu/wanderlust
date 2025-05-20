@@ -13,7 +13,11 @@ type Props = {
 
 export default function PoiCard({ poi, className, ...props }: Props) {
   return (
-    <div key={poi.id} className={cn('group', className)} {...props}>
+    <div
+      key={poi.id}
+      className={cn('group', className)}
+      {...props}
+    >
       <img
         src={ipx(poi.image.url, 'w_512')}
         alt={poi.image.alt}

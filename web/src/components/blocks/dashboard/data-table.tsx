@@ -80,7 +80,10 @@ export function DataTable<TData, TValue>({
         <div className="ml-auto" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-2">
+            <Button
+              variant="outline"
+              className="ml-2"
+            >
               <Settings2Icon className="size-4" />
               View
             </Button>

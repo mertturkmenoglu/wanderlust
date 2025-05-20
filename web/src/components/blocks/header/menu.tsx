@@ -20,13 +20,19 @@ export default function Menu({ auth }: Readonly<Props>) {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="rounded-full" variant="ghost">
+          <Button
+            className="rounded-full"
+            variant="ghost"
+          >
             <UserIcon className="size-5 text-black" />
             <span className="sr-only">Menu</span>
             <span className="hidden sm:ml-2 sm:block">{shortName}</span>
           </Button>
         </DropdownMenuTrigger>
-        <MenuContent fullName={auth.fullName} username={auth.username} />
+        <MenuContent
+          fullName={auth.fullName}
+          username={auth.username}
+        />
       </DropdownMenu>
     </div>
   );

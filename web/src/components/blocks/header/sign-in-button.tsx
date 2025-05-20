@@ -15,7 +15,11 @@ export default function SignInButton() {
         to: location.pathname,
       }}
     >
-      <Button variant="default" className="" asChild>
+      <Button
+        variant="default"
+        className=""
+        asChild
+      >
         <div className="flex items-center gap-2">
           <div>Sign in</div>
           <ArrowRight className="size-4" />

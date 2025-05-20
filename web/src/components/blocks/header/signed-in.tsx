@@ -22,7 +22,10 @@ export default function SignedInLinks() {
       {showSearch && (
         <TooltipProvider delayDuration={300}>
           <Tooltip>
-            <TooltipTrigger tabIndex={-1} asChild>
+            <TooltipTrigger
+              tabIndex={-1}
+              asChild
+            >
               <button
                 className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
                 onClick={() => setOpen(true)}
@@ -31,14 +34,20 @@ export default function SignedInLinks() {
                 <span className="sr-only">Search</span>
               </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={8}>
+            <TooltipContent
+              side="bottom"
+              sideOffset={8}
+            >
               <p>Search</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       )}
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog
+        open={open}
+        onOpenChange={setOpen}
+      >
         <Search
           className="px-4"
           onItemClicked={() => setOpen(false)}
@@ -58,7 +67,10 @@ export default function SignedInLinks() {
               <span className="sr-only">Notifications</span>
             </Link>
           </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={8}>
+          <TooltipContent
+            side="bottom"
+            sideOffset={8}
+          >
             <p>Notifications</p>
           </TooltipContent>
         </Tooltip>
@@ -76,7 +88,10 @@ export default function SignedInLinks() {
               <span className="sr-only">Messages</span>
             </Link>
           </TooltipTrigger>
-          <TooltipContent side="bottom" sideOffset={8}>
+          <TooltipContent
+            side="bottom"
+            sideOffset={8}
+          >
             <p>Messages</p>
           </TooltipContent>
         </Tooltip>

@@ -73,7 +73,11 @@ export default function CustomSearchBox({
           }}
         />
 
-        <Button type="submit" className="rounded" size="default">
+        <Button
+          type="submit"
+          className="rounded"
+          size="default"
+        >
           <SearchIcon className="size-4" />
           <span className="md:ml-2 sr-only md:not-sr-only">Search</span>
         </Button>

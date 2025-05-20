@@ -10,22 +10,34 @@ export default function Footer() {
     <footer className="my-20">
       <ul className="mb-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
         <li>
-          <Link to="." href="/about">
+          <Link
+            to="."
+            href="/about"
+          >
             About
           </Link>
         </li>
         <li>
-          <Link to="." href="/blog">
+          <Link
+            to="."
+            href="/blog"
+          >
             Blog
           </Link>
         </li>
         <li>
-          <Link to="." href="/help">
+          <Link
+            to="."
+            href="/help"
+          >
             FAQ
           </Link>
         </li>
         <li>
-          <Link to="." href="/contact-us">
+          <Link
+            to="."
+            href="/contact-us"
+          >
             Contact Us
           </Link>
         </li>

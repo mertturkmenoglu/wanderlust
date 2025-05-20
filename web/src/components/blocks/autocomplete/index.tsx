@@ -33,7 +33,11 @@ export function Autocomplete({
       {showAdvancedSearch && (
         <div className="text-sm leading-none tracking-tight">
           Need more power? Try our{' '}
-          <Button variant="link" className="px-0 underline" asChild>
+          <Button
+            variant="link"
+            className="px-0 underline"
+            asChild
+          >
             <Link to="/search">Advanced Search</Link>
           </Button>
         </div>
@@ -58,7 +62,10 @@ export function Autocomplete({
           ))}
 
           {!isEmptyResult && showAllResultsButton && (
-            <Button asChild variant="link">
+            <Button
+              asChild
+              variant="link"
+            >
               <Link
                 to="/search"
                 search={{
@@ -71,7 +78,10 @@ export function Autocomplete({
           )}
 
           {isEmptyResult && (
-            <Button asChild variant="link">
+            <Button
+              asChild
+              variant="link"
+            >
               <Link to="/search">
                 No results found. Try our advanced search.
               </Link>

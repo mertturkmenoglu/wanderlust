@@ -16,9 +16,15 @@ export default function DashboardActions({ children }: Props) {
   const [open, setOpen] = useState(true);
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
+    <Collapsible
+      open={open}
+      onOpenChange={setOpen}
+    >
       <CollapsibleTrigger asChild>
-        <Button variant="secondary" className="w-full justify-start">
+        <Button
+          variant="secondary"
+          className="w-full justify-start"
+        >
           {open ? (
             <ChevronUpIcon className="size-4" />
           ) : (

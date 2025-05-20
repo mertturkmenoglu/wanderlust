@@ -31,7 +31,10 @@ export default function MenuContent({ fullName, username }: Readonly<Props>) {
   const shortName = useShortName(fullName, 25);
 
   return (
-    <DropdownMenuContent className="w-56" align="end">
+    <DropdownMenuContent
+      className="w-56"
+      align="end"
+    >
       <DropdownMenuLabel>{shortName}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>

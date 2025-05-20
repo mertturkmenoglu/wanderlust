@@ -66,7 +66,11 @@ export default function Card({
           {innerContent}
         </button>
       ) : (
-        <Link to="/p/$id" params={{ id }} className="flex gap-2 md:gap-8">
+        <Link
+          to="/p/$id"
+          params={{ id }}
+          className="flex gap-2 md:gap-8"
+        >
           {innerContent}
         </Link>
       )}

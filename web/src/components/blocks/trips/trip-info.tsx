@@ -46,8 +46,14 @@ export function TripInfo({ className }: Props) {
       </div>
 
       <div className="my-4 space-y-2">
-        <LineItem icon={ActivityIcon} text={`Status: ${trip.status}`} />
-        <LineItem icon={EyeIcon} text={`Visibility: ${trip.visibilityLevel}`} />
+        <LineItem
+          icon={ActivityIcon}
+          text={`Status: ${trip.status}`}
+        />
+        <LineItem
+          icon={EyeIcon}
+          text={`Visibility: ${trip.visibilityLevel}`}
+        />
         <LineItem
           icon={ClockIcon}
           text={`Start Date: ${formatDate(trip.startAt, 'dd MMM yyyy')}`}
@@ -59,11 +65,28 @@ export function TripInfo({ className }: Props) {
       </div>
 
       <div className="flex flex-col mt-4 text-left items-start w-full pr-2 -ml-2">
-        <TripLink to="" id={trip.id} />
-        <TripLink to="participants" id={trip.id} />
-        <TripLink to="amenities" id={trip.id} />
-        <TripLink to="comments" id={trip.id} />
-        {isPrivileged && <TripLink to="edit" id={trip.id} />}
+        <TripLink
+          to=""
+          id={trip.id}
+        />
+        <TripLink
+          to="participants"
+          id={trip.id}
+        />
+        <TripLink
+          to="amenities"
+          id={trip.id}
+        />
+        <TripLink
+          to="comments"
+          id={trip.id}
+        />
+        {isPrivileged && (
+          <TripLink
+            to="edit"
+            id={trip.id}
+          />
+        )}
       </div>
     </div>
   );

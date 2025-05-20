@@ -35,7 +35,11 @@ export default function PoiGrid({ dataKey: key, data }: Props) {
         {isEmpty && <div>No data available.</div>}
         {!isEmpty &&
           data.slice(0, 6).map((poi) => (
-            <Link key={poi.id} to="/p/$id" params={{ id: poi.id }}>
+            <Link
+              key={poi.id}
+              to="/p/$id"
+              params={{ id: poi.id }}
+            >
               <PoiCard
                 poi={{
                   ...poi,

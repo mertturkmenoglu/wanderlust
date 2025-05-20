@@ -18,7 +18,10 @@ export default function DeleteDialog({ type, onClick }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive" size="sm">
+        <Button
+          variant="destructive"
+          size="sm"
+        >
           Delete
         </Button>
       </DialogTrigger>
@@ -31,11 +34,18 @@ export default function DeleteDialog({ type, onClick }: Props) {
           undone and all data will be permanently deleted.
         </div>
         <DialogFooter className="sm:justify-start">
-          <Button type="button" variant="destructive" onClick={onClick}>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={onClick}
+          >
             Delete
           </Button>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant="secondary"
+            >
               Close
             </Button>
           </DialogClose>

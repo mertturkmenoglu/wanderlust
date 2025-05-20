@@ -20,7 +20,10 @@ export default function Header({ className, ...props }: Readonly<Props>) {
       )}
       {...props}
     >
-      <Link to="/" className="flex items-center gap-4">
+      <Link
+        to="/"
+        className="flex items-center gap-4"
+      >
         <img
           src="/logo.png"
           alt="Wanderlust"
