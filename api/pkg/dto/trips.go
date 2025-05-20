@@ -339,3 +339,22 @@ type UpdateTripOutput struct {
 type UpdateTripOutputBody struct {
 	Trip Trip `json:"trip"`
 }
+
+type CreateTripLocationInput struct {
+	ID   string `path:"id" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	Body CreateTripLocationInputBody
+}
+
+type CreateTripLocationInputBody struct {
+	PoiID         string    `json:"poiId" example:"7323488942953598976" doc:"Point of Interest ID"`
+	ScheduledTime time.Time `json:"scheduledTime" example:"2023-05-01T00:00:00Z" doc:"Scheduled time of the location visit" format:"date-time"`
+	Description   *string   `json:"description" example:"My awesome location" doc:"Description of the location" required:"false"`
+}
+
+type CreateTripLocationOutput struct {
+	Body CreateTripLocationOutputBody
+}
+
+type CreateTripLocationOutputBody struct {
+	Location TripLocation `json:"location"`
+}
