@@ -289,3 +289,16 @@ DELETE FROM trip_comments WHERE trip_id = $1;
 
 -- name: DeleteTripAllInvites :exec
 DELETE FROM trip_invites WHERE trip_id = $1;
+
+-- name: CreateTripLocation :one
+INSERT INTO trip_locations (
+  trip_id,
+  poi_id,
+  scheduled_time,
+  description
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING *;

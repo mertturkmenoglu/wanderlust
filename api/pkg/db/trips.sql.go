@@ -231,6 +231,44 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 	return i, err
 }
 
+const createTripLocation = `-- name: CreateTripLocation :one
+INSERT INTO trip_locations (
+  trip_id,
+  poi_id,
+  scheduled_time,
+  description
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING trip_id, scheduled_time, poi_id, description
+`
+
+type CreateTripLocationParams struct {
+	TripID        string
+	PoiID         string
+	ScheduledTime pgtype.Timestamptz
+	Description   string
+}
+
+func (q *Queries) CreateTripLocation(ctx context.Context, arg CreateTripLocationParams) (TripLocation, error) {
+	row := q.db.QueryRow(ctx, createTripLocation,
+		arg.TripID,
+		arg.PoiID,
+		arg.ScheduledTime,
+		arg.Description,
+	)
+	var i TripLocation
+	err := row.Scan(
+		&i.TripID,
+		&i.ScheduledTime,
+		&i.PoiID,
+		&i.Description,
+	)
+	return i, err
+}
+
 const deleteInvite = `-- name: DeleteInvite :exec
 DELETE FROM trip_invites WHERE id = $1
 `
