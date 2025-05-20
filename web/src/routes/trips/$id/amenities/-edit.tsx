@@ -30,17 +30,13 @@ export function EditAmenities() {
     },
   });
 
-  const mutation = api.useMutation(
-    'patch',
-    '/api/v2/trips/{tripId}/amenities',
-    {
-      onSuccess: async () => {
-        await invalidator.invalidate();
-        form.reset();
-        toast.success('Amenities updated successfully');
-      },
+  const mutation = api.useMutation('patch', '/api/v2/trips/{id}/amenities', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      form.reset();
+      toast.success('Amenities updated successfully');
     },
-  );
+  });
 
   if (query.isPending) {
     return <Spinner className="my-8 mx-auto size-8" />;
@@ -63,7 +59,7 @@ export function EditAmenities() {
         mutation.mutate({
           params: {
             path: {
-              tripId: trip.id,
+              id: trip.id,
             },
           },
           body: {
