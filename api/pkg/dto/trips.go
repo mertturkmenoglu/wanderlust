@@ -298,3 +298,44 @@ type UpdateTripAmenitiesOutput struct {
 type UpdateTripAmenitiesOutputBody struct {
 	Amenities []Amenity `json:"amenities"`
 }
+
+type UpdateTripInput struct {
+	ID   string `path:"id" example:"7323488942953598976" doc:"Trip ID" required:"true"`
+	Body UpdateTripInputBody
+}
+
+type UpdateTripInputBody struct {
+	Title           string    `json:"title" example:"My Trip" doc:"Trip title" minLength:"1" maxLength:"128"`
+	Description     string    `json:"description" example:"My trip description" doc:"Trip description" minLength:"0" maxLength:"1024"`
+	VisibilityLevel string    `json:"visibilityLevel" example:"public" doc:"Trip visibility level" enum:"public,friends,private"`
+	StartAt         time.Time `json:"startAt" example:"2023-05-01T00:00:00Z" doc:"Start datetime of the trip" format:"date-time"`
+	EndAt           time.Time `json:"endAt" example:"2023-05-01T00:00:00Z" doc:"End datetime of the trip" format:"date-time"`
+}
+
+func (body *UpdateTripInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+	if body.StartAt.After(body.EndAt) {
+		return []error{&huma.ErrorDetail{
+			Message:  "Start date must be before end date",
+			Location: prefix.With("startAt"),
+			Value:    body.StartAt,
+		}}
+	}
+
+	if body.StartAt.Before(time.Now()) {
+		return []error{&huma.ErrorDetail{
+			Message:  "Start date must be in the future",
+			Location: prefix.With("startAt"),
+			Value:    body.StartAt,
+		}}
+	}
+
+	return nil
+}
+
+type UpdateTripOutput struct {
+	Body UpdateTripOutputBody
+}
+
+type UpdateTripOutputBody struct {
+	Trip Trip `json:"trip"`
+}
