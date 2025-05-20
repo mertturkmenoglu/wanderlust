@@ -12,10 +12,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// POST /trips/:id/locations (Add Location)
-// PATCH /trips/:id/locations/:locationId (Update Location)
-// DELETE /trips/:id/locations/:locationId (Delete Location)
-
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		*app,
@@ -503,4 +499,35 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	// Create Trip Location
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/trips/{id}/locations",
+			Summary:       "Add Location to Trip",
+			Description:   "Add a location to a trip",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.CreateTripLocationInput) (*dto.CreateTripLocationOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.createTripLocation(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// PATCH /trips/:id/locations/:locationId (Update Location)
+	// DELETE /trips/:id/locations/:locationId (Delete Location)
 }
