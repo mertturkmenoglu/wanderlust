@@ -961,6 +961,7 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 	}
 
 	type Location struct {
+		ID            string    `json:"id"`
 		TripID        string    `json:"tripId"`
 		ScheduledTime time.Time `json:"scheduledTime"`
 		Description   string    `json:"description"`
