@@ -62,11 +62,11 @@ CREATE INDEX IF NOT EXISTS idx_trip_comments_trip ON trip_comments(trip_id);
 CREATE INDEX IF NOT EXISTS idx_trip_comments_from ON trip_comments(from_id);
 
 CREATE TABLE IF NOT EXISTS trip_locations (
+  id TEXT PRIMARY KEY,
   trip_id TEXT NOT NULL,
   scheduled_time TIMESTAMPTZ NOT NULL,
   poi_id TEXT NOT NULL,
   description VARCHAR(1024) NOT NULL,
-  PRIMARY KEY (trip_id, poi_id),
   CONSTRAINT
     fk_trip_locations_trip FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
   CONSTRAINT
@@ -74,6 +74,8 @@ CREATE TABLE IF NOT EXISTS trip_locations (
 );
 
 CREATE INDEX IF NOT EXISTS idx_trip_locations_poi ON trip_locations(poi_id);
+CREATE INDEX IF NOT EXISTS idx_trip_locations_trip ON trip_locations(trip_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_trip_locations_composite ON trip_locations(trip_id, poi_id, scheduled_time);
 
 CREATE TABLE IF NOT EXISTS trip_amenities (
   trip_id TEXT NOT NULL,

@@ -10,6 +10,10 @@ DROP INDEX IF EXISTS idx_trip_amenities_trip;
 
 DROP TABLE IF EXISTS trip_amenities;
 
+DROP INDEX IF EXISTS idx_trip_locations_composite;
+
+DROP INDEX IF EXISTS idx_trip_locations_trip;
+
 DROP INDEX IF EXISTS idx_trip_locations_poi;
 
 DROP TABLE IF EXISTS trip_locations;

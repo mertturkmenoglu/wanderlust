@@ -256,6 +256,7 @@ type TripInvite struct {
 }
 
 type TripLocation struct {
+	ID            string
 	TripID        string
 	ScheduledTime pgtype.Timestamptz
 	PoiID         string
