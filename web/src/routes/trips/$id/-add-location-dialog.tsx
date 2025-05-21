@@ -24,15 +24,16 @@ import { useState } from 'react';
 import { InstantSearch } from 'react-instantsearch';
 
 type Props = {
-  day: Date;
   tripId: string;
 };
 
-export function AddLocationDialog({ day, tripId }: Props) {
+const fmtString = "yyyy-MM-dd'T'HH:mm";
+
+export function AddLocationDialog({ tripId }: Props) {
   const searchClient = useSearchClient();
   const [item, setItem] = useState<AutocompleteItemInfo | null>(null);
   const [desc, setDesc] = useState('');
-  const [time, setTime] = useState(formatDate(day, "yyyy-MM-dd'T'HH:mm"));
+  const [time, setTime] = useState(formatDate(new Date(), fmtString));
   const invalidator = useInvalidator();
   const [open, setOpen] = useState(false);
 
@@ -42,6 +43,9 @@ export function AddLocationDialog({ day, tripId }: Props) {
     {
       onSuccess: async () => {
         await invalidator.invalidate();
+        setItem(null);
+        setDesc('');
+        setTime(formatDate(new Date(), fmtString));
         setOpen(false);
       },
     },
@@ -51,7 +55,7 @@ export function AddLocationDialog({ day, tripId }: Props) {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
-          variant="ghost"
+          variant="secondary"
           size="sm"
           className="ml-auto"
           onClick={() => setOpen(true)}
