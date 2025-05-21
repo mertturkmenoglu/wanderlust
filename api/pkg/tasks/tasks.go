@@ -13,11 +13,11 @@ import (
 type TasksService struct {
 	Client  *asynq.Client
 	mailSvc *mail.MailService
-	upload  *upload.Upload
+	upload  *upload.UploadService
 	addr    string
 }
 
-func New(mailSvc *mail.MailService, upload *upload.Upload) *TasksService {
+func New(mailSvc *mail.MailService, upload *upload.UploadService) *TasksService {
 	return &TasksService{
 		Client: asynq.NewClient(asynq.RedisClientOpt{
 			Addr: cfg.Env.RedisAddr,

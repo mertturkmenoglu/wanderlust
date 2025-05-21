@@ -22,5 +22,5 @@ type Application struct {
 	Log        *zap.Logger
 	PLog       *pterm.Logger
 	Tasks      *tasks.TasksService
-	Upload     *upload.Upload
+	Upload     *upload.UploadService
 }

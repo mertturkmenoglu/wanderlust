@@ -9,14 +9,14 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-type Upload struct {
+type UploadService struct {
 	Client   *minio.Client
 	Context  context.Context
 	buckets  []string
 	location string
 }
 
-func New() *Upload {
+func New() *UploadService {
 	var (
 		endpoint          = cfg.Env.MinioEndpoint
 		id                = cfg.Env.MinioUser
@@ -33,7 +33,7 @@ func New() *Upload {
 		log.Fatal("cannot create minio client", err.Error())
 	}
 
-	up := &Upload{
+	svc := &UploadService{
 		Client:   client,
 		Context:  context.Background(),
 		buckets:  Buckets,
@@ -42,23 +42,23 @@ func New() *Upload {
 
 	// if autocreate buckets environment variable is true, try to create buckets
 	if autocreateBuckets {
-		_, err = up.autocreateBuckets()
+		_, err = svc.autocreateBuckets()
 
 		if err != nil {
 			log.Fatal("cannot create buckets", err.Error())
 		}
 	}
 
-	return up
+	return svc
 }
 
-func (up *Upload) autocreateBuckets() ([]*minio.BucketInfo, error) {
+func (svc *UploadService) autocreateBuckets() ([]*minio.BucketInfo, error) {
 	bucketInfo := make([]*minio.BucketInfo, 0)
 
-	for _, bucketName := range up.buckets {
+	for _, bucketName := range svc.buckets {
 		// Check if a bucket exists. If it already exists, skip it.
-		if exists, _ := up.Client.BucketExists(up.Context, bucketName); !exists {
-			info, err := up.createBucket(bucketName)
+		if exists, _ := svc.Client.BucketExists(svc.Context, bucketName); !exists {
+			info, err := svc.createBucket(bucketName)
 
 			if err != nil {
 				return nil, err
@@ -71,20 +71,21 @@ func (up *Upload) autocreateBuckets() ([]*minio.BucketInfo, error) {
 	return bucketInfo, nil
 }
 
-func (up *Upload) createBucket(bucket string) (*minio.BucketInfo, error) {
+func (svc *UploadService) createBucket(bucket string) (*minio.BucketInfo, error) {
 	// Create a bucket
-	err := up.Client.MakeBucket(up.Context, bucket, minio.MakeBucketOptions{
-		Region: up.location,
+	err := svc.Client.MakeBucket(svc.Context, bucket, minio.MakeBucketOptions{
+		Region: svc.location,
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	// Get public access policy for the bucket
-	policy := getPublicPolicyForBucket(bucket)
-	// Set the policy for the bucket
-	err = up.Client.SetBucketPolicy(context.Background(), bucket, policy)
+	err = svc.Client.SetBucketPolicy(
+		context.Background(),
+		bucket,
+		getPublicPolicyForBucket(bucket),
+	)
 
 	if err != nil {
 		return nil, err
