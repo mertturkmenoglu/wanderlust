@@ -1172,6 +1172,7 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		}
 
 		locations = append(locations, dto.TripLocation{
+			ID:            dbLocation.ID,
 			TripID:        dbLocation.TripID,
 			ScheduledTime: dbLocation.ScheduledTime,
 			Description:   dbLocation.Description,
