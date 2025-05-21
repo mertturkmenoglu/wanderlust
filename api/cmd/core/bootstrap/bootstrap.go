@@ -22,7 +22,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sony/sonyflake"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
-	"go.uber.org/zap"
 )
 
 func LoadEnv() {
@@ -35,7 +34,7 @@ func LoadEnv() {
 	cfg.InitConfigurationStruct()
 }
 
-func InitGlobalMiddlewares(e *echo.Echo, logger *zap.Logger) {
+func InitGlobalMiddlewares(e *echo.Echo, app *core.Application) {
 	e.Use(middlewares.CustomRecovery())
 
 	if cfg.Env.Env == "dev" {
@@ -46,7 +45,7 @@ func InitGlobalMiddlewares(e *echo.Echo, logger *zap.Logger) {
 		e.Use(middleware.RequestID())
 		e.Use(middlewares.Cors())
 		e.Use(middlewares.PTermLogger)
-		e.Use(middlewares.CustomBodyDump(logger))
+		e.Use(middlewares.CustomBodyDump(app.Log))
 	}
 
 	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
@@ -56,10 +55,11 @@ func InitGlobalMiddlewares(e *echo.Echo, logger *zap.Logger) {
 	e.Use(middleware.BodyLimit("1MB"))
 }
 
-func NewApplication(logger *zap.Logger) *core.Application {
+func NewApplication() *core.Application {
 	emailSvc := email.New()
 	uploadSvc := upload.New()
 	cacheSvc := cache.New()
+	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
 
 	return &core.Application{
 		Activities: activities.NewActivity(cacheSvc),
@@ -108,11 +108,25 @@ func ScalarDocs(e *echo.Echo) {
 	}
 }
 
-func StartServer(e *echo.Echo) {
+func StartServer(app *core.Application, e *echo.Echo) {
+	go app.Tasks.Run()
+	defer app.Tasks.Close()
+
+	tracingShutdown := InitTracer()
+	defer tracingShutdown()
+
+	defer app.Log.Sync()
+
 	portString := fmt.Sprintf(":%d", cfg.Env.Port)
 	e.Logger.Fatal(e.Start(portString))
 }
 
 func InitTracer() func() {
 	return tracing.Init()
+}
+
+func GetHumaConfig() *huma.Config {
+	humaConfig := huma.DefaultConfig(API_NAME, API_VERSION)
+	SetupOpenApiSecurityConfig(&humaConfig)
+	return &humaConfig
 }
