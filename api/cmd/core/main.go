@@ -2,8 +2,6 @@ package main
 
 import (
 	"wanderlust/cmd/core/bootstrap"
-	"wanderlust/pkg/logs"
-	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humaecho"
@@ -13,27 +11,17 @@ import (
 func main() {
 	bootstrap.LoadEnv()
 
-	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
-	defer logger.Sync()
-
-	tracingShutdown := bootstrap.InitTracer()
-
-	defer tracingShutdown()
-
 	e := echo.New()
 	e.HideBanner = true
-
-	humaConfig := huma.DefaultConfig(bootstrap.API_NAME, bootstrap.API_VERSION)
-
-	bootstrap.InitGlobalMiddlewares(e, logger)
-	bootstrap.SetupOpenApiSecurityConfig(&humaConfig)
-
 	huma.DefaultArrayNullable = false
-	api := humaecho.New(e, humaConfig)
+	app := bootstrap.NewApplication()
+	humaConfig := bootstrap.GetHumaConfig()
+	api := humaecho.New(e, *humaConfig)
 
+	bootstrap.InitGlobalMiddlewares(e, app)
 	bootstrap.SetupOpenApiDocs(&api)
-	bootstrap.RegisterRoutes(&api, logger)
+	bootstrap.RegisterRoutes(app, &api)
 	bootstrap.RunMigrations()
 	bootstrap.ScalarDocs(e)
-	bootstrap.StartServer(e)
+	bootstrap.StartServer(app, e)
 }
