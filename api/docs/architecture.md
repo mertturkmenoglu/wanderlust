@@ -1,7 +1,7 @@
 # Architecture
 
-- We are not following any particular software architecture style like DDD, clean, tiered, hexagonal, etc.
-- You can see the concepts of DDD and tiered (n-layer) architectures applied to this project.
+- We are not following any particular software architecture style like DDD, clean, vertical slice, tiered, hexagonal, etc.
+- You can see the concepts of DDD, vertical slice, and tiered (n-layer) architectures applied to this project.
 - Each subfolder in the `app` folder losely represents a domain object. `module.go` file contains the router (controller), `service.go` file contains the business logic.
 - But to keep modules separate (loose coupling), DTO (data transfer object) files are kept in the `pkg/dto` folder.
 - And also all the database objects are kept in the `pkg/db` folder.
