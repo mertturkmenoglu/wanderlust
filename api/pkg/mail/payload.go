@@ -1,8 +1,4 @@
-package email
-
-type Payload interface {
-	WelcomePayload | ForgotPasswordPayload | NewLoginAlertPayload | PasswordResetPayload | VerifyEmailPayload
-}
+package mail
 
 type (
 	ForgotPasswordPayload struct {
