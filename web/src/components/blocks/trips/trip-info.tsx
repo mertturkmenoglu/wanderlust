@@ -12,7 +12,6 @@ import {
   ClockIcon,
   ConciergeBellIcon,
   EyeIcon,
-  MapPinIcon,
   ReplyIcon,
   Settings2Icon,
   TextQuoteIcon,
@@ -63,7 +62,6 @@ export function TripInfo({ className }: Props) {
 
       <div className="flex flex-col mt-4 text-left items-start w-full pr-2 -ml-2">
         <TripLink to="" id={trip.id} />
-        {isPrivileged && <TripLink to="locations" id={trip.id} />}
         <TripLink to="participants" id={trip.id} />
         <TripLink to="amenities" id={trip.id} />
         <TripLink to="comments" id={trip.id} />
@@ -91,13 +89,12 @@ function LineItem({ icon: Icon, text, title }: LineItemProps) {
 }
 
 type TripLinkProps = {
-  to: '' | 'locations' | 'participants' | 'amenities' | 'comments' | 'edit';
+  to: '' | 'participants' | 'amenities' | 'comments' | 'edit';
   id: string;
 };
 
 const icons: Record<TripLinkProps['to'], typeof ActivityIcon> = {
   '': TextQuoteIcon,
-  locations: MapPinIcon,
   participants: UsersIcon,
   amenities: ConciergeBellIcon,
   comments: ReplyIcon,
