@@ -41,8 +41,10 @@
   - Points of Interests (100K)
   - Amenities-Pois
   - Point of Interests Media
+  - Users
+  - Follows
 
-## Getting IDs
+## Getting IDs (Manual Way)
 
 - For some types, you will be asked to enter a file that contains IDs of the objects you want to generate fake data for.
 - For example, if you want to generate fake data for amenities-pois, you will be asked to enter a file that contains IDs of POIs.
@@ -50,18 +52,35 @@
 - Example: If you have created POIs in the database, you can get the IDs by running this command:
 
 ```bash
-docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM pois" -o /home/file.txt
+docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM pois" --csv -o /home/file.csv
 ```
 
-- This will create a file called `file.txt` in Docker container's home directory.
-- Open Docker Desktop, click on the container, and click on "Files" tab.
-- Navigate to `/home` directory.
-- Right click on the `file.txt` file and select "Save".
-- Select the location where you want to save the file.
+- This will create a file called `file.csv` in Docker container's home directory.
+- You can either:
+
+  - Copy with a command.
+  - Copy with Docker Desktop.
+  - You can copy the file to `tmp` directory with this command:
+
+  ```bash
+  docker cp wl-postgres:/home/file.csv tmp/file.csv
+  ```
+
+  - Or, open Docker Desktop, click on the container, and click on "Files" tab.
+  - Navigate to `/home` directory.
+  - Right click on the `file.csv` file and select "Save".
+  - Select the location where you want to save the file.
+
 - This file will **NOT** be in the correct format.
 - Open this file in a text editor and alter the file to have one ID per line (and nothing else).
 - Save the file.
 - Now you can use this file as input for the script.
+
+## Getting IDs (Automatic Way)
+
+- Run `just fake-id`.
+- This will automate the process of getting IDs.
+- Files will be in correct format.
 
 ## Example Workflow
 
