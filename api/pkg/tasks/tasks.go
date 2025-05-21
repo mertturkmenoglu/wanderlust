@@ -57,6 +57,8 @@ func (t *Tasks) registerHandlers(mux *asynq.ServeMux) {
 }
 
 func (t *Tasks) Close() {
+	log.Println("Closing asynq client")
+
 	err := t.Client.Close()
 
 	if err != nil {
