@@ -128,3 +128,7 @@ func (s *Service) canUpdateTrip(trip *dto.Trip, userId string) bool {
 func (s *Service) canCreateLocation(trip *dto.Trip, userId string) bool {
 	return s.isPrivilegedUser(trip, userId)
 }
+
+func (s *Service) canUpdateTripLocation(trip *dto.Trip, userId string) bool {
+	return s.isPrivilegedUser(trip, userId)
+}
