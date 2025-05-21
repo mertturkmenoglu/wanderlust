@@ -1065,6 +1065,7 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 	}
 
 	res, err := s.db.CreateTripLocation(ctx, db.CreateTripLocationParams{
+		ID:     utils.GenerateId(s.Flake),
 		TripID: tripId,
 		PoiID:  body.PoiID,
 		ScheduledTime: pgtype.Timestamptz{
@@ -1097,12 +1098,132 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 	return &dto.CreateTripLocationOutput{
 		Body: dto.CreateTripLocationOutputBody{
 			Location: dto.TripLocation{
+				ID:            res.ID,
 				TripID:        tripId,
 				ScheduledTime: res.ScheduledTime.Time,
 				Description:   res.Description,
 				PoiID:         res.PoiID,
 				Poi:           dto.Poi{},
 			},
+		},
+	}, nil
+}
+
+func (s *Service) findTripLocationById(ctx context.Context, id string) (*dto.TripLocation, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	location, err := s.db.GetTripLocationById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Location not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get location")
+	}
+
+	dbPoi, err := s.db.GetPoiById(ctx, location.TripLocation.PoiID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get poi")
+	}
+
+	poi := mapper.ToPoi(dbPoi.Poi, dbPoi.Category, dbPoi.Address, dbPoi.City, []dto.Amenity{}, make(map[string]dto.OpenHours), []dto.Media{})
+
+	return &dto.TripLocation{
+		ID:            location.TripLocation.ID,
+		TripID:        location.TripLocation.TripID,
+		ScheduledTime: location.TripLocation.ScheduledTime.Time,
+		Description:   location.TripLocation.Description,
+		PoiID:         location.TripLocation.PoiID,
+		Poi:           poi,
+	}, nil
+}
+
+func (s *Service) updateTripLocation(ctx context.Context, input *dto.UpdateTripLocationInput) (*dto.UpdateTripLocationOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, input.TripID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canRead(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !s.canUpdateTripLocation(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to update this trip location")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	location, err := s.findTripLocationById(ctx, input.LocationID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	var description = location.Description
+	var scheduledTime = location.ScheduledTime
+
+	if input.Body.Description != nil {
+		description = *input.Body.Description
+	}
+
+	if input.Body.ScheduledTime != nil {
+		scheduledTime = *input.Body.ScheduledTime
+	}
+
+	if scheduledTime.Before(trip.StartAt) {
+		err = huma.Error400BadRequest("Scheduled time must be after the trip start time")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if scheduledTime.After(trip.EndAt) {
+		err = huma.Error400BadRequest("Scheduled time must be before the trip end time")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	_, err = s.db.UpdateTripLocation(ctx, db.UpdateTripLocationParams{
+		ID:          input.LocationID,
+		TripID:      input.TripID,
+		Description: description,
+		ScheduledTime: pgtype.Timestamptz{
+			Time:  scheduledTime,
+			Valid: true,
+		},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update location")
+	}
+
+	location, err = s.findTripLocationById(ctx, input.LocationID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdateTripLocationOutput{
+		Body: dto.UpdateTripLocationOutputBody{
+			Location: *location,
 		},
 	}, nil
 }
