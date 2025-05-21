@@ -17,28 +17,16 @@ import (
 	"wanderlust/app/reviews"
 	"wanderlust/app/trips"
 	"wanderlust/app/users"
-	"wanderlust/pkg/utils"
+	"wanderlust/pkg/core"
+	"wanderlust/pkg/middlewares"
 
 	"github.com/danielgtaylor/huma/v2"
-	"go.opentelemetry.io/otel/attribute"
-	"go.uber.org/zap"
 )
 
-func RegisterRoutes(api *huma.API, logger *zap.Logger) {
+func RegisterRoutes(app *core.Application, api *huma.API) {
 	grp := huma.NewGroup(*api, API_PREFIX)
-	app := NewApplication(logger)
 
-	grp.UseMiddleware(func(ctx huma.Context, next func(huma.Context)) {
-		oid := ctx.Operation().OperationID
-		if oid == "" {
-			oid = ctx.Operation().Summary
-		}
-		sp := utils.NewSpan(ctx.Context(), oid)
-		defer sp.End()
-
-		sp.SetAttributes(attribute.String("operation-id", oid))
-		next(ctx)
-	})
+	grp.UseMiddleware(middlewares.HumaOperationID())
 
 	aggregator.Register(grp, app)
 	amenities.Register(grp, app)
