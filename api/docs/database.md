@@ -103,31 +103,31 @@ docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM poi
 func foo(ctx context.Context, d *db.Db) error {
   tx, err := d.Pool.Begin(ctx)
 
-	if err != nil {
+  if err != nil {
     return err
-	}
+  }
 
-	defer tx.Rollback(ctx)
+  defer tx.Rollback(ctx)
 
-	qtx := d.Queries.WithTx(tx)
+  qtx := d.Queries.WithTx(tx)
 
-	err = qtx.SomeQuery(ctx, "FOO")
+  err = qtx.SomeQuery(ctx, "FOO")
 
-	if err != nil {
+  if err != nil {
     return err
-	}
+  }
 
   err = qtx.AnotherQuery(ctx, "BAR")
 
-	if err != nil {
+  if err != nil {
     return err
-	}
+  }
 
-	err = tx.Commit(ctx)
+  err = tx.Commit(ctx)
 
-	if err != nil {
+  if err != nil {
     return err
-	}
+  }
 
   return nil
 }
