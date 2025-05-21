@@ -2,10 +2,6 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
 import { SignInCard } from './-card';
 
-const schema = z.object({
-  signInModal: z.boolean().optional().catch(false),
-});
-
 export const Route = createFileRoute('/_auth/sign-in/')({
   component: RouteComponent,
   beforeLoad: async ({ context: { auth } }) => {
@@ -15,7 +11,9 @@ export const Route = createFileRoute('/_auth/sign-in/')({
       });
     }
   },
-  validateSearch: schema,
+  validateSearch: z.object({
+    signInModal: z.boolean().optional().catch(false),
+  }),
 });
 
 function RouteComponent() {
