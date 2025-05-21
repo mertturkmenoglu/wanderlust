@@ -1,10 +1,5 @@
 package tasks
 
-type Payload interface {
-	ForgotPasswordEmailPayload | WelcomeEmailPayload | NewLoginAlertEmailPayload |
-		PasswordResetEmailPayload | VerifyEmailEmailPayload | DeleteDiaryMediaPayload
-}
-
 type (
 	ForgotPasswordEmailPayload struct {
 		Email string
