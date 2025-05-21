@@ -81,7 +81,7 @@ func handleMediaForManyPois() error {
 }
 
 func createMediaForPoi(poiId string, count int) error {
-	for i := 0; i < count; i++ {
+	for i := range count {
 		url := getRandomImageUrl()
 
 		_, err := GetDb().Queries.CreatePoiMedia(context.Background(), db.CreatePoiMediaParams{
