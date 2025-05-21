@@ -29,7 +29,7 @@ type Service struct {
 	pool *pgxpool.Pool
 }
 
-func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
+func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -56,11 +56,11 @@ func (s *Service) getMany(ctx context.Context, ids []string) ([]dto.Trip, error)
 	return trips, nil
 }
 
-func (s *Service) get(ctx context.Context, id string) (*dto.Trip, error) {
+func (s *Service) find(ctx context.Context, id string) (*dto.Trip, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.getMany(ctx, []string{id})
+	res, err := s.findMany(ctx, []string{id})
 
 	if err != nil {
 		sp.RecordError(err)
@@ -85,7 +85,7 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	trip, err := s.get(ctx, id)
+	trip, err := s.find(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -127,7 +127,7 @@ func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, erro
 		tripIds[i] = row.ID
 	}
 
-	trips, err := s.getMany(ctx, tripIds)
+	trips, err := s.findMany(ctx, tripIds)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -214,7 +214,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 		return nil, huma.Error500InternalServerError("failed to create trip")
 	}
 
-	res, err := s.get(ctx, dbRes.ID)
+	res, err := s.find(ctx, dbRes.ID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -233,7 +233,7 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -296,7 +296,7 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -398,7 +398,7 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 		return nil, err
 	}
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -535,7 +535,7 @@ func (s *Service) removeInvite(ctx context.Context, tripId string, inviteId stri
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -564,7 +564,7 @@ func (s *Service) removeParticipant(ctx context.Context, tripId string, particip
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -602,7 +602,7 @@ func (s *Service) removeTrip(ctx context.Context, id string) error {
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, id)
+	trip, err := s.find(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -631,7 +631,7 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -679,7 +679,7 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -737,7 +737,7 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 	}, nil
 }
 
-func (s *Service) getCommentById(ctx context.Context, id string) (*dto.TripComment, error) {
+func (s *Service) findCommentById(ctx context.Context, id string) (*dto.TripComment, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -769,7 +769,7 @@ func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommen
 
 	userId := ctx.Value("userId").(string)
 
-	comment, err := s.getCommentById(ctx, input.CommentID)
+	comment, err := s.findCommentById(ctx, input.CommentID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -793,7 +793,7 @@ func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommen
 		return nil, huma.Error500InternalServerError("Failed to update comment")
 	}
 
-	updatedComment, err := s.getCommentById(ctx, input.CommentID)
+	updatedComment, err := s.findCommentById(ctx, input.CommentID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -813,14 +813,14 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 
 	userId := ctx.Value("userId").(string)
 
-	comment, err := s.getCommentById(ctx, commentId)
+	comment, err := s.findCommentById(ctx, commentId)
 
 	if err != nil {
 		sp.RecordError(err)
 		return err
 	}
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -853,7 +853,7 @@ func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.U
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -907,7 +907,7 @@ func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.U
 		return nil, huma.Error500InternalServerError("Failed to update amenities")
 	}
 
-	trip, err = s.get(ctx, tripId)
+	trip, err = s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -927,7 +927,7 @@ func (s *Service) updateTrip(ctx context.Context, id string, body dto.UpdateTrip
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, id)
+	trip, err := s.find(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -1033,7 +1033,7 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -1150,7 +1150,7 @@ func (s *Service) updateTripLocation(ctx context.Context, input *dto.UpdateTripL
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, input.TripID)
+	trip, err := s.find(ctx, input.TripID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -1234,7 +1234,7 @@ func (s *Service) removeTripLocation(ctx context.Context, tripId string, locatio
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.get(ctx, tripId)
+	trip, err := s.find(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
