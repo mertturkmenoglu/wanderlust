@@ -17,31 +17,30 @@ import (
 	"wanderlust/app/reviews"
 	"wanderlust/app/trips"
 	"wanderlust/app/users"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/middlewares"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterRoutes(app *core.Application, api *huma.API) {
-	grp := huma.NewGroup(*api, API_PREFIX)
+func (w *Wanderlust) Routing() {
+	grp := huma.NewGroup(*w.api, API_PREFIX)
 
 	grp.UseMiddleware(middlewares.HumaOperationID())
 
-	aggregator.Register(grp, app)
-	amenities.Register(grp, app)
-	auth.Register(grp, app)
-	bookmarks.Register(grp, app)
-	categories.Register(grp, app)
-	cities.Register(grp, app)
-	collections.Register(grp, app)
-	diary.Register(grp, app)
-	favorites.Register(grp, app)
+	aggregator.Register(grp, w.app)
+	amenities.Register(grp, w.app)
+	auth.Register(grp, w.app)
+	bookmarks.Register(grp, w.app)
+	categories.Register(grp, w.app)
+	cities.Register(grp, w.app)
+	collections.Register(grp, w.app)
+	diary.Register(grp, w.app)
+	favorites.Register(grp, w.app)
 	health.Register(grp)
-	images.Register(grp, app)
-	lists.Register(grp, app)
-	pois.Register(grp, app)
-	reviews.Register(grp, app)
-	trips.Register(grp, app)
-	users.Register(grp, app)
+	images.Register(grp, w.app)
+	lists.Register(grp, w.app)
+	pois.Register(grp, w.app)
+	reviews.Register(grp, w.app)
+	trips.Register(grp, w.app)
+	users.Register(grp, w.app)
 }
