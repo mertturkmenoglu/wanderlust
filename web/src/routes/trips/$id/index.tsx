@@ -66,6 +66,10 @@ function RouteComponent() {
       </div>
 
       <div className="">
+        <div className="my-4">
+          {isPrivileged && <AddLocationDialog tripId={trip.id} />}
+        </div>
+
         <Accordion
           type="multiple"
           defaultValue={days.map((_, i) => `day-${i}`)}
@@ -80,9 +84,6 @@ function RouteComponent() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <div className="flex col-span-full">
-                  {isPrivileged && <AddLocationDialog day={day} tripId={trip.id} />}
-                </div>
                 {locations.length === 0 && (
                   <AppMessage
                     emptyMessage="No locations scheduled for this day"
