@@ -1,4 +1,4 @@
-# Fake Data Generation (Out of Date Documentation)
+# Fake Data Generation
 
 ## Prerequisites
 
