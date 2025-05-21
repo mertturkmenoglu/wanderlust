@@ -1227,3 +1227,51 @@ func (s *Service) updateTripLocation(ctx context.Context, input *dto.UpdateTripL
 		},
 	}, nil
 }
+
+func (s *Service) removeTripLocation(ctx context.Context, tripId string, locationId string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	trip, err := s.get(ctx, tripId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	if !s.canRead(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this trip")
+		sp.RecordError(err)
+		return err
+	}
+
+	if !s.canDeleteTripLocation(trip, userId) {
+		err = huma.Error403Forbidden("You are not authorized to update this trip location")
+		sp.RecordError(err)
+		return err
+	}
+
+	ct, err := s.db.DeleteTripLocation(ctx, locationId)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		pgErr, ok := err.(*pgconn.PgError)
+
+		if !ok {
+			return huma.Error500InternalServerError("Failed to delete location")
+		}
+
+		return huma.Error500InternalServerError("Failed to delete location " + pgErr.Code + ": " + pgErr.Message)
+	}
+
+	if ct.RowsAffected() != 1 {
+		err = huma.Error404NotFound("Location with id " + locationId + " not found")
+		sp.RecordError(err)
+		return err
+	}
+
+	return nil
+}
