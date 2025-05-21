@@ -4,7 +4,7 @@ import (
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/db"
-	"wanderlust/pkg/email"
+	"wanderlust/pkg/mail"
 	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/upload"
 
@@ -18,9 +18,9 @@ type Application struct {
 	Db         *db.Db
 	Flake      *sonyflake.Sonyflake
 	Cache      *cache.Cache
-	Email      *email.EmailService
+	Mail       *mail.MailService
 	Log        *zap.Logger
 	PLog       *pterm.Logger
-	Tasks      *tasks.Tasks
+	Tasks      *tasks.TasksService
 	Upload     *upload.Upload
 }
