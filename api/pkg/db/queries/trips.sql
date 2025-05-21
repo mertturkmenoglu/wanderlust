@@ -69,6 +69,7 @@ SELECT
   WHERE ta.trip_id = trips.id
   ) AS amenities,
   (SELECT json_agg(jsonb_build_object(
+    'id', tlocations.id,
     'tripId', tlocations.trip_id,
     'scheduledTime', tlocations.scheduled_time,
     'poiId', tlocations.poi_id,
@@ -292,6 +293,7 @@ DELETE FROM trip_invites WHERE trip_id = $1;
 
 -- name: CreateTripLocation :one
 INSERT INTO trip_locations (
+  id,
   trip_id,
   poi_id,
   scheduled_time,
@@ -300,5 +302,20 @@ INSERT INTO trip_locations (
   $1,
   $2,
   $3,
-  $4
+  $4,
+  $5
 ) RETURNING *;
+
+-- name: UpdateTripLocation :one
+UPDATE trip_locations
+SET description = $2,
+    scheduled_time = $3
+WHERE id = $1 AND trip_id = $4
+RETURNING *;
+
+-- name: GetTripLocationById :one
+SELECT
+  sqlc.embed(tl)
+FROM trip_locations tl
+WHERE tl.id = $1
+LIMIT 1;

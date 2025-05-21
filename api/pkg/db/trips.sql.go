@@ -233,6 +233,7 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 
 const createTripLocation = `-- name: CreateTripLocation :one
 INSERT INTO trip_locations (
+  id,
   trip_id,
   poi_id,
   scheduled_time,
@@ -241,11 +242,13 @@ INSERT INTO trip_locations (
   $1,
   $2,
   $3,
-  $4
-) RETURNING trip_id, scheduled_time, poi_id, description
+  $4,
+  $5
+) RETURNING id, trip_id, scheduled_time, poi_id, description
 `
 
 type CreateTripLocationParams struct {
+	ID            string
 	TripID        string
 	PoiID         string
 	ScheduledTime pgtype.Timestamptz
@@ -254,6 +257,7 @@ type CreateTripLocationParams struct {
 
 func (q *Queries) CreateTripLocation(ctx context.Context, arg CreateTripLocationParams) (TripLocation, error) {
 	row := q.db.QueryRow(ctx, createTripLocation,
+		arg.ID,
 		arg.TripID,
 		arg.PoiID,
 		arg.ScheduledTime,
@@ -261,6 +265,7 @@ func (q *Queries) CreateTripLocation(ctx context.Context, arg CreateTripLocation
 	)
 	var i TripLocation
 	err := row.Scan(
+		&i.ID,
 		&i.TripID,
 		&i.ScheduledTime,
 		&i.PoiID,
@@ -614,6 +619,31 @@ func (q *Queries) GetTripCommentsCount(ctx context.Context, tripID string) (int6
 	return count, err
 }
 
+const getTripLocationById = `-- name: GetTripLocationById :one
+SELECT
+  tl.id, tl.trip_id, tl.scheduled_time, tl.poi_id, tl.description
+FROM trip_locations tl
+WHERE tl.id = $1
+LIMIT 1
+`
+
+type GetTripLocationByIdRow struct {
+	TripLocation TripLocation
+}
+
+func (q *Queries) GetTripLocationById(ctx context.Context, id string) (GetTripLocationByIdRow, error) {
+	row := q.db.QueryRow(ctx, getTripLocationById, id)
+	var i GetTripLocationByIdRow
+	err := row.Scan(
+		&i.TripLocation.ID,
+		&i.TripLocation.TripID,
+		&i.TripLocation.ScheduledTime,
+		&i.TripLocation.PoiID,
+		&i.TripLocation.Description,
+	)
+	return i, err
+}
+
 const getTripsByIdsPopulated = `-- name: GetTripsByIdsPopulated :many
 SELECT
   trips.id, trips.owner_id, trips.status, trips.title, trips.description, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
@@ -640,6 +670,7 @@ SELECT
   WHERE ta.trip_id = trips.id
   ) AS amenities,
   (SELECT json_agg(jsonb_build_object(
+    'id', tlocations.id,
     'tripId', tlocations.trip_id,
     'scheduledTime', tlocations.scheduled_time,
     'poiId', tlocations.poi_id,
@@ -815,6 +846,39 @@ func (q *Queries) UpdateTripComment(ctx context.Context, arg UpdateTripCommentPa
 		&i.FromID,
 		&i.Content,
 		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateTripLocation = `-- name: UpdateTripLocation :one
+UPDATE trip_locations
+SET description = $2,
+    scheduled_time = $3
+WHERE id = $1 AND trip_id = $4
+RETURNING id, trip_id, scheduled_time, poi_id, description
+`
+
+type UpdateTripLocationParams struct {
+	ID            string
+	Description   string
+	ScheduledTime pgtype.Timestamptz
+	TripID        string
+}
+
+func (q *Queries) UpdateTripLocation(ctx context.Context, arg UpdateTripLocationParams) (TripLocation, error) {
+	row := q.db.QueryRow(ctx, updateTripLocation,
+		arg.ID,
+		arg.Description,
+		arg.ScheduledTime,
+		arg.TripID,
+	)
+	var i TripLocation
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.ScheduledTime,
+		&i.PoiID,
+		&i.Description,
 	)
 	return i, err
 }
