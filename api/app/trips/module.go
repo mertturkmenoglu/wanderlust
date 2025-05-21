@@ -556,5 +556,31 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// DELETE /trips/:id/locations/:locationId (Delete Location)
+	// Delete Trip Location
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/trips/{tripId}/locations/{locationId}",
+			Summary:       "Remove Trip Location",
+			Description:   "Remove a trip location",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeleteTripLocationInput) (*struct{}, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removeTripLocation(ctx, input.TripID, input.LocationID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
 }
