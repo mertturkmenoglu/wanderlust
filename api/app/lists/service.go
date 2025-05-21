@@ -8,6 +8,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -18,26 +19,34 @@ type Service struct {
 	app *core.Application
 }
 
-func (s *Service) getAllLists(userId string, params dto.PaginationQueryParams) (*dto.GetAllListsOfUserOutput, error) {
-	dbLists, err := s.app.Db.Queries.GetAllListsOfUser(context.Background(), db.GetAllListsOfUserParams{
+func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetAllListsOfUserOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	dbLists, err := s.app.Db.Queries.GetAllListsOfUser(ctx, db.GetAllListsOfUserParams{
 		UserID: userId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get all lists of user")
 	}
 
-	count, err := s.app.Db.Queries.CountAllListsOfUser(context.Background(), userId)
+	count, err := s.app.Db.Queries.CountAllListsOfUser(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to count all lists of user")
 	}
 
-	dbUser, err := s.app.Db.Queries.GetUserById(context.Background(), userId)
+	dbUser, err := s.app.Db.Queries.GetUserById(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get user by id")
 	}
 
@@ -84,10 +93,17 @@ func (s *Service) getPublicLists(username string, params dto.PaginationQueryPara
 	}, nil
 }
 
-func (s *Service) getList(id string) (*dto.GetListByIdOutput, error) {
-	dbList, err := s.app.Db.Queries.GetListById(context.Background(), id)
+func (s *Service) getList(ctx context.Context, id string) (*dto.GetListByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	dbList, err := s.app.Db.Queries.GetListById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("list not found")
 		}
@@ -95,9 +111,16 @@ func (s *Service) getList(id string) (*dto.GetListByIdOutput, error) {
 		return nil, huma.Error500InternalServerError("Failed to get list by id")
 	}
 
-	dbListItems, err := s.app.Db.Queries.GetListItems(context.Background(), id)
+	if !dbList.List.IsPublic && dbList.User.ID != userId {
+		err = huma.Error403Forbidden("You are not authorized to access this list")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	dbListItems, err := s.app.Db.Queries.GetListItems(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get list items")
 	}
 

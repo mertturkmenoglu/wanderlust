@@ -33,8 +33,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetAllListsOfUserInput) (*dto.GetAllListsOfUserOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.getAllLists(userId, input.PaginationQueryParams)
+			res, err := s.getAllLists(ctx, input.PaginationQueryParams)
 
 			if err != nil {
 				return nil, err
@@ -53,12 +52,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.WithAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListRead),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetListByIdInput) (*dto.GetListByIdOutput, error) {
-			res, err := s.getList(input.ID)
+			res, err := s.getList(ctx, input.ID)
 
 			if err != nil {
 				return nil, err
