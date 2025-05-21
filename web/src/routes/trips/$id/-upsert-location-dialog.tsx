@@ -19,21 +19,37 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
 import { api } from '@/lib/api';
 import { formatDate } from 'date-fns';
-import { ArrowLeftIcon, MapPinPlusIcon } from 'lucide-react';
+import {
+  ArrowLeftIcon,
+  MapPinPlusIcon,
+  Settings2Icon,
+  Trash2Icon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { InstantSearch } from 'react-instantsearch';
 
 type Props = {
   tripId: string;
+  initial?: {
+    locationId: string;
+    item: AutocompleteItemInfo | null;
+    desc: string;
+    time: string;
+  };
 };
 
 const fmtString = "yyyy-MM-dd'T'HH:mm";
 
-export function AddLocationDialog({ tripId }: Props) {
+export function UpsertLocationDialog({ tripId, initial }: Props) {
   const searchClient = useSearchClient();
-  const [item, setItem] = useState<AutocompleteItemInfo | null>(null);
-  const [desc, setDesc] = useState('');
-  const [time, setTime] = useState(formatDate(new Date(), fmtString));
+  const isUpdate = initial !== undefined;
+  const [item, setItem] = useState<AutocompleteItemInfo | null>(
+    initial?.item ?? null,
+  );
+  const [desc, setDesc] = useState(initial?.desc ?? '');
+  const [time, setTime] = useState(
+    formatDate(initial?.time ?? new Date(), fmtString),
+  );
   const invalidator = useInvalidator();
   const [open, setOpen] = useState(false);
 
@@ -51,34 +67,66 @@ export function AddLocationDialog({ tripId }: Props) {
     },
   );
 
+  const updateLocationMutation = api.useMutation(
+    'patch',
+    '/api/v2/trips/{tripId}/locations/{locationId}',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        setOpen(false);
+      },
+    },
+  );
+
+  const deleteLocationMutation = api.useMutation(
+    'delete',
+    '/api/v2/trips/{tripId}/locations/{locationId}',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        setOpen(false);
+      },
+    },
+  );
+
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="ml-auto"
-          onClick={() => setOpen(true)}
-        >
-          <MapPinPlusIcon className="size-4" />
-          <span>Add Location</span>
-        </Button>
+        {isUpdate ? (
+          <Button variant="ghost" size="icon">
+            <Settings2Icon className="size-4" />
+          </Button>
+        ) : (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="ml-auto"
+            onClick={() => setOpen(true)}
+          >
+            <MapPinPlusIcon className="size-4" />
+            <span>Add Location</span>
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent className="min-h-[600px]">
         <AlertDialogHeader>
-          <AlertDialogTitle>Add Location to Trip</AlertDialogTitle>
+          <AlertDialogTitle>
+            {isUpdate ? 'Update Location' : 'Add Location to Trip'}
+          </AlertDialogTitle>
           <AlertDialogDescription>
             {item !== null ? (
               <div>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="!px-0"
-                  onClick={() => setItem(null)}
-                >
-                  <ArrowLeftIcon className="size-4" />
-                  <span>Go back</span>
-                </Button>
+                {!isUpdate && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="!px-0"
+                    onClick={() => setItem(null)}
+                  >
+                    <ArrowLeftIcon className="size-4" />
+                    <span>Go back</span>
+                  </Button>
+                )}
                 <img
                   src={item.image}
                   alt=""
@@ -148,26 +196,62 @@ export function AddLocationDialog({ tripId }: Props) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-auto">
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          {isUpdate && (
+            <Button
+              variant="destructive"
+              onClick={(e) => {
+                e.preventDefault();
+                if (confirm('Are you sure you want to delete this location?')) {
+                  deleteLocationMutation.mutate({
+                    params: {
+                      path: {
+                        tripId,
+                        locationId: initial.locationId,
+                      },
+                    },
+                  });
+                }
+              }}
+            >
+              <Trash2Icon className="size-4" />
+              <span>Delete</span>
+            </Button>
+          )}
+          <AlertDialogCancel className="ml-auto">Cancel</AlertDialogCancel>
           <AlertDialogAction
             disabled={item === null || addLocationMutation.isPending}
             onClick={(e) => {
               e.preventDefault();
-              addLocationMutation.mutate({
-                params: {
-                  path: {
-                    id: tripId,
+              if (isUpdate) {
+                updateLocationMutation.mutate({
+                  params: {
+                    path: {
+                      tripId,
+                      locationId: initial.locationId,
+                    },
                   },
-                },
-                body: {
-                  poiId: item?.id ?? '',
-                  scheduledTime: new Date(time).toISOString(),
-                  description: desc,
-                },
-              });
+                  body: {
+                    scheduledTime: new Date(time).toISOString(),
+                    description: desc,
+                  },
+                });
+              } else {
+                addLocationMutation.mutate({
+                  params: {
+                    path: {
+                      id: tripId,
+                    },
+                  },
+                  body: {
+                    poiId: item?.id ?? '',
+                    scheduledTime: new Date(time).toISOString(),
+                    description: desc,
+                  },
+                });
+              }
             }}
           >
-            Add
+            {isUpdate ? 'Update' : 'Add'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
