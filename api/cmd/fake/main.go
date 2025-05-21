@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
+	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/db"
 
 	"github.com/joho/godotenv"
@@ -45,6 +46,7 @@ var noCountNeeded = []string{
 	"amenities-pois",
 	"categories",
 	"cities",
+	"follows",
 	"media",      // because we handle it on the handler level
 	"media-many", // because we handle it on the handler level
 	"reviews",
@@ -64,6 +66,8 @@ func main() {
 	if err != nil {
 		panic("cannot load .env file: " + err.Error())
 	}
+
+	cfg.InitConfigurationStruct()
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
@@ -117,11 +121,11 @@ func generateAndInsert(genType string, count int) error {
 	case "categories":
 		return handleCategories()
 	case "cities":
-		return fmt.Errorf("not implemented")
+		return fmt.Errorf("manually run pkg/db/seed/cities.sql")
 	case "favorites":
 		return fmt.Errorf("not implemented")
 	case "follows":
-		return fmt.Errorf("not implemented")
+		return handleFollows()
 	case "lists":
 		return fmt.Errorf("not implemented")
 	case "list-items":
