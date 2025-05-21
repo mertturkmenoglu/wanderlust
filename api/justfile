@@ -75,3 +75,8 @@ all: build
 	echo "=> Pushing secrets to Infisical..."
 	infisical secrets set --file="./.env"
 	echo "=> Pushed secrets to Infisical"
+
+# Fake data generation database id selection helper
+@fake-id:
+	chmod +x ./cmd/fake/fake-id.sh
+	./cmd/fake/fake-id.sh
