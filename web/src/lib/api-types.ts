@@ -4858,6 +4858,69 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/trips/{tripId}/locations/{locationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Trip Location
+         * @description Update a trip location
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Location ID
+                     * @example 7323488942953598976
+                     */
+                    locationId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripLocationInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripLocationOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/trips/{tripId}/participants/{participantId}": {
         parameters: {
             query?: never;
@@ -7420,6 +7483,28 @@ export interface components {
              * @enum {string}
              */
             visibilityLevel: "public" | "friends" | "private";
+        };
+        UpdateTripLocationInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the location */
+            description?: string | null;
+            /**
+             * Format: date-time
+             * @description Scheduled time of the location
+             */
+            scheduledTime?: string | null;
+        };
+        UpdateTripLocationOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            location: components["schemas"]["TripLocation"];
         };
         UpdateTripOutputBody: {
             /**
