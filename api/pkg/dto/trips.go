@@ -378,3 +378,8 @@ type UpdateTripLocationOutput struct {
 type UpdateTripLocationOutputBody struct {
 	Location TripLocation `json:"location"`
 }
+
+type DeleteTripLocationInput struct {
+	TripID     string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	LocationID string `path:"locationId" example:"7323488942953598976" required:"true" doc:"Location ID"`
+}
