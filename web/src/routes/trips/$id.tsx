@@ -34,7 +34,7 @@ function RouteComponent() {
       />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-8 my-8">
-        <TripInfo className="w-full col-span-full md:col-span-1 md:border-r border-border" />
+        <TripInfo className="w-full col-span-full md:col-span-1" />
 
         <div className="w-full col-span-full md:col-span-3">
           <div className="">
