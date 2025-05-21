@@ -7143,6 +7143,8 @@ export interface components {
         TripLocation: {
             /** @description Description of the location */
             description: string;
+            /** @description ID of location */
+            id: string;
             poi: components["schemas"]["Poi"];
             /** @description Point of Interest ID */
             poiId: string;
