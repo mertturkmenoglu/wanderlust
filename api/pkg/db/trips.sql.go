@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -349,6 +350,14 @@ DELETE FROM trip_comments WHERE id = $1
 func (q *Queries) DeleteTripComment(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteTripComment, id)
 	return err
+}
+
+const deleteTripLocation = `-- name: DeleteTripLocation :execresult
+DELETE FROM trip_locations WHERE id = $1
+`
+
+func (q *Queries) DeleteTripLocation(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, deleteTripLocation, id)
 }
 
 const getAllTripsIds = `-- name: GetAllTripsIds :many

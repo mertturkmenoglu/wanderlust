@@ -319,3 +319,6 @@ SELECT
 FROM trip_locations tl
 WHERE tl.id = $1
 LIMIT 1;
+
+-- name: DeleteTripLocation :execresult
+DELETE FROM trip_locations WHERE id = $1;
