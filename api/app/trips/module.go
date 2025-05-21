@@ -528,6 +528,33 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// PATCH /trips/:id/locations/:locationId (Update Location)
+	// Update Trip Location
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/trips/{tripId}/locations/{locationId}",
+			Summary:       "Update Trip Location",
+			Description:   "Update a trip location",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateTripLocationInput) (*dto.UpdateTripLocationOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateTripLocation(ctx, input)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
 	// DELETE /trips/:id/locations/:locationId (Delete Location)
 }
