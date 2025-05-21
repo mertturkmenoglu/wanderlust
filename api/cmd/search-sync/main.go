@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"wanderlust/pkg/cfg"
 
 	"github.com/joho/godotenv"
 	"github.com/pterm/pterm"
@@ -19,6 +20,8 @@ func main() {
 	if err != nil {
 		panic("cannot load .env file: " + err.Error())
 	}
+
+	cfg.InitConfigurationStruct()
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
