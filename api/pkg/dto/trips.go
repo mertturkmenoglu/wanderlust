@@ -82,6 +82,7 @@ type TripComment struct {
 }
 
 type TripLocation struct {
+	ID            string    `json:"id" example:"7323488942953598976" doc:"ID of location"`
 	TripID        string    `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
 	ScheduledTime time.Time `json:"scheduledTime" example:"2023-05-01T00:00:00Z" doc:"Scheduled time of the location"`
 	Description   string    `json:"description" example:"Lorem ipsum dolor sit amet" doc:"Description of the location"`
@@ -356,5 +357,24 @@ type CreateTripLocationOutput struct {
 }
 
 type CreateTripLocationOutputBody struct {
+	Location TripLocation `json:"location"`
+}
+
+type UpdateTripLocationInput struct {
+	TripID     string `path:"tripId" example:"7323488942953598976" required:"true" doc:"Trip ID"`
+	LocationID string `path:"locationId" example:"7323488942953598976" required:"true" doc:"Location ID"`
+	Body       UpdateTripLocationInputBody
+}
+
+type UpdateTripLocationInputBody struct {
+	Description   *string    `json:"description" example:"My awesome location" doc:"Description of the location" required:"false"`
+	ScheduledTime *time.Time `json:"scheduledTime" example:"2023-05-01T00:00:00Z" doc:"Scheduled time of the location" required:"false" format:"date-time"`
+}
+
+type UpdateTripLocationOutput struct {
+	Body UpdateTripLocationOutputBody
+}
+
+type UpdateTripLocationOutputBody struct {
 	Location TripLocation `json:"location"`
 }
