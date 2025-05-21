@@ -7,10 +7,26 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useSignUpForm, useSignUpMutation } from './-hooks';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const schema = z.object({
+  fullName: z
+    .string()
+    .min(3, { message: 'At least 3 characters' })
+    .max(128, { message: 'Value is too long' }),
+  username: z
+    .string()
+    .min(4, { message: 'At least 4 characters' })
+    .max(32, { message: 'Value is too long' }),
+  email: z.string().min(1, { message: 'Email is required' }).email(),
+  password: z.string().min(1, { message: 'Password is required' }),
+});
 
 export const Route = createFileRoute('/_auth/sign-up/')({
   component: RouteComponent,
@@ -25,8 +41,25 @@ export const Route = createFileRoute('/_auth/sign-up/')({
 
 function RouteComponent() {
   const [showPassword, setShowPassword] = useState(false);
-  const { formState, register, handleSubmit } = useSignUpForm();
-  const mutation = useSignUpMutation();
+  const { formState, register, handleSubmit } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      fullName: '',
+      username: '',
+      email: '',
+      password: '',
+    },
+  });
+
+  const registerMutation = api.useMutation(
+    'post',
+    '/api/v2/auth/credentials/register',
+    {
+      onSuccess: () => {
+        window.location.href = '/sign-in';
+      },
+    },
+  );
 
   return (
     <Card className="mx-auto my-32 flex max-w-lg flex-col p-8">
@@ -37,14 +70,14 @@ function RouteComponent() {
       />
       <h2 className="mt-4 text-xl font-bold">Create Your Wanderlust Account</h2>
       <div className="text-sm text-muted-foreground">
-        Already have an account?{' '}
-        <AuthLink
-          href="/sign-in"
-          text="Sign In"
-        />
+        Already have an account? <AuthLink href="/sign-in" text="Sign In" />
       </div>
       <form
-        onSubmit={handleSubmit((_data) => mutation.mutate(_data))}
+        onSubmit={handleSubmit((data) => {
+          registerMutation.mutate({
+            body: data,
+          });
+        })}
         className="mt-8 w-full"
       >
         <Label htmlFor="full-name">Full Name</Label>
@@ -112,25 +145,15 @@ function RouteComponent() {
           <div className="my-4"></div>
         </div>
 
-        <Button
-          variant="default"
-          className="w-full"
-          type="submit"
-        >
+        <Button variant="default" className="w-full" type="submit">
           Sign Up
         </Button>
 
         <Separator className="my-4" />
 
         <div className="space-y-4">
-          <OAuthButton
-            provider="google"
-            text="Sign up with Google"
-          />
-          <OAuthButton
-            provider="facebook"
-            text="Sign up with Facebook"
-          />
+          <OAuthButton provider="google" text="Sign up with Google" />
+          <OAuthButton provider="facebook" text="Sign up with Facebook" />
         </div>
 
         <div className="mt-4 text-center">
