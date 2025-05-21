@@ -47,7 +47,7 @@ function RouteComponent() {
         className="mt-4"
         disabled={isSent || sendVerificationEmailMutation.isPending}
       >
-        Click to send verification email
+        {isSent ? 'Check your inbox' : 'Click to send verification email'}
       </Button>
     </div>
   );
