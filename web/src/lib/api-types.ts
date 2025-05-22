@@ -3049,17 +3049,25 @@ export interface paths {
             parameters: {
                 query?: never;
                 header?: never;
-                path?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
-            requestBody?: never;
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateListItemsInputBody"];
+                };
+            };
             responses: {
                 /** @description OK */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["UpdateListItemsOutputBody"];
+                    };
                 };
                 /** @description Error */
                 default: {
@@ -3072,52 +3080,6 @@ export interface paths {
                 };
             };
         };
-        trace?: never;
-    };
-    "/api/v2/lists/{id}/items/{poiId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Remove List Item
-         * @description Remove a POI from a list
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/v2/pois/drafts": {
@@ -7436,6 +7398,22 @@ export interface components {
             readonly $schema?: string;
             isPublic: boolean;
             name: string;
+        };
+        UpdateListItemsInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            itemIds: string[];
+        };
+        UpdateListItemsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            list: components["schemas"]["List"];
         };
         UpdateListOutputBody: {
             /**
