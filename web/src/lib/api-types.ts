@@ -7405,7 +7405,7 @@ export interface components {
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            itemIds: string[];
+            poiIds: string[];
         };
         UpdateListItemsOutputBody: {
             /**
