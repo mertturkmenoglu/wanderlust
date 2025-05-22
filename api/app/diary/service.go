@@ -139,35 +139,6 @@ func (s *Service) get(ctx context.Context, id string) (*dto.GetDiaryEntryByIdOut
 	}, nil
 }
 
-func (s *Service) changeSharing(ctx context.Context, id string) error {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	res, err := s.findById(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-		return err
-	}
-
-	userId := ctx.Value("userId").(string)
-
-	if res.UserID != userId {
-		err = huma.Error403Forbidden("You are not authorized to update this diary entry")
-		sp.RecordError(err)
-		return err
-	}
-
-	err = s.Db.Queries.ChangeShareWithFriends(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("failed to change diary entry sharing")
-	}
-
-	return nil
-}
-
 func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
