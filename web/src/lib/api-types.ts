@@ -5858,21 +5858,8 @@ export interface components {
              * @description The date of the diary entry
              */
             date: string;
-            /** @description The description of the diary entry */
-            description: string;
-            /** @description The IDs of the friends */
-            friends: string[];
-            locations: components["schemas"]["CreateDiaryEntryLocation"][];
-            /** @description Whether the diary entry is shared with friends or not */
-            shareWithFriends: boolean;
             /** @description The title of the diary entry */
             title: string;
-        };
-        CreateDiaryEntryLocation: {
-            /** @description The description of the location */
-            description?: string | null;
-            /** @description The ID of the point of interest */
-            id: string;
         };
         CreateDiaryEntryOutputBody: {
             /**
