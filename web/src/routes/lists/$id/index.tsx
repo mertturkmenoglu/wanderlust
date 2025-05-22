@@ -44,16 +44,6 @@ export const Route = createFileRoute('/lists/$id/')({
       }),
     );
   },
-  errorComponent: ({ error }) => {
-    return (
-      <AppMessage
-        errorMessage={error.message}
-        className="my-32"
-        backLink="/lists"
-        backLinkText="Go back to the lists page"
-      />
-    );
-  },
 });
 
 function RouteComponent() {
