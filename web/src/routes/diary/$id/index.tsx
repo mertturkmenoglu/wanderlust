@@ -39,7 +39,9 @@ function RouteComponent() {
         </div>
 
         <CollapsibleText
-          text={entry.description}
+          text={
+            entry.description.length > 0 ? entry.description : 'No description'
+          }
           charLimit={1000}
           className="mt-4 text-justify"
         />
