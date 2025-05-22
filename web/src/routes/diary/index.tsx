@@ -1,13 +1,14 @@
 import AppMessage from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import React, { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import EntryCard from './-components/entry-card';
 import Header from './-components/header';
 import Loading from './-components/loading';
-import { useDiaryEntriesQuery, useLoadMoreText } from './-hooks';
+import { useDiaryEntriesQuery } from './-hooks';
 
 export const Route = createFileRoute('/diary/')({
   component: RouteComponent,
@@ -44,7 +45,7 @@ type Props = {
 function Layout({ date }: Props) {
   const query = useDiaryEntriesQuery(date);
   const isEmpty = query.data && query.data.pages[0]?.entries.length === 0;
-  const loadMoreButtonText = useLoadMoreText(query);
+  const loadMoreText = useLoadMoreText(query);
 
   if (query.isPending) {
     return <Loading />;
@@ -87,7 +88,7 @@ function Layout({ date }: Props) {
             onClick={() => query.fetchNextPage()}
             disabled={!query.hasNextPage || query.isFetchingNextPage}
           >
-            {loadMoreButtonText}
+            {loadMoreText}
           </Button>
         </div>
       )}
