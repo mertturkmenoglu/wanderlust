@@ -11,125 +11,189 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
-func (s *Service) getMany(ids []string) ([]dto.DiaryEntry, error) {
-	res, err := s.app.Db.Queries.GetDiaryEntriesByIdsPopulated(context.Background(), ids)
+func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.DiaryEntry, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbEntries, err := s.Db.Queries.GetDiaryEntriesByIdsPopulated(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	entries := make([]dto.DiaryEntry, len(res))
+	entries := make([]dto.DiaryEntry, len(dbEntries))
 
-	for i, r := range res {
-		v, err := mapper.ToDiaryEntry(r)
+	for i, dbEntry := range dbEntries {
+		entry, err := mapper.ToDiaryEntry(dbEntry)
 
 		if err != nil {
+			sp.RecordError(err)
 			return nil, err
 		}
 
-		entries[i] = v
+		entries[i] = entry
 	}
 
 	return entries, nil
 }
 
-func (s *Service) getById(userId string, id string) (*dto.GetDiaryEntryByIdOutput, error) {
-	res, err := s.get(id)
+func (s *Service) findById(ctx context.Context, id string) (*dto.DiaryEntry, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entries, err := s.findMany(ctx, []string{id})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	if res.UserID != userId {
-		if !res.ShareWithFriends {
-			return nil, huma.Error403Forbidden("You are not authorized to access this diary entry")
-		}
-
-		hasAccess := false
-
-		for _, friend := range res.Friends {
-			if friend.ID == userId {
-				hasAccess = true
-				break
-			}
-		}
-
-		if !hasAccess {
-			return nil, huma.Error403Forbidden("You are not authorized to access this diary entry")
-		}
+	if len(entries) == 0 {
+		err = huma.Error404NotFound("Diary entry not found")
+		sp.RecordError(err)
+		return nil, err
 	}
 
-	return &dto.GetDiaryEntryByIdOutput{
-		Body: dto.GetDiaryEntryByIdOutputBody{
-			Entry: *res,
+	return &entries[0], nil
+}
+
+func (s *Service) create(ctx context.Context, body dto.CreateDiaryEntryInputBody) (*dto.CreateDiaryEntryOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	dbEntry, err := s.db.CreateNewDiaryEntry(ctx, db.CreateNewDiaryEntryParams{
+		ID:               utils.GenerateId(s.Flake),
+		UserID:           userId,
+		Title:            body.Title,
+		Description:      "",
+		ShareWithFriends: false,
+		Date: pgtype.Timestamptz{
+			Time:  body.Date,
+			Valid: true,
+		},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create diary entry")
+	}
+
+	entry, err := s.findById(ctx, dbEntry.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get diary entry")
+	}
+
+	return &dto.CreateDiaryEntryOutput{
+		Body: dto.CreateDiaryEntryOutputBody{
+			Entry: *entry,
 		},
 	}, nil
 }
 
-func (s *Service) get(id string) (*dto.DiaryEntry, error) {
-	res, err := s.getMany([]string{id})
+func (s *Service) get(ctx context.Context, id string) (*dto.GetDiaryEntryByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	if len(res) == 0 {
-		return nil, huma.Error404NotFound("Diary entry not found")
+	userId := ctx.Value("userId").(string)
+
+	if !s.canRead(entry, userId) {
+		err = huma.Error403Forbidden("You are not authorized to access this diary entry")
+		sp.RecordError(err)
+		return nil, err
 	}
 
-	return &res[0], nil
+	return &dto.GetDiaryEntryByIdOutput{
+		Body: dto.GetDiaryEntryByIdOutputBody{
+			Entry: *entry,
+		},
+	}, nil
 }
 
-func (s *Service) changeSharing(userId string, id string) error {
-	res, err := s.get(id)
+func (s *Service) changeSharing(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.findById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return err
 	}
 
+	userId := ctx.Value("userId").(string)
+
 	if res.UserID != userId {
-		return huma.Error403Forbidden("You are not authorized to access this diary entry")
+		err = huma.Error403Forbidden("You are not authorized to update this diary entry")
+		sp.RecordError(err)
+		return err
 	}
 
-	err = s.app.Db.Queries.ChangeShareWithFriends(context.Background(), id)
+	err = s.Db.Queries.ChangeShareWithFriends(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return huma.Error500InternalServerError("failed to change diary entry sharing")
 	}
 
 	return nil
 }
 
-func (s *Service) list(userId string, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
+func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	if filterParams.From != "" && filterParams.To != "" {
-		return s.filterAndList(userId, params, filterParams)
+		return s.filterAndList(ctx, params, filterParams)
 	}
 
-	return s.listAll(userId, params)
+	return s.listAll(ctx, params)
 }
 
-func (s *Service) listAll(userId string, params dto.PaginationQueryParams) (*dto.GetDiaryEntriesOutput, error) {
-	dbRes, err := s.app.Db.Queries.ListDiaryEntries(context.Background(), db.ListDiaryEntriesParams{
+func (s *Service) listAll(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetDiaryEntriesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	dbRes, err := s.Db.Queries.ListDiaryEntries(ctx, db.ListDiaryEntriesParams{
 		UserID: userId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Diary entries not found")
 		}
@@ -143,15 +207,17 @@ func (s *Service) listAll(userId string, params dto.PaginationQueryParams) (*dto
 		ids[i] = v.ID
 	}
 
-	res, err := s.getMany(ids)
+	res, err := s.findMany(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	count, err := s.app.Db.Queries.CountDiaryEntries(context.Background(), userId)
+	count, err := s.Db.Queries.CountDiaryEntries(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -163,20 +229,27 @@ func (s *Service) listAll(userId string, params dto.PaginationQueryParams) (*dto
 	}, nil
 }
 
-func (s *Service) filterAndList(userId string, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
+func (s *Service) filterAndList(ctx context.Context, params dto.PaginationQueryParams, filterParams dto.DiaryDateFilterQueryParams) (*dto.GetDiaryEntriesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	to, err := time.Parse(time.DateOnly, filterParams.To)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error422UnprocessableEntity("invalid date format parameter to")
 	}
 
 	from, err := time.Parse(time.DateOnly, filterParams.From)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error422UnprocessableEntity("invalid date format parameter from")
 	}
 
-	dbRes, err := s.app.Db.Queries.ListAndFilterDiaryEntries(context.Background(), db.ListAndFilterDiaryEntriesParams{
+	userId := ctx.Value("userId").(string)
+
+	dbRes, err := s.Db.Queries.ListAndFilterDiaryEntries(ctx, db.ListAndFilterDiaryEntriesParams{
 		UserID: userId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
@@ -185,6 +258,8 @@ func (s *Service) filterAndList(userId string, params dto.PaginationQueryParams,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Diary entries not found")
 		}
@@ -198,19 +273,21 @@ func (s *Service) filterAndList(userId string, params dto.PaginationQueryParams,
 		ids[i] = v.ID
 	}
 
-	res, err := s.getMany(ids)
+	res, err := s.findMany(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	count, err := s.app.Db.Queries.CountDiaryEntriesFilterByRange(context.Background(), db.CountDiaryEntriesFilterByRangeParams{
+	count, err := s.Db.Queries.CountDiaryEntriesFilterByRange(ctx, db.CountDiaryEntriesFilterByRangeParams{
 		UserID: userId,
 		Date:   pgtype.Timestamptz{Time: to, Valid: true},
 		Date_2: pgtype.Timestamptz{Time: from, Valid: true},
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("failed to count diary entries")
 	}
 
@@ -222,99 +299,33 @@ func (s *Service) filterAndList(userId string, params dto.PaginationQueryParams,
 	}, nil
 }
 
-func (s *Service) create(userId string, body dto.CreateDiaryEntryInputBody) (*dto.CreateDiaryEntryOutput, error) {
-	t, err := time.Parse(time.DateOnly, body.Date)
+func (s *Service) remove(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
 
 	if err != nil {
-		return nil, huma.Error422UnprocessableEntity("invalid date format")
-	}
-
-	ctx := context.Background()
-	tx, err := s.app.Db.Pool.Begin(ctx)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create diary entry")
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := s.app.Db.Queries.WithTx(tx)
-
-	entry, err := qtx.CreateNewDiaryEntry(ctx, db.CreateNewDiaryEntryParams{
-		ID:               utils.GenerateId(s.app.Flake),
-		UserID:           userId,
-		Title:            body.Title,
-		Description:      body.Description,
-		ShareWithFriends: body.ShareWithFriends,
-		Date:             pgtype.Timestamptz{Time: t, Valid: true},
-	})
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create diary entry")
-	}
-
-	for i, poi := range body.Locations {
-		_, err = qtx.CreateDiaryEntryPoi(ctx, db.CreateDiaryEntryPoiParams{
-			DiaryEntryID: entry.ID,
-			PoiID:        poi.ID,
-			Description:  utils.NilStrToText(poi.Description),
-			ListIndex:    int32(i + 1),
-		})
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("failed to create diary entry poi")
-		}
-	}
-
-	for i, friendID := range body.Friends {
-		_, err = qtx.CreateDiaryEntryUser(ctx, db.CreateDiaryEntryUserParams{
-			DiaryEntryID: entry.ID,
-			UserID:       friendID,
-			ListIndex:    int32(i + 1),
-		})
-
-		if err != nil {
-			return nil, huma.Error500InternalServerError("failed to create diary entry user")
-		}
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create diary entry")
-	}
-
-	entryRes, err := s.get(entry.ID)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to get diary entry")
-	}
-
-	return &dto.CreateDiaryEntryOutput{
-		Body: dto.CreateDiaryEntryOutputBody{
-			Entry: *entryRes,
-		},
-	}, nil
-}
-
-func (s *Service) remove(userId string, id string) error {
-	entry, err := s.get(id)
-
-	if err != nil {
+		sp.RecordError(err)
 		return err
 	}
 
+	userId := ctx.Value("userId").(string)
+
 	if entry.UserID != userId {
-		return huma.Error403Forbidden("you are not authorized to delete this diary entry")
+		err = huma.Error403Forbidden("you are not authorized to delete this diary entry")
+		sp.RecordError(err)
+		return err
 	}
 
-	err = s.app.Db.Queries.DeleteDiaryEntry(context.Background(), id)
+	err = s.Db.Queries.DeleteDiaryEntry(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return huma.Error500InternalServerError("failed to delete diary entry")
 	}
 
-	bucket := upload.BUCKET_DIARIES
+	bucket := string(upload.BUCKET_DIARIES)
 
 	for _, m := range entry.Media {
 		_, after, found := strings.Cut(m.Url, "diaries/")
@@ -323,16 +334,11 @@ func (s *Service) remove(userId string, id string) error {
 			continue
 		}
 
-		err = s.app.Upload.Client.RemoveObject(
-			context.Background(),
-			string(bucket),
-			after,
-			minio.RemoveObjectOptions{},
-		)
+		err = s.Upload.Client.RemoveObject(ctx, bucket, after, minio.RemoveObjectOptions{})
 
 		if err != nil {
-			s.app.Log.Debug("error deleting diary media, cannot remove object from bucket",
-				zap.String("bucket", string(bucket)),
+			s.Log.Debug("error deleting diary media, cannot remove object from bucket",
+				zap.String("bucket", bucket),
 				zap.String("object", after),
 				zap.String("url", m.Url),
 				zap.Error(err),
@@ -344,61 +350,71 @@ func (s *Service) remove(userId string, id string) error {
 	return nil
 }
 
-func (s *Service) uploadMedia(userId string, id string, body dto.UploadDiaryMediaInputBody) (*dto.UploadDiaryMediaOutput, error) {
-	entry, err := s.get(id)
+func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDiaryMediaInputBody) (*dto.UploadDiaryMediaOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
+	userId := ctx.Value("userId").(string)
+
 	if entry.UserID != userId {
-		return nil, huma.Error403Forbidden("you are not authorized to upload media for this diary entry")
+		err = huma.Error403Forbidden("you are not authorized to upload media for this diary entry")
+		sp.RecordError(err)
+		return nil, err
 	}
 
-	bucket := upload.BUCKET_DIARIES
+	bucket := string(upload.BUCKET_DIARIES)
 
 	// Check if the file is uploaded
-	_, err = s.app.Upload.Client.GetObject(
-		context.Background(),
-		string(bucket),
-		body.FileName,
-		minio.GetObjectOptions{},
-	)
+	_, err = s.Upload.Client.GetObject(ctx, bucket, body.FileName, minio.GetObjectOptions{})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error400BadRequest("file not uploaded")
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.app.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID)) {
-		return nil, huma.Error400BadRequest("incorrect file")
+	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID)) {
+		err = huma.Error400BadRequest("incorrect file")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	// delete cached information
-	err = s.app.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID))
+	err = s.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID))
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to delete cached information")
 	}
 
-	endpoint := s.app.Upload.Client.EndpointURL().String()
+	endpoint := s.Upload.Client.EndpointURL().String()
 	url := endpoint + "/" + string(bucket) + "/" + body.FileName
 
-	lastOrder, err := s.app.Db.Queries.GetLastMediaOrderOfEntry(context.Background(), id)
+	lastOrder, err := s.Db.Queries.GetLastMediaOrderOfEntry(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get last media order")
 	}
 
 	ord, ok := lastOrder.(int32)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("Failed to cast last media order")
+		err = huma.Error500InternalServerError("Failed to cast last media order")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	order := int16(ord) + 1
 
-	_, err = s.app.Db.Queries.CreateDiaryMedia(context.Background(), db.CreateDiaryMediaParams{
+	_, err = s.Db.Queries.CreateDiaryMedia(ctx, db.CreateDiaryMediaParams{
 		DiaryEntryID: id,
 		Url:          url,
 		Alt:          body.FileName,
@@ -407,12 +423,14 @@ func (s *Service) uploadMedia(userId string, id string, body dto.UploadDiaryMedi
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create diary media")
 	}
 
-	entryRes, err := s.get(id)
+	entryRes, err := s.findById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
