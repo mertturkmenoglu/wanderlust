@@ -73,12 +73,8 @@ type CreateDiaryEntryInput struct {
 }
 
 type CreateDiaryEntryInputBody struct {
-	Title            string                     `json:"title" required:"true" example:"My diary entry" doc:"The title of the diary entry" minLength:"1" maxLength:"128"`
-	Description      string                     `json:"description" required:"true" example:"My diary entry description" doc:"The description of the diary entry" minLength:"1" maxLength:"4096"`
-	Date             string                     `json:"date" required:"true" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" format:"date"`
-	ShareWithFriends bool                       `json:"shareWithFriends" required:"true" example:"true" doc:"Whether the diary entry is shared with friends or not"`
-	Friends          []string                   `json:"friends" required:"true" example:"[\"7323488942953598976\"]" doc:"The IDs of the friends"`
-	Locations        []CreateDiaryEntryLocation `json:"locations"`
+	Title string    `json:"title" required:"true" example:"My diary entry" doc:"The title of the diary entry" minLength:"1" maxLength:"128"`
+	Date  time.Time `json:"date" required:"true" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" format:"date-time"`
 }
 
 type CreateDiaryEntryLocation struct {
