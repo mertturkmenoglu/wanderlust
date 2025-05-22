@@ -1,11 +1,10 @@
-import AppMessage from '@/components/blocks/app-message';
 import BackLink from '@/components/blocks/back-link';
 import InputInfo from '@/components/kit/input-info';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { api, fetchClient } from '@/lib/api';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
@@ -18,37 +17,15 @@ export const Route = createFileRoute('/lists/$id/edit/')({
       throw new Error('You are not signed in');
     }
   },
-  loader: async ({ params }) => {
-    const list = await fetchClient.GET('/api/v2/lists/{id}', {
-      params: {
-        path: {
-          id: params.id,
+  loader: async ({ context, params }) => {
+    return context.queryClient.ensureQueryData(
+      api.queryOptions('get', '/api/v2/lists/{id}', {
+        params: {
+          path: {
+            id: params.id,
+          },
         },
-      },
-    });
-
-    if (list.error) {
-      if (list.error.status === 404) {
-        throw new Error('List not found');
-      } else if (list.error.status === 401) {
-        throw new Error('You are not signed in');
-      } else if (list.error.status === 403) {
-        throw new Error('You do not have permission to update this list');
-      } else {
-        throw new Error('Something went wrong');
-      }
-    }
-
-    return { list: list.data!.list };
-  },
-  errorComponent: ({ error }) => {
-    return (
-      <AppMessage
-        errorMessage={error.message}
-        className="my-32"
-        backLink="/lists"
-        backLinkText="Go back to the lists page"
-      />
+      }),
     );
   },
 });
@@ -107,7 +84,7 @@ function RouteComponent() {
               id="name"
               placeholder="Name"
               autoComplete="off"
-              className="w-full"
+              className="w-full mt-1"
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -115,13 +92,13 @@ function RouteComponent() {
               }}
             />
             {showErr && (
-              <div className="text-sm text-destructive">
+              <div className="text-sm text-destructive mt-1">
                 Name length should be between 1 and 128 characters
               </div>
             )}
           </div>
 
-          <div className="w-full">
+          <div className="w-full flex items-start gap-2">
             <Checkbox
               id="is-public"
               checked={isPublic}
@@ -130,13 +107,10 @@ function RouteComponent() {
                 setIsPublic(c === true);
               }}
             />
-            <Label
-              htmlFor="is-public"
-              className="ml-2"
-            >
-              Public list
-            </Label>
-            <InputInfo text="If you make your list public, other users can see it." />
+            <div>
+              <Label htmlFor="is-public">Public list</Label>
+              <InputInfo text="If you make your list public, other users can see it." />
+            </div>
           </div>
 
           <Button
