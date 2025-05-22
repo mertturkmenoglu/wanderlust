@@ -270,3 +270,68 @@ func (s *Service) createListItem(listId string, body dto.CreateListItemInputBody
 		},
 	}, nil
 }
+
+func (s *Service) updateListItems(ctx context.Context, listId string, itemIds []string) (*dto.UpdateListItemsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	list, err := s.getList(ctx, listId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if list.Body.List.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to update this list")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.app.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to begin transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.app.Db.Queries.WithTx(tx)
+
+	err = qtx.DeleteAllListItems(ctx, listId)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to delete all list items")
+	}
+
+	for i, itemId := range itemIds {
+		_, err = qtx.CreateListItem(ctx, db.CreateListItemParams{
+			ListID:    listId,
+			PoiID:     itemId,
+			ListIndex: int32(i + 1),
+		})
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Failed to create list item")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	list, err = s.getList(ctx, listId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.UpdateListItemsOutput{
+		Body: dto.UpdateListItemsOutputBody{
+			List: list.Body.List,
+		},
+	}, nil
+}
