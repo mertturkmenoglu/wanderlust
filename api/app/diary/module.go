@@ -11,11 +11,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// POST /diary/ 							Create Diary Entry
-// GET /diary/:id 							Get Diary Entry By ID
-// GET /diary/ List 						Diary Entries
 // PATCH /diary/:id 						Update Diary Entry
-// DELETE /diary/:id 						Delete Diary Entry
 // POST /diary/:id/friends 					Add Friend
 // DELETE /diary/:id/friends/:friendId 		Remove Friend
 // PATCH /diary/:id/friends 				Update Friends
@@ -37,6 +33,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Diary"}
 	})
 
+	// Create Diary Entry
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
@@ -64,8 +61,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	////////////////////////////////
-
+	// List Diary Entries
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -93,6 +89,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Get Diary Entry
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
@@ -120,33 +117,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	huma.Register(grp,
-		huma.Operation{
-			Method:        http.MethodPatch,
-			Path:          "/diary/{id}/sharing",
-			Summary:       "Change Diary Entry Sharing",
-			Description:   "Change the sharing of a diary entry",
-			DefaultStatus: http.StatusNoContent,
-			Middlewares: huma.Middlewares{
-				middlewares.IsAuth(grp.API),
-			},
-			Security: core.OpenApiJwtSecurity,
-		},
-		func(ctx context.Context, input *dto.ChangeDiaryEntySharingInput) (*struct{}, error) {
-			ctx, sp := tracing.NewSpan(ctx)
-			defer sp.End()
-
-			err := s.changeSharing(ctx, input.ID)
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, err
-			}
-
-			return nil, nil
-		},
-	)
-
+	// Delete Diary Entry
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
