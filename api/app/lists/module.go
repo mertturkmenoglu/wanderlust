@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -208,24 +209,6 @@ func Register(grp *huma.Group, app *core.Application) {
 
 	huma.Register(grp,
 		huma.Operation{
-			Method:        http.MethodDelete,
-			Path:          "/lists/{id}/items/{poiId}",
-			Summary:       "Remove List Item",
-			Description:   "Remove a POI from a list",
-			DefaultStatus: http.StatusNoContent,
-			Middlewares: huma.Middlewares{
-				middlewares.IsAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListItemDelete),
-			},
-			Security: core.OpenApiJwtSecurity,
-		},
-		func(ctx context.Context, i *struct{}) (*struct{}, error) {
-			return nil, huma.Error501NotImplemented("Not implemented")
-		},
-	)
-
-	huma.Register(grp,
-		huma.Operation{
 			Method:        http.MethodPatch,
 			Path:          "/lists/{id}/items",
 			Summary:       "Update List Items",
@@ -233,12 +216,20 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListItemUpdate),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, i *struct{}) (*struct{}, error) {
-			return nil, huma.Error501NotImplemented("Not implemented")
+		func(ctx context.Context, input *dto.UpdateListItemsInput) (*dto.UpdateListItemsOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateListItems(ctx, input.ID, input.Body.ItemIds)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return res, nil
 		},
 	)
 }
