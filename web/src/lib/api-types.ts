@@ -2299,58 +2299,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/diary/{id}/sharing": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Change Diary Entry Sharing
-         * @description Change the sharing of a diary entry
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
     "/api/v2/favorites/": {
         parameters: {
             query?: never;
@@ -5854,7 +5802,7 @@ export interface components {
              */
             readonly $schema?: string;
             /**
-             * Format: date
+             * Format: date-time
              * @description The date of the diary entry
              */
             date: string;
