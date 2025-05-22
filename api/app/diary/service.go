@@ -207,7 +207,7 @@ func (s *Service) listAll(ctx context.Context, params dto.PaginationQueryParams)
 		ids[i] = v.ID
 	}
 
-	res, err := s.findMany(ctx, ids)
+	entries, err := s.findMany(ctx, ids)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -223,7 +223,7 @@ func (s *Service) listAll(ctx context.Context, params dto.PaginationQueryParams)
 
 	return &dto.GetDiaryEntriesOutput{
 		Body: dto.GetDiaryEntriesOutputBody{
-			Entries:    res,
+			Entries:    entries,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
