@@ -271,7 +271,7 @@ func (s *Service) createListItem(listId string, body dto.CreateListItemInputBody
 	}, nil
 }
 
-func (s *Service) updateListItems(ctx context.Context, listId string, itemIds []string) (*dto.UpdateListItemsOutput, error) {
+func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []string) (*dto.UpdateListItemsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -305,10 +305,10 @@ func (s *Service) updateListItems(ctx context.Context, listId string, itemIds []
 		return nil, huma.Error500InternalServerError("Failed to delete all list items")
 	}
 
-	for i, itemId := range itemIds {
+	for i, poiId := range poiIds {
 		_, err = qtx.CreateListItem(ctx, db.CreateListItemParams{
 			ListID:    listId,
-			PoiID:     itemId,
+			PoiID:     poiId,
 			ListIndex: int32(i + 1),
 		})
 

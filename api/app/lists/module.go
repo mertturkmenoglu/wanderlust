@@ -223,7 +223,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.updateListItems(ctx, input.ID, input.Body.ItemIds)
+			res, err := s.updateListItems(ctx, input.ID, input.Body.PoiIds)
 
 			if err != nil {
 				return nil, err

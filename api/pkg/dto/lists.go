@@ -164,7 +164,7 @@ type UpdateListItemsInput struct {
 }
 
 type UpdateListItemsInputBody struct {
-	ItemIds []string `json:"itemIds" required:"true" minItems:"0" maxItems:"256" uniqueItems:"true"`
+	PoiIds []string `json:"poiIds" required:"true" minItems:"0" maxItems:"256" uniqueItems:"true"`
 }
 
 type UpdateListItemsOutput struct {
