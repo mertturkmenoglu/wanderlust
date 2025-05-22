@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
   Popover,
@@ -6,10 +6,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Link } from '@tanstack/react-router';
 import { format } from 'date-fns';
-import { BookMarkedIcon, CalendarIcon, PlusIcon } from 'lucide-react';
+import { BookMarkedIcon, CalendarIcon } from 'lucide-react';
 import { type DateRange } from 'react-day-picker';
+import { CreateDialog } from './create-dialog';
 
 type Props = {
   date: DateRange | undefined;
@@ -64,16 +64,8 @@ export default function Header({ date, setDate }: Props) {
             />
           </PopoverContent>
         </Popover>
-        <Link
-          to="/diary/new"
-          className={cn(
-            'flex items-center gap-2',
-            buttonVariants({ variant: 'default' }),
-          )}
-        >
-          <PlusIcon className="size-4" />
-          <div className="sr-only sm:not-sr-only">New Entry</div>
-        </Link>
+
+        <CreateDialog />
       </div>
     </div>
   );
