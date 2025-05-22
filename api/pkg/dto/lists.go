@@ -157,3 +157,20 @@ type CreateListItemOutputBody struct {
 	ListIndex int32     `json:"listIndex" example:"1" doc:"Index of the POI in the list"`
 	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of list item"`
 }
+
+type UpdateListItemsInput struct {
+	ID   string `path:"id" required:"true" minLength:"1" maxLength:"128"`
+	Body UpdateListItemsInputBody
+}
+
+type UpdateListItemsInputBody struct {
+	ItemIds []string `json:"itemIds" required:"true" minItems:"0" maxItems:"256" uniqueItems:"true"`
+}
+
+type UpdateListItemsOutput struct {
+	Body UpdateListItemsOutputBody
+}
+
+type UpdateListItemsOutputBody struct {
+	List List `json:"list"`
+}
