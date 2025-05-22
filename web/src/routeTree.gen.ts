@@ -63,7 +63,6 @@ import { Route as TripsIdParticipantsIndexImport } from './routes/trips/$id/part
 import { Route as TripsIdEditIndexImport } from './routes/trips/$id/edit/index'
 import { Route as TripsIdCommentsIndexImport } from './routes/trips/$id/comments/index'
 import { Route as TripsIdAmenitiesIndexImport } from './routes/trips/$id/amenities/index'
-import { Route as ListsIdItemsIndexImport } from './routes/lists/$id/items/index'
 import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
 import { Route as DiaryIdEditIndexImport } from './routes/diary/$id/edit/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
@@ -408,12 +407,6 @@ const TripsIdAmenitiesIndexRoute = TripsIdAmenitiesIndexImport.update({
   id: '/amenities/',
   path: '/amenities/',
   getParentRoute: () => TripsIdRoute,
-} as any)
-
-const ListsIdItemsIndexRoute = ListsIdItemsIndexImport.update({
-  id: '/lists/$id/items/',
-  path: '/lists/$id/items/',
-  getParentRoute: () => rootRoute,
 } as any)
 
 const ListsIdEditIndexRoute = ListsIdEditIndexImport.update({
@@ -988,13 +981,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListsIdEditIndexImport
       parentRoute: typeof rootRoute
     }
-    '/lists/$id/items/': {
-      id: '/lists/$id/items/'
-      path: '/lists/$id/items'
-      fullPath: '/lists/$id/items'
-      preLoaderRoute: typeof ListsIdItemsIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/trips/$id/amenities/': {
       id: '/trips/$id/amenities/'
       path: '/amenities'
@@ -1431,7 +1417,6 @@ export interface FileRoutesByFullPath {
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
-  '/lists/$id/items': typeof ListsIdItemsIndexRoute
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
@@ -1513,7 +1498,6 @@ export interface FileRoutesByTo {
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
   '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
-  '/lists/$id/items': typeof ListsIdItemsIndexRoute
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
@@ -1601,7 +1585,6 @@ export interface FileRoutesById {
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
   '/diary/$id/edit/': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
-  '/lists/$id/items/': typeof ListsIdItemsIndexRoute
   '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit/': typeof TripsIdEditIndexRoute
@@ -1690,7 +1673,6 @@ export interface FileRouteTypes {
     | '/forgot-password/reset'
     | '/diary/$id/edit'
     | '/lists/$id/edit'
-    | '/lists/$id/items'
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
@@ -1771,7 +1753,6 @@ export interface FileRouteTypes {
     | '/forgot-password/reset'
     | '/diary/$id/edit'
     | '/lists/$id/edit'
-    | '/lists/$id/items'
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
@@ -1857,7 +1838,6 @@ export interface FileRouteTypes {
     | '/_auth/forgot-password/reset/'
     | '/diary/$id/edit/'
     | '/lists/$id/edit/'
-    | '/lists/$id/items/'
     | '/trips/$id/amenities/'
     | '/trips/$id/comments/'
     | '/trips/$id/edit/'
@@ -1927,7 +1907,6 @@ export interface RootRouteChildren {
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
   DiaryIdEditIndexRoute: typeof DiaryIdEditIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
-  ListsIdItemsIndexRoute: typeof ListsIdItemsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1964,7 +1943,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
   DiaryIdEditIndexRoute: DiaryIdEditIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
-  ListsIdItemsIndexRoute: ListsIdItemsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -2009,8 +1987,7 @@ export const routeTree = rootRoute
         "/p/$id/",
         "/_auth/forgot-password/reset/",
         "/diary/$id/edit/",
-        "/lists/$id/edit/",
-        "/lists/$id/items/"
+        "/lists/$id/edit/"
       ]
     },
     "/": {
@@ -2243,9 +2220,6 @@ export const routeTree = rootRoute
     },
     "/lists/$id/edit/": {
       "filePath": "lists/$id/edit/index.tsx"
-    },
-    "/lists/$id/items/": {
-      "filePath": "lists/$id/items/index.tsx"
     },
     "/trips/$id/amenities/": {
       "filePath": "trips/$id/amenities/index.tsx",
