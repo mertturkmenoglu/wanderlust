@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import React, { useState } from 'react';
-import type { DateRange } from 'react-day-picker';
+import React from 'react';
 import EntryCard from './-components/entry-card';
 import Header from './-components/header';
 import Loading from './-components/loading';
-import { useDiaryEntriesQuery } from './-hooks';
+import DiaryContextProvider from './-context';
+import { useDiaryContext, useDiaryEntriesQuery } from './-hooks';
 
 export const Route = createFileRoute('/diary/')({
   component: RouteComponent,
@@ -22,28 +22,22 @@ export const Route = createFileRoute('/diary/')({
 });
 
 function RouteComponent() {
-  const [date, setDate] = useState<DateRange | undefined>();
-
   return (
-    <div className="max-w-7xl mx-auto my-8">
-      <Header
-        date={date}
-        setDate={setDate}
-      />
+    <DiaryContextProvider>
+      <div className="max-w-7xl mx-auto my-8">
+        <Header />
 
-      <Separator className="my-4" />
+        <Separator className="my-4" />
 
-      <Layout date={date} />
-    </div>
+        <Layout />
+      </div>
+    </DiaryContextProvider>
   );
 }
 
-type Props = {
-  date: DateRange | undefined;
-};
-
-function Layout({ date }: Props) {
-  const query = useDiaryEntriesQuery(date);
+function Layout() {
+  const ctx = useDiaryContext();
+  const query = useDiaryEntriesQuery(ctx.filterDateRange);
   const isEmpty = query.data && query.data.pages[0]?.entries.length === 0;
   const loadMoreText = useLoadMoreText(query);
 

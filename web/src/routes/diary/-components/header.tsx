@@ -8,15 +8,14 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { BookMarkedIcon, CalendarIcon } from 'lucide-react';
-import { type DateRange } from 'react-day-picker';
+import { useDiaryContext } from '../-hooks';
 import { CreateDialog } from './create-dialog';
 
-type Props = {
-  date: DateRange | undefined;
-  setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
-};
+export default function Header() {
+  const ctx = useDiaryContext();
+  const date = ctx.filterDateRange;
+  const setDate = ctx.setFilterDateRange;
 
-export default function Header({ date, setDate }: Props) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 items-center justify-between">
       <div className="flex items-center gap-2">
