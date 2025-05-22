@@ -49,17 +49,3 @@ export function useDiaryEntriesQuery(date?: DateRange) {
       lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
   });
 }
-
-export function useLoadMoreText(
-  query: ReturnType<typeof useDiaryEntriesQuery>,
-) {
-  if (query.isFetchingNextPage) {
-    return 'Loading...';
-  }
-
-  if (query.hasNextPage) {
-    return 'Load more';
-  }
-
-  return 'Nothing more to load';
-}
