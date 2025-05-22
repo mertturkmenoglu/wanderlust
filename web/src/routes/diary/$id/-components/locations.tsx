@@ -5,12 +5,10 @@ import { Grid2X2Icon, MapIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Map } from './map.client';
 
-type DisplayMode = 'grid' | 'map';
-
 export default function Locations() {
   const route = getRouteApi('/diary/$id/');
   const { entry } = route.useLoaderData();
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('grid');
+  const [isGridMode, setIsGridMode] = useState(true);
 
   return (
     <>
@@ -19,10 +17,10 @@ export default function Locations() {
         <div>
           <ToggleGroup
             type="single"
-            value={displayMode}
+            value={isGridMode ? 'grid' : 'map'}
             onValueChange={(v) => {
               if (v) {
-                setDisplayMode(v === 'grid' ? v : 'map');
+                setIsGridMode(v === 'grid');
               }
             }}
           >
@@ -44,7 +42,7 @@ export default function Locations() {
         </div>
       </div>
 
-      {displayMode === 'grid' ? (
+      {isGridMode ? (
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {entry.locations.map((location) => (
             <Link

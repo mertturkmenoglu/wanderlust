@@ -1,16 +1,9 @@
 import BackLink from '@/components/blocks/back-link';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { AuthContext } from '@/providers/auth-provider';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { PencilIcon } from 'lucide-react';
+import { Settings2Icon } from 'lucide-react';
 import { useContext } from 'react';
-import SharePopover from './share-popover';
 
 export default function Header() {
   const route = getRouteApi('/diary/$id/');
@@ -41,51 +34,21 @@ export default function Header() {
         <div className="space-x-2">
           {isOwner && (
             <>
-              <TooltipProvider delayDuration={300}>
-                <Tooltip>
-                  <TooltipTrigger tabIndex={-1}>
-                    <SharePopover
-                      id={entry.id}
-                      friendsCount={entry.friends.length}
-                      share={entry.shareWithFriends}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="bottom"
-                    sideOffset={8}
-                  >
-                    Share
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider delayDuration={300}>
-                <Tooltip>
-                  <TooltipTrigger tabIndex={-1}>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="icon"
-                    >
-                      <Link
-                        to="/diary/$id/edit"
-                        params={{
-                          id: entry.id,
-                        }}
-                      >
-                        <PencilIcon className="size-4" />
-                        <span className="sr-only">Edit diary entry</span>
-                      </Link>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="bottom"
-                    sideOffset={8}
-                  >
-                    Edit
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Button
+                asChild
+                variant="ghost"
+                size="default"
+              >
+                <Link
+                  to="/diary/$id/edit"
+                  params={{
+                    id: entry.id,
+                  }}
+                >
+                  <Settings2Icon className="size-4" />
+                  <span>Edit</span>
+                </Link>
+              </Button>
             </>
           )}
         </div>
