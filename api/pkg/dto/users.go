@@ -91,7 +91,7 @@ type GetUserActivitiesOutputBody struct {
 }
 
 type SearchUserFollowingInput struct {
-	Username string `path:"username" validate:"required" doc:"Username of the user" example:"johndoe"`
+	Username string `query:"username" validate:"required" doc:"Username of the user" example:"johndoe"`
 }
 
 type SearchUserFollowingOutput struct {

@@ -128,7 +128,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/users/{username}/following/search",
+			Path:          "/users/search/following",
 			Summary:       "Search User Following",
 			Description:   "Search user following by username",
 			DefaultStatus: http.StatusOK,
