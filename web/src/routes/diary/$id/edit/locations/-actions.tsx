@@ -15,7 +15,12 @@ export default function Actions({ index, className }: Props) {
     control: form.control,
     name: 'locations',
   });
-  const location = array.fields[index]!;
+  const locations = form.watch('locations');
+  const location = locations[index];
+
+  if (location === undefined) {
+    return <></>;
+  }
 
   return (
     <div className={cn(className)}>
@@ -31,7 +36,7 @@ export default function Actions({ index, className }: Props) {
       <Button
         variant="ghost"
         size="icon"
-        disabled={index === array.fields.length - 1}
+        disabled={index === locations.length - 1}
         onClick={() => array.swap(index, index + 1)}
       >
         <ArrowDownIcon className="size-3" />

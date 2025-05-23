@@ -16,9 +16,13 @@ export default function Description({ index }: Props) {
     control: form.control,
     name: 'locations',
   });
-  const location = array.fields[index]!;
-  const [text, setText] = useState(location.description ?? '');
+  const location = form.watch('locations')[index];
+  const [text, setText] = useState(location?.description ?? '');
   const [isEditMode, setIsEditMode] = useState(false);
+
+  if (location === undefined) {
+    return <></>;
+  }
 
   if (isEditMode) {
     return (

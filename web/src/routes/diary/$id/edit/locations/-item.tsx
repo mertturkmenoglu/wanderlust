@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import Actions from './-actions';
 import Description from './-description';
 import type { FormInput } from './-schema';
@@ -10,11 +10,11 @@ type Props = {
 
 export default function Item({ index }: Props) {
   const form = useFormContext<FormInput>();
-  const array = useFieldArray({
-    control: form.control,
-    name: 'locations',
-  });
-  const location = array.fields[index]!;
+  const location = form.watch('locations')[index];
+
+  if (location === undefined) {
+    return <></>;
+  }
 
   return (
     <div className="flex flex-col">
