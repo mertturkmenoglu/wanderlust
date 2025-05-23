@@ -1,6 +1,10 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"github.com/danielgtaylor/huma/v2"
+)
 
 type DiaryEntry struct {
 	ID               string          `json:"id" example:"7323488942953598976" doc:"The ID of the diary entry"`
@@ -77,6 +81,18 @@ type CreateDiaryEntryInputBody struct {
 	Date  time.Time `json:"date" required:"true" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" format:"date-time"`
 }
 
+func (body *CreateDiaryEntryInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+	if body.Date.After(time.Now()) {
+		return []error{&huma.ErrorDetail{
+			Message:  "Date must be in the past",
+			Location: prefix.With("date"),
+			Value:    body.Date,
+		}}
+	}
+
+	return nil
+}
+
 type CreateDiaryEntryLocation struct {
 	ID          string  `json:"id" required:"true" example:"7323488942953598976" doc:"The ID of the point of interest"`
 	Description *string `json:"description" example:"My location description" doc:"The description of the location" required:"false" minLength:"1" maxLength:"256"`
@@ -110,5 +126,37 @@ type UploadDiaryMediaOutput struct {
 }
 
 type UploadDiaryMediaOutputBody struct {
+	Entry DiaryEntry `json:"entry"`
+}
+
+type UpdateDiaryEntryInput struct {
+	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
+	Body UpdateDiaryEntryInputBody
+}
+
+type UpdateDiaryEntryInputBody struct {
+	Title            string    `json:"title" example:"My diary entry" doc:"The title of the diary entry" required:"true" minLength:"1" maxLength:"128"`
+	Description      string    `json:"description" example:"My diary entry description" doc:"The description of the diary entry" required:"false" minLength:"0" maxLength:"4096"`
+	Date             time.Time `json:"date" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" required:"true" format:"date-time"`
+	ShareWithFriends bool      `json:"shareWithFriends" example:"true" doc:"Whether the diary entry is shared with friends or not" required:"true"`
+}
+
+func (body *UpdateDiaryEntryInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+	if body.Date.After(time.Now()) {
+		return []error{&huma.ErrorDetail{
+			Message:  "Date must be in the past",
+			Location: prefix.With("date"),
+			Value:    body.Date,
+		}}
+	}
+
+	return nil
+}
+
+type UpdateDiaryEntryOutput struct {
+	Body UpdateDiaryEntryOutputBody
+}
+
+type UpdateDiaryEntryOutputBody struct {
 	Entry DiaryEntry `json:"entry"`
 }
