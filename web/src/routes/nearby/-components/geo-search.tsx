@@ -1,3 +1,4 @@
+import { icon } from '@/components/icons/leaflet';
 import { Link } from '@tanstack/react-router';
 import { type LeafletEvent } from 'leaflet';
 import { type UseGeoSearchProps, useGeoSearch } from 'react-instantsearch';
@@ -21,6 +22,7 @@ export default function GeoSearch(props: UseGeoSearchProps) {
         <Marker
           key={item.objectID}
           position={item._geoloc}
+          icon={icon}
         >
           <Popup>
             <Link

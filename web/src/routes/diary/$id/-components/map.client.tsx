@@ -1,3 +1,4 @@
+import { icon } from '@/components/icons/leaflet';
 import type { components } from '@/lib/api-types';
 import { Link } from '@tanstack/react-router';
 import type { LatLngTuple } from 'leaflet';
@@ -38,6 +39,7 @@ export function Map({ locations }: Props) {
           <Marker
             key={location.poi.id}
             position={[location.poi.address.lat, location.poi.address.lng]}
+            icon={icon}
           >
             <Popup>
               <Link
