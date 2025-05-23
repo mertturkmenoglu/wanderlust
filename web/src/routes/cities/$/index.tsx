@@ -1,5 +1,6 @@
 import Collection from '@/components/blocks/collection';
 import OverlayBanner from '@/components/blocks/overlay-banner';
+import TagNavigation from '@/components/blocks/tag-navigation';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
@@ -72,6 +73,15 @@ function RouteComponent() {
       </div>
 
       <Map {...city.coordinates} />
+
+      <div className="mt-8">
+        <h3 className="text-2xl font-bold mb-8">Discover {city.name}</h3>
+        <TagNavigation
+          urlSuffix={
+            '&pois[refinementList][poi.address.city.name][0]=' + city.name
+          }
+        />
+      </div>
 
       <OverlayBanner
         image="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
