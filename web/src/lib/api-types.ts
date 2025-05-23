@@ -2238,7 +2238,49 @@ export interface paths {
         };
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update Diary Entry
+         * @description Update a diary entry
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateDiaryEntryInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateDiaryEntryOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/v2/diary/{id}/media": {
@@ -7324,6 +7366,32 @@ export interface components {
              */
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
+        };
+        UpdateDiaryEntryInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: date-time
+             * @description The date of the diary entry
+             */
+            date: string;
+            /** @description The description of the diary entry */
+            description?: string;
+            /** @description Whether the diary entry is shared with friends or not */
+            shareWithFriends: boolean;
+            /** @description The title of the diary entry */
+            title: string;
+        };
+        UpdateDiaryEntryOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
         };
         UpdateListInputBody: {
             /**
