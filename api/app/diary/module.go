@@ -11,7 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// PATCH /diary/:id/friends 				Manage Friends
 // PATCH /diary/:id/locations 				Manage Locations
 // PATCH /diary/:id 						Update Diary Entry
 // POST /diary/:id/media 					Upload Media
@@ -186,6 +185,34 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.update(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Update Diary Entry Friends
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/diary/{id}/friends",
+			Summary:       "Update Diary Entry Friends",
+			Description:   "Update a diary entry friends",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateDiaryEntryFriendsInput) (*dto.UpdateDiaryEntryFriendsOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateFriends(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
