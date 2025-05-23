@@ -562,3 +562,87 @@ func (s *Service) updateFriends(ctx context.Context, id string, body dto.UpdateD
 		},
 	}, nil
 }
+
+func (s *Service) updateLocations(ctx context.Context, id string, body dto.UpdateDiaryEntryLocationsInputBody) (*dto.UpdateDiaryEntryLocationsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	entry, err := s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if entry.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to manage this diary entry")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to start transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.Db.Queries.WithTx(tx)
+
+	err = qtx.RemoveDiaryEntryLocations(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update diary entry locations")
+	}
+
+	batch := make([]db.BatchCreateDiaryEntryLocationsParams, len(body.Locations))
+
+	for i, location := range body.Locations {
+		var description *string = nil
+
+		if location.Description != nil {
+			description = location.Description
+		}
+
+		batch[i] = db.BatchCreateDiaryEntryLocationsParams{
+			DiaryEntryID: id,
+			PoiID:        location.PoiID,
+			ListIndex:    int32(i + 1),
+			Description: pgtype.Text{
+				String: *description,
+				Valid:  description != nil,
+			},
+		}
+	}
+
+	_, err = qtx.BatchCreateDiaryEntryLocations(ctx, batch)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update diary entry locations")
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	entry, err = s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get diary entry")
+	}
+
+	return &dto.UpdateDiaryEntryLocationsOutput{
+		Body: dto.UpdateDiaryEntryLocationsOutputBody{
+			Entry: *entry,
+		},
+	}, nil
+}
