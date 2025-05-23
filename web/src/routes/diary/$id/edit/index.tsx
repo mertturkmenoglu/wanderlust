@@ -12,12 +12,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { lengthTracker } from '@/lib/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
 import { formatDate, isFuture } from 'date-fns';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const schema = z
@@ -59,6 +61,7 @@ export const Route = createFileRoute('/diary/$id/edit/')({
 
 function RouteComponent() {
   const { entry } = Route.useLoaderData();
+  const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -72,6 +75,17 @@ function RouteComponent() {
 
   const isPublic = form.watch('shareWithFriends');
 
+  const updateDiaryEntryMutation = api.useMutation(
+    'patch',
+    '/api/v2/diary/{id}',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Diary entry updated successfully.');
+      },
+    },
+  );
+
   return (
     <div className="my-8">
       <h3
@@ -82,7 +96,22 @@ function RouteComponent() {
       </h3>
 
       <Form {...form}>
-        <form className="w-full md:max-w-2xl">
+        <form
+          className="w-full md:max-w-2xl"
+          onSubmit={form.handleSubmit((data) => {
+            updateDiaryEntryMutation.mutate({
+              params: {
+                path: {
+                  id: entry.id,
+                },
+              },
+              body: {
+                ...data,
+                date: new Date(data.date).toISOString(),
+              },
+            });
+          })}
+        >
           <FormField
             control={form.control}
             name="title"
