@@ -11,8 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// PATCH /diary/:id/locations 				Manage Locations
-// PATCH /diary/:id 						Update Diary Entry
 // POST /diary/:id/media 					Upload Media
 // PATCH /diary/:id/media 					Update Media
 // DELETE /diary/:id/media/:mediaId 		Remove Media
