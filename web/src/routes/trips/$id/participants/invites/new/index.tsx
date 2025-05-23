@@ -21,10 +21,10 @@ function RouteComponent() {
 
   const searchQuery = api.useQuery(
     'get',
-    '/api/v2/users/{username}/following/search',
+    '/api/v2/users/search/following',
     {
       params: {
-        path: {
+        query: {
           username: debouncedSearch,
         },
       },
