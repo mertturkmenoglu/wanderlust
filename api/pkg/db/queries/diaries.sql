@@ -110,11 +110,6 @@ LIMIT $5;
 SELECT COUNT(*) FROM diary_entries
 WHERE user_id = $1 AND date <= $2 AND date >= $3;
 
--- name: ChangeShareWithFriends :exec
-UPDATE diary_entries
-SET share_with_friends = not share_with_friends
-WHERE id = $1;
-
 -- name: GetDiaryMedia :many
 SELECT * FROM diary_media
 WHERE diary_entry_id = $1
@@ -160,3 +155,19 @@ LEFT JOIN diary_entries_pois dl ON dl.diary_entry_id = de.id
 WHERE de.id = ANY($1::TEXT[])
 
 GROUP BY de.id, de.title, u.id;
+
+-- name: UpdateDiaryEntry :one
+UPDATE diary_entries
+SET
+  title = $2,
+  description = $3,
+  date = $4,
+  share_with_friends = $5
+WHERE id = $1
+RETURNING *;
+
+-- name: RemoveDiaryEntryFriends :exec
+DELETE FROM 
+  diary_entries_users
+WHERE
+  diary_entry_id = $1;

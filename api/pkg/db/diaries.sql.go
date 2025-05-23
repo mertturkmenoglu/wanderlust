@@ -11,17 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const changeShareWithFriends = `-- name: ChangeShareWithFriends :exec
-UPDATE diary_entries
-SET share_with_friends = not share_with_friends
-WHERE id = $1
-`
-
-func (q *Queries) ChangeShareWithFriends(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, changeShareWithFriends, id)
-	return err
-}
-
 const countDiaryEntries = `-- name: CountDiaryEntries :one
 SELECT COUNT(*) FROM diary_entries
 WHERE user_id = $1
@@ -637,4 +626,57 @@ func (q *Queries) ListDiaryEntries(ctx context.Context, arg ListDiaryEntriesPara
 		return nil, err
 	}
 	return items, nil
+}
+
+const removeDiaryEntryFriends = `-- name: RemoveDiaryEntryFriends :exec
+DELETE FROM 
+  diary_entries_users
+WHERE
+  diary_entry_id = $1
+`
+
+func (q *Queries) RemoveDiaryEntryFriends(ctx context.Context, diaryEntryID string) error {
+	_, err := q.db.Exec(ctx, removeDiaryEntryFriends, diaryEntryID)
+	return err
+}
+
+const updateDiaryEntry = `-- name: UpdateDiaryEntry :one
+UPDATE diary_entries
+SET
+  title = $2,
+  description = $3,
+  date = $4,
+  share_with_friends = $5
+WHERE id = $1
+RETURNING id, user_id, title, description, share_with_friends, date, created_at, updated_at
+`
+
+type UpdateDiaryEntryParams struct {
+	ID               string
+	Title            string
+	Description      string
+	Date             pgtype.Timestamptz
+	ShareWithFriends bool
+}
+
+func (q *Queries) UpdateDiaryEntry(ctx context.Context, arg UpdateDiaryEntryParams) (DiaryEntry, error) {
+	row := q.db.QueryRow(ctx, updateDiaryEntry,
+		arg.ID,
+		arg.Title,
+		arg.Description,
+		arg.Date,
+		arg.ShareWithFriends,
+	)
+	var i DiaryEntry
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Title,
+		&i.Description,
+		&i.ShareWithFriends,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
