@@ -2341,6 +2341,64 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/diary/{id}/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Diary Entry Locations
+         * @description Update a diary entry locations
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateDiaryEntryLocationsInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateDiaryEntryLocationsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/diary/{id}/media": {
         parameters: {
             query?: never;
@@ -7459,6 +7517,29 @@ export interface components {
             shareWithFriends: boolean;
             /** @description The title of the diary entry */
             title: string;
+        };
+        UpdateDiaryEntryLocationItem: {
+            /** @description Description of the location */
+            description?: string | null;
+            /** @description ID of the point of interest */
+            poiId: string;
+        };
+        UpdateDiaryEntryLocationsInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description IDs of the locations */
+            locations: components["schemas"]["UpdateDiaryEntryLocationItem"][];
+        };
+        UpdateDiaryEntryLocationsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            entry: components["schemas"]["DiaryEntry"];
         };
         UpdateDiaryEntryOutputBody: {
             /**
