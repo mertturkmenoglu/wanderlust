@@ -487,3 +487,78 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateDiaryEnt
 		},
 	}, nil
 }
+
+func (s *Service) updateFriends(ctx context.Context, id string, body dto.UpdateDiaryEntryFriendsInputBody) (*dto.UpdateDiaryEntryFriendsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if entry.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to update this diary entry")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to start transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.Db.Queries.WithTx(tx)
+
+	err = qtx.RemoveDiaryEntryFriends(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update diary entry friends")
+	}
+
+	batch := make([]db.BatchCreateDiaryEntryUsersParams, len(body.Friends))
+
+	for i, friendId := range body.Friends {
+		batch[i] = db.BatchCreateDiaryEntryUsersParams{
+			DiaryEntryID: id,
+			UserID:       friendId,
+			ListIndex:    int32(i + 1),
+		}
+	}
+
+	_, err = qtx.BatchCreateDiaryEntryUsers(ctx, batch)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to add diary entry friends")
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	entry, err = s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get diary entry")
+	}
+
+	return &dto.UpdateDiaryEntryFriendsOutput{
+		Body: dto.UpdateDiaryEntryFriendsOutputBody{
+			Entry: *entry,
+		},
+	}, nil
+}
