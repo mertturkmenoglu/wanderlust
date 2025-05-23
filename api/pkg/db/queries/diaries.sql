@@ -132,43 +132,31 @@ WHERE id = $1;
 -- name: GetDiaryEntriesByIdsPopulated :many
 SELECT
   de.*,
-	COALESCE(json_agg(DISTINCT to_jsonb(dm.*)) FILTER (WHERE dm.id IS NOT NULL), '[]') AS media,
+	COALESCE(
+    json_agg(DISTINCT to_jsonb(dm.*)) FILTER (WHERE dm.id IS NOT NULL), '[]') AS media,
 	to_jsonb(u.*) as user,
   (SELECT json_agg(to_jsonb(pr.*))
    FROM diary_entries_users def
    JOIN profile pr ON pr.id = def.user_id
    WHERE def.diary_entry_id = de.id
   ) AS friends,
-  COALESCE(json_agg(DISTINCT jsonb_build_object(
-    'description', dl.description,
-    'index', dl.list_index,
-    'poi', to_jsonb(poi.*),
-    'poiCategory', to_jsonb(cat.*),
-    'poiAddress', to_jsonb(addr.*),
-    'poiCity', to_jsonb(cities.*),
-    'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
-    'poiMedia', COALESCE(poi_media.media, '[]')
-  )) FILTER (WHERE dl.diary_entry_id IS NOT NULL), '[]') AS locations
+  COALESCE(
+    json_agg(DISTINCT jsonb_build_object(
+      'description', dl.description,
+      'index', dl.list_index,
+      'poiId', dl.poi_id
+    )) FILTER (WHERE dl.diary_entry_id IS NOT NULL), '[]') AS locations,
+  get_pois(
+    ARRAY(
+      SELECT poi_id
+      FROM diary_entries_pois
+      WHERE diary_entry_id = de.id
+    )
+  ) AS pois
 FROM diary_entries de
 LEFT JOIN users u ON u.id = de.user_id
 LEFT JOIN diary_media dm ON de.id = dm.diary_entry_id
 LEFT JOIN diary_entries_pois dl ON dl.diary_entry_id = de.id
-LEFT JOIN pois poi ON poi.id = dl.poi_id
-LEFT JOIN categories cat ON cat.id = poi.category_id
-LEFT JOIN addresses addr ON addr.id = poi.address_id
-LEFT JOIN cities ON cities.id = addr.city_id
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(a.*)) AS amenities
-  FROM amenities_pois pa
-  JOIN amenities a ON a.id = pa.amenity_id
-  WHERE pa.poi_id = poi.id
-) AS poi_amenities ON TRUE
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(pm.*)) AS media
-  FROM media pm
-  WHERE pm.poi_id = poi.id
-) AS poi_media ON TRUE
-
 WHERE de.id = ANY($1::TEXT[])
 
 GROUP BY de.id, de.title, u.id;
