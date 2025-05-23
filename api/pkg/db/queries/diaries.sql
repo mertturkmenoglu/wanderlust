@@ -28,7 +28,7 @@ INSERT INTO diary_entries_pois (
   $4
 ) RETURNING *;
 
--- name: CreateDiaryEntryUser :one
+-- name: BatchCreateDiaryEntryUsers :copyfrom
 INSERT INTO diary_entries_users (
   diary_entry_id,
   user_id,
@@ -37,7 +37,7 @@ INSERT INTO diary_entries_users (
   $1,
   $2,
   $3
-) RETURNING *;
+);
 
 -- name: CreateDiaryMedia :one
 INSERT INTO diary_media (

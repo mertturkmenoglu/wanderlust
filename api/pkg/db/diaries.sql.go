@@ -11,6 +11,12 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BatchCreateDiaryEntryUsersParams struct {
+	DiaryEntryID string
+	UserID       string
+	ListIndex    int32
+}
+
 const countDiaryEntries = `-- name: CountDiaryEntries :one
 SELECT COUNT(*) FROM diary_entries
 WHERE user_id = $1
@@ -76,31 +82,6 @@ func (q *Queries) CreateDiaryEntryPoi(ctx context.Context, arg CreateDiaryEntryP
 		&i.Description,
 		&i.ListIndex,
 	)
-	return i, err
-}
-
-const createDiaryEntryUser = `-- name: CreateDiaryEntryUser :one
-INSERT INTO diary_entries_users (
-  diary_entry_id,
-  user_id,
-  list_index
-) VALUES (
-  $1,
-  $2,
-  $3
-) RETURNING diary_entry_id, user_id, list_index
-`
-
-type CreateDiaryEntryUserParams struct {
-	DiaryEntryID string
-	UserID       string
-	ListIndex    int32
-}
-
-func (q *Queries) CreateDiaryEntryUser(ctx context.Context, arg CreateDiaryEntryUserParams) (DiaryEntriesUser, error) {
-	row := q.db.QueryRow(ctx, createDiaryEntryUser, arg.DiaryEntryID, arg.UserID, arg.ListIndex)
-	var i DiaryEntriesUser
-	err := row.Scan(&i.DiaryEntryID, &i.UserID, &i.ListIndex)
 	return i, err
 }
 
