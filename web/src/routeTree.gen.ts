@@ -64,6 +64,7 @@ import { Route as TripsIdEditIndexImport } from './routes/trips/$id/edit/index'
 import { Route as TripsIdCommentsIndexImport } from './routes/trips/$id/comments/index'
 import { Route as TripsIdAmenitiesIndexImport } from './routes/trips/$id/amenities/index'
 import { Route as ListsIdEditIndexImport } from './routes/lists/$id/edit/index'
+import { Route as DiaryIdEditIndexImport } from './routes/diary/$id/edit/index'
 import { Route as AuthForgotPasswordResetIndexImport } from './routes/_auth/forgot-password/reset/index'
 import { Route as AdminDashboardUsersIndexImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardPoisIndexImport } from './routes/_admin/dashboard/pois/index'
@@ -72,7 +73,9 @@ import { Route as AdminDashboardCitiesIndexImport } from './routes/_admin/dashbo
 import { Route as AdminDashboardCategoriesIndexImport } from './routes/_admin/dashboard/categories/index'
 import { Route as AdminDashboardAmenitiesIndexImport } from './routes/_admin/dashboard/amenities/index'
 import { Route as TripsIdParticipantsInvitesIndexImport } from './routes/trips/$id/participants/invites/index'
-import { Route as DiaryIdEditInfoIndexImport } from './routes/diary/$id/edit/info/index'
+import { Route as DiaryIdEditMediaIndexImport } from './routes/diary/$id/edit/media/index'
+import { Route as DiaryIdEditLocationsIndexImport } from './routes/diary/$id/edit/locations/index'
+import { Route as DiaryIdEditFriendsIndexImport } from './routes/diary/$id/edit/friends/index'
 import { Route as AdminDashboardUsersVerifyIndexImport } from './routes/_admin/dashboard/users/verify/index'
 import { Route as AdminDashboardPoisDraftsIndexImport } from './routes/_admin/dashboard/pois/drafts/index'
 import { Route as AdminDashboardPoisIdIndexImport } from './routes/_admin/dashboard/pois/$id/index'
@@ -415,6 +418,12 @@ const ListsIdEditIndexRoute = ListsIdEditIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DiaryIdEditIndexRoute = DiaryIdEditIndexImport.update({
+  id: '/diary/$id/edit/',
+  path: '/diary/$id/edit/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthForgotPasswordResetIndexRoute =
   AuthForgotPasswordResetIndexImport.update({
     id: '/_auth/forgot-password/reset/',
@@ -468,9 +477,21 @@ const TripsIdParticipantsInvitesIndexRoute =
     getParentRoute: () => TripsIdRoute,
   } as any)
 
-const DiaryIdEditInfoIndexRoute = DiaryIdEditInfoIndexImport.update({
-  id: '/diary/$id/edit/info/',
-  path: '/diary/$id/edit/info/',
+const DiaryIdEditMediaIndexRoute = DiaryIdEditMediaIndexImport.update({
+  id: '/diary/$id/edit/media/',
+  path: '/diary/$id/edit/media/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DiaryIdEditLocationsIndexRoute = DiaryIdEditLocationsIndexImport.update({
+  id: '/diary/$id/edit/locations/',
+  path: '/diary/$id/edit/locations/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DiaryIdEditFriendsIndexRoute = DiaryIdEditFriendsIndexImport.update({
+  id: '/diary/$id/edit/friends/',
+  path: '/diary/$id/edit/friends/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -967,6 +988,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordResetIndexImport
       parentRoute: typeof rootRoute
     }
+    '/diary/$id/edit/': {
+      id: '/diary/$id/edit/'
+      path: '/diary/$id/edit'
+      fullPath: '/diary/$id/edit'
+      preLoaderRoute: typeof DiaryIdEditIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/lists/$id/edit/': {
       id: '/lists/$id/edit/'
       path: '/lists/$id/edit'
@@ -1121,11 +1149,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardUsersVerifyIndexImport
       parentRoute: typeof AdminDashboardImport
     }
-    '/diary/$id/edit/info/': {
-      id: '/diary/$id/edit/info/'
-      path: '/diary/$id/edit/info'
-      fullPath: '/diary/$id/edit/info'
-      preLoaderRoute: typeof DiaryIdEditInfoIndexImport
+    '/diary/$id/edit/friends/': {
+      id: '/diary/$id/edit/friends/'
+      path: '/diary/$id/edit/friends'
+      fullPath: '/diary/$id/edit/friends'
+      preLoaderRoute: typeof DiaryIdEditFriendsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/diary/$id/edit/locations/': {
+      id: '/diary/$id/edit/locations/'
+      path: '/diary/$id/edit/locations'
+      fullPath: '/diary/$id/edit/locations'
+      preLoaderRoute: typeof DiaryIdEditLocationsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/diary/$id/edit/media/': {
+      id: '/diary/$id/edit/media/'
+      path: '/diary/$id/edit/media'
+      fullPath: '/diary/$id/edit/media'
+      preLoaderRoute: typeof DiaryIdEditMediaIndexImport
       parentRoute: typeof rootRoute
     }
     '/trips/$id/participants/invites/': {
@@ -1415,6 +1457,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
@@ -1437,7 +1480,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
-  '/diary/$id/edit/info': typeof DiaryIdEditInfoIndexRoute
+  '/diary/$id/edit/friends': typeof DiaryIdEditFriendsIndexRoute
+  '/diary/$id/edit/locations': typeof DiaryIdEditLocationsIndexRoute
+  '/diary/$id/edit/media': typeof DiaryIdEditMediaIndexRoute
   '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
@@ -1496,6 +1541,7 @@ export interface FileRoutesByTo {
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/diary/$id/edit': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
@@ -1518,7 +1564,9 @@ export interface FileRoutesByTo {
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
-  '/diary/$id/edit/info': typeof DiaryIdEditInfoIndexRoute
+  '/diary/$id/edit/friends': typeof DiaryIdEditFriendsIndexRoute
+  '/diary/$id/edit/locations': typeof DiaryIdEditLocationsIndexRoute
+  '/diary/$id/edit/media': typeof DiaryIdEditMediaIndexRoute
   '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/amenities/$id/edit': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
@@ -1583,6 +1631,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/pois/': typeof AdminDashboardPoisIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
   '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
+  '/diary/$id/edit/': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
   '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
@@ -1605,7 +1654,9 @@ export interface FileRoutesById {
   '/_admin/dashboard/pois/$id/': typeof AdminDashboardPoisIdIndexRoute
   '/_admin/dashboard/pois/drafts/': typeof AdminDashboardPoisDraftsIndexRoute
   '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
-  '/diary/$id/edit/info/': typeof DiaryIdEditInfoIndexRoute
+  '/diary/$id/edit/friends/': typeof DiaryIdEditFriendsIndexRoute
+  '/diary/$id/edit/locations/': typeof DiaryIdEditLocationsIndexRoute
+  '/diary/$id/edit/media/': typeof DiaryIdEditMediaIndexRoute
   '/trips/$id/participants/invites/': typeof TripsIdParticipantsInvitesIndexRoute
   '/_admin/dashboard/amenities/$id/edit/': typeof AdminDashboardAmenitiesIdEditIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
@@ -1671,6 +1722,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/diary/$id/edit'
     | '/lists/$id/edit'
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
@@ -1693,7 +1745,9 @@ export interface FileRouteTypes {
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
-    | '/diary/$id/edit/info'
+    | '/diary/$id/edit/friends'
+    | '/diary/$id/edit/locations'
+    | '/diary/$id/edit/media'
     | '/trips/$id/participants/invites'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
@@ -1751,6 +1805,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
+    | '/diary/$id/edit'
     | '/lists/$id/edit'
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
@@ -1773,7 +1828,9 @@ export interface FileRouteTypes {
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
     | '/dashboard/users/verify'
-    | '/diary/$id/edit/info'
+    | '/diary/$id/edit/friends'
+    | '/diary/$id/edit/locations'
+    | '/diary/$id/edit/media'
     | '/trips/$id/participants/invites'
     | '/dashboard/amenities/$id/edit'
     | '/dashboard/categories/$id/edit'
@@ -1836,6 +1893,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/pois/'
     | '/_admin/dashboard/users/'
     | '/_auth/forgot-password/reset/'
+    | '/diary/$id/edit/'
     | '/lists/$id/edit/'
     | '/trips/$id/amenities/'
     | '/trips/$id/comments/'
@@ -1858,7 +1916,9 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/pois/$id/'
     | '/_admin/dashboard/pois/drafts/'
     | '/_admin/dashboard/users/verify/'
-    | '/diary/$id/edit/info/'
+    | '/diary/$id/edit/friends/'
+    | '/diary/$id/edit/locations/'
+    | '/diary/$id/edit/media/'
     | '/trips/$id/participants/invites/'
     | '/_admin/dashboard/amenities/$id/edit/'
     | '/_admin/dashboard/categories/$id/edit/'
@@ -1905,8 +1965,11 @@ export interface RootRouteChildren {
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
+  DiaryIdEditIndexRoute: typeof DiaryIdEditIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
-  DiaryIdEditInfoIndexRoute: typeof DiaryIdEditInfoIndexRoute
+  DiaryIdEditFriendsIndexRoute: typeof DiaryIdEditFriendsIndexRoute
+  DiaryIdEditLocationsIndexRoute: typeof DiaryIdEditLocationsIndexRoute
+  DiaryIdEditMediaIndexRoute: typeof DiaryIdEditMediaIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1941,8 +2004,11 @@ const rootRouteChildren: RootRouteChildren = {
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
+  DiaryIdEditIndexRoute: DiaryIdEditIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
-  DiaryIdEditInfoIndexRoute: DiaryIdEditInfoIndexRoute,
+  DiaryIdEditFriendsIndexRoute: DiaryIdEditFriendsIndexRoute,
+  DiaryIdEditLocationsIndexRoute: DiaryIdEditLocationsIndexRoute,
+  DiaryIdEditMediaIndexRoute: DiaryIdEditMediaIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -1986,8 +2052,11 @@ export const routeTree = rootRoute
         "/lists/$id/",
         "/p/$id/",
         "/_auth/forgot-password/reset/",
+        "/diary/$id/edit/",
         "/lists/$id/edit/",
-        "/diary/$id/edit/info/"
+        "/diary/$id/edit/friends/",
+        "/diary/$id/edit/locations/",
+        "/diary/$id/edit/media/"
       ]
     },
     "/": {
@@ -2215,6 +2284,9 @@ export const routeTree = rootRoute
     "/_auth/forgot-password/reset/": {
       "filePath": "_auth/forgot-password/reset/index.tsx"
     },
+    "/diary/$id/edit/": {
+      "filePath": "diary/$id/edit/index.tsx"
+    },
     "/lists/$id/edit/": {
       "filePath": "lists/$id/edit/index.tsx"
     },
@@ -2302,8 +2374,14 @@ export const routeTree = rootRoute
       "filePath": "_admin/dashboard/users/verify/index.tsx",
       "parent": "/_admin/dashboard"
     },
-    "/diary/$id/edit/info/": {
-      "filePath": "diary/$id/edit/info/index.tsx"
+    "/diary/$id/edit/friends/": {
+      "filePath": "diary/$id/edit/friends/index.tsx"
+    },
+    "/diary/$id/edit/locations/": {
+      "filePath": "diary/$id/edit/locations/index.tsx"
+    },
+    "/diary/$id/edit/media/": {
+      "filePath": "diary/$id/edit/media/index.tsx"
     },
     "/trips/$id/participants/invites/": {
       "filePath": "trips/$id/participants/invites/index.tsx",
