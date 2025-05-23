@@ -411,3 +411,79 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 		},
 	}, nil
 }
+
+func (s *Service) update(ctx context.Context, id string, body dto.UpdateDiaryEntryInputBody) (*dto.UpdateDiaryEntryOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if entry.UserID != userId {
+		err = huma.Error403Forbidden("you are not authorized to update this diary entry")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to start transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.Db.Queries.WithTx(tx)
+
+	_, err = qtx.UpdateDiaryEntry(ctx, db.UpdateDiaryEntryParams{
+		ID:          id,
+		Title:       body.Title,
+		Description: body.Description,
+		Date: pgtype.Timestamptz{
+			Time:  body.Date,
+			Valid: true,
+		},
+		ShareWithFriends: body.ShareWithFriends,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update diary entry")
+	}
+
+	if !body.ShareWithFriends {
+		err = qtx.RemoveDiaryEntryFriends(ctx, id)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to remove diary entry friends")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	entry, err = s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get diary entry")
+	}
+
+	return &dto.UpdateDiaryEntryOutput{
+		Body: dto.UpdateDiaryEntryOutputBody{
+			Entry: *entry,
+		},
+	}, nil
+}
