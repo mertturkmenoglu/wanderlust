@@ -177,3 +177,45 @@ type UpdateDiaryEntryFriendsOutput struct {
 type UpdateDiaryEntryFriendsOutputBody struct {
 	Entry DiaryEntry `json:"entry"`
 }
+
+type UpdateDiaryEntryLocationsInput struct {
+	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
+	Body UpdateDiaryEntryLocationsInputBody
+}
+
+type UpdateDiaryEntryLocationsInputBody struct {
+	Locations []UpdateDiaryEntryLocationItem `json:"locations" doc:"IDs of the locations" required:"true" minItems:"0" maxItems:"32"`
+}
+
+func (body *UpdateDiaryEntryLocationsInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+	ids := make(map[string]bool)
+
+	// Check if the POI IDs are unique
+	for _, location := range body.Locations {
+		poiId := location.PoiID
+		_, has := ids[poiId]
+
+		if has {
+			return []error{&huma.ErrorDetail{
+				Message:  "Duplicate point of interest ID",
+				Location: prefix.With("locations"),
+				Value:    poiId,
+			}}
+		}
+	}
+
+	return nil
+}
+
+type UpdateDiaryEntryLocationItem struct {
+	PoiID       string  `json:"poiId" doc:"ID of the point of interest" required:"true" minLength:"1" maxLength:"32"`
+	Description *string `json:"description" doc:"Description of the location" required:"false" `
+}
+
+type UpdateDiaryEntryLocationsOutput struct {
+	Body UpdateDiaryEntryLocationsOutputBody
+}
+
+type UpdateDiaryEntryLocationsOutputBody struct {
+	Entry DiaryEntry `json:"entry"`
+}
