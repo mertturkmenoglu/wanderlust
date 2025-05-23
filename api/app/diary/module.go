@@ -11,16 +11,12 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
+// PATCH /diary/:id/friends 				Manage Friends
+// PATCH /diary/:id/locations 				Manage Locations
 // PATCH /diary/:id 						Update Diary Entry
-// POST /diary/:id/friends 					Add Friend
-// DELETE /diary/:id/friends/:friendId 		Remove Friend
-// PATCH /diary/:id/friends 				Update Friends
 // POST /diary/:id/media 					Upload Media
 // PATCH /diary/:id/media 					Update Media
 // DELETE /diary/:id/media/:mediaId 		Remove Media
-// POST /diary/:id/locations 				Add Location
-// PATCH /diary/:id/locations 				Update Location
-// DELETE /diary/:id/locations/:locationId 	Remove Location
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
@@ -162,6 +158,34 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.uploadMedia(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Update Diary Entry
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/diary/{id}",
+			Summary:       "Update Diary Entry",
+			Description:   "Update a diary entry",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateDiaryEntryInput) (*dto.UpdateDiaryEntryOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
