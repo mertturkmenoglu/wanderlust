@@ -68,7 +68,8 @@ export default function SearchResults({ className }: Props) {
         <button
           key={res.id}
           className="flex gap-4 items-center hover:bg-muted p-2 rounded-md w-full"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             const maxAllowedCount = 32;
             const friends = form.getValues('friends');
             const alreadyInList =
@@ -84,19 +85,16 @@ export default function SearchResults({ className }: Props) {
               return;
             }
 
-            console.log('appending');
-            console.log({ beforeLen: array.fields.length });
             array.append({
               id: res.id,
               username: res.username,
               fullName: res.fullName,
               profileImage: res.profileImage,
             });
-            console.log({ len: array.fields.length });
           }}
         >
           <UserImage
-            src={ipx(`http://${res.profileImage ?? ''}`, 'w_512')}
+            src={ipx(res.profileImage ?? '', 'w_512')}
             className="size-8"
           />
           <div className="flex flex-col items-start text-sm">
