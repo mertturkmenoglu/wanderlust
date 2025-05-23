@@ -53,6 +53,7 @@ import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
 import { Route as AuthOnboardingIndexImport } from './routes/_auth/onboarding/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/_auth/forgot-password/index'
 import { Route as AdminDashboardIndexImport } from './routes/_admin/dashboard/index'
+import { Route as DiaryIdEditImport } from './routes/diary/$id/edit'
 import { Route as UUsernameReviewsIndexImport } from './routes/u/$username/reviews/index'
 import { Route as UUsernameListsIndexImport } from './routes/u/$username/lists/index'
 import { Route as UUsernameFollowingIndexImport } from './routes/u/$username/following/index'
@@ -352,6 +353,12 @@ const AdminDashboardIndexRoute = AdminDashboardIndexImport.update({
   getParentRoute: () => AdminDashboardRoute,
 } as any)
 
+const DiaryIdEditRoute = DiaryIdEditImport.update({
+  id: '/diary/$id/edit',
+  path: '/diary/$id/edit',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const UUsernameReviewsIndexRoute = UUsernameReviewsIndexImport.update({
   id: '/reviews/',
   path: '/reviews/',
@@ -419,9 +426,9 @@ const ListsIdEditIndexRoute = ListsIdEditIndexImport.update({
 } as any)
 
 const DiaryIdEditIndexRoute = DiaryIdEditIndexImport.update({
-  id: '/diary/$id/edit/',
-  path: '/diary/$id/edit/',
-  getParentRoute: () => rootRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => DiaryIdEditRoute,
 } as any)
 
 const AuthForgotPasswordResetIndexRoute =
@@ -478,21 +485,21 @@ const TripsIdParticipantsInvitesIndexRoute =
   } as any)
 
 const DiaryIdEditMediaIndexRoute = DiaryIdEditMediaIndexImport.update({
-  id: '/diary/$id/edit/media/',
-  path: '/diary/$id/edit/media/',
-  getParentRoute: () => rootRoute,
+  id: '/media/',
+  path: '/media/',
+  getParentRoute: () => DiaryIdEditRoute,
 } as any)
 
 const DiaryIdEditLocationsIndexRoute = DiaryIdEditLocationsIndexImport.update({
-  id: '/diary/$id/edit/locations/',
-  path: '/diary/$id/edit/locations/',
-  getParentRoute: () => rootRoute,
+  id: '/locations/',
+  path: '/locations/',
+  getParentRoute: () => DiaryIdEditRoute,
 } as any)
 
 const DiaryIdEditFriendsIndexRoute = DiaryIdEditFriendsIndexImport.update({
-  id: '/diary/$id/edit/friends/',
-  path: '/diary/$id/edit/friends/',
-  getParentRoute: () => rootRoute,
+  id: '/friends/',
+  path: '/friends/',
+  getParentRoute: () => DiaryIdEditRoute,
 } as any)
 
 const AdminDashboardUsersVerifyIndexRoute =
@@ -785,6 +792,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIndexImport
       parentRoute: typeof TripsImport
     }
+    '/diary/$id/edit': {
+      id: '/diary/$id/edit'
+      path: '/diary/$id/edit'
+      fullPath: '/diary/$id/edit'
+      preLoaderRoute: typeof DiaryIdEditImport
+      parentRoute: typeof rootRoute
+    }
     '/_admin/dashboard/': {
       id: '/_admin/dashboard/'
       path: '/'
@@ -990,10 +1004,10 @@ declare module '@tanstack/react-router' {
     }
     '/diary/$id/edit/': {
       id: '/diary/$id/edit/'
-      path: '/diary/$id/edit'
-      fullPath: '/diary/$id/edit'
+      path: '/'
+      fullPath: '/diary/$id/edit/'
       preLoaderRoute: typeof DiaryIdEditIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof DiaryIdEditImport
     }
     '/lists/$id/edit/': {
       id: '/lists/$id/edit/'
@@ -1151,24 +1165,24 @@ declare module '@tanstack/react-router' {
     }
     '/diary/$id/edit/friends/': {
       id: '/diary/$id/edit/friends/'
-      path: '/diary/$id/edit/friends'
+      path: '/friends'
       fullPath: '/diary/$id/edit/friends'
       preLoaderRoute: typeof DiaryIdEditFriendsIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof DiaryIdEditImport
     }
     '/diary/$id/edit/locations/': {
       id: '/diary/$id/edit/locations/'
-      path: '/diary/$id/edit/locations'
+      path: '/locations'
       fullPath: '/diary/$id/edit/locations'
       preLoaderRoute: typeof DiaryIdEditLocationsIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof DiaryIdEditImport
     }
     '/diary/$id/edit/media/': {
       id: '/diary/$id/edit/media/'
-      path: '/diary/$id/edit/media'
+      path: '/media'
       fullPath: '/diary/$id/edit/media'
       preLoaderRoute: typeof DiaryIdEditMediaIndexImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof DiaryIdEditImport
     }
     '/trips/$id/participants/invites/': {
       id: '/trips/$id/participants/invites/'
@@ -1407,6 +1421,24 @@ const UUsernameRouteWithChildren = UUsernameRoute._addFileChildren(
   UUsernameRouteChildren,
 )
 
+interface DiaryIdEditRouteChildren {
+  DiaryIdEditIndexRoute: typeof DiaryIdEditIndexRoute
+  DiaryIdEditFriendsIndexRoute: typeof DiaryIdEditFriendsIndexRoute
+  DiaryIdEditLocationsIndexRoute: typeof DiaryIdEditLocationsIndexRoute
+  DiaryIdEditMediaIndexRoute: typeof DiaryIdEditMediaIndexRoute
+}
+
+const DiaryIdEditRouteChildren: DiaryIdEditRouteChildren = {
+  DiaryIdEditIndexRoute: DiaryIdEditIndexRoute,
+  DiaryIdEditFriendsIndexRoute: DiaryIdEditFriendsIndexRoute,
+  DiaryIdEditLocationsIndexRoute: DiaryIdEditLocationsIndexRoute,
+  DiaryIdEditMediaIndexRoute: DiaryIdEditMediaIndexRoute,
+}
+
+const DiaryIdEditRouteWithChildren = DiaryIdEditRoute._addFileChildren(
+  DiaryIdEditRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
@@ -1428,6 +1460,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/diary/$id/edit': typeof DiaryIdEditRouteWithChildren
   '/dashboard/': typeof AdminDashboardIndexRoute
   '/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/onboarding': typeof AuthOnboardingIndexRoute
@@ -1457,7 +1490,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
   '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
-  '/diary/$id/edit': typeof DiaryIdEditIndexRoute
+  '/diary/$id/edit/': typeof DiaryIdEditIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
@@ -1602,6 +1635,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/diary/$id/edit': typeof DiaryIdEditRouteWithChildren
   '/_admin/dashboard/': typeof AdminDashboardIndexRoute
   '/_auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/_auth/onboarding/': typeof AuthOnboardingIndexRoute
@@ -1693,6 +1727,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms'
     | '/trips/'
+    | '/diary/$id/edit'
     | '/dashboard/'
     | '/forgot-password'
     | '/onboarding'
@@ -1722,7 +1757,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois'
     | '/dashboard/users'
     | '/forgot-password/reset'
-    | '/diary/$id/edit'
+    | '/diary/$id/edit/'
     | '/lists/$id/edit'
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
@@ -1864,6 +1899,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
+    | '/diary/$id/edit'
     | '/_admin/dashboard/'
     | '/_auth/forgot-password/'
     | '/_auth/onboarding/'
@@ -1951,6 +1987,7 @@ export interface RootRouteChildren {
   ReportIndexRoute: typeof ReportIndexRoute
   SearchIndexRoute: typeof SearchIndexRoute
   TermsIndexRoute: typeof TermsIndexRoute
+  DiaryIdEditRoute: typeof DiaryIdEditRouteWithChildren
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthOnboardingIndexRoute: typeof AuthOnboardingIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
@@ -1965,11 +2002,7 @@ export interface RootRouteChildren {
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
   AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
-  DiaryIdEditIndexRoute: typeof DiaryIdEditIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
-  DiaryIdEditFriendsIndexRoute: typeof DiaryIdEditFriendsIndexRoute
-  DiaryIdEditLocationsIndexRoute: typeof DiaryIdEditLocationsIndexRoute
-  DiaryIdEditMediaIndexRoute: typeof DiaryIdEditMediaIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1990,6 +2023,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportIndexRoute: ReportIndexRoute,
   SearchIndexRoute: SearchIndexRoute,
   TermsIndexRoute: TermsIndexRoute,
+  DiaryIdEditRoute: DiaryIdEditRouteWithChildren,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthOnboardingIndexRoute: AuthOnboardingIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
@@ -2004,11 +2038,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
   AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
-  DiaryIdEditIndexRoute: DiaryIdEditIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
-  DiaryIdEditFriendsIndexRoute: DiaryIdEditFriendsIndexRoute,
-  DiaryIdEditLocationsIndexRoute: DiaryIdEditLocationsIndexRoute,
-  DiaryIdEditMediaIndexRoute: DiaryIdEditMediaIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -2038,6 +2068,7 @@ export const routeTree = rootRoute
         "/report/",
         "/search/",
         "/terms/",
+        "/diary/$id/edit",
         "/_auth/forgot-password/",
         "/_auth/onboarding/",
         "/_auth/sign-in/",
@@ -2052,11 +2083,7 @@ export const routeTree = rootRoute
         "/lists/$id/",
         "/p/$id/",
         "/_auth/forgot-password/reset/",
-        "/diary/$id/edit/",
-        "/lists/$id/edit/",
-        "/diary/$id/edit/friends/",
-        "/diary/$id/edit/locations/",
-        "/diary/$id/edit/media/"
+        "/lists/$id/edit/"
       ]
     },
     "/": {
@@ -2182,6 +2209,15 @@ export const routeTree = rootRoute
       "filePath": "trips/index.tsx",
       "parent": "/trips"
     },
+    "/diary/$id/edit": {
+      "filePath": "diary/$id/edit.tsx",
+      "children": [
+        "/diary/$id/edit/",
+        "/diary/$id/edit/friends/",
+        "/diary/$id/edit/locations/",
+        "/diary/$id/edit/media/"
+      ]
+    },
     "/_admin/dashboard/": {
       "filePath": "_admin/dashboard/index.tsx",
       "parent": "/_admin/dashboard"
@@ -2285,7 +2321,8 @@ export const routeTree = rootRoute
       "filePath": "_auth/forgot-password/reset/index.tsx"
     },
     "/diary/$id/edit/": {
-      "filePath": "diary/$id/edit/index.tsx"
+      "filePath": "diary/$id/edit/index.tsx",
+      "parent": "/diary/$id/edit"
     },
     "/lists/$id/edit/": {
       "filePath": "lists/$id/edit/index.tsx"
@@ -2375,13 +2412,16 @@ export const routeTree = rootRoute
       "parent": "/_admin/dashboard"
     },
     "/diary/$id/edit/friends/": {
-      "filePath": "diary/$id/edit/friends/index.tsx"
+      "filePath": "diary/$id/edit/friends/index.tsx",
+      "parent": "/diary/$id/edit"
     },
     "/diary/$id/edit/locations/": {
-      "filePath": "diary/$id/edit/locations/index.tsx"
+      "filePath": "diary/$id/edit/locations/index.tsx",
+      "parent": "/diary/$id/edit"
     },
     "/diary/$id/edit/media/": {
-      "filePath": "diary/$id/edit/media/index.tsx"
+      "filePath": "diary/$id/edit/media/index.tsx",
+      "parent": "/diary/$id/edit"
     },
     "/trips/$id/participants/invites/": {
       "filePath": "trips/$id/participants/invites/index.tsx",
