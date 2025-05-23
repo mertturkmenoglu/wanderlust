@@ -42,7 +42,6 @@ import { Route as SettingsAccountIndexImport } from './routes/settings/account/i
 import { Route as PIdIndexImport } from './routes/p/$id/index'
 import { Route as ListsIdIndexImport } from './routes/lists/$id/index'
 import { Route as DiscoverEventsIndexImport } from './routes/discover/events/index'
-import { Route as DiaryNewIndexImport } from './routes/diary/new/index'
 import { Route as DiaryIdIndexImport } from './routes/diary/$id/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexImport } from './routes/cities/$/index'
@@ -284,12 +283,6 @@ const ListsIdIndexRoute = ListsIdIndexImport.update({
 const DiscoverEventsIndexRoute = DiscoverEventsIndexImport.update({
   id: '/discover/events/',
   path: '/discover/events/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const DiaryNewIndexRoute = DiaryNewIndexImport.update({
-  id: '/diary/new/',
-  path: '/diary/new/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -867,13 +860,6 @@ declare module '@tanstack/react-router' {
       path: '/diary/$id'
       fullPath: '/diary/$id'
       preLoaderRoute: typeof DiaryIdIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/diary/new/': {
-      id: '/diary/new/'
-      path: '/diary/new'
-      fullPath: '/diary/new'
-      preLoaderRoute: typeof DiaryNewIndexImport
       parentRoute: typeof rootRoute
     }
     '/discover/events/': {
@@ -1471,7 +1457,6 @@ export interface FileRoutesByFullPath {
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/diary/$id': typeof DiaryIdIndexRoute
-  '/diary/new': typeof DiaryNewIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
@@ -1555,7 +1540,6 @@ export interface FileRoutesByTo {
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/diary/$id': typeof DiaryIdIndexRoute
-  '/diary/new': typeof DiaryNewIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
@@ -1646,7 +1630,6 @@ export interface FileRoutesById {
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/diary/$id/': typeof DiaryIdIndexRoute
-  '/diary/new/': typeof DiaryNewIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
@@ -1738,7 +1721,6 @@ export interface FileRouteTypes {
     | '/cities/$'
     | '/cities/list'
     | '/diary/$id'
-    | '/diary/new'
     | '/discover/events'
     | '/lists/$id'
     | '/p/$id'
@@ -1821,7 +1803,6 @@ export interface FileRouteTypes {
     | '/cities/$'
     | '/cities/list'
     | '/diary/$id'
-    | '/diary/new'
     | '/discover/events'
     | '/lists/$id'
     | '/p/$id'
@@ -1910,7 +1891,6 @@ export interface FileRouteTypes {
     | '/cities/$/'
     | '/cities/list/'
     | '/diary/$id/'
-    | '/diary/new/'
     | '/discover/events/'
     | '/lists/$id/'
     | '/p/$id/'
@@ -1997,7 +1977,6 @@ export interface RootRouteChildren {
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiaryIdIndexRoute: typeof DiaryIdIndexRoute
-  DiaryNewIndexRoute: typeof DiaryNewIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
@@ -2033,7 +2012,6 @@ const rootRouteChildren: RootRouteChildren = {
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiaryIdIndexRoute: DiaryIdIndexRoute,
-  DiaryNewIndexRoute: DiaryNewIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
@@ -2078,7 +2056,6 @@ export const routeTree = rootRoute
         "/cities/$/",
         "/cities/list/",
         "/diary/$id/",
-        "/diary/new/",
         "/discover/events/",
         "/lists/$id/",
         "/p/$id/",
@@ -2248,9 +2225,6 @@ export const routeTree = rootRoute
     },
     "/diary/$id/": {
       "filePath": "diary/$id/index.tsx"
-    },
-    "/diary/new/": {
-      "filePath": "diary/new/index.tsx"
     },
     "/discover/events/": {
       "filePath": "discover/events/index.tsx"
