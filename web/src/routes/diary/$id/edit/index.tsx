@@ -1,4 +1,3 @@
-import BackLink from '@/components/blocks/back-link';
 import InputInfo from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import {
@@ -74,12 +73,7 @@ function RouteComponent() {
   const isPublic = form.watch('shareWithFriends');
 
   return (
-    <div className="max-w-md mx-auto my-8">
-      <BackLink
-        href={`/diary/${entry.id}`}
-        text="Go back to the diary entry"
-      />
-
+    <div className="my-8">
       <h3
         className="text-lg"
         id="diary-information"
