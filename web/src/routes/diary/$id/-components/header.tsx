@@ -40,7 +40,7 @@ export default function Header() {
                 size="default"
               >
                 <Link
-                  to="/diary/$id/edit/info"
+                  to="/diary/$id/edit"
                   params={{
                     id: entry.id,
                   }}
