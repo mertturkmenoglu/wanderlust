@@ -160,3 +160,20 @@ type UpdateDiaryEntryOutput struct {
 type UpdateDiaryEntryOutputBody struct {
 	Entry DiaryEntry `json:"entry"`
 }
+
+type UpdateDiaryEntryFriendsInput struct {
+	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
+	Body UpdateDiaryEntryFriendsInputBody
+}
+
+type UpdateDiaryEntryFriendsInputBody struct {
+	Friends []string `json:"friends" doc:"IDs of the friends" required:"true" minItems:"0" maxItems:"32" uniqueItems:"true"`
+}
+
+type UpdateDiaryEntryFriendsOutput struct {
+	Body UpdateDiaryEntryFriendsOutputBody
+}
+
+type UpdateDiaryEntryFriendsOutputBody struct {
+	Entry DiaryEntry `json:"entry"`
+}
