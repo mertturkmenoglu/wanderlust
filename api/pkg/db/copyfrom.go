@@ -79,6 +79,41 @@ func (q *Queries) BatchCreateAmenitiesPois(ctx context.Context, arg []BatchCreat
 	return q.db.CopyFrom(ctx, []string{"amenities_pois"}, []string{"amenity_id", "poi_id"}, &iteratorForBatchCreateAmenitiesPois{rows: arg})
 }
 
+// iteratorForBatchCreateDiaryEntryLocations implements pgx.CopyFromSource.
+type iteratorForBatchCreateDiaryEntryLocations struct {
+	rows                 []BatchCreateDiaryEntryLocationsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateDiaryEntryLocations) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateDiaryEntryLocations) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].DiaryEntryID,
+		r.rows[0].PoiID,
+		r.rows[0].Description,
+		r.rows[0].ListIndex,
+	}, nil
+}
+
+func (r iteratorForBatchCreateDiaryEntryLocations) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateDiaryEntryLocations(ctx context.Context, arg []BatchCreateDiaryEntryLocationsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"diary_entries_pois"}, []string{"diary_entry_id", "poi_id", "description", "list_index"}, &iteratorForBatchCreateDiaryEntryLocations{rows: arg})
+}
+
 // iteratorForBatchCreateDiaryEntryUsers implements pgx.CopyFromSource.
 type iteratorForBatchCreateDiaryEntryUsers struct {
 	rows                 []BatchCreateDiaryEntryUsersParams

@@ -11,6 +11,13 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BatchCreateDiaryEntryLocationsParams struct {
+	DiaryEntryID string
+	PoiID        string
+	Description  pgtype.Text
+	ListIndex    int32
+}
+
 type BatchCreateDiaryEntryUsersParams struct {
 	DiaryEntryID string
 	UserID       string
@@ -45,44 +52,6 @@ func (q *Queries) CountDiaryEntriesFilterByRange(ctx context.Context, arg CountD
 	var count int64
 	err := row.Scan(&count)
 	return count, err
-}
-
-const createDiaryEntryPoi = `-- name: CreateDiaryEntryPoi :one
-INSERT INTO diary_entries_pois (
-  diary_entry_id,
-  poi_id,
-  description,
-  list_index
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4
-) RETURNING diary_entry_id, poi_id, description, list_index
-`
-
-type CreateDiaryEntryPoiParams struct {
-	DiaryEntryID string
-	PoiID        string
-	Description  pgtype.Text
-	ListIndex    int32
-}
-
-func (q *Queries) CreateDiaryEntryPoi(ctx context.Context, arg CreateDiaryEntryPoiParams) (DiaryEntriesPoi, error) {
-	row := q.db.QueryRow(ctx, createDiaryEntryPoi,
-		arg.DiaryEntryID,
-		arg.PoiID,
-		arg.Description,
-		arg.ListIndex,
-	)
-	var i DiaryEntriesPoi
-	err := row.Scan(
-		&i.DiaryEntryID,
-		&i.PoiID,
-		&i.Description,
-		&i.ListIndex,
-	)
-	return i, err
 }
 
 const createDiaryMedia = `-- name: CreateDiaryMedia :one
@@ -618,6 +587,18 @@ WHERE
 
 func (q *Queries) RemoveDiaryEntryFriends(ctx context.Context, diaryEntryID string) error {
 	_, err := q.db.Exec(ctx, removeDiaryEntryFriends, diaryEntryID)
+	return err
+}
+
+const removeDiaryEntryLocations = `-- name: RemoveDiaryEntryLocations :exec
+DELETE FROM 
+  diary_entries_pois
+WHERE
+  diary_entry_id = $1
+`
+
+func (q *Queries) RemoveDiaryEntryLocations(ctx context.Context, diaryEntryID string) error {
+	_, err := q.db.Exec(ctx, removeDiaryEntryLocations, diaryEntryID)
 	return err
 }
 

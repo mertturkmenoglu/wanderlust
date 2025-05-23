@@ -15,7 +15,7 @@ INSERT INTO diary_entries (
   $6
 ) RETURNING *;
 
--- name: CreateDiaryEntryPoi :one
+-- name: BatchCreateDiaryEntryLocations :copyfrom
 INSERT INTO diary_entries_pois (
   diary_entry_id,
   poi_id,
@@ -26,7 +26,7 @@ INSERT INTO diary_entries_pois (
   $2,
   $3,
   $4
-) RETURNING *;
+);
 
 -- name: BatchCreateDiaryEntryUsers :copyfrom
 INSERT INTO diary_entries_users (
@@ -169,5 +169,11 @@ RETURNING *;
 -- name: RemoveDiaryEntryFriends :exec
 DELETE FROM 
   diary_entries_users
+WHERE
+  diary_entry_id = $1;
+
+-- name: RemoveDiaryEntryLocations :exec
+DELETE FROM 
+  diary_entries_pois
 WHERE
   diary_entry_id = $1;
