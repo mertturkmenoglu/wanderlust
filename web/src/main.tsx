@@ -11,6 +11,7 @@ import '@mdxeditor/editor/style.css';
 import 'instantsearch.css/themes/reset.css';
 import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
 import Spinner from './components/kit/spinner.tsx';
