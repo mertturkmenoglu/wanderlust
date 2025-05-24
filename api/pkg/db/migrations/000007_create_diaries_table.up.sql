@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS diary_entries_users (
   user_id TEXT NOT NULL,
   list_index INT NOT NULL,
   PRIMARY KEY (diary_entry_id, user_id),
-  CONSTRAINT fk_diary_entries_entry FOREIGN KEY (diary_entry_id) REFERENCES diary_entries(id) ON DELETE CASCADE,
-  CONSTRAINT fk_diary_entries_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_diary_entries_users_entry FOREIGN KEY (diary_entry_id) REFERENCES diary_entries(id) ON DELETE CASCADE,
+  CONSTRAINT fk_diary_entries_users_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT idx_unique_list_items_diary_users UNIQUE (diary_entry_id, list_index)
 );
 
