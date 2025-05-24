@@ -181,10 +181,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UploadReviewMediaInput) (*dto.UploadReviewMediaOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.uploadMedia(userId, input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.uploadMedia(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

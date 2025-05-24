@@ -17,7 +17,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/minio/minio-go/v7"
 )
 
 type Service struct {
@@ -331,59 +330,66 @@ func (s *Service) getRatings(ctx context.Context, id string) (*dto.GetRatingsByP
 	}, nil
 }
 
-func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMediaInputBody) (*dto.UploadReviewMediaOutput, error) {
-	review, err := s.get(context.Background(), id)
+func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadReviewMediaInputBody) (*dto.UploadReviewMediaOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	review, err := s.find(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	if review.Body.Review.UserID != userId {
-		return nil, huma.Error403Forbidden("You do not have permission to upload media for this review")
+	userId := ctx.Value("userId").(string)
+
+	if !canUploadMedia(review, userId) {
+		err = huma.Error403Forbidden("You do not have permission to upload media for this review")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	bucket := upload.BUCKET_REVIEWS
 
 	// Check if the file is uploaded
-	_, err = s.Upload.Client.GetObject(
-		context.Background(),
-		string(bucket),
-		input.FileName,
-		minio.GetObjectOptions{},
-	)
-
-	if err != nil {
-		return nil, huma.Error400BadRequest("file not uploaded")
+	if !s.Upload.FileExists(bucket, input.FileName) {
+		err = huma.Error400BadRequest("file not uploaded")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
-		return nil, huma.Error400BadRequest("incorrect file")
+	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
+		err = huma.Error400BadRequest("incorrect file")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	// delete cached information
 	err = s.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID))
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to delete cached information")
 	}
 
-	endpoint := s.Upload.Client.EndpointURL().String()
-	url := endpoint + "/" + string(bucket) + "/" + input.FileName
-
-	lastOrder, err := s.db.GetLastMediaOrderOfReview(context.Background(), id)
+	lastOrder, err := s.db.GetLastMediaOrderOfReview(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get last media order")
 	}
 
 	ord, ok := lastOrder.(int32)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("Failed to cast last media order")
+		err = huma.Error500InternalServerError("Failed to cast last media order")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	order := int16(ord) + 1
+	url := s.Upload.GetUrlForFile(bucket, input.FileName)
 
 	_, err = s.db.CreateReviewMedia(context.Background(), db.CreateReviewMediaParams{
 		ReviewID:   id,
@@ -392,18 +398,20 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMe
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create review media")
 	}
 
-	rev, err := s.get(context.Background(), id)
+	review, err = s.find(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
 	return &dto.UploadReviewMediaOutput{
 		Body: dto.UploadReviewMediaOutputBody{
-			Review: rev.Body.Review,
+			Review: *review,
 		},
 	}, nil
 }
