@@ -53,7 +53,7 @@ export default function NearbyPois() {
         <h3 className="text-2xl font-bold tracking-tight">Nearby Locations</h3>
         <ScrollArea>
           <div className="flex gap-8 my-4">
-            {query.data.hits.slice(0, 6).map(({ document: p }) => (
+            {(query.data.hits ?? []).slice(0, 6).map(({ document: p }) => (
               <Link
                 to="/p/$id"
                 params={{
