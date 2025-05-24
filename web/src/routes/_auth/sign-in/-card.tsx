@@ -7,11 +7,9 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -28,8 +26,6 @@ const schema = z.object({
 
 export function SignInCard({ isModal }: Props) {
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const invalidator = useInvalidator();
 
   const { formState, register, handleSubmit } = useForm({
     resolver: zodResolver(schema),
@@ -43,14 +39,8 @@ export function SignInCard({ isModal }: Props) {
     'post',
     '/api/v2/auth/credentials/login',
     {
-      onSuccess: async (d) => {
-        localStorage.setItem('token', d.token.replace('Bearer ', '') ?? '');
-        await invalidator.invalidate();
-        await navigate({
-          to: '/',
-          search: {},
-        });
-        window.location.reload();
+      onSuccess: async () => {
+        window.location.href = '/';
       },
     },
   );
@@ -69,7 +59,11 @@ export function SignInCard({ isModal }: Props) {
       />
       <h2 className="mt-4 text-xl font-bold">Sign in to Wanderlust</h2>
       <div className="text-sm text-muted-foreground">
-        Don&apos;t have an account? <AuthLink href="/sign-up" text="Sign Up" />
+        Don&apos;t have an account?{' '}
+        <AuthLink
+          href="/sign-up"
+          text="Sign Up"
+        />
       </div>
       <form
         onSubmit={handleSubmit((data) => {
@@ -129,15 +123,25 @@ export function SignInCard({ isModal }: Props) {
 
         <div className="my-4"></div>
 
-        <Button variant="default" className="w-full" type="submit">
+        <Button
+          variant="default"
+          className="w-full"
+          type="submit"
+        >
           Sign In
         </Button>
 
         <Separator className="my-4" />
 
         <div className="space-y-4">
-          <OAuthButton provider="google" text="Sign in with Google" />
-          <OAuthButton provider="facebook" text="Sign in with Facebook" />
+          <OAuthButton
+            provider="google"
+            text="Sign in with Google"
+          />
+          <OAuthButton
+            provider="facebook"
+            text="Sign in with Facebook"
+          />
         </div>
 
         <div className="mt-4 text-center">
