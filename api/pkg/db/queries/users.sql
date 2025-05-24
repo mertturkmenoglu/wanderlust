@@ -159,3 +159,13 @@ WHERE id = $1;
 UPDATE users
 SET following_count = following_count - 1
 WHERE id = $1;
+
+-- name: SetFollowersCount :exec
+UPDATE users
+SET followers_count = $2
+WHERE id = $1;
+
+-- name: SetFollowingCount :exec
+UPDATE users
+SET following_count = $2
+WHERE id = $1;
