@@ -335,7 +335,7 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 	userId := ctx.Value("userId").(string)
 
 	if entry.UserID != userId {
-		err = huma.Error403Forbidden("you are not authorized to upload media for this diary entry")
+		err = huma.Error403Forbidden("You are not authorized to upload media for this diary entry")
 		sp.RecordError(err)
 		return nil, err
 	}
@@ -347,18 +347,18 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error400BadRequest("file not uploaded")
+		return nil, huma.Error400BadRequest("File not uploaded")
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID)) {
-		err = huma.Error400BadRequest("incorrect file")
+	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, body.ID)) {
+		err = huma.Error400BadRequest("Incorrect file")
 		sp.RecordError(err)
 		return nil, err
 	}
 
 	// delete cached information
-	err = s.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, body.ID))
+	err = s.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, body.ID))
 
 	if err != nil {
 		sp.RecordError(err)
