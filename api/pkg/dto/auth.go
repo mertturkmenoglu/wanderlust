@@ -17,6 +17,7 @@ type LoginInputBody struct {
 type LoginOutput struct {
 	Authorization string `header:"Authorization"`
 	Body          LoginOutputBody
+	SetCookie     []http.Cookie `header:"Set-Cookie"`
 }
 
 type LoginOutputBody struct {
@@ -95,9 +96,13 @@ type OAuthCallbackInput struct {
 }
 
 type OAuthCallbackOutput struct {
-	SetCookie http.Cookie `header:"Set-Cookie"`
+	SetCookie []http.Cookie `header:"Set-Cookie"`
 	Status    int
 	Url       string `header:"Location"`
+}
+
+type LogoutOutput struct {
+	SetCookie []http.Cookie `header:"Set-Cookie"`
 }
 
 type SendVerificationEmailInput struct {
