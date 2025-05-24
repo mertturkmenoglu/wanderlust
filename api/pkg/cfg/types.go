@@ -35,6 +35,7 @@ type TEnv struct {
 	MinioUser                string `key:"MINIO_USER"`
 	OtlpEndpoint             string `key:"OTLP_ENDPOINT"`
 	OtlpWriterEndpoint       string `key:"OTLP_WRITER_ENDPOINT"`
+	OtlpLogsURLPath          string `key:"OTLP_LOGS_URL_PATH"`
 	OtlpTraceURLPath         string `key:"OTLP_TRACE_URL_PATH"`
 	OtlpMetricsURLPath       string `key:"OTLP_METRICS_URL_PATH"`
 	OtlpAuthToken            string `key:"OTLP_AUTH_TOKEN"`
