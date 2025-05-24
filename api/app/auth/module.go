@@ -99,12 +99,14 @@ func Register(grp *huma.Group, app *core.Application) {
 				return nil, huma.Error400BadRequest("Invalid email or password")
 			}
 
+			exp := time.Now().Add(7 * 24 * time.Hour)
+
 			jwt, err := tokens.Encode(tokens.Payload{
 				ID:       user.ID,
 				Username: user.Username,
 				Email:    user.Email,
 				Role:     user.Role,
-			}, time.Now().Add(7*24*time.Hour))
+			}, exp)
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to create JWT")
@@ -117,6 +119,43 @@ func Register(grp *huma.Group, app *core.Application) {
 				Body: dto.LoginOutputBody{
 					Token: bearerToken,
 				},
+				SetCookie: []http.Cookie{
+					{
+						Name:     "token",
+						Value:    bearerToken,
+						MaxAge:   7 * 24 * 60 * 60,
+						Path:     "/",
+						Expires:  exp,
+						HttpOnly: true,
+						Secure:   cfg.Env.Env != "dev",
+						SameSite: http.SameSiteLaxMode,
+					},
+				},
+			}, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/auth/logout",
+			Summary:       "Logout",
+			Description:   "Logout",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.LogoutOutput, error) {
+			return &dto.LogoutOutput{
+				SetCookie: []http.Cookie{{
+					Name:    "token",
+					Value:   "",
+					MaxAge:  -1,
+					Path:    "/",
+					Expires: time.Unix(0, 0),
+				}},
 			}, nil
 		},
 	)
@@ -398,7 +437,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				})
 			}
 
-			_, err = s.getOrCreateUserFromOAuthUser(userInfo)
+			user, err := s.getOrCreateUserFromOAuthUser(userInfo)
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to create user", &huma.ErrorDetail{
@@ -408,14 +447,38 @@ func Register(grp *huma.Group, app *core.Application) {
 				})
 			}
 
+			exp := time.Now().Add(7 * 24 * time.Hour)
+
+			jwt, err := tokens.Encode(tokens.Payload{
+				ID:       user.ID,
+				Username: user.Username,
+				Email:    user.Email,
+				Role:     user.Role,
+			}, exp)
+
+			if err != nil {
+				return nil, huma.Error500InternalServerError("Failed to create JWT")
+			}
+
+			bearerToken := "Bearer " + jwt
+
 			return &dto.OAuthCallbackOutput{
-				SetCookie: http.Cookie{
+				SetCookie: []http.Cookie{{
 					Name:    "state",
 					Value:   "",
 					MaxAge:  -1,
 					Path:    "/",
 					Expires: time.Unix(0, 0),
-				},
+				}, {
+					Name:     "token",
+					Value:    bearerToken,
+					MaxAge:   7 * 24 * 60 * 60,
+					Path:     "/",
+					Expires:  exp,
+					HttpOnly: true,
+					Secure:   cfg.Env.Env != "dev",
+					SameSite: http.SameSiteLaxMode,
+				}},
 				Status: http.StatusTemporaryRedirect,
 				Url:    cfg.Env.OauthRedirect,
 			}, nil
