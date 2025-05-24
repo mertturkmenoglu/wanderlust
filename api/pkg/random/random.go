@@ -9,6 +9,7 @@ import (
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var base62Runes = []rune("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 
 // Generates a unique string from the allowed runes.
 // Generated string will have a length of n.
@@ -20,6 +21,19 @@ func FromLetters(n int) string {
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letterRunes[randv1.Intn(len(letterRunes))]
+	}
+
+	return string(b)
+}
+
+func FromBase62(n int) string {
+	if n < 1 {
+		return ""
+	}
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = base62Runes[randv1.Intn(len(base62Runes))]
 	}
 
 	return string(b)
