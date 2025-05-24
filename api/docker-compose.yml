@@ -104,6 +104,17 @@ services:
       - 5080:5080
     image: public.ecr.aws/zinclabs/openobserve:latest
 
+  wl-otel-lgtm:
+    container_name: wl-otel-lgtm
+    restart: unless-stopped
+    ports:
+      - 3010:3000
+      - 4317:4317
+      - 4318:4318
+    tty: true
+    stdin_open: true
+    image: grafana/otel-lgtm
+
 networks:
   wl-redisnet:
   wl-searchnet:
