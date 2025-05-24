@@ -29,7 +29,7 @@ export default function Friends() {
           >
             <UserCard
               fullName={f.fullName}
-              image={f.profileImage}
+              image={f.profileImage ?? '/profile.png'}
               username={f.username}
             />
           </Link>
