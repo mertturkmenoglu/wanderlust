@@ -85,8 +85,7 @@ func ToDiaryEntryFriends(dbFriends []byte) ([]dto.Profile, error) {
 
 	if len(dbFriends) > 0 {
 		var objects []any = []any{}
-
-		err := json.Unmarshal(dbFriends, &friends)
+		err := json.Unmarshal(dbFriends, &objects)
 
 		if err != nil {
 			return nil, err
