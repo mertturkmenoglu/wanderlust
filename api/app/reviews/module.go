@@ -108,9 +108,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetReviewsByUsernameInput) (*dto.GetReviewsByUsernameOutput, error) {
-			res, err := s.getByUsername(input.Username, input.PaginationQueryParams)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getByUsername(ctx, input.Username, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

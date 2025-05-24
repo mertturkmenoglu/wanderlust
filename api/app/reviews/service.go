@@ -212,14 +212,19 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *Service) getByUsername(username string, params dto.PaginationQueryParams) (*dto.GetReviewsByUsernameOutput, error) {
-	dbRes, err := s.db.GetReviewsByUsername(context.Background(), db.GetReviewsByUsernameParams{
+func (s *Service) getByUsername(ctx context.Context, username string, params dto.PaginationQueryParams) (*dto.GetReviewsByUsernameOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	ids, err := s.db.GetReviewIdsByUsername(ctx, db.GetReviewIdsByUsernameParams{
 		Username: username,
 		Offset:   int32(pagination.GetOffset(params)),
 		Limit:    int32(params.PageSize),
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Reviews not found")
 		}
@@ -227,21 +232,17 @@ func (s *Service) getByUsername(username string, params dto.PaginationQueryParam
 		return nil, huma.Error500InternalServerError("Failed to get reviews")
 	}
 
-	ids := make([]string, len(dbRes))
-
-	for i, v := range dbRes {
-		ids[i] = v.Review.ID
-	}
-
-	reviews, err := s.findMany(context.Background(), ids)
+	reviews, err := s.findMany(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	count, err := s.db.CountReviewsByUsername(context.Background(), username)
+	count, err := s.db.CountReviewsByUsername(ctx, username)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get reviews count")
 	}
 
