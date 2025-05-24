@@ -31,6 +31,7 @@ import { Route as BookmarksIndexImport } from './routes/bookmarks/index'
 import { Route as UUsernameImport } from './routes/u/$username'
 import { Route as TripsIdImport } from './routes/trips/$id'
 import { Route as AdminDashboardImport } from './routes/_admin/dashboard'
+import { Route as AdminAdminImport } from './routes/_admin/admin'
 import { Route as UUsernameIndexImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexImport } from './routes/trips/planner/index'
 import { Route as TripsMyTripsIndexImport } from './routes/trips/my-trips/index'
@@ -217,6 +218,12 @@ const TripsIdRoute = TripsIdImport.update({
 const AdminDashboardRoute = AdminDashboardImport.update({
   id: '/_admin/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AdminAdminRoute = AdminAdminImport.update({
+  id: '/_admin/admin',
+  path: '/admin',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -664,6 +671,13 @@ declare module '@tanstack/react-router' {
       path: '/trips'
       fullPath: '/trips'
       preLoaderRoute: typeof TripsImport
+      parentRoute: typeof rootRoute
+    }
+    '/_admin/admin': {
+      id: '/_admin/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminAdminImport
       parentRoute: typeof rootRoute
     }
     '/_admin/dashboard': {
@@ -1429,6 +1443,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
+  '/admin': typeof AdminAdminRoute
   '/dashboard': typeof AdminDashboardRouteWithChildren
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
@@ -1516,6 +1531,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminAdminRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/diary': typeof DiaryIndexRoute
@@ -1602,6 +1618,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
+  '/_admin/admin': typeof AdminAdminRoute
   '/_admin/dashboard': typeof AdminDashboardRouteWithChildren
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
@@ -1693,6 +1710,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/trips'
+    | '/admin'
     | '/dashboard'
     | '/trips/$id'
     | '/u/$username'
@@ -1779,6 +1797,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/bookmarks'
     | '/categories'
     | '/diary'
@@ -1863,6 +1882,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/trips'
+    | '/_admin/admin'
     | '/_admin/dashboard'
     | '/trips/$id'
     | '/u/$username'
@@ -1953,6 +1973,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   TripsRoute: typeof TripsRouteWithChildren
+  AdminAdminRoute: typeof AdminAdminRoute
   AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
   UUsernameRoute: typeof UUsernameRouteWithChildren
   BookmarksIndexRoute: typeof BookmarksIndexRoute
@@ -1988,6 +2009,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SettingsRoute: SettingsRouteWithChildren,
   TripsRoute: TripsRouteWithChildren,
+  AdminAdminRoute: AdminAdminRoute,
   AdminDashboardRoute: AdminDashboardRouteWithChildren,
   UUsernameRoute: UUsernameRouteWithChildren,
   BookmarksIndexRoute: BookmarksIndexRoute,
@@ -2032,6 +2054,7 @@ export const routeTree = rootRoute
         "/",
         "/settings",
         "/trips",
+        "/_admin/admin",
         "/_admin/dashboard",
         "/u/$username",
         "/bookmarks/",
@@ -2084,6 +2107,9 @@ export const routeTree = rootRoute
         "/trips/my-trips/",
         "/trips/planner/"
       ]
+    },
+    "/_admin/admin": {
+      "filePath": "_admin/admin.tsx"
     },
     "/_admin/dashboard": {
       "filePath": "_admin/dashboard.tsx",
