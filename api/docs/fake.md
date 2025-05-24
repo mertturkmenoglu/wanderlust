@@ -36,12 +36,11 @@
   - Amenities
   - Categories
   - Cities (Run `pkg/db/seed/cities.sql` manually)
-  - Addresses (100K)
-  - Users (100K)
-  - Points of Interests (100K)
+  - Addresses (10K)
+  - Users (10K)
+  - Points of Interests (10K)
   - Amenities-Pois
   - Point of Interests Media
-  - Users
   - Follows
 
 ## Getting IDs (Manual Way)
