@@ -66,17 +66,10 @@ WHERE review_id = $1;
 DELETE FROM reviews
 WHERE id = $1;
 
--- name: GetReviewsByPoiId :many
+-- name: GetReviewIdsByPoiId :many
 SELECT 
-  sqlc.embed(reviews),
-  sqlc.embed(profile),
-  sqlc.embed(pois)
-FROM 
-    reviews
-JOIN 
-    profile ON reviews.user_id = profile.id
-JOIN 
-    pois ON reviews.poi_id = pois.id
+  reviews.id
+FROM reviews
 WHERE reviews.poi_id = $1
 ORDER BY reviews.created_at DESC
 OFFSET $2
