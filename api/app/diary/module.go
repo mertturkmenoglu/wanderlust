@@ -11,10 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// POST /diary/:id/media 					Upload Media
-// PATCH /diary/:id/media 					Update Media
-// DELETE /diary/:id/media/:mediaId 		Remove Media
-
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		app,
@@ -138,6 +134,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Upload Media
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
@@ -155,6 +152,62 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.uploadMedia(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Delete Media
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/diary/{id}/media/{mediaId}",
+			Summary:       "Delete Diary Entry Media",
+			Description:   "Delete a diary entry media",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeleteDiaryMediaInput) (*struct{}, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removeMedia(ctx, input.ID, input.MediaID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
+
+	// Update Diary Media
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/diary/{id}/media",
+			Summary:       "Update Diary Entry Media",
+			Description:   "Update a diary entry media",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateDiaryMediaInput) (*dto.UpdateDiaryMediaOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateMedia(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
