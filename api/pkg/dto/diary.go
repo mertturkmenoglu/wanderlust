@@ -129,6 +129,28 @@ type UploadDiaryMediaOutputBody struct {
 	Entry DiaryEntry `json:"entry"`
 }
 
+type DeleteDiaryMediaInput struct {
+	ID      string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
+	MediaID int64  `path:"mediaId" example:"123" doc:"ID of media"`
+}
+
+type UpdateDiaryMediaInput struct {
+	ID   string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
+	Body UpdateDiaryMediaInputBody
+}
+
+type UpdateDiaryMediaInputBody struct {
+	Ids []int64 `json:"ids" doc:"IDs of the media" required:"true" minItems:"0" maxItems:"32" uniqueItems:"true"`
+}
+
+type UpdateDiaryMediaOutput struct {
+	Body UpdateDiaryMediaOutputBody
+}
+
+type UpdateDiaryMediaOutputBody struct {
+	Entry DiaryEntry `json:"entry"`
+}
+
 type UpdateDiaryEntryInput struct {
 	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
 	Body UpdateDiaryEntryInputBody
