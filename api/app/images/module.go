@@ -3,10 +3,10 @@ package images
 import (
 	"context"
 	"net/http"
-	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -33,17 +33,14 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.PresignedUrlInput) (*dto.PresignedUrlOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.getPresignedURL(input.Bucket, input.FileExt)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getPresignedURL(ctx, input)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("failed to get presigned URL")
-			}
-
-			err = app.Cache.SetObj(cache.KeyBuilder(cache.KeyImageUpload, userId, res.Body.Id), res.Body, 0)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("failed to save presigned URL to cache")
+				sp.RecordError(err)
+				return nil, err
 			}
 
 			return res, nil
