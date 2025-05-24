@@ -79,7 +79,21 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 
 func WithAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 	return func(ctx huma.Context, next func(huma.Context)) {
-		token := strings.TrimPrefix(ctx.Header("Authorization"), "Bearer ")
+		var token = ""
+		authHeader := ctx.Header("Authorization")
+
+		if len(authHeader) == 0 {
+			cookies := huma.ReadCookies(ctx)
+
+			for _, cookie := range cookies {
+				if cookie.Name == "token" {
+					token = strings.TrimPrefix(cookie.Value, "Bearer ")
+					break
+				}
+			}
+		} else {
+			token = strings.TrimPrefix(authHeader, "Bearer ")
+		}
 
 		if len(token) == 0 {
 			next(setContextValuesEmpty(ctx))
