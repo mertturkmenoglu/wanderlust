@@ -1,3 +1,4 @@
+import { CreateListDialog } from '@/components/blocks/lists/create-list-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,10 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { AuthContext } from '@/providers/auth-provider';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { EllipsisVertical, FlagIcon, Plus, Share2 } from 'lucide-react';
+import {
+  EllipsisVerticalIcon,
+  FlagIcon,
+  PlusIcon,
+  Share2Icon,
+} from 'lucide-react';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 import AddToListButton from './add-to-list-button';
@@ -40,6 +47,8 @@ export default function Menu() {
   const auth = useContext(AuthContext);
   const [listId, setListId] = useState<string | null>(null);
   const query = useMyListsInfo(poi.id);
+  const invalidator = useInvalidator();
+  const [newListDialogOpen, setNewListDialogOpen] = useState(false);
 
   return (
     <Dialog>
@@ -53,7 +62,7 @@ export default function Menu() {
             variant="ghost"
             size="icon"
           >
-            <EllipsisVertical className="size-6 text-primary" />
+            <EllipsisVerticalIcon className="size-6 text-primary" />
           </Button>
         </DropdownMenuTrigger>
 
@@ -70,7 +79,7 @@ export default function Menu() {
                   size="sm"
                   type="button"
                 >
-                  <Plus className="mr-2 size-4" />
+                  <PlusIcon className="mr-2 size-4" />
                   Add to list
                 </Button>
               </DropdownMenuItem>
@@ -84,7 +93,7 @@ export default function Menu() {
               size="sm"
               onClick={handleShareClick}
             >
-              <Share2 className="mr-2 size-4" />
+              <Share2Icon className="mr-2 size-4" />
               Share
             </Button>
           </DropdownMenuItem>
@@ -135,7 +144,26 @@ export default function Menu() {
             )}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="sm:flex sm:justify-between">
+          <CreateListDialog
+            open={newListDialogOpen}
+            setOpen={setNewListDialogOpen}
+            onSuccess={async () => {
+              toast.success('List created');
+              await invalidator.invalidate();
+              setNewListDialogOpen(false);
+            }}
+          >
+            <Button
+              variant="secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                setNewListDialogOpen(true);
+              }}
+            >
+              Create New List
+            </Button>
+          </CreateListDialog>
           <AddToListButton
             poiId={poi.id}
             listId={listId}
