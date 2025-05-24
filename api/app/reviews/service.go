@@ -295,10 +295,15 @@ func (s *Service) getByPoiID(ctx context.Context, id string, params dto.Paginati
 	}, nil
 }
 
-func (s *Service) getRatings(id string) (*dto.GetRatingsByPoiIdOutput, error) {
-	dbRes, err := s.db.GetPoiRatings(context.Background(), id)
+func (s *Service) getRatings(ctx context.Context, id string) (*dto.GetRatingsByPoiIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbRes, err := s.db.GetPoiRatings(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Reviews not found")
 		}
