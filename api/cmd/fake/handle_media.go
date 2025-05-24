@@ -32,7 +32,7 @@ var imageIds = []int{
 }
 
 func getRandomImageUrl() string {
-	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", imageIds[gofakeit.IntRange(0, len(imageIds))])
+	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", imageIds[gofakeit.IntRange(0, len(imageIds)-1)])
 }
 
 func handleMedia() error {
