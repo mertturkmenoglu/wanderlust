@@ -1,22 +1,20 @@
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { api } from '@/lib/api';
 import { LogOutIcon } from 'lucide-react';
-import { useCallback } from 'react';
 
-export default function Logout(): React.ReactElement {
-  const logout = async () => {
-    localStorage.removeItem('token');
-    window.location.reload();
-  };
-
-  const onClick = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    await logout();
-  }, []);
+export default function Logout() {
+  const logoutMutation = api.useMutation('post', '/api/v2/auth/logout', {
+    onSuccess: () => {
+      window.location.href = '/';
+    },
+  });
 
   return (
     <DropdownMenuItem
       className="cursor-pointer group focus:bg-destructive"
-      onClick={onClick}
+      onClick={() => {
+        logoutMutation.mutate({});
+      }}
     >
       <LogOutIcon className="size-4 group-focus:text-white" />
       <span className="ml-2 group-focus:text-white">Log out</span>
