@@ -5,6 +5,7 @@ import (
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/id"
 	"wanderlust/pkg/logs"
 	"wanderlust/pkg/mail"
 	"wanderlust/pkg/tasks"
@@ -19,11 +20,13 @@ func NewApp() *core.Application {
 	uploadSvc := upload.New()
 	cacheSvc := cache.New()
 	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
 
 	return &core.Application{
 		Activities: activities.NewActivity(cacheSvc),
 		Db:         db.NewDb(),
-		Flake:      sonyflake.NewSonyflake(sonyflake.Settings{}),
+		Flake:      flake,
+		ID:         id.NewGenerator(flake),
 		Log:        logger,
 		Cache:      cacheSvc,
 		Mail:       mailSvc,
