@@ -18,15 +18,29 @@ const items = [
     text: 'Dashboard',
     href: '/dashboard',
   },
+  {
+    text: 'Admin Tools',
+    href: '/admin',
+  },
 ] as const satisfies Item[];
 
 export default function Sidebar() {
   const parentRoute = getRouteApi('/settings');
   const { auth } = parentRoute.useRouteContext();
+  const isDev = import.meta.env.DEV;
 
   const showDashboardLink = auth.user?.role === 'admin';
-  const filtered = items.filter((x) => x.href !== '/dashboard');
-  const links = showDashboardLink ? items : filtered;
+  const links = items.filter((x) => {
+    if (x.href === '/admin' && !isDev) {
+      return false;
+    }
+
+    if (x.href === '/dashboard' && !showDashboardLink) {
+      return false;
+    }
+
+    return true;
+  });
 
   return (
     <nav className="grid gap-4 text-sm text-muted-foreground">
