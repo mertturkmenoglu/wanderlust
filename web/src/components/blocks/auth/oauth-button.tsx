@@ -15,7 +15,7 @@ export default function OAuthButton({ provider, text }: Readonly<Props>) {
       variant="outline"
       className="w-full"
       onClick={() => {
-        window.location.href = baseUrl + `auth/${provider}`;
+        window.location.href = baseUrl + `/api/v2/auth/${provider}`;
       }}
       type="button"
     >
