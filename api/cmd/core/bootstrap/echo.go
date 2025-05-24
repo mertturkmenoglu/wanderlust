@@ -22,7 +22,7 @@ func (w *Wanderlust) SetupEcho() {
 		w.echo.Use(middleware.RequestID())
 		w.echo.Use(middlewares.Cors())
 		w.echo.Use(middlewares.PTermLogger)
-		w.echo.Use(middlewares.CustomBodyDump(w.app.Log))
+		w.echo.Use(middlewares.CustomBodyDump())
 	}
 
 	w.echo.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
