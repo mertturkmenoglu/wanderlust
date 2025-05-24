@@ -375,6 +375,39 @@ func (q *Queries) BatchCreateUsers(ctx context.Context, arg []BatchCreateUsersPa
 	return q.db.CopyFrom(ctx, []string{"users"}, []string{"id", "email", "username", "full_name", "password_hash", "google_id", "fb_id", "is_email_verified", "is_onboarding_completed", "profile_image"}, &iteratorForBatchCreateUsers{rows: arg})
 }
 
+// iteratorForBatchFollow implements pgx.CopyFromSource.
+type iteratorForBatchFollow struct {
+	rows                 []BatchFollowParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchFollow) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchFollow) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].FollowerID,
+		r.rows[0].FollowingID,
+	}, nil
+}
+
+func (r iteratorForBatchFollow) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchFollow(ctx context.Context, arg []BatchFollowParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"follows"}, []string{"follower_id", "following_id"}, &iteratorForBatchFollow{rows: arg})
+}
+
 // iteratorForCreateCities implements pgx.CopyFromSource.
 type iteratorForCreateCities struct {
 	rows                 []CreateCitiesParams

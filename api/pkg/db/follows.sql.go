@@ -9,6 +9,11 @@ import (
 	"context"
 )
 
+type BatchFollowParams struct {
+	FollowerID  string
+	FollowingID string
+}
+
 const follow = `-- name: Follow :exec
 INSERT INTO follows (
   follower_id,
@@ -27,6 +32,30 @@ type FollowParams struct {
 func (q *Queries) Follow(ctx context.Context, arg FollowParams) error {
 	_, err := q.db.Exec(ctx, follow, arg.FollowerID, arg.FollowingID)
 	return err
+}
+
+const getFollowersCount = `-- name: GetFollowersCount :one
+SELECT COUNT(*) FROM follows
+WHERE following_id = $1
+`
+
+func (q *Queries) GetFollowersCount(ctx context.Context, followingID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getFollowersCount, followingID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const getFollowingCount = `-- name: GetFollowingCount :one
+SELECT COUNT(*) FROM follows
+WHERE follower_id = $1
+`
+
+func (q *Queries) GetFollowingCount(ctx context.Context, followerID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getFollowingCount, followerID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const getUserFollowers = `-- name: GetUserFollowers :many

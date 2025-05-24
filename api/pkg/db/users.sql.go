@@ -444,6 +444,38 @@ func (q *Queries) MakeUserVerified(ctx context.Context, id string) error {
 	return err
 }
 
+const setFollowersCount = `-- name: SetFollowersCount :exec
+UPDATE users
+SET followers_count = $2
+WHERE id = $1
+`
+
+type SetFollowersCountParams struct {
+	ID             string
+	FollowersCount int32
+}
+
+func (q *Queries) SetFollowersCount(ctx context.Context, arg SetFollowersCountParams) error {
+	_, err := q.db.Exec(ctx, setFollowersCount, arg.ID, arg.FollowersCount)
+	return err
+}
+
+const setFollowingCount = `-- name: SetFollowingCount :exec
+UPDATE users
+SET following_count = $2
+WHERE id = $1
+`
+
+type SetFollowingCountParams struct {
+	ID             string
+	FollowingCount int32
+}
+
+func (q *Queries) SetFollowingCount(ctx context.Context, arg SetFollowingCountParams) error {
+	_, err := q.db.Exec(ctx, setFollowingCount, arg.ID, arg.FollowingCount)
+	return err
+}
+
 const updateUserBannerImage = `-- name: UpdateUserBannerImage :exec
 UPDATE users
 SET banner_image = $2
