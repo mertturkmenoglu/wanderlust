@@ -131,9 +131,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetReviewsByPoiIdInput) (*dto.GetReviewsByPoiIdOutput, error) {
-			res, err := s.getByPoiID(input.ID, input.PaginationQueryParams)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getByPoiID(ctx, input.ID, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

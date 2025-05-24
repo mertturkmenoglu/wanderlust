@@ -254,14 +254,18 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 	}, nil
 }
 
-func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.GetReviewsByPoiIdOutput, error) {
-	dbRes, err := s.db.GetReviewsByPoiId(context.Background(), db.GetReviewsByPoiIdParams{
+func (s *Service) getByPoiID(ctx context.Context, id string, params dto.PaginationQueryParams) (*dto.GetReviewsByPoiIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	ids, err := s.db.GetReviewIdsByPoiId(ctx, db.GetReviewIdsByPoiIdParams{
 		PoiID:  id,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Reviews not found")
 		}
@@ -269,21 +273,17 @@ func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.
 		return nil, huma.Error500InternalServerError("Failed to get reviews")
 	}
 
-	ids := make([]string, len(dbRes))
-
-	for i, v := range dbRes {
-		ids[i] = v.Review.ID
-	}
-
-	reviews, err := s.findMany(context.Background(), ids)
+	reviews, err := s.findMany(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
-	count, err := s.db.CountReviewsByPoiId(context.Background(), id)
+	count, err := s.db.CountReviewsByPoiId(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get reviews count")
 	}
 
