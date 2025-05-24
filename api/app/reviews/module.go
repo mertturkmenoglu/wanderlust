@@ -85,10 +85,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteReviewInput) (*dto.CreateReviewOutput, error) {
-			userId := ctx.Value("userId").(string)
-			err := s.remove(ctx, userId, input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

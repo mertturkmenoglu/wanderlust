@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"strings"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
@@ -19,7 +18,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
-	"go.uber.org/zap"
 )
 
 type Service struct {
@@ -173,45 +171,39 @@ func (s *Service) create(ctx context.Context, body dto.CreateReviewInputBody) (*
 	}, nil
 }
 
-func (s *Service) remove(ctx context.Context, userId string, id string) error {
-	reviewRes, err := s.get(ctx, id)
+func (s *Service) remove(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	review, err := s.find(ctx, id)
 
 	if err != nil {
 		return err
 	}
 
-	r := reviewRes.Body.Review
+	userId := ctx.Value("userId").(string)
 
-	if r.UserID != userId {
-		return huma.Error403Forbidden("You do not have permission to delete this review")
+	if !canRemoveReview(review, userId) {
+		err = huma.Error403Forbidden("You do not have permission to delete this review")
+		sp.RecordError(err)
+		return err
 	}
 
 	err = s.db.DeleteReview(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return huma.Error500InternalServerError("Failed to delete review")
 	}
 
-	for _, m := range r.Media {
-		_, after, found := strings.Cut(m.Url, "reviews/")
-
-		if !found {
-			continue
-		}
-
-		err = s.Upload.Client.RemoveObject(
-			context.Background(),
-			string(upload.BUCKET_REVIEWS),
-			after,
-			minio.RemoveObjectOptions{},
-		)
+	for _, m := range review.Media {
+		err = s.Upload.RemoveFileFromUrl(m.Url, upload.BUCKET_REVIEWS)
 
 		if err != nil {
-			s.Log.Debug("error deleting review media",
-				zap.String("bucket", string(upload.BUCKET_REVIEWS)),
-				zap.String("object", after),
-				zap.String("url", m.Url),
-				zap.Error(err),
+			tracing.Slog.Error("Failed to delete review media",
+				slog.String("bucket", string(upload.BUCKET_REVIEWS)),
+				slog.String("object", m.Url),
+				slog.Any("error", err),
 			)
 			continue
 		}
