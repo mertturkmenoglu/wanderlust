@@ -2,19 +2,29 @@ package tracing
 
 import (
 	"context"
-	"log"
+	Log "log"
 	"time"
 
+	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
+var Slog = otelslog.NewLogger("wanderlust")
+
 func Init() func() {
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{},
+		propagation.Baggage{},
+	))
+
 	traceExporter := TraceExporter()
 
 	tp := trace.NewTracerProvider(
@@ -23,11 +33,6 @@ func Init() func() {
 	)
 
 	otel.SetTracerProvider(tp)
-
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
-		propagation.TraceContext{},
-		propagation.Baggage{},
-	))
 
 	metricExporter := MetricExporter()
 
@@ -40,13 +45,26 @@ func Init() func() {
 
 	otel.SetMeterProvider(mp)
 
+	logExporter := LogExporter()
+
+	lp := log.NewLoggerProvider(
+		log.WithResource(Resource()),
+		log.WithProcessor(log.NewBatchProcessor(logExporter)),
+	)
+
+	global.SetLoggerProvider(lp)
+
 	return func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Fatal(err)
+			Log.Fatal(err)
 		}
 
 		if err := mp.Shutdown(context.Background()); err != nil {
-			log.Fatal(err)
+			Log.Fatal(err)
+		}
+
+		if err := lp.Shutdown(context.Background()); err != nil {
+			Log.Fatal(err)
 		}
 	}
 }
