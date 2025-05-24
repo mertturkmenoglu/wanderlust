@@ -435,6 +435,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Logout
+         * @description Logout
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        Domain?: string;
+                        Expires?: string;
+                        HttpOnly?: boolean;
+                        MaxAge?: number;
+                        Name?: string;
+                        Partitioned?: boolean;
+                        Path?: string;
+                        Quoted?: boolean;
+                        Raw?: string;
+                        RawExpires?: string;
+                        SameSite?: number;
+                        Secure?: boolean;
+                        "Set-Cookie"?: string;
+                        Unparsed?: string;
+                        Value?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/auth/me": {
         parameters: {
             query?: never;
@@ -648,8 +709,22 @@ export interface paths {
                 /** @description Temporary Redirect */
                 307: {
                     headers: {
+                        Domain?: string;
+                        Expires?: string;
+                        HttpOnly?: boolean;
                         Location?: string;
+                        MaxAge?: number;
+                        Name?: string;
+                        Partitioned?: boolean;
+                        Path?: string;
+                        Quoted?: boolean;
+                        Raw?: string;
+                        RawExpires?: string;
+                        SameSite?: number;
+                        Secure?: boolean;
                         "Set-Cookie"?: string;
+                        Unparsed?: string;
+                        Value?: string;
                         [name: string]: unknown;
                     };
                     content?: never;
