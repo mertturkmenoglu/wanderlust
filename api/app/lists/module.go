@@ -57,6 +57,9 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetListByIdInput) (*dto.GetListByIdOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
 			res, err := s.getList(ctx, input.ID)
 
 			if err != nil {
