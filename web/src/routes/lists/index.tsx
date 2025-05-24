@@ -1,12 +1,19 @@
 import AppMessage from '@/components/blocks/app-message';
+import { CreateListDialog } from '@/components/blocks/lists/create-list-dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { api } from '@/lib/api';
-import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import { GlobeIcon, LockIcon } from 'lucide-react';
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router';
+import { GlobeIcon, LockIcon, PlusIcon } from 'lucide-react';
 import React from 'react';
-import CreateListDialog from './-create-list-dialog';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/lists/')({
   component: RouteComponent,
@@ -20,6 +27,9 @@ export const Route = createFileRoute('/lists/')({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
+  const invalidator = useInvalidator();
+
   const query = api.useInfiniteQuery(
     'get',
     '/api/v2/lists/',
@@ -52,7 +62,26 @@ function RouteComponent() {
     <div className="max-w-7xl my-8 mx-auto">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl">My Lists</h2>
-        <CreateListDialog />
+        <CreateListDialog
+          onSuccess={async (res) => {
+            toast.success('List created');
+            await invalidator.invalidate();
+            await navigate({
+              to: '/lists/$id',
+              params: {
+                id: res.list.id,
+              },
+            });
+          }}
+        >
+          <Button
+            variant="default"
+            className="space-x-2"
+          >
+            <PlusIcon className="size-4" />
+            <span>New List</span>
+          </Button>
+        </CreateListDialog>
       </div>
 
       <Separator className="my-4" />
