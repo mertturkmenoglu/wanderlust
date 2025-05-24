@@ -1,3 +1,4 @@
+import InputError from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,15 +69,23 @@ export default function Description({ index }: Props) {
   }
 
   return (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        setIsEditMode(true);
-        setText(location.description ?? '');
-      }}
-      className="text-muted-foreground flex p-4 pt-0"
-    >
-      {text.length > 0 ? text : 'Click to add a description'}
-    </button>
+    <div>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          setIsEditMode(true);
+          setText(location.description ?? '');
+        }}
+        className="text-muted-foreground flex p-4 pt-0 text-left"
+      >
+        {text.length > 0 ? text : 'Click to add a description'}
+      </button>
+      <InputError
+        className="ml-4 my-4"
+        error={
+          form.formState.errors.locations?.at?.(index)?.description ?? undefined
+        }
+      />
+    </div>
   );
 }
