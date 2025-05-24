@@ -21,9 +21,16 @@ type Props = {
   onSuccess: (
     data: components['schemas']['CreateListOutputBody'],
   ) => Promise<void>;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function CreateListDialog({ children, onSuccess }: Props) {
+export function CreateListDialog({
+  children,
+  onSuccess,
+  open,
+  setOpen,
+}: Props) {
   const [name, setName] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -35,7 +42,10 @@ export function CreateListDialog({ children, onSuccess }: Props) {
   });
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
