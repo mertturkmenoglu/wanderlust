@@ -33,7 +33,7 @@ func handlePoiSync() error {
 			Flake: flake,
 		},
 	}
-	const step int64 = 10
+	const step int64 = 100
 	ctx := context.Background()
 
 	for i = 0; i <= totalCount; i += step {
@@ -47,15 +47,13 @@ func handlePoiSync() error {
 			return err
 		}
 
-		for _, id := range ids {
-			pois, err := s.GetPoisByIds(ctx, []string{id})
+		pois, err := s.GetPoisByIds(ctx, ids)
 
-			if err != nil {
-				return err
-			}
+		if err != nil {
+			return err
+		}
 
-			poi := pois[0]
-
+		for _, poi := range pois {
 			_, err = searchService.Client.Collection(string(search.CollectionPois)).Documents().Upsert(context.Background(), map[string]any{
 				"name":     poi.Name,
 				"poi":      poi,
