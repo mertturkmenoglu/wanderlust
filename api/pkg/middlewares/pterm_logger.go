@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/labstack/echo/v4"
 	"github.com/pterm/pterm"
 )
@@ -19,6 +20,7 @@ func PTermLogger(next echo.HandlerFunc) echo.HandlerFunc {
 		err := next(c)
 
 		if err != nil {
+			spew.Dump(err)
 			c.Error(err)
 		}
 
@@ -49,8 +51,10 @@ func PTermLogger(next echo.HandlerFunc) echo.HandlerFunc {
 		)
 
 		if res.Status >= 500 {
+			spew.Dump(err)
 			logger.Error("Server Error", args)
 		} else if res.Status >= 400 {
+			spew.Dump(err)
 			logger.Error("Request Error", args)
 		} else {
 			logger.Info("Request", args)
