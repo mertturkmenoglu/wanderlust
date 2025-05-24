@@ -391,7 +391,7 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 	order := int16(ord) + 1
 	url := s.Upload.GetUrlForFile(bucket, input.FileName)
 
-	_, err = s.db.CreateReviewMedia(context.Background(), db.CreateReviewMediaParams{
+	_, err = s.db.CreateReviewMedia(ctx, db.CreateReviewMediaParams{
 		ReviewID:   id,
 		Url:        url,
 		MediaOrder: order,
