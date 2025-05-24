@@ -47,8 +47,8 @@ function RouteComponent() {
     <main className="max-w-7xl mx-auto mt-8 md:mt-16">
       <Breadcrumb />
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-32">
-        <div className="h-min w-full lg:w-full">
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-32">
+        <div className="h-min">
           <Lightbox
             index={index}
             slides={poi.media.map((m) => ({
@@ -84,9 +84,7 @@ function RouteComponent() {
               },
             }}
             inline={{
-              className: 'w-min h-min w-11/12 lg:w-full',
               style: {
-                maxWidth: '900px',
                 aspectRatio: '1/1',
                 margin: '0 auto',
               },
