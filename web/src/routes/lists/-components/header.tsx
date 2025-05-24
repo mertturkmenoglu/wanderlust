@@ -3,16 +3,20 @@ import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useNavigate } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export function Header() {
   const navigate = useNavigate();
   const invalidator = useInvalidator();
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex items-center justify-between">
       <h2 className="text-2xl">My Lists</h2>
       <CreateListDialog
+        open={open}
+        setOpen={setOpen}
         onSuccess={async (res) => {
           toast.success('List created');
           await invalidator.invalidate();
