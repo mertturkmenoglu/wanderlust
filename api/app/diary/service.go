@@ -3,6 +3,7 @@ package diary
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 	"time"
 	"wanderlust/pkg/cache"
@@ -408,6 +409,205 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 	return &dto.UploadDiaryMediaOutput{
 		Body: dto.UploadDiaryMediaOutputBody{
 			Entry: *entryRes,
+		},
+	}, nil
+}
+
+func (s *Service) removeMedia(ctx context.Context, id string, mediaId int64) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if entry.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to delete this diary entry")
+		sp.RecordError(err)
+		return err
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to start transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.Db.Queries.WithTx(tx)
+
+	err = qtx.RemoveDiaryEntryAllMedia(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete diary entry media")
+	}
+
+	media := entry.Media
+
+	slices.SortFunc(media, func(a, b dto.DiaryMedia) int {
+		return int(a.MediaOrder) - int(b.MediaOrder)
+	})
+
+	index := 0
+
+	var toBeRemoved *dto.DiaryMedia = nil
+
+	for _, m := range media {
+		if m.ID == mediaId {
+			toBeRemoved = &m
+			continue
+		}
+
+		var cap string = ""
+
+		if m.Caption != nil {
+			cap = *m.Caption
+		}
+
+		_, err = qtx.CreateDiaryMedia(ctx, db.CreateDiaryMediaParams{
+			DiaryEntryID: id,
+			Url:          m.Url,
+			Alt:          m.Alt,
+			Caption: pgtype.Text{
+				String: cap,
+				Valid:  m.Caption != nil,
+			},
+			MediaOrder: int16(index + 1),
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return huma.Error500InternalServerError("Failed to create diary entry media")
+		}
+
+		index++
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	if toBeRemoved != nil {
+		err = s.Upload.RemoveFileFromUrl(toBeRemoved.Url, upload.BUCKET_DIARIES)
+
+		if err != nil {
+			s.Log.Error("Diary media removal failed.", zap.String("url", toBeRemoved.Url), zap.Error(err))
+		}
+	}
+
+	return nil
+}
+
+func (s *Service) updateMedia(ctx context.Context, id string, body dto.UpdateDiaryMediaInputBody) (*dto.UpdateDiaryMediaOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	entry, err := s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if entry.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to update this diary entry")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to start transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.Db.Queries.WithTx(tx)
+
+	err = qtx.RemoveDiaryEntryAllMedia(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete diary entry media")
+	}
+
+	media := entry.Media
+
+	slices.SortFunc(media, func(a, b dto.DiaryMedia) int {
+		return int(a.MediaOrder) - int(b.MediaOrder)
+	})
+
+	for i, id := range body.Ids {
+		var m *dto.DiaryMedia = nil
+
+		for _, v := range media {
+			if v.ID == id {
+				m = &v
+				break
+			}
+		}
+
+		if m == nil {
+			err = huma.Error400BadRequest("Invalid media ID")
+			sp.RecordError(err)
+			return nil, err
+		}
+
+		var cap string = ""
+
+		if m.Caption != nil {
+			cap = *m.Caption
+		}
+
+		_, err = qtx.CreateDiaryMedia(ctx, db.CreateDiaryMediaParams{
+			DiaryEntryID: m.DiaryEntryID,
+			Url:          m.Url,
+			Alt:          m.Alt,
+			Caption: pgtype.Text{
+				String: cap,
+				Valid:  m.Caption != nil,
+			},
+			MediaOrder: int16(i + 1),
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to create diary entry media")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	entry, err = s.findById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get diary entry")
+	}
+
+	return &dto.UpdateDiaryMediaOutput{
+		Body: dto.UpdateDiaryMediaOutputBody{
+			Entry: *entry,
 		},
 	}, nil
 }
