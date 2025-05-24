@@ -1,3 +1,4 @@
+import AppMessage from '@/components/blocks/app-message';
 import PoiCard from '@/components/blocks/poi-card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { getRouteApi, Link } from '@tanstack/react-router';
@@ -17,6 +18,7 @@ export default function Locations() {
         <div>
           <ToggleGroup
             type="single"
+            disabled={entry.locations.length === 0}
             value={isGridMode ? 'grid' : 'map'}
             onValueChange={(v) => {
               if (v) {
@@ -41,6 +43,14 @@ export default function Locations() {
           </ToggleGroup>
         </div>
       </div>
+
+      {entry.locations.length === 0 && (
+        <AppMessage
+          emptyMessage="No locations"
+          showBackButton={false}
+          className="mt-8"
+        />
+      )}
 
       {isGridMode ? (
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
