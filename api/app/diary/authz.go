@@ -2,8 +2,12 @@ package diary
 
 import "wanderlust/pkg/dto"
 
-func (s *Service) canRead(entry *dto.DiaryEntry, userId string) bool {
-	if entry.UserID == userId {
+func isOwner(entry *dto.DiaryEntry, userId string) bool {
+	return entry.UserID == userId
+}
+
+func canRead(entry *dto.DiaryEntry, userId string) bool {
+	if isOwner(entry, userId) {
 		return true
 	}
 
@@ -18,4 +22,12 @@ func (s *Service) canRead(entry *dto.DiaryEntry, userId string) bool {
 	}
 
 	return false
+}
+
+func canUpdate(entry *dto.DiaryEntry, userId string) bool {
+	return isOwner(entry, userId)
+}
+
+func canDelete(entry *dto.DiaryEntry, userId string) bool {
+	return isOwner(entry, userId)
 }
