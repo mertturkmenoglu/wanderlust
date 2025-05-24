@@ -1,4 +1,5 @@
 import AppMessage from '@/components/blocks/app-message';
+import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { useState } from 'react';
@@ -15,7 +16,7 @@ export default function Media() {
     <>
       <div className="text-xl font-medium">Media</div>
 
-      <div className="mt-4 grid grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {entry.media.length === 0 && (
           <AppMessage
             emptyMessage="No images"
@@ -26,7 +27,7 @@ export default function Media() {
         {entry.media.map((m, i) => (
           <button
             key={m.url}
-            className={cn('max-w-fit', {})}
+            className={cn('aspect-square md:aspect-video size-48 w-full', {})}
             onClick={() => {
               setImageIndex(() => {
                 setOpen(true);
@@ -35,9 +36,11 @@ export default function Media() {
             }}
           >
             <img
-              src={m.url}
+              src={ipx(m.url, 'w_512')}
               alt={m.alt}
-              className={cn('aspect-square object-contain size-48 rounded-md')}
+              className={cn(
+                'aspect-square md:aspect-video object-cover size-48 rounded-md w-full',
+              )}
             />
           </button>
         ))}
