@@ -91,19 +91,6 @@ services:
     depends_on:
       - wl-redis
 
-  wl-openobserve:
-    container_name: wl-openobserve
-    restart: unless-stopped
-    volumes:
-      - ./tmp/zodata:/data
-    environment:
-      - ZO_DATA_DIR=/data
-      - ZO_ROOT_USER_EMAIL=wanderlust@example.com
-      - ZO_ROOT_USER_PASSWORD=wanderlust
-    ports:
-      - 5080:5080
-    image: public.ecr.aws/zinclabs/openobserve:latest
-
   wl-otel-lgtm:
     container_name: wl-otel-lgtm
     restart: unless-stopped
