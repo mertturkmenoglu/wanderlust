@@ -117,17 +117,11 @@ INSERT INTO review_media (
   $3
 );
 
--- name: GetReviewsByUsername :many
+-- name: GetReviewIdsByUsername :many
 SELECT 
-  sqlc.embed(reviews),
-  sqlc.embed(profile),
-  sqlc.embed(pois)
-FROM 
-    reviews
-JOIN 
-    profile ON reviews.user_id = profile.id
-JOIN 
-    pois ON reviews.poi_id = pois.id
+  reviews.id
+FROM reviews
+JOIN profile ON reviews.user_id = profile.id
 WHERE profile.username = $1
 ORDER BY reviews.created_at DESC
 OFFSET $2
