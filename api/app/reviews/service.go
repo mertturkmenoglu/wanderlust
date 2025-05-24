@@ -3,6 +3,7 @@ package reviews
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"strings"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
@@ -11,23 +12,30 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
-	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
-func (s *Service) getMany(ids []string) ([]dto.Review, error) {
-	dbReviews, err := s.app.Db.Queries.GetReviewsByIdsPopulated(context.Background(), ids)
+func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Review, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbReviews, err := s.db.GetReviewsByIdsPopulated(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("Reviews not found")
 		}
@@ -48,34 +56,62 @@ func (s *Service) getMany(ids []string) ([]dto.Review, error) {
 	return reviews, nil
 }
 
-func (s *Service) get(id string) (*dto.GetReviewByIdOutput, error) {
-	review, err := s.getMany([]string{id})
+func (s *Service) find(ctx context.Context, id string) (*dto.Review, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	reviews, err := s.findMany(ctx, []string{id})
 
 	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if len(reviews) == 0 {
+		err = huma.Error404NotFound("Review not found")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &reviews[0], nil
+}
+
+func (s *Service) get(ctx context.Context, id string) (*dto.GetReviewByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	review, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
 	return &dto.GetReviewByIdOutput{
 		Body: dto.GetReviewByIdOutputBody{
-			Review: review[0],
+			Review: *review,
 		},
 	}, nil
 }
 
-func (s *Service) create(userId string, body dto.CreateReviewInputBody) (*dto.CreateReviewOutput, error) {
-	ctx := context.Background()
-	tx, err := s.app.Db.Pool.Begin(ctx)
+func (s *Service) create(ctx context.Context, body dto.CreateReviewInputBody) (*dto.CreateReviewOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create transaction")
 	}
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
+	userId := ctx.Value("userId").(string)
 
 	dbReview, err := qtx.CreateReview(ctx, db.CreateReviewParams{
-		ID:      utils.GenerateId(s.app.Flake),
+		ID:      s.ID.Flake(),
 		PoiID:   body.PoiID,
 		UserID:  userId,
 		Content: body.Content,
@@ -83,6 +119,7 @@ func (s *Service) create(userId string, body dto.CreateReviewInputBody) (*dto.Cr
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create review")
 	}
 
@@ -92,34 +129,42 @@ func (s *Service) create(userId string, body dto.CreateReviewInputBody) (*dto.Cr
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to increment total points")
 	}
 
 	err = qtx.IncrementTotalVotes(ctx, body.PoiID)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to increment total votes")
 	}
 
 	err = tx.Commit(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
-	getRes, err := s.get(dbReview.ID)
+	getRes, err := s.get(ctx, dbReview.ID)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
 	r := getRes.Body.Review
 
-	_ = s.app.Activities.Add(userId, activities.ActivityReview, activities.ReviewPayload{
+	err = s.Activities.Add(userId, activities.ActivityReview, activities.ReviewPayload{
 		PoiName: r.Poi.Name,
 		PoiId:   r.Poi.ID,
 		Rating:  r.Rating,
 	})
+
+	if err != nil {
+		tracing.Slog.Error("Failed to add create review activity", slog.Any("error", err))
+	}
 
 	return &dto.CreateReviewOutput{
 		Body: dto.CreateReviewOutputBody{
@@ -128,8 +173,8 @@ func (s *Service) create(userId string, body dto.CreateReviewInputBody) (*dto.Cr
 	}, nil
 }
 
-func (s *Service) remove(userId string, id string) error {
-	reviewRes, err := s.get(id)
+func (s *Service) remove(ctx context.Context, userId string, id string) error {
+	reviewRes, err := s.get(ctx, id)
 
 	if err != nil {
 		return err
@@ -141,7 +186,7 @@ func (s *Service) remove(userId string, id string) error {
 		return huma.Error403Forbidden("You do not have permission to delete this review")
 	}
 
-	err = s.app.Db.Queries.DeleteReview(context.Background(), id)
+	err = s.db.DeleteReview(ctx, id)
 
 	if err != nil {
 		return huma.Error500InternalServerError("Failed to delete review")
@@ -154,7 +199,7 @@ func (s *Service) remove(userId string, id string) error {
 			continue
 		}
 
-		err = s.app.Upload.Client.RemoveObject(
+		err = s.Upload.Client.RemoveObject(
 			context.Background(),
 			string(upload.BUCKET_REVIEWS),
 			after,
@@ -162,7 +207,7 @@ func (s *Service) remove(userId string, id string) error {
 		)
 
 		if err != nil {
-			s.app.Log.Debug("error deleting review media",
+			s.Log.Debug("error deleting review media",
 				zap.String("bucket", string(upload.BUCKET_REVIEWS)),
 				zap.String("object", after),
 				zap.String("url", m.Url),
@@ -176,7 +221,7 @@ func (s *Service) remove(userId string, id string) error {
 }
 
 func (s *Service) getByUsername(username string, params dto.PaginationQueryParams) (*dto.GetReviewsByUsernameOutput, error) {
-	dbRes, err := s.app.Db.Queries.GetReviewsByUsername(context.Background(), db.GetReviewsByUsernameParams{
+	dbRes, err := s.db.GetReviewsByUsername(context.Background(), db.GetReviewsByUsernameParams{
 		Username: username,
 		Offset:   int32(pagination.GetOffset(params)),
 		Limit:    int32(params.PageSize),
@@ -196,13 +241,13 @@ func (s *Service) getByUsername(username string, params dto.PaginationQueryParam
 		ids[i] = v.Review.ID
 	}
 
-	reviews, err := s.getMany(ids)
+	reviews, err := s.findMany(context.Background(), ids)
 
 	if err != nil {
 		return nil, err
 	}
 
-	count, err := s.app.Db.Queries.CountReviewsByUsername(context.Background(), username)
+	count, err := s.db.CountReviewsByUsername(context.Background(), username)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to get reviews count")
@@ -217,7 +262,7 @@ func (s *Service) getByUsername(username string, params dto.PaginationQueryParam
 }
 
 func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.GetReviewsByPoiIdOutput, error) {
-	dbRes, err := s.app.Db.Queries.GetReviewsByPoiId(context.Background(), db.GetReviewsByPoiIdParams{
+	dbRes, err := s.db.GetReviewsByPoiId(context.Background(), db.GetReviewsByPoiIdParams{
 		PoiID:  id,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
@@ -237,13 +282,13 @@ func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.
 		ids[i] = v.Review.ID
 	}
 
-	reviews, err := s.getMany(ids)
+	reviews, err := s.findMany(context.Background(), ids)
 
 	if err != nil {
 		return nil, err
 	}
 
-	count, err := s.app.Db.Queries.CountReviewsByPoiId(context.Background(), id)
+	count, err := s.db.CountReviewsByPoiId(context.Background(), id)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to get reviews count")
@@ -258,7 +303,7 @@ func (s *Service) getByPoiID(id string, params dto.PaginationQueryParams) (*dto.
 }
 
 func (s *Service) getRatings(id string) (*dto.GetRatingsByPoiIdOutput, error) {
-	dbRes, err := s.app.Db.Queries.GetPoiRatings(context.Background(), id)
+	dbRes, err := s.db.GetPoiRatings(context.Background(), id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -289,7 +334,7 @@ func (s *Service) getRatings(id string) (*dto.GetRatingsByPoiIdOutput, error) {
 }
 
 func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMediaInputBody) (*dto.UploadReviewMediaOutput, error) {
-	review, err := s.get(id)
+	review, err := s.get(context.Background(), id)
 
 	if err != nil {
 		return nil, err
@@ -302,7 +347,7 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMe
 	bucket := upload.BUCKET_REVIEWS
 
 	// Check if the file is uploaded
-	_, err = s.app.Upload.Client.GetObject(
+	_, err = s.Upload.Client.GetObject(
 		context.Background(),
 		string(bucket),
 		input.FileName,
@@ -314,21 +359,21 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMe
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.app.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
+	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
 		return nil, huma.Error400BadRequest("incorrect file")
 	}
 
 	// delete cached information
-	err = s.app.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID))
+	err = s.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID))
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to delete cached information")
 	}
 
-	endpoint := s.app.Upload.Client.EndpointURL().String()
+	endpoint := s.Upload.Client.EndpointURL().String()
 	url := endpoint + "/" + string(bucket) + "/" + input.FileName
 
-	lastOrder, err := s.app.Db.Queries.GetLastMediaOrderOfReview(context.Background(), id)
+	lastOrder, err := s.db.GetLastMediaOrderOfReview(context.Background(), id)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to get last media order")
@@ -342,7 +387,7 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMe
 
 	order := int16(ord) + 1
 
-	_, err = s.app.Db.Queries.CreateReviewMedia(context.Background(), db.CreateReviewMediaParams{
+	_, err = s.db.CreateReviewMedia(context.Background(), db.CreateReviewMediaParams{
 		ReviewID:   id,
 		Url:        url,
 		MediaOrder: order,
@@ -352,7 +397,7 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadReviewMe
 		return nil, huma.Error500InternalServerError("Failed to create review media")
 	}
 
-	rev, err := s.get(id)
+	rev, err := s.get(context.Background(), id)
 
 	if err != nil {
 		return nil, err

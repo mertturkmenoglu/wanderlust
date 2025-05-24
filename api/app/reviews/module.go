@@ -6,13 +6,16 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -28,9 +31,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetReviewByIdInput) (*dto.GetReviewByIdOutput, error) {
-			res, err := s.get(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -51,10 +58,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateReviewInput) (*dto.CreateReviewOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.create(userId, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -76,7 +86,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 		func(ctx context.Context, input *dto.DeleteReviewInput) (*dto.CreateReviewOutput, error) {
 			userId := ctx.Value("userId").(string)
-			err := s.remove(userId, input.ID)
+			err := s.remove(ctx, userId, input.ID)
 
 			if err != nil {
 				return nil, err
