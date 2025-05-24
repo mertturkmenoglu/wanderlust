@@ -177,3 +177,9 @@ DELETE FROM
   diary_entries_pois
 WHERE
   diary_entry_id = $1;
+
+-- name: RemoveDiaryEntryAllMedia :exec
+DELETE FROM
+  diary_media
+WHERE
+  diary_entry_id = $1;

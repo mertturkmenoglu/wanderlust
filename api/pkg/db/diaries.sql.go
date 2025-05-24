@@ -578,6 +578,18 @@ func (q *Queries) ListDiaryEntries(ctx context.Context, arg ListDiaryEntriesPara
 	return items, nil
 }
 
+const removeDiaryEntryAllMedia = `-- name: RemoveDiaryEntryAllMedia :exec
+DELETE FROM
+  diary_media
+WHERE
+  diary_entry_id = $1
+`
+
+func (q *Queries) RemoveDiaryEntryAllMedia(ctx context.Context, diaryEntryID string) error {
+	_, err := q.db.Exec(ctx, removeDiaryEntryAllMedia, diaryEntryID)
+	return err
+}
+
 const removeDiaryEntryFriends = `-- name: RemoveDiaryEntryFriends :exec
 DELETE FROM 
   diary_entries_users
