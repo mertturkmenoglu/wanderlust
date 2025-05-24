@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { BookMarkedIcon, CalendarIcon } from 'lucide-react';
+import { BookMarkedIcon, CalendarIcon, XIcon } from 'lucide-react';
 import { useDiaryContext } from '../-hooks';
 import { CreateDialog } from './create-dialog';
 
@@ -24,6 +24,12 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-2">
+        {date !== undefined && (
+          <button onClick={() => setDate(undefined)}>
+            <XIcon className="size-4 text-destructive" />
+            <span className="sr-only">Clear date</span>
+          </button>
+        )}
         <Popover>
           <PopoverTrigger asChild>
             <Button
