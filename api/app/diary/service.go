@@ -127,7 +127,7 @@ func (s *Service) get(ctx context.Context, id string) (*dto.GetDiaryEntryByIdOut
 
 	userId := ctx.Value("userId").(string)
 
-	if !s.canRead(entry, userId) {
+	if !canRead(entry, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this diary entry")
 		sp.RecordError(err)
 		return nil, err
@@ -284,7 +284,7 @@ func (s *Service) remove(ctx context.Context, id string) error {
 
 	userId := ctx.Value("userId").(string)
 
-	if entry.UserID != userId {
+	if !canDelete(entry, userId) {
 		err = huma.Error403Forbidden("you are not authorized to delete this diary entry")
 		sp.RecordError(err)
 		return err
@@ -625,7 +625,7 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateDiaryEnt
 
 	userId := ctx.Value("userId").(string)
 
-	if entry.UserID != userId {
+	if !canUpdate(entry, userId) {
 		err = huma.Error403Forbidden("you are not authorized to update this diary entry")
 		sp.RecordError(err)
 		return nil, err
@@ -656,15 +656,6 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateDiaryEnt
 	if err != nil {
 		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to update diary entry")
-	}
-
-	if !body.ShareWithFriends {
-		err = qtx.RemoveDiaryEntryFriends(ctx, id)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to remove diary entry friends")
-		}
 	}
 
 	err = tx.Commit(ctx)
