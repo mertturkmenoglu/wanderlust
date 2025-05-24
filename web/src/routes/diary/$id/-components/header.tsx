@@ -21,7 +21,7 @@ export default function Header() {
         <div>
           <h2 className="text-2xl tracking-tighter">{entry.title}</h2>
           <div className="text-xs text-muted-foreground mt-1 flex items-center">
-            <div>Created by: {isOwner ? 'You' : entry.user.fullName}</div>
+            <div>Created by {isOwner ? 'You' : entry.user.fullName}</div>
             <div className="ml-1">
               at{' '}
               {new Date(entry.createdAt).toLocaleDateString('en-US', {
