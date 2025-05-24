@@ -48,3 +48,20 @@ func (svc *UploadService) RemoveFileFromUrl(url string, bucket BucketName) error
 		minio.RemoveObjectOptions{},
 	)
 }
+
+func (svc *UploadService) FileExists(bucket BucketName, filename string) bool {
+	_, err := svc.Client.GetObject(
+		svc.Context,
+		string(bucket),
+		filename,
+		minio.GetObjectOptions{},
+	)
+
+	return err == nil
+}
+
+func (svc *UploadService) GetUrlForFile(bucket BucketName, filename string) string {
+	endpoint := svc.Client.EndpointURL().String()
+	url := endpoint + "/" + string(bucket) + "/" + filename
+	return url
+}
