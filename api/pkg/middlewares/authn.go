@@ -2,139 +2,95 @@ package middlewares
 
 import (
 	"net/http"
-	"strings"
-	"time"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/tokens"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
 
+// Extracts access and refresh tokens from cookies
+func extractFromCookie(cookies []*http.Cookie) (string, string) {
+	var accessToken = ""
+	var refreshToken = ""
+
+	for _, cookie := range cookies {
+		if cookie.Name == tokens.AccessTokenCookieName {
+			accessToken = cookie.Value
+		} else if cookie.Name == tokens.RefreshTokenCookieName {
+			refreshToken = cookie.Value
+		}
+	}
+
+	return accessToken, refreshToken
+}
+
+// Is Authenticated Middleware
+//
+// This middleware checks if the user is authenticated or not.
+// If the user is authenticated, it sets the userId, username, and role in the context.
+// If not, returns an unauthorized error.
 func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 	return func(ctx huma.Context, next func(huma.Context)) {
-		var token = ""
-		authHeader := ctx.Header("Authorization")
+		_, sp := tracing.NewSpan(ctx.Context())
+		defer sp.End()
 
-		if len(authHeader) == 0 {
-			cookies := huma.ReadCookies(ctx)
-
-			for _, cookie := range cookies {
-				if cookie.Name == "token" {
-					token = strings.TrimPrefix(cookie.Value, "Bearer ")
-					break
-				}
-			}
-		} else {
-			token = strings.TrimPrefix(authHeader, "Bearer ")
-		}
-
-		if len(token) == 0 {
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
-			return
-		}
-
-		claims, err := tokens.Decode(token)
+		accessToken, refreshToken := extractFromCookie(huma.ReadCookies(ctx))
+		userInformation, err := tokens.CheckTokens(accessToken, refreshToken)
 
 		if err != nil {
+			sp.RecordError(err)
 			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
-		if claims.ExpiresAt.Time.Before(time.Now()) {
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Token expired")
-			return
-		}
-
-		if claims.Issuer != "wanderlust" {
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Invalid issuer")
-			return
-		}
-
-		if claims.Subject != claims.Email {
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Invalid subject")
-			return
-		}
-
-		ctx = huma.WithValue(ctx, "userId", claims.ID)
-		ctx = huma.WithValue(ctx, "email", claims.Email)
-		ctx = huma.WithValue(ctx, "username", claims.Username)
-		ctx = huma.WithValue(ctx, "role", claims.Role)
+		ctx = huma.WithValue(ctx, "userId", userInformation.ID)
+		ctx = huma.WithValue(ctx, "username", userInformation.Username)
+		ctx = huma.WithValue(ctx, "role", userInformation.Role)
 
 		if cfg.Env.Env == "dev" {
-			tracer := otel.Tracer("")
-			_, sp := tracer.Start(ctx.Context(), "authn-middleware")
-			defer sp.End()
-
-			sp.SetAttributes(attribute.String("userId", claims.ID))
-			sp.SetAttributes(attribute.String("email", claims.Email))
-			sp.SetAttributes(attribute.String("username", claims.Username))
-			sp.SetAttributes(attribute.String("role", claims.Role))
+			sp.SetAttributes(attribute.String("userId", userInformation.ID))
+			sp.SetAttributes(attribute.String("username", userInformation.Username))
+			sp.SetAttributes(attribute.String("role", userInformation.Role))
 		}
 
 		next(ctx)
 	}
 }
 
+// With Authenticated Middleware
+//
+// This middleware checks if the user is authenticated or not.
+// If the user is authenticated, it sets the userId, username, and role in the context.
+// If not, sets the userId, username, and role to empty strings in the context and
+// continues with the next middleware.
 func WithAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 	return func(ctx huma.Context, next func(huma.Context)) {
-		var token = ""
-		authHeader := ctx.Header("Authorization")
+		_, sp := tracing.NewSpan(ctx.Context())
+		defer sp.End()
 
-		if len(authHeader) == 0 {
-			cookies := huma.ReadCookies(ctx)
-
-			for _, cookie := range cookies {
-				if cookie.Name == "token" {
-					token = strings.TrimPrefix(cookie.Value, "Bearer ")
-					break
-				}
-			}
-		} else {
-			token = strings.TrimPrefix(authHeader, "Bearer ")
-		}
-
-		if len(token) == 0 {
-			next(setContextValuesEmpty(ctx))
-			return
-		}
-
-		claims, err := tokens.Decode(token)
+		accessToken, refreshToken := extractFromCookie(huma.ReadCookies(ctx))
+		userInformation, err := tokens.CheckTokens(accessToken, refreshToken)
 
 		if err != nil {
-			next(setContextValuesEmpty(ctx))
+			ctx = huma.WithValue(ctx, "userId", "")
+			ctx = huma.WithValue(ctx, "username", "")
+			ctx = huma.WithValue(ctx, "role", "")
+			next(ctx)
 			return
 		}
 
-		if claims.ExpiresAt.Time.Before(time.Now()) {
-			next(setContextValuesEmpty(ctx))
-			return
-		}
+		ctx = huma.WithValue(ctx, "userId", userInformation.ID)
+		ctx = huma.WithValue(ctx, "username", userInformation.Username)
+		ctx = huma.WithValue(ctx, "role", userInformation.Role)
 
-		if claims.Issuer != "wanderlust" {
-			next(setContextValuesEmpty(ctx))
-			return
+		if cfg.Env.Env == "dev" {
+			sp.SetAttributes(attribute.String("userId", userInformation.ID))
+			sp.SetAttributes(attribute.String("username", userInformation.Username))
+			sp.SetAttributes(attribute.String("role", userInformation.Role))
 		}
-
-		if claims.Subject != claims.Email {
-			next(setContextValuesEmpty(ctx))
-			return
-		}
-
-		ctx = huma.WithValue(ctx, "userId", claims.ID)
-		ctx = huma.WithValue(ctx, "email", claims.Email)
-		ctx = huma.WithValue(ctx, "username", claims.Username)
-		ctx = huma.WithValue(ctx, "role", claims.Role)
 
 		next(ctx)
 	}
-}
-
-func setContextValuesEmpty(ctx huma.Context) huma.Context {
-	ctx = huma.WithValue(ctx, "userId", "")
-	ctx = huma.WithValue(ctx, "email", "")
-	ctx = huma.WithValue(ctx, "username", "")
-	ctx = huma.WithValue(ctx, "role", "")
-	return ctx
 }
