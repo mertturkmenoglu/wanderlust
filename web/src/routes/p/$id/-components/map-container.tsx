@@ -13,7 +13,7 @@ export default function MapContainer() {
   return (
     <>
       <div className="flex items-end justify-between">
-        <h3 className="text-2xl font-bold">Location</h3>
+        <h3 className="text-xl font-semibold">Location</h3>
         <Button
           variant="link"
           className="px-0"

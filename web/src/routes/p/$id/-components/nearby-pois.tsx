@@ -50,7 +50,9 @@ export default function NearbyPois() {
   if (query.data) {
     return (
       <div className="mt-4 lg:px-8">
-        <h3 className="text-2xl font-bold tracking-tight">Nearby Locations</h3>
+        <h3 className="text-xl font-semibold tracking-tight">
+          Nearby Locations
+        </h3>
         <ScrollArea>
           <div className="flex gap-8 my-4">
             {(query.data.hits ?? []).slice(0, 6).map(({ document: p }) => (
