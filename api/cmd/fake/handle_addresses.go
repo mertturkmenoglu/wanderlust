@@ -34,11 +34,26 @@ func batchInsertAddresses(n int) error {
 		return err
 	}
 
-	for i := range n {
-		lat, _ := gofakeit.LatitudeInRange(32, 45)
-		lng, _ := gofakeit.LongitudeInRange(-80, -120)
+	cities, err := d.Queries.GetCities(context.Background())
 
+	if err != nil {
+		return err
+	}
+
+	for i := range n {
 		idx := i % len(cityIds)
+
+		var city *db.City
+
+		for _, c := range cities {
+			if c.ID == cityIds[idx] {
+				city = &c
+				break
+			}
+		}
+
+		lat := city.Latitude + gofakeit.Float64Range(-0.02, 0.02)
+		lng := city.Longitude + gofakeit.Float64Range(-0.02, 0.02)
 
 		arg = append(arg, db.BatchCreateAddressesParams{
 			CityID:     cityIds[idx],
