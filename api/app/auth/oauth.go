@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/random"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 	"golang.org/x/oauth2"
@@ -83,34 +84,35 @@ func getFbOAuth2Config() *oauth2.Config {
 	}
 }
 
-func getOAuthToken(params getOAuthTokenParams) (*oauth2.Token, error) {
+func getOAuthToken(ctx context.Context, params getOAuthTokenParams) (*oauth2.Token, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	cfg := getOAuthConfig(params.provider)
 
 	if params.state != params.cookieState {
-		return nil, huma.Error400BadRequest("State parameter mismatch", &huma.ErrorDetail{
-			Message:  "State parameter mismatch",
-			Location: "state",
-			Value:    params.state,
-		})
+		err := huma.Error400BadRequest("State parameter mismatch")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	// Exchange the code for a token
-	token, err := cfg.Exchange(context.Background(), params.code)
+	token, err := cfg.Exchange(ctx, params.code)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to exchange code for token", &huma.ErrorDetail{
-			Message:  "Failed to exchange code for token",
-			Location: "code",
-			Value:    params.code,
-		})
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to exchange code for token")
 	}
 
 	return token, nil
 }
 
-func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, error) {
+func fetchUserInfo(ctx context.Context, provider string, token *oauth2.Token) (*oauthUser, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	cfg := getOAuthConfig(provider)
-	client := cfg.Client(context.Background(), token)
+	client := cfg.Client(ctx, token)
 
 	var endpoint = ""
 
@@ -126,11 +128,8 @@ func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, error) {
 	res, err := client.Get(endpoint)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to fetch user info", &huma.ErrorDetail{
-			Message:  "Failed to fetch user info",
-			Location: "user_info",
-			Value:    endpoint,
-		})
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to fetch user info")
 	}
 
 	defer res.Body.Close()
@@ -141,21 +140,15 @@ func fetchUserInfo(provider string, token *oauth2.Token) (*oauthUser, error) {
 	case "google":
 		googleUser := googleUser{}
 		if err := json.NewDecoder(res.Body).Decode(&googleUser); err != nil {
-			return nil, huma.Error500InternalServerError("Failed to parse user info", &huma.ErrorDetail{
-				Message:  "Failed to parse user info",
-				Location: "user_info",
-				Value:    endpoint,
-			})
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to parse user info")
 		}
 		mapGoogleUserToOAuthUser(&userInfo, &googleUser)
 	case "facebook":
 		fbUser := fbUser{}
 		if err := json.NewDecoder(res.Body).Decode(&fbUser); err != nil {
-			return nil, huma.Error500InternalServerError("Failed to parse user info", &huma.ErrorDetail{
-				Message:  "Failed to parse user info",
-				Location: "user_info",
-				Value:    endpoint,
-			})
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to parse user info")
 		}
 		mapFbUserToOAuthUser(&userInfo, &fbUser)
 	default:

@@ -521,7 +521,7 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	token, err := getOAuthToken(getOAuthTokenParams{
+	token, err := getOAuthToken(ctx, getOAuthTokenParams{
 		provider:    input.Provider,
 		state:       input.QueryState,
 		code:        input.Code,
@@ -533,7 +533,7 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 		return nil, huma.Error500InternalServerError("Failed to get OAuth token")
 	}
 
-	userInfo, err := fetchUserInfo(input.Provider, token)
+	userInfo, err := fetchUserInfo(ctx, input.Provider, token)
 
 	if err != nil {
 		sp.RecordError(err)
