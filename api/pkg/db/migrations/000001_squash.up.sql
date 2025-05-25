@@ -117,15 +117,18 @@ CREATE TABLE IF NOT EXISTS addresses (
 CREATE TABLE IF NOT EXISTS follows (
   follower_id TEXT NOT NULL,
   following_id TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  PRIMARY KEY (follower_id, following_id),
+  CONSTRAINT 
+    fk_follows_follower FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT 
+    fk_follows_following FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Create indexes
 CREATE INDEX IF NOT EXISTS idx_follows_follower ON follows(follower_id);
 
 CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id);
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_follows_unique ON follows(follower_id, following_id);
 
 --
 --
