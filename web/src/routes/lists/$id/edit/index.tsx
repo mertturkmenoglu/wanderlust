@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 import { ArrowDownIcon, ArrowUpIcon, SaveIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute('/lists/$id/edit/')({
@@ -40,10 +41,18 @@ function RouteComponent() {
   const invalidator = useInvalidator();
 
   const [name, setName] = useState(list.name);
+  const form = useForm({
+    defaultValues: {
+      items: list.items,
+    },
+  });
+
+  const array = useFieldArray({
+    control: form.control,
+    name: 'items',
+  });
   const [isPublic, setIsPublic] = useState(list.isPublic);
-  const [items, setItems] = useState(list.items);
   const [isListDirty, setIsListDirty] = useState(false);
-  const [isItemsDirty, setIsItemsDirty] = useState(false);
   const isErr = name.length > 128 || name.length < 1;
   const showErr = isListDirty && isErr;
 
@@ -61,7 +70,6 @@ function RouteComponent() {
     {
       onSuccess: async () => {
         await invalidator.invalidate();
-        setIsItemsDirty(false);
         toast.success('List items updated');
       },
     },
@@ -147,13 +155,13 @@ function RouteComponent() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="font-bold">List Items</div>
-          {items.length > 0 && isItemsDirty && (
+          {form.watch('items').length > 0 && form.formState.isDirty && (
             <div className="flex">
               <Button
                 variant="default"
                 size="sm"
                 className="ml-auto"
-                disabled={!isItemsDirty}
+                disabled={!form.formState.isDirty}
                 onClick={() => {
                   updateListItemsMutation.mutate({
                     params: {
@@ -162,7 +170,7 @@ function RouteComponent() {
                       },
                     },
                     body: {
-                      poiIds: items.map((item) => item.poiId),
+                      poiIds: form.getValues('items').map((item) => item.poiId),
                     },
                   });
                 }}
@@ -173,14 +181,14 @@ function RouteComponent() {
             </div>
           )}
         </div>
-        {items.length === 0 && (
+        {form.watch('items').length === 0 && (
           <AppMessage
             emptyMessage="This list is empty"
             className="my-16"
             showBackButton={false}
           />
         )}
-        {items.map((item, i) => (
+        {form.watch('items').map((item, i) => (
           <div
             key={item.poi.id}
             className="flex items-center gap-2"
@@ -203,8 +211,7 @@ function RouteComponent() {
               size="icon"
               className="ml-auto"
               onClick={() => {
-                setIsItemsDirty(true);
-                setItems(items.filter((i) => i.poi.id !== item.poi.id));
+                array.remove(i);
               }}
             >
               <span className="sr-only">Remove</span>
@@ -215,14 +222,7 @@ function RouteComponent() {
               size="icon"
               disabled={i === 0}
               onClick={() => {
-                setIsItemsDirty(true);
-                const newItems = [...items];
-                [newItems[i - 1], newItems[i]] = [
-                  newItems[i]!,
-                  newItems[i - 1]!,
-                ];
-
-                setItems([...newItems]);
+                array.move(i - 1, i);
               }}
             >
               <span className="sr-only">Move Up</span>
@@ -232,15 +232,9 @@ function RouteComponent() {
             <Button
               variant="ghost"
               size="icon"
-              disabled={i === items.length - 1}
+              disabled={i === form.watch('items').length - 1}
               onClick={() => {
-                setIsItemsDirty(true);
-                const newItems = [...items];
-                const temp = items[i]!;
-                newItems[i] = newItems[i + 1]!;
-                newItems[i + 1] = temp;
-
-                setItems([...newItems]);
+                array.move(i, i + 1);
               }}
             >
               <span className="sr-only">Move Down</span>
