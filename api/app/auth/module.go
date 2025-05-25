@@ -3,23 +3,19 @@ package auth
 import (
 	"context"
 	"net/http"
-	"time"
-	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/hash"
 	"wanderlust/pkg/middlewares"
-	"wanderlust/pkg/random"
-	"wanderlust/pkg/tasks"
-	"wanderlust/pkg/tokens"
-	"wanderlust/pkg/utils"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -40,40 +36,17 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
-			email := ctx.Value("email").(string)
-			user, err := s.getUserByEmail(ctx, email)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getMe(ctx)
 
 			if err != nil {
-				return nil, huma.Error404NotFound("User not found")
+				sp.RecordError(err)
+				return nil, err
 			}
 
-			return &dto.GetMeOutput{
-				Body: dto.GetMeOutputBody{
-					ID:                    user.ID,
-					Email:                 user.Email,
-					Username:              user.Username,
-					FullName:              user.FullName,
-					GoogleID:              utils.TextToStr(user.GoogleID),
-					FacebookID:            utils.TextToStr(user.FbID),
-					IsEmailVerified:       user.IsEmailVerified,
-					IsOnboardingCompleted: user.IsOnboardingCompleted,
-					IsActive:              user.IsActive,
-					IsBusinessAccount:     user.IsBusinessAccount,
-					IsVerified:            user.IsVerified,
-					Role:                  user.Role,
-					Bio:                   utils.TextToStr(user.Bio),
-					Pronouns:              utils.TextToStr(user.Pronouns),
-					Website:               utils.TextToStr(user.Website),
-					Phone:                 utils.TextToStr(user.Phone),
-					ProfileImage:          utils.TextToStr(user.ProfileImage),
-					BannerImage:           utils.TextToStr(user.BannerImage),
-					FollowersCount:        user.FollowersCount,
-					FollowingCount:        user.FollowingCount,
-					LastLogin:             user.LastLogin.Time,
-					CreatedAt:             user.CreatedAt.Time,
-					UpdatedAt:             user.UpdatedAt.Time,
-				},
-			}, nil
+			return res, nil
 		})
 
 	huma.Register(grp,
@@ -85,53 +58,17 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Login with email and password",
 		},
 		func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
-			user, dbErr := s.getUserByEmail(ctx, input.Body.Email)
-			var hashed = ""
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
 
-			if dbErr == nil {
-				hashed = user.PasswordHash.String
-			}
-
-			matched, verifyErr := hash.Verify(input.Body.Password, hashed)
-
-			// If the passwords don't match, or there's an error, return a generic error message.
-			if !matched || dbErr != nil || verifyErr != nil {
-				return nil, huma.Error400BadRequest("Invalid email or password")
-			}
-
-			exp := time.Now().Add(7 * 24 * time.Hour)
-
-			jwt, err := tokens.Encode(tokens.Payload{
-				ID:       user.ID,
-				Username: user.Username,
-				Email:    user.Email,
-				Role:     user.Role,
-			}, exp)
+			res, err := s.login(ctx, input.Body)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to create JWT")
+				sp.RecordError(err)
+				return nil, err
 			}
 
-			bearerToken := "Bearer " + jwt
-
-			return &dto.LoginOutput{
-				Authorization: bearerToken,
-				Body: dto.LoginOutputBody{
-					Token: bearerToken,
-				},
-				SetCookie: []http.Cookie{
-					{
-						Name:     "token",
-						Value:    bearerToken,
-						MaxAge:   7 * 24 * 60 * 60,
-						Path:     "/",
-						Expires:  exp,
-						HttpOnly: true,
-						Secure:   cfg.Env.Env != "dev",
-						SameSite: http.SameSiteLaxMode,
-					},
-				},
-			}, nil
+			return res, nil
 		},
 	)
 
@@ -148,15 +85,17 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.LogoutOutput, error) {
-			return &dto.LogoutOutput{
-				SetCookie: []http.Cookie{{
-					Name:    "token",
-					Value:   "",
-					MaxAge:  -1,
-					Path:    "/",
-					Expires: time.Unix(0, 0),
-				}},
-			}, nil
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.logout(ctx)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
 		},
 	)
 
@@ -169,34 +108,17 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusCreated,
 		},
 		func(ctx context.Context, input *dto.RegisterInput) (*dto.RegisterOutput, error) {
-			err := s.checkIfEmailOrUsernameIsTaken(input.Body.Email, input.Body.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.register(ctx, input.Body)
 
 			if err != nil {
-				return nil, huma.Error400BadRequest("Email or username already taken")
+				sp.RecordError(err)
+				return nil, err
 			}
 
-			ok := isValidUsername(input.Body.Username)
-
-			if !ok {
-				return nil, huma.Error400BadRequest("Username must include only alphanumeric characters or underscore")
-			}
-
-			saved, err := s.createUserFromCredentialsInfo(input.Body)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to create user")
-			}
-
-			return &dto.RegisterOutput{
-				Body: dto.RegisterOutputBody{
-					ID:        saved.ID,
-					Email:     saved.Email,
-					Username:  saved.Username,
-					FullName:  saved.FullName,
-					CreatedAt: saved.CreatedAt.Time,
-					UpdatedAt: saved.UpdatedAt.Time,
-				},
-			}, nil
+			return res, nil
 		},
 	)
 
@@ -209,38 +131,14 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.SendVerificationEmailInput) (*struct{}, error) {
-			user, err := s.getUserByEmail(ctx, input.Body.Email)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.sendVerificationEmail(ctx, input.Body.Email)
 
 			if err != nil {
-				return nil, huma.Error400BadRequest("Invalid email")
-			}
-
-			if user.IsEmailVerified {
-				return nil, huma.Error400BadRequest("Email already verified")
-			}
-
-			code, err := random.DigitsString(6)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to generate verification code")
-			}
-
-			key := "verify-email:" + code
-			err = s.app.Cache.Set(ctx, key, user.Email, time.Minute*15).Err()
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
-			}
-
-			url := s.getEmailVerifyUrl(code)
-
-			_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
-				Email: user.Email,
-				Url:   url,
-			})
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to enqueue verification email task")
+				sp.RecordError(err)
+				return nil, err
 			}
 
 			return nil, nil
@@ -256,32 +154,14 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.VerifyEmailInput) (*struct{}, error) {
-			key := "verify-email:" + input.Code
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
 
-			if !app.Cache.Has(ctx, key) {
-				return nil, huma.Error400BadRequest("Invalid or expired verification code")
-			}
-
-			email, err := app.Cache.Get(ctx, key).Result()
+			err := s.verifyEmailAddress(ctx, input.Code)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to get verification code from cache")
-			}
-
-			user, err := s.getUserByEmail(ctx, email)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to get user by email")
-			}
-
-			if user.IsEmailVerified {
-				return nil, huma.Error400BadRequest("Email already verified")
-			}
-
-			err = s.verifyUserEmail(user.ID)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to verify email")
+				sp.RecordError(err)
+				return nil, err
 			}
 
 			return nil, nil
@@ -297,32 +177,14 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.SendForgotPasswordEmailInput) (*struct{}, error) {
-			user, err := s.getUserByEmail(ctx, input.Body.Email)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.sendForgotPasswordEmail(ctx, input.Body.Email)
 
 			if err != nil {
-				return nil, huma.Error400BadRequest("Invalid email")
-			}
-
-			code, err := random.DigitsString(6)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to generate verification code")
-			}
-
-			key := "forgot-password:" + code
-			err = s.app.Cache.Set(ctx, key, user.Email, time.Minute*15).Err()
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
-			}
-
-			_, err = s.app.Tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
-				Email: user.Email,
-				Code:  code,
-			})
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to enqueue forgot password email task")
+				sp.RecordError(err)
+				return nil, err
 			}
 
 			return nil, nil
@@ -338,33 +200,14 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 		},
 		func(ctx context.Context, input *dto.ResetPasswordInput) (*struct{}, error) {
-			user, err := s.getUserByEmail(ctx, input.Body.Email)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.resetPassword(ctx, input.Body)
 
 			if err != nil {
-				return nil, huma.Error400BadRequest("Invalid email")
-			}
-
-			key := "forgot-password:" + input.Body.Code
-			cacheVal, err := s.app.Cache.Get(ctx, key).Result()
-
-			if err != nil {
-				return nil, huma.Error400BadRequest("Invalid or expired verification code")
-			}
-
-			if cacheVal != user.Email {
-				return nil, huma.Error400BadRequest("Invalid or expired verification code")
-			}
-
-			err = s.updateUserPassword(user.ID, input.Body.NewPassword)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to update password")
-			}
-
-			err = s.app.Cache.Del(ctx, key).Err()
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to delete verification code from cache")
+				sp.RecordError(err)
+				return nil, err
 			}
 
 			return nil, nil
@@ -380,26 +223,18 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusTemporaryRedirect,
 		},
 		func(ctx context.Context, input *dto.OAuthInput) (*dto.OAuthOutput, error) {
-			state, url, err := getOAuthStateAndRedirectUrl(input.Provider)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.startOAuthFlow(ctx, input.Provider)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to create OAuth state")
+				sp.RecordError(err)
+				return nil, err
 			}
 
-			c := &http.Cookie{
-				Name:     "state",
-				Value:    state,
-				Path:     "/",
-				MaxAge:   int(time.Hour.Seconds()),
-				Secure:   false,
-				HttpOnly: true,
-			}
+			return res, nil
 
-			return &dto.OAuthOutput{
-				Status: http.StatusTemporaryRedirect,
-				Url:    url,
-				Cookie: c.String(),
-			}, nil
 		},
 	)
 
@@ -412,76 +247,17 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusTemporaryRedirect,
 		},
 		func(ctx context.Context, input *dto.OAuthCallbackInput) (*dto.OAuthCallbackOutput, error) {
-			token, err := getOAuthToken(getOAuthTokenParams{
-				provider:    input.Provider,
-				state:       input.QueryState,
-				code:        input.Code,
-				cookieState: input.CookieState,
-			})
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.oauthCallback(ctx, input)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to get OAuth token", &huma.ErrorDetail{
-					Message:  "Failed to get OAuth token",
-					Location: "OAuth",
-					Value:    err.Error(),
-				})
+				sp.RecordError(err)
+				return nil, err
 			}
 
-			userInfo, err := fetchUserInfo(input.Provider, token)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to fetch user info", &huma.ErrorDetail{
-					Message:  "Failed to fetch user info",
-					Location: "OAuth",
-					Value:    err.Error(),
-				})
-			}
-
-			user, err := s.getOrCreateUserFromOAuthUser(userInfo)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to create user", &huma.ErrorDetail{
-					Message:  "Failed to create user",
-					Location: "OAuth",
-					Value:    err.Error(),
-				})
-			}
-
-			exp := time.Now().Add(7 * 24 * time.Hour)
-
-			jwt, err := tokens.Encode(tokens.Payload{
-				ID:       user.ID,
-				Username: user.Username,
-				Email:    user.Email,
-				Role:     user.Role,
-			}, exp)
-
-			if err != nil {
-				return nil, huma.Error500InternalServerError("Failed to create JWT")
-			}
-
-			bearerToken := "Bearer " + jwt
-
-			return &dto.OAuthCallbackOutput{
-				SetCookie: []http.Cookie{{
-					Name:    "state",
-					Value:   "",
-					MaxAge:  -1,
-					Path:    "/",
-					Expires: time.Unix(0, 0),
-				}, {
-					Name:     "token",
-					Value:    bearerToken,
-					MaxAge:   7 * 24 * 60 * 60,
-					Path:     "/",
-					Expires:  exp,
-					HttpOnly: true,
-					Secure:   cfg.Env.Env != "dev",
-					SameSite: http.SameSiteLaxMode,
-				}},
-				Status: http.StatusTemporaryRedirect,
-				Url:    cfg.Env.OauthRedirect,
-			}, nil
+			return res, nil
 		},
 	)
 }

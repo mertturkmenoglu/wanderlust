@@ -7,20 +7,25 @@ import (
 	"strings"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/random"
+	"wanderlust/pkg/tracing"
 
 	"github.com/jackc/pgx/v5"
 )
 
-func generateUsernameFromEmail(db *db.Db, email string) (string, error) {
+func generateUsernameFromEmail(ctx context.Context, db *db.Db, email string) (string, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	localPart := strings.Split(email, "@")[0]
 	validLocalPart := cleanEmailLocalPart(localPart)
 
 	// Check if a user with validLocalPart username exists
-	_, err := db.Queries.GetUserByUsername(context.Background(), validLocalPart)
+	_, err := db.Queries.GetUserByUsername(ctx, validLocalPart)
 
 	if err != nil {
 		if !errors.Is(err, pgx.ErrNoRows) {
 			// Something else happened. Abort.
+			sp.RecordError(err)
 			return "", err
 		}
 
