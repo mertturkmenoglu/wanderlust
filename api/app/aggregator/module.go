@@ -34,6 +34,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getHomeAggregation(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

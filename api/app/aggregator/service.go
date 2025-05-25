@@ -18,7 +18,7 @@ type Service struct {
 }
 
 func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
-	_, sp := tracing.NewSpan(ctx)
+	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	var cacheRes dto.HomeAggregatorOutput
@@ -45,12 +45,14 @@ func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOu
 	obj, err := s.getHomeAggregationFromDb(spanCtx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
 	err = s.app.Cache.SetObj(ctx, cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -99,18 +101,22 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 	wg.Wait()
 
 	if errNew != nil {
+		sp.RecordError(errNew)
 		return nil, errNew
 	}
 
 	if errPopular != nil {
+		sp.RecordError(errPopular)
 		return nil, errPopular
 	}
 
 	if errFeatured != nil {
+		sp.RecordError(errFeatured)
 		return nil, errFeatured
 	}
 
 	if errFavorites != nil {
+		sp.RecordError(errFavorites)
 		return nil, errFavorites
 	}
 
@@ -123,6 +129,7 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 	allPois, err := s.GetPoisByIds(ctx, allIds)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -174,12 +181,14 @@ func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, er
 	dbPois, err := s.app.Db.Queries.GetPoisByIdsPopulated(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("failed to get point of interests")
 	}
 
 	pois, err := mapper.FromDbPoisToPois(ctx, dbPois)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -193,6 +202,7 @@ func (s *Service) getNewPoisIds(ctx context.Context) ([]string, error) {
 	arr, err := s.app.Db.Queries.GetNewPoisIds(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -210,6 +220,7 @@ func (s *Service) getPopularPoisIds(ctx context.Context) ([]string, error) {
 	arr, err := s.app.Db.Queries.GetPopularPoisIds(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -227,6 +238,7 @@ func (s *Service) getFeaturedPoisIds(ctx context.Context) ([]string, error) {
 	arr, err := s.app.Db.Queries.GetFeaturedPoisIds(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -244,6 +256,7 @@ func (s *Service) getFavoritePoisIds(ctx context.Context) ([]string, error) {
 	arr, err := s.app.Db.Queries.GetFavoritePoisIds(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
