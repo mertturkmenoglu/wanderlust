@@ -85,6 +85,10 @@ SELECT COALESCE(MAX(list_index), 0)
 FROM list_items
 WHERE list_id = $1;
 
+-- name: GetListItemCount :one
+SELECT COUNT(*) FROM list_items
+WHERE list_id = $1;
+
 -- name: GetListItem :one
 SELECT * FROM list_items
 WHERE list_id = $1 AND poi_id = $2

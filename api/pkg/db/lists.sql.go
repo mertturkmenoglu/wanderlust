@@ -318,6 +318,18 @@ func (q *Queries) GetListItem(ctx context.Context, arg GetListItemParams) (ListI
 	return i, err
 }
 
+const getListItemCount = `-- name: GetListItemCount :one
+SELECT COUNT(*) FROM list_items
+WHERE list_id = $1
+`
+
+func (q *Queries) GetListItemCount(ctx context.Context, listID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getListItemCount, listID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getListItems = `-- name: GetListItems :many
 SELECT
   list_items.list_id, list_items.poi_id, list_items.list_index, list_items.created_at,
