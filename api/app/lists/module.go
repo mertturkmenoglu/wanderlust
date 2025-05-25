@@ -14,7 +14,9 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -34,9 +36,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetAllListsOfUserInput) (*dto.GetAllListsOfUserOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
 			res, err := s.getAllLists(ctx, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -63,6 +69,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getList(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -84,10 +91,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetListStatusesInput) (*dto.GetListStatusesOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.getListStatus(userId, input.PoiID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getListStatus(ctx, input.PoiID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -104,9 +114,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetPublicListsOfUserInput) (*dto.GetPublicListsOfUserOutput, error) {
-			res, err := s.getPublicLists(input.Username, input.PaginationQueryParams)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getPublicLists(ctx, input.Username, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -127,10 +141,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateListInput) (*dto.CreateListOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.createList(userId, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -152,9 +169,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateListInput) (*dto.UpdateListOutput, error) {
-			res, err := s.updateList(input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -176,9 +197,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteListInput) (*struct{}, error) {
-			err := s.deleteList(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -200,9 +225,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateListItemInput) (*dto.CreateListItemOutput, error) {
-			res, err := s.createListItem(input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.createListItem(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -229,6 +258,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateListItems(ctx, input.ID, input.Body.PoiIds)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

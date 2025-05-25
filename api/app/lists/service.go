@@ -3,20 +3,23 @@ package lists
 import (
 	"context"
 	"errors"
+	"fmt"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
 func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetAllListsOfUserOutput, error) {
@@ -25,7 +28,7 @@ func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryPar
 
 	userId := ctx.Value("userId").(string)
 
-	dbLists, err := s.app.Db.Queries.GetAllListsOfUser(ctx, db.GetAllListsOfUserParams{
+	dbLists, err := s.db.GetAllListsOfUser(ctx, db.GetAllListsOfUserParams{
 		UserID: userId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
@@ -36,14 +39,14 @@ func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryPar
 		return nil, huma.Error500InternalServerError("Failed to get all lists of user")
 	}
 
-	count, err := s.app.Db.Queries.CountAllListsOfUser(ctx, userId)
+	count, err := s.db.CountAllListsOfUser(ctx, userId)
 
 	if err != nil {
 		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to count all lists of user")
 	}
 
-	dbUser, err := s.app.Db.Queries.GetUserById(ctx, userId)
+	dbUser, err := s.db.GetUserById(ctx, userId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -58,10 +61,15 @@ func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryPar
 	}, nil
 }
 
-func (s *Service) getPublicLists(username string, params dto.PaginationQueryParams) (*dto.GetPublicListsOfUserOutput, error) {
-	dbUser, err := s.app.Db.Queries.GetUserByUsername(context.Background(), username)
+func (s *Service) getPublicLists(ctx context.Context, username string, params dto.PaginationQueryParams) (*dto.GetPublicListsOfUserOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbUser, err := s.db.GetUserByUsername(ctx, username)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("user not found")
 		}
@@ -69,17 +77,18 @@ func (s *Service) getPublicLists(username string, params dto.PaginationQueryPara
 		return nil, huma.Error500InternalServerError("Failed to get user by username")
 	}
 
-	dbLists, err := s.app.Db.Queries.GetPublicListsOfUser(context.Background(), db.GetPublicListsOfUserParams{
+	dbLists, err := s.db.GetPublicListsOfUser(ctx, db.GetPublicListsOfUserParams{
 		UserID: dbUser.ID,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get public lists of user")
 	}
 
-	count, err := s.app.Db.Queries.CountPublicListsOfUser(context.Background(), dbUser.ID)
+	count, err := s.db.CountPublicListsOfUser(ctx, dbUser.ID)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to count public lists of user")
@@ -99,7 +108,7 @@ func (s *Service) getList(ctx context.Context, id string) (*dto.GetListByIdOutpu
 
 	userId := ctx.Value("userId").(string)
 
-	dbList, err := s.app.Db.Queries.GetListById(ctx, id)
+	dbList, err := s.db.GetListById(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -117,7 +126,7 @@ func (s *Service) getList(ctx context.Context, id string) (*dto.GetListByIdOutpu
 		return nil, err
 	}
 
-	dbListItems, err := s.app.Db.Queries.GetListItems(ctx, id)
+	dbListItems, err := s.db.GetListItems(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -131,10 +140,16 @@ func (s *Service) getList(ctx context.Context, id string) (*dto.GetListByIdOutpu
 	}, nil
 }
 
-func (s *Service) getListStatus(userId string, poiId string) (*dto.GetListStatusesOutput, error) {
-	lists, err := s.app.Db.Queries.GetListIdsAndNamesOfUser(context.Background(), userId)
+func (s *Service) getListStatus(ctx context.Context, poiId string) (*dto.GetListStatusesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	lists, err := s.db.GetListIdsAndNamesOfUser(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("user not found")
 		}
@@ -148,12 +163,13 @@ func (s *Service) getListStatus(userId string, poiId string) (*dto.GetListStatus
 		listIds = append(listIds, list.ID)
 	}
 
-	rows, err := s.app.Db.Queries.GetListItemsInListStatus(context.Background(), db.GetListItemsInListStatusParams{
+	rows, err := s.db.GetListItemsInListStatus(ctx, db.GetListItemsInListStatusParams{
 		PoiID:   poiId,
 		Column2: listIds,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get list items in list status")
 	}
 
@@ -183,21 +199,40 @@ func (s *Service) getListStatus(userId string, poiId string) (*dto.GetListStatus
 	}, nil
 }
 
-func (s *Service) createList(userId string, body dto.CreateListInputBody) (*dto.CreateListOutput, error) {
-	res, err := s.app.Db.Queries.CreateList(context.Background(), db.CreateListParams{
-		ID:       utils.GenerateId(s.app.Flake),
+func (s *Service) create(ctx context.Context, body dto.CreateListInputBody) (*dto.CreateListOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	count, err := s.db.CountAllListsOfUser(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get lists count of user")
+	}
+
+	if count > MAX_LISTS_PER_USER {
+		err = huma.Error422UnprocessableEntity(fmt.Sprintf("You can only have up to %d lists", MAX_LISTS_PER_USER))
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	res, err := s.db.CreateList(ctx, db.CreateListParams{
+		ID:       s.ID.Flake(),
 		Name:     body.Name,
 		UserID:   userId,
 		IsPublic: body.IsPublic,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create list")
 	}
 
-	dbUser, err := s.app.Db.Queries.GetUserById(context.Background(), userId)
+	dbUser, err := s.db.GetUserById(ctx, userId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get user by id")
 	}
 
@@ -208,24 +243,44 @@ func (s *Service) createList(userId string, body dto.CreateListInputBody) (*dto.
 	}, nil
 }
 
-func (s *Service) deleteList(id string) error {
-	return s.app.Db.Queries.DeleteList(context.Background(), id)
+func (s *Service) remove(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	err := s.db.DeleteList(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return huma.Error404NotFound("List not found")
+		}
+
+		return huma.Error500InternalServerError("Failed to delete list")
+	}
+
+	return nil
 }
 
-func (s *Service) updateList(id string, body dto.UpdateListInputBody) (*dto.UpdateListOutput, error) {
-	err := s.app.Db.Queries.UpdateList(context.Background(), db.UpdateListParams{
+func (s *Service) update(ctx context.Context, id string, body dto.UpdateListInputBody) (*dto.UpdateListOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	err := s.db.UpdateList(ctx, db.UpdateListParams{
 		ID:       id,
 		Name:     body.Name,
 		IsPublic: body.IsPublic,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to update list")
 	}
 
-	dbList, err := s.app.Db.Queries.GetListById(context.Background(), id)
+	dbList, err := s.db.GetListById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get list by id")
 	}
 
@@ -236,28 +291,48 @@ func (s *Service) updateList(id string, body dto.UpdateListInputBody) (*dto.Upda
 	}, nil
 }
 
-func (s *Service) createListItem(listId string, body dto.CreateListItemInputBody) (*dto.CreateListItemOutput, error) {
-	lastIndex, err := s.app.Db.Queries.GetLastIndexOfList(context.Background(), listId)
+func (s *Service) createListItem(ctx context.Context, listId string, body dto.CreateListItemInputBody) (*dto.CreateListItemOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	lastIndex, err := s.db.GetLastIndexOfList(ctx, listId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get last index of list")
 	}
 
 	lastIndexAsInt, ok := lastIndex.(int32)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("Failed to cast last index of list")
+		err = huma.Error500InternalServerError("Failed to cast last index of list")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	index := lastIndexAsInt + 1
 
-	res, err := s.app.Db.Queries.CreateListItem(context.Background(), db.CreateListItemParams{
+	count, err := s.db.GetListItemCount(ctx, listId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get list item count")
+	}
+
+	if count >= MAX_ITEMS_PER_LIST {
+		err = huma.Error422UnprocessableEntity(fmt.Sprintf("You can only have up to %d items", MAX_ITEMS_PER_LIST))
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	res, err := s.db.CreateListItem(ctx, db.CreateListItemParams{
 		ListID:    listId,
 		PoiID:     body.PoiID,
 		ListIndex: index,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create list item")
 	}
 
@@ -278,6 +353,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 	list, err := s.getList(ctx, listId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -289,19 +365,27 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 		return nil, err
 	}
 
-	tx, err := s.app.Db.Pool.Begin(ctx)
+	if len(poiIds) > MAX_ITEMS_PER_LIST {
+		err = huma.Error422UnprocessableEntity(fmt.Sprintf("You can only have up to %d items", MAX_ITEMS_PER_LIST))
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to begin transaction")
 	}
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.Db.Queries.WithTx(tx)
 
 	err = qtx.DeleteAllListItems(ctx, listId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to delete all list items")
 	}
 
@@ -313,6 +397,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 		})
 
 		if err != nil {
+			sp.RecordError(err)
 			return nil, huma.Error500InternalServerError("Failed to create list item")
 		}
 	}
@@ -320,12 +405,14 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 	err = tx.Commit(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
 	list, err = s.getList(ctx, listId)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
