@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"time"
 	"wanderlust/pkg/cfg"
+	"wanderlust/pkg/tracing"
 
 	"github.com/redis/go-redis/v9"
 )
 
 type Cache struct {
-	Client  *redis.Client
-	Context context.Context
+	*redis.Client
 }
 
 func New() *Cache {
@@ -25,58 +25,53 @@ func New() *Cache {
 	client := redis.NewClient(options)
 
 	return &Cache{
-		Client:  client,
-		Context: context.Background(),
+		Client: client,
 	}
 }
 
-func (c *Cache) Get(key string) (string, error) {
-	return c.Client.Get(c.Context, key).Result()
-}
+func (c *Cache) ReadObj(ctx context.Context, key string, v any) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
 
-func (c *Cache) Set(key string, value string, exp time.Duration) error {
-	return c.Client.Set(c.Context, key, value, exp).Err()
-}
-
-func (c *Cache) Del(key string) error {
-	return c.Client.Del(c.Context, key).Err()
-}
-
-func (c *Cache) ReadObj(key string, v any) error {
-	res, err := c.Get(key)
+	res, err := c.Get(ctx, key).Result()
 
 	if err != nil {
+		sp.RecordError(err)
 		return err
 	}
 
 	err = json.Unmarshal([]byte(res), v)
 
 	if err != nil {
+		sp.RecordError(err)
 		return err
 	}
 
 	return nil
 }
 
-func (c *Cache) SetObj(key string, data any, exp time.Duration) error {
+func (c *Cache) SetObj(ctx context.Context, key string, data any, exp time.Duration) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	serialized, err := json.Marshal(data)
 
 	if err != nil {
+		sp.RecordError(err)
 		return err
 	}
 
-	return c.Set(key, string(serialized), exp)
+	return c.Set(ctx, key, string(serialized), exp).Err()
 }
 
 func (c *Cache) FmtKey(name string, id string) string {
 	return fmt.Sprintf("%s:%s", name, id)
 }
 
-func (c *Cache) Has(key string) bool {
-	_, err := c.Get(key)
-	return err == nil
-}
+func (c *Cache) Has(ctx context.Context, key string) bool {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
 
-func (c *Cache) IncrBy(key string, amount int64) error {
-	return c.Client.IncrBy(c.Context, key, amount).Err()
+	_, err := c.Get(ctx, key).Result()
+	return err == nil
 }
