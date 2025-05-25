@@ -27,7 +27,8 @@ type TEnv struct {
 	FacebookClientSecret     string `key:"FACEBOOK_CLIENT_SECRET"`
 	GoogleClientID           string `key:"GOOGLE_CLIENT_ID"`
 	GoogleClientSecret       string `key:"GOOGLE_CLIENT_SECRET"`
-	JWTSecret                string `key:"JWT_SECRET"`
+	AcessTokenSecret         string `key:"ACCESS_TOKEN_SECRET"`
+	RefreshTokenSecret       string `key:"REFRESH_TOKEN_SECRET"`
 	MinioAutocreateBuckets   bool   `key:"MINIO_AUTOCREATE_BUCKETS"`
 	MinioEndpoint            string `key:"MINIO_ENDPOINT"`
 	MinioLocation            string `key:"MINIO_LOCATION"`
