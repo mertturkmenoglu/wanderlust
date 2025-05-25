@@ -1,5 +1,6 @@
 import CollapsibleText from '@/components/blocks/collapsible-text';
 import { ErrorComponent } from '@/components/blocks/error-component';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { useRef, useState } from 'react';
@@ -125,25 +126,35 @@ function RouteComponent() {
           </div>
 
           <p className="mt-2 text-sm text-primary">{poi.category.name}</p>
-          <CollapsibleText text={poi.description} />
+
           <h2 className="mt-8 text-lg font-bold">Information</h2>
           <InformationTable />
         </div>
       </div>
 
+      <div>
+        <h3 className="text-2xl font-bold">Description</h3>
+        <CollapsibleText
+          text={poi.description}
+          charLimit={1000}
+        />
+      </div>
+
+      <Separator className="my-4" />
+
       <div className="w-full">
         <MapContainer />
       </div>
 
-      <hr className="my-4" />
+      <Separator className="my-4" />
 
       <Amenities />
 
-      <hr className="my-4" />
+      <Separator className="my-4" />
 
       <NearbyPois />
 
-      <hr className="my-4" />
+      <Separator className="my-4" />
 
       <Reviews />
     </main>
