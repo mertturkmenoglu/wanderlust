@@ -2,7 +2,9 @@ import CollapsibleText from '@/components/blocks/collapsible-text';
 import { ErrorComponent } from '@/components/blocks/error-component';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
+import { MapIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import Lightbox, { type ThumbnailsRef } from 'yet-another-react-lightbox';
 import Inline from 'yet-another-react-lightbox/plugins/inline';
@@ -48,7 +50,7 @@ function RouteComponent() {
     <main className="max-w-7xl mx-auto mt-8 md:mt-16">
       <Breadcrumb />
 
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-32">
+      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
         <div className="h-min">
           <Lightbox
             index={index}
@@ -112,7 +114,7 @@ function RouteComponent() {
 
         <div>
           <div className="flex items-center justify-between">
-            <h2 className="line-clamp-2 scroll-m-20 text-4xl font-extrabold capitalize tracking-tight">
+            <h2 className="line-clamp-2 scroll-m-20 text-4xl capitalize tracking-tight">
               {poi.name}
             </h2>
 
@@ -127,13 +129,24 @@ function RouteComponent() {
 
           <p className="mt-2 text-sm text-primary">{poi.category.name}</p>
 
-          <h2 className="mt-8 text-lg font-bold">Information</h2>
+          <h2 className="mt-4 text-lg font-bold">Information</h2>
           <InformationTable />
+
+          <button
+            className={cn(
+              'bg-primary text-white rounded-md w-full lg:w-2/3 lg:mx-auto',
+              'px-8 py-2.5 mt-4 flex items-center gap-2 justify-center hover:opacity-90',
+              'transition-all duration-200 ease-in-out',
+            )}
+          >
+            <MapIcon className="size-5" />
+            <span className="text-base">Plan a trip</span>
+          </button>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-2xl font-bold">Description</h3>
+      <div className="mt-4">
+        <h3 className="text-xl font-semibold">Description</h3>
         <CollapsibleText
           text={poi.description}
           charLimit={1000}
