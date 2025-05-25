@@ -1,17 +1,20 @@
 import AppMessage from '@/components/blocks/app-message';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from '@/components/ui/pagination';
 import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import { LoaderCircleIcon } from 'lucide-react';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  LoaderCircleIcon,
+} from 'lucide-react';
 import { z } from 'zod';
 import BookmarkCard from './-card';
 
@@ -66,8 +69,8 @@ function Bookmarks() {
       {
         params: {
           query: {
-            page: page,
-            pageSize: pageSize,
+            page,
+            pageSize,
           },
         },
       },
@@ -122,27 +125,67 @@ function Bookmarks() {
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  href={`?page=${pagination.hasPrevious ? page - 1 : 1}`}
-                />
+                <Link
+                  data-slot="pagination-link"
+                  className={cn(
+                    buttonVariants({
+                      variant: 'ghost',
+                    }),
+                    'gap-1 px-2.5 sm:pl-2.5',
+                  )}
+                  aria-label="Go to previous page"
+                  to="/bookmarks"
+                  search={{
+                    page: pagination.hasPrevious ? page - 1 : 1,
+                    pageSize,
+                  }}
+                >
+                  <ChevronLeftIcon />
+                  <span className="hidden sm:block">Previous</span>
+                </Link>
               </PaginationItem>
 
               {nums.map((x) => (
                 <PaginationItem key={`pagination-${x}`}>
-                  <PaginationLink
-                    isActive={x === page}
-                    href={`?page=${x}`}
+                  <Link
+                    aria-current={x === page ? 'page' : undefined}
+                    data-slot="pagination-link"
+                    data-active={x === page}
+                    className={cn(
+                      buttonVariants({
+                        variant: x === page ? 'outline' : 'ghost',
+                      }),
+                    )}
+                    to="/bookmarks"
+                    search={{
+                      page: x,
+                      pageSize,
+                    }}
                   >
                     {x}
-                  </PaginationLink>
+                  </Link>
                 </PaginationItem>
               ))}
 
-              <PaginationItem aria-disabled={!pagination.hasNext}>
-                <PaginationNext
-                  href={`?page=${pagination.hasNext ? page + 1 : page}`}
-                  aria-disabled={!pagination.hasNext}
-                />
+              <PaginationItem>
+                <Link
+                  data-slot="pagination-link"
+                  className={cn(
+                    buttonVariants({
+                      variant: 'ghost',
+                    }),
+                    'gap-1 px-2.5 sm:pl-2.5',
+                  )}
+                  aria-label="Go to next page"
+                  to="/bookmarks"
+                  search={{
+                    page: pagination.hasNext ? page + 1 : page,
+                    pageSize,
+                  }}
+                >
+                  <span className="hidden sm:block">Next</span>
+                  <ChevronRightIcon />
+                </Link>
               </PaginationItem>
             </PaginationContent>
           </Pagination>
