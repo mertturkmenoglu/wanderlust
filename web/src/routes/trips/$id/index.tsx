@@ -59,11 +59,20 @@ function RouteComponent() {
       </div>
 
       <div className="grid sm:grid-cols-3 gap-4 mt-4">
-        <InfoCard type="participants" count={trip.participants.length + 1} />
+        <InfoCard
+          type="participants"
+          count={trip.participants.length + 1}
+        />
 
-        <InfoCard type="days" count={intervalDays.length} />
+        <InfoCard
+          type="days"
+          count={intervalDays.length}
+        />
 
-        <InfoCard type="locations" count={trip.locations.length} />
+        <InfoCard
+          type="locations"
+          count={trip.locations.length}
+        />
       </div>
 
       <div className="">
@@ -130,13 +139,7 @@ function RouteComponent() {
                         >
                           <PoiCard
                             className="max-w-xs"
-                            poi={{
-                              ...loc.poi,
-                              image: {
-                                url: loc.poi.media[0]?.url ?? '',
-                                alt: loc.poi.media[0]?.alt ?? '',
-                              },
-                            }}
+                            poi={loc.poi}
                           />
                         </Link>
                         <div className="mt-4">

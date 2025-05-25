@@ -40,15 +40,7 @@ export default function PoiGrid({ dataKey: key, data }: Props) {
               to="/p/$id"
               params={{ id: poi.id }}
             >
-              <PoiCard
-                poi={{
-                  ...poi,
-                  image: {
-                    url: poi.media[0]?.url ?? '',
-                    alt: poi.media[0]?.alt ?? '',
-                  },
-                }}
-              />
+              <PoiCard poi={poi} />
             </Link>
           ))}
       </div>

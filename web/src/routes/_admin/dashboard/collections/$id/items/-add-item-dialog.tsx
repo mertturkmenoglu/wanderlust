@@ -107,15 +107,7 @@ export default function AddItemDialog({ collectionId, open, setOpen }: Props) {
             )}
             {query.isSuccess && (
               <div>
-                <PoiCard
-                  poi={{
-                    ...query.data.poi,
-                    image: {
-                      url: query.data.poi.media[0]?.url ?? '',
-                      alt: query.data.poi.media[0]?.alt ?? '',
-                    },
-                  }}
-                />
+                <PoiCard poi={query.data.poi} />
               </div>
             )}
           </div>

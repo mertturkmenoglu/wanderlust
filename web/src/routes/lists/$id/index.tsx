@@ -187,11 +187,29 @@ function RouteComponent() {
             >
               <PoiCard
                 poi={{
-                  ...listItem.poi,
-                  image: {
-                    url: listItem.poi.firstMedia.url,
-                    alt: listItem.poi.firstMedia.alt,
-                  },
+                  address: listItem.poi.address,
+                  category: listItem.poi.category,
+                  name: listItem.poi.name,
+                  totalPoints: 0,
+                  totalVotes: 0,
+                  id: listItem.poi.id,
+                  media: [
+                    {
+                      url: listItem.poi.firstMedia.url,
+                      alt: listItem.poi.firstMedia.alt,
+                      caption: null,
+                      mediaOrder: 1,
+                      createdAt: '',
+                      id: 0,
+                      poiId: listItem.poiId,
+                      extension: '',
+                      fileSize: 0,
+                      height: 0,
+                      width: 0,
+                      thumbnail: '',
+                      mimeType: '',
+                    },
+                  ],
                 }}
               />
             </Link>

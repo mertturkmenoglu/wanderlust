@@ -43,18 +43,7 @@ function RouteComponent() {
             }}
             key={item.poiId}
           >
-            <PoiCard
-              poi={{
-                id: item.poiId,
-                name: item.poi.name,
-                category: item.poi.category,
-                address: item.poi.address,
-                image: {
-                  url: item.poi.media[0]?.url ?? '',
-                  alt: item.poi.media[0]?.alt ?? '',
-                },
-              }}
-            />
+            <PoiCard poi={item.poi} />
           </Link>
         ))}
       </div>

@@ -162,15 +162,7 @@ function RouteComponent() {
                     id: item.poiId,
                   }}
                 >
-                  <PoiCard
-                    poi={{
-                      ...item.poi,
-                      image: {
-                        alt: item.poi.media[0]?.alt ?? '',
-                        url: item.poi.media[0]?.url ?? '',
-                      },
-                    }}
-                  />
+                  <PoiCard poi={item.poi} />
                 </Link>
               )}
 
@@ -179,15 +171,7 @@ function RouteComponent() {
                   <div className="cursor-grabbing">
                     <GripVerticalIcon className="size-6" />
                   </div>
-                  <PoiCard
-                    poi={{
-                      ...item.poi,
-                      image: {
-                        alt: item.poi.media[0]?.alt ?? '',
-                        url: item.poi.media[0]?.url ?? '',
-                      },
-                    }}
-                  />
+                  <PoiCard poi={item.poi} />
                 </div>
               )}
 

@@ -62,15 +62,7 @@ export default function Locations() {
                 id: location.poi.id,
               }}
             >
-              <PoiCard
-                poi={{
-                  ...location.poi,
-                  image: {
-                    url: location.poi.media[0]?.url ?? '',
-                    alt: location.poi.media[0]?.alt ?? '',
-                  },
-                }}
-              />
+              <PoiCard poi={location.poi} />
               <div className="mt-4 text-muted-foreground">
                 {location.description}
               </div>
