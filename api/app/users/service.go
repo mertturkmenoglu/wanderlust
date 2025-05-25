@@ -26,6 +26,7 @@ type Service struct {
 }
 
 func (s *Service) updateImage(userId string, updateType string, input dto.UpdateUserProfileImageInputBody) (*dto.UpdateUserProfileImageOutput, error) {
+	ctx := context.Background()
 	bucket := upload.BUCKET_PROFILE_IMAGES
 
 	if updateType == "banner" {
@@ -45,12 +46,12 @@ func (s *Service) updateImage(userId string, updateType string, input dto.Update
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.app.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
+	if !s.app.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
 		return nil, huma.Error400BadRequest("Invalid file")
 	}
 
 	// Delete cached information
-	err = s.app.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID))
+	err = s.app.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)).Err()
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("Failed to delete cache")

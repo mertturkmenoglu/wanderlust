@@ -352,14 +352,14 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, body.ID)) {
+	if !s.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, body.ID)) {
 		err = huma.Error400BadRequest("Incorrect file")
 		sp.RecordError(err)
 		return nil, err
 	}
 
 	// delete cached information
-	err = s.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, body.ID))
+	err = s.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, body.ID)).Err()
 
 	if err != nil {
 		sp.RecordError(err)

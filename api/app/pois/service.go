@@ -76,9 +76,9 @@ func (s *Service) getPoiById(ctx context.Context, id string) (*dto.Poi, error) {
 	sp := utils.NewSpan(ctx, utils.GetFnName())
 	defer sp.End()
 
-	if s.App.Cache.Has(cache.KeyBuilder("poi", id)) {
+	if s.App.Cache.Has(ctx, cache.KeyBuilder("poi", id)) {
 		var res dto.Poi
-		err := s.App.Cache.ReadObj(cache.KeyBuilder("poi", id), res)
+		err := s.App.Cache.ReadObj(ctx, cache.KeyBuilder("poi", id), res)
 
 		if err == nil {
 			return &res, nil
@@ -95,7 +95,7 @@ func (s *Service) getPoiById(ctx context.Context, id string) (*dto.Poi, error) {
 		return nil, huma.Error404NotFound("point of interest not found")
 	}
 
-	s.App.Cache.SetObj(cache.KeyBuilder("poi", id), res[0], time.Hour*24*90)
+	s.App.Cache.SetObj(ctx, cache.KeyBuilder("poi", id), res[0], time.Hour*24*90)
 
 	return &res[0], nil
 }
@@ -149,6 +149,7 @@ func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
 }
 
 func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
+	ctx := context.Background()
 	id := utils.GenerateId(s.App.Flake)
 	draft := map[string]any{
 		"id": id,
@@ -161,7 +162,7 @@ func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
 		return nil, huma.Error500InternalServerError("failed to create draft")
 	}
 
-	err = s.App.Cache.Set("poi-draft:"+id, string(v), time.Hour*24*90) // 90 days
+	err = s.App.Cache.Set(ctx, "poi-draft:"+id, string(v), time.Hour*24*90).Err() // 90 days
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("failed to set draft")
@@ -181,6 +182,7 @@ func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
 }
 
 func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
+	ctx := context.Background()
 	ids, err := s.App.Cache.Client.LRange(context.Background(), "poi-drafts", 0, -1).Result()
 
 	if err != nil {
@@ -190,7 +192,7 @@ func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
 	var drafts []map[string]any
 
 	for _, id := range ids {
-		v, err := s.App.Cache.Get("poi-draft:" + id)
+		v, err := s.App.Cache.Get(ctx, "poi-draft:"+id).Result()
 
 		if err != nil {
 			return nil, huma.Error500InternalServerError("failed to get draft")
@@ -215,7 +217,8 @@ func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
 }
 
 func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
-	v, err := s.App.Cache.Get("poi-draft:" + id)
+	ctx := context.Background()
+	v, err := s.App.Cache.Get(ctx, "poi-draft:"+id).Result()
 
 	if err != nil {
 		return nil, huma.Error404NotFound("draft not found")
@@ -237,13 +240,14 @@ func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
 }
 
 func (s *Service) updateDraft(id string, body dto.UpdatePoiDraftInputBody) (*dto.UpdatePoiDraftOutput, error) {
+	ctx := context.Background()
 	v, err := json.Marshal(body.Values)
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("failed to marshal draft")
 	}
 
-	err = s.App.Cache.Set("poi-draft:"+id, string(v), 0)
+	err = s.App.Cache.Set(ctx, "poi-draft:"+id, string(v), 0).Err()
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("failed to set draft")
@@ -257,6 +261,7 @@ func (s *Service) updateDraft(id string, body dto.UpdatePoiDraftInputBody) (*dto
 }
 
 func (s *Service) uploadMedia(userId string, id string, input dto.UploadPoiMediaInputBody) (*dto.UpdatePoiDraftOutput, error) {
+	ctx := context.Background()
 	bucket := upload.BUCKET_POIS
 
 	// Check if the file is uploaded
@@ -272,12 +277,12 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadPoiMedia
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.App.Cache.Has(cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
+	if !s.App.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
 		return nil, huma.Error400BadRequest("incorrect file")
 	}
 
 	// delete cached information
-	err = s.App.Cache.Del(cache.KeyBuilder(cache.KeyImageUpload, id, input.ID))
+	err = s.App.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, id, input.ID)).Err()
 
 	if err != nil {
 		return nil, huma.Error500InternalServerError("failed to delete cached information")
@@ -381,6 +386,7 @@ func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput
 }
 
 func (s *Service) deleteDraft(id string, deleteMedia bool) error {
+	ctx := context.Background()
 	draft, err := s.getDraft(id)
 
 	if err != nil {
@@ -417,7 +423,7 @@ func (s *Service) deleteDraft(id string, deleteMedia bool) error {
 
 	}
 
-	err = s.App.Cache.Del("poi-draft:" + id)
+	err = s.App.Cache.Del(ctx, "poi-draft:"+id).Err()
 
 	if err != nil {
 		return huma.Error500InternalServerError("failed to delete draft")

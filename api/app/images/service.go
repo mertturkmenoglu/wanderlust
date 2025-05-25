@@ -42,7 +42,7 @@ func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlIn
 		FileName:      fileName,
 	}
 
-	err = s.app.Cache.SetObj(cache.KeyBuilder(cache.KeyImageUpload, id), out, 0)
+	err = s.app.Cache.SetObj(ctx, cache.KeyBuilder(cache.KeyImageUpload, id), out, 0)
 
 	if err != nil {
 		sp.RecordError(err)

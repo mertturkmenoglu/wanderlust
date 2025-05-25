@@ -23,7 +23,7 @@ func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAg
 
 	var cacheRes dto.HomeAggregatorOutput
 
-	err := s.app.Cache.ReadObj(cache.KeyHomeAggregations, &cacheRes)
+	err := s.app.Cache.ReadObj(ctx, cache.KeyHomeAggregations, &cacheRes)
 
 	if err == nil {
 		return &cacheRes, nil
@@ -48,7 +48,7 @@ func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOu
 		return nil, err
 	}
 
-	err = s.app.Cache.SetObj(cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
+	err = s.app.Cache.SetObj(ctx, cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
 
 	if err != nil {
 		return nil, err

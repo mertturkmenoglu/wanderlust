@@ -226,7 +226,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			key := "verify-email:" + code
-			err = s.app.Cache.Set(key, user.Email, time.Minute*15)
+			err = s.app.Cache.Set(ctx, key, user.Email, time.Minute*15).Err()
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
@@ -258,11 +258,11 @@ func Register(grp *huma.Group, app *core.Application) {
 		func(ctx context.Context, input *dto.VerifyEmailInput) (*struct{}, error) {
 			key := "verify-email:" + input.Code
 
-			if !app.Cache.Has(key) {
+			if !app.Cache.Has(ctx, key) {
 				return nil, huma.Error400BadRequest("Invalid or expired verification code")
 			}
 
-			email, err := app.Cache.Get(key)
+			email, err := app.Cache.Get(ctx, key).Result()
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to get verification code from cache")
@@ -310,7 +310,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			key := "forgot-password:" + code
-			err = s.app.Cache.Set(key, user.Email, time.Minute*15)
+			err = s.app.Cache.Set(ctx, key, user.Email, time.Minute*15).Err()
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to set verification code in cache")
@@ -345,7 +345,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			key := "forgot-password:" + input.Body.Code
-			cacheVal, err := s.app.Cache.Get(key)
+			cacheVal, err := s.app.Cache.Get(ctx, key).Result()
 
 			if err != nil {
 				return nil, huma.Error400BadRequest("Invalid or expired verification code")
@@ -361,7 +361,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				return nil, huma.Error500InternalServerError("Failed to update password")
 			}
 
-			err = s.app.Cache.Del(key)
+			err = s.app.Cache.Del(ctx, key).Err()
 
 			if err != nil {
 				return nil, huma.Error500InternalServerError("Failed to delete verification code from cache")
