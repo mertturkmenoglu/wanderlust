@@ -8,70 +8,115 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type Payload struct {
+type UserInformation struct {
 	ID       string
 	Username string
-	Email    string
 	Role     string
 }
 
 var (
-	ErrorExpired      = errors.New("token is expired")
-	ErrorInvalidToken = errors.New("invalid token")
-	DefaultExpiry     = time.Hour * 24 * 7 // 7 days
+	ErrorExpired           = errors.New("token is expired")
+	ErrorInvalidToken      = errors.New("invalid token")
+
 )
 
-type Claims struct {
+type AccessTokenData struct {
 	ID       string `json:"id"`
 	Username string `json:"username"`
-	Email    string `json:"email"`
 	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
-// Produce a JWT from the payload that expires at the given time.
-func Encode(payload Payload, expiresAt time.Time) (string, error) {
-	secretKey := cfg.Env.JWTSecret
+type RefreshTokenData struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	Role     string `json:"role"`
+	jwt.RegisteredClaims
+}
+
+// Returns access and refresh tokens or error
+func CreateAuthTokens(payload UserInformation) (string, string, error) {
 	now := time.Now()
 
-	// Create new claims from custom values and registered claims
-	claims := Claims{
+	accessTokenData := AccessTokenData{
 		ID:       payload.ID,
 		Username: payload.Username,
 		Role:     payload.Role,
-		Email:    payload.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expiresAt),
+			ExpiresAt: jwt.NewNumericDate(now.Add(AccessTokenExpiration)),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			Issuer:    "wanderlust",
-			Subject:   payload.Email,
+			Subject:   payload.ID,
 		},
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signed, err := token.SignedString([]byte(secretKey))
-
-	if err != nil {
-		return "", err
+	refreshTokenData := RefreshTokenData{
+		ID:       payload.ID,
+		Username: payload.Username,
+		Role:     payload.Role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(now.Add(RefreshTokenExpiration)),
+			IssuedAt:  jwt.NewNumericDate(now),
+			NotBefore: jwt.NewNumericDate(now),
+			Issuer:    "wanderlust",
+			Subject:   payload.ID,
+		},
 	}
 
-	return signed, nil
+	accessToken, err := jwt.
+		NewWithClaims(jwt.SigningMethodHS256, accessTokenData).
+		SignedString([]byte(cfg.Env.AcessTokenSecret))
+
+	if err != nil {
+		return "", "", err
+	}
+
+	refreshToken, err := jwt.
+		NewWithClaims(jwt.SigningMethodHS256, refreshTokenData).
+		SignedString([]byte(cfg.Env.RefreshTokenSecret))
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessToken, refreshToken, nil
 }
 
-// Decodes given JWT formatted tokenString into Claims
-func Decode(tokenString string) (*Claims, error) {
-	secretKey := cfg.Env.JWTSecret
+func CheckTokens(accessToken string, refreshToken string) (*UserInformation, error) {
+	accessClaims, err := decodeAccessToken(accessToken)
 
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
+	if err == nil {
+		return &UserInformation{
+			ID:       accessClaims.ID,
+			Username: accessClaims.Username,
+			Role:     accessClaims.Role,
+		}, nil
+	}
+
+	refreshClaims, err := decodeRefreshToken(refreshToken)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserInformation{
+		ID:       refreshClaims.ID,
+		Username: refreshClaims.Username,
+		Role:     refreshClaims.Role,
+	}, nil
+}
+
+func decodeAccessToken(s string) (*AccessTokenData, error) {
+	token, err := jwt.ParseWithClaims(s, &AccessTokenData{}, func(token *jwt.Token) (any, error) {
+		return []byte(cfg.Env.AcessTokenSecret), nil
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	claims, ok := token.Claims.(*Claims)
+	claims, ok := token.Claims.(*AccessTokenData)
 
 	if !ok || !token.Valid {
 		return nil, ErrorInvalidToken
@@ -79,6 +124,44 @@ func Decode(tokenString string) (*Claims, error) {
 
 	if claims.ExpiresAt.Before(time.Now()) || claims.NotBefore.After(time.Now()) {
 		return nil, ErrorExpired
+	}
+
+	if claims.Issuer != "wanderlust" {
+		return nil, ErrorInvalidToken
+	}
+
+	if claims.Subject != claims.ID {
+		return nil, ErrorInvalidToken
+	}
+
+	return claims, nil
+}
+
+func decodeRefreshToken(s string) (*RefreshTokenData, error) {
+	token, err := jwt.ParseWithClaims(s, &RefreshTokenData{}, func(token *jwt.Token) (any, error) {
+		return []byte(cfg.Env.RefreshTokenSecret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*RefreshTokenData)
+
+	if !ok || !token.Valid {
+		return nil, ErrorInvalidToken
+	}
+
+	if claims.ExpiresAt.Before(time.Now()) || claims.NotBefore.After(time.Now()) {
+		return nil, ErrorExpired
+	}
+
+	if claims.Issuer != "wanderlust" {
+		return nil, ErrorInvalidToken
+	}
+
+	if claims.Subject != claims.ID {
+		return nil, ErrorInvalidToken
 	}
 
 	return claims, nil
