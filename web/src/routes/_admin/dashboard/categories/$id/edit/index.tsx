@@ -70,7 +70,7 @@ function RouteComponent() {
       />
 
       <form
-        className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
+        className="max-w-xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0"
         onSubmit={form.handleSubmit((data) => {
           mutation.mutate({
             params: {
@@ -126,8 +126,6 @@ function RouteComponent() {
             Preview
           </Button>
         </div>
-
-        <div></div>
 
         <div className="flex items-center gap-2">
           <Button type="submit">Update</Button>
