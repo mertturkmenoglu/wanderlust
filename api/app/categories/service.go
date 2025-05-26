@@ -6,24 +6,33 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
-func (s *Service) list() (*dto.ListCategoriesOutput, error) {
-	res, err := s.app.Db.Queries.GetCategories(context.Background())
+func (s *Service) list(ctx context.Context) (*dto.ListCategoriesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.db.GetCategories(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("no categories found")
+			return nil, huma.Error404NotFound("No categories found")
 		}
 
-		return nil, huma.Error500InternalServerError("failed to get all categories")
+		return nil, huma.Error500InternalServerError("Failed to get all categories")
 	}
 
 	categories := make([]dto.Category, len(res))
@@ -43,19 +52,24 @@ func (s *Service) list() (*dto.ListCategoriesOutput, error) {
 	}, nil
 }
 
-func (s *Service) create(body dto.CreateCategoryInputBody) (*dto.CreateCategoryOutput, error) {
-	res, err := s.app.Db.Queries.CreateCategory(context.Background(), db.CreateCategoryParams{
+func (s *Service) create(ctx context.Context, body dto.CreateCategoryInputBody) (*dto.CreateCategoryOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.db.CreateCategory(ctx, db.CreateCategoryParams{
 		ID:    body.ID,
 		Name:  body.Name,
 		Image: body.Image,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, huma.Error422UnprocessableEntity("category already exists")
+			return nil, huma.Error422UnprocessableEntity("Category already exists")
 		}
 
-		return nil, huma.Error500InternalServerError("failed to create category")
+		return nil, huma.Error500InternalServerError("Failed to create category")
 	}
 
 	return &dto.CreateCategoryOutput{
@@ -70,19 +84,24 @@ func (s *Service) create(body dto.CreateCategoryInputBody) (*dto.CreateCategoryO
 
 }
 
-func (s *Service) update(id int16, body dto.UpdateCategoryInputBody) (*dto.UpdateCategoryOutput, error) {
-	dbCategory, err := s.app.Db.Queries.UpdateCategory(context.Background(), db.UpdateCategoryParams{
+func (s *Service) update(ctx context.Context, id int16, body dto.UpdateCategoryInputBody) (*dto.UpdateCategoryOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbCategory, err := s.db.UpdateCategory(ctx, db.UpdateCategoryParams{
 		ID:    id,
 		Name:  body.Name,
 		Image: body.Image,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("category not found")
+			return nil, huma.Error404NotFound("Category not found")
 		}
 
-		return nil, huma.Error500InternalServerError("failed to update category")
+		return nil, huma.Error500InternalServerError("Failed to update category")
 	}
 
 	return &dto.UpdateCategoryOutput{
@@ -96,15 +115,20 @@ func (s *Service) update(id int16, body dto.UpdateCategoryInputBody) (*dto.Updat
 	}, nil
 }
 
-func (s *Service) remove(id int16) error {
-	err := s.app.Db.Queries.DeleteCategory(context.Background(), id)
+func (s *Service) remove(ctx context.Context, id int16) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	err := s.db.DeleteCategory(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
-			return huma.Error404NotFound("category not found")
+			return huma.Error404NotFound("Category not found")
 		}
 
-		return huma.Error500InternalServerError("failed to delete category")
+		return huma.Error500InternalServerError("Failed to delete category")
 	}
 
 	return nil

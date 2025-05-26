@@ -7,13 +7,16 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -29,9 +32,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.ListCategoriesOutput, error) {
-			res, err := s.list()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.list(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -53,9 +60,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateCategoryInput) (*dto.CreateCategoryOutput, error) {
-			res, err := s.create(input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -77,9 +88,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateCategoryInput) (*dto.UpdateCategoryOutput, error) {
-			res, err := s.update(input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -101,9 +116,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteCategoryInput) (*struct{}, error) {
-			err := s.remove(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
