@@ -1,7 +1,9 @@
 import AppMessage from '@/components/blocks/app-message';
 import PoiCard from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useGeoSearch } from 'react-instantsearch';
 import { MapContainer, TileLayer } from 'react-leaflet';
@@ -81,11 +83,24 @@ export default function Container() {
         <GeoSearch />
       </MapContainer>
 
-      <div className="mt-8 max-w-xl">
+      <div className="mt-8 max-w-4xl  mx-auto">
         <div className="text-lg font-semibold">List of nearby locations</div>
-        {items.map((item) => (
-          <PoiCard poi={item.poi} />
-        ))}
+        <ScrollArea className="mt-4 h-[600px]">
+          <div className="grid md:grid-cols-2 gap-8 pr-4">
+            {items.map((item) => (
+              <Link
+                to="/p/$id"
+                key={item.poi.id}
+                params={{
+                  id: item.poi.id,
+                }}
+              >
+                <PoiCard poi={item.poi} />
+              </Link>
+            ))}
+          </div>
+          <ScrollBar />
+        </ScrollArea>
       </div>
     </div>
   );
