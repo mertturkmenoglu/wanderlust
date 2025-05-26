@@ -3,12 +3,14 @@ import { ErrorComponent } from '@/components/blocks/error-component';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute } from '@tanstack/react-router';
 import { MapIcon } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import Lightbox, { type ThumbnailsRef } from 'yet-another-react-lightbox';
 import Inline from 'yet-another-react-lightbox/plugins/inline';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
+import AddToListButton from './-components/add-to-list-button';
 import Amenities from './-components/amenities';
 import BookmarkButton from './-components/bookmark-button';
 import Breadcrumb from './-components/breadcrumb';
@@ -37,6 +39,7 @@ export const Route = createFileRoute('/p/$id/')({
 
 function RouteComponent() {
   const { poi } = Route.useLoaderData();
+  const auth = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const ref = useRef<ThumbnailsRef>(null);
@@ -119,6 +122,8 @@ function RouteComponent() {
             </h2>
 
             <div className="flex items-center">
+              {!!auth.user && <AddToListButton />}
+
               <FavoriteButton />
 
               <BookmarkButton />
