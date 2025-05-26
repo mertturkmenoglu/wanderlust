@@ -23,7 +23,11 @@ export function useSearchClient() {
   return searchClient;
 }
 
-export function useGeoSearchClient() {
+type GeoSearchClientProps = {
+  additionalSearchParameters?: Record<string, any>;
+};
+
+export function useGeoSearchClient(props?: GeoSearchClientProps) {
   const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     server: {
       apiKey: 'wanderlust',
@@ -39,6 +43,8 @@ export function useGeoSearchClient() {
     },
     additionalSearchParameters: {
       query_by: 'name',
+      per_page: 10,
+      ...(props?.additionalSearchParameters ?? {}),
     },
     geoLocationField: 'location',
   });
