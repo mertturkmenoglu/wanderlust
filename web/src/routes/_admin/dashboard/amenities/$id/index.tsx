@@ -7,7 +7,6 @@ import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
@@ -58,10 +57,7 @@ function RouteComponent() {
             params={{
               id,
             }}
-            className={cn(
-              buttonVariants({ variant: 'outline', size: 'sm' }),
-              '',
-            )}
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
           >
             Edit
           </Link>
@@ -83,7 +79,7 @@ function RouteComponent() {
 
       <DataTable
         columns={keyValueCols}
-        filterColumnId="k"
+        filterColumnId=""
         data={[
           {
             k: 'ID',
