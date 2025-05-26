@@ -28,9 +28,9 @@ function RouteComponent() {
       </DashboardActions>
 
       <AppMessage
-        emptyMessage="In progress"
+        emptyMessage="Select an action"
         showBackButton={false}
-        className="mt-4"
+        className="my-32"
       />
     </div>
   );
