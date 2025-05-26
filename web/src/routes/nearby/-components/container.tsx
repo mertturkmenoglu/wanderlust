@@ -1,4 +1,5 @@
 import AppMessage from '@/components/blocks/app-message';
+import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { LoaderCircleIcon } from 'lucide-react';
 import { MapContainer, TileLayer } from 'react-leaflet';
@@ -19,7 +20,7 @@ export default function Container() {
             return rej(err.message);
           },
           {
-            timeout: 100_000,
+            timeout: 1000,
           },
         );
       });
@@ -30,16 +31,27 @@ export default function Container() {
 
   if (query.isLoading) {
     return (
-      <LoaderCircleIcon className="mx-auto my-16 size-8 animate-spin text-primary" />
+      <LoaderCircleIcon className="mx-auto my-32 size-12 animate-spin text-primary" />
     );
   }
 
   if (query.error) {
     return (
-      <AppMessage
-        errorMessage={query.error.message}
-        showBackButton={false}
-      />
+      <div className="flex flex-col items-center justify-center">
+        <AppMessage
+          emptyMessage={
+            query.error.message ?? 'Give permission to access your location'
+          }
+          showBackButton={false}
+          className="mt-32"
+        />
+        <Button
+          variant="link"
+          onClick={() => query.refetch()}
+        >
+          Retry
+        </Button>
+      </div>
     );
   }
 
