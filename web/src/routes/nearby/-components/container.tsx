@@ -84,7 +84,13 @@ export default function Container() {
       </MapContainer>
 
       <div className="mt-8 max-w-4xl  mx-auto">
-        <div className="text-lg font-semibold">List of nearby locations</div>
+        {items.length === 0 && (
+          <AppMessage
+            emptyMessage="No nearby locations found"
+            showBackButton={false}
+            className="mt-4"
+          />
+        )}
         <ScrollArea className="mt-4 h-[600px]">
           <div className="grid md:grid-cols-2 gap-8 pr-4">
             {items.map((item) => (
