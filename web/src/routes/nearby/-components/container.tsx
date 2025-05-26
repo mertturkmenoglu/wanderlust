@@ -1,12 +1,15 @@
 import AppMessage from '@/components/blocks/app-message';
+import PoiCard from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { LoaderCircleIcon } from 'lucide-react';
+import { useGeoSearch } from 'react-instantsearch';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeoSearch from './geo-search';
 
 export default function Container() {
   const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
+  const { items } = useGeoSearch();
 
   const query = useQuery({
     queryKey: ['geolocation-permission'],
@@ -60,21 +63,30 @@ export default function Container() {
   }
 
   return (
-    <MapContainer
-      center={query.data}
-      zoom={14}
-      minZoom={4}
-      className="mt-4"
-      scrollWheelZoom={true}
-      style={{
-        height: '600px',
-      }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url={url}
-      />
-      <GeoSearch />
-    </MapContainer>
+    <div>
+      <MapContainer
+        center={query.data}
+        zoom={14}
+        minZoom={4}
+        className="mt-4"
+        scrollWheelZoom={true}
+        style={{
+          height: '600px',
+        }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url={url}
+        />
+        <GeoSearch />
+      </MapContainer>
+
+      <div className="mt-8 max-w-xl">
+        <div className="text-lg font-semibold">List of nearby locations</div>
+        {items.map((item) => (
+          <PoiCard poi={item.poi} />
+        ))}
+      </div>
+    </div>
   );
 }
