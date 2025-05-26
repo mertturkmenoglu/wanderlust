@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
@@ -33,10 +34,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateUserProfileImageInput) (*dto.UpdateUserProfileImageOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.updateImage(userId, input.Type, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateImage(ctx, input.Type, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -57,10 +61,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetUserProfileInput) (*dto.GetUserProfileOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.getUserProfile(userId, input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getUserProfile(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -77,9 +84,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetUserFollowersInput) (*dto.GetUserFollowersOutput, error) {
-			res, err := s.getFollowers(input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getFollowers(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -96,9 +107,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetUserFollowingInput) (*dto.GetUserFollowingOutput, error) {
-			res, err := s.getFollowing(input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getFollowing(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -115,9 +130,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetUserActivitiesInput) (*dto.GetUserActivitiesOutput, error) {
-			res, err := s.getActivities(input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getActivities(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -138,10 +157,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.SearchUserFollowingInput) (*dto.SearchUserFollowingOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.searchFollowing(userId, input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.searchFollowing(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -163,9 +185,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.MakeUserVerifiedInput) (*dto.MakeUserVerifiedOutput, error) {
-			res, err := s.makeVerified(input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.makeVerified(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -186,11 +212,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.FollowUserInput) (*dto.FollowUserOutput, error) {
-			userId := ctx.Value("userId").(string)
-			thisUsername := ctx.Value("username").(string)
-			res, err := s.changeFollow(userId, thisUsername, input.Username)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.changeFollow(ctx, input.Username)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -211,10 +239,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateUserProfileInput) (*dto.UpdateUserProfileOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.updateProfile(userId, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateProfile(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
