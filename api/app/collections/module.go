@@ -7,13 +7,16 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -34,9 +37,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetCollectionsInput) (*dto.GetCollectionsOutput, error) {
-			res, err := s.list(input.PaginationQueryParams)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.list(ctx, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -53,9 +60,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetCollectionByIdInput) (*dto.GetCollectionByIdOutput, error) {
-			res, err := s.getById(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getById(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -77,9 +88,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateCollectionInput) (*dto.CreateCollectionOutput, error) {
-			res, err := s.create(input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -101,9 +116,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteCollectionInput) (*struct{}, error) {
-			err := s.remove(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -125,9 +144,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateCollectionInput) (*dto.UpdateCollectionOutput, error) {
-			res, err := s.update(input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -149,9 +172,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateCollectionItemInput) (*dto.CreateCollectionItemOutput, error) {
-			res, err := s.createItem(input.CollectionID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.createItem(ctx, input.CollectionID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -173,9 +200,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteCollectionItemInput) (*struct{}, error) {
-			err := s.removeItem(input.CollectionID, input.Index)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removeItem(ctx, input.CollectionID, input.Index)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -197,9 +228,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateCollectionItemsInput) (*dto.UpdateCollectionItemsOutput, error) {
-			res, err := s.updateItems(input.CollectionID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateItems(ctx, input.CollectionID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -221,9 +256,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateCollectionPoiRelationInput) (*struct{}, error) {
-			err := s.createPoiRelation(input.CollectionID, input.PoiID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.createPoiRelation(ctx, input.CollectionID, input.PoiID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -245,9 +284,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateCollectionCityRelationInput) (*struct{}, error) {
-			err := s.createCityRelation(input.CollectionID, input.CityID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.createCityRelation(ctx, input.CollectionID, input.CityID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -269,9 +312,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.RemoveCollectionPoiRelationInput) (*struct{}, error) {
-			err := s.removePoiRelation(input.CollectionID, input.PoiID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removePoiRelation(ctx, input.CollectionID, input.PoiID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -293,9 +340,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.RemoveCollectionCityRelationInput) (*struct{}, error) {
-			err := s.removeCityRelation(input.CollectionID, input.CityID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.removeCityRelation(ctx, input.CollectionID, input.CityID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -312,9 +363,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetCollectionsForPoiInput) (*dto.GetCollectionsForPoiOutput, error) {
-			res, err := s.getCollectionsForPoi(input.PoiID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getCollectionsForPoi(ctx, input.PoiID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -331,9 +386,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *dto.GetCollectionsForCityInput) (*dto.GetCollectionsForCityOutput, error) {
-			res, err := s.getCollectionsForCity(input.CityID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getCollectionsForCity(ctx, input.CityID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -355,9 +414,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetAllPoiCollectionsOutput, error) {
-			res, err := s.getAllPoiCollections()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getAllPoiCollections(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -379,9 +442,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetAllCityCollectionsOutput, error) {
-			res, err := s.getAllCityCollections()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getAllCityCollections(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
