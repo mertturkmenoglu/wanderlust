@@ -36,7 +36,7 @@ func (w *Wanderlust) Routing() {
 	collections.Register(grp, w.app)
 	diary.Register(grp, w.app)
 	favorites.Register(grp, w.app)
-	health.Register(grp)
+	health.Register(grp, w.app)
 	images.Register(grp, w.app)
 	lists.Register(grp, w.app)
 	pois.Register(grp, w.app)
