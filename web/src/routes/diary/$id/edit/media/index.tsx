@@ -2,28 +2,18 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { ArrowDownIcon, ArrowUpIcon, Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import NewImageDialog from './-new';
 
 export const Route = createFileRoute('/diary/$id/edit/media/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
-    return context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/diary/{id}', {
-        params: {
-          path: {
-            id: params.id,
-          },
-        },
-      }),
-    );
-  },
 });
 
 function RouteComponent() {
-  const { entry } = Route.useLoaderData();
+  const route = getRouteApi('/diary/$id/edit');
+  const { entry } = route.useLoaderData();
   const invalidator = useInvalidator();
 
   const deleteMutation = api.useMutation(

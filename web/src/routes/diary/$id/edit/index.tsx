@@ -16,7 +16,7 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { lengthTracker } from '@/lib/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { formatDate, isFuture } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -46,21 +46,11 @@ const dateFormat = 'yyyy-MM-dd';
 
 export const Route = createFileRoute('/diary/$id/edit/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
-    return context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/diary/{id}', {
-        params: {
-          path: {
-            id: params.id,
-          },
-        },
-      }),
-    );
-  },
 });
 
 function RouteComponent() {
-  const { entry } = Route.useLoaderData();
+  const route = getRouteApi('/diary/$id/edit');
+  const { entry } = route.useLoaderData();
   const invalidator = useInvalidator();
 
   const form = useForm({

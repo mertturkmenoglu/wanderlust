@@ -4,7 +4,7 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { InstantSearch } from 'react-instantsearch';
 import { toast } from 'sonner';
@@ -13,21 +13,11 @@ import { schema } from './-schema';
 
 export const Route = createFileRoute('/diary/$id/edit/locations/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
-    return context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/diary/{id}', {
-        params: {
-          path: {
-            id: params.id,
-          },
-        },
-      }),
-    );
-  },
 });
 
 function RouteComponent() {
-  const { entry } = Route.useLoaderData();
+  const route = getRouteApi('/diary/$id/edit');
+  const { entry } = route.useLoaderData();
   const searchClient = useSearchClient();
   const invalidator = useInvalidator();
 
