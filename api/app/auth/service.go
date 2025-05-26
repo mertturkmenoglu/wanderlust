@@ -730,3 +730,88 @@ func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthU
 
 	return &saved, nil
 }
+
+func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInputBody) (*dto.ChangePasswordOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	if body.NewPassword != body.ConfirmPassword {
+
+		err := huma.Error422UnprocessableEntity("Passwords do not match")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+	user, err := s.find(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get user by id")
+	}
+
+	// Does user has a password?
+	// If not, it means user registered with OAuth.
+	// Directly let them change their password.
+	// Else, check if the password is correct.
+	if user.PasswordHash.Valid {
+		matched, verifyErr := hash.Verify(body.CurrentPassword, user.PasswordHash.String)
+
+		if !matched || verifyErr != nil {
+			err := huma.Error422UnprocessableEntity("Invalid password")
+			sp.RecordError(err)
+			return nil, err
+		}
+	}
+
+	hashed, err := hash.Hash(body.NewPassword)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to hash password")
+	}
+
+	err = s.db.UpdateUserPassword(ctx, db.UpdateUserPasswordParams{
+		ID:           user.ID,
+		PasswordHash: pgtype.Text{String: hashed, Valid: true},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update password")
+	}
+
+	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
+		ID:       user.ID,
+		Username: user.Username,
+		Role:     user.Role,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create JWT")
+	}
+
+	return &dto.ChangePasswordOutput{
+		SetCookie: []http.Cookie{
+			{
+				Name:     tokens.AccessTokenCookieName,
+				Value:    accessToken,
+				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   cfg.Env.Env != "dev",
+				SameSite: http.SameSiteLaxMode,
+			},
+			{
+				Name:     tokens.RefreshTokenCookieName,
+				Value:    refreshToken,
+				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   cfg.Env.Env != "dev",
+				SameSite: http.SameSiteLaxMode,
+			},
+		},
+	}, nil
+}
