@@ -6,13 +6,16 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -32,10 +35,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateFavoriteInput) (*dto.CreateFavoriteOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.create(input.Body.PoiId, userId)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body.PoiId)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -56,10 +62,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteFavoriteInput) (*struct{}, error) {
-			userId := ctx.Value("userId").(string)
-			err := s.remove(userId, input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -80,10 +89,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetUserFavoritesInput) (*dto.GetUserFavoritesOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.get(userId, input.PaginationQueryParams)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.get(ctx, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -104,9 +116,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetUserFavoritesByUsernameInput) (*dto.GetUserFavoritesOutput, error) {
-			res, err := s.getByUsername(input.Username, input.PaginationQueryParams)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getByUsername(ctx, input.Username, input.PaginationQueryParams)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

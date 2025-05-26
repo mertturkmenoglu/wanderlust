@@ -8,27 +8,38 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
-func (s *Service) create(poiId string, userId string) (*dto.CreateFavoriteOutput, error) {
-	res, err := s.app.Db.Queries.CreateFavorite(context.Background(), db.CreateFavoriteParams{
+func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavoriteOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	res, err := s.db.CreateFavorite(ctx, db.CreateFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, huma.Error422UnprocessableEntity("poi already favorited")
+			return nil, huma.Error422UnprocessableEntity("Point of Interest is already favorited")
 		}
 
-		return nil, err
+		return nil, huma.Error500InternalServerError("Failed to create favorite")
 	}
 
 	return &dto.CreateFavoriteOutput{
@@ -41,29 +52,56 @@ func (s *Service) create(poiId string, userId string) (*dto.CreateFavoriteOutput
 	}, nil
 }
 
-func (s *Service) remove(userId string, poiId string) error {
-	return s.app.Db.Queries.DeleteFavoriteByPoiId(context.Background(), db.DeleteFavoriteByPoiIdParams{
+func (s *Service) remove(ctx context.Context, poiId string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	err := s.db.DeleteFavoriteByPoiId(ctx, db.DeleteFavoriteByPoiIdParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return huma.Error404NotFound("Point of Interest not found")
+		}
+
+		return huma.Error500InternalServerError("Failed to delete favorite")
+	}
+
+	return nil
 }
 
-func (s *Service) get(userId string, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
-	offset := pagination.GetOffset(params)
-	res, err := s.app.Db.Queries.GetFavoritesByUserId(context.Background(), db.GetFavoritesByUserIdParams{
+func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	res, err := s.db.GetFavoritesByUserId(ctx, db.GetFavoritesByUserIdParams{
 		UserID: userId,
-		Offset: int32(offset),
+		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
 
 	if err != nil {
-		return nil, err
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("User not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get favorites")
 	}
 
-	count, err := s.app.Db.Queries.CountUserFavorites(context.Background(), userId)
+	count, err := s.db.CountUserFavorites(ctx, userId)
 
 	if err != nil {
-		return nil, err
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get favorites count")
 	}
 
 	return &dto.GetUserFavoritesOutput{
@@ -74,32 +112,38 @@ func (s *Service) get(userId string, params dto.PaginationQueryParams) (*dto.Get
 	}, nil
 }
 
-func (s *Service) getByUsername(username string, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
-	user, err := s.app.Db.Queries.GetUserByUsername(context.Background(), username)
+func (s *Service) getByUsername(ctx context.Context, username string, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	user, err := s.db.GetUserByUsername(ctx, username)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("user not found")
+			return nil, huma.Error404NotFound("User not found")
 		}
 
-		return nil, err
+		return nil, huma.Error500InternalServerError("Failed to get favorites")
 	}
 
-	offset := pagination.GetOffset(params)
-	res, err := s.app.Db.Queries.GetFavoritesByUserId(context.Background(), db.GetFavoritesByUserIdParams{
+	res, err := s.db.GetFavoritesByUserId(ctx, db.GetFavoritesByUserIdParams{
 		UserID: user.ID,
-		Offset: int32(offset),
+		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
 
 	if err != nil {
-		return nil, err
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get favorites")
 	}
 
-	count, err := s.app.Db.Queries.CountUserFavorites(context.Background(), user.ID)
+	count, err := s.db.CountUserFavorites(ctx, user.ID)
 
 	if err != nil {
-		return nil, err
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get favorites count")
 	}
 
 	return &dto.GetUserFavoritesOutput{
