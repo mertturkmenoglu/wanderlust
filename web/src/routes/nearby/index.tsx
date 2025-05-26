@@ -8,7 +8,11 @@ export const Route = createFileRoute('/nearby/')({
 });
 
 function RouteComponent() {
-  const searchClient = useGeoSearchClient();
+  const searchClient = useGeoSearchClient({
+    additionalSearchParameters: {
+      per_page: 50,
+    },
+  });
 
   return (
     <div className="mx-auto max-w-7xl my-16">

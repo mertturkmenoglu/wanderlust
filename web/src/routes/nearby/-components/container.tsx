@@ -91,22 +91,24 @@ export default function Container() {
             className="mt-4"
           />
         )}
-        <ScrollArea className="mt-4 h-[600px]">
-          <div className="grid md:grid-cols-2 gap-8 pr-4">
-            {items.map((item) => (
-              <Link
-                to="/p/$id"
-                key={item.poi.id}
-                params={{
-                  id: item.poi.id,
-                }}
-              >
-                <PoiCard poi={item.poi} />
-              </Link>
-            ))}
-          </div>
-          <ScrollBar />
-        </ScrollArea>
+        {items.length !== 0 && (
+          <ScrollArea className="mt-4 h-[600px]">
+            <div className="grid md:grid-cols-2 gap-8 pr-4">
+              {items.map((item) => (
+                <Link
+                  to="/p/$id"
+                  key={item.poi.id}
+                  params={{
+                    id: item.poi.id,
+                  }}
+                >
+                  <PoiCard poi={item.poi} />
+                </Link>
+              ))}
+            </div>
+            <ScrollBar />
+          </ScrollArea>
+        )}
       </div>
     </div>
   );
