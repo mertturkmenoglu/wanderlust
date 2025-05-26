@@ -7,13 +7,16 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		App: app,
+		App:  app,
+		db:   app.Db.Queries,
+		pool: app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -32,30 +35,17 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 		},
 		func(ctx context.Context, input *dto.GetPoiByIdInput) (*dto.GetPoiByIdOutput, error) {
-			userId := ctx.Value("userId").(string)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
 			res, err := s.getPoiById(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
-			isFavorite := false
-			isBookmarked := false
-
-			if userId != "" {
-				isFavorite = s.isFavorite(input.ID, userId)
-				isBookmarked = s.isBookmarked(input.ID, userId)
-			}
-
-			return &dto.GetPoiByIdOutput{
-				Body: dto.GetPoiByIdOutputBody{
-					Poi: *res,
-					Meta: dto.GetPoiByIdMeta{
-						IsFavorite:   isFavorite,
-						IsBookmarked: isBookmarked,
-					},
-				},
-			}, nil
+			return res, nil
 		},
 	)
 
@@ -68,9 +58,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.PeekPoisOutput, error) {
-			res, err := s.peekPois()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.peekPois(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -92,9 +86,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.CreatePoiDraftOutput, error) {
-			res, err := s.createDraft()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.createDraft(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -116,9 +114,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetAllPoiDraftsOutput, error) {
-			res, err := s.getDrafts()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getDrafts(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -140,9 +142,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.GetPoiDraftInput) (*dto.GetPoiDraftOutput, error) {
-			res, err := s.getDraft(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getDraft(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -164,9 +170,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdatePoiDraftInput) (*dto.UpdatePoiDraftOutput, error) {
-			res, err := s.updateDraft(input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateDraft(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -188,10 +198,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UploadPoiMediaInput) (*dto.UpdatePoiDraftOutput, error) {
-			userId := ctx.Value("userId").(string)
-			res, err := s.uploadMedia(userId, input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.uploadMedia(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -213,9 +226,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeletePoiMediaInput) (*dto.UpdatePoiDraftOutput, error) {
-			res, err := s.deleteMedia(input.ID, input.Index)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.deleteMedia(ctx, input.ID, input.Index)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -237,9 +254,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeletePoiDraftInput) (*struct{}, error) {
-			err := s.deleteDraft(input.ID, true)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.deleteDraft(ctx, input.ID, true)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -261,9 +282,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.PublishPoiDraftInput) (*dto.PublishPoiDraftOutput, error) {
-			res, err := s.publishDraft(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.publishDraft(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 

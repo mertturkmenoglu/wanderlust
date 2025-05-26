@@ -5,35 +5,37 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+	"sync"
 	"time"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
-	"github.com/minio/minio-go/v7"
-	"go.opentelemetry.io/otel"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	App *core.Application
+	App  *core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
-func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, error) {
-	tracer := otel.Tracer("")
-	_, sp := tracer.Start(ctx, utils.GetFnName())
+func (s *Service) FindMany(ctx context.Context, ids []string) ([]dto.Poi, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
 
-	dbPois, err := s.App.Db.Queries.GetPoisByIdsPopulated(context.Background(), ids)
-
-	sp.End()
+	dbPois, err := s.db.GetPoisByIdsPopulated(ctx, ids)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to get point of interests")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get point of interests")
 	}
 
 	pois := make([]dto.Poi, len(dbPois))
@@ -45,7 +47,8 @@ func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, er
 			err = json.Unmarshal(dbPoi.Amenities, &amenities)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("failed to unmarshal amenities")
+				sp.RecordError(err)
+				return nil, huma.Error500InternalServerError("Failed to unmarshal amenities")
 			}
 		}
 
@@ -55,7 +58,8 @@ func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, er
 			err = json.Unmarshal(dbPoi.Media, &dbMedia)
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("failed to unmarshal media")
+				sp.RecordError(err)
+				return nil, huma.Error500InternalServerError("Failed to unmarshal media")
 			}
 		}
 
@@ -63,7 +67,8 @@ func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, er
 		openHours, err := mapper.ToOpenHours(dbPoi.Poi.OpenTimes)
 
 		if err != nil {
-			return nil, huma.Error500InternalServerError("failed to unmarshal open times")
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to unmarshal open times")
 		}
 
 		pois[i] = mapper.ToPoi(dbPoi.Poi, dbPoi.Category, dbPoi.Address, dbPoi.City, amenities, openHours, media)
@@ -72,36 +77,63 @@ func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, er
 	return pois, nil
 }
 
-func (s *Service) getPoiById(ctx context.Context, id string) (*dto.Poi, error) {
-	sp := utils.NewSpan(ctx, utils.GetFnName())
+func (s *Service) getPoiById(ctx context.Context, id string) (*dto.GetPoiByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	if s.App.Cache.Has(ctx, cache.KeyBuilder("poi", id)) {
-		var res dto.Poi
-		err := s.App.Cache.ReadObj(ctx, cache.KeyBuilder("poi", id), res)
-
-		if err == nil {
-			return &res, nil
-		}
-	}
-
-	res, err := s.GetPoisByIds(ctx, []string{id})
+	res, err := s.FindMany(ctx, []string{id})
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
 	if len(res) != 1 {
-		return nil, huma.Error404NotFound("point of interest not found")
+		err = huma.Error404NotFound("Point of interest not found")
+		sp.RecordError(err)
+		return nil, err
 	}
 
-	s.App.Cache.SetObj(ctx, cache.KeyBuilder("poi", id), res[0], time.Hour*24*90)
+	userId := ctx.Value("userId").(string)
+	isFavorite := false
+	isBookmarked := false
 
-	return &res[0], nil
+	if userId != "" {
+		var wg sync.WaitGroup
+
+		wg.Add(2)
+
+		go func() {
+			defer wg.Done()
+			isFavorite = s.isFavorite(ctx, id)
+		}()
+
+		go func() {
+			defer wg.Done()
+			isBookmarked = s.isBookmarked(ctx, id)
+		}()
+
+		wg.Wait()
+	}
+
+	return &dto.GetPoiByIdOutput{
+		Body: dto.GetPoiByIdOutputBody{
+			Poi: res[0],
+			Meta: dto.GetPoiByIdMeta{
+				IsFavorite:   isFavorite,
+				IsBookmarked: isBookmarked,
+			},
+		},
+	}, nil
 }
 
-func (s *Service) isFavorite(poiId string, userId string) bool {
-	_, err := s.App.Db.Queries.IsFavorite(context.Background(), db.IsFavoriteParams{
+func (s *Service) isFavorite(ctx context.Context, poiId string) bool {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	_, err := s.App.Db.Queries.IsFavorite(ctx, db.IsFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -109,8 +141,13 @@ func (s *Service) isFavorite(poiId string, userId string) bool {
 	return err == nil
 }
 
-func (s *Service) isBookmarked(poiId string, userId string) bool {
-	_, err := s.App.Db.Queries.IsBookmarked(context.Background(), db.IsBookmarkedParams{
+func (s *Service) isBookmarked(ctx context.Context, poiId string) bool {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+
+	_, err := s.App.Db.Queries.IsBookmarked(ctx, db.IsBookmarkedParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -118,15 +155,20 @@ func (s *Service) isBookmarked(poiId string, userId string) bool {
 	return err == nil
 }
 
-func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
-	dbRes, err := s.App.Db.Queries.PeekPois(context.Background())
+func (s *Service) peekPois(ctx context.Context) (*dto.PeekPoisOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbRes, err := s.db.PeekPois(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("pois not found")
+			return nil, huma.Error404NotFound("Pois not found")
 		}
 
-		return nil, huma.Error500InternalServerError("failed to peek pois")
+		return nil, huma.Error500InternalServerError("Failed to peek pois")
 	}
 
 	ids := make([]string, len(dbRes))
@@ -135,9 +177,10 @@ func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
 		ids[i] = v.ID
 	}
 
-	res, err := s.GetPoisByIds(context.Background(), ids)
+	res, err := s.FindMany(ctx, ids)
 
 	if err != nil {
+		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -148,9 +191,12 @@ func (s *Service) peekPois() (*dto.PeekPoisOutput, error) {
 	}, nil
 }
 
-func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
-	ctx := context.Background()
-	id := utils.GenerateId(s.App.Flake)
+func (s *Service) createDraft(ctx context.Context) (*dto.CreatePoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	id := s.App.ID.Flake()
+
 	draft := map[string]any{
 		"id": id,
 		"v":  2,
@@ -159,19 +205,22 @@ func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
 	v, err := json.Marshal(draft)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create draft")
 	}
 
 	err = s.App.Cache.Set(ctx, "poi-draft:"+id, string(v), time.Hour*24*90).Err() // 90 days
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to set draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set draft")
 	}
 
-	_, err = s.App.Cache.Client.LPush(context.Background(), "poi-drafts", id).Result()
+	_, err = s.App.Cache.Client.LPush(ctx, "poi-drafts", id).Result()
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to record draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to record draft")
 	}
 
 	return &dto.CreatePoiDraftOutput{
@@ -181,12 +230,15 @@ func (s *Service) createDraft() (*dto.CreatePoiDraftOutput, error) {
 	}, nil
 }
 
-func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
-	ctx := context.Background()
-	ids, err := s.App.Cache.Client.LRange(context.Background(), "poi-drafts", 0, -1).Result()
+func (s *Service) getDrafts(ctx context.Context) (*dto.GetAllPoiDraftsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	ids, err := s.App.Cache.Client.LRange(ctx, "poi-drafts", 0, -1).Result()
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to get drafts")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get drafts")
 	}
 
 	var drafts []map[string]any
@@ -195,6 +247,7 @@ func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
 		v, err := s.App.Cache.Get(ctx, "poi-draft:"+id).Result()
 
 		if err != nil {
+			sp.RecordError(err)
 			return nil, huma.Error500InternalServerError("failed to get draft")
 		}
 
@@ -203,6 +256,7 @@ func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
 		err = json.Unmarshal([]byte(v), &draft)
 
 		if err != nil {
+			sp.RecordError(err)
 			return nil, huma.Error500InternalServerError("failed to unmarshal draft")
 		}
 
@@ -216,12 +270,15 @@ func (s *Service) getDrafts() (*dto.GetAllPoiDraftsOutput, error) {
 	}, nil
 }
 
-func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
-	ctx := context.Background()
+func (s *Service) getDraft(ctx context.Context, id string) (*dto.GetPoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	v, err := s.App.Cache.Get(ctx, "poi-draft:"+id).Result()
 
 	if err != nil {
-		return nil, huma.Error404NotFound("draft not found")
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Draft not found")
 	}
 
 	var draft map[string]any
@@ -229,7 +286,8 @@ func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
 	err = json.Unmarshal([]byte(v), &draft)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to unmarshal draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to unmarshal draft")
 	}
 
 	return &dto.GetPoiDraftOutput{
@@ -239,18 +297,22 @@ func (s *Service) getDraft(id string) (*dto.GetPoiDraftOutput, error) {
 	}, nil
 }
 
-func (s *Service) updateDraft(id string, body dto.UpdatePoiDraftInputBody) (*dto.UpdatePoiDraftOutput, error) {
-	ctx := context.Background()
+func (s *Service) updateDraft(ctx context.Context, id string, body dto.UpdatePoiDraftInputBody) (*dto.UpdatePoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	v, err := json.Marshal(body.Values)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to marshal draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to marshal draft")
 	}
 
 	err = s.App.Cache.Set(ctx, "poi-draft:"+id, string(v), 0).Err()
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to set draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set draft")
 	}
 
 	return &dto.UpdatePoiDraftOutput{
@@ -260,41 +322,42 @@ func (s *Service) updateDraft(id string, body dto.UpdatePoiDraftInputBody) (*dto
 	}, nil
 }
 
-func (s *Service) uploadMedia(userId string, id string, input dto.UploadPoiMediaInputBody) (*dto.UpdatePoiDraftOutput, error) {
-	ctx := context.Background()
+func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadPoiMediaInputBody) (*dto.UpdatePoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	bucket := upload.BUCKET_POIS
 
-	// Check if the file is uploaded
-	_, err := s.App.Upload.Client.GetObject(
-		context.Background(),
-		string(bucket),
-		input.FileName,
-		minio.GetObjectOptions{},
-	)
+	ok := s.App.Upload.FileExists(bucket, input.FileName)
 
-	if err != nil {
-		return nil, huma.Error400BadRequest("file not uploaded")
+	if !ok {
+		err := huma.Error400BadRequest("File not uploaded")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.App.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)) {
-		return nil, huma.Error400BadRequest("incorrect file")
+	if !s.App.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
+		err := huma.Error400BadRequest("Incorrect file")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	// delete cached information
-	err = s.App.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, id, input.ID)).Err()
+	err := s.App.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)).Err()
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to delete cached information")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete cached information")
 	}
 
-	endpoint := s.App.Upload.Client.EndpointURL().String()
-	url := endpoint + "/" + string(bucket) + "/" + input.FileName
+	url := s.App.Upload.GetUrlForFile(bucket, input.FileName)
 
-	draft, err := s.getDraft(id)
+	draft, err := s.getDraft(ctx, id)
 
 	if err != nil {
-		return nil, huma.Error404NotFound("draft not found")
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Draft not found")
 	}
 
 	media, has := draft.Body.Draft["media"]
@@ -315,34 +378,43 @@ func (s *Service) uploadMedia(userId string, id string, input dto.UploadPoiMedia
 		"extension": extension,
 	})
 
-	res, err := s.updateDraft(id, dto.UpdatePoiDraftInputBody{
+	res, err := s.updateDraft(ctx, id, dto.UpdatePoiDraftInputBody{
 		Values: draft.Body.Draft,
 	})
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to update draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update draft")
 	}
 
 	return res, nil
 }
 
-func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput, error) {
-	draft, err := s.getDraft(id)
+func (s *Service) deleteMedia(ctx context.Context, id string, index int32) (*dto.UpdatePoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	draft, err := s.getDraft(ctx, id)
 
 	if err != nil {
-		return nil, huma.Error404NotFound("draft not found")
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Draft not found")
 	}
 
 	media, has := draft.Body.Draft["media"]
 
 	if !has {
-		return nil, huma.Error404NotFound("media not found")
+		err := huma.Error404NotFound("Media not found")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	mediaCast, ok := media.([]any)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("failed to cast media")
+		err := huma.Error500InternalServerError("Failed to cast media")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	m := mediaCast[int(index)]
@@ -350,18 +422,16 @@ func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput
 	img, ok := m.(map[string]any)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("failed to cast img")
+		err := huma.Error500InternalServerError("Failed to cast img")
+		sp.RecordError(err)
+		return nil, err
 	}
 
-	err = s.App.Upload.Client.RemoveObject(
-		context.Background(),
-		string(upload.BUCKET_POIS),
-		img["fileName"].(string),
-		minio.RemoveObjectOptions{},
-	)
+	err = s.App.Upload.RemoveFileFromUrl(img["url"].(string), upload.BUCKET_POIS)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to delete image")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete image")
 	}
 
 	newMedia := make([]any, 0)
@@ -374,23 +444,27 @@ func (s *Service) deleteMedia(id string, index int32) (*dto.UpdatePoiDraftOutput
 
 	draft.Body.Draft["media"] = newMedia
 
-	res, err := s.updateDraft(id, dto.UpdatePoiDraftInputBody{
+	res, err := s.updateDraft(ctx, id, dto.UpdatePoiDraftInputBody{
 		Values: draft.Body.Draft,
 	})
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to update draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update draft")
 	}
 
 	return res, nil
 }
 
-func (s *Service) deleteDraft(id string, deleteMedia bool) error {
-	ctx := context.Background()
-	draft, err := s.getDraft(id)
+func (s *Service) deleteDraft(ctx context.Context, id string, deleteMedia bool) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	draft, err := s.getDraft(ctx, id)
 
 	if err != nil {
-		return huma.Error404NotFound("draft not found")
+		sp.RecordError(err)
+		return huma.Error404NotFound("Draft not found")
 	}
 
 	media, has := draft.Body.Draft["media"]
@@ -399,25 +473,25 @@ func (s *Service) deleteDraft(id string, deleteMedia bool) error {
 		mediaCast, ok := media.([]any)
 
 		if !ok {
-			return huma.Error500InternalServerError("failed to cast media")
+			err := huma.Error500InternalServerError("Failed to cast media")
+			sp.RecordError(err)
+			return err
 		}
 
 		for _, m := range mediaCast {
 			img, ok := m.(map[string]any)
 
 			if !ok {
-				return huma.Error500InternalServerError("failed to cast img")
+				err := huma.Error500InternalServerError("Failed to cast img")
+				sp.RecordError(err)
+				return err
 			}
 
-			err = s.App.Upload.Client.RemoveObject(
-				context.Background(),
-				string(upload.BUCKET_POIS),
-				img["fileName"].(string),
-				minio.RemoveObjectOptions{},
-			)
+			err = s.App.Upload.RemoveFileFromUrl(img["url"].(string), upload.BUCKET_POIS)
 
 			if err != nil {
-				return huma.Error500InternalServerError("failed to delete image")
+				sp.RecordError(err)
+				return huma.Error500InternalServerError("Failed to delete image")
 			}
 		}
 
@@ -426,62 +500,77 @@ func (s *Service) deleteDraft(id string, deleteMedia bool) error {
 	err = s.App.Cache.Del(ctx, "poi-draft:"+id).Err()
 
 	if err != nil {
-		return huma.Error500InternalServerError("failed to delete draft")
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete draft")
 	}
 
-	_, err = s.App.Cache.Client.LRem(context.Background(), "poi-drafts", 1, id).Result()
+	_, err = s.App.Cache.Client.LRem(ctx, "poi-drafts", 1, id).Result()
 
 	if err != nil {
-		return huma.Error500InternalServerError("failed to delete draft from list")
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete draft from list")
 	}
 
 	return nil
 }
 
-func (s *Service) publishDraft(id string) (*dto.PublishPoiDraftOutput, error) {
-	draft, err := s.getDraft(id)
+func (s *Service) publishDraft(ctx context.Context, id string) (*dto.PublishPoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	draft, err := s.getDraft(ctx, id)
 
 	if err != nil {
-		return nil, huma.Error404NotFound("draft not found")
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Draft not found")
 	}
 
-	res, err := s.saveDraftToDatabase(draft.Body.Draft)
+	res, err := s.saveDraftToDatabase(ctx, draft.Body.Draft)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to publish draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to publish draft")
 	}
 
-	err = s.deleteDraft(id, false)
+	err = s.deleteDraft(ctx, id, false)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to delete draft")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete draft")
 	}
 
 	return res, nil
 }
 
-func (s *Service) saveDraftToDatabase(draft map[string]any) (*dto.PublishPoiDraftOutput, error) {
-	ctx := context.Background()
-	tx, err := s.App.Db.Pool.Begin(ctx)
+func (s *Service) saveDraftToDatabase(ctx context.Context, draft map[string]any) (*dto.PublishPoiDraftOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create transaction")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create transaction")
 	}
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.App.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	address, ok := draft["address"].(map[string]any)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("failed to cast address")
+		err := huma.Error500InternalServerError("Failed to cast address")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	cityId, ok := address["cityId"].(float64)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("failed to cast cityId")
+		err := huma.Error500InternalServerError("Failed to cast cityId")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	addr, err := qtx.CreateAddress(ctx, db.CreateAddressParams{
@@ -494,17 +583,19 @@ func (s *Service) saveDraftToDatabase(draft map[string]any) (*dto.PublishPoiDraf
 	})
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create address")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create address")
 	}
 
 	hoursbytes, err := json.Marshal(draft["hours"])
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to marshal hours")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to marshal hours")
 	}
 
 	poi, err := qtx.CreateOnePoi(ctx, db.CreateOnePoiParams{
-		ID:                 utils.GenerateId(s.App.Flake),
+		ID:                 s.App.ID.Flake(),
 		Name:               draft["name"].(string),
 		Phone:              utils.StrToText(draft["phone"].(string)),
 		Description:        draft["description"].(string),
@@ -520,7 +611,8 @@ func (s *Service) saveDraftToDatabase(draft map[string]any) (*dto.PublishPoiDraf
 	})
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to create poi")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create poi")
 	}
 
 	_, has := draft["amenities"]
@@ -535,7 +627,8 @@ func (s *Service) saveDraftToDatabase(draft map[string]any) (*dto.PublishPoiDraf
 			})
 
 			if err != nil {
-				return nil, huma.Error500InternalServerError("failed to create amenity poi connection")
+				sp.RecordError(err)
+				return nil, huma.Error500InternalServerError("Failed to create amenity poi connection")
 			}
 		}
 	}
@@ -564,14 +657,16 @@ func (s *Service) saveDraftToDatabase(draft map[string]any) (*dto.PublishPoiDraf
 		})
 
 		if err != nil {
-			return nil, huma.Error500InternalServerError("failed to create media")
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to create media")
 		}
 	}
 
 	err = tx.Commit(ctx)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("failed to commit transaction")
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
 	return &dto.PublishPoiDraftOutput{
