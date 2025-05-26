@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { ipx } from '@/lib/ipx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
@@ -53,7 +54,7 @@ function RouteComponent() {
 
       {previewUrl !== '' && (
         <img
-          src={previewUrl}
+          src={ipx(previewUrl, 'w_512')}
           alt="Preview"
           className="mt-8 w-64 rounded-md aspect-video object-cover"
         />
