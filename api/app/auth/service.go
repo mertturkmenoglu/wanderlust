@@ -701,7 +701,7 @@ func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthU
 		return nil, fmt.Errorf("failed to generate username: %v", err)
 	}
 
-	saved, err := s.db.CreateUser(context.Background(), db.CreateUserParams{
+	saved, err := s.db.CreateUser(ctx, db.CreateUserParams{
 		ID:           s.ID.Flake(),
 		Email:        oauthUser.email,
 		Username:     username,
