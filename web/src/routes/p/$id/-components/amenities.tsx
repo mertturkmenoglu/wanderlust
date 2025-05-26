@@ -152,7 +152,7 @@ function Item({ id, name }: { id: number; name: string }) {
       <Link
         to="/search"
         search={{
-          'pois[refinementList][poi.Amenities.Amenity.Name][0]': name,
+          'pois[refinementList][poi.amenities.name][0]': name,
         }}
         className="text-muted-foreground text-sm line-clamp-2 hover:text-primary hover:underline"
       >
