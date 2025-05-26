@@ -6,31 +6,41 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/mapper"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
-func (s *Service) list() (*dto.CitiesListOutput, error) {
-	dbCities, err := s.app.Db.Queries.GetCities(context.Background())
+func (s *Service) list(ctx context.Context) (*dto.CitiesListOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbCities, err := s.db.GetCities(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("No cities found")
 		}
 
-		return nil, huma.Error500InternalServerError("Internal server error")
+		return nil, huma.Error500InternalServerError("Failed to get all cities")
 	}
 
 	cities := make([]dto.City, len(dbCities))
 
 	for i, dbCity := range dbCities {
-		cities[i] = mapToCity(dbCity)
+		cities[i] = mapper.ToCity(dbCity)
 	}
 
 	return &dto.CitiesListOutput{
@@ -40,7 +50,10 @@ func (s *Service) list() (*dto.CitiesListOutput, error) {
 	}, nil
 }
 
-func (s *Service) featured() (*dto.CitiesFeaturedOutput, error) {
+func (s *Service) featured(ctx context.Context) (*dto.CitiesFeaturedOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
 	featuredCitiesIds := []int32{
 		1106, // Salzburg
 		1108, // Vienna
@@ -56,20 +69,22 @@ func (s *Service) featured() (*dto.CitiesFeaturedOutput, error) {
 		7010, // Barcelona
 	}
 
-	dbFeaturedCities, err := s.app.Db.Queries.GetFeaturedCities(context.Background(), featuredCitiesIds)
+	dbFeaturedCities, err := s.db.GetFeaturedCities(ctx, featuredCitiesIds)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("No featured cities found")
 		}
 
-		return nil, huma.Error500InternalServerError("Internal server error")
+		return nil, huma.Error500InternalServerError("Failed to get featured cities")
 	}
 
 	cities := make([]dto.City, len(dbFeaturedCities))
 
 	for i, dbCity := range dbFeaturedCities {
-		cities[i] = mapToCity(dbCity)
+		cities[i] = mapper.ToCity(dbCity)
 	}
 
 	return &dto.CitiesFeaturedOutput{
@@ -79,26 +94,34 @@ func (s *Service) featured() (*dto.CitiesFeaturedOutput, error) {
 	}, nil
 }
 
-func (s *Service) get(id int32) (*dto.GetCityByIdOutput, error) {
-	res, err := s.app.Db.Queries.GetCityById(context.Background(), id)
+func (s *Service) get(ctx context.Context, id int32) (*dto.GetCityByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.db.GetCityById(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("City not found")
 		}
 
-		return nil, huma.Error500InternalServerError("Internal server error")
+		return nil, huma.Error500InternalServerError("Failed to get city")
 	}
 
 	return &dto.GetCityByIdOutput{
 		Body: dto.GetCityByIdOutputBody{
-			City: mapToCity(res),
+			City: mapper.ToCity(res),
 		},
 	}, nil
 }
 
-func (s *Service) create(body dto.CreateCityInputBody) (*dto.CreateCityOutput, error) {
-	dbCity, err := s.app.Db.Queries.CreateCity(context.Background(), db.CreateCityParams{
+func (s *Service) create(ctx context.Context, body dto.CreateCityInputBody) (*dto.CreateCityOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbCity, err := s.db.CreateCity(ctx, db.CreateCityParams{
 		ID:             body.ID,
 		Name:           body.Name,
 		StateCode:      body.StateCode,
@@ -116,36 +139,46 @@ func (s *Service) create(body dto.CreateCityInputBody) (*dto.CreateCityOutput, e
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrTooManyRows) {
 			return nil, huma.Error400BadRequest("City already exists")
 		}
 
-		return nil, huma.Error500InternalServerError("Internal server error")
+		return nil, huma.Error500InternalServerError("Failed to create city")
 	}
 
 	return &dto.CreateCityOutput{
 		Body: dto.CreateCityOutputBody{
-			City: mapToCity(dbCity),
+			City: mapper.ToCity(dbCity),
 		},
 	}, nil
 }
 
-func (s *Service) remove(id int32) error {
-	err := s.app.Db.Queries.DeleteCity(context.Background(), id)
+func (s *Service) remove(ctx context.Context, id int32) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	err := s.db.DeleteCity(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return huma.Error404NotFound("City not found")
 		}
 
-		return huma.Error500InternalServerError("Internal server error")
+		return huma.Error500InternalServerError("Failed to delete city")
 	}
 
 	return nil
 }
 
-func (s *Service) update(id int32, body dto.UpdateCityInputBody) (*dto.UpdateCityOutput, error) {
-	dbCity, err := s.app.Db.Queries.UpdateCity(context.Background(), db.UpdateCityParams{
+func (s *Service) update(ctx context.Context, id int32, body dto.UpdateCityInputBody) (*dto.UpdateCityOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbCity, err := s.db.UpdateCity(ctx, db.UpdateCityParams{
 		ID:             id,
 		Name:           body.Name,
 		StateCode:      body.StateCode,
@@ -163,16 +196,18 @@ func (s *Service) update(id int32, body dto.UpdateCityInputBody) (*dto.UpdateCit
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("City not found")
 		}
 
-		return nil, huma.Error500InternalServerError("Internal server error")
+		return nil, huma.Error500InternalServerError("Failed to update city")
 	}
 
 	return &dto.UpdateCityOutput{
 		Body: dto.UpdateCityOutputBody{
-			City: mapToCity(dbCity),
+			City: mapper.ToCity(dbCity),
 		},
 	}, nil
 }

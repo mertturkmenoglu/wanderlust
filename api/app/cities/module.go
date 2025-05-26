@@ -7,13 +7,16 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -29,9 +32,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "List cities",
 		},
 		func(ctx context.Context, input *struct{}) (*dto.CitiesListOutput, error) {
-			res, err := s.list()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.list(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -48,9 +55,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get featured cities",
 		},
 		func(ctx context.Context, input *struct{}) (*dto.CitiesFeaturedOutput, error) {
-			res, err := s.featured()
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.featured(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -67,9 +78,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get city by ID",
 		},
 		func(ctx context.Context, input *dto.GetCityByIdInput) (*dto.GetCityByIdOutput, error) {
-			res, err := s.get(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -91,9 +106,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.CreateCityInput) (*dto.CreateCityOutput, error) {
-			res, err := s.create(input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -115,9 +134,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.DeleteCityInput) (*struct{}, error) {
-			err := s.remove(input.ID)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -139,9 +162,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 		},
 		func(ctx context.Context, input *dto.UpdateCityInput) (*dto.UpdateCityOutput, error) {
-			res, err := s.update(input.ID, input.Body)
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
