@@ -47,7 +47,7 @@ func handlePoiSync() error {
 			return err
 		}
 
-		pois, err := s.GetPoisByIds(ctx, ids)
+		pois, err := s.FindMany(ctx, ids)
 
 		if err != nil {
 			return err
