@@ -260,6 +260,21 @@ export interface paths {
                 200: {
                     headers: {
                         Authorization?: string;
+                        Domain?: string;
+                        Expires?: string;
+                        HttpOnly?: boolean;
+                        MaxAge?: number;
+                        Name?: string;
+                        Partitioned?: boolean;
+                        Path?: string;
+                        Quoted?: boolean;
+                        Raw?: string;
+                        RawExpires?: string;
+                        SameSite?: number;
+                        Secure?: boolean;
+                        "Set-Cookie"?: string;
+                        Unparsed?: string;
+                        Value?: string;
                         [name: string]: unknown;
                     };
                     content: {
@@ -510,6 +525,71 @@ export interface paths {
         get: operations["auth-get-me"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/auth/password/change": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change Password
+         * @description Change the password of the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ChangePasswordInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        Domain?: string;
+                        Expires?: string;
+                        HttpOnly?: boolean;
+                        MaxAge?: number;
+                        Name?: string;
+                        Partitioned?: boolean;
+                        Path?: string;
+                        Quoted?: boolean;
+                        Raw?: string;
+                        RawExpires?: string;
+                        SameSite?: number;
+                        Secure?: boolean;
+                        "Set-Cookie"?: string;
+                        Unparsed?: string;
+                        Value?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -5837,6 +5917,19 @@ export interface components {
             image: string;
             /** @description Name of the category */
             name: string;
+        };
+        ChangePasswordInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Confirm password of the user */
+            confirmPassword: string;
+            /** @description Current password of the user */
+            currentPassword: string;
+            /** @description New password of the user */
+            newPassword: string;
         };
         CitiesFeaturedOutputBody: {
             /**
