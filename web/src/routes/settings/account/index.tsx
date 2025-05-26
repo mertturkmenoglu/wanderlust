@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/settings/account/')({
@@ -25,12 +26,6 @@ function RouteComponent() {
             disabled={true}
             value={auth.user?.email}
           />
-          <Button
-            variant="link"
-            disabled
-          >
-            Change
-          </Button>
         </div>
 
         <Label htmlFor="username">Username</Label>
@@ -40,12 +35,6 @@ function RouteComponent() {
             disabled={true}
             value={auth.user?.username}
           />
-          <Button
-            variant="link"
-            disabled
-          >
-            Change
-          </Button>
         </div>
 
         <Label htmlFor="password">Password</Label>
@@ -67,18 +56,17 @@ function RouteComponent() {
 
         <Label>Social Logins</Label>
         <div className="col-span-2 flex gap-4">
-          <Button
-            variant="outline"
-            disabled={auth.user?.googleId === null}
-          >
-            <GoogleIcon className="size-4" />
-          </Button>
-          <Button
-            variant="outline"
-            disabled={auth.user?.facebookId === null}
-          >
-            <FacebookIcon className="size-4" />
-          </Button>
+          <GoogleIcon
+            className={cn('size-6', {
+              grayscale: auth.user?.googleId === null,
+            })}
+          />
+
+          <FacebookIcon
+            className={cn('size-6', {
+              grayscale: auth.user?.facebookId === null,
+            })}
+          />
         </div>
       </div>
     </div>
