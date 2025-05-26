@@ -132,10 +132,10 @@ type UpdateUserProfileInput struct {
 
 type UpdateUserProfileInputBody struct {
 	FullName string  `json:"fullName" example:"John Doe" doc:"Full name of the user" required:"true" minLength:"3" maxLength:"128"`
-	Bio      *string `json:"bio" example:"Lorem ipsum dolor sit amet" doc:"Bio of the user" required:"false" minLength:"3" maxLength:"255"`
-	Pronouns *string `json:"pronouns" example:"he/him" doc:"Pronouns of the user" required:"false" minLength:"3" maxLength:"255"`
-	Website  *string `json:"website" example:"https://example.com" doc:"Website of the user" required:"false" minLength:"3" maxLength:"255" format:"uri"`
-	Phone    *string `json:"phone" example:"+1234567890" doc:"Phone number of the user" required:"false" minLength:"3" maxLength:"32"`
+	Bio      *string `json:"bio" example:"Lorem ipsum dolor sit amet" doc:"Bio of the user" required:"false" nullable:"true" minLength:"3" maxLength:"255"`
+	Pronouns *string `json:"pronouns" example:"he/him" doc:"Pronouns of the user" required:"false" minLength:"3" nullable:"true" maxLength:"255"`
+	Website  *string `json:"website" example:"https://example.com" doc:"Website of the user" required:"false" nullable:"true" minLength:"3" maxLength:"255" format:"uri"`
+	Phone    *string `json:"phone" example:"+1234567890" doc:"Phone number of the user" required:"false" nullable:"true" minLength:"3" maxLength:"32"`
 }
 
 type UpdateUserProfileOutput struct {
