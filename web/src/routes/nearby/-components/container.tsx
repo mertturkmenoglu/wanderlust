@@ -20,7 +20,7 @@ export default function Container() {
             return rej(err.message);
           },
           {
-            timeout: 1000,
+            timeout: 100_000,
           },
         );
       });
@@ -31,7 +31,10 @@ export default function Container() {
 
   if (query.isLoading) {
     return (
-      <LoaderCircleIcon className="mx-auto my-32 size-12 animate-spin text-primary" />
+      <div className="flex flex-col items-center justify-center">
+        <LoaderCircleIcon className="mx-auto mt-32 size-12 animate-spin text-primary" />
+        <div className="text-sm mt-8 mb-32">Allow access to your location</div>
+      </div>
     );
   }
 
@@ -47,6 +50,7 @@ export default function Container() {
         />
         <Button
           variant="link"
+          className="mb-32"
           onClick={() => query.refetch()}
         >
           Retry
