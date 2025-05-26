@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { ChangePasswordForm } from './-change-password';
 
 export const Route = createFileRoute('/settings/account/')({
   component: RouteComponent,
@@ -13,6 +15,7 @@ export const Route = createFileRoute('/settings/account/')({
 
 function RouteComponent() {
   const { auth } = Route.useRouteContext();
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   return (
     <div>
@@ -46,11 +49,15 @@ function RouteComponent() {
           />
           <Button
             variant="link"
-            disabled
+            onClick={() => setIsChangePasswordOpen((prev) => !prev)}
           >
-            Change
+            {isChangePasswordOpen ? 'Hide' : 'Change'}
           </Button>
         </div>
+
+        <div />
+
+        {isChangePasswordOpen && <ChangePasswordForm />}
 
         <Separator className="my-4 col-span-full" />
 
