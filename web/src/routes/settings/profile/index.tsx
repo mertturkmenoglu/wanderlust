@@ -1,5 +1,6 @@
 import InputError from '@/components/kit/input-error';
 import InputInfo from '@/components/kit/input-info';
+import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,10 +15,12 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { pronounGroups } from './-pronouns';
 import UpdateImage from './-update-image';
@@ -26,7 +29,7 @@ export const schema = z.object({
   fullName: z.string().min(1).max(128),
   bio: z.string().max(255).nullable(),
   pronouns: z.string().max(32).nullable(),
-  website: z.string().max(255).url().nullable(),
+  website: z.string().max(255).nullable(),
   phone: z.string().max(32).nullable(),
 });
 
@@ -37,6 +40,7 @@ export const Route = createFileRoute('/settings/profile/')({
 function RouteComponent() {
   const { auth } = Route.useRouteContext();
   const user = auth.user!;
+  const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -50,8 +54,9 @@ function RouteComponent() {
   });
 
   const mutation = api.useMutation('patch', '/api/v2/users/profile', {
-    onSuccess: () => {
-      window.location.reload();
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      toast.success('Profile updated');
     },
   });
 
@@ -87,8 +92,19 @@ function RouteComponent() {
 
       <form
         onSubmit={form.handleSubmit((data) => {
+          let bio = data.bio === '' ? null : data.bio;
+          let pronouns = data.pronouns === '' ? null : data.pronouns;
+          let website = data.website === '' ? null : data.website;
+          let phone = data.phone === '' ? null : data.phone;
+
           mutation.mutate({
-            body: data,
+            body: {
+              fullName: data.fullName,
+              bio,
+              pronouns,
+              website,
+              phone,
+            },
           });
         })}
         className="mt-4 grid grid-cols-3 gap-4 md:gap-8"
@@ -205,7 +221,13 @@ function RouteComponent() {
 
         <div className="col-span-2"></div>
 
-        <Button type="submit">Update</Button>
+        <Button
+          type="submit"
+          disabled={!form.formState.isDirty || mutation.isPending}
+        >
+          {mutation.isPending && <Spinner className="mr-2" />}
+          Update
+        </Button>
       </form>
     </div>
   );
