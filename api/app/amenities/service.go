@@ -10,19 +10,24 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	app *core.Application
+	*core.Application
+	db   *db.Queries
+	pool *pgxpool.Pool
 }
 
 func (s *Service) list(ctx context.Context) (*dto.ListAmenitiesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.app.Db.Queries.GetAllAmenities(ctx)
+	res, err := s.db.GetAllAmenities(ctx)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("no amenities found")
 		}
@@ -50,9 +55,11 @@ func (s *Service) create(ctx context.Context, body dto.CreateAmenityInputBody) (
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.app.Db.Queries.CreateAmenity(ctx, body.Name)
+	res, err := s.db.CreateAmenity(ctx, body.Name)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrTooManyRows) {
 			return nil, huma.Error422UnprocessableEntity("amenity already exists")
 		}
@@ -75,12 +82,14 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateAmenityIn
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.app.Db.Queries.UpdateAmenity(ctx, db.UpdateAmenityParams{
+	err := s.db.UpdateAmenity(ctx, db.UpdateAmenityParams{
 		ID:   id,
 		Name: body.Name,
 	})
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, huma.Error404NotFound("amenity not found")
 		}
@@ -102,9 +111,11 @@ func (s *Service) remove(ctx context.Context, id int32) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.app.Db.Queries.DeleteAmenity(ctx, id)
+	err := s.db.DeleteAmenity(ctx, id)
 
 	if err != nil {
+		sp.RecordError(err)
+
 		if errors.Is(err, pgx.ErrNoRows) {
 			return huma.Error404NotFound("amenity not found")
 		}

@@ -14,7 +14,9 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app,
+		app.Db.Queries,
+		app.Db.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -36,6 +38,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.list(ctx)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -63,6 +66,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -90,6 +94,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
@@ -117,6 +122,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.remove(ctx, input.ID)
 
 			if err != nil {
+				sp.RecordError(err)
 				return nil, err
 			}
 
