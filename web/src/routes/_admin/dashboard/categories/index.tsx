@@ -37,7 +37,7 @@ function RouteComponent() {
 
       <DataTable
         columns={keyValueCols}
-        filterColumnId="name"
+        filterColumnId="v"
         data={categories.map((c) => ({
           k: `${c.id}`,
           v: c.name,
