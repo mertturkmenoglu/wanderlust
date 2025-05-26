@@ -46,7 +46,7 @@ func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlIn
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("failed to save presigned URL to cache")
+		return nil, huma.Error500InternalServerError("Failed to save presigned URL to cache")
 	}
 
 	return &dto.PresignedUrlOutput{
