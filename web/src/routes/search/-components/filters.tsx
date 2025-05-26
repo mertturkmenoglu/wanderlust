@@ -31,7 +31,7 @@ export default function Filters() {
 
       <RefinementList attribute="poi.category.name" />
 
-      {/* <RefinementList attribute="poi.amenities.amenity.name" /> */}
+      <RefinementList attribute="poi.amenities.name" />
 
       <RefinementList attribute="poi.priceLevel" />
 

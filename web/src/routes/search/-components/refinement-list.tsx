@@ -13,7 +13,7 @@ type Props = {
     | 'poi.accessibilityLevel'
     | 'poi.address.city.state.name'
     | 'poi.address.city.name'
-    // | 'poi.amenities.amenity.name'
+    | 'poi.amenities.name'
     | 'poi.address.city.country.name';
   className?: string;
 };
@@ -86,8 +86,8 @@ export default function RefinementList({ attribute, className }: Props) {
         return 'States';
       case 'poi.address.city.name':
         return 'Cities';
-      // case 'poi.amenities.amenity.name':
-      //   return 'Amenities';
+      case 'poi.amenities.name':
+        return 'Amenities';
       case 'poi.address.city.country.name':
         return 'Countries';
       default:
