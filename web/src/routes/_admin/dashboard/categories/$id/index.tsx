@@ -79,7 +79,7 @@ function RouteComponent() {
 
       <DataTable
         columns={keyValueCols}
-        filterColumnId="k"
+        filterColumnId=""
         data={[
           {
             k: 'ID',
