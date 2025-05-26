@@ -39,7 +39,7 @@ function RouteComponent() {
       <div className="">
         <DataTable
           columns={keyValueCols}
-          filterColumnId="name"
+          filterColumnId="v"
           data={amenities.map((a) => ({
             k: `${a.id}`,
             v: a.name,
