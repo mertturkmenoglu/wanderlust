@@ -7,6 +7,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
+import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
@@ -72,7 +73,7 @@ function RouteComponent() {
       </DashboardActions>
 
       <img
-        src={category.image}
+        src={ipx(category.image, 'w_512')}
         alt={category.name}
         className="mt-8 w-64 rounded-md aspect-video object-cover"
       />
