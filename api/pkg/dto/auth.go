@@ -134,3 +134,17 @@ type ResetPasswordInputBody struct {
 	Code        string `json:"code" example:"123456" doc:"Verification code" minLength:"6" maxLength:"6" required:"true"`
 	NewPassword string `json:"newPassword" example:"newpassword123" doc:"New password of the user" minLength:"6" maxLength:"128" required:"true"`
 }
+
+type ChangePasswordInput struct {
+	Body ChangePasswordInputBody
+}
+
+type ChangePasswordInputBody struct {
+	CurrentPassword string `json:"currentPassword" example:"password123" doc:"Current password of the user" minLength:"1" maxLength:"128" required:"true"`
+	NewPassword     string `json:"newPassword" example:"newpassword123" doc:"New password of the user" minLength:"6" maxLength:"128" required:"true"`
+	ConfirmPassword string `json:"confirmPassword" example:"newpassword123" doc:"Confirm password of the user" minLength:"6" maxLength:"128" required:"true"`
+}
+
+type ChangePasswordOutput struct {
+	SetCookie []http.Cookie `header:"Set-Cookie"`
+}
