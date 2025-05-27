@@ -14,6 +14,7 @@ import (
 	"wanderlust/app/images"
 	"wanderlust/app/lists"
 	"wanderlust/app/pois"
+	"wanderlust/app/reports"
 	"wanderlust/app/reviews"
 	"wanderlust/app/trips"
 	"wanderlust/app/users"
@@ -40,6 +41,7 @@ func (w *Wanderlust) Routing() {
 	images.Register(grp, w.app)
 	lists.Register(grp, w.app)
 	pois.Register(grp, w.app)
+	reports.Register(grp, w.app)
 	reviews.Register(grp, w.app)
 	trips.Register(grp, w.app)
 	users.Register(grp, w.app)
