@@ -26,3 +26,39 @@ type GetReportByIdOutput struct {
 type GetReportByIdOutputBody struct {
 	Report Report `json:"report"`
 }
+
+type GetReportsInput struct {
+	PaginationQueryParams
+}
+
+type GetReportsOutput struct {
+	Body GetReportsOutputBody
+}
+
+type GetReportsOutputBody struct {
+	Reports    []Report       `json:"reports"`
+	Pagination PaginationInfo `json:"pagination"`
+}
+
+type CreateReportInput struct {
+	Body CreateReportInputBody
+}
+
+type CreateReportInputBody struct {
+	ResourceID   string `json:"resourceId" example:"564457817990234127" doc:"ID of the resource"`
+	ResourceType string `json:"resourceType" example:"poi" doc:"Type of the resource"`
+	Description  string `json:"description" example:"Lorem ipsum dolor sit amet" doc:"Description of the report"`
+	Reason       int32  `json:"reason" example:"1" doc:"Reason for the report"`
+}
+
+type CreateReportOutput struct {
+	Body CreateReportOutputBody
+}
+
+type CreateReportOutputBody struct {
+	Report Report `json:"report"`
+}
+
+type DeleteReportInput struct {
+	ID string `path:"id" example:"564457817990234127" doc:"ID of the report"`
+}
