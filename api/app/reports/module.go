@@ -139,4 +139,33 @@ func Register(grp *huma.Group, app *core.Application) {
 			return nil, nil
 		},
 	)
+
+	// Update Report
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/reports/{id}",
+			Summary:       "Update Report",
+			Description:   "Update a report",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActReportCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateReportInput) (*dto.UpdateReportOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.update(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }

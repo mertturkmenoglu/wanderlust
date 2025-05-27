@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
@@ -168,4 +169,43 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) update(ctx context.Context, id string, body dto.UpdateReportInputBody) (*dto.UpdateReportOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	_, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	err = s.db.UpdateReport(ctx, db.UpdateReportParams{
+		ID:          id,
+		Description: pgtype.Text{String: body.Description, Valid: true},
+		Reason:      body.Reason,
+		Resolved:    body.Resolved,
+		ResolvedAt:  pgtype.Timestamptz{Time: time.Now(), Valid: body.Resolved},
+		UpdatedAt:   pgtype.Timestamptz{Time: time.Now(), Valid: true},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update report")
+	}
+
+	report, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdateReportOutput{
+		Body: dto.UpdateReportOutputBody{
+			Report: *report,
+		},
+	}, nil
 }
