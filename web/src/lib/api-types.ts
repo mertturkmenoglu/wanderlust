@@ -4148,11 +4148,12 @@ export interface paths {
             };
         };
         put?: never;
+        post?: never;
         /**
          * Delete Report
          * @description Delete a report
          */
-        post: {
+        delete: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -4185,7 +4186,6 @@ export interface paths {
                 };
             };
         };
-        delete?: never;
         options?: never;
         head?: never;
         /**
