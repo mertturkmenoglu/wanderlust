@@ -12,9 +12,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// GET /reports/search
-// PATCH /reports/{id}
-
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		*app,
@@ -73,6 +70,35 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.list(ctx, input.PaginationQueryParams)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Search Reports
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/reports/search",
+			Summary:       "Search Reports",
+			Description:   "Search reports",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+				middlewares.Authz(grp.API, authz.ActReportCRUD),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.SearchReportsInput) (*dto.SearchReportsOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.search(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)

@@ -12,6 +12,7 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -206,6 +207,161 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateReportIn
 	return &dto.UpdateReportOutput{
 		Body: dto.UpdateReportOutputBody{
 			Report: *report,
+		},
+	}, nil
+}
+
+func (s *Service) findByQuery(ctx context.Context, input *dto.SearchReportsInput) ([]dto.Report, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
+	builder := psql.Select("*").From("reports")
+
+	if input.ReporterID != "" {
+		builder = builder.Where(sq.Eq{"reporter_id": input.ReporterID})
+	}
+
+	if input.ResourceType != "" {
+		builder = builder.Where(sq.Eq{"resource_type": input.ResourceType})
+	}
+
+	if input.Reason != 0 {
+		builder = builder.Where(sq.Eq{"reason": input.Reason})
+	}
+
+	if !input.Resolved {
+		builder = builder.Where(sq.Eq{"resolved": input.Resolved})
+	}
+
+	builder = builder.Offset(uint64(pagination.GetOffset(input.PaginationQueryParams)))
+	builder = builder.Limit(uint64(input.PaginationQueryParams.PageSize))
+	builder = builder.OrderBy("created_at DESC")
+
+	query, args, err := builder.ToSql()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to build query")
+	}
+
+	rows, err := s.pool.Query(ctx, query, args...)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to query database")
+	}
+
+	defer rows.Close()
+
+	var items []db.Report
+
+	for rows.Next() {
+		var i db.Report
+
+		err := rows.Scan(
+			&i.ID,
+			&i.ResourceID,
+			&i.ResourceType,
+			&i.ReporterID,
+			&i.Description,
+			&i.Reason,
+			&i.Resolved,
+			&i.ResolvedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to scan row")
+		}
+
+		items = append(items, i)
+	}
+
+	if err := rows.Err(); err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to scan rows")
+	}
+
+	reports := make([]dto.Report, len(items))
+
+	for i, r := range items {
+		reports[i] = mapper.ToReport(r)
+	}
+
+	return reports, nil
+}
+
+func (s *Service) countByQuery(ctx context.Context, input *dto.SearchReportsInput) (int64, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
+	builder := psql.Select("COUNT(*)").From("reports")
+
+	if input.ReporterID != "" {
+		builder = builder.Where(sq.Eq{"reporter_id": input.ReporterID})
+	}
+
+	if input.ResourceType != "" {
+		builder = builder.Where(sq.Eq{"resource_type": input.ResourceType})
+	}
+
+	if input.Reason != 0 {
+		builder = builder.Where(sq.Eq{"reason": input.Reason})
+	}
+
+	if !input.Resolved {
+		builder = builder.Where(sq.Eq{"resolved": input.Resolved})
+	}
+
+	query, args, err := builder.ToSql()
+
+	if err != nil {
+		sp.RecordError(err)
+		return 0, huma.Error500InternalServerError("Failed to build query")
+	}
+
+	row := s.pool.QueryRow(ctx, query, args...)
+
+	var count int64
+
+	err = row.Scan(&count)
+
+	if err != nil {
+		sp.RecordError(err)
+		return 0, huma.Error500InternalServerError("Failed to scan row")
+	}
+
+	return count, nil
+}
+
+func (s *Service) search(ctx context.Context, input *dto.SearchReportsInput) (*dto.SearchReportsOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	reports, err := s.findByQuery(ctx, input)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	count, err := s.countByQuery(ctx, input)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.SearchReportsOutput{
+		Body: dto.SearchReportsOutputBody{
+			Reports:    reports,
+			Pagination: pagination.Compute(input.PaginationQueryParams, count),
 		},
 	}, nil
 }
