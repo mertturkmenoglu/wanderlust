@@ -81,3 +81,20 @@ type UpdateReportOutput struct {
 type UpdateReportOutputBody struct {
 	Report Report `json:"report"`
 }
+
+type SearchReportsInput struct {
+	PaginationQueryParams
+	ReporterID   string `query:"reporterId" example:"564457817990234127" doc:"ID of the reporter"`
+	ResourceType string `query:"resourceType" example:"poi" doc:"Type of the resource"`
+	Reason       int32  `query:"reason" example:"1" doc:"Reason for the report"`
+	Resolved     bool   `query:"resolved" example:"false" doc:"Whether the report is resolved"`
+}
+
+type SearchReportsOutput struct {
+	Body SearchReportsOutputBody
+}
+
+type SearchReportsOutputBody struct {
+	Reports    []Report       `json:"reports"`
+	Pagination PaginationInfo `json:"pagination"`
+}
