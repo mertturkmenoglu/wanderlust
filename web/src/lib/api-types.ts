@@ -3927,6 +3927,312 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/reports/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Reports
+         * @description Get reports
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReportsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Create Report
+         * @description Create a report
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateReportInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreateReportOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reports/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Reports
+         * @description Search reports
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /**
+                     * @description Page number
+                     * @example 2
+                     */
+                    page?: number;
+                    /**
+                     * @description Page size
+                     * @example 20
+                     */
+                    pageSize?: number;
+                    /**
+                     * @description ID of the reporter
+                     * @example 564457817990234127
+                     */
+                    reporterId?: string;
+                    /**
+                     * @description Type of the resource
+                     * @example poi
+                     */
+                    resourceType?: string;
+                    /**
+                     * @description Reason for the report
+                     * @example 1
+                     */
+                    reason?: number;
+                    /**
+                     * @description Whether the report is resolved
+                     * @example false
+                     */
+                    resolved?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SearchReportsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/reports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Report
+         * @description Get report by ID
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the report
+                     * @example 564457817990234127
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReportByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Delete Report
+         * @description Delete a report
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the report
+                     * @example 564457817990234127
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Report
+         * @description Update a report
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the report
+                     * @example 564457817990234127
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateReportInputBody"];
+                };
+            };
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateReportOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/reviews/": {
         parameters: {
             query?: never;
@@ -6328,6 +6634,32 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        CreateReportInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the report */
+            description: string;
+            /**
+             * Format: int32
+             * @description Reason for the report
+             */
+            reason: number;
+            /** @description ID of the resource */
+            resourceId: string;
+            /** @description Type of the resource */
+            resourceType: string;
+        };
+        CreateReportOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            report: components["schemas"]["Report"];
+        };
         CreateReviewInputBody: {
             /**
              * Format: uri
@@ -6845,6 +7177,23 @@ export interface components {
             /** Format: int64 */
             totalVotes: number;
         };
+        GetReportByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            report: components["schemas"]["Report"];
+        };
+        GetReportsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pagination: components["schemas"]["PaginationInfo"];
+            reports: components["schemas"]["Report"][];
+        };
         GetReviewByIdOutputBody: {
             /**
              * Format: uri
@@ -7350,6 +7699,40 @@ export interface components {
             /** @description Username of the user */
             username: string;
         };
+        Report: {
+            /**
+             * Format: date-time
+             * @description Date the report was created
+             */
+            createdAt: string;
+            /** @description Description of the report */
+            description: string | null;
+            /** @description ID of the report */
+            id: string;
+            /**
+             * Format: int32
+             * @description Reason for the report
+             */
+            reason: number;
+            /** @description ID of the reporter */
+            reporterId: string | null;
+            /** @description Whether the report is resolved */
+            resolved: boolean;
+            /**
+             * Format: date-time
+             * @description Date the report was resolved
+             */
+            resolvedAt: string | null;
+            /** @description ID of the resource */
+            resourceId: string;
+            /** @description Type of the resource */
+            resourceType: string;
+            /**
+             * Format: date-time
+             * @description Date the report was last updated
+             */
+            updatedAt: string;
+        };
         ResetPasswordInputBody: {
             /**
              * Format: uri
@@ -7415,6 +7798,15 @@ export interface components {
             id: string;
             /** @description Name of point of interest */
             name: string;
+        };
+        SearchReportsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pagination: components["schemas"]["PaginationInfo"];
+            reports: components["schemas"]["Report"][];
         };
         SearchUserFollowingOutputBody: {
             /**
@@ -7885,6 +8277,30 @@ export interface components {
             draft: {
                 [key: string]: unknown;
             };
+        };
+        UpdateReportInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Description of the report */
+            description: string;
+            /**
+             * Format: int32
+             * @description Reason for the report
+             */
+            reason: number;
+            /** @description Whether the report is resolved */
+            resolved: boolean;
+        };
+        UpdateReportOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            report: components["schemas"]["Report"];
         };
         UpdateTripAmenitiesInputBody: {
             /**
