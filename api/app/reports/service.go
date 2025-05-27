@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/mail"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
@@ -123,6 +125,13 @@ func (s *Service) create(ctx context.Context, body dto.CreateReportInputBody) (*
 
 	userId := ctx.Value("userId").(string)
 
+	user, err := s.db.GetUserById(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get user")
+	}
+
 	dbRes, err := s.db.CreateReport(ctx, db.CreateReportParams{
 		ID:           s.ID.Flake(),
 		ResourceID:   body.ResourceID,
@@ -142,6 +151,21 @@ func (s *Service) create(ctx context.Context, body dto.CreateReportInputBody) (*
 	if err != nil {
 		sp.RecordError(err)
 		return nil, err
+	}
+
+	err = s.Mail.Send(mail.MailInfo{
+		TemplatePath: "templates/report-acknowledge.html",
+		Subject:      "We receieved your report!",
+		To:           user.Email,
+		Data:         mail.ReportAcknowledgeEmailPayload{},
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		tracing.Slog.Error("Failed to send report acknowledge email",
+			slog.String("reportId", report.ID),
+			slog.Any("error", err),
+		)
 	}
 
 	return &dto.CreateReportOutput{
