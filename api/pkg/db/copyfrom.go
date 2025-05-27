@@ -192,6 +192,43 @@ func (q *Queries) BatchCreatePois(ctx context.Context, arg []BatchCreatePoisPara
 	return q.db.CopyFrom(ctx, []string{"pois"}, []string{"id", "name", "phone", "description", "address_id", "website", "price_level", "accessibility_level", "total_votes", "total_points", "total_favorites", "category_id", "open_times"}, &iteratorForBatchCreatePois{rows: arg})
 }
 
+// iteratorForBatchCreateReports implements pgx.CopyFromSource.
+type iteratorForBatchCreateReports struct {
+	rows                 []BatchCreateReportsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateReports) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateReports) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].ResourceID,
+		r.rows[0].ResourceType,
+		r.rows[0].ReporterID,
+		r.rows[0].Description,
+		r.rows[0].Reason,
+	}, nil
+}
+
+func (r iteratorForBatchCreateReports) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateReports(ctx context.Context, arg []BatchCreateReportsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"reports"}, []string{"id", "resource_id", "resource_type", "reporter_id", "description", "reason"}, &iteratorForBatchCreateReports{rows: arg})
+}
+
 // iteratorForBatchCreateReviewMedia implements pgx.CopyFromSource.
 type iteratorForBatchCreateReviewMedia struct {
 	rows                 []BatchCreateReviewMediaParams

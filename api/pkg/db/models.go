@@ -192,6 +192,19 @@ type Profile struct {
 	CreatedAt         pgtype.Timestamptz
 }
 
+type Report struct {
+	ID           string
+	ResourceID   string
+	ResourceType string
+	ReporterID   pgtype.Text
+	Description  pgtype.Text
+	Reason       int32
+	Resolved     bool
+	ResolvedAt   pgtype.Timestamptz
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
+}
+
 type Review struct {
 	ID        string
 	PoiID     string
