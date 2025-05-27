@@ -62,3 +62,22 @@ type CreateReportOutputBody struct {
 type DeleteReportInput struct {
 	ID string `path:"id" example:"564457817990234127" doc:"ID of the report"`
 }
+
+type UpdateReportInput struct {
+	ID   string `path:"id" example:"564457817990234127" doc:"ID of the report"`
+	Body UpdateReportInputBody
+}
+
+type UpdateReportInputBody struct {
+	Description string `json:"description" example:"Lorem ipsum dolor sit amet" doc:"Description of the report"`
+	Reason      int32  `json:"reason" example:"1" doc:"Reason for the report"`
+	Resolved    bool   `json:"resolved" example:"false" doc:"Whether the report is resolved"`
+}
+
+type UpdateReportOutput struct {
+	Body UpdateReportOutputBody
+}
+
+type UpdateReportOutputBody struct {
+	Report Report `json:"report"`
+}
