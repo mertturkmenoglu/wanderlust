@@ -27,6 +27,14 @@ type Service struct {
 	pool *pgxpool.Pool
 }
 
+func NewService(app *core.Application) *Service {
+	return &Service{
+		App:  app,
+		db:   app.Db.Queries,
+		pool: app.Db.Pool,
+	}
+}
+
 func (s *Service) FindMany(ctx context.Context, ids []string) ([]dto.Poi, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
