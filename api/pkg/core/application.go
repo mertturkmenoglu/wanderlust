@@ -15,7 +15,7 @@ import (
 )
 
 type Application struct {
-	Activities *activities.Activity
+	Activities *activities.ActivityService
 	Db         *db.Db
 	Flake      *sonyflake.Sonyflake
 	Cache      *cache.Cache

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
@@ -382,10 +383,18 @@ func (s *Service) changeFollow(ctx context.Context, otherUsername string) (*dto.
 	}
 
 	if !isFollowing {
-		_ = s.app.Activities.Add(thisUserId, activities.ActivityFollow, activities.FollowPayload{
-			ThisUsername:  thisUsername,
-			OtherUsername: otherUsername,
+		err = s.app.Activities.Add(ctx, activities.Activity{
+			UserID: thisUserId,
+			Type:   activities.ActivityFollow,
+			Payload: activities.FollowPayload{
+				ThisUsername:  thisUsername,
+				OtherUsername: otherUsername,
+			},
 		})
+
+		if err != nil {
+			tracing.Slog.Error("Failed to add follow activity", slog.Any("error", err))
+		}
 	}
 
 	return &dto.FollowUserOutput{

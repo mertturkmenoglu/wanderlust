@@ -153,10 +153,14 @@ func (s *Service) create(ctx context.Context, body dto.CreateReviewInputBody) (*
 
 	r := getRes.Body.Review
 
-	err = s.Activities.Add(userId, activities.ActivityReview, activities.ReviewPayload{
-		PoiName: r.Poi.Name,
-		PoiId:   r.Poi.ID,
-		Rating:  r.Rating,
+	err = s.Activities.Add(ctx, activities.Activity{
+		UserID: userId,
+		Type:   activities.ActivityReview,
+		Payload: activities.ReviewPayload{
+			PoiName: r.Poi.Name,
+			PoiId:   r.Poi.ID,
+			Rating:  r.Rating,
+		},
 	})
 
 	if err != nil {

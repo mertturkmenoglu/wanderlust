@@ -23,7 +23,7 @@ func NewApp() *core.Application {
 	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
 
 	return &core.Application{
-		Activities: activities.NewActivity(cacheSvc),
+		Activities: activities.New(cacheSvc),
 		Db:         db.NewDb(),
 		Flake:      flake,
 		ID:         id.NewGenerator(flake),
