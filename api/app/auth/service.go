@@ -337,9 +337,12 @@ func (s *Service) sendVerificationEmail(ctx context.Context, email string) error
 		code,
 	)
 
-	_, err = s.Tasks.CreateAndEnqueue(tasks.TypeVerifyEmailEmail, tasks.VerifyEmailEmailPayload{
-		Email: user.Email,
-		Url:   url,
+	_, err = s.Tasks.CreateAndEnqueue(tasks.Job{
+		Type: tasks.TypeVerifyEmailEmail,
+		Data: tasks.VerifyEmailEmailPayload{
+			Email: user.Email,
+			Url:   url,
+		},
 	})
 
 	if err != nil {
@@ -423,9 +426,12 @@ func (s *Service) sendForgotPasswordEmail(ctx context.Context, email string) err
 		return huma.Error500InternalServerError("Failed to set verification code in cache")
 	}
 
-	_, err = s.Tasks.CreateAndEnqueue(tasks.TypeForgotPasswordEmail, tasks.ForgotPasswordEmailPayload{
-		Email: user.Email,
-		Code:  code,
+	_, err = s.Tasks.CreateAndEnqueue(tasks.Job{
+		Type: tasks.TypeForgotPasswordEmail,
+		Data: tasks.ForgotPasswordEmailPayload{
+			Email: user.Email,
+			Code:  code,
+		},
 	})
 
 	if err != nil {
