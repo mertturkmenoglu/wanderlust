@@ -84,7 +84,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateDiaryEntryInputBody
 	userId := ctx.Value("userId").(string)
 
 	dbEntry, err := s.db.CreateNewDiaryEntry(ctx, db.CreateNewDiaryEntryParams{
-		ID:               utils.GenerateId(s.Flake),
+		ID:               s.ID.Flake(),
 		UserID:           userId,
 		Title:            body.Title,
 		Description:      "",
