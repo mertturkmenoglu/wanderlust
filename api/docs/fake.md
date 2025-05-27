@@ -35,7 +35,7 @@
 - To prevent frustration, here's a recommended order for generating different types of data (and how many to generate):
   - Amenities
   - Categories
-  - Cities (Run `pkg/db/seed/cities.sql` manually)
+  - Cities
   - Addresses (10K)
   - Users (10K)
   - Points of Interests (10K)
