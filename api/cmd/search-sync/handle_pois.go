@@ -27,12 +27,11 @@ func handlePoiSync() error {
 	}
 
 	searchService := search.New()
-	s := pois.Service{
-		App: &core.Application{
-			Db:    d,
-			Flake: flake,
-		},
-	}
+	s := pois.NewService(&core.Application{
+		Db:    d,
+		Flake: flake,
+	})
+
 	const step int64 = 100
 	ctx := context.Background()
 
