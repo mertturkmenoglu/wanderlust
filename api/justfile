@@ -42,7 +42,7 @@ all: build
 
 # Run fake data generation script
 @fake:
-	go run cmd/fake/*.go
+	go run cmd/fake/*.go -mode=automate
 
 # Generate Go code from SQL schema
 @sqlc:
