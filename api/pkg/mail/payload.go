@@ -22,4 +22,7 @@ type (
 	VerifyEmailPayload struct {
 		Url string
 	}
+
+	ReportAcknowledgeEmailPayload struct {
+	}
 )
