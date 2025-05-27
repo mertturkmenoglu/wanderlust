@@ -6,7 +6,6 @@ import (
 	"wanderlust/pkg/mail"
 
 	"github.com/hibiken/asynq"
-	"github.com/minio/minio-go/v7"
 )
 
 const (
@@ -15,16 +14,32 @@ const (
 	TypeNewLoginAlertEmail  = "email:new-login-alert"
 	TypePasswordResetEmail  = "email:password-reset"
 	TypeVerifyEmailEmail    = "email:verify-email"
-	TypeDeleteDiaryMedia    = "diary:delete-media"
 )
 
-func (t *TasksService) register(mux *asynq.ServeMux) {
-	mux.HandleFunc(TypeForgotPasswordEmail, t.HandleEmailForgotPasswordTask)
-	mux.HandleFunc(TypeNewLoginAlertEmail, t.HandleNewLoginAlertEmailTask)
-	mux.HandleFunc(TypeWelcomeEmail, t.HandleWelcomeEmailTask)
-	mux.HandleFunc(TypePasswordResetEmail, t.HandlePasswordResetEmailTask)
-	mux.HandleFunc(TypeVerifyEmailEmail, t.HandleVerifyEmailEmailTask)
-	mux.HandleFunc(TypeDeleteDiaryMedia, t.HandleDeleteDiaryMediaTask)
+type ForgotPasswordEmailPayload struct {
+	Email string
+	Code  string
+}
+
+type WelcomeEmailPayload struct {
+	Email string
+	Name  string
+}
+
+type NewLoginAlertEmailPayload struct {
+	Email     string
+	Location  string
+	UserAgent string
+}
+
+type PasswordResetEmailPayload struct {
+	Email string
+	Url   string
+}
+
+type VerifyEmailEmailPayload struct {
+	Email string
+	Url   string
 }
 
 func (svc *TasksService) HandleEmailForgotPasswordTask(_ context.Context, t *asynq.Task) error {
@@ -112,24 +127,4 @@ func (ts *TasksService) HandleVerifyEmailEmailTask(_ context.Context, t *asynq.T
 			Url: p.Url,
 		},
 	})
-}
-
-func (ts *TasksService) HandleDeleteDiaryMediaTask(_ context.Context, t *asynq.Task) error {
-	p, err := parse[DeleteDiaryMediaPayload](t.Payload())
-
-	if err != nil {
-		return err
-	}
-
-	const bucket = "diaries"
-
-	for _, name := range p.ObjectNames {
-		err = ts.upload.Client.RemoveObject(context.Background(), bucket, name, minio.RemoveObjectOptions{})
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
