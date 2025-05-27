@@ -140,7 +140,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	// Delete Report
 	huma.Register(grp,
 		huma.Operation{
-			Method:        http.MethodPost,
+			Method:        http.MethodDelete,
 			Path:          "/reports/{id}",
 			Summary:       "Delete Report",
 			Description:   "Delete a report",
