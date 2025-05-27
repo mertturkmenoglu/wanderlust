@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/utils"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func handlePois(count int) error {
-	sf := sonyflake.NewSonyflake(sonyflake.Settings{})
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
 	step := 1000
 
 	if count < step {
@@ -49,8 +50,16 @@ func handlePois(count int) error {
 			addressId := addressIds[idx]
 			totalVotes := int32(gofakeit.Number(1000, 10_000))
 
+			idInt, err := flake.NextID()
+
+			if err != nil {
+				return err
+			}
+
+			id := fmt.Sprintf("%d", idInt)
+
 			arg = append(arg, db.BatchCreatePoisParams{
-				ID:                 utils.GenerateId(sf),
+				ID:                 id,
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
 				Description:        gofakeit.LoremIpsumSentence(32),
