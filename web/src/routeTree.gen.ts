@@ -79,6 +79,7 @@ import { Route as DiaryIdEditMediaIndexImport } from './routes/diary/$id/edit/me
 import { Route as DiaryIdEditLocationsIndexImport } from './routes/diary/$id/edit/locations/index'
 import { Route as DiaryIdEditFriendsIndexImport } from './routes/diary/$id/edit/friends/index'
 import { Route as AdminDashboardUsersVerifyIndexImport } from './routes/_admin/dashboard/users/verify/index'
+import { Route as AdminDashboardReportsIdIndexImport } from './routes/_admin/dashboard/reports/$id/index'
 import { Route as AdminDashboardPoisDraftsIndexImport } from './routes/_admin/dashboard/pois/drafts/index'
 import { Route as AdminDashboardPoisIdIndexImport } from './routes/_admin/dashboard/pois/$id/index'
 import { Route as AdminDashboardCollectionsNewIndexImport } from './routes/_admin/dashboard/collections/new/index'
@@ -515,6 +516,13 @@ const AdminDashboardUsersVerifyIndexRoute =
   AdminDashboardUsersVerifyIndexImport.update({
     id: '/users/verify/',
     path: '/users/verify/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+
+const AdminDashboardReportsIdIndexRoute =
+  AdminDashboardReportsIdIndexImport.update({
+    id: '/reports/$id/',
+    path: '/reports/$id/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
@@ -1172,6 +1180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardPoisDraftsIndexImport
       parentRoute: typeof AdminDashboardImport
     }
+    '/_admin/dashboard/reports/$id/': {
+      id: '/_admin/dashboard/reports/$id/'
+      path: '/reports/$id'
+      fullPath: '/dashboard/reports/$id'
+      preLoaderRoute: typeof AdminDashboardReportsIdIndexImport
+      parentRoute: typeof AdminDashboardImport
+    }
     '/_admin/dashboard/users/verify/': {
       id: '/_admin/dashboard/users/verify/'
       path: '/users/verify'
@@ -1361,6 +1376,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCollectionsNewIndexRoute: typeof AdminDashboardCollectionsNewIndexRoute
   AdminDashboardPoisIdIndexRoute: typeof AdminDashboardPoisIdIndexRoute
   AdminDashboardPoisDraftsIndexRoute: typeof AdminDashboardPoisDraftsIndexRoute
+  AdminDashboardReportsIdIndexRoute: typeof AdminDashboardReportsIdIndexRoute
   AdminDashboardUsersVerifyIndexRoute: typeof AdminDashboardUsersVerifyIndexRoute
   AdminDashboardAmenitiesIdEditIndexRoute: typeof AdminDashboardAmenitiesIdEditIndexRoute
   AdminDashboardCategoriesIdEditIndexRoute: typeof AdminDashboardCategoriesIdEditIndexRoute
@@ -1393,6 +1409,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
     AdminDashboardCollectionsNewIndexRoute,
   AdminDashboardPoisIdIndexRoute: AdminDashboardPoisIdIndexRoute,
   AdminDashboardPoisDraftsIndexRoute: AdminDashboardPoisDraftsIndexRoute,
+  AdminDashboardReportsIdIndexRoute: AdminDashboardReportsIdIndexRoute,
   AdminDashboardUsersVerifyIndexRoute: AdminDashboardUsersVerifyIndexRoute,
   AdminDashboardAmenitiesIdEditIndexRoute:
     AdminDashboardAmenitiesIdEditIndexRoute,
@@ -1531,6 +1548,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/collections/new': typeof AdminDashboardCollectionsNewIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
+  '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/diary/$id/edit/friends': typeof DiaryIdEditFriendsIndexRoute
   '/diary/$id/edit/locations': typeof DiaryIdEditLocationsIndexRoute
@@ -1616,6 +1634,7 @@ export interface FileRoutesByTo {
   '/dashboard/collections/new': typeof AdminDashboardCollectionsNewIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/pois/drafts': typeof AdminDashboardPoisDraftsIndexRoute
+  '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
   '/diary/$id/edit/friends': typeof DiaryIdEditFriendsIndexRoute
   '/diary/$id/edit/locations': typeof DiaryIdEditLocationsIndexRoute
@@ -1708,6 +1727,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/collections/new/': typeof AdminDashboardCollectionsNewIndexRoute
   '/_admin/dashboard/pois/$id/': typeof AdminDashboardPoisIdIndexRoute
   '/_admin/dashboard/pois/drafts/': typeof AdminDashboardPoisDraftsIndexRoute
+  '/_admin/dashboard/reports/$id/': typeof AdminDashboardReportsIdIndexRoute
   '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
   '/diary/$id/edit/friends/': typeof DiaryIdEditFriendsIndexRoute
   '/diary/$id/edit/locations/': typeof DiaryIdEditLocationsIndexRoute
@@ -1801,6 +1821,7 @@ export interface FileRouteTypes {
     | '/dashboard/collections/new'
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
+    | '/dashboard/reports/$id'
     | '/dashboard/users/verify'
     | '/diary/$id/edit/friends'
     | '/diary/$id/edit/locations'
@@ -1885,6 +1906,7 @@ export interface FileRouteTypes {
     | '/dashboard/collections/new'
     | '/dashboard/pois/$id'
     | '/dashboard/pois/drafts'
+    | '/dashboard/reports/$id'
     | '/dashboard/users/verify'
     | '/diary/$id/edit/friends'
     | '/diary/$id/edit/locations'
@@ -1975,6 +1997,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/collections/new/'
     | '/_admin/dashboard/pois/$id/'
     | '/_admin/dashboard/pois/drafts/'
+    | '/_admin/dashboard/reports/$id/'
     | '/_admin/dashboard/users/verify/'
     | '/diary/$id/edit/friends/'
     | '/diary/$id/edit/locations/'
@@ -2156,6 +2179,7 @@ export const routeTree = rootRoute
         "/_admin/dashboard/collections/new/",
         "/_admin/dashboard/pois/$id/",
         "/_admin/dashboard/pois/drafts/",
+        "/_admin/dashboard/reports/$id/",
         "/_admin/dashboard/users/verify/",
         "/_admin/dashboard/amenities/$id/edit/",
         "/_admin/dashboard/categories/$id/edit/",
@@ -2434,6 +2458,10 @@ export const routeTree = rootRoute
     },
     "/_admin/dashboard/pois/drafts/": {
       "filePath": "_admin/dashboard/pois/drafts/index.tsx",
+      "parent": "/_admin/dashboard"
+    },
+    "/_admin/dashboard/reports/$id/": {
+      "filePath": "_admin/dashboard/reports/$id/index.tsx",
       "parent": "/_admin/dashboard"
     },
     "/_admin/dashboard/users/verify/": {
