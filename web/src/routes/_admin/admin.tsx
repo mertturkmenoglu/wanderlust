@@ -21,9 +21,10 @@ const items = [
   { name: 'API Docs', href: 'http://localhost:5000/docs' },
   { name: 'Typesense Dashboard', href: 'http://localhost:3006' },
   { name: 'MinIO Dashboard', href: 'http://localhost:9001' },
-  { name: 'Inbucket', href: 'http://localhost:10000' },
+  { name: 'Mailpit', href: 'http://localhost:8025' },
   { name: 'Asynqmon', href: 'http://localhost:8080' },
   { name: 'Grafana', href: 'http://localhost:3010' },
+  { name: 'Inbucket', href: 'http://localhost:10000', disabled: true },
   { name: 'Jaeger', href: 'http://localhost:16686', disabled: true },
   { name: 'Open Observe', href: 'http://localhost:5080', disabled: true },
 ];
