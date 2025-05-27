@@ -31,6 +31,7 @@ function RouteComponent() {
       <DashboardBreadcrumb
         items={[{ name: 'Reports', href: '/dashboard/reports' }]}
       />
+
       <Separator className="my-2" />
 
       <Suspense
@@ -46,6 +47,25 @@ function RouteComponent() {
   );
 }
 
+const reasons = [
+  {
+    id: 1,
+    name: 'Spam',
+  },
+  {
+    id: 2,
+    name: 'Inappropriate',
+  },
+  {
+    id: 3,
+    name: 'Fake',
+  },
+  {
+    id: 4,
+    name: 'Other',
+  },
+];
+
 function Content() {
   const search = Route.useSearch();
   const query = api.useSuspenseQuery('get', '/api/v2/reports/search', {
@@ -53,6 +73,9 @@ function Content() {
       query: search,
     },
   });
+
+  const reason = (r: number) =>
+    reasons.find((x) => x.id === r)?.name ?? 'Other';
 
   return (
     <div>
@@ -68,8 +91,8 @@ function Content() {
             (r.description?.length ?? 0) > 10
               ? r.description?.slice(0, 10) + '...'
               : r.description,
-          reason: r.reason,
-          resolved: r.resolved,
+          reason: reason(r.reason),
+          resolved: r.resolved ? 'Yes' : 'No',
           resolvedAt:
             r.resolvedAt !== null
               ? `${formatDistanceToNow(new Date(r.resolvedAt))} ago`
