@@ -49,7 +49,8 @@ UPDATE reports SET
   description = $2,
   reason = $3,
   resolved = $4,
-  resolved_at = $5
+  resolved_at = $5,
+  updated_at = $6
 WHERE id = $1;
 
 -- name: DeleteReport :exec

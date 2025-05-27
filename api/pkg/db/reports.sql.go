@@ -162,7 +162,8 @@ UPDATE reports SET
   description = $2,
   reason = $3,
   resolved = $4,
-  resolved_at = $5
+  resolved_at = $5,
+  updated_at = $6
 WHERE id = $1
 `
 
@@ -172,6 +173,7 @@ type UpdateReportParams struct {
 	Reason      int32
 	Resolved    bool
 	ResolvedAt  pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
 }
 
 func (q *Queries) UpdateReport(ctx context.Context, arg UpdateReportParams) error {
@@ -181,6 +183,7 @@ func (q *Queries) UpdateReport(ctx context.Context, arg UpdateReportParams) erro
 		arg.Reason,
 		arg.Resolved,
 		arg.ResolvedAt,
+		arg.UpdatedAt,
 	)
 	return err
 }
