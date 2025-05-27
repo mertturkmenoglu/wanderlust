@@ -41,6 +41,9 @@ ORDER BY created_at DESC
 OFFSET $1
 LIMIT $2;
 
+-- name: CountReports :one
+SELECT COUNT(*) FROM reports;
+
 -- name: UpdateReport :exec
 UPDATE reports SET
   description = $2,

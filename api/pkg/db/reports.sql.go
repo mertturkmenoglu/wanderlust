@@ -20,6 +20,17 @@ type BatchCreateReportsParams struct {
 	Reason       int32
 }
 
+const countReports = `-- name: CountReports :one
+SELECT COUNT(*) FROM reports
+`
+
+func (q *Queries) CountReports(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countReports)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createReport = `-- name: CreateReport :one
 INSERT INTO reports (
   id,
