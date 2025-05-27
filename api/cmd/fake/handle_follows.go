@@ -10,8 +10,13 @@ import (
 	"github.com/pterm/pterm"
 )
 
-func handleFollows() error {
-	path, _ := pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin user ids")
+func handleFollows(path string) error {
+	isInteractive := path == ""
+
+	if path == "" {
+		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin user ids")
+	}
+
 	userIds, err := readUserIdsFromFile(path)
 
 	if err != nil {
@@ -23,10 +28,12 @@ func handleFollows() error {
 
 	tryFollowing(userIds)
 
-	ans, _ := pterm.DefaultInteractiveTextInput.Show("Inserted to follows table. Do you want to update users table? [Y/n]")
+	if isInteractive {
+		ans, _ := pterm.DefaultInteractiveTextInput.Show("Inserted to follows table. Do you want to update users table? [Y/n]")
 
-	if ans == "n" || ans == "N" {
-		return nil
+		if ans == "n" || ans == "N" {
+			return nil
+		}
 	}
 
 	logger.Trace("Updating users table")

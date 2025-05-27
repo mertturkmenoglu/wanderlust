@@ -12,7 +12,7 @@ import (
 	"github.com/pterm/pterm"
 )
 
-func handleAmenitiesPois() error {
+func handleAmenitiesPois(path string) error {
 	ctx := context.Background()
 	d := GetDb()
 
@@ -22,7 +22,10 @@ func handleAmenitiesPois() error {
 		return err
 	}
 
-	path, _ := pterm.DefaultInteractiveTextInput.Show("Enter path for the file that contains POI ids")
+	if path == "" {
+		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file that contains POI ids")
+	}
+
 	f, err := os.Open(path)
 
 	if err != nil {

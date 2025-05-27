@@ -48,8 +48,11 @@ func handleMedia() error {
 	return createMediaForPoi(poiId, count)
 }
 
-func handleMediaForManyPois() error {
-	path, _ := pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin POI ids")
+func handleMediaForManyPois(path string) error {
+	if path == "" {
+		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin POI ids")
+	}
+
 	f, err := os.Open(path)
 
 	if err != nil {
