@@ -2,6 +2,7 @@ import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
 import {
+  ClipboardListIcon,
   ComponentIcon,
   LibraryIcon,
   MapIcon,
@@ -57,6 +58,12 @@ function RouteComponent() {
           href="/dashboard/collections"
           text="Collections"
           icon={LibraryIcon}
+        />
+
+        <Item
+          href="/dashboard/reports"
+          text="Reports"
+          icon={ClipboardListIcon}
         />
       </div>
     </div>
