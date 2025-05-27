@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"slices"
 	"strconv"
@@ -69,6 +70,27 @@ func main() {
 
 	cfg.InitConfigurationStruct()
 
+	modePtr := flag.String("mode", "interactive", "Mode to run the script. Can be interactive or automate")
+	flag.Parse()
+
+	mode := *modePtr
+
+	if mode != "interactive" && mode != "automate" {
+		logger.Fatal("Invalid mode. Terminating.", logger.Args("mode", mode))
+	}
+
+	if mode == "automate" {
+		err := automate()
+
+		if err != nil {
+			logger.Fatal("Encountered error. Terminating", logger.Args("error", err.Error()))
+		}
+
+		logger.Info("Completed all generations successfully")
+
+		return
+	}
+
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")
 
@@ -115,17 +137,17 @@ func generateAndInsert(genType string, count int) error {
 	case "amenities":
 		return handleAmenities()
 	case "amenities-pois":
-		return handleAmenitiesPois()
+		return handleAmenitiesPois("")
 	case "bookmarks":
 		return fmt.Errorf("not implemented")
 	case "categories":
 		return handleCategories()
 	case "cities":
-		return fmt.Errorf("manually run pkg/db/seed/cities.sql")
+		return handleCities()
 	case "favorites":
 		return fmt.Errorf("not implemented")
 	case "follows":
-		return handleFollows()
+		return handleFollows("")
 	case "lists":
 		return fmt.Errorf("not implemented")
 	case "list-items":
@@ -133,7 +155,7 @@ func generateAndInsert(genType string, count int) error {
 	case "media":
 		return handleMedia()
 	case "media-many":
-		return handleMediaForManyPois()
+		return handleMediaForManyPois("")
 	case "point-of-interests":
 		return handlePois(count)
 	case "reviews":
