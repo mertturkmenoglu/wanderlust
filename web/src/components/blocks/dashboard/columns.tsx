@@ -42,6 +42,62 @@ export const poisCols: ColumnDef<Poi>[] = [
   },
 ];
 
+export type Report = {
+  id: string;
+  resourceId: string;
+  resourceType: string;
+  reporterId: string | null;
+  description: string | null;
+  reason: number;
+  resolved: boolean;
+  resolvedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const reportsCols: ColumnDef<Report>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+  },
+  {
+    accessorKey: 'resourceId',
+    header: 'Resource ID',
+  },
+  {
+    accessorKey: 'resourceType',
+    header: 'Resource Type',
+  },
+  {
+    accessorKey: 'reporterId',
+    header: 'Reporter ID',
+  },
+  {
+    accessorKey: 'description',
+    header: 'Description',
+  },
+  {
+    accessorKey: 'reason',
+    header: 'Reason',
+  },
+  {
+    accessorKey: 'resolved',
+    header: 'Resolved',
+  },
+  {
+    accessorKey: 'resolvedAt',
+    header: 'Resolved At',
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+  },
+  {
+    accessorKey: 'updatedAt',
+    header: 'Updated At',
+  },
+];
+
 export type PoiDraft = {
   id: string;
   name: string;
