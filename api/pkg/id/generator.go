@@ -26,7 +26,7 @@ func (g *Generator) Flake() string {
 	return generateFlake(g.flake)
 }
 
-func (g *Generator) Base32(n int) string {
+func (g *Generator) Base62(n int) string {
 	return random.FromBase62(n)
 }
 
