@@ -52,15 +52,17 @@ export function Menu({ review }: Props) {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onClick={() =>
-                mutation.mutate({
-                  params: {
-                    path: {
-                      id: review.id,
+              onClick={() => {
+                if (confirm('Are you sure you want to delete this review?')) {
+                  mutation.mutate({
+                    params: {
+                      path: {
+                        id: review.id,
+                      },
                     },
-                  },
-                })
-              }
+                  });
+                }
+              }}
             >
               Delete
               <DropdownMenuShortcut>
