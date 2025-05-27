@@ -48,8 +48,8 @@ export type Report = {
   resourceType: string;
   reporterId: string | null;
   description: string | null;
-  reason: number;
-  resolved: boolean;
+  reason: string;
+  resolved: string;
   resolvedAt: string | null;
   createdAt: string;
   updatedAt: string;
