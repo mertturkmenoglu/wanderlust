@@ -8,7 +8,19 @@ import {
 } from '@/components/ui/dialog';
 import { getRouteApi } from '@tanstack/react-router';
 
-function fmt(s: string): string {
+function getFormatter(s: string): (x: string) => string {
+  if (s.includes(',')) {
+    return legacyFormatter;
+  }
+
+  return formatter;
+}
+
+function formatter(s: string): string {
+  return s;
+}
+
+function legacyFormatter(s: string): string {
   let a = s.split(', ')[1];
   if (a === undefined) {
     return '';
@@ -54,6 +66,23 @@ export default function OpenHoursDialog() {
   } = route.useLoaderData();
   const allKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
   const keys = allKeys.filter((k) => !!data[k]);
+  const moo = allKeys.map((key) => {
+    if (!keys.includes(key)) {
+      return {
+        readable: keyToReadableDay(key),
+        info: 'Closed',
+      };
+    }
+
+    const o = data[key]?.opensAt ?? '';
+    const c = data[key]?.closesAt ?? '';
+    const fmt = getFormatter(o);
+
+    return {
+      readable: keyToReadableDay(key),
+      info: `${fmt(o)} - ${fmt(c)}`,
+    };
+  });
 
   return (
     <Dialog>
@@ -70,17 +99,13 @@ export default function OpenHoursDialog() {
           <DialogTitle>Open Hours</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col space-y-2 text-sm">
-          {allKeys.map((key) => (
+          {moo.map(({ readable, info }, i) => (
             <div
-              key={key}
+              key={i}
               className="grid grid-cols-2"
             >
-              <div className="font-semibold">{keyToReadableDay(key)}</div>
-              <div className="text-right">
-                {keys.includes(key)
-                  ? `${fmt(data[key]?.opensAt ?? '')} - ${fmt(data[key]?.closesAt ?? '')}`
-                  : 'Closed'}
-              </div>
+              <div className="font-semibold">{readable}</div>
+              <div className="text-right">{info}</div>
             </div>
           ))}
         </div>
