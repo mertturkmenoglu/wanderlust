@@ -30,9 +30,7 @@ export default function Header() {
       <div>
         <h3 className="font-bold text-xl text-primary">Reviews</h3>
         <div className="my-2 flex items-center gap-4">
-          <span className="font-bold text-6xl text-primary">
-            {computeRating(poi.totalPoints, poi.totalVotes)}
-          </span>
+          <span className="font-bold text-6xl text-primary">{rating}</span>
           <div>
             <FormattedRating
               rating={parseFloat(rating)}
