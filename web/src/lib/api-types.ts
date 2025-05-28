@@ -3985,6 +3985,64 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/pois/{id}/info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Point of Interest General Information
+         * @description Update a point of interest general information
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdatePoiInfoInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiInfoOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/reports/": {
         parameters: {
             query?: never;
@@ -8371,6 +8429,44 @@ export interface components {
             draft: {
                 [key: string]: unknown;
             };
+        };
+        UpdatePoiInfoInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description Accessibility level
+             */
+            accessibilityLevel: number;
+            /**
+             * Format: int32
+             * @description ID of category
+             */
+            categoryId: number;
+            /** @description Description of point of interest */
+            description: string;
+            /** @description Name of point of interest */
+            name: string;
+            /** @description Phone number */
+            phone: string | null;
+            /**
+             * Format: int32
+             * @description Price level
+             */
+            priceLevel: number;
+            /** @description Website */
+            website: string | null;
+        };
+        UpdatePoiInfoOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poi: components["schemas"]["Poi"];
         };
         UpdateReportInputBody: {
             /**
