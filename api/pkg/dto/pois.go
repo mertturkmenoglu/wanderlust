@@ -1,6 +1,10 @@
 package dto
 
-import "time"
+import (
+	"time"
+
+	"github.com/danielgtaylor/huma/v2"
+)
 
 type OpenHours struct {
 	OpensAt  string `json:"opensAt" example:"10:00" doc:"Opening time of POI in 24H format"`
@@ -220,5 +224,67 @@ type UpdatePoiAmenitiesOutput struct {
 }
 
 type UpdatePoiAmenitiesOutputBody struct {
+	Poi Poi `json:"poi"`
+}
+
+type UpdatePoiHoursInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976"`
+	Body UpdatePoiHoursInputBody
+}
+
+type UpdatePoiHoursInputBody struct {
+	Hours []UpdatePoiHoursHour `json:"hours" doc:"Hours" required:"true" minItems:"0" maxItems:"7"`
+}
+
+type UpdatePoiHoursHour struct {
+	Day      string `json:"day" example:"mon" doc:"Day" required:"true" enum:"mon,tue,wed,thu,fri,sat,sun"`
+	OpensAt  string `json:"opensAt" example:"10:00" doc:"Opens at" required:"true"`
+	ClosesAt string `json:"closesAt" example:"18:00" doc:"Closes at" required:"true"`
+}
+
+func (body *UpdatePoiHoursInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+	set := make(map[string]bool)
+
+	for _, entry := range body.Hours {
+		day := entry.Day
+		_, has := set[day]
+
+		if has {
+			return []error{&huma.ErrorDetail{
+				Message:  "Duplicate day",
+				Location: prefix.With("hours"),
+				Value:    day,
+			}}
+		}
+
+		set[day] = true
+		open := entry.OpensAt
+		close := entry.ClosesAt
+
+		if _, err := time.Parse("15:04", open); err != nil {
+			return []error{&huma.ErrorDetail{
+				Message:  "Invalid opening time",
+				Location: prefix.With("hours"),
+				Value:    open,
+			}}
+		}
+
+		if _, err := time.Parse("15:04", close); err != nil {
+			return []error{&huma.ErrorDetail{
+				Message:  "Invalid closing time",
+				Location: prefix.With("hours"),
+				Value:    close,
+			}}
+		}
+	}
+
+	return nil
+}
+
+type UpdatePoiHoursOutput struct {
+	Body UpdatePoiHoursOutputBody
+}
+
+type UpdatePoiHoursOutputBody struct {
 	Poi Poi `json:"poi"`
 }
