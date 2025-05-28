@@ -4,9 +4,11 @@ import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import Amenities from './-components/amenities';
 import Breadcrumb from './-components/breadcrumb';
+import { CityInfo } from './-components/city-info';
 import { Description } from './-components/description';
 import { Header } from './-components/header';
 import { ImageGrid } from './-components/image-grid';
+import { Information } from './-components/information';
 import Map from './-components/map';
 import NearbyPois from './-components/nearby-pois';
 import Reviews from './-components/reviews';
@@ -44,7 +46,15 @@ function RouteComponent() {
 
       <Separator className="my-4" />
 
-      <Amenities />
+      <CityInfo className="my-4" />
+
+      <Separator className="my-4" />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-2 my-4">
+        <Amenities className="col-span-2" />
+
+        <Information />
+      </div>
 
       <Separator className="my-4" />
 

@@ -13,7 +13,7 @@ export function CityInfo({ className }: Props) {
   return (
     <div className={cn(className)}>
       <div className="grid grid-cols-5 gap-8">
-        <div className="col-span-5 lg:col-span-2">
+        <div className="col-span-5 md:col-span-2">
           <img
             src={ipx(poi.address.city.image.url, 'f_webp,w_1024')}
             alt=""
@@ -21,7 +21,7 @@ export function CityInfo({ className }: Props) {
           />
         </div>
 
-        <div className="col-span-5 lg:col-span-3">
+        <div className="col-span-5 md:col-span-3">
           <h2 className="text-6xl font-bold">{poi.address.city.name}</h2>
           <div className="mt-2 text-sm text-muted-foreground">
             {poi.address.city.state.name}/{poi.address.city.country.name}
