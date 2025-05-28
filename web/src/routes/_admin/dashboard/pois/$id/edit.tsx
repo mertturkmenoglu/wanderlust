@@ -1,9 +1,11 @@
 import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import Spinner from '@/components/kit/spinner';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
+import { Suspense } from 'react';
 
 export const Route = createFileRoute('/_admin/dashboard/pois/$id/edit')({
   component: RouteComponent,
@@ -94,7 +96,15 @@ function RouteComponent() {
         </Link>
       </div>
 
-      <Outlet />
+      <Suspense
+        fallback={
+          <div>
+            <Spinner className="size-8 mx-auto my-16" />
+          </div>
+        }
+      >
+        <Outlet />
+      </Suspense>
     </div>
   );
 }
