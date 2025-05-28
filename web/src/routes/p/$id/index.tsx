@@ -10,7 +10,7 @@ import { Header } from './-components/header';
 import { ImageGrid } from './-components/image-grid';
 import { Information } from './-components/information';
 import Map from './-components/map';
-import NearbyPois from './-components/nearby-pois';
+import { NearbyPois } from './-components/nearby-pois';
 import Reviews from './-components/reviews';
 
 export const Route = createFileRoute('/p/$id/')({
@@ -58,7 +58,7 @@ function RouteComponent() {
 
       <Separator className="my-4" />
 
-      <NearbyPois />
+      <NearbyPois className="my-4" />
 
       <Separator className="my-4" />
 
