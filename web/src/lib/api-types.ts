@@ -4043,6 +4043,64 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/pois/{id}/hours": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Point of Interest Hours
+         * @description Update a point of interest hours
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdatePoiHoursInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiHoursOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/pois/{id}/info": {
         parameters: {
             query?: never;
@@ -8504,6 +8562,34 @@ export interface components {
             draft: {
                 [key: string]: unknown;
             };
+        };
+        UpdatePoiHoursHour: {
+            /** @description Closes at */
+            closesAt: string;
+            /**
+             * @description Day
+             * @enum {string}
+             */
+            day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+            /** @description Opens at */
+            opensAt: string;
+        };
+        UpdatePoiHoursInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Hours */
+            hours: components["schemas"]["UpdatePoiHoursHour"][];
+        };
+        UpdatePoiHoursOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poi: components["schemas"]["Poi"];
         };
         UpdatePoiInfoInputBody: {
             /**
