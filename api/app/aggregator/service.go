@@ -3,7 +3,6 @@ package aggregator
 import (
 	"context"
 	"slices"
-	"sync"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
@@ -11,6 +10,7 @@ import (
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
+	"golang.org/x/sync/errgroup"
 )
 
 type Service struct {
@@ -64,60 +64,41 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 	defer sp.End()
 
 	var (
-		wg           sync.WaitGroup
-		dbNew        []string
-		dbPopular    []string
-		dbFeatured   []string
-		dbFavorites  []string
-		errNew       error
-		errPopular   error
-		errFeatured  error
-		errFavorites error
+		dbNew       []string
+		dbPopular   []string
+		dbFeatured  []string
+		dbFavorites []string
 	)
 
-	wg.Add(4)
+	g, gctx := errgroup.WithContext(ctx)
 
-	go func() {
-		defer wg.Done()
-		dbNew, errNew = s.getNewPoisIds(ctx)
-	}()
+	g.Go(func() error {
+		var err error
+		dbNew, err = s.getNewPoisIds(gctx)
+		return err
+	})
 
-	go func() {
-		defer wg.Done()
-		dbPopular, errPopular = s.getPopularPoisIds(ctx)
-	}()
+	g.Go(func() error {
+		var err error
+		dbPopular, err = s.getPopularPoisIds(gctx)
+		return err
+	})
 
-	go func() {
-		defer wg.Done()
-		dbFeatured, errFeatured = s.getFeaturedPoisIds(ctx)
-	}()
+	g.Go(func() error {
+		var err error
+		dbFeatured, err = s.getFeaturedPoisIds(gctx)
+		return err
+	})
 
-	go func() {
-		defer wg.Done()
-		dbFavorites, errFavorites = s.getFavoritePoisIds(ctx)
-	}()
+	g.Go(func() error {
+		var err error
+		dbFavorites, err = s.getFavoritePoisIds(gctx)
+		return err
+	})
 
-	// Wait for all queries to finish
-	wg.Wait()
-
-	if errNew != nil {
-		sp.RecordError(errNew)
-		return nil, errNew
-	}
-
-	if errPopular != nil {
-		sp.RecordError(errPopular)
-		return nil, errPopular
-	}
-
-	if errFeatured != nil {
-		sp.RecordError(errFeatured)
-		return nil, errFeatured
-	}
-
-	if errFavorites != nil {
-		sp.RecordError(errFavorites)
-		return nil, errFavorites
+	if err := g.Wait(); err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get points of interests")
 	}
 
 	totalCapacity := len(dbNew) + len(dbPopular) + len(dbFeatured) + len(dbFavorites)
@@ -141,27 +122,19 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 	poisFavorites := make([]dto.Poi, 0, len(dbFavorites))
 
 	for _, v := range allPois {
-		if slices.ContainsFunc(dbNew, func(x string) bool {
-			return x == v.ID
-		}) {
+		if contains(dbNew, v.ID) {
 			poisNew = append(poisNew, v)
 		}
 
-		if slices.ContainsFunc(dbPopular, func(x string) bool {
-			return x == v.ID
-		}) {
+		if contains(dbPopular, v.ID) {
 			poisPopular = append(poisPopular, v)
 		}
 
-		if slices.ContainsFunc(dbFeatured, func(x string) bool {
-			return x == v.ID
-		}) {
+		if contains(dbFeatured, v.ID) {
 			poisFeatured = append(poisFeatured, v)
 		}
 
-		if slices.ContainsFunc(dbFavorites, func(x string) bool {
-			return x == v.ID
-		}) {
+		if contains(dbFavorites, v.ID) {
 			poisFavorites = append(poisFavorites, v)
 		}
 	}
@@ -174,6 +147,12 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 			Favorites: poisFavorites,
 		},
 	}, nil
+}
+
+func contains(s []string, e string) bool {
+	return slices.ContainsFunc(s, func(x string) bool {
+		return x == e
+	})
 }
 
 func (s *Service) getPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, error) {
