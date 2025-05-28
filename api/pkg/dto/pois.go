@@ -182,3 +182,26 @@ type UpdatePoiAddressOutput struct {
 type UpdatePoiAddressOutputBody struct {
 	Poi Poi `json:"poi"`
 }
+
+type UpdatePoiInfoInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976"`
+	Body UpdatePoiInfoInputBody
+}
+
+type UpdatePoiInfoInputBody struct {
+	Name               string  `json:"name" example:"The Great Wall of China" doc:"Name of point of interest"`
+	CategoryID         int16   `json:"categoryId" example:"1" doc:"ID of category"`
+	Description        string  `json:"description" example:"The Great Wall of China is a series of fortifications." doc:"Description of point of interest"`
+	Phone              *string `json:"phone" example:"+989123456789" doc:"Phone number"`
+	Website            *string `json:"website" example:"https://example.com" doc:"Website"`
+	AccessibilityLevel int16   `json:"accessibilityLevel" example:"2" doc:"Accessibility level"`
+	PriceLevel         int16   `json:"priceLevel" example:"2" doc:"Price level"`
+}
+
+type UpdatePoiInfoOutput struct {
+	Body UpdatePoiInfoOutputBody
+}
+
+type UpdatePoiInfoOutputBody struct {
+	Poi Poi `json:"poi"`
+}
