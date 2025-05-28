@@ -160,3 +160,25 @@ type PublishPoiDraftOutput struct {
 type PublishPoiDraftOutputBody struct {
 	ID string `json:"id" example:"7323488942953598976" doc:"ID of draft"`
 }
+
+type UpdatePoiAddressInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976"`
+	Body UpdatePoiAddressInputBody
+}
+
+type UpdatePoiAddressInputBody struct {
+	CityID     int32   `json:"cityId" example:"1234" doc:"ID of city"`
+	Line1      string  `json:"line1" example:"Example Street" doc:"Line 1"`
+	Line2      *string `json:"line2" example:"Example Street" doc:"Line 2"`
+	PostalCode *string `json:"postalCode" example:"12345" doc:"Postal code"`
+	Lat        float64 `json:"lat" example:"12.3456" doc:"Latitude"`
+	Lng        float64 `json:"lng" example:"12.3456" doc:"Longitude"`
+}
+
+type UpdatePoiAddressOutput struct {
+	Body UpdatePoiAddressOutputBody
+}
+
+type UpdatePoiAddressOutputBody struct {
+	Poi Poi `json:"poi"`
+}
