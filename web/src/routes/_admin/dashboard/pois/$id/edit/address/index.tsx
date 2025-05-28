@@ -1,3 +1,5 @@
+import Spinner from '@/components/kit/spinner';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -14,10 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -40,6 +44,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
+  const invalidator = useInvalidator();
   const {
     data: { cities },
   } = api.useSuspenseQuery('get', '/api/v2/cities/');
@@ -58,6 +63,17 @@ function RouteComponent() {
     },
   });
 
+  const updateAddressMutation = api.useMutation(
+    'patch',
+    '/api/v2/pois/{id}/address',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Address updated');
+      },
+    },
+  );
+
   return (
     <div>
       <h3 className="my-4 text-lg font-medium">
@@ -67,7 +83,18 @@ function RouteComponent() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((data) => {
-            console.log(data);
+            updateAddressMutation.mutate({
+              params: {
+                path: {
+                  id: poi.id,
+                },
+              },
+              body: {
+                ...data.address,
+                line2: data.address.line2 ?? null,
+                postalCode: data.address.postalCode ?? null,
+              },
+            });
           })}
           className="mt-8 grid grid-cols-1 gap-4 px-0 mx-auto md:grid-cols-2"
         >
@@ -192,6 +219,15 @@ function RouteComponent() {
               </FormItem>
             )}
           />
+
+          <div className="col-span-full flex justify-end">
+            <Button disabled={updateAddressMutation.isPending}>
+              {updateAddressMutation.isPending && (
+                <Spinner className="size-4" />
+              )}
+              Update
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
