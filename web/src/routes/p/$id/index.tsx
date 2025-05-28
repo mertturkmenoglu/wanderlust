@@ -5,9 +5,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import Amenities from './-components/amenities';
 import Breadcrumb from './-components/breadcrumb';
 import { Description } from './-components/description';
-import { ImageGrid } from './-components/image-grid';
 import { Header } from './-components/header';
-import MapContainer from './-components/map-container';
+import { ImageGrid } from './-components/image-grid';
+import Map from './-components/map';
 import NearbyPois from './-components/nearby-pois';
 import Reviews from './-components/reviews';
 
@@ -40,9 +40,7 @@ function RouteComponent() {
 
       <Separator className="my-4" />
 
-      <div className="w-full">
-        <MapContainer />
-      </div>
+      <Map />
 
       <Separator className="my-4" />
 
