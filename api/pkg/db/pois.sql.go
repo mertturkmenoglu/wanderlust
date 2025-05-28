@@ -168,6 +168,16 @@ func (q *Queries) CreatePoiMedia(ctx context.Context, arg CreatePoiMediaParams) 
 	return i, err
 }
 
+const deletePoiAllAmenities = `-- name: DeletePoiAllAmenities :exec
+DELETE FROM amenities_pois
+WHERE poi_id = $1
+`
+
+func (q *Queries) DeletePoiAllAmenities(ctx context.Context, poiID string) error {
+	_, err := q.db.Exec(ctx, deletePoiAllAmenities, poiID)
+	return err
+}
+
 const getFavoritePois = `-- name: GetFavoritePois :many
 SELECT
   pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,

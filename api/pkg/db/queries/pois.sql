@@ -269,3 +269,7 @@ SET
   accessibility_level = $6,
   price_level = $7
 WHERE id = $8;
+
+-- name: DeletePoiAllAmenities :exec
+DELETE FROM amenities_pois
+WHERE poi_id = $1;
