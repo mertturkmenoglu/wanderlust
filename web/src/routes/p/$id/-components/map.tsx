@@ -48,13 +48,6 @@ export default function Map() {
           url={url}
         />
       </MapContainer>
-
-      {/* <Separator className="my-4" />
-
-      <div className="mt-4">
-        <div className="text-2xl font-medium">{poi.address.city.name}</div>
-      </div> */}
-      {/* <pre>{JSON.stringify(poi.address, null, 2)}</pre> */}
     </div>
   );
 }
