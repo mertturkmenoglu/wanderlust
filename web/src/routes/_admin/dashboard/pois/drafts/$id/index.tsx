@@ -8,7 +8,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import StepsIndicator from './-steps-indicator';
-import Step4 from './-steps/step-4';
 import Step5 from './-steps/step-5';
 import Step6 from './-steps/step-6';
 
@@ -100,7 +99,6 @@ function RouteComponent() {
         <StepsIndicator draftId={draft.id as string} />
       </div>
 
-      {step === 4 && <Step4 />}
       {step === 5 && <Step5 />}
       {step === 6 && <Step6 />}
     </div>
