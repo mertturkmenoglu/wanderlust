@@ -257,3 +257,15 @@ LEFT JOIN LATERAL (
 ) amenities_agg ON true
 
 WHERE pois.id = ANY($1::TEXT[]);
+
+-- name: UpdatePoiInfo :exec
+UPDATE pois
+SET
+  name = $1,
+  category_id = $2,
+  description = $3,
+  phone = $4,
+  website = $5,
+  accessibility_level = $6,
+  price_level = $7
+WHERE id = $8;
