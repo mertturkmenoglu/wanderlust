@@ -205,3 +205,20 @@ type UpdatePoiInfoOutput struct {
 type UpdatePoiInfoOutputBody struct {
 	Poi Poi `json:"poi"`
 }
+
+type UpdatePoiAmenitiesInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976"`
+	Body UpdatePoiAmenitiesInputBody
+}
+
+type UpdatePoiAmenitiesInputBody struct {
+	AmenityIds []int32 `json:"amenityIds" doc:"IDs of amenities" required:"true" uniqueItems:"true" minItems:"0" maxItems:"64"`
+}
+
+type UpdatePoiAmenitiesOutput struct {
+	Body UpdatePoiAmenitiesOutputBody
+}
+
+type UpdatePoiAmenitiesOutputBody struct {
+	Poi Poi `json:"poi"`
+}
