@@ -95,3 +95,38 @@ func (q *Queries) RandSelectAddresses(ctx context.Context, limit int32) ([]int32
 	}
 	return items, nil
 }
+
+const updateAddress = `-- name: UpdateAddress :exec
+UPDATE addresses
+SET
+  city_id = $1,
+  line1 = $2,
+  line2 = $3,
+  postal_code = $4,
+  lat = $5,
+  lng = $6
+WHERE id = $7
+`
+
+type UpdateAddressParams struct {
+	CityID     int32
+	Line1      string
+	Line2      pgtype.Text
+	PostalCode pgtype.Text
+	Lat        float64
+	Lng        float64
+	ID         int32
+}
+
+func (q *Queries) UpdateAddress(ctx context.Context, arg UpdateAddressParams) error {
+	_, err := q.db.Exec(ctx, updateAddress,
+		arg.CityID,
+		arg.Line1,
+		arg.Line2,
+		arg.PostalCode,
+		arg.Lat,
+		arg.Lng,
+		arg.ID,
+	)
+	return err
+}

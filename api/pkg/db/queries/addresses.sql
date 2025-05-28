@@ -37,3 +37,14 @@ SELECT id
 FROM addresses
 ORDER BY RANDOM()
 LIMIT $1;
+
+-- name: UpdateAddress :exec
+UPDATE addresses
+SET
+  city_id = $1,
+  line1 = $2,
+  line2 = $3,
+  postal_code = $4,
+  lat = $5,
+  lng = $6
+WHERE id = $7;
