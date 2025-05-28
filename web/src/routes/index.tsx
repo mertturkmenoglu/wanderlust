@@ -5,34 +5,21 @@ import QuickActions from '@/components/blocks/quick-actions';
 import Search from '@/components/blocks/search';
 import TagNavigation from '@/components/blocks/tag-navigation';
 import VerticalBanner from '@/components/blocks/vertical-banner';
+import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useContext } from 'react';
+import { Suspense, useContext } from 'react';
 
 export const Route = createFileRoute('/')({
   component: App,
-  loader: async ({ context }) => {
-    const q1 = await context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/aggregator/home'),
-    );
-    const q2 = await context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/cities/featured'),
-    );
-
-    return { aggregations: q1, cities: q2 };
-  },
 });
 
 function App() {
   const auth = useContext(AuthContext);
-  const {
-    aggregations,
-    cities: { cities },
-  } = Route.useLoaderData();
   const isAuthenticated = !auth.isLoading && auth.user !== null;
 
   return (
@@ -53,7 +40,32 @@ function App() {
           className="my-8"
         />
       )}
+      <Suspense
+        fallback={
+          <div className="max-w-7xl mx-auto my-16">
+            <Spinner className="size-4 mx-auto" />
+          </div>
+        }
+      >
+        <Content />
+      </Suspense>
+    </div>
+  );
+}
 
+function Content() {
+  const { data: aggregations } = api.useSuspenseQuery(
+    'get',
+    '/api/v2/aggregator/home',
+  );
+
+  const { data: cities } = api.useSuspenseQuery(
+    'get',
+    '/api/v2/cities/featured',
+  );
+
+  return (
+    <>
       <div className="flex items-baseline">
         <h2 className="text-2xl font-semibold">Featured Cities</h2>
         <Button
@@ -65,7 +77,7 @@ function App() {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-        {cities.map((city) => (
+        {cities.cities.map((city) => (
           <Link
             to="."
             href={`/cities/${city.id}/${city.name}`}
@@ -201,6 +213,6 @@ function App() {
         dataKey="new"
         data={aggregations.new}
       />
-    </div>
+    </>
   );
 }
