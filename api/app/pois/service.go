@@ -766,7 +766,7 @@ func (s *Service) updateInfo(ctx context.Context, id string, body dto.UpdatePoiI
 		return nil, err
 	}
 
-	poi, err := s.find(ctx, id)
+	_, err := s.find(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -800,7 +800,7 @@ func (s *Service) updateInfo(ctx context.Context, id string, body dto.UpdatePoiI
 		return nil, huma.Error500InternalServerError("Failed to update info")
 	}
 
-	poi, err = s.find(ctx, id)
+	poi, err := s.find(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -809,6 +809,74 @@ func (s *Service) updateInfo(ctx context.Context, id string, body dto.UpdatePoiI
 
 	return &dto.UpdatePoiInfoOutput{
 		Body: dto.UpdatePoiInfoOutputBody{
+			Poi: *poi,
+		},
+	}, nil
+}
+
+func (s *Service) updateAmenities(ctx context.Context, id string, body dto.UpdatePoiAmenitiesInputBody) (*dto.UpdatePoiAmenitiesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to update this amenities")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	_, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.db.WithTx(tx)
+
+	err = qtx.DeletePoiAllAmenities(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete all amenities")
+	}
+
+	for _, amenityId := range body.AmenityIds {
+		_, err = qtx.CreateOneAmenitiesPois(ctx, db.CreateOneAmenitiesPoisParams{
+			AmenityID: amenityId,
+			PoiID:     id,
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to create amenity poi connection")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	poi, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdatePoiAmenitiesOutput{
+		Body: dto.UpdatePoiAmenitiesOutputBody{
 			Poi: *poi,
 		},
 	}, nil
