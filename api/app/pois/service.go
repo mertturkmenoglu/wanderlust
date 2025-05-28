@@ -18,6 +18,7 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -85,7 +86,7 @@ func (s *Service) FindMany(ctx context.Context, ids []string) ([]dto.Poi, error)
 	return pois, nil
 }
 
-func (s *Service) getPoiById(ctx context.Context, id string) (*dto.GetPoiByIdOutput, error) {
+func (s *Service) find(ctx context.Context, id string) (*dto.Poi, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -98,6 +99,20 @@ func (s *Service) getPoiById(ctx context.Context, id string) (*dto.GetPoiByIdOut
 
 	if len(res) != 1 {
 		err = huma.Error404NotFound("Point of interest not found")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &res[0], nil
+}
+
+func (s *Service) getPoiById(ctx context.Context, id string) (*dto.GetPoiByIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := s.find(ctx, id)
+
+	if err != nil {
 		sp.RecordError(err)
 		return nil, err
 	}
@@ -126,7 +141,7 @@ func (s *Service) getPoiById(ctx context.Context, id string) (*dto.GetPoiByIdOut
 
 	return &dto.GetPoiByIdOutput{
 		Body: dto.GetPoiByIdOutputBody{
-			Poi: res[0],
+			Poi: *res,
 			Meta: dto.GetPoiByIdMeta{
 				IsFavorite:   isFavorite,
 				IsBookmarked: isBookmarked,
@@ -680,6 +695,63 @@ func (s *Service) saveDraftToDatabase(ctx context.Context, draft map[string]any)
 	return &dto.PublishPoiDraftOutput{
 		Body: dto.PublishPoiDraftOutputBody{
 			ID: poi.ID,
+		},
+	}, nil
+}
+
+func (s *Service) updateAddress(ctx context.Context, id string, body dto.UpdatePoiAddressInputBody) (*dto.UpdatePoiAddressOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to update this address")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	poi, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	var line2 string
+	var postalCode string
+
+	if body.Line2 != nil {
+		line2 = *body.Line2
+	}
+
+	if body.PostalCode != nil {
+		postalCode = *body.PostalCode
+	}
+
+	err = s.db.UpdateAddress(ctx, db.UpdateAddressParams{
+		ID:         poi.AddressID,
+		CityID:     body.CityID,
+		Line1:      body.Line1,
+		Line2:      pgtype.Text{String: line2, Valid: body.Line2 != nil},
+		PostalCode: pgtype.Text{String: postalCode, Valid: body.PostalCode != nil},
+		Lat:        body.Lat,
+		Lng:        body.Lng,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update address")
+	}
+
+	poi, err = s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdatePoiAddressOutput{
+		Body: dto.UpdatePoiAddressOutputBody{
+			Poi: *poi,
 		},
 	}, nil
 }
