@@ -755,3 +755,61 @@ func (s *Service) updateAddress(ctx context.Context, id string, body dto.UpdateP
 		},
 	}, nil
 }
+
+func (s *Service) updateInfo(ctx context.Context, id string, body dto.UpdatePoiInfoInputBody) (*dto.UpdatePoiInfoOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to update this info")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	poi, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	var phone string
+	var website string
+
+	if body.Phone != nil {
+		phone = *body.Phone
+	}
+
+	if body.Website != nil {
+		website = *body.Website
+	}
+
+	err = s.db.UpdatePoiInfo(ctx, db.UpdatePoiInfoParams{
+		ID:                 id,
+		Name:               body.Name,
+		CategoryID:         body.CategoryID,
+		Description:        body.Description,
+		Phone:              pgtype.Text{String: phone, Valid: body.Phone != nil},
+		Website:            pgtype.Text{String: website, Valid: body.Website != nil},
+		AccessibilityLevel: body.AccessibilityLevel,
+		PriceLevel:         body.PriceLevel,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update info")
+	}
+
+	poi, err = s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdatePoiInfoOutput{
+		Body: dto.UpdatePoiInfoOutputBody{
+			Poi: *poi,
+		},
+	}, nil
+}

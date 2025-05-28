@@ -299,6 +299,33 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
+			Path:          "/pois/{id}/info",
+			Summary:       "Update Point of Interest General Information",
+			Description:   "Update a point of interest general information",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdatePoiInfoInput) (*dto.UpdatePoiInfoOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateInfo(ctx, input.ID, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
 			Path:          "/pois/{id}/address",
 			Summary:       "Update Point of Interest Address",
 			Description:   "Update a point of interest address",
