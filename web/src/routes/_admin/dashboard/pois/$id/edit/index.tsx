@@ -1,3 +1,5 @@
+import Spinner from '@/components/kit/spinner';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -16,10 +18,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -39,6 +43,7 @@ export const Route = createFileRoute('/_admin/dashboard/pois/$id/edit/')({
 function RouteComponent() {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
+  const invalidator = useInvalidator();
   const {
     data: { categories },
   } = api.useSuspenseQuery('get', '/api/v2/categories/');
@@ -56,6 +61,17 @@ function RouteComponent() {
     },
   });
 
+  const updateInfoMutation = api.useMutation(
+    'patch',
+    '/api/v2/pois/{id}/info',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Point of interest updated');
+      },
+    },
+  );
+
   return (
     <div>
       <h3 className="my-4 text-lg font-medium">
@@ -65,7 +81,18 @@ function RouteComponent() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((data) => {
-            console.log(data);
+            updateInfoMutation.mutate({
+              params: {
+                path: {
+                  id: poi.id,
+                },
+              },
+              body: {
+                ...data,
+                phone: data.phone ?? null,
+                website: data.website ?? null,
+              },
+            });
           })}
           className="mt-8 grid grid-cols-1 gap-4 px-0 mx-auto md:grid-cols-2"
         >
@@ -244,6 +271,12 @@ function RouteComponent() {
               </FormItem>
             )}
           />
+          <div className="col-span-full flex justify-end">
+            <Button disabled={updateInfoMutation.isPending}>
+              {updateInfoMutation.isPending && <Spinner className="size-4" />}
+              Update
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
