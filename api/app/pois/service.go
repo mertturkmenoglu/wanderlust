@@ -881,3 +881,60 @@ func (s *Service) updateAmenities(ctx context.Context, id string, body dto.Updat
 		},
 	}, nil
 }
+
+func (s *Service) updateHours(ctx context.Context, id string, body dto.UpdatePoiHoursInputBody) (*dto.UpdatePoiHoursOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to update this hours")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	_, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	asMap := make(map[string]dto.OpenHours)
+
+	for _, entry := range body.Hours {
+		asMap[entry.Day] = dto.OpenHours{
+			OpensAt:  entry.OpensAt,
+			ClosesAt: entry.ClosesAt,
+		}
+	}
+
+	serialized, err := json.Marshal(asMap)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to marshal hours")
+	}
+
+	err = s.db.UpdatePoiHours(ctx, db.UpdatePoiHoursParams{
+		ID:        id,
+		OpenTimes: serialized,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update hours")
+	}
+
+	poi, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdatePoiHoursOutput{
+		Body: dto.UpdatePoiHoursOutputBody{
+			Poi: *poi,
+		},
+	}, nil
+}
