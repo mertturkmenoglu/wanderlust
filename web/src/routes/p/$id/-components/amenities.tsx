@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import {
   AccessibilityIcon,
@@ -117,16 +118,20 @@ const iconMapping: Map<number, LucideIconType> = new Map([
   [56, PartyPopperIcon],
 ]);
 
-export default function Amenities() {
+type Props = {
+  className?: string;
+};
+
+export default function Amenities({ className }: Props) {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
   const { amenities } = poi;
   const isEmpty = amenities.length === 0;
 
   return (
-    <div className="mt-4 lg:px-8">
+    <div className={cn(className)}>
       <h3 className="text-xl font-semibold tracking-tight">Amenities</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+      <div className="grid grid-cols-2 gap-4 mt-4">
         {isEmpty ? (
           <EmptyState />
         ) : (
