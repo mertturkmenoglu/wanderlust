@@ -1034,6 +1034,22 @@ func (q *Queries) RandSelectPois(ctx context.Context, limit int32) ([]string, er
 	return items, nil
 }
 
+const updatePoiHours = `-- name: UpdatePoiHours :exec
+UPDATE pois
+SET open_times = $1
+WHERE id = $2
+`
+
+type UpdatePoiHoursParams struct {
+	OpenTimes []byte
+	ID        string
+}
+
+func (q *Queries) UpdatePoiHours(ctx context.Context, arg UpdatePoiHoursParams) error {
+	_, err := q.db.Exec(ctx, updatePoiHours, arg.OpenTimes, arg.ID)
+	return err
+}
+
 const updatePoiInfo = `-- name: UpdatePoiInfo :exec
 UPDATE pois
 SET

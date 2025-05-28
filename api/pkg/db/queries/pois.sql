@@ -273,3 +273,8 @@ WHERE id = $8;
 -- name: DeletePoiAllAmenities :exec
 DELETE FROM amenities_pois
 WHERE poi_id = $1;
+
+-- name: UpdatePoiHours :exec
+UPDATE pois
+SET open_times = $1
+WHERE id = $2;
