@@ -120,23 +120,25 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 		return nil, errFavorites
 	}
 
-	allIds := make([]string, 0)
+	totalCapacity := len(dbNew) + len(dbPopular) + len(dbFeatured) + len(dbFavorites)
+
+	allIds := make([]string, 0, totalCapacity)
 	allIds = append(allIds, dbNew...)
 	allIds = append(allIds, dbPopular...)
 	allIds = append(allIds, dbFeatured...)
 	allIds = append(allIds, dbFavorites...)
 
-	allPois, err := s.GetPoisByIds(ctx, allIds)
+	allPois, err := s.getPoisByIds(ctx, allIds)
 
 	if err != nil {
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	poisNew := make([]dto.Poi, 0)
-	poisPopular := make([]dto.Poi, 0)
-	poisFeatured := make([]dto.Poi, 0)
-	poisFavorites := make([]dto.Poi, 0)
+	poisNew := make([]dto.Poi, 0, len(dbNew))
+	poisPopular := make([]dto.Poi, 0, len(dbPopular))
+	poisFeatured := make([]dto.Poi, 0, len(dbFeatured))
+	poisFavorites := make([]dto.Poi, 0, len(dbFavorites))
 
 	for _, v := range allPois {
 		if slices.ContainsFunc(dbNew, func(x string) bool {
@@ -174,7 +176,7 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 	}, nil
 }
 
-func (s *Service) GetPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, error) {
+func (s *Service) getPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
