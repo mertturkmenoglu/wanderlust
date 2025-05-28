@@ -1,3 +1,5 @@
+import Spinner from '@/components/kit/spinner';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
@@ -8,10 +10,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -27,6 +31,8 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
+  const invalidator = useInvalidator();
+
   const {
     data: { amenities },
   } = api.useSuspenseQuery('get', '/api/v2/amenities/');
@@ -38,6 +44,17 @@ function RouteComponent() {
     },
   });
 
+  const updateAmenitiesMutation = api.useMutation(
+    'patch',
+    '/api/v2/pois/{id}/amenities',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Amenities updated');
+      },
+    },
+  );
+
   return (
     <div>
       <h3 className="my-4 text-lg font-medium">
@@ -47,7 +64,16 @@ function RouteComponent() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((data) => {
-            console.log(data);
+            updateAmenitiesMutation.mutate({
+              params: {
+                path: {
+                  id: poi.id,
+                },
+              },
+              body: {
+                amenityIds: data.amenities ?? [],
+              },
+            });
           })}
           className="mt-8 grid grid-cols-1 gap-4 px-0 mx-auto md:grid-cols-2"
         >
@@ -104,6 +130,15 @@ function RouteComponent() {
               </FormItem>
             )}
           />
+
+          <div className="col-span-full flex justify-end">
+            <Button disabled={updateAmenitiesMutation.isPending}>
+              {updateAmenitiesMutation.isPending && (
+                <Spinner className="size-4" />
+              )}
+              Update
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
