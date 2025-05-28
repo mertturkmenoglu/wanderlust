@@ -3927,6 +3927,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/pois/{id}/address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Point of Interest Address
+         * @description Update a point of interest address
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdatePoiAddressInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiAddressOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/reports/": {
         parameters: {
             query?: never;
@@ -8257,6 +8315,42 @@ export interface components {
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
+        };
+        UpdatePoiAddressInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /**
+             * Format: int32
+             * @description ID of city
+             */
+            cityId: number;
+            /**
+             * Format: double
+             * @description Latitude
+             */
+            lat: number;
+            /** @description Line 1 */
+            line1: string;
+            /** @description Line 2 */
+            line2: string | null;
+            /**
+             * Format: double
+             * @description Longitude
+             */
+            lng: number;
+            /** @description Postal code */
+            postalCode: string | null;
+        };
+        UpdatePoiAddressOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poi: components["schemas"]["Poi"];
         };
         UpdatePoiDraftInputBody: {
             /**
