@@ -1,3 +1,4 @@
+import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
@@ -48,7 +49,7 @@ export function ImageGrid({ className }: Props) {
     >
       <div className="col-span-2 row-span-2">
         <img
-          src={first.url}
+          src={ipx(first.url, 'w_512')}
           alt={first.alt}
           className="w-full h-full object-cover rounded-l-xl"
         />
@@ -60,7 +61,7 @@ export function ImageGrid({ className }: Props) {
         >
           {m.url !== '' ? (
             <img
-              src={m.url}
+              src={ipx(m.url, 'w_512')}
               alt={m.alt}
               className={cn('w-full h-full object-cover', {
                 'rounded-tr-xl': i === 1,

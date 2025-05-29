@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
+import { ipx } from '@/lib/ipx';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { ArrowDownIcon, ArrowUpIcon, Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -53,7 +54,7 @@ function RouteComponent() {
           >
             <div className="flex items-center gap-4 justify-between">
               <img
-                src={m.url}
+                src={ipx(m.url, 'w_512')}
                 alt={m.alt}
                 className="w-32 object-cover aspect-video rounded"
               />

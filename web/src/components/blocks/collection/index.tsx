@@ -1,3 +1,4 @@
+import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { HeartIcon } from 'lucide-react';
 
@@ -32,7 +33,7 @@ export default function Collection({
           <div key={item.id}>
             <div className="relative">
               <img
-                src={item.image}
+                src={ipx(item.image, 'w_512')}
                 alt=""
                 className="aspect-video w-full rounded-md object-cover"
               />

@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/card';
+import { ipx } from '@/lib/ipx';
 import { useFormContext } from 'react-hook-form';
 import Actions from './-actions';
 import Description from './-description';
@@ -25,7 +26,7 @@ export default function Item({ index }: Props) {
 
       <Card className="mt-1 p-0 gap-0">
         <img
-          src={location.image}
+          src={ipx(location.image, 'w_512')}
           alt=""
           className="aspect-[7/2] w-full rounded-t-md object-cover"
         />

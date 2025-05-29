@@ -1,3 +1,4 @@
+import { ipx } from '@/lib/ipx';
 import { Link } from '@tanstack/react-router';
 
 export type AutocompleteItemInfo = {
@@ -27,7 +28,7 @@ export default function Card({
   const innerContent = (
     <>
       <img
-        src={image}
+        src={ipx(image, 'w_256')}
         alt=""
         className="aspect-video w-24 md:w-48 rounded-lg object-cover"
       />

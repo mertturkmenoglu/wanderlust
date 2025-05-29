@@ -6,6 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { components } from '@/lib/api-types';
+import { ipx } from '@/lib/ipx';
 
 type Props = {
   bookmark: components['schemas']['Bookmark'];
@@ -15,7 +16,7 @@ export default function BookmarkCard({ bookmark: { poi } }: Props) {
   return (
     <Card className="group flex flex-col md:flex-row py-0">
       <img
-        src={poi.firstMedia.url}
+        src={ipx(poi.firstMedia.url, 'w_512')}
         alt={poi.firstMedia.alt}
         className="aspect-video w-full rounded-t-md object-cover md:w-32 md:rounded-none md:rounded-l-md lg:w-32 2xl:w-64"
       />
