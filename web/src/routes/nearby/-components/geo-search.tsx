@@ -1,3 +1,4 @@
+import PoiCard from '@/components/blocks/poi-card';
 import { icon } from '@/components/icons/leaflet';
 import { Link } from '@tanstack/react-router';
 import { type LeafletEvent } from 'leaflet';
@@ -24,20 +25,19 @@ export default function GeoSearch(props: UseGeoSearchProps) {
           position={item._geoloc}
           icon={icon}
         >
-          <Popup>
+          <Popup className="min-w-md flex items-center !text-primary">
             <Link
               to="/p/$id"
+              className="text-primary"
               params={{
                 id: item.poi.id,
               }}
             >
-              {item.name}
+              <PoiCard
+                poi={item.poi}
+                hoverEffects={false}
+              />
             </Link>
-            <div>{item.poi.description.slice(0, 100)}...</div>
-            <div>
-              {item.poi.address.city.name}, {item.poi.address.city.state.name} /{' '}
-              {item.poi.address.city.country.name}
-            </div>
           </Popup>
         </Marker>
       ))}
