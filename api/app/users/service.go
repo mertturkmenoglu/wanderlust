@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
@@ -21,10 +22,13 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/minio/minio-go/v7"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Service struct {
-	app *core.Application
+	app        *core.Application
+	poiService *pois.Service
 }
 
 func (s *Service) updateImage(ctx context.Context, updateType string, input dto.UpdateUserProfileImageInputBody) (*dto.UpdateUserProfileImageOutput, error) {
@@ -122,6 +126,76 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 	return &dto.UpdateUserProfileImageOutput{
 		Body: dto.UpdateUserProfileImageOutputBody{
 			URL: url,
+		},
+	}, nil
+}
+
+func (s *Service) getTopPois(ctx context.Context, username string) (*dto.GetUserTopPoisOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	var cacheRes []dto.Poi
+
+	err := s.app.Cache.ReadObj(ctx, cache.KeyBuilder("user-top-pois", username), &cacheRes)
+
+	if err == nil {
+		sp.AddEvent("cache.hit", trace.WithAttributes(
+			attribute.String("cache-key", cache.KeyBuilder("user-top-pois", username)),
+		))
+
+		return &dto.GetUserTopPoisOutput{
+			Body: dto.GetUserTopPoisOutputBody{
+				Pois: cacheRes,
+			},
+		}, nil
+	}
+
+	sp.AddEvent("cache.miss", trace.WithAttributes(
+		attribute.String("cache-key", cache.KeyBuilder("user-top-pois", username)),
+	))
+
+	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("User not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get user profile")
+	}
+
+	topPois, err := s.app.Db.Queries.GetUserTopPois(ctx, dbProfile.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get user top pois")
+	}
+
+	ids := make([]string, len(topPois))
+
+	for i, v := range topPois {
+		ids[i] = v.PoiID
+	}
+
+	res, err := s.poiService.FindMany(ctx, ids)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get user top pois")
+	}
+
+	err = s.app.Cache.SetObj(ctx, cache.KeyBuilder("user-top-pois", username), res, cache.TTLUserTopPois)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set user top pois in cache")
+	}
+
+	return &dto.GetUserTopPoisOutput{
+		Body: dto.GetUserTopPoisOutputBody{
+			Pois: res,
 		},
 	}, nil
 }

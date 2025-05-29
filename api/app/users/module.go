@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"net/http"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/authz"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
@@ -18,7 +19,8 @@ func Register(grp *huma.Group, app *core.Application) {
 	})
 
 	s := Service{
-		app: app,
+		app:        app,
+		poiService: pois.NewService(app),
 	}
 
 	huma.Register(grp,
@@ -88,6 +90,29 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.getFollowers(ctx, input.Username)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/users/{username}/top",
+			Summary:       "Get User Top Point of Interests",
+			Description:   "Get user top point of interests by username",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetUserTopPoisInput) (*dto.GetUserTopPoisOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getTopPois(ctx, input.Username)
 
 			if err != nil {
 				sp.RecordError(err)
