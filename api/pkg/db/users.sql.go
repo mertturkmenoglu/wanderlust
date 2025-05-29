@@ -396,6 +396,32 @@ func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string)
 	return i, err
 }
 
+const getUserTopPois = `-- name: GetUserTopPois :many
+SELECT user_id, poi_id, index FROM user_top_pois
+WHERE user_id = $1
+ORDER BY index ASC
+`
+
+func (q *Queries) GetUserTopPois(ctx context.Context, userID string) ([]UserTopPoi, error) {
+	rows, err := q.db.Query(ctx, getUserTopPois, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UserTopPoi
+	for rows.Next() {
+		var i UserTopPoi
+		if err := rows.Scan(&i.UserID, &i.PoiID, &i.Index); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const incrUserFollowers = `-- name: IncrUserFollowers :exec
 UPDATE users
 SET followers_count = followers_count + 1

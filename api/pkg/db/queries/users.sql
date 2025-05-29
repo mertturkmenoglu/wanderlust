@@ -169,3 +169,8 @@ WHERE id = $1;
 UPDATE users
 SET following_count = $2
 WHERE id = $1;
+
+-- name: GetUserTopPois :many
+SELECT * FROM user_top_pois
+WHERE user_id = $1
+ORDER BY index ASC;
