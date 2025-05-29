@@ -157,3 +157,19 @@ type GetUserTopPoisOutput struct {
 type GetUserTopPoisOutputBody struct {
 	Pois []Poi `json:"pois"`
 }
+
+type UpdateUserTopPoisInput struct {
+	Body UpdateUserTopPoisInputBody
+}
+
+type UpdateUserTopPoisInputBody struct {
+	PoiIds []string `json:"poiIds" doc:"IDs of points of interests" required:"true" uniqueItems:"true" minItems:"0" maxItems:"4"`
+}
+
+type UpdateUserTopPoisOutput struct {
+	Body UpdateUserTopPoisOutputBody
+}
+
+type UpdateUserTopPoisOutputBody struct {
+	Pois []Poi `json:"pois"`
+}
