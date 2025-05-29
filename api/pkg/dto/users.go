@@ -145,3 +145,15 @@ type UpdateUserProfileOutput struct {
 type UpdateUserProfileOutputBody struct {
 	Profile Profile `json:"profile"`
 }
+
+type GetUserTopPoisInput struct {
+	Username string `path:"username" validate:"required" doc:"Username of the user" example:"johndoe"`
+}
+
+type GetUserTopPoisOutput struct {
+	Body GetUserTopPoisOutputBody
+}
+
+type GetUserTopPoisOutputBody struct {
+	Pois []Poi `json:"pois"`
+}
