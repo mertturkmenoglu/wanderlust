@@ -3,6 +3,7 @@ package aggregator
 import (
 	"context"
 	"slices"
+	"sync"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
@@ -11,10 +12,13 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/sync/singleflight"
 )
 
 type Service struct {
-	app *core.Application
+	app          *core.Application
+	cacheMutex   sync.RWMutex
+	requestGroup singleflight.Group
 }
 
 func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
@@ -36,27 +40,42 @@ func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOu
 	spanCtx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
+	s.cacheMutex.RLock()
 	cacheRes, err := s.checkCacheForHomeAggregation(spanCtx)
+	s.cacheMutex.RUnlock()
 
 	if err == nil {
 		return cacheRes, nil
 	}
 
-	obj, err := s.getHomeAggregationFromDb(spanCtx)
+	result, err, _ := s.requestGroup.Do("home-aggregation", func() (any, error) {
+		obj, err := s.getHomeAggregationFromDb(spanCtx)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, err
+		}
+
+		// Save to cache
+		s.cacheMutex.Lock()
+		defer s.cacheMutex.Unlock()
+
+		err = s.app.Cache.SetObj(ctx, cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, err
+		}
+
+		return obj, nil
+	})
 
 	if err != nil {
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	err = s.app.Cache.SetObj(ctx, cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, err
-	}
-
-	return obj, nil
+	return result.(*dto.HomeAggregatorOutput), nil
 }
 
 func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggregatorOutput, error) {

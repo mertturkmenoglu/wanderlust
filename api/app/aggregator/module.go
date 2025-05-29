@@ -3,16 +3,20 @@ package aggregator
 import (
 	"context"
 	"net/http"
+	"sync"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
+	"golang.org/x/sync/singleflight"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app: app,
+		app:          app,
+		cacheMutex:   sync.RWMutex{},
+		requestGroup: singleflight.Group{},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
