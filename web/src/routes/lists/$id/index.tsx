@@ -89,7 +89,7 @@ function RouteComponent() {
                   to="/report"
                   search={{
                     type: 'list',
-                    resourceId: list.id,
+                    id: list.id,
                   }}
                   className="flex items-center gap-2 w-full"
                 >
