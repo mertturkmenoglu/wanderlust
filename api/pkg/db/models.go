@@ -313,3 +313,9 @@ type User struct {
 	CreatedAt             pgtype.Timestamptz
 	UpdatedAt             pgtype.Timestamptz
 }
+
+type UserTopPoi struct {
+	UserID string
+	PoiID  string
+	Index  int32
+}
