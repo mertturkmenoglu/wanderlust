@@ -174,3 +174,18 @@ WHERE id = $1;
 SELECT * FROM user_top_pois
 WHERE user_id = $1
 ORDER BY index ASC;
+
+-- name: DeleteUserAllTopPois :exec
+DELETE FROM user_top_pois
+WHERE user_id = $1;
+
+-- name: CreateUserTopPoi :one
+INSERT INTO user_top_pois (
+  user_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+) RETURNING *;

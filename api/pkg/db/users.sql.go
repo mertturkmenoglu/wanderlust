@@ -110,6 +110,31 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const createUserTopPoi = `-- name: CreateUserTopPoi :one
+INSERT INTO user_top_pois (
+  user_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+) RETURNING user_id, poi_id, index
+`
+
+type CreateUserTopPoiParams struct {
+	UserID string
+	PoiID  string
+	Index  int32
+}
+
+func (q *Queries) CreateUserTopPoi(ctx context.Context, arg CreateUserTopPoiParams) (UserTopPoi, error) {
+	row := q.db.QueryRow(ctx, createUserTopPoi, arg.UserID, arg.PoiID, arg.Index)
+	var i UserTopPoi
+	err := row.Scan(&i.UserID, &i.PoiID, &i.Index)
+	return i, err
+}
+
 const decrUserFollowers = `-- name: DecrUserFollowers :exec
 UPDATE users
 SET followers_count = followers_count - 1
@@ -129,6 +154,16 @@ WHERE id = $1
 
 func (q *Queries) DecrUserFollowing(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, decrUserFollowing, id)
+	return err
+}
+
+const deleteUserAllTopPois = `-- name: DeleteUserAllTopPois :exec
+DELETE FROM user_top_pois
+WHERE user_id = $1
+`
+
+func (q *Queries) DeleteUserAllTopPois(ctx context.Context, userID string) error {
+	_, err := q.db.Exec(ctx, deleteUserAllTopPois, userID)
 	return err
 }
 
