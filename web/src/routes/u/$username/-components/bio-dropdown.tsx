@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Link } from '@tanstack/react-router';
-import { EllipsisVertical, FlagIcon } from 'lucide-react';
+import { EllipsisVerticalIcon, FlagIcon } from 'lucide-react';
 
 type Props = {
   userId: string;
@@ -24,7 +24,7 @@ export default function BioDropdown({ userId }: Props) {
           variant="outline"
           size="icon"
         >
-          <EllipsisVertical className="size-6 text-black" />
+          <EllipsisVerticalIcon className="size-6 text-black" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
