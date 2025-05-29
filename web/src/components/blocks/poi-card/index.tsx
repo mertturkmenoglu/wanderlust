@@ -18,9 +18,15 @@ type Props = {
     | 'totalPoints'
     | 'media'
   >;
+  hoverEffects?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export default function PoiCard({ poi, className, ...props }: Props) {
+export default function PoiCard({
+  poi,
+  className,
+  hoverEffects = true,
+  ...props
+}: Props) {
   const [index, setIndex] = useState(0);
   const el = poi.media[index];
   const rating = computeRating(poi.totalPoints, poi.totalVotes);
@@ -33,7 +39,10 @@ export default function PoiCard({ poi, className, ...props }: Props) {
     <div
       key={poi.id}
       className={cn(
-        'group transition duration-300 ease-in-out hover:bg-gray-100 hover:-m-2 hover:p-2 rounded-md',
+        'group transition duration-300 ease-in-out rounded-md',
+        {
+          'hover:bg-gray-100 hover:-m-2 hover:p-2': hoverEffects,
+        },
         className,
       )}
       {...props}
