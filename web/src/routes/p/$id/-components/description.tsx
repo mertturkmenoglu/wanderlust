@@ -1,5 +1,6 @@
 import CollapsibleText from '@/components/blocks/collapsible-text';
 import FormattedRating from '@/components/kit/formatted-rating';
+import { InfoCard } from '@/components/kit/info-card';
 import { Button } from '@/components/ui/button';
 import { computeRating } from '@/lib/rating';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,6 @@ import {
   MapIcon,
   PersonStandingIcon,
 } from 'lucide-react';
-import { InfoCard } from './info-card';
 
 type Props = {
   className?: string;
