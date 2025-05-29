@@ -125,6 +125,33 @@ func Register(grp *huma.Group, app *core.Application) {
 
 	huma.Register(grp,
 		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/users/top",
+			Summary:       "Update User Top Point of Interests",
+			Description:   "Update user top point of interests",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdateUserTopPoisInput) (*dto.UpdateUserTopPoisOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateTopPois(ctx, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
 			Method:        http.MethodGet,
 			Path:          "/users/{username}/following",
 			Summary:       "Get User Following",

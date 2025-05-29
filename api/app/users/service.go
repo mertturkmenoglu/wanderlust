@@ -200,6 +200,72 @@ func (s *Service) getTopPois(ctx context.Context, username string) (*dto.GetUser
 	}, nil
 }
 
+func (s *Service) updateTopPois(ctx context.Context, body dto.UpdateUserTopPoisInputBody) (*dto.UpdateUserTopPoisOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	userId := ctx.Value("userId").(string)
+	username := ctx.Value("username").(string)
+
+	pois, err := s.poiService.FindMany(ctx, body.PoiIds)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("Point of interests not found")
+	}
+
+	tx, err := s.app.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.app.Db.Queries.WithTx(tx)
+
+	err = qtx.DeleteUserAllTopPois(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete user top pois")
+	}
+
+	for i, poi := range pois {
+		_, err = qtx.CreateUserTopPoi(ctx, db.CreateUserTopPoiParams{
+			UserID: userId,
+			PoiID:  poi.ID,
+			Index:  int32(i + 1),
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to create user top poi")
+		}
+	}
+
+	err = s.app.Cache.SetObj(ctx, cache.KeyBuilder("user-top-pois", username), pois, cache.TTLUserTopPois)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set user top pois in cache")
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+	}
+
+	return &dto.UpdateUserTopPoisOutput{
+		Body: dto.UpdateUserTopPoisOutputBody{
+			Pois: pois,
+		},
+	}, nil
+}
+
 func (s *Service) getUserProfile(ctx context.Context, username string) (*dto.GetUserProfileOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
