@@ -32,12 +32,10 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { collection } = Route.useLoaderData();
-  const { items, id, name } = collection;
+  const { items, id } = collection;
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [slotItemMap, setSlotItemMap] = useState(
-    utils.initSlotItemMap(items, 'poiId'),
-  );
+  const [slotItemMap] = useState(utils.initSlotItemMap(items, 'poiId'));
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mutation = api.useMutation('patch', '/api/v2/collections/{id}/items', {
