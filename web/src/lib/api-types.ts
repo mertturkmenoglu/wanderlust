@@ -6097,6 +6097,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/users/top": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update User Top Point of Interests
+         * @description Update user top point of interests
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUserTopPoisInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateUserTopPoisOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/users/{username}": {
         parameters: {
             query?: never;
@@ -8852,6 +8904,23 @@ export interface components {
              */
             readonly $schema?: string;
             profile: components["schemas"]["Profile"];
+        };
+        UpdateUserTopPoisInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description IDs of points of interests */
+            poiIds: string[];
+        };
+        UpdateUserTopPoisOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            pois: components["schemas"]["Poi"][];
         };
         UploadDiaryMediaInputBody: {
             /**
