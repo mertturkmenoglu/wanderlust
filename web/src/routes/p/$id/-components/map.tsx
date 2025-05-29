@@ -1,7 +1,8 @@
+import { icon } from '@/components/icons/leaflet';
 import { Button } from '@/components/ui/button';
 import { getRouteApi } from '@tanstack/react-router';
 import { ExternalLinkIcon } from 'lucide-react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
 
 export default function Map() {
   const route = getRouteApi('/p/$id/');
@@ -47,6 +48,18 @@ export default function Map() {
           attribution=""
           url={url}
         />
+        <Marker
+          position={[lat, lng]}
+          icon={icon}
+        >
+          <Tooltip
+            direction="bottom"
+            offset={[24, 48]}
+            opacity={1}
+          >
+            {poi.name}
+          </Tooltip>
+        </Marker>
       </MapContainer>
     </div>
   );
