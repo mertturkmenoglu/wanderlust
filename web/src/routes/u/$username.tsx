@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import Bio from './$username/-components/bio';
+import { Header } from './$username/-components/header';
 
 export const Route = createFileRoute('/u/$username')({
   component: RouteComponent,
@@ -19,8 +19,8 @@ export const Route = createFileRoute('/u/$username')({
 
 function RouteComponent() {
   return (
-    <div className=" max-w-5xl mx-auto">
-      <Bio className="mt-8" />
+    <div className="max-w-7xl mx-auto">
+      <Header className="mt-8" />
       <Outlet />
     </div>
   );
