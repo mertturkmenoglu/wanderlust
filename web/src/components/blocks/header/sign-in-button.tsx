@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from '@tanstack/react-router';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRightIcon } from 'lucide-react';
 
 export default function SignInButton() {
   const location = useLocation();
@@ -22,7 +22,7 @@ export default function SignInButton() {
       >
         <div className="flex items-center gap-2">
           <div>Sign in</div>
-          <ArrowRight className="size-4" />
+          <ArrowRightIcon className="size-4" />
         </div>
       </Button>
     </Link>
