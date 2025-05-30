@@ -58,6 +58,10 @@ export function Header({ className }: Props) {
         </div>
       </div>
 
+      {profile.bio && (
+        <div className="mt-4 text-sm text-muted-foreground">{profile.bio}</div>
+      )}
+
       <Tabs
         className="md:max-w-5xl"
         username={profile.username}

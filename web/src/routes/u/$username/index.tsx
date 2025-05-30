@@ -1,5 +1,5 @@
 import { api } from '@/lib/api';
-import { createFileRoute, getRouteApi } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { FavoriteLocations } from './-components/favorite-locations';
 import { InfoCardGroup } from './-components/info-card-group';
 
@@ -19,9 +19,6 @@ export const Route = createFileRoute('/u/$username/')({
 });
 
 function RouteComponent() {
-  const rootRoute = getRouteApi('/u/$username');
-  const { profile } = rootRoute.useLoaderData();
-
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -29,9 +26,6 @@ function RouteComponent() {
           <div className="text-2xl font-medium">About</div>
 
           <InfoCardGroup className="mt-4" />
-          <div className="mt-4 text-sm text-muted-foreground">
-            {profile.bio ?? `${profile.fullName} hasn't written anything yet.`}
-          </div>
         </div>
 
         <div>
