@@ -36,6 +36,8 @@ export default function AddToListButton() {
   const { poi } = route.useLoaderData();
   const auth = useContext(AuthContext);
   const [listId, setListId] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
   const query = api.useQuery(
     'get',
     '/api/v2/lists/status/{poiId}',
@@ -47,7 +49,7 @@ export default function AddToListButton() {
       },
     },
     {
-      enabled: !!auth.user,
+      enabled: !!auth.user && open,
     },
   );
   const invalidator = useInvalidator();
@@ -60,12 +62,18 @@ export default function AddToListButton() {
   });
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+    >
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
-              <Button variant="ghost">
+              <Button
+                variant="ghost"
+                onClick={() => setOpen(true)}
+              >
                 <PlusIcon className={cn('size-6 text-primary')} />
               </Button>
             </DialogTrigger>
