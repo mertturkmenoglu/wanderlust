@@ -34,6 +34,8 @@ It's open source and free.
 
 - Check each subproject's README file.
 - Make sure you have all the requirements installed.
+  - You can run `requirements.sh` script to check if you have all the requirements installed.
+  - `chmod u+x ./requirements.sh && ./requirements.sh`
   - Login to Infisical.
   - Start Docker service or Docker Desktop.
 - Run `just setup` to setup the project.
