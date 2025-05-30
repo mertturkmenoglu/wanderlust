@@ -114,12 +114,17 @@ type GetTripInvitesByTripIdOutputBody struct {
 	Invites []TripInvite `json:"invites"`
 }
 
+type GetAllTripsInput struct {
+	PaginationQueryParams
+}
+
 type GetAllTripsOutput struct {
 	Body GetAllTripsOutputBody
 }
 
 type GetAllTripsOutputBody struct {
-	Trips []Trip `json:"trips"`
+	Trips      []Trip         `json:"trips"`
+	Pagination PaginationInfo `json:"pagination"`
 }
 
 type GetMyTripInvitesOutput struct {
