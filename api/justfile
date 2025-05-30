@@ -44,6 +44,9 @@ all: build
 @fake:
 	go run cmd/fake/*.go -mode=automate
 
+@fake-interactive:
+	go run cmd/fake/*.go -mode=interactive
+
 # Generate Go code from SQL schema
 @sqlc:
 	sqlc generate -f ./conf/sqlc.yaml
