@@ -159,9 +159,9 @@ func generateAndInsert(genType string, count int) error {
 	case "point-of-interests":
 		return handlePois(count)
 	case "reviews":
-		return handleReviews()
+		return handleReviews("", "")
 	case "review-media":
-		return handleReviewMedia()
+		return handleReviewMedia("")
 	case "users":
 		return handleUsers(count)
 	default:
