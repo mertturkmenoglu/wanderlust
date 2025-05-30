@@ -1,78 +1,58 @@
 package main
 
 import (
-	"bufio"
 	"context"
-	"os"
+	"fmt"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/pterm/pterm"
 )
 
-func handleReviews() error {
-	poiPath, _ := pterm.DefaultInteractiveTextInput.Show("Enter the path to the file that contains POI ids:")
-	userPath, _ := pterm.DefaultInteractiveTextInput.Show("enter the path to the file that contains user ids:")
+func handleReviews(poiPath string, userPath string) error {
+	isInteractive := poiPath == "" || userPath == ""
 
-	poiFile, err := os.Open(poiPath)
+	if isInteractive {
+		poiPath, _ = input("Enter the path to the file that contains POI ids:")
+		userPath, _ = input("enter the path to the file that contains user ids:")
+	}
+
+	poiIds, err := readFile(poiPath)
 
 	if err != nil {
 		return err
 	}
 
-	defer poiFile.Close()
-
-	userFile, err := os.Open(userPath)
+	userIds, err := readFile(userPath)
 
 	if err != nil {
 		return err
 	}
 
-	defer userFile.Close()
-
-	poiScanner := bufio.NewScanner(poiFile)
-	userScanner := bufio.NewScanner(userFile)
-
-	userIds := make([]string, 0)
-
-	for userScanner.Scan() {
-		id := userScanner.Text()
-		userIds = append(userIds, id)
-	}
-
+	logger.Trace("Read poi ids file", logger.Args("count", len(poiIds)))
 	logger.Trace("Read user ids file", logger.Args("count", len(userIds)))
 
-	if err = userScanner.Err(); err != nil {
-		return err
-	}
-
-	i := 1
-
-	for poiScanner.Scan() {
+	for i, id := range poiIds {
 		if i%100 == 0 {
 			logger.Trace("inserting review", logger.Args("i", i))
 		}
 
-		id := poiScanner.Text()
-		n := gofakeit.IntRange(25, 100)
-		randUserIds := randElems(userIds, 5)
+		n := gofakeit.IntRange(1, 100)
+		randUserIds := randElems(userIds, 50)
 		err = createReviewForPoi(id, n, randUserIds)
 
 		if err != nil {
 			return err
 		}
-
-		i++
 	}
 
-	return poiScanner.Err()
+	return nil
 }
 
 func createReviewForPoi(poiId string, count int, userIds []string) error {
 	d := GetDb()
 	params := make([]db.BatchCreateReviewsParams, 0)
 
-	for i := 0; i < count; i++ {
+	for range count {
 		userId := randElem(userIds)
 		params = append(params, db.BatchCreateReviewsParams{
 			ID:      gofakeit.UUID(),
@@ -88,42 +68,54 @@ func createReviewForPoi(poiId string, count int, userIds []string) error {
 	return err
 }
 
-func handleReviewMedia() error {
-	path, _ := pterm.DefaultInteractiveTextInput.Show("Enter the path to the file that contains review ids:")
-	f, err := os.Open(path)
+func handleReviewMedia(reviewPath string) error {
+	isInteractive := reviewPath == ""
+
+	if isInteractive {
+		reviewPath, _ = input("Enter the path to the file that contains review ids:")
+	}
+
+	reviewIds, err := readFile(reviewPath)
 
 	if err != nil {
 		return err
 	}
 
-	defer f.Close()
+	skipped := 0
 
-	scanner := bufio.NewScanner(f)
-	i := 1
+	for i, id := range reviewIds {
+		// Not all reviews should have media. 1/3 of them should have media.
+		chance := gofakeit.Float32()
 
-	for scanner.Scan() {
-		if i%100 == 0 {
-			logger.Trace("inserting review media", logger.Args("i", i))
+		if chance < 0.66 {
+			skipped++
+			continue
 		}
 
-		id := scanner.Text()
+		if i%100 == 0 {
+			logger.Trace(
+				"inserting review media",
+				logger.Args("progress", fmt.Sprintf("(%d/%d)", i, len(reviewIds))),
+			)
+		}
+
 		n := gofakeit.IntRange(0, 4)
 		err = createReviewMedia(id, n)
 
 		if err != nil {
 			return err
 		}
-
-		i++
 	}
 
-	return scanner.Err()
+	logger.Trace("Skipped generating review media for this number of reviews:", logger.Args("count", skipped))
+
+	return nil
 }
 
 func createReviewMedia(id string, n int) error {
 	params := make([]db.BatchCreateReviewMediaParams, 0)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		params = append(params, db.BatchCreateReviewMediaParams{
 			ReviewID:   id,
 			Url:        getRandomImageUrl(),
