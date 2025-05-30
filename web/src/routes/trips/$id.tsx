@@ -4,6 +4,16 @@ import { TripInfo } from '@/components/blocks/trips/trip-info';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { z } from 'zod';
+
+const schema = z.object({
+  showLocationDialog: z.boolean().optional(),
+  poiId: z.string().optional(),
+  isUpdate: z.boolean().optional(),
+  description: z.string().optional(),
+  scheduledTime: z.string().optional(),
+  locId: z.string().optional(),
+});
 
 export const Route = createFileRoute('/trips/$id')({
   component: RouteComponent,
@@ -18,6 +28,7 @@ export const Route = createFileRoute('/trips/$id')({
       }),
     );
   },
+  validateSearch: schema,
   errorComponent: ErrorComponent,
 });
 
