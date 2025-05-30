@@ -107,13 +107,17 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 	}, nil
 }
 
-func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, error) {
+func (s *Service) getAllTrips(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetAllTripsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	rows, err := s.db.GetAllTripsIds(ctx, userId)
+	rows, err := s.db.GetAllTripsIds(ctx, db.GetAllTripsIdsParams{
+		OwnerID: userId,
+		Offset:  int32(pagination.GetOffset(params)),
+		Limit:   int32(params.PageSize),
+	})
 
 	if err != nil {
 		sp.RecordError(err)
@@ -133,9 +137,17 @@ func (s *Service) getAllTrips(ctx context.Context) (*dto.GetAllTripsOutput, erro
 		return nil, err
 	}
 
+	count, err := s.db.CountMyTrips(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get trips count")
+	}
+
 	return &dto.GetAllTripsOutput{
 		Body: dto.GetAllTripsOutputBody{
-			Trips: trips,
+			Trips:      trips,
+			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
 }
