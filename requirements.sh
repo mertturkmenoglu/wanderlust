@@ -1,3 +1,4 @@
+#!/bin/env bash
 commands=(
   "docker -v"
   "go version"
