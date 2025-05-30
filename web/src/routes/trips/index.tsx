@@ -3,6 +3,11 @@ import { CreateDialog } from '@/components/blocks/trips/create-dialog';
 import { buttonVariants } from '@/components/ui/button';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
+import { z } from 'zod';
+
+const schema = z.object({
+  showNewDialog: z.boolean().optional(),
+});
 
 export const Route = createFileRoute('/trips/')({
   component: RouteComponent,
@@ -13,6 +18,7 @@ export const Route = createFileRoute('/trips/')({
       });
     }
   },
+  validateSearch: schema,
   errorComponent: ErrorComponent,
 });
 
