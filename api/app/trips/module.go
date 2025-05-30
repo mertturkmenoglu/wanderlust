@@ -121,11 +121,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *struct{}) (*dto.GetAllTripsOutput, error) {
+		func(ctx context.Context, input *dto.GetAllTripsInput) (*dto.GetAllTripsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getAllTrips(ctx)
+			res, err := s.getAllTrips(ctx, input.PaginationQueryParams)
 
 			if err != nil {
 				sp.RecordError(err)
