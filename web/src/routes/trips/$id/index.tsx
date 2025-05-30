@@ -9,7 +9,12 @@ import {
 } from '@/components/ui/accordion';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { cn } from '@/lib/utils';
-import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  getRouteApi,
+  Link,
+  useNavigate,
+} from '@tanstack/react-router';
 import {
   addDays,
   eachDayOfInterval,
@@ -28,6 +33,7 @@ function RouteComponent() {
   const { trip } = route.useLoaderData();
   const { auth } = route.useRouteContext();
   const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
+  const navigate = useNavigate();
 
   const intervalDays = eachDayOfInterval({
     start: trip.startAt,
@@ -76,9 +82,7 @@ function RouteComponent() {
       </div>
 
       <div className="">
-        <div className="my-4">
-          {isPrivileged && <UpsertLocationDialog tripId={trip.id} />}
-        </div>
+        <div className="my-4">{isPrivileged && <UpsertLocationDialog />}</div>
 
         <Accordion
           type="multiple"
@@ -139,6 +143,7 @@ function RouteComponent() {
                         >
                           <PoiCard
                             className="max-w-xs"
+                            hoverEffects={false}
                             poi={loc.poi}
                           />
                         </Link>
@@ -151,19 +156,18 @@ function RouteComponent() {
                       {isPrivileged && (
                         <div className="ml-auto self-start">
                           <UpsertLocationDialog
-                            tripId={trip.id}
-                            initial={{
-                              desc: loc.description,
-                              locationId: loc.id,
-                              item: {
-                                categoryName: loc.poi.category.name,
-                                id: loc.poi.id,
-                                image: loc.poi.media[0]?.url ?? '',
-                                name: loc.poi.name,
-                                city: loc.poi.address.city.name,
-                                state: loc.poi.address.city.state.name,
-                              },
-                              time: loc.scheduledTime,
+                            onOpen={() => {
+                              navigate({
+                                to: '.',
+                                search: () => ({
+                                  showLocationDialog: true,
+                                  isUpdate: true,
+                                  poiId: loc.poi.id,
+                                  description: loc.description,
+                                  scheduledTime: loc.scheduledTime,
+                                  locId: loc.id,
+                                }),
+                              });
                             }}
                           />
                         </div>
