@@ -113,7 +113,14 @@ SELECT DISTINCT trips.id, trips.created_at
 FROM trips
 LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
 WHERE trips.owner_id = $1 OR tp.user_id = $1
-ORDER BY trips.created_at DESC;
+ORDER BY trips.created_at DESC
+OFFSET $2
+LIMIT $3;
+
+-- name: CountMyTrips :one
+SELECT COUNT(*) FROM trips
+LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
+WHERE trips.owner_id = $1 OR tp.user_id = $1;
 
 -- name: GetInvitesByToUserId :many
 SELECT

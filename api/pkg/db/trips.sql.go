@@ -66,6 +66,19 @@ type BatchCreateTripsParams struct {
 	EndAt           pgtype.Timestamptz
 }
 
+const countMyTrips = `-- name: CountMyTrips :one
+SELECT COUNT(*) FROM trips
+LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
+WHERE trips.owner_id = $1 OR tp.user_id = $1
+`
+
+func (q *Queries) CountMyTrips(ctx context.Context, ownerID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countMyTrips, ownerID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createTrip = `-- name: CreateTrip :one
 INSERT INTO trips (
   id,
@@ -366,15 +379,23 @@ FROM trips
 LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
 WHERE trips.owner_id = $1 OR tp.user_id = $1
 ORDER BY trips.created_at DESC
+OFFSET $2
+LIMIT $3
 `
+
+type GetAllTripsIdsParams struct {
+	OwnerID string
+	Offset  int32
+	Limit   int32
+}
 
 type GetAllTripsIdsRow struct {
 	ID        string
 	CreatedAt pgtype.Timestamptz
 }
 
-func (q *Queries) GetAllTripsIds(ctx context.Context, ownerID string) ([]GetAllTripsIdsRow, error) {
-	rows, err := q.db.Query(ctx, getAllTripsIds, ownerID)
+func (q *Queries) GetAllTripsIds(ctx context.Context, arg GetAllTripsIdsParams) ([]GetAllTripsIdsRow, error) {
+	rows, err := q.db.Query(ctx, getAllTripsIds, arg.OwnerID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
