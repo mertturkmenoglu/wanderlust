@@ -1,16 +1,12 @@
 import CollapsibleText from '@/components/blocks/collapsible-text';
 import FormattedRating from '@/components/kit/formatted-rating';
 import { InfoCard } from '@/components/kit/info-card';
-import { Button } from '@/components/ui/button';
+
 import { computeRating } from '@/lib/rating';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
-import {
-  DollarSignIcon,
-  HeartIcon,
-  MapIcon,
-  PersonStandingIcon,
-} from 'lucide-react';
+import { DollarSignIcon, HeartIcon, PersonStandingIcon } from 'lucide-react';
+import { PlanTripDialog } from './plan-trip-dialog';
 
 type Props = {
   className?: string;
@@ -34,13 +30,8 @@ export function Description({ className }: Props) {
           text={poi.description}
           charLimit={1000}
         />
-        <Button
-          size="lg"
-          className="mt-4 w-2/3 mx-auto"
-        >
-          <MapIcon className="size-5" />
-          <span className="text-base">Plan a trip</span>
-        </Button>
+
+        <PlanTripDialog />
       </div>
 
       <div className="grid grid-cols-2 grid-rows-2 gap-2">
