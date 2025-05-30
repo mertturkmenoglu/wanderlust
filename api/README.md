@@ -46,3 +46,7 @@ Now you should be able to run the project locally and have some ideas about the 
 - `project-structure.md`
 - `architecture.md`
 - `abbreviations.md`
+- `email.md`
+- `scalar.md`
+- `telemetry.md`
+- `asynq.md`
