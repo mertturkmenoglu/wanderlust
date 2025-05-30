@@ -1,4 +1,5 @@
 import ActionBanner from '@/components/blocks/action-banner';
+import AppMessage from '@/components/blocks/app-message';
 import OverlayBanner from '@/components/blocks/overlay-banner';
 import PoiGrid from '@/components/blocks/poi-grid';
 import QuickActions from '@/components/blocks/quick-actions';
@@ -13,6 +14,7 @@ import { ipx } from '@/lib/ipx';
 import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Suspense, useContext } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -40,15 +42,25 @@ function App() {
           className="my-8"
         />
       )}
-      <Suspense
+      <ErrorBoundary
         fallback={
-          <div className="max-w-7xl mx-auto my-16">
-            <Spinner className="size-4 mx-auto" />
-          </div>
+          <AppMessage
+            errorMessage="Something went wrong"
+            showBackButton={false}
+            className="my-16"
+          />
         }
       >
-        <Content />
-      </Suspense>
+        <Suspense
+          fallback={
+            <div className="max-w-7xl mx-auto my-16">
+              <Spinner className="size-4 mx-auto" />
+            </div>
+          }
+        >
+          <Content />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }
