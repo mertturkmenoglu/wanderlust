@@ -19,10 +19,14 @@ export function Section() {
         path: {
           id: poi.id,
         },
+        query: {
+          pageSize: 10,
+        },
       },
     },
     {
       initialPageParam: 1,
+      pageParamName: 'page',
       getNextPageParam: (lastPage) =>
         lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
     },
