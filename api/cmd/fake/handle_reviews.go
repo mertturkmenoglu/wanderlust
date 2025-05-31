@@ -100,7 +100,7 @@ func handleReviewMedia(reviewPath string) error {
 		}
 
 		n := gofakeit.IntRange(0, 4)
-		err = createReviewMedia(id, n)
+		err = createReviewImages(id, n)
 
 		if err != nil {
 			return err
@@ -112,17 +112,17 @@ func handleReviewMedia(reviewPath string) error {
 	return nil
 }
 
-func createReviewMedia(id string, n int) error {
-	params := make([]db.BatchCreateReviewMediaParams, 0)
+func createReviewImages(id string, n int) error {
+	params := make([]db.BatchCreateReviewImageParams, 0)
 
 	for i := range n {
-		params = append(params, db.BatchCreateReviewMediaParams{
-			ReviewID:   id,
-			Url:        getRandomImageUrl(),
-			MediaOrder: int16(i + 1),
+		params = append(params, db.BatchCreateReviewImageParams{
+			ReviewID: id,
+			Url:      getRandomImageUrl(),
+			Index:    int16(i + 1),
 		})
 	}
 
-	_, err := GetDb().Queries.BatchCreateReviewMedia(context.Background(), params)
+	_, err := GetDb().Queries.BatchCreateReviewImage(context.Background(), params)
 	return err
 }

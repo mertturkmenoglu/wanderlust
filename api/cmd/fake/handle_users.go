@@ -72,16 +72,14 @@ func handleUsers(count int) error {
 
 		for range step {
 			arg = append(arg, db.BatchCreateUsersParams{
-				ID:                    gofakeit.UUID(),
-				Email:                 gofakeit.LetterN(4) + gofakeit.Email(),
-				Username:              gofakeit.Username() + gofakeit.LetterN(3),
-				FullName:              gofakeit.Name(),
-				PasswordHash:          pgtype.Text{String: h, Valid: true},
-				GoogleID:              pgtype.Text{Valid: false},
-				FbID:                  pgtype.Text{Valid: false},
-				IsOnboardingCompleted: true,
-				IsEmailVerified:       true,
-				ProfileImage:          pgtype.Text{String: prefix + gofakeit.RandomString(imageNames), Valid: true},
+				ID:           gofakeit.UUID(),
+				Email:        gofakeit.LetterN(4) + gofakeit.Email(),
+				Username:     gofakeit.Username() + gofakeit.LetterN(3),
+				FullName:     gofakeit.Name(),
+				PasswordHash: pgtype.Text{String: h, Valid: true},
+				GoogleID:     pgtype.Text{Valid: false},
+				FbID:         pgtype.Text{Valid: false},
+				ProfileImage: pgtype.Text{String: prefix + gofakeit.RandomString(imageNames), Valid: true},
 			})
 		}
 

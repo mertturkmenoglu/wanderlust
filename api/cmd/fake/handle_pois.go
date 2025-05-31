@@ -71,7 +71,7 @@ func handlePois(count int) error {
 				TotalPoints:        int32(gofakeit.Number(int(totalVotes), int(totalVotes)*5)),
 				TotalFavorites:     int32(gofakeit.Number(1000, 10000)),
 				CategoryID:         int16(gofakeit.Number(1, 23)),
-				OpenTimes:          ot,
+				Hours:          ot,
 			})
 		}
 

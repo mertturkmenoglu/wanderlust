@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 	"wanderlust/pkg/db"
-	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/pterm/pterm"
@@ -88,11 +87,9 @@ func createMediaForPoi(poiId string, count int) error {
 		url := getRandomImageUrl()
 
 		_, err := GetDb().Queries.CreatePoiMedia(context.Background(), db.CreatePoiMediaParams{
-			PoiID:      poiId,
-			Url:        url,
-			Alt:        "Alt text for image " + strconv.Itoa(i),
-			Caption:    utils.StrToText("Caption text for image " + strconv.Itoa(i)),
-			MediaOrder: int16(i + 1),
+			PoiID: poiId,
+			Url:   url,
+			Alt:   "Alt text for image " + strconv.Itoa(i),
 		})
 
 		if err != nil {
