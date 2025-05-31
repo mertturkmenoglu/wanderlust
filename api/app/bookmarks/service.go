@@ -3,6 +3,7 @@ package bookmarks
 import (
 	"context"
 	"errors"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
@@ -17,8 +18,9 @@ import (
 
 type Service struct {
 	*core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	poiService *pois.Service
+	db         *db.Queries
+	pool       *pgxpool.Pool
 }
 
 func (s *Service) create(ctx context.Context, body dto.CreateBookmarkInputBody) (*dto.CreateBookmarkOutput, error) {
@@ -110,9 +112,28 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 		return nil, huma.Error500InternalServerError("Failed to get bookmarks")
 	}
 
+	poiIds := make([]string, len(res))
+
+	for i, v := range res {
+		poiIds[i] = v.PoiID
+	}
+
+	pois, err := s.poiService.FindMany(ctx, poiIds)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get bookmarks")
+	}
+
+	bookmarks := make([]dto.Bookmark, len(res))
+
+	for i, v := range res {
+		bookmarks[i] = mapper.ToBookmark(v, pois[i])
+	}
+
 	return &dto.GetUserBookmarksOutput{
 		Body: dto.GetUserBookmarksOutputBody{
-			Bookmarks:  mapper.ToBookmarks(res),
+			Bookmarks:  bookmarks,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
