@@ -24,7 +24,7 @@ It's open source and free.
 - sqlc (https://sqlc.dev/)
 - Just (https://github.com/casey/just)
 - Air (https://github.com/air-verse/air)
-- Go Migrate (https://github.com/golang-migrate/migrate)
+- Goose (https://github.com/pressly/goose)
 - Node.js (https://nodejs.org/en/download)
 - pnpm (https://pnpm.io/installation)
 - Infisical CLI (https://infisical.com/docs/documentation/getting-started/introduction)
