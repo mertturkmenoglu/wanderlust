@@ -40,18 +40,3 @@ func getDsnFromEnv() string {
 
 	return dsn
 }
-
-func getConnStringFromEnv() string {
-	vars := getVariables()
-
-	connString := fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
-		vars.user,
-		vars.password,
-		vars.host,
-		vars.port,
-		vars.name,
-	)
-
-	return connString
-}
