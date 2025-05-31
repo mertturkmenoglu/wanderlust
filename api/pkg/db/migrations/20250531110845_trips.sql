@@ -1,9 +1,10 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS trips (
   id TEXT PRIMARY KEY,
   owner_id TEXT NOT NULL,
-  status VARCHAR(16) NOT NULL,
-  title VARCHAR(128) NOT NULL,
-  description VARCHAR(1024) NOT NULL DEFAULT '',
+  title VARCHAR(256) NOT NULL,
+  description VARCHAR(4096) NOT NULL DEFAULT '',
   visibility_level VARCHAR(16) NOT NULL,
   start_at TIMESTAMPTZ NOT NULL,
   end_at TIMESTAMPTZ NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE IF NOT EXISTS trips (
     fk_users_owner FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_trips_owner ON trips(owner_id); 
+CREATE INDEX IF NOT EXISTS idx_trips_owner ON trips(owner_id);
 
 CREATE OR REPLACE TRIGGER update_trips_timestamp BEFORE
 UPDATE
@@ -27,14 +28,15 @@ CREATE TABLE IF NOT EXISTS trip_invites (
   sent_at TIMESTAMPTZ NOT NULL,
   expires_at TIMESTAMPTZ NOT NULL,
   trip_title VARCHAR(128) NOT NULL,
-  trip_description VARCHAR(1024) NOT NULL,
   role VARCHAR(16) NOT NULL,
   CONSTRAINT
     fk_trip_invites_trip FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
   CONSTRAINT
     fk_trip_invites_from FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT
-    fk_trip_invites_to FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
+    fk_trip_invites_to FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT
+    idx_trip_invites_unique UNIQUE (trip_id, to_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_trip_invites_trip ON trip_invites(trip_id);
@@ -43,13 +45,11 @@ CREATE INDEX IF NOT EXISTS idx_trip_invites_from ON trip_invites(from_id);
 
 CREATE INDEX IF NOT EXISTS idx_trip_invites_to ON trip_invites(to_id);
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_trip_invites_unique ON trip_invites(trip_id, to_id);
-
 CREATE TABLE IF NOT EXISTS trip_comments (
   id TEXT PRIMARY KEY,
   trip_id TEXT NOT NULL,
   from_id TEXT NOT NULL,
-  content VARCHAR(255) NOT NULL,
+  content VARCHAR(512) NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   CONSTRAINT
     fk_trip_comments_trip FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
@@ -70,12 +70,14 @@ CREATE TABLE IF NOT EXISTS trip_locations (
   CONSTRAINT
     fk_trip_locations_trip FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
   CONSTRAINT
-    fk_trip_locations_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE
+    fk_trip_locations_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE,
+  CONSTRAINT
+    idx_trip_locations_unique UNIQUE (trip_id, poi_id, scheduled_time)
 );
 
 CREATE INDEX IF NOT EXISTS idx_trip_locations_poi ON trip_locations(poi_id);
+
 CREATE INDEX IF NOT EXISTS idx_trip_locations_trip ON trip_locations(trip_id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_trip_locations_composite ON trip_locations(trip_id, poi_id, scheduled_time);
 
 CREATE TABLE IF NOT EXISTS trip_amenities (
   trip_id TEXT NOT NULL,
@@ -97,11 +99,27 @@ CREATE TABLE IF NOT EXISTS trip_participants (
   CONSTRAINT
     fk_trip_participants_trip FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE,
   CONSTRAINT
-    fk_trip_participants_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    fk_trip_participants_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT
+    idx_trip_participants_unique UNIQUE (trip_id, user_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_trip_participants_trip ON trip_participants(trip_id);
 
 CREATE INDEX IF NOT EXISTS idx_trip_participants_user ON trip_participants(user_id);
+-- +goose StatementEnd
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_trip_participants_unique ON trip_participants(trip_id, user_id);
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS trip_participants;
+
+DROP TABLE IF EXISTS trip_amenities;
+
+DROP TABLE IF EXISTS trip_locations;
+
+DROP TABLE IF EXISTS trip_comments;
+
+DROP TABLE IF EXISTS trip_invites;
+
+DROP TABLE IF EXISTS trips;
+-- +goose StatementEnd

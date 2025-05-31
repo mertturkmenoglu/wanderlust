@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS reports (
   id TEXT PRIMARY KEY,
   resource_id TEXT NOT NULL,
@@ -12,7 +14,17 @@ CREATE TABLE IF NOT EXISTS reports (
 );
 
 CREATE INDEX IF NOT EXISTS idx_reports_reporter ON reports (reporter_id);
+
 CREATE INDEX IF NOT EXISTS idx_reports_resolved ON reports (resolved);
+
 CREATE INDEX IF NOT EXISTS idx_reports_resolved_at ON reports (resolved_at);
+
 CREATE INDEX IF NOT EXISTS idx_reports_created_at ON reports (created_at);
+
 CREATE INDEX IF NOT EXISTS idx_reports_updated_at ON reports (updated_at);
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS reports;
+-- +goose StatementEnd

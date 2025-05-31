@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE OR REPLACE FUNCTION get_pois(ids TEXT[])
 RETURNS JSONB
 AS $$
@@ -16,7 +18,7 @@ BEGIN
       'totalPoints', pois.total_points,
       'totalFavorites', pois.total_favorites,
       'categoryId', pois.category_id,
-      'openTimes', pois.open_times,
+      'hours', pois.hours,
       'createdAt', pois.created_at,
       'updatedAt', pois.updated_at,
       'address', jsonb_build_object(
@@ -32,15 +34,15 @@ BEGIN
         'id', c.id,
         'name', c.name,
         'description', c.description,
-        'stateCode', c.state_code,
-        'stateName', c.state_name,
-        'countryCode', c.country_code,
-        'countryName', c.country_name,
-        'imageUrl', c.image_url,
-        'imageLicense', c.img_license,
-        'imageLicenseLink', c.img_license_link,
-        'imageAttribution', c.img_attr,
-        'imageAttributionLink', c.img_attr_link,
+        'state', jsonb_build_object(
+          'code', c.state_code,
+          'name', c.state_name
+        ),
+        'country', jsonb_build_object(
+          'code', c.country_code,
+          'name', c.country_name
+        ),
+        'image', c.image,
         'latitude', c.latitude,
         'longitude', c.longitude
       ),
@@ -62,10 +64,8 @@ BEGIN
       SELECT json_agg(jsonb_build_object(
         'id', m.id,
         'url', m.url,
-        'alt', m.alt,
-        'caption', m.caption,
-        'mediaOrder', m.media_order
-      ) ORDER BY m.media_order) AS media
+        'index', m.index
+      ) ORDER BY m.index) AS media
       FROM public.media m
       WHERE m.poi_id = pois.id
     ) media_agg ON true
@@ -85,4 +85,9 @@ BEGIN
   );
 END;
 $$ LANGUAGE plpgsql;
+-- +goose StatementEnd
 
+-- +goose Down
+-- +goose StatementBegin
+DROP FUNCTION IF EXISTS get_pois(TEXT[]);
+-- +goose StatementEnd
