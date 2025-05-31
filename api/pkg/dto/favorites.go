@@ -3,21 +3,11 @@ package dto
 import "time"
 
 type Favorite struct {
-	ID        int32       `json:"id" example:"1234" doc:"ID of favorite"`
-	PoiID     string      `json:"poiId" example:"7323488942953598976" doc:"ID of point of interest"`
-	Poi       FavoritePoi `json:"poi"`
-	UserID    string      `json:"userId" example:"7323488942953598976" doc:"ID of user"`
-	CreatedAt time.Time   `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of favorite"`
-}
-
-type FavoritePoi struct {
-	ID         string   `json:"id" example:"7323488942953598976" doc:"ID of point of interest"`
-	Name       string   `json:"name" example:"The Great Wall of China" doc:"Name of point of interest"`
-	AddressID  int32    `json:"addressId" example:"123456789" doc:"ID of address of point of interest"`
-	Address    Address  `json:"address"`
-	CategoryID int16    `json:"categoryId" example:"1" doc:"ID of category of point of interest"`
-	Category   Category `json:"category"`
-	FirstMedia Media    `json:"firstMedia"`
+	ID        int32     `json:"id" example:"1234" doc:"ID of favorite"`
+	PoiID     string    `json:"poiId" example:"7323488942953598976" doc:"ID of point of interest"`
+	Poi       Poi       `json:"poi"`
+	UserID    string    `json:"userId" example:"7323488942953598976" doc:"ID of user"`
+	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of favorite"`
 }
 
 type CreateFavoriteInput struct {

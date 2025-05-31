@@ -3,6 +3,7 @@ package favorites
 import (
 	"context"
 	"errors"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
@@ -17,8 +18,9 @@ import (
 
 type Service struct {
 	*core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	poiService *pois.Service
+	db         *db.Queries
+	pool       *pgxpool.Pool
 }
 
 func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavoriteOutput, error) {
@@ -104,9 +106,28 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 		return nil, huma.Error500InternalServerError("Failed to get favorites count")
 	}
 
+	poiIds := make([]string, len(res))
+
+	for i, v := range res {
+		poiIds[i] = v.PoiID
+	}
+
+	pois, err := s.poiService.FindMany(ctx, poiIds)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get favorites")
+	}
+
+	favorites := make([]dto.Favorite, len(res))
+
+	for i, v := range res {
+		favorites[i] = mapper.ToFavorite(v, pois[i])
+	}
+
 	return &dto.GetUserFavoritesOutput{
 		Body: dto.GetUserFavoritesOutputBody{
-			Favorites:  mapper.ToFavorites(res),
+			Favorites:  favorites,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
@@ -146,9 +167,28 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 		return nil, huma.Error500InternalServerError("Failed to get favorites count")
 	}
 
+	poiIds := make([]string, len(res))
+
+	for i, v := range res {
+		poiIds[i] = v.PoiID
+	}
+
+	pois, err := s.poiService.FindMany(ctx, poiIds)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get favorites")
+	}
+
+	favorites := make([]dto.Favorite, len(res))
+
+	for i, v := range res {
+		favorites[i] = mapper.ToFavorite(v, pois[i])
+	}
+
 	return &dto.GetUserFavoritesOutput{
 		Body: dto.GetUserFavoritesOutputBody{
-			Favorites:  mapper.ToFavorites(res),
+			Favorites:  favorites,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil

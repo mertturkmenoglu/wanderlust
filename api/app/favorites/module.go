@@ -3,6 +3,7 @@ package favorites
 import (
 	"context"
 	"net/http"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
@@ -14,6 +15,7 @@ import (
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		app,
+		pois.NewService(app),
 		app.Db.Queries,
 		app.Db.Pool,
 	}
