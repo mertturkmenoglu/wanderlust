@@ -101,29 +101,22 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 
 	return &dto.GetMeOutput{
 		Body: dto.GetMeOutputBody{
-			ID:                    user.ID,
-			Email:                 user.Email,
-			Username:              user.Username,
-			FullName:              user.FullName,
-			GoogleID:              utils.TextToStr(user.GoogleID),
-			FacebookID:            utils.TextToStr(user.FbID),
-			IsEmailVerified:       user.IsEmailVerified,
-			IsOnboardingCompleted: user.IsOnboardingCompleted,
-			IsActive:              user.IsActive,
-			IsBusinessAccount:     user.IsBusinessAccount,
-			IsVerified:            user.IsVerified,
-			Role:                  user.Role,
-			Bio:                   utils.TextToStr(user.Bio),
-			Pronouns:              utils.TextToStr(user.Pronouns),
-			Website:               utils.TextToStr(user.Website),
-			Phone:                 utils.TextToStr(user.Phone),
-			ProfileImage:          utils.TextToStr(user.ProfileImage),
-			BannerImage:           utils.TextToStr(user.BannerImage),
-			FollowersCount:        user.FollowersCount,
-			FollowingCount:        user.FollowingCount,
-			LastLogin:             user.LastLogin.Time,
-			CreatedAt:             user.CreatedAt.Time,
-			UpdatedAt:             user.UpdatedAt.Time,
+			ID:             user.ID,
+			Email:          user.Email,
+			Username:       user.Username,
+			FullName:       user.FullName,
+			GoogleID:       utils.TextToStr(user.GoogleID),
+			FacebookID:     utils.TextToStr(user.FbID),
+			IsVerified:     user.IsVerified,
+			Bio:            utils.TextToStr(user.Bio),
+			Pronouns:       utils.TextToStr(user.Pronouns),
+			Website:        utils.TextToStr(user.Website),
+			ProfileImage:   utils.TextToStr(user.ProfileImage),
+			BannerImage:    utils.TextToStr(user.BannerImage),
+			FollowersCount: user.FollowersCount,
+			FollowingCount: user.FollowingCount,
+			CreatedAt:      user.CreatedAt.Time,
+			UpdatedAt:      user.UpdatedAt.Time,
 		},
 	}, nil
 }
@@ -146,10 +139,17 @@ func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.Logi
 		return nil, huma.Error400BadRequest("Invalid email or password")
 	}
 
+	role, err := s.getUserRole(ctx, user.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
 	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
 		ID:       user.ID,
 		Username: user.Username,
-		Role:     user.Role,
+		Role:     role,
 	})
 
 	if err != nil {
@@ -276,16 +276,14 @@ func (s *Service) createUserFromCredentialsInfo(ctx context.Context, dto dto.Reg
 	}
 
 	saved, err := s.db.CreateUser(ctx, db.CreateUserParams{
-		ID:                    s.ID.Flake(),
-		Email:                 dto.Email,
-		FullName:              dto.FullName,
-		Username:              dto.Username,
-		PasswordHash:          pgtype.Text{String: hashed, Valid: true},
-		GoogleID:              pgtype.Text{},
-		FbID:                  pgtype.Text{},
-		IsEmailVerified:       false,
-		IsOnboardingCompleted: true,
-		ProfileImage:          pgtype.Text{},
+		ID:           s.ID.Flake(),
+		Email:        dto.Email,
+		FullName:     dto.FullName,
+		Username:     dto.Username,
+		PasswordHash: pgtype.Text{String: hashed, Valid: true},
+		GoogleID:     pgtype.Text{},
+		FbID:         pgtype.Text{},
+		ProfileImage: pgtype.Text{},
 	})
 
 	if err != nil {
@@ -294,109 +292,6 @@ func (s *Service) createUserFromCredentialsInfo(ctx context.Context, dto dto.Reg
 	}
 
 	return &saved, nil
-}
-
-func (s *Service) sendVerificationEmail(ctx context.Context, email string) error {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	user, err := s.findByEmail(ctx, email)
-
-	if err != nil {
-		sp.RecordError(err)
-		err := huma.Error422UnprocessableEntity("Invalid email")
-		return err
-	}
-
-	if user.IsEmailVerified {
-		err := huma.Error422UnprocessableEntity("Email already verified")
-		sp.RecordError(err)
-		return err
-	}
-
-	code, err := random.DigitsString(6)
-
-	if err != nil {
-		sp.RecordError(err)
-		err := huma.Error500InternalServerError("Failed to generate verification code")
-		return err
-	}
-
-	key := "verify-email:" + code
-	err = s.Cache.Set(ctx, key, user.Email, time.Minute*15).Err()
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to set verification code in cache")
-	}
-
-	// Get the URL to verify the email
-	url := fmt.Sprintf(
-		"%s/api/v2/auth/verify-email/verify?code=%s",
-		cfg.Env.URL,
-		code,
-	)
-
-	_, err = s.Tasks.CreateAndEnqueue(tasks.Job{
-		Type: tasks.TypeVerifyEmailEmail,
-		Data: tasks.VerifyEmailEmailPayload{
-			Email: user.Email,
-			Url:   url,
-		},
-	})
-
-	if err != nil {
-		sp.RecordError(err)
-		err := huma.Error500InternalServerError("Failed to enqueue verification email task")
-		return err
-	}
-
-	return nil
-}
-
-func (s *Service) verifyEmailAddress(ctx context.Context, code string) error {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	key := "verify-email:" + code
-
-	if !s.Cache.Has(ctx, key) {
-		err := huma.Error422UnprocessableEntity("Invalid or expired verification code")
-		sp.RecordError(err)
-		return err
-	}
-
-	email, err := s.Cache.Get(ctx, key).Result()
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to get verification code")
-	}
-
-	user, err := s.findByEmail(ctx, email)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to get user by email")
-	}
-
-	if user.IsEmailVerified {
-		err := huma.Error422UnprocessableEntity("Email already verified")
-		sp.RecordError(err)
-		return err
-	}
-
-	err = s.db.UpdateUserIsEmailVerified(ctx, db.UpdateUserIsEmailVerifiedParams{
-		ID:              user.ID,
-		IsEmailVerified: true,
-	})
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to verify email")
-	}
-
-	return nil
 }
 
 func (s *Service) sendForgotPasswordEmail(ctx context.Context, email string) error {
@@ -553,10 +448,17 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 		return nil, huma.Error500InternalServerError("Failed to create user")
 	}
 
+	role, err := s.getUserRole(ctx, user.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
 	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
 		ID:       user.ID,
 		Username: user.Username,
-		Role:     user.Role,
+		Role:     role,
 	})
 
 	if err != nil {
@@ -721,8 +623,6 @@ func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthU
 			String: oauthUser.id,
 			Valid:  oauthUser.provider == "facebook",
 		},
-		IsEmailVerified:       true,
-		IsOnboardingCompleted: false,
 		ProfileImage: pgtype.Text{
 			String: oauthUser.picture,
 			Valid:  true,
@@ -787,10 +687,17 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 		return nil, huma.Error500InternalServerError("Failed to update password")
 	}
 
+	role, err := s.getUserRole(ctx, user.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
 	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
 		ID:       user.ID,
 		Username: user.Username,
-		Role:     user.Role,
+		Role:     role,
 	})
 
 	if err != nil {
@@ -820,4 +727,24 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 			},
 		},
 	}, nil
+}
+
+func (s *Service) getUserRole(ctx context.Context, userId string) (string, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	isAdmin, err := s.db.IsAdmin(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return "", huma.Error500InternalServerError("Failed to get user role")
+	}
+
+	role := "user"
+
+	if isAdmin {
+		role = "admin"
+	}
+
+	return role, nil
 }

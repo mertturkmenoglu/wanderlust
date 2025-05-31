@@ -125,52 +125,6 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/auth/verify-email/send",
-			Summary:       "Send Verification Email",
-			Description:   "Send verification email to the user",
-			DefaultStatus: http.StatusNoContent,
-		},
-		func(ctx context.Context, input *dto.SendVerificationEmailInput) (*struct{}, error) {
-			ctx, sp := tracing.NewSpan(ctx)
-			defer sp.End()
-
-			err := s.sendVerificationEmail(ctx, input.Body.Email)
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, err
-			}
-
-			return nil, nil
-		},
-	)
-
-	huma.Register(grp,
-		huma.Operation{
-			Method:        http.MethodGet,
-			Path:          "/auth/verify-email/verify",
-			Summary:       "Verify Email",
-			Description:   "Verify the email of the user",
-			DefaultStatus: http.StatusNoContent,
-		},
-		func(ctx context.Context, input *dto.VerifyEmailInput) (*struct{}, error) {
-			ctx, sp := tracing.NewSpan(ctx)
-			defer sp.End()
-
-			err := s.verifyEmailAddress(ctx, input.Code)
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, err
-			}
-
-			return nil, nil
-		},
-	)
-
-	huma.Register(grp,
-		huma.Operation{
-			Method:        http.MethodPost,
 			Path:          "/auth/forgot-password/send",
 			Summary:       "Send Forgot Password Email",
 			Description:   "Send forgot password email to the user",
