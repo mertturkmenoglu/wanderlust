@@ -7,8 +7,6 @@ type AuthzAct string
 type AuthzFn func(s *Authz, c huma.Context) (bool, error)
 
 const (
-	ActTest AuthzAct = "test"
-
 	ActAmenityUpdate    AuthzAct = "amenity.update"
 	ActAmenityCreate    AuthzAct = "amenity.create"
 	ActAmenityDelete    AuthzAct = "amenity.delete"
@@ -18,13 +16,6 @@ const (
 	ActCityCreate       AuthzAct = "city.create"
 	ActCityDelete       AuthzAct = "city.delete"
 	ActCityUpdate       AuthzAct = "city.update"
-	ActListRead         AuthzAct = "list.read"
-	ActListStatusRead   AuthzAct = "list.status.read"
-	ActListUpdate       AuthzAct = "list.update"
-	ActListDelete       AuthzAct = "list.delete"
-	ActListItemCreate   AuthzAct = "list.item.create"
-	ActListItemDelete   AuthzAct = "list.item.delete"
-	ActListItemUpdate   AuthzAct = "list.item.update"
 	ActUserMakeVerified AuthzAct = "user.make-verified"
 	ActPoiDraftCreate   AuthzAct = "poi.draft.create"
 	ActPoiDraftRead     AuthzAct = "poi.draft.read"
@@ -34,7 +25,6 @@ const (
 )
 
 var Fns = map[AuthzAct]AuthzFn{
-	ActTest:             Identity,
 	ActCityCreate:       IsAdmin,
 	ActCityDelete:       IsAdmin,
 	ActCityUpdate:       IsAdmin,
@@ -45,12 +35,6 @@ var Fns = map[AuthzAct]AuthzFn{
 	ActCategoryDelete:   IsAdmin,
 	ActCategoryUpdate:   IsAdmin,
 	ActUserMakeVerified: IsAdmin,
-	ActListRead:         FnListRead,
-	ActListStatusRead:   Identity,
-	ActListUpdate:       FnListUpdate,
-	ActListDelete:       FnListDelete,
-	ActListItemCreate:   FnListItemCreate,
-	ActListItemDelete:   NotImplemented,
 	ActPoiDraftCreate:   IsAdmin,
 	ActPoiDraftRead:     IsAdmin,
 	ActPoiDraftUpdate:   IsAdmin,
