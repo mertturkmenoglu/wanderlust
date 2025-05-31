@@ -13,6 +13,7 @@ all: build
 	echo "=> Setting up the project..."
 	go mod download
 	just env-pull
+	goose up
 	just sqlc
 	just docker
 	echo "=> Setup completed. Run 'just watch' to start the server."
@@ -26,7 +27,7 @@ all: build
 # Live reload
 @watch:
 	if command -v air > /dev/null; then \
-		RUN_MIGRATIONS=1 air -c conf/.air.toml; \
+		air -c conf/.air.toml; \
 		echo "Watching...";\
 	else \
 		echo "Air is not installed. Run 'go install github.com/air-verse/air@latest' to install Air";\
@@ -54,12 +55,6 @@ all: build
 # Synchronize search index with the primary database
 @search:
 	go run cmd/search-sync/*.go
-
-# Create a new migration
-@create-migration:
-	read -p "Give migration a name: " migrationname; \
-	migrate create -ext sql -dir pkg/db/migrations -seq $$migrationname; \
-	echo "Created migration with name $$migrationname. Update sql files."
 
 # Create example .env file
 @env-example:
