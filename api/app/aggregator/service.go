@@ -182,10 +182,10 @@ func (s *Service) getPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, er
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("failed to get point of interests")
+		return nil, huma.Error500InternalServerError("Failed to get point of interests")
 	}
 
-	pois, err := mapper.FromDbPoisToPois(ctx, dbPois)
+	pois, err := mapper.ToPois(ctx, dbPois)
 
 	if err != nil {
 		sp.RecordError(err)
