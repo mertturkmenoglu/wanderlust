@@ -7,7 +7,7 @@ type City struct {
 	State       CityState       `json:"state"`
 	Country     CityCountry     `json:"country"`
 	Coordinates CityCoordinates `json:"coordinates" `
-	Image       CityImage       `json:"image"`
+	Image       string          `json:"image"`
 }
 
 type CityState struct {
@@ -18,14 +18,6 @@ type CityState struct {
 type CityCountry struct {
 	Code string `json:"code" example:"US" doc:"Country code"`
 	Name string `json:"name" example:"United States" doc:"Country name"`
-}
-
-type CityImage struct {
-	Url             string  `json:"url" example:"https://example.com/image.jpg" doc:"Image URL"`
-	License         *string `json:"license" example:"CC BY 4.0" doc:"Image license"`
-	LicenseLink     *string `json:"licenseLink" example:"https://example.com/license" doc:"Image license link"`
-	Attribution     *string `json:"attribution" example:"Photo by John Doe" doc:"Image attribution"`
-	AttributionLink *string `json:"attributionLink" example:"https://example.com/attribution" doc:"Image attribution link"`
 }
 
 type CityCoordinates struct {
@@ -88,19 +80,15 @@ type UpdateCityInput struct {
 }
 
 type UpdateCityInputBody struct {
-	Name                 string  `json:"name" required:"true" minLength:"1" maxLength:"64" example:"New York" doc:"City name"`
-	StateCode            string  `json:"stateCode" required:"true" minLength:"1" maxLength:"16" example:"NY" doc:"State code"`
-	StateName            string  `json:"stateName" required:"true" minLength:"1" maxLength:"64" example:"New York" doc:"State name"`
-	CountryCode          string  `json:"countryCode" required:"true" minLength:"2" maxLength:"2" example:"US" doc:"Country code"`
-	CountryName          string  `json:"countryName" required:"true" minLength:"1" maxLength:"64" example:"United States" doc:"Country name"`
-	ImageUrl             string  `json:"imageUrl" required:"true" minLength:"1" maxLength:"255" format:"uri" example:"https://example.com/image.jpg" doc:"Image URL"`
-	Latitude             float64 `json:"latitude" required:"true" min:"-90" max:"90" example:"40.7128" doc:"Latitude"`
-	Longitude            float64 `json:"longitude" required:"true" min:"-180" max:"180" example:"-74.0060" doc:"Longitude"`
-	Description          string  `json:"description" required:"true" minLength:"1" maxLength:"1024" example:"A big metropolis." doc:"City description"`
-	ImageLicense         string  `json:"imageLicense" required:"true" minLength:"1" maxLength:"32" example:"CC BY 4.0" doc:"Image license"`
-	ImageLicenseLink     string  `json:"imageLicenseLink" required:"true" minLength:"1" maxLength:"256" format:"uri" example:"https://example.com/license" doc:"Image license link"`
-	ImageAttribution     string  `json:"imageAttribute" required:"true" minLength:"1" maxLength:"256" example:"Photo by John Doe" doc:"Image attribution"`
-	ImageAttributionLink string  `json:"imageAttributionLink" required:"true" minLength:"1" maxLength:"256" example:"https://example.com/attribution" doc:"Image attribution link"`
+	Name        string  `json:"name" required:"true" minLength:"1" maxLength:"64" example:"New York" doc:"City name"`
+	StateCode   string  `json:"stateCode" required:"true" minLength:"1" maxLength:"16" example:"NY" doc:"State code"`
+	StateName   string  `json:"stateName" required:"true" minLength:"1" maxLength:"64" example:"New York" doc:"State name"`
+	CountryCode string  `json:"countryCode" required:"true" minLength:"2" maxLength:"2" example:"US" doc:"Country code"`
+	CountryName string  `json:"countryName" required:"true" minLength:"1" maxLength:"64" example:"United States" doc:"Country name"`
+	Image       string  `json:"image" required:"true" minLength:"1" maxLength:"256" format:"uri" example:"https://example.com/image.jpg" doc:"Image URL"`
+	Latitude    float64 `json:"latitude" required:"true" min:"-90" max:"90" example:"40.7128" doc:"Latitude"`
+	Longitude   float64 `json:"longitude" required:"true" min:"-180" max:"180" example:"-74.0060" doc:"Longitude"`
+	Description string  `json:"description" required:"true" minLength:"1" maxLength:"1024" example:"A big metropolis." doc:"City description"`
 }
 
 type UpdateCityOutput struct {

@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -122,20 +121,16 @@ func (s *Service) create(ctx context.Context, body dto.CreateCityInputBody) (*dt
 	defer sp.End()
 
 	dbCity, err := s.db.CreateCity(ctx, db.CreateCityParams{
-		ID:             body.ID,
-		Name:           body.Name,
-		StateCode:      body.StateCode,
-		StateName:      body.StateName,
-		CountryCode:    body.CountryCode,
-		CountryName:    body.CountryName,
-		ImageUrl:       body.ImageUrl,
-		Latitude:       body.Latitude,
-		Longitude:      body.Longitude,
-		Description:    body.Description,
-		ImgLicense:     utils.StrToText(body.ImageLicense),
-		ImgLicenseLink: utils.StrToText(body.ImageLicenseLink),
-		ImgAttr:        utils.StrToText(body.ImageAttribution),
-		ImgAttrLink:    utils.StrToText(body.ImageAttributionLink),
+		ID:          body.ID,
+		Name:        body.Name,
+		StateCode:   body.StateCode,
+		StateName:   body.StateName,
+		CountryCode: body.CountryCode,
+		CountryName: body.CountryName,
+		Image:       body.Image,
+		Latitude:    body.Latitude,
+		Longitude:   body.Longitude,
+		Description: body.Description,
 	})
 
 	if err != nil {
@@ -179,20 +174,16 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateCityInput
 	defer sp.End()
 
 	dbCity, err := s.db.UpdateCity(ctx, db.UpdateCityParams{
-		ID:             id,
-		Name:           body.Name,
-		StateCode:      body.StateCode,
-		StateName:      body.StateName,
-		CountryCode:    body.CountryCode,
-		CountryName:    body.CountryName,
-		ImageUrl:       body.ImageUrl,
-		Latitude:       body.Latitude,
-		Longitude:      body.Longitude,
-		Description:    body.Description,
-		ImgLicense:     utils.StrToText(body.ImageLicense),
-		ImgLicenseLink: utils.StrToText(body.ImageLicenseLink),
-		ImgAttr:        utils.StrToText(body.ImageAttribution),
-		ImgAttrLink:    utils.StrToText(body.ImageAttributionLink),
+		ID:          id,
+		Name:        body.Name,
+		StateCode:   body.StateCode,
+		StateName:   body.StateName,
+		CountryCode: body.CountryCode,
+		CountryName: body.CountryName,
+		Image:       body.Image,
+		Latitude:    body.Latitude,
+		Longitude:   body.Longitude,
+		Description: body.Description,
 	})
 
 	if err != nil {
