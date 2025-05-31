@@ -4,7 +4,6 @@ INSERT INTO trips (
   owner_id,
   title,
   description,
-  status,
   visibility_level,
   start_at,
   end_at
@@ -15,15 +14,13 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7,
-  $8
+  $7
 ) RETURNING *;
 
 -- name: BatchCreateTrips :copyfrom
 INSERT INTO trips (
   id,
   owner_id,
-  status,
   description,
   title,
   visibility_level,
@@ -36,8 +33,7 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7,
-  $8
+  $7
 );
 
 -- name: GetTripById :one
@@ -77,33 +73,10 @@ SELECT
   ))
   FROM trip_locations tlocations
   WHERE tlocations.trip_id = trips.id
-  ) AS locations,
-  COALESCE(json_agg(DISTINCT jsonb_build_object(
-    'poi', to_jsonb(poi.*),
-    'poiCategory', to_jsonb(cat.*),
-    'poiAddress', to_jsonb(addr.*),
-    'poiCity', to_jsonb(cities.*),
-    'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
-    'poiMedia', COALESCE(poi_media.media, '[]')
-  )) FILTER (WHERE trip_locations.poi_id IS NOT NULL), '[]') AS ps
+  ) AS locations
 FROM trips
 LEFT JOIN users u ON u.id = trips.owner_id
 LEFT JOIN trip_locations ON trip_locations.trip_id = trips.id
-LEFT JOIN pois poi ON poi.id = trip_locations.poi_id
-LEFT JOIN categories cat ON cat.id = poi.category_id
-LEFT JOIN addresses addr ON addr.id = poi.address_id
-LEFT JOIN cities ON cities.id = addr.city_id
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(a.*)) AS amenities
-  FROM amenities_pois pa
-  JOIN amenities a ON a.id = pa.amenity_id
-  WHERE pa.poi_id = poi.id
-) AS poi_amenities ON TRUE
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(pm.*)) AS media
-  FROM media pm
-  WHERE pm.poi_id = poi.id
-) AS poi_media ON TRUE
 WHERE trips.id = ANY($1::TEXT[])
 GROUP BY trips.id, u.id
 ORDER BY trips.created_at DESC;
@@ -166,7 +139,6 @@ INSERT INTO trip_invites (
   sent_at,
   expires_at,
   trip_title,
-  trip_description,
   role
 ) VALUES (
   $1,
@@ -176,8 +148,7 @@ INSERT INTO trip_invites (
   $5,
   $6,
   $7,
-  $8,
-  $9
+  $8
 ) RETURNING *;
 
 -- name: DeleteInvite :exec

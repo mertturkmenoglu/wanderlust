@@ -28,11 +28,6 @@ UPDATE users
 SET fb_id = $2
 WHERE id = $1;
 
--- name: UpdateUserIsEmailVerified :exec
-UPDATE users
-SET is_email_verified = $2
-WHERE id = $1;
-
 -- name: UpdateUserPassword :exec
 UPDATE users
 SET password_hash = $2
@@ -47,8 +42,6 @@ INSERT INTO users (
   password_hash,
   google_id,
   fb_id,
-  is_email_verified,
-  is_onboarding_completed,
   profile_image
 ) VALUES (
   $1,
@@ -58,9 +51,7 @@ INSERT INTO users (
   $5,
   $6,
   $7,
-  $8,
-  $9,
-  $10
+  $8
 ) RETURNING *;
 
 -- name: BatchCreateUsers :copyfrom
@@ -72,8 +63,6 @@ INSERT INTO users (
   password_hash,
   google_id,
   fb_id,
-  is_email_verified,
-  is_onboarding_completed,
   profile_image
 ) VALUES (
   $1,
@@ -83,35 +72,19 @@ INSERT INTO users (
   $5,
   $6,
   $7,
-  $8,
-  $9,
-  $10
+  $8
 );
 
 -- name: GetUserProfileByUsername :one
-SELECT 
-  id,
-  username,
-  full_name,
-  is_business_account,
-  is_verified,
-  bio,
-  pronouns,
-  website,
-  phone,
-  profile_image,
-  banner_image,
-  followers_count,
-  following_count,
-  created_at
-FROM users
+SELECT *
+FROM profile
 WHERE username = $1 LIMIT 1;
 
 -- name: IsAdmin :one
 SELECT EXISTS (
   SELECT 1
-  FROM users
-  WHERE id = $1 AND role = 'admin'
+  FROM admins
+  WHERE user_id = $1
 );
 
 -- name: MakeUserVerified :exec
@@ -125,8 +98,7 @@ SET
   full_name = $2,
   bio = $3,
   pronouns = $4,
-  website = $5,
-  phone = $6
+  website = $5
 WHERE id = $1
 RETURNING *;
 

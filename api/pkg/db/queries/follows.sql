@@ -37,25 +37,25 @@ WHERE follower_id = $1 AND following_id = $2;
 
 -- name: GetUserFollowers :many
 SELECT
-  sqlc.embed(users)
+  sqlc.embed(profile)
 FROM follows
-  LEFT JOIN users ON users.id = follows.follower_id
+  LEFT JOIN profile ON profile.id = follows.follower_id
 WHERE follows.following_id = $1
 ORDER BY follows.created_at DESC;
 
 -- name: GetUserFollowing :many
 SELECT
-  sqlc.embed(users)
+  sqlc.embed(profile)
 FROM follows
-  LEFT JOIN users ON users.id = follows.following_id
+  LEFT JOIN profile ON profile.id = follows.following_id
 WHERE follows.follower_id = $1
 ORDER BY follows.created_at DESC;
 
 -- name: SearchUserFollowing :many
 SELECT
-  sqlc.embed(users)
+  sqlc.embed(profile)
 FROM follows
-  LEFT JOIN users ON users.id = follows.following_id
-WHERE follows.follower_id = $1 AND users.username ILIKE $2
+  LEFT JOIN profile ON profile.id = follows.following_id
+WHERE follows.follower_id = $1 AND profile.username ILIKE $2
 ORDER BY follows.created_at DESC
 LIMIT 25;

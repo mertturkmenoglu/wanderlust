@@ -14,9 +14,9 @@ INSERT INTO lists (
 -- name: GetListById :one
 SELECT 
   sqlc.embed(lists), 
-  sqlc.embed(users)
+  sqlc.embed(profile)
 FROM lists
-  LEFT JOIN users ON users.id = lists.user_id
+  LEFT JOIN profile ON profile.id = lists.user_id
 WHERE lists.id = $1 LIMIT 1;
 
 -- name: DeleteList :exec
@@ -45,21 +45,10 @@ SET
 WHERE id = $1;
 
 -- name: GetListItems :many
-SELECT
-  sqlc.embed(list_items),
-  sqlc.embed(pois),
-  sqlc.embed(categories),
-  sqlc.embed(addresses),
-  sqlc.embed(cities),
-  sqlc.embed(media)
-  FROM list_items
-INNER JOIN pois ON list_items.poi_id = pois.id
-LEFT JOIN categories ON pois.category_id = categories.id
-LEFT JOIN addresses ON pois.address_id = addresses.id
-LEFT JOIN cities ON addresses.city_id = cities.id
-LEFT JOIN media ON pois.id = media.poi_id
-WHERE media.media_order = 1 AND list_items.list_id = $1
-ORDER BY list_items.list_index ASC;
+SELECT *
+FROM list_items
+WHERE list_id = $1
+ORDER BY index ASC;
 
 -- name: CountAllListsOfUser :one
 SELECT COUNT(*) FROM lists
@@ -73,7 +62,7 @@ WHERE user_id = $1 AND is_public = true;
 INSERT INTO list_items (
   list_id,
   poi_id,
-  list_index
+  index
 ) VALUES (
   $1,
   $2,
@@ -81,11 +70,11 @@ INSERT INTO list_items (
 ) RETURNING *;
 
 -- name: GetLastIndexOfList :one
-SELECT COALESCE(MAX(list_index), 0)
+SELECT COALESCE(MAX(index), 0)
 FROM list_items
 WHERE list_id = $1;
 
--- name: GetListItemCount :one
+-- name: CountListItems :one
 SELECT COUNT(*) FROM list_items
 WHERE list_id = $1;
 
@@ -93,16 +82,6 @@ WHERE list_id = $1;
 SELECT * FROM list_items
 WHERE list_id = $1 AND poi_id = $2
 LIMIT 1;
-
--- name: DeleteListsListItemAtIndex :exec
-DELETE FROM list_items
-WHERE list_id = $1 AND list_index = $2;
-
--- name: DecrListItemsListIndexAfterDelete :exec
-UPDATE list_items
-SET
-  list_index = list_index - 1
-WHERE list_id = $1 AND list_index > $2;
 
 -- name: DeleteAllListItems :exec
 DELETE FROM list_items
