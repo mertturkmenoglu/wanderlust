@@ -373,7 +373,7 @@ func (s *Service) getFollowing(ctx context.Context, username string) (*dto.GetUs
 
 	return &dto.GetUserFollowingOutput{
 		Body: dto.GetUserFollowingOutputBody{
-			Following: mapper.ToFollowing(res),
+			Following: mapper.ToFollowings(res),
 		},
 	}, nil
 }
@@ -442,7 +442,7 @@ func (s *Service) searchFollowing(ctx context.Context, username string) (*dto.Se
 
 	return &dto.SearchUserFollowingOutput{
 		Body: dto.SearchUserFollowingOutputBody{
-			Friends: mapper.FromSearchToFollowing(res),
+			Friends: mapper.ToFollowingsFromSearch(res),
 		},
 	}, nil
 }
@@ -654,7 +654,6 @@ func (s *Service) updateProfile(ctx context.Context, body dto.UpdateUserProfileI
 		Bio:      utils.NilStrToText(body.Bio),
 		Pronouns: utils.NilStrToText(body.Pronouns),
 		Website:  utils.NilStrToText(body.Website),
-		Phone:    utils.NilStrToText(body.Phone),
 	})
 
 	if err != nil {
@@ -669,7 +668,7 @@ func (s *Service) updateProfile(ctx context.Context, body dto.UpdateUserProfileI
 
 	return &dto.UpdateUserProfileOutput{
 		Body: dto.UpdateUserProfileOutputBody{
-			Profile: mapper.FromUserToProfile(dbUser),
+			Profile: mapper.ToProfileFromUser(dbUser),
 		},
 	}, nil
 }
