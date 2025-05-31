@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/core"
-	"wanderlust/pkg/db"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -32,10 +31,6 @@ func New() *Wanderlust {
 }
 
 func (w *Wanderlust) StartServer() {
-	if cfg.Env.RunMigrations == "1" {
-		db.RunMigrations()
-	}
-
 	go w.app.Tasks.Run()
 	defer w.app.Tasks.Close()
 
