@@ -26,7 +26,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: wanderlust
     volumes:
-      - wl-pg_data:/var/lib/postgresql/data
+      - wl-pg-data:/var/lib/postgresql/data
     shm_size: 1g
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -41,7 +41,7 @@ services:
       - 9000:9000
       - 9001:9001
     volumes:
-      - ./tmp/minio/data:/data
+      - wl-minio-data:/data
     environment:
       - MINIO_ROOT_USER=wanderlust
       - MINIO_ROOT_PASSWORD=wanderlust
@@ -55,7 +55,7 @@ services:
     ports:
       - "8108:8108"
     volumes:
-      - ./tmp/typesense-data:/data
+      - wl-typesense-data:/data
     command: "--data-dir /data --api-key=wanderlust --enable-cors"
     networks:
       - wl-searchnet
@@ -74,7 +74,7 @@ services:
     container_name: wl-mailpit
     restart: unless-stopped
     volumes:
-      - ./tmp/mailpit-data:/data
+      - wl-mailpit-data:/data
     ports:
       - 8025:8025
       - 1025:1025
@@ -113,4 +113,7 @@ networks:
   wl-searchnet:
 
 volumes:
-  wl-pg_data:
+  wl-pg-data:
+  wl-minio-data:
+  wl-typesense-data:
+  wl-mailpit-data:
