@@ -60,15 +60,15 @@ func (q *Queries) GetFollowingCount(ctx context.Context, followerID string) (int
 
 const getUserFollowers = `-- name: GetUserFollowers :many
 SELECT
-  users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_onboarding_completed, users.is_active, users.is_business_account, users.is_verified, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.bio, users.pronouns, users.website, users.phone, users.profile_image, users.banner_image, users.followers_count, users.following_count, users.last_login, users.created_at, users.updated_at
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM follows
-  LEFT JOIN users ON users.id = follows.follower_id
+  LEFT JOIN profile ON profile.id = follows.follower_id
 WHERE follows.following_id = $1
 ORDER BY follows.created_at DESC
 `
 
 type GetUserFollowersRow struct {
-	User User
+	Profile Profile
 }
 
 func (q *Queries) GetUserFollowers(ctx context.Context, followingID string) ([]GetUserFollowersRow, error) {
@@ -81,34 +81,18 @@ func (q *Queries) GetUserFollowers(ctx context.Context, followingID string) ([]G
 	for rows.Next() {
 		var i GetUserFollowersRow
 		if err := rows.Scan(
-			&i.User.ID,
-			&i.User.Email,
-			&i.User.Username,
-			&i.User.FullName,
-			&i.User.PasswordHash,
-			&i.User.GoogleID,
-			&i.User.FbID,
-			&i.User.IsEmailVerified,
-			&i.User.IsOnboardingCompleted,
-			&i.User.IsActive,
-			&i.User.IsBusinessAccount,
-			&i.User.IsVerified,
-			&i.User.Role,
-			&i.User.PasswordResetToken,
-			&i.User.PasswordResetExpires,
-			&i.User.LoginAttempts,
-			&i.User.LockoutUntil,
-			&i.User.Bio,
-			&i.User.Pronouns,
-			&i.User.Website,
-			&i.User.Phone,
-			&i.User.ProfileImage,
-			&i.User.BannerImage,
-			&i.User.FollowersCount,
-			&i.User.FollowingCount,
-			&i.User.LastLogin,
-			&i.User.CreatedAt,
-			&i.User.UpdatedAt,
+			&i.Profile.ID,
+			&i.Profile.Username,
+			&i.Profile.FullName,
+			&i.Profile.IsVerified,
+			&i.Profile.Bio,
+			&i.Profile.Pronouns,
+			&i.Profile.Website,
+			&i.Profile.ProfileImage,
+			&i.Profile.BannerImage,
+			&i.Profile.FollowersCount,
+			&i.Profile.FollowingCount,
+			&i.Profile.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -122,15 +106,15 @@ func (q *Queries) GetUserFollowers(ctx context.Context, followingID string) ([]G
 
 const getUserFollowing = `-- name: GetUserFollowing :many
 SELECT
-  users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_onboarding_completed, users.is_active, users.is_business_account, users.is_verified, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.bio, users.pronouns, users.website, users.phone, users.profile_image, users.banner_image, users.followers_count, users.following_count, users.last_login, users.created_at, users.updated_at
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM follows
-  LEFT JOIN users ON users.id = follows.following_id
+  LEFT JOIN profile ON profile.id = follows.following_id
 WHERE follows.follower_id = $1
 ORDER BY follows.created_at DESC
 `
 
 type GetUserFollowingRow struct {
-	User User
+	Profile Profile
 }
 
 func (q *Queries) GetUserFollowing(ctx context.Context, followerID string) ([]GetUserFollowingRow, error) {
@@ -143,34 +127,18 @@ func (q *Queries) GetUserFollowing(ctx context.Context, followerID string) ([]Ge
 	for rows.Next() {
 		var i GetUserFollowingRow
 		if err := rows.Scan(
-			&i.User.ID,
-			&i.User.Email,
-			&i.User.Username,
-			&i.User.FullName,
-			&i.User.PasswordHash,
-			&i.User.GoogleID,
-			&i.User.FbID,
-			&i.User.IsEmailVerified,
-			&i.User.IsOnboardingCompleted,
-			&i.User.IsActive,
-			&i.User.IsBusinessAccount,
-			&i.User.IsVerified,
-			&i.User.Role,
-			&i.User.PasswordResetToken,
-			&i.User.PasswordResetExpires,
-			&i.User.LoginAttempts,
-			&i.User.LockoutUntil,
-			&i.User.Bio,
-			&i.User.Pronouns,
-			&i.User.Website,
-			&i.User.Phone,
-			&i.User.ProfileImage,
-			&i.User.BannerImage,
-			&i.User.FollowersCount,
-			&i.User.FollowingCount,
-			&i.User.LastLogin,
-			&i.User.CreatedAt,
-			&i.User.UpdatedAt,
+			&i.Profile.ID,
+			&i.Profile.Username,
+			&i.Profile.FullName,
+			&i.Profile.IsVerified,
+			&i.Profile.Bio,
+			&i.Profile.Pronouns,
+			&i.Profile.Website,
+			&i.Profile.ProfileImage,
+			&i.Profile.BannerImage,
+			&i.Profile.FollowersCount,
+			&i.Profile.FollowingCount,
+			&i.Profile.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -204,10 +172,10 @@ func (q *Queries) IsUserFollowing(ctx context.Context, arg IsUserFollowingParams
 
 const searchUserFollowing = `-- name: SearchUserFollowing :many
 SELECT
-  users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_onboarding_completed, users.is_active, users.is_business_account, users.is_verified, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.bio, users.pronouns, users.website, users.phone, users.profile_image, users.banner_image, users.followers_count, users.following_count, users.last_login, users.created_at, users.updated_at
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM follows
-  LEFT JOIN users ON users.id = follows.following_id
-WHERE follows.follower_id = $1 AND users.username ILIKE $2
+  LEFT JOIN profile ON profile.id = follows.following_id
+WHERE follows.follower_id = $1 AND profile.username ILIKE $2
 ORDER BY follows.created_at DESC
 LIMIT 25
 `
@@ -218,7 +186,7 @@ type SearchUserFollowingParams struct {
 }
 
 type SearchUserFollowingRow struct {
-	User User
+	Profile Profile
 }
 
 func (q *Queries) SearchUserFollowing(ctx context.Context, arg SearchUserFollowingParams) ([]SearchUserFollowingRow, error) {
@@ -231,34 +199,18 @@ func (q *Queries) SearchUserFollowing(ctx context.Context, arg SearchUserFollowi
 	for rows.Next() {
 		var i SearchUserFollowingRow
 		if err := rows.Scan(
-			&i.User.ID,
-			&i.User.Email,
-			&i.User.Username,
-			&i.User.FullName,
-			&i.User.PasswordHash,
-			&i.User.GoogleID,
-			&i.User.FbID,
-			&i.User.IsEmailVerified,
-			&i.User.IsOnboardingCompleted,
-			&i.User.IsActive,
-			&i.User.IsBusinessAccount,
-			&i.User.IsVerified,
-			&i.User.Role,
-			&i.User.PasswordResetToken,
-			&i.User.PasswordResetExpires,
-			&i.User.LoginAttempts,
-			&i.User.LockoutUntil,
-			&i.User.Bio,
-			&i.User.Pronouns,
-			&i.User.Website,
-			&i.User.Phone,
-			&i.User.ProfileImage,
-			&i.User.BannerImage,
-			&i.User.FollowersCount,
-			&i.User.FollowingCount,
-			&i.User.LastLogin,
-			&i.User.CreatedAt,
-			&i.User.UpdatedAt,
+			&i.Profile.ID,
+			&i.Profile.Username,
+			&i.Profile.FullName,
+			&i.Profile.IsVerified,
+			&i.Profile.Bio,
+			&i.Profile.Pronouns,
+			&i.Profile.Website,
+			&i.Profile.ProfileImage,
+			&i.Profile.BannerImage,
+			&i.Profile.FollowersCount,
+			&i.Profile.FollowingCount,
+			&i.Profile.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

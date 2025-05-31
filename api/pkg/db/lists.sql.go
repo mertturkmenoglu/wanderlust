@@ -21,6 +21,18 @@ func (q *Queries) CountAllListsOfUser(ctx context.Context, userID string) (int64
 	return count, err
 }
 
+const countListItems = `-- name: CountListItems :one
+SELECT COUNT(*) FROM list_items
+WHERE list_id = $1
+`
+
+func (q *Queries) CountListItems(ctx context.Context, listID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countListItems, listID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countPublicListsOfUser = `-- name: CountPublicListsOfUser :one
 SELECT COUNT(*) FROM lists
 WHERE user_id = $1 AND is_public = true
@@ -77,47 +89,30 @@ const createListItem = `-- name: CreateListItem :one
 INSERT INTO list_items (
   list_id,
   poi_id,
-  list_index
+  index
 ) VALUES (
   $1,
   $2,
   $3
-) RETURNING list_id, poi_id, list_index, created_at
+) RETURNING list_id, poi_id, index, created_at
 `
 
 type CreateListItemParams struct {
-	ListID    string
-	PoiID     string
-	ListIndex int32
+	ListID string
+	PoiID  string
+	Index  int32
 }
 
 func (q *Queries) CreateListItem(ctx context.Context, arg CreateListItemParams) (ListItem, error) {
-	row := q.db.QueryRow(ctx, createListItem, arg.ListID, arg.PoiID, arg.ListIndex)
+	row := q.db.QueryRow(ctx, createListItem, arg.ListID, arg.PoiID, arg.Index)
 	var i ListItem
 	err := row.Scan(
 		&i.ListID,
 		&i.PoiID,
-		&i.ListIndex,
+		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const decrListItemsListIndexAfterDelete = `-- name: DecrListItemsListIndexAfterDelete :exec
-UPDATE list_items
-SET
-  list_index = list_index - 1
-WHERE list_id = $1 AND list_index > $2
-`
-
-type DecrListItemsListIndexAfterDeleteParams struct {
-	ListID    string
-	ListIndex int32
-}
-
-func (q *Queries) DecrListItemsListIndexAfterDelete(ctx context.Context, arg DecrListItemsListIndexAfterDeleteParams) error {
-	_, err := q.db.Exec(ctx, decrListItemsListIndexAfterDelete, arg.ListID, arg.ListIndex)
-	return err
 }
 
 const deleteAllListItems = `-- name: DeleteAllListItems :exec
@@ -137,21 +132,6 @@ WHERE id = $1
 
 func (q *Queries) DeleteList(ctx context.Context, id string) error {
 	_, err := q.db.Exec(ctx, deleteList, id)
-	return err
-}
-
-const deleteListsListItemAtIndex = `-- name: DeleteListsListItemAtIndex :exec
-DELETE FROM list_items
-WHERE list_id = $1 AND list_index = $2
-`
-
-type DeleteListsListItemAtIndexParams struct {
-	ListID    string
-	ListIndex int32
-}
-
-func (q *Queries) DeleteListsListItemAtIndex(ctx context.Context, arg DeleteListsListItemAtIndexParams) error {
-	_, err := q.db.Exec(ctx, deleteListsListItemAtIndex, arg.ListID, arg.ListIndex)
 	return err
 }
 
@@ -197,7 +177,7 @@ func (q *Queries) GetAllListsOfUser(ctx context.Context, arg GetAllListsOfUserPa
 }
 
 const getLastIndexOfList = `-- name: GetLastIndexOfList :one
-SELECT COALESCE(MAX(list_index), 0)
+SELECT COALESCE(MAX(index), 0)
 FROM list_items
 WHERE list_id = $1
 `
@@ -212,15 +192,15 @@ func (q *Queries) GetLastIndexOfList(ctx context.Context, listID string) (interf
 const getListById = `-- name: GetListById :one
 SELECT 
   lists.id, lists.name, lists.user_id, lists.is_public, lists.created_at, lists.updated_at, 
-  users.id, users.email, users.username, users.full_name, users.password_hash, users.google_id, users.fb_id, users.is_email_verified, users.is_onboarding_completed, users.is_active, users.is_business_account, users.is_verified, users.role, users.password_reset_token, users.password_reset_expires, users.login_attempts, users.lockout_until, users.bio, users.pronouns, users.website, users.phone, users.profile_image, users.banner_image, users.followers_count, users.following_count, users.last_login, users.created_at, users.updated_at
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM lists
-  LEFT JOIN users ON users.id = lists.user_id
+  LEFT JOIN profile ON profile.id = lists.user_id
 WHERE lists.id = $1 LIMIT 1
 `
 
 type GetListByIdRow struct {
-	List List
-	User User
+	List    List
+	Profile Profile
 }
 
 func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, error) {
@@ -233,34 +213,18 @@ func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, e
 		&i.List.IsPublic,
 		&i.List.CreatedAt,
 		&i.List.UpdatedAt,
-		&i.User.ID,
-		&i.User.Email,
-		&i.User.Username,
-		&i.User.FullName,
-		&i.User.PasswordHash,
-		&i.User.GoogleID,
-		&i.User.FbID,
-		&i.User.IsEmailVerified,
-		&i.User.IsOnboardingCompleted,
-		&i.User.IsActive,
-		&i.User.IsBusinessAccount,
-		&i.User.IsVerified,
-		&i.User.Role,
-		&i.User.PasswordResetToken,
-		&i.User.PasswordResetExpires,
-		&i.User.LoginAttempts,
-		&i.User.LockoutUntil,
-		&i.User.Bio,
-		&i.User.Pronouns,
-		&i.User.Website,
-		&i.User.Phone,
-		&i.User.ProfileImage,
-		&i.User.BannerImage,
-		&i.User.FollowersCount,
-		&i.User.FollowingCount,
-		&i.User.LastLogin,
-		&i.User.CreatedAt,
-		&i.User.UpdatedAt,
+		&i.Profile.ID,
+		&i.Profile.Username,
+		&i.Profile.FullName,
+		&i.Profile.IsVerified,
+		&i.Profile.Bio,
+		&i.Profile.Pronouns,
+		&i.Profile.Website,
+		&i.Profile.ProfileImage,
+		&i.Profile.BannerImage,
+		&i.Profile.FollowersCount,
+		&i.Profile.FollowingCount,
+		&i.Profile.CreatedAt,
 	)
 	return i, err
 }
@@ -296,7 +260,7 @@ func (q *Queries) GetListIdsAndNamesOfUser(ctx context.Context, userID string) (
 }
 
 const getListItem = `-- name: GetListItem :one
-SELECT list_id, poi_id, list_index, created_at FROM list_items
+SELECT list_id, poi_id, index, created_at FROM list_items
 WHERE list_id = $1 AND poi_id = $2
 LIMIT 1
 `
@@ -312,111 +276,33 @@ func (q *Queries) GetListItem(ctx context.Context, arg GetListItemParams) (ListI
 	err := row.Scan(
 		&i.ListID,
 		&i.PoiID,
-		&i.ListIndex,
+		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const getListItemCount = `-- name: GetListItemCount :one
-SELECT COUNT(*) FROM list_items
-WHERE list_id = $1
-`
-
-func (q *Queries) GetListItemCount(ctx context.Context, listID string) (int64, error) {
-	row := q.db.QueryRow(ctx, getListItemCount, listID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
 const getListItems = `-- name: GetListItems :many
-SELECT
-  list_items.list_id, list_items.poi_id, list_items.list_index, list_items.created_at,
-  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
-  categories.id, categories.name, categories.image,
-  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
-  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
-  FROM list_items
-INNER JOIN pois ON list_items.poi_id = pois.id
-LEFT JOIN categories ON pois.category_id = categories.id
-LEFT JOIN addresses ON pois.address_id = addresses.id
-LEFT JOIN cities ON addresses.city_id = cities.id
-LEFT JOIN media ON pois.id = media.poi_id
-WHERE media.media_order = 1 AND list_items.list_id = $1
-ORDER BY list_items.list_index ASC
+SELECT list_id, poi_id, index, created_at
+FROM list_items
+WHERE list_id = $1
+ORDER BY index ASC
 `
 
-type GetListItemsRow struct {
-	ListItem ListItem
-	Poi      Poi
-	Category Category
-	Address  Address
-	City     City
-	Medium   Medium
-}
-
-func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListItemsRow, error) {
+func (q *Queries) GetListItems(ctx context.Context, listID string) ([]ListItem, error) {
 	rows, err := q.db.Query(ctx, getListItems, listID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetListItemsRow
+	var items []ListItem
 	for rows.Next() {
-		var i GetListItemsRow
+		var i ListItem
 		if err := rows.Scan(
-			&i.ListItem.ListID,
-			&i.ListItem.PoiID,
-			&i.ListItem.ListIndex,
-			&i.ListItem.CreatedAt,
-			&i.Poi.ID,
-			&i.Poi.Name,
-			&i.Poi.Phone,
-			&i.Poi.Description,
-			&i.Poi.AddressID,
-			&i.Poi.Website,
-			&i.Poi.PriceLevel,
-			&i.Poi.AccessibilityLevel,
-			&i.Poi.TotalVotes,
-			&i.Poi.TotalPoints,
-			&i.Poi.TotalFavorites,
-			&i.Poi.CategoryID,
-			&i.Poi.OpenTimes,
-			&i.Poi.CreatedAt,
-			&i.Poi.UpdatedAt,
-			&i.Category.ID,
-			&i.Category.Name,
-			&i.Category.Image,
-			&i.Address.ID,
-			&i.Address.CityID,
-			&i.Address.Line1,
-			&i.Address.Line2,
-			&i.Address.PostalCode,
-			&i.Address.Lat,
-			&i.Address.Lng,
-			&i.City.ID,
-			&i.City.Name,
-			&i.City.StateCode,
-			&i.City.StateName,
-			&i.City.CountryCode,
-			&i.City.CountryName,
-			&i.City.ImageUrl,
-			&i.City.Latitude,
-			&i.City.Longitude,
-			&i.City.Description,
-			&i.City.ImgLicense,
-			&i.City.ImgLicenseLink,
-			&i.City.ImgAttr,
-			&i.City.ImgAttrLink,
-			&i.Medium.ID,
-			&i.Medium.PoiID,
-			&i.Medium.Url,
-			&i.Medium.Alt,
-			&i.Medium.Caption,
-			&i.Medium.MediaOrder,
-			&i.Medium.CreatedAt,
+			&i.ListID,
+			&i.PoiID,
+			&i.Index,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

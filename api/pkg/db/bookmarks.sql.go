@@ -64,59 +64,11 @@ func (q *Queries) DeleteBookmarkByPoiId(ctx context.Context, arg DeleteBookmarkB
 	return err
 }
 
-const getBookmarkById = `-- name: GetBookmarkById :one
-SELECT bookmarks.id, bookmarks.poi_id, bookmarks.user_id, bookmarks.created_at, pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at FROM bookmarks
-JOIN pois ON pois.id = bookmarks.poi_id
-WHERE bookmarks.id = $1
-`
-
-type GetBookmarkByIdRow struct {
-	Bookmark Bookmark
-	Poi      Poi
-}
-
-func (q *Queries) GetBookmarkById(ctx context.Context, id int32) (GetBookmarkByIdRow, error) {
-	row := q.db.QueryRow(ctx, getBookmarkById, id)
-	var i GetBookmarkByIdRow
-	err := row.Scan(
-		&i.Bookmark.ID,
-		&i.Bookmark.PoiID,
-		&i.Bookmark.UserID,
-		&i.Bookmark.CreatedAt,
-		&i.Poi.ID,
-		&i.Poi.Name,
-		&i.Poi.Phone,
-		&i.Poi.Description,
-		&i.Poi.AddressID,
-		&i.Poi.Website,
-		&i.Poi.PriceLevel,
-		&i.Poi.AccessibilityLevel,
-		&i.Poi.TotalVotes,
-		&i.Poi.TotalPoints,
-		&i.Poi.TotalFavorites,
-		&i.Poi.CategoryID,
-		&i.Poi.OpenTimes,
-		&i.Poi.CreatedAt,
-		&i.Poi.UpdatedAt,
-	)
-	return i, err
-}
-
 const getBookmarksByUserId = `-- name: GetBookmarksByUserId :many
 SELECT 
-  bookmarks.id, bookmarks.poi_id, bookmarks.user_id, bookmarks.created_at,
-  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
-  categories.id, categories.name, categories.image,
-  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
-  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
+  id, poi_id, user_id, created_at
 FROM bookmarks
-  JOIN pois ON pois.id = bookmarks.poi_id
-  JOIN categories ON categories.id = pois.category_id
-  JOIN addresses ON addresses.id = pois.address_id
-  JOIN cities ON addresses.city_id = cities.id
-  JOIN media ON media.poi_id = pois.id
-WHERE bookmarks.user_id = $1 AND media.media_order = 1
+WHERE bookmarks.user_id = $1
 ORDER BY bookmarks.created_at DESC
 OFFSET $2
 LIMIT $3
@@ -128,75 +80,20 @@ type GetBookmarksByUserIdParams struct {
 	Limit  int32
 }
 
-type GetBookmarksByUserIdRow struct {
-	Bookmark Bookmark
-	Poi      Poi
-	Category Category
-	Address  Address
-	City     City
-	Medium   Medium
-}
-
-func (q *Queries) GetBookmarksByUserId(ctx context.Context, arg GetBookmarksByUserIdParams) ([]GetBookmarksByUserIdRow, error) {
+func (q *Queries) GetBookmarksByUserId(ctx context.Context, arg GetBookmarksByUserIdParams) ([]Bookmark, error) {
 	rows, err := q.db.Query(ctx, getBookmarksByUserId, arg.UserID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetBookmarksByUserIdRow
+	var items []Bookmark
 	for rows.Next() {
-		var i GetBookmarksByUserIdRow
+		var i Bookmark
 		if err := rows.Scan(
-			&i.Bookmark.ID,
-			&i.Bookmark.PoiID,
-			&i.Bookmark.UserID,
-			&i.Bookmark.CreatedAt,
-			&i.Poi.ID,
-			&i.Poi.Name,
-			&i.Poi.Phone,
-			&i.Poi.Description,
-			&i.Poi.AddressID,
-			&i.Poi.Website,
-			&i.Poi.PriceLevel,
-			&i.Poi.AccessibilityLevel,
-			&i.Poi.TotalVotes,
-			&i.Poi.TotalPoints,
-			&i.Poi.TotalFavorites,
-			&i.Poi.CategoryID,
-			&i.Poi.OpenTimes,
-			&i.Poi.CreatedAt,
-			&i.Poi.UpdatedAt,
-			&i.Category.ID,
-			&i.Category.Name,
-			&i.Category.Image,
-			&i.Address.ID,
-			&i.Address.CityID,
-			&i.Address.Line1,
-			&i.Address.Line2,
-			&i.Address.PostalCode,
-			&i.Address.Lat,
-			&i.Address.Lng,
-			&i.City.ID,
-			&i.City.Name,
-			&i.City.StateCode,
-			&i.City.StateName,
-			&i.City.CountryCode,
-			&i.City.CountryName,
-			&i.City.ImageUrl,
-			&i.City.Latitude,
-			&i.City.Longitude,
-			&i.City.Description,
-			&i.City.ImgLicense,
-			&i.City.ImgLicenseLink,
-			&i.City.ImgAttr,
-			&i.City.ImgAttrLink,
-			&i.Medium.ID,
-			&i.Medium.PoiID,
-			&i.Medium.Url,
-			&i.Medium.Alt,
-			&i.Medium.Caption,
-			&i.Medium.MediaOrder,
-			&i.Medium.CreatedAt,
+			&i.ID,
+			&i.PoiID,
+			&i.UserID,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

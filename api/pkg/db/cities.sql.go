@@ -7,25 +7,19 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type CreateCitiesParams struct {
-	ID             int32
-	Name           string
-	StateCode      string
-	StateName      string
-	CountryCode    string
-	CountryName    string
-	ImageUrl       string
-	Latitude       float64
-	Longitude      float64
-	Description    string
-	ImgLicense     pgtype.Text
-	ImgLicenseLink pgtype.Text
-	ImgAttr        pgtype.Text
-	ImgAttrLink    pgtype.Text
+	ID          int32
+	Name        string
+	StateCode   string
+	StateName   string
+	CountryCode string
+	CountryName string
+	Image       string
+	Latitude    float64
+	Longitude   float64
+	Description string
 }
 
 const createCity = `-- name: CreateCity :one
@@ -36,14 +30,10 @@ INSERT INTO cities (
   state_name,
   country_code,
   country_name,
-  image_url,
+  image,
   latitude,
   longitude,
-  description,
-  img_license,
-  img_license_link,
-  img_attr,
-  img_attr_link
+  description
 ) VALUES (
   $1,
   $2,
@@ -54,29 +44,21 @@ INSERT INTO cities (
   $7,
   $8,
   $9,
-  $10,
-  $11,
-  $12,
-  $13,
-  $14
-) RETURNING id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description, img_license, img_license_link, img_attr, img_attr_link
+  $10
+) RETURNING id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description
 `
 
 type CreateCityParams struct {
-	ID             int32
-	Name           string
-	StateCode      string
-	StateName      string
-	CountryCode    string
-	CountryName    string
-	ImageUrl       string
-	Latitude       float64
-	Longitude      float64
-	Description    string
-	ImgLicense     pgtype.Text
-	ImgLicenseLink pgtype.Text
-	ImgAttr        pgtype.Text
-	ImgAttrLink    pgtype.Text
+	ID          int32
+	Name        string
+	StateCode   string
+	StateName   string
+	CountryCode string
+	CountryName string
+	Image       string
+	Latitude    float64
+	Longitude   float64
+	Description string
 }
 
 func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, error) {
@@ -87,14 +69,10 @@ func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, e
 		arg.StateName,
 		arg.CountryCode,
 		arg.CountryName,
-		arg.ImageUrl,
+		arg.Image,
 		arg.Latitude,
 		arg.Longitude,
 		arg.Description,
-		arg.ImgLicense,
-		arg.ImgLicenseLink,
-		arg.ImgAttr,
-		arg.ImgAttrLink,
 	)
 	var i City
 	err := row.Scan(
@@ -104,14 +82,10 @@ func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, e
 		&i.StateName,
 		&i.CountryCode,
 		&i.CountryName,
-		&i.ImageUrl,
+		&i.Image,
 		&i.Latitude,
 		&i.Longitude,
 		&i.Description,
-		&i.ImgLicense,
-		&i.ImgLicenseLink,
-		&i.ImgAttr,
-		&i.ImgAttrLink,
 	)
 	return i, err
 }
@@ -127,7 +101,7 @@ func (q *Queries) DeleteCity(ctx context.Context, id int32) error {
 }
 
 const getCities = `-- name: GetCities :many
-SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description, img_license, img_license_link, img_attr, img_attr_link FROM cities
+SELECT id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description FROM cities
 ORDER BY id
 `
 
@@ -147,14 +121,10 @@ func (q *Queries) GetCities(ctx context.Context) ([]City, error) {
 			&i.StateName,
 			&i.CountryCode,
 			&i.CountryName,
-			&i.ImageUrl,
+			&i.Image,
 			&i.Latitude,
 			&i.Longitude,
 			&i.Description,
-			&i.ImgLicense,
-			&i.ImgLicenseLink,
-			&i.ImgAttr,
-			&i.ImgAttrLink,
 		); err != nil {
 			return nil, err
 		}
@@ -167,7 +137,7 @@ func (q *Queries) GetCities(ctx context.Context) ([]City, error) {
 }
 
 const getCityById = `-- name: GetCityById :one
-SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description, img_license, img_license_link, img_attr, img_attr_link FROM cities
+SELECT id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description FROM cities
 WHERE cities.id = $1 LIMIT 1
 `
 
@@ -181,20 +151,16 @@ func (q *Queries) GetCityById(ctx context.Context, id int32) (City, error) {
 		&i.StateName,
 		&i.CountryCode,
 		&i.CountryName,
-		&i.ImageUrl,
+		&i.Image,
 		&i.Latitude,
 		&i.Longitude,
 		&i.Description,
-		&i.ImgLicense,
-		&i.ImgLicenseLink,
-		&i.ImgAttr,
-		&i.ImgAttrLink,
 	)
 	return i, err
 }
 
 const getFeaturedCities = `-- name: GetFeaturedCities :many
-SELECT id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description, img_license, img_license_link, img_attr, img_attr_link FROM cities
+SELECT id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description FROM cities
 WHERE id = ANY($1::int[])
 `
 
@@ -214,14 +180,10 @@ func (q *Queries) GetFeaturedCities(ctx context.Context, dollar_1 []int32) ([]Ci
 			&i.StateName,
 			&i.CountryCode,
 			&i.CountryName,
-			&i.ImageUrl,
+			&i.Image,
 			&i.Latitude,
 			&i.Longitude,
 			&i.Description,
-			&i.ImgLicense,
-			&i.ImgLicenseLink,
-			&i.ImgAttr,
-			&i.ImgAttrLink,
 		); err != nil {
 			return nil, err
 		}
@@ -268,33 +230,25 @@ SET
   state_name = $4,
   country_code = $5,
   country_name = $6,
-  image_url = $7,
+  image = $7,
   latitude = $8,
   longitude = $9,
-  description = $10,
-  img_license = $11,
-  img_license_link = $12,
-  img_attr = $13,
-  img_attr_link = $14
+  description = $10
 WHERE id = $1
-RETURNING id, name, state_code, state_name, country_code, country_name, image_url, latitude, longitude, description, img_license, img_license_link, img_attr, img_attr_link
+RETURNING id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description
 `
 
 type UpdateCityParams struct {
-	ID             int32
-	Name           string
-	StateCode      string
-	StateName      string
-	CountryCode    string
-	CountryName    string
-	ImageUrl       string
-	Latitude       float64
-	Longitude      float64
-	Description    string
-	ImgLicense     pgtype.Text
-	ImgLicenseLink pgtype.Text
-	ImgAttr        pgtype.Text
-	ImgAttrLink    pgtype.Text
+	ID          int32
+	Name        string
+	StateCode   string
+	StateName   string
+	CountryCode string
+	CountryName string
+	Image       string
+	Latitude    float64
+	Longitude   float64
+	Description string
 }
 
 func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (City, error) {
@@ -305,14 +259,10 @@ func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (City, e
 		arg.StateName,
 		arg.CountryCode,
 		arg.CountryName,
-		arg.ImageUrl,
+		arg.Image,
 		arg.Latitude,
 		arg.Longitude,
 		arg.Description,
-		arg.ImgLicense,
-		arg.ImgLicenseLink,
-		arg.ImgAttr,
-		arg.ImgAttrLink,
 	)
 	var i City
 	err := row.Scan(
@@ -322,14 +272,10 @@ func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (City, e
 		&i.StateName,
 		&i.CountryCode,
 		&i.CountryName,
-		&i.ImageUrl,
+		&i.Image,
 		&i.Latitude,
 		&i.Longitude,
 		&i.Description,
-		&i.ImgLicense,
-		&i.ImgLicenseLink,
-		&i.ImgAttr,
-		&i.ImgAttrLink,
 	)
 	return i, err
 }

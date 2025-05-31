@@ -12,16 +12,14 @@ import (
 )
 
 type BatchCreateUsersParams struct {
-	ID                    string
-	Email                 string
-	Username              string
-	FullName              string
-	PasswordHash          pgtype.Text
-	GoogleID              pgtype.Text
-	FbID                  pgtype.Text
-	IsEmailVerified       bool
-	IsOnboardingCompleted bool
-	ProfileImage          pgtype.Text
+	ID           string
+	Email        string
+	Username     string
+	FullName     string
+	PasswordHash pgtype.Text
+	GoogleID     pgtype.Text
+	FbID         pgtype.Text
+	ProfileImage pgtype.Text
 }
 
 const createUser = `-- name: CreateUser :one
@@ -33,8 +31,6 @@ INSERT INTO users (
   password_hash,
   google_id,
   fb_id,
-  is_email_verified,
-  is_onboarding_completed,
   profile_image
 ) VALUES (
   $1,
@@ -44,23 +40,19 @@ INSERT INTO users (
   $5,
   $6,
   $7,
-  $8,
-  $9,
-  $10
-) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
+  $8
+) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	ID                    string
-	Email                 string
-	Username              string
-	FullName              string
-	PasswordHash          pgtype.Text
-	GoogleID              pgtype.Text
-	FbID                  pgtype.Text
-	IsEmailVerified       bool
-	IsOnboardingCompleted bool
-	ProfileImage          pgtype.Text
+	ID           string
+	Email        string
+	Username     string
+	FullName     string
+	PasswordHash pgtype.Text
+	GoogleID     pgtype.Text
+	FbID         pgtype.Text
+	ProfileImage pgtype.Text
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -72,8 +64,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.PasswordHash,
 		arg.GoogleID,
 		arg.FbID,
-		arg.IsEmailVerified,
-		arg.IsOnboardingCompleted,
 		arg.ProfileImage,
 	)
 	var i User
@@ -85,25 +75,14 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -168,7 +147,7 @@ func (q *Queries) DeleteUserAllTopPois(ctx context.Context, userID string) error
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
 WHERE email = $1 LIMIT 1
 `
 
@@ -183,25 +162,14 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -209,7 +177,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByFbId = `-- name: GetUserByFbId :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
 WHERE fb_id = $1 LIMIT 1
 `
 
@@ -224,25 +192,14 @@ func (q *Queries) GetUserByFbId(ctx context.Context, fbID pgtype.Text) (User, er
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -250,7 +207,7 @@ func (q *Queries) GetUserByFbId(ctx context.Context, fbID pgtype.Text) (User, er
 }
 
 const getUserByGoogleId = `-- name: GetUserByGoogleId :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
 WHERE google_id = $1 LIMIT 1
 `
 
@@ -265,25 +222,14 @@ func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -291,7 +237,7 @@ func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -306,25 +252,14 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -332,7 +267,7 @@ func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at FROM users
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
 WHERE username = $1 LIMIT 1
 `
 
@@ -347,25 +282,14 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -373,55 +297,22 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 }
 
 const getUserProfileByUsername = `-- name: GetUserProfileByUsername :one
-SELECT 
-  id,
-  username,
-  full_name,
-  is_business_account,
-  is_verified,
-  bio,
-  pronouns,
-  website,
-  phone,
-  profile_image,
-  banner_image,
-  followers_count,
-  following_count,
-  created_at
-FROM users
+SELECT id, username, full_name, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at
+FROM profile
 WHERE username = $1 LIMIT 1
 `
 
-type GetUserProfileByUsernameRow struct {
-	ID                string
-	Username          string
-	FullName          string
-	IsBusinessAccount bool
-	IsVerified        bool
-	Bio               pgtype.Text
-	Pronouns          pgtype.Text
-	Website           pgtype.Text
-	Phone             pgtype.Text
-	ProfileImage      pgtype.Text
-	BannerImage       pgtype.Text
-	FollowersCount    int32
-	FollowingCount    int32
-	CreatedAt         pgtype.Timestamptz
-}
-
-func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string) (GetUserProfileByUsernameRow, error) {
+func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string) (Profile, error) {
 	row := q.db.QueryRow(ctx, getUserProfileByUsername, username)
-	var i GetUserProfileByUsernameRow
+	var i Profile
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.FullName,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
@@ -482,13 +373,13 @@ func (q *Queries) IncrUserFollowing(ctx context.Context, id string) error {
 const isAdmin = `-- name: IsAdmin :one
 SELECT EXISTS (
   SELECT 1
-  FROM users
-  WHERE id = $1 AND role = 'admin'
+  FROM admins
+  WHERE user_id = $1
 )
 `
 
-func (q *Queries) IsAdmin(ctx context.Context, id string) (bool, error) {
-	row := q.db.QueryRow(ctx, isAdmin, id)
+func (q *Queries) IsAdmin(ctx context.Context, userID string) (bool, error) {
+	row := q.db.QueryRow(ctx, isAdmin, userID)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
@@ -585,22 +476,6 @@ func (q *Queries) UpdateUserGoogleId(ctx context.Context, arg UpdateUserGoogleId
 	return err
 }
 
-const updateUserIsEmailVerified = `-- name: UpdateUserIsEmailVerified :exec
-UPDATE users
-SET is_email_verified = $2
-WHERE id = $1
-`
-
-type UpdateUserIsEmailVerifiedParams struct {
-	ID              string
-	IsEmailVerified bool
-}
-
-func (q *Queries) UpdateUserIsEmailVerified(ctx context.Context, arg UpdateUserIsEmailVerifiedParams) error {
-	_, err := q.db.Exec(ctx, updateUserIsEmailVerified, arg.ID, arg.IsEmailVerified)
-	return err
-}
-
 const updateUserPassword = `-- name: UpdateUserPassword :exec
 UPDATE users
 SET password_hash = $2
@@ -623,10 +498,9 @@ SET
   full_name = $2,
   bio = $3,
   pronouns = $4,
-  website = $5,
-  phone = $6
+  website = $5
 WHERE id = $1
-RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_email_verified, is_onboarding_completed, is_active, is_business_account, is_verified, role, password_reset_token, password_reset_expires, login_attempts, lockout_until, bio, pronouns, website, phone, profile_image, banner_image, followers_count, following_count, last_login, created_at, updated_at
+RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at
 `
 
 type UpdateUserProfileParams struct {
@@ -635,7 +509,6 @@ type UpdateUserProfileParams struct {
 	Bio      pgtype.Text
 	Pronouns pgtype.Text
 	Website  pgtype.Text
-	Phone    pgtype.Text
 }
 
 func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfileParams) (User, error) {
@@ -645,7 +518,6 @@ func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfilePa
 		arg.Bio,
 		arg.Pronouns,
 		arg.Website,
-		arg.Phone,
 	)
 	var i User
 	err := row.Scan(
@@ -656,25 +528,14 @@ func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfilePa
 		&i.PasswordHash,
 		&i.GoogleID,
 		&i.FbID,
-		&i.IsEmailVerified,
-		&i.IsOnboardingCompleted,
-		&i.IsActive,
-		&i.IsBusinessAccount,
 		&i.IsVerified,
-		&i.Role,
-		&i.PasswordResetToken,
-		&i.PasswordResetExpires,
-		&i.LoginAttempts,
-		&i.LockoutUntil,
 		&i.Bio,
 		&i.Pronouns,
 		&i.Website,
-		&i.Phone,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
 		&i.FollowingCount,
-		&i.LastLogin,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

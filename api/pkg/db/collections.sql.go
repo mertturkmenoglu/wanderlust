@@ -7,8 +7,6 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countCollections = `-- name: CountCollections :one
@@ -79,27 +77,27 @@ const createCollectionItem = `-- name: CreateCollectionItem :one
 INSERT INTO collection_items (
   collection_id,
   poi_id,
-  list_index
+  index
 ) VALUES (
   $1,
   $2,
   $3
-) RETURNING collection_id, poi_id, list_index, created_at
+) RETURNING collection_id, poi_id, index, created_at
 `
 
 type CreateCollectionItemParams struct {
 	CollectionID string
 	PoiID        string
-	ListIndex    int32
+	Index        int32
 }
 
 func (q *Queries) CreateCollectionItem(ctx context.Context, arg CreateCollectionItemParams) (CollectionItem, error) {
-	row := q.db.QueryRow(ctx, createCollectionItem, arg.CollectionID, arg.PoiID, arg.ListIndex)
+	row := q.db.QueryRow(ctx, createCollectionItem, arg.CollectionID, arg.PoiID, arg.Index)
 	var i CollectionItem
 	err := row.Scan(
 		&i.CollectionID,
 		&i.PoiID,
-		&i.ListIndex,
+		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -132,16 +130,16 @@ const decrListIndexAfterDelete = `-- name: DecrListIndexAfterDelete :exec
 UPDATE collection_items
 SET 
   list_index = list_index - 1
-WHERE collection_id = $1 AND list_index > $2
+WHERE collection_id = $1 AND index > $2
 `
 
 type DecrListIndexAfterDeleteParams struct {
 	CollectionID string
-	ListIndex    int32
+	Index        int32
 }
 
 func (q *Queries) DecrListIndexAfterDelete(ctx context.Context, arg DecrListIndexAfterDeleteParams) error {
-	_, err := q.db.Exec(ctx, decrListIndexAfterDelete, arg.CollectionID, arg.ListIndex)
+	_, err := q.db.Exec(ctx, decrListIndexAfterDelete, arg.CollectionID, arg.Index)
 	return err
 }
 
@@ -167,16 +165,16 @@ func (q *Queries) DeleteCollection(ctx context.Context, id string) error {
 
 const deleteCollectionItemAtIndex = `-- name: DeleteCollectionItemAtIndex :exec
 DELETE FROM collection_items
-WHERE collection_id = $1 AND list_index = $2
+WHERE collection_id = $1 AND index = $2
 `
 
 type DeleteCollectionItemAtIndexParams struct {
 	CollectionID string
-	ListIndex    int32
+	Index        int32
 }
 
 func (q *Queries) DeleteCollectionItemAtIndex(ctx context.Context, arg DeleteCollectionItemAtIndexParams) error {
-	_, err := q.db.Exec(ctx, deleteCollectionItemAtIndex, arg.CollectionID, arg.ListIndex)
+	_, err := q.db.Exec(ctx, deleteCollectionItemAtIndex, arg.CollectionID, arg.Index)
 	return err
 }
 
@@ -271,7 +269,7 @@ func (q *Queries) GetCollectionIdsForPoi(ctx context.Context, poiID string) ([]s
 }
 
 const getCollectionItem = `-- name: GetCollectionItem :one
-SELECT collection_id, poi_id, list_index, created_at FROM collection_items
+SELECT collection_id, poi_id, index, created_at FROM collection_items
 WHERE collection_id = $1 AND poi_id = $2
 LIMIT 1
 `
@@ -287,99 +285,33 @@ func (q *Queries) GetCollectionItem(ctx context.Context, arg GetCollectionItemPa
 	err := row.Scan(
 		&i.CollectionID,
 		&i.PoiID,
-		&i.ListIndex,
+		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getCollectionItems = `-- name: GetCollectionItems :many
-SELECT 
-  collection_items.collection_id, collection_items.poi_id, collection_items.list_index, collection_items.created_at,
-  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
-  categories.id, categories.name, categories.image,
-  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
-  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
+SELECT collection_id, poi_id, index, created_at
 FROM collection_items
-  INNER JOIN pois ON collection_items.poi_id = pois.id
-  LEFT JOIN categories ON pois.category_id = categories.id
-  LEFT JOIN addresses ON pois.address_id = addresses.id
-  LEFT JOIN cities ON addresses.city_id = cities.id
-  LEFT JOIN media ON pois.id = media.poi_id
-WHERE media.media_order = 1 AND collection_items.collection_id = $1
-ORDER BY collection_items.list_index ASC
+WHERE collection_id = $1
+ORDER BY index ASC
 `
 
-type GetCollectionItemsRow struct {
-	CollectionItem CollectionItem
-	Poi            Poi
-	Category       Category
-	Address        Address
-	City           City
-	Medium         Medium
-}
-
-func (q *Queries) GetCollectionItems(ctx context.Context, collectionID string) ([]GetCollectionItemsRow, error) {
+func (q *Queries) GetCollectionItems(ctx context.Context, collectionID string) ([]CollectionItem, error) {
 	rows, err := q.db.Query(ctx, getCollectionItems, collectionID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetCollectionItemsRow
+	var items []CollectionItem
 	for rows.Next() {
-		var i GetCollectionItemsRow
+		var i CollectionItem
 		if err := rows.Scan(
-			&i.CollectionItem.CollectionID,
-			&i.CollectionItem.PoiID,
-			&i.CollectionItem.ListIndex,
-			&i.CollectionItem.CreatedAt,
-			&i.Poi.ID,
-			&i.Poi.Name,
-			&i.Poi.Phone,
-			&i.Poi.Description,
-			&i.Poi.AddressID,
-			&i.Poi.Website,
-			&i.Poi.PriceLevel,
-			&i.Poi.AccessibilityLevel,
-			&i.Poi.TotalVotes,
-			&i.Poi.TotalPoints,
-			&i.Poi.TotalFavorites,
-			&i.Poi.CategoryID,
-			&i.Poi.OpenTimes,
-			&i.Poi.CreatedAt,
-			&i.Poi.UpdatedAt,
-			&i.Category.ID,
-			&i.Category.Name,
-			&i.Category.Image,
-			&i.Address.ID,
-			&i.Address.CityID,
-			&i.Address.Line1,
-			&i.Address.Line2,
-			&i.Address.PostalCode,
-			&i.Address.Lat,
-			&i.Address.Lng,
-			&i.City.ID,
-			&i.City.Name,
-			&i.City.StateCode,
-			&i.City.StateName,
-			&i.City.CountryCode,
-			&i.City.CountryName,
-			&i.City.ImageUrl,
-			&i.City.Latitude,
-			&i.City.Longitude,
-			&i.City.Description,
-			&i.City.ImgLicense,
-			&i.City.ImgLicenseLink,
-			&i.City.ImgAttr,
-			&i.City.ImgAttrLink,
-			&i.Medium.ID,
-			&i.Medium.PoiID,
-			&i.Medium.Url,
-			&i.Medium.Alt,
-			&i.Medium.Caption,
-			&i.Medium.MediaOrder,
-			&i.Medium.CreatedAt,
+			&i.CollectionID,
+			&i.PoiID,
+			&i.Index,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -417,76 +349,6 @@ func (q *Queries) GetCollections(ctx context.Context, arg GetCollectionsParams) 
 			&i.Name,
 			&i.Description,
 			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getCollectionsByIdsPopulated = `-- name: GetCollectionsByIdsPopulated :many
-SELECT
-  col.id, col.name, col.description, col.created_at,
-  COALESCE(json_agg(DISTINCT jsonb_build_object(
-    'index', ci.list_index,
-    'created_at', ci.created_at,
-    'poi', to_jsonb(poi.*),
-    'poiCategory', to_jsonb(cat.*),
-    'poiAddress', to_jsonb(addr.*),
-    'poiCity', to_jsonb(cities.*),
-    'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
-    'poiMedia', COALESCE(poi_media.media, '[]')
-  )) FILTER (WHERE ci.collection_id IS NOT NULL), '[]') AS items
-FROM collections col
-LEFT JOIN collection_items ci ON ci.collection_id = col.id
-LEFT JOIN pois poi ON poi.id = ci.poi_id
-LEFT JOIN categories cat ON cat.id = poi.category_id
-LEFT JOIN addresses addr ON addr.id = poi.address_id
-LEFT JOIN cities ON cities.id = addr.city_id
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(a.*)) AS amenities
-  FROM amenities_pois pa
-  JOIN amenities a ON a.id = pa.amenity_id
-  WHERE pa.poi_id = poi.id
-) AS poi_amenities ON TRUE
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(pm.*)) AS media
-  FROM media pm
-  WHERE pm.poi_id = poi.id
-) AS poi_media ON TRUE
-
-WHERE col.id = ANY($1::TEXT[])
-
-GROUP BY col.id
-`
-
-type GetCollectionsByIdsPopulatedRow struct {
-	ID          string
-	Name        string
-	Description string
-	CreatedAt   pgtype.Timestamptz
-	Items       interface{}
-}
-
-func (q *Queries) GetCollectionsByIdsPopulated(ctx context.Context, dollar_1 []string) ([]GetCollectionsByIdsPopulatedRow, error) {
-	rows, err := q.db.Query(ctx, getCollectionsByIdsPopulated, dollar_1)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetCollectionsByIdsPopulatedRow
-	for rows.Next() {
-		var i GetCollectionsByIdsPopulatedRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Description,
-			&i.CreatedAt,
-			&i.Items,
 		); err != nil {
 			return nil, err
 		}

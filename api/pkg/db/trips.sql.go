@@ -58,7 +58,6 @@ type BatchCreateTripAmenitiesParams struct {
 type BatchCreateTripsParams struct {
 	ID              string
 	OwnerID         string
-	Status          string
 	Description     string
 	Title           string
 	VisibilityLevel string
@@ -85,7 +84,6 @@ INSERT INTO trips (
   owner_id,
   title,
   description,
-  status,
   visibility_level,
   start_at,
   end_at
@@ -96,9 +94,8 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7,
-  $8
-) RETURNING id, owner_id, status, title, description, visibility_level, start_at, end_at, created_at, updated_at
+  $7
+) RETURNING id, owner_id, title, description, visibility_level, start_at, end_at, created_at, updated_at
 `
 
 type CreateTripParams struct {
@@ -106,7 +103,6 @@ type CreateTripParams struct {
 	OwnerID         string
 	Title           string
 	Description     string
-	Status          string
 	VisibilityLevel string
 	StartAt         pgtype.Timestamptz
 	EndAt           pgtype.Timestamptz
@@ -118,7 +114,6 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 		arg.OwnerID,
 		arg.Title,
 		arg.Description,
-		arg.Status,
 		arg.VisibilityLevel,
 		arg.StartAt,
 		arg.EndAt,
@@ -127,7 +122,6 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 	err := row.Scan(
 		&i.ID,
 		&i.OwnerID,
-		&i.Status,
 		&i.Title,
 		&i.Description,
 		&i.VisibilityLevel,
@@ -191,7 +185,6 @@ INSERT INTO trip_invites (
   sent_at,
   expires_at,
   trip_title,
-  trip_description,
   role
 ) VALUES (
   $1,
@@ -201,21 +194,19 @@ INSERT INTO trip_invites (
   $5,
   $6,
   $7,
-  $8,
-  $9
-) RETURNING id, trip_id, from_id, to_id, sent_at, expires_at, trip_title, trip_description, role
+  $8
+) RETURNING id, trip_id, from_id, to_id, sent_at, expires_at, trip_title, role
 `
 
 type CreateTripInviteParams struct {
-	ID              string
-	TripID          string
-	FromID          string
-	ToID            string
-	SentAt          pgtype.Timestamptz
-	ExpiresAt       pgtype.Timestamptz
-	TripTitle       string
-	TripDescription string
-	Role            string
+	ID        string
+	TripID    string
+	FromID    string
+	ToID      string
+	SentAt    pgtype.Timestamptz
+	ExpiresAt pgtype.Timestamptz
+	TripTitle string
+	Role      string
 }
 
 func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInviteParams) (TripInvite, error) {
@@ -227,7 +218,6 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 		arg.SentAt,
 		arg.ExpiresAt,
 		arg.TripTitle,
-		arg.TripDescription,
 		arg.Role,
 	)
 	var i TripInvite
@@ -239,7 +229,6 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 		&i.SentAt,
 		&i.ExpiresAt,
 		&i.TripTitle,
-		&i.TripDescription,
 		&i.Role,
 	)
 	return i, err
@@ -416,7 +405,7 @@ func (q *Queries) GetAllTripsIds(ctx context.Context, arg GetAllTripsIdsParams) 
 
 const getInvitesByToUserId = `-- name: GetInvitesByToUserId :many
 SELECT
-  invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.trip_title, invites.trip_description, invites.role,
+  invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.trip_title, invites.role,
   jsonb_build_object(
     'id', p.id,
     'fullName', p.full_name,
@@ -451,7 +440,6 @@ func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetI
 			&i.TripInvite.SentAt,
 			&i.TripInvite.ExpiresAt,
 			&i.TripInvite.TripTitle,
-			&i.TripInvite.TripDescription,
 			&i.TripInvite.Role,
 			&i.Fromuser,
 		); err != nil {
@@ -467,7 +455,7 @@ func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetI
 
 const getInvitesByTripId = `-- name: GetInvitesByTripId :many
 SELECT
-  invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.trip_title, invites.trip_description, invites.role,
+  invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.trip_title, invites.role,
   jsonb_build_object(
     'id', pfrom.id,
     'fullName', pfrom.full_name,
@@ -510,7 +498,6 @@ func (q *Queries) GetInvitesByTripId(ctx context.Context, tripID string) ([]GetI
 			&i.TripInvite.SentAt,
 			&i.TripInvite.ExpiresAt,
 			&i.TripInvite.TripTitle,
-			&i.TripInvite.TripDescription,
 			&i.TripInvite.Role,
 			&i.Fromuser,
 			&i.Touser,
@@ -526,7 +513,7 @@ func (q *Queries) GetInvitesByTripId(ctx context.Context, tripID string) ([]GetI
 }
 
 const getTripById = `-- name: GetTripById :one
-SELECT id, owner_id, status, title, description, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
+SELECT id, owner_id, title, description, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
 `
 
 func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
@@ -535,7 +522,6 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.OwnerID,
-		&i.Status,
 		&i.Title,
 		&i.Description,
 		&i.VisibilityLevel,
@@ -676,7 +662,7 @@ func (q *Queries) GetTripLocationById(ctx context.Context, id string) (GetTripLo
 
 const getTripsByIdsPopulated = `-- name: GetTripsByIdsPopulated :many
 SELECT
-  trips.id, trips.owner_id, trips.status, trips.title, trips.description, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
+  trips.id, trips.owner_id, trips.title, trips.description, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
   jsonb_build_object(
     'id', u.id,
     'fullName', u.full_name,
@@ -708,33 +694,10 @@ SELECT
   ))
   FROM trip_locations tlocations
   WHERE tlocations.trip_id = trips.id
-  ) AS locations,
-  COALESCE(json_agg(DISTINCT jsonb_build_object(
-    'poi', to_jsonb(poi.*),
-    'poiCategory', to_jsonb(cat.*),
-    'poiAddress', to_jsonb(addr.*),
-    'poiCity', to_jsonb(cities.*),
-    'poiAmenities', COALESCE(poi_amenities.amenities, '[]'),
-    'poiMedia', COALESCE(poi_media.media, '[]')
-  )) FILTER (WHERE trip_locations.poi_id IS NOT NULL), '[]') AS ps
+  ) AS locations
 FROM trips
 LEFT JOIN users u ON u.id = trips.owner_id
 LEFT JOIN trip_locations ON trip_locations.trip_id = trips.id
-LEFT JOIN pois poi ON poi.id = trip_locations.poi_id
-LEFT JOIN categories cat ON cat.id = poi.category_id
-LEFT JOIN addresses addr ON addr.id = poi.address_id
-LEFT JOIN cities ON cities.id = addr.city_id
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(a.*)) AS amenities
-  FROM amenities_pois pa
-  JOIN amenities a ON a.id = pa.amenity_id
-  WHERE pa.poi_id = poi.id
-) AS poi_amenities ON TRUE
-LEFT JOIN LATERAL (
-  SELECT json_agg(to_jsonb(pm.*)) AS media
-  FROM media pm
-  WHERE pm.poi_id = poi.id
-) AS poi_media ON TRUE
 WHERE trips.id = ANY($1::TEXT[])
 GROUP BY trips.id, u.id
 ORDER BY trips.created_at DESC
@@ -746,7 +709,6 @@ type GetTripsByIdsPopulatedRow struct {
 	Participants []byte
 	Amenities    []byte
 	Locations    []byte
-	Ps           interface{}
 }
 
 func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string) ([]GetTripsByIdsPopulatedRow, error) {
@@ -761,7 +723,6 @@ func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string)
 		if err := rows.Scan(
 			&i.Trip.ID,
 			&i.Trip.OwnerID,
-			&i.Trip.Status,
 			&i.Trip.Title,
 			&i.Trip.Description,
 			&i.Trip.VisibilityLevel,
@@ -773,7 +734,6 @@ func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string)
 			&i.Participants,
 			&i.Amenities,
 			&i.Locations,
-			&i.Ps,
 		); err != nil {
 			return nil, err
 		}
@@ -817,7 +777,7 @@ SET
   start_at = $5,
   end_at = $6
 WHERE id = $1
-RETURNING id, owner_id, status, title, description, visibility_level, start_at, end_at, created_at, updated_at
+RETURNING id, owner_id, title, description, visibility_level, start_at, end_at, created_at, updated_at
 `
 
 type UpdateTripParams struct {
@@ -842,7 +802,6 @@ func (q *Queries) UpdateTrip(ctx context.Context, arg UpdateTripParams) (Trip, e
 	err := row.Scan(
 		&i.ID,
 		&i.OwnerID,
-		&i.Status,
 		&i.Title,
 		&i.Description,
 		&i.VisibilityLevel,

@@ -11,96 +11,82 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type BatchCreateDiaryEntryLocationsParams struct {
-	DiaryEntryID string
-	PoiID        string
-	Description  pgtype.Text
-	ListIndex    int32
+type BatchCreateDiaryLocationsParams struct {
+	DiaryID     string
+	PoiID       string
+	Description pgtype.Text
+	Index       int32
 }
 
-type BatchCreateDiaryEntryUsersParams struct {
-	DiaryEntryID string
-	UserID       string
-	ListIndex    int32
+type BatchCreateDiaryUsersParams struct {
+	DiaryID string
+	UserID  string
+	Index   int32
 }
 
-const countDiaryEntries = `-- name: CountDiaryEntries :one
-SELECT COUNT(*) FROM diary_entries
+const countDiaries = `-- name: CountDiaries :one
+SELECT COUNT(*) FROM diaries
 WHERE user_id = $1
 `
 
-func (q *Queries) CountDiaryEntries(ctx context.Context, userID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countDiaryEntries, userID)
+func (q *Queries) CountDiaries(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countDiaries, userID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const countDiaryEntriesFilterByRange = `-- name: CountDiaryEntriesFilterByRange :one
-SELECT COUNT(*) FROM diary_entries
+const countDiariesFilterByRange = `-- name: CountDiariesFilterByRange :one
+SELECT COUNT(*) FROM diaries
 WHERE user_id = $1 AND date <= $2 AND date >= $3
 `
 
-type CountDiaryEntriesFilterByRangeParams struct {
+type CountDiariesFilterByRangeParams struct {
 	UserID string
 	Date   pgtype.Timestamptz
 	Date_2 pgtype.Timestamptz
 }
 
-func (q *Queries) CountDiaryEntriesFilterByRange(ctx context.Context, arg CountDiaryEntriesFilterByRangeParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countDiaryEntriesFilterByRange, arg.UserID, arg.Date, arg.Date_2)
+func (q *Queries) CountDiariesFilterByRange(ctx context.Context, arg CountDiariesFilterByRangeParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countDiariesFilterByRange, arg.UserID, arg.Date, arg.Date_2)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const createDiaryMedia = `-- name: CreateDiaryMedia :one
-INSERT INTO diary_media (
-  diary_entry_id,
+const createDiaryImage = `-- name: CreateDiaryImage :one
+INSERT INTO diary_images (
+  diary_id,
   url,
-  alt,
-  caption,
-  media_order
+  index
 ) VALUES (
   $1,
   $2,
-  $3,
-  $4,
-  $5
-) RETURNING id, diary_entry_id, url, alt, caption, media_order, created_at
+  $3
+) RETURNING id, diary_id, url, index, created_at
 `
 
-type CreateDiaryMediaParams struct {
-	DiaryEntryID string
-	Url          string
-	Alt          string
-	Caption      pgtype.Text
-	MediaOrder   int16
+type CreateDiaryImageParams struct {
+	DiaryID string
+	Url     string
+	Index   int16
 }
 
-func (q *Queries) CreateDiaryMedia(ctx context.Context, arg CreateDiaryMediaParams) (DiaryMedium, error) {
-	row := q.db.QueryRow(ctx, createDiaryMedia,
-		arg.DiaryEntryID,
-		arg.Url,
-		arg.Alt,
-		arg.Caption,
-		arg.MediaOrder,
-	)
-	var i DiaryMedium
+func (q *Queries) CreateDiaryImage(ctx context.Context, arg CreateDiaryImageParams) (DiaryImage, error) {
+	row := q.db.QueryRow(ctx, createDiaryImage, arg.DiaryID, arg.Url, arg.Index)
+	var i DiaryImage
 	err := row.Scan(
 		&i.ID,
-		&i.DiaryEntryID,
+		&i.DiaryID,
 		&i.Url,
-		&i.Alt,
-		&i.Caption,
-		&i.MediaOrder,
+		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const createNewDiaryEntry = `-- name: CreateNewDiaryEntry :one
-INSERT INTO diary_entries (
+const createNewDiary = `-- name: CreateNewDiary :one
+INSERT INTO diaries (
   id,
   user_id,
   title,
@@ -117,7 +103,7 @@ INSERT INTO diary_entries (
 ) RETURNING id, user_id, title, description, share_with_friends, date, created_at, updated_at
 `
 
-type CreateNewDiaryEntryParams struct {
+type CreateNewDiaryParams struct {
 	ID               string
 	UserID           string
 	Title            string
@@ -126,8 +112,8 @@ type CreateNewDiaryEntryParams struct {
 	Date             pgtype.Timestamptz
 }
 
-func (q *Queries) CreateNewDiaryEntry(ctx context.Context, arg CreateNewDiaryEntryParams) (DiaryEntry, error) {
-	row := q.db.QueryRow(ctx, createNewDiaryEntry,
+func (q *Queries) CreateNewDiary(ctx context.Context, arg CreateNewDiaryParams) (Diary, error) {
+	row := q.db.QueryRow(ctx, createNewDiary,
 		arg.ID,
 		arg.UserID,
 		arg.Title,
@@ -135,7 +121,7 @@ func (q *Queries) CreateNewDiaryEntry(ctx context.Context, arg CreateNewDiaryEnt
 		arg.ShareWithFriends,
 		arg.Date,
 	)
-	var i DiaryEntry
+	var i Diary
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
@@ -149,134 +135,49 @@ func (q *Queries) CreateNewDiaryEntry(ctx context.Context, arg CreateNewDiaryEnt
 	return i, err
 }
 
-const deleteDiaryEntry = `-- name: DeleteDiaryEntry :exec
-DELETE FROM diary_entries
+const deleteDiary = `-- name: DeleteDiary :exec
+DELETE FROM diaries
 WHERE id = $1
 `
 
-func (q *Queries) DeleteDiaryEntry(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteDiaryEntry, id)
+func (q *Queries) DeleteDiary(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, deleteDiary, id)
 	return err
 }
 
-const getDiaryEntriesByIdsPopulated = `-- name: GetDiaryEntriesByIdsPopulated :many
-SELECT
-  de.id, de.user_id, de.title, de.description, de.share_with_friends, de.date, de.created_at, de.updated_at,
-	COALESCE(
-    json_agg(DISTINCT to_jsonb(dm.*)) FILTER (WHERE dm.id IS NOT NULL), '[]') AS media,
-	to_jsonb(u.*) as user,
-  (SELECT json_agg(to_jsonb(pr.*))
-   FROM diary_entries_users def
-   JOIN profile pr ON pr.id = def.user_id
-   WHERE def.diary_entry_id = de.id
-  ) AS friends,
-  COALESCE(
-    json_agg(DISTINCT jsonb_build_object(
-      'description', dl.description,
-      'index', dl.list_index,
-      'poiId', dl.poi_id
-    )) FILTER (WHERE dl.diary_entry_id IS NOT NULL), '[]') AS locations,
-  get_pois(
-    ARRAY(
-      SELECT poi_id
-      FROM diary_entries_pois
-      WHERE diary_entry_id = de.id
-    )
-  ) AS pois
-FROM diary_entries de
-LEFT JOIN users u ON u.id = de.user_id
-LEFT JOIN diary_media dm ON de.id = dm.diary_entry_id
-LEFT JOIN diary_entries_pois dl ON dl.diary_entry_id = de.id
-WHERE de.id = ANY($1::TEXT[])
-
-GROUP BY de.id, de.title, u.id
-`
-
-type GetDiaryEntriesByIdsPopulatedRow struct {
-	ID               string
-	UserID           string
-	Title            string
-	Description      string
-	ShareWithFriends bool
-	Date             pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-	UpdatedAt        pgtype.Timestamptz
-	Media            interface{}
-	User             []byte
-	Friends          []byte
-	Locations        interface{}
-	Pois             []byte
-}
-
-func (q *Queries) GetDiaryEntriesByIdsPopulated(ctx context.Context, dollar_1 []string) ([]GetDiaryEntriesByIdsPopulatedRow, error) {
-	rows, err := q.db.Query(ctx, getDiaryEntriesByIdsPopulated, dollar_1)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetDiaryEntriesByIdsPopulatedRow
-	for rows.Next() {
-		var i GetDiaryEntriesByIdsPopulatedRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.Title,
-			&i.Description,
-			&i.ShareWithFriends,
-			&i.Date,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Media,
-			&i.User,
-			&i.Friends,
-			&i.Locations,
-			&i.Pois,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getDiaryEntryById = `-- name: GetDiaryEntryById :one
+const getDiaryById = `-- name: GetDiaryById :one
 SELECT 
-  diary_entries.id, diary_entries.user_id, diary_entries.title, diary_entries.description, diary_entries.share_with_friends, diary_entries.date, diary_entries.created_at, diary_entries.updated_at, 
-  profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
-FROM diary_entries
-  LEFT JOIN profile ON diary_entries.user_id = profile.id
-WHERE diary_entries.id = $1 LIMIT 1
+  diaries.id, diaries.user_id, diaries.title, diaries.description, diaries.share_with_friends, diaries.date, diaries.created_at, diaries.updated_at, 
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+FROM diaries
+LEFT JOIN profile ON diaries.user_id = profile.id
+WHERE diaries.id = $1 LIMIT 1
 `
 
-type GetDiaryEntryByIdRow struct {
-	DiaryEntry DiaryEntry
-	Profile    Profile
+type GetDiaryByIdRow struct {
+	Diary   Diary
+	Profile Profile
 }
 
-func (q *Queries) GetDiaryEntryById(ctx context.Context, id string) (GetDiaryEntryByIdRow, error) {
-	row := q.db.QueryRow(ctx, getDiaryEntryById, id)
-	var i GetDiaryEntryByIdRow
+func (q *Queries) GetDiaryById(ctx context.Context, id string) (GetDiaryByIdRow, error) {
+	row := q.db.QueryRow(ctx, getDiaryById, id)
+	var i GetDiaryByIdRow
 	err := row.Scan(
-		&i.DiaryEntry.ID,
-		&i.DiaryEntry.UserID,
-		&i.DiaryEntry.Title,
-		&i.DiaryEntry.Description,
-		&i.DiaryEntry.ShareWithFriends,
-		&i.DiaryEntry.Date,
-		&i.DiaryEntry.CreatedAt,
-		&i.DiaryEntry.UpdatedAt,
+		&i.Diary.ID,
+		&i.Diary.UserID,
+		&i.Diary.Title,
+		&i.Diary.Description,
+		&i.Diary.ShareWithFriends,
+		&i.Diary.Date,
+		&i.Diary.CreatedAt,
+		&i.Diary.UpdatedAt,
 		&i.Profile.ID,
 		&i.Profile.Username,
 		&i.Profile.FullName,
-		&i.Profile.IsBusinessAccount,
 		&i.Profile.IsVerified,
 		&i.Profile.Bio,
 		&i.Profile.Pronouns,
 		&i.Profile.Website,
-		&i.Profile.Phone,
 		&i.Profile.ProfileImage,
 		&i.Profile.BannerImage,
 		&i.Profile.FollowersCount,
@@ -286,93 +187,27 @@ func (q *Queries) GetDiaryEntryById(ctx context.Context, id string) (GetDiaryEnt
 	return i, err
 }
 
-const getDiaryEntryPois = `-- name: GetDiaryEntryPois :many
-SELECT 
-  diary_entries_pois.diary_entry_id, diary_entries_pois.poi_id, diary_entries_pois.description, diary_entries_pois.list_index,
-  pois.id, pois.name, pois.phone, pois.description, pois.address_id, pois.website, pois.price_level, pois.accessibility_level, pois.total_votes, pois.total_points, pois.total_favorites, pois.category_id, pois.open_times, pois.created_at, pois.updated_at,
-  categories.id, categories.name, categories.image,
-  addresses.id, addresses.city_id, addresses.line1, addresses.line2, addresses.postal_code, addresses.lat, addresses.lng,
-  cities.id, cities.name, cities.state_code, cities.state_name, cities.country_code, cities.country_name, cities.image_url, cities.latitude, cities.longitude, cities.description, cities.img_license, cities.img_license_link, cities.img_attr, cities.img_attr_link,
-  media.id, media.poi_id, media.url, media.alt, media.caption, media.media_order, media.created_at
-FROM diary_entries_pois
-  LEFT JOIN pois ON diary_entries_pois.poi_id = pois.id
-  LEFT JOIN categories ON categories.id = pois.category_id
-  LEFT JOIN addresses ON addresses.id = pois.address_id
-  LEFT JOIN cities ON addresses.city_id = cities.id
-  LEFT JOIN media ON media.poi_id = pois.id
-WHERE diary_entries_pois.diary_entry_id = $1 AND media.media_order = 1
-ORDER BY diary_entries_pois.list_index ASC
+const getDiaryImages = `-- name: GetDiaryImages :many
+SELECT id, diary_id, url, index, created_at FROM diary_images
+WHERE diary_id = $1
+ORDER BY index ASC
 `
 
-type GetDiaryEntryPoisRow struct {
-	DiaryEntriesPoi DiaryEntriesPoi
-	Poi             Poi
-	Category        Category
-	Address         Address
-	City            City
-	Medium          Medium
-}
-
-func (q *Queries) GetDiaryEntryPois(ctx context.Context, diaryEntryID string) ([]GetDiaryEntryPoisRow, error) {
-	rows, err := q.db.Query(ctx, getDiaryEntryPois, diaryEntryID)
+func (q *Queries) GetDiaryImages(ctx context.Context, diaryID string) ([]DiaryImage, error) {
+	rows, err := q.db.Query(ctx, getDiaryImages, diaryID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetDiaryEntryPoisRow
+	var items []DiaryImage
 	for rows.Next() {
-		var i GetDiaryEntryPoisRow
+		var i DiaryImage
 		if err := rows.Scan(
-			&i.DiaryEntriesPoi.DiaryEntryID,
-			&i.DiaryEntriesPoi.PoiID,
-			&i.DiaryEntriesPoi.Description,
-			&i.DiaryEntriesPoi.ListIndex,
-			&i.Poi.ID,
-			&i.Poi.Name,
-			&i.Poi.Phone,
-			&i.Poi.Description,
-			&i.Poi.AddressID,
-			&i.Poi.Website,
-			&i.Poi.PriceLevel,
-			&i.Poi.AccessibilityLevel,
-			&i.Poi.TotalVotes,
-			&i.Poi.TotalPoints,
-			&i.Poi.TotalFavorites,
-			&i.Poi.CategoryID,
-			&i.Poi.OpenTimes,
-			&i.Poi.CreatedAt,
-			&i.Poi.UpdatedAt,
-			&i.Category.ID,
-			&i.Category.Name,
-			&i.Category.Image,
-			&i.Address.ID,
-			&i.Address.CityID,
-			&i.Address.Line1,
-			&i.Address.Line2,
-			&i.Address.PostalCode,
-			&i.Address.Lat,
-			&i.Address.Lng,
-			&i.City.ID,
-			&i.City.Name,
-			&i.City.StateCode,
-			&i.City.StateName,
-			&i.City.CountryCode,
-			&i.City.CountryName,
-			&i.City.ImageUrl,
-			&i.City.Latitude,
-			&i.City.Longitude,
-			&i.City.Description,
-			&i.City.ImgLicense,
-			&i.City.ImgLicenseLink,
-			&i.City.ImgAttr,
-			&i.City.ImgAttrLink,
-			&i.Medium.ID,
-			&i.Medium.PoiID,
-			&i.Medium.Url,
-			&i.Medium.Alt,
-			&i.Medium.Caption,
-			&i.Medium.MediaOrder,
-			&i.Medium.CreatedAt,
+			&i.ID,
+			&i.DiaryID,
+			&i.Url,
+			&i.Index,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -384,43 +219,86 @@ func (q *Queries) GetDiaryEntryPois(ctx context.Context, diaryEntryID string) ([
 	return items, nil
 }
 
-const getDiaryEntryUsers = `-- name: GetDiaryEntryUsers :many
-SELECT 
-  diary_entries_users.diary_entry_id, diary_entries_users.user_id, diary_entries_users.list_index,
-  profile.id, profile.username, profile.full_name, profile.is_business_account, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.phone, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
-FROM diary_entries_users
-  JOIN profile ON diary_entries_users.user_id = profile.id
-WHERE diary_entries_users.diary_entry_id = $1
-ORDER BY diary_entries_users.list_index ASC
+const getDiaryLastImageIndex = `-- name: GetDiaryLastImageIndex :one
+SELECT COALESCE(MAX(index), 0)
+FROM diary_images
+WHERE diary_id = $1
 `
 
-type GetDiaryEntryUsersRow struct {
-	DiaryEntriesUser DiaryEntriesUser
-	Profile          Profile
+func (q *Queries) GetDiaryLastImageIndex(ctx context.Context, diaryID string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, getDiaryLastImageIndex, diaryID)
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
-func (q *Queries) GetDiaryEntryUsers(ctx context.Context, diaryEntryID string) ([]GetDiaryEntryUsersRow, error) {
-	rows, err := q.db.Query(ctx, getDiaryEntryUsers, diaryEntryID)
+const getDiaryPois = `-- name: GetDiaryPois :many
+SELECT diary_id, poi_id, description, index
+FROM diary_pois
+WHERE diary_pois.diary_id = $1
+ORDER BY diary_pois.index ASC
+`
+
+func (q *Queries) GetDiaryPois(ctx context.Context, diaryID string) ([]DiaryPoi, error) {
+	rows, err := q.db.Query(ctx, getDiaryPois, diaryID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetDiaryEntryUsersRow
+	var items []DiaryPoi
 	for rows.Next() {
-		var i GetDiaryEntryUsersRow
+		var i DiaryPoi
 		if err := rows.Scan(
-			&i.DiaryEntriesUser.DiaryEntryID,
-			&i.DiaryEntriesUser.UserID,
-			&i.DiaryEntriesUser.ListIndex,
+			&i.DiaryID,
+			&i.PoiID,
+			&i.Description,
+			&i.Index,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getDiaryUsers = `-- name: GetDiaryUsers :many
+SELECT 
+  diary_users.diary_id, diary_users.user_id, diary_users.index,
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+FROM diary_users
+JOIN profile ON diary_users.user_id = profile.id
+WHERE diary_users.diary_id = $1
+ORDER BY diary_users.index ASC
+`
+
+type GetDiaryUsersRow struct {
+	DiaryUser DiaryUser
+	Profile   Profile
+}
+
+func (q *Queries) GetDiaryUsers(ctx context.Context, diaryID string) ([]GetDiaryUsersRow, error) {
+	rows, err := q.db.Query(ctx, getDiaryUsers, diaryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetDiaryUsersRow
+	for rows.Next() {
+		var i GetDiaryUsersRow
+		if err := rows.Scan(
+			&i.DiaryUser.DiaryID,
+			&i.DiaryUser.UserID,
+			&i.DiaryUser.Index,
 			&i.Profile.ID,
 			&i.Profile.Username,
 			&i.Profile.FullName,
-			&i.Profile.IsBusinessAccount,
 			&i.Profile.IsVerified,
 			&i.Profile.Bio,
 			&i.Profile.Pronouns,
 			&i.Profile.Website,
-			&i.Profile.Phone,
 			&i.Profile.ProfileImage,
 			&i.Profile.BannerImage,
 			&i.Profile.FollowersCount,
@@ -437,62 +315,15 @@ func (q *Queries) GetDiaryEntryUsers(ctx context.Context, diaryEntryID string) (
 	return items, nil
 }
 
-const getDiaryMedia = `-- name: GetDiaryMedia :many
-SELECT id, diary_entry_id, url, alt, caption, media_order, created_at FROM diary_media
-WHERE diary_entry_id = $1
-ORDER BY media_order ASC
-`
-
-func (q *Queries) GetDiaryMedia(ctx context.Context, diaryEntryID string) ([]DiaryMedium, error) {
-	rows, err := q.db.Query(ctx, getDiaryMedia, diaryEntryID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []DiaryMedium
-	for rows.Next() {
-		var i DiaryMedium
-		if err := rows.Scan(
-			&i.ID,
-			&i.DiaryEntryID,
-			&i.Url,
-			&i.Alt,
-			&i.Caption,
-			&i.MediaOrder,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getLastMediaOrderOfEntry = `-- name: GetLastMediaOrderOfEntry :one
-SELECT COALESCE(MAX(media_order), 0)
-FROM diary_media
-WHERE diary_entry_id = $1
-`
-
-func (q *Queries) GetLastMediaOrderOfEntry(ctx context.Context, diaryEntryID string) (interface{}, error) {
-	row := q.db.QueryRow(ctx, getLastMediaOrderOfEntry, diaryEntryID)
-	var coalesce interface{}
-	err := row.Scan(&coalesce)
-	return coalesce, err
-}
-
-const listAndFilterDiaryEntries = `-- name: ListAndFilterDiaryEntries :many
-SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
+const listAndFilterDiaries = `-- name: ListAndFilterDiaries :many
+SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diaries
 WHERE user_id = $1 AND date <= $2 AND date >= $3
 ORDER BY date DESC, created_at DESC
 OFFSET $4
 LIMIT $5
 `
 
-type ListAndFilterDiaryEntriesParams struct {
+type ListAndFilterDiariesParams struct {
 	UserID string
 	Date   pgtype.Timestamptz
 	Date_2 pgtype.Timestamptz
@@ -500,8 +331,8 @@ type ListAndFilterDiaryEntriesParams struct {
 	Limit  int32
 }
 
-func (q *Queries) ListAndFilterDiaryEntries(ctx context.Context, arg ListAndFilterDiaryEntriesParams) ([]DiaryEntry, error) {
-	rows, err := q.db.Query(ctx, listAndFilterDiaryEntries,
+func (q *Queries) ListAndFilterDiaries(ctx context.Context, arg ListAndFilterDiariesParams) ([]Diary, error) {
+	rows, err := q.db.Query(ctx, listAndFilterDiaries,
 		arg.UserID,
 		arg.Date,
 		arg.Date_2,
@@ -512,9 +343,9 @@ func (q *Queries) ListAndFilterDiaryEntries(ctx context.Context, arg ListAndFilt
 		return nil, err
 	}
 	defer rows.Close()
-	var items []DiaryEntry
+	var items []Diary
 	for rows.Next() {
-		var i DiaryEntry
+		var i Diary
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
@@ -535,29 +366,29 @@ func (q *Queries) ListAndFilterDiaryEntries(ctx context.Context, arg ListAndFilt
 	return items, nil
 }
 
-const listDiaryEntries = `-- name: ListDiaryEntries :many
-SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diary_entries
+const listDiaries = `-- name: ListDiaries :many
+SELECT id, user_id, title, description, share_with_friends, date, created_at, updated_at FROM diaries
 WHERE user_id = $1
 ORDER BY date DESC, created_at DESC
 OFFSET $2
 LIMIT $3
 `
 
-type ListDiaryEntriesParams struct {
+type ListDiariesParams struct {
 	UserID string
 	Offset int32
 	Limit  int32
 }
 
-func (q *Queries) ListDiaryEntries(ctx context.Context, arg ListDiaryEntriesParams) ([]DiaryEntry, error) {
-	rows, err := q.db.Query(ctx, listDiaryEntries, arg.UserID, arg.Offset, arg.Limit)
+func (q *Queries) ListDiaries(ctx context.Context, arg ListDiariesParams) ([]Diary, error) {
+	rows, err := q.db.Query(ctx, listDiaries, arg.UserID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []DiaryEntry
+	var items []Diary
 	for rows.Next() {
-		var i DiaryEntry
+		var i Diary
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
@@ -578,44 +409,44 @@ func (q *Queries) ListDiaryEntries(ctx context.Context, arg ListDiaryEntriesPara
 	return items, nil
 }
 
-const removeDiaryEntryAllMedia = `-- name: RemoveDiaryEntryAllMedia :exec
+const removeDiaryAllImages = `-- name: RemoveDiaryAllImages :exec
 DELETE FROM
-  diary_media
+  diary_images
 WHERE
-  diary_entry_id = $1
+  diary_id = $1
 `
 
-func (q *Queries) RemoveDiaryEntryAllMedia(ctx context.Context, diaryEntryID string) error {
-	_, err := q.db.Exec(ctx, removeDiaryEntryAllMedia, diaryEntryID)
+func (q *Queries) RemoveDiaryAllImages(ctx context.Context, diaryID string) error {
+	_, err := q.db.Exec(ctx, removeDiaryAllImages, diaryID)
 	return err
 }
 
-const removeDiaryEntryFriends = `-- name: RemoveDiaryEntryFriends :exec
+const removeDiaryFriends = `-- name: RemoveDiaryFriends :exec
 DELETE FROM 
-  diary_entries_users
+  diary_users
 WHERE
-  diary_entry_id = $1
+  diary_id = $1
 `
 
-func (q *Queries) RemoveDiaryEntryFriends(ctx context.Context, diaryEntryID string) error {
-	_, err := q.db.Exec(ctx, removeDiaryEntryFriends, diaryEntryID)
+func (q *Queries) RemoveDiaryFriends(ctx context.Context, diaryID string) error {
+	_, err := q.db.Exec(ctx, removeDiaryFriends, diaryID)
 	return err
 }
 
-const removeDiaryEntryLocations = `-- name: RemoveDiaryEntryLocations :exec
+const removeDiaryLocations = `-- name: RemoveDiaryLocations :exec
 DELETE FROM 
-  diary_entries_pois
+  diary_pois
 WHERE
-  diary_entry_id = $1
+  diary_id = $1
 `
 
-func (q *Queries) RemoveDiaryEntryLocations(ctx context.Context, diaryEntryID string) error {
-	_, err := q.db.Exec(ctx, removeDiaryEntryLocations, diaryEntryID)
+func (q *Queries) RemoveDiaryLocations(ctx context.Context, diaryID string) error {
+	_, err := q.db.Exec(ctx, removeDiaryLocations, diaryID)
 	return err
 }
 
-const updateDiaryEntry = `-- name: UpdateDiaryEntry :one
-UPDATE diary_entries
+const updateDiary = `-- name: UpdateDiary :one
+UPDATE diaries
 SET
   title = $2,
   description = $3,
@@ -625,7 +456,7 @@ WHERE id = $1
 RETURNING id, user_id, title, description, share_with_friends, date, created_at, updated_at
 `
 
-type UpdateDiaryEntryParams struct {
+type UpdateDiaryParams struct {
 	ID               string
 	Title            string
 	Description      string
@@ -633,15 +464,15 @@ type UpdateDiaryEntryParams struct {
 	ShareWithFriends bool
 }
 
-func (q *Queries) UpdateDiaryEntry(ctx context.Context, arg UpdateDiaryEntryParams) (DiaryEntry, error) {
-	row := q.db.QueryRow(ctx, updateDiaryEntry,
+func (q *Queries) UpdateDiary(ctx context.Context, arg UpdateDiaryParams) (Diary, error) {
+	row := q.db.QueryRow(ctx, updateDiary,
 		arg.ID,
 		arg.Title,
 		arg.Description,
 		arg.Date,
 		arg.ShareWithFriends,
 	)
-	var i DiaryEntry
+	var i Diary
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
