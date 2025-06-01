@@ -5,12 +5,10 @@ import (
 	"wanderlust/pkg/dto"
 )
 
-func ToPois(data [][]byte) ([]dto.Poi, error) {
-	bytes := data[0]
-
+func ToPois(data []byte) ([]dto.Poi, error) {
 	var pois []dto.Poi
 
-	err := json.Unmarshal(bytes, &pois)
+	err := json.Unmarshal(data, &pois)
 
 	if err != nil {
 		return nil, err

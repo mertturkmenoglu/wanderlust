@@ -40,7 +40,7 @@ func (s *Service) FindMany(ctx context.Context, ids []string) ([]dto.Poi, error)
 		return nil, huma.Error500InternalServerError("Failed to get point of interests")
 	}
 
-	pois, err := mapper.ToPois(dbPois)
+	pois, err := mapper.ToPois(dbPois[0])
 
 	if err != nil {
 		sp.RecordError(err)
