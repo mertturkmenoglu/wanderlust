@@ -25,14 +25,21 @@ commandhelpers=(
   "https://www.npmjs.com/package/concurrently"
 )
 
+# Turn flag to false if any requirement fails
+flag=0
+
 for i in "${!commands[@]}"; do
   cmd="${commands[$i]}"
   cmdhelper="${commandhelpers[$i]}"
   cmdname="${cmd%% *}"
+  
   if command -v $cmd > /dev/null; then
     echo -e "=> \033[32m[OK]\033[0m $cmdname"
   else
+    flag=1
     echo -e "=> \033[31m[ERR]\033[0m $cmdname"
     echo "You can find installation instructions at $cmdhelper"
   fi
 done
+
+exit $flag
