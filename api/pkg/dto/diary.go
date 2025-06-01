@@ -9,8 +9,8 @@ import (
 type Diary struct {
 	ID               string          `json:"id" example:"7323488942953598976" doc:"The ID of the diary entry"`
 	UserID           string          `json:"userId" example:"7323488942953598976" doc:"The ID of the user"`
-	User             Profile         `json:"user"`
-	Friends          []Profile       `json:"friends"`
+	Owner            DiaryUser       `json:"user"`
+	Friends          []DiaryUser     `json:"friends"`
 	Locations        []DiaryLocation `json:"locations"`
 	Images           []DiaryImage    `json:"images"`
 	Title            string          `json:"title" example:"My diary entry" doc:"The title of the diary entry"`
@@ -21,7 +21,15 @@ type Diary struct {
 	UpdatedAt        time.Time       `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"The updated at time of the diary entry"`
 }
 
+type DiaryUser struct {
+	ID           string  `json:"id" example:"7323488942953598976" doc:"User ID"`
+	FullName     string  `json:"fullName" example:"John Doe" doc:"User full name"`
+	Username     string  `json:"username" example:"johndoe" doc:"Username"`
+	ProfileImage *string `json:"profileImage" example:"http://example.com/image.png" doc:"Profile image URL of the user"`
+}
+
 type DiaryLocation struct {
+	PoiId       string  `json:"poiId" example:"7323488942953598976" doc:"Point of Interest ID"`
 	Poi         Poi     `json:"poi"`
 	Description *string `json:"description" example:"My location description" doc:"The description of the location"`
 	Index       int16   `json:"index" example:"1" doc:"The list index of the location"`
