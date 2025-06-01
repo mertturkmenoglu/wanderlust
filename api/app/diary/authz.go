@@ -2,11 +2,11 @@ package diary
 
 import "wanderlust/pkg/dto"
 
-func isOwner(entry *dto.DiaryEntry, userId string) bool {
+func isOwner(entry *dto.Diary, userId string) bool {
 	return entry.UserID == userId
 }
 
-func canRead(entry *dto.DiaryEntry, userId string) bool {
+func canRead(entry *dto.Diary, userId string) bool {
 	if isOwner(entry, userId) {
 		return true
 	}
@@ -24,10 +24,10 @@ func canRead(entry *dto.DiaryEntry, userId string) bool {
 	return false
 }
 
-func canUpdate(entry *dto.DiaryEntry, userId string) bool {
+func canUpdate(entry *dto.Diary, userId string) bool {
 	return isOwner(entry, userId)
 }
 
-func canDelete(entry *dto.DiaryEntry, userId string) bool {
+func canDelete(entry *dto.Diary, userId string) bool {
 	return isOwner(entry, userId)
 }
