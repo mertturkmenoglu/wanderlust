@@ -2,16 +2,26 @@
 
 ## Prerequisites
 
-- You need `go-migrate` installed on your system: https://github.com/golang-migrate/migrate
+- You need `goose` installed on your system.
 
 ## Running
 
-- Run `just create-migration` command.
-- It will ask for a file name. Enter a valid and meaningful name for your migration. Example: `create_users_table`
-- Go Migrate will create up and down SQL files inside the `internal/pkg/db/migrations` folder.
-- Example file names:
-  - `000001_create_users_table.down.sql`
-  - `000001_create_users_table.up.sql`
-- Go and add database changes you want to run to `.up.sql` file.
-- Also add the reverse operations to `.down.sql` file.
-- Next time you run the app with `RUN_MIGRATIONS=1` flag, app will check the database and run the necessary migrations.
+- Goose expects these environment variables to be set:
+  - `GOOSE_DRIVER`: Database driver (e.g. `postgres`)
+  - `GOOSE_DBSTRING`: Database connection string (e.g. `postgres://postgres:postgres@localhost:5432/wanderlust`)
+  - `GOOSE_DIR`: Directory where migrations are stored (e.g. `./pkg/db/migrations`)
+- Run `goose create <migration_name> sql` command.
+- Goose will create a new migration file inside the `pkg/db/migrations` directory.
+- Example file name:
+  - `20250531105008_squirrels.sql`
+- Add up and down SQL statements to the migration file.
+- Run `goose up` to apply the migration.
+
+## Other Commands
+
+- `goose -h`: Help
+- `goose up`: Apply all migrations
+- `goose up-by-one`: Apply the next migration
+- `goose down`: Revert the last migration
+- `goose redo`: Re-run the last migration
+- `goose reset`: Roll back all migrations
