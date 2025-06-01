@@ -226,21 +226,35 @@ func (q *Queries) GetAllPoiCollections(ctx context.Context) ([]CollectionsPoi, e
 	return items, nil
 }
 
-const getCollectionById = `-- name: GetCollectionById :one
-SELECT id, name, description, created_at FROM collections
-WHERE id = $1 LIMIT 1
+const getCollectionIds = `-- name: GetCollectionIds :many
+SELECT id FROM collections
+OFFSET $1
+LIMIT $2
 `
 
-func (q *Queries) GetCollectionById(ctx context.Context, id string) (Collection, error) {
-	row := q.db.QueryRow(ctx, getCollectionById, id)
-	var i Collection
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Description,
-		&i.CreatedAt,
-	)
-	return i, err
+type GetCollectionIdsParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) GetCollectionIds(ctx context.Context, arg GetCollectionIdsParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, getCollectionIds, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getCollectionIdsForPoi = `-- name: GetCollectionIdsForPoi :many
@@ -291,64 +305,53 @@ func (q *Queries) GetCollectionItem(ctx context.Context, arg GetCollectionItemPa
 	return i, err
 }
 
-const getCollectionItems = `-- name: GetCollectionItems :many
-SELECT collection_id, poi_id, index, created_at
-FROM collection_items
-WHERE collection_id = $1
-ORDER BY index ASC
-`
-
-func (q *Queries) GetCollectionItems(ctx context.Context, collectionID string) ([]CollectionItem, error) {
-	rows, err := q.db.Query(ctx, getCollectionItems, collectionID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []CollectionItem
-	for rows.Next() {
-		var i CollectionItem
-		if err := rows.Scan(
-			&i.CollectionID,
-			&i.PoiID,
-			&i.Index,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const getCollections = `-- name: GetCollections :many
-SELECT id, name, description, created_at FROM collections
-ORDER BY created_at DESC
-OFFSET $1
-LIMIT $2
+SELECT 
+  collections.id, collections.name, collections.description, collections.created_at,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'collectionId', items.collection_id,
+    'poiId', items.poi_id,
+    'index', items.index,
+    'createdAt', items.created_at
+  ))
+  FROM collection_items items
+  WHERE items.collection_id = collections.id
+  ) AS items,
+  (SELECT get_pois(
+    ARRAY(
+      SELECT 
+        DISTINCT poi_id 
+      FROM collection_items 
+      WHERE collection_id = collections.id
+    )
+  )) AS pois
+FROM collections
+WHERE collections.id = ANY($1::TEXT[])
+GROUP BY collections.id
 `
 
-type GetCollectionsParams struct {
-	Offset int32
-	Limit  int32
+type GetCollectionsRow struct {
+	Collection Collection
+	Items      []byte
+	Pois       []byte
 }
 
-func (q *Queries) GetCollections(ctx context.Context, arg GetCollectionsParams) ([]Collection, error) {
-	rows, err := q.db.Query(ctx, getCollections, arg.Offset, arg.Limit)
+func (q *Queries) GetCollections(ctx context.Context, dollar_1 []string) ([]GetCollectionsRow, error) {
+	rows, err := q.db.Query(ctx, getCollections, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Collection
+	var items []GetCollectionsRow
 	for rows.Next() {
-		var i Collection
+		var i GetCollectionsRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Description,
-			&i.CreatedAt,
+			&i.Collection.ID,
+			&i.Collection.Name,
+			&i.Collection.Description,
+			&i.Collection.CreatedAt,
+			&i.Items,
+			&i.Pois,
 		); err != nil {
 			return nil, err
 		}

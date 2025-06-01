@@ -63,7 +63,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getById(ctx, input.ID)
+			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
 				sp.RecordError(err)

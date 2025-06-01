@@ -26,7 +26,7 @@ func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Collection,
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.db.GetCollections(ctx, db.GetCollectionsParams{})
+	res, err := s.db.GetCollections(ctx, ids)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -36,14 +36,14 @@ func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Collection,
 	collections := make([]dto.Collection, len(res))
 
 	for i, v := range res {
-		v, err := mapper.ToCollection(v)
+		res, err := mapper.ToCollection(v)
 
 		if err != nil {
 			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to map collections")
+			return nil, huma.Error500InternalServerError("Failed to get collections")
 		}
 
-		collections[i] = v
+		collections[i] = res
 	}
 
 	return collections, nil
@@ -73,7 +73,7 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbRes, err := s.db.GetCollections(ctx, db.GetCollectionsParams{
+	ids, err := s.db.GetCollectionIds(ctx, db.GetCollectionIdsParams{
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
 	})
@@ -88,12 +88,6 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 		return nil, huma.Error500InternalServerError("Failed to get collections")
 	}
 
-	ids := make([]string, len(dbRes))
-
-	for i, v := range dbRes {
-		ids[i] = v.ID
-	}
-
 	collections, err := s.findMany(ctx, ids)
 
 	if err != nil {
@@ -105,7 +99,7 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("failed to count collections")
+		return nil, huma.Error500InternalServerError("Failed to count collections")
 	}
 
 	return &dto.GetCollectionsOutput{
@@ -116,7 +110,7 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 	}, nil
 }
 
-func (s *Service) getById(ctx context.Context, id string) (*dto.GetCollectionByIdOutput, error) {
+func (s *Service) get(ctx context.Context, id string) (*dto.GetCollectionByIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -167,7 +161,14 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.DeleteCollection(ctx, id)
+	_, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	err = s.db.DeleteCollection(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -186,7 +187,14 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateCollecti
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.UpdateCollection(ctx, db.UpdateCollectionParams{
+	_, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	err = s.db.UpdateCollection(ctx, db.UpdateCollectionParams{
 		Name:        body.Name,
 		Description: body.Description,
 		ID:          id,

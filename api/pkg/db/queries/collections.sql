@@ -9,19 +9,38 @@ INSERT INTO collections (
   $3
 ) RETURNING *;
 
--- name: GetCollectionById :one
-SELECT * FROM collections
-WHERE id = $1 LIMIT 1;
-
 -- name: DeleteCollection :exec
 DELETE FROM collections
 WHERE id = $1;
 
--- name: GetCollections :many
-SELECT * FROM collections
-ORDER BY created_at DESC
+-- name: GetCollectionIds :many
+SELECT id FROM collections
 OFFSET $1
 LIMIT $2;
+
+-- name: GetCollections :many
+SELECT 
+  sqlc.embed(collections),
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'collectionId', items.collection_id,
+    'poiId', items.poi_id,
+    'index', items.index,
+    'createdAt', items.created_at
+  ))
+  FROM collection_items items
+  WHERE items.collection_id = collections.id
+  ) AS items,
+  (SELECT get_pois(
+    ARRAY(
+      SELECT 
+        DISTINCT poi_id 
+      FROM collection_items 
+      WHERE collection_id = collections.id
+    )
+  )) AS pois
+FROM collections
+WHERE collections.id = ANY($1::TEXT[])
+GROUP BY collections.id;
 
 -- name: UpdateCollection :exec
 UPDATE collections
@@ -29,12 +48,6 @@ SET
   name = $1,
   description = $2
 WHERE id = $3;
-
--- name: GetCollectionItems :many
-SELECT *
-FROM collection_items
-WHERE collection_id = $1
-ORDER BY index ASC;
 
 -- name: CountCollections :one
 SELECT count(*) FROM collections;

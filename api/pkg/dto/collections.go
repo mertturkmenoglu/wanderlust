@@ -6,7 +6,7 @@ type Collection struct {
 	ID          string           `json:"id" example:"7323488942953598976" doc:"ID of collection"`
 	Name        string           `json:"name" example:"My collection" doc:"Name of collection"`
 	Description string           `json:"description" example:"My collection description" doc:"Description of collection"`
-	CreatedAt   string           `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of collection"`
+	CreatedAt   time.Time        `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of collection"`
 	Items       []CollectionItem `json:"items"`
 }
 
