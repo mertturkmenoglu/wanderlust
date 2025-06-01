@@ -21,21 +21,11 @@ type ListUser struct {
 }
 
 type ListItem struct {
-	ListID    string      `json:"listId"`
-	PoiID     string      `json:"poiId"`
-	Poi       ListItemPoi `json:"poi"`
-	ListIndex int32       `json:"listIndex"`
-	CreatedAt time.Time   `json:"createdAt"`
-}
-
-type ListItemPoi struct {
-	ID         string   `json:"id"`
-	Name       string   `json:"name"`
-	AddressID  int32    `json:"addressId"`
-	Address    Address  `json:"address"`
-	CategoryID int16    `json:"categoryId"`
-	Category   Category `json:"category"`
-	FirstMedia Media    `json:"firstMedia"`
+	ListID    string    `json:"listId"`
+	PoiID     string    `json:"poiId"`
+	Poi       Poi       `json:"poi"`
+	Index     int32     `json:"index"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type ListStatus struct {
@@ -43,10 +33,6 @@ type ListStatus struct {
 	Name     string `json:"name" example:"My List" doc:"Name of the list"`
 	Includes bool   `json:"includes" example:"true" doc:"Whether the POI is included in the list"`
 }
-
-//
-// Requests
-//
 
 type GetAllListsOfUserInput struct {
 	PaginationQueryParams
@@ -154,7 +140,7 @@ type CreateListItemOutput struct {
 type CreateListItemOutputBody struct {
 	ListID    string    `json:"listId" example:"7323488942953598976" doc:"ID of the list"`
 	PoiID     string    `json:"poiId" example:"7323488942953598976" doc:"ID of the POI"`
-	ListIndex int32     `json:"listIndex" example:"1" doc:"Index of the POI in the list"`
+	Index     int32     `json:"index" example:"1" doc:"Index of the POI in the list"`
 	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of list item"`
 }
 
