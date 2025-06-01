@@ -37,7 +37,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getPoiById(ctx, input.ID)
+			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -60,7 +60,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.peekPois(ctx)
+			res, err := s.peek(ctx)
 
 			if err != nil {
 				sp.RecordError(err)

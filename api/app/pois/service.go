@@ -3,7 +3,6 @@ package pois
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"sync"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
@@ -12,7 +11,6 @@ import (
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -42,7 +40,12 @@ func (s *Service) FindMany(ctx context.Context, ids []string) ([]dto.Poi, error)
 		return nil, huma.Error500InternalServerError("Failed to get point of interests")
 	}
 
-	pois, err := mapper.ToPois(ctx, dbPois)
+	pois, err := mapper.ToPois(dbPois)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get point of interests")
+	}
 
 	return pois, nil
 }
@@ -67,7 +70,7 @@ func (s *Service) find(ctx context.Context, id string) (*dto.Poi, error) {
 	return &res[0], nil
 }
 
-func (s *Service) getPoiById(ctx context.Context, id string) (*dto.GetPoiByIdOutput, error) {
+func (s *Service) get(ctx context.Context, id string) (*dto.GetPoiByIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -139,7 +142,7 @@ func (s *Service) isBookmarked(ctx context.Context, poiId string) bool {
 	return err == nil
 }
 
-func (s *Service) peekPois(ctx context.Context) (*dto.PeekPoisOutput, error) {
+func (s *Service) peek(ctx context.Context) (*dto.PeekPoisOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -150,11 +153,6 @@ func (s *Service) peekPois(ctx context.Context) (*dto.PeekPoisOutput, error) {
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("Pois not found")
-		}
-
 		return nil, huma.Error500InternalServerError("Failed to peek pois")
 	}
 
@@ -372,10 +370,10 @@ func (s *Service) updateHours(ctx context.Context, id string, body dto.UpdatePoi
 		return nil, err
 	}
 
-	asMap := make(map[string]dto.OpenHours)
+	asMap := make(map[string]dto.OpenClose)
 
 	for _, entry := range body.Hours {
-		asMap[entry.Day] = dto.OpenHours{
+		asMap[entry.Day] = dto.OpenClose{
 			OpensAt:  entry.OpensAt,
 			ClosesAt: entry.ClosesAt,
 		}
