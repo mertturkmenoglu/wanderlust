@@ -13,7 +13,7 @@ type Collection struct {
 type CollectionItem struct {
 	CollectionID string    `json:"collectionId" example:"7323488942953598976" doc:"ID of collection"`
 	PoiID        string    `json:"poiId" example:"7323488942953598976" doc:"ID of point of interest"`
-	ListIndex    int32     `json:"listIndex" example:"1" doc:"Index of collection item in the list"`
+	Index        int32     `json:"index" example:"1" doc:"Index of collection item in the list"`
 	Poi          Poi       `json:"poi"`
 	CreatedAt    time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of collection item"`
 }
