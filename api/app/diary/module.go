@@ -22,13 +22,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		op.Tags = []string{"Diary"}
 	})
 
-	// Create Diary Entry
+	// Create Diary
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
 			Path:          "/diary/",
-			Summary:       "Create Diary Entry",
-			Description:   "Create a diary entry",
+			Summary:       "Create Diary",
+			Description:   "Create a diary",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -50,13 +50,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// List Diary Entries
+	// List Diaries
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
 			Path:          "/diary/",
-			Summary:       "List Diary Entries",
-			Description:   "List diary entries for the current user",
+			Summary:       "List Diaries",
+			Description:   "List diaries for the current user",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -78,13 +78,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Get Diary Entry
+	// Get Diary
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
 			Path:          "/diary/{id}",
-			Summary:       "Get Diary Entry",
-			Description:   "Get a diary entry by ID",
+			Summary:       "Get Diary",
+			Description:   "Get a diary by ID",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -106,13 +106,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Delete Diary Entry
+	// Delete Diary
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
 			Path:          "/diary/{id}",
-			Summary:       "Delete Diary Entry",
-			Description:   "Delete a diary entry",
+			Summary:       "Delete Diary",
+			Description:   "Delete a diary",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -139,8 +139,8 @@ func Register(grp *huma.Group, app *core.Application) {
 		huma.Operation{
 			Method:        http.MethodPost,
 			Path:          "/diary/{id}/image",
-			Summary:       "Upload Image to a Diary Entry",
-			Description:   "Add image to a diary entry",
+			Summary:       "Upload Image to a Diary",
+			Description:   "Add image to a diary",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -151,7 +151,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.uploadMedia(ctx, input.ID, input.Body)
+			res, err := s.uploadImage(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -162,7 +162,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Delete Media
+	// Delete Image
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
@@ -179,7 +179,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.removeMedia(ctx, input.ID, input.ImageID)
+			err := s.removeImage(ctx, input.ID, input.ImageID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -190,13 +190,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Update Diary Media
+	// Update Diary Image
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
 			Path:          "/diary/{id}/image",
-			Summary:       "Update Diary Entry Image",
-			Description:   "Update a diary entry image",
+			Summary:       "Update Diary Image",
+			Description:   "Update a diary image",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -207,7 +207,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.updateMedia(ctx, input.ID, input.Body)
+			res, err := s.updateImage(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -218,13 +218,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Update Diary Entry
+	// Update Diary
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
 			Path:          "/diary/{id}",
-			Summary:       "Update Diary Entry",
-			Description:   "Update a diary entry",
+			Summary:       "Update Diary",
+			Description:   "Update a diary",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -246,13 +246,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Update Diary Entry Friends
+	// Update Diary Friends
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
 			Path:          "/diary/{id}/friends",
-			Summary:       "Update Diary Entry Friends",
-			Description:   "Update a diary entry friends",
+			Summary:       "Update Diary Friends",
+			Description:   "Update a diary friends",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -274,13 +274,13 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Update Diary Entry Locations
+	// Update Diary Locations
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
 			Path:          "/diary/{id}/locations",
-			Summary:       "Update Diary Entry Locations",
-			Description:   "Update a diary entry locations",
+			Summary:       "Update Diary Locations",
+			Description:   "Update a diary locations",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
