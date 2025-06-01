@@ -12,10 +12,11 @@ default:
 # Setup the project
 @setup:
   echo "=> Setting up the project..."
+  chmod u+x ./requirements.sh
+  ./requirements.sh
   just api/setup
   just web/setup
   just wiop/setup
-  pnpm add -g concurrently
   echo "=> Setup completed. Run 'just watch' to start the server."
 
 # Type generation
