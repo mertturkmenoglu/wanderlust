@@ -28,23 +28,25 @@ BEGIN
         'line2', addr.line2,
         'postalCode', addr.postal_code,
         'lat', addr.lat,
-        'lng', addr.lng
-      ),
-      'city', jsonb_build_object(
-        'id', c.id,
-        'name', c.name,
-        'description', c.description,
-        'state', jsonb_build_object(
-          'code', c.state_code,
-          'name', c.state_name
-        ),
-        'country', jsonb_build_object(
-          'code', c.country_code,
-          'name', c.country_name
-        ),
-        'image', c.image,
-        'latitude', c.latitude,
-        'longitude', c.longitude
+        'lng', addr.lng,
+        'city', jsonb_build_object(
+          'id', c.id,
+          'name', c.name,
+          'description', c.description,
+          'state', jsonb_build_object(
+            'code', c.state_code,
+            'name', c.state_name
+          ),
+          'country', jsonb_build_object(
+            'code', c.country_code,
+            'name', c.country_name
+          ),
+          'image', c.image,
+          'coordinates', jsonb_build_object(
+            'latitude', c.latitude,
+            'longitude', c.longitude
+          )
+        )
       ),
       'category', jsonb_build_object(
         'id', cat.id,

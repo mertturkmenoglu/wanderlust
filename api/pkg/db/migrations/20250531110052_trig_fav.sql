@@ -13,7 +13,7 @@ CREATE TRIGGER dec_poi_favorites_count_trigger
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TRIGGER IF EXISTS dec_poi_favorites_count_trigger;
+DROP TRIGGER IF EXISTS dec_poi_favorites_count_trigger ON favorites;
 
-DROP TRIGGER IF EXISTS inc_poi_favorites_count_trigger;
+DROP TRIGGER IF EXISTS inc_poi_favorites_count_trigger ON favorites;
 -- +goose StatementEnd
