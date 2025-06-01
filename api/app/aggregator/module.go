@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"sync"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
@@ -15,6 +16,7 @@ import (
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		app:          app,
+		poisService:  pois.NewService(app),
 		cacheMutex:   sync.RWMutex{},
 		requestGroup: singleflight.Group{},
 	}

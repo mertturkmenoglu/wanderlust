@@ -4,10 +4,10 @@ import (
 	"context"
 	"slices"
 	"sync"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -17,6 +17,7 @@ import (
 
 type Service struct {
 	app          *core.Application
+	poisService  *pois.Service
 	cacheMutex   sync.RWMutex
 	requestGroup singleflight.Group
 }
@@ -128,7 +129,7 @@ func (s *Service) getHomeAggregationFromDb(ctx context.Context) (*dto.HomeAggreg
 	allIds = append(allIds, dbFeatured...)
 	allIds = append(allIds, dbFavorites...)
 
-	allPois, err := s.getPoisByIds(ctx, allIds)
+	allPois, err := s.poisService.FindMany(ctx, allIds)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -172,27 +173,6 @@ func contains(s []string, e string) bool {
 	return slices.ContainsFunc(s, func(x string) bool {
 		return x == e
 	})
-}
-
-func (s *Service) getPoisByIds(ctx context.Context, ids []string) ([]dto.Poi, error) {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	dbPois, err := s.app.Db.Queries.GetPoisByIdsPopulated(ctx, ids)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get point of interests")
-	}
-
-	pois, err := mapper.ToPois(ctx, dbPois)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, err
-	}
-
-	return pois, nil
 }
 
 func (s *Service) getNewPoisIds(ctx context.Context) ([]string, error) {
