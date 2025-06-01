@@ -50,13 +50,45 @@ INSERT INTO diary_images (
   $3
 ) RETURNING *;
 
--- name: GetDiaryById :one
+-- name: GetDiaries :many
 SELECT 
   sqlc.embed(diaries), 
-  sqlc.embed(profile)
+  sqlc.embed(p) AS owner,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', friend.id,
+    'fullName', friend.full_name,
+    'username', friend.username,
+    'profileImage', friend.profile_image
+  ))
+  FROM diary_users du
+  JOIN profile friend ON friend.id = du.user_id
+  WHERE du.diary_id = diaries.id
+  ) AS friends,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', di.id,
+    'diaryId', di.diary_id,
+    'url', di.url,
+    'index', di.index,
+    'createdAt', di.created_at
+  ))
+  FROM diary_images di
+  WHERE di.diary_id = diaries.id
+  ) AS images,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'diaryId', dp.diary_id,
+    'poiId', dp.poiId,
+    'description', dp.description,
+    'index', dp.index
+  ))
+  FROM diary_pois dp
+  WHERE dp.diary_id = diaries.id
+  ) AS locations,
+  (SELECT get_pois(ARRAY(SELECT DISTINCT poi_id FROM diary_pois WHERE diary_id = diaries.id))) AS pois
 FROM diaries
-LEFT JOIN profile ON diaries.user_id = profile.id
-WHERE diaries.id = $1 LIMIT 1;
+LEFT JOIN 
+  profile p ON diaries.user_id = p.id
+WHERE diaries.id = ANY($1::TEXT[])
+GROUP BY diaries.id;
 
 -- name: GetDiaryUsers :many
 SELECT 
@@ -94,11 +126,6 @@ LIMIT $5;
 -- name: CountDiariesFilterByRange :one
 SELECT COUNT(*) FROM diaries
 WHERE user_id = $1 AND date <= $2 AND date >= $3;
-
--- name: GetDiaryImages :many
-SELECT * FROM diary_images
-WHERE diary_id = $1
-ORDER BY index ASC;
 
 -- name: GetDiaryLastImageIndex :one
 SELECT COALESCE(MAX(index), 0)

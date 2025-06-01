@@ -145,69 +145,90 @@ func (q *Queries) DeleteDiary(ctx context.Context, id string) error {
 	return err
 }
 
-const getDiaryById = `-- name: GetDiaryById :one
+const getDiaries = `-- name: GetDiaries :many
 SELECT 
   diaries.id, diaries.user_id, diaries.title, diaries.description, diaries.share_with_friends, diaries.date, diaries.created_at, diaries.updated_at, 
-  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+  p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner AS owner,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', friend.id,
+    'fullName', friend.full_name,
+    'username', friend.username,
+    'profileImage', friend.profile_image
+  ))
+  FROM diary_users du
+  JOIN profile friend ON friend.id = du.user_id
+  WHERE du.diary_id = diaries.id
+  ) AS friends,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', di.id,
+    'diaryId', di.diary_id,
+    'url', di.url,
+    'index', di.index,
+    'createdAt', di.created_at
+  ))
+  FROM diary_images di
+  WHERE di.diary_id = diaries.id
+  ) AS images,
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'diaryId', dp.diary_id,
+    'poiId', dp.poiId,
+    'description', dp.description,
+    'index', dp.index
+  ))
+  FROM diary_pois dp
+  WHERE dp.diary_id = diaries.id
+  ) AS locations,
+  (SELECT get_pois(ARRAY(SELECT DISTINCT poi_id FROM diary_pois WHERE diary_id = diaries.id))) AS pois
 FROM diaries
-LEFT JOIN profile ON diaries.user_id = profile.id
-WHERE diaries.id = $1 LIMIT 1
+LEFT JOIN 
+  profile p ON diaries.user_id = p.id
+WHERE diaries.id = ANY($1::TEXT[])
+GROUP BY diaries.id
 `
 
-type GetDiaryByIdRow struct {
-	Diary   Diary
-	Profile Profile
+type GetDiariesRow struct {
+	Diary     Diary
+	Profile   Profile
+	Friends   []byte
+	Images    []byte
+	Locations []byte
+	Pois      []byte
 }
 
-func (q *Queries) GetDiaryById(ctx context.Context, id string) (GetDiaryByIdRow, error) {
-	row := q.db.QueryRow(ctx, getDiaryById, id)
-	var i GetDiaryByIdRow
-	err := row.Scan(
-		&i.Diary.ID,
-		&i.Diary.UserID,
-		&i.Diary.Title,
-		&i.Diary.Description,
-		&i.Diary.ShareWithFriends,
-		&i.Diary.Date,
-		&i.Diary.CreatedAt,
-		&i.Diary.UpdatedAt,
-		&i.Profile.ID,
-		&i.Profile.Username,
-		&i.Profile.FullName,
-		&i.Profile.IsVerified,
-		&i.Profile.Bio,
-		&i.Profile.Pronouns,
-		&i.Profile.Website,
-		&i.Profile.ProfileImage,
-		&i.Profile.BannerImage,
-		&i.Profile.FollowersCount,
-		&i.Profile.FollowingCount,
-		&i.Profile.CreatedAt,
-	)
-	return i, err
-}
-
-const getDiaryImages = `-- name: GetDiaryImages :many
-SELECT id, diary_id, url, index, created_at FROM diary_images
-WHERE diary_id = $1
-ORDER BY index ASC
-`
-
-func (q *Queries) GetDiaryImages(ctx context.Context, diaryID string) ([]DiaryImage, error) {
-	rows, err := q.db.Query(ctx, getDiaryImages, diaryID)
+func (q *Queries) GetDiaries(ctx context.Context, dollar_1 []string) ([]GetDiariesRow, error) {
+	rows, err := q.db.Query(ctx, getDiaries, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []DiaryImage
+	var items []GetDiariesRow
 	for rows.Next() {
-		var i DiaryImage
+		var i GetDiariesRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.DiaryID,
-			&i.Url,
-			&i.Index,
-			&i.CreatedAt,
+			&i.Diary.ID,
+			&i.Diary.UserID,
+			&i.Diary.Title,
+			&i.Diary.Description,
+			&i.Diary.ShareWithFriends,
+			&i.Diary.Date,
+			&i.Diary.CreatedAt,
+			&i.Diary.UpdatedAt,
+			&i.Profile.ID,
+			&i.Profile.Username,
+			&i.Profile.FullName,
+			&i.Profile.IsVerified,
+			&i.Profile.Bio,
+			&i.Profile.Pronouns,
+			&i.Profile.Website,
+			&i.Profile.ProfileImage,
+			&i.Profile.BannerImage,
+			&i.Profile.FollowersCount,
+			&i.Profile.FollowingCount,
+			&i.Profile.CreatedAt,
+			&i.Friends,
+			&i.Images,
+			&i.Locations,
+			&i.Pois,
 		); err != nil {
 			return nil, err
 		}
