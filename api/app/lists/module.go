@@ -3,7 +3,6 @@ package lists
 import (
 	"context"
 	"net/http"
-	"wanderlust/pkg/authz"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
@@ -86,7 +85,6 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListStatusRead),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
@@ -164,7 +162,6 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListUpdate),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
@@ -192,7 +189,6 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListDelete),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
@@ -220,7 +216,6 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
-				middlewares.Authz(grp.API, authz.ActListItemCreate),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
