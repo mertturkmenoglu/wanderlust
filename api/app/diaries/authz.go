@@ -1,4 +1,4 @@
-package diary
+package diaries
 
 import "wanderlust/pkg/dto"
 
