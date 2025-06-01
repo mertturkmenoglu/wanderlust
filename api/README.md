@@ -6,7 +6,7 @@
 - Just: https://github.com/casey/just
 - Docker: https://docs.docker.com/desktop/setup/install/linux/ubuntu/
 - Sqlc: https://sqlc.dev/
-- Go Migration: https://github.com/golang-migrate/migrate
+- Goose: https://github.com/pressly/goose
 - Go Air: https://github.com/air-verse/air
 - Infisical: https://infisical.com/docs/documentation/getting-started/introduction
 
@@ -21,6 +21,7 @@ or you can follow these steps for manual setup:
 - Setup environment variables:
   - Using Infisical CLI (recommended, read `infisical.md`), or
   - Manually (create `.env` => copy from `.env.example` and fill)
+- Run migrations with Goose: `goose up`
 - Run sqlc to generate latest database queries & types: `just sqlc`
 - Run Docker containers: `docker compose up -d`
 - Run the development server: `just watch`
