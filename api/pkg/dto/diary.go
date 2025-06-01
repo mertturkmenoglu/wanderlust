@@ -6,13 +6,13 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-type DiaryEntry struct {
+type Diary struct {
 	ID               string          `json:"id" example:"7323488942953598976" doc:"The ID of the diary entry"`
 	UserID           string          `json:"userId" example:"7323488942953598976" doc:"The ID of the user"`
 	User             Profile         `json:"user"`
 	Friends          []Profile       `json:"friends"`
 	Locations        []DiaryLocation `json:"locations"`
-	Media            []DiaryMedia    `json:"media"`
+	Images           []DiaryImage    `json:"images"`
 	Title            string          `json:"title" example:"My diary entry" doc:"The title of the diary entry"`
 	Description      string          `json:"description" example:"My diary entry description" doc:"The description of the diary entry"`
 	ShareWithFriends bool            `json:"shareWithFriends" example:"true" doc:"Whether the diary entry is shared with friends or not"`
@@ -24,20 +24,18 @@ type DiaryEntry struct {
 type DiaryLocation struct {
 	Poi         Poi     `json:"poi"`
 	Description *string `json:"description" example:"My location description" doc:"The description of the location"`
-	ListIndex   int32   `json:"listIndex" example:"1" doc:"The list index of the location"`
+	Index       int16   `json:"index" example:"1" doc:"The list index of the location"`
 }
 
-type DiaryMedia struct {
-	ID           int64     `json:"id" example:"7323488942953598976" doc:"The ID of the media"`
-	DiaryEntryID string    `json:"diaryEntryId" example:"7323488942953598976" doc:"The ID of the diary entry"`
-	Url          string    `json:"url" example:"https://example.com/image.jpg" doc:"The URL of the media"`
-	Alt          string    `json:"alt" example:"My image" doc:"The alt text of the media"`
-	Caption      *string   `json:"caption" example:"My image caption" doc:"The caption of the media"`
-	MediaOrder   int16     `json:"mediaOrder" example:"1" doc:"The media order of the media"`
-	CreatedAt    time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"The created at time of the media"`
+type DiaryImage struct {
+	ID        int64     `json:"id" example:"7323488942953598976" doc:"The ID of the media"`
+	DiaryID   string    `json:"diaryId" example:"7323488942953598976" doc:"The ID of the diary entry"`
+	Url       string    `json:"url" example:"https://example.com/image.jpg" doc:"The URL of the media"`
+	Index     int16     `json:"index" example:"1" doc:"The media order of the media"`
+	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"The created at time of the media"`
 }
 
-type GetDiaryEntriesInput struct {
+type GetDiariesInput struct {
 	PaginationQueryParams
 	DiaryDateFilterQueryParams
 }
@@ -47,41 +45,41 @@ type DiaryDateFilterQueryParams struct {
 	To   string `query:"to,omitempty" example:"2024-01-01" doc:"End date of the date range" required:"false"`
 }
 
-type GetDiaryEntriesOutput struct {
-	Body GetDiaryEntriesOutputBody
+type GetDiariesOutput struct {
+	Body GetDiariesOutputBody
 }
 
-type GetDiaryEntriesOutputBody struct {
-	Entries    []DiaryEntry   `json:"entries"`
+type GetDiariesOutputBody struct {
+	Diaries    []Diary        `json:"diaries"`
 	Pagination PaginationInfo `json:"pagination"`
 }
 
-type GetDiaryEntryByIdInput struct {
+type GetDiaryByIdInput struct {
 	ID string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
 }
 
-type GetDiaryEntryByIdOutput struct {
-	Body GetDiaryEntryByIdOutputBody
+type GetDiaryByIdOutput struct {
+	Body GetDiaryByIdOutputBody
 }
 
-type GetDiaryEntryByIdOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type GetDiaryByIdOutputBody struct {
+	Diary Diary `json:"diary"`
 }
 
-type ChangeDiaryEntySharingInput struct {
+type ChangeDiarySharingInput struct {
 	ID string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
 }
 
-type CreateDiaryEntryInput struct {
-	Body CreateDiaryEntryInputBody
+type CreateDiaryInput struct {
+	Body CreateDiaryInputBody
 }
 
-type CreateDiaryEntryInputBody struct {
+type CreateDiaryInputBody struct {
 	Title string    `json:"title" required:"true" example:"My diary entry" doc:"The title of the diary entry" minLength:"1" maxLength:"128"`
 	Date  time.Time `json:"date" required:"true" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" format:"date-time"`
 }
 
-func (body *CreateDiaryEntryInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+func (body *CreateDiaryInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
 	if body.Date.After(time.Now()) {
 		return []error{&huma.ErrorDetail{
 			Message:  "Date must be in the past",
@@ -93,77 +91,77 @@ func (body *CreateDiaryEntryInputBody) Resolve(ctx huma.Context, prefix *huma.Pa
 	return nil
 }
 
-type CreateDiaryEntryLocation struct {
+type CreateDiaryLocation struct {
 	ID          string  `json:"id" required:"true" example:"7323488942953598976" doc:"The ID of the point of interest"`
 	Description *string `json:"description" example:"My location description" doc:"The description of the location" required:"false" minLength:"1" maxLength:"256"`
 }
 
-type CreateDiaryEntryOutput struct {
-	Body CreateDiaryEntryOutputBody
+type CreateDiaryOutput struct {
+	Body CreateDiaryOutputBody
 }
 
-type CreateDiaryEntryOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type CreateDiaryOutputBody struct {
+	Diary Diary `json:"diary"`
 }
 
-type DeleteDiaryEntryInput struct {
+type DeleteDiaryInput struct {
 	ID string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
 }
 
-type UploadDiaryMediaInput struct {
+type UploadDiaryImageInput struct {
 	ID   string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
-	Body UploadDiaryMediaInputBody
+	Body UploadDiaryImageInputBody
 }
 
-type UploadDiaryMediaInputBody struct {
+type UploadDiaryImageInputBody struct {
 	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
 	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
 	Size     int32  `json:"size" example:"1024" doc:"Size of media of point of interest" required:"true"`
 }
 
-type UploadDiaryMediaOutput struct {
-	Body UploadDiaryMediaOutputBody
+type UploadDiaryImageOutput struct {
+	Body UploadDiaryImageOutputBody
 }
 
-type UploadDiaryMediaOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type UploadDiaryImageOutputBody struct {
+	Diary Diary `json:"diary"`
 }
 
-type DeleteDiaryMediaInput struct {
+type DeleteDiaryImageInput struct {
 	ID      string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
-	MediaID int64  `path:"mediaId" example:"123" doc:"ID of media"`
+	ImageID int64  `path:"imageId" example:"123" doc:"ID of media"`
 }
 
-type UpdateDiaryMediaInput struct {
+type UpdateDiaryImageInput struct {
 	ID   string `path:"id" example:"7323488942953598976" doc:"ID of diary entry"`
-	Body UpdateDiaryMediaInputBody
+	Body UpdateDiaryImageInputBody
 }
 
-type UpdateDiaryMediaInputBody struct {
-	Ids []int64 `json:"ids" doc:"IDs of the media" required:"true" minItems:"0" maxItems:"32" uniqueItems:"true"`
+type UpdateDiaryImageInputBody struct {
+	Ids []int64 `json:"ids" doc:"IDs of the images" required:"true" minItems:"0" maxItems:"32" uniqueItems:"true"`
 }
 
-type UpdateDiaryMediaOutput struct {
-	Body UpdateDiaryMediaOutputBody
+type UpdateDiaryImageOutput struct {
+	Body UpdateDiaryImageOutputBody
 }
 
-type UpdateDiaryMediaOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type UpdateDiaryImageOutputBody struct {
+	Diary Diary `json:"diary"`
 }
 
-type UpdateDiaryEntryInput struct {
+type UpdateDiaryInput struct {
 	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
-	Body UpdateDiaryEntryInputBody
+	Body UpdateDiaryInputBody
 }
 
-type UpdateDiaryEntryInputBody struct {
+type UpdateDiaryInputBody struct {
 	Title            string    `json:"title" example:"My diary entry" doc:"The title of the diary entry" required:"true" minLength:"1" maxLength:"128"`
 	Description      string    `json:"description" example:"My diary entry description" doc:"The description of the diary entry" required:"false" minLength:"0" maxLength:"4096"`
 	Date             time.Time `json:"date" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry" required:"true" format:"date-time"`
 	ShareWithFriends bool      `json:"shareWithFriends" example:"true" doc:"Whether the diary entry is shared with friends or not" required:"true"`
 }
 
-func (body *UpdateDiaryEntryInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+func (body *UpdateDiaryInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
 	if body.Date.After(time.Now()) {
 		return []error{&huma.ErrorDetail{
 			Message:  "Date must be in the past",
@@ -175,41 +173,41 @@ func (body *UpdateDiaryEntryInputBody) Resolve(ctx huma.Context, prefix *huma.Pa
 	return nil
 }
 
-type UpdateDiaryEntryOutput struct {
-	Body UpdateDiaryEntryOutputBody
+type UpdateDiaryOutput struct {
+	Body UpdateDiaryOutputBody
 }
 
-type UpdateDiaryEntryOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type UpdateDiaryOutputBody struct {
+	Diary Diary `json:"diary"`
 }
 
-type UpdateDiaryEntryFriendsInput struct {
+type UpdateDiaryFriendsInput struct {
 	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
-	Body UpdateDiaryEntryFriendsInputBody
+	Body UpdateDiaryFriendsInputBody
 }
 
-type UpdateDiaryEntryFriendsInputBody struct {
+type UpdateDiaryFriendsInputBody struct {
 	Friends []string `json:"friends" doc:"IDs of the friends" required:"true" minItems:"0" maxItems:"32" uniqueItems:"true"`
 }
 
-type UpdateDiaryEntryFriendsOutput struct {
-	Body UpdateDiaryEntryFriendsOutputBody
+type UpdateDiaryFriendsOutput struct {
+	Body UpdateDiaryFriendsOutputBody
 }
 
-type UpdateDiaryEntryFriendsOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type UpdateDiaryFriendsOutputBody struct {
+	Diary Diary `json:"diary"`
 }
 
-type UpdateDiaryEntryLocationsInput struct {
+type UpdateDiaryLocationsInput struct {
 	ID   string `path:"id" example:"7323488942953598976" doc:"ID of the diary entry"`
-	Body UpdateDiaryEntryLocationsInputBody
+	Body UpdateDiaryLocationsInputBody
 }
 
-type UpdateDiaryEntryLocationsInputBody struct {
-	Locations []UpdateDiaryEntryLocationItem `json:"locations" doc:"IDs of the locations" required:"true" minItems:"0" maxItems:"32"`
+type UpdateDiaryLocationsInputBody struct {
+	Locations []UpdateDiaryLocationItem `json:"locations" doc:"IDs of the locations" required:"true" minItems:"0" maxItems:"32"`
 }
 
-func (body *UpdateDiaryEntryLocationsInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
+func (body *UpdateDiaryLocationsInputBody) Resolve(ctx huma.Context, prefix *huma.PathBuffer) []error {
 	ids := make(map[string]bool)
 
 	// Check if the POI IDs are unique
@@ -229,15 +227,15 @@ func (body *UpdateDiaryEntryLocationsInputBody) Resolve(ctx huma.Context, prefix
 	return nil
 }
 
-type UpdateDiaryEntryLocationItem struct {
+type UpdateDiaryLocationItem struct {
 	PoiID       string  `json:"poiId" doc:"ID of the point of interest" required:"true" minLength:"1" maxLength:"32"`
 	Description *string `json:"description" doc:"Description of the location" required:"false" `
 }
 
-type UpdateDiaryEntryLocationsOutput struct {
-	Body UpdateDiaryEntryLocationsOutputBody
+type UpdateDiaryLocationsOutput struct {
+	Body UpdateDiaryLocationsOutputBody
 }
 
-type UpdateDiaryEntryLocationsOutputBody struct {
-	Entry DiaryEntry `json:"entry"`
+type UpdateDiaryLocationsOutputBody struct {
+	Diary Diary `json:"diary"`
 }
