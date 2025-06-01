@@ -62,6 +62,51 @@ func (q *Queries) CountReviewsByUsername(ctx context.Context, username string) (
 	return count, err
 }
 
+const createReview = `-- name: CreateReview :one
+INSERT INTO reviews (
+  id,
+  poi_id,
+  user_id,
+  content,
+  rating
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING id, poi_id, user_id, content, rating, created_at, updated_at
+`
+
+type CreateReviewParams struct {
+	ID      string
+	PoiID   string
+	UserID  string
+	Content string
+	Rating  int16
+}
+
+func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) (Review, error) {
+	row := q.db.QueryRow(ctx, createReview,
+		arg.ID,
+		arg.PoiID,
+		arg.UserID,
+		arg.Content,
+		arg.Rating,
+	)
+	var i Review
+	err := row.Scan(
+		&i.ID,
+		&i.PoiID,
+		&i.UserID,
+		&i.Content,
+		&i.Rating,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const deleteReview = `-- name: DeleteReview :exec
 DELETE FROM reviews
 WHERE id = $1
@@ -192,10 +237,21 @@ func (q *Queries) GetReviewIdsByUsername(ctx context.Context, arg GetReviewIdsBy
 const getReviewsByIds = `-- name: GetReviewsByIds :many
 SELECT
   reviews.id, reviews.poi_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,
-  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at,
+  images_agg.images
 FROM
   reviews
 LEFT JOIN profile ON reviews.user_id = profile.id
+LEFT JOIN LATERAL (
+  SELECT json_agg(jsonb_build_object(
+    'id', m.id,
+    'reviewId', m.review_id,
+    'url', m.url,
+    'index', m.index
+  ) ORDER BY m.index) AS images
+  FROM public.review_images m
+  WHERE m.review_id = reviews.id
+) images_agg ON true
 WHERE reviews.id = ANY($1::TEXT[])
 ORDER BY reviews.created_at DESC
 `
@@ -203,6 +259,7 @@ ORDER BY reviews.created_at DESC
 type GetReviewsByIdsRow struct {
 	Review  Review
 	Profile Profile
+	Images  []byte
 }
 
 func (q *Queries) GetReviewsByIds(ctx context.Context, dollar_1 []string) ([]GetReviewsByIdsRow, error) {
@@ -234,6 +291,7 @@ func (q *Queries) GetReviewsByIds(ctx context.Context, dollar_1 []string) ([]Get
 			&i.Profile.FollowersCount,
 			&i.Profile.FollowingCount,
 			&i.Profile.CreatedAt,
+			&i.Images,
 		); err != nil {
 			return nil, err
 		}

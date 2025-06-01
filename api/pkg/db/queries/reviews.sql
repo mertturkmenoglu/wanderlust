@@ -2,6 +2,21 @@
 SELECT COUNT(*) FROM reviews
 WHERE poi_id = $1;
 
+-- name: CreateReview :one
+INSERT INTO reviews (
+  id,
+  poi_id,
+  user_id,
+  content,
+  rating
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5
+) RETURNING *;
+
 -- name: BatchCreateReviews :copyfrom
 INSERT INTO reviews (
   id,
@@ -75,9 +90,20 @@ GROUP BY rating;
 -- name: GetReviewsByIds :many
 SELECT
   sqlc.embed(reviews),
-  sqlc.embed(profile)
+  sqlc.embed(profile),
+  images_agg.images
 FROM
   reviews
 LEFT JOIN profile ON reviews.user_id = profile.id
+LEFT JOIN LATERAL (
+  SELECT json_agg(jsonb_build_object(
+    'id', m.id,
+    'reviewId', m.review_id,
+    'url', m.url,
+    'index', m.index
+  ) ORDER BY m.index) AS images
+  FROM public.review_images m
+  WHERE m.review_id = reviews.id
+) images_agg ON true
 WHERE reviews.id = ANY($1::TEXT[])
 ORDER BY reviews.created_at DESC;

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
@@ -21,15 +22,16 @@ import (
 
 type Service struct {
 	*core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	poiService *pois.Service
+	db         *db.Queries
+	pool       *pgxpool.Pool
 }
 
 func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Review, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbReviews, err := s.db.GetReviewsByIdsPopulated(ctx, ids)
+	dbReviews, err := s.db.GetReviewsByIds(ctx, ids)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -44,10 +46,24 @@ func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Review, err
 		return nil, huma.Error404NotFound("One or more reviews not found")
 	}
 
-	reviews := make([]dto.Review, len(dbReviews))
+	poiIds := make([]string, 0)
 
-	for i, dbReview := range dbReviews {
-		reviews[i] = mapper.ToReview(dbReview)
+	for _, v := range dbReviews {
+		poiIds = append(poiIds, v.Review.PoiID)
+	}
+
+	pois, err := s.poiService.FindMany(ctx, poiIds)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	reviews, err := mapper.ToReviews(dbReviews, pois)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	return reviews, nil
@@ -199,11 +215,11 @@ func (s *Service) remove(ctx context.Context, id string) error {
 		return huma.Error500InternalServerError("Failed to delete review")
 	}
 
-	for _, m := range review.Media {
+	for _, m := range review.Images {
 		err = s.Upload.RemoveFileFromUrl(m.Url, upload.BUCKET_REVIEWS)
 
 		if err != nil {
-			tracing.Slog.Error("Failed to delete review media",
+			tracing.Slog.Error("Failed to delete review image",
 				slog.String("bucket", string(upload.BUCKET_REVIEWS)),
 				slog.String("object", m.Url),
 				slog.Any("error", err),
@@ -377,7 +393,7 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 		return nil, huma.Error500InternalServerError("Failed to delete cached information")
 	}
 
-	lastOrder, err := s.db.GetLastMediaOrderOfReview(ctx, id)
+	lastOrder, err := s.db.GetLastReviewImageIndex(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -395,10 +411,12 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 	order := int16(ord) + 1
 	url := s.Upload.GetUrlForFile(bucket, input.FileName)
 
-	_, err = s.db.CreateReviewMedia(ctx, db.CreateReviewMediaParams{
-		ReviewID:   id,
-		Url:        url,
-		MediaOrder: order,
+	_, err = s.db.BatchCreateReviewImage(ctx, []db.BatchCreateReviewImageParams{
+		{
+			ReviewID: id,
+			Url:      url,
+			Index:    order,
+		},
 	})
 
 	if err != nil {

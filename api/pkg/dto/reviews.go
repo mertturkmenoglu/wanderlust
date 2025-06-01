@@ -10,9 +10,9 @@ type Review struct {
 	Rating    int16         `json:"rating" example:"1" doc:"Rating of the review"`
 	CreatedAt time.Time     `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of review"`
 	UpdatedAt time.Time     `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"Updated at time of review"`
-	Poi       ReviewPoi     `json:"poi"`
+	Poi       Poi           `json:"poi"`
 	User      Profile       `json:"user"`
-	Media     []ReviewMedia `json:"media"`
+	Images    []ReviewImage `json:"images"`
 }
 
 type ReviewPoi struct {
@@ -20,11 +20,11 @@ type ReviewPoi struct {
 	Name string `json:"name" example:"The Great Wall of China" doc:"Name of point of interest"`
 }
 
-type ReviewMedia struct {
-	ID         int64  `json:"id" example:"1234" doc:"ID of media of review"`
-	ReviewID   string `json:"reviewId" example:"7323488942953598976" doc:"ID of review"`
-	Url        string `json:"url" example:"https://example.com/media.jpg" doc:"URL of media of review"`
-	MediaOrder int16  `json:"mediaOrder" example:"1" doc:"Media order of media of review"`
+type ReviewImage struct {
+	ID       int64  `json:"id" example:"1234" doc:"ID of media of review"`
+	ReviewID string `json:"reviewId" example:"7323488942953598976" doc:"ID of review"`
+	Url      string `json:"url" example:"https://example.com/media.jpg" doc:"URL of media of review"`
+	Index    int16  `json:"index" example:"1" doc:"Media order of media of review"`
 }
 
 type GetReviewByIdInput struct {
