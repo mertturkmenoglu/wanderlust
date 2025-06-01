@@ -45,7 +45,14 @@ SET
 WHERE id = $1;
 
 -- name: GetListItems :many
-SELECT *
+SELECT 
+  sqlc.embed(list_items),
+  get_pois(
+    ARRAY(
+      SELECT poi_id FROM list_items
+      WHERE list_items.list_id = $1
+    )
+  ) as pois
 FROM list_items
 WHERE list_id = $1
 ORDER BY index ASC;

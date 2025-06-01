@@ -283,26 +283,39 @@ func (q *Queries) GetListItem(ctx context.Context, arg GetListItemParams) (ListI
 }
 
 const getListItems = `-- name: GetListItems :many
-SELECT list_id, poi_id, index, created_at
+SELECT 
+  list_items.list_id, list_items.poi_id, list_items.index, list_items.created_at,
+  get_pois(
+    ARRAY(
+      SELECT poi_id FROM list_items
+      WHERE list_items.list_id = $1
+    )
+  )
 FROM list_items
 WHERE list_id = $1
 ORDER BY index ASC
 `
 
-func (q *Queries) GetListItems(ctx context.Context, listID string) ([]ListItem, error) {
+type GetListItemsRow struct {
+	ListItem ListItem
+	GetPois  []byte
+}
+
+func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListItemsRow, error) {
 	rows, err := q.db.Query(ctx, getListItems, listID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListItem
+	var items []GetListItemsRow
 	for rows.Next() {
-		var i ListItem
+		var i GetListItemsRow
 		if err := rows.Scan(
-			&i.ListID,
-			&i.PoiID,
-			&i.Index,
-			&i.CreatedAt,
+			&i.ListItem.ListID,
+			&i.ListItem.PoiID,
+			&i.ListItem.Index,
+			&i.ListItem.CreatedAt,
+			&i.GetPois,
 		); err != nil {
 			return nil, err
 		}
