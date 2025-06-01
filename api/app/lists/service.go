@@ -22,6 +22,41 @@ type Service struct {
 	pool *pgxpool.Pool
 }
 
+func (s *Service) find(ctx context.Context, id string) (*dto.List, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbList, err := s.db.GetListById(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("List not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get list by id")
+	}
+
+	dbListItems, err := s.db.GetListItems(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get list items")
+	}
+
+	pois, err := mapper.ToPois(dbListItems[0].GetPois)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get pois")
+	}
+
+	list := mapper.ToListWithItems(dbList, dbListItems, pois)
+
+	return &list, nil
+}
+
 func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetAllListsOfUserOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
@@ -55,7 +90,7 @@ func (s *Service) getAllLists(ctx context.Context, params dto.PaginationQueryPar
 
 	return &dto.GetAllListsOfUserOutput{
 		Body: dto.GetAllListsOfUserOutputBody{
-			Lists:      mapper.ToGetAllLists(dbLists, dbUser),
+			Lists:      mapper.ToListsWithoutItems(dbLists, dbUser),
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
@@ -96,7 +131,7 @@ func (s *Service) getPublicLists(ctx context.Context, username string, params dt
 
 	return &dto.GetPublicListsOfUserOutput{
 		Body: dto.GetPublicListsOfUserOutputBody{
-			Lists:      mapper.ToGetAllLists(dbLists, dbUser),
+			Lists:      mapper.ToListsWithoutItems(dbLists, dbUser),
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
@@ -107,35 +142,21 @@ func (s *Service) getList(ctx context.Context, id string) (*dto.GetListByIdOutpu
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-
-	dbList, err := s.db.GetListById(ctx, id)
+	list, err := s.find(ctx, id)
 
 	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("list not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get list by id")
+		return nil, err
 	}
 
-	if !dbList.List.IsPublic && dbList.User.ID != userId {
+	if !list.IsPublic && list.UserID != userId {
 		err = huma.Error403Forbidden("You are not authorized to access this list")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	dbListItems, err := s.db.GetListItems(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get list items")
-	}
-
 	return &dto.GetListByIdOutput{
 		Body: dto.GetListByIdOutputBody{
-			List: mapper.ToListWithItems(dbList, dbListItems),
+			List: *list,
 		},
 	}, nil
 }
@@ -238,7 +259,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateListInputBody) (*dt
 
 	return &dto.CreateListOutput{
 		Body: dto.CreateListOutputBody{
-			List: mapper.ToList(res, dbUser),
+			List: mapper.ToListWithoutItems(res, dbUser),
 		},
 	}, nil
 }
@@ -247,7 +268,22 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.DeleteList(ctx, id)
+	userId := ctx.Value("userId").(string)
+
+	list, err := s.find(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	if list.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to delete this list")
+		sp.RecordError(err)
+		return err
+	}
+
+	err = s.db.DeleteList(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -266,7 +302,21 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateListInpu
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.UpdateList(ctx, db.UpdateListParams{
+	list, err := s.find(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if list.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to update this list")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	err = s.db.UpdateList(ctx, db.UpdateListParams{
 		ID:       id,
 		Name:     body.Name,
 		IsPublic: body.IsPublic,
@@ -277,7 +327,7 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateListInpu
 		return nil, huma.Error500InternalServerError("Failed to update list")
 	}
 
-	dbList, err := s.db.GetListById(ctx, id)
+	list, err = s.find(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -286,7 +336,7 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateListInpu
 
 	return &dto.UpdateListOutput{
 		Body: dto.UpdateListOutputBody{
-			List: mapper.ToList(dbList.List, dbList.User),
+			List: *list,
 		},
 	}, nil
 }
@@ -294,6 +344,20 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateListInpu
 func (s *Service) createListItem(ctx context.Context, listId string, body dto.CreateListItemInputBody) (*dto.CreateListItemOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
+
+	list, err := s.find(ctx, listId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if list.UserID != userId {
+		err = huma.Error403Forbidden("You are not authorized to update this list")
+		sp.RecordError(err)
+		return nil, err
+	}
 
 	lastIndex, err := s.db.GetLastIndexOfList(ctx, listId)
 
@@ -312,7 +376,7 @@ func (s *Service) createListItem(ctx context.Context, listId string, body dto.Cr
 
 	index := lastIndexAsInt + 1
 
-	count, err := s.db.GetListItemCount(ctx, listId)
+	count, err := s.db.CountListItems(ctx, listId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -326,9 +390,9 @@ func (s *Service) createListItem(ctx context.Context, listId string, body dto.Cr
 	}
 
 	res, err := s.db.CreateListItem(ctx, db.CreateListItemParams{
-		ListID:    listId,
-		PoiID:     body.PoiID,
-		ListIndex: index,
+		ListID: listId,
+		PoiID:  body.PoiID,
+		Index:  index,
 	})
 
 	if err != nil {
@@ -340,7 +404,7 @@ func (s *Service) createListItem(ctx context.Context, listId string, body dto.Cr
 		Body: dto.CreateListItemOutputBody{
 			ListID:    listId,
 			PoiID:     body.PoiID,
-			ListIndex: index,
+			Index:     index,
 			CreatedAt: res.CreatedAt.Time,
 		},
 	}, nil
@@ -350,7 +414,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	list, err := s.getList(ctx, listId)
+	list, err := s.find(ctx, listId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -359,7 +423,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 
 	userId := ctx.Value("userId").(string)
 
-	if list.Body.List.UserID != userId {
+	if list.UserID != userId {
 		err = huma.Error403Forbidden("You are not authorized to update this list")
 		sp.RecordError(err)
 		return nil, err
@@ -391,9 +455,9 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 
 	for i, poiId := range poiIds {
 		_, err = qtx.CreateListItem(ctx, db.CreateListItemParams{
-			ListID:    listId,
-			PoiID:     poiId,
-			ListIndex: int32(i + 1),
+			ListID: listId,
+			PoiID:  poiId,
+			Index:  int32(i + 1),
 		})
 
 		if err != nil {
@@ -409,7 +473,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 		return nil, huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
-	list, err = s.getList(ctx, listId)
+	list, err = s.find(ctx, listId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -418,7 +482,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 
 	return &dto.UpdateListItemsOutput{
 		Body: dto.UpdateListItemsOutputBody{
-			List: list.Body.List,
+			List: *list,
 		},
 	}, nil
 }
