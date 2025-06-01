@@ -35,7 +35,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateDiaryEntryInput) (*dto.CreateDiaryEntryOutput, error) {
+		func(ctx context.Context, input *dto.CreateDiaryInput) (*dto.CreateDiaryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -63,7 +63,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetDiaryEntriesInput) (*dto.GetDiaryEntriesOutput, error) {
+		func(ctx context.Context, input *dto.GetDiariesInput) (*dto.GetDiariesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -91,7 +91,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetDiaryEntryByIdInput) (*dto.GetDiaryEntryByIdOutput, error) {
+		func(ctx context.Context, input *dto.GetDiaryByIdInput) (*dto.GetDiaryByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -119,7 +119,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteDiaryEntryInput) (*struct{}, error) {
+		func(ctx context.Context, input *dto.DeleteDiaryInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -134,20 +134,20 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
-	// Upload Media
+	// Upload image
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/diary/{id}/media",
-			Summary:       "Upload Media to a Diary Entry",
-			Description:   "Add media to a diary entry",
+			Path:          "/diary/{id}/image",
+			Summary:       "Upload Image to a Diary Entry",
+			Description:   "Add image to a diary entry",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UploadDiaryMediaInput) (*dto.UploadDiaryMediaOutput, error) {
+		func(ctx context.Context, input *dto.UploadDiaryImageInput) (*dto.UploadDiaryImageOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -166,20 +166,20 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
-			Path:          "/diary/{id}/media/{mediaId}",
-			Summary:       "Delete Diary Entry Media",
-			Description:   "Delete a diary entry media",
+			Path:          "/diary/{id}/image/{imageId}",
+			Summary:       "Delete Diary Image",
+			Description:   "Delete a diary image",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteDiaryMediaInput) (*struct{}, error) {
+		func(ctx context.Context, input *dto.DeleteDiaryImageInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.removeMedia(ctx, input.ID, input.MediaID)
+			err := s.removeMedia(ctx, input.ID, input.ImageID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -194,16 +194,16 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
-			Path:          "/diary/{id}/media",
-			Summary:       "Update Diary Entry Media",
-			Description:   "Update a diary entry media",
+			Path:          "/diary/{id}/image",
+			Summary:       "Update Diary Entry Image",
+			Description:   "Update a diary entry image",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateDiaryMediaInput) (*dto.UpdateDiaryMediaOutput, error) {
+		func(ctx context.Context, input *dto.UpdateDiaryImageInput) (*dto.UpdateDiaryImageOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -231,7 +231,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateDiaryEntryInput) (*dto.UpdateDiaryEntryOutput, error) {
+		func(ctx context.Context, input *dto.UpdateDiaryInput) (*dto.UpdateDiaryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -259,7 +259,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateDiaryEntryFriendsInput) (*dto.UpdateDiaryEntryFriendsOutput, error) {
+		func(ctx context.Context, input *dto.UpdateDiaryFriendsInput) (*dto.UpdateDiaryFriendsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -287,7 +287,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateDiaryEntryLocationsInput) (*dto.UpdateDiaryEntryLocationsOutput, error) {
+		func(ctx context.Context, input *dto.UpdateDiaryLocationsInput) (*dto.UpdateDiaryLocationsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
