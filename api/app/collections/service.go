@@ -26,7 +26,7 @@ func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Collection,
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.db.GetCollectionsByIdsPopulated(ctx, ids)
+	res, err := s.db.GetCollections(ctx, db.GetCollectionsParams{})
 
 	if err != nil {
 		sp.RecordError(err)
@@ -233,7 +233,7 @@ func (s *Service) createItem(ctx context.Context, collectionId string, body dto.
 	_, err = s.db.CreateCollectionItem(ctx, db.CreateCollectionItemParams{
 		CollectionID: collectionId,
 		PoiID:        body.PoiID,
-		ListIndex:    asInt + 1,
+		Index:        asInt + 1,
 	})
 
 	if err != nil {
@@ -272,7 +272,7 @@ func (s *Service) removeItem(ctx context.Context, collectionId string, index int
 
 	err = qtx.DeleteCollectionItemAtIndex(ctx, db.DeleteCollectionItemAtIndexParams{
 		CollectionID: collectionId,
-		ListIndex:    index,
+		Index:        index,
 	})
 
 	if err != nil {
@@ -283,7 +283,7 @@ func (s *Service) removeItem(ctx context.Context, collectionId string, index int
 	// Decrement list index of all items after the deleted one
 	err = qtx.DecrListIndexAfterDelete(ctx, db.DecrListIndexAfterDeleteParams{
 		CollectionID: collectionId,
-		ListIndex:    index,
+		Index:        index,
 	})
 
 	if err != nil {
@@ -360,7 +360,7 @@ func (s *Service) updateItems(ctx context.Context, collectionId string, body dto
 		_, err = qtx.CreateCollectionItem(ctx, db.CreateCollectionItemParams{
 			CollectionID: collectionId,
 			PoiID:        item.PoiID,
-			ListIndex:    item.ListIndex,
+			Index:        item.ListIndex,
 		})
 
 		if err != nil {

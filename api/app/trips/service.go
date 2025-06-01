@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
@@ -23,9 +24,10 @@ import (
 
 type Service struct {
 	core.Application
-	wg   *sync.WaitGroup
-	db   *db.Queries
-	pool *pgxpool.Pool
+	poisService *pois.Service
+	wg          *sync.WaitGroup
+	db          *db.Queries
+	pool        *pgxpool.Pool
 }
 
 func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
@@ -38,6 +40,16 @@ func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Trip, error
 		sp.RecordError(err)
 		return nil, err
 	}
+
+	poiIds := make([]string, 0)
+
+	for _, v := range res {
+		for _, l := range v.Locations {
+			poiIds = append(poiIds, l)
+		}
+	}
+
+	pois, err := s.poisService.FindMany(ctx)
 
 	trips := make([]dto.Trip, len(res))
 
@@ -215,7 +227,6 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 		Title:           body.Title,
 		Description:     body.Description,
 		VisibilityLevel: body.Visibility,
-		Status:          "draft",
 		StartAt:         pgtype.Timestamptz{Time: body.StartAt, Valid: true},
 		EndAt:           pgtype.Timestamptz{Time: body.EndAt, Valid: true},
 	})
@@ -349,8 +360,7 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 			Time:  expiresAt,
 			Valid: true,
 		},
-		TripTitle:       trip.Title,
-		TripDescription: trip.Description,
+		TripTitle: trip.Title,
 	})
 
 	if err != nil {

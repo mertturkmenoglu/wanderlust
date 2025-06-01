@@ -14,7 +14,6 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
-	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -30,18 +29,18 @@ type Service struct {
 	pool *pgxpool.Pool
 }
 
-func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.DiaryEntry, error) {
+func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Diary, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbEntries, err := s.Db.Queries.GetDiaryEntriesByIdsPopulated(ctx, ids)
+	dbEntries, err := s.Db.Queries.GetDiaries(ctx, ids)
 
 	if err != nil {
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	entries := make([]dto.DiaryEntry, len(dbEntries))
+	entries := make([]dto.Diary, len(dbEntries))
 
 	for i, dbEntry := range dbEntries {
 		entry, err := mapper.ToDiaryEntry(dbEntry)
@@ -83,7 +82,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateDiaryEntryInputBody
 
 	userId := ctx.Value("userId").(string)
 
-	dbEntry, err := s.db.CreateNewDiaryEntry(ctx, db.CreateNewDiaryEntryParams{
+	dbEntry, err := s.db.CreateNewDiary(ctx, db.CreateNewDiaryParams{
 		ID:               s.ID.Flake(),
 		UserID:           userId,
 		Title:            body.Title,
@@ -157,7 +156,7 @@ func (s *Service) listAll(ctx context.Context, params dto.PaginationQueryParams)
 
 	userId := ctx.Value("userId").(string)
 
-	dbRes, err := s.Db.Queries.ListDiaryEntries(ctx, db.ListDiaryEntriesParams{
+	dbRes, err := s.Db.Queries.ListDiaries(ctx, db.ListDiariesParams{
 		UserID: userId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
@@ -186,7 +185,7 @@ func (s *Service) listAll(ctx context.Context, params dto.PaginationQueryParams)
 		return nil, err
 	}
 
-	count, err := s.Db.Queries.CountDiaryEntries(ctx, userId)
+	count, err := s.Db.Queries.CountDiaries(ctx, userId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -194,7 +193,7 @@ func (s *Service) listAll(ctx context.Context, params dto.PaginationQueryParams)
 	}
 
 	return &dto.GetDiaryEntriesOutput{
-		Body: dto.GetDiaryEntriesOutputBody{
+		Body: dto.GetDiariesOutputBody{
 			Entries:    entries,
 			Pagination: pagination.Compute(params, count),
 		},
@@ -221,7 +220,7 @@ func (s *Service) filterAndList(ctx context.Context, params dto.PaginationQueryP
 
 	userId := ctx.Value("userId").(string)
 
-	dbRes, err := s.Db.Queries.ListAndFilterDiaryEntries(ctx, db.ListAndFilterDiaryEntriesParams{
+	dbRes, err := s.Db.Queries.ListAndFilterDiaries(ctx, db.ListAndFilterDiariesParams{
 		UserID: userId,
 		Offset: int32(pagination.GetOffset(params)),
 		Limit:  int32(params.PageSize),
@@ -252,7 +251,7 @@ func (s *Service) filterAndList(ctx context.Context, params dto.PaginationQueryP
 		return nil, err
 	}
 
-	count, err := s.Db.Queries.CountDiaryEntriesFilterByRange(ctx, db.CountDiaryEntriesFilterByRangeParams{
+	count, err := s.Db.Queries.CountDiariesFilterByRange(ctx, db.CountDiariesFilterByRangeParams{
 		UserID: userId,
 		Date:   pgtype.Timestamptz{Time: to, Valid: true},
 		Date_2: pgtype.Timestamptz{Time: from, Valid: true},
@@ -264,7 +263,7 @@ func (s *Service) filterAndList(ctx context.Context, params dto.PaginationQueryP
 	}
 
 	return &dto.GetDiaryEntriesOutput{
-		Body: dto.GetDiaryEntriesOutputBody{
+		Body: dto.GetDiariesOutputBody{
 			Entries:    res,
 			Pagination: pagination.Compute(params, count),
 		},
@@ -290,7 +289,7 @@ func (s *Service) remove(ctx context.Context, id string) error {
 		return err
 	}
 
-	err = s.Db.Queries.DeleteDiaryEntry(ctx, id)
+	err = s.Db.Queries.DeleteDiary(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -369,7 +368,7 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 	endpoint := s.Upload.Client.EndpointURL().String()
 	url := endpoint + "/" + string(bucket) + "/" + body.FileName
 
-	lastOrder, err := s.Db.Queries.GetLastMediaOrderOfEntry(ctx, id)
+	lastOrder, err := s.Db.Queries.GetDiaryLastImageIndex(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -386,12 +385,10 @@ func (s *Service) uploadMedia(ctx context.Context, id string, body dto.UploadDia
 
 	order := int16(ord) + 1
 
-	_, err = s.Db.Queries.CreateDiaryMedia(ctx, db.CreateDiaryMediaParams{
-		DiaryEntryID: id,
-		Url:          url,
-		Alt:          body.FileName,
-		Caption:      utils.StrToText(body.FileName),
-		MediaOrder:   order,
+	_, err = s.Db.Queries.CreateDiaryImage(ctx, db.CreateDiaryImageParams{
+		DiaryID: id,
+		Url:     url,
+		Index:   order,
 	})
 
 	if err != nil {
@@ -443,7 +440,7 @@ func (s *Service) removeMedia(ctx context.Context, id string, mediaId int64) err
 
 	qtx := s.Db.Queries.WithTx(tx)
 
-	err = qtx.RemoveDiaryEntryAllMedia(ctx, id)
+	err = qtx.RemoveDiaryAllImages(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -466,21 +463,10 @@ func (s *Service) removeMedia(ctx context.Context, id string, mediaId int64) err
 			continue
 		}
 
-		var cap string = ""
-
-		if m.Caption != nil {
-			cap = *m.Caption
-		}
-
-		_, err = qtx.CreateDiaryMedia(ctx, db.CreateDiaryMediaParams{
-			DiaryEntryID: id,
-			Url:          m.Url,
-			Alt:          m.Alt,
-			Caption: pgtype.Text{
-				String: cap,
-				Valid:  m.Caption != nil,
-			},
-			MediaOrder: int16(index + 1),
+		_, err = qtx.CreateDiaryImage(ctx, db.CreateDiaryImageParams{
+			DiaryID: id,
+			Url:     m.Url,
+			Index:   int16(index + 1),
 		})
 
 		if err != nil {
@@ -539,7 +525,7 @@ func (s *Service) updateMedia(ctx context.Context, id string, body dto.UpdateDia
 
 	qtx := s.Db.Queries.WithTx(tx)
 
-	err = qtx.RemoveDiaryEntryAllMedia(ctx, id)
+	err = qtx.RemoveDiaryAllImages(ctx, id)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -574,7 +560,7 @@ func (s *Service) updateMedia(ctx context.Context, id string, body dto.UpdateDia
 			cap = *m.Caption
 		}
 
-		_, err = qtx.CreateDiaryMedia(ctx, db.CreateDiaryMediaParams{
+		_, err = qtx.CreateDiaryImage(ctx, db.CreateDiaryImageParams{
 			DiaryEntryID: m.DiaryEntryID,
 			Url:          m.Url,
 			Alt:          m.Alt,
@@ -679,7 +665,7 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateDiaryEnt
 	}, nil
 }
 
-func (s *Service) updateFriends(ctx context.Context, id string, body dto.UpdateDiaryEntryFriendsInputBody) (*dto.UpdateDiaryEntryFriendsOutput, error) {
+func (s *Service) updateFriends(ctx context.Context, id string, body dto.UpdateDiaryFriendsInputBody) (*dto.UpdateDiaryFriendsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -747,14 +733,14 @@ func (s *Service) updateFriends(ctx context.Context, id string, body dto.UpdateD
 		return nil, huma.Error500InternalServerError("Failed to get diary entry")
 	}
 
-	return &dto.UpdateDiaryEntryFriendsOutput{
-		Body: dto.UpdateDiaryEntryFriendsOutputBody{
+	return &dto.UpdateDiaryFriendsOutput{
+		Body: dto.UpdateDiaryFriendsOutputBody{
 			Entry: *entry,
 		},
 	}, nil
 }
 
-func (s *Service) updateLocations(ctx context.Context, id string, body dto.UpdateDiaryEntryLocationsInputBody) (*dto.UpdateDiaryEntryLocationsOutput, error) {
+func (s *Service) updateLocations(ctx context.Context, id string, body dto.UpdateDiaryLocationsInputBody) (*dto.UpdateDiaryLocationsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -831,8 +817,8 @@ func (s *Service) updateLocations(ctx context.Context, id string, body dto.Updat
 		return nil, huma.Error500InternalServerError("Failed to get diary entry")
 	}
 
-	return &dto.UpdateDiaryEntryLocationsOutput{
-		Body: dto.UpdateDiaryEntryLocationsOutputBody{
+	return &dto.UpdateDiaryLocationsOutput{
+		Body: dto.UpdateDiaryLocationsOutputBody{
 			Entry: *entry,
 		},
 	}, nil
