@@ -59,21 +59,14 @@ type GetMeOutputBody struct {
 	FullName              string    `json:"fullName" example:"John Doe" doc:"Full name of the user"`
 	GoogleID              *string   `json:"googleId" example:"1234567890" doc:"Google ID of the user" required:"true"`
 	FacebookID            *string   `json:"facebookId" example:"1234567890" doc:"Facebook ID of the user" required:"true"`
-	IsEmailVerified       bool      `json:"isEmailVerified" example:"false" doc:"Is the email verified"`
-	IsOnboardingCompleted bool      `json:"isOnboardingCompleted" example:"false" doc:"Is the onboarding completed"`
-	IsActive              bool      `json:"isActive" example:"true" doc:"Is the user active"`
-	IsBusinessAccount     bool      `json:"isBusinessAccount" example:"false" doc:"Is the user a business account"`
 	IsVerified            bool      `json:"isVerified" example:"false" doc:"Is the user verified"`
-	Role                  string    `json:"role" example:"user" doc:"Role of the user"`
 	Bio                   *string   `json:"bio" example:"Lorem ipsum" doc:"Bio of the user" required:"true"`
 	Pronouns              *string   `json:"pronouns" example:"he/him" doc:"Pronouns of the user" required:"true"`
 	Website               *string   `json:"website" example:"https://example.com" doc:"Website of the user" required:"true"`
-	Phone                 *string   `json:"phone" example:"+1234567890" doc:"Phone number of the user" required:"true"`
 	ProfileImage          *string   `json:"profileImage" example:"https://example.com/profile.jpg" doc:"Profile image of the user" required:"true"`
 	BannerImage           *string   `json:"bannerImage" example:"https://example.com/banner.jpg" doc:"Banner image of the user" required:"true"`
 	FollowersCount        int32     `json:"followersCount" example:"100" doc:"Number of followers"`
 	FollowingCount        int32     `json:"followingCount" example:"50" doc:"Number of following"`
-	LastLogin             time.Time `json:"lastLogin" example:"2023-01-01T00:00:00Z" doc:"Last login date of the user"`
 	CreatedAt             time.Time `json:"createdAt" example:"2023-01-01T00:00:00Z" doc:"Creation date of the user"`
 	UpdatedAt             time.Time `json:"updatedAt" example:"2023-01-01T00:00:00Z" doc:"Last update date of the user"`
 }
