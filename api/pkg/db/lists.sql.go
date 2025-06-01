@@ -290,7 +290,7 @@ SELECT
       SELECT poi_id FROM list_items
       WHERE list_items.list_id = $1
     )
-  )
+  ) as pois
 FROM list_items
 WHERE list_id = $1
 ORDER BY index ASC
@@ -298,7 +298,7 @@ ORDER BY index ASC
 
 type GetListItemsRow struct {
 	ListItem ListItem
-	GetPois  []byte
+	Pois     []byte
 }
 
 func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListItemsRow, error) {
@@ -315,7 +315,7 @@ func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListIte
 			&i.ListItem.PoiID,
 			&i.ListItem.Index,
 			&i.ListItem.CreatedAt,
-			&i.GetPois,
+			&i.Pois,
 		); err != nil {
 			return nil, err
 		}
