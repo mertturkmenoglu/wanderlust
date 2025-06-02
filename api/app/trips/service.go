@@ -19,7 +19,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 )
 
 type Service struct {
@@ -41,27 +40,17 @@ func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Trip, error
 		return nil, err
 	}
 
-	poiIds := make([]string, 0)
-
-	for _, v := range res {
-		for _, l := range v.Locations {
-			poiIds = append(poiIds, l)
-		}
-	}
-
-	pois, err := s.poisService.FindMany(ctx)
-
 	trips := make([]dto.Trip, len(res))
 
-	for i, t := range res {
-		v, err := mapper.ToTrip(t)
+	for i, r := range res {
+		trip, err := mapper.ToTrip(r)
 
 		if err != nil {
 			sp.RecordError(err)
 			return nil, err
 		}
 
-		trips[i] = v
+		trips[i] = trip
 	}
 
 	return trips, nil
@@ -83,7 +72,7 @@ func (s *Service) find(ctx context.Context, id string) (*dto.Trip, error) {
 		return nil, huma.Error500InternalServerError("Failed to get trip")
 	}
 
-	if len(res) == 0 {
+	if len(res) != 1 {
 		err = huma.Error404NotFound("Trip not found")
 		sp.RecordError(err)
 		return nil, err
@@ -105,7 +94,6 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 
 	userId := ctx.Value("userId").(string)
 
-	// Check authorization rules
 	if !s.canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
@@ -180,33 +168,15 @@ func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput
 	invites := make([]dto.TripInvite, len(dbInvites))
 
 	for i, dbInvite := range dbInvites {
-		res, err := mapper.FromToUserRowToTripInvite(dbInvite)
+		res, err := mapper.ToTripInviteFromInvitesByUserIdRow(dbInvite)
 
 		if err != nil {
 			sp.RecordError(err)
-			return nil, err
+			return nil, huma.Error500InternalServerError("Failed to get invites")
 		}
 
 		invites[i] = res
 	}
-
-	s.wg.Add(1)
-
-	go func() {
-		defer s.wg.Done()
-
-		// Create a new context to avoid race conditions with the request context
-		ctx := context.Background()
-
-		for _, invite := range invites {
-			if invite.ExpiresAt.Before(time.Now()) {
-				err = s.db.DeleteInvite(ctx, invite.ID)
-				if err != nil {
-					s.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
-				}
-			}
-		}
-	}()
 
 	return &dto.GetMyTripInvitesOutput{
 		Body: dto.GetMyTripInvitesOutputBody{
@@ -233,14 +203,14 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("failed to create trip")
+		return nil, huma.Error500InternalServerError("Failed to create trip")
 	}
 
 	res, err := s.find(ctx, dbRes.ID)
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("failed to get trip")
+		return nil, huma.Error500InternalServerError("Failed to get trip")
 	}
 
 	return &dto.CreateTripOutput{
@@ -278,7 +248,7 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 	invites := make([]dto.TripInvite, len(dbInvites))
 
 	for i, dbInvite := range dbInvites {
-		res, err := mapper.FromTripRowToTripInvite(dbInvite)
+		res, err := mapper.ToTripInviteFromInvitesByTripIdRow(dbInvite)
 
 		if err != nil {
 			sp.RecordError(err)
@@ -287,24 +257,6 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 
 		invites[i] = res
 	}
-
-	s.wg.Add(1)
-
-	go func() {
-		defer s.wg.Done()
-
-		// Create a new context to avoid race conditions with the request context
-		ctx := context.Background()
-
-		for _, invite := range invites {
-			if invite.ExpiresAt.Before(time.Now()) {
-				err = s.db.DeleteInvite(ctx, invite.ID)
-				if err != nil {
-					s.Log.Error("Failed to delete expired invite", zap.String("inviteId", invite.ID), zap.Error(err))
-				}
-			}
-		}
-	}()
 
 	return &dto.GetTripInvitesByTripIdOutput{
 		Body: dto.GetTripInvitesByTripIdOutputBody{
@@ -426,7 +378,7 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 		return nil, huma.Error404NotFound("Trip not found")
 	}
 
-	inviteDto, err := mapper.FromTripRowToTripInvite(*dbInvite)
+	inviteDto, err := mapper.ToTripInviteFromInvitesByTripIdRow(*dbInvite)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -774,7 +726,7 @@ func (s *Service) findCommentById(ctx context.Context, id string) (*dto.TripComm
 		return nil, huma.Error500InternalServerError("Failed to get comment")
 	}
 
-	res, err := mapper.FromSingleDbTripCommentToTripComment(comment)
+	res, err := mapper.ToTripCommentFromCommentByIdRow(comment)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -1146,14 +1098,21 @@ func (s *Service) findTripLocationById(ctx context.Context, id string) (*dto.Tri
 		return nil, huma.Error500InternalServerError("Failed to get location")
 	}
 
-	dbPoi, err := s.db.GetPoiById(ctx, location.TripLocation.PoiID)
+	dbPoi, err := s.db.GetPoisByIdsPopulated(ctx, []string{location.TripLocation.PoiID})
 
 	if err != nil {
 		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to get poi")
 	}
 
-	poi := mapper.ToPoi(dbPoi.Poi, dbPoi.Category, dbPoi.Address, dbPoi.City, []dto.Amenity{}, make(map[string]dto.OpenHours), []dto.Media{})
+	pois, err := mapper.ToPois(dbPoi[0])
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get poi")
+	}
+
+	poi := pois[0]
 
 	return &dto.TripLocation{
 		ID:            location.TripLocation.ID,
