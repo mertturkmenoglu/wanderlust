@@ -64,7 +64,7 @@ func handleAmenities() error {
 
 	d := GetDb()
 
-	logger.Trace("creating amenities", logger.Args("list length", len(list)))
+	logger.Info("Starting amenities generation")
 
 	for i, amenity := range list {
 		_, err := d.Queries.CreateAmenity(context.Background(), amenity)
@@ -74,6 +74,8 @@ func handleAmenities() error {
 			return err
 		}
 	}
+
+	logger.Info("Ending amenities generation")
 
 	return nil
 }

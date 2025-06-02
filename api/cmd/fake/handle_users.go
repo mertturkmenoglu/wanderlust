@@ -10,7 +10,6 @@ import (
 )
 
 func handleUsers(count int) error {
-	logger.Trace("handling users. generating", logger.Args("count", count))
 	prefix := "https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/"
 
 	var imageNames = []string{
@@ -60,10 +59,9 @@ func handleUsers(count int) error {
 		step = count
 	}
 
+	logger.Info("Starting user generation")
+
 	for i := 0; i < count; i += step {
-		if i%step == 0 {
-			logger.Trace("Inserting users", logger.Args("index", i))
-		}
 		if i+step >= count {
 			step = count - i
 		}
@@ -89,6 +87,8 @@ func handleUsers(count int) error {
 			return err
 		}
 	}
+
+	logger.Info("Ending user generation")
 
 	return nil
 }

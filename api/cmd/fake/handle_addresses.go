@@ -10,17 +10,15 @@ import (
 
 func handleAddresses(count int) error {
 	const step = 100
+	logger.Info("Starting addresses generation")
 	for i := 0; i < count; i += step {
-		if i%100 == 0 {
-			logger.Trace("Processing record", logger.Args("index", i))
-		}
-
 		err := batchInsertAddresses(step)
 
 		if err != nil {
 			return err
 		}
 	}
+	logger.Info("Ending addresses generation")
 
 	return nil
 }

@@ -22,11 +22,9 @@ func handlePois(count int) error {
 	ctx := context.Background()
 	d := GetDb()
 
-	for i := 0; i < count; i += step {
-		if i%step == 0 {
-			logger.Trace("Inserting pois", logger.Args("index", i))
-		}
+	logger.Info("Starting pois generation")
 
+	for i := 0; i < count; i += step {
 		if i+step >= count {
 			step = count - i
 		}
@@ -71,7 +69,7 @@ func handlePois(count int) error {
 				TotalPoints:        int32(gofakeit.Number(int(totalVotes), int(totalVotes)*5)),
 				TotalFavorites:     int32(gofakeit.Number(1000, 10000)),
 				CategoryID:         int16(gofakeit.Number(1, 23)),
-				Hours:          ot,
+				Hours:              ot,
 			})
 		}
 
@@ -81,6 +79,8 @@ func handlePois(count int) error {
 			return err
 		}
 	}
+
+	logger.Info("Ending pois generation")
 
 	return nil
 }

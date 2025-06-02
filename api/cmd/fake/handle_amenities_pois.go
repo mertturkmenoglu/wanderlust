@@ -1,14 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"context"
-	"errors"
-	"os"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/jackc/pgx/v5"
 	"github.com/pterm/pterm"
 )
 
@@ -26,46 +22,34 @@ func handleAmenitiesPois(path string) error {
 		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file that contains POI ids")
 	}
 
-	f, err := os.Open(path)
+	logger.Info("Starting amenities generation for POIs")
+
+	ids, err := readFile(path)
 
 	if err != nil {
 		return err
 	}
 
-	defer f.Close()
+	batch := make([]db.BatchCreateAmenitiesPoisParams, 0)
 
-	scanner := bufio.NewScanner(f)
-	i := 1
-
-	for scanner.Scan() {
-		if i%100 == 0 {
-			logger.Trace("inserting poi amenity", logger.Args("i", i))
-		}
-
-		id := scanner.Text()
+	for _, id := range ids {
 		n := gofakeit.IntRange(2, 10)
-		arg := make([]db.BatchCreateAmenitiesPoisParams, 0)
+		tmp := make([]db.Amenity, len(amenities))
+		copy(tmp, amenities)
+		gofakeit.ShuffleAnySlice(tmp)
 
-		for range n {
-			aid := amenities[gofakeit.Number(0, len(amenities)-1)].ID
-			arg = append(arg, db.BatchCreateAmenitiesPoisParams{
+		for i := range n {
+			aid := tmp[i].ID
+			batch = append(batch, db.BatchCreateAmenitiesPoisParams{
 				AmenityID: aid,
 				PoiID:     id,
 			})
 		}
-
-		_, err = d.Queries.BatchCreateAmenitiesPois(ctx, arg)
-
-		if err != nil {
-			if errors.Is(err, pgx.ErrTooManyRows) {
-				logger.Warn("Too many rows returned. Skipping.", logger.Args("index", i))
-			} else {
-				return err
-			}
-		}
-
-		i++
 	}
 
-	return scanner.Err()
+	_, err = GetDb().Queries.BatchCreateAmenitiesPois(context.Background(), batch)
+
+	logger.Info("Ending amenities generation for POIs")
+
+	return err
 }

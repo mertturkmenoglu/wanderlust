@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -28,33 +27,30 @@ func handleReviews(poiPath string, userPath string) error {
 		return err
 	}
 
-	logger.Trace("Read poi ids file", logger.Args("count", len(poiIds)))
-	logger.Trace("Read user ids file", logger.Args("count", len(userIds)))
+	logger.Info("Starting review generation for POIs")
 
-	for i, id := range poiIds {
-		if i%100 == 0 {
-			logger.Trace("inserting review", logger.Args("i", i))
-		}
+	batch := make([]db.BatchCreateReviewsParams, 0)
 
+	for _, id := range poiIds {
 		n := gofakeit.IntRange(1, 100)
 		randUserIds := randElems(userIds, 50)
-		err = createReviewForPoi(id, n, randUserIds)
-
-		if err != nil {
-			return err
-		}
+		res := createReviewForPoi(id, n, randUserIds)
+		batch = append(batch, res...)
 	}
 
-	return nil
+	_, err = GetDb().Queries.BatchCreateReviews(context.Background(), batch)
+
+	logger.Info("Ending review generation for POIs")
+
+	return err
 }
 
-func createReviewForPoi(poiId string, count int, userIds []string) error {
-	d := GetDb()
-	params := make([]db.BatchCreateReviewsParams, 0)
+func createReviewForPoi(poiId string, count int, userIds []string) []db.BatchCreateReviewsParams {
+	batch := make([]db.BatchCreateReviewsParams, 0)
 
 	for range count {
 		userId := randElem(userIds)
-		params = append(params, db.BatchCreateReviewsParams{
+		batch = append(batch, db.BatchCreateReviewsParams{
 			ID:      gofakeit.UUID(),
 			PoiID:   poiId,
 			UserID:  userId,
@@ -63,9 +59,7 @@ func createReviewForPoi(poiId string, count int, userIds []string) error {
 		})
 	}
 
-	_, err := d.Queries.BatchCreateReviews(context.Background(), params)
-
-	return err
+	return batch
 }
 
 func handleReviewMedia(reviewPath string) error {
@@ -83,7 +77,11 @@ func handleReviewMedia(reviewPath string) error {
 
 	skipped := 0
 
-	for i, id := range reviewIds {
+	batch := make([]db.BatchCreateReviewImageParams, 0)
+
+	logger.Info("Starting review media generation")
+
+	for _, id := range reviewIds {
 		// Not all reviews should have media. 1/3 of them should have media.
 		chance := gofakeit.Float32()
 
@@ -92,27 +90,19 @@ func handleReviewMedia(reviewPath string) error {
 			continue
 		}
 
-		if i%100 == 0 {
-			logger.Trace(
-				"inserting review media",
-				logger.Args("progress", fmt.Sprintf("(%d/%d)", i, len(reviewIds))),
-			)
-		}
-
 		n := gofakeit.IntRange(0, 4)
-		err = createReviewImages(id, n)
-
-		if err != nil {
-			return err
-		}
+		res := createReviewImages(id, n)
+		batch = append(batch, res...)
 	}
 
-	logger.Trace("Skipped generating review media for this number of reviews:", logger.Args("count", skipped))
+	logger.Info("Ending review media generation")
 
-	return nil
+	_, err = GetDb().Queries.BatchCreateReviewImage(context.Background(), batch)
+
+	return err
 }
 
-func createReviewImages(id string, n int) error {
+func createReviewImages(id string, n int) []db.BatchCreateReviewImageParams {
 	params := make([]db.BatchCreateReviewImageParams, 0)
 
 	for i := range n {
@@ -123,6 +113,5 @@ func createReviewImages(id string, n int) error {
 		})
 	}
 
-	_, err := GetDb().Queries.BatchCreateReviewImage(context.Background(), params)
-	return err
+	return params
 }

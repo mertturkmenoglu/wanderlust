@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"context"
-	"os"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -17,16 +15,17 @@ func handleFollows(path string) error {
 		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin user ids")
 	}
 
-	userIds, err := readUserIdsFromFile(path)
+	userIds, err := readFile(path)
 
 	if err != nil {
 		return err
 	}
 
-	logger.Trace("Read user ids", logger.Args("count", len(userIds)))
-	logger.Trace("Trying to follow users")
+	logger.Info("Starting following users")
 
 	tryFollowing(userIds)
+
+	logger.Info("Ending following users")
 
 	if isInteractive {
 		ans, _ := pterm.DefaultInteractiveTextInput.Show("Inserted to follows table. Do you want to update users table? [Y/n]")
@@ -36,35 +35,13 @@ func handleFollows(path string) error {
 		}
 	}
 
-	logger.Trace("Updating users table")
+	logger.Info("Trying to update users table")
 
 	tryUpdatingUsers(userIds)
 
+	logger.Info("Ending updating users table")
+
 	return nil
-}
-
-func readUserIdsFromFile(path string) ([]string, error) {
-	f, err := os.Open(path)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
-
-	userIds := make([]string, 0)
-
-	for scanner.Scan() {
-		userIds = append(userIds, scanner.Text())
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return userIds, nil
 }
 
 func tryFollowing(userIds []string) {
@@ -74,11 +51,7 @@ func tryFollowing(userIds []string) {
 	failCounter := 0
 	batch := make([]db.BatchFollowParams, 0, 100)
 
-	for i, userId := range userIds {
-		if i%1000 == 0 {
-			logger.Trace("Following users", logger.Args("i", i, "success", successCounter, "fail", failCounter))
-		}
-
+	for _, userId := range userIds {
 		for range 10 {
 			idx := gofakeit.IntRange(0, len(userIds)-1)
 			targetUserId := userIds[idx]
@@ -116,7 +89,7 @@ func tryFollowing(userIds []string) {
 		}
 	}
 
-	logger.Trace("Followed users", logger.Args("success", successCounter, "fails", failCounter))
+	logger.Info("Followed users", logger.Args("success", successCounter, "fails", failCounter))
 }
 
 func tryUpdatingUsers(userIds []string) {
@@ -125,11 +98,7 @@ func tryUpdatingUsers(userIds []string) {
 	successCounter := 0
 	failCounter := 0
 
-	for i, userId := range userIds {
-		if i%1000 == 0 {
-			logger.Trace("Updating users", logger.Args("i", i, "success", successCounter, "fail", failCounter))
-		}
-
+	for _, userId := range userIds {
 		followingCount, err := d.Queries.GetFollowingCount(ctx, userId)
 
 		if err != nil {
@@ -166,6 +135,4 @@ func tryUpdatingUsers(userIds []string) {
 
 		successCounter++
 	}
-
-	logger.Trace("Updated users", logger.Args("success", successCounter, "fails", failCounter))
 }

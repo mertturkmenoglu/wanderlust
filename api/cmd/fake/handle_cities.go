@@ -9,7 +9,7 @@ import (
 var sqlQuery string
 
 func handleCities() error {
-	logger.Trace("Starting to insert cities into the database")
+	logger.Info("Starting cities generation")
 
 	d := GetDb()
 	_, err := d.Pool.Exec(context.Background(), sqlQuery)
@@ -18,6 +18,6 @@ func handleCities() error {
 		return err
 	}
 
-	logger.Info("Inserted cities into the database")
+	logger.Info("Ending cities generation")
 	return nil
 }

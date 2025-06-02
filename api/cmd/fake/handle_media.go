@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"fmt"
-	"os"
 	"strconv"
 	"wanderlust/pkg/db"
 
@@ -44,58 +42,52 @@ func handleMedia() error {
 		return err
 	}
 
-	return createMediaForPoi(poiId, count)
+	res := createMediaForPoi(poiId, count)
+	_, err = GetDb().Queries.BatchCreatePoiMedia(context.Background(), res)
+
+	return err
 }
 
 func handleMediaForManyPois(path string) error {
 	if path == "" {
 		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin POI ids")
 	}
+	logger.Info("Starting media generation for POIs")
 
-	f, err := os.Open(path)
+	ids, err := readFile(path)
 
 	if err != nil {
 		return err
 	}
 
-	defer f.Close()
+	batch := make([]db.BatchCreatePoiMediaParams, 0)
 
-	scanner := bufio.NewScanner(f)
-	i := 1
-
-	for scanner.Scan() {
-		if i%100 == 0 {
-			logger.Trace("inserting poi media", logger.Args("i", i))
-		}
-
-		id := scanner.Text()
+	for _, id := range ids {
 		n := gofakeit.IntRange(2, 10)
-		err := createMediaForPoi(id, n)
-
-		if err != nil {
-			return err
-		}
-
-		i++
+		res := createMediaForPoi(id, n)
+		batch = append(batch, res...)
 	}
 
-	return scanner.Err()
+	_, err = GetDb().Queries.BatchCreatePoiMedia(context.Background(), batch)
+
+	logger.Info("Ending media generation for POIs")
+
+	return err
 }
 
-func createMediaForPoi(poiId string, count int) error {
+func createMediaForPoi(poiId string, count int) []db.BatchCreatePoiMediaParams {
+	arg := make([]db.BatchCreatePoiMediaParams, 0)
+
 	for i := range count {
 		url := getRandomImageUrl()
 
-		_, err := GetDb().Queries.CreatePoiMedia(context.Background(), db.CreatePoiMediaParams{
+		arg = append(arg, db.BatchCreatePoiMediaParams{
 			PoiID: poiId,
 			Url:   url,
 			Alt:   "Alt text for image " + strconv.Itoa(i),
+			Index: int16(i + 1),
 		})
-
-		if err != nil {
-			return err
-		}
 	}
 
-	return nil
+	return arg
 }
