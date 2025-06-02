@@ -1,4 +1,4 @@
-package bootstrap
+package core
 
 import (
 	"github.com/danielgtaylor/huma/v2"

@@ -5,8 +5,10 @@ import (
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/id"
+	"wanderlust/pkg/logs"
 	"wanderlust/pkg/mail"
 	"wanderlust/pkg/tasks"
+	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
 
 	"github.com/pterm/pterm"
@@ -25,4 +27,25 @@ type Application struct {
 	PLog       *pterm.Logger
 	Tasks      *tasks.TasksService
 	Upload     *upload.UploadService
+}
+
+func NewApp() *Application {
+	mailSvc := mail.New()
+	uploadSvc := upload.New()
+	cacheSvc := cache.New()
+	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+
+	return &Application{
+		Activities: activities.New(cacheSvc),
+		Db:         db.NewDb(),
+		Flake:      flake,
+		Cache:      cacheSvc,
+		ID:         id.NewGenerator(flake),
+		Mail:       mailSvc,
+		Log:        logger,
+		PLog:       logs.NewPTermLogger(),
+		Tasks:      tasks.New(mailSvc, uploadSvc),
+		Upload:     uploadSvc,
+	}
 }

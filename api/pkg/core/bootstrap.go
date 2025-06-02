@@ -1,9 +1,10 @@
-package bootstrap
+package core
 
 import (
+	"context"
 	"fmt"
+	"time"
 	"wanderlust/pkg/cfg"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -11,7 +12,7 @@ import (
 )
 
 type Wanderlust struct {
-	app  *core.Application
+	app  *Application
 	api  *huma.API
 	echo *echo.Echo
 }
@@ -39,6 +40,13 @@ func (w *Wanderlust) StartServer() {
 
 	defer w.app.Log.Sync()
 
-	portString := fmt.Sprintf(":%d", cfg.Env.Port)
-	w.echo.Logger.Fatal(w.echo.Start(portString))
+	port := fmt.Sprintf(":%d", cfg.Env.Port)
+	w.echo.Logger.Fatal(w.echo.Start(port))
+}
+
+func (w *Wanderlust) StopServer() {
+	// Give the server 5 seconds to gracefully shut down, then give up.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	w.echo.Shutdown(ctx)
 }

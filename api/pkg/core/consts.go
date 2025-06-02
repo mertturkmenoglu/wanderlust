@@ -1,4 +1,4 @@
-package bootstrap
+package core
 
 var (
 	API_NAME        = "Wanderlust API"
