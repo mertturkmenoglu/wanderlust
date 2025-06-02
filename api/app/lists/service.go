@@ -45,11 +45,15 @@ func (s *Service) find(ctx context.Context, id string) (*dto.List, error) {
 		return nil, huma.Error500InternalServerError("Failed to get list items")
 	}
 
-	pois, err := mapper.ToPois(dbListItems[0].Pois)
+	pois := make([]dto.Poi, 0)
 
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get pois")
+	if len(dbListItems) > 0 {
+		pois, err = mapper.ToPois(dbListItems[0].Pois)
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to get pois")
+		}
 	}
 
 	list := mapper.ToListWithItems(dbList, dbListItems, pois)
