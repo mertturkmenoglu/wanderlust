@@ -7229,6 +7229,12 @@ export interface components {
             listIndex: number;
             poiId: string;
         };
+        OpenClose: {
+            /** @description Closing time of POI in 24H format */
+            closesAt: string;
+            /** @description Opening time of POI in 24H format */
+            opensAt: string;
+        };
         PaginationInfo: {
             /** @description Has next page */
             hasNext: boolean;
@@ -7289,7 +7295,9 @@ export interface components {
             createdAt: string;
             /** @description Description of point of interest */
             description: string;
-            hours: string;
+            hours: {
+                [key: string]: components["schemas"]["OpenClose"];
+            };
             /** @description ID of point of interest */
             id: string;
             media: components["schemas"]["Media"][];
