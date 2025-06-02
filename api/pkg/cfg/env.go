@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func InitConfigurationStruct() {
+func Init() {
 	envType := reflect.TypeOf(Env)
 
 	for i := range envType.NumField() {
