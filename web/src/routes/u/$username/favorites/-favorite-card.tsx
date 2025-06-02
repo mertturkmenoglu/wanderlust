@@ -16,8 +16,8 @@ export default function FavoriteCard({ favorite: { poi } }: Props) {
   return (
     <Card className="group flex flex-col md:flex-row py-0">
       <img
-        src={ipx(poi.firstMedia.url, 'w_512')}
-        alt={poi.firstMedia.alt}
+        src={ipx(poi.media[0]?.url ?? '', 'w_512')}
+        alt={poi.media[0]?.alt ?? ''}
         className="aspect-video w-full rounded-t-md object-cover md:w-32 md:rounded-none md:rounded-l-md lg:w-32 2xl:w-64"
       />
 

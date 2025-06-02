@@ -2,7 +2,7 @@ import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
 import { useQuery } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 export type AuthContextState = {
   isLoading: boolean;
@@ -33,33 +33,6 @@ export default function AuthContextProvider({
       },
     ),
   );
-
-  useEffect(() => {
-    const path = window.location.pathname;
-
-    if (query.data) {
-      if (!query.data.isOnboardingCompleted && path !== '/onboarding') {
-        window.location.href = '/onboarding';
-        return;
-      }
-
-      if (
-        !query.data.isEmailVerified &&
-        path !== '/onboarding' &&
-        path !== '/verify-email'
-      ) {
-        window.location.href = '/verify-email';
-      }
-
-      if (query.data.isOnboardingCompleted && path === '/onboarding') {
-        window.location.href = '/';
-      }
-
-      if (query.data.isEmailVerified && path === '/verify-email') {
-        window.location.href = '/';
-      }
-    }
-  }, [query.data]);
 
   return (
     <AuthContext.Provider

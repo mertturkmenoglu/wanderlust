@@ -6,7 +6,6 @@ import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import CityBreadcrumb from './-city-breadcrumb';
-import ImageAttributionPopover from './-image-attribution-popover';
 import Map from './-map';
 
 export const Route = createFileRoute('/cities/$/')({
@@ -47,16 +46,9 @@ function RouteComponent() {
         <div className="col-span-5 lg:col-span-2">
           <div className="">
             <img
-              src={ipx(city.image.url, 'f_webp,w_1024')}
+              src={ipx(city.image, 'f_webp,w_1024')}
               alt=""
               className="rounded-md object-cover aspect-video"
-            />
-
-            <ImageAttributionPopover
-              attribute={city.image.attribution}
-              attributionLink={city.image.attributionLink}
-              license={city.image.license}
-              licenseLink={city.image.licenseLink}
             />
           </div>
         </div>
@@ -151,7 +143,7 @@ function RouteComponent() {
       />
 
       <OverlayBanner
-        image={city.image.url}
+        image={city.image}
         alt={`${city.name} image`}
         message={
           <div className="flex items-center gap-4">

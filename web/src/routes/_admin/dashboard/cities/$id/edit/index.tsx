@@ -22,14 +22,10 @@ const schema = z.object({
   stateName: z.string().min(1).max(64),
   countryCode: z.string().length(2),
   countryName: z.string().min(1).max(64),
-  imageUrl: z.string().min(1).max(256),
+  image: z.string().min(1).max(256),
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   description: z.string().min(1).max(1024),
-  imageLicense: z.string().min(1).max(32).nullable(),
-  imageLicenseLink: z.string().min(1).max(256).nullable(),
-  imageAttribute: z.string().min(1).max(256).nullable(),
-  imageAttributionLink: z.string().min(1).max(256).nullable(),
 });
 
 export const Route = createFileRoute('/_admin/dashboard/cities/$id/edit/')({
@@ -48,7 +44,7 @@ export const Route = createFileRoute('/_admin/dashboard/cities/$id/edit/')({
 
 function RouteComponent() {
   const city = Route.useLoaderData();
-  const [previewUrl, setPreviewUrl] = useState(city.image.url);
+  const [previewUrl, setPreviewUrl] = useState(city.image);
   const navigate = useNavigate();
   const invalidator = useInvalidator();
 
@@ -56,17 +52,13 @@ function RouteComponent() {
     resolver: zodResolver(schema),
     defaultValues: {
       ...city,
-      imageAttribute: city.image.attribution,
-      imageAttributionLink: city.image.attributionLink,
-      imageLicense: city.image.license,
-      imageLicenseLink: city.image.licenseLink,
       latitude: city.coordinates.latitude,
       longitude: city.coordinates.longitude,
       stateCode: city.state.code,
       stateName: city.state.name,
       countryCode: city.country.code,
       countryName: city.country.name,
-      imageUrl: city.image.url,
+      image: city.image,
     },
   });
 
@@ -117,13 +109,7 @@ function RouteComponent() {
                 id: city.id,
               },
             },
-            body: {
-              ...data,
-              imageLicense: data.imageLicense ?? '',
-              imageLicenseLink: data.imageLicenseLink ?? '',
-              imageAttribute: data.imageAttribute ?? '',
-              imageAttributionLink: data.imageAttributionLink ?? '',
-            },
+            body: data,
           });
         })}
       >
@@ -210,76 +196,21 @@ function RouteComponent() {
             id="image"
             placeholder="https://example.com/image.jpg"
             autoComplete="off"
-            {...form.register('imageUrl')}
+            {...form.register('image')}
           />
-          <InputInfo text={(form.watch('imageUrl')?.length ?? 0) + '/255'} />
-          <InputError error={form.formState.errors.imageUrl} />
+          <InputInfo text={(form.watch('image')?.length ?? 0) + '/255'} />
+          <InputError error={form.formState.errors.image} />
           <Button
             type="button"
             variant="link"
             className="px-0"
-            onClick={() => setPreviewUrl(form.watch('imageUrl'))}
+            onClick={() => setPreviewUrl(form.watch('image'))}
           >
             Preview
           </Button>
         </div>
 
         <div></div>
-
-        <div className="">
-          <Label htmlFor="image-license">Image License</Label>
-          <Input
-            type="text"
-            id="image-license"
-            placeholder="Image License"
-            autoComplete="off"
-            {...form.register('imageLicense')}
-          />
-          <InputInfo text="Image License (e.g. CC v3)" />
-          <InputError error={form.formState.errors.imageLicense} />
-        </div>
-
-        <div className="">
-          <Label htmlFor="image-license-link">Image License Link</Label>
-          <Input
-            type="text"
-            id="image-license-link"
-            placeholder="Image License Link"
-            autoComplete="off"
-            {...form.register('imageLicenseLink')}
-          />
-          <InputInfo text="Link to image license" />
-          <InputError error={form.formState.errors.imageLicense} />
-        </div>
-
-        <div className="">
-          <Label htmlFor="image-attribute">Image Attribute</Label>
-          <Input
-            type="text"
-            id="image-attribute"
-            placeholder="Image Attribute"
-            autoComplete="off"
-            {...form.register('imageAttribute')}
-          />
-          <InputInfo text="Attribution to original work" />
-          <InputError error={form.formState.errors.imageAttribute} />
-        </div>
-
-        <div className="">
-          <Label htmlFor="image-attribution-link">Image Attribution Link</Label>
-          <Input
-            type="text"
-            id="image-attribution-link"
-            placeholder="Image Attribution Link"
-            autoComplete="off"
-            {...form.register('imageAttributionLink')}
-          />
-          <InputInfo text="Link to original work" />
-          <InputError error={form.formState.errors.imageAttributionLink} />
-        </div>
-
-        <div />
-        <div />
 
         <div className="">
           <Label htmlFor="lat">Latitude</Label>

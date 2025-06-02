@@ -30,7 +30,7 @@ export default function NewImageDialog({ id }: Props) {
     return URL.createObjectURL(file);
   }, [file]);
 
-  const uploadMutation = api.useMutation('post', '/api/v2/diary/{id}/media', {
+  const uploadMutation = api.useMutation('post', '/api/v2/diary/{id}/image', {
     onSuccess: async () => {
       toast.success('Image updated');
       await invalidator.invalidate();

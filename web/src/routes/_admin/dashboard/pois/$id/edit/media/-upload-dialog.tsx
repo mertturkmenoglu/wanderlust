@@ -22,7 +22,7 @@ type Props = {
   poi: components['schemas']['Poi'];
 };
 
-export default function UploadDialog({ poi }: Props) {
+export default function UploadDialog({}: Props) {
   const api = useUpload();
   const [preview, setPreview] = useState('');
   const [alt, setAlt] = useState('');
@@ -81,25 +81,25 @@ export default function UploadDialog({ poi }: Props) {
       return;
     }
 
-    let updateRes = await fetchClient.POST('/api/v2/pois/drafts/{id}/media', {
-      params: {
-        path: {
-          id: poi.id,
-        },
-      },
-      body: {
-        id: res.data.id,
-        alt: alt,
-        caption: caption,
-        fileName: res.data.fileName,
-        size: 0,
-      },
-    });
+    // let updateRes = await fetchClient.POST('/api/v2/pois/drafts/{id}/media', {
+    //   params: {
+    //     path: {
+    //       id: poi.id,
+    //     },
+    //   },
+    //   body: {
+    //     id: res.data.id,
+    //     alt: alt,
+    //     caption: caption,
+    //     fileName: res.data.fileName,
+    //     size: 0,
+    //   },
+    // });
 
-    if (updateRes.error) {
-      toast.error(updateRes.error.title ?? 'Something went wrong');
-      return;
-    }
+    // if (updateRes.error) {
+    //   toast.error(updateRes.error.title ?? 'Something went wrong');
+    //   return;
+    // }
 
     toast.success('Media uploaded');
     window.location.reload();

@@ -14,24 +14,24 @@ export const Route = createFileRoute('/diary/$id/edit/media/')({
 
 function RouteComponent() {
   const route = getRouteApi('/diary/$id/edit');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
   const invalidator = useInvalidator();
 
   const deleteMutation = api.useMutation(
     'delete',
-    '/api/v2/diary/{id}/media/{mediaId}',
+    '/api/v2/diary/{id}/image/{imageId}',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
-        toast.success('Media deleted successfully');
+        toast.success('Image deleted successfully');
       },
     },
   );
 
-  const updateMutation = api.useMutation('patch', '/api/v2/diary/{id}/media', {
+  const updateMutation = api.useMutation('patch', '/api/v2/diary/{id}/image', {
     onSuccess: async () => {
       await invalidator.invalidate();
-      toast.success('Media updated successfully');
+      toast.success('Image updated successfully');
     },
   });
 
@@ -39,15 +39,15 @@ function RouteComponent() {
     <div className="my-8 max-w-2xl">
       <div className="flex items-baseline justify-between border-b border-border">
         <h3 className="text-lg">Edit Media</h3>
-        <NewImageDialog id={entry.id} />
+        <NewImageDialog id={diary.id} />
       </div>
       <div className="flex flex-col mt-2">
-        {entry.media.length === 0 && (
+        {diary.images.length === 0 && (
           <div className="text-sm text-muted-foreground my-8">
-            No media added yet
+            No images added yet
           </div>
         )}
-        {entry.media.map((m, i) => (
+        {diary.images.map((m, i) => (
           <div
             key={m.id}
             className=""
@@ -55,7 +55,6 @@ function RouteComponent() {
             <div className="flex items-center gap-4 justify-between">
               <img
                 src={ipx(m.url, 'w_512')}
-                alt={m.alt}
                 className="w-32 object-cover aspect-video rounded"
               />
               <div className="flex gap-2 items-center">
@@ -69,8 +68,8 @@ function RouteComponent() {
                       deleteMutation.mutate({
                         params: {
                           path: {
-                            id: entry.id,
-                            mediaId: m.id,
+                            id: diary.id,
+                            imageId: m.id,
                           },
                         },
                       });
@@ -82,16 +81,16 @@ function RouteComponent() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={i === entry.media.length - 1}
+                  disabled={i === diary.images.length - 1}
                   onClick={() => {
-                    const newArr = [...entry.media];
+                    const newArr = [...diary.images];
                     const tmp = newArr[i]!;
                     newArr[i] = newArr[i + 1]!;
                     newArr[i + 1] = tmp;
                     updateMutation.mutate({
                       params: {
                         path: {
-                          id: entry.id,
+                          id: diary.id,
                         },
                       },
                       body: {
@@ -107,14 +106,14 @@ function RouteComponent() {
                   size="icon"
                   disabled={i === 0}
                   onClick={() => {
-                    const newArr = [...entry.media];
+                    const newArr = [...diary.images];
                     const tmp = newArr[i]!;
                     newArr[i] = newArr[i - 1]!;
                     newArr[i - 1] = tmp;
                     updateMutation.mutate({
                       params: {
                         path: {
-                          id: entry.id,
+                          id: diary.id,
                         },
                       },
                       body: {
@@ -127,7 +126,7 @@ function RouteComponent() {
                 </Button>
               </div>
             </div>
-            {i !== entry.media.length - 1 && <Separator className="my-2" />}
+            {i !== diary.images.length - 1 && <Separator className="my-2" />}
           </div>
         ))}
       </div>

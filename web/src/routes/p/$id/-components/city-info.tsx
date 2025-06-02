@@ -15,7 +15,7 @@ export function CityInfo({ className }: Props) {
       <div className="grid grid-cols-5 gap-8">
         <div className="col-span-5 md:col-span-2">
           <img
-            src={ipx(poi.address.city.image.url, 'f_webp,w_1024')}
+            src={ipx(poi.address.city.image, 'f_webp,w_1024')}
             alt=""
             className="rounded-md object-cover aspect-video"
           />

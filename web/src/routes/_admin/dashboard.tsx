@@ -3,7 +3,8 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 export const Route = createFileRoute('/_admin/dashboard')({
   component: RouteComponent,
   beforeLoad: async ({ context: { auth } }) => {
-    if (!auth.user || auth.user.role !== 'admin') {
+    // TODO: Add admin role check
+    if (!auth.user) {
       throw redirect({
         to: '/',
       });

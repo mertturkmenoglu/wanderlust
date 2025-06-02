@@ -16,13 +16,13 @@ export const Route = createFileRoute('/diary/$id/edit/friends/')({
 
 function RouteComponent() {
   const route = getRouteApi('/diary/$id/edit');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
   const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      friends: entry.friends.map((f) => ({
+      friends: diary.friends.map((f) => ({
         id: f.id,
         username: f.username,
         fullName: f.fullName,
@@ -51,7 +51,7 @@ function RouteComponent() {
             updateFriendsMutation.mutate({
               params: {
                 path: {
-                  id: entry.id,
+                  id: diary.id,
                 },
               },
               body: {

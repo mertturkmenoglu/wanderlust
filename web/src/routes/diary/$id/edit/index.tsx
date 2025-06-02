@@ -50,16 +50,16 @@ export const Route = createFileRoute('/diary/$id/edit/')({
 
 function RouteComponent() {
   const route = getRouteApi('/diary/$id/edit');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
   const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: entry.title,
-      description: entry.description,
-      date: formatDate(entry.date, dateFormat),
-      shareWithFriends: entry.shareWithFriends,
+      title: diary.title,
+      description: diary.description,
+      date: formatDate(diary.date, dateFormat),
+      shareWithFriends: diary.shareWithFriends,
     },
   });
 
@@ -92,7 +92,7 @@ function RouteComponent() {
             updateDiaryEntryMutation.mutate({
               params: {
                 path: {
-                  id: entry.id,
+                  id: diary.id,
                 },
               },
               body: {

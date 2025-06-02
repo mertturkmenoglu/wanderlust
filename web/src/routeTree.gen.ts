@@ -47,10 +47,8 @@ import { Route as DiaryIdIndexImport } from './routes/diary/$id/index'
 import { Route as CitiesListIndexImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexImport } from './routes/cities/$/index'
 import { Route as CIdIndexImport } from './routes/c/$id/index'
-import { Route as AuthVerifyEmailIndexImport } from './routes/_auth/verify-email/index'
 import { Route as AuthSignUpIndexImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexImport } from './routes/_auth/sign-in/index'
-import { Route as AuthOnboardingIndexImport } from './routes/_auth/onboarding/index'
 import { Route as AuthForgotPasswordIndexImport } from './routes/_auth/forgot-password/index'
 import { Route as AdminDashboardIndexImport } from './routes/_admin/dashboard/index'
 import { Route as DiaryIdEditImport } from './routes/diary/$id/edit'
@@ -322,12 +320,6 @@ const CIdIndexRoute = CIdIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthVerifyEmailIndexRoute = AuthVerifyEmailIndexImport.update({
-  id: '/_auth/verify-email/',
-  path: '/verify-email/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AuthSignUpIndexRoute = AuthSignUpIndexImport.update({
   id: '/_auth/sign-up/',
   path: '/sign-up/',
@@ -337,12 +329,6 @@ const AuthSignUpIndexRoute = AuthSignUpIndexImport.update({
 const AuthSignInIndexRoute = AuthSignInIndexImport.update({
   id: '/_auth/sign-in/',
   path: '/sign-in/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthOnboardingIndexRoute = AuthOnboardingIndexImport.update({
-  id: '/_auth/onboarding/',
-  path: '/onboarding/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -860,13 +846,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordIndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/onboarding/': {
-      id: '/_auth/onboarding/'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthOnboardingIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/_auth/sign-in/': {
       id: '/_auth/sign-in/'
       path: '/sign-in'
@@ -879,13 +858,6 @@ declare module '@tanstack/react-router' {
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof AuthSignUpIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/_auth/verify-email/': {
-      id: '/_auth/verify-email/'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof AuthVerifyEmailIndexImport
       parentRoute: typeof rootRoute
     }
     '/c/$id/': {
@@ -1565,10 +1537,8 @@ export interface FileRoutesByFullPath {
   '/diary/$id/edit': typeof DiaryIdEditRouteWithChildren
   '/dashboard/': typeof AdminDashboardIndexRoute
   '/forgot-password': typeof AuthForgotPasswordIndexRoute
-  '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
-  '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/c/$id': typeof CIdIndexRoute
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
@@ -1654,10 +1624,8 @@ export interface FileRoutesByTo {
   '/trips': typeof TripsIndexRoute
   '/dashboard': typeof AdminDashboardIndexRoute
   '/forgot-password': typeof AuthForgotPasswordIndexRoute
-  '/onboarding': typeof AuthOnboardingIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
-  '/verify-email': typeof AuthVerifyEmailIndexRoute
   '/c/$id': typeof CIdIndexRoute
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
@@ -1749,10 +1717,8 @@ export interface FileRoutesById {
   '/diary/$id/edit': typeof DiaryIdEditRouteWithChildren
   '/_admin/dashboard/': typeof AdminDashboardIndexRoute
   '/_auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
-  '/_auth/onboarding/': typeof AuthOnboardingIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
-  '/_auth/verify-email/': typeof AuthVerifyEmailIndexRoute
   '/c/$id/': typeof CIdIndexRoute
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
@@ -1846,10 +1812,8 @@ export interface FileRouteTypes {
     | '/diary/$id/edit'
     | '/dashboard/'
     | '/forgot-password'
-    | '/onboarding'
     | '/sign-in'
     | '/sign-up'
-    | '/verify-email'
     | '/c/$id'
     | '/cities/$'
     | '/cities/list'
@@ -1934,10 +1898,8 @@ export interface FileRouteTypes {
     | '/trips'
     | '/dashboard'
     | '/forgot-password'
-    | '/onboarding'
     | '/sign-in'
     | '/sign-up'
-    | '/verify-email'
     | '/c/$id'
     | '/cities/$'
     | '/cities/list'
@@ -2027,10 +1989,8 @@ export interface FileRouteTypes {
     | '/diary/$id/edit'
     | '/_admin/dashboard/'
     | '/_auth/forgot-password/'
-    | '/_auth/onboarding/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
-    | '/_auth/verify-email/'
     | '/c/$id/'
     | '/cities/$/'
     | '/cities/list/'
@@ -2119,10 +2079,8 @@ export interface RootRouteChildren {
   TermsIndexRoute: typeof TermsIndexRoute
   DiaryIdEditRoute: typeof DiaryIdEditRouteWithChildren
   AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
-  AuthOnboardingIndexRoute: typeof AuthOnboardingIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
-  AuthVerifyEmailIndexRoute: typeof AuthVerifyEmailIndexRoute
   CIdIndexRoute: typeof CIdIndexRoute
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
@@ -2155,10 +2113,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermsIndexRoute: TermsIndexRoute,
   DiaryIdEditRoute: DiaryIdEditRouteWithChildren,
   AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
-  AuthOnboardingIndexRoute: AuthOnboardingIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
-  AuthVerifyEmailIndexRoute: AuthVerifyEmailIndexRoute,
   CIdIndexRoute: CIdIndexRoute,
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
@@ -2200,10 +2156,8 @@ export const routeTree = rootRoute
         "/terms/",
         "/diary/$id/edit",
         "/_auth/forgot-password/",
-        "/_auth/onboarding/",
         "/_auth/sign-in/",
         "/_auth/sign-up/",
-        "/_auth/verify-email/",
         "/c/$id/",
         "/cities/$/",
         "/cities/list/",
@@ -2357,17 +2311,11 @@ export const routeTree = rootRoute
     "/_auth/forgot-password/": {
       "filePath": "_auth/forgot-password/index.tsx"
     },
-    "/_auth/onboarding/": {
-      "filePath": "_auth/onboarding/index.tsx"
-    },
     "/_auth/sign-in/": {
       "filePath": "_auth/sign-in/index.tsx"
     },
     "/_auth/sign-up/": {
       "filePath": "_auth/sign-up/index.tsx"
-    },
-    "/_auth/verify-email/": {
-      "filePath": "_auth/verify-email/index.tsx"
     },
     "/c/$id/": {
       "filePath": "c/$id/index.tsx"

@@ -8,7 +8,7 @@ import { Map } from './map.client';
 
 export default function Locations() {
   const route = getRouteApi('/diary/$id/');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
   const [isGridMode, setIsGridMode] = useState(true);
 
   return (
@@ -18,7 +18,7 @@ export default function Locations() {
         <div>
           <ToggleGroup
             type="single"
-            disabled={entry.locations.length === 0}
+            disabled={diary.locations.length === 0}
             value={isGridMode ? 'grid' : 'map'}
             onValueChange={(v) => {
               if (v) {
@@ -44,7 +44,7 @@ export default function Locations() {
         </div>
       </div>
 
-      {entry.locations.length === 0 && (
+      {diary.locations.length === 0 && (
         <AppMessage
           emptyMessage="No locations"
           showBackButton={false}
@@ -54,7 +54,7 @@ export default function Locations() {
 
       {isGridMode ? (
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {entry.locations.map((location) => (
+          {diary.locations.map((location) => (
             <Link
               to="/p/$id"
               key={location.poi.id}
@@ -71,7 +71,7 @@ export default function Locations() {
         </div>
       ) : (
         <div>
-          <Map locations={entry.locations} />
+          <Map locations={diary.locations} />
         </div>
       )}
     </>

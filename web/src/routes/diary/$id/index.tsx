@@ -23,7 +23,7 @@ export const Route = createFileRoute('/diary/$id/')({
 });
 
 function RouteComponent() {
-  const { entry } = Route.useLoaderData();
+  const { diary } = Route.useLoaderData();
 
   return (
     <div className="max-w-7xl mx-auto my-8">
@@ -33,14 +33,14 @@ function RouteComponent() {
 
       <div className="mx-auto">
         <div className="text-lg my-8 ml-auto text-end">
-          {new Date(entry.date).toLocaleDateString('en-US', {
+          {new Date(diary.date).toLocaleDateString('en-US', {
             dateStyle: 'full',
           })}
         </div>
 
         <CollapsibleText
           text={
-            entry.description.length > 0 ? entry.description : 'No description'
+            diary.description.length > 0 ? diary.description : 'No description'
           }
           charLimit={1000}
           className="mt-4 text-justify"

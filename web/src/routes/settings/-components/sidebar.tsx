@@ -1,4 +1,4 @@
-import { getRouteApi, Link } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 
 type Item = {
   text: string;
@@ -25,11 +25,11 @@ const items = [
 ] as const satisfies Item[];
 
 export default function Sidebar() {
-  const parentRoute = getRouteApi('/settings');
-  const { auth } = parentRoute.useRouteContext();
   const isDev = import.meta.env.DEV;
 
-  const showDashboardLink = auth.user?.role === 'admin';
+  // TODO: Add admin role check
+  // const showDashboardLink = auth.user?.role === 'admin';
+  const showDashboardLink = false;
   const links = items.filter((x) => {
     if (x.href === '/admin' && !isDev) {
       return false;

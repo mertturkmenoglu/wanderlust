@@ -90,7 +90,7 @@ function RouteComponent() {
       </DashboardActions>
 
       <img
-        src={ipx(city.image.url, 'w_512')}
+        src={ipx(city.image, 'w_512')}
         alt={city.name}
         className="mt-4 w-64 rounded-md aspect-video object-cover"
       />
@@ -122,22 +122,6 @@ function RouteComponent() {
           {
             k: 'Country Name',
             v: city.country.name,
-          },
-          {
-            k: 'Image License',
-            v: city.image.license ?? '-',
-          },
-          {
-            k: 'Image License Link',
-            v: city.image.licenseLink ?? '-',
-          },
-          {
-            k: 'Image Attribution',
-            v: city.image.attribution ?? '-',
-          },
-          {
-            k: 'Image Attribution Link',
-            v: city.image.attributionLink ?? '-',
           },
         ]}
       />

@@ -59,7 +59,7 @@ function RouteComponent() {
                   className="rounded-md"
                 >
                   <img
-                    src={ipx(city.image.url, 'w_512')}
+                    src={ipx(city.image, 'w_512')}
                     alt=""
                     className="aspect-video w-full rounded-md object-cover"
                   />

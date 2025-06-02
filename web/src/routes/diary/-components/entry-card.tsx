@@ -2,7 +2,7 @@ import type { components } from '@/lib/api-types';
 import { GlobeIcon, LockIcon } from 'lucide-react';
 
 type Props = {
-  entry: components['schemas']['DiaryEntry'];
+  entry: components['schemas']['Diary'];
 };
 
 export default function EntryCard({ entry }: Props) {

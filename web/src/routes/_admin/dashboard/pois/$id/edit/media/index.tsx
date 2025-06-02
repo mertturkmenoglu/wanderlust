@@ -22,7 +22,6 @@ function RouteComponent() {
           data={media.map((m) => ({
             ...m,
             fileName: '',
-            caption: m.caption ?? '',
           }))}
         />
       </div>

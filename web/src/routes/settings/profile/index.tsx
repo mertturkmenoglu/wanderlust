@@ -30,7 +30,6 @@ export const schema = z.object({
   bio: z.string().max(255).nullable(),
   pronouns: z.string().max(32).nullable(),
   website: z.string().max(255).nullable(),
-  phone: z.string().max(32).nullable(),
 });
 
 export const Route = createFileRoute('/settings/profile/')({
@@ -49,7 +48,6 @@ function RouteComponent() {
       bio: user.bio ?? '',
       pronouns: user.pronouns ?? '',
       website: user.website ?? '',
-      phone: user.phone ?? '',
     },
   });
 
@@ -95,7 +93,6 @@ function RouteComponent() {
           let bio = data.bio === '' ? null : data.bio;
           let pronouns = data.pronouns === '' ? null : data.pronouns;
           let website = data.website === '' ? null : data.website;
-          let phone = data.phone === '' ? null : data.phone;
 
           mutation.mutate({
             body: {
@@ -103,7 +100,6 @@ function RouteComponent() {
               bio,
               pronouns,
               website,
-              phone,
             },
           });
         })}
@@ -142,23 +138,6 @@ function RouteComponent() {
           />
           <InputInfo text="Let us know about you" />
           <InputError error={form.formState.errors.bio} />
-        </div>
-
-        <Label
-          htmlFor="phone"
-          className="mt-2"
-        >
-          Phone
-        </Label>
-        <div className="col-span-2">
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="+1 (000) 000 0000"
-            autoComplete="tel"
-            {...form.register('phone')}
-          />
-          <InputError error={form.formState.errors.phone} />
         </div>
 
         <Label

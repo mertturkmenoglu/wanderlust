@@ -7,9 +7,9 @@ import { useContext } from 'react';
 
 export default function Header() {
   const route = getRouteApi('/diary/$id/');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
   const auth = useContext(AuthContext);
-  const isOwner = auth.user?.id === entry.userId;
+  const isOwner = auth.user?.id === diary.userId;
 
   return (
     <>
@@ -19,12 +19,12 @@ export default function Header() {
       />
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl tracking-tighter">{entry.title}</h2>
+          <h2 className="text-2xl tracking-tighter">{diary.title}</h2>
           <div className="text-xs text-muted-foreground mt-1 flex items-center">
-            <div>Created by {isOwner ? 'You' : entry.user.fullName}</div>
+            <div>Created by {isOwner ? 'You' : diary.user.fullName}</div>
             <div className="ml-1">
               at{' '}
-              {new Date(entry.createdAt).toLocaleDateString('en-US', {
+              {new Date(diary.createdAt).toLocaleDateString('en-US', {
                 dateStyle: 'medium',
               })}
             </div>
@@ -42,7 +42,7 @@ export default function Header() {
                 <Link
                   to="/diary/$id/edit"
                   params={{
-                    id: entry.id,
+                    id: diary.id,
                   }}
                 >
                   <Settings2Icon className="size-4" />

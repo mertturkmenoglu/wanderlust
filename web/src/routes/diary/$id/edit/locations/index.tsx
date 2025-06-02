@@ -17,14 +17,14 @@ export const Route = createFileRoute('/diary/$id/edit/locations/')({
 
 function RouteComponent() {
   const route = getRouteApi('/diary/$id/edit');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
   const searchClient = useSearchClient();
   const invalidator = useInvalidator();
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      locations: entry.locations.map((l) => ({
+      locations: diary.locations.map((l) => ({
         id: l.poi.id,
         name: l.poi.name,
         image: l.poi.media[0]?.url ?? '',
@@ -103,7 +103,7 @@ function RouteComponent() {
               updateDiaryLocationsMutation.mutate({
                 params: {
                   path: {
-                    id: entry.id,
+                    id: diary.id,
                   },
                 },
                 body: {

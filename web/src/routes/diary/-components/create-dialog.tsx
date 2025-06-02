@@ -52,7 +52,7 @@ export function CreateDialog() {
       toast.success('Diary entry created');
       await invalidator.invalidate();
       await navigate({
-        to: `/diary/${res.entry.id}`,
+        to: `/diary/${res.diary.id}`,
       });
     },
   });

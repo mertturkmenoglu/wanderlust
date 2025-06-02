@@ -38,7 +38,7 @@ function RouteComponent() {
 function Layout() {
   const ctx = useDiaryContext();
   const query = useDiaryEntriesQuery(ctx.filterDateRange);
-  const isEmpty = query.data && query.data.pages[0]?.entries.length === 0;
+  const isEmpty = query.data && query.data.pages[0]?.diaries.length === 0;
   const loadMoreText = useLoadMoreText(query);
 
   if (query.isPending) {
@@ -60,16 +60,16 @@ function Layout() {
         {query.data &&
           query.data.pages.map((page, i) => (
             <React.Fragment key={i}>
-              {page.entries.map((entry) => (
+              {page.diaries.map((diary) => (
                 <Link
                   to="/diary/$id"
                   params={{
-                    id: entry.id,
+                    id: diary.id,
                   }}
-                  key={entry.id}
+                  key={diary.id}
                   className="block"
                 >
-                  <EntryCard entry={entry} />
+                  <EntryCard entry={diary} />
                 </Link>
               ))}
             </React.Fragment>

@@ -97,7 +97,7 @@ function Content() {
             className="rounded-md hover:underline decoration-primary decoration-2 underline-offset-4"
           >
             <img
-              src={ipx(city.image.url, 'w_600')}
+              src={ipx(city.image, 'w_600')}
               alt=""
               className="aspect-video w-full rounded-md object-cover"
             />

@@ -4,13 +4,13 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 
 export default function Friends() {
   const route = getRouteApi('/diary/$id/');
-  const { entry } = route.useLoaderData();
+  const { diary } = route.useLoaderData();
 
   return (
     <>
       <div className="text-xl font-medium">Friends</div>
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {entry.friends.length === 0 && (
+        {diary.friends.length === 0 && (
           <div className="col-span-full">
             <AppMessage
               emptyMessage="No users"
@@ -19,7 +19,7 @@ export default function Friends() {
             />
           </div>
         )}
-        {entry.friends.map((f) => (
+        {diary.friends.map((f) => (
           <Link
             to="/u/$username"
             key={f.id}
