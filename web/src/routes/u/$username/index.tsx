@@ -1,3 +1,4 @@
+import { ErrorComponent } from '@/components/blocks/error-component';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { FavoriteLocations } from './-components/favorite-locations';
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/u/$username/')({
       }),
     );
   },
+  errorComponent: ErrorComponent,
 });
 
 function RouteComponent() {
