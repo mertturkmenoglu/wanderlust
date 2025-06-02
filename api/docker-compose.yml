@@ -8,7 +8,7 @@ services:
     networks:
       - wl-redisnet
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT}:6379
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -20,11 +20,11 @@ services:
     image: postgres:16.4-alpine
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - ${DB_PORT}:5432
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: wanderlust
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - wl-pg-data:/var/lib/postgresql/data
     shm_size: 1g
@@ -38,25 +38,25 @@ services:
     container_name: wl-minio
     restart: unless-stopped
     ports:
-      - 9000:9000
-      - 9001:9001
+      - ${MINIO_PORT}:9000
+      - ${MINIO_CONSOLE_PORT}:9001
     volumes:
       - wl-minio-data:/data
     environment:
       - MINIO_ROOT_USER=wanderlust
       - MINIO_ROOT_PASSWORD=wanderlust
     image: quay.io/minio/minio
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
 
   wl-typesense:
     container_name: wl-typesense
     image: typesense/typesense:26.0
     restart: unless-stopped
     ports:
-      - "8108:8108"
+      - ${TYPESENSE_PORT}:8108
     volumes:
       - wl-typesense-data:/data
-    command: "--data-dir /data --api-key=wanderlust --enable-cors"
+    command: "--data-dir /data --api-key=${TYPESENSE_API_KEY} --enable-cors"
     networks:
       - wl-searchnet
 
@@ -64,7 +64,7 @@ services:
     container_name: wl-typesense-dashboard
     restart: unless-stopped
     ports:
-      - 3006:80
+      - ${TYPESENSE_DASHBOARD_PORT}:80
     image: ghcr.io/bfritscher/typesense-dashboard:latest
     networks:
       - wl-searchnet
@@ -76,8 +76,8 @@ services:
     volumes:
       - wl-mailpit-data:/data
     ports:
-      - 8025:8025
-      - 1025:1025
+      - ${MAILPIT_PORT}:8025
+      - ${MAILPIT_SMTP_PORT}:1025
     environment:
       MP_MAX_MESSAGES: 5000
       MP_DATABASE: /data/mailpit.db
@@ -91,9 +91,9 @@ services:
     networks:
       - wl-redisnet
     ports:
-      - "8080:8080"
+      - ${ASYNQMON_PORT}:8080
     environment:
-      REDIS_URL: redis://wl-redis:6379
+      REDIS_URL: redis://wl-redis:${REDIS_PORT}
     depends_on:
       - wl-redis
 
@@ -101,9 +101,9 @@ services:
     container_name: wl-otel-lgtm
     restart: unless-stopped
     ports:
-      - 3010:3000
-      - 4317:4317
-      - 4318:4318
+      - ${GRAFANA_PORT}:3000
+      - ${OLGTM_GRPC_PORT}:4317
+      - ${OLGTM_HTTP_PORT}:4318
     tty: true
     stdin_open: true
     image: grafana/otel-lgtm
