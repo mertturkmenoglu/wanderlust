@@ -5,18 +5,12 @@ all: build
 
 @build:
 	echo "=> Building..."
-	go build -o main cmd/core/main.go
+	go build -o main ./main.go
 	echo "=> Build completed"
 
 # Setup the project
 @setup:
-	echo "=> Setting up the project..."
-	go mod download
-	just env-pull
-	goose up
-	just sqlc
-	just docker
-	echo "=> Setup completed. Run 'just watch' to start the server."
+	chmod u+x ./scripts/setup.sh && ./scripts/setup.sh
 
 # Clean the binary
 @clean:
@@ -26,55 +20,48 @@ all: build
 
 # Live reload
 @watch:
-	if command -v air > /dev/null; then \
-		air -c conf/.air.toml; \
-		echo "Watching...";\
-	else \
-		echo "Air is not installed. Run 'go install github.com/air-verse/air@latest' to install Air";\
-	fi
+	air -c conf/.air.toml
 
 # Up the Docker containers
 @docker:
-	if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then \
-		docker compose up -d; \
-	else \
-		echo "Docker is not installed or not running. Start Docker and run this command again."; \
-	fi
+	docker compose up -d
 
 # Run fake data generation script
 @fake:
-	go run cmd/fake/*.go -mode=automate
+	go run . fake
 
-@fake-interactive:
-	go run cmd/fake/*.go -mode=interactive
+# Synchronize search index with the primary database
+@search:
+	go run . search-sync
 
 # Generate Go code from SQL schema
 @sqlc:
 	sqlc generate -f ./conf/sqlc.yaml
 
-# Synchronize search index with the primary database
-@search:
-	go run cmd/search-sync/*.go
-
 # Create example .env file
 @env-example:
-	echo "=> Creating example .env file..."
-	infisical secrets generate-example-env > .env.example
-	echo "=> Created example .env file"
+	chmod u+x ./scripts/infisical.sh && ./scripts/infisical.sh env-example
 
 # Pull secrets from Infisical and export secrets to .env file
 @env-pull:
-	echo "=> Exporting secrets to .env file..."
-	infisical export > .env
-	echo "=> Exported secrets to .env file"
+	chmod u+x ./scripts/infisical.sh && ./scripts/infisical.sh env-pull
 
 # Push secrets from .env file to Infisical
 @env-push:
-	echo "=> Pushing secrets to Infisical..."
-	infisical secrets set --file="./.env"
-	echo "=> Pushed secrets to Infisical"
+	chmod u+x ./scripts/infisical.sh && ./scripts/infisical.sh env-push
 
 # Fake data generation database id selection helper
 @fake-id:
-	chmod +x ./cmd/fake/fake-id.sh
-	./cmd/fake/fake-id.sh
+	chmod u+x ./scripts/fake-id.sh && ./scripts/fake-id.sh
+
+@test-e2e-run:
+	cd tests && go test -v
+
+@test-e2e-setup:
+	docker compose -f ./docker-compose.test.yml --env-file .env.test up -d
+	goose up
+	air -c conf/.air.toml -- --env-file=.env.test
+
+@test-e2e-teardown:
+	docker compose down
+	
