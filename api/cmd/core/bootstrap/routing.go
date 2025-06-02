@@ -8,7 +8,7 @@ import (
 	"wanderlust/app/categories"
 	"wanderlust/app/cities"
 	"wanderlust/app/collections"
-	"wanderlust/app/diary"
+	"wanderlust/app/diaries"
 	"wanderlust/app/favorites"
 	"wanderlust/app/health"
 	"wanderlust/app/images"
@@ -35,7 +35,7 @@ func (w *Wanderlust) Routing() {
 	categories.Register(grp, w.app)
 	cities.Register(grp, w.app)
 	collections.Register(grp, w.app)
-	diary.Register(grp, w.app)
+	diaries.Register(grp, w.app)
 	favorites.Register(grp, w.app)
 	health.Register(grp, w.app)
 	images.Register(grp, w.app)
