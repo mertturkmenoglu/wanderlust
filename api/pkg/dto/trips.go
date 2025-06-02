@@ -55,15 +55,14 @@ const (
 )
 
 type TripInvite struct {
-	ID              string    `json:"id" example:"7323488942953598976" doc:"ID of invite"`
-	TripID          string    `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
-	From            TripUser  `json:"from"`
-	To              TripUser  `json:"to"`
-	SentAt          time.Time `json:"sentAt" example:"2023-05-01T00:00:00Z" doc:"Sent at time of invite"`
-	ExpiresAt       time.Time `json:"expiresAt" example:"2023-05-01T00:00:00Z" doc:"Expires at time of invite"`
-	TripTitle       string    `json:"tripTitle" example:"My Awesome Trip" doc:"Title of the trip"`
-	TripDescription string    `json:"tripDescription" example:"Lorem ipsum dolor sit amet" doc:"Description of the trip"`
-	Role            TripRole  `json:"role" example:"participant" doc:"Role of invite"`
+	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of invite"`
+	TripID    string    `json:"tripId" example:"7323488942953598976" doc:"Trip ID"`
+	From      TripUser  `json:"from"`
+	To        TripUser  `json:"to"`
+	SentAt    time.Time `json:"sentAt" example:"2023-05-01T00:00:00Z" doc:"Sent at time of invite"`
+	ExpiresAt time.Time `json:"expiresAt" example:"2023-05-01T00:00:00Z" doc:"Expires at time of invite"`
+	TripTitle string    `json:"tripTitle" example:"My Awesome Trip" doc:"Title of the trip"`
+	Role      TripRole  `json:"role" example:"participant" doc:"Role of invite"`
 }
 
 type TripInviteDetail struct {
