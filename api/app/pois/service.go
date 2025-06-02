@@ -33,6 +33,10 @@ func (s *Service) FindMany(ctx context.Context, ids []string) ([]dto.Poi, error)
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
+	if len(ids) == 0 {
+		return []dto.Poi{}, nil
+	}
+
 	dbPois, err := s.db.GetPoisByIdsPopulated(ctx, ids)
 
 	if err != nil {
