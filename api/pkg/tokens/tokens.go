@@ -15,9 +15,8 @@ type UserInformation struct {
 }
 
 var (
-	ErrorExpired           = errors.New("token is expired")
-	ErrorInvalidToken      = errors.New("invalid token")
-
+	ErrorExpired      = errors.New("token is expired")
+	ErrorInvalidToken = errors.New("invalid token")
 )
 
 type AccessTokenData struct {
@@ -66,7 +65,7 @@ func CreateAuthTokens(payload UserInformation) (string, string, error) {
 
 	accessToken, err := jwt.
 		NewWithClaims(jwt.SigningMethodHS256, accessTokenData).
-		SignedString([]byte(cfg.Env.AcessTokenSecret))
+		SignedString([]byte(cfg.Env.AccessTokenSecret))
 
 	if err != nil {
 		return "", "", err
@@ -109,7 +108,7 @@ func CheckTokens(accessToken string, refreshToken string) (*UserInformation, err
 
 func decodeAccessToken(s string) (*AccessTokenData, error) {
 	token, err := jwt.ParseWithClaims(s, &AccessTokenData{}, func(token *jwt.Token) (any, error) {
-		return []byte(cfg.Env.AcessTokenSecret), nil
+		return []byte(cfg.Env.AccessTokenSecret), nil
 	})
 
 	if err != nil {

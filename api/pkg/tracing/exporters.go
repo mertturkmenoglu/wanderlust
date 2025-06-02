@@ -13,11 +13,11 @@ import (
 
 func TraceExporter() *otlptrace.Exporter {
 	exporter, err := otlptracehttp.New(context.Background(),
-		otlptracehttp.WithEndpoint(cfg.Env.OtlpEndpoint),
-		otlptracehttp.WithURLPath(cfg.Env.OtlpTraceURLPath),
+		otlptracehttp.WithEndpoint(cfg.Env.OTLPEndpoint),
+		otlptracehttp.WithURLPath(cfg.Env.OTLPTracesUrlPath),
 		otlptracehttp.WithInsecure(),
 		otlptracehttp.WithHeaders(map[string]string{
-			"Authorization": "Basic " + cfg.Env.OtlpAuthToken,
+			"Authorization": "Basic " + cfg.Env.OTLPAuthToken,
 		}),
 	)
 
@@ -30,11 +30,11 @@ func TraceExporter() *otlptrace.Exporter {
 
 func MetricExporter() *otlpmetrichttp.Exporter {
 	metricExporter, err := otlpmetrichttp.New(context.Background(),
-		otlpmetrichttp.WithEndpoint(cfg.Env.OtlpEndpoint),
-		otlpmetrichttp.WithURLPath(cfg.Env.OtlpMetricsURLPath),
+		otlpmetrichttp.WithEndpoint(cfg.Env.OTLPEndpoint),
+		otlpmetrichttp.WithURLPath(cfg.Env.OTLPMetricsUrlPath),
 		otlpmetrichttp.WithInsecure(),
 		otlpmetrichttp.WithHeaders(map[string]string{
-			"Authorization": "Basic " + cfg.Env.OtlpAuthToken,
+			"Authorization": "Basic " + cfg.Env.OTLPAuthToken,
 		}),
 	)
 
@@ -49,11 +49,11 @@ func MetricExporter() *otlpmetrichttp.Exporter {
 func LogExporter() *otlploghttp.Exporter {
 	logExporter, err := otlploghttp.New(
 		context.Background(),
-		otlploghttp.WithEndpoint(cfg.Env.OtlpEndpoint),
-		otlploghttp.WithURLPath(cfg.Env.OtlpLogsURLPath),
+		otlploghttp.WithEndpoint(cfg.Env.OTLPEndpoint),
+		otlploghttp.WithURLPath(cfg.Env.OTLPLogsUrlPath),
 		otlploghttp.WithInsecure(),
 		otlploghttp.WithHeaders(map[string]string{
-			"Authorization": "Basic " + cfg.Env.OtlpAuthToken,
+			"Authorization": "Basic " + cfg.Env.OTLPAuthToken,
 		}),
 	)
 

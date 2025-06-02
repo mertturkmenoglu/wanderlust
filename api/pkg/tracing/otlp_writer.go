@@ -42,10 +42,10 @@ func (w *OtlpWriter) Sync() error {
 
 func NewOtlpWriter() *OtlpWriter {
 	return &OtlpWriter{
-		endpoint: cfg.Env.OtlpWriterEndpoint,
+		endpoint: cfg.Env.OTLPWriterEndpoint,
 		headers: map[string]string{
 			"Content-Type":  "application/json",
-			"Authorization": "Basic " + cfg.Env.OtlpAuthToken,
+			"Authorization": "Basic " + cfg.Env.OTLPAuthToken,
 		},
 	}
 }

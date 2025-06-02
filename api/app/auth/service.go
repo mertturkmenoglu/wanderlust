@@ -495,7 +495,7 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 			},
 		},
 		Status: http.StatusTemporaryRedirect,
-		Url:    cfg.Env.OauthRedirect,
+		Url:    cfg.Env.OAuthRedirect,
 	}, nil
 }
 
