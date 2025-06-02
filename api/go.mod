@@ -15,6 +15,7 @@ require (
 	github.com/pterm/pterm v0.12.80
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/sony/sonyflake v1.2.0
+	github.com/spf13/cobra v1.8.1
 	github.com/typesense/typesense-go/v2 v2.0.0
 	go.opentelemetry.io/otel v1.36.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.35.0
@@ -27,6 +28,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.36.0
 	golang.org/x/crypto v0.38.0
 	golang.org/x/sync v0.14.0
+	resty.dev/v3 v3.0.0-beta.3
 )
 
 require (
@@ -69,7 +71,6 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/sony/gobreaker v0.5.0 // indirect
-	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
