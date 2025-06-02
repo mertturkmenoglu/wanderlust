@@ -73,7 +73,15 @@ SELECT
   ))
   FROM trip_locations tlocations
   WHERE tlocations.trip_id = trips.id
-  ) AS locations
+  ) AS locations,
+  (SELECT get_pois(
+    ARRAY(
+      SELECT 
+        DISTINCT poi_id 
+      FROM trip_locations
+      WHERE trip_locations.trip_id = trips.id
+    )
+  )) AS pois
 FROM trips
 LEFT JOIN users u ON u.id = trips.owner_id
 LEFT JOIN trip_locations ON trip_locations.trip_id = trips.id
