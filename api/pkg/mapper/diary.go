@@ -5,38 +5,48 @@ import (
 	"fmt"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/utils"
 )
 
 func ToDiary(dbDiary db.GetDiariesRow) (dto.Diary, error) {
 	friends := make([]dto.DiaryUser, 0)
 
-	err := json.Unmarshal(dbDiary.Friends, &friends)
+	if len(dbDiary.Friends) > 0 {
+		err := json.Unmarshal(dbDiary.Friends, &friends)
 
-	if err != nil {
-		return dto.Diary{}, err
+		if err != nil {
+			return dto.Diary{}, err
+		}
 	}
 
 	images := make([]dto.DiaryImage, 0)
 
-	err = json.Unmarshal(dbDiary.Images, &images)
+	if len(dbDiary.Images) > 0 {
+		err := json.Unmarshal(dbDiary.Images, &images)
 
-	if err != nil {
-		return dto.Diary{}, err
+		if err != nil {
+			return dto.Diary{}, err
+		}
 	}
 
 	locations := make([]dto.DiaryLocation, 0)
 
-	err = json.Unmarshal(dbDiary.Locations, &locations)
+	if len(dbDiary.Locations) > 0 {
+		err := json.Unmarshal(dbDiary.Locations, &locations)
 
-	if err != nil {
-		return dto.Diary{}, err
+		if err != nil {
+			return dto.Diary{}, err
+		}
 	}
 
-	pois, err := ToPois(dbDiary.Pois)
+	pois := make([]dto.Poi, 0)
 
-	if err != nil {
-		return dto.Diary{}, err
+	if len(dbDiary.Pois) > 0 {
+		var err error
+		pois, err = ToPois(dbDiary.Pois)
+
+		if err != nil {
+			return dto.Diary{}, err
+		}
 	}
 
 	for i, loc := range locations {
@@ -56,6 +66,16 @@ func ToDiary(dbDiary db.GetDiariesRow) (dto.Diary, error) {
 		locations[i].Poi = *poi
 	}
 
+	var owner dto.DiaryUser
+
+	if len(dbDiary.Owner) > 0 {
+		err := json.Unmarshal(dbDiary.Owner, &owner)
+
+		if err != nil {
+			return dto.Diary{}, err
+		}
+	}
+
 	return dto.Diary{
 		ID:               dbDiary.Diary.ID,
 		UserID:           dbDiary.Diary.UserID,
@@ -65,14 +85,9 @@ func ToDiary(dbDiary db.GetDiariesRow) (dto.Diary, error) {
 		Date:             dbDiary.Diary.Date.Time,
 		CreatedAt:        dbDiary.Diary.CreatedAt.Time,
 		UpdatedAt:        dbDiary.Diary.UpdatedAt.Time,
-		Owner: dto.DiaryUser{
-			ID:           dbDiary.Profile.ID,
-			Username:     dbDiary.Profile.Username,
-			FullName:     dbDiary.Profile.FullName,
-			ProfileImage: utils.TextToStr(dbDiary.Profile.ProfileImage),
-		},
-		Friends:   friends,
-		Images:    images,
-		Locations: locations,
+		Owner:            owner,
+		Friends:          friends,
+		Images:           images,
+		Locations:        locations,
 	}, nil
 }
