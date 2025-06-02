@@ -13,5 +13,5 @@ func LoadEnv() {
 		panic("cannot load .env file: " + err.Error())
 	}
 
-	cfg.InitConfigurationStruct()
+	cfg.Init()
 }
