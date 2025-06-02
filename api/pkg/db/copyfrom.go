@@ -148,6 +148,41 @@ func (q *Queries) BatchCreateDiaryUsers(ctx context.Context, arg []BatchCreateDi
 	return q.db.CopyFrom(ctx, []string{"diary_users"}, []string{"diary_id", "user_id", "index"}, &iteratorForBatchCreateDiaryUsers{rows: arg})
 }
 
+// iteratorForBatchCreatePoiMedia implements pgx.CopyFromSource.
+type iteratorForBatchCreatePoiMedia struct {
+	rows                 []BatchCreatePoiMediaParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreatePoiMedia) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreatePoiMedia) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].PoiID,
+		r.rows[0].Url,
+		r.rows[0].Alt,
+		r.rows[0].Index,
+	}, nil
+}
+
+func (r iteratorForBatchCreatePoiMedia) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreatePoiMedia(ctx context.Context, arg []BatchCreatePoiMediaParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"media"}, []string{"poi_id", "url", "alt", "index"}, &iteratorForBatchCreatePoiMedia{rows: arg})
+}
+
 // iteratorForBatchCreatePois implements pgx.CopyFromSource.
 type iteratorForBatchCreatePois struct {
 	rows                 []BatchCreatePoisParams

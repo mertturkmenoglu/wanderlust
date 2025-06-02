@@ -11,6 +11,13 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BatchCreatePoiMediaParams struct {
+	PoiID string
+	Url   string
+	Alt   string
+	Index int16
+}
+
 type BatchCreatePoisParams struct {
 	ID                 string
 	Name               string

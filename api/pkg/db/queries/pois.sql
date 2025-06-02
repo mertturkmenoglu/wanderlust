@@ -57,6 +57,19 @@ INSERT INTO media (
   $4
 ) RETURNING *;
 
+-- name: BatchCreatePoiMedia :copyfrom
+INSERT INTO media (
+  poi_id,
+  url,
+  alt,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+);
+
 -- name: GetFavoritePoisIds :many
 SELECT 
   id 
