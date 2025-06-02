@@ -32,7 +32,7 @@ func ToReview(dbReview db.GetReviewsByIdsRow, pois []dto.Poi) (dto.Review, error
 		}
 	}
 
-	var images []dto.ReviewImage
+	images := make([]dto.ReviewImage, 0)
 
 	if len(dbReview.Images) > 0 {
 		err := json.Unmarshal(dbReview.Images, &images)
