@@ -21,7 +21,7 @@ func main() {
 		panic("cannot load .env file: " + err.Error())
 	}
 
-	cfg.InitConfigurationStruct()
+	cfg.Init()
 
 	pterm.DefaultBasicText.
 		Println("You can use the" + pterm.LightYellow(" arrow keys ") + "to navigate between options.")

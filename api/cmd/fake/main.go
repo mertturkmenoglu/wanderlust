@@ -15,7 +15,7 @@ func main() {
 		panic("cannot load .env file: " + err.Error())
 	}
 
-	cfg.InitConfigurationStruct()
+	cfg.Init()
 
 	modePtr := flag.String("mode", "interactive", "Mode to run the script. Can be interactive or automate")
 	flag.Parse()
