@@ -8,21 +8,7 @@ const queryClient = new QueryClient({
       gcTime: Infinity,
       staleTime: Infinity,
       refetchOnWindowFocus: false,
-      retry: (count, error) => {
-        if (isApiError(error)) {
-          if (
-            error.status === 401 ||
-            error.status === 403 ||
-            error.status === 404
-          ) {
-            return false;
-          }
-
-          return count < 3;
-        }
-
-        return count < 3;
-      },
+      retry: false,
     },
     mutations: {
       onError: (err) => {
