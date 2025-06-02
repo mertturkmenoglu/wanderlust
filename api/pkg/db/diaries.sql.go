@@ -148,7 +148,12 @@ func (q *Queries) DeleteDiary(ctx context.Context, id string) error {
 const getDiaries = `-- name: GetDiaries :many
 SELECT 
   diaries.id, diaries.user_id, diaries.title, diaries.description, diaries.share_with_friends, diaries.date, diaries.created_at, diaries.updated_at, 
-  p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner, p.owner AS owner,
+  jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  ) AS owner,
   (SELECT json_agg(DISTINCT jsonb_build_object(
     'id', friend.id,
     'fullName', friend.full_name,
@@ -171,7 +176,7 @@ SELECT
   ) AS images,
   (SELECT json_agg(DISTINCT jsonb_build_object(
     'diaryId', dp.diary_id,
-    'poiId', dp.poiId,
+    'poiId', dp.poi_id,
     'description', dp.description,
     'index', dp.index
   ))
@@ -181,14 +186,14 @@ SELECT
   (SELECT get_pois(ARRAY(SELECT DISTINCT poi_id FROM diary_pois WHERE diary_id = diaries.id))) AS pois
 FROM diaries
 LEFT JOIN 
-  profile p ON diaries.user_id = p.id
+  users u ON diaries.user_id = u.id
 WHERE diaries.id = ANY($1::TEXT[])
-GROUP BY diaries.id
+GROUP BY diaries.id, u.id
 `
 
 type GetDiariesRow struct {
 	Diary     Diary
-	Profile   Profile
+	Owner     []byte
 	Friends   []byte
 	Images    []byte
 	Locations []byte
@@ -213,18 +218,7 @@ func (q *Queries) GetDiaries(ctx context.Context, dollar_1 []string) ([]GetDiari
 			&i.Diary.Date,
 			&i.Diary.CreatedAt,
 			&i.Diary.UpdatedAt,
-			&i.Profile.ID,
-			&i.Profile.Username,
-			&i.Profile.FullName,
-			&i.Profile.IsVerified,
-			&i.Profile.Bio,
-			&i.Profile.Pronouns,
-			&i.Profile.Website,
-			&i.Profile.ProfileImage,
-			&i.Profile.BannerImage,
-			&i.Profile.FollowersCount,
-			&i.Profile.FollowingCount,
-			&i.Profile.CreatedAt,
+			&i.Owner,
 			&i.Friends,
 			&i.Images,
 			&i.Locations,
