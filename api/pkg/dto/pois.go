@@ -28,7 +28,7 @@ type Poi struct {
 	CategoryID         int16     `json:"categoryId" example:"1" doc:"ID of category of point of interest"`
 	Category           Category  `json:"category"`
 	Amenities          []Amenity `json:"amenities"`
-	Hours              string    `json:"hours"`
+	Hours              PoiHours  `json:"hours"`
 	Media              []Media   `json:"media"`
 	Address            Address   `json:"address"`
 	CreatedAt          time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of point of interest"`
