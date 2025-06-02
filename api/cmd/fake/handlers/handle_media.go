@@ -1,13 +1,13 @@
-package main
+package handlers
 
 import (
 	"context"
 	"fmt"
 	"strconv"
+	"wanderlust/cmd/fake/utils"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/pterm/pterm"
 )
 
 // Got from picsum list endpoint
@@ -32,29 +32,8 @@ func getRandomImageUrl() string {
 	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", imageIds[gofakeit.IntRange(0, len(imageIds)-1)])
 }
 
-func handleMedia() error {
-	poiId, _ := pterm.DefaultInteractiveTextInput.Show("Enter poi id")
-	sCount, _ := pterm.DefaultInteractiveTextInput.Show("Enter count (2, 10)")
-
-	count, err := strconv.Atoi(sCount)
-
-	if err != nil {
-		return err
-	}
-
-	res := createMediaForPoi(poiId, count)
-	_, err = GetDb().Queries.BatchCreatePoiMedia(context.Background(), res)
-
-	return err
-}
-
-func handleMediaForManyPois(path string) error {
-	if path == "" {
-		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file containin POI ids")
-	}
-	logger.Info("Starting media generation for POIs")
-
-	ids, err := readFile(path)
+func (f *Fake) HandleMediaForManyPois(path string) error {
+	ids, err := utils.ReadFile(path)
 
 	if err != nil {
 		return err
@@ -68,9 +47,7 @@ func handleMediaForManyPois(path string) error {
 		batch = append(batch, res...)
 	}
 
-	_, err = GetDb().Queries.BatchCreatePoiMedia(context.Background(), batch)
-
-	logger.Info("Ending media generation for POIs")
+	_, err = f.db.Queries.BatchCreatePoiMedia(context.Background(), batch)
 
 	return err
 }

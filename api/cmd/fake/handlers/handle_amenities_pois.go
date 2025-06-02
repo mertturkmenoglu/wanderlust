@@ -1,30 +1,23 @@
-package main
+package handlers
 
 import (
 	"context"
+	"wanderlust/cmd/fake/utils"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/pterm/pterm"
 )
 
-func handleAmenitiesPois(path string) error {
+func (f *Fake) HandleAmenitiesPois(path string) error {
 	ctx := context.Background()
-	d := GetDb()
 
-	amenities, err := d.Queries.GetAllAmenities(ctx)
+	amenities, err := f.db.Queries.GetAllAmenities(ctx)
 
 	if err != nil {
 		return err
 	}
 
-	if path == "" {
-		path, _ = pterm.DefaultInteractiveTextInput.Show("Enter path for the file that contains POI ids")
-	}
-
-	logger.Info("Starting amenities generation for POIs")
-
-	ids, err := readFile(path)
+	ids, err := utils.ReadFile(path)
 
 	if err != nil {
 		return err
@@ -47,9 +40,7 @@ func handleAmenitiesPois(path string) error {
 		}
 	}
 
-	_, err = GetDb().Queries.BatchCreateAmenitiesPois(context.Background(), batch)
-
-	logger.Info("Ending amenities generation for POIs")
+	_, err = f.db.Queries.BatchCreateAmenitiesPois(context.Background(), batch)
 
 	return err
 }

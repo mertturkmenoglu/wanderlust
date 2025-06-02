@@ -1,8 +1,8 @@
-package main
+package handlers
 
 import "context"
 
-func handleAmenities() error {
+func (f *Fake) HandleAmenities() error {
 	list := []string{
 		"Wi-Fi",
 		"Free Parking",
@@ -62,20 +62,13 @@ func handleAmenities() error {
 		"Event Hosting",
 	}
 
-	d := GetDb()
-
-	logger.Info("Starting amenities generation")
-
-	for i, amenity := range list {
-		_, err := d.Queries.CreateAmenity(context.Background(), amenity)
+	for _, amenity := range list {
+		_, err := f.db.Queries.CreateAmenity(context.Background(), amenity)
 
 		if err != nil {
-			logger.Error("failed to create amenity", logger.Args("amenity", amenity, "index", i))
 			return err
 		}
 	}
-
-	logger.Info("Ending amenities generation")
 
 	return nil
 }

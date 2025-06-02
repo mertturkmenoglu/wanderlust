@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"bufio"
@@ -8,11 +8,11 @@ import (
 	"github.com/pterm/pterm"
 )
 
-func randElem[T any](arr []T) T {
+func RandElem[T any](arr []T) T {
 	return arr[rand.Intn(len(arr))]
 }
 
-func randElems[T any](arr []T, n int) []T {
+func RandElems[T any](arr []T, n int) []T {
 	newArr := make([]T, len(arr))
 	copy(newArr, arr)
 
@@ -24,11 +24,11 @@ func randElems[T any](arr []T, n int) []T {
 }
 
 // A shorter alias for pterm.DefaultInteractiveTextInput.Show
-func input(text ...string) (string, error) {
+func Input(text ...string) (string, error) {
 	return pterm.DefaultInteractiveTextInput.Show(text...)
 }
 
-func readFile(path string) ([]string, error) {
+func ReadFile(path string) ([]string, error) {
 	f, err := os.Open(path)
 
 	if err != nil {

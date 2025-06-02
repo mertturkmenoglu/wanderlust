@@ -1,55 +1,58 @@
-package main
+package handlers
 
 import (
 	"context"
+	"wanderlust/cmd/fake/utils"
 	"wanderlust/pkg/db"
 
 	"github.com/brianvoe/gofakeit/v7"
 )
 
-func handleReviews(poiPath string, userPath string) error {
-	isInteractive := poiPath == "" || userPath == ""
-
-	if isInteractive {
-		poiPath, _ = input("Enter the path to the file that contains POI ids:")
-		userPath, _ = input("enter the path to the file that contains user ids:")
-	}
-
-	poiIds, err := readFile(poiPath)
+func (f *Fake) HandleReviews(poiPath string, userPath string) error {
+	poiIds, err := utils.ReadFile(poiPath)
 
 	if err != nil {
 		return err
 	}
 
-	userIds, err := readFile(userPath)
+	userIds, err := utils.ReadFile(userPath)
 
 	if err != nil {
 		return err
 	}
-
-	logger.Info("Starting review generation for POIs")
 
 	batch := make([]db.BatchCreateReviewsParams, 0)
 
 	for _, id := range poiIds {
 		n := gofakeit.IntRange(1, 100)
-		randUserIds := randElems(userIds, 50)
+		randUserIds := utils.RandElems(userIds, 50)
 		res := createReviewForPoi(id, n, randUserIds)
 		batch = append(batch, res...)
 	}
 
-	_, err = GetDb().Queries.BatchCreateReviews(context.Background(), batch)
+	i := 0
 
-	logger.Info("Ending review generation for POIs")
+	for i = 0; i < len(batch); i += 500 {
+		_, err = f.db.Queries.BatchCreateReviews(context.Background(), batch[i:i+100])
 
-	return err
+		if err != nil {
+			return err
+		}
+	}
+
+	if i < len(batch) {
+		_, err = f.db.Queries.BatchCreateReviews(context.Background(), batch[i:])
+		return err
+	}
+
+	return nil
 }
 
 func createReviewForPoi(poiId string, count int, userIds []string) []db.BatchCreateReviewsParams {
 	batch := make([]db.BatchCreateReviewsParams, 0)
 
 	for range count {
-		userId := randElem(userIds)
+		userId := utils.RandElem(userIds)
 		batch = append(batch, db.BatchCreateReviewsParams{
 			ID:      gofakeit.UUID(),
 			PoiID:   poiId,
@@ -62,24 +65,15 @@ func createReviewForPoi(poiId string, count int, userIds []string) []db.BatchCre
 	return batch
 }
 
-func handleReviewMedia(reviewPath string) error {
-	isInteractive := reviewPath == ""
-
-	if isInteractive {
-		reviewPath, _ = input("Enter the path to the file that contains review ids:")
-	}
-
-	reviewIds, err := readFile(reviewPath)
+func (f *Fake) HandleReviewMedia(reviewPath string) error {
+	reviewIds, err := utils.ReadFile(reviewPath)
 
 	if err != nil {
 		return err
 	}
 
 	skipped := 0
-
 	batch := make([]db.BatchCreateReviewImageParams, 0)
-
-	logger.Info("Starting review media generation")
 
 	for _, id := range reviewIds {
 		// Not all reviews should have media. 1/3 of them should have media.
@@ -95,10 +89,7 @@ func handleReviewMedia(reviewPath string) error {
 		batch = append(batch, res...)
 	}
 
-	logger.Info("Ending review media generation")
-
-	_, err = GetDb().Queries.BatchCreateReviewImage(context.Background(), batch)
-
+	_, err = f.db.Queries.BatchCreateReviewImage(context.Background(), batch)
 	return err
 }
 

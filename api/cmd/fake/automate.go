@@ -3,6 +3,10 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"time"
+	"wanderlust/cmd/fake/handlers"
+
+	"github.com/pterm/pterm"
 )
 
 const (
@@ -28,46 +32,59 @@ var steps = [...]string{
 }
 
 func automate() error {
-	logger.Info("Starting automated generation")
+	f := handlers.NewFake()
+	automationStart := time.Now()
 
 	for _, step := range steps {
-		err := mux(step)
+		spinner, _ := pterm.DefaultSpinner.Start("Generating: " + step)
+		start := time.Now()
+
+		err := mux(f, step)
+
+		elapsed := time.Since(start)
+
 		if err != nil {
+			spinner.Fail("Failed to generate: " + step)
 			return err
+		} else {
+			spinner.Success()
 		}
+
+		f.Logger.Info("=> Elapsed time: " + elapsed.String())
 	}
 
-	logger.Info("Automated generation completed.")
+	totalElapsed := time.Since(automationStart)
+	f.Logger.Info("=> Total Elapsed time: " + totalElapsed.String())
 
 	return nil
 }
 
-func mux(t string) error {
+func mux(f *handlers.Fake, t string) error {
 	switch t {
 	case "amenities":
-		return handleAmenities()
+		return f.HandleAmenities()
 	case "categories":
-		return handleCategories()
+		return f.HandleCategories()
 	case "cities":
-		return handleCities()
+		return f.HandleCities()
 	case "addresses":
-		return handleAddresses(10_000)
+		return f.HandleAddresses(10_000)
 	case "users":
-		return handleUsers(10_000)
+		return f.HandleUsers(10_000)
 	case "pois":
-		return handlePois(10_000)
+		return f.HandlePois(10_000)
 	case "fake-id":
 		return exec.Command("just", "fake-id").Run()
 	case "amenities-pois":
-		return handleAmenitiesPois(poisPath)
+		return f.HandleAmenitiesPois(poisPath)
 	case "media-for-many-pois":
-		return handleMediaForManyPois(poisPath)
+		return f.HandleMediaForManyPois(poisPath)
 	case "follows":
-		return handleFollows(usersPath)
+		return f.HandleFollows(usersPath)
 	case "reviews":
-		return handleReviews(poisPath, usersPath)
+		return f.HandleReviews(poisPath, usersPath)
 	case "review-media":
-		return handleReviewMedia(reviewsPath)
+		return f.HandleReviewMedia(reviewsPath)
 	default:
 		return fmt.Errorf("invalid task type: %s", t)
 	}

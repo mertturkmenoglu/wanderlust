@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func handleUsers(count int) error {
+func (f *Fake) HandleUsers(count int) error {
 	prefix := "https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/"
 
 	var imageNames = []string{
@@ -46,7 +46,6 @@ func handleUsers(count int) error {
 	}
 
 	ctx := context.Background()
-	d := GetDb()
 	h, err := hash.Hash("LoremIpsum!1")
 
 	if err != nil {
@@ -58,8 +57,6 @@ func handleUsers(count int) error {
 	if count < step {
 		step = count
 	}
-
-	logger.Info("Starting user generation")
 
 	for i := 0; i < count; i += step {
 		if i+step >= count {
@@ -81,14 +78,12 @@ func handleUsers(count int) error {
 			})
 		}
 
-		_, err := d.Queries.BatchCreateUsers(ctx, arg)
+		_, err := f.db.Queries.BatchCreateUsers(ctx, arg)
 
 		if err != nil {
 			return err
 		}
 	}
-
-	logger.Info("Ending user generation")
 
 	return nil
 }

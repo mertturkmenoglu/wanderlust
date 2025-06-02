@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -8,31 +8,29 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func handleAddresses(count int) error {
+func (f *Fake) HandleAddresses(count int) error {
 	const step = 100
-	logger.Info("Starting addresses generation")
+
 	for i := 0; i < count; i += step {
-		err := batchInsertAddresses(step)
+		err := f.batchInsertAddresses(step)
 
 		if err != nil {
 			return err
 		}
 	}
-	logger.Info("Ending addresses generation")
 
 	return nil
 }
 
-func batchInsertAddresses(n int) error {
-	d := GetDb()
+func (f *Fake) batchInsertAddresses(n int) error {
 	arg := make([]db.BatchCreateAddressesParams, 0, n)
-	cityIds, err := d.Queries.RandSelectCities(context.Background(), int32(n))
+	cityIds, err := f.db.Queries.RandSelectCities(context.Background(), int32(n))
 
 	if err != nil {
 		return err
 	}
 
-	cities, err := d.Queries.GetCities(context.Background())
+	cities, err := f.db.Queries.GetCities(context.Background())
 
 	if err != nil {
 		return err
@@ -63,7 +61,7 @@ func batchInsertAddresses(n int) error {
 		})
 	}
 
-	_, err = d.Queries.BatchCreateAddresses(context.Background(), arg)
+	_, err = f.db.Queries.BatchCreateAddresses(context.Background(), arg)
 
 	return err
 }

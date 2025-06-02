@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -11,18 +11,14 @@ import (
 	"github.com/sony/sonyflake"
 )
 
-func handlePois(count int) error {
+func (f *Fake) HandlePois(count int) error {
 	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
 	step := 1000
+	ctx := context.Background()
 
 	if count < step {
 		step = count
 	}
-
-	ctx := context.Background()
-	d := GetDb()
-
-	logger.Info("Starting pois generation")
 
 	for i := 0; i < count; i += step {
 		if i+step >= count {
@@ -30,7 +26,7 @@ func handlePois(count int) error {
 		}
 
 		arg := make([]db.BatchCreatePoisParams, 0, step)
-		addressIds, err := d.Queries.RandSelectAddresses(ctx, int32(step))
+		addressIds, err := f.db.Queries.RandSelectAddresses(ctx, int32(step))
 		addressIdsLen := len(addressIds)
 
 		if err != nil {
@@ -73,14 +69,12 @@ func handlePois(count int) error {
 			})
 		}
 
-		_, err = d.Queries.BatchCreatePois(ctx, arg)
+		_, err = f.db.Queries.BatchCreatePois(ctx, arg)
 
 		if err != nil {
 			return err
 		}
 	}
-
-	logger.Info("Ending pois generation")
 
 	return nil
 }

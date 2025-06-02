@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -10,7 +10,7 @@ type category struct {
 	image string
 }
 
-func handleCategories() error {
+func (f *Fake) HandleCategories() error {
 	// Supermaven added images, I haven't checked whether they are appropriate or not.
 	// TODO: Check images later.
 	categories := []category{
@@ -39,10 +39,8 @@ func handleCategories() error {
 		{name: "Tourist Attractions", image: "https://images.unsplash.com/photo-1697719074506-30fc25fed9c5"},
 	}
 
-	d := GetDb()
-
 	for i, category := range categories {
-		_, err := d.Queries.CreateCategory(context.Background(), db.CreateCategoryParams{
+		_, err := f.db.Queries.CreateCategory(context.Background(), db.CreateCategoryParams{
 			ID:    int16(i + 1),
 			Name:  category.name,
 			Image: category.image,
