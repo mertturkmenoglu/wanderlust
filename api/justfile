@@ -59,7 +59,7 @@ all: build
 
 @test-e2e-setup:
 	docker compose -f ./docker-compose.test.yml --env-file .env.test up -d
-	goose up
+	goose up -env=.env.test
 	air -c conf/.air.toml -- --env-file=.env.test
 
 @test-e2e-teardown:
