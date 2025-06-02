@@ -3,6 +3,7 @@ package mapper
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 )
@@ -86,6 +87,16 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		locations[i].Poi = *poi
 	}
 
+	var status = "upcoming"
+
+	now := time.Now()
+
+	if dbTrip.Trip.EndAt.Time.Before(now) {
+		status = "ended"
+	} else if dbTrip.Trip.StartAt.Time.Before(now) {
+		status = "started"
+	}
+
 	return dto.Trip{
 		ID:                 dbTrip.Trip.ID,
 		OwnerID:            dbTrip.Trip.OwnerID,
@@ -100,6 +111,7 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		Participants:       participants,
 		RequestedAmenities: amenities,
 		Locations:          locations,
+		Status:             status,
 	}, nil
 }
 

@@ -12,7 +12,7 @@ type Trip struct {
 	Owner              TripUser            `json:"owner"`
 	Title              string              `json:"title" example:"My Awesome Trip" doc:"Title of the trip"`
 	Description        string              `json:"description" example:"Lorem ipsum dolor sit amet" doc:"Description of the trip"`
-	Status             TripStatus          `json:"status" example:"draft" doc:"Status of the trip"`
+	Status             string              `json:"status" example:"draft" doc:"Status of the trip"`
 	VisibilityLevel    TripVisibilityLevel `json:"visibilityLevel" example:"friends" doc:"Visibility level of the trip"`
 	StartAt            time.Time           `json:"startAt" example:"2023-05-01T00:00:00Z" doc:"Start datetime of the trip"`
 	EndAt              time.Time           `json:"endAt" example:"2023-05-01T00:00:00Z" doc:"End datetime of the trip"`
