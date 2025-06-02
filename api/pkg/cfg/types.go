@@ -37,7 +37,7 @@ type TEnv struct {
 	OAuthRedirect            string `key:"OAUTH_REDIRECT"`
 	OLGTMGRPCPort            int    `key:"OLGTM_GRPC_PORT"`
 	OLGTMHTTPPort            int    `key:"OLGTM_HTTP_PORT"`
-	OTLPAuthToken            string `key:"OTLPAUTH_TOKEN"`
+	OTLPAuthToken            string `key:"OTLP_AUTH_TOKEN"`
 	OTLPEndpoint             string `key:"OTLP_ENDPOINT"`
 	OTLPLogsUrlPath          string `key:"OTLP_LOGS_URL_PATH"`
 	OTLPMetricsUrlPath       string `key:"OTLP_METRICS_URL_PATH"`
