@@ -59,10 +59,14 @@ func ToTrip(dbTrip db.GetTripsByIdsPopulatedRow) (dto.Trip, error) {
 		}
 	}
 
-	pois, err := ToPois(dbTrip.Pois)
+	pois := make([]dto.Poi, 0)
 
-	if err != nil {
-		return dto.Trip{}, err
+	if len(dbTrip.Pois) > 0 {
+		pois, err = ToPois(dbTrip.Pois)
+
+		if err != nil {
+			return dto.Trip{}, err
+		}
 	}
 
 	for i, loc := range locations {
