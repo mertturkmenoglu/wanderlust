@@ -596,108 +596,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/auth/verify-email/send": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send Verification Email
-         * @description Send verification email to the user
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["SendVerificationEmailInputBody"];
-                };
-            };
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/auth/verify-email/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Verify Email
-         * @description Verify the email of the user
-         */
-        get: {
-            parameters: {
-                query: {
-                    /**
-                     * @description Verification code
-                     * @example 123456
-                     */
-                    code: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v2/auth/{provider}": {
         parameters: {
             query?: never;
@@ -2209,8 +2107,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Diary Entries
-         * @description List diary entries for the current user
+         * List Diaries
+         * @description List diaries for the current user
          */
         get: {
             parameters: {
@@ -2248,7 +2146,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetDiaryEntriesOutputBody"];
+                        "application/json": components["schemas"]["GetDiariesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2264,8 +2162,8 @@ export interface paths {
         };
         put?: never;
         /**
-         * Create Diary Entry
-         * @description Create a diary entry
+         * Create Diary
+         * @description Create a diary
          */
         post: {
             parameters: {
@@ -2276,7 +2174,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["CreateDiaryEntryInputBody"];
+                    "application/json": components["schemas"]["CreateDiaryInputBody"];
                 };
             };
             responses: {
@@ -2286,7 +2184,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["CreateDiaryEntryOutputBody"];
+                        "application/json": components["schemas"]["CreateDiaryOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2314,8 +2212,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Diary Entry
-         * @description Get a diary entry by ID
+         * Get Diary
+         * @description Get a diary by ID
          */
         get: {
             parameters: {
@@ -2338,7 +2236,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetDiaryEntryByIdOutputBody"];
+                        "application/json": components["schemas"]["GetDiaryByIdOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2355,8 +2253,8 @@ export interface paths {
         put?: never;
         post?: never;
         /**
-         * Delete Diary Entry
-         * @description Delete a diary entry
+         * Delete Diary
+         * @description Delete a diary
          */
         delete: {
             parameters: {
@@ -2394,8 +2292,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update Diary Entry
-         * @description Update a diary entry
+         * Update Diary
+         * @description Update a diary
          */
         patch: {
             parameters: {
@@ -2412,7 +2310,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdateDiaryEntryInputBody"];
+                    "application/json": components["schemas"]["UpdateDiaryInputBody"];
                 };
             };
             responses: {
@@ -2422,7 +2320,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdateDiaryEntryOutputBody"];
+                        "application/json": components["schemas"]["UpdateDiaryOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2452,8 +2350,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update Diary Entry Friends
-         * @description Update a diary entry friends
+         * Update Diary Friends
+         * @description Update a diary friends
          */
         patch: {
             parameters: {
@@ -2470,7 +2368,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdateDiaryEntryFriendsInputBody"];
+                    "application/json": components["schemas"]["UpdateDiaryFriendsInputBody"];
                 };
             };
             responses: {
@@ -2480,7 +2378,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdateDiaryEntryFriendsOutputBody"];
+                        "application/json": components["schemas"]["UpdateDiaryFriendsOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2496,65 +2394,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/diary/{id}/locations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update Diary Entry Locations
-         * @description Update a diary entry locations
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of the diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateDiaryEntryLocationsInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateDiaryEntryLocationsOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/diary/{id}/media": {
+    "/api/v2/diary/{id}/image": {
         parameters: {
             query?: never;
             header?: never;
@@ -2564,8 +2404,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Upload Media to a Diary Entry
-         * @description Add media to a diary entry
+         * Upload Image to a Diary
+         * @description Add image to a diary
          */
         post: {
             parameters: {
@@ -2582,7 +2422,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UploadDiaryMediaInputBody"];
+                    "application/json": components["schemas"]["UploadDiaryImageInputBody"];
                 };
             };
             responses: {
@@ -2592,7 +2432,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UploadDiaryMediaOutputBody"];
+                        "application/json": components["schemas"]["UploadDiaryImageOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2610,8 +2450,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update Diary Entry Media
-         * @description Update a diary entry media
+         * Update Diary Image
+         * @description Update a diary image
          */
         patch: {
             parameters: {
@@ -2628,7 +2468,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdateDiaryMediaInputBody"];
+                    "application/json": components["schemas"]["UpdateDiaryImageInputBody"];
                 };
             };
             responses: {
@@ -2638,7 +2478,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdateDiaryMediaOutputBody"];
+                        "application/json": components["schemas"]["UpdateDiaryImageOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2654,7 +2494,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/diary/{id}/media/{mediaId}": {
+    "/api/v2/diary/{id}/image/{imageId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2665,8 +2505,8 @@ export interface paths {
         put?: never;
         post?: never;
         /**
-         * Delete Diary Entry Media
-         * @description Delete a diary entry media
+         * Delete Diary Image
+         * @description Delete a diary image
          */
         delete: {
             parameters: {
@@ -2682,7 +2522,7 @@ export interface paths {
                      * @description ID of media
                      * @example 123
                      */
-                    mediaId: number;
+                    imageId: number;
                 };
                 cookie?: never;
             };
@@ -2709,6 +2549,64 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v2/diary/{id}/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Diary Locations
+         * @description Update a diary locations
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of the diary entry
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateDiaryLocationsInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateDiaryLocationsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/v2/favorites/": {
@@ -3440,389 +3338,6 @@ export interface paths {
                 };
             };
         };
-        trace?: never;
-    };
-    "/api/v2/pois/drafts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get All Drafts
-         * @description Get all drafts
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetAllPoiDraftsOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Create Draft
-         * @description Create a new draft
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CreatePoiDraftOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/pois/drafts/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Draft by ID
-         * @description Get a draft by id
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of draft
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetPoiDraftOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        /**
-         * Delete Draft
-         * @description Delete a draft
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of draft
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        /**
-         * Update Draft by ID
-         * @description Update a draft by id
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of draft
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdatePoiDraftInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/pois/drafts/{id}/media": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Upload Media for a Draft
-         * @description Upload media for a draft
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of draft
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UploadPoiMediaInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/pois/drafts/{id}/media/{index}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Draft Media
-         * @description Delete a draft media by index
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of draft
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description Index of media
-                     * @example 0
-                     */
-                    index: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdatePoiDraftOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/pois/drafts/{id}/publish": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Publish Draft
-         * @description Publish a draft
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of draft
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PublishPoiDraftOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/v2/pois/peek": {
@@ -6537,30 +6052,11 @@ export interface components {
              * @description ID of bookmark
              */
             id: number;
-            poi: components["schemas"]["BookmarkPoi"];
+            poi: components["schemas"]["Poi"];
             /** @description ID of point of interest */
             poiId: string;
             /** @description ID of user */
             userId: string;
-        };
-        BookmarkPoi: {
-            address: components["schemas"]["Address"];
-            /**
-             * Format: int32
-             * @description ID of address of point of interest
-             */
-            addressId: number;
-            category: components["schemas"]["Category"];
-            /**
-             * Format: int32
-             * @description ID of category of point of interest
-             */
-            categoryId: number;
-            firstMedia: components["schemas"]["Media"];
-            /** @description ID of point of interest */
-            id: string;
-            /** @description Name of point of interest */
-            name: string;
         };
         Category: {
             /**
@@ -6612,7 +6108,7 @@ export interface components {
              * @description City ID
              */
             id: number;
-            image: components["schemas"]["CityImage"];
+            image: string;
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
@@ -6635,18 +6131,6 @@ export interface components {
             /** @description Country name */
             name: string;
         };
-        CityImage: {
-            /** @description Image attribution */
-            attribution: string | null;
-            /** @description Image attribution link */
-            attributionLink: string | null;
-            /** @description Image license */
-            license: string | null;
-            /** @description Image license link */
-            licenseLink: string | null;
-            /** @description Image URL */
-            url: string;
-        };
         CityState: {
             /** @description State code */
             code: string;
@@ -6654,7 +6138,10 @@ export interface components {
             name: string;
         };
         Collection: {
-            /** @description Created at time of collection */
+            /**
+             * Format: date-time
+             * @description Created at time of collection
+             */
             createdAt: string;
             /** @description Description of collection */
             description: string;
@@ -6676,7 +6163,7 @@ export interface components {
              * Format: int32
              * @description Index of collection item in the list
              */
-            listIndex: number;
+            index: number;
             poi: components["schemas"]["Poi"];
             /** @description ID of point of interest */
             poiId: string;
@@ -6786,22 +6273,11 @@ export interface components {
              * @description City ID
              */
             id: number;
-            /** @description Image attribution */
-            imageAttribute: string;
-            /** @description Image attribution link */
-            imageAttributionLink: string;
-            /** @description Image license */
-            imageLicense: string;
-            /**
-             * Format: uri
-             * @description Image license link
-             */
-            imageLicenseLink: string;
             /**
              * Format: uri
              * @description Image URL
              */
-            imageUrl: string;
+            image: string;
             /**
              * Format: double
              * @description Latitude
@@ -6834,7 +6310,7 @@ export interface components {
              * @description City ID
              */
             id: number;
-            image: components["schemas"]["CityImage"];
+            image: string;
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
@@ -6875,7 +6351,7 @@ export interface components {
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
         };
-        CreateDiaryEntryInputBody: {
+        CreateDiaryInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -6889,13 +6365,13 @@ export interface components {
             /** @description The title of the diary entry */
             title: string;
         };
-        CreateDiaryEntryOutputBody: {
+        CreateDiaryOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
+            diary: components["schemas"]["Diary"];
         };
         CreateFavoriteInputBody: {
             /**
@@ -6955,13 +6431,13 @@ export interface components {
              * @description Created at time of list item
              */
             createdAt: string;
-            /** @description ID of the list */
-            listId: string;
             /**
              * Format: int32
              * @description Index of the POI in the list
              */
-            listIndex: number;
+            index: number;
+            /** @description ID of the list */
+            listId: string;
             /** @description ID of the POI */
             poiId: string;
         };
@@ -6972,16 +6448,6 @@ export interface components {
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
-        };
-        CreatePoiDraftOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            draft: {
-                [key: string]: unknown;
-            };
         };
         CreateReportInputBody: {
             /**
@@ -7130,7 +6596,7 @@ export interface components {
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
         };
-        DiaryEntry: {
+        Diary: {
             /**
              * Format: date-time
              * @description The created at time of the diary entry
@@ -7143,11 +6609,11 @@ export interface components {
             date: string;
             /** @description The description of the diary entry */
             description: string;
-            friends: components["schemas"]["Profile"][];
+            friends: components["schemas"]["DiaryUser"][];
             /** @description The ID of the diary entry */
             id: string;
+            images: components["schemas"]["DiaryImage"][];
             locations: components["schemas"]["DiaryLocation"][];
-            media: components["schemas"]["DiaryMedia"][];
             /** @description Whether the diary entry is shared with friends or not */
             shareWithFriends: boolean;
             /** @description The title of the diary entry */
@@ -7157,32 +6623,18 @@ export interface components {
              * @description The updated at time of the diary entry
              */
             updatedAt: string;
-            user: components["schemas"]["Profile"];
+            user: components["schemas"]["DiaryUser"];
             /** @description The ID of the user */
             userId: string;
         };
-        DiaryLocation: {
-            /** @description The description of the location */
-            description: string | null;
-            /**
-             * Format: int32
-             * @description The list index of the location
-             */
-            listIndex: number;
-            poi: components["schemas"]["Poi"];
-        };
-        DiaryMedia: {
-            /** @description The alt text of the media */
-            alt: string;
-            /** @description The caption of the media */
-            caption: string | null;
+        DiaryImage: {
             /**
              * Format: date-time
              * @description The created at time of the media
              */
             createdAt: string;
             /** @description The ID of the diary entry */
-            diaryEntryId: string;
+            diaryId: string;
             /**
              * Format: int64
              * @description The ID of the media
@@ -7192,9 +6644,31 @@ export interface components {
              * Format: int32
              * @description The media order of the media
              */
-            mediaOrder: number;
+            index: number;
             /** @description The URL of the media */
             url: string;
+        };
+        DiaryLocation: {
+            /** @description The description of the location */
+            description: string | null;
+            /**
+             * Format: int32
+             * @description The list index of the location
+             */
+            index: number;
+            poi: components["schemas"]["Poi"];
+            /** @description Point of Interest ID */
+            poiId: string;
+        };
+        DiaryUser: {
+            /** @description User full name */
+            fullName: string;
+            /** @description User ID */
+            id: string;
+            /** @description Profile image URL of the user */
+            profileImage: string | null;
+            /** @description Username */
+            username: string;
         };
         ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
@@ -7244,30 +6718,11 @@ export interface components {
              * @description ID of favorite
              */
             id: number;
-            poi: components["schemas"]["FavoritePoi"];
+            poi: components["schemas"]["Poi"];
             /** @description ID of point of interest */
             poiId: string;
             /** @description ID of user */
             userId: string;
-        };
-        FavoritePoi: {
-            address: components["schemas"]["Address"];
-            /**
-             * Format: int32
-             * @description ID of address of point of interest
-             */
-            addressId: number;
-            category: components["schemas"]["Category"];
-            /**
-             * Format: int32
-             * @description ID of category of point of interest
-             */
-            categoryId: number;
-            firstMedia: components["schemas"]["Media"];
-            /** @description ID of point of interest */
-            id: string;
-            /** @description Name of point of interest */
-            name: string;
         };
         FollowUserOutputBody: {
             /**
@@ -7302,16 +6757,6 @@ export interface components {
             readonly $schema?: string;
             collections: components["schemas"]["Collection"][];
         };
-        GetAllPoiDraftsOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            drafts: {
-                [key: string]: unknown;
-            }[];
-        };
         GetAllTripsOutputBody: {
             /**
              * Format: uri
@@ -7336,7 +6781,7 @@ export interface components {
              * @description City ID
              */
             id: number;
-            image: components["schemas"]["CityImage"];
+            image: string;
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
@@ -7374,22 +6819,22 @@ export interface components {
             collections: components["schemas"]["Collection"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
-        GetDiaryEntriesOutputBody: {
+        GetDiariesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entries: components["schemas"]["DiaryEntry"][];
+            diaries: components["schemas"]["Diary"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
-        GetDiaryEntryByIdOutputBody: {
+        GetDiaryByIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
+            diary: components["schemas"]["Diary"];
         };
         GetListByIdOutputBody: {
             /**
@@ -7442,29 +6887,12 @@ export interface components {
             googleId: string | null;
             /** @description ID of the user */
             id: string;
-            /** @description Is the user active */
-            isActive: boolean;
-            /** @description Is the user a business account */
-            isBusinessAccount: boolean;
-            /** @description Is the email verified */
-            isEmailVerified: boolean;
-            /** @description Is the onboarding completed */
-            isOnboardingCompleted: boolean;
             /** @description Is the user verified */
             isVerified: boolean;
-            /**
-             * Format: date-time
-             * @description Last login date of the user
-             */
-            lastLogin: string;
-            /** @description Phone number of the user */
-            phone: string | null;
             /** @description Profile image of the user */
             profileImage: string | null;
             /** @description Pronouns of the user */
             pronouns: string | null;
-            /** @description Role of the user */
-            role: string;
             /**
              * Format: date-time
              * @description Last update date of the user
@@ -7495,16 +6923,6 @@ export interface components {
             readonly $schema?: string;
             meta: components["schemas"]["GetPoiByIdMeta"];
             poi: components["schemas"]["Poi"];
-        };
-        GetPoiDraftOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            draft: {
-                [key: string]: unknown;
-            };
         };
         GetPublicListsOfUserOutputBody: {
             /**
@@ -7728,22 +7146,11 @@ export interface components {
         ListItem: {
             /** Format: date-time */
             createdAt: string;
+            /** Format: int32 */
+            index: number;
             listId: string;
-            /** Format: int32 */
-            listIndex: number;
-            poi: components["schemas"]["ListItemPoi"];
+            poi: components["schemas"]["Poi"];
             poiId: string;
-        };
-        ListItemPoi: {
-            address: components["schemas"]["Address"];
-            /** Format: int32 */
-            addressId: number;
-            category: components["schemas"]["Category"];
-            /** Format: int32 */
-            categoryId: number;
-            firstMedia: components["schemas"]["Media"];
-            id: string;
-            name: string;
         };
         ListStatus: {
             /** @description ID of the list */
@@ -7797,25 +7204,11 @@ export interface components {
         Media: {
             /** @description Alt of media of point of interest */
             alt: string;
-            /** @description Caption of media of point of interest */
-            caption: string | null;
             /**
              * Format: date-time
              * @description Created at time of media of point of interest
              */
             createdAt: string;
-            /** @description Extension of media of point of interest */
-            extension: string;
-            /**
-             * Format: int64
-             * @description File size of media of point of interest
-             */
-            fileSize: number;
-            /**
-             * Format: int32
-             * @description Height of media of point of interest
-             */
-            height: number;
             /**
              * Format: int64
              * @description ID of media of point of interest
@@ -7825,31 +7218,16 @@ export interface components {
              * Format: int32
              * @description Media order of media of point of interest
              */
-            mediaOrder: number;
-            /** @description Mime type of media of point of interest */
-            mimeType: string;
+            index: number;
             /** @description ID of point of interest */
             poiId: string;
-            /** @description Thumbnail of media of point of interest */
-            thumbnail: string;
             /** @description URL of media of point of interest */
             url: string;
-            /**
-             * Format: int32
-             * @description Width of media of point of interest
-             */
-            width: number;
         };
         NewOrderItem: {
             /** Format: int32 */
             listIndex: number;
             poiId: string;
-        };
-        OpenHours: {
-            /** @description Closing time of POI in 24H format */
-            closesAt: string;
-            /** @description Opening time of POI in 24H format */
-            opensAt: string;
         };
         PaginationInfo: {
             /** @description Has next page */
@@ -7911,14 +7289,12 @@ export interface components {
             createdAt: string;
             /** @description Description of point of interest */
             description: string;
+            hours: string;
             /** @description ID of point of interest */
             id: string;
             media: components["schemas"]["Media"][];
             /** @description Name of point of interest */
             name: string;
-            openTimes: {
-                [key: string]: components["schemas"]["OpenHours"];
-            };
             /** @description Phone number of point of interest */
             phone: string | null;
             /**
@@ -8004,15 +7380,6 @@ export interface components {
             username: string;
             /** @description Website of user */
             website: string | null;
-        };
-        PublishPoiDraftOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description ID of draft */
-            id: string;
         };
         RegisterInputBody: {
             /**
@@ -8117,8 +7484,8 @@ export interface components {
             createdAt: string;
             /** @description ID of review */
             id: string;
-            media: components["schemas"]["ReviewMedia"][];
-            poi: components["schemas"]["ReviewPoi"];
+            images: components["schemas"]["ReviewImage"][];
+            poi: components["schemas"]["Poi"];
             /** @description ID of point of interest */
             poiId: string;
             /**
@@ -8135,7 +7502,7 @@ export interface components {
             /** @description ID of user */
             userId: string;
         };
-        ReviewMedia: {
+        ReviewImage: {
             /**
              * Format: int64
              * @description ID of media of review
@@ -8145,17 +7512,11 @@ export interface components {
              * Format: int32
              * @description Media order of media of review
              */
-            mediaOrder: number;
+            index: number;
             /** @description ID of review */
             reviewId: string;
             /** @description URL of media of review */
             url: string;
-        };
-        ReviewPoi: {
-            /** @description ID of point of interest */
-            id: string;
-            /** @description Name of point of interest */
-            name: string;
         };
         SearchReportsOutputBody: {
             /**
@@ -8175,18 +7536,6 @@ export interface components {
             friends: components["schemas"]["Profile"][];
         };
         SendForgotPasswordEmailInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /**
-             * Format: email
-             * @description Email of the user
-             */
-            email: string;
-        };
-        SendVerificationEmailInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -8267,8 +7616,6 @@ export interface components {
              */
             sentAt: string;
             to: components["schemas"]["TripUser"];
-            /** @description Description of the trip */
-            tripDescription: string;
             /** @description Trip ID */
             tripId: string;
             /** @description Title of the trip */
@@ -8309,8 +7656,6 @@ export interface components {
              */
             startAt: string;
             to: components["schemas"]["TripUser"];
-            /** @description Description of the trip */
-            tripDescription: string;
             /** @description Trip ID */
             tripId: string;
             /** @description Title of the trip */
@@ -8412,22 +7757,11 @@ export interface components {
             countryName: string;
             /** @description City description */
             description: string;
-            /** @description Image attribution */
-            imageAttribute: string;
-            /** @description Image attribution link */
-            imageAttributionLink: string;
-            /** @description Image license */
-            imageLicense: string;
-            /**
-             * Format: uri
-             * @description Image license link
-             */
-            imageLicenseLink: string;
             /**
              * Format: uri
              * @description Image URL
              */
-            imageUrl: string;
+            image: string;
             /**
              * Format: double
              * @description Latitude
@@ -8460,7 +7794,7 @@ export interface components {
              * @description City ID
              */
             id: number;
-            image: components["schemas"]["CityImage"];
+            image: string;
             /** @description City name */
             name: string;
             state: components["schemas"]["CityState"];
@@ -8500,7 +7834,7 @@ export interface components {
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
         };
-        UpdateDiaryEntryFriendsInputBody: {
+        UpdateDiaryFriendsInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -8509,15 +7843,32 @@ export interface components {
             /** @description IDs of the friends */
             friends: string[];
         };
-        UpdateDiaryEntryFriendsOutputBody: {
+        UpdateDiaryFriendsOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
+            diary: components["schemas"]["Diary"];
         };
-        UpdateDiaryEntryInputBody: {
+        UpdateDiaryImageInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description IDs of the images */
+            ids: number[];
+        };
+        UpdateDiaryImageOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            diary: components["schemas"]["Diary"];
+        };
+        UpdateDiaryInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -8535,53 +7886,36 @@ export interface components {
             /** @description The title of the diary entry */
             title: string;
         };
-        UpdateDiaryEntryLocationItem: {
+        UpdateDiaryLocationItem: {
             /** @description Description of the location */
             description?: string | null;
             /** @description ID of the point of interest */
             poiId: string;
         };
-        UpdateDiaryEntryLocationsInputBody: {
+        UpdateDiaryLocationsInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
             /** @description IDs of the locations */
-            locations: components["schemas"]["UpdateDiaryEntryLocationItem"][];
+            locations: components["schemas"]["UpdateDiaryLocationItem"][];
         };
-        UpdateDiaryEntryLocationsOutputBody: {
+        UpdateDiaryLocationsOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
+            diary: components["schemas"]["Diary"];
         };
-        UpdateDiaryEntryOutputBody: {
+        UpdateDiaryOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
-        };
-        UpdateDiaryMediaInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description IDs of the media */
-            ids: number[];
-        };
-        UpdateDiaryMediaOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
+            diary: components["schemas"]["Diary"];
         };
         UpdateListInputBody: {
             /**
@@ -8668,26 +8002,6 @@ export interface components {
              */
             readonly $schema?: string;
             poi: components["schemas"]["Poi"];
-        };
-        UpdatePoiDraftInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            values: {
-                [key: string]: unknown;
-            };
-        };
-        UpdatePoiDraftOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            draft: {
-                [key: string]: unknown;
-            };
         };
         UpdatePoiHoursHour: {
             /** @description Closes at */
@@ -8934,7 +8248,7 @@ export interface components {
             readonly $schema?: string;
             pois: components["schemas"]["Poi"][];
         };
-        UploadDiaryMediaInputBody: {
+        UploadDiaryImageInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -8950,33 +8264,13 @@ export interface components {
              */
             size: number;
         };
-        UploadDiaryMediaOutputBody: {
+        UploadDiaryImageOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
              */
             readonly $schema?: string;
-            entry: components["schemas"]["DiaryEntry"];
-        };
-        UploadPoiMediaInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Alt of media of point of interest */
-            alt: string;
-            /** @description Caption of media of point of interest */
-            caption: string;
-            /** @description File name of image */
-            fileName: string;
-            /** @description ID of image */
-            id: string;
-            /**
-             * Format: int32
-             * @description Size of media of point of interest
-             */
-            size: number;
+            diary: components["schemas"]["Diary"];
         };
         UploadReviewMediaInputBody: {
             /**
