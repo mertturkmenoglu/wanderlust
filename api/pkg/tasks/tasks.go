@@ -4,14 +4,18 @@ import (
 	"encoding/json"
 	"log"
 	"wanderlust/pkg/cfg"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/logs"
 	"wanderlust/pkg/mail"
 	"wanderlust/pkg/upload"
 
 	"github.com/hibiken/asynq"
+	"github.com/pterm/pterm"
 )
 
 type TasksService struct {
 	client    *asynq.Client
+	scheduler *asynq.Scheduler
 	mailSvc   *mail.MailService
 	uploadSvc *upload.UploadService
 	db        *db.Db
@@ -19,11 +23,14 @@ type TasksService struct {
 	logger    *pterm.Logger
 }
 
-func New(mailSvc *mail.MailService, upload *upload.UploadService) *TasksService {
+func New(mailSvc *mail.MailService, upload *upload.UploadService, db *db.Db) *TasksService {
 	return &TasksService{
 		client: asynq.NewClient(asynq.RedisClientOpt{
 			Addr: cfg.Env.RedisAddr,
 		}),
+		scheduler: asynq.NewScheduler(asynq.RedisClientOpt{
+			Addr: cfg.Env.RedisAddr,
+		}, nil),
 		mailSvc:   mailSvc,
 		uploadSvc: upload,
 		addr:      cfg.Env.RedisAddr,
@@ -62,6 +69,12 @@ func (t *TasksService) Run() {
 	}
 }
 
+func (t *TasksService) RunScheduler() {
+	if err := t.scheduler.Run(); err != nil {
+		log.Fatalf("could not run asynq scheduler: %v", err)
+	}
+}
+
 func (t *TasksService) Close() {
 	log.Println("Closing asynq client")
 	err := t.client.Close()
@@ -69,6 +82,8 @@ func (t *TasksService) Close() {
 	if err != nil {
 		log.Fatalf("could not close asynq client: %v", err)
 	}
+
+	t.scheduler.Shutdown()
 }
 
 type Job struct {
@@ -86,6 +101,10 @@ func (t *TasksService) CreateAndEnqueue(job Job, opts ...asynq.Option) (*asynq.T
 	newTask := asynq.NewTask(job.Type, serialized)
 
 	return t.client.Enqueue(newTask, opts...)
+}
+
+func (t *TasksService) Schedule(cronspec string, task *asynq.Task, opts ...asynq.Option) (string, error) {
+	return t.scheduler.Register(cronspec, task, opts...)
 }
 
 func parse[T any](serialized []byte) (*T, error) {
