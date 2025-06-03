@@ -1,22 +1,22 @@
+# List all available commands
 default:
 	just --list
 
-all: build
+# Allow scripts to be executed
+@allow-scripts:
+	chmod u+x scripts/*.sh
 
+# Build the project
 @build:
-	echo "=> Building..."
 	go build -o main ./main.go
-	echo "=> Build completed"
 
 # Setup the project
-@setup:
-	chmod u+x ./scripts/setup.sh && ./scripts/setup.sh
+@setup: allow-scripts
+	./scripts/setup.sh
 
 # Clean the binary
 @clean:
-	echo "=> Removing binary..."
 	rm -f main
-	echo "=> Removed binary"
 
 # Live reload
 @watch:
@@ -27,7 +27,7 @@ all: build
 	docker compose up -d
 
 # Run fake data generation script
-@fake:
+@fake: allow-scripts
 	go run . fake
 
 # Synchronize search index with the primary database
@@ -38,30 +38,21 @@ all: build
 @sqlc:
 	sqlc generate -f ./conf/sqlc.yaml
 
-# Create example .env file
-@env-example:
-	chmod u+x ./scripts/infisical.sh && ./scripts/infisical.sh env-example
-
-# Pull secrets from Infisical and export secrets to .env file
-@env-pull:
-	chmod u+x ./scripts/infisical.sh && ./scripts/infisical.sh env-pull
-
-# Push secrets from .env file to Infisical
-@env-push:
-	chmod u+x ./scripts/infisical.sh && ./scripts/infisical.sh env-push
+# Run Infisical script with given action (example, pull, push)
+@env action: allow-scripts
+	./scripts/infisical.sh {{action}}
 
 # Fake data generation database id selection helper
 @fake-id:
-	chmod u+x ./scripts/fake-id.sh && ./scripts/fake-id.sh
+	./scripts/fake-id.sh
 
-@test-e2e-run:
+@e2e-run:
 	cd tests && go test -v
 
-@test-e2e-setup:
+@e2e-setup:
 	docker compose -f ./docker-compose.test.yml --env-file .env.test up -d
 	goose up -env=.env.test
 	air -c conf/.air.toml -- --env-file=.env.test
 
-@test-e2e-teardown:
+@e2e-teardown:
 	docker compose down
-	
