@@ -49,7 +49,7 @@ export function Information({ className }: Props) {
         {poi.website && ok && (
           <>
             <div className="font-medium">Website</div>
-            <div className="text-right">
+            <div className="text-right break-all">
               <a
                 href={poi.website}
                 target="_blank"
@@ -57,7 +57,7 @@ export function Information({ className }: Props) {
                 className="text-primary hover:underline inline-flex items-center gap-1"
               >
                 <span>{host}</span>
-                <ExternalLinkIcon className="size-3" />
+                <ExternalLinkIcon className="size-3 min-h-3 min-w-3" />
               </a>
             </div>
           </>
