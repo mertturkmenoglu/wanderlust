@@ -206,6 +206,87 @@ func (s *Service) logout(ctx context.Context) (*dto.LogoutOutput, error) {
 	}, nil
 }
 
+func (s *Service) refresh(ctx context.Context, cookieRefreshToken string) (*dto.RefreshOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	// Try to decode refresh token
+	// Also check its integrity and validity
+	refreshTokenData, err := tokens.DecodeRefreshToken(cookieRefreshToken)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error401Unauthorized("Invalid refresh token")
+	}
+
+	// Check Redis cache for the refrest token
+	// If it's not there, it means the token is invalid or expired.
+	_, err = s.Application.Cache.Get(ctx, "refresh:"+refreshTokenData.ID).Result()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error401Unauthorized("Invalid refresh token")
+	}
+
+	userId := refreshTokenData.UserID
+	user, err := s.find(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get user by id")
+	}
+
+	authTokens, err := tokens.CreateAuthTokens(tokens.UserInformation{
+		ID:       user.ID,
+		Username: user.Username,
+		Role:     refreshTokenData.Role,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create JWT")
+	}
+
+	// Delete previous refresh token from cache
+	err = s.Application.Cache.Del(ctx, "refresh:"+refreshTokenData.ID).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete refresh token from cache")
+	}
+
+	// Set new refresh token in cache
+	err = s.Application.Cache.Set(ctx, "refresh:"+authTokens.RefreshTokenJTI, authTokens.RefreshToken, tokens.RefreshTokenExpiration).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set refresh token in cache")
+	}
+
+	return &dto.RefreshOutput{
+		SetCookie: []http.Cookie{
+			{
+				Name:     tokens.AccessTokenCookieName,
+				Value:    authTokens.AccessToken,
+				MaxAge:   tokens.AccessTokenMaxAge,
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   cfg.Env.Env != "dev",
+				SameSite: http.SameSiteLaxMode,
+			},
+			{
+				Name:     tokens.RefreshTokenCookieName,
+				Value:    authTokens.RefreshToken,
+				MaxAge:   tokens.RefreshTokenMaxAge,
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   cfg.Env.Env != "dev",
+				SameSite: http.SameSiteLaxMode,
+			},
+		},
+	}, nil
+}
+
 func (s *Service) register(ctx context.Context, body dto.RegisterInputBody) (*dto.RegisterOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
