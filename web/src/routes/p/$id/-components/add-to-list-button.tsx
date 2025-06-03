@@ -58,6 +58,7 @@ export default function AddToListButton() {
     onSuccess: async () => {
       await invalidator.invalidate();
       toast.success('Added to the list');
+      setOpen(false);
     },
   });
 
