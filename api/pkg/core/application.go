@@ -35,17 +35,18 @@ func NewApp() *Application {
 	cacheSvc := cache.New()
 	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
 	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+	database := db.NewDb()
 
 	return &Application{
 		Activities: activities.New(cacheSvc),
-		Db:         db.NewDb(),
+		Db:         database,
 		Flake:      flake,
 		Cache:      cacheSvc,
 		ID:         id.NewGenerator(flake),
 		Mail:       mailSvc,
 		Log:        logger,
 		PLog:       logs.NewPTermLogger(),
-		Tasks:      tasks.New(mailSvc, uploadSvc),
+		Tasks:      tasks.New(mailSvc, uploadSvc, database),
 		Upload:     uploadSvc,
 	}
 }
