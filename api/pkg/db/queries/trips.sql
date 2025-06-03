@@ -162,6 +162,9 @@ INSERT INTO trip_invites (
 -- name: DeleteInvite :exec
 DELETE FROM trip_invites WHERE id = $1;
 
+-- name: FindExpiredTripInvites :many
+SELECT id FROM trip_invites WHERE expires_at < now();
+
 -- name: AddParticipantToTrip :one
 INSERT INTO trip_participants (
   id,

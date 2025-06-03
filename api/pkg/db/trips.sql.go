@@ -362,6 +362,30 @@ func (q *Queries) DeleteTripLocation(ctx context.Context, id string) (pgconn.Com
 	return q.db.Exec(ctx, deleteTripLocation, id)
 }
 
+const findExpiredTripInvites = `-- name: FindExpiredTripInvites :many
+SELECT id FROM trip_invites WHERE expires_at < now()
+`
+
+func (q *Queries) FindExpiredTripInvites(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, findExpiredTripInvites)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAllTripsIds = `-- name: GetAllTripsIds :many
 SELECT DISTINCT trips.id, trips.created_at
 FROM trips
