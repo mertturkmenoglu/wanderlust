@@ -102,6 +102,29 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
+			Path:          "/auth/refresh",
+			Summary:       "Refresh Tokens",
+			Description:   "Refresh the tokens of the user",
+			DefaultStatus: http.StatusNoContent,
+		},
+		func(ctx context.Context, input *dto.RefreshInput) (*dto.RefreshOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.refresh(ctx, input.CookieRefreshToken)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
 			Path:          "/auth/credentials/register",
 			Summary:       "Register with Credentials",
 			Description:   "Register with email and password",
