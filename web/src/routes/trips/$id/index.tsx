@@ -21,6 +21,7 @@ import {
   formatDate,
   isWithinInterval,
 } from 'date-fns';
+import { useMemo } from 'react';
 import { InfoCard } from './-info-card';
 import { UpsertLocationDialog } from './-upsert-location-dialog';
 
@@ -51,6 +52,18 @@ function RouteComponent() {
       ),
     };
   });
+
+  const defaultOpenDays = useMemo(() => {
+    const indices: number[] = [];
+
+    for (let i = 0; i < days.length; i++) {
+      if (days[i]!.locations.length > 0) {
+        indices.push(i);
+      }
+    }
+
+    return indices.map((i) => `day-${i}`);
+  }, [days]);
 
   return (
     <div className="mt-4">
@@ -86,9 +99,7 @@ function RouteComponent() {
 
         <Accordion
           type="multiple"
-          defaultValue={days
-            .filter((d) => d.locations.length > 0)
-            .map((_, i) => `day-${i}`)}
+          defaultValue={defaultOpenDays}
         >
           {days.map(({ day, locations }, i) => (
             <AccordionItem
