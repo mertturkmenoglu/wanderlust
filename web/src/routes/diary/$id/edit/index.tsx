@@ -1,4 +1,5 @@
 import InputInfo from '@/components/kit/input-info';
+import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -71,16 +72,12 @@ function RouteComponent() {
 
   const isPublic = form.watch('shareWithFriends');
 
-  const updateDiaryEntryMutation = api.useMutation(
-    'patch',
-    '/api/v2/diary/{id}',
-    {
-      onSuccess: async () => {
-        await invalidator.invalidate();
-        toast.success('Diary entry updated successfully.');
-      },
+  const updateDiaryMutation = api.useMutation('patch', '/api/v2/diary/{id}', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      toast.success('Diary updated successfully.');
     },
-  );
+  });
 
   const deleteDiaryMutation = api.useMutation('delete', '/api/v2/diary/{id}', {
     onSuccess: async () => {
@@ -127,7 +124,7 @@ function RouteComponent() {
         <form
           className="w-full md:max-w-2xl"
           onSubmit={form.handleSubmit((data) => {
-            updateDiaryEntryMutation.mutate({
+            updateDiaryMutation.mutate({
               params: {
                 path: {
                   id: diary.id,
@@ -165,7 +162,7 @@ function RouteComponent() {
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Describe your trip"
+                    placeholder="Write like you're talking to a friend"
                     autoComplete="off"
                     {...field}
                   />
@@ -212,9 +209,9 @@ function RouteComponent() {
                 </div>
                 <FormDescription>
                   {isPublic ? (
-                    <InputInfo text="Friends can see this diary entry." />
+                    <InputInfo text="Friends can see this diary." />
                   ) : (
-                    <InputInfo text="Only you can see this diary entry. Any user added to this entry will be removed." />
+                    <InputInfo text="Only you can see this diary. Any user added to this entry will be removed." />
                   )}
                 </FormDescription>
                 <FormMessage />
@@ -225,9 +222,13 @@ function RouteComponent() {
           <Button
             type="submit"
             className="mt-4"
-            disabled={!form.formState.isDirty}
+            disabled={updateDiaryMutation.isPending}
           >
-            Update
+            {updateDiaryMutation.isPending ? (
+              <Spinner className="mr-2" />
+            ) : (
+              'Update'
+            )}
           </Button>
         </form>
       </Form>
