@@ -14,7 +14,9 @@ type TasksService struct {
 	client    *asynq.Client
 	mailSvc   *mail.MailService
 	uploadSvc *upload.UploadService
+	db        *db.Db
 	addr      string
+	logger    *pterm.Logger
 }
 
 func New(mailSvc *mail.MailService, upload *upload.UploadService) *TasksService {
@@ -25,6 +27,8 @@ func New(mailSvc *mail.MailService, upload *upload.UploadService) *TasksService 
 		mailSvc:   mailSvc,
 		uploadSvc: upload,
 		addr:      cfg.Env.RedisAddr,
+		db:        db,
+		logger:    logs.NewPTermLogger(),
 	}
 }
 
