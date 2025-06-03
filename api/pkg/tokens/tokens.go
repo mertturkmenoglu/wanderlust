@@ -6,6 +6,7 @@ import (
 	"wanderlust/pkg/cfg"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type UserInformation struct {
@@ -20,25 +21,32 @@ var (
 )
 
 type AccessTokenData struct {
-	ID       string `json:"id"`
+	UserID   string `json:"id"`
 	Username string `json:"username"`
 	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 type RefreshTokenData struct {
-	ID       string `json:"id"`
+	UserID   string `json:"id"`
 	Username string `json:"username"`
 	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
+type AuthTokens struct {
+	AccessToken     string
+	AccessTokenJTI  string
+	RefreshToken    string
+	RefreshTokenJTI string
+}
+
 // Returns access and refresh tokens or error
-func CreateAuthTokens(payload UserInformation) (string, string, error) {
+func CreateAuthTokens(payload UserInformation) (*AuthTokens, error) {
 	now := time.Now()
 
 	accessTokenData := AccessTokenData{
-		ID:       payload.ID,
+		UserID:   payload.ID,
 		Username: payload.Username,
 		Role:     payload.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -47,11 +55,12 @@ func CreateAuthTokens(payload UserInformation) (string, string, error) {
 			NotBefore: jwt.NewNumericDate(now),
 			Issuer:    "wanderlust",
 			Subject:   payload.ID,
+			ID:        uuid.NewString(),
 		},
 	}
 
 	refreshTokenData := RefreshTokenData{
-		ID:       payload.ID,
+		UserID:   payload.ID,
 		Username: payload.Username,
 		Role:     payload.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -60,6 +69,7 @@ func CreateAuthTokens(payload UserInformation) (string, string, error) {
 			NotBefore: jwt.NewNumericDate(now),
 			Issuer:    "wanderlust",
 			Subject:   payload.ID,
+			ID:        uuid.NewString(),
 		},
 	}
 
@@ -68,7 +78,7 @@ func CreateAuthTokens(payload UserInformation) (string, string, error) {
 		SignedString([]byte(cfg.Env.AccessTokenSecret))
 
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 
 	refreshToken, err := jwt.
@@ -76,37 +86,42 @@ func CreateAuthTokens(payload UserInformation) (string, string, error) {
 		SignedString([]byte(cfg.Env.RefreshTokenSecret))
 
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 
-	return accessToken, refreshToken, nil
+	return &AuthTokens{
+		AccessToken:     accessToken,
+		AccessTokenJTI:  accessTokenData.ID,
+		RefreshToken:    refreshToken,
+		RefreshTokenJTI: refreshTokenData.ID,
+	}, nil
 }
 
 func CheckTokens(accessToken string, refreshToken string) (*UserInformation, error) {
-	accessClaims, err := decodeAccessToken(accessToken)
+	accessClaims, err := DecodeAccessToken(accessToken)
 
 	if err == nil {
 		return &UserInformation{
-			ID:       accessClaims.ID,
+			ID:       accessClaims.UserID,
 			Username: accessClaims.Username,
 			Role:     accessClaims.Role,
 		}, nil
 	}
 
-	refreshClaims, err := decodeRefreshToken(refreshToken)
+	refreshClaims, err := DecodeRefreshToken(refreshToken)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return &UserInformation{
-		ID:       refreshClaims.ID,
+		ID:       refreshClaims.UserID,
 		Username: refreshClaims.Username,
 		Role:     refreshClaims.Role,
 	}, nil
 }
 
-func decodeAccessToken(s string) (*AccessTokenData, error) {
+func DecodeAccessToken(s string) (*AccessTokenData, error) {
 	token, err := jwt.ParseWithClaims(s, &AccessTokenData{}, func(token *jwt.Token) (any, error) {
 		return []byte(cfg.Env.AccessTokenSecret), nil
 	})
@@ -129,14 +144,14 @@ func decodeAccessToken(s string) (*AccessTokenData, error) {
 		return nil, ErrorInvalidToken
 	}
 
-	if claims.Subject != claims.ID {
+	if claims.Subject != claims.UserID {
 		return nil, ErrorInvalidToken
 	}
 
 	return claims, nil
 }
 
-func decodeRefreshToken(s string) (*RefreshTokenData, error) {
+func DecodeRefreshToken(s string) (*RefreshTokenData, error) {
 	token, err := jwt.ParseWithClaims(s, &RefreshTokenData{}, func(token *jwt.Token) (any, error) {
 		return []byte(cfg.Env.RefreshTokenSecret), nil
 	})
@@ -159,7 +174,7 @@ func decodeRefreshToken(s string) (*RefreshTokenData, error) {
 		return nil, ErrorInvalidToken
 	}
 
-	if claims.Subject != claims.ID {
+	if claims.Subject != claims.UserID {
 		return nil, ErrorInvalidToken
 	}
 
