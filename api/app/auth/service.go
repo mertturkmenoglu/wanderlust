@@ -146,7 +146,7 @@ func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.Logi
 		return nil, err
 	}
 
-	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
+	authTokens, err := tokens.CreateAuthTokens(tokens.UserInformation{
 		ID:       user.ID,
 		Username: user.Username,
 		Role:     role,
@@ -157,12 +157,19 @@ func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.Logi
 		return nil, huma.Error500InternalServerError("Failed to create JWT")
 	}
 
+	err = s.Application.Cache.Set(ctx, "refresh:"+authTokens.RefreshTokenJTI, authTokens.RefreshToken, tokens.RefreshTokenExpiration).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set refresh token in cache")
+	}
+
 	return &dto.LoginOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:     tokens.AccessTokenCookieName,
-				Value:    accessToken,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Value:    authTokens.AccessToken,
+				MaxAge:   tokens.AccessTokenMaxAge,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   cfg.Env.Env != "dev",
@@ -170,8 +177,8 @@ func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.Logi
 			},
 			{
 				Name:     tokens.RefreshTokenCookieName,
-				Value:    refreshToken,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Value:    authTokens.RefreshToken,
+				MaxAge:   tokens.RefreshTokenMaxAge,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   cfg.Env.Env != "dev",
@@ -536,7 +543,7 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 		return nil, err
 	}
 
-	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
+	authTokens, err := tokens.CreateAuthTokens(tokens.UserInformation{
 		ID:       user.ID,
 		Username: user.Username,
 		Role:     role,
@@ -545,6 +552,13 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 	if err != nil {
 		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to create JWT")
+	}
+
+	err = s.Application.Cache.Set(ctx, "refresh:"+authTokens.RefreshTokenJTI, authTokens.RefreshToken, tokens.RefreshTokenExpiration).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set refresh token in cache")
 	}
 
 	return &dto.OAuthCallbackOutput{
@@ -558,8 +572,8 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 			},
 			{
 				Name:     tokens.AccessTokenCookieName,
-				Value:    accessToken,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Value:    authTokens.AccessToken,
+				MaxAge:   tokens.AccessTokenMaxAge,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   cfg.Env.Env != "dev",
@@ -567,8 +581,8 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 			},
 			{
 				Name:     tokens.RefreshTokenCookieName,
-				Value:    refreshToken,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Value:    authTokens.RefreshToken,
+				MaxAge:   tokens.RefreshTokenMaxAge,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   cfg.Env.Env != "dev",
@@ -723,7 +737,6 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 	defer sp.End()
 
 	if body.NewPassword != body.ConfirmPassword {
-
 		err := huma.Error422UnprocessableEntity("Passwords do not match")
 		sp.RecordError(err)
 		return nil, err
@@ -775,7 +788,7 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 		return nil, err
 	}
 
-	accessToken, refreshToken, err := tokens.CreateAuthTokens(tokens.UserInformation{
+	authTokens, err := tokens.CreateAuthTokens(tokens.UserInformation{
 		ID:       user.ID,
 		Username: user.Username,
 		Role:     role,
@@ -786,12 +799,19 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 		return nil, huma.Error500InternalServerError("Failed to create JWT")
 	}
 
+	err = s.Application.Cache.Set(ctx, "refresh:"+authTokens.RefreshTokenJTI, authTokens.RefreshToken, tokens.RefreshTokenExpiration).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to set refresh token in cache")
+	}
+
 	return &dto.ChangePasswordOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:     tokens.AccessTokenCookieName,
-				Value:    accessToken,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Value:    authTokens.AccessToken,
+				MaxAge:   tokens.AccessTokenMaxAge,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   cfg.Env.Env != "dev",
@@ -799,8 +819,8 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 			},
 			{
 				Name:     tokens.RefreshTokenCookieName,
-				Value:    refreshToken,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
+				Value:    authTokens.RefreshToken,
+				MaxAge:   tokens.RefreshTokenMaxAge,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   cfg.Env.Env != "dev",
