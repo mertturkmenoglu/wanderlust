@@ -37,6 +37,13 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 		defer sp.End()
 
 		accessToken, refreshToken := extractFromCookie(huma.ReadCookies(ctx))
+
+		if accessToken == "" {
+			sp.RecordError(huma.Error401Unauthorized("Unauthorized"))
+			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
+			return
+		}
+
 		userInformation, err := tokens.CheckTokens(accessToken, refreshToken)
 
 		if err != nil {
@@ -71,6 +78,15 @@ func WithAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 		defer sp.End()
 
 		accessToken, refreshToken := extractFromCookie(huma.ReadCookies(ctx))
+
+		if accessToken == "" {
+			ctx = huma.WithValue(ctx, "userId", "")
+			ctx = huma.WithValue(ctx, "username", "")
+			ctx = huma.WithValue(ctx, "role", "")
+			next(ctx)
+			return
+		}
+
 		userInformation, err := tokens.CheckTokens(accessToken, refreshToken)
 
 		if err != nil {
