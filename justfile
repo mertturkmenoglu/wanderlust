@@ -3,11 +3,7 @@ default:
 
 # Live reload
 @watch:
-  if command -v concurrently > /dev/null; then \
-    concurrently --names api,web,ipx -c yellow,red,blue "just api/watch" "just web/watch" "just wiop/watch"; \
-  else \
-    echo "Concurrently is not installed. Run 'pnpm add -g concurrently' to install Concurrently"; \
-  fi
+  concurrently --names api,web,ipx -c yellow,red,blue "just api/watch" "just web/watch" "just wiop/watch"; \
 
 # Setup the project
 @setup:
