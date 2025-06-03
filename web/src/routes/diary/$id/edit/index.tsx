@@ -16,8 +16,13 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { lengthTracker } from '@/lib/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFileRoute, getRouteApi } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  getRouteApi,
+  useNavigate,
+} from '@tanstack/react-router';
 import { formatDate, isFuture } from 'date-fns';
+import { Trash2Icon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -52,6 +57,7 @@ function RouteComponent() {
   const route = getRouteApi('/diary/$id/edit');
   const { diary } = route.useLoaderData();
   const invalidator = useInvalidator();
+  const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -76,14 +82,46 @@ function RouteComponent() {
     },
   );
 
+  const deleteDiaryMutation = api.useMutation('delete', '/api/v2/diary/{id}', {
+    onSuccess: async () => {
+      await invalidator.invalidate();
+      toast.success('Diary deleted successfully.');
+      navigate({
+        to: '/diary',
+      });
+    },
+  });
+
   return (
     <div className="my-8">
-      <h3
-        className="text-lg"
-        id="diary-information"
-      >
-        Edit Diary Information
-      </h3>
+      <div className="flex items-start gap-4 justify-between w-full md:max-w-2xl">
+        <h3
+          className="text-lg"
+          id="diary-information"
+        >
+          Edit Diary Information
+        </h3>
+
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={(e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to delete this diary?')) {
+              deleteDiaryMutation.mutate({
+                params: {
+                  path: {
+                    id: diary.id,
+                  },
+                },
+              });
+            }
+          }}
+        >
+          <Trash2Icon className="mr-2 h-4 w-4" />
+          <span>Delete</span>
+        </Button>
+      </div>
 
       <Form {...form}>
         <form
