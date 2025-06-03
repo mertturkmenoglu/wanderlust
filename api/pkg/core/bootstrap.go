@@ -35,6 +35,9 @@ func (w *Wanderlust) StartServer() {
 	go w.app.Tasks.Run()
 	defer w.app.Tasks.Close()
 
+	go w.app.Tasks.RunScheduler()
+	w.RegisterPeriodicTasks()
+
 	tracingShutdown := tracing.Init()
 	defer tracingShutdown()
 
