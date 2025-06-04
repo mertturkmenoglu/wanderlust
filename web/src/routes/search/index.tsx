@@ -25,10 +25,11 @@ export const Route = createFileRoute('/search/')({
   validateSearch: schema,
 });
 
+// TODO: I don't know why this is not working, we shouldn't be using expect error.
+// But I couldn't figure out a way to fix this issue.
 const routing: RouterProps = {
   router: history(),
   stateMapping: {
-    // TODO: I don't know why this is not working
     // @ts-expect-error
     stateToRoute(uiState) {
       const s = uiState['pois'];
@@ -49,10 +50,8 @@ const routing: RouterProps = {
         ),
       };
     },
-    // TODO: I don't know why this is not working
     // @ts-expect-error
     routeToState(routeState) {
-      console.log(typeof routeState.category);
       return {
         pois: {
           query: routeState.q,
