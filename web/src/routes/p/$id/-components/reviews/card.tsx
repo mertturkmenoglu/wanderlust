@@ -6,7 +6,6 @@ import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
-import { FlagIcon } from 'lucide-react';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import { Menu } from './menu';
@@ -101,17 +100,6 @@ export function ReviewCard({ review }: Props) {
           />
           <span className="text-sm font-semibold">{review.rating}.0</span>
         </div>
-        <Link
-          to="/report"
-          search={{
-            type: 'review',
-            id: review.id,
-          }}
-          className="text-xs text-muted-foreground flex items-center ml-auto hover:underline"
-        >
-          <FlagIcon className="size-3" />
-          <span className="ml-2">Report</span>
-        </Link>
       </div>
     </div>
   );
