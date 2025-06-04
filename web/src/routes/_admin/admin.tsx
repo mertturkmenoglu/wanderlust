@@ -5,9 +5,8 @@ export const Route = createFileRoute('/_admin/admin')({
   component: RouteComponent,
   beforeLoad: ({ context: { auth } }) => {
     const isDev = import.meta.env.DEV;
-    console.log({ isDev });
-    // TODO: Add admin role check
-    if (!isDev || !auth.user) {
+
+    if (!isDev || !auth.user || auth.user.role !== 'admin') {
       throw redirect({
         to: '/',
       });
