@@ -30,22 +30,9 @@ func (f *Fake) HandleReviews(poiPath string, userPath string) error {
 		batch = append(batch, res...)
 	}
 
-	i := 0
+	_, err = f.db.Queries.BatchCreateReviews(context.Background(), batch)
 
-	for i = 0; i < len(batch); i += 500 {
-		_, err = f.db.Queries.BatchCreateReviews(context.Background(), batch[i:i+100])
-
-		if err != nil {
-			return err
-		}
-	}
-
-	if i < len(batch) {
-		_, err = f.db.Queries.BatchCreateReviews(context.Background(), batch[i:])
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func createReviewForPoi(poiId string, count int, userIds []string) []db.BatchCreateReviewsParams {
