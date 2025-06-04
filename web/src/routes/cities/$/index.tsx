@@ -1,10 +1,16 @@
-import Collection from '@/components/blocks/collection';
+import AppMessage from '@/components/blocks/app-message';
+import { ErrorComponent } from '@/components/blocks/error-component';
 import OverlayBanner from '@/components/blocks/overlay-banner';
+import PoiCard from '@/components/blocks/poi-card';
 import TagNavigation from '@/components/blocks/tag-navigation';
+import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import CityBreadcrumb from './-city-breadcrumb';
 import Map from './-map';
 
@@ -33,6 +39,7 @@ export const Route = createFileRoute('/cities/$/')({
       }),
     );
   },
+  errorComponent: ErrorComponent,
 });
 
 function RouteComponent() {
@@ -93,54 +100,19 @@ function RouteComponent() {
         imgClassName="aspect-[3]"
       />
 
-      <Collection
-        className="my-8"
-        title="Curated Locations"
-        actions={
-          <Button
-            asChild
-            variant="link"
-          >
-            <Link
-              to="."
-              href={`/collections/city/curated/${city.id}`}
-            >
-              See more
-            </Link>
-          </Button>
-        }
-        items={[
-          {
-            id: '0',
-            title: 'Squirrels Out',
-            category: 'Historical Landmark',
-            favorite: true,
-            image:
-              'https://a.ltrbxd.com/resized/film-poster/4/7/5/3/7/0/475370-knives-out-0-1000-0-1500-crop.jpg?v=7da76d742c',
-          },
-          {
-            id: '1',
-            title: 'Anatomy of a Squirrel',
-            category: 'Restaurant',
-            favorite: true,
-            image: 'https://i.imgur.com/5F9jdqG.jpg',
-          },
-          {
-            id: '2',
-            title: 'All Quiet on the Western Squirrels',
-            category: 'Bookstores',
-            favorite: false,
-            image: 'https://i.imgur.com/SnP70MO.jpg',
-          },
-          {
-            id: '3',
-            title: 'Sincap Coffee',
-            category: 'Coffee Shops',
-            favorite: true,
-            image: 'https://i.imgur.com/JYnxkQM.jpg',
-          },
-        ]}
-      />
+      <ErrorBoundary
+        fallback={<AppMessage errorMessage="Something went wrong" />}
+      >
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center">
+              <Spinner className="size-8 mx-auto my-4" />
+            </div>
+          }
+        >
+          <CollectionsContent />
+        </Suspense>
+      </ErrorBoundary>
 
       <OverlayBanner
         image={city.image}
@@ -154,7 +126,7 @@ function RouteComponent() {
             >
               <Link
                 to="."
-                href={`/search?pois[refinementList][poi.City.Name][0]=${city.name}`}
+                href={`/search?pois[refinementList][poi.city.name][0]=${city.name}`}
               >
                 Discover
               </Link>
@@ -164,104 +136,65 @@ function RouteComponent() {
         className="my-8"
         imgClassName="aspect-[3]"
       />
+    </div>
+  );
+}
 
-      <Collection
-        className="my-8"
-        title="Users Favorites"
-        actions={
-          <Button
-            asChild
-            variant="link"
+function CollectionsContent() {
+  const { id } = Route.useLoaderData();
+  const query = api.useSuspenseQuery('get', '/api/v2/collections/city/{id}', {
+    params: {
+      path: {
+        id,
+      },
+    },
+  });
+
+  return (
+    <div className="mt-8 space-y-8">
+      {query.data.collections.map((collection) => (
+        <div>
+          <div
+            key={collection.id}
+            className="flex items-baseline gap-4 mb-4"
           >
+            <h3 className="text-2xl font-bold">{collection.name}</h3>
             <Link
-              to="."
-              href={`/collections/city/curated/${city.id}`}
+              to="/c/$id"
+              params={{
+                id: collection.id,
+              }}
+              className="hover:underline decoration-primary decoration-2 underline-offset-4 text-base text-primary"
             >
               See more
             </Link>
-          </Button>
-        }
-        items={[
-          {
-            id: '0',
-            title: 'Squirrel Runner 2049',
-            category: 'Historical Landmark',
-            favorite: true,
-            image:
-              'https://a.ltrbxd.com/resized/film-poster/2/6/5/4/3/9/265439-blade-runner-2049-0-1000-0-1500-crop.jpg?v=86735e0bb8',
-          },
-          {
-            id: '1',
-            title: "The Squirrel's Speech",
-            category: 'Breweries',
-            favorite: true,
-            image:
-              'https://a.ltrbxd.com/resized/film-poster/5/3/6/3/5363-the-king-s-speech-0-1000-0-1500-crop.jpg?v=334f06fd89',
-          },
-          {
-            id: '4',
-            title: 'No Time to Squirrel',
-            category: 'Photography Spots',
-            favorite: false,
-            image: 'https://i.imgur.com/XFG5Q7R.jpg',
-          },
-          {
-            id: '5',
-            title: "Squirrel's Gambit",
-            category: 'Restaurant',
-            favorite: true,
-            image: 'https://i.imgur.com/FKlIkC5.jpg',
-          },
-        ]}
-      />
+          </div>
 
-      <Collection
-        className="my-8"
-        title="Popular Tourist Attractions"
-        actions={
-          <Button
-            asChild
-            variant="link"
-          >
-            <Link
-              to="."
-              href={`/collections/city/curated/${city.id}`}
-            >
-              See more
-            </Link>
-          </Button>
-        }
-        items={[
-          {
-            id: '2',
-            title: 'The Squirrel from Earth',
-            category: 'Museums',
-            favorite: false,
-            image: 'https://i.imgur.com/1mn0i08.jpg',
-          },
-          {
-            id: '3',
-            title: 'Squirrel Gump',
-            category: 'Famous Filming Locations',
-            favorite: true,
-            image: 'https://i.imgur.com/f6VKpRj.jpg',
-          },
-          {
-            id: '4',
-            title: 'The Grand Squirrel Hotel',
-            category: 'Hotels',
-            favorite: false,
-            image: 'https://i.imgur.com/Ivsxi5b.jpg',
-          },
-          {
-            id: '5',
-            title: 'The Squirrel of The Opera',
-            category: 'Theaters',
-            favorite: true,
-            image: 'https://i.imgur.com/FKlIkC5.jpg',
-          },
-        ]}
-      />
+          <ScrollArea>
+            <div className="flex gap-8 my-4">
+              {collection.items.map((item) => (
+                <Link
+                  key={item.poiId}
+                  to="/p/$id"
+                  params={{
+                    id: item.poiId,
+                  }}
+                >
+                  <PoiCard
+                    poi={item.poi}
+                    className="w-[256px]"
+                    hoverEffects={false}
+                  />
+                </Link>
+              ))}
+            </div>
+            <ScrollBar
+              orientation="horizontal"
+              className="mt-8"
+            />
+          </ScrollArea>
+        </div>
+      ))}
     </div>
   );
 }
