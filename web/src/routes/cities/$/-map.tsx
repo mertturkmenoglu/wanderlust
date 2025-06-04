@@ -1,3 +1,4 @@
+import { tileUrl } from '@/lib/map';
 import { MapContainer, TileLayer } from 'react-leaflet';
 
 type Props = {
@@ -6,8 +7,6 @@ type Props = {
 };
 
 export default function Map({ latitude, longitude }: Props) {
-  const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
-
   return (
     <>
       <h3 className="text-2xl font-bold mt-8 lg:mt-0">Location</h3>
@@ -26,7 +25,7 @@ export default function Map({ latitude, longitude }: Props) {
         >
           <TileLayer
             attribution=""
-            url={url}
+            url={tileUrl}
           />
         </MapContainer>
       </div>

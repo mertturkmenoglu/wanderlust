@@ -1,5 +1,6 @@
 import { icon } from '@/components/icons/leaflet';
 import type { components } from '@/lib/api-types';
+import { tileUrl } from '@/lib/map';
 import { Link } from '@tanstack/react-router';
 import type { LatLngTuple } from 'leaflet';
 import 'leaflet-defaulticon-compatibility';
@@ -11,8 +12,6 @@ type Props = {
 };
 
 export function Map({ locations }: Props) {
-  const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
-
   const fst = locations[0];
   const center: LatLngTuple =
     fst !== undefined ? [fst.poi.address.lat, fst.poi.address.lng] : [0, 0];
@@ -33,7 +32,7 @@ export function Map({ locations }: Props) {
       >
         <TileLayer
           attribution=""
-          url={url}
+          url={tileUrl}
         />
         {locations.map((location) => (
           <Marker

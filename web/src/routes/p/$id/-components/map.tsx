@@ -1,5 +1,6 @@
 import { icon } from '@/components/icons/leaflet';
 import { Button } from '@/components/ui/button';
+import { tileUrl } from '@/lib/map';
 import { getRouteApi } from '@tanstack/react-router';
 import { ExternalLinkIcon } from 'lucide-react';
 import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
@@ -10,7 +11,6 @@ export default function Map() {
   const lat = poi.address.lat;
   const lng = poi.address.lng;
   const zoom = 17;
-  const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
 
   return (
     <div>
@@ -34,9 +34,8 @@ export default function Map() {
       </div>
       <MapContainer
         center={[lat, lng]}
-        zoom={16}
-        minZoom={4}
-        scrollWheelZoom={true}
+        zoom={18}
+        minZoom={1}
         style={{
           height: '400px',
           marginTop: '16px',
@@ -46,7 +45,7 @@ export default function Map() {
       >
         <TileLayer
           attribution=""
-          url={url}
+          url={tileUrl}
         />
         <Marker
           position={[lat, lng]}

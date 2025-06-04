@@ -2,6 +2,7 @@ import AppMessage from '@/components/blocks/app-message';
 import PoiCard from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { tileUrl } from '@/lib/map';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
@@ -10,7 +11,6 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import GeoSearch from './geo-search';
 
 export default function Container() {
-  const url = `https://mt0.google.com/vt/scale=${window.devicePixelRatio}&hl=en&x={x}&y={y}&z={z}`;
   const { items } = useGeoSearch();
 
   const query = useQuery({
@@ -77,8 +77,8 @@ export default function Container() {
         }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url={url}
+          attribution=""
+          url={tileUrl}
         />
         <GeoSearch />
       </MapContainer>
