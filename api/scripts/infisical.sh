@@ -1,3 +1,5 @@
+#!/bin/env bash
+
 op=$1
 
 if [ $op = "example" ]; then
