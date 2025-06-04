@@ -96,7 +96,19 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, err
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("User not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get user by id")
+	}
+
+	role, err := s.getUserRole(ctx, userId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get user role")
 	}
 
 	return &dto.GetMeOutput{
@@ -115,6 +127,7 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 			BannerImage:    utils.TextToStr(user.BannerImage),
 			FollowersCount: user.FollowersCount,
 			FollowingCount: user.FollowingCount,
+			Role:           role,
 			CreatedAt:      user.CreatedAt.Time,
 			UpdatedAt:      user.UpdatedAt.Time,
 		},

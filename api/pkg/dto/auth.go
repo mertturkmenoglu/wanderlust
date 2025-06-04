@@ -75,6 +75,7 @@ type GetMeOutputBody struct {
 	BannerImage    *string   `json:"bannerImage" example:"https://example.com/banner.jpg" doc:"Banner image of the user" required:"true"`
 	FollowersCount int32     `json:"followersCount" example:"100" doc:"Number of followers"`
 	FollowingCount int32     `json:"followingCount" example:"50" doc:"Number of following"`
+	Role           string    `json:"role" example:"user" doc:"The user's role"`
 	CreatedAt      time.Time `json:"createdAt" example:"2023-01-01T00:00:00Z" doc:"Creation date of the user"`
 	UpdatedAt      time.Time `json:"updatedAt" example:"2023-01-01T00:00:00Z" doc:"Last update date of the user"`
 }
