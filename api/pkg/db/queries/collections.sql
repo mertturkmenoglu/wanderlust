@@ -9,6 +9,17 @@ INSERT INTO collections (
   $3
 ) RETURNING *;
 
+-- name: BatchCreateCollections :copyfrom
+INSERT INTO collections (
+  id,
+  name,
+  description
+) VALUES (
+  $1,
+  $2,
+  $3
+);
+
 -- name: DeleteCollection :exec
 DELETE FROM collections
 WHERE id = $1;
@@ -63,6 +74,17 @@ INSERT INTO collection_items (
   $3
 ) RETURNING *;
 
+-- name: BatchCreateCollectionItems :copyfrom
+INSERT INTO collection_items (
+  collection_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+);
+
 -- name: GetLastIndexOfCollection :one
 SELECT COALESCE(MAX(list_index), 0)
 FROM collection_items
@@ -98,7 +120,29 @@ INSERT INTO collections_pois (
   $3
 );
 
+-- name: BatchCreateCollectionPoiRelations :copyfrom
+INSERT INTO collections_pois (
+  collection_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+);
+
 -- name: CreateCollectionCityRelation :exec
+INSERT INTO collections_cities (
+  collection_id,
+  city_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+);
+
+-- name: BatchCreateCollectionCityRelations :copyfrom
 INSERT INTO collections_cities (
   collection_id,
   city_id,

@@ -79,6 +79,142 @@ func (q *Queries) BatchCreateAmenitiesPois(ctx context.Context, arg []BatchCreat
 	return q.db.CopyFrom(ctx, []string{"amenities_pois"}, []string{"amenity_id", "poi_id"}, &iteratorForBatchCreateAmenitiesPois{rows: arg})
 }
 
+// iteratorForBatchCreateCollectionCityRelations implements pgx.CopyFromSource.
+type iteratorForBatchCreateCollectionCityRelations struct {
+	rows                 []BatchCreateCollectionCityRelationsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateCollectionCityRelations) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateCollectionCityRelations) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].CollectionID,
+		r.rows[0].CityID,
+		r.rows[0].Index,
+	}, nil
+}
+
+func (r iteratorForBatchCreateCollectionCityRelations) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateCollectionCityRelations(ctx context.Context, arg []BatchCreateCollectionCityRelationsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"collections_cities"}, []string{"collection_id", "city_id", "index"}, &iteratorForBatchCreateCollectionCityRelations{rows: arg})
+}
+
+// iteratorForBatchCreateCollectionItems implements pgx.CopyFromSource.
+type iteratorForBatchCreateCollectionItems struct {
+	rows                 []BatchCreateCollectionItemsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateCollectionItems) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateCollectionItems) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].CollectionID,
+		r.rows[0].PoiID,
+		r.rows[0].Index,
+	}, nil
+}
+
+func (r iteratorForBatchCreateCollectionItems) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateCollectionItems(ctx context.Context, arg []BatchCreateCollectionItemsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"collection_items"}, []string{"collection_id", "poi_id", "index"}, &iteratorForBatchCreateCollectionItems{rows: arg})
+}
+
+// iteratorForBatchCreateCollectionPoiRelations implements pgx.CopyFromSource.
+type iteratorForBatchCreateCollectionPoiRelations struct {
+	rows                 []BatchCreateCollectionPoiRelationsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateCollectionPoiRelations) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateCollectionPoiRelations) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].CollectionID,
+		r.rows[0].PoiID,
+		r.rows[0].Index,
+	}, nil
+}
+
+func (r iteratorForBatchCreateCollectionPoiRelations) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateCollectionPoiRelations(ctx context.Context, arg []BatchCreateCollectionPoiRelationsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"collections_pois"}, []string{"collection_id", "poi_id", "index"}, &iteratorForBatchCreateCollectionPoiRelations{rows: arg})
+}
+
+// iteratorForBatchCreateCollections implements pgx.CopyFromSource.
+type iteratorForBatchCreateCollections struct {
+	rows                 []BatchCreateCollectionsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateCollections) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateCollections) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].Name,
+		r.rows[0].Description,
+	}, nil
+}
+
+func (r iteratorForBatchCreateCollections) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateCollections(ctx context.Context, arg []BatchCreateCollectionsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"collections"}, []string{"id", "name", "description"}, &iteratorForBatchCreateCollections{rows: arg})
+}
+
 // iteratorForBatchCreateDiaryLocations implements pgx.CopyFromSource.
 type iteratorForBatchCreateDiaryLocations struct {
 	rows                 []BatchCreateDiaryLocationsParams

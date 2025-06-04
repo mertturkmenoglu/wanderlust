@@ -9,6 +9,30 @@ import (
 	"context"
 )
 
+type BatchCreateCollectionCityRelationsParams struct {
+	CollectionID string
+	CityID       int32
+	Index        int32
+}
+
+type BatchCreateCollectionItemsParams struct {
+	CollectionID string
+	PoiID        string
+	Index        int32
+}
+
+type BatchCreateCollectionPoiRelationsParams struct {
+	CollectionID string
+	PoiID        string
+	Index        int32
+}
+
+type BatchCreateCollectionsParams struct {
+	ID          string
+	Name        string
+	Description string
+}
+
 const countCollections = `-- name: CountCollections :one
 SELECT count(*) FROM collections
 `
