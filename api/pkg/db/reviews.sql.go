@@ -234,6 +234,38 @@ func (q *Queries) GetReviewIdsByUsername(ctx context.Context, arg GetReviewIdsBy
 	return items, nil
 }
 
+const getReviewImagesByPoiId = `-- name: GetReviewImagesByPoiId :many
+SELECT id, review_id, url, index FROM review_images WHERE review_id IN (
+  SELECT id FROM reviews WHERE poi_id = $1
+  ORDER BY created_at DESC
+) LIMIT 20
+`
+
+func (q *Queries) GetReviewImagesByPoiId(ctx context.Context, poiID string) ([]ReviewImage, error) {
+	rows, err := q.db.Query(ctx, getReviewImagesByPoiId, poiID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ReviewImage
+	for rows.Next() {
+		var i ReviewImage
+		if err := rows.Scan(
+			&i.ID,
+			&i.ReviewID,
+			&i.Url,
+			&i.Index,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getReviewsByIds = `-- name: GetReviewsByIds :many
 SELECT
   reviews.id, reviews.poi_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,

@@ -107,3 +107,9 @@ LEFT JOIN LATERAL (
 ) images_agg ON true
 WHERE reviews.id = ANY($1::TEXT[])
 ORDER BY reviews.created_at DESC;
+
+-- name: GetReviewImagesByPoiId :many
+SELECT * FROM review_images WHERE review_id IN (
+  SELECT id FROM reviews WHERE poi_id = $1
+  ORDER BY created_at DESC
+) LIMIT 20;
