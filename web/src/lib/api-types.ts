@@ -4161,6 +4161,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/reviews/poi/{id}/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get POI Reviews Images
+         * @description Get images of the POI reviews
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of point of interest
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetReviewImagesByPoiIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/reviews/poi/{id}/ratings": {
         parameters: {
             query?: never;
@@ -7035,6 +7089,14 @@ export interface components {
              */
             readonly $schema?: string;
             review: components["schemas"]["Review"];
+        };
+        GetReviewImagesByPoiIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            images: components["schemas"]["ReviewImage"][];
         };
         GetReviewsByPoiIdOutputBody: {
             /**
