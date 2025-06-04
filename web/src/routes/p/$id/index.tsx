@@ -69,11 +69,11 @@ function RouteComponent() {
 
       <Separator className="my-4" />
 
-      <Collections className="my-4" />
+      <Reviews />
 
       <Separator className="my-4" />
 
-      <Reviews />
+      <Collections className="my-4" />
     </main>
   );
 }
