@@ -2,6 +2,7 @@ import { ErrorComponent } from '@/components/blocks/error-component';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
+import { z } from 'zod';
 import Amenities from './-components/amenities';
 import Breadcrumb from './-components/breadcrumb';
 import { CityInfo } from './-components/city-info';
@@ -13,6 +14,10 @@ import { Information } from './-components/information';
 import Map from './-components/map';
 import { NearbyPois } from './-components/nearby-pois';
 import Reviews from './-components/reviews';
+
+const schema = z.object({
+  page: z.number().min(1).max(100).optional(),
+});
 
 export const Route = createFileRoute('/p/$id/')({
   component: RouteComponent,
@@ -28,6 +33,7 @@ export const Route = createFileRoute('/p/$id/')({
     );
   },
   errorComponent: ErrorComponent,
+  validateSearch: schema,
 });
 
 function RouteComponent() {
