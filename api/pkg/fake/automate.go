@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	poisPath    = "tmp/pois.txt"
-	usersPath   = "tmp/users.txt"
-	reviewsPath = "tmp/reviews.txt"
+	poisPath        = "tmp/pois.txt"
+	usersPath       = "tmp/users.txt"
+	reviewsPath     = "tmp/reviews.txt"
+	collectionsPath = "tmp/collections.txt"
 )
 
 var steps = [...]string{
@@ -22,13 +23,18 @@ var steps = [...]string{
 	"addresses",
 	"users",
 	"pois",
-	"fake-id",
+	"fake-id", // run fake id to get user and poi ids
 	"amenities-pois",
 	"media-for-many-pois",
 	"follows",
 	"reviews",
 	"fake-id", // run fake id again to get review ids
 	"review-media",
+	"collections",
+	"fake-id", // run fake id again to get collection ids
+	"collection-items",
+	"collections-cities",
+	"collections-pois",
 }
 
 func Automate() error {
@@ -67,6 +73,14 @@ func mux(f *handlers.Fake, t string) error {
 		return f.HandleCategories()
 	case "cities":
 		return f.HandleCities()
+	case "collections":
+		return f.HandleCollections(10_000)
+	case "collection-items":
+		return f.HandleCollectionItems(collectionsPath, poisPath)
+	case "collections-cities":
+		return f.HandleCollectionsCities(collectionsPath)
+	case "collections-pois":
+		return f.HandleCollectionsPois(collectionsPath, poisPath)
 	case "addresses":
 		return f.HandleAddresses(10_000)
 	case "users":
