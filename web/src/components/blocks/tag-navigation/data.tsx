@@ -14,7 +14,7 @@ import {
   UtensilsIcon,
 } from 'lucide-react';
 
-const base = '/search?pois[refinementList][poi.category.name][0]=';
+const base = '/search?category=';
 
 const data = [
   { href: `${base}Hotels`, text: 'Hotels', icon: BedIcon },

@@ -125,8 +125,10 @@ function RouteComponent() {
               variant="default"
             >
               <Link
-                to="."
-                href={`/search?pois[refinementList][poi.city.name][0]=${city.name}`}
+                to="/search"
+                search={{
+                  city: city.name,
+                }}
               >
                 Discover
               </Link>

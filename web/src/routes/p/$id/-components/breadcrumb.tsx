@@ -11,7 +11,6 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 export default function Breadcrumb() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
-  const categoryLink = `/search?pois[refinementList][poi.Category.Name][0]=${poi.category.name}`;
 
   return (
     <ShadcnBreadcrumb>
@@ -24,7 +23,14 @@ export default function Breadcrumb() {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to={categoryLink}>{poi.category.name}</Link>
+            <Link
+              to="/search"
+              search={{
+                category: poi.category.name,
+              }}
+            >
+              {poi.category.name}
+            </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
