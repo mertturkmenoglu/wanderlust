@@ -33,13 +33,12 @@ export function RatingsSection({ className }: Props) {
   });
 
   return (
-    <div>
+    <div className={cn(className)}>
       <div
         className={cn(
           'bg-gradient-to-r from-accent/50 to-primary/10',
           'flex flex-col gap-8',
           'p-6 h-min rounded-md',
-          className,
         )}
       >
         <div>
