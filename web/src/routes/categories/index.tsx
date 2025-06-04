@@ -27,7 +27,7 @@ function RouteComponent() {
           <Link
             to={`/search`}
             search={{
-              'pois[refinementList][poi.Category.Name][0]': category.name,
+              category: category.name,
             }}
             key={category.id}
             className="rounded-md"

@@ -69,7 +69,7 @@ export function Autocomplete({
               <Link
                 to="/search"
                 search={{
-                  'pois[query]': currentRefinement,
+                  q: currentRefinement,
                 }}
               >
                 See all results

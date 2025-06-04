@@ -25,7 +25,7 @@ import { z } from 'zod';
 import { pronounGroups } from './-pronouns';
 import UpdateImage from './-update-image';
 
-export const schema = z.object({
+const schema = z.object({
   fullName: z.string().min(1).max(128),
   bio: z.string().max(255).nullable(),
   pronouns: z.string().max(32).nullable(),
