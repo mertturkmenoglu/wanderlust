@@ -5,6 +5,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import Amenities from './-components/amenities';
 import Breadcrumb from './-components/breadcrumb';
 import { CityInfo } from './-components/city-info';
+import { Collections } from './-components/collections';
 import { Description } from './-components/description';
 import { Header } from './-components/header';
 import { ImageGrid } from './-components/image-grid';
@@ -59,6 +60,10 @@ function RouteComponent() {
       <Separator className="my-4" />
 
       <NearbyPois className="my-4" />
+
+      <Separator className="my-4" />
+
+      <Collections className="my-4" />
 
       <Separator className="my-4" />
 
