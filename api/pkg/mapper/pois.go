@@ -6,6 +6,10 @@ import (
 )
 
 func ToPois(data []byte) ([]dto.Poi, error) {
+	if len(data) == 0 {
+		return []dto.Poi{}, nil
+	}
+
 	var pois []dto.Poi
 
 	err := json.Unmarshal(data, &pois)
