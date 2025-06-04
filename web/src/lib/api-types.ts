@@ -596,6 +596,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh Tokens
+         * @description Refresh the tokens of the user
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: {
+                    /** @description Refresh token of the user */
+                    refresh_token?: string;
+                };
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        Domain?: string;
+                        Expires?: string;
+                        HttpOnly?: boolean;
+                        MaxAge?: number;
+                        Name?: string;
+                        Partitioned?: boolean;
+                        Path?: string;
+                        Quoted?: boolean;
+                        Raw?: string;
+                        RawExpires?: string;
+                        SameSite?: number;
+                        Secure?: boolean;
+                        "Set-Cookie"?: string;
+                        Unparsed?: string;
+                        Value?: string;
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/auth/{provider}": {
         parameters: {
             query?: never;
@@ -6893,6 +6957,8 @@ export interface components {
             profileImage: string | null;
             /** @description Pronouns of the user */
             pronouns: string | null;
+            /** @description The user's role */
+            role: string;
             /**
              * Format: date-time
              * @description Last update date of the user
