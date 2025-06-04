@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { LoaderCircleIcon, StarIcon } from 'lucide-react';
 import CreateReviewDialog from './create-dialog';
+import { ReviewImages } from './images';
 
 type Props = {
   className?: string;
@@ -32,35 +33,43 @@ export function RatingsSection({ className }: Props) {
   });
 
   return (
-    <div
-      className={cn(
-        'bg-gradient-to-r from-accent/50 to-primary/10 p-8 flex flex-col gap-8',
-        className,
-      )}
-    >
-      <div>
-        <h3 className="font-bold text-xl text-primary">Reviews</h3>
-        <div className="my-2 flex items-center gap-4">
-          <span className="font-bold text-6xl text-primary">{rating}</span>
-          <div>
-            <FormattedRating
-              rating={parseFloat(rating)}
-              votes={poi.totalVotes}
-              showNumbers={false}
-            />
-            <span className="text-xs text-muted-foreground tracking-tight">
-              {fmt.format(poi.totalVotes)} reviews
-            </span>
+    <div>
+      <div
+        className={cn(
+          'bg-gradient-to-r from-accent/50 to-primary/10',
+          'flex flex-col gap-8',
+          'p-6 h-min rounded-md',
+          className,
+        )}
+      >
+        <div>
+          <h3 className="font-bold text-xl text-primary">Reviews</h3>
+          <div className="my-2 flex items-center gap-4">
+            <span className="font-bold text-6xl text-primary">{rating}</span>
+            <div>
+              <FormattedRating
+                rating={parseFloat(rating)}
+                votes={poi.totalVotes}
+                showNumbers={false}
+              />
+              <span className="text-xs text-muted-foreground tracking-tight">
+                {fmt.format(poi.totalVotes)} reviews
+              </span>
+            </div>
           </div>
+          <CreateReviewDialog />
         </div>
-        <CreateReviewDialog />
+
+        {query.isLoading && (
+          <LoaderCircleIcon className="size-16 my-auto mx-auto animate-spin text-primary" />
+        )}
+
+        {query.data && <Ratings ratings={query.data} />}
       </div>
 
-      {query.isLoading && (
-        <LoaderCircleIcon className="size-16 my-auto mx-auto animate-spin text-primary" />
-      )}
-
-      {query.data && <Ratings ratings={query.data} />}
+      <div className="mt-4">
+        <ReviewImages />
+      </div>
     </div>
   );
 }
@@ -76,20 +85,20 @@ function Ratings({ ratings }: RatingsProps) {
   const sorted = entries.sort((a, b) => b[0] - a[0]);
 
   return (
-    <div className="space-y-2">
+    <div className="w-full space-y-2">
       {sorted.map(([rating, count]) => (
         <div
           key={rating}
-          className="flex items-center text-right gap-2"
+          className="grid grid-cols-12 items-center text-right gap-2"
         >
-          <div className="flex items-center gap-1 w-8 justify-end text-primary text-sm font-medium">
+          <div className="flex items-center gap-1 justify-end text-primary text-sm font-medium">
             {rating} <StarIcon className="size-3 fill-primary text-primary" />
           </div>
           <Progress
             value={(count * 100) / ratings.totalVotes}
-            className="max-w-xs"
+            className="col-span-10"
           />
-          <span className="text-xs text-primary tabular-nums">
+          <span className="col-span-1 text-xs text-primary tabular-nums">
             ({fmt.format(count)})
           </span>
         </div>
