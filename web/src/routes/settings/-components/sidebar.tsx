@@ -1,4 +1,6 @@
+import { AuthContext } from '@/providers/auth-provider';
 import { Link } from '@tanstack/react-router';
+import { useContext } from 'react';
 
 type Item = {
   text: string;
@@ -26,20 +28,24 @@ const items = [
 
 export default function Sidebar() {
   const isDev = import.meta.env.DEV;
+  const auth = useContext(AuthContext);
 
-  // TODO: Add admin role check
-  // const showDashboardLink = auth.user?.role === 'admin';
-  const showDashboardLink = false;
   const links = items.filter((x) => {
-    if (x.href === '/admin' && !isDev) {
-      return false;
+    const protectedRoutes = ['/admin', '/dashboard'];
+
+    if (!protectedRoutes.includes(x.href)) {
+      return true;
     }
 
-    if (x.href === '/dashboard' && !showDashboardLink) {
-      return false;
+    if (x.href === '/admin') {
+      return isDev && auth.user?.role === 'admin';
     }
 
-    return true;
+    if (x.href === '/dashboard') {
+      return auth.user?.role === 'admin';
+    }
+
+    return false;
   });
 
   return (
