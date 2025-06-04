@@ -16,3 +16,8 @@ docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM rev
 docker cp wl-postgres:/home/reviews.csv tmp/reviews.csv
 tail -n +2 tmp/reviews.csv > tmp/reviews.txt
 rm tmp/reviews.csv
+
+docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM collections" --csv -o /home/collections.csv
+docker cp wl-postgres:/home/collections.csv tmp/collections.csv
+tail -n +2 tmp/collections.csv > tmp/collections.txt
+rm tmp/collections.csv
