@@ -172,6 +172,29 @@ func Register(grp *huma.Group, app *core.Application) {
 
 	huma.Register(grp,
 		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/reviews/poi/{id}/images",
+			Summary:       "Get POI Reviews Images",
+			Description:   "Get images of the POI reviews",
+			DefaultStatus: http.StatusOK,
+		},
+		func(ctx context.Context, input *dto.GetReviewImagesByPoiIdInput) (*dto.GetReviewImagesByPoiIdOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.getImages(ctx, input.ID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	huma.Register(grp,
+		huma.Operation{
 			Method:        http.MethodPost,
 			Path:          "/reviews/{id}/media",
 			Summary:       "Upload Media for a Review",

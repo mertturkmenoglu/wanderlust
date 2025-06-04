@@ -350,6 +350,40 @@ func (s *Service) getRatings(ctx context.Context, id string) (*dto.GetRatingsByP
 	}, nil
 }
 
+func (s *Service) getImages(ctx context.Context, id string) (*dto.GetReviewImagesByPoiIdOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbRes, err := s.db.GetReviewImagesByPoiId(ctx, id)
+
+	if err != nil {
+		sp.RecordError(err)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, huma.Error404NotFound("Reviews not found")
+		}
+
+		return nil, huma.Error500InternalServerError("Failed to get reviews")
+	}
+
+	images := make([]dto.ReviewImage, len(dbRes))
+
+	for i, v := range dbRes {
+		images[i] = dto.ReviewImage{
+			ID:       v.ID,
+			ReviewID: v.ReviewID,
+			Url:      v.Url,
+			Index:    v.Index,
+		}
+	}
+
+	return &dto.GetReviewImagesByPoiIdOutput{
+		Body: dto.GetReviewImagesByPoiIdOutputBody{
+			Images: images,
+		},
+	}, nil
+}
+
 func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadReviewMediaInputBody) (*dto.UploadReviewMediaOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
