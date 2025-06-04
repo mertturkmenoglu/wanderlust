@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS collections_cities (
   CONSTRAINT
     fk_collections_cities_city FOREIGN KEY (city_id) REFERENCES cities(id) ON DELETE CASCADE,
   CONSTRAINT
-    idx_collections_cities_unique UNIQUE (collection_id, index)
+    idx_collections_cities_unique UNIQUE (collection_id, city_id, index)
 );
 
 CREATE TABLE IF NOT EXISTS collections_pois (
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS collections_pois (
   CONSTRAINT
     fk_collections_pois_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE,
   CONSTRAINT
-    idx_collections_pois_unique UNIQUE (collection_id, index)
+    idx_collections_pois_unique UNIQUE (collection_id, poi_id, index)
 );
 -- +goose StatementEnd
 
