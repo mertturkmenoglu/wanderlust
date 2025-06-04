@@ -1,44 +1,43 @@
 import AppMessage from '@/components/blocks/app-message';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from '@/components/ui/pagination';
 import { Separator } from '@/components/ui/separator';
+import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
 import { api } from '@/lib/api';
-import { getRouteApi } from '@tanstack/react-router';
-import { LoaderCircleIcon } from 'lucide-react';
-import { useMemo } from 'react';
+import { cn } from '@/lib/utils';
+import { getRouteApi, Link } from '@tanstack/react-router';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  LoaderCircleIcon,
+} from 'lucide-react';
 import { ReviewCard } from './card';
 
 export function Section() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
+  const { page } = route.useSearch();
 
-  const query = api.useInfiniteQuery(
-    'get',
-    '/api/v2/reviews/poi/{id}',
-    {
-      params: {
-        path: {
-          id: poi.id,
-        },
-        query: {
-          pageSize: 10,
-        },
+  const query = api.useQuery('get', '/api/v2/reviews/poi/{id}', {
+    params: {
+      path: {
+        id: poi.id,
+      },
+      query: {
+        pageSize: 10,
+        page: page ?? 1,
       },
     },
-    {
-      initialPageParam: 1,
-      pageParamName: 'page',
-      getNextPageParam: (lastPage) =>
-        lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
-    },
+  });
+
+  const nums = usePaginationNumbers(
+    page ?? 1,
+    query.data?.pagination.totalPages ?? 1,
   );
-
-  const flat = useMemo(() => {
-    if (!query.data) {
-      return [];
-    }
-
-    return query.data.pages.flatMap((p) => p.reviews);
-  }, [query.data]);
 
   if (query.isLoading) {
     return (
@@ -56,7 +55,7 @@ export function Section() {
     );
   }
 
-  if (query.data && flat.length === 0) {
+  if (query.data && query.data.pagination.totalRecords === 0) {
     return (
       <AppMessage
         emptyMessage="There are no reviews yet."
@@ -70,28 +69,92 @@ export function Section() {
     return <></>;
   }
 
+  const { reviews, pagination } = query.data;
+
   return (
     <>
-      {flat.map((review) => (
+      {reviews.map((review, i) => (
         <div key={review.id}>
           <ReviewCard review={review} />
-          <Separator className="my-2" />
+          {i !== reviews.length - 1 && <Separator className="my-2" />}
         </div>
       ))}
-      {query.hasNextPage && (
-        <div className="mt-4 flex justify-center">
-          <Button
-            onClick={() => query.fetchNextPage()}
-            disabled={!query.hasNextPage || query.isFetchingNextPage}
-          >
-            {query.isFetchingNextPage
-              ? 'Loading more...'
-              : query.hasNextPage
-                ? 'Load More'
-                : 'Nothing more to load'}
-          </Button>
-        </div>
-      )}
+
+      <div className="mt-4 flex justify-center col-span-full">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <Link
+                data-slot="pagination-link"
+                className={cn(
+                  buttonVariants({
+                    variant: 'ghost',
+                  }),
+                  'gap-1 px-2.5 sm:pl-2.5',
+                )}
+                aria-label="Go to previous page"
+                to="/p/$id"
+                params={{
+                  id: poi.id,
+                }}
+                search={{
+                  page: pagination.hasPrevious ? (page ?? 1) - 1 : 1,
+                }}
+              >
+                <ChevronLeftIcon />
+                <span className="hidden sm:block">Previous</span>
+              </Link>
+            </PaginationItem>
+
+            {nums.map((x) => (
+              <PaginationItem key={`pagination-${x}`}>
+                <Link
+                  aria-current={x === (page ?? 1) ? 'page' : undefined}
+                  data-slot="pagination-link"
+                  data-active={x === (page ?? 1)}
+                  className={cn(
+                    buttonVariants({
+                      variant: x === (page ?? 1) ? 'outline' : 'ghost',
+                    }),
+                  )}
+                  to="/p/$id"
+                  params={{
+                    id: poi.id,
+                  }}
+                  search={{
+                    page: x,
+                  }}
+                >
+                  {x}
+                </Link>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <Link
+                data-slot="pagination-link"
+                className={cn(
+                  buttonVariants({
+                    variant: 'ghost',
+                  }),
+                  'gap-1 px-2.5 sm:pl-2.5',
+                )}
+                aria-label="Go to next page"
+                to="/p/$id"
+                params={{
+                  id: poi.id,
+                }}
+                search={{
+                  page: pagination.hasNext ? (page ?? 1) + 1 : page,
+                }}
+              >
+                <span className="hidden sm:block">Next</span>
+                <ChevronRightIcon />
+              </Link>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     </>
   );
 }
