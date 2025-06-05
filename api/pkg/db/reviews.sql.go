@@ -162,15 +162,15 @@ func (q *Queries) GetPoiRatings(ctx context.Context, poiID string) ([]GetPoiRati
 }
 
 const getPoiTotalRating = `-- name: GetPoiTotalRating :one
-SELECT SUM(rating) FROM reviews
+SELECT COALESCE(SUM(rating), 0) FROM reviews
 WHERE poi_id = $1
 `
 
-func (q *Queries) GetPoiTotalRating(ctx context.Context, poiID string) (int64, error) {
+func (q *Queries) GetPoiTotalRating(ctx context.Context, poiID string) (interface{}, error) {
 	row := q.db.QueryRow(ctx, getPoiTotalRating, poiID)
-	var sum int64
-	err := row.Scan(&sum)
-	return sum, err
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
 const getReviewIdsByPoiIdFiltered = `-- name: GetReviewIdsByPoiIdFiltered :many

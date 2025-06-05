@@ -124,5 +124,5 @@ SELECT * FROM review_images WHERE review_id IN (
 ) LIMIT 20;
 
 -- name: GetPoiTotalRating :one
-SELECT SUM(rating) FROM reviews
+SELECT COALESCE(SUM(rating), 0) FROM reviews
 WHERE poi_id = $1;
