@@ -151,3 +151,8 @@ WHERE id = $2;
 UPDATE pois
 SET total_favorites = $2
 WHERE id = $1;
+
+-- name: SetPoiRatingsAndVotes :exec
+UPDATE pois
+SET total_points = $2, total_votes = $3
+WHERE id = $1;

@@ -161,6 +161,18 @@ func (q *Queries) GetPoiRatings(ctx context.Context, poiID string) ([]GetPoiRati
 	return items, nil
 }
 
+const getPoiTotalRating = `-- name: GetPoiTotalRating :one
+SELECT SUM(rating) FROM reviews
+WHERE poi_id = $1
+`
+
+func (q *Queries) GetPoiTotalRating(ctx context.Context, poiID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getPoiTotalRating, poiID)
+	var sum int64
+	err := row.Scan(&sum)
+	return sum, err
+}
+
 const getReviewIdsByPoiIdFiltered = `-- name: GetReviewIdsByPoiIdFiltered :many
 SELECT 
   id

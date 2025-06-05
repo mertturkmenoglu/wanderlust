@@ -360,6 +360,23 @@ func (q *Queries) SetPoiFavoritesCount(ctx context.Context, arg SetPoiFavoritesC
 	return err
 }
 
+const setPoiRatingsAndVotes = `-- name: SetPoiRatingsAndVotes :exec
+UPDATE pois
+SET total_points = $2, total_votes = $3
+WHERE id = $1
+`
+
+type SetPoiRatingsAndVotesParams struct {
+	ID          string
+	TotalPoints int32
+	TotalVotes  int32
+}
+
+func (q *Queries) SetPoiRatingsAndVotes(ctx context.Context, arg SetPoiRatingsAndVotesParams) error {
+	_, err := q.db.Exec(ctx, setPoiRatingsAndVotes, arg.ID, arg.TotalPoints, arg.TotalVotes)
+	return err
+}
+
 const updatePoiHours = `-- name: UpdatePoiHours :exec
 UPDATE pois
 SET hours = $1
