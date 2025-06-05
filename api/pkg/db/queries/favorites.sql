@@ -33,10 +33,8 @@ LIMIT $3;
 SELECT COUNT(*) FROM favorites
 WHERE user_id = $1;
 
--- name: GetFavoriteById :one
-SELECT * FROM favorites
-WHERE id = $1;
-
 -- name: IsFavorite :one
-SELECT id FROM favorites
-WHERE poi_id = $1 AND user_id = $2;
+SELECT EXISTS (
+  SELECT 1 FROM favorites
+  WHERE poi_id = $1 AND user_id = $2
+);
