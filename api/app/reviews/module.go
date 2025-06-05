@@ -136,7 +136,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getByPoiID(ctx, input.ID, input.PaginationQueryParams)
+			res, err := s.getByPoiID(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
