@@ -2,6 +2,7 @@ package fakeutils
 
 import (
 	"bufio"
+	"fmt"
 	"math/rand"
 	"os"
 
@@ -50,4 +51,28 @@ func ReadFile(path string) ([]string, error) {
 	}
 
 	return lines, nil
+}
+
+func GetBatchCount(arrlen int, bathcSize int) int {
+	// Get how many chunks there are
+	chunkCount := arrlen / bathcSize
+
+	// If there are any leftovers, add them to the last chunk
+	if arrlen%bathcSize != 0 {
+		chunkCount++
+	}
+
+	return chunkCount
+}
+
+func CombineErrors(errchan chan error) error {
+	var combinedErr error
+	for err := range errchan {
+		if combinedErr == nil {
+			combinedErr = err
+		} else {
+			combinedErr = fmt.Errorf("%w; %v", combinedErr, err)
+		}
+	}
+	return combinedErr
 }
