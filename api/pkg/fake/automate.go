@@ -14,6 +14,7 @@ const (
 	usersPath       = "tmp/users.txt"
 	reviewsPath     = "tmp/reviews.txt"
 	collectionsPath = "tmp/collections.txt"
+	listsPath       = "tmp/lists.txt"
 )
 
 var steps = [...]string{
@@ -35,6 +36,9 @@ var steps = [...]string{
 	"collection-items",
 	"collections-cities",
 	"collections-pois",
+	"lists",
+	"fake-id", // run fake id again to get list ids
+	"list-items",
 }
 
 func Automate() error {
@@ -67,8 +71,12 @@ func Automate() error {
 
 func mux(f *handlers.Fake, t string) error {
 	switch t {
+	case "addresses":
+		return f.HandleAddresses(10_000)
 	case "amenities":
 		return f.HandleAmenities()
+	case "amenities-pois":
+		return f.HandleAmenitiesPois(poisPath)
 	case "categories":
 		return f.HandleCategories()
 	case "cities":
@@ -81,24 +89,24 @@ func mux(f *handlers.Fake, t string) error {
 		return f.HandleCollectionsCities(collectionsPath)
 	case "collections-pois":
 		return f.HandleCollectionsPois(collectionsPath, poisPath)
-	case "addresses":
-		return f.HandleAddresses(10_000)
-	case "users":
-		return f.HandleUsers(10_000)
-	case "pois":
-		return f.HandlePois(10_000)
 	case "fake-id":
 		return exec.Command("just", "fake-id").Run()
-	case "amenities-pois":
-		return f.HandleAmenitiesPois(poisPath)
-	case "media-for-many-pois":
-		return f.HandleMediaForManyPois(poisPath)
 	case "follows":
 		return f.HandleFollows(usersPath)
+	case "lists":
+		return f.HandleLists(usersPath)
+	case "list-items":
+		return f.HandleListItems(listsPath, poisPath)
+	case "media-for-many-pois":
+		return f.HandleMediaForManyPois(poisPath)
+	case "pois":
+		return f.HandlePois(10_000)
 	case "reviews":
 		return f.HandleReviews(poisPath, usersPath)
 	case "review-media":
 		return f.HandleReviewMedia(reviewsPath)
+	case "users":
+		return f.HandleUsers(10_000)
 	default:
 		return fmt.Errorf("invalid task type: %s", t)
 	}
