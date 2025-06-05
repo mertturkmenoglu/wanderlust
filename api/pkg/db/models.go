@@ -117,7 +117,6 @@ type DiaryUser struct {
 }
 
 type Favorite struct {
-	ID        int32
 	PoiID     string
 	UserID    string
 	CreatedAt pgtype.Timestamptz

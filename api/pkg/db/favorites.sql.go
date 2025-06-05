@@ -34,7 +34,7 @@ INSERT INTO favorites (
   $1,
   $2
 )
-RETURNING id, poi_id, user_id, created_at
+RETURNING poi_id, user_id, created_at
 `
 
 type CreateFavoriteParams struct {
@@ -45,12 +45,7 @@ type CreateFavoriteParams struct {
 func (q *Queries) CreateFavorite(ctx context.Context, arg CreateFavoriteParams) (Favorite, error) {
 	row := q.db.QueryRow(ctx, createFavorite, arg.UserID, arg.PoiID)
 	var i Favorite
-	err := row.Scan(
-		&i.ID,
-		&i.PoiID,
-		&i.UserID,
-		&i.CreatedAt,
-	)
+	err := row.Scan(&i.PoiID, &i.UserID, &i.CreatedAt)
 	return i, err
 }
 
@@ -69,25 +64,8 @@ func (q *Queries) DeleteFavoriteByPoiId(ctx context.Context, arg DeleteFavoriteB
 	return err
 }
 
-const getFavoriteById = `-- name: GetFavoriteById :one
-SELECT id, poi_id, user_id, created_at FROM favorites
-WHERE id = $1
-`
-
-func (q *Queries) GetFavoriteById(ctx context.Context, id int32) (Favorite, error) {
-	row := q.db.QueryRow(ctx, getFavoriteById, id)
-	var i Favorite
-	err := row.Scan(
-		&i.ID,
-		&i.PoiID,
-		&i.UserID,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
 const getFavoritesByUserId = `-- name: GetFavoritesByUserId :many
-SELECT id, poi_id, user_id, created_at
+SELECT poi_id, user_id, created_at
 FROM favorites
 WHERE user_id = $1
 ORDER BY created_at DESC
@@ -110,12 +88,7 @@ func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUs
 	var items []Favorite
 	for rows.Next() {
 		var i Favorite
-		if err := rows.Scan(
-			&i.ID,
-			&i.PoiID,
-			&i.UserID,
-			&i.CreatedAt,
-		); err != nil {
+		if err := rows.Scan(&i.PoiID, &i.UserID, &i.CreatedAt); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -127,8 +100,10 @@ func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUs
 }
 
 const isFavorite = `-- name: IsFavorite :one
-SELECT id FROM favorites
-WHERE poi_id = $1 AND user_id = $2
+SELECT EXISTS (
+  SELECT 1 FROM favorites
+  WHERE poi_id = $1 AND user_id = $2
+)
 `
 
 type IsFavoriteParams struct {
@@ -136,9 +111,9 @@ type IsFavoriteParams struct {
 	UserID string
 }
 
-func (q *Queries) IsFavorite(ctx context.Context, arg IsFavoriteParams) (int32, error) {
+func (q *Queries) IsFavorite(ctx context.Context, arg IsFavoriteParams) (bool, error) {
 	row := q.db.QueryRow(ctx, isFavorite, arg.PoiID, arg.UserID)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }
