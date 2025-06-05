@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"slices"
+	"sync"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 
@@ -21,6 +23,29 @@ func (f *Fake) HandleReviews(poiPath string, userPath string) error {
 		return err
 	}
 
+	var wg sync.WaitGroup
+	chunkCount := fakeutils.GetChunkCount(len(poiIds), 100)
+	errchan := make(chan error, chunkCount)
+
+	for chunk := range slices.Chunk(poiIds, 100) {
+		wg.Add(1)
+
+		go func(chunk []string) {
+			defer wg.Done()
+			err := f.createReviews(context.Background(), chunk, userIds)
+			if err != nil {
+				errchan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errchan)
+
+	return fakeutils.CombineErrors(errchan)
+}
+
+func (f *Fake) createReviews(ctx context.Context, poiIds []string, userIds []string) error {
 	batch := make([]db.BatchCreateReviewsParams, 0)
 
 	for _, id := range poiIds {
@@ -30,8 +55,7 @@ func (f *Fake) HandleReviews(poiPath string, userPath string) error {
 		batch = append(batch, res...)
 	}
 
-	_, err = f.db.Queries.BatchCreateReviews(context.Background(), batch)
-
+	_, err := f.db.Queries.BatchCreateReviews(ctx, batch)
 	return err
 }
 
@@ -59,15 +83,36 @@ func (f *Fake) HandleReviewMedia(reviewPath string) error {
 		return err
 	}
 
-	skipped := 0
+	var wg sync.WaitGroup
+	chunkCount := fakeutils.GetChunkCount(len(reviewIds), 100)
+	errchan := make(chan error, chunkCount)
+
+	for chunk := range slices.Chunk(reviewIds, 100) {
+		wg.Add(1)
+
+		go func(chunk []string) {
+			defer wg.Done()
+			err := f.reviewImages(context.Background(), chunk)
+			if err != nil {
+				errchan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errchan)
+
+	return fakeutils.CombineErrors(errchan)
+}
+
+func (f *Fake) reviewImages(ctx context.Context, chunk []string) error {
 	batch := make([]db.BatchCreateReviewImageParams, 0)
 
-	for _, id := range reviewIds {
+	for _, id := range chunk {
 		// Not all reviews should have media. 1/3 of them should have media.
 		chance := gofakeit.Float32()
 
 		if chance < 0.66 {
-			skipped++
 			continue
 		}
 
@@ -76,7 +121,7 @@ func (f *Fake) HandleReviewMedia(reviewPath string) error {
 		batch = append(batch, res...)
 	}
 
-	_, err = f.db.Queries.BatchCreateReviewImage(context.Background(), batch)
+	_, err := f.db.Queries.BatchCreateReviewImage(ctx, batch)
 	return err
 }
 
