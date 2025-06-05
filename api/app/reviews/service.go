@@ -273,14 +273,39 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 	}, nil
 }
 
-func (s *Service) getByPoiID(ctx context.Context, id string, params dto.PaginationQueryParams) (*dto.GetReviewsByPoiIdOutput, error) {
+func (s *Service) getByPoiID(ctx context.Context, input *dto.GetReviewsByPoiIdInput) (*dto.GetReviewsByPoiIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	ids, err := s.db.GetReviewIdsByPoiId(ctx, db.GetReviewIdsByPoiIdParams{
-		PoiID:  id,
-		Offset: int32(pagination.GetOffset(params)),
-		Limit:  int32(params.PageSize),
+	var minRating int16 = 0
+	var maxRating int16 = 5
+	var sortBy = "created_at"
+	var sortOrd = "desc"
+
+	if input.MinRating != 0 {
+		minRating = input.MinRating
+	}
+
+	if input.MaxRating != 0 {
+		maxRating = input.MaxRating
+	}
+
+	if input.SortBy == "rating" {
+		sortBy = "rating"
+	}
+
+	if input.SortOrd == "asc" {
+		sortOrd = "asc"
+	}
+
+	ids, err := s.db.GetReviewIdsByPoiIdFiltered(ctx, db.GetReviewIdsByPoiIdFilteredParams{
+		Poiid:     input.ID,
+		Minrating: minRating,
+		Maxrating: maxRating,
+		Sortby:    sortBy,
+		Sortord:   sortOrd,
+		Offset:    int32(pagination.GetOffset(input.PaginationQueryParams)),
+		Limit:     int32(input.PaginationQueryParams.PageSize),
 	})
 
 	if err != nil {
@@ -299,7 +324,7 @@ func (s *Service) getByPoiID(ctx context.Context, id string, params dto.Paginati
 		return nil, err
 	}
 
-	count, err := s.db.CountReviewsByPoiId(ctx, id)
+	count, err := s.db.CountReviewsByPoiId(ctx, input.ID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -309,7 +334,7 @@ func (s *Service) getByPoiID(ctx context.Context, id string, params dto.Paginati
 	return &dto.GetReviewsByPoiIdOutput{
 		Body: dto.GetReviewsByPoiIdOutputBody{
 			Reviews:    reviews,
-			Pagination: pagination.Compute(params, count),
+			Pagination: pagination.Compute(input.PaginationQueryParams, count),
 		},
 	}, nil
 }
