@@ -49,7 +49,7 @@ function Content({ className }: ContentProps) {
     <div className={cn(className)}>
       <div className="mt-8 space-y-8">
         {query.data.collections.map((collection) => (
-          <div>
+          <div key={collection.id}>
             <div
               key={collection.id}
               className="flex items-baseline gap-4 mb-4"
