@@ -2,11 +2,12 @@ package fake
 
 import (
 	"fmt"
-	"os/exec"
 	"time"
 	"wanderlust/pkg/fake/handlers"
+	"wanderlust/pkg/id"
 
 	"github.com/pterm/pterm"
+	"github.com/sony/sonyflake"
 )
 
 const (
@@ -26,11 +27,11 @@ var steps = [...]string{
 	"pois",
 	"fake-id", // run fake id to get user and poi ids
 	"amenities-pois",
-	"media-for-many-pois",
+	"poi-media",
 	"follows",
 	"reviews",
 	"fake-id", // run fake id again to get review ids
-	"review-media",
+	"review-images",
 	"collections",
 	"fake-id", // run fake id again to get collection ids
 	"collection-items",
@@ -45,13 +46,104 @@ var steps = [...]string{
 
 func Automate() error {
 	f := handlers.NewFake()
+	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
+	idgen := id.NewGenerator(flake)
+
+	fakers := map[string]handlers.IFaker{
+		"addresses": &handlers.FakeAddresses{
+			Count: 10_000,
+			Step:  1000,
+			Fake:  f,
+		},
+		"amenities": &handlers.FakeAmenities{
+			Fake: f,
+		},
+		"amenities-pois": &handlers.FakeAmenitiesPois{
+			PoisPath: poisPath,
+			Fake:     f,
+		},
+		"bookmarks": &handlers.FakeBookmarks{
+			UsersPath: usersPath,
+			PoisPath:  poisPath,
+			Fake:      f,
+		},
+		"categories": &handlers.FakeCategories{
+			Fake: f,
+		},
+		"cities": &handlers.FakeCities{
+			Fake: f,
+		},
+		"collections": &handlers.FakeCollections{
+			ID:   idgen,
+			Fake: f,
+		},
+		"collection-items": &handlers.FakeCollectionItems{
+			CollectionsPath: collectionsPath,
+			PoisPath:        poisPath,
+			Fake:            f,
+		},
+		"collections-cities": &handlers.FakeCollectionsCities{
+			CollectionsPath: collectionsPath,
+			Fake:            f,
+		},
+		"collections-pois": &handlers.FakeCollectionsPois{
+			CollectionsPath: collectionsPath,
+			PoisPath:        poisPath,
+			Fake:            f,
+		},
+		"fake-id": &handlers.FakeID{},
+		"favorites": &handlers.FakeFavorites{
+			UsersPath: usersPath,
+			PoisPath:  poisPath,
+			Fake:      f,
+		},
+		"follows": &handlers.FakeFollows{
+			UsersPath: usersPath,
+			Fake:      f,
+		},
+		"lists": &handlers.FakeLists{
+			UsersPath: usersPath,
+			ID:        idgen,
+			Fake:      f,
+		},
+		"list-items": &handlers.FakeListItems{
+			ListsPath: listsPath,
+			PoisPath:  poisPath,
+			Fake:      f,
+		},
+		"poi-media": &handlers.FakeMedia{
+			PoisPath: poisPath,
+			Fake:     f,
+		},
+		"pois": &handlers.FakePois{
+			Count: 10_000,
+			Step:  1000,
+			ID:    idgen,
+			Fake:  f,
+		},
+		"reviews": &handlers.FakeReviews{
+			PoisPath:  poisPath,
+			UsersPath: usersPath,
+			Fake:      f,
+		},
+		"review-images": &handlers.FakeReviewImages{
+			ReviewsPath: reviewsPath,
+			Fake:        f,
+		},
+		"users": &handlers.FakeUsers{
+			Count: 10_000,
+			Step:  1000,
+			Fake:  f,
+		},
+	}
+
 	automationStart := time.Now()
 
 	for _, step := range steps {
 		spinner, _ := pterm.DefaultSpinner.Start("Generating: " + step)
 		start := time.Now()
 
-		err := mux(f, step)
+		count, err := mux(fakers, step)
 
 		elapsed := time.Since(start)
 
@@ -62,7 +154,11 @@ func Automate() error {
 			spinner.Success()
 		}
 
-		f.Logger.Info("=> Elapsed time: " + elapsed.String())
+		f.Logger.Info("Generated: ", f.Logger.ArgsFromMap(map[string]any{
+			"step":  step,
+			"count": count,
+			"time":  elapsed,
+		}))
 	}
 
 	totalElapsed := time.Since(automationStart)
@@ -71,49 +167,10 @@ func Automate() error {
 	return nil
 }
 
-func mux(f *handlers.Fake, t string) error {
-	switch t {
-	case "addresses":
-		return f.HandleAddresses(10_000)
-	case "amenities":
-		return f.HandleAmenities()
-	case "amenities-pois":
-		return f.HandleAmenitiesPois(poisPath)
-	case "bookmarks":
-		return f.HandleBookmarks(usersPath, poisPath)
-	case "categories":
-		return f.HandleCategories()
-	case "cities":
-		return f.HandleCities()
-	case "collections":
-		return f.HandleCollections(10_000)
-	case "collection-items":
-		return f.HandleCollectionItems(collectionsPath, poisPath)
-	case "collections-cities":
-		return f.HandleCollectionsCities(collectionsPath)
-	case "collections-pois":
-		return f.HandleCollectionsPois(collectionsPath, poisPath)
-	case "fake-id":
-		return exec.Command("just", "fake-id").Run()
-	case "favorites":
-		return f.HandleFavorites(usersPath, poisPath)
-	case "follows":
-		return f.HandleFollows(usersPath)
-	case "lists":
-		return f.HandleLists(usersPath)
-	case "list-items":
-		return f.HandleListItems(listsPath, poisPath)
-	case "media-for-many-pois":
-		return f.HandleMediaForManyPois(poisPath)
-	case "pois":
-		return f.HandlePois(10_000)
-	case "reviews":
-		return f.HandleReviews(poisPath, usersPath)
-	case "review-media":
-		return f.HandleReviewMedia(reviewsPath)
-	case "users":
-		return f.HandleUsers(10_000)
-	default:
-		return fmt.Errorf("invalid task type: %s", t)
+func mux(f map[string]handlers.IFaker, step string) (int64, error) {
+	faker, ok := f[step]
+	if !ok {
+		return 0, fmt.Errorf("invalid task type: %s", step)
 	}
+	return faker.Generate()
 }
