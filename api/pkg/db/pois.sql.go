@@ -344,6 +344,22 @@ func (q *Queries) RandSelectPoiIds(ctx context.Context, limit int32) ([]string, 
 	return items, nil
 }
 
+const setPoiFavoritesCount = `-- name: SetPoiFavoritesCount :exec
+UPDATE pois
+SET total_favorites = $2
+WHERE id = $1
+`
+
+type SetPoiFavoritesCountParams struct {
+	ID             string
+	TotalFavorites int32
+}
+
+func (q *Queries) SetPoiFavoritesCount(ctx context.Context, arg SetPoiFavoritesCountParams) error {
+	_, err := q.db.Exec(ctx, setPoiFavoritesCount, arg.ID, arg.TotalFavorites)
+	return err
+}
+
 const updatePoiHours = `-- name: UpdatePoiHours :exec
 UPDATE pois
 SET hours = $1

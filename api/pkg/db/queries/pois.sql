@@ -146,3 +146,8 @@ WHERE poi_id = $1;
 UPDATE pois
 SET hours = $1
 WHERE id = $2;
+
+-- name: SetPoiFavoritesCount :exec
+UPDATE pois
+SET total_favorites = $2
+WHERE id = $1;

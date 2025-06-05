@@ -38,3 +38,7 @@ SELECT EXISTS (
   SELECT 1 FROM favorites
   WHERE poi_id = $1 AND user_id = $2
 );
+
+-- name: GetPoiFavoritesCount :one
+SELECT COUNT(*) FROM favorites
+WHERE poi_id = $1;

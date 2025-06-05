@@ -99,6 +99,18 @@ func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUs
 	return items, nil
 }
 
+const getPoiFavoritesCount = `-- name: GetPoiFavoritesCount :one
+SELECT COUNT(*) FROM favorites
+WHERE poi_id = $1
+`
+
+func (q *Queries) GetPoiFavoritesCount(ctx context.Context, poiID string) (int64, error) {
+	row := q.db.QueryRow(ctx, getPoiFavoritesCount, poiID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const isFavorite = `-- name: IsFavorite :one
 SELECT EXISTS (
   SELECT 1 FROM favorites
