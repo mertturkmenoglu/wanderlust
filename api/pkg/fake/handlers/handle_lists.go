@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"slices"
+	"sync"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/id"
@@ -40,7 +42,6 @@ func (f *Fake) HandleLists(usersPath string) error {
 }
 
 func (f *Fake) HandleListItems(listsPath string, poisPath string) error {
-	ctx := context.Background()
 	listIds, err := fakeutils.ReadFile(listsPath)
 
 	if err != nil {
@@ -53,6 +54,34 @@ func (f *Fake) HandleListItems(listsPath string, poisPath string) error {
 		return err
 	}
 
+	var wg sync.WaitGroup
+	chunkCount := fakeutils.GetChunkCount(len(listIds), 100)
+	errchan := make(chan error, chunkCount)
+	sem := make(chan struct{}, 10)
+
+	for chunk := range slices.Chunk(listIds, 100) {
+		wg.Add(1)
+
+		go func(chunk []string) {
+			defer wg.Done()
+
+			sem <- struct{}{}        // acquire a slot
+			defer func() { <-sem }() // release the slot
+
+			err := f.createListItems(context.Background(), chunk, poiIds)
+			if err != nil {
+				errchan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errchan)
+
+	return fakeutils.CombineErrors(errchan)
+}
+
+func (f *Fake) createListItems(ctx context.Context, listIds []string, poiIds []string) error {
 	batch := make([]db.BatchCreateListItemsParams, 0)
 
 	for _, listId := range listIds {
@@ -68,7 +97,7 @@ func (f *Fake) HandleListItems(listsPath string, poisPath string) error {
 		}
 	}
 
-	_, err = f.db.Queries.BatchCreateListItems(ctx, batch)
+	_, err := f.db.Queries.BatchCreateListItems(ctx, batch)
 
 	return err
 }
