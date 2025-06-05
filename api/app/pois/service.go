@@ -124,12 +124,12 @@ func (s *Service) isFavorite(ctx context.Context, poiId string) bool {
 
 	userId := ctx.Value("userId").(string)
 
-	_, err := s.App.Db.Queries.IsFavorite(ctx, db.IsFavoriteParams{
+	isFav, err := s.App.Db.Queries.IsFavorite(ctx, db.IsFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
 
-	return err == nil
+	return err == nil && isFav
 }
 
 func (s *Service) isBookmarked(ctx context.Context, poiId string) bool {
