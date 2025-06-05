@@ -35,12 +35,17 @@ func (f *Fake) tryFollowing(userIds []string) error {
 
 	chunkCount := fakeutils.GetChunkCount(len(userIds), 100)
 	errChan := make(chan error, chunkCount)
+	sem := make(chan struct{}, 10)
 
 	for chunk := range slices.Chunk(userIds, 100) {
 		wg.Add(1)
 
 		go func(ch []string) {
 			defer wg.Done()
+
+			sem <- struct{}{}        // acquire a slot
+			defer func() { <-sem }() // release the slot
+
 			if err := f.followUsers(context.Background(), ch, userIds); err != nil {
 				errChan <- err
 			}
@@ -85,12 +90,17 @@ func (f *Fake) tryUpdatingUsers(userIds []string) error {
 
 	chunkCount := fakeutils.GetChunkCount(len(userIds), 100)
 	errChan := make(chan error, chunkCount)
+	sem := make(chan struct{}, 10)
 
 	for chunk := range slices.Chunk(userIds, 100) {
 		wg.Add(1)
 
 		go func(ch []string) {
 			defer wg.Done()
+
+			sem <- struct{}{}        // acquire a slot
+			defer func() { <-sem }() // release the slot
+
 			if err := f.updateUsers(context.Background(), ch); err != nil {
 				errChan <- err
 			}

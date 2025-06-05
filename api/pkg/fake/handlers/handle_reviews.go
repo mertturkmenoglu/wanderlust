@@ -26,12 +26,17 @@ func (f *Fake) HandleReviews(poiPath string, userPath string) error {
 	var wg sync.WaitGroup
 	chunkCount := fakeutils.GetChunkCount(len(poiIds), 100)
 	errchan := make(chan error, chunkCount)
+	sem := make(chan struct{}, 10)
 
 	for chunk := range slices.Chunk(poiIds, 100) {
 		wg.Add(1)
 
 		go func(chunk []string) {
 			defer wg.Done()
+
+			sem <- struct{}{}        // acquire a slot
+			defer func() { <-sem }() // release the slot
+
 			err := f.createReviews(context.Background(), chunk, userIds)
 			if err != nil {
 				errchan <- err
@@ -56,6 +61,7 @@ func (f *Fake) createReviews(ctx context.Context, poiIds []string, userIds []str
 	}
 
 	_, err := f.db.Queries.BatchCreateReviews(ctx, batch)
+
 	return err
 }
 
@@ -86,12 +92,17 @@ func (f *Fake) HandleReviewMedia(reviewPath string) error {
 	var wg sync.WaitGroup
 	chunkCount := fakeutils.GetChunkCount(len(reviewIds), 100)
 	errchan := make(chan error, chunkCount)
+	sem := make(chan struct{}, 10)
 
 	for chunk := range slices.Chunk(reviewIds, 100) {
 		wg.Add(1)
 
 		go func(chunk []string) {
 			defer wg.Done()
+
+			sem <- struct{}{}        // acquire a slot
+			defer func() { <-sem }() // release the slot
+
 			err := f.reviewImages(context.Background(), chunk)
 			if err != nil {
 				errchan <- err
@@ -122,6 +133,7 @@ func (f *Fake) reviewImages(ctx context.Context, chunk []string) error {
 	}
 
 	_, err := f.db.Queries.BatchCreateReviewImage(ctx, batch)
+
 	return err
 }
 
