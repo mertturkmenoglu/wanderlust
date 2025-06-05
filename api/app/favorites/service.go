@@ -46,7 +46,6 @@ func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavorite
 
 	return &dto.CreateFavoriteOutput{
 		Body: dto.CreateFavoriteOutputBody{
-			ID:        res.ID,
 			PoiID:     res.PoiID,
 			UserID:    res.UserID,
 			CreatedAt: res.CreatedAt.Time,
