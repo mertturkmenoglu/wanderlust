@@ -8,39 +8,38 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 )
 
-func (f *Fake) HandleAmenitiesPois(path string) error {
-	ctx := context.Background()
+type FakeAmenitiesPois struct {
+	PoisPath string
+	*Fake
+}
 
+func (f *FakeAmenitiesPois) Generate() (int64, error) {
+	ctx := context.Background()
 	amenities, err := f.db.Queries.GetAllAmenities(ctx)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	ids, err := fakeutils.ReadFile(path)
+	ids, err := fakeutils.ReadFile(f.PoisPath)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	batch := make([]db.BatchCreateAmenitiesPoisParams, 0)
 
 	for _, id := range ids {
-		n := gofakeit.IntRange(2, 10)
-		tmp := make([]db.Amenity, len(amenities))
-		copy(tmp, amenities)
-		gofakeit.ShuffleAnySlice(tmp)
+		n := gofakeit.IntRange(4, 10)
+		randAmenities := fakeutils.RandElems(amenities, n)
 
-		for i := range n {
-			aid := tmp[i].ID
+		for _, a := range randAmenities {
 			batch = append(batch, db.BatchCreateAmenitiesPoisParams{
-				AmenityID: aid,
+				AmenityID: a.ID,
 				PoiID:     id,
 			})
 		}
 	}
 
-	_, err = f.db.Queries.BatchCreateAmenitiesPois(context.Background(), batch)
-
-	return err
+	return f.db.Queries.BatchCreateAmenitiesPois(ctx, batch)
 }

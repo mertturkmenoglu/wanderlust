@@ -2,63 +2,87 @@ package handlers
 
 import (
 	"context"
+	"slices"
+	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/id"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/sony/sonyflake"
+	"golang.org/x/sync/errgroup"
 )
 
-func (f *Fake) HandleCollections(count int) error {
-	step := 1000
-	ctx := context.Background()
-	idgen := id.NewGenerator(sonyflake.NewSonyflake(sonyflake.Settings{}))
-
-	if count < step {
-		step = count
-	}
-
-	for i := 0; i < count; i += step {
-		if i+step >= count {
-			step = count - i
-		}
-
-		batch := make([]db.BatchCreateCollectionsParams, 0, step)
-
-		for range step {
-			batch = append(batch, db.BatchCreateCollectionsParams{
-				ID:          idgen.Flake(),
-				Name:        gofakeit.Name(),
-				Description: gofakeit.Paragraph(10, 8, 6, " "),
-			})
-		}
-
-		_, err := f.db.Queries.BatchCreateCollections(ctx, batch)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+type FakeCollections struct {
+	ID *id.Generator
+	*Fake
 }
 
-func (f *Fake) HandleCollectionItems(collectionPath string, poiPath string) error {
+func (f *FakeCollections) Generate() (int64, error) {
+	count := 10_000
 	ctx := context.Background()
-	collectionIds, err := fakeutils.ReadFile(collectionPath)
+	batch := make([]db.BatchCreateCollectionsParams, 0, count)
 
-	if err != nil {
-		return err
+	for range count {
+		batch = append(batch, db.BatchCreateCollectionsParams{
+			ID:          f.ID.Flake(),
+			Name:        gofakeit.Name(),
+			Description: gofakeit.Paragraph(10, 8, 6, " "),
+		})
 	}
 
-	poiIds, err := fakeutils.ReadFile(poiPath)
+	return f.db.Queries.BatchCreateCollections(ctx, batch)
+}
+
+type FakeCollectionItems struct {
+	CollectionsPath string
+	PoisPath        string
+	*Fake
+}
+
+func (f *FakeCollectionItems) Generate() (int64, error) {
+	collectionIds, poiIds, err := f.readFiles()
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	batch := make([]db.BatchCreateCollectionItemsParams, 0, 10*len(collectionIds))
+	var total atomic.Int64
+	g, gctx := errgroup.WithContext(context.Background())
+	g.SetLimit(10)
+
+	for chunk := range slices.Chunk(collectionIds, 100) {
+		g.Go(func() error {
+			count, err := f.createCollectionItems(gctx, chunk, poiIds)
+			total.Add(count)
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
+
+	return total.Load(), nil
+}
+
+func (f *FakeCollectionItems) readFiles() ([]string, []string, error) {
+	collectionIds, err := fakeutils.ReadFile(f.CollectionsPath)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	poiIds, err := fakeutils.ReadFile(f.PoisPath)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return collectionIds, poiIds, nil
+}
+
+func (f *FakeCollectionItems) createCollectionItems(ctx context.Context, collectionIds []string, poiIds []string) (int64, error) {
+	batch := make([]db.BatchCreateCollectionItemsParams, 0)
 
 	for _, collectionId := range collectionIds {
 		pois := fakeutils.RandElems(poiIds, 10)
@@ -72,23 +96,25 @@ func (f *Fake) HandleCollectionItems(collectionPath string, poiPath string) erro
 		}
 	}
 
-	_, err = f.db.Queries.BatchCreateCollectionItems(ctx, batch)
-
-	return err
+	return f.db.Queries.BatchCreateCollectionItems(ctx, batch)
 }
 
-func (f *Fake) HandleCollectionsCities(collectionPath string) error {
-	ctx := context.Background()
-	collectionIds, err := fakeutils.ReadFile(collectionPath)
+type FakeCollectionsCities struct {
+	CollectionsPath string
+	*Fake
+}
+
+func (f *FakeCollectionsCities) Generate() (int64, error) {
+	collectionIds, err := fakeutils.ReadFile(f.CollectionsPath)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	cities, err := f.db.Queries.GetCities(ctx)
+	cities, err := f.db.Queries.GetCities(context.Background())
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	batch := make([]db.BatchCreateCollectionCityRelationsParams, 0, 10*len(cities))
@@ -105,26 +131,59 @@ func (f *Fake) HandleCollectionsCities(collectionPath string) error {
 		}
 	}
 
-	_, err = f.db.Queries.BatchCreateCollectionCityRelations(ctx, batch)
-
-	return err
+	return f.db.Queries.BatchCreateCollectionCityRelations(context.Background(), batch)
 }
 
-func (f *Fake) HandleCollectionsPois(collectionPath string, poisPath string) error {
-	ctx := context.Background()
-	collectionIds, err := fakeutils.ReadFile(collectionPath)
+type FakeCollectionsPois struct {
+	CollectionsPath string
+	PoisPath        string
+	*Fake
+}
+
+func (f *FakeCollectionsPois) Generate() (int64, error) {
+	collectionIds, poiIds, err := f.readFiles()
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	poiIds, err := fakeutils.ReadFile(poisPath)
+	var total atomic.Int64
+	g, gctx := errgroup.WithContext(context.Background())
+	g.SetLimit(10)
+
+	for chunk := range slices.Chunk(poiIds, 100) {
+		g.Go(func() error {
+			count, err := f.createCollectionsPois(gctx, chunk, collectionIds)
+			total.Add(count)
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
+
+	return total.Load(), nil
+}
+
+func (f *FakeCollectionsPois) readFiles() ([]string, []string, error) {
+	collectionIds, err := fakeutils.ReadFile(f.CollectionsPath)
 
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	batch := make([]db.BatchCreateCollectionPoiRelationsParams, 0, 5*len(poiIds))
+	poiIds, err := fakeutils.ReadFile(f.PoisPath)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return collectionIds, poiIds, nil
+}
+
+func (f *FakeCollectionsPois) createCollectionsPois(ctx context.Context, poiIds []string, collectionIds []string) (int64, error) {
+	batch := make([]db.BatchCreateCollectionPoiRelationsParams, 0)
 
 	for _, poiId := range poiIds {
 		collections := fakeutils.RandElems(collectionIds, 5)
@@ -138,7 +197,5 @@ func (f *Fake) HandleCollectionsPois(collectionPath string, poisPath string) err
 		}
 	}
 
-	_, err = f.db.Queries.BatchCreateCollectionPoiRelations(ctx, batch)
-
-	return err
+	return f.db.Queries.BatchCreateCollectionPoiRelations(ctx, batch)
 }

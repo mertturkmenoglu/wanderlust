@@ -8,12 +8,16 @@ import (
 //go:embed cities.sql
 var sqlQuery string
 
-func (f *Fake) HandleCities() error {
-	_, err := f.db.Pool.Exec(context.Background(), sqlQuery)
+type FakeCities struct {
+	*Fake
+}
+
+func (f *FakeCities) Generate() (int64, error) {
+	ct, err := f.db.Pool.Exec(context.Background(), sqlQuery)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return ct.RowsAffected(), nil
 }

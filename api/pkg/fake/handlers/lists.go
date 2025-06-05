@@ -3,32 +3,55 @@ package handlers
 import (
 	"context"
 	"slices"
-	"sync"
+	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/id"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/sony/sonyflake"
+	"golang.org/x/sync/errgroup"
 )
 
-func (f *Fake) HandleLists(usersPath string) error {
-	ctx := context.Background()
-	idgen := id.NewGenerator(sonyflake.NewSonyflake(sonyflake.Settings{}))
+type FakeLists struct {
+	UsersPath string
+	ID        *id.Generator
+	*Fake
+}
 
-	userIds, err := fakeutils.ReadFile(usersPath)
+func (f *FakeLists) Generate() (int64, error) {
+	userIds, err := fakeutils.ReadFile(f.UsersPath)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
+	var total atomic.Int64
+	g, gctx := errgroup.WithContext(context.Background())
+	g.SetLimit(10)
+
+	for chunk := range slices.Chunk(userIds, 100) {
+		g.Go(func() error {
+			count, err := f.createLists(gctx, chunk)
+			total.Add(count)
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
+
+	return total.Load(), nil
+}
+
+func (f *FakeLists) createLists(ctx context.Context, userIds []string) (int64, error) {
 	batch := make([]db.BatchCreateListsParams, 0)
 
 	for _, userId := range userIds {
 		n := gofakeit.Number(1, 5)
 		for range n {
 			batch = append(batch, db.BatchCreateListsParams{
-				ID:       idgen.Flake(),
+				ID:       f.ID.Flake(),
 				Name:     gofakeit.HipsterSentence(4),
 				UserID:   userId,
 				IsPublic: gofakeit.Bool(),
@@ -36,52 +59,58 @@ func (f *Fake) HandleLists(usersPath string) error {
 		}
 	}
 
-	_, err = f.db.Queries.BatchCreateLists(ctx, batch)
-
-	return err
+	return f.db.Queries.BatchCreateLists(ctx, batch)
 }
 
-func (f *Fake) HandleListItems(listsPath string, poisPath string) error {
-	listIds, err := fakeutils.ReadFile(listsPath)
+type FakeListItems struct {
+	ListsPath string
+	PoisPath  string
+	*Fake
+}
+
+func (f *FakeListItems) Generate() (int64, error) {
+	listIds, poiIds, err := f.readFiles()
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	poiIds, err := fakeutils.ReadFile(poisPath)
-
-	if err != nil {
-		return err
-	}
-
-	var wg sync.WaitGroup
-	chunkCount := fakeutils.GetChunkCount(len(listIds), 100)
-	errchan := make(chan error, chunkCount)
-	sem := make(chan struct{}, 10)
+	var total atomic.Int64
+	g, gctx := errgroup.WithContext(context.Background())
+	g.SetLimit(10)
 
 	for chunk := range slices.Chunk(listIds, 100) {
-		wg.Add(1)
-
-		go func(chunk []string) {
-			defer wg.Done()
-
-			sem <- struct{}{}        // acquire a slot
-			defer func() { <-sem }() // release the slot
-
-			err := f.createListItems(context.Background(), chunk, poiIds)
-			if err != nil {
-				errchan <- err
-			}
-		}(chunk)
+		g.Go(func() error {
+			count, err := f.createListItems(gctx, chunk, poiIds)
+			total.Add(count)
+			return err
+		})
 	}
 
-	wg.Wait()
-	close(errchan)
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
 
-	return fakeutils.CombineErrors(errchan)
+	return total.Load(), nil
 }
 
-func (f *Fake) createListItems(ctx context.Context, listIds []string, poiIds []string) error {
+func (f *FakeListItems) readFiles() ([]string, []string, error) {
+	listIds, err := fakeutils.ReadFile(f.ListsPath)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	poiIds, err := fakeutils.ReadFile(f.PoisPath)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return listIds, poiIds, nil
+}
+
+func (f *FakeListItems) createListItems(ctx context.Context, listIds []string, poiIds []string) (int64, error) {
 	batch := make([]db.BatchCreateListItemsParams, 0)
 
 	for _, listId := range listIds {
@@ -97,7 +126,5 @@ func (f *Fake) createListItems(ctx context.Context, listIds []string, poiIds []s
 		}
 	}
 
-	_, err := f.db.Queries.BatchCreateListItems(ctx, batch)
-
-	return err
+	return f.db.Queries.BatchCreateListItems(ctx, batch)
 }

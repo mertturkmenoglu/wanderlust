@@ -17,3 +17,7 @@ func NewFake() *Fake {
 		db:     db.NewDb(),
 	}
 }
+
+type IFaker interface {
+	Generate() (int64, error)
+}

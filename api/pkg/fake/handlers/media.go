@@ -32,39 +32,32 @@ func getRandomImageUrl() string {
 	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", imageIds[gofakeit.IntRange(0, len(imageIds)-1)])
 }
 
-func (f *Fake) HandleMediaForManyPois(path string) error {
-	ids, err := fakeutils.ReadFile(path)
+type FakeMedia struct {
+	PoisPath string
+	*Fake
+}
+
+func (f *FakeMedia) Generate() (int64, error) {
+	poiIds, err := fakeutils.ReadFile(f.PoisPath)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	batch := make([]db.BatchCreatePoiMediaParams, 0)
 
-	for _, id := range ids {
+	for _, id := range poiIds {
 		n := gofakeit.IntRange(2, 10)
-		res := createMediaForPoi(id, n)
-		batch = append(batch, res...)
+
+		for i := range n {
+			batch = append(batch, db.BatchCreatePoiMediaParams{
+				PoiID: id,
+				Url:   getRandomImageUrl(),
+				Alt:   "Alt text for image " + strconv.Itoa(i),
+				Index: int16(i + 1),
+			})
+		}
 	}
 
-	_, err = f.db.Queries.BatchCreatePoiMedia(context.Background(), batch)
-
-	return err
-}
-
-func createMediaForPoi(poiId string, count int) []db.BatchCreatePoiMediaParams {
-	arg := make([]db.BatchCreatePoiMediaParams, 0)
-
-	for i := range count {
-		url := getRandomImageUrl()
-
-		arg = append(arg, db.BatchCreatePoiMediaParams{
-			PoiID: poiId,
-			Url:   url,
-			Alt:   "Alt text for image " + strconv.Itoa(i),
-			Index: int16(i + 1),
-		})
-	}
-
-	return arg
+	return f.db.Queries.BatchCreatePoiMedia(context.Background(), batch)
 }

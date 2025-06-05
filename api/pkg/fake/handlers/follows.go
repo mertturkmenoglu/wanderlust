@@ -3,62 +3,61 @@ package handlers
 import (
 	"context"
 	"slices"
-	"sync"
+	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
+
+	"golang.org/x/sync/errgroup"
 )
 
-func (f *Fake) HandleFollows(path string) error {
-	userIds, err := fakeutils.ReadFile(path)
-
-	if err != nil {
-		return err
-	}
-
-	err = f.tryFollowing(userIds)
-
-	if err != nil {
-		return err
-	}
-
-	err = f.tryUpdatingUsers(userIds)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+type FakeFollows struct {
+	UsersPath string
+	*Fake
 }
 
-func (f *Fake) tryFollowing(userIds []string) error {
-	var wg sync.WaitGroup
+func (f *FakeFollows) Generate() (int64, error) {
+	userIds, err := fakeutils.ReadFile(f.UsersPath)
 
-	chunkCount := fakeutils.GetChunkCount(len(userIds), 100)
-	errChan := make(chan error, chunkCount)
-	sem := make(chan struct{}, 10)
+	if err != nil {
+		return 0, err
+	}
+
+	var total atomic.Int64
+	g, gctx := errgroup.WithContext(context.Background())
+	g.SetLimit(10)
 
 	for chunk := range slices.Chunk(userIds, 100) {
-		wg.Add(1)
-
-		go func(ch []string) {
-			defer wg.Done()
-
-			sem <- struct{}{}        // acquire a slot
-			defer func() { <-sem }() // release the slot
-
-			if err := f.followUsers(context.Background(), ch, userIds); err != nil {
-				errChan <- err
-			}
-		}(chunk)
+		g.Go(func() error {
+			count, err := f.followUsers(gctx, chunk, userIds)
+			total.Add(count)
+			return err
+		})
 	}
 
-	wg.Wait()
-	close(errChan)
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
 
-	return fakeutils.CombineErrors(errChan)
+	g, gctx = errgroup.WithContext(context.Background())
+	g.SetLimit(10)
+
+	for chunk := range slices.Chunk(userIds, 100) {
+		g.Go(func() error {
+			err := f.updateUsers(gctx, chunk)
+			return err
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return 0, err
+	}
+
+	return total.Load(), nil
 }
 
-func (f *Fake) followUsers(ctx context.Context, chunk []string, allUserIds []string) error {
+func (f *FakeFollows) followUsers(ctx context.Context, chunk []string, allUserIds []string) (int64, error) {
+	var total int64 = 0
+
 	for _, userId := range chunk {
 		batch := make([]db.BatchFollowParams, 0, len(chunk))
 		targets := fakeutils.RandElems(allUserIds, 10)
@@ -74,46 +73,20 @@ func (f *Fake) followUsers(ctx context.Context, chunk []string, allUserIds []str
 			})
 		}
 
-		_, err := f.db.Queries.BatchFollow(ctx, batch)
+		count, err := f.db.Queries.BatchFollow(ctx, batch)
 
 		// Key collisions can happen. Ignore it.
 		if err != nil {
 			continue
+		} else {
+			total += count
 		}
 	}
 
-	return nil
+	return total, nil
 }
 
-func (f *Fake) tryUpdatingUsers(userIds []string) error {
-	var wg sync.WaitGroup
-
-	chunkCount := fakeutils.GetChunkCount(len(userIds), 100)
-	errChan := make(chan error, chunkCount)
-	sem := make(chan struct{}, 10)
-
-	for chunk := range slices.Chunk(userIds, 100) {
-		wg.Add(1)
-
-		go func(ch []string) {
-			defer wg.Done()
-
-			sem <- struct{}{}        // acquire a slot
-			defer func() { <-sem }() // release the slot
-
-			if err := f.updateUsers(context.Background(), ch); err != nil {
-				errChan <- err
-			}
-		}(chunk)
-	}
-
-	wg.Wait()
-	close(errChan)
-
-	return fakeutils.CombineErrors(errChan)
-}
-
-func (f *Fake) updateUsers(ctx context.Context, ids []string) error {
+func (f *FakeFollows) updateUsers(ctx context.Context, ids []string) error {
 	tx, err := f.db.Pool.Begin(ctx)
 
 	if err != nil {

@@ -3,56 +3,50 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/id"
 	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/sony/sonyflake"
 )
 
-func (f *Fake) HandlePois(count int) error {
-	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
-	step := 1000
-	ctx := context.Background()
+type FakePois struct {
+	Count int
+	Step  int
+	ID    *id.Generator
+	*Fake
+}
 
-	if count < step {
-		step = count
+func (f *FakePois) Generate() (int64, error) {
+	if f.Count < f.Step {
+		f.Step = f.Count
 	}
 
-	for i := 0; i < count; i += step {
-		if i+step >= count {
-			step = count - i
+	for i := 0; i < f.Count; i += f.Step {
+		if i+f.Step >= f.Count {
+			f.Step = f.Count - i
 		}
 
-		arg := make([]db.BatchCreatePoisParams, 0, step)
-		addressIds, err := f.db.Queries.RandSelectAddresses(ctx, int32(step))
+		batch := make([]db.BatchCreatePoisParams, 0, f.Step)
+		addressIds, err := f.db.Queries.RandSelectAddresses(context.Background(), int32(f.Step))
 		addressIdsLen := len(addressIds)
 
 		if err != nil {
-			return err
+			return 0, err
 		}
 
-		for j := range step {
+		for j := range f.Step {
 			ot, err := genRandOpenTimes()
 
 			if err != nil {
-				return err
+				return 0, err
 			}
 
 			idx := j % addressIdsLen
 			addressId := addressIds[idx]
 
-			idInt, err := flake.NextID()
-
-			if err != nil {
-				return err
-			}
-
-			id := fmt.Sprintf("%d", idInt)
-
-			arg = append(arg, db.BatchCreatePoisParams{
-				ID:                 id,
+			batch = append(batch, db.BatchCreatePoisParams{
+				ID:                 f.ID.Flake(),
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
 				Description:        gofakeit.LoremIpsumSentence(32),
@@ -68,14 +62,14 @@ func (f *Fake) HandlePois(count int) error {
 			})
 		}
 
-		_, err = f.db.Queries.BatchCreatePois(ctx, arg)
+		_, err = f.db.Queries.BatchCreatePois(context.Background(), batch)
 
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	return nil
+	return int64(f.Count), nil
 }
 
 func genRandOpenTimes() ([]byte, error) {

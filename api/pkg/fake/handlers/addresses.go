@@ -3,56 +3,50 @@ package handlers
 import (
 	"context"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/fake/fakeutils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func (f *Fake) HandleAddresses(count int) error {
-	const step = 100
-
-	for i := 0; i < count; i += step {
-		err := f.batchInsertAddresses(step)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+type FakeAddresses struct {
+	Count int
+	Step  int
+	*Fake
 }
 
-func (f *Fake) batchInsertAddresses(n int) error {
-	arg := make([]db.BatchCreateAddressesParams, 0, n)
-	cityIds, err := f.db.Queries.RandSelectCities(context.Background(), int32(n))
+func (f *FakeAddresses) Generate() (int64, error) {
+	var total int64 = 0
 
-	if err != nil {
-		return err
+	for i := 0; i < f.Count; i += f.Step {
+		count, err := f.batchInsert()
+
+		if err != nil {
+			return 0, err
+		}
+
+		total += count
 	}
 
+	return total, nil
+}
+
+func (f *FakeAddresses) batchInsert() (int64, error) {
+	arg := make([]db.BatchCreateAddressesParams, 0, f.Step)
 	cities, err := f.db.Queries.GetCities(context.Background())
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	for i := range n {
-		idx := i % len(cityIds)
+	for range f.Step {
+		randCity := fakeutils.RandElem(cities)
 
-		var city *db.City
-
-		for _, c := range cities {
-			if c.ID == cityIds[idx] {
-				city = &c
-				break
-			}
-		}
-
-		lat := city.Latitude + gofakeit.Float64Range(-0.02, 0.02)
-		lng := city.Longitude + gofakeit.Float64Range(-0.02, 0.02)
+		lat := randCity.Latitude + gofakeit.Float64Range(-0.02, 0.02)
+		lng := randCity.Longitude + gofakeit.Float64Range(-0.02, 0.02)
 
 		arg = append(arg, db.BatchCreateAddressesParams{
-			CityID:     cityIds[idx],
+			CityID:     randCity.ID,
 			Line1:      gofakeit.Street(),
 			Line2:      pgtype.Text{String: gofakeit.StreetName(), Valid: true},
 			PostalCode: pgtype.Text{String: gofakeit.Zip(), Valid: true},
@@ -61,7 +55,5 @@ func (f *Fake) batchInsertAddresses(n int) error {
 		})
 	}
 
-	_, err = f.db.Queries.BatchCreateAddresses(context.Background(), arg)
-
-	return err
+	return f.db.Queries.BatchCreateAddresses(context.Background(), arg)
 }
