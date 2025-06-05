@@ -6,7 +6,7 @@ import { computeRating } from '@/lib/rating';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { LoaderCircleIcon, StarIcon } from 'lucide-react';
-import CreateReviewDialog from './create-dialog';
+import { CreateReviewDialog } from './create/create-dialog';
 import { ReviewImages } from './images';
 
 type Props = {
