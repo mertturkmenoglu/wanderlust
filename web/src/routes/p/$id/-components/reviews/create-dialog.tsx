@@ -93,7 +93,7 @@ export default function CreateReviewDialog() {
           <span>Add a review</span>
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className="sm:max-w-4xl">
+      <AlertDialogContent className="sm:max-w-xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Add a review</AlertDialogTitle>
           <AlertDialogDescription>
@@ -106,7 +106,10 @@ export default function CreateReviewDialog() {
             <Rating
               id="rating"
               defaultValue={0}
-              onChange={(v) => setRating(v.value)}
+              value={rating}
+              onChange={(v) => {
+                setRating(v.value);
+              }}
               disabled={false}
               starsClassName="size-8"
             />
@@ -118,6 +121,7 @@ export default function CreateReviewDialog() {
               id="content"
               rows={5}
               placeholder="Leave a review"
+              className="mt-1"
               {...form.register('content')}
             />
             <InputInfo text={lengthTracker(form.watch('content'), 2048)} />
