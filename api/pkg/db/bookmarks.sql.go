@@ -9,6 +9,11 @@ import (
 	"context"
 )
 
+type BatchCreateBookmarksParams struct {
+	UserID string
+	PoiID  string
+}
+
 const countUserBookmarks = `-- name: CountUserBookmarks :one
 SELECT COUNT(*) FROM bookmarks
 WHERE user_id = $1
@@ -28,8 +33,7 @@ INSERT INTO bookmarks (
 ) VALUES (
   $1,
   $2
-)
-RETURNING id, poi_id, user_id, created_at
+) RETURNING id, poi_id, user_id, created_at
 `
 
 type CreateBookmarkParams struct {

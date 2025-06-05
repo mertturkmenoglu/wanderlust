@@ -79,6 +79,39 @@ func (q *Queries) BatchCreateAmenitiesPois(ctx context.Context, arg []BatchCreat
 	return q.db.CopyFrom(ctx, []string{"amenities_pois"}, []string{"amenity_id", "poi_id"}, &iteratorForBatchCreateAmenitiesPois{rows: arg})
 }
 
+// iteratorForBatchCreateBookmarks implements pgx.CopyFromSource.
+type iteratorForBatchCreateBookmarks struct {
+	rows                 []BatchCreateBookmarksParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateBookmarks) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateBookmarks) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].UserID,
+		r.rows[0].PoiID,
+	}, nil
+}
+
+func (r iteratorForBatchCreateBookmarks) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateBookmarks(ctx context.Context, arg []BatchCreateBookmarksParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"bookmarks"}, []string{"user_id", "poi_id"}, &iteratorForBatchCreateBookmarks{rows: arg})
+}
+
 // iteratorForBatchCreateCollectionCityRelations implements pgx.CopyFromSource.
 type iteratorForBatchCreateCollectionCityRelations struct {
 	rows                 []BatchCreateCollectionCityRelationsParams

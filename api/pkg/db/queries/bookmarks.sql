@@ -5,8 +5,16 @@ INSERT INTO bookmarks (
 ) VALUES (
   $1,
   $2
-)
-RETURNING *;
+) RETURNING *;
+
+-- name: BatchCreateBookmarks :copyfrom
+INSERT INTO bookmarks (
+  user_id,
+  poi_id
+) VALUES (
+  $1,
+  $2
+);
 
 -- name: DeleteBookmarkByPoiId :exec
 DELETE FROM bookmarks
