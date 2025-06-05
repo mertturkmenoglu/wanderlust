@@ -161,24 +161,45 @@ func (q *Queries) GetPoiRatings(ctx context.Context, poiID string) ([]GetPoiRati
 	return items, nil
 }
 
-const getReviewIdsByPoiId = `-- name: GetReviewIdsByPoiId :many
+const getReviewIdsByPoiIdFiltered = `-- name: GetReviewIdsByPoiIdFiltered :many
 SELECT 
   id
 FROM reviews
-WHERE poi_id = $1
-ORDER BY created_at DESC
-OFFSET $2
-LIMIT $3
+WHERE 
+    poi_id = $3::TEXT
+  AND
+    (rating >= COALESCE($4, rating))
+  AND
+    (rating <= COALESCE($5, rating))
+ORDER BY
+  CASE WHEN $6::TEXT = 'created_at' AND $7::TEXT = 'desc' THEN created_at END DESC,
+  CASE WHEN $6::TEXT = 'created_at' AND $7::TEXT = 'asc' THEN created_at END ASC,
+  CASE WHEN $6::TEXT = 'rating' AND $7::TEXT = 'desc' THEN rating END DESC,
+  CASE WHEN $6::TEXT = 'rating' AND $7::TEXT = 'asc' THEN rating END ASC
+OFFSET $1
+LIMIT $2
 `
 
-type GetReviewIdsByPoiIdParams struct {
-	PoiID  string
-	Offset int32
-	Limit  int32
+type GetReviewIdsByPoiIdFilteredParams struct {
+	Offset    int32
+	Limit     int32
+	Poiid     string
+	Minrating int16
+	Maxrating int16
+	Sortby    string
+	Sortord   string
 }
 
-func (q *Queries) GetReviewIdsByPoiId(ctx context.Context, arg GetReviewIdsByPoiIdParams) ([]string, error) {
-	rows, err := q.db.Query(ctx, getReviewIdsByPoiId, arg.PoiID, arg.Offset, arg.Limit)
+func (q *Queries) GetReviewIdsByPoiIdFiltered(ctx context.Context, arg GetReviewIdsByPoiIdFilteredParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, getReviewIdsByPoiIdFiltered,
+		arg.Offset,
+		arg.Limit,
+		arg.Poiid,
+		arg.Minrating,
+		arg.Maxrating,
+		arg.Sortby,
+		arg.Sortord,
+	)
 	if err != nil {
 		return nil, err
 	}

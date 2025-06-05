@@ -36,14 +36,23 @@ INSERT INTO reviews (
 DELETE FROM reviews
 WHERE id = $1;
 
--- name: GetReviewIdsByPoiId :many
+-- name: GetReviewIdsByPoiIdFiltered :many
 SELECT 
   id
 FROM reviews
-WHERE poi_id = $1
-ORDER BY created_at DESC
-OFFSET $2
-LIMIT $3;
+WHERE 
+    poi_id = sqlc.arg(poiId)::TEXT
+  AND
+    (rating >= COALESCE(sqlc.arg(minRating), rating))
+  AND
+    (rating <= COALESCE(sqlc.arg(maxRating), rating))
+ORDER BY
+  CASE WHEN sqlc.arg(sortBy)::TEXT = 'created_at' AND sqlc.arg(sortOrd)::TEXT = 'desc' THEN created_at END DESC,
+  CASE WHEN sqlc.arg(sortBy)::TEXT = 'created_at' AND sqlc.arg(sortOrd)::TEXT = 'asc' THEN created_at END ASC,
+  CASE WHEN sqlc.arg(sortBy)::TEXT = 'rating' AND sqlc.arg(sortOrd)::TEXT = 'desc' THEN rating END DESC,
+  CASE WHEN sqlc.arg(sortBy)::TEXT = 'rating' AND sqlc.arg(sortOrd)::TEXT = 'asc' THEN rating END ASC
+OFFSET $1
+LIMIT $2;
 
 -- name: CountReviewsByPoiId :one
 SELECT COUNT(*) FROM reviews
