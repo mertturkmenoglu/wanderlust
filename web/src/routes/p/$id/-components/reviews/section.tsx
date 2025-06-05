@@ -20,7 +20,7 @@ import { ReviewCard } from './card';
 export function Section() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
-  const { page } = route.useSearch();
+  const search = route.useSearch();
 
   const query = api.useQuery('get', '/api/v2/reviews/poi/{id}', {
     params: {
@@ -29,13 +29,17 @@ export function Section() {
       },
       query: {
         pageSize: 10,
-        page: page ?? 1,
+        page: search.page ?? 1,
+        maxRating: search.maxRating,
+        minRating: search.minRating,
+        sortBy: search.sortBy,
+        sortOrd: search.sortOrd,
       },
     },
   });
 
   const nums = usePaginationNumbers(
-    page ?? 1,
+    search.page ?? 1,
     query.data?.pagination.totalPages ?? 1,
   );
 
@@ -98,7 +102,7 @@ export function Section() {
                   id: poi.id,
                 }}
                 search={{
-                  page: pagination.hasPrevious ? (page ?? 1) - 1 : 1,
+                  page: pagination.hasPrevious ? (search.page ?? 1) - 1 : 1,
                 }}
               >
                 <ChevronLeftIcon />
@@ -109,12 +113,12 @@ export function Section() {
             {nums.map((x) => (
               <PaginationItem key={`pagination-${x}`}>
                 <Link
-                  aria-current={x === (page ?? 1) ? 'page' : undefined}
+                  aria-current={x === (search.page ?? 1) ? 'page' : undefined}
                   data-slot="pagination-link"
-                  data-active={x === (page ?? 1)}
+                  data-active={x === (search.page ?? 1)}
                   className={cn(
                     buttonVariants({
-                      variant: x === (page ?? 1) ? 'outline' : 'ghost',
+                      variant: x === (search.page ?? 1) ? 'outline' : 'ghost',
                     }),
                   )}
                   to="/p/$id"
@@ -145,7 +149,9 @@ export function Section() {
                   id: poi.id,
                 }}
                 search={{
-                  page: pagination.hasNext ? (page ?? 1) + 1 : page,
+                  page: pagination.hasNext
+                    ? (search.page ?? 1) + 1
+                    : search.page,
                 }}
               >
                 <span className="hidden sm:block">Next</span>
