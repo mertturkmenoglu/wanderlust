@@ -76,7 +76,11 @@ type GetReviewsByUsernameOutputBody struct {
 }
 
 type GetReviewsByPoiIdInput struct {
-	ID string `path:"id" validate:"required" doc:"ID of point of interest" example:"7323488942953598976"`
+	ID        string `path:"id" validate:"required" doc:"ID of point of interest" example:"7323488942953598976"`
+	SortBy    string `query:"sortBy" doc:"Sort by" example:"created_at" enum:"created_at,rating"`
+	SortOrd   string `query:"sortOrd" doc:"Sort order" example:"desc" enum:"asc,desc"`
+	MinRating int16  `query:"minRating" doc:"Minimum rating" example:"1" min:"1" max:"5"`
+	MaxRating int16  `query:"maxRating" doc:"Maximum rating" example:"5" min:"1" max:"5"`
 	PaginationQueryParams
 }
 
