@@ -25,7 +25,7 @@ func (f *Fake) HandleLists(usersPath string) error {
 	batch := make([]db.BatchCreateListsParams, 0)
 
 	for _, userId := range userIds {
-		n := gofakeit.Number(1, 10)
+		n := gofakeit.Number(1, 5)
 		for range n {
 			batch = append(batch, db.BatchCreateListsParams{
 				ID:       idgen.Flake(),
@@ -85,7 +85,7 @@ func (f *Fake) createListItems(ctx context.Context, listIds []string, poiIds []s
 	batch := make([]db.BatchCreateListItemsParams, 0)
 
 	for _, listId := range listIds {
-		n := gofakeit.Number(2, 20)
+		n := gofakeit.Number(4, 10)
 		randPois := fakeutils.RandElems(poiIds, n)
 
 		for i := range n {

@@ -54,8 +54,8 @@ func (f *Fake) createReviews(ctx context.Context, poiIds []string, userIds []str
 	batch := make([]db.BatchCreateReviewsParams, 0)
 
 	for _, id := range poiIds {
-		n := gofakeit.IntRange(1, 100)
-		randUserIds := fakeutils.RandElems(userIds, 50)
+		n := gofakeit.IntRange(1, 40)
+		randUserIds := fakeutils.RandElems(userIds, 30)
 		res := createReviewForPoi(id, n, randUserIds)
 		batch = append(batch, res...)
 	}
@@ -120,10 +120,11 @@ func (f *Fake) reviewImages(ctx context.Context, chunk []string) error {
 	batch := make([]db.BatchCreateReviewImageParams, 0)
 
 	for _, id := range chunk {
-		// Not all reviews should have media. 1/3 of them should have media.
+		// Not all reviews should have media.
+		// Skip reviews with a chance of 0.8.
 		chance := gofakeit.Float32()
 
-		if chance < 0.66 {
+		if chance < 0.8 {
 			continue
 		}
 
