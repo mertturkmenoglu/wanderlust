@@ -113,6 +113,16 @@ UPDATE pois
 SET total_points = total_points + $2
 WHERE id = $1;
 
+-- name: IncrementFavorites :exec
+UPDATE pois
+SET total_favorites = total_favorites + 1
+WHERE id = $1;
+
+-- name: DecrementFavorites :exec
+UPDATE pois
+SET total_favorites = total_favorites - 1
+WHERE id = $1;
+
 -- name: GetPoisByIdsPopulated :many
 SELECT get_pois($1::TEXT[]);
 

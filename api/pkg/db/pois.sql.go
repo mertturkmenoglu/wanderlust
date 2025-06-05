@@ -85,6 +85,17 @@ func (q *Queries) CreatePoiMedia(ctx context.Context, arg CreatePoiMediaParams) 
 	return i, err
 }
 
+const decrementFavorites = `-- name: DecrementFavorites :exec
+UPDATE pois
+SET total_favorites = total_favorites - 1
+WHERE id = $1
+`
+
+func (q *Queries) DecrementFavorites(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, decrementFavorites, id)
+	return err
+}
+
 const deletePoiAllAmenities = `-- name: DeletePoiAllAmenities :exec
 DELETE FROM amenities_pois
 WHERE poi_id = $1
@@ -266,6 +277,17 @@ func (q *Queries) GetPopularPoisIds(ctx context.Context) ([]string, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const incrementFavorites = `-- name: IncrementFavorites :exec
+UPDATE pois
+SET total_favorites = total_favorites + 1
+WHERE id = $1
+`
+
+func (q *Queries) IncrementFavorites(ctx context.Context, id string) error {
+	_, err := q.db.Exec(ctx, incrementFavorites, id)
+	return err
 }
 
 const incrementTotalPoints = `-- name: IncrementTotalPoints :exec
