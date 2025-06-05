@@ -9,6 +9,7 @@ domains=(
   "users"
   "reviews"
   "collections"
+  "lists"
 )
 
 for i in "${!domains[@]}"; do
