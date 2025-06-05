@@ -27,9 +27,20 @@ func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavorite
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.db.WithTx(tx)
+
 	userId := ctx.Value("userId").(string)
 
-	res, err := s.db.CreateFavorite(ctx, db.CreateFavoriteParams{
+	res, err := qtx.CreateFavorite(ctx, db.CreateFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -42,6 +53,20 @@ func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavorite
 		}
 
 		return nil, huma.Error500InternalServerError("Failed to create favorite")
+	}
+
+	err = qtx.IncrementFavorites(ctx, poiId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to increment favorites")
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
 	return &dto.CreateFavoriteOutput{
@@ -57,8 +82,20 @@ func (s *Service) remove(ctx context.Context, poiId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.db.WithTx(tx)
+
 	userId := ctx.Value("userId").(string)
-	err := s.db.DeleteFavoriteByPoiId(ctx, db.DeleteFavoriteByPoiIdParams{
+
+	err = qtx.DeleteFavoriteByPoiId(ctx, db.DeleteFavoriteByPoiIdParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -71,6 +108,20 @@ func (s *Service) remove(ctx context.Context, poiId string) error {
 		}
 
 		return huma.Error500InternalServerError("Failed to delete favorite")
+	}
+
+	err = qtx.DecrementFavorites(ctx, poiId)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to increment favorites")
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
 	return nil
