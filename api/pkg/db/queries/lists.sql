@@ -11,6 +11,19 @@ INSERT INTO lists (
   $4
 ) RETURNING *;
 
+-- name: BatchCreateLists :copyfrom
+INSERT INTO lists (
+  id,
+  name,
+  user_id,
+  is_public
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+);
+
 -- name: GetListById :one
 SELECT 
   sqlc.embed(lists), 
@@ -75,6 +88,17 @@ INSERT INTO list_items (
   $2,
   $3
 ) RETURNING *;
+
+-- name: BatchCreateListItems :copyfrom
+INSERT INTO list_items (
+  list_id,
+  poi_id,
+  index
+) VALUES (
+  $1,
+  $2,
+  $3
+);
 
 -- name: GetLastIndexOfList :one
 SELECT COALESCE(MAX(index), 0)
