@@ -39,6 +39,7 @@ var steps = [...]string{
 	"lists",
 	"fake-id", // run fake id again to get list ids
 	"list-items",
+	"favorites",
 }
 
 func Automate() error {
@@ -91,6 +92,8 @@ func mux(f *handlers.Fake, t string) error {
 		return f.HandleCollectionsPois(collectionsPath, poisPath)
 	case "fake-id":
 		return exec.Command("just", "fake-id").Run()
+	case "favorites":
+		return f.HandleFavorites(usersPath, poisPath)
 	case "follows":
 		return f.HandleFollows(usersPath)
 	case "lists":
