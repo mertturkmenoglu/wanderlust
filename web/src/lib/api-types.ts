@@ -4111,6 +4111,26 @@ export interface paths {
             parameters: {
                 query?: {
                     /**
+                     * @description Sort by
+                     * @example created_at
+                     */
+                    sortBy?: "created_at" | "rating";
+                    /**
+                     * @description Sort order
+                     * @example desc
+                     */
+                    sortOrd?: "asc" | "desc";
+                    /**
+                     * @description Minimum rating
+                     * @example 1
+                     */
+                    minRating?: number;
+                    /**
+                     * @description Maximum rating
+                     * @example 5
+                     */
+                    maxRating?: number;
+                    /**
                      * @description Page number
                      * @example 2
                      */
