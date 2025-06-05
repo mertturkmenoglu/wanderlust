@@ -9,6 +9,11 @@ import (
 	"context"
 )
 
+type BatchCreateFavoritesParams struct {
+	UserID string
+	PoiID  string
+}
+
 const countUserFavorites = `-- name: CountUserFavorites :one
 SELECT COUNT(*) FROM favorites
 WHERE user_id = $1

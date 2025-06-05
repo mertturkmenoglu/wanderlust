@@ -8,6 +8,15 @@ INSERT INTO favorites (
 )
 RETURNING *;
 
+-- name: BatchCreateFavorites :copyfrom
+INSERT INTO favorites (
+  user_id,
+  poi_id
+) VALUES (
+  $1,
+  $2
+);
+
 -- name: DeleteFavoriteByPoiId :exec
 DELETE FROM favorites
 WHERE poi_id = $1 AND user_id = $2;

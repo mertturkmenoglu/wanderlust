@@ -284,6 +284,39 @@ func (q *Queries) BatchCreateDiaryUsers(ctx context.Context, arg []BatchCreateDi
 	return q.db.CopyFrom(ctx, []string{"diary_users"}, []string{"diary_id", "user_id", "index"}, &iteratorForBatchCreateDiaryUsers{rows: arg})
 }
 
+// iteratorForBatchCreateFavorites implements pgx.CopyFromSource.
+type iteratorForBatchCreateFavorites struct {
+	rows                 []BatchCreateFavoritesParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateFavorites) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateFavorites) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].UserID,
+		r.rows[0].PoiID,
+	}, nil
+}
+
+func (r iteratorForBatchCreateFavorites) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateFavorites(ctx context.Context, arg []BatchCreateFavoritesParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"favorites"}, []string{"user_id", "poi_id"}, &iteratorForBatchCreateFavorites{rows: arg})
+}
+
 // iteratorForBatchCreateListItems implements pgx.CopyFromSource.
 type iteratorForBatchCreateListItems struct {
 	rows                 []BatchCreateListItemsParams
