@@ -47,6 +47,36 @@ func (f *Fake) HandleReviews(poiPath string, userPath string) error {
 	wg.Wait()
 	close(errchan)
 
+	err = fakeutils.CombineErrors(errchan)
+
+	if err != nil {
+		return err
+	}
+
+	chunkCount = fakeutils.GetChunkCount(len(poiIds), 100)
+	errchan = make(chan error, chunkCount)
+	sem = make(chan struct{}, 10)
+
+	for chunk := range slices.Chunk(poiIds, 100) {
+		wg.Add(1)
+
+		go func(chunk []string) {
+			defer wg.Done()
+
+			sem <- struct{}{}        // acquire a slot
+			defer func() { <-sem }() // release the slot
+
+			err := f.updatePoiRateAndVotes(context.Background(), chunk)
+
+			if err != nil {
+				errchan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errchan)
+
 	return fakeutils.CombineErrors(errchan)
 }
 
@@ -150,4 +180,42 @@ func createReviewImages(id string, n int) []db.BatchCreateReviewImageParams {
 	}
 
 	return params
+}
+
+func (f *Fake) updatePoiRateAndVotes(ctx context.Context, poiIds []string) error {
+	tx, err := f.db.Pool.Begin(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := f.db.Queries.WithTx(tx)
+
+	for _, poiId := range poiIds {
+		count, err := qtx.CountReviewsByPoiId(ctx, poiId)
+
+		if err != nil {
+			return err
+		}
+
+		totalRating, err := qtx.GetPoiTotalRating(ctx, poiId)
+
+		if err != nil {
+			return err
+		}
+
+		err = qtx.SetPoiRatingsAndVotes(ctx, db.SetPoiRatingsAndVotesParams{
+			ID:             poiId,
+			TotalVotes:     int32(count),
+			TotalPoints:    int32(totalRating),
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit(ctx)
 }
