@@ -42,7 +42,6 @@ func (f *Fake) HandlePois(count int) error {
 
 			idx := j % addressIdsLen
 			addressId := addressIds[idx]
-			totalVotes := int32(gofakeit.Number(1000, 10_000))
 
 			idInt, err := flake.NextID()
 
@@ -61,9 +60,9 @@ func (f *Fake) HandlePois(count int) error {
 				Website:            utils.StrToText(gofakeit.URL()),
 				PriceLevel:         int16(gofakeit.Number(1, 5)),
 				AccessibilityLevel: int16(gofakeit.Number(1, 5)),
-				TotalVotes:         totalVotes,
-				TotalPoints:        int32(gofakeit.Number(int(totalVotes), int(totalVotes)*5)),
-				TotalFavorites:     int32(gofakeit.Number(1000, 10000)),
+				TotalVotes:         0,
+				TotalPoints:        0,
+				TotalFavorites:     0,
 				CategoryID:         int16(gofakeit.Number(1, 23)),
 				Hours:              ot,
 			})
