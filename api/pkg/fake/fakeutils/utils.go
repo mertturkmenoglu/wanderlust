@@ -53,7 +53,7 @@ func ReadFile(path string) ([]string, error) {
 	return lines, nil
 }
 
-func GetBatchCount(arrlen int, bathcSize int) int {
+func GetChunkCount(arrlen int, bathcSize int) int {
 	// Get how many chunks there are
 	chunkCount := arrlen / bathcSize
 
