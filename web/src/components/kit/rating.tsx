@@ -4,24 +4,27 @@ import { normalizeProps, useMachine } from '@zag-js/react';
 import { StarIcon } from 'lucide-react';
 
 type Props = {
-  defaultValue?: number;
-  onChange: ({ value }: { value: number }) => void;
   id: string;
+  value?: number;
+  onChange: ({ value }: { value: number }) => void;
+  defaultValue?: number;
   disabled?: boolean;
   starsClassName?: string;
 };
 
 export function Rating({
-  defaultValue,
-  onChange,
   id,
-  disabled,
+  value,
+  onChange,
+  defaultValue,
+  disabled = false,
   starsClassName,
 }: Props) {
   const service = useMachine(rating.machine, {
     id,
     allowHalf: false,
-    value: defaultValue,
+    value,
+    defaultValue,
     disabled,
     onValueChange: onChange,
   });
@@ -45,7 +48,7 @@ export function Rating({
                 className={cn(
                   'text-primary size-4',
                   {
-                    'fill-primary': state.highlighted,
+                    'fill-primary': state.highlighted || state.checked,
                   },
                   starsClassName,
                 )}
