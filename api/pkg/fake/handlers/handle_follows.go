@@ -33,7 +33,7 @@ func (f *Fake) HandleFollows(path string) error {
 func (f *Fake) tryFollowing(userIds []string) error {
 	var wg sync.WaitGroup
 
-	chunkCount := fakeutils.GetBatchCount(len(userIds), 100)
+	chunkCount := fakeutils.GetChunkCount(len(userIds), 100)
 	errChan := make(chan error, chunkCount)
 
 	for chunk := range slices.Chunk(userIds, 100) {
@@ -83,7 +83,7 @@ func (f *Fake) followUsers(ctx context.Context, chunk []string, allUserIds []str
 func (f *Fake) tryUpdatingUsers(userIds []string) error {
 	var wg sync.WaitGroup
 
-	chunkCount := fakeutils.GetBatchCount(len(userIds), 100)
+	chunkCount := fakeutils.GetChunkCount(len(userIds), 100)
 	errChan := make(chan error, chunkCount)
 
 	for chunk := range slices.Chunk(userIds, 100) {
