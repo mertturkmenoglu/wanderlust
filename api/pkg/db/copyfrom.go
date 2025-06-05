@@ -284,6 +284,75 @@ func (q *Queries) BatchCreateDiaryUsers(ctx context.Context, arg []BatchCreateDi
 	return q.db.CopyFrom(ctx, []string{"diary_users"}, []string{"diary_id", "user_id", "index"}, &iteratorForBatchCreateDiaryUsers{rows: arg})
 }
 
+// iteratorForBatchCreateListItems implements pgx.CopyFromSource.
+type iteratorForBatchCreateListItems struct {
+	rows                 []BatchCreateListItemsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateListItems) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateListItems) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ListID,
+		r.rows[0].PoiID,
+		r.rows[0].Index,
+	}, nil
+}
+
+func (r iteratorForBatchCreateListItems) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateListItems(ctx context.Context, arg []BatchCreateListItemsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"list_items"}, []string{"list_id", "poi_id", "index"}, &iteratorForBatchCreateListItems{rows: arg})
+}
+
+// iteratorForBatchCreateLists implements pgx.CopyFromSource.
+type iteratorForBatchCreateLists struct {
+	rows                 []BatchCreateListsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateLists) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateLists) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].Name,
+		r.rows[0].UserID,
+		r.rows[0].IsPublic,
+	}, nil
+}
+
+func (r iteratorForBatchCreateLists) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateLists(ctx context.Context, arg []BatchCreateListsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"lists"}, []string{"id", "name", "user_id", "is_public"}, &iteratorForBatchCreateLists{rows: arg})
+}
+
 // iteratorForBatchCreatePoiMedia implements pgx.CopyFromSource.
 type iteratorForBatchCreatePoiMedia struct {
 	rows                 []BatchCreatePoiMediaParams

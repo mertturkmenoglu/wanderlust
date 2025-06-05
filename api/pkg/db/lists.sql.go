@@ -9,6 +9,19 @@ import (
 	"context"
 )
 
+type BatchCreateListItemsParams struct {
+	ListID string
+	PoiID  string
+	Index  int32
+}
+
+type BatchCreateListsParams struct {
+	ID       string
+	Name     string
+	UserID   string
+	IsPublic bool
+}
+
 const countAllListsOfUser = `-- name: CountAllListsOfUser :one
 SELECT COUNT(*) FROM lists
 WHERE user_id = $1
