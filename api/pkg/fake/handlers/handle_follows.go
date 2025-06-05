@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"context"
+	"slices"
+	"sync"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-
-	"github.com/brianvoe/gofakeit/v7"
 )
 
 func (f *Fake) HandleFollows(path string) error {
@@ -15,23 +15,50 @@ func (f *Fake) HandleFollows(path string) error {
 		return err
 	}
 
-	f.tryFollowing(userIds)
-	f.tryUpdatingUsers(userIds)
+	err = f.tryFollowing(userIds)
+
+	if err != nil {
+		return err
+	}
+
+	err = f.tryUpdatingUsers(userIds)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func (f *Fake) tryFollowing(userIds []string) {
-	ctx := context.Background()
-	successCounter := 0
-	failCounter := 0
-	batch := make([]db.BatchFollowParams, 0, 100)
+func (f *Fake) tryFollowing(userIds []string) error {
+	var wg sync.WaitGroup
 
-	for _, userId := range userIds {
-		for range 10 {
-			idx := gofakeit.IntRange(0, len(userIds)-1)
-			targetUserId := userIds[idx]
+	chunkCount := fakeutils.GetBatchCount(len(userIds), 100)
+	errChan := make(chan error, chunkCount)
 
+	for chunk := range slices.Chunk(userIds, 100) {
+		wg.Add(1)
+
+		go func(ch []string) {
+			defer wg.Done()
+			if err := f.followUsers(context.Background(), ch, userIds); err != nil {
+				errChan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	return fakeutils.CombineErrors(errChan)
+}
+
+func (f *Fake) followUsers(ctx context.Context, chunk []string, allUserIds []string) error {
+	for _, userId := range chunk {
+		batch := make([]db.BatchFollowParams, 0, len(chunk))
+		targets := fakeutils.RandElems(allUserIds, 10)
+
+		for _, targetUserId := range targets {
 			if targetUserId == userId {
 				continue
 			}
@@ -42,43 +69,52 @@ func (f *Fake) tryFollowing(userIds []string) {
 			})
 		}
 
-		if len(batch) >= 100 {
-			_, err := f.db.Queries.BatchFollow(ctx, batch)
-
-			if err != nil {
-				failCounter++
-			} else {
-				successCounter++
-			}
-
-			batch = make([]db.BatchFollowParams, 0, 100)
-		}
-	}
-
-	if len(batch) >= 100 {
 		_, err := f.db.Queries.BatchFollow(ctx, batch)
 
+		// Key collisions can happen. Ignore it.
 		if err != nil {
-			failCounter++
-		} else {
-			successCounter++
+			continue
 		}
 	}
+
+	return nil
 }
 
-func (f *Fake) tryUpdatingUsers(userIds []string) {
-	ctx := context.Background()
+func (f *Fake) tryUpdatingUsers(userIds []string) error {
+	var wg sync.WaitGroup
+
+	chunkCount := fakeutils.GetBatchCount(len(userIds), 100)
+	errChan := make(chan error, chunkCount)
+
+	for chunk := range slices.Chunk(userIds, 100) {
+		wg.Add(1)
+
+		go func(ch []string) {
+			defer wg.Done()
+			if err := f.updateUsers(context.Background(), ch); err != nil {
+				errChan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	return fakeutils.CombineErrors(errChan)
+}
+
+func (f *Fake) updateUsers(ctx context.Context, ids []string) error {
 	tx, err := f.db.Pool.Begin(ctx)
 
 	if err != nil {
-		return
+		return err
 	}
 
 	defer tx.Rollback(ctx)
 
 	qtx := f.db.Queries.WithTx(tx)
 
-	for _, userId := range userIds {
+	for _, userId := range ids {
 		followingCount, err := qtx.GetFollowingCount(ctx, userId)
 
 		if err != nil {
@@ -110,9 +146,5 @@ func (f *Fake) tryUpdatingUsers(userIds []string) {
 		}
 	}
 
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		return
-	}
+	return tx.Commit(ctx)
 }
