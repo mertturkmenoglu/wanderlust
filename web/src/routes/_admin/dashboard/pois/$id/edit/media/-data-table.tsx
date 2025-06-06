@@ -16,7 +16,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -64,16 +63,6 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter by name..."
-          value={
-            (table.getColumn('fileName')?.getFilterValue() as string) ?? ''
-          }
-          onChange={(event) =>
-            table.getColumn('fileName')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
         <div className="ml-auto" />
         <UploadDialog poi={poi} />
         <DropdownMenu>
