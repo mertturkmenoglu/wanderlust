@@ -34,7 +34,7 @@ export function Description({ className }: Props) {
         <PlanTripDialog />
       </div>
 
-      <div className="grid grid-cols-2 grid-rows-2 gap-2">
+      <div className="grid grid-cols-2 grid-rows-2 gap-2 h-min">
         <InfoCard.Root>
           <InfoCard.Content>
             <InfoCard.NumberColumn>
