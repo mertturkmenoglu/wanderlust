@@ -14,10 +14,6 @@ This document describes the project structure of the Wanderlust API.
 │   ...
 │
 ├── assets (Static assets)
-├── cmd (Runnables)
-│   ├── core (Core Web API Server)
-│   ├── fake (Fake Data Generator)
-│   └── search-sync (Search Synchronizer)
 ├── conf (Configuration files)
 ├── docs (Documentation)
 ├── pkg (Library code)
@@ -25,6 +21,7 @@ This document describes the project structure of the Wanderlust API.
 │   ├── authz
 │   ├── cache
 │   ├── cfg
+│   ├── commands (Cobra & Huma CLI commands)
 │   ├── core
 │   ├── db (Database layer)
 │   │   ├── migrations (Database migrations)
@@ -34,7 +31,10 @@ This document describes the project structure of the Wanderlust API.
 │   ...
 │   ...
 │   └── utils (Utility functions)
-└── templates (Email templates)
+│
+├── scripts (Bash scripts to automate some workflows)
+├── templates (Email templates)
+└── tests (End to End tests)
 ```
 
 ## Notes
