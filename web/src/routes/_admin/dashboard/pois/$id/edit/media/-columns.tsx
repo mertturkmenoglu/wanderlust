@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Drawer,
   DrawerClose,
@@ -34,32 +33,9 @@ import { toast } from 'sonner';
 export type PoiMedia = {
   url: string;
   alt: string;
-  fileName: string;
 };
 
 export const columns: ColumnDef<PoiMedia>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: 'image',
     header: 'Image',
@@ -68,15 +44,14 @@ export const columns: ColumnDef<PoiMedia>[] = [
       <img
         src={row.original.url}
         alt={row.original.alt}
-        className="w-16"
+        className="w-24 object-cover"
       />
     ),
   },
   {
-    accessorKey: 'fileName',
-    header: 'File Name',
+    accessorKey: 'url',
+    header: 'URL',
   },
-
   {
     accessorKey: 'alt',
     header: 'Alt',
