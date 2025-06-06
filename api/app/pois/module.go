@@ -174,4 +174,31 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPost,
+			Path:          "/pois/{id}/media",
+			Summary:       "Upload Media for a POI",
+			Description:   "Upload media for a POI",
+			DefaultStatus: http.StatusCreated,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UploadPoiMediaInput) (*dto.UploadPoiMediaOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.uploadMedia(ctx, input)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
 }
