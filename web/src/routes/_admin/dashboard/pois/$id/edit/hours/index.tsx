@@ -33,7 +33,7 @@ function RouteComponent() {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
   const invalidator = useInvalidator();
-  const entries = Object.entries(JSON.parse(poi.hours)).map(([k, v]) => ({
+  const entries = Object.entries(poi.hours).map(([k, v]) => ({
     day: k,
     ...v,
   }));
