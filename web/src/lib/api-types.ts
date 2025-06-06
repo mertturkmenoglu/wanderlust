@@ -3738,6 +3738,64 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/pois/{id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Media for a POI
+         * @description Upload media for a POI
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadPoiMediaInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UploadPoiMediaOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/reports/": {
         parameters: {
             query?: never;
@@ -8427,6 +8485,27 @@ export interface components {
              */
             readonly $schema?: string;
             diary: components["schemas"]["Diary"];
+        };
+        UploadPoiMediaInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Alt of image */
+            alt: string;
+            /** @description File name of image */
+            fileName: string;
+            /** @description ID of image */
+            id: string;
+        };
+        UploadPoiMediaOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poi: components["schemas"]["Poi"];
         };
         UploadReviewMediaInputBody: {
             /**
