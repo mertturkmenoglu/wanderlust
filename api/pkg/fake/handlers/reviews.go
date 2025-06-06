@@ -44,7 +44,7 @@ func (f *FakeReviews) Generate() (int64, error) {
 	g, gctx = errgroup.WithContext(context.Background())
 	g.SetLimit(10)
 
-	for chunk := range slices.Chunk(userIds, 100) {
+	for chunk := range slices.Chunk(poiIds, 100) {
 		g.Go(func() error {
 			err := f.updatePoiRateAndVotes(gctx, chunk)
 			return err
