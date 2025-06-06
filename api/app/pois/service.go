@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"sync"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/upload"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -409,6 +411,83 @@ func (s *Service) updateHours(ctx context.Context, id string, body dto.UpdatePoi
 
 	return &dto.UpdatePoiHoursOutput{
 		Body: dto.UpdatePoiHoursOutputBody{
+			Poi: *poi,
+		},
+	}, nil
+}
+
+func (s *Service) uploadMedia(ctx context.Context, input *dto.UploadPoiMediaInput) (*dto.UploadPoiMediaOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to update this POI")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	poi, err := s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error404NotFound("POI not found")
+	}
+
+	bucket := upload.BUCKET_POIS
+
+	// Check if the file is uploaded
+	if !s.App.Upload.FileExists(bucket, input.Body.FileName) {
+		err := huma.Error400BadRequest("File not found")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	// Check if user uploaded the correct file
+	if !s.App.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)) {
+		err := huma.Error400BadRequest("Invalid file")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	// Delete cached information
+	err = s.App.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to delete cached information")
+	}
+
+	var lastIndex int16 = 0
+
+	for _, media := range poi.Media {
+		if media.Index > lastIndex {
+			lastIndex = media.Index
+		}
+	}
+
+	lastIndex++
+
+	_, err = s.db.CreatePoiMedia(ctx, db.CreatePoiMediaParams{
+		PoiID: input.ID,
+		Url:   s.App.Upload.GetUrlForFile(bucket, input.Body.FileName),
+		Alt:   input.Body.Alt,
+		Index: lastIndex,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create media")
+	}
+
+	poi, err = s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to find POI")
+	}
+
+	return &dto.UploadPoiMediaOutput{
+		Body: dto.UploadPoiMediaOutputBody{
 			Poi: *poi,
 		},
 	}, nil
