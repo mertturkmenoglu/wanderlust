@@ -3,6 +3,7 @@ package pois
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"sync"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
@@ -491,4 +492,62 @@ func (s *Service) uploadMedia(ctx context.Context, input *dto.UploadPoiMediaInpu
 			Poi: *poi,
 		},
 	}, nil
+}
+
+func (s *Service) deleteMedia(ctx context.Context, input *dto.DeletePoiMediaInput) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	poi, err := s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	media := poi.Media
+
+	var toBeDeleted *dto.Media
+
+	for _, m := range media {
+		if m.Index == input.Index {
+			toBeDeleted = &m
+			break
+		}
+	}
+
+	if toBeDeleted == nil {
+		err := huma.Error404NotFound("Media not found")
+		sp.RecordError(err)
+		return err
+	}
+
+	tx, err := s.App.Db.Pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.App.Db.Queries.WithTx(tx)
+
+	err = qtx.DeletePoiMedia(ctx, db.DeletePoiMediaParams{
+		PoiID: input.ID,
+		Index: input.Index,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to delete media")
+	}
+
+	err = s.App.Upload.RemoveFileFromUrl(toBeDeleted.Url, upload.BUCKET_POIS)
+
+	if err != nil {
+		slog.Error("Failed to remove POI media", slog.String("url", toBeDeleted.Url))
+	}
+
+	return tx.Commit(ctx)
 }

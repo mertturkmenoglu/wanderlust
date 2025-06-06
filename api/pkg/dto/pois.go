@@ -221,3 +221,8 @@ type UploadPoiMediaOutput struct {
 type UploadPoiMediaOutputBody struct {
 	Poi Poi `json:"poi"`
 }
+
+type DeletePoiMediaInput struct {
+	ID    string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	Index int16  `path:"index" validate:"required" doc:"Index of media" example:"1"`
+}

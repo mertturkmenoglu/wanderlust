@@ -17,6 +17,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useInvalidator } from '@/hooks/use-invalidator';
+import { api } from '@/lib/api';
 import { getRouteApi } from '@tanstack/react-router';
 import type { CellContext, ColumnDef } from '@tanstack/react-table';
 import {
@@ -69,10 +71,22 @@ export type Props = {
 function ActionsComponent({ ctx: { row, table } }: Props) {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
+  const invalidator = useInvalidator();
 
   const media = row.original;
   const lastIndex = table.getRowModel().rows.length - 1;
   const [alt, setAlt] = useState(media.alt);
+
+  const deleteMediaMutation = api.useMutation(
+    'delete',
+    '/api/v2/pois/{id}/media/{index}',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Media deleted');
+      },
+    },
+  );
 
   return (
     <Drawer direction="right">
@@ -131,7 +145,16 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
           </DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => {}}
+            onClick={() => {
+              deleteMediaMutation.mutate({
+                params: {
+                  path: {
+                    id: poi.id,
+                    index: row.index,
+                  },
+                },
+              });
+            }}
           >
             <Trash2Icon className="size-4" />
             Delete Image

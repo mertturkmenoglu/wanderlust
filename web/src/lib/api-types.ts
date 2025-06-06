@@ -3796,6 +3796,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/pois/{id}/media/{index}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete POI Media
+         * @description Delete a POI Media
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description Index of media
+                     * @example 1
+                     */
+                    index: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/reports/": {
         parameters: {
             query?: never;
@@ -7411,11 +7468,6 @@ export interface components {
             /** @description Alt of media of point of interest */
             alt: string;
             /**
-             * Format: date-time
-             * @description Created at time of media of point of interest
-             */
-            createdAt: string;
-            /**
              * Format: int64
              * @description ID of media of point of interest
              */
@@ -7425,8 +7477,6 @@ export interface components {
              * @description Media order of media of point of interest
              */
             index: number;
-            /** @description ID of point of interest */
-            poiId: string;
             /** @description URL of media of point of interest */
             url: string;
         };

@@ -201,4 +201,31 @@ func Register(grp *huma.Group, app *core.Application) {
 			return res, nil
 		},
 	)
+
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodDelete,
+			Path:          "/pois/{id}/media/{index}",
+			Summary:       "Delete POI Media",
+			Description:   "Delete a POI Media",
+			DefaultStatus: http.StatusNoContent,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.DeletePoiMediaInput) (*struct{}, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			err := s.deleteMedia(ctx, input)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return nil, nil
+		},
+	)
 }

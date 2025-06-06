@@ -106,6 +106,22 @@ func (q *Queries) DeletePoiAllAmenities(ctx context.Context, poiID string) error
 	return err
 }
 
+const deletePoiMedia = `-- name: DeletePoiMedia :exec
+DELETE FROM media
+WHERE poi_id = $1
+  AND index = $2
+`
+
+type DeletePoiMediaParams struct {
+	PoiID string
+	Index int16
+}
+
+func (q *Queries) DeletePoiMedia(ctx context.Context, arg DeletePoiMediaParams) error {
+	_, err := q.db.Exec(ctx, deletePoiMedia, arg.PoiID, arg.Index)
+	return err
+}
+
 const getFavoritePoisIds = `-- name: GetFavoritePoisIds :many
 SELECT 
   id 

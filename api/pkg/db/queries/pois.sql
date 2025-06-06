@@ -156,3 +156,8 @@ WHERE id = $1;
 UPDATE pois
 SET total_points = $2, total_votes = $3
 WHERE id = $1;
+
+-- name: DeletePoiMedia :exec
+DELETE FROM media
+WHERE poi_id = $1
+  AND index = $2;
