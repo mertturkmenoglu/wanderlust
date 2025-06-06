@@ -20,6 +20,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
+import { lengthTracker } from '@/lib/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
@@ -28,7 +29,7 @@ import { z } from 'zod';
 
 const schema = z.object({
   name: z.string().min(1),
-  description: z.string().min(1).max(512),
+  description: z.string().min(1).max(2048),
   phone: z.string().optional(),
   website: z.string().optional(),
   priceLevel: z.number().min(1).max(5),
@@ -159,7 +160,7 @@ function RouteComponent() {
                   />
                 </FormControl>
                 <FormDescription>
-                  {`${form.watch('description')?.length ?? 0}/512`}
+                  {lengthTracker(form.watch('description'), 2048)}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
