@@ -14,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { fetchClient } from '@/lib/api';
 import type { components } from '@/lib/api-types';
 import { TrashIcon, UploadIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { useUpload } from './-hooks';
 
@@ -22,22 +22,11 @@ type Props = {
   poi: components['schemas']['Poi'];
 };
 
-export default function UploadDialog({}: Props) {
-  const api = useUpload();
-  const [preview, setPreview] = useState('');
+export default function UploadDialog({ poi }: Props) {
+  const fileApi = useUpload();
   const [alt, setAlt] = useState('');
-  const [caption, setCaption] = useState('');
-  let f = api.acceptedFiles[0];
-
-  useEffect(() => {
-    if (!f) {
-      setPreview('');
-      return;
-    }
-
-    let preview = URL.createObjectURL(f);
-    setPreview(preview);
-  }, [f]);
+  let f = fileApi.acceptedFiles[0];
+  const preview = f ? URL.createObjectURL(f) : '';
 
   const upload = async () => {
     if (!f) {
@@ -54,6 +43,11 @@ export default function UploadDialog({}: Props) {
 
     if (ext !== 'jpg' && ext !== 'jpeg' && ext !== 'png') {
       toast.error('Invalid file type');
+      return;
+    }
+
+    if (alt === '') {
+      toast.error('Alt text is required');
       return;
     }
 
@@ -81,25 +75,23 @@ export default function UploadDialog({}: Props) {
       return;
     }
 
-    // let updateRes = await fetchClient.POST('/api/v2/pois/drafts/{id}/media', {
-    //   params: {
-    //     path: {
-    //       id: poi.id,
-    //     },
-    //   },
-    //   body: {
-    //     id: res.data.id,
-    //     alt: alt,
-    //     caption: caption,
-    //     fileName: res.data.fileName,
-    //     size: 0,
-    //   },
-    // });
+    let updateRes = await fetchClient.POST('/api/v2/pois/{id}/media', {
+      params: {
+        path: {
+          id: poi.id,
+        },
+      },
+      body: {
+        id: res.data.id,
+        alt: alt,
+        fileName: res.data.fileName,
+      },
+    });
 
-    // if (updateRes.error) {
-    //   toast.error(updateRes.error.title ?? 'Something went wrong');
-    //   return;
-    // }
+    if (updateRes.error) {
+      toast.error(updateRes.error.title ?? 'Something went wrong');
+      return;
+    }
 
     toast.success('Media uploaded');
     window.location.reload();
@@ -123,17 +115,17 @@ export default function UploadDialog({}: Props) {
         {!f ? (
           <div
             className="text-sm text-muted-foreground text-center cursor-pointer flex flex-col gap-2"
-            {...api.getRootProps()}
+            {...fileApi.getRootProps()}
           >
             <div
-              {...api.getDropzoneProps()}
+              {...fileApi.getDropzoneProps()}
               className="border border-dashed border-border rounded-md p-8 py-32"
             >
-              <input {...api.getHiddenInputProps()} />
+              <input {...fileApi.getHiddenInputProps()} />
               <span>Drag your file here</span>
               <div className="text-xs my-2">(or)</div>
               <button
-                {...api.getTriggerProps()}
+                {...fileApi.getTriggerProps()}
                 className="cursor-pointer"
               >
                 Choose file
@@ -142,12 +134,12 @@ export default function UploadDialog({}: Props) {
           </div>
         ) : (
           <div
-            {...api.getItemGroupProps()}
+            {...fileApi.getItemGroupProps()}
             className=""
           >
             <div
               key={f.name}
-              {...api.getItemProps({ file: f })}
+              {...fileApi.getItemProps({ file: f })}
               className="flex flex-col gap-2 items-center"
             >
               <img
@@ -156,7 +148,7 @@ export default function UploadDialog({}: Props) {
                 className="w-full rounded-md object-cover"
               />
               <div
-                {...api.getItemNameProps({ file: f })}
+                {...fileApi.getItemNameProps({ file: f })}
                 className="text-sm text-muted-foreground"
               >
                 {f.name}
@@ -165,7 +157,7 @@ export default function UploadDialog({}: Props) {
                 variant="destructive"
                 size="default"
                 className="cursor-pointer w-full"
-                {...api.getItemDeleteTriggerProps({ file: f })}
+                {...fileApi.getItemDeleteTriggerProps({ file: f })}
               >
                 <TrashIcon className="size-3" />
                 <span>Delete</span>
@@ -183,22 +175,9 @@ export default function UploadDialog({}: Props) {
                 <Input
                   type="text"
                   id="alt"
-                  placeholder="Describe the image for accessibility tools (Optional)"
+                  placeholder="Describe the image for accessibility tools"
                   value={alt}
                   onChange={(e) => setAlt(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-center mt-4">
-              <div className="flex flex-col gap-1 w-full">
-                <Label htmlFor="caption">Caption</Label>
-                <Input
-                  type="text"
-                  id="caption"
-                  placeholder="Caption for the image (Optional)"
-                  value={caption}
-                  onChange={(e) => setCaption(e.target.value)}
                 />
               </div>
             </div>
