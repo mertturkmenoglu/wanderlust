@@ -60,8 +60,8 @@ func (s *Service) fooBar(ctx context.Context) (string, error) {
   }
 
   sp.AddEvent("cache.miss", trace.WithAttributes(
-		attribute.String("cache-key", "foo-bar"),
-	))
+    attribute.String("cache-key", "foo-bar"),
+  ))
 
   result, err := s.db.GetFooBar(ctx)
 
