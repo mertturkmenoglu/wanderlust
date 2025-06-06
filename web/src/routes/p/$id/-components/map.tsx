@@ -53,7 +53,6 @@ export default function Map() {
         >
           <Tooltip
             direction="bottom"
-            offset={[24, 48]}
             opacity={1}
           >
             {poi.name}
