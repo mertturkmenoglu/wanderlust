@@ -12,11 +12,7 @@ import (
 )
 
 func Register(grp *huma.Group, app *core.Application) {
-	s := Service{
-		App:  app,
-		db:   app.Db.Queries,
-		pool: app.Db.Pool,
-	}
+	s := NewService(app)
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
 		op.Tags = []string{"Point of Interests"}
