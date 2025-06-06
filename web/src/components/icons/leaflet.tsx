@@ -7,10 +7,14 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 export const icon = L.icon({
   iconUrl: mapPinIcon,
   iconRetinaUrl: mapPinIcon,
+  iconSize: [48, 48],
+  iconAnchor: [24, 48],
 });
 
 export const defaultIcon = L.icon({
   iconRetinaUrl: iconRetina,
   iconUrl: iconMarker,
   shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
 });
