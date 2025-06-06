@@ -66,7 +66,8 @@ BEGIN
       SELECT json_agg(jsonb_build_object(
         'id', m.id,
         'url', m.url,
-        'index', m.index
+        'index', m.index,
+        'alt', m.alt
       ) ORDER BY m.index) AS media
       FROM public.media m
       WHERE m.poi_id = pois.id
