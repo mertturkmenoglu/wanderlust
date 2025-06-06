@@ -36,12 +36,10 @@ type Poi struct {
 }
 
 type Media struct {
-	ID        int64     `json:"id" example:"7323488942953598976" doc:"ID of media of point of interest"`
-	PoiID     string    `json:"poiId" example:"7323488942953598976" doc:"ID of point of interest"`
-	Url       string    `json:"url" example:"https://example.com/media.jpg" doc:"URL of media of point of interest"`
-	Alt       string    `json:"alt" example:"Media of point of interest" doc:"Alt of media of point of interest"`
-	Index     int16     `json:"index" example:"1" doc:"Media order of media of point of interest"`
-	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of media of point of interest"`
+	ID    int64  `json:"id" example:"7323488942953598976" doc:"ID of media of point of interest"`
+	Url   string `json:"url" example:"https://example.com/media.jpg" doc:"URL of media of point of interest"`
+	Alt   string `json:"alt" example:"Media of point of interest" doc:"Alt of media of point of interest"`
+	Index int16  `json:"index" example:"1" doc:"Media order of media of point of interest"`
 }
 
 type Address struct {
