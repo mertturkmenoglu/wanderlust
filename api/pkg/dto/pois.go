@@ -81,24 +81,6 @@ type PeekPoisOutputBody struct {
 	Pois []Poi `json:"pois"`
 }
 
-type UploadPoiMediaInput struct {
-	ID   string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976" minLength:"1" maxLength:"32"`
-	Body UploadPoiMediaInputBody
-}
-
-type UploadPoiMediaInputBody struct {
-	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
-	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
-	Alt      string `json:"alt" example:"Media of point of interest" doc:"Alt of media of point of interest" required:"true"`
-	Caption  string `json:"caption" example:"Media of point of interest" doc:"Caption of media of point of interest" required:"true"`
-	Size     int32  `json:"size" example:"1024" doc:"Size of media of point of interest" required:"true"`
-}
-
-type DeletePoiMediaInput struct {
-	ID    string `path:"id" validate:"required" doc:"ID of draft" example:"7323488942953598976"`
-	Index int32  `path:"index" validate:"required" doc:"Index of media" example:"0" min:"0" max:"10"`
-}
-
 type UpdatePoiAddressInput struct {
 	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976"`
 	Body UpdatePoiAddressInputBody
@@ -220,5 +202,24 @@ type UpdatePoiHoursOutput struct {
 }
 
 type UpdatePoiHoursOutputBody struct {
+	Poi Poi `json:"poi"`
+}
+
+type UploadPoiMediaInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	Body UploadPoiMediaInputBody
+}
+
+type UploadPoiMediaInputBody struct {
+	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
+	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
+	Alt      string `json:"alt" example:"Media of point of interest" doc:"Alt of image" required:"true"`
+}
+
+type UploadPoiMediaOutput struct {
+	Body UploadPoiMediaOutputBody
+}
+
+type UploadPoiMediaOutputBody struct {
 	Poi Poi `json:"poi"`
 }
