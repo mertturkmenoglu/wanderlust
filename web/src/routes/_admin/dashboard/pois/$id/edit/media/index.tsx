@@ -21,7 +21,7 @@ function RouteComponent() {
           poi={poi}
           data={media.map((m) => ({
             ...m,
-            fileName: '',
+            alt: m.alt ?? '',
           }))}
         />
       </div>
