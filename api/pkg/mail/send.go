@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"wanderlust/pkg/cfg"
 
 	"github.com/jordan-wright/email"
 )
@@ -16,6 +17,10 @@ type MailInfo struct {
 }
 
 func (svc *MailService) Send(info MailInfo) error {
+	if !cfg.Env.EnableEmails {
+		return nil
+	}
+
 	email := email.NewEmail()
 	email.From = fmt.Sprintf("%s <%s>", svc.from, svc.fromEmail)
 	email.To = []string{info.To}
