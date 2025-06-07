@@ -14,6 +14,7 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
+	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -366,7 +367,14 @@ func (s *Service) uploadImage(ctx context.Context, id string, body dto.UploadDia
 		return nil, err
 	}
 
-	order := int16(ord) + 1
+	order, err := utils.SafeInt32ToInt16(ord)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Internal server error")
+	}
+
+	order++
 
 	_, err = s.Db.Queries.CreateDiaryImage(ctx, db.CreateDiaryImageParams{
 		DiaryID: id,
@@ -436,7 +444,7 @@ func (s *Service) removeImage(ctx context.Context, id string, mediaId int64) err
 		return int(a.Index) - int(b.Index)
 	})
 
-	index := 0
+	var index int16 = 0
 
 	var toBeRemoved *dto.DiaryImage = nil
 
@@ -449,7 +457,7 @@ func (s *Service) removeImage(ctx context.Context, id string, mediaId int64) err
 		_, err = qtx.CreateDiaryImage(ctx, db.CreateDiaryImageParams{
 			DiaryID: id,
 			Url:     m.Url,
-			Index:   int16(index + 1),
+			Index:   index + 1,
 		})
 
 		if err != nil {
@@ -537,10 +545,17 @@ func (s *Service) updateImage(ctx context.Context, id string, body dto.UpdateDia
 			return nil, err
 		}
 
+		index, err := utils.SafeInt64ToInt16(int64(i))
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
 		_, err = qtx.CreateDiaryImage(ctx, db.CreateDiaryImageParams{
 			DiaryID: id,
 			Url:     m.Url,
-			Index:   int16(i + 1),
+			Index:   index + 1,
 		})
 
 		if err != nil {
@@ -659,10 +674,16 @@ func (s *Service) updateFriends(ctx context.Context, id string, body dto.UpdateD
 	batch := make([]db.BatchCreateDiaryUsersParams, len(body.Friends))
 
 	for i, friendId := range body.Friends {
+		index, err := utils.SafeInt64ToInt32(int64(i))
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
 		batch[i] = db.BatchCreateDiaryUsersParams{
 			DiaryID: id,
 			UserID:  friendId,
-			Index:   int32(i + 1),
+			Index:   index + 1,
 		}
 	}
 
@@ -739,10 +760,16 @@ func (s *Service) updateLocations(ctx context.Context, id string, body dto.Updat
 			description = location.Description
 		}
 
+		index, err := utils.SafeInt64ToInt32(int64(i))
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
 		batch[i] = db.BatchCreateDiaryLocationsParams{
 			DiaryID: id,
 			PoiID:   location.PoiID,
-			Index:   int32(i + 1),
+			Index:   index + 1,
 			Description: pgtype.Text{
 				String: *description,
 				Valid:  description != nil,

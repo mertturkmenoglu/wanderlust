@@ -86,8 +86,8 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 
 	res, err := s.db.GetBookmarksByUserId(ctx, db.GetBookmarksByUserIdParams{
 		UserID: userId,
-		Offset: int32(pagination.GetOffset(params)),
-		Limit:  int32(params.PageSize),
+		Offset: pagination.GetOffset(params),
+		Limit:  params.PageSize,
 	})
 
 	if err != nil {

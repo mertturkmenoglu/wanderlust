@@ -14,6 +14,7 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
+	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -358,12 +359,20 @@ func (s *Service) getRatings(ctx context.Context, id string) (*dto.GetRatingsByP
 	ratings := make(map[int8]int64)
 	var totalVotes int64 = 0
 
-	for i := range 5 {
-		ratings[int8(i+1)] = 0
+	var i int8
+
+	for i = range 5 {
+		ratings[i+1] = 0
 	}
 
 	for _, v := range dbRes {
-		ratings[int8(v.Rating)] = v.Count
+		cast, err := utils.SafeInt16ToInt8(v.Rating)
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
+		ratings[cast] = v.Count
 		totalVotes += v.Count
 	}
 
@@ -467,7 +476,14 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 		return nil, err
 	}
 
-	order := int16(ord) + 1
+	ordInt16, err := utils.SafeInt32ToInt16(ord)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Internal server error")
+	}
+
+	order := ordInt16 + 1
 	url := s.Upload.GetUrlForFile(bucket, input.FileName)
 
 	_, err = s.db.BatchCreateReviewImage(ctx, []db.BatchCreateReviewImageParams{

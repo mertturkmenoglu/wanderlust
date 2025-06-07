@@ -233,10 +233,16 @@ func (s *Service) updateTopPois(ctx context.Context, body dto.UpdateUserTopPoisI
 	}
 
 	for i, poi := range pois {
+		index, err := utils.SafeInt64ToInt32(int64(i))
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
 		_, err = qtx.CreateUserTopPoi(ctx, db.CreateUserTopPoiParams{
 			UserID: userId,
 			PoiID:  poi.ID,
-			Index:  int32(i + 1),
+			Index:  index + 1,
 		})
 
 		if err != nil {

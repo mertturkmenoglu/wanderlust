@@ -10,6 +10,7 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -458,10 +459,16 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 	}
 
 	for i, poiId := range poiIds {
+		index, err := utils.SafeInt64ToInt32(int64(i))
+
+		if err != nil {
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
 		_, err = qtx.CreateListItem(ctx, db.CreateListItemParams{
 			ListID: listId,
 			PoiID:  poiId,
-			Index:  int32(i + 1),
+			Index:  index + 1,
 		})
 
 		if err != nil {

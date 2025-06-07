@@ -334,7 +334,9 @@ func (s *Service) updateItems(ctx context.Context, collectionId string, body dto
 		return nil, err
 	}
 
-	for i := 1; i <= int(lastIndex); i++ {
+	var i int32
+
+	for i = 1; i <= lastIndex; i++ {
 		ok := slices.ContainsFunc(body.NewOrder, func(item dto.NewOrderItem) bool {
 			return item.ListIndex == int32(i)
 		})

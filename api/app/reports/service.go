@@ -13,6 +13,7 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/utils"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/danielgtaylor/huma/v2"
@@ -259,8 +260,22 @@ func (s *Service) findByQuery(ctx context.Context, input *dto.SearchReportsInput
 		builder = builder.Where(sq.Eq{"resolved": input.Resolved})
 	}
 
-	builder = builder.Offset(uint64(pagination.GetOffset(input.PaginationQueryParams)))
-	builder = builder.Limit(uint64(input.PaginationQueryParams.PageSize))
+	offset, err := utils.SafeInt32ToUInt64(pagination.GetOffset(input.PaginationQueryParams))
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Internal server error")
+	}
+
+	limit, err := utils.SafeInt32ToUInt64(input.PaginationQueryParams.PageSize)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Internal server error")
+	}
+
+	builder = builder.Offset(offset)
+	builder = builder.Limit(limit)
 	builder = builder.OrderBy("created_at DESC")
 
 	query, args, err := builder.ToSql()
