@@ -5,9 +5,6 @@ import (
 	"context"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-	"wanderlust/pkg/utils"
-
-	"github.com/brianvoe/gofakeit/v7"
 )
 
 type FakeAmenitiesPois struct {
@@ -27,12 +24,7 @@ func (f *FakeAmenitiesPois) Generate() (int64, error) {
 	batch := make([]db.BatchCreateAmenitiesPoisParams, 0)
 
 	for _, id := range ids {
-		n, err := utils.SafeInt64ToInt32(int64(gofakeit.IntRange(4, 10)))
-
-		if err != nil {
-			return 0, err
-		}
-
+		n := fakeutils.RandInt32Range(4, 10)
 		randAmenities := fakeutils.RandElems(amenities, n)
 
 		for _, a := range randAmenities {

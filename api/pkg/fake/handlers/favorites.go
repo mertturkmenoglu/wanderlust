@@ -9,7 +9,6 @@ import (
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/utils"
 
-	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -74,12 +73,7 @@ func (f *FakeFavorites) createFavorites(ctx context.Context, userIds []string, p
 	batch := make([]db.BatchCreateFavoritesParams, 0)
 
 	for _, userId := range userIds {
-		n, err := utils.SafeInt64ToInt32(int64(gofakeit.Number(10, 20)))
-
-		if err != nil {
-			return 0, err
-		}
-
+		n := fakeutils.RandInt32Range(10, 20)
 		randPois := fakeutils.RandElems(poiIds, n)
 
 		for i := range n {

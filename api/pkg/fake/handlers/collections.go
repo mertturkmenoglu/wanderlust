@@ -68,15 +68,10 @@ func (f *FakeCollectionItems) Generate() (int64, error) {
 }
 
 func (f *FakeCollectionItems) readFiles() ([]string, []string, error) {
-	collectionIds, err := fakeutils.ReadFile(f.CollectionsPath)
+	collectionIds, err1 := fakeutils.ReadFile(f.CollectionsPath)
+	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
 
-	if err != nil {
-		return nil, nil, err
-	}
-
-	poiIds, err := fakeutils.ReadFile(f.PoisPath)
-
-	if err != nil {
+	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
@@ -113,15 +108,10 @@ type FakeCollectionsCities struct {
 }
 
 func (f *FakeCollectionsCities) Generate() (int64, error) {
-	collectionIds, err := fakeutils.ReadFile(f.CollectionsPath)
+	collectionIds, err1 := fakeutils.ReadFile(f.CollectionsPath)
+	cities, err2 := f.db.Queries.GetCities(context.Background())
 
-	if err != nil {
-		return 0, err
-	}
-
-	cities, err := f.db.Queries.GetCities(context.Background())
-
-	if err != nil {
+	if err := cmp.Or(err1, err2); err != nil {
 		return 0, err
 	}
 

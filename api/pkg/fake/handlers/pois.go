@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"cmp"
 	"context"
 	"encoding/json"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/id"
 	"wanderlust/pkg/utils"
 
@@ -36,25 +36,10 @@ func (f *FakePois) Generate() (int64, error) {
 			return 0, err
 		}
 
-		for j := range f.Step {
-			ot, err1 := genRandOpenTimes()
-			addrlen, err2 := utils.SafeInt64ToInt32(int64(len(addressIds)))
+		for range f.Step {
+			ot, err := genRandOpenTimes()
 
-			if err := cmp.Or(err1, err2); err != nil {
-				return 0, err
-			}
-
-			idx := j % addrlen
-			addressId := addressIds[idx]
-
-			price64 := int64(gofakeit.Number(1, 5))
-			price, err1 := utils.SafeInt64ToInt16(price64)
-			accessibility64 := int64(gofakeit.Number(1, 5))
-			a11y, err2 := utils.SafeInt64ToInt16(accessibility64)
-			category64 := int64(gofakeit.Number(1, 23))
-			category, err3 := utils.SafeInt64ToInt16(category64)
-
-			if err := cmp.Or(err1, err2, err3); err != nil {
+			if err != nil {
 				return 0, err
 			}
 
@@ -63,14 +48,14 @@ func (f *FakePois) Generate() (int64, error) {
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
 				Description:        gofakeit.LoremIpsumSentence(32),
-				AddressID:          addressId,
+				AddressID:          fakeutils.RandElem(addressIds),
 				Website:            utils.StrToText(gofakeit.URL()),
-				PriceLevel:         price,
-				AccessibilityLevel: a11y,
+				PriceLevel:         fakeutils.RandInt16Range(1, 5),
+				AccessibilityLevel: fakeutils.RandInt16Range(1, 5),
 				TotalVotes:         0,
 				TotalPoints:        0,
 				TotalFavorites:     0,
-				CategoryID:         category,
+				CategoryID:         fakeutils.RandInt16Range(1, 23),
 				Hours:              ot,
 			})
 		}

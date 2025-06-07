@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/id"
-	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
@@ -111,12 +110,7 @@ func (f *FakeListItems) createListItems(ctx context.Context, listIds []string, p
 	batch := make([]db.BatchCreateListItemsParams, 0)
 
 	for _, listId := range listIds {
-		n, err := utils.SafeInt64ToInt32(int64(gofakeit.Number(4, 10)))
-
-		if err != nil {
-			return 0, err
-		}
-
+		n := fakeutils.RandInt32Range(4, 10)
 		randPois := fakeutils.RandElems(poiIds, n)
 
 		for i := range n {

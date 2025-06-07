@@ -192,11 +192,7 @@ func (f *FakeReviewImages) createReviewImages(ctx context.Context, chunk []strin
 			continue
 		}
 
-		n, err := utils.SafeInt64ToInt16(int64(gofakeit.IntRange(0, 4)))
-
-		if err != nil {
-			return 0, err
-		}
+		n := fakeutils.RandInt16Range(0, 4)
 
 		for i := range n {
 			batch = append(batch, db.BatchCreateReviewImageParams{

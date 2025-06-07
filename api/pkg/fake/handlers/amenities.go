@@ -67,9 +67,7 @@ type FakeAmenities struct {
 
 func (f *FakeAmenities) Generate() (int64, error) {
 	for _, amenity := range amenitiesData {
-		_, err := f.db.Queries.CreateAmenity(context.Background(), amenity)
-
-		if err != nil {
+		if _, err := f.db.Queries.CreateAmenity(context.Background(), amenity); err != nil {
 			return 0, err
 		}
 	}

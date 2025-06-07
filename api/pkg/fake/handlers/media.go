@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 )
@@ -48,11 +47,7 @@ func (f *FakeMedia) Generate() (int64, error) {
 	batch := make([]db.BatchCreatePoiMediaParams, 0)
 
 	for _, id := range poiIds {
-		n, err := utils.SafeInt64ToInt16(int64(gofakeit.IntRange(2, 10)))
-
-		if err != nil {
-			return 0, err
-		}
+		n := fakeutils.RandInt16Range(2, 10)
 
 		for i := range n {
 			istr := strconv.FormatInt(int64(i), 10)
