@@ -9,7 +9,7 @@ type Props = {
 export default function Map({ latitude, longitude }: Props) {
   return (
     <>
-      <h3 className="text-2xl font-bold mt-8 lg:mt-0">Location</h3>
+      <h3 className="text-2xl font-bold mt-8 lg:mt-4">Location</h3>
       <div className="mt-4">
         <MapContainer
           center={[latitude, longitude]}
