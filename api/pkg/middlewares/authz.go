@@ -13,7 +13,7 @@ func Authz(api huma.API, key authz.AuthzAct) func(ctx huma.Context, next func(hu
 		fn := authz.Fns[key]
 
 		if fn == nil {
-			huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
+			_ = huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
 			return
 		}
 
@@ -23,16 +23,16 @@ func Authz(api huma.API, key authz.AuthzAct) func(ctx huma.Context, next func(hu
 			v, ok := err.(huma.StatusError)
 
 			if ok {
-				huma.WriteErr(api, ctx, v.GetStatus(), v.Error())
+				_ = huma.WriteErr(api, ctx, v.GetStatus(), v.Error())
 				return
 			}
 
-			huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
+			_ = huma.WriteErr(api, ctx, http.StatusInternalServerError, "an error occurred")
 			return
 		}
 
 		if !isAuthorized {
-			huma.WriteErr(api, ctx, http.StatusForbidden, "unauthorized to perform this action")
+			_ = huma.WriteErr(api, ctx, http.StatusForbidden, "unauthorized to perform this action")
 			return
 		}
 

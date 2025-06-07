@@ -41,7 +41,7 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 
 		if accessToken == "" {
 			sp.RecordError(huma.Error401Unauthorized("Unauthorized"))
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
+			_ = huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
@@ -49,7 +49,7 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 
 		if err != nil {
 			sp.RecordError(err)
-			huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
+			_ = huma.WriteErr(api, ctx, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 
