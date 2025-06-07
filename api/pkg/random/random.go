@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
-	randv1 "math/rand"
 	"strconv"
 )
 
@@ -20,7 +19,13 @@ func FromLetters(n int) string {
 
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = letterRunes[randv1.Intn(len(letterRunes))]
+		x, err := rand.Int(rand.Reader, big.NewInt(int64(len(letterRunes))))
+
+		if err != nil {
+			panic("cannot generate random number: " + err.Error())
+		}
+
+		b[i] = letterRunes[x.Int64()]
 	}
 
 	return string(b)
@@ -33,7 +38,13 @@ func FromBase62(n int) string {
 
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = base62Runes[randv1.Intn(len(base62Runes))]
+		x, err := rand.Int(rand.Reader, big.NewInt(int64(len(base62Runes))))
+
+		if err != nil {
+			panic("cannot generate random number: " + err.Error())
+		}
+
+		b[i] = base62Runes[x.Int64()]
 	}
 
 	return string(b)
