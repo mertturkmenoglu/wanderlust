@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { env } from '@/lib/env';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
@@ -41,6 +42,8 @@ export const Route = createFileRoute('/_auth/sign-up/')({
 
 function RouteComponent() {
   const [showPassword, setShowPassword] = useState(false);
+  const showOAuthButtons = env.VITE_ALLOW_OAUTH_LOGINS;
+
   const { formState, register, handleSubmit } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -70,7 +73,11 @@ function RouteComponent() {
       />
       <h2 className="mt-4 text-xl font-bold">Create Your Wanderlust Account</h2>
       <div className="text-sm text-muted-foreground">
-        Already have an account? <AuthLink href="/sign-in" text="Sign In" />
+        Already have an account?{' '}
+        <AuthLink
+          href="/sign-in"
+          text="Sign In"
+        />
       </div>
       <form
         onSubmit={handleSubmit((data) => {
@@ -145,16 +152,28 @@ function RouteComponent() {
           <div className="my-4"></div>
         </div>
 
-        <Button variant="default" className="w-full" type="submit">
+        <Button
+          variant="default"
+          className="w-full"
+          type="submit"
+        >
           Sign Up
         </Button>
 
         <Separator className="my-4" />
 
-        <div className="space-y-4">
-          <OAuthButton provider="google" text="Sign up with Google" />
-          <OAuthButton provider="facebook" text="Sign up with Facebook" />
-        </div>
+        {showOAuthButtons && (
+          <div className="space-y-4">
+            <OAuthButton
+              provider="google"
+              text="Sign up with Google"
+            />
+            <OAuthButton
+              provider="facebook"
+              text="Sign up with Facebook"
+            />
+          </div>
+        )}
 
         <div className="mt-4 text-center">
           <AuthLegalText type="signup" />

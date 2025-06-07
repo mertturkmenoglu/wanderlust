@@ -1,6 +1,7 @@
 import { ErrorComponent } from '@/components/blocks/error-component';
 import Footer from '@/components/blocks/footer';
 import Header from '@/components/blocks/header';
+import { env } from '@/lib/env';
 import { type AuthContextState } from '@/providers/auth-provider';
 import type { QueryClient } from '@tanstack/react-query';
 import {
@@ -38,7 +39,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     );
   },
   loader: () => {
-    const isRedirect = import.meta.env.VITE_REDIRECT_WIP === 'true';
+    const isRedirect = env.VITE_REDIRECT_WIP;
 
     if (isRedirect && window.location.pathname !== '/wip') {
       window.location.href = '/wip';

@@ -1,4 +1,3 @@
-const maptilerPK =
-  import.meta.env.VITE_MAPTILER_KEY ?? '__invalid-maptiler-key';
+import { env } from './env';
 
-export const tileUrl = `https://api.maptiler.com/maps/streets-v2-light/256/{z}/{x}/{y}.png?key=${maptilerPK}`;
+export const tileUrl = `https://api.maptiler.com/maps/streets-v2-light/256/{z}/{x}/{y}.png?key=${env.VITE_MAPTILER_KEY}`;

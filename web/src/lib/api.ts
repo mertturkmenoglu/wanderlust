@@ -1,8 +1,9 @@
 import createFetchClient, { type Middleware } from 'openapi-fetch';
 import createClient from 'openapi-react-query';
 import type { components, paths } from './api-types';
+import { env } from './env';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = env.VITE_API_URL;
 
 export const fetchClient = createFetchClient<paths>({
   baseUrl: apiUrl,

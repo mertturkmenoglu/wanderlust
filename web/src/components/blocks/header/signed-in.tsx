@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { env } from '@/lib/env';
 import { Link, useLocation } from '@tanstack/react-router';
 import { BellIcon, SearchIcon, SendIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -16,9 +17,7 @@ export default function SignedInLinks() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const showSearch = !hideSearchPaths.includes(location.pathname);
-  const showNotifications =
-    import.meta.env.VITE_APP_BAR_SHOW_WIP_ICONS === 'true';
-  const showMessages = import.meta.env.VITE_APP_BAR_SHOW_WIP_ICONS === 'true';
+  const showIcons = env.VITE_APP_BAR_SHOW_WIP_ICONS;
 
   return (
     <div className="flex items-center gap-2">
@@ -58,7 +57,7 @@ export default function SignedInLinks() {
         />
       </CommandDialog>
 
-      {showNotifications && (
+      {showIcons && (
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger tabIndex={-1}>
@@ -81,7 +80,7 @@ export default function SignedInLinks() {
         </TooltipProvider>
       )}
 
-      {showMessages && (
+      {showIcons && (
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger tabIndex={-1}>

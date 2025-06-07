@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
+import { env } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
@@ -26,6 +27,7 @@ const schema = z.object({
 
 export function SignInCard({ isModal }: Props) {
   const [showPassword, setShowPassword] = useState(false);
+  const showOAuthButtons = env.VITE_ALLOW_OAUTH_LOGINS;
 
   const { formState, register, handleSubmit } = useForm({
     resolver: zodResolver(schema),
@@ -41,6 +43,7 @@ export function SignInCard({ isModal }: Props) {
     {
       onSuccess: async () => {
         window.location.href = '/';
+        window.location.search = '';
       },
     },
   );
@@ -133,16 +136,18 @@ export function SignInCard({ isModal }: Props) {
 
         <Separator className="my-4" />
 
-        <div className="space-y-4">
-          <OAuthButton
-            provider="google"
-            text="Sign in with Google"
-          />
-          <OAuthButton
-            provider="facebook"
-            text="Sign in with Facebook"
-          />
-        </div>
+        {showOAuthButtons && (
+          <div className="space-y-4">
+            <OAuthButton
+              provider="google"
+              text="Sign in with Google"
+            />
+            <OAuthButton
+              provider="facebook"
+              text="Sign in with Facebook"
+            />
+          </div>
+        )}
 
         <div className="mt-4 text-center">
           <AuthLegalText type="signin" />

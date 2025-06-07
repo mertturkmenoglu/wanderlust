@@ -1,11 +1,12 @@
-export const imgProxyBaseUrl = import.meta.env.VITE_IMG_PROXY_URL ?? '';
+import { env } from './env';
 
-const enableIpx = import.meta.env.VITE_ENABLE_IPX ?? false;
+const enableIpx = env.VITE_ENABLE_IPX;
+const baseUrl = env.VITE_IMG_PROXY_URL;
 
 export function ipx(ogUrl: string, ops: string): string {
   if (!enableIpx) {
     return ogUrl;
   } else {
-    return `${imgProxyBaseUrl}/${ops}/${ogUrl}`;
+    return `${baseUrl}/${ops}/${ogUrl}`;
   }
 }

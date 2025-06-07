@@ -1,5 +1,6 @@
 import AppMessage from '@/components/blocks/app-message';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { env } from '@/lib/env';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { type Props as THit } from '@/routes/search/-components/hit';
@@ -20,8 +21,8 @@ type Props = {
   className?: string;
 };
 
-const searchApiKey = import.meta.env.VITE_SEARCH_CLIENT_API_KEY ?? '';
-const searchApiUrl = import.meta.env.VITE_SEARCH_CLIENT_URL ?? '';
+const searchApiKey = env.VITE_SEARCH_CLIENT_API_KEY;
+const searchApiUrl = env.VITE_SEARCH_CLIENT_URL;
 const headers = {
   'X-TYPESENSE-API-KEY': searchApiKey,
 };

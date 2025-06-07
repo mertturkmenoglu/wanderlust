@@ -1,6 +1,7 @@
 import FbIcon from '@/components/icons/facebook';
 import GoogleIcon from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
+import { env } from '@/lib/env';
 
 type Props = {
   provider: 'google' | 'facebook';
@@ -8,7 +9,7 @@ type Props = {
 };
 
 export default function OAuthButton({ provider, text }: Readonly<Props>) {
-  const baseUrl = import.meta.env.VITE_API_URL ?? '';
+  const baseUrl = env.VITE_API_URL;
 
   return (
     <Button
