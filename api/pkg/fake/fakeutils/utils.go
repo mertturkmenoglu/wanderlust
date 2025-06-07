@@ -9,7 +9,9 @@ import (
 	randV2 "math/rand/v2"
 	"os"
 	"strings"
+	"wanderlust/pkg/utils"
 
+	"github.com/brianvoe/gofakeit/v7"
 	"github.com/pterm/pterm"
 )
 
@@ -89,4 +91,24 @@ func CombineErrors(errchan chan error) error {
 		}
 	}
 	return combinedErr
+}
+
+func RandInt16Range(min int16, max int16) int16 {
+	n, err := utils.SafeInt64ToInt16(int64(gofakeit.IntRange(int(min), int(max))))
+
+	if err != nil {
+		panic(err)
+	}
+
+	return n
+}
+
+func RandInt32Range(min int32, max int32) int32 {
+	n, err := utils.SafeInt64ToInt32(int64(gofakeit.IntRange(int(min), int(max))))
+
+	if err != nil {
+		panic(err)
+	}
+
+	return n
 }
