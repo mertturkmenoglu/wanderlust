@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WipImport } from './routes/wip'
 import { Route as TripsImport } from './routes/trips'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as IndexImport } from './routes/index'
@@ -103,6 +104,12 @@ import { Route as AdminDashboardPoisIdEditAmenitiesIndexImport } from './routes/
 import { Route as AdminDashboardPoisIdEditAddressIndexImport } from './routes/_admin/dashboard/pois/$id/edit/address/index'
 
 // Create/Update Routes
+
+const WipRoute = WipImport.update({
+  id: '/wip',
+  path: '/wip',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TripsRoute = TripsImport.update({
   id: '/trips',
@@ -697,6 +704,13 @@ declare module '@tanstack/react-router' {
       path: '/trips'
       fullPath: '/trips'
       preLoaderRoute: typeof TripsImport
+      parentRoute: typeof rootRoute
+    }
+    '/wip': {
+      id: '/wip'
+      path: '/wip'
+      fullPath: '/wip'
+      preLoaderRoute: typeof WipImport
       parentRoute: typeof rootRoute
     }
     '/_admin/admin': {
@@ -1516,6 +1530,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
+  '/wip': typeof WipRoute
   '/admin': typeof AdminAdminRoute
   '/dashboard': typeof AdminDashboardRouteWithChildren
   '/trips/$id': typeof TripsIdRouteWithChildren
@@ -1607,6 +1622,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/wip': typeof WipRoute
   '/admin': typeof AdminAdminRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
@@ -1696,6 +1712,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
+  '/wip': typeof WipRoute
   '/_admin/admin': typeof AdminAdminRoute
   '/_admin/dashboard': typeof AdminDashboardRouteWithChildren
   '/trips/$id': typeof TripsIdRouteWithChildren
@@ -1791,6 +1808,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/trips'
+    | '/wip'
     | '/admin'
     | '/dashboard'
     | '/trips/$id'
@@ -1881,6 +1899,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/wip'
     | '/admin'
     | '/bookmarks'
     | '/categories'
@@ -1968,6 +1987,7 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/trips'
+    | '/wip'
     | '/_admin/admin'
     | '/_admin/dashboard'
     | '/trips/$id'
@@ -2062,6 +2082,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   TripsRoute: typeof TripsRouteWithChildren
+  WipRoute: typeof WipRoute
   AdminAdminRoute: typeof AdminAdminRoute
   AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
   UUsernameRoute: typeof UUsernameRouteWithChildren
@@ -2096,6 +2117,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SettingsRoute: SettingsRouteWithChildren,
   TripsRoute: TripsRouteWithChildren,
+  WipRoute: WipRoute,
   AdminAdminRoute: AdminAdminRoute,
   AdminDashboardRoute: AdminDashboardRouteWithChildren,
   UUsernameRoute: UUsernameRouteWithChildren,
@@ -2139,6 +2161,7 @@ export const routeTree = rootRoute
         "/",
         "/settings",
         "/trips",
+        "/wip",
         "/_admin/admin",
         "/_admin/dashboard",
         "/u/$username",
@@ -2190,6 +2213,9 @@ export const routeTree = rootRoute
         "/trips/my-trips/",
         "/trips/planner/"
       ]
+    },
+    "/wip": {
+      "filePath": "wip.tsx"
     },
     "/_admin/admin": {
       "filePath": "_admin/admin.tsx"
