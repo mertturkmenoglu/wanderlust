@@ -16,6 +16,9 @@ export default function SignedInLinks() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const showSearch = !hideSearchPaths.includes(location.pathname);
+  const showNotifications =
+    import.meta.env.VITE_APP_BAR_SHOW_WIP_ICONS === 'true';
+  const showMessages = import.meta.env.VITE_APP_BAR_SHOW_WIP_ICONS === 'true';
 
   return (
     <div className="flex items-center gap-2">
@@ -55,47 +58,51 @@ export default function SignedInLinks() {
         />
       </CommandDialog>
 
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger tabIndex={-1}>
-            <Link
-              to="/"
-              href="/notifications"
-              className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
+      {showNotifications && (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger tabIndex={-1}>
+              <Link
+                to="/"
+                href="/notifications"
+                className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
+              >
+                <BellIcon className="size-5 transition-all duration-500 ease-in-out group-hover:text-primary" />
+                <span className="sr-only">Notifications</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              sideOffset={8}
             >
-              <BellIcon className="size-5 transition-all duration-500 ease-in-out group-hover:text-primary" />
-              <span className="sr-only">Notifications</span>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent
-            side="bottom"
-            sideOffset={8}
-          >
-            <p>Notifications</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+              <p>Notifications</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
 
-      <TooltipProvider delayDuration={300}>
-        <Tooltip>
-          <TooltipTrigger tabIndex={-1}>
-            <Link
-              to="/"
-              href="/messages"
-              className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
+      {showMessages && (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger tabIndex={-1}>
+              <Link
+                to="/"
+                href="/messages"
+                className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
+              >
+                <SendIcon className="size-5 transition-all duration-500 ease-in-out group-hover:text-primary" />
+                <span className="sr-only">Messages</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              sideOffset={8}
             >
-              <SendIcon className="size-5 transition-all duration-500 ease-in-out group-hover:text-primary" />
-              <span className="sr-only">Messages</span>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent
-            side="bottom"
-            sideOffset={8}
-          >
-            <p>Messages</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+              <p>Messages</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
   );
 }
