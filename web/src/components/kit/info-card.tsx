@@ -36,7 +36,9 @@ type NumberColumnProps = {
 
 export function NumberColumn({ className, children }: NumberColumnProps) {
   return (
-    <span className={cn('font-bold text-6xl text-primary', className)}>
+    <span
+      className={cn('font-bold text-3xl md:text-6xl text-primary', className)}
+    >
       {children}
     </span>
   );
