@@ -7,5 +7,9 @@ import (
 )
 
 func (w *Wanderlust) RegisterPeriodicTasks() {
-	w.app.Tasks.Schedule("@every 1m", asynq.NewTask(tasks.TypeFindExpiredTripInvites, []byte{}, asynq.MaxRetry(1)))
+	_, err := w.app.Tasks.Schedule("@every 1m", asynq.NewTask(tasks.TypeFindExpiredTripInvites, []byte{}, asynq.MaxRetry(1)))
+
+	if err != nil {
+		panic(err)
+	}
 }
