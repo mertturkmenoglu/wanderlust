@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"sync/atomic"
@@ -45,15 +46,10 @@ func (f *FakeBookmarks) Generate() (int64, error) {
 }
 
 func (f *FakeBookmarks) readFiles() ([]string, []string, error) {
-	userIds, err := fakeutils.ReadFile(f.UsersPath)
+	userIds, err1 := fakeutils.ReadFile(f.UsersPath)
+	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
 
-	if err != nil {
-		return nil, nil, err
-	}
-
-	poiIds, err := fakeutils.ReadFile(f.PoisPath)
-
-	if err != nil {
+	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 

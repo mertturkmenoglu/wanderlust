@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
@@ -16,15 +17,10 @@ type FakeAmenitiesPois struct {
 
 func (f *FakeAmenitiesPois) Generate() (int64, error) {
 	ctx := context.Background()
-	amenities, err := f.db.Queries.GetAllAmenities(ctx)
+	amenities, err1 := f.db.Queries.GetAllAmenities(ctx)
+	ids, err2 := fakeutils.ReadFile(f.PoisPath)
 
-	if err != nil {
-		return 0, err
-	}
-
-	ids, err := fakeutils.ReadFile(f.PoisPath)
-
-	if err != nil {
+	if err := cmp.Or(err1, err2); err != nil {
 		return 0, err
 	}
 
