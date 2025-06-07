@@ -16,9 +16,10 @@ func extractFromCookie(cookies []*http.Cookie) (string, string) {
 	var refreshToken = ""
 
 	for _, cookie := range cookies {
-		if cookie.Name == tokens.AccessTokenCookieName {
+		switch cookie.Name {
+		case tokens.AccessTokenCookieName:
 			accessToken = cookie.Value
-		} else if cookie.Name == tokens.RefreshTokenCookieName {
+		case tokens.RefreshTokenCookieName:
 			refreshToken = cookie.Value
 		}
 	}
