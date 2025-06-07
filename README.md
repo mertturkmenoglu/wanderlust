@@ -30,6 +30,11 @@ It's open source and free.
 - Infisical CLI (https://infisical.com/docs/documentation/getting-started/introduction)
 - Concurrently (https://www.npmjs.com/package/concurrently)
 
+Optional:
+
+- gosec (https://github.com/securego/gosec)
+- staticcheck (https://staticcheck.dev/docs/getting-started/)
+
 ## Installation and Running
 
 - Check each subproject's README file.
