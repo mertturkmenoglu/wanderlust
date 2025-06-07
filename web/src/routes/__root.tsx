@@ -37,6 +37,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       </div>
     );
   },
+  loader: () => {
+    const isRedirect = import.meta.env.VITE_REDIRECT_WIP === 'true';
+
+    if (isRedirect && window.location.pathname !== '/wip') {
+      window.location.href = '/wip';
+    }
+  },
   errorComponent: ErrorComponent,
   notFoundComponent: () => {
     return (
