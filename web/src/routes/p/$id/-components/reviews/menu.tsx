@@ -10,6 +10,7 @@ import {
 import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
 import { AuthContext } from '@/providers/auth-provider';
+import { Link } from '@tanstack/react-router';
 import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from 'lucide-react';
 import { useContext } from 'react';
 import { toast } from 'sonner';
@@ -41,10 +42,19 @@ export function Menu({ review }: Props) {
         align="end"
       >
         <DropdownMenuItem>
-          Report
-          <DropdownMenuShortcut>
-            <FlagIcon className="size-3" />
-          </DropdownMenuShortcut>
+          <Link
+            to="/report"
+            search={{
+              id: review.id,
+              type: 'review',
+            }}
+            className="flex items-center justify-between w-full"
+          >
+            Report
+            <DropdownMenuShortcut>
+              <FlagIcon className="size-3" />
+            </DropdownMenuShortcut>
+          </Link>
         </DropdownMenuItem>
 
         {isOwner && (
