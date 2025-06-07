@@ -10,6 +10,11 @@
 - Go Air: https://github.com/air-verse/air
 - Infisical: https://infisical.com/docs/documentation/getting-started/introduction
 
+Optional:
+
+- gosec https://github.com/securego/gosec
+- staticcheck https://staticcheck.dev/docs/getting-started/
+
 ## Setup
 
 - Run `just setup` to setup the project.
