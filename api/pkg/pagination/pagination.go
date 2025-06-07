@@ -2,7 +2,7 @@ package pagination
 
 import "wanderlust/pkg/dto"
 
-func GetOffset(params dto.PaginationQueryParams) int {
+func GetOffset(params dto.PaginationQueryParams) int32 {
 	return (params.Page - 1) * params.PageSize
 }
 
