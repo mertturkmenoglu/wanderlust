@@ -5,14 +5,13 @@ import (
 	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/utils"
 
-	"github.com/pterm/pterm"
 	"github.com/sony/sonyflake"
 	tsapi "github.com/typesense/typesense-go/v2/typesense/api"
 )
 
 func handlePoiSync() error {
-	logger := pterm.DefaultLogger.WithLevel(pterm.LogLevelTrace)
 	d := db.NewDb()
 	ctx := context.Background()
 
@@ -22,7 +21,6 @@ func handlePoiSync() error {
 		return err
 	}
 
-	var i int64 = 0
 	flake, err := sonyflake.New(sonyflake.Settings{})
 
 	if err != nil {
@@ -35,7 +33,7 @@ func handlePoiSync() error {
 		Flake: flake,
 	})
 
-	const step int64 = 1000
+	const step int32 = 1000
 
 	_, err = searchService.Client.Collection(string(CollectionPois)).Delete(ctx)
 
@@ -45,11 +43,17 @@ func handlePoiSync() error {
 
 	searchService.CreateSchemas()
 
-	for i = 0; i <= totalCount; i += step {
-		logger.Trace("syncing", logger.Args("i", i))
+	var i int32
+	n, err := utils.SafeInt64ToInt32(totalCount)
+
+	if err != nil {
+		return err
+	}
+
+	for i = 0; i <= n; i += step {
 		ids, err := d.Queries.GetPaginatedPoiIds(ctx, db.GetPaginatedPoiIdsParams{
-			Offset: int32(i),
-			Limit:  int32(step),
+			Offset: i,
+			Limit:  step,
 		})
 
 		if err != nil {
