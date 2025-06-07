@@ -56,7 +56,7 @@ export function PlanTripDialog({ className }: Props) {
       <AlertDialogTrigger asChild>
         <Button
           size="lg"
-          className="mt-4 w-2/3 mx-auto"
+          className="mt-4 w-full md:w-2/3 mx-auto"
           onClick={() => setOpen(true)}
         >
           <MapIcon className="size-5" />
