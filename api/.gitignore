@@ -6,3 +6,4 @@ typesense-data/
 data/*.csv
 *.out
 main
+gosec-results.*
