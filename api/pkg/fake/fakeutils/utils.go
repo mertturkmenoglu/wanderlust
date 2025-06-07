@@ -2,22 +2,32 @@ package fakeutils
 
 import (
 	"bufio"
+	"crypto/rand"
+	"errors"
 	"fmt"
-	"math/rand"
+	"math/big"
+	randV2 "math/rand/v2"
 	"os"
+	"strings"
 
 	"github.com/pterm/pterm"
 )
 
 func RandElem[T any](arr []T) T {
-	return arr[rand.Intn(len(arr))]
+	x, err := rand.Int(rand.Reader, big.NewInt(int64(len(arr))))
+
+	if err != nil {
+		panic("cannot generate random number: " + err.Error())
+	}
+
+	return arr[x.Int64()]
 }
 
-func RandElems[T any](arr []T, n int) []T {
+func RandElems[T any](arr []T, n int32) []T {
 	newArr := make([]T, len(arr))
 	copy(newArr, arr)
 
-	rand.Shuffle(len(newArr), func(i, j int) {
+	randV2.Shuffle(len(newArr), func(i, j int) {
 		newArr[i], newArr[j] = newArr[j], newArr[i]
 	})
 
@@ -30,7 +40,11 @@ func Input(text ...string) (string, error) {
 }
 
 func ReadFile(path string) ([]string, error) {
-	f, err := os.Open(path)
+	if !strings.HasPrefix(path, "tmp/") {
+		return nil, errors.New("you must read a file from the tmp/ directory")
+	}
+
+	f, err := os.Open(path) // #nosec G304 -- this is a development time util, paths are safe
 
 	if err != nil {
 		return nil, err
