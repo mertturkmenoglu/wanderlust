@@ -117,7 +117,7 @@ export function CreateDialog() {
 
   return (
     <Dialog
-      open={showNewDialog}
+      open={showNewDialog === true}
       onOpenChange={(o) =>
         navigate({
           to: '.',
