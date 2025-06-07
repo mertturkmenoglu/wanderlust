@@ -10,6 +10,8 @@ commands=(
   "pnpm --version"
   "infisical --version"
   "concurrently --version"
+  "gosec --version"
+  "staticcheck --version"
 )
 
 commandhelpers=(
@@ -23,6 +25,8 @@ commandhelpers=(
   "https://pnpm.io/installation"
   "https://infisical.com/docs/documentation/getting-started/introduction"
   "https://www.npmjs.com/package/concurrently"
+  "https://github.com/securego/gosec"
+  "https://staticcheck.dev/docs/getting-started/"
 )
 
 # Turn flag to false if any requirement fails
