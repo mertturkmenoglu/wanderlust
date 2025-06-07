@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"wanderlust/pkg/db"
@@ -36,15 +37,10 @@ func (f *FakePois) Generate() (int64, error) {
 		}
 
 		for j := range f.Step {
-			ot, err := genRandOpenTimes()
+			ot, err1 := genRandOpenTimes()
+			addrlen, err2 := utils.SafeInt64ToInt32(int64(len(addressIds)))
 
-			if err != nil {
-				return 0, err
-			}
-
-			addrlen, err := utils.SafeInt64ToInt32(int64(len(addressIds)))
-
-			if err != nil {
+			if err := cmp.Or(err1, err2); err != nil {
 				return 0, err
 			}
 
@@ -52,23 +48,13 @@ func (f *FakePois) Generate() (int64, error) {
 			addressId := addressIds[idx]
 
 			price64 := int64(gofakeit.Number(1, 5))
-			price, err := utils.SafeInt64ToInt16(price64)
-
-			if err != nil {
-				return 0, err
-			}
-
+			price, err1 := utils.SafeInt64ToInt16(price64)
 			accessibility64 := int64(gofakeit.Number(1, 5))
-			a11y, err := utils.SafeInt64ToInt16(accessibility64)
-
-			if err != nil {
-				return 0, err
-			}
-
+			a11y, err2 := utils.SafeInt64ToInt16(accessibility64)
 			category64 := int64(gofakeit.Number(1, 23))
-			category, err := utils.SafeInt64ToInt16(category64)
+			category, err3 := utils.SafeInt64ToInt16(category64)
 
-			if err != nil {
+			if err := cmp.Or(err1, err2, err3); err != nil {
 				return 0, err
 			}
 
@@ -99,36 +85,35 @@ func (f *FakePois) Generate() (int64, error) {
 	return int64(f.Count), nil
 }
 
+var days = [...]string{"mon", "tue", "wed", "thu", "fri", "sat", "sun"}
+
+var openings = [...]string{
+	"07:00",
+	"08:00",
+	"09:00",
+	"10:00",
+	"11:00",
+}
+
+var closings = [...]string{
+	"17:00",
+	"18:00",
+	"19:00",
+	"20:00",
+	"21:00",
+}
+
 func genRandOpenTimes() ([]byte, error) {
-	v := map[string]any{
-		"mon": genOpenTimesForDay(),
-		"tue": genOpenTimesForDay(),
-		"wed": genOpenTimesForDay(),
-		"thu": genOpenTimesForDay(),
-		"fri": genOpenTimesForDay(),
-		"sat": genOpenTimesForDay(),
-		"sun": genOpenTimesForDay(),
+	v := make(map[string]any)
+
+	for _, d := range days {
+		v[d] = genOpenTimesForDay()
 	}
 
 	return json.Marshal(v)
 }
 
 func genOpenTimesForDay() map[string]string {
-	openings := []string{
-		"07:00",
-		"08:00",
-		"09:00",
-		"10:00",
-		"11:00",
-	}
-
-	closings := []string{
-		"17:00",
-		"18:00",
-		"19:00",
-		"20:00",
-		"21:00",
-	}
 
 	return map[string]string{
 		"opensAt":  openings[gofakeit.Number(0, len(openings)-1)],

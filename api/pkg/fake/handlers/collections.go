@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"sync/atomic"
@@ -180,15 +181,10 @@ func (f *FakeCollectionsPois) Generate() (int64, error) {
 }
 
 func (f *FakeCollectionsPois) readFiles() ([]string, []string, error) {
-	collectionIds, err := fakeutils.ReadFile(f.CollectionsPath)
+	collectionIds, err1 := fakeutils.ReadFile(f.CollectionsPath)
+	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
 
-	if err != nil {
-		return nil, nil, err
-	}
-
-	poiIds, err := fakeutils.ReadFile(f.PoisPath)
-
-	if err != nil {
+	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 

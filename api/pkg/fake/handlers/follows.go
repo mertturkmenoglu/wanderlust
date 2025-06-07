@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"sync/atomic"
@@ -99,47 +100,24 @@ func (f *FakeFollows) updateUsers(ctx context.Context, ids []string) error {
 	qtx := f.db.Queries.WithTx(tx)
 
 	for _, userId := range ids {
-		followingCount, err := qtx.GetFollowingCount(ctx, userId)
+		followingCount, err1 := qtx.GetFollowingCount(ctx, userId)
+		followingCountInt32, err2 := utils.SafeInt64ToInt32(followingCount)
+		followersCount, err3 := qtx.GetFollowersCount(ctx, userId)
+		followersCountInt32, err4 := utils.SafeInt64ToInt32(followersCount)
 
-		if err != nil {
+		if err := cmp.Or(err1, err2, err3, err4); err != nil {
 			continue
 		}
 
-		followingCountInt32, err := utils.SafeInt64ToInt32(followingCount)
-
-		if err != nil {
-			continue
-		}
-
-		followersCount, err := qtx.GetFollowersCount(ctx, userId)
-
-		if err != nil {
-			continue
-		}
-
-		followersCountInt32, err := utils.SafeInt64ToInt32(followersCount)
-
-		if err != nil {
-			continue
-		}
-
-		err = qtx.SetFollowersCount(ctx, db.SetFollowersCountParams{
+		_ = qtx.SetFollowersCount(ctx, db.SetFollowersCountParams{
 			ID:             userId,
 			FollowersCount: followersCountInt32,
 		})
 
-		if err != nil {
-			continue
-		}
-
-		err = qtx.SetFollowingCount(ctx, db.SetFollowingCountParams{
+		_ = qtx.SetFollowingCount(ctx, db.SetFollowingCountParams{
 			ID:             userId,
 			FollowingCount: followingCountInt32,
 		})
-
-		if err != nil {
-			continue
-		}
 	}
 
 	return tx.Commit(ctx)

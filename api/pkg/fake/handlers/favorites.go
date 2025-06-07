@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"slices"
 	"sync/atomic"
@@ -59,15 +60,10 @@ func (f *FakeFavorites) Generate() (int64, error) {
 }
 
 func (f *FakeFavorites) readFiles() ([]string, []string, error) {
-	userIds, err := fakeutils.ReadFile(f.UsersPath)
+	userIds, err1 := fakeutils.ReadFile(f.UsersPath)
+	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
 
-	if err != nil {
-		return nil, nil, err
-	}
-
-	poiIds, err := fakeutils.ReadFile(f.PoisPath)
-
-	if err != nil {
+	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
@@ -109,15 +105,10 @@ func (f *FakeFavorites) updateFavoritesCount(ctx context.Context, poiIds []strin
 	qtx := f.db.Queries.WithTx(tx)
 
 	for _, poiId := range poiIds {
-		count, err := qtx.GetPoiFavoritesCount(ctx, poiId)
+		count, err1 := qtx.GetPoiFavoritesCount(ctx, poiId)
+		total, err2 := utils.SafeInt64ToInt32(count)
 
-		if err != nil {
-			return err
-		}
-
-		total, err := utils.SafeInt64ToInt32(count)
-
-		if err != nil {
+		if err := cmp.Or(err1, err2); err != nil {
 			return err
 		}
 

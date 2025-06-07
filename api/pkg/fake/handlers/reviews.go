@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"slices"
@@ -114,15 +115,10 @@ func (f *FakeReviews) updatePoiRateAndVotes(ctx context.Context, poiIds []string
 	qtx := f.db.Queries.WithTx(tx)
 
 	for _, poiId := range poiIds {
-		count, err := qtx.CountReviewsByPoiId(ctx, poiId)
+		count, err1 := qtx.CountReviewsByPoiId(ctx, poiId)
+		totalRating, err2 := qtx.GetPoiTotalRating(ctx, poiId)
 
-		if err != nil {
-			return err
-		}
-
-		totalRating, err := qtx.GetPoiTotalRating(ctx, poiId)
-
-		if err != nil {
+		if err := cmp.Or(err1, err2); err != nil {
 			return err
 		}
 
@@ -132,15 +128,10 @@ func (f *FakeReviews) updatePoiRateAndVotes(ctx context.Context, poiIds []string
 			return fmt.Errorf("invalid type: %T", totalRating)
 		}
 
-		votesInt32, err := utils.SafeInt64ToInt32(count)
+		votesInt32, err1 := utils.SafeInt64ToInt32(count)
+		pointsInt32, err2 := utils.SafeInt64ToInt32(cast)
 
-		if err != nil {
-			return err
-		}
-
-		pointsInt32, err := utils.SafeInt64ToInt32(cast)
-
-		if err != nil {
+		if err := cmp.Or(err1, err2); err != nil {
 			return err
 		}
 
