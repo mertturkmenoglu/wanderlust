@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/tracing"
@@ -51,5 +52,9 @@ func (w *Wanderlust) StopServer() {
 	// Give the server 5 seconds to gracefully shut down, then give up.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	w.echo.Shutdown(ctx)
+	err := w.echo.Shutdown(ctx)
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
