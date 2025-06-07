@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
+	"wanderlust/pkg/utils"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -104,7 +105,19 @@ func (f *FakeFollows) updateUsers(ctx context.Context, ids []string) error {
 			continue
 		}
 
+		followingCountInt32, err := utils.SafeInt64ToInt32(followingCount)
+
+		if err != nil {
+			continue
+		}
+
 		followersCount, err := qtx.GetFollowersCount(ctx, userId)
+
+		if err != nil {
+			continue
+		}
+
+		followersCountInt32, err := utils.SafeInt64ToInt32(followersCount)
 
 		if err != nil {
 			continue
@@ -112,7 +125,7 @@ func (f *FakeFollows) updateUsers(ctx context.Context, ids []string) error {
 
 		err = qtx.SetFollowersCount(ctx, db.SetFollowersCountParams{
 			ID:             userId,
-			FollowersCount: int32(followersCount),
+			FollowersCount: followersCountInt32,
 		})
 
 		if err != nil {
@@ -121,7 +134,7 @@ func (f *FakeFollows) updateUsers(ctx context.Context, ids []string) error {
 
 		err = qtx.SetFollowingCount(ctx, db.SetFollowingCountParams{
 			ID:             userId,
-			FollowingCount: int32(followingCount),
+			FollowingCount: followingCountInt32,
 		})
 
 		if err != nil {

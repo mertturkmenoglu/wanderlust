@@ -11,8 +11,8 @@ import (
 )
 
 type FakePois struct {
-	Count int
-	Step  int
+	Count int32
+	Step  int32
 	ID    *id.Generator
 	*Fake
 }
@@ -22,14 +22,14 @@ func (f *FakePois) Generate() (int64, error) {
 		f.Step = f.Count
 	}
 
-	for i := 0; i < f.Count; i += f.Step {
+	var i int32
+	for i = 0; i < f.Count; i += f.Step {
 		if i+f.Step >= f.Count {
 			f.Step = f.Count - i
 		}
 
 		batch := make([]db.BatchCreatePoisParams, 0, f.Step)
-		addressIds, err := f.db.Queries.RandSelectAddresses(context.Background(), int32(f.Step))
-		addressIdsLen := len(addressIds)
+		addressIds, err := f.db.Queries.RandSelectAddresses(context.Background(), f.Step)
 
 		if err != nil {
 			return 0, err
@@ -42,8 +42,35 @@ func (f *FakePois) Generate() (int64, error) {
 				return 0, err
 			}
 
-			idx := j % addressIdsLen
+			addrlen, err := utils.SafeInt64ToInt32(int64(len(addressIds)))
+
+			if err != nil {
+				return 0, err
+			}
+
+			idx := j % addrlen
 			addressId := addressIds[idx]
+
+			price64 := int64(gofakeit.Number(1, 5))
+			price, err := utils.SafeInt64ToInt16(price64)
+
+			if err != nil {
+				return 0, err
+			}
+
+			accessibility64 := int64(gofakeit.Number(1, 5))
+			a11y, err := utils.SafeInt64ToInt16(accessibility64)
+
+			if err != nil {
+				return 0, err
+			}
+
+			category64 := int64(gofakeit.Number(1, 23))
+			category, err := utils.SafeInt64ToInt16(category64)
+
+			if err != nil {
+				return 0, err
+			}
 
 			batch = append(batch, db.BatchCreatePoisParams{
 				ID:                 f.ID.Flake(),
@@ -52,12 +79,12 @@ func (f *FakePois) Generate() (int64, error) {
 				Description:        gofakeit.LoremIpsumSentence(32),
 				AddressID:          addressId,
 				Website:            utils.StrToText(gofakeit.URL()),
-				PriceLevel:         int16(gofakeit.Number(1, 5)),
-				AccessibilityLevel: int16(gofakeit.Number(1, 5)),
+				PriceLevel:         price,
+				AccessibilityLevel: a11y,
 				TotalVotes:         0,
 				TotalPoints:        0,
 				TotalFavorites:     0,
-				CategoryID:         int16(gofakeit.Number(1, 23)),
+				CategoryID:         category,
 				Hours:              ot,
 			})
 		}

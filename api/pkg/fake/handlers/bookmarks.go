@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
+	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
@@ -63,7 +64,12 @@ func (f *FakeBookmarks) createBookmarks(ctx context.Context, userIds []string, p
 	batch := make([]db.BatchCreateBookmarksParams, 0)
 
 	for _, userId := range userIds {
-		n := gofakeit.Number(10, 20)
+		n, err := utils.SafeInt64ToInt32(int64(gofakeit.Number(10, 20)))
+
+		if err != nil {
+			return 0, err
+		}
+
 		randPois := fakeutils.RandElems(poiIds, n)
 
 		for i := range n {

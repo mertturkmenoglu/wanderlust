@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/utils"
 )
 
 type category struct {
@@ -42,8 +43,14 @@ type FakeCategories struct {
 
 func (f *FakeCategories) Generate() (int64, error) {
 	for i, category := range categoriesData {
-		_, err := f.db.Queries.CreateCategory(context.Background(), db.CreateCategoryParams{
-			ID:    int16(i + 1),
+		index, err := utils.SafeInt64ToInt16(int64(i))
+
+		if err != nil {
+			return 0, err
+		}
+
+		_, err = f.db.Queries.CreateCategory(context.Background(), db.CreateCategoryParams{
+			ID:    index + 1,
 			Name:  category.name,
 			Image: category.image,
 		})

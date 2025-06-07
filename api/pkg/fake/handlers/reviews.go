@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
+	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
@@ -82,12 +83,18 @@ func (f *FakeReviews) createReviews(ctx context.Context, poiIds []string, userId
 
 		for range n {
 			userId := fakeutils.RandElem(userIds)
+			rating, err := utils.SafeInt64ToInt16(int64(gofakeit.IntRange(1, 5)))
+
+			if err != nil {
+				return 0, err
+			}
+
 			batch = append(batch, db.BatchCreateReviewsParams{
 				ID:      gofakeit.UUID(),
 				PoiID:   poiId,
 				UserID:  userId,
 				Content: gofakeit.Paragraph(2, 4, 5, " "),
-				Rating:  int16(gofakeit.IntRange(1, 5)),
+				Rating:  rating,
 			})
 		}
 	}
@@ -125,10 +132,22 @@ func (f *FakeReviews) updatePoiRateAndVotes(ctx context.Context, poiIds []string
 			return fmt.Errorf("invalid type: %T", totalRating)
 		}
 
+		votesInt32, err := utils.SafeInt64ToInt32(count)
+
+		if err != nil {
+			return err
+		}
+
+		pointsInt32, err := utils.SafeInt64ToInt32(cast)
+
+		if err != nil {
+			return err
+		}
+
 		err = qtx.SetPoiRatingsAndVotes(ctx, db.SetPoiRatingsAndVotesParams{
 			ID:          poiId,
-			TotalVotes:  int32(count),
-			TotalPoints: int32(cast),
+			TotalVotes:  votesInt32,
+			TotalPoints: pointsInt32,
 		})
 
 		if err != nil {
@@ -182,13 +201,17 @@ func (f *FakeReviewImages) createReviewImages(ctx context.Context, chunk []strin
 			continue
 		}
 
-		n := gofakeit.IntRange(0, 4)
+		n, err := utils.SafeInt64ToInt16(int64(gofakeit.IntRange(0, 4)))
+
+		if err != nil {
+			return 0, err
+		}
 
 		for i := range n {
 			batch = append(batch, db.BatchCreateReviewImageParams{
 				ReviewID: id,
 				Url:      getRandomImageUrl(),
-				Index:    int16(i + 1),
+				Index:    i + 1,
 			})
 		}
 	}

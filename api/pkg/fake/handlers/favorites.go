@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
+	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
@@ -77,7 +78,12 @@ func (f *FakeFavorites) createFavorites(ctx context.Context, userIds []string, p
 	batch := make([]db.BatchCreateFavoritesParams, 0)
 
 	for _, userId := range userIds {
-		n := gofakeit.Number(10, 20)
+		n, err := utils.SafeInt64ToInt32(int64(gofakeit.Number(10, 20)))
+
+		if err != nil {
+			return 0, err
+		}
+
 		randPois := fakeutils.RandElems(poiIds, n)
 
 		for i := range n {
@@ -109,9 +115,15 @@ func (f *FakeFavorites) updateFavoritesCount(ctx context.Context, poiIds []strin
 			return err
 		}
 
+		total, err := utils.SafeInt64ToInt32(count)
+
+		if err != nil {
+			return err
+		}
+
 		err = qtx.SetPoiFavoritesCount(ctx, db.SetPoiFavoritesCountParams{
 			ID:             poiId,
-			TotalFavorites: int32(count),
+			TotalFavorites: total,
 		})
 
 		if err != nil {

@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/id"
+	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
@@ -88,10 +89,16 @@ func (f *FakeCollectionItems) createCollectionItems(ctx context.Context, collect
 		pois := fakeutils.RandElems(poiIds, 10)
 
 		for i, poiId := range pois {
+			index, err := utils.SafeInt64ToInt32(int64(i))
+
+			if err != nil {
+				return 0, err
+			}
+
 			batch = append(batch, db.BatchCreateCollectionItemsParams{
 				CollectionID: collectionId,
 				PoiID:        poiId,
-				Index:        int32(i + 1),
+				Index:        index + 1,
 			})
 		}
 	}
@@ -123,10 +130,16 @@ func (f *FakeCollectionsCities) Generate() (int64, error) {
 		collections := fakeutils.RandElems(collectionIds, 10)
 
 		for i, collectionId := range collections {
+			index, err := utils.SafeInt64ToInt32(int64(i))
+
+			if err != nil {
+				return 0, err
+			}
+
 			batch = append(batch, db.BatchCreateCollectionCityRelationsParams{
 				CollectionID: collectionId,
 				CityID:       city.ID,
-				Index:        int32(i + 1),
+				Index:        index + 1,
 			})
 		}
 	}
@@ -189,10 +202,16 @@ func (f *FakeCollectionsPois) createCollectionsPois(ctx context.Context, poiIds 
 		collections := fakeutils.RandElems(collectionIds, 5)
 
 		for i, collectionId := range collections {
+			index, err := utils.SafeInt64ToInt32(int64(i))
+
+			if err != nil {
+				return 0, err
+			}
+
 			batch = append(batch, db.BatchCreateCollectionPoiRelationsParams{
 				CollectionID: collectionId,
 				PoiID:        poiId,
-				Index:        int32(i + 1),
+				Index:        index + 1,
 			})
 		}
 	}

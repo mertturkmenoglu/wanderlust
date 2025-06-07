@@ -44,7 +44,7 @@ var imageNames = []string{
 	"mWzmPRv.jpeg",
 }
 
-var defaultPassword = "LoremIpsum!1"
+var defaultPassword = "LoremIpsum!1" // #nosec G101 -- This is a test/fake value
 
 type FakeUsers struct {
 	Count int
