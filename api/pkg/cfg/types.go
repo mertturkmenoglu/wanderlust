@@ -13,6 +13,7 @@ type TEnv struct {
 	DocsType                 string `key:"DOCS_TYPE"`
 	EmailFrom                string `key:"EMAIL_FROM"`
 	EmailName                string `key:"EMAIL_NAME"`
+	EnableEmails             bool   `key:"ENABLE_EMAILS"`
 	Env                      string `key:"ENV"`
 	FacebookCallback         string `key:"FACEBOOK_CALLBACK"`
 	FacebookClientID         string `key:"FACEBOOK_CLIENT_ID"`
