@@ -107,7 +107,8 @@ export function Description({ className }: Props) {
               </div>
 
               <span className="text-xs text-muted-foreground tracking-tight">
-                Accessibility Level
+                Accessibility{' '}
+                <span className="sr-only md:not-sr-only">Level</span>
               </span>
             </InfoCard.DescriptionColumn>
           </InfoCard.Content>
