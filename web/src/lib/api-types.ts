@@ -3680,6 +3680,226 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/pois/{id}/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Point of Interest Image
+         * @description Upload a point of interest image
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UploadPoiImageInputBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UploadPoiImageOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/pois/{id}/images/reorder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Reorder Point of Interest Images
+         * @description Reorder a point of interest images
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ReorderPoiImagesInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ReorderPoiImagesOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v2/pois/{id}/images/{imageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Point of Interest Image
+         * @description Delete a point of interest image
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of image
+                     * @example 1
+                     */
+                    imageId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Point of Interest Image
+         * @description Update a point of interest image
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description ID of POI
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                    /**
+                     * @description ID of image
+                     * @example 7323488
+                     */
+                    imageId: number;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdatePoiImageInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdatePoiImageOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/v2/pois/{id}/info": {
         parameters: {
             query?: never;
@@ -3736,121 +3956,6 @@ export interface paths {
                 };
             };
         };
-        trace?: never;
-    };
-    "/api/v2/pois/{id}/media": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Upload Media for a POI
-         * @description Upload media for a POI
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of POI
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UploadPoiMediaInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UploadPoiMediaOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/pois/{id}/media/{index}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete POI Media
-         * @description Delete a POI Media
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of POI
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description Index of media
-                     * @example 1
-                     */
-                    index: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/v2/reports/": {
@@ -7368,6 +7473,22 @@ export interface components {
             new: components["schemas"]["Poi"][];
             popular: components["schemas"]["Poi"][];
         };
+        Image: {
+            /** @description Alt text of image */
+            alt: string;
+            /**
+             * Format: int64
+             * @description Image ID
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description Order of image
+             */
+            index: number;
+            /** @description Image URL */
+            url: string;
+        };
         List: {
             /**
              * Format: date-time
@@ -7464,22 +7585,6 @@ export interface components {
             readonly $schema?: string;
             isVerified: boolean;
         };
-        Media: {
-            /** @description Alt of media of point of interest */
-            alt: string;
-            /**
-             * Format: int64
-             * @description ID of media of point of interest
-             */
-            id: number;
-            /**
-             * Format: int32
-             * @description Media order of media of point of interest
-             */
-            index: number;
-            /** @description URL of media of point of interest */
-            url: string;
-        };
         NewOrderItem: {
             /** Format: int32 */
             listIndex: number;
@@ -7497,12 +7602,12 @@ export interface components {
             /** @description Has previous page */
             hasPrevious: boolean;
             /**
-             * Format: int64
+             * Format: int32
              * @description Page number
              */
             page: number;
             /**
-             * Format: int64
+             * Format: int32
              * @description Page size
              */
             pageSize: number;
@@ -7556,7 +7661,7 @@ export interface components {
             };
             /** @description ID of point of interest */
             id: string;
-            media: components["schemas"]["Media"][];
+            images: components["schemas"]["Image"][];
             /** @description Name of point of interest */
             name: string;
             /** @description Phone number of point of interest */
@@ -7687,6 +7792,23 @@ export interface components {
             updatedAt: string;
             /** @description Username of the user */
             username: string;
+        };
+        ReorderPoiImagesInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description IDs of images */
+            images: number[];
+        };
+        ReorderPoiImagesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poi: components["schemas"]["Poi"];
         };
         Report: {
             /**
@@ -8295,6 +8417,23 @@ export interface components {
             readonly $schema?: string;
             poi: components["schemas"]["Poi"];
         };
+        UpdatePoiImageInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Alt of image */
+            alt: string;
+        };
+        UpdatePoiImageOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            poi: components["schemas"]["Poi"];
+        };
         UpdatePoiInfoInputBody: {
             /**
              * Format: uri
@@ -8536,7 +8675,7 @@ export interface components {
             readonly $schema?: string;
             diary: components["schemas"]["Diary"];
         };
-        UploadPoiMediaInputBody: {
+        UploadPoiImageInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
@@ -8548,8 +8687,10 @@ export interface components {
             fileName: string;
             /** @description ID of image */
             id: string;
+            /** @description URL of image */
+            url: string;
         };
-        UploadPoiMediaOutputBody: {
+        UploadPoiImageOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
