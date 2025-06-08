@@ -25,7 +25,7 @@ export type Props = {
         image: string;
         name: string;
       };
-      media: Array<{
+      images: Array<{
         id: number;
         url: string;
       }>;
@@ -39,7 +39,7 @@ export default function Hit({ hit }: Readonly<Props>) {
       id={hit.poi.id}
       name={hit.name}
       categoryName={hit.poi.category.name}
-      image={hit.poi.media[0]?.url ?? ''}
+      image={hit.poi.images[0]?.url ?? ''}
       city={hit.poi.address.city.name}
       state={hit.poi.address.city.state.name}
       isCardClickable={false}

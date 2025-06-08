@@ -72,7 +72,7 @@ export function NearbyPois({ className }: Props) {
               >
                 <div className="group w-[256px]">
                   <img
-                    src={ipx(p.poi.media[0]?.url ?? '', 'w_512')}
+                    src={ipx(p.poi.images[0]?.url ?? '', 'w_512')}
                     alt=""
                     className="aspect-video w-full rounded-md object-cover"
                   />
