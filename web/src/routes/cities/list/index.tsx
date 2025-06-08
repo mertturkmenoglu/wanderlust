@@ -56,15 +56,20 @@ function RouteComponent() {
                     _splat: `${city.id}/${city.name}`,
                   }}
                   key={city.id}
-                  className="rounded-md"
+                  className="group overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md"
                 >
-                  <img
-                    src={ipx(city.image, 'w_512')}
-                    alt=""
-                    className="aspect-video w-full rounded-md object-cover"
-                  />
-                  <div className="mt-2 text-xl font-bold lg:text-base">
-                    {city.name}
+                  <div className="relative">
+                    <img
+                      src={ipx(city.image, 'w_512')}
+                      alt=""
+                      className="aspect-video w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="text-xl font-bold text-white drop-shadow-lg">
+                        {city.name}
+                      </div>
+                    </div>
                   </div>
                 </Link>
               ))}
