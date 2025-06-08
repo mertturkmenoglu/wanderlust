@@ -41,7 +41,7 @@ function RouteComponent() {
     },
   });
 
-  const img = collection.items[0]?.poi.media[0] ?? { url: '', alt: '' };
+  const img = collection.items[0]?.poi.images[0] ?? { url: '', alt: '' };
 
   return (
     <>

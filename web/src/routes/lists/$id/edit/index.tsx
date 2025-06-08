@@ -195,8 +195,8 @@ function RouteComponent() {
           >
             <div className={cn('group', 'flex items-center gap-4')}>
               <img
-                src={ipx(item.poi.media[0]?.url ?? '', 'w_512')}
-                alt={item.poi.media[0]?.alt ?? ''}
+                src={ipx(item.poi.images[0]?.url ?? '', 'w_512')}
+                alt={item.poi.images[0]?.alt ?? ''}
                 className="aspect-video w-full rounded-md object-cover max-w-36"
               />
 

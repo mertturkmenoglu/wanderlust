@@ -27,7 +27,7 @@ function RouteComponent() {
       locations: diary.locations.map((l) => ({
         id: l.poi.id,
         name: l.poi.name,
-        image: l.poi.media[0]?.url ?? '',
+        image: l.poi.images[0]?.url ?? '',
         categoryName: l.poi.category.name,
         city: l.poi.address.city.name,
         state: l.poi.address.city.state.name,

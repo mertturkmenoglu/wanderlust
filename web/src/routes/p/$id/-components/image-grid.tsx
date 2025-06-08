@@ -11,11 +11,11 @@ type Props = {
 export function ImageGrid({ className }: Props) {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
-  const media = poi.media;
-  const first = media[0];
+  const images = poi.images;
+  const first = images[0];
 
   const rest = useMemo(() => {
-    const slice = media.slice(1, 5) as Array<{
+    const slice = images.slice(1, 5) as Array<{
       id: number;
       url: string;
       alt: string;
@@ -32,7 +32,7 @@ export function ImageGrid({ className }: Props) {
       }
     }
     return slice;
-  }, [media]);
+  }, [images]);
 
   const [open, setOpen] = useState(false);
 
@@ -54,15 +54,15 @@ export function ImageGrid({ className }: Props) {
           className="w-full h-full object-cover rounded-l-xl"
         />
       </div>
-      {rest.map((m, i) => (
+      {rest.map((img, i) => (
         <div
           className={cn('col-span-1 row-span-1')}
-          key={m.id}
+          key={img.id}
         >
-          {m.url !== '' ? (
+          {img.url !== '' ? (
             <img
-              src={ipx(m.url, 'w_512')}
-              alt={m.alt}
+              src={ipx(img.url, 'w_512')}
+              alt={img.alt}
               className={cn('w-full h-full object-cover', {
                 'rounded-tr-xl': i === 1,
                 'rounded-br-xl': i === 3,
@@ -88,8 +88,8 @@ export function ImageGrid({ className }: Props) {
       <Lightbox
         open={open}
         close={() => setOpen(false)}
-        slides={media.map((m) => ({
-          src: m.url,
+        slides={images.map((img) => ({
+          src: img.url,
         }))}
         animation={{ fade: 0 }}
         controller={{ closeOnPullDown: true, closeOnBackdropClick: true }}

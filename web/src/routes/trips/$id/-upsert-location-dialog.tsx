@@ -201,7 +201,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
                 {query.data && (
                   <>
                     <img
-                      src={query.data.poi.media[0]?.url ?? ''}
+                      src={query.data.poi.images[0]?.url ?? ''}
                       alt=""
                       className="aspect-[5/2] w-full rounded-md mt-4 object-cover"
                     />
