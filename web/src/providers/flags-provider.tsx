@@ -4,7 +4,7 @@ import React, { useContext } from 'react';
 
 export type FlagsResponse = {
   version: string;
-  flags: Record<string, any>;
+  flags: Record<string, string | boolean | number>;
 };
 
 export type FlagsContextState = {
