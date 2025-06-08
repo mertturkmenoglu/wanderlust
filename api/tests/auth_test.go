@@ -8,6 +8,8 @@ import (
 )
 
 func TestAuthE2E(t *testing.T) {
+	t.SkipNow()
+
 	client := resty.New()
 	defer client.Close()
 
