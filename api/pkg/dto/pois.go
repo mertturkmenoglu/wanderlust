@@ -29,17 +29,17 @@ type Poi struct {
 	Category           Category  `json:"category"`
 	Amenities          []Amenity `json:"amenities"`
 	Hours              PoiHours  `json:"hours"`
-	Media              []Media   `json:"media"`
+	Images             []Image   `json:"images"`
 	Address            Address   `json:"address"`
 	CreatedAt          time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of point of interest"`
 	UpdatedAt          time.Time `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"Updated at time of point of interest"`
 }
 
-type Media struct {
-	ID    int64  `json:"id" example:"7323488942953598976" doc:"ID of media of point of interest"`
-	Url   string `json:"url" example:"https://example.com/media.jpg" doc:"URL of media of point of interest"`
-	Alt   string `json:"alt" example:"Media of point of interest" doc:"Alt of media of point of interest"`
-	Index int16  `json:"index" example:"1" doc:"Media order of media of point of interest"`
+type Image struct {
+	ID    int64  `json:"id" example:"7323488942953598976" doc:"Image ID"`
+	Url   string `json:"url" example:"https://example.com/media.jpg" doc:"Image URL"`
+	Alt   string `json:"alt" example:"Media of point of interest" doc:"Alt text of image"`
+	Index int16  `json:"index" example:"1" doc:"Order of image"`
 }
 
 type Address struct {
@@ -203,26 +203,62 @@ type UpdatePoiHoursOutputBody struct {
 	Poi Poi `json:"poi"`
 }
 
-type UploadPoiMediaInput struct {
+type UploadPoiImageInput struct {
 	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
-	Body UploadPoiMediaInputBody
+	Body UploadPoiImageInputBody
 }
 
-type UploadPoiMediaInputBody struct {
-	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
+type UploadPoiImageInputBody struct {
 	ID       string `json:"id" example:"7323488942953598976" doc:"ID of image" required:"true"`
+	FileName string `json:"fileName" example:"7323488942953598976.png" doc:"File name of image" required:"true"`
+	Url      string `json:"url" example:"https://example.com/media.jpg" doc:"URL of image" required:"true"`
 	Alt      string `json:"alt" example:"Media of point of interest" doc:"Alt of image" required:"true"`
 }
 
-type UploadPoiMediaOutput struct {
-	Body UploadPoiMediaOutputBody
+type UploadPoiImageOutput struct {
+	Body UploadPoiImageOutputBody
 }
 
-type UploadPoiMediaOutputBody struct {
+type UploadPoiImageOutputBody struct {
+	Poi Poi `json:"poi"`
+}
+
+type UpdatePoiImageInput struct {
+	ID      string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	ImageID int64  `path:"imageId" validate:"required" doc:"ID of image" example:"7323488"`
+	Body    UpdatePoiImageInputBody
+}
+
+type UpdatePoiImageInputBody struct {
+	Alt string `json:"alt" example:"Media of point of interest" doc:"Alt of image" required:"true"`
+}
+
+type UpdatePoiImageOutput struct {
+	Body UpdatePoiImageOutputBody
+}
+
+type UpdatePoiImageOutputBody struct {
 	Poi Poi `json:"poi"`
 }
 
 type DeletePoiMediaInput struct {
-	ID    string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
-	Index int16  `path:"index" validate:"required" doc:"Index of media" example:"1"`
+	ID      string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	ImageID int64  `path:"imageId" validate:"required" doc:"ID of image" example:"1"`
+}
+
+type ReorderPoiImagesInput struct {
+	ID   string `path:"id" validate:"required" doc:"ID of POI" example:"7323488942953598976" minLength:"1" maxLength:"32"`
+	Body ReorderPoiImagesInputBody
+}
+
+type ReorderPoiImagesInputBody struct {
+	Images []int64 `json:"images" doc:"IDs of images" required:"true" uniqueItems:"true" minItems:"0" maxItems:"16"`
+}
+
+type ReorderPoiImagesOutput struct {
+	Body ReorderPoiImagesOutputBody
+}
+
+type ReorderPoiImagesOutputBody struct {
+	Poi Poi `json:"poi"`
 }
