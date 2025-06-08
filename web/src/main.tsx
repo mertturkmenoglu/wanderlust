@@ -18,6 +18,10 @@ import Spinner from './components/kit/spinner.tsx';
 import AuthContextProvider, {
   AuthContext,
 } from './providers/auth-provider.tsx';
+import {
+  FlagsContext,
+  FlagsContextProvider,
+} from './providers/flags-provider.tsx';
 import reportWebVitals from './reportWebVitals.ts';
 import './styles.css';
 
@@ -27,6 +31,7 @@ const router = createRouter({
   context: {
     ...TanstackQuery.getContext(),
     auth: undefined!,
+    flags: undefined!,
   },
   defaultPreload: false,
   scrollRestoration: true,
@@ -43,14 +48,17 @@ declare module '@tanstack/react-router' {
 
 function App() {
   return (
-    <AuthContextProvider>
-      <InnerApp />
-    </AuthContextProvider>
+    <FlagsContextProvider>
+      <AuthContextProvider>
+        <InnerApp />
+      </AuthContextProvider>
+    </FlagsContextProvider>
   );
 }
 
 function InnerApp() {
   const auth = useContext(AuthContext);
+  const flags = useContext(FlagsContext);
 
   if (auth.isLoading && !auth.user) {
     return (
@@ -63,7 +71,7 @@ function InnerApp() {
   return (
     <RouterProvider
       router={router}
-      context={{ auth }}
+      context={{ auth, flags: flags.flags }}
     />
   );
 }
