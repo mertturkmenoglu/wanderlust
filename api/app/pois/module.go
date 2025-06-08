@@ -175,23 +175,24 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Upload image
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/pois/{id}/media",
-			Summary:       "Upload Media for a POI",
-			Description:   "Upload media for a POI",
+			Path:          "/pois/{id}/images",
+			Summary:       "Upload Point of Interest Image",
+			Description:   "Upload a point of interest image",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UploadPoiMediaInput) (*dto.UploadPoiMediaOutput, error) {
+		func(ctx context.Context, input *dto.UploadPoiImageInput) (*dto.UploadPoiImageOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.uploadMedia(ctx, input)
+			res, err := s.uploadImage(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -202,12 +203,41 @@ func Register(grp *huma.Group, app *core.Application) {
 		},
 	)
 
+	// Update image
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/pois/{id}/images/{imageId}",
+			Summary:       "Update Point of Interest Image",
+			Description:   "Update a point of interest image",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.UpdatePoiImageInput) (*dto.UpdatePoiImageOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.updateImage(ctx, input)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Delete image
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
-			Path:          "/pois/{id}/media/{index}",
-			Summary:       "Delete POI Media",
-			Description:   "Delete a POI Media",
+			Path:          "/pois/{id}/images/{imageId}",
+			Summary:       "Delete Point of Interest Image",
+			Description:   "Delete a point of interest image",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -218,7 +248,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.deleteMedia(ctx, input)
+			err := s.deleteImage(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -226,6 +256,34 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			return nil, nil
+		},
+	)
+
+	// Reorder images
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodPatch,
+			Path:          "/pois/{id}/images/reorder",
+			Summary:       "Reorder Point of Interest Images",
+			Description:   "Reorder a point of interest images",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.ReorderPoiImagesInput) (*dto.ReorderPoiImagesOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.reorderImages(ctx, input)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
 		},
 	)
 }

@@ -417,40 +417,40 @@ func (s *Service) updateHours(ctx context.Context, id string, body dto.UpdatePoi
 	}, nil
 }
 
-func (s *Service) uploadMedia(ctx context.Context, input *dto.UploadPoiMediaInput) (*dto.UploadPoiMediaOutput, error) {
+func (s *Service) uploadImage(ctx context.Context, input *dto.UploadPoiImageInput) (*dto.UploadPoiImageOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
-
-	if !isAdmin(ctx) {
-		err := huma.Error403Forbidden("You do not have permission to update this POI")
-		sp.RecordError(err)
-		return nil, err
-	}
 
 	poi, err := s.find(ctx, input.ID)
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error404NotFound("POI not found")
+		return nil, err
+	}
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to upload this image")
+		sp.RecordError(err)
+		return nil, err
 	}
 
 	bucket := upload.BUCKET_POIS
 
 	// Check if the file is uploaded
 	if !s.App.Upload.FileExists(bucket, input.Body.FileName) {
-		err := huma.Error400BadRequest("File not found")
+		err = huma.Error400BadRequest("File not uploaded")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	// Check if user uploaded the correct file
+	// Check if user uploaded the correct file using cached information
 	if !s.App.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)) {
-		err := huma.Error400BadRequest("Invalid file")
+		err = huma.Error400BadRequest("Incorrect file")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	// Delete cached information
+	// delete cached information
 	err = s.App.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)).Err()
 
 	if err != nil {
@@ -460,41 +460,100 @@ func (s *Service) uploadMedia(ctx context.Context, input *dto.UploadPoiMediaInpu
 
 	var lastIndex int16 = 0
 
-	for _, media := range poi.Media {
-		if media.Index > lastIndex {
-			lastIndex = media.Index
+	for _, image := range poi.Images {
+		if image.Index > lastIndex {
+			lastIndex = image.Index
 		}
 	}
 
-	lastIndex++
+	newIndex := lastIndex + 1
 
-	_, err = s.db.CreatePoiMedia(ctx, db.CreatePoiMediaParams{
-		PoiID: input.ID,
-		Url:   s.App.Upload.GetUrlForFile(bucket, input.Body.FileName),
+	url := s.App.Upload.GetUrlForFile(bucket, input.Body.FileName)
+
+	_, err = s.db.CreatePoiImage(ctx, db.CreatePoiImageParams{
+		PoiID: poi.ID,
+		Url:   url,
 		Alt:   input.Body.Alt,
-		Index: lastIndex,
+		Index: newIndex,
 	})
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to create media")
+		return nil, huma.Error500InternalServerError("Failed to create poi image")
 	}
 
 	poi, err = s.find(ctx, input.ID)
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to find POI")
+		return nil, err
 	}
 
-	return &dto.UploadPoiMediaOutput{
-		Body: dto.UploadPoiMediaOutputBody{
+	return &dto.UploadPoiImageOutput{
+		Body: dto.UploadPoiImageOutputBody{
 			Poi: *poi,
 		},
 	}, nil
 }
 
-func (s *Service) deleteMedia(ctx context.Context, input *dto.DeletePoiMediaInput) error {
+func (s *Service) updateImage(ctx context.Context, input *dto.UpdatePoiImageInput) (*dto.UpdatePoiImageOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	poi, err := s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to update this image")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	var imgId *int64 = nil
+
+	for _, image := range poi.Images {
+		if image.ID == input.ImageID {
+			imgId = &image.ID
+			break
+		}
+	}
+
+	if imgId == nil {
+		err = huma.Error404NotFound("Image not found")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	_, err = s.db.UpdatePoiImageAlt(ctx, db.UpdatePoiImageAltParams{
+		ID:    *imgId,
+		PoiID: poi.ID,
+		Alt:   input.Body.Alt,
+	})
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to update image")
+	}
+
+	poi, err = s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.UpdatePoiImageOutput{
+		Body: dto.UpdatePoiImageOutputBody{
+			Poi: *poi,
+		},
+	}, nil
+}
+
+func (s *Service) deleteImage(ctx context.Context, input *dto.DeletePoiMediaInput) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -505,24 +564,38 @@ func (s *Service) deleteMedia(ctx context.Context, input *dto.DeletePoiMediaInpu
 		return err
 	}
 
-	media := poi.Media
-
-	var toBeDeleted *dto.Media
-
-	for _, m := range media {
-		if m.Index == input.Index {
-			toBeDeleted = &m
-			break
-		}
-	}
-
-	if toBeDeleted == nil {
-		err := huma.Error404NotFound("Media not found")
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to delete this image")
 		sp.RecordError(err)
 		return err
 	}
 
-	tx, err := s.App.Db.Pool.Begin(ctx)
+	var imgId *int64 = nil
+	var imgUrl string = ""
+
+	for _, image := range poi.Images {
+		if image.ID == input.ImageID {
+			imgId = &image.ID
+			imgUrl = image.Url
+			break
+		}
+	}
+
+	if imgId == nil {
+		err = huma.Error404NotFound("Image not found")
+		sp.RecordError(err)
+		return err
+	}
+
+	var remainingImageIds []int64 = make([]int64, 0)
+
+	for _, image := range poi.Images {
+		if image.ID != *imgId {
+			remainingImageIds = append(remainingImageIds, image.ID)
+		}
+	}
+
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -531,23 +604,135 @@ func (s *Service) deleteMedia(ctx context.Context, input *dto.DeletePoiMediaInpu
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.App.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
-	err = qtx.DeletePoiMedia(ctx, db.DeletePoiMediaParams{
-		PoiID: input.ID,
-		Index: input.Index,
+	for i, imgId := range remainingImageIds {
+		_, err = qtx.UpdatePoiImageIndex(ctx, db.UpdatePoiImageIndexParams{
+			ID:    imgId,
+			PoiID: poi.ID,
+			Index: int16(i + 1),
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return huma.Error500InternalServerError("Failed to update image index")
+		}
+	}
+
+	_, err = qtx.DeletePoiImage(ctx, db.DeletePoiImageParams{
+		PoiID: poi.ID,
+		ID:    *imgId,
 	})
 
 	if err != nil {
 		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to delete media")
+		return huma.Error500InternalServerError("Failed to delete image")
 	}
 
-	err = s.App.Upload.RemoveFileFromUrl(toBeDeleted.Url, upload.BUCKET_POIS)
+	err = tx.Commit(ctx)
 
 	if err != nil {
-		slog.Error("Failed to remove POI media", slog.String("url", toBeDeleted.Url))
+		sp.RecordError(err)
+		return huma.Error500InternalServerError("Failed to reorder images")
 	}
 
-	return tx.Commit(ctx)
+	err = s.App.Upload.RemoveFileFromUrl(imgUrl, upload.BUCKET_POIS)
+
+	if err != nil {
+		tracing.Slog.Error("Failed to delete image",
+			slog.String("bucket", string(upload.BUCKET_POIS)),
+			slog.String("object", imgUrl),
+			slog.Any("error", err),
+		)
+		return err
+	}
+
+	poi, err = s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) reorderImages(ctx context.Context, input *dto.ReorderPoiImagesInput) (*dto.ReorderPoiImagesOutput, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	poi, err := s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	if !isAdmin(ctx) {
+		err := huma.Error403Forbidden("You do not have permission to reorder images")
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	// Check if image IDs are valid, i.e. they are in the database
+	for _, imgId := range input.Body.Images {
+		flag := true
+
+		for _, image := range poi.Images {
+			if image.ID == imgId {
+				flag = false
+				break
+			}
+		}
+
+		if flag {
+			err = huma.Error400BadRequest("Invalid image ID")
+			sp.RecordError(err)
+			return nil, err
+		}
+	}
+
+	tx, err := s.pool.Begin(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to create transaction")
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := s.db.WithTx(tx)
+
+	for i, imgId := range input.Body.Images {
+		_, err = qtx.UpdatePoiImageIndex(ctx, db.UpdatePoiImageIndexParams{
+			ID:    imgId,
+			PoiID: poi.ID,
+			Index: int16(i + 1),
+		})
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Failed to update image index")
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to reorder images")
+	}
+
+	poi, err = s.find(ctx, input.ID)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, err
+	}
+
+	return &dto.ReorderPoiImagesOutput{
+		Body: dto.ReorderPoiImagesOutputBody{
+			Poi: *poi,
+		},
+	}, nil
 }
