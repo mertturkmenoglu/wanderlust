@@ -86,7 +86,7 @@ function RouteComponent() {
         </Link>
 
         <Link
-          to="/dashboard/pois/$id/edit/media"
+          to="/dashboard/pois/$id/edit/images"
           params={{
             id,
           }}

@@ -66,8 +66,8 @@ function RouteComponent() {
       </DashboardActions>
 
       <img
-        src={ipx(poi.media[0]?.url ?? '', 'w_512')}
-        alt={poi.media[0]?.alt}
+        src={ipx(poi.images[0]?.url ?? '', 'w_512')}
+        alt={poi.images[0]?.alt}
         className="mt-4 w-64 rounded-md aspect-video object-cover"
       />
 
@@ -142,7 +142,7 @@ function RouteComponent() {
             },
             {
               k: 'Total Media',
-              v: `${poi.media.length}`,
+              v: `${poi.images.length}`,
             },
             {
               k: 'Address',

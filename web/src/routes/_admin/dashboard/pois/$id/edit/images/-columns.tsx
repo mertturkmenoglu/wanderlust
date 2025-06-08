@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
+import type { components } from '@/lib/api-types';
 import { getRouteApi } from '@tanstack/react-router';
 import type { CellContext, ColumnDef } from '@tanstack/react-table';
 import {
@@ -32,12 +33,7 @@ import {
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export type PoiMedia = {
-  url: string;
-  alt: string;
-};
-
-export const columns: ColumnDef<PoiMedia>[] = [
+export const columns: ColumnDef<components['schemas']['Image']>[] = [
   {
     accessorKey: 'image',
     header: 'Image',
@@ -59,13 +55,21 @@ export const columns: ColumnDef<PoiMedia>[] = [
     header: 'Alt',
   },
   {
+    accessorKey: 'index',
+    header: 'Order',
+  },
+  {
+    accessorKey: 'id',
+    header: 'ID',
+  },
+  {
     id: 'actions',
     cell: (ctx) => <ActionsComponent ctx={ctx} />,
   },
 ];
 
 export type Props = {
-  ctx: CellContext<PoiMedia, unknown>;
+  ctx: CellContext<components['schemas']['Image'], unknown>;
 };
 
 function ActionsComponent({ ctx: { row, table } }: Props) {
@@ -73,17 +77,39 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
   const { poi } = route.useLoaderData();
   const invalidator = useInvalidator();
 
-  const media = row.original;
+  const image = row.original;
   const lastIndex = table.getRowModel().rows.length - 1;
-  const [alt, setAlt] = useState(media.alt);
+  const [alt, setAlt] = useState(image.alt);
 
-  const deleteMediaMutation = api.useMutation(
-    'delete',
-    '/api/v2/pois/{id}/media/{index}',
+  const updateImageMutation = api.useMutation(
+    'patch',
+    '/api/v2/pois/{id}/images/{imageId}',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
-        toast.success('Media deleted');
+        toast.success('Image updated');
+      },
+    },
+  );
+
+  const deleteImageMutation = api.useMutation(
+    'delete',
+    '/api/v2/pois/{id}/images/{imageId}',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Image deleted');
+      },
+    },
+  );
+
+  const reorderImagesMutation = api.useMutation(
+    'patch',
+    '/api/v2/pois/{id}/images/reorder',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Images reordered');
       },
     },
   );
@@ -104,7 +130,7 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={async () => {
-              await navigator.clipboard.writeText(media.url);
+              await navigator.clipboard.writeText(image.url);
               toast.success('Image URL copied to clipboard');
             }}
           >
@@ -121,10 +147,21 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
             variant="default"
             disabled={row.index === 0}
             onClick={() => {
-              let m = poi.media ? [...poi.media] : [];
-              let tmp = m[row.index - 1]!;
-              m[row.index - 1] = m[row.index]!;
-              m[row.index] = tmp;
+              let imgs = poi.images ? [...poi.images] : [];
+              let tmp = imgs[row.index - 1]!;
+              imgs[row.index - 1] = imgs[row.index]!;
+              imgs[row.index] = tmp;
+
+              reorderImagesMutation.mutate({
+                params: {
+                  path: {
+                    id: poi.id,
+                  },
+                },
+                body: {
+                  images: imgs.map((img) => img.id),
+                },
+              });
             }}
           >
             <ChevronUpIcon className="size-4" />
@@ -134,10 +171,21 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
             variant="default"
             disabled={row.index === lastIndex}
             onClick={() => {
-              let m = poi.media ? [...poi.media] : [];
-              let tmp = m[row.index + 1]!;
-              m[row.index + 1] = m[row.index]!;
-              m[row.index] = tmp;
+              let imgs = poi.images ? [...poi.images] : [];
+              let tmp = imgs[row.index + 1]!;
+              imgs[row.index + 1] = imgs[row.index]!;
+              imgs[row.index] = tmp;
+
+              reorderImagesMutation.mutate({
+                params: {
+                  path: {
+                    id: poi.id,
+                  },
+                },
+                body: {
+                  images: imgs.map((img) => img.id),
+                },
+              });
             }}
           >
             <ChevronDownIcon className="size-4" />
@@ -146,11 +194,11 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
           <DropdownMenuItem
             variant="destructive"
             onClick={() => {
-              deleteMediaMutation.mutate({
+              deleteImageMutation.mutate({
                 params: {
                   path: {
                     id: poi.id,
-                    index: row.index,
+                    imageId: row.original.id,
                   },
                 },
               });
@@ -167,8 +215,8 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
         </DrawerHeader>
         <div className="p-4">
           <img
-            src={media.url}
-            alt={media.alt}
+            src={image.url}
+            alt={image.alt}
             className=""
           />
 
@@ -186,7 +234,23 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
           </div>
         </div>
         <DrawerFooter>
-          <Button onClick={async () => {}}>Update</Button>
+          <Button
+            onClick={async () => {
+              updateImageMutation.mutate({
+                params: {
+                  path: {
+                    id: poi.id,
+                    imageId: row.original.id,
+                  },
+                },
+                body: {
+                  alt,
+                },
+              });
+            }}
+          >
+            Update
+          </Button>
           <DrawerClose className="w-full">
             <Button
               variant="outline"

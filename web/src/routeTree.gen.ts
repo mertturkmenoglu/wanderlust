@@ -98,7 +98,7 @@ import { Route as AdminDashboardCollectionsIdEditIndexImport } from './routes/_a
 import { Route as AdminDashboardCitiesIdEditIndexImport } from './routes/_admin/dashboard/cities/$id/edit/index'
 import { Route as AdminDashboardCategoriesIdEditIndexImport } from './routes/_admin/dashboard/categories/$id/edit/index'
 import { Route as AdminDashboardAmenitiesIdEditIndexImport } from './routes/_admin/dashboard/amenities/$id/edit/index'
-import { Route as AdminDashboardPoisIdEditMediaIndexImport } from './routes/_admin/dashboard/pois/$id/edit/media/index'
+import { Route as AdminDashboardPoisIdEditImagesIndexImport } from './routes/_admin/dashboard/pois/$id/edit/images/index'
 import { Route as AdminDashboardPoisIdEditHoursIndexImport } from './routes/_admin/dashboard/pois/$id/edit/hours/index'
 import { Route as AdminDashboardPoisIdEditAmenitiesIndexImport } from './routes/_admin/dashboard/pois/$id/edit/amenities/index'
 import { Route as AdminDashboardPoisIdEditAddressIndexImport } from './routes/_admin/dashboard/pois/$id/edit/address/index'
@@ -653,10 +653,10 @@ const AdminDashboardAmenitiesIdEditIndexRoute =
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 
-const AdminDashboardPoisIdEditMediaIndexRoute =
-  AdminDashboardPoisIdEditMediaIndexImport.update({
-    id: '/media/',
-    path: '/media/',
+const AdminDashboardPoisIdEditImagesIndexRoute =
+  AdminDashboardPoisIdEditImagesIndexImport.update({
+    id: '/images/',
+    path: '/images/',
     getParentRoute: () => AdminDashboardPoisIdEditRoute,
   } as any)
 
@@ -1315,11 +1315,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardPoisIdEditHoursIndexImport
       parentRoute: typeof AdminDashboardPoisIdEditImport
     }
-    '/_admin/dashboard/pois/$id/edit/media/': {
-      id: '/_admin/dashboard/pois/$id/edit/media/'
-      path: '/media'
-      fullPath: '/dashboard/pois/$id/edit/media'
-      preLoaderRoute: typeof AdminDashboardPoisIdEditMediaIndexImport
+    '/_admin/dashboard/pois/$id/edit/images/': {
+      id: '/_admin/dashboard/pois/$id/edit/images/'
+      path: '/images'
+      fullPath: '/dashboard/pois/$id/edit/images'
+      preLoaderRoute: typeof AdminDashboardPoisIdEditImagesIndexImport
       parentRoute: typeof AdminDashboardPoisIdEditImport
     }
   }
@@ -1392,7 +1392,7 @@ interface AdminDashboardPoisIdEditRouteChildren {
   AdminDashboardPoisIdEditAddressIndexRoute: typeof AdminDashboardPoisIdEditAddressIndexRoute
   AdminDashboardPoisIdEditAmenitiesIndexRoute: typeof AdminDashboardPoisIdEditAmenitiesIndexRoute
   AdminDashboardPoisIdEditHoursIndexRoute: typeof AdminDashboardPoisIdEditHoursIndexRoute
-  AdminDashboardPoisIdEditMediaIndexRoute: typeof AdminDashboardPoisIdEditMediaIndexRoute
+  AdminDashboardPoisIdEditImagesIndexRoute: typeof AdminDashboardPoisIdEditImagesIndexRoute
 }
 
 const AdminDashboardPoisIdEditRouteChildren: AdminDashboardPoisIdEditRouteChildren =
@@ -1404,8 +1404,8 @@ const AdminDashboardPoisIdEditRouteChildren: AdminDashboardPoisIdEditRouteChildr
       AdminDashboardPoisIdEditAmenitiesIndexRoute,
     AdminDashboardPoisIdEditHoursIndexRoute:
       AdminDashboardPoisIdEditHoursIndexRoute,
-    AdminDashboardPoisIdEditMediaIndexRoute:
-      AdminDashboardPoisIdEditMediaIndexRoute,
+    AdminDashboardPoisIdEditImagesIndexRoute:
+      AdminDashboardPoisIdEditImagesIndexRoute,
   }
 
 const AdminDashboardPoisIdEditRouteWithChildren =
@@ -1617,7 +1617,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/pois/$id/edit/address': typeof AdminDashboardPoisIdEditAddressIndexRoute
   '/dashboard/pois/$id/edit/amenities': typeof AdminDashboardPoisIdEditAmenitiesIndexRoute
   '/dashboard/pois/$id/edit/hours': typeof AdminDashboardPoisIdEditHoursIndexRoute
-  '/dashboard/pois/$id/edit/media': typeof AdminDashboardPoisIdEditMediaIndexRoute
+  '/dashboard/pois/$id/edit/images': typeof AdminDashboardPoisIdEditImagesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -1704,7 +1704,7 @@ export interface FileRoutesByTo {
   '/dashboard/pois/$id/edit/address': typeof AdminDashboardPoisIdEditAddressIndexRoute
   '/dashboard/pois/$id/edit/amenities': typeof AdminDashboardPoisIdEditAmenitiesIndexRoute
   '/dashboard/pois/$id/edit/hours': typeof AdminDashboardPoisIdEditHoursIndexRoute
-  '/dashboard/pois/$id/edit/media': typeof AdminDashboardPoisIdEditMediaIndexRoute
+  '/dashboard/pois/$id/edit/images': typeof AdminDashboardPoisIdEditImagesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -1799,7 +1799,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/pois/$id/edit/address/': typeof AdminDashboardPoisIdEditAddressIndexRoute
   '/_admin/dashboard/pois/$id/edit/amenities/': typeof AdminDashboardPoisIdEditAmenitiesIndexRoute
   '/_admin/dashboard/pois/$id/edit/hours/': typeof AdminDashboardPoisIdEditHoursIndexRoute
-  '/_admin/dashboard/pois/$id/edit/media/': typeof AdminDashboardPoisIdEditMediaIndexRoute
+  '/_admin/dashboard/pois/$id/edit/images/': typeof AdminDashboardPoisIdEditImagesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1895,7 +1895,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois/$id/edit/address'
     | '/dashboard/pois/$id/edit/amenities'
     | '/dashboard/pois/$id/edit/hours'
-    | '/dashboard/pois/$id/edit/media'
+    | '/dashboard/pois/$id/edit/images'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1981,7 +1981,7 @@ export interface FileRouteTypes {
     | '/dashboard/pois/$id/edit/address'
     | '/dashboard/pois/$id/edit/amenities'
     | '/dashboard/pois/$id/edit/hours'
-    | '/dashboard/pois/$id/edit/media'
+    | '/dashboard/pois/$id/edit/images'
   id:
     | '__root__'
     | '/'
@@ -2074,7 +2074,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/pois/$id/edit/address/'
     | '/_admin/dashboard/pois/$id/edit/amenities/'
     | '/_admin/dashboard/pois/$id/edit/hours/'
-    | '/_admin/dashboard/pois/$id/edit/media/'
+    | '/_admin/dashboard/pois/$id/edit/images/'
   fileRoutesById: FileRoutesById
 }
 
@@ -2482,7 +2482,7 @@ export const routeTree = rootRoute
         "/_admin/dashboard/pois/$id/edit/address/",
         "/_admin/dashboard/pois/$id/edit/amenities/",
         "/_admin/dashboard/pois/$id/edit/hours/",
-        "/_admin/dashboard/pois/$id/edit/media/"
+        "/_admin/dashboard/pois/$id/edit/images/"
       ]
     },
     "/_admin/dashboard/amenities/$id/": {
@@ -2593,8 +2593,8 @@ export const routeTree = rootRoute
       "filePath": "_admin/dashboard/pois/$id/edit/hours/index.tsx",
       "parent": "/_admin/dashboard/pois/$id/edit"
     },
-    "/_admin/dashboard/pois/$id/edit/media/": {
-      "filePath": "_admin/dashboard/pois/$id/edit/media/index.tsx",
+    "/_admin/dashboard/pois/$id/edit/images/": {
+      "filePath": "_admin/dashboard/pois/$id/edit/images/index.tsx",
       "parent": "/_admin/dashboard/pois/$id/edit"
     }
   }

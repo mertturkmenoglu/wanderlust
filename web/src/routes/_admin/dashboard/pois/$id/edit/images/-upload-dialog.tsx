@@ -75,7 +75,7 @@ export default function UploadDialog({ poi }: Props) {
       return;
     }
 
-    let updateRes = await fetchClient.POST('/api/v2/pois/{id}/media', {
+    let updateRes = await fetchClient.POST('/api/v2/pois/{id}/images', {
       params: {
         path: {
           id: poi.id,
@@ -84,6 +84,7 @@ export default function UploadDialog({ poi }: Props) {
       body: {
         id: res.data.id,
         alt: alt,
+        url: res.data.url,
         fileName: res.data.fileName,
       },
     });

@@ -2,14 +2,13 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { columns } from './-columns';
 import { DataTable } from './-data-table';
 
-export const Route = createFileRoute('/_admin/dashboard/pois/$id/edit/media/')({
+export const Route = createFileRoute('/_admin/dashboard/pois/$id/edit/images/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
-  const media = poi.media;
 
   return (
     <div>
@@ -19,9 +18,9 @@ function RouteComponent() {
         <DataTable
           columns={columns}
           poi={poi}
-          data={media.map((m) => ({
-            ...m,
-            alt: m.alt ?? '',
+          data={poi.images.map((img) => ({
+            ...img,
+            alt: img.alt ?? '',
           }))}
         />
       </div>
