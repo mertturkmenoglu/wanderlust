@@ -16,7 +16,7 @@ type Props = {
     | 'address'
     | 'totalVotes'
     | 'totalPoints'
-    | 'media'
+    | 'images'
   >;
   hoverEffects?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
@@ -28,7 +28,7 @@ export default function PoiCard({
   ...props
 }: Props) {
   const [index, setIndex] = useState(0);
-  const el = poi.media[index];
+  const el = poi.images[index];
   const rating = computeRating(poi.totalPoints, poi.totalVotes);
 
   if (!el) {
@@ -63,16 +63,16 @@ export default function PoiCard({
         {/* Preload previous and next images */}
         {index !== 0 && (
           <img
-            src={ipx(poi.media[index - 1]!.url, 'w_512')}
-            alt={poi.media[index - 1]!.alt}
+            src={ipx(poi.images[index - 1]!.url, 'w_512')}
+            alt={poi.images[index - 1]!.alt}
             className="hidden"
           />
         )}
 
-        {index !== poi.media.length - 1 && (
+        {index !== poi.images.length - 1 && (
           <img
-            src={ipx(poi.media[index + 1]!.url, 'w_512')}
-            alt={poi.media[index + 1]!.alt}
+            src={ipx(poi.images[index + 1]!.url, 'w_512')}
+            alt={poi.images[index + 1]!.alt}
             className="hidden"
           />
         )}
@@ -85,7 +85,7 @@ export default function PoiCard({
 
         <button
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-white rounded-full p-1 opacity-0 group-hover:opacity-80 duration-200"
-          disabled={index === poi.media.length - 1}
+          disabled={index === poi.images.length - 1}
           onClick={(e) => {
             e.preventDefault();
             setIndex((prev) => prev + 1);
@@ -96,7 +96,7 @@ export default function PoiCard({
         </button>
 
         <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 opacity-0 group-hover:opacity-80 duration-200">
-          {Array.from({ length: poi.media.length }).map((_, i) => (
+          {Array.from({ length: poi.images.length }).map((_, i) => (
             <div
               key={i}
               className={cn('size-2 rounded-full border border-border', {
