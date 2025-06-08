@@ -1,9 +1,16 @@
 import { Button } from '@/components/ui/button';
+import { useFeatureFlags } from '@/providers/flags-provider';
 import { Link, useLocation } from '@tanstack/react-router';
 import { ArrowRightIcon } from 'lucide-react';
 
 export default function SignInButton() {
   const location = useLocation();
+  const flags = useFeatureFlags();
+  const isRedirectToWip = flags['redirect-to-wip'] === true;
+
+  if (isRedirectToWip) {
+    return <></>;
+  }
 
   return (
     <Link

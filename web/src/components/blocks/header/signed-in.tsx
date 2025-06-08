@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { env } from '@/lib/env';
+import { useFeatureFlags } from '@/providers/flags-provider';
 import { Link, useLocation } from '@tanstack/react-router';
 import { BellIcon, SearchIcon, SendIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -17,7 +17,8 @@ export default function SignedInLinks() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const showSearch = !hideSearchPaths.includes(location.pathname);
-  const showIcons = env.VITE_APP_BAR_SHOW_WIP_ICONS;
+  const flags = useFeatureFlags();
+  const showIcons = flags['app-bar-show-wip-icons'] === true;
 
   return (
     <div className="flex items-center gap-2">
