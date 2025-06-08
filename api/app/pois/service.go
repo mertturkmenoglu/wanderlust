@@ -12,6 +12,7 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/upload"
+	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -607,10 +608,17 @@ func (s *Service) deleteImage(ctx context.Context, input *dto.DeletePoiMediaInpu
 	qtx := s.db.WithTx(tx)
 
 	for i, imgId := range remainingImageIds {
+		index, err := utils.SafeInt64ToInt16(int64(i + 1))
+
+		if err != nil {
+			sp.RecordError(err)
+			return huma.Error500InternalServerError("Internal server error")
+		}
+
 		_, err = qtx.UpdatePoiImageIndex(ctx, db.UpdatePoiImageIndexParams{
 			ID:    imgId,
 			PoiID: poi.ID,
-			Index: int16(i + 1),
+			Index: index,
 		})
 
 		if err != nil {
@@ -703,10 +711,17 @@ func (s *Service) reorderImages(ctx context.Context, input *dto.ReorderPoiImages
 	qtx := s.db.WithTx(tx)
 
 	for i, imgId := range input.Body.Images {
+		index, err := utils.SafeInt64ToInt16(int64(i + 1))
+
+		if err != nil {
+			sp.RecordError(err)
+			return nil, huma.Error500InternalServerError("Internal server error")
+		}
+
 		_, err = qtx.UpdatePoiImageIndex(ctx, db.UpdatePoiImageIndexParams{
 			ID:    imgId,
 			PoiID: poi.ID,
-			Index: int16(i + 1),
+			Index: index,
 		})
 
 		if err != nil {
