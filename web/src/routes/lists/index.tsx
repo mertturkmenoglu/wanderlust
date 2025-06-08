@@ -1,6 +1,5 @@
 import AppMessage from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { api } from '@/lib/api';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
@@ -52,8 +51,6 @@ function RouteComponent() {
     <div className="max-w-7xl my-8 mx-auto">
       <Header />
 
-      <Separator className="my-4" />
-
       {query.isLoading && (
         <AppMessage
           emptyMessage="Loading..."
@@ -64,7 +61,7 @@ function RouteComponent() {
         <AppMessage emptyMessage="You have no lists yet" />
       )}
       {query.data && (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-2 mt-4">
           {query.data.pages.map((page, i) => (
             <React.Fragment key={i}>
               {page.lists.map((list) => (
@@ -74,7 +71,7 @@ function RouteComponent() {
                     id: list.id,
                   }}
                   key={list.id}
-                  className="block"
+                  className="block p-2 rounded-lg transition-colors hover:bg-primary/5"
                 >
                   <div className="flex items-center gap-4">
                     <div>

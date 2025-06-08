@@ -50,7 +50,7 @@ function RouteComponent() {
         />
       )}
       {query.data && (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-2">
           {query.data.pages.map((page, i) => (
             <React.Fragment key={i}>
               {page.lists.map((list) => (
@@ -60,7 +60,7 @@ function RouteComponent() {
                     id: list.id,
                   }}
                   key={list.id}
-                  className="block"
+                  className="block p-2 rounded-lg transition-colors hover:bg-primary/5"
                 >
                   <div className="flex items-center gap-4">
                     <div>
