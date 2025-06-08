@@ -69,12 +69,16 @@ func ReadFile(path string) ([]string, error) {
 	return lines, nil
 }
 
-func GetChunkCount(arrlen int, bathcSize int) int {
+func GetChunkCount(arrlen int, batchSize int) int {
+	if batchSize <= 0 {
+		return 0
+	}
+
 	// Get how many chunks there are
-	chunkCount := arrlen / bathcSize
+	chunkCount := arrlen / batchSize
 
 	// If there are any leftovers, add them to the last chunk
-	if arrlen%bathcSize != 0 {
+	if arrlen%batchSize != 0 {
 		chunkCount++
 	}
 
