@@ -23,8 +23,8 @@ func ToPois(data []byte) ([]dto.Poi, error) {
 			pois[i].Amenities = []dto.Amenity{}
 		}
 
-		if p.Media == nil {
-			pois[i].Media = []dto.Media{}
+		if p.Images == nil {
+			pois[i].Images = []dto.Image{}
 		}
 	}
 
