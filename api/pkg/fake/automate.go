@@ -27,7 +27,7 @@ var steps = [...]string{
 	"pois",
 	"fake-id", // run fake id to get user and poi ids
 	"amenities-pois",
-	"poi-media",
+	"images",
 	"follows",
 	"reviews",
 	"fake-id", // run fake id again to get review ids
@@ -101,6 +101,10 @@ func Automate() error {
 			UsersPath: usersPath,
 			Fake:      f,
 		},
+		"images": &handlers.FakeImages{
+			PoisPath: poisPath,
+			Fake:     f,
+		},
 		"lists": &handlers.FakeLists{
 			UsersPath: usersPath,
 			ID:        idgen,
@@ -110,10 +114,6 @@ func Automate() error {
 			ListsPath: listsPath,
 			PoisPath:  poisPath,
 			Fake:      f,
-		},
-		"poi-media": &handlers.FakeMedia{
-			PoisPath: poisPath,
-			Fake:     f,
 		},
 		"pois": &handlers.FakePois{
 			Count: 10_000,
@@ -169,8 +169,10 @@ func Automate() error {
 
 func mux(f map[string]handlers.IFaker, step string) (int64, error) {
 	faker, ok := f[step]
+
 	if !ok {
 		return 0, fmt.Errorf("invalid task type: %s", step)
 	}
+
 	return faker.Generate()
 }

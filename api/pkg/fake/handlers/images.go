@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-
-	"github.com/brianvoe/gofakeit/v7"
 )
 
 // Got from picsum list endpoint
@@ -29,29 +27,29 @@ var imageIds = []int{
 }
 
 func getRandomImageUrl() string {
-	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", imageIds[gofakeit.IntRange(0, len(imageIds)-1)])
+	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", fakeutils.RandElem(imageIds))
 }
 
-type FakeMedia struct {
+type FakeImages struct {
 	PoisPath string
 	*Fake
 }
 
-func (f *FakeMedia) Generate() (int64, error) {
+func (f *FakeImages) Generate() (int64, error) {
 	poiIds, err := fakeutils.ReadFile(f.PoisPath)
 
 	if err != nil {
 		return 0, err
 	}
 
-	batch := make([]db.BatchCreatePoiMediaParams, 0)
+	batch := make([]db.BatchCreatePoiImagesParams, 0)
 
 	for _, id := range poiIds {
 		n := fakeutils.RandInt16Range(2, 10)
 
 		for i := range n {
 			istr := strconv.FormatInt(int64(i), 10)
-			batch = append(batch, db.BatchCreatePoiMediaParams{
+			batch = append(batch, db.BatchCreatePoiImagesParams{
 				PoiID: id,
 				Url:   getRandomImageUrl(),
 				Alt:   "Alt text for image " + istr,
@@ -60,5 +58,5 @@ func (f *FakeMedia) Generate() (int64, error) {
 		}
 	}
 
-	return f.db.Queries.BatchCreatePoiMedia(context.Background(), batch)
+	return f.db.Queries.BatchCreatePoiImages(context.Background(), batch)
 }
