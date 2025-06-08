@@ -30,7 +30,7 @@ CREATE OR REPLACE TRIGGER update_pois_timestamp BEFORE
 UPDATE
   ON pois FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
-CREATE TABLE IF NOT EXISTS media (
+CREATE TABLE IF NOT EXISTS images (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   poi_id TEXT NOT NULL,
   url VARCHAR(256) NOT NULL,
@@ -38,17 +38,15 @@ CREATE TABLE IF NOT EXISTS media (
   index SMALLINT NOT NULL CHECK(index >= 0),
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   CONSTRAINT 
-    fk_media_poi FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE SET DEFAULT,
-  CONSTRAINT
-    idx_media_pois_unique UNIQUE (poi_id, index)
+    fk_images_pois FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE SET DEFAULT
 );
 
-CREATE INDEX IF NOT EXISTS idx_media_pois ON media(poi_id);
+CREATE INDEX IF NOT EXISTS idx_images_pois ON images(poi_id);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE IF EXISTS media;
+DROP TABLE IF EXISTS images;
 
 DROP TABLE IF EXISTS pois;
 -- +goose StatementEnd

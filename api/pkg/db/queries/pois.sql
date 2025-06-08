@@ -44,8 +44,8 @@ ORDER BY created_at ASC
 OFFSET $1
 LIMIT $2;
 
--- name: CreatePoiMedia :one
-INSERT INTO media (
+-- name: CreatePoiImage :one
+INSERT INTO images(
   poi_id,
   url,
   alt,
@@ -57,8 +57,8 @@ INSERT INTO media (
   $4
 ) RETURNING *;
 
--- name: BatchCreatePoiMedia :copyfrom
-INSERT INTO media (
+-- name: BatchCreatePoiImages :copyfrom
+INSERT INTO images (
   poi_id,
   url,
   alt,
@@ -157,7 +157,18 @@ UPDATE pois
 SET total_points = $2, total_votes = $3
 WHERE id = $1;
 
--- name: DeletePoiMedia :exec
-DELETE FROM media
+-- name: DeletePoiImage :execresult
+DELETE FROM images
 WHERE poi_id = $1
-  AND index = $2;
+  AND id = $2;
+
+-- name: UpdatePoiImageAlt :execresult
+UPDATE images
+SET alt = $2
+WHERE poi_id = $1 AND id = $3;
+
+-- name: UpdatePoiImageIndex :execresult
+UPDATE images
+SET index = $2
+WHERE poi_id = $1 AND id = $3;
+

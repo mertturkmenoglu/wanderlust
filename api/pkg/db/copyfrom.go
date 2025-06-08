@@ -419,13 +419,13 @@ func (q *Queries) BatchCreateLists(ctx context.Context, arg []BatchCreateListsPa
 	return q.db.CopyFrom(ctx, []string{"lists"}, []string{"id", "name", "user_id", "is_public"}, &iteratorForBatchCreateLists{rows: arg})
 }
 
-// iteratorForBatchCreatePoiMedia implements pgx.CopyFromSource.
-type iteratorForBatchCreatePoiMedia struct {
-	rows                 []BatchCreatePoiMediaParams
+// iteratorForBatchCreatePoiImages implements pgx.CopyFromSource.
+type iteratorForBatchCreatePoiImages struct {
+	rows                 []BatchCreatePoiImagesParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForBatchCreatePoiMedia) Next() bool {
+func (r *iteratorForBatchCreatePoiImages) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -437,7 +437,7 @@ func (r *iteratorForBatchCreatePoiMedia) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForBatchCreatePoiMedia) Values() ([]interface{}, error) {
+func (r iteratorForBatchCreatePoiImages) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].PoiID,
 		r.rows[0].Url,
@@ -446,12 +446,12 @@ func (r iteratorForBatchCreatePoiMedia) Values() ([]interface{}, error) {
 	}, nil
 }
 
-func (r iteratorForBatchCreatePoiMedia) Err() error {
+func (r iteratorForBatchCreatePoiImages) Err() error {
 	return nil
 }
 
-func (q *Queries) BatchCreatePoiMedia(ctx context.Context, arg []BatchCreatePoiMediaParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"media"}, []string{"poi_id", "url", "alt", "index"}, &iteratorForBatchCreatePoiMedia{rows: arg})
+func (q *Queries) BatchCreatePoiImages(ctx context.Context, arg []BatchCreatePoiImagesParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"images"}, []string{"poi_id", "url", "alt", "index"}, &iteratorForBatchCreatePoiImages{rows: arg})
 }
 
 // iteratorForBatchCreatePois implements pgx.CopyFromSource.

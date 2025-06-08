@@ -8,10 +8,11 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type BatchCreatePoiMediaParams struct {
+type BatchCreatePoiImagesParams struct {
 	PoiID string
 	Url   string
 	Alt   string
@@ -45,8 +46,8 @@ func (q *Queries) CountPois(ctx context.Context) (int64, error) {
 	return count, err
 }
 
-const createPoiMedia = `-- name: CreatePoiMedia :one
-INSERT INTO media (
+const createPoiImage = `-- name: CreatePoiImage :one
+INSERT INTO images(
   poi_id,
   url,
   alt,
@@ -59,21 +60,21 @@ INSERT INTO media (
 ) RETURNING id, poi_id, url, alt, index, created_at
 `
 
-type CreatePoiMediaParams struct {
+type CreatePoiImageParams struct {
 	PoiID string
 	Url   string
 	Alt   string
 	Index int16
 }
 
-func (q *Queries) CreatePoiMedia(ctx context.Context, arg CreatePoiMediaParams) (Medium, error) {
-	row := q.db.QueryRow(ctx, createPoiMedia,
+func (q *Queries) CreatePoiImage(ctx context.Context, arg CreatePoiImageParams) (Image, error) {
+	row := q.db.QueryRow(ctx, createPoiImage,
 		arg.PoiID,
 		arg.Url,
 		arg.Alt,
 		arg.Index,
 	)
-	var i Medium
+	var i Image
 	err := row.Scan(
 		&i.ID,
 		&i.PoiID,
@@ -106,20 +107,19 @@ func (q *Queries) DeletePoiAllAmenities(ctx context.Context, poiID string) error
 	return err
 }
 
-const deletePoiMedia = `-- name: DeletePoiMedia :exec
-DELETE FROM media
+const deletePoiImage = `-- name: DeletePoiImage :execresult
+DELETE FROM images
 WHERE poi_id = $1
-  AND index = $2
+  AND id = $2
 `
 
-type DeletePoiMediaParams struct {
+type DeletePoiImageParams struct {
 	PoiID string
-	Index int16
+	ID    int64
 }
 
-func (q *Queries) DeletePoiMedia(ctx context.Context, arg DeletePoiMediaParams) error {
-	_, err := q.db.Exec(ctx, deletePoiMedia, arg.PoiID, arg.Index)
-	return err
+func (q *Queries) DeletePoiImage(ctx context.Context, arg DeletePoiImageParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, deletePoiImage, arg.PoiID, arg.ID)
 }
 
 const getFavoritePoisIds = `-- name: GetFavoritePoisIds :many
@@ -407,6 +407,38 @@ type UpdatePoiHoursParams struct {
 func (q *Queries) UpdatePoiHours(ctx context.Context, arg UpdatePoiHoursParams) error {
 	_, err := q.db.Exec(ctx, updatePoiHours, arg.Hours, arg.ID)
 	return err
+}
+
+const updatePoiImageAlt = `-- name: UpdatePoiImageAlt :execresult
+UPDATE images
+SET alt = $2
+WHERE poi_id = $1 AND id = $3
+`
+
+type UpdatePoiImageAltParams struct {
+	PoiID string
+	Alt   string
+	ID    int64
+}
+
+func (q *Queries) UpdatePoiImageAlt(ctx context.Context, arg UpdatePoiImageAltParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updatePoiImageAlt, arg.PoiID, arg.Alt, arg.ID)
+}
+
+const updatePoiImageIndex = `-- name: UpdatePoiImageIndex :execresult
+UPDATE images
+SET index = $2
+WHERE poi_id = $1 AND id = $3
+`
+
+type UpdatePoiImageIndexParams struct {
+	PoiID string
+	Index int16
+	ID    int64
+}
+
+func (q *Queries) UpdatePoiImageIndex(ctx context.Context, arg UpdatePoiImageIndexParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updatePoiImageIndex, arg.PoiID, arg.Index, arg.ID)
 }
 
 const updatePoiInfo = `-- name: UpdatePoiInfo :exec

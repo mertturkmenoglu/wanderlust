@@ -53,7 +53,7 @@ BEGIN
         'name', cat.name,
         'image', cat.image
       ),
-      'media', media_agg.media,
+      'images', images_agg.images,
       'amenities', amenities_agg.amenities
     ))
     FROM public.pois
@@ -61,17 +61,17 @@ BEGIN
     JOIN public.cities c ON addr.city_id = c.id
     JOIN public.categories cat ON pois.category_id = cat.id
 
-    -- LATERAL join for media
+    -- LATERAL join for images
     LEFT JOIN LATERAL (
       SELECT json_agg(jsonb_build_object(
-        'id', m.id,
-        'url', m.url,
-        'index', m.index,
-        'alt', m.alt
-      ) ORDER BY m.index) AS media
-      FROM public.media m
-      WHERE m.poi_id = pois.id
-    ) media_agg ON true
+        'id', img.id,
+        'url', img.url,
+        'index', img.index,
+        'alt', img.alt
+      ) ORDER BY img.index) AS images
+      FROM public.images img
+      WHERE img.poi_id = pois.id
+    ) images_agg ON true
 
     -- LATERAL join for amenities
     LEFT JOIN LATERAL (

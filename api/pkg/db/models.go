@@ -128,6 +128,15 @@ type Follow struct {
 	CreatedAt   pgtype.Timestamptz
 }
 
+type Image struct {
+	ID        int64
+	PoiID     string
+	Url       string
+	Alt       string
+	Index     int16
+	CreatedAt pgtype.Timestamptz
+}
+
 type List struct {
 	ID        string
 	Name      string
@@ -141,15 +150,6 @@ type ListItem struct {
 	ListID    string
 	PoiID     string
 	Index     int32
-	CreatedAt pgtype.Timestamptz
-}
-
-type Medium struct {
-	ID        int64
-	PoiID     string
-	Url       string
-	Alt       string
-	Index     int16
 	CreatedAt pgtype.Timestamptz
 }
 
