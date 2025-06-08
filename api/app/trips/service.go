@@ -94,7 +94,7 @@ func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdO
 
 	userId := ctx.Value("userId").(string)
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return nil, err
@@ -232,7 +232,7 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		return nil, huma.Error404NotFound("Trip not found")
 	}
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return nil, err
@@ -277,13 +277,13 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 		return nil, err
 	}
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	if !s.canCreateInvite(trip, userId) {
+	if !canCreateInvite(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to invite users to this trip")
 		sp.RecordError(err)
 		return nil, err
@@ -515,7 +515,7 @@ func (s *Service) removeInvite(ctx context.Context, tripId string, inviteId stri
 		return err
 	}
 
-	if !s.canCreateInvite(trip, userId) {
+	if !canCreateInvite(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to remove this invite")
 		sp.RecordError(err)
 		return err
@@ -544,13 +544,13 @@ func (s *Service) removeParticipant(ctx context.Context, tripId string, particip
 		return err
 	}
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return err
 	}
 
-	if !s.canRemoveParticipant(trip, userId, participantId) {
+	if !canRemoveParticipant(trip, userId, participantId) {
 		err = huma.Error403Forbidden("You are not authorized to remove this participant")
 		sp.RecordError(err)
 		return err
@@ -611,7 +611,7 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 		return nil, err
 	}
 
-	if !s.canCreateComment(trip, userId) {
+	if !canCreateComment(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to create a comment")
 		sp.RecordError(err)
 		return nil, err
@@ -659,13 +659,13 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 		return nil, err
 	}
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	if !s.canReadComment(trip, userId) {
+	if !canReadComment(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip's comments")
 		sp.RecordError(err)
 		return nil, err
@@ -749,7 +749,7 @@ func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommen
 		return nil, err
 	}
 
-	if !s.canUpdateComment(comment, userId) {
+	if !canUpdateComment(comment, userId) {
 		err = huma.Error403Forbidden("You are not authorized to update this comment")
 		sp.RecordError(err)
 		return nil, err
@@ -800,7 +800,7 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 		return err
 	}
 
-	if !s.canDeleteComment(trip, comment, userId) {
+	if !canDeleteComment(trip, comment, userId) {
 		err = huma.Error403Forbidden("You are not authorized to delete this comment")
 		sp.RecordError(err)
 		return err
@@ -833,7 +833,7 @@ func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.U
 		return nil, err
 	}
 
-	if !s.canManageAmenities(trip, userId) {
+	if !canManageAmenities(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to manage this trip")
 		sp.RecordError(err)
 		return nil, err
@@ -907,7 +907,7 @@ func (s *Service) updateTrip(ctx context.Context, id string, body dto.UpdateTrip
 		return nil, err
 	}
 
-	if !s.canUpdateTrip(trip, userId) {
+	if !canUpdateTrip(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to update this trip")
 		sp.RecordError(err)
 		return nil, err
@@ -1013,7 +1013,7 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 		return nil, err
 	}
 
-	if !s.canCreateLocation(trip, userId) {
+	if !canCreateLocation(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to create a location for this trip")
 		sp.RecordError(err)
 		return nil, err
@@ -1137,13 +1137,13 @@ func (s *Service) updateTripLocation(ctx context.Context, input *dto.UpdateTripL
 		return nil, err
 	}
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	if !s.canUpdateTripLocation(trip, userId) {
+	if !canUpdateTripLocation(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to update this trip location")
 		sp.RecordError(err)
 		return nil, err
@@ -1221,13 +1221,13 @@ func (s *Service) removeTripLocation(ctx context.Context, tripId string, locatio
 		return err
 	}
 
-	if !s.canRead(trip, userId) {
+	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
 		return err
 	}
 
-	if !s.canDeleteTripLocation(trip, userId) {
+	if !canDeleteTripLocation(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to update this trip location")
 		sp.RecordError(err)
 		return err
