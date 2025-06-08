@@ -18,13 +18,14 @@ func Init() {
 			panic("Environment variable key not set for field " + field.Name)
 		}
 
-		if fieldTypeStr == "string" {
+		switch fieldTypeStr {
+		case "string":
 			reflect.ValueOf(&Env).Elem().FieldByName(field.Name).SetString(GetString(key))
-		} else if fieldTypeStr == "int" || fieldTypeStr == "int32" || fieldTypeStr == "int64" {
+		case "int", "int32", "int64":
 			reflect.ValueOf(&Env).Elem().FieldByName(field.Name).SetInt(int64(GetInt(key)))
-		} else if fieldTypeStr == "bool" {
+		case "bool":
 			reflect.ValueOf(&Env).Elem().FieldByName(field.Name).SetBool(GetBool(key))
-		} else {
+		default:
 			panic("Environment variable type not supported for field " + field.Name)
 		}
 	}
