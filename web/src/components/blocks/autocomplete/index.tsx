@@ -51,7 +51,7 @@ export function Autocomplete({
             <Card
               key={hit.poi.id}
               id={hit.poi.id}
-              image={ipx(hit.poi.media[0].url, 'w_512')}
+              image={ipx(hit.poi.images[0].url, 'w_512')}
               name={hit.poi.name}
               categoryName={hit.poi.category.name}
               city={hit.poi.address.city.name}
