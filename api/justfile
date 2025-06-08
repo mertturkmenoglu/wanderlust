@@ -62,7 +62,7 @@ default:
 
 # Run vulnerability check tool GoSec
 @gosec:
-	gosec -fmt=html -out=gosec-results.html ./...; open gosec-results.html
+	gosec -fmt=html -out=gosec-results.html -exclude-generated ./...; open gosec-results.html
 
 # Run Static Check
 @static-check:
