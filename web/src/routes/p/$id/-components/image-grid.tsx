@@ -49,7 +49,7 @@ export function ImageGrid({ className }: Props) {
     >
       <div className="col-span-2 row-span-2">
         <img
-          src={ipx(first.url, 'w_512')}
+          src={ipx(first.url, 'w_1024')}
           alt={first.alt}
           className="w-full h-full object-cover rounded-l-xl"
         />
