@@ -3,7 +3,7 @@ default:
 
 # Live reload
 @watch:
-  concurrently --names api,web,ipx -c yellow,red,blue "just api/watch" "just web/watch" "just wiop/watch"; \
+  concurrently --pad-prefix --names api,web,flags,ipx -c yellow,red,green,blue "just api/watch" "just web/watch" "just flags/watch" "just wiop/watch"; \
 
 # Setup the project
 @setup:
@@ -12,6 +12,7 @@ default:
   ./requirements.sh
   just api/setup
   just web/setup
+  just flags/setup
   just wiop/setup
   echo "=> Setup completed. Run 'just watch' to start the server."
 
