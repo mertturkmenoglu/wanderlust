@@ -644,7 +644,6 @@ func (s *Service) deleteImage(ctx context.Context, input *dto.DeletePoiMediaInpu
 			slog.String("object", imgUrl),
 			slog.Any("error", err),
 		)
-		return err
 	}
 
 	poi, err = s.find(ctx, input.ID)
