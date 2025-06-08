@@ -11,7 +11,7 @@ import (
 )
 
 // Extracts access and refresh tokens from cookies
-func extractFromCookie(cookies []*http.Cookie) (string, string) {
+func extractTokensFromCookies(cookies []*http.Cookie) (string, string) {
 	var accessToken = ""
 	var refreshToken = ""
 
@@ -37,7 +37,7 @@ func IsAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 		_, sp := tracing.NewSpan(ctx.Context())
 		defer sp.End()
 
-		accessToken, refreshToken := extractFromCookie(huma.ReadCookies(ctx))
+		accessToken, refreshToken := extractTokensFromCookies(huma.ReadCookies(ctx))
 
 		if accessToken == "" {
 			sp.RecordError(huma.Error401Unauthorized("Unauthorized"))
@@ -78,7 +78,7 @@ func WithAuth(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 		_, sp := tracing.NewSpan(ctx.Context())
 		defer sp.End()
 
-		accessToken, refreshToken := extractFromCookie(huma.ReadCookies(ctx))
+		accessToken, refreshToken := extractTokensFromCookies(huma.ReadCookies(ctx))
 
 		if accessToken == "" {
 			ctx = huma.WithValue(ctx, "userId", "")
