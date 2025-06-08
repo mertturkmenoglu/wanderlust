@@ -3,7 +3,7 @@ package trips
 import "wanderlust/pkg/dto"
 
 // Check if the action user is the trip owner or an editor.
-func (s *Service) isPrivilegedUser(trip *dto.Trip, userId string) bool {
+func isPrivilegedUser(trip *dto.Trip, userId string) bool {
 	if trip.OwnerID == userId {
 		return true
 	}
@@ -17,11 +17,11 @@ func (s *Service) isPrivilegedUser(trip *dto.Trip, userId string) bool {
 	return false
 }
 
-func (s *Service) canCreateInvite(trip *dto.Trip, userId string) bool {
-	return s.isPrivilegedUser(trip, userId)
+func canCreateInvite(trip *dto.Trip, userId string) bool {
+	return isPrivilegedUser(trip, userId)
 }
 
-func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participantId string) bool {
+func canRemoveParticipant(trip *dto.Trip, userId string, participantId string) bool {
 	// You cannot remove the owner
 	if participantId == trip.OwnerID {
 		return false
@@ -37,7 +37,7 @@ func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participan
 		return true
 	}
 
-	// If the action user is an editor, they can remove anyone except the owner and themselves
+	// If the action user is an editor, they can remove anyone except the owner.
 	for _, p := range trip.Participants {
 		if p.ID == userId && p.Role == "editor" {
 			return true
@@ -48,7 +48,7 @@ func (s *Service) canRemoveParticipant(trip *dto.Trip, userId string, participan
 	return false
 }
 
-func (s *Service) canRead(trip *dto.Trip, userId string) bool {
+func canRead(trip *dto.Trip, userId string) bool {
 	switch trip.VisibilityLevel {
 	case dto.TRIP_VISIBILITY_LEVEL_PUBLIC:
 		return true
@@ -70,7 +70,7 @@ func (s *Service) canRead(trip *dto.Trip, userId string) bool {
 	}
 }
 
-func (s *Service) canCreateComment(trip *dto.Trip, userId string) bool {
+func canCreateComment(trip *dto.Trip, userId string) bool {
 	if trip.OwnerID == userId {
 		return true
 	}
@@ -84,17 +84,17 @@ func (s *Service) canCreateComment(trip *dto.Trip, userId string) bool {
 	return false
 }
 
-func (s *Service) canReadComment(trip *dto.Trip, userId string) bool {
+func canReadComment(trip *dto.Trip, userId string) bool {
 	// Comment read privileges are the same as trip read privileges
-	return s.canRead(trip, userId)
+	return canRead(trip, userId)
 }
 
-func (s *Service) canUpdateComment(comment *dto.TripComment, userId string) bool {
+func canUpdateComment(comment *dto.TripComment, userId string) bool {
 	// Only the owner can update the comment
 	return comment.From.ID == userId
 }
 
-func (s *Service) canDeleteComment(trip *dto.Trip, comment *dto.TripComment, userId string) bool {
+func canDeleteComment(trip *dto.Trip, comment *dto.TripComment, userId string) bool {
 	// Trip owner can delete any comment
 	if trip.OwnerID == userId {
 		return true
@@ -116,23 +116,23 @@ func (s *Service) canDeleteComment(trip *dto.Trip, comment *dto.TripComment, use
 	return false
 }
 
-func (s *Service) canManageAmenities(trip *dto.Trip, userId string) bool {
-	return s.isPrivilegedUser(trip, userId)
+func canManageAmenities(trip *dto.Trip, userId string) bool {
+	return isPrivilegedUser(trip, userId)
 }
 
-func (s *Service) canUpdateTrip(trip *dto.Trip, userId string) bool {
+func canUpdateTrip(trip *dto.Trip, userId string) bool {
 	// Currently, only the owner can update the trip
 	return trip.OwnerID == userId
 }
 
-func (s *Service) canCreateLocation(trip *dto.Trip, userId string) bool {
-	return s.isPrivilegedUser(trip, userId)
+func canCreateLocation(trip *dto.Trip, userId string) bool {
+	return isPrivilegedUser(trip, userId)
 }
 
-func (s *Service) canUpdateTripLocation(trip *dto.Trip, userId string) bool {
-	return s.isPrivilegedUser(trip, userId)
+func canUpdateTripLocation(trip *dto.Trip, userId string) bool {
+	return isPrivilegedUser(trip, userId)
 }
 
-func (s *Service) canDeleteTripLocation(trip *dto.Trip, userId string) bool {
-	return s.isPrivilegedUser(trip, userId)
+func canDeleteTripLocation(trip *dto.Trip, userId string) bool {
+	return isPrivilegedUser(trip, userId)
 }
