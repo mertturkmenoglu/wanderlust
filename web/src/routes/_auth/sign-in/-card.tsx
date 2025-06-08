@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
-import { env } from '@/lib/env';
 import { cn } from '@/lib/utils';
+import { useFeatureFlags } from '@/providers/flags-provider';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -27,7 +27,8 @@ const schema = z.object({
 
 export function SignInCard({ isModal }: Props) {
   const [showPassword, setShowPassword] = useState(false);
-  const showOAuthButtons = env.VITE_ALLOW_OAUTH_LOGINS;
+  const flags = useFeatureFlags();
+  const showOAuthButtons = flags['allow-oauth-logins'] === true;
 
   const { formState, register, handleSubmit } = useForm({
     resolver: zodResolver(schema),
