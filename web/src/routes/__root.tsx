@@ -1,8 +1,8 @@
 import { ErrorComponent } from '@/components/blocks/error-component';
 import Footer from '@/components/blocks/footer';
 import Header from '@/components/blocks/header';
-import { env } from '@/lib/env';
 import { type AuthContextState } from '@/providers/auth-provider';
+import type { FlagsResponse } from '@/providers/flags-provider';
 import type { QueryClient } from '@tanstack/react-query';
 import {
   Outlet,
@@ -17,6 +17,7 @@ import { SignInModal } from './_auth/sign-in/-modal';
 interface MyRouterContext {
   queryClient: QueryClient;
   auth: AuthContextState;
+  flags: FlagsResponse;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
@@ -38,8 +39,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       </div>
     );
   },
-  loader: () => {
-    const isRedirect = env.VITE_REDIRECT_WIP;
+  loader: ({ context: { flags } }) => {
+    const isRedirect = flags.flags['redirect-to-wip'] === true;
 
     if (isRedirect && window.location.pathname !== '/wip') {
       window.location.href = '/wip';
