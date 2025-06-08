@@ -1,0 +1,6 @@
+tmp/
+.env
+*.log
+*.out
+main
+flags.json
