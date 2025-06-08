@@ -666,3 +666,932 @@ func TestNonParticipantShouldNotBeAbleToCreateComment(t *testing.T) {
 	actual := canCreateComment(trip, userId)
 	assert.Equal(t, expected, actual, "they should be equal")
 }
+
+func TestOwnerShouldBeAbleToReadPrivateTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PRIVATE,
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToReadFriendsLevelTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_FRIENDS,
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToReadPublicTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PUBLIC,
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldNotBeAbleToReadPrivateTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PRIVATE,
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToReadFriendsLevelTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_FRIENDS,
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToReadPublicTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PUBLIC,
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToReadPrivateTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PRIVATE,
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldBeAbleToReadFriendsLevelTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_FRIENDS,
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldBeAbleToReadPublicTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PUBLIC,
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToReadPrivateTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PRIVATE,
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToReadFriendsLevelTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_FRIENDS,
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldBeAbleToReadPublicTripComment(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID:         "id-123",
+		VisibilityLevel: dto.TRIP_VISIBILITY_LEVEL_PUBLIC,
+	}
+
+	userId := "id-789"
+
+	expected := true
+	actual := canReadComment(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldNotBeAbleToUpdateOtherUserComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: "id-789"},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canUpdateComment(comment, tripOwnerId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldNotBeAbleToUpdateOtherUserComment(t *testing.T) {
+	editorId := "id-123"
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: "id-789"},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canUpdateComment(comment, editorId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToUpdateOtherUserComment(t *testing.T) {
+	participantId := "id-123"
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: "id-789"},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canUpdateComment(comment, participantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToUpdateOtherUserComment(t *testing.T) {
+	nonParticipantId := "id-123"
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: "id-789"},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canUpdateComment(comment, nonParticipantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestCommentOwnerShouldBeAbleToUpdateComment(t *testing.T) {
+	commentOwnerId := "id-123"
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: commentOwnerId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canUpdateComment(comment, commentOwnerId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToDeleteOwnComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: tripOwnerId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, tripOwnerId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToDeleteEditorComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: editorId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, editorId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToDeleteParticipantComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	participantId := "id-456"
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: participantId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, participantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToDeleteTripOwnerCommennt(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: tripOwnerId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, editorId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToDeleteTheirComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: editorId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, editorId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToDeleteOtherEditorComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   "id-789",
+				Role: "editor",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: "id-789"},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, editorId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToDeleteParticipantComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	participantId := "id-789"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: participantId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, editorId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToDeleteOwnerComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	participantId := "id-789"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: tripOwnerId},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canDeleteComment(trip, comment, participantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToDeleteEditorComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	participantId := "id-789"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: editorId},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canDeleteComment(trip, comment, participantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldBeAbleToDeleteTheirComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	participantId := "id-789"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: participantId},
+		Content: "Test comment",
+	}
+
+	expected := true
+	actual := canDeleteComment(trip, comment, participantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToDeleteOtherParticipantComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	participantId := "id-789"
+	otherParticipantId := "id-012"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+			{
+				ID:   otherParticipantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: otherParticipantId},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canDeleteComment(trip, comment, participantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToRemoveOwnerComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	nonParticipantId := "id-012"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: tripOwnerId},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canDeleteComment(trip, comment, nonParticipantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToRemoveEditorComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	nonParticipantId := "id-012"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: editorId},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canDeleteComment(trip, comment, nonParticipantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToRemoveParticipantComment(t *testing.T) {
+	tripOwnerId := "id-123"
+	editorId := "id-456"
+	participantId := "id-789"
+	nonParticipantId := "id-012"
+
+	trip := &dto.Trip{
+		OwnerID: tripOwnerId,
+		Participants: []dto.TripUser{
+			{
+				ID:   editorId,
+				Role: "editor",
+			},
+			{
+				ID:   participantId,
+				Role: "participant",
+			},
+		},
+	}
+
+	comment := &dto.TripComment{
+		ID:      "comment-123",
+		From:    dto.TripUser{ID: participantId},
+		Content: "Test comment",
+	}
+
+	expected := false
+	actual := canDeleteComment(trip, comment, nonParticipantId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToManageAmenities(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canManageAmenities(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToManageAmenities(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canManageAmenities(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToManageAmenities(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canManageAmenities(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToManageAmenities(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canManageAmenities(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToUpdateTrip(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canUpdateTrip(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldNotBeAbleToUpdateTrip(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canUpdateTrip(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToUpdateTrip(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canUpdateTrip(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToUpdateTrip(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canUpdateTrip(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToCreateLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canCreateLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToCreateLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canCreateLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToCreateLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canCreateLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToCreateLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canCreateLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToUpdateTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canUpdateTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToUpdateTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canUpdateTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToUpdateTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canUpdateTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToUpdateTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canUpdateTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestOwnerShouldBeAbleToDeleteTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-123"
+
+	expected := true
+	actual := canDeleteTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestEditorShouldBeAbleToDeleteTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "editor",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := true
+	actual := canDeleteTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestParticipantShouldNotBeAbleToDeleteTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+		Participants: []dto.TripUser{
+			{
+				ID:   "id-456",
+				Role: "participant",
+			},
+		},
+	}
+
+	userId := "id-456"
+
+	expected := false
+	actual := canDeleteTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
+
+func TestNonParticipantShouldNotBeAbleToDeleteTripLocation(t *testing.T) {
+	trip := &dto.Trip{
+		OwnerID: "id-123",
+	}
+
+	userId := "id-789"
+
+	expected := false
+	actual := canDeleteTripLocation(trip, userId)
+	assert.Equal(t, expected, actual, "they should be equal")
+}
