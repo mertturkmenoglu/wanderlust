@@ -1,0 +1,19 @@
+# List all available commands
+default:
+	just --list
+
+# Build the project
+@build:
+	go build -o main ./main.go
+
+# Setup the project
+@setup:
+	go mod download
+
+# Clean the binary
+@clean:
+	rm -f main
+
+# Live reload
+@watch:
+	air -c ./.air.toml
