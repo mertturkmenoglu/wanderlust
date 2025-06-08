@@ -106,8 +106,8 @@ func canDeleteComment(trip *dto.Trip, comment *dto.TripComment, userId string) b
 		if p.ID == userId && p.Role == "editor" {
 			return true
 		}
-
-		if p.ID == comment.From.ID {
+		
+		if p.ID == comment.From.ID && p.ID == userId {
 			return true
 		}
 	}
