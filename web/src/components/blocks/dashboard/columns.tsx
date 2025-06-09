@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { type ColumnDef } from '@tanstack/react-table';
 
 export type KeyValueCols = {
@@ -152,6 +153,73 @@ export const citiesCols: ColumnDef<City>[] = [
   {
     accessorKey: 'countryCode',
     header: 'Country Code',
+  },
+];
+
+export type Export = {
+  id: string;
+  createdAt: string;
+  status: string;
+  progress: string;
+  error: string | null;
+  file: string | null;
+  itemCount: number;
+};
+
+export const exportsCols: ColumnDef<Export>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    cell: ({ row }) => {
+      return (
+        <Link
+          to="/dashboard/exports/$id"
+          params={{
+            id: row.getValue('id') ?? '',
+          }}
+          className="text-primary hover:underline"
+        >
+          {row.getValue('id')}
+        </Link>
+      );
+    },
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Created At',
+    cell: ({ row }) => {
+      return <div className="capitalize">{row.getValue('createdAt')}</div>;
+    },
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+  },
+  {
+    accessorKey: 'progress',
+    header: 'Progress',
+  },
+  {
+    accessorKey: 'error',
+    header: 'Error',
+  },
+  {
+    accessorKey: 'file',
+    header: 'File',
+    cell: ({ row }) => {
+      return (
+        <a
+          href={row.getValue('file')}
+          className="text-primary hover:underline"
+        >
+          Download {row.getValue('')}
+        </a>
+      );
+    },
+  },
+  {
+    accessorKey: 'itemCount',
+    header: '# Items',
   },
 ];
 
