@@ -450,36 +450,43 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 
 	qtx := s.db.WithTx(tx)
 
-	if action == "accept" {
-		err = qtx.DeleteInvite(ctx, inviteId)
+	switch action {
+	case "accept":
+		{
+			err = qtx.DeleteInvite(ctx, inviteId)
 
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete invite")
+			if err != nil {
+				sp.RecordError(err)
+				return nil, huma.Error500InternalServerError("Failed to delete invite")
+			}
+
+			_, err = qtx.AddParticipantToTrip(ctx, db.AddParticipantToTripParams{
+				ID:     s.ID.Flake(),
+				UserID: userId,
+				TripID: tripId,
+				Role:   string(inviteDetail.Body.InviteDetail.Role),
+			})
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, huma.Error500InternalServerError("Failed to add participant to trip")
+			}
 		}
+	case "decline":
+		{
+			err = qtx.DeleteInvite(ctx, inviteId)
 
-		_, err = qtx.AddParticipantToTrip(ctx, db.AddParticipantToTripParams{
-			ID:     s.ID.Flake(),
-			UserID: userId,
-			TripID: tripId,
-			Role:   string(inviteDetail.Body.InviteDetail.Role),
-		})
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to add participant to trip")
+			if err != nil {
+				sp.RecordError(err)
+				return nil, huma.Error500InternalServerError("Failed to delete invite")
+			}
 		}
-	} else if action == "decline" {
-		err = qtx.DeleteInvite(ctx, inviteId)
-
-		if err != nil {
+	default:
+		{
+			err = huma.Error400BadRequest("Invalid action")
 			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete invite")
+			return nil, err
 		}
-	} else {
-		err = huma.Error400BadRequest("Invalid action")
-		sp.RecordError(err)
-		return nil, err
 	}
 
 	err = tx.Commit(ctx)
