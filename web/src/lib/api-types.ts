@@ -2673,6 +2673,144 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/v2/export/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get List of Exports
+         * @description Get list of exports
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetListOfExportsOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Start New Export Task
+         * @description Start a new export task
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["StartNewExportTaskInputBody"];
+                };
+            };
+            responses: {
+                /** @description Accepted */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StartNewExportTaskOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/export/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Export Metadata
+         * @description Get export metadata
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Export ID
+                     * @example 7323488942953598976
+                     */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GetExportByIdOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/favorites/": {
         parameters: {
             query?: never;
@@ -7065,6 +7203,30 @@ export interface components {
              */
             type: string;
         };
+        ExportTaskMetadata: {
+            /**
+             * Format: date-time
+             * @description Created at time of export
+             */
+            createdAt: string;
+            /** @description Error of export */
+            error: string | null;
+            /** @description File of export */
+            file: string | null;
+            /** @description ID of export */
+            id: string;
+            /** @description IDs of exported data */
+            ids: string[];
+            /** @description Which data to include */
+            include: string[];
+            /**
+             * Format: int32
+             * @description Progress of export
+             */
+            progress: number;
+            /** @description Status of export */
+            status: string;
+        };
         Favorite: {
             /**
              * Format: date-time
@@ -7194,6 +7356,14 @@ export interface components {
             readonly $schema?: string;
             diary: components["schemas"]["Diary"];
         };
+        GetExportByIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            export: components["schemas"]["ExportTaskMetadata"];
+        };
         GetListByIdOutputBody: {
             /**
              * Format: uri
@@ -7201,6 +7371,14 @@ export interface components {
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
+        };
+        GetListOfExportsOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            exports: components["schemas"]["ExportTaskMetadata"][];
         };
         GetListStatusesOutputBody: {
             /**
@@ -7932,6 +8110,25 @@ export interface components {
              * @description Email of the user
              */
             email: string;
+        };
+        StartNewExportTaskInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            /** @description Which data to include */
+            include: string[];
+            /** @description IDs of the POIs to export */
+            poiIds: string[];
+        };
+        StartNewExportTaskOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             */
+            readonly $schema?: string;
+            task: components["schemas"]["ExportTaskMetadata"];
         };
         Trip: {
             /**
