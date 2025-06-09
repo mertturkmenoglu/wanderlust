@@ -46,7 +46,7 @@ func NewApp() *Application {
 		Mail:       mailSvc,
 		Log:        logger,
 		PLog:       logs.NewPTermLogger(),
-		Tasks:      tasks.New(mailSvc, uploadSvc, database),
+		Tasks:      tasks.New(mailSvc, uploadSvc, database, cacheSvc),
 		Upload:     uploadSvc,
 	}
 }
