@@ -66,21 +66,22 @@ func PTermLogger(next echo.HandlerFunc) echo.HandlerFunc {
 
 func getMethodWithColor(m string) string {
 	tmp := fmt.Sprintf("[%s]", m)
-	if m == http.MethodGet {
+	switch m {
+	case http.MethodGet:
 		return pterm.Green(tmp)
-	} else if m == http.MethodPost {
+	case http.MethodPost:
 		return pterm.Yellow(tmp)
-	} else if m == http.MethodPut {
+	case http.MethodPut:
 		return pterm.Cyan(tmp)
-	} else if m == http.MethodPatch {
+	case http.MethodPatch:
 		return pterm.Magenta(tmp)
-	} else if m == http.MethodDelete {
+	case http.MethodDelete:
 		return pterm.Red(tmp)
-	} else if m == http.MethodHead {
+	case http.MethodHead:
 		return pterm.LightGreen(tmp)
-	} else if m == http.MethodOptions {
+	case http.MethodOptions:
 		return pterm.Blue(tmp)
-	} else {
+	default:
 		return pterm.Gray(tmp)
 	}
 }
