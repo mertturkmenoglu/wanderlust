@@ -7,6 +7,7 @@ var Buckets = []string{
 	"pois",
 	"reviews",
 	"diaries",
+	"exports",
 }
 
 type BucketName string
@@ -18,4 +19,5 @@ const (
 	BUCKET_POIS           BucketName = "pois"
 	BUCKET_REVIEWS        BucketName = "reviews"
 	BUCKET_DIARIES        BucketName = "diaries"
+	BUCKET_EXPORTS        BucketName = "exports"
 )
