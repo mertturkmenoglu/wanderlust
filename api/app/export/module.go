@@ -11,10 +11,6 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-// GET /export/:id/status => Get status of the export task
-// GET /export/:id => Get export data (not the real file, metadata)
-// GET /export/list => List of all exports
-
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		*app,
@@ -44,6 +40,62 @@ func Register(grp *huma.Group, app *core.Application) {
 			defer sp.End()
 
 			res, err := s.startNewExportTask(ctx, input.Body)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Get export metadata
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/export/{id}",
+			Summary:       "Get Export Metadata",
+			Description:   "Get export metadata",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *dto.GetExportByIdInput) (*dto.GetExportByIdOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.get(ctx, input.ID)
+
+			if err != nil {
+				sp.RecordError(err)
+				return nil, err
+			}
+
+			return res, nil
+		},
+	)
+
+	// Get list of exports
+	huma.Register(grp,
+		huma.Operation{
+			Method:        http.MethodGet,
+			Path:          "/export/",
+			Summary:       "Get List of Exports",
+			Description:   "Get list of exports",
+			DefaultStatus: http.StatusOK,
+			Middlewares: huma.Middlewares{
+				middlewares.IsAuth(grp.API),
+			},
+			Security: core.OpenApiJwtSecurity,
+		},
+		func(ctx context.Context, input *struct{}) (*dto.GetListOfExportsOutput, error) {
+			ctx, sp := tracing.NewSpan(ctx)
+			defer sp.End()
+
+			res, err := s.list(ctx)
 
 			if err != nil {
 				sp.RecordError(err)
