@@ -26,6 +26,31 @@ type ExportPoisPayload struct {
 	TaskMetadata dto.ExportTaskMetadata
 }
 
+type PoiOutput struct {
+	ID                 string           `json:"id"`
+	Name               string           `json:"name"`
+	Phone              *string          `json:"phone"`
+	Description        string           `json:"description"`
+	Website            *string          `json:"website"`
+	PriceLevel         int32            `json:"priceLevel"`
+	AccessibilityLevel int32            `json:"accessibilityLevel"`
+	CategoryID         int32            `json:"categoryId"`
+	Amenities          []int32          `json:"amenities"`
+	Hours              dto.PoiHours     `json:"hours"`
+	Images             []dto.Image      `json:"images"`
+	Address            PoiAddressOutput `json:"address"`
+}
+
+type PoiAddressOutput struct {
+	ID         int32   `json:"id"`
+	CityID     int32   `json:"cityId"`
+	Line1      string  `json:"line1"`
+	Line2      *string `json:"line2"`
+	PostalCode *string `json:"postalCode"`
+	Lat        float64 `json:"lat"`
+	Lng        float64 `json:"lng"`
+}
+
 func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) error {
 	p, err := parse[ExportPoisPayload](t.Payload())
 
@@ -35,7 +60,7 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 
 	var completed atomic.Int64
 	var mu sync.RWMutex
-	pois := make([]dto.Poi, 0, len(p.TaskMetadata.IDs))
+	pois := make([]PoiOutput, 0, len(p.TaskMetadata.IDs))
 
 	g, gctx := errgroup.WithContext(ctx)
 	// Limit max workers to 10
@@ -167,7 +192,7 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 func (svc *TasksService) exportPois(
 	ctx context.Context,
 	ids []string,
-) ([]dto.Poi, error) {
+) ([]PoiOutput, error) {
 	dbPois, err := svc.db.Queries.GetPoisByIdsPopulated(ctx, ids)
 
 	if err != nil {
@@ -180,5 +205,38 @@ func (svc *TasksService) exportPois(
 		return nil, err
 	}
 
-	return pois, nil
+	output := make([]PoiOutput, len(pois))
+
+	for i, poi := range pois {
+		amenities := make([]int32, len(poi.Amenities))
+
+		for j, amenity := range poi.Amenities {
+			amenities[j] = int32(amenity.ID)
+		}
+
+		output[i] = PoiOutput{
+			ID:                 poi.ID,
+			Name:               poi.Name,
+			Phone:              poi.Phone,
+			Description:        poi.Description,
+			Website:            poi.Website,
+			PriceLevel:         int32(poi.PriceLevel),
+			AccessibilityLevel: int32(poi.AccessibilityLevel),
+			CategoryID:         int32(poi.CategoryID),
+			Amenities:          amenities,
+			Hours:              poi.Hours,
+			Images:             poi.Images,
+			Address: PoiAddressOutput{
+				ID:         poi.Address.ID,
+				CityID:     poi.Address.CityID,
+				Line1:      poi.Address.Line1,
+				Line2:      poi.Address.Line2,
+				PostalCode: poi.Address.PostalCode,
+				Lat:        poi.Address.Lat,
+				Lng:        poi.Address.Lng,
+			},
+		}
+	}
+
+	return output, nil
 }
