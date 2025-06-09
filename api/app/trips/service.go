@@ -1051,18 +1051,15 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 	if err != nil {
 		sp.RecordError(err)
 
-		pgErr, ok := err.(*pgconn.PgError)
+		var pgErr *pgconn.PgError
 
-		if !ok {
-			return nil, huma.Error500InternalServerError("Failed to create location")
-		}
-
-		if pgErr.Code == db.FOREIGN_KEY_VIOLATION {
-			return nil, huma.Error404NotFound(fmt.Sprintf("Point of Interest with the ID %s not found", body.PoiID))
-		}
-
-		if pgErr.Code == db.UNIQUE_VIOLATION {
-			return nil, huma.Error400BadRequest(fmt.Sprintf("Location with the Point of Interest ID %s already exists", body.PoiID))
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			case db.FOREIGN_KEY_VIOLATION:
+				return nil, huma.Error404NotFound(fmt.Sprintf("Point of Interest with the ID %s not found", body.PoiID))
+			case db.UNIQUE_VIOLATION:
+				return nil, huma.Error400BadRequest(fmt.Sprintf("Location with the Point of Interest ID %s already exists", body.PoiID))
+			}
 		}
 
 		return nil, huma.Error400BadRequest("Failed to create location")
