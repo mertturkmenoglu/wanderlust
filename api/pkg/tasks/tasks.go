@@ -3,6 +3,7 @@ package tasks
 import (
 	"encoding/json"
 	"log"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/logs"
@@ -18,12 +19,13 @@ type TasksService struct {
 	scheduler *asynq.Scheduler
 	mailSvc   *mail.MailService
 	uploadSvc *upload.UploadService
+	cache     *cache.Cache
 	db        *db.Db
 	addr      string
 	logger    *pterm.Logger
 }
 
-func New(mailSvc *mail.MailService, upload *upload.UploadService, db *db.Db) *TasksService {
+func New(mailSvc *mail.MailService, upload *upload.UploadService, db *db.Db, cacheSvc *cache.Cache) *TasksService {
 	return &TasksService{
 		client: asynq.NewClient(asynq.RedisClientOpt{
 			Addr: cfg.Env.RedisAddr,
@@ -35,6 +37,7 @@ func New(mailSvc *mail.MailService, upload *upload.UploadService, db *db.Db) *Ta
 		uploadSvc: upload,
 		addr:      cfg.Env.RedisAddr,
 		db:        db,
+		cache:     cacheSvc,
 		logger:    logs.NewPTermLogger(),
 	}
 }
@@ -50,6 +53,7 @@ func (t *TasksService) NewMux() *asynq.ServeMux {
 	mux.HandleFunc(TypeDeleteDiaryMedia, t.HandleDeleteDiaryMediaTask)
 	mux.HandleFunc(TypeFindExpiredTripInvites, t.FindExpiredTripInvitesTask)
 	mux.HandleFunc(TypeDeleteExpiredTripInvite, t.DeleteExpiredTripInviteTask)
+	mux.HandleFunc(TypeExportPois, t.ExportPoisTask)
 
 	return mux
 }
