@@ -58,3 +58,23 @@ type StartNewExportTaskOutput struct {
 type StartNewExportTaskOutputBody struct {
 	Task ExportTaskMetadata `json:"task"`
 }
+
+type GetExportByIdInput struct {
+	ID string `path:"id" example:"7323488942953598976" required:"true" doc:"Export ID"`
+}
+
+type GetExportByIdOutput struct {
+	Body GetExportByIdOutputBody
+}
+
+type GetExportByIdOutputBody struct {
+	Export ExportTaskMetadata `json:"export"`
+}
+
+type GetListOfExportsOutput struct {
+	Body GetListOfExportsOutputBody
+}
+
+type GetListOfExportsOutputBody struct {
+	Exports []ExportTaskMetadata `json:"exports"`
+}
