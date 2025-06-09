@@ -9,6 +9,7 @@ import (
 	"wanderlust/app/cities"
 	"wanderlust/app/collections"
 	"wanderlust/app/diaries"
+	"wanderlust/app/export"
 	"wanderlust/app/favorites"
 	"wanderlust/app/health"
 	"wanderlust/app/images"
@@ -30,6 +31,7 @@ var Modules = []core.RegisterFunc{
 	cities.Register,
 	collections.Register,
 	diaries.Register,
+	export.Register,
 	favorites.Register,
 	health.Register,
 	images.Register,
