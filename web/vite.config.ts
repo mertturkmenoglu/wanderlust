@@ -17,6 +17,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
   },
+  // https://github.com/vitejs/vite/discussions/17738
+  optimizeDeps: {
+    exclude: ['node_modules/.cache'],
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
