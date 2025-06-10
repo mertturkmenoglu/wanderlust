@@ -25,9 +25,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     const search = useSearch({ strict: false });
 
     return (
-      <div>
+      <div className="min-h-screen flex flex-col">
         <Header />
-        <Outlet />
+        <main className="flex-1">
+          <Outlet />
+        </main>
         <Footer />
         <TanStackRouterDevtools />
         <TanstackQueryLayout />
