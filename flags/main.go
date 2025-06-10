@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/subtle"
 	"encoding/json"
 	"io"
 	"log"
@@ -75,7 +76,7 @@ func main() {
 			return
 		}
 
-		if apiKeyHeader != os.Getenv("API_KEY") {
+		if subtle.ConstantTimeCompare([]byte(apiKeyHeader), []byte(os.Getenv("API_KEY"))) != 1 {
 			http.Error(w, "Invalid API key", http.StatusForbidden)
 			return
 		}
