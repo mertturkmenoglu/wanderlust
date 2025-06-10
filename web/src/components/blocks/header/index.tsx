@@ -15,7 +15,7 @@ export default function Header({ className, ...props }: Readonly<Props>) {
   return (
     <header
       className={cn(
-        'max-w-7xl mt-8 flex items-center justify-between mx-auto',
+        'max-w-7xl mt-8 flex items-center justify-between mx-auto w-full',
         className,
       )}
       {...props}
