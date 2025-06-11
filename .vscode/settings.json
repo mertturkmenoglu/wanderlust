@@ -12,7 +12,8 @@
     "@radix-ui",
     "^lucide-react/dist/lucide-react.suffixed$",
     "react-day-picker",
-    "@mdxeditor/editor"
+    "@mdxeditor/editor",
+    "radix-ui"
   ],
   "oxc.enable": true
 }
