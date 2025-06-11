@@ -30,7 +30,7 @@ func Hash(s string) (string, error) {
 	salt, err := random.Bytes(saltLength)
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("generating random salt: %w", err)
 	}
 
 	hash := argon2.Key([]byte(s), salt, iterations, memory, parallelism, keyLength)
@@ -57,7 +57,7 @@ func Verify(plain string, hashed string) (bool, error) {
 	salt, hash, err := decode(hashed)
 
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("verifying hash: %w", err)
 	}
 
 	otherHash := argon2.Key([]byte(plain), salt, iterations, memory, parallelism, keyLength)
@@ -83,7 +83,7 @@ func decode(s string) ([]byte, []byte, error) {
 	_, err := fmt.Sscanf(parts[2], "v=%d", &version)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("decoding version: %w", err)
 	}
 
 	if version != argon2.Version {
@@ -96,18 +96,18 @@ func decode(s string) ([]byte, []byte, error) {
 	_, err = fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &mem, &iter, &parallel)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("decoding params: %w", err)
 	}
 
 	salt, err := base64.RawStdEncoding.Strict().DecodeString(parts[4])
 
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("decoding salt: %w", err)
 	}
 
 	hash, err := base64.RawStdEncoding.Strict().DecodeString(parts[5])
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("decoding hash: %w", err)
 	}
 
 	return salt, hash, nil
