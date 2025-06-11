@@ -3,6 +3,7 @@ package activities
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/tracing"
 )
@@ -36,16 +37,22 @@ func (svc *ActivityService) Add(ctx context.Context, activity Activity) error {
 
 	if err != nil {
 		sp.RecordError(err)
-		return err
+		return fmt.Errorf("marshaling activity: %w", err)
 	}
 
 	_, err = svc.cache.Client.LPush(ctx, key, serialized).Result()
 
 	if err != nil {
 		sp.RecordError(err)
-		return err
+		return fmt.Errorf("pushing activity to redis: %w", err)
 	}
 
 	_, err = svc.cache.Client.LTrim(ctx, key, 0, 100).Result()
-	return err
+
+	if err != nil {
+		sp.RecordError(err)
+		return fmt.Errorf("trimming activity list: %w", err)
+	}
+
+	return nil
 }
