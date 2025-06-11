@@ -3,9 +3,9 @@ package activities
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/tracing"
 )
 
 type ActivityService struct {
@@ -25,10 +25,12 @@ type Activity struct {
 }
 
 func (svc *ActivityService) Add(ctx context.Context, activity Activity) error {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
 	key := cache.KeyBuilder("activities", activity.UserID)
+
+	if activity.Payload == nil {
+		err := errors.New("payload is nil")
+		return fmt.Errorf("adding activity: %w", err)
+	}
 
 	serialized, err := json.Marshal(map[string]any{
 		"type":    activity.Type,
@@ -36,21 +38,18 @@ func (svc *ActivityService) Add(ctx context.Context, activity Activity) error {
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return fmt.Errorf("marshaling activity: %w", err)
 	}
 
 	_, err = svc.cache.Client.LPush(ctx, key, serialized).Result()
 
 	if err != nil {
-		sp.RecordError(err)
 		return fmt.Errorf("pushing activity to redis: %w", err)
 	}
 
 	_, err = svc.cache.Client.LTrim(ctx, key, 0, 100).Result()
 
 	if err != nil {
-		sp.RecordError(err)
 		return fmt.Errorf("trimming activity list: %w", err)
 	}
 
