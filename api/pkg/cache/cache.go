@@ -37,14 +37,14 @@ func (c *Cache) ReadObj(ctx context.Context, key string, v any) error {
 
 	if err != nil {
 		sp.RecordError(err)
-		return err
+		return fmt.Errorf("getting key %s: %w", key, err)
 	}
 
 	err = json.Unmarshal([]byte(res), v)
 
 	if err != nil {
 		sp.RecordError(err)
-		return err
+		return fmt.Errorf("unmarshaling key %s: %w", key, err)
 	}
 
 	return nil
@@ -58,10 +58,17 @@ func (c *Cache) SetObj(ctx context.Context, key string, data any, exp time.Durat
 
 	if err != nil {
 		sp.RecordError(err)
-		return err
+		return fmt.Errorf("marshaling key %s: %w", key, err)
 	}
 
-	return c.Set(ctx, key, string(serialized), exp).Err()
+	err = c.Set(ctx, key, string(serialized), exp).Err()
+
+	if err != nil {
+		sp.RecordError(err)
+		return fmt.Errorf("setting key %s: %w", key, err)
+	}
+
+	return nil
 }
 
 func (c *Cache) FmtKey(name string, id string) string {
