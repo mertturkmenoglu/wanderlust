@@ -1,0 +1,90 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "react",
+    "unicorn",
+    "typescript",
+    "oxc",
+    "react-perf",
+    "promise",
+    "import",
+    "jsdoc",
+    "jsx-a11y",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "style": "error",
+    "restriction": "error",
+    "nursery": "error"
+  },
+  "env": {
+    "browser": true
+  },
+  "ignorePatterns": [
+    "**/node_modules",
+    "**/public",
+    "**/*.d.ts",
+    "src/routeTree.gen.ts",
+    "src/components/ui/*.tsx",
+    "src/lib/*.ts",
+    "src/reportWebVitals.ts",
+    "prettier.config.js",
+    "vite.config.ts"
+  ],
+  "rules": {
+    "typescript/no-empty-interface": "error",
+    "jsx-a11y/alt-text": "error",
+    "react/jsx-key": "error",
+    "unicorn/filename-case": "allow",
+    "sort-imports": "allow",
+    "max-lines-per-function": "allow",
+    "no-undef": "error",
+    "eslint/func-style": [
+      "error",
+      "declaration",
+      { "overrides": { "namedExports": "ignore" } }
+    ],
+    "eslint/max-depth": [
+      "error",
+      {
+        "max": 4
+      }
+    ],
+    "typescript/explicit-function-return-type": "allow",
+    "oxc/no-async-await": "allow",
+    "sort-keys": "allow",
+    "no-ternary": "allow",
+    "yoda": "allow",
+    "no-magic-numbers": "allow",
+    "import/consistent-type-specifier-style": "allow",
+    "typescript/consistent-type-definitions": "allow",
+    "react/jsx-filename-extension": [
+      "error",
+      { "extensions": [".jsx", ".tsx"] }
+    ],
+    "react/react-in-jsx-scope": "allow",
+    "import/no-named-as-default": "allow",
+    "react-perf/jsx-no-new-function-as-prop": "allow",
+    "import/exports-last": "allow",
+    "react-perf/jsx-no-new-object-as-prop": "allow",
+    "oxc/no-rest-spread-properties": "allow",
+    "max-nested-callbacks": "allow",
+    "oxc/no-optional-chaining": "allow",
+    "no-undefined": "allow",
+    "unicorn/no-null": "allow",
+    "typescript/consistent-indexed-object-style": "error",
+    "react/no-array-index-key": "allow",
+    "import/max-dependencies": "allow",
+    "react-perf/jsx-no-jsx-as-prop": "allow",
+    "import/no-namespace": "allow",
+    "react-perf/jsx-no-new-array-as-prop": "allow",
+    "import/no-unassigned-import": "allow",
+    "no-alert": "allow",
+    "no-negated-condition": "allow",
+    "max-lines": "allow"
+  }
+}
