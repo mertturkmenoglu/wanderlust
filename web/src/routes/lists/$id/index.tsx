@@ -18,9 +18,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { AuthContext } from '@/providers/auth-provider';
-import { Separator } from '@radix-ui/react-dropdown-menu';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import {
   EllipsisVerticalIcon,
