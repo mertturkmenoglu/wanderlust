@@ -3,6 +3,14 @@ package pagination
 import "wanderlust/pkg/dto"
 
 func GetOffset(params dto.PaginationQueryParams) int32 {
+	if params.Page <= 0 || params.PageSize <= 0 {
+		return 0
+	}
+
+	if params.PageSize > 1000 || params.Page > 1000 {
+		return 0
+	}
+
 	return (params.Page - 1) * params.PageSize
 }
 
