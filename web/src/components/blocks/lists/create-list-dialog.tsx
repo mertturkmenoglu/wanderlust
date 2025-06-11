@@ -1,4 +1,4 @@
-import InputInfo from '@/components/kit/input-info';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -34,7 +34,7 @@ export function CreateListDialog({
   const [name, setName] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const isErr = name.length > 128 || name.length < 1;
+  const isErr = name.length > 128 || name.length === 0;
   const showErr = isDirty && isErr;
 
   const mutation = api.useMutation('post', '/api/v2/lists/', {

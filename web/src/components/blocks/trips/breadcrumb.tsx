@@ -8,11 +8,13 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Link } from '@tanstack/react-router';
 
+type TItem = {
+  name: string;
+  href: string;
+};
+
 type Props = {
-  items: Array<{
-    name: string;
-    href: string;
-  }>;
+  items: TItem[];
 };
 
 export function Breadcrumb({ items }: Readonly<Props>) {

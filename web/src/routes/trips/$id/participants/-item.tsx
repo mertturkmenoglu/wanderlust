@@ -1,4 +1,4 @@
-import UserImage from '@/components/blocks/user-image';
+import { UserImage } from '@/components/blocks/user-image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {

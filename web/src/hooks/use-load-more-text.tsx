@@ -7,9 +7,13 @@ export function useLoadMoreText({
   isFetchingNextPage,
   hasNextPage,
 }: Indicators) {
-  return isFetchingNextPage
-    ? 'Loading more...'
-    : hasNextPage
-      ? 'Load More'
-      : 'Nothing more to load';
+  if (isFetchingNextPage) {
+    return 'Loading more...';
+  }
+
+  if (hasNextPage) {
+    return 'Load More';
+  }
+
+  return 'Nothing more to load';
 }

@@ -1,5 +1,5 @@
-import DashboardActions from '@/components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardActions } from '@/components/blocks/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { collectionsCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { buttonVariants } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_admin/dashboard/collections/')({
   component: RouteComponent,
-  loader: async ({ context }) => {
+  loader: ({ context }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/collections/'),
     );

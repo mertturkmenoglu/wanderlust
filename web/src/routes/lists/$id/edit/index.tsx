@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import BackLink from '@/components/blocks/back-link';
-import InputInfo from '@/components/kit/input-info';
+import { AppMessage } from '@/components/blocks/app-message';
+import { BackLink } from '@/components/blocks/back-link';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -18,12 +18,12 @@ import { toast } from 'sonner';
 
 export const Route = createFileRoute('/lists/$id/edit/')({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
+  beforeLoad: ({ context }) => {
     if (!context.auth.user) {
       throw new Error('You are not signed in');
     }
   },
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/lists/{id}', {
         params: {
@@ -53,7 +53,7 @@ function RouteComponent() {
   });
   const [isPublic, setIsPublic] = useState(list.isPublic);
   const [isListDirty, setIsListDirty] = useState(false);
-  const isErr = name.length > 128 || name.length < 1;
+  const isErr = name.length > 128 || name.length === 0;
   const showErr = isListDirty && isErr;
 
   const updateListMutation = api.useMutation('patch', '/api/v2/lists/{id}', {

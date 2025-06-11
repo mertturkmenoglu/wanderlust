@@ -10,7 +10,7 @@ import {
 import { useCallback } from 'react';
 import { useHitsPerPage } from 'react-instantsearch';
 
-export default function HitsPerPage() {
+export function HitsPerPage() {
   const { items, refine } = useHitsPerPage({
     items: [
       { label: '10 items', value: 10, default: true },

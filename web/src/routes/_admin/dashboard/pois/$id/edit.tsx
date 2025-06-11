@@ -1,5 +1,5 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import Spinner from '@/components/kit/spinner';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { Spinner } from '@/components/kit/spinner';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';

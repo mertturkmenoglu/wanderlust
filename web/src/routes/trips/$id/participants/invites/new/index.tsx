@@ -1,5 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
-import Spinner from '@/components/kit/spinner';
+import { AppMessage } from '@/components/blocks/app-message';
+import { Spinner } from '@/components/kit/spinner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { api } from '@/lib/api';

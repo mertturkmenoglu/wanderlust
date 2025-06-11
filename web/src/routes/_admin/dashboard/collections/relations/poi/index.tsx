@@ -1,5 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { AppMessage } from '@/components/blocks/app-message';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -138,8 +138,9 @@ function Content() {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2">
-        {query.data.collections.map(() => (
+        {query.data.collections.map((c) => (
           <div
+            key={c.id}
             // key={`${item.id}-${item.}`}
             className="border border-border p-6 rounded-md"
           >

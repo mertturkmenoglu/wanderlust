@@ -10,5 +10,5 @@ export const Route = createFileRoute('/trips/planner/')({
 });
 
 function RouteComponent() {
-  return <div></div>;
+  return <div />;
 }

@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
-import Spinner from '@/components/kit/spinner';
+import { Spinner } from '@/components/kit/spinner';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
@@ -33,7 +33,9 @@ function Content() {
     {
       initialPageParam: 1,
       pageParamName: 'page',
-      getNextPageParam: (lastPage) =>
+      getNextPageParam: (lastPage: {
+        pagination: { hasNext: boolean; page: number };
+      }) =>
         lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : undefined,
     },
   );

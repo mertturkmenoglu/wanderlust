@@ -10,5 +10,5 @@ export const Route = createFileRoute('/settings/')({
 });
 
 function RouteComponent() {
-  return <></>;
+  return null;
 }

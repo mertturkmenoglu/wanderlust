@@ -31,7 +31,7 @@ import { PlusIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 
-export default function AddToListButton() {
+export function AddToListButton() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
   const auth = useContext(AuthContext);

@@ -9,11 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function CollapsibleText({
-  text,
-  className,
-  charLimit = 200,
-}: Props) {
+export function CollapsibleText({ text, className, charLimit = 200 }: Props) {
   const [showMore, setShowMore] = useState(false);
   const [showButton] = useState(() => text.length > charLimit);
   const paragraphs = useParagraphs(text, charLimit, showMore);

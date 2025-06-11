@@ -1,15 +1,15 @@
 import { isBefore } from 'date-fns';
 import { z } from 'zod';
 
-export const visibility = ['public', 'friends', 'private'] as const;
+const visibility = ['public', 'friends', 'private'] as const;
 
 export type Visibility = (typeof visibility)[number];
 
-export const visibilityOptions: Array<{
+const visibilityOptions: {
   label: string;
   value: Visibility;
   info: string;
-}> = [
+}[] = [
   {
     label: 'Public',
     value: 'public',
@@ -27,7 +27,7 @@ export const visibilityOptions: Array<{
   },
 ];
 
-export const schema = z
+const schema = z
   .object({
     title: z.string().min(1).max(128),
     description: z.string().min(0).max(1024),
@@ -66,10 +66,12 @@ export const schema = z
     }
   });
 
-export function asVisibility(v: string): Visibility {
+function asVisibility(v: string): Visibility {
   if (v === 'public' || v === 'friends' || v === 'private') {
     return v;
   }
 
   throw new Error('Invalid visibility');
 }
+
+export { asVisibility, schema, visibilityOptions };

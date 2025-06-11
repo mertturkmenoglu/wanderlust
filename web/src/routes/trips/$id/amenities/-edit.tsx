@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import InputError from '@/components/kit/input-error';
-import Spinner from '@/components/kit/spinner';
+import { AppMessage } from '@/components/blocks/app-message';
+import { InputError } from '@/components/kit/input-error';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';

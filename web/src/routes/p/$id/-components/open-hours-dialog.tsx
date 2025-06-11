@@ -59,15 +59,15 @@ function keyToReadableDay(key: string): string {
   }
 }
 
-export default function OpenHoursDialog() {
+export function OpenHoursDialog() {
   const route = getRouteApi('/p/$id/');
   const {
     poi: { hours: data },
   } = route.useLoaderData();
   const allKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-  const keys = allKeys.filter((k) => !!data[k]);
+  const keys = new Set(allKeys.filter((k) => !!data[k]));
   const moo = allKeys.map((key) => {
-    if (!keys.includes(key)) {
+    if (!keys.has(key)) {
       return {
         readable: keyToReadableDay(key),
         info: 'Closed',

@@ -1,4 +1,4 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { poisCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { Separator } from '@/components/ui/separator';

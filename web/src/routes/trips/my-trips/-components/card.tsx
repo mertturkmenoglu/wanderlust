@@ -1,3 +1,4 @@
+// oxlint-disable no-nested-ternary
 import {
   Tooltip,
   TooltipContent,

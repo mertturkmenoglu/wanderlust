@@ -6,7 +6,7 @@ import { InfoCardGroup } from './-components/info-card-group';
 
 export const Route = createFileRoute('/u/$username/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/users/{username}/top', {
         params: {

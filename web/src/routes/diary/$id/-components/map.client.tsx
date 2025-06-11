@@ -14,7 +14,7 @@ type Props = {
 export function Map({ locations }: Props) {
   const fst = locations[0];
   const center: LatLngTuple =
-    fst !== undefined ? [fst.poi.address.lat, fst.poi.address.lng] : [0, 0];
+    fst === undefined ? [0, 0] : [fst.poi.address.lat, fst.poi.address.lng];
 
   return (
     <div className="mt-4">
@@ -22,7 +22,7 @@ export function Map({ locations }: Props) {
         center={center}
         zoom={14}
         minZoom={4}
-        scrollWheelZoom={true}
+        scrollWheelZoom
         style={{
           height: '400px',
           marginTop: '16px',

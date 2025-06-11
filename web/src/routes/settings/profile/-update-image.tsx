@@ -20,12 +20,7 @@ type Props = {
   action: 'profile' | 'banner';
 };
 
-export default function UpdateImage({
-  image,
-  fallbackImage,
-  fullName,
-  action,
-}: Props) {
+export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
   const [preview, setPreview] = useState(() =>
     image === null ? fallbackImage : image,
   );
@@ -33,7 +28,7 @@ export default function UpdateImage({
   const mutation = api.useMutation('post', '/api/v2/users/image/{type}', {
     onSuccess: () => {
       toast.success('Image updated');
-      window.location.reload();
+      globalThis.window.location.reload();
     },
   });
 
@@ -70,7 +65,7 @@ export default function UpdateImage({
                 )}
               >
                 <UploadIcon className="size-4 text-primary" />
-                {!file ? `Upload a ${action} image` : 'Change selection'}
+                {file ? 'Change selection' : `Upload a ${action} image`}
               </label>
               <div className="text-xs text-muted-foreground mt-2">
                 PNG, JPEG, GIF, and WebP are supported. Maximum 5MB.

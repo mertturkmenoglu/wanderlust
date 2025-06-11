@@ -5,14 +5,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import type { components } from '@/lib/api-types';
 import { UserIcon } from 'lucide-react';
-import MenuContent from './menu-content';
+import { MenuContent } from './menu-content';
 import { useShortName } from './use-short-name';
 
 type Props = {
   auth: components['schemas']['GetMeOutputBody'];
 };
 
-export default function Menu({ auth }: Readonly<Props>) {
+export function Menu({ auth }: Readonly<Props>) {
   const firstName = auth.fullName.split(' ')[0] ?? '';
   const shortName = useShortName(firstName, 20);
 

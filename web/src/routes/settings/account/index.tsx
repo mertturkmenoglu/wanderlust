@@ -1,5 +1,5 @@
-import FacebookIcon from '@/components/icons/facebook';
-import GoogleIcon from '@/components/icons/google';
+import { FacebookIcon } from '@/components/icons/facebook';
+import { GoogleIcon } from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,7 +26,7 @@ function RouteComponent() {
         <div className="col-span-2 flex">
           <Input
             id="name"
-            disabled={true}
+            disabled
             value={auth.user?.email}
           />
         </div>
@@ -35,7 +35,7 @@ function RouteComponent() {
         <div className="col-span-2 flex">
           <Input
             id="username"
-            disabled={true}
+            disabled
             value={auth.user?.username}
           />
         </div>
@@ -44,7 +44,7 @@ function RouteComponent() {
         <div className="col-span-2 flex">
           <Input
             id="password"
-            disabled={true}
+            disabled
             value="********"
           />
           <Button

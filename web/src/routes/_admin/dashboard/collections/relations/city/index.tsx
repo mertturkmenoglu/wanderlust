@@ -1,4 +1,4 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { createFileRoute } from '@tanstack/react-router';
 

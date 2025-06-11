@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import CollapsibleText from '@/components/blocks/collapsible-text';
-import PoiCard from '@/components/blocks/poi-card';
+import { AppMessage } from '@/components/blocks/app-message';
+import { CollapsibleText } from '@/components/blocks/collapsible-text';
+import { PoiCard } from '@/components/blocks/poi-card';
 import {
   Accordion,
   AccordionContent,
@@ -56,7 +56,8 @@ function RouteComponent() {
   const defaultOpenDays = useMemo(() => {
     const indices: number[] = [];
 
-    for (let i = 0; i < days.length; i++) {
+    for (let i = 0; i < days.length; i += 1) {
+      // oxlint-disable-next-line no-non-null-assertion
       if (days[i]!.locations.length > 0) {
         indices.push(i);
       }
@@ -140,7 +141,7 @@ function RouteComponent() {
                       className="flex items-center gap-4 ml-2"
                     >
                       <div className="flex items-center self-start gap-2 mt-20">
-                        <div className="min-w-8 w-8 h-1 bg-border"></div>
+                        <div className="min-w-8 w-8 h-1 bg-border" />
                         <div className="text-lg text-muted-foreground">
                           {formatDate(loc.scheduledTime, 'HH:mm')}
                         </div>

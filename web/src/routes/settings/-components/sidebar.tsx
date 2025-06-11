@@ -26,7 +26,7 @@ const items = [
   },
 ] as const satisfies Item[];
 
-export default function Sidebar() {
+export function Sidebar() {
   const isDev = import.meta.env.DEV;
   const auth = useContext(AuthContext);
 

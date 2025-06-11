@@ -5,7 +5,7 @@ type Props = {
   className?: string;
 };
 
-export default function Verified({ className }: Props) {
+export function Verified({ className }: Props) {
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <BadgeCheckIcon className="size-6 text-primary" />

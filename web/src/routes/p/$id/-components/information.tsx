@@ -1,7 +1,9 @@
+// oxlint-disable prefer-optional-catch-binding
+// oxlint-disable no-unused-vars
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { ExternalLinkIcon } from 'lucide-react';
-import OpenHoursDialog from './open-hours-dialog';
+import { OpenHoursDialog } from './open-hours-dialog';
 
 type Props = {
   className?: string;
@@ -11,7 +13,7 @@ function useWebsiteHostname(s: string): [string, boolean] {
   try {
     const url = new URL(s);
     return [url.hostname, true];
-  } catch (e) {
+  } catch (error) {
     return ['', false];
   }
 }
@@ -63,7 +65,7 @@ export function Information({ className }: Props) {
           </>
         )}
 
-        <div></div>
+        <div />
         <div className="text-right">
           <OpenHoursDialog />
         </div>

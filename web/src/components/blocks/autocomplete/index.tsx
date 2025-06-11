@@ -5,8 +5,8 @@ import {
 } from '@/hooks/use-autocomplete';
 import { ipx } from '@/lib/ipx';
 import { Link } from '@tanstack/react-router';
-import CustomSearchBox from '../custom-search-box';
-import Card, { type AutocompleteItemInfo } from './card';
+import { CustomSearchBox } from '../custom-search-box';
+import { Card, type AutocompleteItemInfo } from './card';
 
 type Props = {
   showAdvancedSearch?: boolean;
@@ -43,7 +43,7 @@ export function Autocomplete({
         </div>
       )}
 
-      <CustomSearchBox isSearchOnType={true} />
+      <CustomSearchBox isSearchOnType />
 
       {showDropdown && (
         <div className="my-2 rounded-lg border border-border">

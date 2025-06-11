@@ -5,7 +5,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { type FormInput, FormSchema } from './-schema';
 
-export function useForgotPasswordForm() {
+function useForgotPasswordForm() {
   return useForm<FormInput>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -14,7 +14,7 @@ export function useForgotPasswordForm() {
   });
 }
 
-export function useForgotPasswordMutation() {
+function useForgotPasswordMutation() {
   const navigate = useNavigate();
 
   return useMutation({
@@ -27,8 +27,13 @@ export function useForgotPasswordMutation() {
       });
     },
     onSuccess: (_, variables) => {
-      window.sessionStorage.setItem('forgot-password-email', variables.email);
+      globalThis.window.sessionStorage.setItem(
+        'forgot-password-email',
+        variables.email,
+      );
       navigate({ to: '/forgot-password/reset' });
     },
   });
 }
+
+export { useForgotPasswordForm, useForgotPasswordMutation };

@@ -18,7 +18,7 @@ type Props = {
   id: string;
 };
 
-export default function NewImageDialog({ id }: Props) {
+export function NewImageDialog({ id }: Props) {
   const invalidator = useInvalidator();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -59,7 +59,7 @@ export default function NewImageDialog({ id }: Props) {
         </DialogHeader>
         <div className="flex flex-col items-center justify-center space-x-2 text-sm gap-4">
           {preview === null ? (
-            <div className="rounded-md w-80 aspect-video bg-muted"></div>
+            <div className="rounded-md w-80 aspect-video bg-muted" />
           ) : (
             <img
               src={preview}
@@ -78,7 +78,7 @@ export default function NewImageDialog({ id }: Props) {
               )}
             >
               <UploadIcon className="size-4 text-primary" />
-              {!file ? `Upload an image` : 'Change selection'}
+              {file ? 'Change selection' : 'Upload an image'}
             </label>
             <div className="text-xs text-muted-foreground mt-2">
               PNG, JPEG, GIF, and WebP are supported. Maximum 5MB.

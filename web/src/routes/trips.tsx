@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/trips')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (!auth.user) {
       throw redirect({
         to: '/',

@@ -1,4 +1,4 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Captions from 'yet-another-react-lightbox/plugins/captions';
 
-export default function Media() {
+export function Media() {
   const route = getRouteApi('/diary/$id/');
   const { diary } = route.useLoaderData();
   const [open, setOpen] = useState(false);
@@ -26,6 +26,7 @@ export default function Media() {
         )}
         {diary.images.map((m, i) => (
           <button
+            type="button"
             key={m.url}
             className={cn('aspect-square md:aspect-video size-48 w-full', {})}
             onClick={() => {
@@ -40,6 +41,7 @@ export default function Media() {
               className={cn(
                 'aspect-square md:aspect-video object-cover size-48 rounded-md w-full',
               )}
+              alt=""
             />
           </button>
         ))}

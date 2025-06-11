@@ -1,5 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import PoiCard from '@/components/blocks/poi-card';
+// oxlint-disable avoid-new
+import { AppMessage } from '@/components/blocks/app-message';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { tileUrl } from '@/lib/map';
@@ -8,21 +9,21 @@ import { Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useGeoSearch } from 'react-instantsearch';
 import { MapContainer, TileLayer } from 'react-leaflet';
-import GeoSearch from './geo-search';
+import { GeoSearch } from './geo-search';
 
-export default function Container() {
+export function Container() {
   const { items } = useGeoSearch();
 
   const query = useQuery({
     queryKey: ['geolocation-permission'],
-    queryFn: async () => {
-      return new Promise<[number, number]>((res, rej) => {
+    queryFn: () => {
+      return new Promise<[number, number]>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
-            return res([pos.coords.latitude, pos.coords.longitude]);
+            return resolve([pos.coords.latitude, pos.coords.longitude]);
           },
           (err) => {
-            return rej(err.message);
+            return reject(err.message);
           },
           {
             timeout: 100_000,
@@ -71,7 +72,7 @@ export default function Container() {
         zoom={14}
         minZoom={4}
         className="mt-4"
-        scrollWheelZoom={true}
+        scrollWheelZoom
         style={{
           height: '600px',
         }}
@@ -91,7 +92,7 @@ export default function Container() {
             className="mt-4"
           />
         )}
-        {items.length !== 0 && (
+        {items.length > 0 && (
           <ScrollArea className="mt-4 h-[600px]">
             <div className="grid md:grid-cols-2 gap-8 pr-4">
               {items.map((item) => (

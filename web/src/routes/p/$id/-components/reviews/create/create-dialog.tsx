@@ -1,5 +1,5 @@
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Rating } from '@/components/kit/rating';
 import {
   AlertDialog,
@@ -80,9 +80,6 @@ function Content() {
       form.reset();
       setRating(0);
       toast.success('Review added');
-    },
-    onError: async (err) => {
-      toast.error(err.title ?? 'Something went wrong');
     },
   });
 

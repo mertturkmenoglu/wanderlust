@@ -9,7 +9,7 @@ type Props = {
   lefty?: boolean;
 };
 
-export default function ActionBanner({
+export function ActionBanner({
   className,
   image,
   alt,

@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function Actions({ index, className }: Props) {
+export function Actions({ index, className }: Props) {
   const form = useFormContext<FormInput>();
   const array = useFieldArray({
     control: form.control,
@@ -19,7 +19,7 @@ export default function Actions({ index, className }: Props) {
   const location = locations[index];
 
   if (location === undefined) {
-    return <></>;
+    return null;
   }
 
   return (

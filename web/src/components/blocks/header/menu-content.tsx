@@ -19,7 +19,7 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
-import Logout from './logout';
+import { Logout } from './logout';
 import { useShortName } from './use-short-name';
 
 type Props = {
@@ -27,7 +27,7 @@ type Props = {
   username: string;
 };
 
-export default function MenuContent({ fullName, username }: Readonly<Props>) {
+export function MenuContent({ fullName, username }: Readonly<Props>) {
   const shortName = useShortName(fullName, 25);
 
   return (

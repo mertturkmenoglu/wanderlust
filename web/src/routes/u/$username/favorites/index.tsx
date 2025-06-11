@@ -1,10 +1,10 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { api } from '@/lib/api';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
-import FavoriteCard from './-favorite-card';
+import { FavoriteCard } from './-favorite-card';
 
 export const Route = createFileRoute('/u/$username/favorites/')({
   component: RouteComponent,
@@ -27,7 +27,9 @@ function RouteComponent() {
     },
     {
       initialPageParam: 1,
-      getNextPageParam: (lastPage) => {
+      getNextPageParam: (lastPage: {
+        pagination: { hasNext: boolean; page: number };
+      }) => {
         if (!lastPage.pagination.hasNext) {
           return null;
         }

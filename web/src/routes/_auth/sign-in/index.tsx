@@ -4,7 +4,7 @@ import { SignInCard } from './-card';
 
 export const Route = createFileRoute('/_auth/sign-in/')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (auth.user) {
       throw redirect({
         to: '/',
@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_auth/sign-in/')({
     }
   },
   validateSearch: z.object({
+    // oxlint-disable-next-line prefer-await-to-then
     signInModal: z.boolean().optional().catch(false),
   }),
 });

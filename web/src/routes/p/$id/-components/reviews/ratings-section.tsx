@@ -1,4 +1,4 @@
-import FormattedRating from '@/components/kit/formatted-rating';
+import { FormattedRating } from '@/components/kit/formatted-rating';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
@@ -50,7 +50,7 @@ export function RatingsSection({ className }: Props) {
             <span className="font-bold text-6xl text-primary">{rating}</span>
             <div>
               <FormattedRating
-                rating={parseFloat(rating)}
+                rating={Number.parseFloat(rating)}
                 votes={poi.totalVotes}
                 showNumbers={false}
               />

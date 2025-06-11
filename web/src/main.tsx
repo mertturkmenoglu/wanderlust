@@ -7,16 +7,16 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 
-import '@mdxeditor/editor/style.css';
 import 'instantsearch.css/themes/reset.css';
 import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
-import Spinner from './components/kit/spinner.tsx';
-import AuthContextProvider, {
+import { Spinner } from './components/kit/spinner.tsx';
+import {
   AuthContext,
+  AuthContextProvider,
 } from './providers/auth-provider.tsx';
 import {
   FlagsContext,
@@ -30,7 +30,9 @@ const router = createRouter({
   routeTree,
   context: {
     ...TanstackQuery.getContext(),
+    // oxlint-disable-next-line no-non-null-assertion
     auth: undefined!,
+    // oxlint-disable-next-line no-non-null-assertion
     flags: undefined!,
   },
   defaultPreload: false,
@@ -77,7 +79,7 @@ function InnerApp() {
 }
 
 // Render the app
-const rootElement = document.getElementById('app');
+const rootElement = globalThis.document.querySelector('#app');
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(

@@ -8,7 +8,7 @@ type Props = {
   showNumbers?: boolean;
 };
 
-export default function FormattedRating({
+export function FormattedRating({
   rating,
   votes,
   starsClassName,
@@ -27,9 +27,11 @@ export default function FormattedRating({
     <div className="flex items-center space-x-2">
       <Rating
         id={id}
-        onChange={() => {}}
+        onChange={() => {
+          // do nothing
+        }}
         defaultValue={rating}
-        disabled={true}
+        disabled
         starsClassName={starsClassName}
       />
       {showNumbers && (

@@ -1,8 +1,8 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
+import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { InviteCard } from './-card';
-import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 
 export const Route = createFileRoute('/trips/invites/')({
   component: RouteComponent,
@@ -29,7 +29,7 @@ function RouteComponent() {
         {invites.length === 0 && (
           <AppMessage
             emptyMessage="No invites yet"
-            showBackButton={true}
+            showBackButton
             backLink="/trips"
             backLinkText="Go to Trips page"
             className="my-8"

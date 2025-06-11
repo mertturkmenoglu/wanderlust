@@ -1,18 +1,18 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { env } from '@/lib/env';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
-import { type Props as THit } from '@/routes/search/-components/hit';
+import type { Props as THit } from '@/routes/search/-components/hit';
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 
 type SearchResponse = {
   found: number;
-  hits: Array<{
+  hits: {
     document: THit['hit'];
-  }>;
+  }[];
   out_of: number;
   page: number;
 };

@@ -1,4 +1,4 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Pagination,
@@ -70,7 +70,7 @@ export function Section() {
   }
 
   if (!query.data) {
-    return <></>;
+    return null;
   }
 
   const { reviews, pagination } = query.data;

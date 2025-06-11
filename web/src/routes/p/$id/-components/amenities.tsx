@@ -59,7 +59,7 @@ import {
 
 type LucideIconType = typeof WifiIcon;
 
-const iconMapping: Map<number, LucideIconType> = new Map([
+const iconMapping = new Map<number, LucideIconType>([
   [1, WifiIcon],
   [2, SquareParkingIcon],
   [3, ParkingMeterIcon],
@@ -122,7 +122,7 @@ type Props = {
   className?: string;
 };
 
-export default function Amenities({ className }: Props) {
+export function Amenities({ className }: Props) {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
   const { amenities } = poi;

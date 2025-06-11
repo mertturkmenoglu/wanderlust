@@ -2,27 +2,23 @@ import { env } from '@/lib/env';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import React, { useContext } from 'react';
 
-export type FlagsResponse = {
+type FlagsResponse = {
   version: string;
   flags: Record<string, string | boolean | number>;
 };
 
-export type FlagsContextState = {
+type FlagsContextState = {
   flags: FlagsResponse;
 };
 
-export const FlagsContext = React.createContext<FlagsContextState>({
+const FlagsContext = React.createContext<FlagsContextState>({
   flags: {
     flags: {},
     version: '',
   },
 });
 
-export function FlagsContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function FlagsContextProvider({ children }: { children: React.ReactNode }) {
   const query = useSuspenseQuery({
     queryKey: ['flags'],
     queryFn: async () => {
@@ -44,7 +40,7 @@ export function FlagsContextProvider({
   );
 }
 
-export function useFeatureFlags() {
+function useFeatureFlags() {
   const ctx = useContext(FlagsContext);
 
   if (!ctx) {
@@ -53,3 +49,11 @@ export function useFeatureFlags() {
 
   return ctx.flags.flags;
 }
+
+export {
+  FlagsContext,
+  FlagsContextProvider,
+  useFeatureFlags,
+  type FlagsContextState,
+  type FlagsResponse,
+};

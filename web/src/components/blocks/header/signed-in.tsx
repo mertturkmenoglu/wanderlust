@@ -1,3 +1,4 @@
+import { Search } from '@/components/blocks/search';
 import { CommandDialog } from '@/components/ui/command';
 import {
   Tooltip,
@@ -9,14 +10,13 @@ import { useFeatureFlags } from '@/providers/flags-provider';
 import { Link, useLocation } from '@tanstack/react-router';
 import { BellIcon, SearchIcon, SendIcon } from 'lucide-react';
 import { useState } from 'react';
-import Search from '../search';
 
-const hideSearchPaths = ['/', '/search'];
+const hideSearchPaths = new Set(['/', '/search']);
 
-export default function SignedInLinks() {
+export function SignedInLinks() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const showSearch = !hideSearchPaths.includes(location.pathname);
+  const showSearch = !hideSearchPaths.has(location.pathname);
   const flags = useFeatureFlags();
   const showIcons = flags['app-bar-show-wip-icons'] === true;
 
@@ -30,6 +30,7 @@ export default function SignedInLinks() {
               asChild
             >
               <button
+                type="button"
                 className="group inline-flex items-center justify-center rounded-full p-2 transition-all duration-500 ease-in-out hover:bg-primary/10"
                 onClick={() => setOpen(true)}
               >

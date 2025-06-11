@@ -1,10 +1,12 @@
+// oxlint-disable no-non-null-assertion
+// oxlint-disable no-await-in-loop
 import { fetchClient } from '@/lib/api';
 import * as fileUpload from '@zag-js/file-upload';
 import { normalizeProps, useMachine } from '@zag-js/react';
 import { useId } from 'react';
 import { toast } from 'sonner';
 
-export function useUpload() {
+function useUpload() {
   const service = useMachine(fileUpload.machine, {
     id: useId(),
     accept: ['image/jpeg', 'image/png'],
@@ -15,15 +17,15 @@ export function useUpload() {
   return fileUpload.connect(service, normalizeProps);
 }
 
-export type UseUpload = ReturnType<typeof useUpload>;
+type UseUpload = ReturnType<typeof useUpload>;
 
-export function usePreviews(up: UseUpload) {
+function usePreviews(up: UseUpload) {
   return up.acceptedFiles.map((file) => URL.createObjectURL(file));
 }
 
 type Ext = 'jpg' | 'jpeg' | 'png';
 
-export function checkExtensions(
+function checkExtensions(
   extensions: (string | undefined)[],
 ): extensions is Ext[] {
   for (const ext of extensions) {
@@ -41,14 +43,14 @@ export function checkExtensions(
   return true;
 }
 
-export async function doFileUpload(files: File[], reviewId: string) {
+async function doFileUpload(files: File[], reviewId: string) {
   const extensions = files.map((file) => file.name.split('.').at(-1));
 
   if (!checkExtensions(extensions)) {
     return false;
   }
 
-  for (let i = 0; i < files.length; i++) {
+  for (let i = 0; i < files.length; i += 1) {
     let ext = extensions.at(i)!;
     let file = files.at(i)!;
 
@@ -96,4 +98,6 @@ export async function doFileUpload(files: File[], reviewId: string) {
   }
 
   return true;
-};
+}
+
+export { checkExtensions, doFileUpload, usePreviews, useUpload };

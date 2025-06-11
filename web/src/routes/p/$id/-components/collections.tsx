@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import PoiCard from '@/components/blocks/poi-card';
-import Spinner from '@/components/kit/spinner';
+import { AppMessage } from '@/components/blocks/app-message';
+import { PoiCard } from '@/components/blocks/poi-card';
+import { Spinner } from '@/components/kit/spinner';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';

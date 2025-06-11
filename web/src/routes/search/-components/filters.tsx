@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { XIcon } from 'lucide-react';
 import { useClearRefinements } from 'react-instantsearch';
-import RefinementList from './refinement-list';
+import { RefinementList } from './refinement-list';
 
-export default function Filters() {
+export function Filters() {
   const { canRefine, refine } = useClearRefinements();
 
   return (

@@ -1,3 +1,4 @@
+// oxlint-disable func-style
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -54,7 +55,7 @@ function getAccessibilityLevelLabel(x: number): string {
   }
 }
 
-export default function RefinementList({ attribute, className }: Props) {
+export function RefinementList({ attribute, className }: Props) {
   const limit = attribute === 'poi.category.name' ? 10 : 5;
   const showMoreLimit = attribute === 'poi.category.name' ? 20 : 10;
 

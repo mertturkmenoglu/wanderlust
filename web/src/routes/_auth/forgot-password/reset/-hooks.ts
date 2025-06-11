@@ -7,16 +7,17 @@ import { type FormInput, FormSchema } from './-schema';
 
 const redirectTimeout = 3000;
 
-export function usePasswordResetForm() {
+function usePasswordResetForm() {
   return useForm<FormInput>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      email: window.sessionStorage.getItem('forgot-password-email') ?? '',
+      email:
+        globalThis.window.sessionStorage.getItem('forgot-password-email') ?? '',
     },
   });
 }
 
-export function usePasswordResetMutation() {
+function usePasswordResetMutation() {
   return useMutation({
     mutationKey: ['password-reset'],
     mutationFn: async (data: FormInput) => {
@@ -33,8 +34,10 @@ export function usePasswordResetMutation() {
         'Your password has been reset successfully. Redirecting...',
       );
       setTimeout(() => {
-        window.location.href = '/sign-in';
+        globalThis.window.location.href = '/sign-in';
       }, redirectTimeout);
     },
   });
 }
+
+export { usePasswordResetForm, usePasswordResetMutation };

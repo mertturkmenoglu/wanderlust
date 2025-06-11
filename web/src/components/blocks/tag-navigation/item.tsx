@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
-import { type LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export type Props = {
   href: string;
@@ -8,7 +8,7 @@ export type Props = {
   icon: LucideIcon;
 };
 
-export default function NavItem(props: Props): React.ReactElement {
+export function NavItem(props: Props): React.ReactElement {
   return (
     <li>
       <Link

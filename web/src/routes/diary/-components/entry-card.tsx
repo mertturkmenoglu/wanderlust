@@ -5,7 +5,7 @@ type Props = {
   entry: components['schemas']['Diary'];
 };
 
-export default function EntryCard({ entry }: Props) {
+export function EntryCard({ entry }: Props) {
   return (
     <div className="flex items-center gap-4">
       <div>

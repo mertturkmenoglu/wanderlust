@@ -1,10 +1,10 @@
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Input } from '@/components/ui/input';
 import { useFormContext } from 'react-hook-form';
 import type { FormInput } from './-schema';
 
-export default function SearchInput() {
+export function SearchInput() {
   const form = useFormContext<FormInput>();
 
   return (

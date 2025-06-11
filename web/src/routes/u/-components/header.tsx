@@ -1,14 +1,14 @@
-import UserImage from '@/components/blocks/user-image';
+import { UserImage } from '@/components/blocks/user-image';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { AuthContext } from '@/providers/auth-provider';
 import { getRouteApi } from '@tanstack/react-router';
 import { useContext } from 'react';
-import ActionButtons from './action-buttons';
-import BioDropdown from './bio-dropdown';
-import Tabs from './tabs';
-import Verified from './verified';
+import { ActionButtons } from './action-buttons';
+import { BioDropdown } from './bio-dropdown';
+import { UserTabs as Tabs } from './tabs';
+import { Verified } from './verified';
 
 type Props = {
   className?: string;

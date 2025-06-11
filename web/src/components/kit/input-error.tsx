@@ -1,13 +1,13 @@
 import { cn } from '@/lib/utils';
-import { type FieldError } from 'react-hook-form';
+import type { FieldError } from 'react-hook-form';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
   error?: FieldError;
 };
 
-export default function InputError({ error, className, ...props }: Props) {
+export function InputError({ error, className, ...props }: Props) {
   if (error === undefined) {
-    return <></>;
+    return null;
   }
 
   return (

@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import DashboardActions from '@/components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { AppMessage } from '@/components/blocks/app-message';
+import { DashboardActions } from '@/components/blocks/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';

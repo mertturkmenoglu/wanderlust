@@ -1,7 +1,7 @@
-import AuthLegalText from '@/components/blocks/auth/legal-text';
-import AuthLink from '@/components/blocks/auth/link';
-import OAuthButton from '@/components/blocks/auth/oauth-button';
-import InputError from '@/components/kit/input-error';
+import { AuthLegalText } from '@/components/blocks/auth/legal-text';
+import { AuthLink } from '@/components/blocks/auth/link';
+import { OAuthButton } from '@/components/blocks/auth/oauth-button';
+import { InputError } from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,7 +31,7 @@ const schema = z.object({
 
 export const Route = createFileRoute('/_auth/sign-up/')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (auth.user) {
       throw redirect({
         to: '/',
@@ -60,7 +60,7 @@ function RouteComponent() {
     '/api/v2/auth/credentials/register',
     {
       onSuccess: () => {
-        window.location.href = '/sign-in';
+        globalThis.window.location.href = '/sign-in';
       },
     },
   );
@@ -97,7 +97,7 @@ function RouteComponent() {
           {...register('fullName')}
         />
         <InputError error={formState.errors.fullName} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Label htmlFor="email">Email</Label>
         <Input
@@ -108,7 +108,7 @@ function RouteComponent() {
           {...register('email')}
         />
         <InputError error={formState.errors.email} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Label htmlFor="username">Username</Label>
         <Input
@@ -119,7 +119,7 @@ function RouteComponent() {
           {...register('username')}
         />
         <InputError error={formState.errors.email} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Label htmlFor="password">Password</Label>
         <div className="relative">
@@ -150,7 +150,7 @@ function RouteComponent() {
             error={formState.errors.password}
             className="self-start"
           />
-          <div className="my-4"></div>
+          <div className="my-4" />
         </div>
 
         <Button

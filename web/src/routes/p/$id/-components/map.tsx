@@ -5,7 +5,7 @@ import { getRouteApi } from '@tanstack/react-router';
 import { ExternalLinkIcon } from 'lucide-react';
 import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
 
-export default function Map() {
+export function Map() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
   const lat = poi.address.lat;

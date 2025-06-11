@@ -1,4 +1,4 @@
-import { type Props as NavItemProps } from './item';
+import type { Props as NavItemProps } from './item';
 
 import {
   BedIcon,
@@ -16,7 +16,7 @@ import {
 
 const base = '/search?category=';
 
-const data = [
+export const data = [
   { href: `${base}Hotels`, text: 'Hotels', icon: BedIcon },
   { href: `${base}Coffee shops`, text: 'Coffee', icon: CoffeeIcon },
   { href: `${base}Bars & Clubs`, text: 'Bars', icon: MartiniIcon },
@@ -45,5 +45,3 @@ const data = [
     icon: MountainSnowIcon,
   },
 ] satisfies NavItemProps[];
-
-export default data;

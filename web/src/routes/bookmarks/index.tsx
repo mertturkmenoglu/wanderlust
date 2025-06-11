@@ -1,4 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
+// oxlint-disable prefer-await-to-then
+import { AppMessage } from '@/components/blocks/app-message';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Pagination,
@@ -16,7 +17,7 @@ import {
   LoaderCircleIcon,
 } from 'lucide-react';
 import { z } from 'zod';
-import BookmarkCard from './-card';
+import { BookmarkCard } from './-card';
 
 const bookmarksSearchSchema = z.object({
   page: z.number().min(1).max(100).default(1).catch(1),
@@ -25,7 +26,7 @@ const bookmarksSearchSchema = z.object({
 
 export const Route = createFileRoute('/bookmarks/')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (!auth.user) {
       throw redirect({
         to: '/sign-in',
@@ -110,7 +111,7 @@ function Bookmarks() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {bookmarks.map((bookmark) => (
           <Link
-            to={`/p/$id`}
+            to="/p/$id"
             params={{
               id: bookmark.poiId,
             }}

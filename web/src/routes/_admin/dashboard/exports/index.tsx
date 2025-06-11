@@ -1,5 +1,5 @@
-import DashboardActions from '@/components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardActions } from '@/components/blocks/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { exportsCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { buttonVariants } from '@/components/ui/button';
@@ -41,6 +41,7 @@ function RouteComponent() {
       <DataTable
         columns={exportsCols}
         filterColumnId="id"
+        // oxlint-disable-next-line no-map-spread
         data={sorted.map((e) => ({
           ...e,
           itemCount: e.ids.length,

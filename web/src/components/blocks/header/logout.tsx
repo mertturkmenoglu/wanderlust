@@ -2,10 +2,10 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { api } from '@/lib/api';
 import { LogOutIcon } from 'lucide-react';
 
-export default function Logout() {
+export function Logout() {
   const logoutMutation = api.useMutation('post', '/api/v2/auth/logout', {
     onSuccess: () => {
-      window.location.href = '/';
+      globalThis.window.location.href = '/';
     },
   });
 

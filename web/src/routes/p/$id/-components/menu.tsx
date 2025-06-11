@@ -10,11 +10,11 @@ import { EllipsisVerticalIcon, FlagIcon, Share2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
 async function handleShareClick() {
-  await navigator.clipboard.writeText(window.location.href);
+  await navigator.clipboard.writeText(globalThis.window.location.href);
   toast.success('Link copied to clipboard!');
 }
 
-export default function Menu() {
+export function Menu() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
 

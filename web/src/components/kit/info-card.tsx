@@ -5,7 +5,7 @@ type InfoCardProps = {
   children: React.ReactNode;
 };
 
-export function InfoCardRoot({ className, children }: InfoCardProps) {
+function InfoCardRoot({ className, children }: InfoCardProps) {
   return (
     <div
       className={cn(
@@ -23,7 +23,7 @@ type ContentProps = {
   children: React.ReactNode;
 };
 
-export function Content({ className, children }: ContentProps) {
+function Content({ className, children }: ContentProps) {
   return (
     <div className={cn('flex items-center gap-4', className)}>{children}</div>
   );
@@ -34,7 +34,7 @@ type NumberColumnProps = {
   children: React.ReactNode;
 };
 
-export function NumberColumn({ className, children }: NumberColumnProps) {
+function NumberColumn({ className, children }: NumberColumnProps) {
   return (
     <span
       className={cn('font-bold text-3xl md:text-6xl text-primary', className)}
@@ -49,10 +49,7 @@ type DescriptionColumnProps = {
   children: React.ReactNode;
 };
 
-export function DescriptionColumn({
-  className,
-  children,
-}: DescriptionColumnProps) {
+function DescriptionColumn({ className, children }: DescriptionColumnProps) {
   return <span className={cn(className)}>{children}</span>;
 }
 

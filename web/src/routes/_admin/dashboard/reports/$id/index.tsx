@@ -1,9 +1,9 @@
-import DashboardActions from '@/components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardActions } from '@/components/blocks/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
-import DeleteDialog from '@/components/blocks/dashboard/delete-dialog';
-import Spinner from '@/components/kit/spinner';
+import { DeleteDialog } from '@/components/blocks/dashboard/delete-dialog';
+import { Spinner } from '@/components/kit/spinner';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_admin/dashboard/reports/$id/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/reports/{id}', {
         params: {
@@ -51,11 +51,12 @@ const reasons = [
   },
 ];
 
+function getReason(r: number) {
+  return reasons.find((x) => x.id === r)?.name ?? 'Other';
+}
+
 function RouteComponent() {
   const { report } = Route.useLoaderData();
-
-  const reason = (r: number) =>
-    reasons.find((x) => x.id === r)?.name ?? 'Other';
 
   const link = useMemo(() => {
     if (report.resourceType === 'poi') {
@@ -176,7 +177,7 @@ function RouteComponent() {
           },
           {
             k: 'Reason',
-            v: reason(report.reason),
+            v: getReason(report.reason),
           },
           {
             k: 'Resolved',

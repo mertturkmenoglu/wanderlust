@@ -1,11 +1,11 @@
-import BackLink from '@/components/blocks/back-link';
+import { BackLink } from '@/components/blocks/back-link';
 import { Button } from '@/components/ui/button';
 import { AuthContext } from '@/providers/auth-provider';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { Settings2Icon } from 'lucide-react';
 import { useContext } from 'react';
 
-export default function Header() {
+export function Header() {
   const route = getRouteApi('/diary/$id/');
   const { diary } = route.useLoaderData();
   const auth = useContext(AuthContext);
@@ -33,23 +33,21 @@ export default function Header() {
 
         <div className="space-x-2">
           {isOwner && (
-            <>
-              <Button
-                asChild
-                variant="ghost"
-                size="default"
+            <Button
+              asChild
+              variant="ghost"
+              size="default"
+            >
+              <Link
+                to="/diary/$id/edit"
+                params={{
+                  id: diary.id,
+                }}
               >
-                <Link
-                  to="/diary/$id/edit"
-                  params={{
-                    id: diary.id,
-                  }}
-                >
-                  <Settings2Icon className="size-4" />
-                  <span>Edit</span>
-                </Link>
-              </Button>
-            </>
+                <Settings2Icon className="size-4" />
+                <span>Edit</span>
+              </Link>
+            </Button>
           )}
         </div>
       </div>

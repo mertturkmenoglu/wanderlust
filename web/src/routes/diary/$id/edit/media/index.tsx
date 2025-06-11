@@ -1,3 +1,4 @@
+// oxlint-disable no-non-null-assertion
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -6,7 +7,7 @@ import { ipx } from '@/lib/ipx';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { ArrowDownIcon, ArrowUpIcon, Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
-import NewImageDialog from './-new';
+import { NewImageDialog } from './-new';
 
 export const Route = createFileRoute('/diary/$id/edit/media/')({
   component: RouteComponent,
@@ -56,6 +57,7 @@ function RouteComponent() {
               <img
                 src={ipx(m.url, 'w_512')}
                 className="w-32 object-cover aspect-video rounded"
+                alt=""
               />
               <div className="flex gap-2 items-center">
                 <Button

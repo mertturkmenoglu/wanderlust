@@ -33,6 +33,7 @@ function RouteComponent() {
   const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
   const { poi } = route.useLoaderData();
   const invalidator = useInvalidator();
+  // oxlint-disable-next-line no-map-spread
   const entries = Object.entries(poi.hours).map(([k, v]) => ({
     day: k,
     ...v,
@@ -56,8 +57,8 @@ function RouteComponent() {
     return allDays.indexOf(a.day) - allDays.indexOf(b.day);
   });
 
-  const unusedDays = allDays.filter(
-    (day) => !usedDays.some((h) => h.day === day),
+  const unusedDays = new Set(
+    allDays.filter((day) => !usedDays.some((h) => h.day === day)),
   );
 
   const updateHoursMutation = api.useMutation(
@@ -78,21 +79,21 @@ function RouteComponent() {
       </h3>
 
       <datalist id="open-hours-list">
-        <option value="05:00"></option>
-        <option value="06:00"></option>
-        <option value="07:00"></option>
-        <option value="08:00"></option>
-        <option value="09:00"></option>
-        <option value="10:00"></option>
+        <option value="05:00" />
+        <option value="06:00" />
+        <option value="07:00" />
+        <option value="08:00" />
+        <option value="09:00" />
+        <option value="10:00" />
       </datalist>
 
       <datalist id="close-hours-list">
-        <option value="17:00"></option>
-        <option value="18:00"></option>
-        <option value="19:00"></option>
-        <option value="20:00"></option>
-        <option value="21:00"></option>
-        <option value="22:00"></option>
+        <option value="17:00" />
+        <option value="18:00" />
+        <option value="19:00" />
+        <option value="20:00" />
+        <option value="21:00" />
+        <option value="22:00" />
       </datalist>
 
       <Form {...form}>
@@ -123,11 +124,12 @@ function RouteComponent() {
             <div className="flex gap-2">
               {allDays.map((day) => (
                 <button
+                  key={day}
                   className=""
                   type="button"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (unusedDays.includes(day)) {
+                    if (unusedDays.has(day)) {
                       array.append({
                         day,
                         opensAt: '',
@@ -143,7 +145,7 @@ function RouteComponent() {
                 >
                   <Badge
                     key={day}
-                    variant={unusedDays.includes(day) ? 'outline' : 'default'}
+                    variant={unusedDays.has(day) ? 'outline' : 'default'}
                   >
                     <div className="capitalize">{day}</div>
                   </Badge>
@@ -163,7 +165,7 @@ function RouteComponent() {
               value={everyOpensAt}
               list="open-hours-list"
               onChange={(e) => {
-                for (let i = 0; i < usedDays.length; i++) {
+                for (let i = 0; i < usedDays.length; i += 1) {
                   form.setValue(`hours.${i}.opensAt`, e.target.value);
                 }
                 setEveryOpensAt(e.target.value);
@@ -176,7 +178,7 @@ function RouteComponent() {
               value={everyClosesAt}
               list="close-hours-list"
               onChange={(e) => {
-                for (let i = 0; i < usedDays.length; i++) {
+                for (let i = 0; i < usedDays.length; i += 1) {
                   form.setValue(`hours.${i}.closesAt`, e.target.value);
                 }
                 setEveryClosesAt(e.target.value);

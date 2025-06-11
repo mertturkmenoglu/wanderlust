@@ -10,7 +10,7 @@ type Props = {
   initials?: string | null;
 };
 
-export default function UserImage({
+export function UserImage({
   className,
   imgClassName,
   fallbackClassName,

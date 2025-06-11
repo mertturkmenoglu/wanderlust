@@ -1,4 +1,4 @@
-import InputError from '@/components/kit/input-error';
+import { InputError } from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,7 @@ type Props = {
   index: number;
 };
 
-export default function Description({ index }: Props) {
+export function Description({ index }: Props) {
   const form = useFormContext<FormInput>();
   const array = useFieldArray({
     control: form.control,
@@ -22,7 +22,7 @@ export default function Description({ index }: Props) {
   const [isEditMode, setIsEditMode] = useState(false);
 
   if (location === undefined) {
-    return <></>;
+    return null;
   }
 
   if (isEditMode) {
@@ -71,6 +71,7 @@ export default function Description({ index }: Props) {
   return (
     <div>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           setIsEditMode(true);

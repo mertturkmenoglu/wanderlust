@@ -143,7 +143,14 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {hrefPrefix !== undefined ? (
+                      {hrefPrefix === undefined ? (
+                        <>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </>
+                      ) : (
                         <Link
                           key={cell.id}
                           to="."
@@ -154,13 +161,6 @@ export function DataTable<TData, TValue>({
                             cell.getContext(),
                           )}
                         </Link>
-                      ) : (
-                        <>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </>
                       )}
                     </TableCell>
                   ))}

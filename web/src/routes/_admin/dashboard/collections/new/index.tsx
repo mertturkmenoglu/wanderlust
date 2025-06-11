@@ -1,6 +1,6 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import CustomEditor from '../-custom-editor';
+import { CustomEditor } from '../-custom-editor';
 
 const schema = z.object({
   name: z.string().min(1).max(128),

@@ -1,7 +1,4 @@
-import { FilterIcon } from 'lucide-react';
-import React from 'react';
-import { useCurrentRefinements } from 'react-instantsearch';
-import CustomSearchBox from '@/components/blocks/custom-search-box';
+import { CustomSearchBox } from '@/components/blocks/custom-search-box';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -12,14 +9,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import Filters from './filters';
-import Results from './results';
+import { FilterIcon } from 'lucide-react';
+import React from 'react';
+import { useCurrentRefinements } from 'react-instantsearch';
+import { Filters } from './filters';
+import { Results } from './results';
 
 const MemoizedFilters = React.memo(function MFilters() {
   return <Filters />;
 });
 
-export default function Container() {
+export function Container() {
   const { items } = useCurrentRefinements();
   const refinementCount = items
     .map((group) => group.refinements.length)
@@ -29,7 +29,7 @@ export default function Container() {
 
   return (
     <>
-      <CustomSearchBox isSearchOnType={true} />
+      <CustomSearchBox isSearchOnType />
 
       <div className="my-8 flex gap-8 flex-col md:flex-row">
         <Sheet>

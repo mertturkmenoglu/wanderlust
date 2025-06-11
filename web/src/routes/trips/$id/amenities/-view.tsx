@@ -1,4 +1,4 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { getRouteApi } from '@tanstack/react-router';
 
 export function ViewAmenities() {

@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import UserImage from '@/components/blocks/user-image';
-import Spinner from '@/components/kit/spinner';
+import { AppMessage } from '@/components/blocks/app-message';
+import { UserImage } from '@/components/blocks/user-image';
+import { Spinner } from '@/components/kit/spinner';
 import { Card } from '@/components/ui/card';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-export default function SearchResults({ className }: Props) {
+export function SearchResults({ className }: Props) {
   const form = useFormContext<FormInput>();
   const array = useFieldArray({
     control: form.control,
@@ -66,14 +66,14 @@ export default function SearchResults({ className }: Props) {
     <Card className={cn('gap-0 p-2', className)}>
       {results.map((res) => (
         <button
+          type="button"
           key={res.id}
           className="flex gap-4 items-center hover:bg-muted p-2 rounded-md w-full"
           onClick={(e) => {
             e.preventDefault();
             const maxAllowedCount = 32;
             const friends = form.getValues('friends');
-            const alreadyInList =
-              friends.find((lo) => lo.id === res.id) !== undefined;
+            const alreadyInList = friends.some((lo) => lo.id === res.id);
 
             if (alreadyInList) {
               toast.error('User is already added.');

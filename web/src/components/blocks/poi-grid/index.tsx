@@ -1,4 +1,4 @@
-import PoiCard from '@/components/blocks/poi-card';
+import { PoiCard } from '@/components/blocks/poi-card';
 import type { components } from '@/lib/api-types';
 import { Link } from '@tanstack/react-router';
 
@@ -17,10 +17,12 @@ function getTitle(type: Props['dataKey']) {
       return 'Featured Locations';
     case 'favorite':
       return 'Favorite Locations';
+    default:
+      return '';
   }
 }
 
-export default function PoiGrid({ dataKey: key, data }: Props) {
+export function PoiGrid({ dataKey: key, data }: Props) {
   const title = getTitle(key);
   const sliced = data.slice(0, 6);
   const isEmpty = sliced.length === 0;

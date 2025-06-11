@@ -1,8 +1,8 @@
-import AppMessage from '@/components/blocks/app-message';
-import UserCard from '@/components/blocks/user-card';
+import { AppMessage } from '@/components/blocks/app-message';
+import { UserCard } from '@/components/blocks/user-card';
 import { getRouteApi, Link } from '@tanstack/react-router';
 
-export default function Friends() {
+export function Friends() {
   const route = getRouteApi('/diary/$id/');
   const { diary } = route.useLoaderData();
 

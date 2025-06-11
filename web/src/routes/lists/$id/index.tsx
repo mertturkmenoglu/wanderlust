@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import BackLink from '@/components/blocks/back-link';
-import PoiCard from '@/components/blocks/poi-card';
+import { AppMessage } from '@/components/blocks/app-message';
+import { BackLink } from '@/components/blocks/back-link';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Dialog,
@@ -74,7 +74,7 @@ function RouteComponent() {
             <div>Created by: {list.user.fullName}</div>
             <div>{new Date(list.createdAt).toLocaleDateString()}</div>
           </div>
-          <div className="text-xs text-muted-foreground mt-1"></div>
+          <div className="text-xs text-muted-foreground mt-1" />
         </div>
         <Dialog>
           <DropdownMenu>
@@ -116,7 +116,10 @@ function RouteComponent() {
 
                   <DialogTrigger asChild>
                     <DropdownMenuItem>
-                      <button className="flex items-center gap-2 w-full text-destructive">
+                      <button
+                        type="button"
+                        className="flex items-center gap-2 w-full text-destructive"
+                      >
                         <TrashIcon className="size-3" />
                         <div className="text-sm">Delete</div>
                       </button>

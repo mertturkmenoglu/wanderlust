@@ -1,12 +1,12 @@
 import { Link } from '@tanstack/react-router';
-import { type ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
-export type KeyValueCols = {
+type KeyValueCols = {
   k: string;
   v: string;
 };
 
-export const keyValueCols: ColumnDef<KeyValueCols>[] = [
+const keyValueCols: ColumnDef<KeyValueCols>[] = [
   {
     accessorKey: 'k',
     header: 'Key',
@@ -17,14 +17,14 @@ export const keyValueCols: ColumnDef<KeyValueCols>[] = [
   },
 ];
 
-export type Poi = {
+type Poi = {
   id: string;
   name: string;
   addressId: number;
   categoryId: number;
 };
 
-export const poisCols: ColumnDef<Poi>[] = [
+const poisCols: ColumnDef<Poi>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -43,7 +43,7 @@ export const poisCols: ColumnDef<Poi>[] = [
   },
 ];
 
-export type Report = {
+type Report = {
   id: string;
   resourceId: string;
   resourceType: string;
@@ -56,7 +56,7 @@ export type Report = {
   updatedAt: string;
 };
 
-export const reportsCols: ColumnDef<Report>[] = [
+const reportsCols: ColumnDef<Report>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -99,13 +99,13 @@ export const reportsCols: ColumnDef<Report>[] = [
   },
 ];
 
-export type PoiDraft = {
+type PoiDraft = {
   id: string;
   name: string;
   v: number;
 };
 
-export const poisDraftsCols: ColumnDef<PoiDraft>[] = [
+const poisDraftsCols: ColumnDef<PoiDraft>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -120,7 +120,7 @@ export const poisDraftsCols: ColumnDef<PoiDraft>[] = [
   },
 ];
 
-export type City = {
+type City = {
   id: number;
   name: string;
   stateName: string;
@@ -129,7 +129,7 @@ export type City = {
   countryCode: string;
 };
 
-export const citiesCols: ColumnDef<City>[] = [
+const citiesCols: ColumnDef<City>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -156,7 +156,7 @@ export const citiesCols: ColumnDef<City>[] = [
   },
 ];
 
-export type Export = {
+type Export = {
   id: string;
   createdAt: string;
   status: string;
@@ -166,7 +166,7 @@ export type Export = {
   itemCount: number;
 };
 
-export const exportsCols: ColumnDef<Export>[] = [
+const exportsCols: ColumnDef<Export>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -223,14 +223,14 @@ export const exportsCols: ColumnDef<Export>[] = [
   },
 ];
 
-export type Collection = {
+type Collection = {
   id: string;
   name: string;
   description: string;
   createdAt: string;
 };
 
-export const collectionsCols: ColumnDef<Collection>[] = [
+const collectionsCols: ColumnDef<Collection>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -248,3 +248,20 @@ export const collectionsCols: ColumnDef<Collection>[] = [
     header: 'Created At',
   },
 ];
+
+export {
+  citiesCols,
+  collectionsCols,
+  exportsCols,
+  keyValueCols,
+  poisCols,
+  poisDraftsCols,
+  reportsCols,
+  type City,
+  type Collection,
+  type Export,
+  type KeyValueCols,
+  type Poi,
+  type PoiDraft,
+  type Report,
+};

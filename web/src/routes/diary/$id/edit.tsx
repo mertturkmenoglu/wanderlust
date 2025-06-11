@@ -1,4 +1,4 @@
-import BackLink from '@/components/blocks/back-link';
+import { BackLink } from '@/components/blocks/back-link';
 import { buttonVariants } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -6,7 +6,7 @@ import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/diary/$id/edit')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/diary/{id}', {
         params: {

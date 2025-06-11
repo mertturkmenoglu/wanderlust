@@ -1,5 +1,5 @@
-import FbIcon from '@/components/icons/facebook';
-import GoogleIcon from '@/components/icons/google';
+import { FacebookIcon } from '@/components/icons/facebook';
+import { GoogleIcon } from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
 import { env } from '@/lib/env';
 
@@ -8,7 +8,7 @@ type Props = {
   text: string;
 };
 
-export default function OAuthButton({ provider, text }: Readonly<Props>) {
+export function OAuthButton({ provider, text }: Readonly<Props>) {
   const baseUrl = env.VITE_API_URL;
 
   return (
@@ -16,12 +16,12 @@ export default function OAuthButton({ provider, text }: Readonly<Props>) {
       variant="outline"
       className="w-full"
       onClick={() => {
-        window.location.href = baseUrl + `/api/v2/auth/${provider}`;
+        globalThis.window.location.href = baseUrl + `/api/v2/auth/${provider}`;
       }}
       type="button"
     >
       {provider === 'google' && <GoogleIcon className="mr-2 size-5" />}
-      {provider === 'facebook' && <FbIcon className="mr-2 size-5" />}
+      {provider === 'facebook' && <FacebookIcon className="mr-2 size-5" />}
       {text}
     </Button>
   );

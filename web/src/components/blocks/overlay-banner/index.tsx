@@ -8,7 +8,7 @@ type Props = {
   imgClassName?: string;
 };
 
-export default function OverlayBanner({
+export function OverlayBanner({
   className,
   image,
   alt,

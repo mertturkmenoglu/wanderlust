@@ -1,9 +1,9 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { ErrorComponent } from '@/components/blocks/error-component';
-import OverlayBanner from '@/components/blocks/overlay-banner';
-import PoiCard from '@/components/blocks/poi-card';
-import TagNavigation from '@/components/blocks/tag-navigation';
-import Spinner from '@/components/kit/spinner';
+import { OverlayBanner } from '@/components/blocks/overlay-banner';
+import { PoiCard } from '@/components/blocks/poi-card';
+import { TagNavigation } from '@/components/blocks/tag-navigation';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
@@ -11,8 +11,8 @@ import { ipx } from '@/lib/ipx';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import CityBreadcrumb from './-city-breadcrumb';
-import Map from './-map';
+import { CityBreadcrumb } from './-city-breadcrumb';
+import { Map } from './-map';
 
 export const Route = createFileRoute('/cities/$/')({
   component: RouteComponent,
@@ -155,7 +155,7 @@ function CollectionsContent() {
   return (
     <div className="mt-8 space-y-8">
       {query.data.collections.map((collection) => (
-        <div>
+        <div key={collection.id}>
           <div
             key={collection.id}
             className="flex items-baseline gap-4 mb-4"

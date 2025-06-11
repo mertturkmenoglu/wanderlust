@@ -8,17 +8,13 @@ type Props = {
   username: string;
 };
 
-export default function UserCard({
-  image,
-  fullName,
-  username,
-  className,
-}: Props) {
+export function UserCard({ image, fullName, username, className }: Props) {
   return (
     <Card className={cn('flex gap-4 p-2 items-center', className)}>
       <img
         src={image ?? '/profile.png'}
         className="aspect-square w-12 rounded-lg object-cover"
+        alt={fullName}
       />
 
       <div>

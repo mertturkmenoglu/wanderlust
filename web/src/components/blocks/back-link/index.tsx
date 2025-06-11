@@ -9,7 +9,7 @@ type Props = {
   text?: string;
 };
 
-export default function BackLink({ href, className, text = 'Go back' }: Props) {
+export function BackLink({ href, className, text = 'Go back' }: Props) {
   return (
     <Link
       to={href}

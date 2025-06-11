@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function UserTabs({ username, className }: Props) {
+export function UserTabs({ username, className }: Props) {
   const matches = useMatches();
   const lastMatch = matches[matches.length - 1];
 

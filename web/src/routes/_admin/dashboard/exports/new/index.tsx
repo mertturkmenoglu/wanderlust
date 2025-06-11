@@ -1,4 +1,4 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';

@@ -8,7 +8,7 @@ import {
 import { useContext } from 'react';
 import { Card } from './card';
 
-export default function QuickActions() {
+export function QuickActions() {
   const auth = useContext(AuthContext);
 
   return (

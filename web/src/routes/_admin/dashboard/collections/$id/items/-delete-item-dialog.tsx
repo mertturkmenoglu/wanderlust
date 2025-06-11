@@ -19,11 +19,7 @@ type Props = {
   index: number;
 };
 
-export default function DeleteItemDialog({
-  collectionId,
-  poiName,
-  index,
-}: Props) {
+export function DeleteItemDialog({ collectionId, poiName, index }: Props) {
   const invalidator = useInvalidator();
 
   const mutation = api.useMutation(

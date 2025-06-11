@@ -12,7 +12,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function DashboardActions({ children }: Props) {
+export function DashboardActions({ children }: Props) {
   const [open, setOpen] = useState(true);
 
   return (

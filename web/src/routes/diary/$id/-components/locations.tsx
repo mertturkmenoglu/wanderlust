@@ -1,12 +1,12 @@
-import AppMessage from '@/components/blocks/app-message';
-import PoiCard from '@/components/blocks/poi-card';
+import { AppMessage } from '@/components/blocks/app-message';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { Grid2X2Icon, MapIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Map } from './map.client';
 
-export default function Locations() {
+export function Locations() {
   const route = getRouteApi('/diary/$id/');
   const { diary } = route.useLoaderData();
   const [isGridMode, setIsGridMode] = useState(true);

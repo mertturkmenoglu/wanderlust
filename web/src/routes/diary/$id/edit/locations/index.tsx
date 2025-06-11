@@ -8,7 +8,7 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { InstantSearch } from 'react-instantsearch';
 import { toast } from 'sonner';
-import Item from './-item';
+import { Item } from './-item';
 import { schema } from './-schema';
 
 export const Route = createFileRoute('/diary/$id/edit/locations/')({
@@ -72,11 +72,10 @@ function RouteComponent() {
           <Autocomplete
             showAdvancedSearch={false}
             showAllResultsButton={false}
-            isCardClickable={true}
+            isCardClickable
             onCardClick={(v) => {
               const maxAllowedCount = 32;
-              const alreadyInList =
-                array.fields.findIndex((lo) => lo.id === v.id) !== -1;
+              const alreadyInList = array.fields.some((lo) => lo.id === v.id);
 
               if (alreadyInList) {
                 toast.error('Location is already added.');

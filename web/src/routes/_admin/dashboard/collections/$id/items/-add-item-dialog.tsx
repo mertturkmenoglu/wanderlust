@@ -1,4 +1,4 @@
-import PoiCard from '@/components/blocks/poi-card';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,7 +22,7 @@ type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function AddItemDialog({ collectionId, open, setOpen }: Props) {
+export function AddItemDialog({ collectionId, open, setOpen }: Props) {
   const [text, setText] = useState('');
   const [poiId, setPoiId] = useState('');
   const [ok, setOk] = useState(false);

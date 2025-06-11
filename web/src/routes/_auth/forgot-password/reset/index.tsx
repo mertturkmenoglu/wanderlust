@@ -1,5 +1,5 @@
-import AuthLink from '@/components/blocks/auth/link';
-import InputError from '@/components/kit/input-error';
+import { AuthLink } from '@/components/blocks/auth/link';
+import { InputError } from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/forgot-password/reset/')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (auth.user) {
       throw redirect({
         to: '/',
@@ -50,11 +50,11 @@ function RouteComponent() {
           id="email"
           placeholder="Email"
           autoComplete="email"
-          disabled={true}
+          disabled
           {...register('email')}
         />
         <InputError error={formState.errors.email} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Label htmlFor="code">Code</Label>
         <Input
@@ -65,7 +65,7 @@ function RouteComponent() {
           {...register('code')}
         />
         <InputError error={formState.errors.code} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Label htmlFor="new-password">New Password</Label>
         <div className="relative">
@@ -96,7 +96,7 @@ function RouteComponent() {
             error={formState.errors.newPassword}
             className="self-start"
           />
-          <div className="my-4"></div>
+          <div className="my-4" />
         </div>
 
         <Button

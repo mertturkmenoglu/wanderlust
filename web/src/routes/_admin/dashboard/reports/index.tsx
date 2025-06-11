@@ -1,7 +1,8 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+// oxlint-disable prefer-await-to-then
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { reportsCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
-import Spinner from '@/components/kit/spinner';
+import { Spinner } from '@/components/kit/spinner';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -66,6 +67,10 @@ const reasons = [
   },
 ];
 
+function getReason(r: number) {
+  return reasons.find((x) => x.id === r)?.name ?? 'Other';
+}
+
 function Content() {
   const search = Route.useSearch();
   const query = api.useSuspenseQuery('get', '/api/v2/reports/search', {
@@ -73,9 +78,6 @@ function Content() {
       query: search,
     },
   });
-
-  const reason = (r: number) =>
-    reasons.find((x) => x.id === r)?.name ?? 'Other';
 
   return (
     <div>
@@ -91,12 +93,12 @@ function Content() {
             (r.description?.length ?? 0) > 10
               ? r.description?.slice(0, 10) + '...'
               : r.description,
-          reason: reason(r.reason),
+          reason: getReason(r.reason),
           resolved: r.resolved ? 'Yes' : 'No',
           resolvedAt:
-            r.resolvedAt !== null
-              ? `${formatDistanceToNow(new Date(r.resolvedAt))} ago`
-              : '-',
+            r.resolvedAt === null
+              ? '-'
+              : `${formatDistanceToNow(new Date(r.resolvedAt))} ago`,
           createdAt: `${formatDistanceToNow(new Date(r.createdAt))} ago`,
           updatedAt: `${formatDistanceToNow(new Date(r.updatedAt))} ago`,
         }))}

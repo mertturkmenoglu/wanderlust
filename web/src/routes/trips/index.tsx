@@ -28,6 +28,7 @@ function RouteComponent() {
       <img
         src="/trip.png"
         className="size-64"
+        alt=""
       />
       <h2 className="mt-8 text-4xl font-bold text-center">
         Plan your next trip with

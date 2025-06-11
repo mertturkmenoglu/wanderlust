@@ -37,7 +37,7 @@ function RouteComponent() {
         <a
           key={item.name}
           href={item.disabled ? '#' : item.href}
-          data-disabled={item.disabled ? item.disabled : false}
+          data-disabled={item.disabled ?? false}
           target="_blank"
           rel="noreferrer"
           className={cn(
@@ -46,7 +46,7 @@ function RouteComponent() {
           )}
         >
           {!item.disabled && (
-            <span className="rounded-full size-1.5 bg-green-500 mr-2"></span>
+            <span className="rounded-full size-1.5 bg-green-500 mr-2" />
           )}
           <span>{item.name}</span>
         </a>

@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon, XIcon } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import UserCard from './-card';
+import { UserCard } from './-card';
 import type { FormInput } from './-schema';
 
 export function List() {
@@ -33,6 +33,7 @@ export function List() {
 
           <div className="ml-auto mt-1">
             <button
+              type="button"
               className="p-1.5 hover:bg-muted rounded-full disabled:hover:bg-transparent"
               disabled={i === 0}
               onClick={() => array.swap(i, i - 1)}
@@ -41,6 +42,7 @@ export function List() {
               <span className="sr-only">Move {friend.fullName} up</span>
             </button>
             <button
+              type="button"
               className="p-1.5 hover:bg-muted rounded-full disabled:hover:bg-transparent"
               disabled={i === friends.length - 1}
               onClick={() => array.swap(i, i + 1)}
@@ -49,6 +51,7 @@ export function List() {
               <span className="sr-only">Move {friend.fullName} down</span>
             </button>
             <button
+              type="button"
               className="p-1.5 hover:bg-muted rounded-full"
               onClick={() => array.remove(i)}
             >

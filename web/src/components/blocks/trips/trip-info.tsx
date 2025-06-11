@@ -1,4 +1,4 @@
-import UserImage from '@/components/blocks/user-image';
+import { UserImage } from '@/components/blocks/user-image';
 import { buttonVariants } from '@/components/ui/button';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { userImage } from '@/lib/image';
@@ -46,8 +46,14 @@ export function TripInfo({ className }: Props) {
       </div>
 
       <div className="my-4 space-y-2">
-        <LineItem icon={ActivityIcon} text={`Status: ${trip.status}`} />
-        <LineItem icon={EyeIcon} text={`Visibility: ${trip.visibilityLevel}`} />
+        <LineItem
+          icon={ActivityIcon}
+          text={`Status: ${trip.status}`}
+        />
+        <LineItem
+          icon={EyeIcon}
+          text={`Visibility: ${trip.visibilityLevel}`}
+        />
         <LineItem
           icon={ClockIcon}
           text={`Start Date: ${formatDate(trip.startAt, 'dd MMM yyyy')}`}
@@ -61,11 +67,28 @@ export function TripInfo({ className }: Props) {
       </div>
 
       <div className="flex flex-col mt-4 text-left items-start w-full pr-2 -ml-2">
-        <TripLink to="" id={trip.id} />
-        <TripLink to="participants" id={trip.id} />
-        <TripLink to="amenities" id={trip.id} />
-        <TripLink to="comments" id={trip.id} />
-        {isPrivileged && <TripLink to="edit" id={trip.id} />}
+        <TripLink
+          to=""
+          id={trip.id}
+        />
+        <TripLink
+          to="participants"
+          id={trip.id}
+        />
+        <TripLink
+          to="amenities"
+          id={trip.id}
+        />
+        <TripLink
+          to="comments"
+          id={trip.id}
+        />
+        {isPrivileged && (
+          <TripLink
+            to="edit"
+            id={trip.id}
+          />
+        )}
       </div>
     </div>
   );
@@ -81,7 +104,10 @@ function LineItem({ icon: Icon, text, title }: LineItemProps) {
   return (
     <div className="flex items-center gap-2">
       <Icon className="size-4 text-primary" />
-      <div className="text-sm text-muted-foreground capitalize" title={title}>
+      <div
+        className="text-sm text-muted-foreground capitalize"
+        title={title}
+      >
         {text}
       </div>
     </div>
@@ -103,7 +129,7 @@ const icons: Record<TripLinkProps['to'], typeof ActivityIcon> = {
 
 function TripLink({ to, id }: TripLinkProps) {
   const Icon = icons[to];
-  const href = to !== '' ? `/trips/$id/${to}` : `/trips/$id`;
+  const href = to === '' ? '/trips/$id' : `/trips/$id/${to}`;
 
   return (
     <Link
@@ -117,7 +143,7 @@ function TripLink({ to, id }: TripLinkProps) {
       )}
     >
       <Icon className="size-4" />
-      <span className="capitalize">{to !== '' ? to : 'Details'}</span>
+      <span className="capitalize">{to === '' ? 'Details' : to}</span>
     </Link>
   );
 }

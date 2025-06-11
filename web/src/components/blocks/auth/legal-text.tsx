@@ -6,7 +6,7 @@ type Props = {
   type: 'signin' | 'signup';
 };
 
-export default function AuthLegalText({ type }: Props) {
+export function AuthLegalText({ type }: Props) {
   return (
     <div className="text-sm text-muted-foreground">
       {type === 'signin'
@@ -25,7 +25,7 @@ export default function AuthLegalText({ type }: Props) {
       >
         Privacy Policy
       </Link>
-      {'.'}
+      .
       <div>
         You also agree that you are not Baran Kandil or an affiliate of him.
       </div>

@@ -1,6 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import PoiCard from '@/components/blocks/poi-card';
+import { AppMessage } from '@/components/blocks/app-message';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
@@ -10,14 +10,14 @@ import { GripVerticalIcon, LinkIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { utils } from 'swapy';
-import AddItemDialog from './-add-item-dialog';
-import DeleteItemDialog from './-delete-item-dialog';
+import { AddItemDialog } from './-add-item-dialog';
+import { DeleteItemDialog } from './-delete-item-dialog';
 
 export const Route = createFileRoute(
   '/_admin/dashboard/collections/$id/items/',
 )({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/collections/{id}', {
         params: {
@@ -39,7 +39,7 @@ function RouteComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const mutation = api.useMutation('patch', '/api/v2/collections/{id}/items', {
-    onSuccess: async () => {
+    onSuccess: () => {
       toast.success('Collection items updated');
       setIsEditMode(false);
     },
@@ -109,7 +109,7 @@ function RouteComponent() {
             <Button
               variant="outline"
               onClick={() => {
-                window.location.reload();
+                globalThis.window.location.reload();
               }}
             >
               Cancel
@@ -127,7 +127,7 @@ function RouteComponent() {
                   body: {
                     newOrder: slotItemMap.map((el) => ({
                       listIndex: +el.slot + 1,
-                      poiId: el.item!,
+                      poiId: el.item,
                     })),
                   },
                 });
@@ -185,10 +185,10 @@ function RouteComponent() {
                     variant="secondary"
                     size="icon"
                     onClick={async () => {
-                      await window.navigator.clipboard.writeText(
+                      await globalThis.window.navigator.clipboard.writeText(
                         new URL(
                           `/p/${item.poiId}`,
-                          window.location.origin,
+                          globalThis.window.location.origin,
                         ).toString(),
                       );
                       toast.success('Link copied to clipboard');

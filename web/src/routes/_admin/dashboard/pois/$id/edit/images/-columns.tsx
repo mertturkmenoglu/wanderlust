@@ -1,3 +1,4 @@
+// oxlint-disable no-non-null-assertion
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -235,7 +236,7 @@ function ActionsComponent({ ctx: { row, table } }: Props) {
         </div>
         <DrawerFooter>
           <Button
-            onClick={async () => {
+            onClick={() => {
               updateImageMutation.mutate({
                 params: {
                   path: {

@@ -1,4 +1,4 @@
-import Spinner from '@/components/kit/spinner';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import {
   Form,

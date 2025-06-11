@@ -1,22 +1,19 @@
 import { api } from '@/lib/api';
 import type { components } from '@/lib/api-types';
 import { useQuery } from '@tanstack/react-query';
-import type { PropsWithChildren } from 'react';
-import React from 'react';
+import React, { type PropsWithChildren } from 'react';
 
-export type AuthContextState = {
+type AuthContextState = {
   isLoading: boolean;
   user: components['schemas']['GetMeOutputBody'] | null;
 };
 
-export const AuthContext = React.createContext<AuthContextState>({
+const AuthContext = React.createContext<AuthContextState>({
   isLoading: true,
   user: null,
 });
 
-export default function AuthContextProvider({
-  children,
-}: Readonly<PropsWithChildren>) {
+function AuthContextProvider({ children }: Readonly<PropsWithChildren>) {
   const query = useQuery(
     api.queryOptions(
       'get',
@@ -45,3 +42,5 @@ export default function AuthContextProvider({
     </AuthContext.Provider>
   );
 }
+
+export { AuthContext, AuthContextProvider, type AuthContextState };

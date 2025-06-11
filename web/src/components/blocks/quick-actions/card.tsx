@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Link } from '@tanstack/react-router';
-import { MapIcon } from 'lucide-react';
+import type { MapIcon } from 'lucide-react';
 
 type Props = {
   to: string;

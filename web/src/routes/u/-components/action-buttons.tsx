@@ -1,4 +1,4 @@
-import Spinner from '@/components/kit/spinner';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
@@ -13,7 +13,7 @@ type Props = {
   username: string;
 };
 
-export default function ActionButtons({
+export function ActionButtons({
   loading,
   isThisUser,
   isFollowing,
@@ -28,7 +28,7 @@ export default function ActionButtons({
     },
   });
 
-  async function handleFollowClick() {
+  function handleFollowClick() {
     mutation.mutate({
       params: {
         path: {
@@ -47,7 +47,7 @@ export default function ActionButtons({
   }
 
   return (
-    <>
+    <div>
       {isThisUser ? (
         <Button
           asChild
@@ -67,6 +67,6 @@ export default function ActionButtons({
           )}
         </Button>
       )}
-    </>
+    </div>
   );
 }

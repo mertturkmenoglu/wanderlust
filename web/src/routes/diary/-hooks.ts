@@ -2,10 +2,10 @@ import { fetchClient } from '@/lib/api';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useContext } from 'react';
-import { type DateRange } from 'react-day-picker';
+import type { DateRange } from 'react-day-picker';
 import { DiaryContext, type DiaryContextState } from './-context';
 
-export function useDiaryEntriesQuery(date?: DateRange) {
+function useDiaryEntriesQuery(date?: DateRange) {
   return useInfiniteQuery({
     queryKey: ['diary', date?.from, date?.to],
     queryFn: async ({ pageParam }) => {
@@ -52,7 +52,7 @@ export function useDiaryEntriesQuery(date?: DateRange) {
   });
 }
 
-export function useDiaryContext(): DiaryContextState {
+function useDiaryContext(): DiaryContextState {
   const context = useContext(DiaryContext);
 
   if (!context) {
@@ -63,3 +63,5 @@ export function useDiaryContext(): DiaryContextState {
 
   return context;
 }
+
+export { useDiaryContext, useDiaryEntriesQuery };

@@ -21,7 +21,7 @@ type Props = {
   setValue: (md: string) => void;
 };
 
-export default function CustomEditor({ value, setValue }: Props) {
+export function CustomEditor({ value, setValue }: Props) {
   return (
     <MDXEditor
       className="prose w-full col-span-full"

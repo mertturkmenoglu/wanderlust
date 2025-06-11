@@ -1,8 +1,8 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
-import ActivityCard from './-activity-card';
+import { ActivityCard, type UserActivityType } from './-activity-card';
 
 export const Route = createFileRoute('/u/$username/activities/')({
   component: RouteComponent,
@@ -46,8 +46,8 @@ function RouteComponent() {
         {activities.map((act, i) => (
           <ActivityCard
             activity={{
-              type: act.type as any,
-              payload: act.payload as any,
+              type: act.type as unknown as UserActivityType,
+              payload: act.payload as unknown as Record<string, unknown>,
             }}
             key={`activity-${i}`}
           />

@@ -1,9 +1,9 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import Sidebar from './settings/-components/sidebar';
+import { Sidebar } from './settings/-components/sidebar';
 
 export const Route = createFileRoute('/settings')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (!auth.user) {
       throw redirect({
         to: '/sign-in',

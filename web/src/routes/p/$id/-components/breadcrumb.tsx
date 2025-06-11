@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { getRouteApi, Link } from '@tanstack/react-router';
 
-export default function Breadcrumb() {
+export function Breadcrumb() {
   const route = getRouteApi('/p/$id/');
   const { poi } = route.useLoaderData();
 

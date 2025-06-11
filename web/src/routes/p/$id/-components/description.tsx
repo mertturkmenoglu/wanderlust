@@ -1,7 +1,6 @@
-import CollapsibleText from '@/components/blocks/collapsible-text';
-import FormattedRating from '@/components/kit/formatted-rating';
+import { CollapsibleText } from '@/components/blocks/collapsible-text';
+import { FormattedRating } from '@/components/kit/formatted-rating';
 import { InfoCard } from '@/components/kit/info-card';
-
 import { computeRating } from '@/lib/rating';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
@@ -42,7 +41,7 @@ export function Description({ className }: Props) {
             </InfoCard.NumberColumn>
             <InfoCard.DescriptionColumn>
               <FormattedRating
-                rating={parseFloat(rating)}
+                rating={Number.parseFloat(rating)}
                 votes={poi.totalVotes}
                 showNumbers={false}
               />

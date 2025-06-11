@@ -1,3 +1,4 @@
+// oxlint-disable no-negated-condition
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,12 +23,13 @@ type Props = {
   poi: components['schemas']['Poi'];
 };
 
-export default function UploadDialog({ poi }: Props) {
+export function UploadDialog({ poi }: Props) {
   const fileApi = useUpload();
   const [alt, setAlt] = useState('');
   let f = fileApi.acceptedFiles[0];
   const preview = f ? URL.createObjectURL(f) : '';
 
+  // oxlint-disable-next-line func-style
   const upload = async () => {
     if (!f) {
       toast.error('No file selected');
@@ -95,7 +97,7 @@ export default function UploadDialog({ poi }: Props) {
     }
 
     toast.success('Media uploaded');
-    window.location.reload();
+    globalThis.window.location.reload();
   };
 
   return (
@@ -126,6 +128,7 @@ export default function UploadDialog({ poi }: Props) {
               <span>Drag your file here</span>
               <div className="text-xs my-2">(or)</div>
               <button
+                type="button"
                 {...fileApi.getTriggerProps()}
                 className="cursor-pointer"
               >

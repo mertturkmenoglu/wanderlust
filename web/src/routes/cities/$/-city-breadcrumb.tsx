@@ -12,7 +12,7 @@ type Props = {
   cityName: string;
 };
 
-export default function CityBreadcrumb({ cityName }: Props) {
+export function CityBreadcrumb({ cityName }: Props) {
   return (
     <Breadcrumb>
       <BreadcrumbList>

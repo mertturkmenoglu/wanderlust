@@ -15,7 +15,7 @@ type Props = AutocompleteItemInfo & {
   onCardClick?: (v: AutocompleteItemInfo) => void;
 };
 
-export default function Card({
+export function Card({
   name,
   image,
   id,
@@ -52,16 +52,19 @@ export default function Card({
     <div className="p-4 hover:bg-muted">
       {isCardClickable ? (
         <button
-          onClick={() =>
-            onCardClick?.({
-              categoryName,
-              city,
-              id,
-              image,
-              name,
-              state,
-            })
-          }
+          type="button"
+          onClick={() => {
+            if (onCardClick) {
+              onCardClick({
+                categoryName,
+                city,
+                id,
+                image,
+                name,
+                state,
+              });
+            }
+          }}
           className="flex gap-2 md:gap-8 text-left"
         >
           {innerContent}

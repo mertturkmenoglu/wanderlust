@@ -1,5 +1,5 @@
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -34,11 +34,13 @@ const visibility = ['public', 'friends', 'private'] as const;
 
 type Visibility = (typeof visibility)[number];
 
-const visibilityOptions: Array<{
+type TVisibilityOption = {
   label: string;
   value: Visibility;
   info: string;
-}> = [
+};
+
+const visibilityOptions: TVisibilityOption[] = [
   {
     label: 'Public',
     value: 'public',
@@ -121,7 +123,7 @@ export function CreateDialog() {
       onOpenChange={(o) =>
         navigate({
           to: '.',
-          search: () => ({ showNewDialog: o ? o : undefined }),
+          search: (prev) => ({ ...prev, showNewDialog: o }),
         })
       }
     >

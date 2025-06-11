@@ -1,5 +1,3 @@
-import AppMessage from '@/components/blocks/app-message';
-import Spinner from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
@@ -7,6 +5,8 @@ import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { Item } from './-item';
+import { AppMessage } from '@/components/blocks/app-message';
+import { Spinner } from '@/components/kit/spinner';
 
 type Props = {
   className?: string;
@@ -33,7 +33,7 @@ export function Comments({ className }: Props) {
     },
     {
       initialPageParam: 1,
-      getNextPageParam: (lastPage) =>
+      getNextPageParam: (lastPage: { pagination: { hasNext: boolean; page: number; }; }) =>
         lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : undefined,
       pageParamName: 'page',
       retry: false,

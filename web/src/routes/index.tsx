@@ -1,12 +1,13 @@
-import ActionBanner from '@/components/blocks/action-banner';
-import AppMessage from '@/components/blocks/app-message';
-import OverlayBanner from '@/components/blocks/overlay-banner';
-import PoiGrid from '@/components/blocks/poi-grid';
-import QuickActions from '@/components/blocks/quick-actions';
-import Search from '@/components/blocks/search';
-import TagNavigation from '@/components/blocks/tag-navigation';
-import VerticalBanner from '@/components/blocks/vertical-banner';
-import Spinner from '@/components/kit/spinner';
+// oxlint-disable no-nested-ternary
+import { ActionBanner } from '@/components/blocks/action-banner';
+import { AppMessage } from '@/components/blocks/app-message';
+import { OverlayBanner } from '@/components/blocks/overlay-banner';
+import { PoiGrid } from '@/components/blocks/poi-grid';
+import { QuickActions } from '@/components/blocks/quick-actions';
+import { Search } from '@/components/blocks/search';
+import { TagNavigation } from '@/components/blocks/tag-navigation';
+import { VerticalBanner } from '@/components/blocks/vertical-banner';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
@@ -42,6 +43,7 @@ function App() {
           className="my-8"
         />
       )}
+
       <ErrorBoundary
         fallback={
           <AppMessage
@@ -135,25 +137,22 @@ function Content() {
         image="https://i.imgur.com/Y3ujIqE.jpg"
         alt="Discover Around You Banner Image"
         content={
-          <>
-            <div className="text-center">
-              <h2 className="mt-8 font-serif text-3xl font-bold text-black/80">
-                Discover new locations around you
-              </h2>
-              <p className="font-serif text-muted-foreground">
-                Find new places to explore and enjoy with your friends and
-                family.
-              </p>
-              <Button
-                asChild
-                size="lg"
-                variant="secondary"
-                className="mt-8"
-              >
-                <Link to="/nearby">Start Exploring</Link>
-              </Button>
-            </div>
-          </>
+          <div className="text-center">
+            <h2 className="mt-8 font-serif text-3xl font-bold text-black/80">
+              Discover new locations around you
+            </h2>
+            <p className="font-serif text-muted-foreground">
+              Find new places to explore and enjoy with your friends and family.
+            </p>
+            <Button
+              asChild
+              size="lg"
+              variant="secondary"
+              className="mt-8"
+            >
+              <Link to="/nearby">Start Exploring</Link>
+            </Button>
+          </div>
         }
       />
 

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/pagination';
 import { usePagination } from 'react-instantsearch';
 
-export default function SearchPagination() {
+export function SearchPagination() {
   const {
     pages,
     currentRefinement,

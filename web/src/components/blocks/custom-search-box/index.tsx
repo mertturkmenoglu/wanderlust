@@ -8,10 +8,7 @@ type Props = {
   isSearchOnType?: boolean;
 } & UseSearchBoxProps;
 
-export default function CustomSearchBox({
-  isSearchOnType = false,
-  ...props
-}: Props) {
+export function CustomSearchBox({ isSearchOnType = false, ...props }: Props) {
   const { query, refine } = useSearchBox(props);
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);

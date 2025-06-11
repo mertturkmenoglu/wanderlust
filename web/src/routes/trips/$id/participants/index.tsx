@@ -39,6 +39,7 @@ function RouteComponent() {
         <Item
           image={trip.owner.profileImage}
           name={trip.owner.fullName}
+          // oxlint-disable-next-line aria-role
           role="Owner"
           isPrivileged={false}
           username={trip.owner.username}

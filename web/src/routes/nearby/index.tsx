@@ -1,7 +1,7 @@
 import { useGeoSearchClient } from '@/hooks/use-search-client';
 import { createFileRoute } from '@tanstack/react-router';
 import { InstantSearch } from 'react-instantsearch';
-import Container from './-components/container';
+import { Container } from './-components/container';
 
 export const Route = createFileRoute('/nearby/')({
   component: RouteComponent,
@@ -20,7 +20,7 @@ function RouteComponent() {
       <InstantSearch
         indexName="pois"
         searchClient={searchClient}
-        routing={true}
+        routing
       >
         <Container />
       </InstantSearch>

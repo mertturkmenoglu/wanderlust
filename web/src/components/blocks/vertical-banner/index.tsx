@@ -8,7 +8,7 @@ type Props = {
   content: React.ReactNode;
 };
 
-export default function VerticalBanner({
+export function VerticalBanner({
   image,
   className,
   imageClassName,

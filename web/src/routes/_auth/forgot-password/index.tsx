@@ -1,6 +1,6 @@
-import AuthLink from '@/components/blocks/auth/link';
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { AuthLink } from '@/components/blocks/auth/link';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/forgot-password/')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (auth.user) {
       throw redirect({
         to: '/',
@@ -52,7 +52,7 @@ function RouteComponent() {
         />
         <InputInfo text="We will send a code to your email address" />
         <InputError error={formState.errors.email} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Button
           variant="default"

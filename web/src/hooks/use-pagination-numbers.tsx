@@ -19,5 +19,6 @@ export function usePaginationNumbers(current: number, total: number): number[] {
     return allNums.slice(-5);
   }
 
+  // oxlint-disable-next-line prefer-negative-index
   return allNums.slice(2, allNums.length - 1);
 }

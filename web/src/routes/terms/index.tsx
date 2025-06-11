@@ -13,11 +13,11 @@ function RouteComponent() {
       </h1>
       <div className="mt-2 font-semibold">Effective Date: June 13, 2024</div>
       <p className="mt-4">
-        Welcome to Wanderlust! These Terms of Service ("Terms") govern your use
-        of the Wanderlust application and its related services (the "Service").
-        By using the Service, you agree to comply with and be bound by these
-        Terms. If you do not agree with these Terms, please do not use the
-        Service.
+        Welcome to Wanderlust! These Terms of Service (&quot;Terms&quot;) govern
+        your use of the Wanderlust application and its related services (the
+        &quot;Service&quot;). By using the Service, you agree to comply with and
+        be bound by these Terms. If you do not agree with these Terms, please do
+        not use the Service.
       </p>
       <ol className="mt-8 space-y-4">
         <li>
@@ -91,9 +91,9 @@ function RouteComponent() {
         </li>
         <li>
           <span className="font-bold">7. Disclaimers</span>: Wanderlust is
-          provided "as is" and without any warranty or condition, express,
-          implied, or statutory. We do not guarantee the availability, accuracy,
-          completeness, reliability, or timeliness of the Service.
+          provided &quot;as is&quot; and without any warranty or condition,
+          express, implied, or statutory. We do not guarantee the availability,
+          accuracy, completeness, reliability, or timeliness of the Service.
         </li>
         <li>
           <span className="font-bold">8. Limitation of Liability</span>: In no

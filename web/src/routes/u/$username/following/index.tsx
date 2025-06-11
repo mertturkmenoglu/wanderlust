@@ -1,5 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
-import UserImage from '@/components/blocks/user-image';
+import { AppMessage } from '@/components/blocks/app-message';
+import { UserImage } from '@/components/blocks/user-image';
 import { api } from '@/lib/api';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';

@@ -1,4 +1,4 @@
-import AppMessage from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { api } from '@/lib/api';
@@ -9,7 +9,7 @@ import { Header } from './-components/header';
 
 export const Route = createFileRoute('/lists/')({
   component: RouteComponent,
-  beforeLoad: async ({ context: { auth } }) => {
+  beforeLoad: ({ context: { auth } }) => {
     if (!auth.user) {
       throw redirect({
         to: '/sign-in',
@@ -31,7 +31,9 @@ function RouteComponent() {
     },
     {
       initialPageParam: 1,
-      getNextPageParam: (lastPage) => {
+      getNextPageParam: (lastPage: {
+        pagination: { hasNext: boolean; page: number };
+      }) => {
         if (!lastPage.pagination.hasNext) {
           return null;
         }

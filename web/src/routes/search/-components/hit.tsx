@@ -1,4 +1,4 @@
-import Card from '@/components/blocks/autocomplete/card';
+import { Card } from '@/components/blocks/autocomplete/card';
 
 export type Props = {
   hit: {
@@ -25,15 +25,15 @@ export type Props = {
         image: string;
         name: string;
       };
-      images: Array<{
+      images: {
         id: number;
         url: string;
-      }>;
+      }[];
     };
   };
 };
 
-export default function Hit({ hit }: Readonly<Props>) {
+export function Hit({ hit }: Readonly<Props>) {
   return (
     <Card
       id={hit.poi.id}

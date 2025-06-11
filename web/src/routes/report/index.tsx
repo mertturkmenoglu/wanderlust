@@ -1,5 +1,6 @@
-import AppMessage from '@/components/blocks/app-message';
-import Spinner from '@/components/kit/spinner';
+// oxlint-disable prefer-await-to-then
+import { AppMessage } from '@/components/blocks/app-message';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -95,7 +96,7 @@ function RouteComponent() {
         emptyMessage="Select a resource and report it"
         backLink="/"
         backLinkText="Back to home"
-        showBackButton={true}
+        showBackButton
       />
     );
   }
@@ -107,7 +108,7 @@ function RouteComponent() {
           successMessage="Thank you for reporting this content."
           backLink="/"
           backLinkText="Back to home"
-          showBackButton={true}
+          showBackButton
         />
       </div>
     );
@@ -141,7 +142,7 @@ function RouteComponent() {
                   <Input
                     placeholder="Resource ID"
                     type="text"
-                    disabled={true}
+                    disabled
                     {...field}
                   />
                 </FormControl>
@@ -162,7 +163,7 @@ function RouteComponent() {
                     placeholder="Resource Type"
                     type="text"
                     className="capitalize"
-                    disabled={true}
+                    disabled
                     {...field}
                   />
                 </FormControl>

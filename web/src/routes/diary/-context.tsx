@@ -1,22 +1,21 @@
-import type { PropsWithChildren } from 'react';
-import React, { useState } from 'react';
+import React, { useState, type PropsWithChildren } from 'react';
 import type { DateRange } from 'react-day-picker';
 
-export type DiaryContextState = {
+type DiaryContextState = {
   filterDateRange: DateRange | undefined;
   setFilterDateRange: React.Dispatch<
     React.SetStateAction<DateRange | undefined>
   >;
 };
 
-export const DiaryContext = React.createContext<DiaryContextState>({
+const DiaryContext = React.createContext<DiaryContextState>({
   filterDateRange: undefined,
-  setFilterDateRange: () => {},
+  setFilterDateRange: () => {
+    // do nothing
+  },
 });
 
-export default function DiaryContextProvider({
-  children,
-}: Readonly<PropsWithChildren>) {
+function DiaryContextProvider({ children }: Readonly<PropsWithChildren>) {
   const [filterDateRange, setFilterDateRange] = useState<
     DateRange | undefined
   >();
@@ -32,3 +31,5 @@ export default function DiaryContextProvider({
     </DiaryContext.Provider>
   );
 }
+
+export { DiaryContext, DiaryContextProvider, type DiaryContextState };

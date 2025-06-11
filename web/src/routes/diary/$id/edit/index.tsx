@@ -1,5 +1,5 @@
-import InputInfo from '@/components/kit/input-info';
-import Spinner from '@/components/kit/spinner';
+import { InputInfo } from '@/components/kit/input-info';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import {
   Form,

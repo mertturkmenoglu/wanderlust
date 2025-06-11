@@ -1,19 +1,18 @@
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -178,7 +177,7 @@ function RouteComponent() {
           </Button>
         </div>
 
-        <div></div>
+        <div />
 
         <div className="">
           <Label htmlFor="lat">Latitude</Label>
@@ -215,12 +214,14 @@ function RouteComponent() {
             className="px-0"
             onClick={async () => {
               const text = await navigator.clipboard.readText();
-              const [lat, lng] = text.split(', ').map((s) => parseFloat(s));
+              const [lat, lng] = text
+                .split(', ')
+                .map((s) => Number.parseFloat(s));
               if (
                 lat === undefined ||
                 lng === undefined ||
-                isNaN(lat) ||
-                isNaN(lng)
+                Number.isNaN(lat) ||
+                Number.isNaN(lng)
               ) {
                 toast.error('Invalid GeoHack format');
                 return;

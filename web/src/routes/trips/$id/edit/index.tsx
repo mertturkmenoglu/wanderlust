@@ -1,5 +1,5 @@
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -112,12 +112,18 @@ function RouteComponent() {
                     onValueChange={field.onChange}
                     defaultValue={field.value ?? undefined}
                   >
-                    <SelectTrigger id="visibility" className="mt-1 w-full">
+                    <SelectTrigger
+                      id="visibility"
+                      className="mt-1 w-full"
+                    >
                       <SelectValue placeholder="Select a visibility" />
                     </SelectTrigger>
                     <SelectContent>
                       {visibilityOptions.map((op) => (
-                        <SelectItem key={op.value} value={op.value}>
+                        <SelectItem
+                          key={op.value}
+                          value={op.value}
+                        >
                           {op.label}
                         </SelectItem>
                       ))}
@@ -182,7 +188,12 @@ function RouteComponent() {
               Cancel
             </Link>
           </Button>
-          <Button type="submit" size="sm" variant="default" className="ml-2">
+          <Button
+            type="submit"
+            size="sm"
+            variant="default"
+            className="ml-2"
+          >
             Save
           </Button>
         </div>

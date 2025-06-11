@@ -1,15 +1,15 @@
-import CollapsibleText from '@/components/blocks/collapsible-text';
+import { CollapsibleText } from '@/components/blocks/collapsible-text';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
-import Friends from './-components/friends';
-import Header from './-components/header';
-import Locations from './-components/locations';
-import Media from './-components/media';
+import { Friends } from './-components/friends';
+import { Header } from './-components/header';
+import { Locations } from './-components/locations';
+import { Media } from './-components/media';
 
 export const Route = createFileRoute('/diary/$id/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/diary/{id}', {
         params: {

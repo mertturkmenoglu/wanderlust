@@ -8,7 +8,7 @@ export function SignInModal() {
 
   return (
     <Dialog
-      defaultOpen={true}
+      defaultOpen
       onOpenChange={(open) => {
         if (!open) {
           router.navigate({
@@ -19,7 +19,7 @@ export function SignInModal() {
       }}
     >
       <DialogContent className="sm:max-w-xl">
-        <SignInCard isModal={true} />
+        <SignInCard isModal />
       </DialogContent>
     </Dialog>
   );

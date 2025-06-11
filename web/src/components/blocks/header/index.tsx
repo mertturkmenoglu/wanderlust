@@ -2,13 +2,13 @@ import { cn } from '@/lib/utils';
 import { AuthContext } from '@/providers/auth-provider';
 import { Link } from '@tanstack/react-router';
 import { useContext } from 'react';
-import Menu from './menu';
-import SignInButton from './sign-in-button';
-import SignedInLinks from './signed-in';
+import { Menu } from './menu';
+import { SignInButton } from './sign-in-button';
+import { SignedInLinks } from './signed-in';
 
 type Props = React.HTMLAttributes<HTMLElement>;
 
-export default function Header({ className, ...props }: Readonly<Props>) {
+export function Header({ className, ...props }: Readonly<Props>) {
   const ctx = useContext(AuthContext);
   const isSignedIn = !ctx.isLoading && ctx.user !== null;
 

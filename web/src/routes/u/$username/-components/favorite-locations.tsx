@@ -1,5 +1,5 @@
 import { Autocomplete } from '@/components/blocks/autocomplete';
-import PoiCard from '@/components/blocks/poi-card';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
@@ -43,7 +43,7 @@ export function FavoriteLocations({ className }: Props) {
 
   useEffect(() => {
     form.setValue('pois', pois);
-  }, [pois]);
+  }, [pois, form]);
 
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -115,11 +115,12 @@ export function FavoriteLocations({ className }: Props) {
               <Autocomplete
                 showAdvancedSearch={false}
                 showAllResultsButton={false}
-                isCardClickable={true}
+                isCardClickable
                 onCardClick={(v) => {
                   const maxAllowedCount = 4;
-                  const alreadyInList =
-                    array.fields.findIndex((lo) => lo.id === v.id) !== -1;
+                  const alreadyInList = array.fields.some(
+                    (lo) => lo.id === v.id,
+                  );
 
                   if (alreadyInList) {
                     toast.error('Location is already added.');
@@ -150,7 +151,7 @@ export function FavoriteLocations({ className }: Props) {
         {form.watch('pois').length === 0 && (
           <div className="flex flex-col items-center justify-center gap-4 col-span-full">
             <span className="text-muted-foreground">
-              {isThisUser ? 'You' : 'This user'} haven't added any favorite
+              {isThisUser ? 'You' : 'This user'} haven&apos;t added any favorite
               locations yet.
             </span>
           </div>

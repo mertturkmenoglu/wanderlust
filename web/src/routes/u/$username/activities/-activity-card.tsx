@@ -1,13 +1,14 @@
 import { Link } from '@tanstack/react-router';
 import { HeartIcon, PenIcon, UsersIcon } from 'lucide-react';
 
-export type UserActivityType =
+type UserActivityType =
   | 'activity-favorite'
   | 'activity-follow'
   | 'activity-review';
 
-export type Activity = {
+type Activity = {
   type: UserActivityType;
+  // oxlint-disable-next-line no-explicit-any
   payload: Record<string, any>;
 };
 
@@ -15,7 +16,7 @@ type Props = {
   activity: Activity;
 };
 
-export default function ActivityCard({ activity: { type, payload } }: Props) {
+function ActivityCard({ activity: { type, payload } }: Props) {
   if (type === 'activity-favorite') {
     return (
       <div className="flex items-center gap-2">
@@ -75,5 +76,7 @@ export default function ActivityCard({ activity: { type, payload } }: Props) {
     );
   }
 
-  return <div></div>;
+  return <div />;
 }
+
+export { ActivityCard, type Activity, type UserActivityType };

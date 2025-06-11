@@ -47,6 +47,7 @@ function Content({ className }: ContentProps) {
     >
       {images.slice(0, 4).map((image, i) => (
         <button
+          type="button"
           key={image.id}
           onClick={() => {
             setIndex(() => {

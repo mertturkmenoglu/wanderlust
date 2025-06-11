@@ -26,7 +26,7 @@ export function Menu({ review }: Props) {
   const mutation = api.useMutation('delete', '/api/v2/reviews/{id}', {
     onSuccess: () => {
       toast.success('Review deleted');
-      window.location.reload();
+      globalThis.window.location.reload();
     },
   });
 

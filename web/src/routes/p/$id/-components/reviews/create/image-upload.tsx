@@ -38,6 +38,7 @@ export function ImageUploadArea({ up }: Props) {
                 <span>Drag your file here</span>
                 <div className="text-xs my-2">(or)</div>
                 <button
+                  type="button"
                   {...up.getTriggerProps()}
                   className="cursor-pointer"
                 >

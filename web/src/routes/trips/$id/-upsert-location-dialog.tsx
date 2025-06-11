@@ -1,5 +1,6 @@
+// oxlint-disable func-style
 import { Autocomplete } from '@/components/blocks/autocomplete';
-import Spinner from '@/components/kit/spinner';
+import { Spinner } from '@/components/kit/spinner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -262,7 +263,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
                 <Autocomplete
                   showAdvancedSearch={false}
                   showAllResultsButton={false}
-                  isCardClickable={true}
+                  isCardClickable
                   onCardClick={(v) => {
                     navigate({
                       to: '.',

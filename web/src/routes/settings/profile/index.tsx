@@ -1,6 +1,6 @@
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
-import Spinner from '@/components/kit/spinner';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
+import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,7 +23,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { pronounGroups } from './-pronouns';
-import UpdateImage from './-update-image';
+import { UpdateImage } from './-update-image';
 
 const schema = z.object({
   fullName: z.string().min(1).max(128),
@@ -38,6 +38,7 @@ export const Route = createFileRoute('/settings/profile/')({
 
 function RouteComponent() {
   const { auth } = Route.useRouteContext();
+  // oxlint-disable-next-line no-non-null-assertion
   const user = auth.user!;
   const invalidator = useInvalidator();
 
@@ -198,7 +199,7 @@ function RouteComponent() {
           <InputError error={form.formState.errors.pronouns} />
         </div>
 
-        <div className="col-span-2"></div>
+        <div className="col-span-2" />
 
         <Button
           type="submit"

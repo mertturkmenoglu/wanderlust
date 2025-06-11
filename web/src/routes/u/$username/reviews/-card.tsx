@@ -1,4 +1,4 @@
-import FormattedRating from '@/components/kit/formatted-rating';
+import { FormattedRating } from '@/components/kit/formatted-rating';
 import { Separator } from '@/components/ui/separator';
 import type { components } from '@/lib/api-types';
 import { Link } from '@tanstack/react-router';
@@ -9,7 +9,7 @@ type Props = {
   isLast: boolean;
 };
 
-export default function Card({ review, isLast }: Props) {
+export function Card({ review, isLast }: Props) {
   return (
     <Link
       to="/p/$id"

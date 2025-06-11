@@ -2,25 +2,22 @@ import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { HeartIcon } from 'lucide-react';
 
+type TItem = {
+  id: string;
+  title: string;
+  category: string;
+  favorite: boolean;
+  image: string;
+};
+
 type Props = {
   className?: string;
   title: string;
   actions?: React.ReactNode;
-  items: Array<{
-    id: string;
-    title: string;
-    category: string;
-    favorite: boolean;
-    image: string;
-  }>;
+  items: TItem[];
 };
 
-export default function Collection({
-  className,
-  title,
-  actions,
-  items,
-}: Props) {
+export function Collection({ className, title, actions, items }: Props) {
   return (
     <div className={cn('w-full', className)}>
       <div className="flex items-baseline">
@@ -37,7 +34,10 @@ export default function Collection({
                 alt=""
                 className="aspect-video w-full rounded-md object-cover"
               />
-              <button className="absolute right-1 top-1 rounded-full bg-white p-1">
+              <button
+                type="button"
+                className="absolute right-1 top-1 rounded-full bg-white p-1"
+              >
                 <HeartIcon
                   className={cn('size-4 text-primary', {
                     'fill-primary': item.favorite,

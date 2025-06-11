@@ -14,7 +14,7 @@ import { BookmarkIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 
-export default function BookmarkButton() {
+export function BookmarkButton() {
   const route = getRouteApi('/p/$id/');
   const { poi, meta } = route.useLoaderData();
   const [booked, setBooked] = useState(meta.isBookmarked);
@@ -37,6 +37,7 @@ export default function BookmarkButton() {
     },
   });
 
+  // oxlint-disable-next-line func-style
   const onClick = () => {
     if (!auth.user) {
       toast.warning('You need to be signed in.');

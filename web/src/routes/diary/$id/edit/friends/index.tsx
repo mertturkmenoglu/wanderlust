@@ -6,9 +6,9 @@ import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { List } from './-list';
-import SearchResults from './-results';
+import { SearchResults } from './-results';
 import { schema } from './-schema';
-import SearchInput from './-search-input';
+import { SearchInput } from './-search-input';
 
 export const Route = createFileRoute('/diary/$id/edit/friends/')({
   component: RouteComponent,

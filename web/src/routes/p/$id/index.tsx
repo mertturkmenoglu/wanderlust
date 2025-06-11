@@ -3,17 +3,17 @@ import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
-import Amenities from './-components/amenities';
-import Breadcrumb from './-components/breadcrumb';
+import { Amenities } from './-components/amenities';
+import { Breadcrumb } from './-components/breadcrumb';
 import { CityInfo } from './-components/city-info';
 import { Collections } from './-components/collections';
 import { Description } from './-components/description';
 import { Header } from './-components/header';
 import { ImageGrid } from './-components/image-grid';
 import { Information } from './-components/information';
-import Map from './-components/map';
+import { Map } from './-components/map';
 import { NearbyPois } from './-components/nearby-pois';
-import Reviews from './-components/reviews';
+import { Reviews } from './-components/reviews';
 
 const schema = z.object({
   page: z.number().min(1).max(100).optional(),

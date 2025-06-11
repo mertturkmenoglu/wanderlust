@@ -1,6 +1,6 @@
 import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter';
 
-export function useSearchClient() {
+function useSearchClient() {
   const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     server: {
       apiKey: 'wanderlust',
@@ -24,10 +24,10 @@ export function useSearchClient() {
 }
 
 type GeoSearchClientProps = {
-  additionalSearchParameters?: Record<string, any>;
+  additionalSearchParameters?: Record<string, unknown>;
 };
 
-export function useGeoSearchClient(props?: GeoSearchClientProps) {
+function useGeoSearchClient(props?: GeoSearchClientProps) {
   const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
     server: {
       apiKey: 'wanderlust',
@@ -44,7 +44,7 @@ export function useGeoSearchClient(props?: GeoSearchClientProps) {
     additionalSearchParameters: {
       query_by: 'name',
       per_page: 10,
-      ...(props?.additionalSearchParameters ?? {}),
+      ...props?.additionalSearchParameters,
     },
     geoLocationField: 'location',
   });
@@ -53,3 +53,5 @@ export function useGeoSearchClient(props?: GeoSearchClientProps) {
 
   return searchClient;
 }
+
+export { useGeoSearchClient, useSearchClient };

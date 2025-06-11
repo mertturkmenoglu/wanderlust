@@ -12,7 +12,7 @@ type Props = {
   favorite: components['schemas']['Favorite'];
 };
 
-export default function FavoriteCard({ favorite: { poi } }: Props) {
+export function FavoriteCard({ favorite: { poi } }: Props) {
   return (
     <Card className="group flex flex-col md:flex-row py-0">
       <img

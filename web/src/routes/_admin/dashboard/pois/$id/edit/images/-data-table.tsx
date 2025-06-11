@@ -27,7 +27,7 @@ import {
 import type { components } from '@/lib/api-types';
 import { Settings2Icon } from 'lucide-react';
 import { useState } from 'react';
-import UploadDialog from './-upload-dialog';
+import { UploadDialog } from './-upload-dialog';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

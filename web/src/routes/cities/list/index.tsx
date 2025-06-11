@@ -1,4 +1,4 @@
-import OverlayBanner from '@/components/blocks/overlay-banner';
+import { OverlayBanner } from '@/components/blocks/overlay-banner';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';

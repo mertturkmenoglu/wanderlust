@@ -1,5 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
-import PoiCard from '@/components/blocks/poi-card';
+import { AppMessage } from '@/components/blocks/app-message';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { api } from '@/lib/api';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import Markdown from 'react-markdown';

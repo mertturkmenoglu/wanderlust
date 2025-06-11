@@ -1,6 +1,6 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,6 +31,7 @@ function RouteComponent() {
   const { categories } = Route.useLoaderData();
   const { id } = Route.useParams();
   const navigate = useNavigate();
+  // oxlint-disable-next-line no-non-null-assertion
   const category = categories.find((category) => category.id === +id)!;
   const [previewUrl, setPreviewUrl] = useState(category.image);
 
@@ -42,7 +43,10 @@ function RouteComponent() {
   const mutation = api.useMutation('patch', '/api/v2/categories/{id}', {
     onSuccess: async () => {
       toast.success('Category updated');
-      navigate({ to: `/dashboard/categories/${id}`, reloadDocument: true });
+      await navigate({
+        to: `/dashboard/categories/${id}`,
+        reloadDocument: true,
+      });
     },
   });
 

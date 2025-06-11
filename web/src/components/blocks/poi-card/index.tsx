@@ -21,7 +21,7 @@ type Props = {
   hoverEffects?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export default function PoiCard({
+export function PoiCard({
   poi,
   className,
   hoverEffects = true,
@@ -32,7 +32,7 @@ export default function PoiCard({
   const rating = computeRating(poi.totalPoints, poi.totalVotes);
 
   if (!el) {
-    return <></>;
+    return null;
   }
 
   return (
@@ -49,6 +49,7 @@ export default function PoiCard({
     >
       <div className="relative">
         <button
+          type="button"
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white rounded-full p-1 opacity-0 group-hover:opacity-80 duration-200"
           disabled={index === 0}
           onClick={(e) => {
@@ -63,16 +64,16 @@ export default function PoiCard({
         {/* Preload previous and next images */}
         {index !== 0 && (
           <img
-            src={ipx(poi.images[index - 1]!.url, 'w_512')}
-            alt={poi.images[index - 1]!.alt}
+            src={ipx(poi.images[index - 1]?.url ?? '', 'w_512')}
+            alt={poi.images[index - 1]?.alt}
             className="hidden"
           />
         )}
 
         {index !== poi.images.length - 1 && (
           <img
-            src={ipx(poi.images[index + 1]!.url, 'w_512')}
-            alt={poi.images[index + 1]!.alt}
+            src={ipx(poi.images[index + 1]?.url ?? '', 'w_512')}
+            alt={poi.images[index + 1]?.alt}
             className="hidden"
           />
         )}
@@ -84,6 +85,7 @@ export default function PoiCard({
         />
 
         <button
+          type="button"
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-white rounded-full p-1 opacity-0 group-hover:opacity-80 duration-200"
           disabled={index === poi.images.length - 1}
           onClick={(e) => {

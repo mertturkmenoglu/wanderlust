@@ -1,9 +1,9 @@
 import { Hits } from 'react-instantsearch';
-import Hit from './hit';
-import HitsPerPage from './hits-per-page';
-import Pagination from './pagination';
+import { Hit } from './hit';
+import { HitsPerPage } from './hits-per-page';
+import { SearchPagination as Pagination } from './pagination';
 
-export default function Results() {
+export function Results() {
   return (
     <>
       <div className="flex w-full items-center justify-between">

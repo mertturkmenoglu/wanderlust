@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 
 export type SpinnerProps = React.ComponentProps<'svg'>;
 
-export default function Spinner({ className, ...props }: SpinnerProps) {
+export function Spinner({ className, ...props }: SpinnerProps) {
   return (
     <svg
       className={cn(

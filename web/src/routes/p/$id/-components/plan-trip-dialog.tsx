@@ -32,7 +32,7 @@ export function PlanTripDialog({ className }: Props) {
         to: '/sign-in',
       });
     }
-  }, [open, auth.user]);
+  }, [open, auth.user, navigate]);
 
   const [state, setState] = useState<'choose' | 'new-trip' | 'add-to-trip'>(
     'choose',
@@ -79,6 +79,7 @@ export function PlanTripDialog({ className }: Props) {
           {state === 'choose' && (
             <>
               <button
+                type="button"
                 className={cn(
                   'flex flex-col gap-4 items-center justify-center p-4 bg-muted aspect-square rounded-md',
                   'font-medium',
@@ -96,6 +97,7 @@ export function PlanTripDialog({ className }: Props) {
               </button>
 
               <button
+                type="button"
                 className={cn(
                   'flex flex-col gap-4 items-center justify-center p-4 bg-muted aspect-square rounded-md',
                   'font-medium',
@@ -120,6 +122,8 @@ export function PlanTripDialog({ className }: Props) {
                 )
                 .map((trip) => (
                   <button
+                    key={trip.id}
+                    type="button"
                     className="p-2 hover:bg-primary/10 w-full flex justify-start items-center"
                     onClick={() => {
                       navigate({

@@ -15,10 +15,10 @@ function RouteComponent() {
         <div className="mt-2 font-semibold">Effective Date: June 13, 2024</div>
         <p className="mt-4">
           Welcome to Wanderlust! This Privacy Policy explains how Wanderlust
-          ("we" or "us") collects, uses, shares, and protects information in
-          relation to the Wanderlust mobile application and its services (the
-          "Service"). By using the Service, you agree to the terms and practices
-          outlined in this Privacy Policy.
+          (&quot;we&quot; or &quot;us&quot;) collects, uses, shares, and
+          protects information in relation to the Wanderlust mobile application
+          and its services (the &quot;Service&quot;). By using the Service, you
+          agree to the terms and practices outlined in this Privacy Policy.
         </p>
         <ol className="mt-8 space-y-4">
           <li>
@@ -89,8 +89,8 @@ function RouteComponent() {
             <ol className="ml-4">
               <li>
                 <span className="font-bold">a. Account Information</span>: You
-                can access and update your account information through the app's
-                settings.
+                can access and update your account information through the
+                app&apos;s settings.
               </li>
               <li>
                 <span className="font-bold">b. Communication Preferences</span>:
@@ -106,7 +106,7 @@ function RouteComponent() {
             destruction.
           </li>
           <li>
-            <span className="font-bold">6. Children's Privacy</span>: The
+            <span className="font-bold">6. Children&apos;s Privacy</span>: The
             Service is not directed to individuals under the age of 18. If we
             become aware that personal information has been collected from a
             child under 18, we will take steps to delete such information.

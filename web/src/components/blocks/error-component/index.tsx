@@ -21,18 +21,19 @@ export function ErrorComponent({ error }: ErrorComponentProps) {
   }, [error]);
 
   const message = useMemo(() => {
-    if (code === 400) {
-      return 'Bad request';
-    } else if (code === 401) {
-      return 'Unauthenticated';
-    } else if (code === 403) {
-      return 'Unauthorized';
-    } else if (code === 404) {
-      return 'Page not found';
-    } else if (code === 500) {
-      return 'Internal server error';
-    } else {
-      return 'Something went wrong';
+    switch (code) {
+      case 400:
+        return 'Bad request';
+      case 401:
+        return 'Unauthenticated';
+      case 403:
+        return 'Unauthorized';
+      case 404:
+        return 'Page not found';
+      case 500:
+        return 'Internal server error';
+      default:
+        return 'Something went wrong';
     }
   }, [code]);
 

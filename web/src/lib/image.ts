@@ -1,17 +1,17 @@
 export function userImage(s: string | null): string {
   if (globalThis.window !== undefined) {
     if (s === null) {
-      return window.location.origin + '/profile.png';
+      return globalThis.window.location.origin + '/profile.png';
     }
 
     if (s.startsWith('//')) {
-      return window.location.protocol + s;
+      return globalThis.window.location.protocol + s;
     }
 
     return s;
   }
 
-  if (s == null) {
+  if (s === null) {
     return '/profile.png';
   }
 

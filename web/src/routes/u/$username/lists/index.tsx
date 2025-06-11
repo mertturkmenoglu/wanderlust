@@ -1,4 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
+// oxlint-disable no-nested-ternary
+import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
 import { createFileRoute, Link } from '@tanstack/react-router';
@@ -25,8 +26,9 @@ function RouteComponent() {
     },
     {
       initialPageParam: 1,
-      getNextPageParam: (lastPage) =>
-        lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null,
+      getNextPageParam: (lastPage: {
+        pagination: { hasNext: boolean; page: number };
+      }) => (lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null),
       pageParamName: 'page',
       retry: false,
       enabled: username !== '',

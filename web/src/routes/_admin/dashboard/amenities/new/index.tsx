@@ -1,6 +1,6 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,7 +68,7 @@ function RouteComponent() {
           <InputError error={form.formState.errors.name} />
         </div>
 
-        <div></div>
+        <div />
 
         <div className="flex items-center gap-2">
           <Button type="submit">Create</Button>

@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
-import AddToListButton from './add-to-list-button';
-import BookmarkButton from './bookmark-button';
-import FavoriteButton from './favorite-button';
-import Menu from './menu';
+import { AddToListButton } from './add-to-list-button';
+import { BookmarkButton } from './bookmark-button';
+import { FavoriteButton } from './favorite-button';
+import { Menu } from './menu';
 
 type Props = {
   className?: string;

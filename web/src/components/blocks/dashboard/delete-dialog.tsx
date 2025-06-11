@@ -14,7 +14,7 @@ type Props = {
   onClick: () => void;
 };
 
-export default function DeleteDialog({ type, onClick }: Props) {
+export function DeleteDialog({ type, onClick }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>

@@ -1,6 +1,6 @@
-import CollapsibleText from '@/components/blocks/collapsible-text';
-import UserImage from '@/components/blocks/user-image';
-import FormattedRating from '@/components/kit/formatted-rating';
+import { CollapsibleText } from '@/components/blocks/collapsible-text';
+import { UserImage } from '@/components/blocks/user-image';
+import { FormattedRating } from '@/components/kit/formatted-rating';
 import type { components } from '@/lib/api-types';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
@@ -55,6 +55,7 @@ export function ReviewCard({ review }: Props) {
         >
           {review.images.map((m, i) => (
             <button
+              type="button"
               key={m.url}
               onClick={() => {
                 setIndex(() => {

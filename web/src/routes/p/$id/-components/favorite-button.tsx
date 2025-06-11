@@ -1,3 +1,4 @@
+// oxlint-disable func-style
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -14,7 +15,7 @@ import { HeartIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 
-export default function FavoriteButton() {
+export function FavoriteButton() {
   const route = getRouteApi('/p/$id/');
   const { poi, meta } = route.useLoaderData();
   const [fav, setFav] = useState(meta.isFavorite);

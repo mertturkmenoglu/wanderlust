@@ -1,6 +1,6 @@
 import type { IndexUiState } from 'instantsearch.js';
 
-export function serializeParams(params?: string[]) {
+function serializeParams(params?: string[]): string | undefined {
   if (params === undefined) {
     return undefined;
   }
@@ -8,15 +8,18 @@ export function serializeParams(params?: string[]) {
   return params.map((el) => el.split(' ').join('+')).join('|');
 }
 
-export function deserializeParams(ser?: IndexUiState) {
+function deserializeParams(ser?: IndexUiState) {
   if (ser === undefined) {
+    // oxlint-disable-next-line no-useless-undefined
     return undefined;
   }
 
   if (typeof ser === 'string') {
-    // @ts-expect-error
+    // @ts-expect-error - TODO: fix types
     return ser.split('|').map((el) => el.split('+').join(' '));
   }
 
   return ser;
 }
+
+export { deserializeParams, serializeParams };

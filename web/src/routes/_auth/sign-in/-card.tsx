@@ -1,7 +1,7 @@
-import AuthLegalText from '@/components/blocks/auth/legal-text';
-import AuthLink from '@/components/blocks/auth/link';
-import OAuthButton from '@/components/blocks/auth/oauth-button';
-import InputError from '@/components/kit/input-error';
+import { AuthLegalText } from '@/components/blocks/auth/legal-text';
+import { AuthLink } from '@/components/blocks/auth/link';
+import { OAuthButton } from '@/components/blocks/auth/oauth-button';
+import { InputError } from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -42,9 +42,9 @@ export function SignInCard({ isModal }: Props) {
     'post',
     '/api/v2/auth/credentials/login',
     {
-      onSuccess: async () => {
-        window.location.href = '/';
-        window.location.search = '';
+      onSuccess: () => {
+        globalThis.window.location.href = '/';
+        globalThis.window.location.search = '';
       },
     },
   );
@@ -87,7 +87,7 @@ export function SignInCard({ isModal }: Props) {
           {...register('email')}
         />
         <InputError error={formState.errors.email} />
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Label htmlFor="password">Password</Label>
         <div className="relative">
@@ -125,7 +125,7 @@ export function SignInCard({ isModal }: Props) {
           />
         </div>
 
-        <div className="my-4"></div>
+        <div className="my-4" />
 
         <Button
           variant="default"

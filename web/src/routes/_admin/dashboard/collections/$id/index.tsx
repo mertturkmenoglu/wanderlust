@@ -1,8 +1,8 @@
-import DashboardActions from '@/components/blocks/dashboard/actions';
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
+import { DashboardActions } from '@/components/blocks/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
-import DeleteDialog from '@/components/blocks/dashboard/delete-dialog';
+import { DeleteDialog } from '@/components/blocks/dashboard/delete-dialog';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_admin/dashboard/collections/$id/')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
       api.queryOptions('get', '/api/v2/collections/{id}', {
         params: {

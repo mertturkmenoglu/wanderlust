@@ -1,5 +1,5 @@
-import AppMessage from '@/components/blocks/app-message';
-import Spinner from '@/components/kit/spinner';
+import { AppMessage } from '@/components/blocks/app-message';
+import { Spinner } from '@/components/kit/spinner';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { api } from '@/lib/api';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';

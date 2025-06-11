@@ -56,7 +56,7 @@ export function NewComment({ className }: Props) {
               },
             });
           }}
-          disabled={!content.length}
+          disabled={content.length === 0}
         >
           <span className="sr-only">Comment</span>
           <SendHorizonalIcon className="size-4" />

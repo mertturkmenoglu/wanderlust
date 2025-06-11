@@ -12,7 +12,7 @@ type Props = {
   bookmark: components['schemas']['Bookmark'];
 };
 
-export default function BookmarkCard({ bookmark: { poi } }: Props) {
+export function BookmarkCard({ bookmark: { poi } }: Props) {
   return (
     <Card className="group flex flex-col md:flex-row py-0">
       <img

@@ -1,11 +1,11 @@
-import PoiCard from '@/components/blocks/poi-card';
+import { PoiCard } from '@/components/blocks/poi-card';
 import { icon } from '@/components/icons/leaflet';
 import { Link } from '@tanstack/react-router';
-import { type LeafletEvent } from 'leaflet';
+import type { LeafletEvent } from 'leaflet';
 import { type UseGeoSearchProps, useGeoSearch } from 'react-instantsearch';
 import { Marker, Popup, useMapEvents } from 'react-leaflet';
 
-export default function GeoSearch(props: UseGeoSearchProps) {
+export function GeoSearch(props: UseGeoSearchProps) {
   const { items, refine } = useGeoSearch(props);
 
   function onViewChange({ target }: LeafletEvent) {

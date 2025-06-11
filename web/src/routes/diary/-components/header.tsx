@@ -1,3 +1,4 @@
+// oxlint-disable no-nested-ternary
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -11,7 +12,7 @@ import { BookMarkedIcon, CalendarIcon, XIcon } from 'lucide-react';
 import { useDiaryContext } from '../-hooks';
 import { CreateDialog } from './create-dialog';
 
-export default function Header() {
+export function Header() {
   const ctx = useDiaryContext();
   const date = ctx.filterDateRange;
   const setDate = ctx.setFilterDateRange;
@@ -25,7 +26,10 @@ export default function Header() {
 
       <div className="flex items-center gap-2">
         {date !== undefined && (
-          <button onClick={() => setDate(undefined)}>
+          <button
+            type="button"
+            onClick={() => setDate(undefined)}
+          >
             <XIcon className="size-4 text-destructive" />
             <span className="sr-only">Clear date</span>
           </button>
@@ -34,7 +38,7 @@ export default function Header() {
           <PopoverTrigger asChild>
             <Button
               id="date"
-              variant={'outline'}
+              variant="outline"
               className={cn(
                 'w-[192px] sm:w-[256px] justify-start text-left font-normal',
                 !date && 'text-muted-foreground',

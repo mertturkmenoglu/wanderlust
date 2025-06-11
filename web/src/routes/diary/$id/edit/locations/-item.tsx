@@ -1,20 +1,20 @@
 import { Card } from '@/components/ui/card';
 import { ipx } from '@/lib/ipx';
 import { useFormContext } from 'react-hook-form';
-import Actions from './-actions';
-import Description from './-description';
+import { Actions } from './-actions';
+import { Description } from './-description';
 import type { FormInput } from './-schema';
 
 type Props = {
   index: number;
 };
 
-export default function Item({ index }: Props) {
+export function Item({ index }: Props) {
   const form = useFormContext<FormInput>();
   const location = form.watch('locations')[index];
 
   if (location === undefined) {
-    return <></>;
+    return null;
   }
 
   return (

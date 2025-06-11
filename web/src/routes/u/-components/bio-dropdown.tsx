@@ -12,7 +12,7 @@ type Props = {
   userId: string;
 };
 
-export default function BioDropdown({ userId }: Props) {
+export function BioDropdown({ userId }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger

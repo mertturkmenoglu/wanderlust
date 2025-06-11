@@ -15,15 +15,15 @@ export function ImageGrid({ className }: Props) {
   const first = images[0];
 
   const rest = useMemo(() => {
-    const slice = images.slice(1, 5) as Array<{
+    const slice = images.slice(1, 5) as {
       id: number;
       url: string;
       alt: string;
-    }>;
+    }[];
     if (slice.length < 4) {
       let pad = 4 - slice.length;
 
-      for (let i = 0; i < pad; i++) {
+      for (let i = 0; i < pad; i += 1) {
         slice.push({
           id: Math.random(),
           url: '',
@@ -79,6 +79,7 @@ export function ImageGrid({ className }: Props) {
         </div>
       ))}
       <button
+        type="button"
         className="absolute bottom-4 right-4 bg-primary text-white rounded-md px-4 py-2"
         onClick={() => setOpen(true)}
       >

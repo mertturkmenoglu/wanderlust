@@ -10,7 +10,7 @@ type Props = {
   showAdvancedSearch?: boolean;
 };
 
-export default function Search({
+export function Search({
   className,
   onItemClicked,
   showAdvancedSearch = true,
@@ -35,7 +35,7 @@ export default function Search({
       >
         <Autocomplete
           showAdvancedSearch={showAdvancedSearch}
-          isCardClickable={true}
+          isCardClickable
           onCardClick={(v) => {
             navigate({
               to: '/p/$id',

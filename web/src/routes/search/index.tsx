@@ -5,7 +5,7 @@ import { history } from 'instantsearch.js/es/lib/routers';
 import type { RouterProps } from 'instantsearch.js/es/middlewares';
 import { InstantSearch } from 'react-instantsearch';
 import { z } from 'zod';
-import Container from './-components/container';
+import { Container } from './-components/container';
 
 const schema = z.object({
   q: z.string().optional(),
@@ -30,7 +30,7 @@ export const Route = createFileRoute('/search/')({
 const routing: RouterProps = {
   router: history(),
   stateMapping: {
-    // @ts-expect-error
+    // @ts-expect-error TODO: fix it
     stateToRoute(uiState) {
       const s = uiState['pois'];
       return {
@@ -50,7 +50,7 @@ const routing: RouterProps = {
         ),
       };
     },
-    // @ts-expect-error
+    // @ts-expect-error TODO: fix it
     routeToState(routeState) {
       return {
         pois: {

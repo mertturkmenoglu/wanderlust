@@ -14,7 +14,7 @@ type Props = {
   backLinkText?: string;
 };
 
-export default function AppMessage({
+export function AppMessage({
   className,
   errorMessage,
   successMessage,

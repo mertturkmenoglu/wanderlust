@@ -1,6 +1,6 @@
-import DashboardBreadcrumb from '@/components/blocks/dashboard/breadcrumb';
-import InputError from '@/components/kit/input-error';
-import InputInfo from '@/components/kit/input-info';
+import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
+import { InputError } from '@/components/kit/input-error';
+import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,10 +10,10 @@ import { api } from '@/lib/api';
 import { lengthTracker } from '@/lib/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import CustomEditor from '../../-custom-editor';
+import { CustomEditor } from '../../-custom-editor';
 
 const schema = z.object({
   name: z.string().min(1).max(128),
@@ -25,7 +25,7 @@ type FormInput = z.infer<typeof schema>;
 export const Route = createFileRoute('/_admin/dashboard/collections/$id/edit/')(
   {
     component: RouteComponent,
-    loader: async ({ context, params }) => {
+    loader: ({ context, params }) => {
       return context.queryClient.ensureQueryData(
         api.queryOptions('get', '/api/v2/collections/{id}', {
           params: {
@@ -62,17 +62,6 @@ function RouteComponent() {
     },
   });
 
-  const onSubmit: SubmitHandler<FormInput> = async (data) => {
-    mutation.mutate({
-      params: {
-        path: {
-          id: collection.id,
-        },
-      },
-      body: data,
-    });
-  };
-
   return (
     <div>
       <DashboardBreadcrumb
@@ -93,7 +82,16 @@ function RouteComponent() {
 
       <form
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
+            params: {
+              path: {
+                id: collection.id,
+              },
+            },
+            body: data,
+          });
+        })}
       >
         <div className="">
           <Label htmlFor="id">ID</Label>

@@ -6,7 +6,7 @@ type Props = {
   longitude: number;
 };
 
-export default function Map({ latitude, longitude }: Props) {
+export function Map({ latitude, longitude }: Props) {
   return (
     <>
       <h3 className="text-2xl font-bold mt-8 lg:mt-4">Location</h3>
@@ -15,7 +15,7 @@ export default function Map({ latitude, longitude }: Props) {
           center={[latitude, longitude]}
           zoom={14}
           minZoom={4}
-          scrollWheelZoom={true}
+          scrollWheelZoom
           style={{
             height: '400px',
             marginTop: '16px',
