@@ -45,7 +45,12 @@ export function RatingsSection({ className }: Props) {
         )}
       >
         <div>
-          <h3 className="font-bold text-xl text-primary">Reviews</h3>
+          <h3
+            id="reviews"
+            className="font-bold text-xl text-primary"
+          >
+            Reviews
+          </h3>
           <div className="my-2 flex items-center gap-4">
             <span className="font-bold text-6xl text-primary">{rating}</span>
             <div>
@@ -131,8 +136,10 @@ function Filters() {
             onClick={() => {
               navigate({
                 to: '.',
+                hash: 'reviews',
                 search: (prev) => ({
                   ...prev,
+                  page: 1,
                   minRating: minRating,
                   maxRating: maxRating,
                   sortBy: sortBy,
