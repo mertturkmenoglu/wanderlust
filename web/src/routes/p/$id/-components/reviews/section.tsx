@@ -8,6 +8,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
 import { api } from '@/lib/api';
+import type { components } from '@/lib/api-types';
 import { cn } from '@/lib/utils';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import {
@@ -74,10 +75,28 @@ export function Section() {
   }
 
   const { reviews, pagination } = query.data;
+  const sortedReviews = (() => {
+    if (search.sortOrd === 'asc' && search.sortBy === 'created_at') {
+      const sorted: components['schemas']['Review'][] = [];
+      for (const v of reviews) {
+        sorted.unshift(v);
+      }
+      return sorted;
+    }
+
+    if (search.sortBy === 'rating') {
+      if (search.sortOrd === 'asc') {
+        return reviews.sort((a, b) => a.rating - b.rating);
+      }
+      return reviews.sort((a, b) => b.rating - a.rating);
+    }
+
+    return reviews;
+  })();
 
   return (
     <>
-      {reviews.map((review, i) => (
+      {sortedReviews.map((review, i) => (
         <div key={review.id}>
           <ReviewCard review={review} />
           {i !== reviews.length - 1 && <Separator className="my-2" />}
@@ -101,9 +120,11 @@ export function Section() {
                 params={{
                   id: poi.id,
                 }}
-                search={{
+                hash="reviews"
+                search={(prev) => ({
+                  ...prev,
                   page: pagination.hasPrevious ? (search.page ?? 1) - 1 : 1,
-                }}
+                })}
               >
                 <ChevronLeftIcon />
                 <span className="hidden sm:block">Previous</span>
@@ -125,9 +146,11 @@ export function Section() {
                   params={{
                     id: poi.id,
                   }}
-                  search={{
+                  hash="reviews"
+                  search={(prev) => ({
+                    ...prev,
                     page: x,
-                  }}
+                  })}
                 >
                   {x}
                 </Link>
@@ -148,11 +171,13 @@ export function Section() {
                 params={{
                   id: poi.id,
                 }}
-                search={{
+                hash="reviews"
+                search={(prev) => ({
+                  ...prev,
                   page: pagination.hasNext
                     ? (search.page ?? 1) + 1
                     : search.page,
-                }}
+                })}
               >
                 <span className="hidden sm:block">Next</span>
                 <ChevronRightIcon />
