@@ -71,10 +71,6 @@ func (c *Cache) SetObj(ctx context.Context, key string, data any, exp time.Durat
 	return nil
 }
 
-func (c *Cache) FmtKey(name string, id string) string {
-	return fmt.Sprintf("%s:%s", name, id)
-}
-
 func (c *Cache) Has(ctx context.Context, key string) bool {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
