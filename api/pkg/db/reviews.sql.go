@@ -47,6 +47,29 @@ func (q *Queries) CountReviewsByPoiId(ctx context.Context, poiID string) (int64,
 	return count, err
 }
 
+const countReviewsByPoiIdFiltered = `-- name: CountReviewsByPoiIdFiltered :one
+SELECT COUNT(*) FROM reviews
+WHERE
+    poi_id = $1::TEXT
+  AND
+    (rating >= COALESCE($2, rating))
+  AND
+    (rating <= COALESCE($3, rating))
+`
+
+type CountReviewsByPoiIdFilteredParams struct {
+	Poiid     string
+	Minrating int16
+	Maxrating int16
+}
+
+func (q *Queries) CountReviewsByPoiIdFiltered(ctx context.Context, arg CountReviewsByPoiIdFilteredParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countReviewsByPoiIdFiltered, arg.Poiid, arg.Minrating, arg.Maxrating)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countReviewsByUsername = `-- name: CountReviewsByUsername :one
 SELECT COUNT(*) FROM reviews
 WHERE user_id = (

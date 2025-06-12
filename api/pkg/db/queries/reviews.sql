@@ -54,6 +54,15 @@ ORDER BY
 OFFSET $1
 LIMIT $2;
 
+-- name: CountReviewsByPoiIdFiltered :one
+SELECT COUNT(*) FROM reviews
+WHERE
+    poi_id = sqlc.arg(poiId)::TEXT
+  AND
+    (rating >= COALESCE(sqlc.arg(minRating), rating))
+  AND
+    (rating <= COALESCE(sqlc.arg(maxRating), rating));
+
 -- name: CountReviewsByPoiId :one
 SELECT COUNT(*) FROM reviews
 WHERE poi_id = $1;
