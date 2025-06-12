@@ -325,7 +325,11 @@ func (s *Service) getByPoiID(ctx context.Context, input *dto.GetReviewsByPoiIdIn
 		return nil, err
 	}
 
-	count, err := s.db.CountReviewsByPoiId(ctx, input.ID)
+	count, err := s.db.CountReviewsByPoiIdFiltered(ctx, db.CountReviewsByPoiIdFilteredParams{
+		Poiid:     input.ID,
+		Minrating: minRating,
+		Maxrating: maxRating,
+	})
 
 	if err != nil {
 		sp.RecordError(err)
