@@ -34,6 +34,10 @@ default:
 @search:
 	go run . search-sync
 
+@ingest:
+	go run . ingest
+	cat tmp/ingest_test.json | jq "." > tmp/pretty.json
+
 # Generate Go code from SQL schema
 @sqlc:
 	sqlc generate -f ./conf/sqlc.yaml
