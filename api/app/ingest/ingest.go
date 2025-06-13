@@ -9,14 +9,20 @@ import (
 )
 
 type OsmData struct {
-	XMLName xml.Name `xml:"osm"`
-	Nodes   []Node   `xml:"node"`
+	XMLName   xml.Name   `xml:"osm"`
+	Nodes     []Node     `xml:"node"`
+	Relations []Relation `xml:"relation"`
 }
 
 type Node struct {
 	Lat  float64 `xml:"lat,attr"`
 	Lon  float64 `xml:"lon,attr"`
 	Tags []Tag   `xml:"tag"`
+}
+
+type Relation struct {
+	ID   int   `xml:"id,attr"`
+	Tags []Tag `xml:"tag"`
 }
 
 type Tag struct {
@@ -71,8 +77,12 @@ func Ingest() {
 				flag--
 			}
 
-			if flag == 2 {
-				break
+			if tag.K == "place" && tag.V == "neighbourhood" {
+				flag--
+			}
+
+			if tag.K == "railway" {
+				flag--
 			}
 		}
 
