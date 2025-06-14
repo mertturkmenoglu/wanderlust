@@ -35,6 +35,7 @@ Here's a list of abbreviations used throughout the project (Note: List is not ex
 - `mem`: Memory
 - `msg`: Message
 - `OP`: Operation
+- `OSM`: OpenStreetMap
 - `PKG`: Package
 - `PG`: PostgreSQL
 - `POI`: Point of Interest
@@ -42,6 +43,7 @@ Here's a list of abbreviations used throughout the project (Note: List is not ex
 - `sp`: Span (OpenTelemetry)
 - `TTL`: Time To Live
 - `URL`: Uniform Resource Locator
+- `XML`: Extensible Markup Language
 
 And some other abbreviations, usually used in according to Go conventions:
 
