@@ -4,22 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/url"
 )
 
 func (wmc *Client) Fetch(lang string, title string) (*Response, error) {
-	un, err := url.QueryUnescape(title)
+	unescapedTitle, err := url.QueryUnescape(title)
 
 	if err != nil {
 		return nil, fmt.Errorf("error unescaping title: %w", err)
 	}
 
-	u := fmt.Sprintf(wmc.urlFmt, lang, un)
+	apiUrl := fmt.Sprintf(wmc.urlFmt, lang, unescapedTitle)
 
-	resp, err := wmc.httpClient.Get(u)
-
-	log.Println(u)
+	resp, err := wmc.httpClient.Get(apiUrl)
 
 	if err != nil {
 		return nil, fmt.Errorf("error fetching wikimedia information: %w", err)
