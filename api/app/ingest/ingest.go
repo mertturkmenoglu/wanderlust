@@ -4,31 +4,27 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"wanderlust/pkg/osm"
 	"wanderlust/pkg/wiki"
 	"wanderlust/pkg/wiki/wikidata"
 	"wanderlust/pkg/wiki/wikimedia"
 )
 
 func Ingest() {
-	// osmData, err := readOsmData("tmp/map.xml")
+	osmData, err := osm.ReadFromFile("tmp/map.xml")
 
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// nodes := filterNodes(osmData.Nodes)
-	// relations := filterRelations(osmData.Relations)
+	osmData.FilterNodes()
+	osmData.FilterRelations()
 
-	// out := OsmData{
-	// 	Nodes:     nodes,
-	// 	Relations: relations,
-	// }
+	err = osm.WriteToFile(osmData)
 
-	// err = writeFilteredOsmData(out)
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	wdc := wikidata.NewWikidataClient(wikidata.WithAlternativeLanguage("es"))
 	wid, err := wiki.NewWikiID("Q48435") // Sagrada Familia
@@ -37,13 +33,13 @@ func Ingest() {
 		log.Fatal(err)
 	}
 
-	res, err := wdc.Fetch(wid)
+	wdcRes, err := wdc.Fetch(wid)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	lang, title, err := wdc.GetTitle(res)
+	lang, title, err := wdc.GetTitle(wdcRes)
 
 	if err != nil {
 		log.Fatal(err)
@@ -51,7 +47,7 @@ func Ingest() {
 
 	log.Println(title)
 
-	ser, _ := json.Marshal(res)
+	ser, _ := json.Marshal(wdcRes)
 	os.WriteFile("tmp/Q48435.json", ser, 0644)
 
 	wmc := wikimedia.NewWikimediaClient()
@@ -63,4 +59,20 @@ func Ingest() {
 
 	ser, _ = json.Marshal(wmcRes)
 	os.WriteFile("tmp/Q48435.wikimedia.json", ser, 0644)
+
+	sec, err := wiki.GetWikiTextFirstSection(wmcRes.Source)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	out, err := wiki.ConvertWikiTextToPlainText(sec)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	out = wiki.RemoveFootnotes(out)
+
+	os.WriteFile("tmp/Q48435.plaintext.txt", []byte(out), 0644)
 }
