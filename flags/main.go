@@ -18,6 +18,15 @@ type Flags struct {
 	Flags   map[string]any `json:"flags"`
 }
 
+var devFlags = Flags{
+	Version: "v1",
+	Flags: map[string]any{
+		"redirect-to-wip":        false,
+		"app-bar-show-wip-icons": true,
+		"allow-oauth-logins":     true,
+	},
+}
+
 func main() {
 	err := godotenv.Load()
 
@@ -25,24 +34,28 @@ func main() {
 		log.Fatalln("Error loading .env file:", err)
 	}
 
-	flagsBytes, err := os.ReadFile("flags.json")
-
-	if err != nil {
-		log.Println("Error reading flags.json:", err)
-	}
-
 	var flags Flags
 
-	if len(flagsBytes) == 0 {
-		flags = Flags{
-			Version: "v1",
-			Flags:   make(map[string]any),
-		}
+	if env, ok := os.LookupEnv("ENV"); ok && env == "dev" {
+		flags = devFlags
 	} else {
-		err = json.Unmarshal(flagsBytes, &flags)
+		flagsBytes, err := os.ReadFile("flags.json")
 
 		if err != nil {
-			log.Fatalln("Error parsing flags.json:", err)
+			log.Println("Error reading flags.json:", err)
+		}
+
+		if len(flagsBytes) == 0 {
+			flags = Flags{
+				Version: "v1",
+				Flags:   make(map[string]any),
+			}
+		} else {
+			err = json.Unmarshal(flagsBytes, &flags)
+
+			if err != nil {
+				log.Fatalln("Error parsing flags.json:", err)
+			}
 		}
 	}
 
