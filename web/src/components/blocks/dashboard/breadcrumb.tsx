@@ -27,7 +27,10 @@ export function DashboardBreadcrumb({ items }: Props) {
           </BreadcrumbLink>
         </BreadcrumbItem>
         {items.slice(0, -1).map((item) => (
-          <div key={item.name}>
+          <div
+            key={item.name}
+            className="flex items-center gap-2"
+          >
             <BreadcrumbSeparator className="text-primary" />
             <BreadcrumbItem key={item.href}>
               <BreadcrumbLink asChild>
