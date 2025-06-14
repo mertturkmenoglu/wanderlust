@@ -84,9 +84,7 @@ function RouteComponent() {
               <FormItem className="col-span-full">
                 <div className="mb-4">
                   <FormLabel>Amenities</FormLabel>
-                  <FormDescription>
-                    Select the items you want to display in the sidebar.
-                  </FormDescription>
+                  <FormDescription>Select the amenities</FormDescription>
                 </div>
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                   {amenities.map((amenity) => (
