@@ -1,114 +1,66 @@
 package ingest
 
 import (
-	_ "embed"
 	"encoding/json"
-	"encoding/xml"
 	"log"
 	"os"
+	"wanderlust/pkg/wiki"
+	"wanderlust/pkg/wiki/wikidata"
+	"wanderlust/pkg/wiki/wikimedia"
 )
 
-type OsmData struct {
-	XMLName   xml.Name   `xml:"osm"`
-	Nodes     []Node     `xml:"node"`
-	Relations []Relation `xml:"relation"`
-}
-
-type Node struct {
-	Lat  float64 `xml:"lat,attr"`
-	Lon  float64 `xml:"lon,attr"`
-	Tags []Tag   `xml:"tag"`
-}
-
-type Relation struct {
-	ID   int   `xml:"id,attr"`
-	Tags []Tag `xml:"tag"`
-}
-
-type Tag struct {
-	K string `xml:"k,attr"`
-	V string `xml:"v,attr"`
-}
-
 func Ingest() {
-	var osmData OsmData
+	// osmData, err := readOsmData("tmp/map.xml")
 
-	log.Println("Starting")
-	log.Println("Reading file")
-	f, err := os.ReadFile("tmp/map.xml")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// nodes := filterNodes(osmData.Nodes)
+	// relations := filterRelations(osmData.Relations)
+
+	// out := OsmData{
+	// 	Nodes:     nodes,
+	// 	Relations: relations,
+	// }
+
+	// err = writeFilteredOsmData(out)
+
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	wdc := wikidata.NewWikidataClient(wikidata.WithAlternativeLanguage("es"))
+	wid, err := wiki.NewWikiID("Q48435") // Sagrada Familia
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("Start unmarshaling xml")
+	res, err := wdc.Fetch(wid)
 
-	err = xml.Unmarshal([]byte(f), &osmData)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("Done unmarshaling xml")
-
-	fi, _ := os.Create("tmp/ingest_test.json")
-	defer fi.Close()
-
-	nodes := make([]Node, 0)
-
-	log.Println("Start Filtering")
-
-	for _, node := range osmData.Nodes {
-		if len(node.Tags) == 0 {
-			continue
-		}
-
-		flag := 0
-
-		for _, tag := range node.Tags {
-			if tag.K == "name" {
-				flag++
-			}
-
-			if tag.K == "wikidata" {
-				flag++
-			}
-
-			if tag.K == "public_transport" && tag.V == "stop_position" {
-				flag--
-			}
-
-			if tag.K == "place" && tag.V == "neighbourhood" {
-				flag--
-			}
-
-			if tag.K == "railway" {
-				flag--
-			}
-		}
-
-		if flag != 2 {
-			continue
-		}
-
-		nodes = append(nodes, node)
-	}
-
-	asXml, err := xml.MarshalIndent(nodes, "", "  ")
+	lang, title, err := wdc.GetTitle(res)
 
 	if err != nil {
-		log.Println("xml err: ", err)
+		log.Fatal(err)
 	}
 
-	err = os.WriteFile("tmp/ingest_test.xml", asXml, 0644)
+	log.Println(title)
+
+	ser, _ := json.Marshal(res)
+	os.WriteFile("tmp/Q48435.json", ser, 0644)
+
+	wmc := wikimedia.NewWikimediaClient()
+	wmcRes, err := wmc.Fetch(lang, title)
 
 	if err != nil {
-		log.Println("xml err: ", err)
+		log.Fatal(err)
 	}
 
-	log.Println("Writing file")
-	log.Println("Length: ", len(nodes))
-
-	bytes, _ := json.Marshal(nodes)
-	fi.Write(bytes)
-	log.Println("Done")
+	ser, _ = json.Marshal(wmcRes)
+	os.WriteFile("tmp/Q48435.wikimedia.json", ser, 0644)
 }
