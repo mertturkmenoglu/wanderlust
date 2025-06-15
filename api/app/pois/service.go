@@ -654,7 +654,7 @@ func (s *Service) deleteImage(ctx context.Context, input *dto.DeletePoiMediaInpu
 		)
 	}
 
-	poi, err = s.find(ctx, input.ID)
+	_, err = s.find(ctx, input.ID)
 
 	if err != nil {
 		sp.RecordError(err)
