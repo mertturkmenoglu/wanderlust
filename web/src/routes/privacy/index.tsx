@@ -12,7 +12,7 @@ function RouteComponent() {
         <h1 className="text-2xl font-bold text-center pb-3">
           Wanderlust - Privacy Policy
         </h1>
-        <div className="mt-2 font-semibold">Effective Date: June 13, 2024</div>
+        <div className="mt-2 font-semibold">Effective Date: June 15, 2025</div>
         <p className="mt-4">
           Welcome to Wanderlust! This Privacy Policy explains how Wanderlust
           (&quot;we&quot; or &quot;us&quot;) collects, uses, shares, and
@@ -30,17 +30,7 @@ function RouteComponent() {
                 such as your name, email address, and profile picture.
               </li>
               <li>
-                <span className="font-bold">b. Service Information</span>: Users
-                providing services may submit information about the services
-                offered, including descriptions and pricing.
-              </li>
-              <li>
-                <span className="font-bold">c. Transactional Information</span>:
-                In the process of enlisting for services, transactional details,
-                including payment information, may be collected.
-              </li>
-              <li>
-                <span className="font-bold">d. Log Data</span>: We automatically
+                <span className="font-bold">b. Log Data</span>: We automatically
                 collect certain information when you use the Service, including
                 your IP address, device information, and usage patterns.
               </li>

@@ -11,7 +11,7 @@ function RouteComponent() {
       <h1 className="text-2xl font-bold text-center pb-3">
         Wanderlust - Terms of Service
       </h1>
-      <div className="mt-2 font-semibold">Effective Date: June 13, 2024</div>
+      <div className="mt-2 font-semibold">Effective Date: June 15, 2025</div>
       <p className="mt-4">
         Welcome to Wanderlust! These Terms of Service (&quot;Terms&quot;) govern
         your use of the Wanderlust application and its related services (the
@@ -39,11 +39,12 @@ function RouteComponent() {
           <span className="font-bold">3. User Responsibilities</span>:
           <ol className="ml-4">
             <li>
-              <span className="font-bold">a. Listing Services</span>: Users are
-              solely responsible for the accuracy and completeness of the
-              information provided when listing services. Wanderlust reserves
-              the right to remove any content that violates these Terms or is
-              deemed inappropriate.
+              <span className="font-bold">a. User Created Content</span>: Users
+              are solely responsible for the accuracy, completeness, and
+              legality of the content when creating public content on Wanderlust
+              like public lists, revies, trips, and diary entries. Wanderlust
+              reserves the right to remove any content that violates these Terms
+              or is deemed inappropriate.
             </li>
             <li>
               <span className="font-bold">b. Communication</span>: Users agree
@@ -57,17 +58,13 @@ function RouteComponent() {
           <span className="font-bold">4. Transactions</span>:
           <ol className="ml-4">
             <li>
-              <span className="font-bold">a. Enlisting Services</span>: Users
-              may enlist for services listed on Wanderlust. The transaction
-              terms, including payment and service details, are to be agreed
-              upon between the service provider and the user. Wanderlust is not
-              responsible for any issues arising from transactions.
-            </li>
-            <li>
-              <span className="font-bold">b. Service Providers</span>: Service
-              providers are responsible for delivering the enlisted services as
-              described. Failure to do so may result in account suspension or
-              termination.
+              <span className="font-bold">a. Joining trips</span>: Users may
+              gain access to a trip upon accepting an invite from the authorized
+              trip users on Wanderlust. Wanderlust does not guarantee any
+              accuracy, completeness, or timeliness of the trip. Trip owner and
+              users with trip editor roles are responsible for providing such
+              details. Wanderlust is not responsible for any issues arising from
+              joining a trip.
             </li>
           </ol>
         </li>
