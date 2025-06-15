@@ -22,10 +22,11 @@ After that, you can find documentation files inside each subproject.
 
 First, you must read the [README](README.md) file in the root directory. It will help you understand what you need to do for getting started with the project.
 
-Then, you can navigate to different subproject folders. There are 3 different applications inside Wanderlust repository:
+Then, you can navigate to different subproject folders. There are 4 different applications inside Wanderlust repository:
 
-- `api`: A RESTful Go + Echo web server.
-- `web`: A Remix app serving web application.
+- `api`: A RESTful Go + Huma + Echo web server.
+- `flags`: A really basic feature flag service with Go net/http server.
+- `web`: A CSR Tanstack Router app serving web application.
 - `wiop`: An on-the-fly image optimization proxy to serve media.
 
 Each folder includes a README file that will guide you how to setup that project and run. You can follow from there.
