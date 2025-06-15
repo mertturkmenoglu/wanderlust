@@ -90,7 +90,7 @@ function Content() {
         </Button>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         {cities.cities.map((city) => (
           <Link
             to="."
@@ -103,9 +103,7 @@ function Content() {
               alt=""
               className="aspect-video w-full rounded-md object-cover"
             />
-            <div className="mt-2 text-xl font-bold lg:text-base">
-              {city.name}
-            </div>
+            <div className="mt-2 text-base font-bold">{city.name}</div>
           </Link>
         ))}
       </div>

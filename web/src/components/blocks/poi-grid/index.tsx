@@ -33,7 +33,7 @@ export function PoiGrid({ dataKey: key, data }: Props) {
         {title}
       </h2>
 
-      <div className="my-4 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="my-4 grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-3">
         {isEmpty && <div>No data available.</div>}
         {!isEmpty &&
           data.slice(0, 6).map((poi) => (
