@@ -34,12 +34,12 @@ func getTagWeight(tag Tag) int {
 		if tag.V == "stop_position" {
 			return -1
 		}
-		fallthrough
+		return 0
 	case "place":
 		if tag.V == "neighbourhood" {
 			return -1
 		}
-		fallthrough
+		return 0
 	case "railway":
 		return -1
 	default:
@@ -48,9 +48,23 @@ func getTagWeight(tag Tag) int {
 }
 
 func isNodeValid(node Node) bool {
-	return len(node.Tags) != 0 && getTagWeight(node.Tags[0]) == 2
+	if len(node.Tags) == 0 {
+		return false
+	}
+	w := 0
+	for _, tag := range node.Tags {
+		w += getTagWeight(tag)
+	}
+	return w == 2
 }
 
 func isRelationValid(relation Relation) bool {
-	return len(relation.Tags) != 0 && getTagWeight(relation.Tags[0]) == 2
+	if len(relation.Tags) == 0 {
+		return false
+	}
+	w := 0
+	for _, tag := range relation.Tags {
+		w += getTagWeight(tag)
+	}
+	return w == 2
 }
