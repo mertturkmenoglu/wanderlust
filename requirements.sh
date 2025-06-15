@@ -31,6 +31,9 @@ commandhelpers=(
 
 # Turn flag to false if any requirement fails
 flag=0
+RED='\033[31m'
+GREEN='\033[32m'
+NC='\033[0m' # No Color
 
 for i in "${!commands[@]}"; do
   cmd="${commands[$i]}"
@@ -38,10 +41,10 @@ for i in "${!commands[@]}"; do
   cmdname="${cmd%% *}"
   
   if command -v $cmd > /dev/null; then
-    echo -e "=> \033[32m[OK]\033[0m $cmdname"
+    echo -e "=> $GREEN[OK]$NC $cmdname"
   else
     flag=1
-    echo -e "=> \033[31m[ERR]\033[0m $cmdname"
+    echo -e "=> $RED[ERR]$NC $cmdname"
     echo "You can find installation instructions at $cmdhelper"
   fi
 done
