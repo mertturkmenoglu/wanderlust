@@ -20,7 +20,24 @@ export function Breadcrumb() {
             <Link to="/">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
+
         <BreadcrumbSeparator />
+
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link
+              to="/cities/$"
+              params={{
+                _splat: `${poi.address.cityId}`,
+              }}
+            >
+              {poi.address.city.name}
+            </Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbSeparator />
+
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link
@@ -33,7 +50,9 @@ export function Breadcrumb() {
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
+
         <BreadcrumbSeparator />
+
         <BreadcrumbItem>
           <BreadcrumbPage className="capitalize">{poi.name}</BreadcrumbPage>
         </BreadcrumbItem>
