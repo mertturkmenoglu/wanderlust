@@ -75,11 +75,7 @@ function RouteComponent() {
 
       <div className="mt-8">
         <h3 className="text-2xl font-bold mb-8">Discover {city.name}</h3>
-        <TagNavigation
-          urlSuffix={
-            '&pois[refinementList][poi.address.city.name][0]=' + city.name
-          }
-        />
+        <TagNavigation urlSuffix={'&city=' + city.name} />
       </div>
 
       <OverlayBanner
