@@ -24,7 +24,7 @@ export function Map({ latitude, longitude }: Props) {
           }}
         >
           <TileLayer
-            attribution=""
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url={tileUrl}
           />
         </MapContainer>
