@@ -1,8 +1,10 @@
+import { Button } from '@/components/ui/button';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
+import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 
 type Props = {
   className?: string;
@@ -35,6 +37,7 @@ export function ImageGrid({ className }: Props) {
   }, [images]);
 
   const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
 
   if (!first) {
     return null;
@@ -48,16 +51,36 @@ export function ImageGrid({ className }: Props) {
       )}
     >
       <div className="col-span-2 row-span-2">
-        <img
-          src={ipx(first.url, 'w_1024')}
-          alt={first.alt}
+        <button
+          type="button"
           className="w-full h-full object-cover rounded-l-xl"
-        />
+          onClick={() =>
+            setIndex(() => {
+              setOpen(true);
+              return 0;
+            })
+          }
+        >
+          <img
+            src={ipx(first.url, 'w_1024')}
+            alt={first.alt}
+            className="w-full h-full object-cover rounded-l-xl"
+          />
+        </button>
       </div>
       {rest.map((img, i) => (
-        <div
+        <button
+          type="button"
           className={cn('col-span-1 row-span-1')}
           key={img.id}
+          onClick={() => {
+            if (img.url !== '') {
+              setIndex(() => {
+                setOpen(true);
+                return i + 1;
+              });
+            }
+          }}
         >
           {img.url !== '' ? (
             <img
@@ -76,24 +99,35 @@ export function ImageGrid({ className }: Props) {
               })}
             />
           )}
-        </div>
+        </button>
       ))}
-      <button
+      <Button
         type="button"
-        className="absolute bottom-4 right-4 bg-primary text-white rounded-md px-4 py-2"
-        onClick={() => setOpen(true)}
+        className="absolute bottom-4 right-4"
+        size="sm"
+        onClick={() =>
+          setIndex(() => {
+            setOpen(true);
+            return 0;
+          })
+        }
       >
-        See more
-      </button>
+        See all
+      </Button>
 
       <Lightbox
         open={open}
         close={() => setOpen(false)}
+        plugins={[Thumbnails]}
         slides={images.map((img) => ({
           src: img.url,
         }))}
         animation={{ fade: 0 }}
-        controller={{ closeOnPullDown: true, closeOnBackdropClick: true }}
+        controller={{
+          closeOnPullDown: true,
+          closeOnBackdropClick: true,
+        }}
+        index={index}
         styles={{
           container: {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
