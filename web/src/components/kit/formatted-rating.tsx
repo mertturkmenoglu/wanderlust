@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { useId } from 'react';
 import { Rating } from './rating';
 
@@ -5,6 +6,7 @@ type Props = {
   rating: number;
   votes: number;
   starsClassName?: string;
+  className?: string;
   showNumbers?: boolean;
 };
 
@@ -12,6 +14,7 @@ export function FormattedRating({
   rating,
   votes,
   starsClassName,
+  className,
   showNumbers = true,
 }: Props) {
   const id = useId();
@@ -24,7 +27,7 @@ export function FormattedRating({
   const formattedRating = fmt.format(votes);
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className={cn('flex items-center space-x-2', className)}>
       <Rating
         id={id}
         onChange={() => {
@@ -32,7 +35,7 @@ export function FormattedRating({
         }}
         defaultValue={rating}
         disabled
-        starsClassName={starsClassName}
+        starsClassName={cn(starsClassName)}
       />
       {showNumbers && (
         <div className="flex items-center space-x-1">
