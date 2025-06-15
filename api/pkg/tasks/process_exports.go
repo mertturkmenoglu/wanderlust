@@ -12,6 +12,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/upload"
+	"wanderlust/pkg/utils"
 
 	"github.com/hibiken/asynq"
 	"github.com/minio/minio-go/v7"
@@ -72,13 +73,24 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 		g.Go(func() error {
 			// Read POIs from DB
 			chunkPois, err := svc.exportPois(gctx, chunk)
+
+			if err != nil {
+				return err
+			}
+
 			// Increment completed count
 			completed.Add(100)
 
 			// Update task status in Redis
-			p.TaskMetadata.Progress = int32(completed.Load() * 100 / int64(len(p.TaskMetadata.IDs)))
+			prog, err := utils.SafeInt64ToInt32(completed.Load() * 100 / int64(len(p.TaskMetadata.IDs)))
+
+			if err != nil {
+				return err
+			}
+
+			p.TaskMetadata.Progress = prog
 			p.TaskMetadata.Status = "inprogress"
-			svc.cache.SetObj(gctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)
+			err = svc.cache.SetObj(gctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)
 
 			if err != nil {
 				return err
@@ -104,7 +116,11 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 
 	// Update task status in Redis
 	p.TaskMetadata.Status = "archiving"
-	svc.cache.SetObj(ctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)
+	err = svc.cache.SetObj(ctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)
+
+	if err != nil {
+		return err
+	}
 
 	// First serialize POIs to JSON
 	serialized, err := json.Marshal(pois)

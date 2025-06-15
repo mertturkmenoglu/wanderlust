@@ -32,7 +32,7 @@ func WriteToFile(data any) error {
 		return fmt.Errorf("xml marshal error: %w", err)
 	}
 
-	err = os.WriteFile("tmp/ingest_test.xml", asXml, 0644)
+	err = os.WriteFile("tmp/ingest_test.xml", asXml, 0600)
 
 	if err != nil {
 		return fmt.Errorf("xml write error: %w", err)
@@ -44,7 +44,7 @@ func WriteToFile(data any) error {
 		return fmt.Errorf("json marshal error: %w", err)
 	}
 
-	err = os.WriteFile("tmp/ingest_test.json", asJson, 0644)
+	err = os.WriteFile("tmp/ingest_test.json", asJson, 0600)
 
 	if err != nil {
 		return fmt.Errorf("json write error: %w", err)

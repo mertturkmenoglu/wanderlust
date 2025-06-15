@@ -48,7 +48,7 @@ func Ingest() {
 	log.Println(title)
 
 	ser, _ := json.Marshal(wdcRes)
-	os.WriteFile("tmp/Q48435.json", ser, 0644)
+	_ = os.WriteFile("tmp/Q48435.json", ser, 0600)
 
 	wmc := wikimedia.NewWikimediaClient()
 	wmcRes, err := wmc.Fetch(lang, title)
@@ -58,7 +58,7 @@ func Ingest() {
 	}
 
 	ser, _ = json.Marshal(wmcRes)
-	os.WriteFile("tmp/Q48435.wikimedia.json", ser, 0644)
+	_ = os.WriteFile("tmp/Q48435.wikimedia.json", ser, 0600)
 
 	sec, err := wiki.GetWikiTextFirstSection(wmcRes.Source)
 
@@ -74,5 +74,5 @@ func Ingest() {
 
 	out = wiki.RemoveFootnotes(out)
 
-	os.WriteFile("tmp/Q48435.plaintext.txt", []byte(out), 0644)
+	_ = os.WriteFile("tmp/Q48435.plaintext.txt", []byte(out), 0600)
 }
