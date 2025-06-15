@@ -3,7 +3,10 @@ default:
 
 # Live reload
 @watch:
-  concurrently --pad-prefix --names api,web,flags,ipx -c yellow,red,green,blue "just api/watch" "just web/watch" "just flags/watch" "just wiop/watch"; \
+  concurrently --pad-prefix \
+    --names api,web,flags,ipx \
+    -c yellow,red,green,blue \
+    "just api/watch" "just web/watch" "just flags/watch" "just wiop/watch";
 
 # Setup the project
 @setup:
