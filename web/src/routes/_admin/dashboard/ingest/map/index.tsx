@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { tileUrl } from '@/lib/map';
 import { createFileRoute } from '@tanstack/react-router';
-import { atom, useAtom } from 'jotai';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { LatLngBounds } from 'leaflet';
 import { AlertTriangleIcon, DownloadCloudIcon, MapIcon } from 'lucide-react';
 import { useEffect } from 'react';
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/_admin/dashboard/ingest/map/')({
 const bbAtom = atom<LatLngBounds>(new LatLngBounds([0, 0], [0, 0]));
 
 function RouteComponent() {
-  const [bb] = useAtom(bbAtom);
+  const bb = useAtomValue(bbAtom);
   const isDisabled = bb.equals(new LatLngBounds([0, 0], [0, 0]));
 
   return (
@@ -45,7 +45,7 @@ function RouteComponent() {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url={tileUrl}
         />
-        <Component />
+        <BoundingBoxWatcher />
       </MapContainer>
 
       <div className="mt-4">
@@ -95,9 +95,9 @@ function RouteComponent() {
   );
 }
 
-function Component() {
+function BoundingBoxWatcher() {
   const map = useMap();
-  const [_, setbb] = useAtom(bbAtom);
+  const setbb = useSetAtom(bbAtom);
 
   useEffect(() => {
     // oxlint-disable-next-line func-style
