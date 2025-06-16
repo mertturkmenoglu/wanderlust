@@ -67,6 +67,7 @@ import { Route as AuthForgotPasswordResetIndexRouteImport } from './routes/_auth
 import { Route as AdminDashboardUsersIndexRouteImport } from './routes/_admin/dashboard/users/index'
 import { Route as AdminDashboardReportsIndexRouteImport } from './routes/_admin/dashboard/reports/index'
 import { Route as AdminDashboardPoisIndexRouteImport } from './routes/_admin/dashboard/pois/index'
+import { Route as AdminDashboardIngestIndexRouteImport } from './routes/_admin/dashboard/ingest/index'
 import { Route as AdminDashboardExportsIndexRouteImport } from './routes/_admin/dashboard/exports/index'
 import { Route as AdminDashboardCollectionsIndexRouteImport } from './routes/_admin/dashboard/collections/index'
 import { Route as AdminDashboardCitiesIndexRouteImport } from './routes/_admin/dashboard/cities/index'
@@ -79,6 +80,7 @@ import { Route as DiaryIdEditFriendsIndexRouteImport } from './routes/diary/$id/
 import { Route as AdminDashboardUsersVerifyIndexRouteImport } from './routes/_admin/dashboard/users/verify/index'
 import { Route as AdminDashboardReportsIdIndexRouteImport } from './routes/_admin/dashboard/reports/$id/index'
 import { Route as AdminDashboardPoisIdIndexRouteImport } from './routes/_admin/dashboard/pois/$id/index'
+import { Route as AdminDashboardIngestMapIndexRouteImport } from './routes/_admin/dashboard/ingest/map/index'
 import { Route as AdminDashboardExportsNewIndexRouteImport } from './routes/_admin/dashboard/exports/new/index'
 import { Route as AdminDashboardExportsIdIndexRouteImport } from './routes/_admin/dashboard/exports/$id/index'
 import { Route as AdminDashboardCollectionsNewIndexRouteImport } from './routes/_admin/dashboard/collections/new/index'
@@ -399,6 +401,12 @@ const AdminDashboardPoisIndexRoute = AdminDashboardPoisIndexRouteImport.update({
   path: '/pois/',
   getParentRoute: () => AdminDashboardRoute,
 } as any)
+const AdminDashboardIngestIndexRoute =
+  AdminDashboardIngestIndexRouteImport.update({
+    id: '/ingest/',
+    path: '/ingest/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
 const AdminDashboardExportsIndexRoute =
   AdminDashboardExportsIndexRouteImport.update({
     id: '/exports/',
@@ -467,6 +475,12 @@ const AdminDashboardPoisIdIndexRoute =
   AdminDashboardPoisIdIndexRouteImport.update({
     id: '/pois/$id/',
     path: '/pois/$id/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
+const AdminDashboardIngestMapIndexRoute =
+  AdminDashboardIngestMapIndexRouteImport.update({
+    id: '/ingest/map/',
+    path: '/ingest/map/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
 const AdminDashboardExportsNewIndexRoute =
@@ -662,6 +676,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/collections': typeof AdminDashboardCollectionsIndexRoute
   '/dashboard/exports': typeof AdminDashboardExportsIndexRoute
+  '/dashboard/ingest': typeof AdminDashboardIngestIndexRoute
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/reports': typeof AdminDashboardReportsIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
@@ -689,6 +704,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/collections/new': typeof AdminDashboardCollectionsNewIndexRoute
   '/dashboard/exports/$id': typeof AdminDashboardExportsIdIndexRoute
   '/dashboard/exports/new': typeof AdminDashboardExportsNewIndexRoute
+  '/dashboard/ingest/map': typeof AdminDashboardIngestMapIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
@@ -752,6 +768,7 @@ export interface FileRoutesByTo {
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/collections': typeof AdminDashboardCollectionsIndexRoute
   '/dashboard/exports': typeof AdminDashboardExportsIndexRoute
+  '/dashboard/ingest': typeof AdminDashboardIngestIndexRoute
   '/dashboard/pois': typeof AdminDashboardPoisIndexRoute
   '/dashboard/reports': typeof AdminDashboardReportsIndexRoute
   '/dashboard/users': typeof AdminDashboardUsersIndexRoute
@@ -778,6 +795,7 @@ export interface FileRoutesByTo {
   '/dashboard/collections/new': typeof AdminDashboardCollectionsNewIndexRoute
   '/dashboard/exports/$id': typeof AdminDashboardExportsIdIndexRoute
   '/dashboard/exports/new': typeof AdminDashboardExportsNewIndexRoute
+  '/dashboard/ingest/map': typeof AdminDashboardIngestMapIndexRoute
   '/dashboard/pois/$id': typeof AdminDashboardPoisIdIndexRoute
   '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/dashboard/users/verify': typeof AdminDashboardUsersVerifyIndexRoute
@@ -848,6 +866,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
   '/_admin/dashboard/collections/': typeof AdminDashboardCollectionsIndexRoute
   '/_admin/dashboard/exports/': typeof AdminDashboardExportsIndexRoute
+  '/_admin/dashboard/ingest/': typeof AdminDashboardIngestIndexRoute
   '/_admin/dashboard/pois/': typeof AdminDashboardPoisIndexRoute
   '/_admin/dashboard/reports/': typeof AdminDashboardReportsIndexRoute
   '/_admin/dashboard/users/': typeof AdminDashboardUsersIndexRoute
@@ -875,6 +894,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/collections/new/': typeof AdminDashboardCollectionsNewIndexRoute
   '/_admin/dashboard/exports/$id/': typeof AdminDashboardExportsIdIndexRoute
   '/_admin/dashboard/exports/new/': typeof AdminDashboardExportsNewIndexRoute
+  '/_admin/dashboard/ingest/map/': typeof AdminDashboardIngestMapIndexRoute
   '/_admin/dashboard/pois/$id/': typeof AdminDashboardPoisIdIndexRoute
   '/_admin/dashboard/reports/$id/': typeof AdminDashboardReportsIdIndexRoute
   '/_admin/dashboard/users/verify/': typeof AdminDashboardUsersVerifyIndexRoute
@@ -946,6 +966,7 @@ export interface FileRouteTypes {
     | '/dashboard/cities'
     | '/dashboard/collections'
     | '/dashboard/exports'
+    | '/dashboard/ingest'
     | '/dashboard/pois'
     | '/dashboard/reports'
     | '/dashboard/users'
@@ -973,6 +994,7 @@ export interface FileRouteTypes {
     | '/dashboard/collections/new'
     | '/dashboard/exports/$id'
     | '/dashboard/exports/new'
+    | '/dashboard/ingest/map'
     | '/dashboard/pois/$id'
     | '/dashboard/reports/$id'
     | '/dashboard/users/verify'
@@ -1036,6 +1058,7 @@ export interface FileRouteTypes {
     | '/dashboard/cities'
     | '/dashboard/collections'
     | '/dashboard/exports'
+    | '/dashboard/ingest'
     | '/dashboard/pois'
     | '/dashboard/reports'
     | '/dashboard/users'
@@ -1062,6 +1085,7 @@ export interface FileRouteTypes {
     | '/dashboard/collections/new'
     | '/dashboard/exports/$id'
     | '/dashboard/exports/new'
+    | '/dashboard/ingest/map'
     | '/dashboard/pois/$id'
     | '/dashboard/reports/$id'
     | '/dashboard/users/verify'
@@ -1131,6 +1155,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/cities/'
     | '/_admin/dashboard/collections/'
     | '/_admin/dashboard/exports/'
+    | '/_admin/dashboard/ingest/'
     | '/_admin/dashboard/pois/'
     | '/_admin/dashboard/reports/'
     | '/_admin/dashboard/users/'
@@ -1158,6 +1183,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/collections/new/'
     | '/_admin/dashboard/exports/$id/'
     | '/_admin/dashboard/exports/new/'
+    | '/_admin/dashboard/ingest/map/'
     | '/_admin/dashboard/pois/$id/'
     | '/_admin/dashboard/reports/$id/'
     | '/_admin/dashboard/users/verify/'
@@ -1623,6 +1649,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardPoisIndexRouteImport
       parentRoute: typeof AdminDashboardRoute
     }
+    '/_admin/dashboard/ingest/': {
+      id: '/_admin/dashboard/ingest/'
+      path: '/ingest'
+      fullPath: '/dashboard/ingest'
+      preLoaderRoute: typeof AdminDashboardIngestIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
+    }
     '/_admin/dashboard/exports/': {
       id: '/_admin/dashboard/exports/'
       path: '/exports'
@@ -1705,6 +1738,13 @@ declare module '@tanstack/react-router' {
       path: '/pois/$id'
       fullPath: '/dashboard/pois/$id'
       preLoaderRoute: typeof AdminDashboardPoisIdIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
+    }
+    '/_admin/dashboard/ingest/map/': {
+      id: '/_admin/dashboard/ingest/map/'
+      path: '/ingest/map'
+      fullPath: '/dashboard/ingest/map'
+      preLoaderRoute: typeof AdminDashboardIngestMapIndexRouteImport
       parentRoute: typeof AdminDashboardRoute
     }
     '/_admin/dashboard/exports/new/': {
@@ -1971,6 +2011,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCitiesIndexRoute: typeof AdminDashboardCitiesIndexRoute
   AdminDashboardCollectionsIndexRoute: typeof AdminDashboardCollectionsIndexRoute
   AdminDashboardExportsIndexRoute: typeof AdminDashboardExportsIndexRoute
+  AdminDashboardIngestIndexRoute: typeof AdminDashboardIngestIndexRoute
   AdminDashboardPoisIndexRoute: typeof AdminDashboardPoisIndexRoute
   AdminDashboardReportsIndexRoute: typeof AdminDashboardReportsIndexRoute
   AdminDashboardUsersIndexRoute: typeof AdminDashboardUsersIndexRoute
@@ -1985,6 +2026,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCollectionsNewIndexRoute: typeof AdminDashboardCollectionsNewIndexRoute
   AdminDashboardExportsIdIndexRoute: typeof AdminDashboardExportsIdIndexRoute
   AdminDashboardExportsNewIndexRoute: typeof AdminDashboardExportsNewIndexRoute
+  AdminDashboardIngestMapIndexRoute: typeof AdminDashboardIngestMapIndexRoute
   AdminDashboardPoisIdIndexRoute: typeof AdminDashboardPoisIdIndexRoute
   AdminDashboardReportsIdIndexRoute: typeof AdminDashboardReportsIdIndexRoute
   AdminDashboardUsersVerifyIndexRoute: typeof AdminDashboardUsersVerifyIndexRoute
@@ -2004,6 +2046,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardCitiesIndexRoute: AdminDashboardCitiesIndexRoute,
   AdminDashboardCollectionsIndexRoute: AdminDashboardCollectionsIndexRoute,
   AdminDashboardExportsIndexRoute: AdminDashboardExportsIndexRoute,
+  AdminDashboardIngestIndexRoute: AdminDashboardIngestIndexRoute,
   AdminDashboardPoisIndexRoute: AdminDashboardPoisIndexRoute,
   AdminDashboardReportsIndexRoute: AdminDashboardReportsIndexRoute,
   AdminDashboardUsersIndexRoute: AdminDashboardUsersIndexRoute,
@@ -2019,6 +2062,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
     AdminDashboardCollectionsNewIndexRoute,
   AdminDashboardExportsIdIndexRoute: AdminDashboardExportsIdIndexRoute,
   AdminDashboardExportsNewIndexRoute: AdminDashboardExportsNewIndexRoute,
+  AdminDashboardIngestMapIndexRoute: AdminDashboardIngestMapIndexRoute,
   AdminDashboardPoisIdIndexRoute: AdminDashboardPoisIdIndexRoute,
   AdminDashboardReportsIdIndexRoute: AdminDashboardReportsIdIndexRoute,
   AdminDashboardUsersVerifyIndexRoute: AdminDashboardUsersVerifyIndexRoute,
