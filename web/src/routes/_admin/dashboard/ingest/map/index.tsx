@@ -6,7 +6,7 @@ import { tileUrl } from '@/lib/map';
 import { createFileRoute } from '@tanstack/react-router';
 import { atom, useAtom } from 'jotai';
 import { LatLngBounds } from 'leaflet';
-import { DownloadCloudIcon, MapIcon } from 'lucide-react';
+import { AlertTriangleIcon, DownloadCloudIcon, MapIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 
@@ -53,6 +53,20 @@ function RouteComponent() {
           <MapIcon className="size-4" />
           <AlertTitle>Current Bounding Box</AlertTitle>
           <AlertDescription>{bb.toBBoxString()}</AlertDescription>
+        </Alert>
+
+        <Alert className="mt-4">
+          <AlertTriangleIcon className="size-4" />
+          <AlertTitle>Reminder</AlertTitle>
+          <AlertDescription>
+            <ul>
+              <li>Select a bounding box</li>
+              <li>Data size is proportional to the area of the bounding box</li>
+              <li>Respect API usage limits</li>
+              <li>After you download the data, rename it to .xml</li>
+              <li>Move the file to API project tmp folder</li>
+            </ul>
+          </AlertDescription>
         </Alert>
       </div>
 
