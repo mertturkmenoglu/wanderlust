@@ -5,6 +5,7 @@ import {
   ArchiveIcon,
   ClipboardListIcon,
   ComponentIcon,
+  ImportIcon,
   LibraryIcon,
   MapIcon,
   MapPinnedIcon,
@@ -71,6 +72,12 @@ function RouteComponent() {
           href="/dashboard/exports"
           text="Exports"
           icon={ArchiveIcon}
+        />
+
+        <Item
+          href="/dashboard/ingest"
+          text="Ingest"
+          icon={ImportIcon}
         />
       </div>
     </div>
