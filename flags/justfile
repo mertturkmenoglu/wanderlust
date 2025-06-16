@@ -9,6 +9,7 @@ default:
 # Setup the project
 @setup:
 	go mod download
+	just env-pull
 
 # Clean the binary
 @clean:
@@ -17,3 +18,15 @@ default:
 # Live reload
 @watch:
 	air -c ./.air.toml
+
+# Create .env.example file
+@env-example:
+	infisical secrets generate-example-env > .env.example
+
+# Pull .env file from Infisical
+@env-pull:
+	infisical export > .env
+
+# Push .env file to Infisical
+@env-push:
+	infisical secrets set --file="./.env"
