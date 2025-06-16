@@ -4,10 +4,7 @@ This service is used to manage feature flags for the Wanderlust application.
 
 ## Usage
 
-To use the service, you need to provide the following environment variables:
-
-- `API_KEY`: The API key to authorize flag update requests. (Admin key)
-- `PORT`: The port to run the service on.
+To use the service, copy the content of `.env.example` to `.env` and fill in the values.
 
 ## Development
 
