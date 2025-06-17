@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useFeatureFlags } from '@/providers/flags-provider';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { ChangePasswordForm } from './-change-password';
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/settings/account/')({
 function RouteComponent() {
   const { auth } = Route.useRouteContext();
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const flags = useFeatureFlags();
 
   return (
     <div>
@@ -59,22 +61,26 @@ function RouteComponent() {
 
         {isChangePasswordOpen && <ChangePasswordForm />}
 
-        <Separator className="my-4 col-span-full" />
+        {flags['allow-oauth-logins'] === true && (
+          <>
+            <Separator className="my-4 col-span-full" />
 
-        <Label>Social Logins</Label>
-        <div className="col-span-2 flex gap-4">
-          <GoogleIcon
-            className={cn('size-6', {
-              grayscale: auth.user?.googleId === null,
-            })}
-          />
+            <Label>Social Logins</Label>
+            <div className="col-span-2 flex gap-4">
+              <GoogleIcon
+                className={cn('size-6', {
+                  grayscale: auth.user?.googleId === null,
+                })}
+              />
 
-          <FacebookIcon
-            className={cn('size-6', {
-              grayscale: auth.user?.facebookId === null,
-            })}
-          />
-        </div>
+              <FacebookIcon
+                className={cn('size-6', {
+                  grayscale: auth.user?.facebookId === null,
+                })}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
