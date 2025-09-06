@@ -9,7 +9,6 @@ default:
 @setup:
   echo "=> Setting up the project..."
   pnpm install
-  pnpm run env-pull
   echo "=> Setup completed. Run 'just watch' to start the server."
 
 # Type generation
