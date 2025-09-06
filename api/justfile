@@ -38,13 +38,18 @@ default:
 	go run . ingest
 	cat tmp/ingest_test.json | jq "." > tmp/pretty.json
 
+# Generate EnvDoc
+@envdoc:
+	go generate ./...
+
 # Generate Go code from SQL schema
 @sqlc:
 	sqlc generate -f ./conf/sqlc.yaml
 
-# Run Infisical script with given action (example, pull, push)
-@env action: allow-scripts
-	./scripts/infisical.sh {{action}}
+# Create .env file based on the env config struct
+@env: allow-scripts
+	just envdoc
+	./scripts/env.sh
 
 # Fake data generation database id selection helper
 @fake-id:
