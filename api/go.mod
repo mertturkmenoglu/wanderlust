@@ -1,6 +1,6 @@
 module wanderlust
 
-go 1.23.0
+go 1.24.1
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
@@ -43,11 +43,17 @@ require (
 )
 
 require (
+	github.com/g4s8/envdoc v1.6.0 // indirect
+	github.com/gobwas/glob v0.2.3 // indirect
+)
+
+require (
 	atomicgo.dev/cursor v0.2.0 // indirect
 	atomicgo.dev/keyboard v0.2.9 // indirect
 	atomicgo.dev/schedule v0.1.0 // indirect
 	cloud.google.com/go/compute/metadata v0.7.0 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/containerd/console v1.0.5 // indirect
@@ -104,3 +110,5 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+tool github.com/g4s8/envdoc
