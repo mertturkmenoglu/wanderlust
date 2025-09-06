@@ -24,8 +24,9 @@ or you can follow these steps for manual setup:
 
 - Install dependencies: `go mod download`
 - Setup environment variables:
-  - Using Infisical CLI (recommended, read `infisical.md`), or
-  - Manually (create `.env` => copy from `.env.example` and fill)
+  - Run `just env` to generate `.env` file.
+  - Dev environment values will be set.
+  - Fill the missing values (empty values) in `.env`. file. (Like `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`)
 - Run migrations with Goose: `goose up`
 - Run sqlc to generate latest database queries & types: `just sqlc`
 - Run Docker containers: `docker compose up -d`
@@ -38,7 +39,7 @@ Inside the `docs` folder, you can find documentation files.
 
 Read these documentation files in this specific order:
 
-- `infisical.md`
+- `env.md`
 - `justfile.md`
 - `database.md`
 - `migrations.md`
