@@ -72,6 +72,8 @@ type TEnv struct {
 	MinioPassword string `env:"MINIO_PASSWORD" envDefault:"wanderlust"`
 	// MinioUser is the user for Minio.
 	MinioUser string `env:"MINIO_USER" envDefault:"wanderlust"`
+	// OAuthRedirect is the redirect URL for OAuth flow.
+	OAuthRedirect string `env:"OAUTH_REDIRECT" envDefault:"http://localhost:3000"`
 	// OLGTMGRPCPort is the port for the OLGTM gRPC server.
 	OLGTMGRPCPort int `env:"OLGTM_GRPC_PORT" envDefault:"4317"`
 	// OLGTMHTTPPort is the port for the OLGTM HTTP server.
