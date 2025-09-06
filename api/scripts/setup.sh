@@ -2,7 +2,7 @@
 
 echo "=> Setting up the project..."
 go mod download
-just env pull
+just env
 just docker
 goose up
 just sqlc
