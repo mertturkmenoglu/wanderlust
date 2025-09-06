@@ -11,10 +11,7 @@
     "lint": "oxlint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
-    "openapi": "npx openapi-typescript http://localhost:5000/openapi.yaml -o ./src/lib/api-types.ts",
-    "env-example": "infisical secrets generate-example-env > .env.example",
-    "env-pull": "infisical export > .env",
-    "env-push": "infisical secrets set --file=\"./.env\""
+    "openapi": "npx openapi-typescript http://localhost:5000/openapi.yaml -o ./src/lib/api-types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
