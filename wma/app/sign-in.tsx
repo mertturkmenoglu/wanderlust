@@ -1,13 +1,32 @@
+import { api } from "@/api/api";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
-import { Link } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, Pressable, TextInput, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  TextInput,
+  ToastAndroid,
+  View,
+} from "react-native";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+  const qc = useQueryClient();
+
+  const mutation = api.useMutation("post", "/api/v2/auth/credentials/login", {
+    onSuccess: async () => {
+      await qc.invalidateQueries();
+      ToastAndroid.show("signed in", ToastAndroid.SHORT);
+      router.navigate("/");
+    },
+  });
 
   return (
     <ThemedView className="flex-1 items-center px-16">
@@ -52,7 +71,14 @@ export default function SignIn() {
       </Pressable>
 
       <Pressable
-        onPress={() => Alert.alert("Sign in clicked")}
+        onPress={() => {
+          mutation.mutate({
+            body: {
+              email,
+              password,
+            },
+          });
+        }}
         className="bg-Colors-light-primary rounded-md w-full py-2"
       >
         <ThemedText
