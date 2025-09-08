@@ -33,6 +33,13 @@ function RootNavigator() {
             headerShown: false,
           }}
         />
+
+        <Stack.Screen
+          name="sign-up"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Protected>
     </Stack>
   );
