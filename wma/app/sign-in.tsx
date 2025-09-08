@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { Link } from "expo-router";
 import { useState } from "react";
 import { Alert, Image, Pressable, TextInput, View } from "react-native";
 
@@ -69,7 +70,7 @@ export default function SignIn() {
           Don&apos;t have an account?
         </ThemedText>
 
-        <Pressable onPress={() => Alert.alert("Sign up clicked")}>
+        <Link href="/sign-up">
           <ThemedText
             type="default"
             className=""
@@ -79,7 +80,7 @@ export default function SignIn() {
           >
             Sign up
           </ThemedText>
-        </Pressable>
+        </Link>
       </View>
 
       <ThemedText
