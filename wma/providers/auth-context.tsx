@@ -1,8 +1,11 @@
-import React, { use, useState, type PropsWithChildren } from "react";
+import { api } from "@/api/api";
+import type { components } from "@/api/types";
+import { useQuery } from "@tanstack/react-query";
+import React, { use, type PropsWithChildren } from "react";
 
 type AuthContextState = {
   isLoading: boolean;
-  user: { id: string; name: string } | null;
+  user: components["schemas"]["GetMeOutputBody"] | null;
 };
 
 const AuthContext = React.createContext<AuthContextState>({
@@ -11,20 +14,27 @@ const AuthContext = React.createContext<AuthContextState>({
 });
 
 function AuthContextProvider({ children }: Readonly<PropsWithChildren>) {
-  // TODO: Replace with your own API call
-  const [isLoading] = useState(true);
-  const [user] = useState<AuthContextState["user"]>(
-    /*{
-    id: "1",
-    name: "John Doe",
-  } */ null
+  const query = useQuery(
+    api.queryOptions(
+      "get",
+      "/api/v2/auth/me",
+      {},
+      {
+        retry: false,
+        refetchInterval: Infinity,
+        staleTime: Infinity,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+      }
+    )
   );
 
   return (
     <AuthContext.Provider
       value={{
-        isLoading: isLoading,
-        user: user,
+        isLoading: query.isLoading,
+        user: query.data || null,
       }}
     >
       {children}
@@ -38,7 +48,7 @@ export function useSession() {
   const value = use(AuthContext);
 
   if (!value) {
-    throw new Error("useSession must be wrapped in a <SessionProvider />");
+    throw new Error("useSession must be wrapped in a <AuthContextProvider />");
   }
 
   return value;
