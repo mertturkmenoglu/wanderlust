@@ -85,6 +85,7 @@
     "import/no-unassigned-import": "allow",
     "no-alert": "allow",
     "no-negated-condition": "allow",
-    "max-lines": "allow"
+    "max-lines": "allow",
+    "oxc/prefer-default-export": "allow"
   }
 }
