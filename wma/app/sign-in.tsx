@@ -109,7 +109,7 @@ export default function SignIn() {
                   },
                 });
               }}
-              className="bg-Colors-light-primary rounded-md w-full py-2"
+              className="bg-primary rounded-md w-full py-2"
             >
               <ThemedText
                 className="text-center"
