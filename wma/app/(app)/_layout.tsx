@@ -3,10 +3,10 @@ import React from "react";
 import { Platform } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { HomeIcon, MapIcon, SearchIcon, UserIcon } from "lucide-react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -31,36 +31,28 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="bolt" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <HomeIcon size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: "Search",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="magnifyingglass" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <SearchIcon size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="trips"
         options={{
           title: "Trips",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="map" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <MapIcon size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="menu"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <UserIcon size={24} color={color} />,
         }}
       />
     </Tabs>
