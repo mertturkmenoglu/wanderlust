@@ -1,10 +1,12 @@
 import { api } from "@/api/api";
+import type { components } from "@/api/types";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Suspense } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -22,6 +24,8 @@ export default function HomeScreen() {
 }
 
 function Content() {
+  const router = useRouter();
+
   const { data: cities } = api.useSuspenseQuery(
     "get",
     "/api/v2/cities/featured"
@@ -33,12 +37,7 @@ function Content() {
   );
 
   return (
-    <ScrollView
-      className="p-4"
-      style={{
-        flexGrow: 0,
-      }}
-    >
+    <ScrollView className="p-4">
       <View className="flex items-baseline flex-row gap-4">
         <Text className="text-2xl font-semibold">Featured Cities</Text>
         <Link href="/(app)/search" className="text-primary">
@@ -49,23 +48,27 @@ function Content() {
       <FlatList
         data={cities.cities}
         className="mt-4"
-        contentContainerClassName="gap-4"
+        contentContainerClassName="gap-4 mb-2"
         renderItem={(city) => (
-          <Link href="/search" className="mb-2">
-            <View>
-              <Image
-                source={{
-                  uri: city.item.image,
-                }}
-                style={{
-                  width: 96,
-                  aspectRatio: 2 / 3,
-                  borderRadius: 8,
-                }}
-              />
-              <Text className="font-medium mt-1">{city.item.name}</Text>
-            </View>
-          </Link>
+          <Pressable
+            className="flex flex-1"
+            onPress={() => {
+              router.push("/search");
+            }}
+          >
+            <Image
+              source={{
+                uri: city.item.image,
+              }}
+              style={{
+                width: 96,
+                aspectRatio: 2 / 3,
+                borderRadius: 8,
+              }}
+              cachePolicy="memory-disk"
+            />
+            <Text className="font-medium mt-1">{city.item.name}</Text>
+          </Pressable>
         )}
         keyExtractor={(city) => `${city.id}`}
         horizontal={true}
@@ -77,47 +80,7 @@ function Content() {
         data={aggregations.featured}
         className="mt-4"
         contentContainerClassName="gap-4"
-        renderItem={(poi) => (
-          <Link href="/search" className="mb-2">
-            <View>
-              <Image
-                source={{
-                  uri: poi.item.images[0].url,
-                }}
-                style={{
-                  width: 160,
-                  aspectRatio: 3 / 2,
-                  borderRadius: 8,
-                }}
-              />
-              <Text
-                className="font-medium mt-1"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.name}
-              </Text>
-              <Text
-                className="text-zinc-500 text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.address.city.name}
-              </Text>
-
-              <Text
-                className="text-primary text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.category.name}
-              </Text>
-            </View>
-          </Link>
-        )}
+        renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
       />
@@ -128,47 +91,7 @@ function Content() {
         data={aggregations.popular}
         className="mt-4"
         contentContainerClassName="gap-4"
-        renderItem={(poi) => (
-          <Link href="/search" className="mb-2">
-            <View>
-              <Image
-                source={{
-                  uri: poi.item.images[0].url,
-                }}
-                style={{
-                  width: 160,
-                  aspectRatio: 3 / 2,
-                  borderRadius: 8,
-                }}
-              />
-              <Text
-                className="font-medium mt-1"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.name}
-              </Text>
-              <Text
-                className="text-zinc-500 text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.address.city.name}
-              </Text>
-
-              <Text
-                className="text-primary text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.category.name}
-              </Text>
-            </View>
-          </Link>
-        )}
+        renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
       />
@@ -179,47 +102,7 @@ function Content() {
         data={aggregations.favorites}
         className="mt-4"
         contentContainerClassName="gap-4"
-        renderItem={(poi) => (
-          <Link href="/search" className="mb-2">
-            <View>
-              <Image
-                source={{
-                  uri: poi.item.images[0].url,
-                }}
-                style={{
-                  width: 160,
-                  aspectRatio: 3 / 2,
-                  borderRadius: 8,
-                }}
-              />
-              <Text
-                className="font-medium mt-1"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.name}
-              </Text>
-              <Text
-                className="text-zinc-500 text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.address.city.name}
-              </Text>
-
-              <Text
-                className="text-primary text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.category.name}
-              </Text>
-            </View>
-          </Link>
-        )}
+        renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
       />
@@ -230,50 +113,71 @@ function Content() {
         data={aggregations.new}
         className="mt-4"
         contentContainerClassName="gap-4"
-        renderItem={(poi) => (
-          <Link href="/search" className="mb-2">
-            <View>
-              <Image
-                source={{
-                  uri: poi.item.images[0].url,
-                }}
-                style={{
-                  width: 160,
-                  aspectRatio: 3 / 2,
-                  borderRadius: 8,
-                }}
-              />
-              <Text
-                className="font-medium mt-1"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.name}
-              </Text>
-              <Text
-                className="text-zinc-500 text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.address.city.name}
-              </Text>
-
-              <Text
-                className="text-primary text-sm"
-                style={{
-                  width: 160,
-                }}
-              >
-                {poi.item.category.name}
-              </Text>
-            </View>
-          </Link>
-        )}
+        renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
       />
     </ScrollView>
+  );
+}
+
+type PoiCardProps = {
+  poi: components["schemas"]["Poi"];
+};
+
+function PoiCard({ poi }: PoiCardProps) {
+  const router = useRouter();
+
+  return (
+    <Pressable
+      onPress={() => {
+        router.push({
+          pathname: "/p/[id]",
+          params: {
+            id: poi.id,
+          },
+        });
+      }}
+      className="mb-2"
+    >
+      <View>
+        <Image
+          source={{
+            uri: poi.images[0].url,
+          }}
+          style={{
+            width: 160,
+            aspectRatio: 3 / 2,
+            borderRadius: 8,
+          }}
+          cachePolicy="memory-disk"
+        />
+        <Text
+          className="font-medium mt-1"
+          style={{
+            width: 160,
+          }}
+        >
+          {poi.name}
+        </Text>
+        <Text
+          className="text-zinc-500 text-sm"
+          style={{
+            width: 160,
+          }}
+        >
+          {poi.address.city.name}
+        </Text>
+
+        <Text
+          className="text-primary text-sm"
+          style={{
+            width: 160,
+          }}
+        >
+          {poi.category.name}
+        </Text>
+      </View>
+    </Pressable>
   );
 }
