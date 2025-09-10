@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/ui/themed-text";
 import { Colors } from "@/constants/Colors";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
