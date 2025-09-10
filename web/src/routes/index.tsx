@@ -128,7 +128,7 @@ function Content() {
 
       <PoiGrid
         dataKey="featured"
-        data={aggregations.new}
+        data={aggregations.featured}
       />
 
       <VerticalBanner
