@@ -55,6 +55,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <UserIcon size={24} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="p/[id]"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
