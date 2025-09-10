@@ -42,13 +42,13 @@ export function FormattedRating({
             className={cn(starsClassName)}
           />
         ))}
-      {Array.from({ length: 5 - rating })
+      {Array.from({ length: 5 - rating + 1 })
         .fill(0)
         .map((_, i) => (
           <HeartIcon
             key={`rating-empty-${id}-${i}`}
             color={Colors.light.primary}
-            size={24}
+            size={16}
             className={cn(starsClassName)}
           />
         ))}
