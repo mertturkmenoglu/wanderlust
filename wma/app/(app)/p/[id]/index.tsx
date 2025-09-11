@@ -1,14 +1,22 @@
 import { api } from "@/api/api";
+import type { components } from "@/api/types";
 import { Amenities } from "@/components/blocks/poi/amenity";
 import { PoiCards } from "@/components/blocks/poi/cards";
 import { PoiCityInfo } from "@/components/blocks/poi/city-info";
 import { PoiInformation } from "@/components/blocks/poi/information";
 import { PoiMap } from "@/components/blocks/poi/map";
+import { ExternalLink } from "@/components/ui/external-link";
 import ParallaxScrollView from "@/components/ui/parallax-scroll-view";
 import { Colors } from "@/constants/Colors";
+import { useBookmark } from "@/hooks/use-bookmark";
+import { useFavorite } from "@/hooks/use-favorite";
 import { blurhash } from "@/lib/image";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import {
+  useLocalSearchParams,
+  useRouter,
+  type ExternalPathString,
+} from "expo-router";
 import {
   BookmarkIcon,
   FlagIcon,
@@ -19,8 +27,10 @@ import {
 } from "lucide-react-native";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
+  Share,
   StyleSheet,
   Text,
   View,
@@ -61,7 +71,40 @@ export default function Page() {
     );
   }
 
-  const poi = query.data.poi;
+  return <Content poi={query.data.poi} meta={query.data.meta} />;
+}
+
+type ContentProps = {
+  poi: components["schemas"]["Poi"];
+  meta: components["schemas"]["GetPoiByIdMeta"];
+};
+
+function Content({ poi, meta }: ContentProps) {
+  const router = useRouter();
+
+  const onShare = async () => {
+    try {
+      const webUrl = process.env.EXPO_PUBLIC_WEB_URL;
+      await Share.share({
+        message: `See ${poi.name} on Wanderlust: ${webUrl}/p/${poi.id}`,
+      });
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
+
+  const reportUrl =
+    `${process.env.EXPO_PUBLIC_WEB_URL}/report?id="${poi.id}"&type=poi` as unknown as ExternalPathString;
+
+  const { status: bookmarkStatus, onPress: onBookmarkPress } = useBookmark({
+    id: poi.id,
+    initial: meta.isBookmarked,
+  });
+
+  const { status: favoriteStatus, onPress: onFavoritePress } = useFavorite({
+    id: poi.id,
+    initial: meta.isFavorite,
+  });
 
   return (
     <ParallaxScrollView
@@ -69,7 +112,7 @@ export default function Page() {
       headerImage={
         <Image
           source={{
-            uri: query.data.poi.images[0].url,
+            uri: poi.images[0].url,
           }}
           style={{
             width: "100%",
@@ -131,21 +174,43 @@ export default function Page() {
       <PoiCards className="mt-4" poi={poi} />
 
       <View className="flex flex-row items-center justify-between gap-2 mt-4 bg-primary/5 p-4 rounded-full">
-        <Pressable>
+        <Pressable
+          accessibilityLabel="Add to list"
+          onPress={() => {
+            router.push({
+              pathname: "/(app)/p/[id]/add-to-list-modal",
+              params: {
+                id: poi.id,
+              },
+            });
+          }}
+        >
           <PlusIcon size={24} color={Colors.light.primary} />
         </Pressable>
-        <Pressable>
-          <HeartIcon size={24} color={Colors.light.primary} />
+        <Pressable onPress={onFavoritePress}>
+          <HeartIcon
+            size={24}
+            color={Colors.light.primary}
+            {...(favoriteStatus && {
+              fill: Colors.light.primary,
+            })}
+          />
         </Pressable>
-        <Pressable>
-          <BookmarkIcon size={24} color={Colors.light.primary} />
+        <Pressable onPress={onBookmarkPress}>
+          <BookmarkIcon
+            size={24}
+            color={Colors.light.primary}
+            {...(bookmarkStatus && {
+              fill: Colors.light.primary,
+            })}
+          />
         </Pressable>
-        <Pressable>
+        <Pressable onPress={onShare}>
           <Share2Icon size={24} color={Colors.light.primary} />
         </Pressable>
-        <Pressable>
+        <ExternalLink href={reportUrl} className="">
           <FlagIcon size={24} color={Colors.light.primary} />
-        </Pressable>
+        </ExternalLink>
       </View>
 
       <Text className="font-bold text-xl mt-4">Description</Text>
