@@ -4,12 +4,13 @@ import { InfoCard } from "@/components/blocks/poi/info-card";
 import { Colors } from "@/constants/Colors";
 import { computeRating } from "@/lib/rating";
 import { cn } from "@/lib/utils";
+import { useRouter } from "expo-router";
 import {
   DollarSignIcon,
   HeartIcon,
   PersonStandingIcon,
 } from "lucide-react-native";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 type Props = {
   className?: string;
@@ -23,29 +24,46 @@ export function PoiCards({ className, poi }: Props) {
     compactDisplay: "short",
     notation: "compact",
   });
+  const router = useRouter();
 
   return (
     <View
       className={cn("flex flex-row flex-wrap gap-2 w-full h-36", className)}
     >
       <InfoCard.Root className="w-[48%] h-min">
-        <InfoCard.Content>
-          <InfoCard.NumberColumn>
-            <Text className="font-bold text-3xl md:text-6xl text-primary">
-              {computeRating(poi.totalPoints, poi.totalVotes)}
-            </Text>
-          </InfoCard.NumberColumn>
-          <InfoCard.DescriptionColumn>
-            <FormattedRating
-              rating={Number.parseFloat(rating)}
-              votes={poi.totalVotes}
-              showNumbers={false}
-            />
-            <Text className="text-xs text-zinc-500 tracking-tight">
-              {fmt.format(poi.totalVotes)} reviews
-            </Text>
-          </InfoCard.DescriptionColumn>
-        </InfoCard.Content>
+        <Pressable
+          className=""
+          onPress={() => {
+            router.push({
+              pathname: "/(app)/p/[id]/reviews",
+              params: {
+                id: poi.id,
+              },
+            });
+          }}
+          android_ripple={{
+            radius: 100,
+          }}
+        >
+          <InfoCard.Content>
+            <InfoCard.NumberColumn>
+              <Text className="font-bold text-3xl md:text-6xl text-primary">
+                {computeRating(poi.totalPoints, poi.totalVotes)}
+              </Text>
+            </InfoCard.NumberColumn>
+            <InfoCard.DescriptionColumn>
+              <FormattedRating
+                rating={Number.parseFloat(rating)}
+                votes={poi.totalVotes}
+                showNumbers={false}
+              />
+
+              <Text className="text-xs text-zinc-500 tracking-tight">
+                {fmt.format(poi.totalVotes)} reviews
+              </Text>
+            </InfoCard.DescriptionColumn>
+          </InfoCard.Content>
+        </Pressable>
       </InfoCard.Root>
 
       <InfoCard.Root className="w-[48%] h-min">
