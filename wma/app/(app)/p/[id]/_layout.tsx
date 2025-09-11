@@ -17,6 +17,14 @@ export default function PageLayout() {
           headerTitle: "Add to list",
         }}
       />
+
+      <Stack.Screen
+        name="reviews"
+        options={{
+          presentation: "modal",
+          headerTitle: "Reviews",
+        }}
+      />
     </Stack>
   );
 }
