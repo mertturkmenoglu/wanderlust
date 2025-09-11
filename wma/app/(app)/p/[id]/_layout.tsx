@@ -9,6 +9,14 @@ export default function PageLayout() {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="add-to-list-modal"
+        options={{
+          presentation: "modal",
+          headerTitle: "Add to list",
+        }}
+      />
     </Stack>
   );
 }
