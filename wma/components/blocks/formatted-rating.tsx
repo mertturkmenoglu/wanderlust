@@ -42,7 +42,7 @@ export function FormattedRating({
             className={cn(starsClassName)}
           />
         ))}
-      {Array.from({ length: 5 - rating + 1 })
+      {Array.from({ length: 5 - rating })
         .fill(0)
         .map((_, i) => (
           <HeartIcon
