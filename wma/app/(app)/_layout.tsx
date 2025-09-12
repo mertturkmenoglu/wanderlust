@@ -61,6 +61,18 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="cities/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="cities/[id]/index"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
