@@ -3,8 +3,12 @@ import { FormattedRating } from "@/components/blocks/formatted-rating";
 import { Colors } from "@/constants/Colors";
 import { blurhash } from "@/lib/image";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PencilIcon,
+} from "lucide-react-native";
 import { Suspense, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -30,6 +34,7 @@ function Content() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [page, setPage] = useState(1);
   const flRef = useRef<FlatList<any>>(null);
+  const router = useRouter();
 
   const query = api.useSuspenseQuery("get", "/api/v2/reviews/poi/{id}", {
     params: {
@@ -57,6 +62,20 @@ function Content() {
 
   return (
     <View>
+      <Pressable
+        className="bg-primary flex flex-row p-2 items-center justify-center rounded-md m-2 gap-2"
+        onPress={() => {
+          router.push({
+            pathname: "/(app)/p/[id]/add-review",
+            params: {
+              id,
+            },
+          });
+        }}
+      >
+        <PencilIcon size={16} color="#ffffff" />
+        <Text className="text-white">Add a review</Text>
+      </Pressable>
       <FlatList
         data={query.data.reviews}
         ref={flRef}
