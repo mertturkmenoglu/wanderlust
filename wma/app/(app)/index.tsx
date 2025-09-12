@@ -40,7 +40,7 @@ function Content() {
     <ScrollView className="p-4">
       <View className="flex items-baseline flex-row gap-4">
         <Text className="text-2xl font-semibold">Featured Cities</Text>
-        <Link href="/(app)/search" className="text-primary">
+        <Link href="/(app)/cities" className="text-primary">
           See all
         </Link>
       </View>
@@ -49,16 +49,21 @@ function Content() {
         data={cities.cities}
         className="mt-4"
         contentContainerClassName="gap-4 mb-2"
-        renderItem={(city) => (
+        renderItem={({ item: city }) => (
           <Pressable
             className="flex flex-1"
             onPress={() => {
-              router.push("/search");
+              router.push({
+                pathname: "/cities/[id]",
+                params: {
+                  id: city.id,
+                },
+              });
             }}
           >
             <Image
               source={{
-                uri: city.item.image,
+                uri: city.image,
               }}
               style={{
                 width: 96,
@@ -67,7 +72,7 @@ function Content() {
               }}
               cachePolicy="memory-disk"
             />
-            <Text className="font-medium mt-1">{city.item.name}</Text>
+            <Text className="font-medium mt-1">{city.name}</Text>
           </Pressable>
         )}
         keyExtractor={(city) => `${city.id}`}
