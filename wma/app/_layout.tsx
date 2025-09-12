@@ -7,6 +7,7 @@ import { isApiError } from "@/api/api";
 import { AuthContextProvider, useSession } from "@/providers/auth-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastAndroid } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreenController from "./splash";
 
 const queryClient = new QueryClient({
@@ -51,26 +52,28 @@ function RootNavigator() {
   const session = useSession();
 
   return (
-    <Stack>
-      <Stack.Protected guard={!!session.user}>
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
-      </Stack.Protected>
+    <SafeAreaProvider>
+      <Stack>
+        <Stack.Protected guard={!!session.user}>
+          <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        </Stack.Protected>
 
-      <Stack.Protected guard={!session.user}>
-        <Stack.Screen
-          name="sign-in"
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Protected guard={!session.user}>
+          <Stack.Screen
+            name="sign-in"
+            options={{
+              headerShown: false,
+            }}
+          />
 
-        <Stack.Screen
-          name="sign-up"
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Protected>
-    </Stack>
+          <Stack.Screen
+            name="sign-up"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Protected>
+      </Stack>
+    </SafeAreaProvider>
   );
 }
