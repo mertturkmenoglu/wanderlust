@@ -105,7 +105,18 @@ export default function TabTwoScreen() {
           </View>
         </View>
 
-        <Button icon={UserIcon} text="View Profile"></Button>
+        <Button
+          icon={UserIcon}
+          text="View Profile"
+          onPress={() => {
+            router.navigate({
+              pathname: "/(app)/u/[username]",
+              params: {
+                username: user.username,
+              },
+            });
+          }}
+        ></Button>
         <Button icon={BellIcon} text="Notifications"></Button>
         <Button icon={SettingsIcon} text="Settings"></Button>
         <Button icon={MapIcon} text="Trips"></Button>
