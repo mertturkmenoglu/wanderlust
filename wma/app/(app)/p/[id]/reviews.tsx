@@ -94,7 +94,16 @@ function Content() {
                 }}
                 placeholder={{ blurhash }}
               />
-              <View>
+              <Pressable
+                onPress={() => {
+                  router.navigate({
+                    pathname: "/(app)/u/[username]",
+                    params: {
+                      username: review.user.username,
+                    },
+                  });
+                }}
+              >
                 <Text className="font-bold">{review.user.fullName}</Text>
                 <Text className="text-sm text-primary">
                   @{review.user.username}
@@ -102,7 +111,7 @@ function Content() {
                 <Text className="text-xs text-zinc-500">
                   {new Date(review.createdAt).toLocaleString()}
                 </Text>
-              </View>
+              </Pressable>
             </View>
             <Text className="p-2 text-sm text-zinc-700 mt-2">
               {review.content}
