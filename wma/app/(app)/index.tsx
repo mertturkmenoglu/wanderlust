@@ -1,5 +1,5 @@
 import { api } from "@/api/api";
-import type { components } from "@/api/types";
+import { PoiCard } from "@/components/blocks/poi-card";
 import { Image } from "expo-image";
 import { Link, useRouter } from "expo-router";
 import { Suspense } from "react";
@@ -84,7 +84,7 @@ function Content() {
       <FlatList
         data={aggregations.featured}
         className="mt-4"
-        contentContainerClassName="gap-4"
+        contentContainerClassName="gap-4 mb-2"
         renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
@@ -95,7 +95,7 @@ function Content() {
       <FlatList
         data={aggregations.popular}
         className="mt-4"
-        contentContainerClassName="gap-4"
+        contentContainerClassName="gap-4 mb-2"
         renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
@@ -106,7 +106,7 @@ function Content() {
       <FlatList
         data={aggregations.favorites}
         className="mt-4"
-        contentContainerClassName="gap-4"
+        contentContainerClassName="gap-4 mb-2"
         renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
@@ -117,72 +117,11 @@ function Content() {
       <FlatList
         data={aggregations.new}
         className="mt-4"
-        contentContainerClassName="gap-4"
+        contentContainerClassName="gap-4 mb-2"
         renderItem={(poi) => <PoiCard poi={poi.item} />}
         keyExtractor={(poi) => `${poi.id}`}
         horizontal={true}
       />
     </ScrollView>
-  );
-}
-
-type PoiCardProps = {
-  poi: components["schemas"]["Poi"];
-};
-
-function PoiCard({ poi }: PoiCardProps) {
-  const router = useRouter();
-
-  return (
-    <Pressable
-      onPress={() => {
-        router.push({
-          pathname: "/p/[id]",
-          params: {
-            id: poi.id,
-          },
-        });
-      }}
-      className="mb-2"
-    >
-      <View>
-        <Image
-          source={{
-            uri: poi.images[0].url,
-          }}
-          style={{
-            width: 160,
-            aspectRatio: 3 / 2,
-            borderRadius: 8,
-          }}
-          cachePolicy="memory-disk"
-        />
-        <Text
-          className="font-medium mt-1"
-          style={{
-            width: 160,
-          }}
-        >
-          {poi.name}
-        </Text>
-        <Text
-          className="text-zinc-500 text-sm"
-          style={{
-            width: 160,
-          }}
-        >
-          {poi.address.city.name}
-        </Text>
-
-        <Text
-          className="text-primary text-sm"
-          style={{
-            width: 160,
-          }}
-        >
-          {poi.category.name}
-        </Text>
-      </View>
-    </Pressable>
   );
 }
