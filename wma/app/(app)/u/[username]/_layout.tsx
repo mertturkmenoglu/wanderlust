@@ -148,15 +148,11 @@ function Content() {
         <TabList className="mt-4">
           <TabTrigger
             name="index"
-            href="/(app)/u/[username]"
-            onPress={(ev) => {
-              ev.preventDefault();
-              router.navigate({
-                pathname: "/(app)/u/[username]",
-                params: {
-                  username: user.username,
-                },
-              });
+            href={{
+              pathname: "/(app)/u/[username]",
+              params: {
+                username: user.username,
+              },
             }}
           >
             <Text
@@ -169,16 +165,12 @@ function Content() {
           </TabTrigger>
 
           <TabTrigger
-            name="index"
-            href="/(app)/u/[username]/activities"
-            onPress={(ev) => {
-              ev.preventDefault();
-              router.navigate({
-                pathname: "/(app)/u/[username]/activities",
-                params: {
-                  username: user.username,
-                },
-              });
+            name="activities"
+            href={{
+              pathname: "/(app)/u/[username]/activities",
+              params: {
+                username: user.username,
+              },
             }}
           >
             <Text
@@ -191,16 +183,12 @@ function Content() {
           </TabTrigger>
 
           <TabTrigger
-            name="index"
-            href="/(app)/u/[username]/reviews"
-            onPress={(ev) => {
-              ev.preventDefault();
-              router.navigate({
-                pathname: "/(app)/u/[username]/reviews",
-                params: {
-                  username: user.username,
-                },
-              });
+            name="reviews"
+            href={{
+              pathname: "/(app)/u/[username]/reviews",
+              params: {
+                username: user.username,
+              },
             }}
           >
             <Text
@@ -213,16 +201,12 @@ function Content() {
           </TabTrigger>
 
           <TabTrigger
-            name="index"
-            href="/(app)/u/[username]/lists"
-            onPress={(ev) => {
-              ev.preventDefault();
-              router.navigate({
-                pathname: "/(app)/u/[username]/lists",
-                params: {
-                  username: user.username,
-                },
-              });
+            name="lists"
+            href={{
+              pathname: "/(app)/u/[username]/lists",
+              params: {
+                username: user.username,
+              },
             }}
           >
             <Text
@@ -235,16 +219,12 @@ function Content() {
           </TabTrigger>
 
           <TabTrigger
-            name="index"
-            href="/(app)/u/[username]/favorites"
-            onPress={(ev) => {
-              ev.preventDefault();
-              router.navigate({
-                pathname: "/(app)/u/[username]/favorites",
-                params: {
-                  username: user.username,
-                },
-              });
+            name="favorites"
+            href={{
+              pathname: "/(app)/u/[username]/favorites",
+              params: {
+                username: user.username,
+              },
             }}
           >
             <Text
@@ -255,6 +235,28 @@ function Content() {
               Favorites
             </Text>
           </TabTrigger>
+
+          <TabTrigger
+            name="followers"
+            href={{
+              pathname: "/(app)/u/[username]/followers",
+              params: {
+                username: user.username,
+              },
+            }}
+            className="hidden"
+          ></TabTrigger>
+
+          <TabTrigger
+            name="following"
+            href={{
+              pathname: "/(app)/u/[username]/following",
+              params: {
+                username: user.username,
+              },
+            }}
+            className="hidden"
+          ></TabTrigger>
         </TabList>
         <TabSlot />
       </Tabs>

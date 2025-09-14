@@ -3,7 +3,7 @@ import { PoiCard } from "@/components/blocks/poi-card";
 import { InfoCard } from "@/components/blocks/poi/info-card";
 import { Colors } from "@/constants/Colors";
 import { cn } from "@/lib/utils";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import { LeafIcon, LinkIcon, SpeechIcon } from "lucide-react-native";
 import { Suspense } from "react";
@@ -47,6 +47,8 @@ function Content() {
     }
   );
 
+  const router = useRouter();
+
   const user = query.data.profile;
   const favoriteLocations = favoritesQuery.data.pois;
 
@@ -58,7 +60,14 @@ function Content() {
         <InfoCard.Root className="w-[48%] h-min">
           <Pressable
             className=""
-            onPress={() => {}}
+            onPress={() => {
+              router.navigate({
+                pathname: "/(app)/u/[username]/followers",
+                params: {
+                  username: user.username,
+                },
+              });
+            }}
             android_ripple={{
               radius: 100,
             }}
@@ -81,7 +90,14 @@ function Content() {
         <InfoCard.Root className="w-[48%] h-min">
           <Pressable
             className=""
-            onPress={() => {}}
+            onPress={() => {
+              router.navigate({
+                pathname: "/(app)/u/[username]/following",
+                params: {
+                  username: user.username,
+                },
+              });
+            }}
             android_ripple={{
               radius: 100,
             }}
