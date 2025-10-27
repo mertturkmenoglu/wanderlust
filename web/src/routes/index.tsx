@@ -1,21 +1,20 @@
 // oxlint-disable no-nested-ternary
 import { ActionBanner } from '@/components/blocks/action-banner';
-import { AppMessage } from '@/components/blocks/app-message';
 import { OverlayBanner } from '@/components/blocks/overlay-banner';
 import { PoiGrid } from '@/components/blocks/poi-grid';
 import { QuickActions } from '@/components/blocks/quick-actions';
 import { Search } from '@/components/blocks/search';
 import { TagNavigation } from '@/components/blocks/tag-navigation';
 import { VerticalBanner } from '@/components/blocks/vertical-banner';
-import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
-import { ipx } from '@/lib/ipx';
 import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Suspense, useContext } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import { useContext } from 'react';
+import { Image } from '@unpic/react';
+import { ipx } from '@/lib/ipx';
+import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -44,25 +43,9 @@ function App() {
         />
       )}
 
-      <ErrorBoundary
-        fallback={
-          <AppMessage
-            errorMessage="Something went wrong"
-            showBackButton={false}
-            className="my-16"
-          />
-        }
-      >
-        <Suspense
-          fallback={
-            <div className="max-w-7xl mx-auto my-16">
-              <Spinner className="size-4 mx-auto" />
-            </div>
-          }
-        >
-          <Content />
-        </Suspense>
-      </ErrorBoundary>
+      <SuspenseWrapper>
+        <Content />
+      </SuspenseWrapper>
     </div>
   );
 }
@@ -98,9 +81,12 @@ function Content() {
             key={city.id}
             className="rounded-md hover:underline decoration-primary decoration-2 underline-offset-4"
           >
-            <img
+            <Image
               src={ipx(city.image, 'w_512')}
-              alt=""
+              layout="constrained"
+              width={512}
+              priority={true}
+              aspectRatio={16 / 9}
               className="aspect-video w-full rounded-md object-cover"
             />
             <div className="mt-2 text-base font-bold">{city.name}</div>
