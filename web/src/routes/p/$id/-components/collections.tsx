@@ -1,12 +1,9 @@
-import { AppMessage } from '@/components/blocks/app-message';
 import { PoiCard } from '@/components/blocks/poi-card';
-import { Spinner } from '@/components/kit/spinner';
+import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { Suspense } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 
 type Props = {
   className?: string;
@@ -14,19 +11,9 @@ type Props = {
 
 export function Collections({ className }: Props) {
   return (
-    <ErrorBoundary
-      fallback={<AppMessage errorMessage="Something went wrong" />}
-    >
-      <Suspense
-        fallback={
-          <div className="flex justify-center">
-            <Spinner className="size-12 mx-auto my-4" />
-          </div>
-        }
-      >
-        <Content className={className} />
-      </Suspense>
-    </ErrorBoundary>
+    <SuspenseWrapper>
+      <Content className={className} />
+    </SuspenseWrapper>
   );
 }
 

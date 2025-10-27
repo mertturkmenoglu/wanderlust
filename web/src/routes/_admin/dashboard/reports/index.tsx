@@ -2,14 +2,13 @@
 import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { reportsCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { Spinner } from '@/components/kit/spinner';
+import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { Suspense } from 'react';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -35,15 +34,9 @@ function RouteComponent() {
 
       <Separator className="my-2" />
 
-      <Suspense
-        fallback={
-          <div className="my-32">
-            <Spinner className="size-12 mx-auto" />
-          </div>
-        }
-      >
+      <SuspenseWrapper>
         <Content />
-      </Suspense>
+      </SuspenseWrapper>
     </div>
   );
 }

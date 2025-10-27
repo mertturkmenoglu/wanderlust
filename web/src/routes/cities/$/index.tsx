@@ -1,18 +1,15 @@
-import { AppMessage } from '@/components/blocks/app-message';
 import { ErrorComponent } from '@/components/blocks/error-component';
 import { OverlayBanner } from '@/components/blocks/overlay-banner';
 import { PoiCard } from '@/components/blocks/poi-card';
 import { TagNavigation } from '@/components/blocks/tag-navigation';
-import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Suspense } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { CityBreadcrumb } from './-city-breadcrumb';
 import { Map } from './-map';
+import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 
 export const Route = createFileRoute('/cities/$/')({
   component: RouteComponent,
@@ -96,19 +93,9 @@ function RouteComponent() {
         imgClassName="aspect-[3]"
       />
 
-      <ErrorBoundary
-        fallback={<AppMessage errorMessage="Something went wrong" />}
-      >
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center">
-              <Spinner className="size-8 mx-auto my-4" />
-            </div>
-          }
-        >
-          <CollectionsContent />
-        </Suspense>
-      </ErrorBoundary>
+      <SuspenseWrapper>
+        <CollectionsContent />
+      </SuspenseWrapper>
 
       <OverlayBanner
         image={city.image}
