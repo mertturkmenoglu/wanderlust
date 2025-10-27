@@ -47,7 +47,7 @@ export function SignInCard({ isModal }: Props) {
       <img
         src="/logo.png"
         alt="Wanderlust"
-        className="size-12 min-h-16 min-w-16"
+        className="size-16 min-h-16 min-w-16"
       />
       <h2 className="mt-4 text-xl font-bold">Sign in to Wanderlust</h2>
       <div className="text-sm text-muted-foreground -mt-2">

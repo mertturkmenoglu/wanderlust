@@ -45,14 +45,14 @@ function RouteComponent() {
   const mutation = useSignUpMutation();
 
   return (
-    <Card className="mx-auto my-32 flex max-w-lg flex-col p-8">
+    <Card className="mx-auto my-32 flex max-w-lg flex-col p-8 gap-2">
       <img
         src="/logo.png"
         alt="Wanderlust"
-        className="size-12 min-h-12 min-w-12"
+        className="size-16 min-h-16 min-w-16"
       />
       <h2 className="mt-4 text-xl font-bold">Create Your Wanderlust Account</h2>
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground -mt-2">
         Already have an account?{' '}
         <AuthLink
           href="/sign-in"
@@ -65,7 +65,7 @@ function RouteComponent() {
             body: data,
           });
         })}
-        className="mt-8 w-full"
+        className="w-full mt-4"
       >
         <FieldGroup className="gap-4">
           <Controller
