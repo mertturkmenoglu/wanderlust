@@ -8,7 +8,6 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider';
 import { routeTree } from './routeTree.gen';
 
 import 'instantsearch.css/themes/reset.css';
-import 'leaflet/dist/leaflet.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
@@ -24,6 +23,7 @@ import {
 } from './providers/flags-provider.tsx';
 import reportWebVitals from './reportWebVitals.ts';
 import './styles.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 // Create a new router instance
 const router = createRouter({
