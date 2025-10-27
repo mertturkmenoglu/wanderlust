@@ -51,6 +51,7 @@
     "@tanstack/react-router-devtools": "^1.121.5",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/router-plugin": "^1.121.4",
+    "@unpic/react": "^1.0.1",
     "@zag-js/file-upload": "^1.15.2",
     "@zag-js/rating-group": "^1.15.2",
     "@zag-js/react": "^1.15.2",
