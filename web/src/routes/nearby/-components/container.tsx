@@ -3,13 +3,13 @@ import { AppMessage } from '@/components/blocks/app-message';
 import { PoiCard } from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { tileUrl } from '@/lib/map';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useGeoSearch } from 'react-instantsearch';
-import { MapContainer, TileLayer } from 'react-leaflet';
 import { GeoSearch } from './geo-search';
+import MapContainer from 'react-map-gl/maplibre';
+import { createStyle } from '@/lib/map';
 
 export function Container() {
   const { items } = useGeoSearch();
@@ -68,19 +68,21 @@ export function Container() {
   return (
     <div>
       <MapContainer
-        center={query.data}
-        zoom={14}
+        initialViewState={{
+          longitude: query.data?.[1],
+          latitude: query.data?.[0],
+          zoom: 14,
+          pitch: 0,
+          bearing: 0,
+        }}
+        mapStyle={createStyle('streets-v2-light')}
         minZoom={4}
-        className="mt-4"
-        scrollWheelZoom
         style={{
           height: '600px',
+          marginTop: '16px',
+          zIndex: 0,
         }}
       >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url={tileUrl}
-        />
         <GeoSearch />
       </MapContainer>
 

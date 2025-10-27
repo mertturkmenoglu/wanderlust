@@ -1,11 +1,9 @@
-import { icon } from '@/components/icons/leaflet';
 import type { components } from '@/lib/api-types';
-import { tileUrl } from '@/lib/map';
+import { createStyle } from '@/lib/map';
 import { Link } from '@tanstack/react-router';
-import type { LatLngTuple } from 'leaflet';
-import 'leaflet-defaulticon-compatibility';
-
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import type { LngLatLike } from 'maplibre-gl';
+import MapContainer, { Marker, Popup } from 'react-map-gl/maplibre';
+import { useState } from 'react';
 
 type Props = {
   locations: components['schemas']['DiaryLocation'][];
@@ -13,16 +11,22 @@ type Props = {
 
 export function Map({ locations }: Props) {
   const fst = locations[0];
-  const center: LatLngTuple =
+  const center: LngLatLike =
     fst === undefined ? [0, 0] : [fst.poi.address.lat, fst.poi.address.lng];
+  const [locPopupIndex, setLocPopupIndex] = useState(-1);
 
   return (
     <div className="mt-4">
       <MapContainer
-        center={center}
-        zoom={14}
-        minZoom={4}
-        scrollWheelZoom
+        initialViewState={{
+          longitude: center[1],
+          latitude: center[0],
+          zoom: 14,
+          pitch: 0,
+          bearing: 0,
+        }}
+        mapStyle={createStyle('streets-v2-light')}
+        // minZoom={10}
         style={{
           height: '400px',
           marginTop: '16px',
@@ -30,29 +34,38 @@ export function Map({ locations }: Props) {
           width: '100%',
         }}
       >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url={tileUrl}
-        />
-        {locations.map((location) => (
+        {locations.map((location, i) => (
           <Marker
             key={location.poi.id}
-            position={[location.poi.address.lat, location.poi.address.lng]}
-            icon={icon}
-          >
-            <Popup>
-              <Link
-                to="/p/$id"
-                params={{
-                  id: location.poi.id,
-                }}
-              >
-                {location.poi.name}
-              </Link>
-              <div>{location.description ?? 'No description'}</div>
-            </Popup>
-          </Marker>
+            latitude={location.poi.address.lat}
+            longitude={location.poi.address.lng}
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              setLocPopupIndex(i);
+            }}
+          ></Marker>
         ))}
+
+        {locPopupIndex !== -1 && (
+          <Popup
+            longitude={locations[locPopupIndex]!.poi.address.lng}
+            latitude={locations[locPopupIndex]!.poi.address.lat}
+            onClose={() => setLocPopupIndex(-1)}
+          >
+            <Link
+              to="/p/$id"
+              params={{
+                id: locations[locPopupIndex]!.poi.id,
+              }}
+              className="text-primary underline"
+            >
+              {locations[locPopupIndex]!.poi.name}
+            </Link>
+            <div>
+              {locations[locPopupIndex]!.description ?? 'No description'}
+            </div>
+          </Popup>
+        )}
       </MapContainer>
     </div>
   );

@@ -2,23 +2,24 @@ import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { tileUrl } from '@/lib/map';
 import { createFileRoute } from '@tanstack/react-router';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { LatLngBounds } from 'leaflet';
 import { AlertTriangleIcon, DownloadCloudIcon, MapIcon } from 'lucide-react';
 import { useEffect } from 'react';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import MapContainer, { useMap } from 'react-map-gl/maplibre';
+import { LngLatBounds } from 'maplibre-gl';
+import { createStyle } from '@/lib/map';
 
 export const Route = createFileRoute('/_admin/dashboard/ingest/map/')({
   component: RouteComponent,
 });
 
-const bbAtom = atom<LatLngBounds>(new LatLngBounds([0, 0], [0, 0]));
+const bbAtom = atom<LngLatBounds>(new LngLatBounds([0, 0], [0, 0]));
 
 function RouteComponent() {
   const bb = useAtomValue(bbAtom);
-  const isDisabled = bb.equals(new LatLngBounds([0, 0], [0, 0]));
+  const isDisabled = bb.isEmpty();
+  // const isDisabled = bb.equals(new LatLngBounds([0, 0], [0, 0]));
 
   return (
     <div>
@@ -32,19 +33,19 @@ function RouteComponent() {
       <Separator className="my-2" />
 
       <MapContainer
-        center={[51.523_771_418_279_33, -0.158_553_196_119_818_36]}
-        zoom={18}
-        scrollWheelZoom
+        initialViewState={{
+          longitude: bb.getCenter().lng,
+          latitude: bb.getCenter().lat,
+          zoom: 0,
+        }}
+        scrollZoom
         style={{
           height: '600px',
           zIndex: 0,
           width: '100%',
         }}
+        mapStyle={createStyle('streets-v2-light')}
       >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url={tileUrl}
-        />
         <BoundingBoxWatcher />
       </MapContainer>
 
@@ -52,7 +53,7 @@ function RouteComponent() {
         <Alert>
           <MapIcon className="size-4" />
           <AlertTitle>Current Bounding Box</AlertTitle>
-          <AlertDescription>{bb.toBBoxString()}</AlertDescription>
+          <AlertDescription>{bb.toString()}</AlertDescription>
         </Alert>
 
         <Alert className="mt-4">
@@ -80,7 +81,7 @@ function RouteComponent() {
             href={
               isDisabled
                 ? '#'
-                : `https://overpass-api.de/api/map?bbox=${bb.toBBoxString()}`
+                : `https://overpass-api.de/api/map?bbox=${bb.toArray().toString()}`
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -96,21 +97,23 @@ function RouteComponent() {
 }
 
 function BoundingBoxWatcher() {
-  const map = useMap();
+  const { current: map } = useMap();
   const setbb = useSetAtom(bbAtom);
 
   useEffect(() => {
     // oxlint-disable-next-line func-style
     const onMoveEnd = () => {
-      const bounds = map.getBounds();
-      setbb(bounds);
+      const bounds = map?.getBounds();
+      if (bounds) {
+        setbb(bounds);
+      }
     };
 
-    map.on('moveend', onMoveEnd);
+    map?.on('moveend', onMoveEnd);
 
     // Cleanup on unmount
     return () => {
-      map.off('moveend', onMoveEnd);
+      map?.off('moveend', onMoveEnd);
     };
   }, [map, setbb]);
 

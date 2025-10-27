@@ -1,5 +1,5 @@
-import { tileUrl } from '@/lib/map';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { createStyle } from '@/lib/map';
+import MapContainer from 'react-map-gl/maplibre';
 
 type Props = {
   latitude: number;
@@ -12,22 +12,25 @@ export function Map({ latitude, longitude }: Props) {
       <h3 className="text-2xl font-bold mt-8 lg:mt-4">Location</h3>
       <div className="mt-4">
         <MapContainer
-          center={[latitude, longitude]}
-          zoom={14}
-          minZoom={4}
-          scrollWheelZoom
+          initialViewState={{
+            latitude,
+            longitude,
+            zoom: 14,
+            pitch: 0,
+            bearing: 0,
+          }}
+          mapStyle={createStyle('streets-v2-light')}
+          dragPan={false}
+          dragRotate={false}
+          minZoom={10}
+          scrollZoom
           style={{
             height: '400px',
             marginTop: '16px',
             zIndex: 0,
             width: '100%',
           }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            url={tileUrl}
-          />
-        </MapContainer>
+        />
       </div>
     </>
   );

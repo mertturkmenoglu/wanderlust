@@ -1,9 +1,9 @@
-import { icon } from '@/components/icons/leaflet';
+import MapContainer, { Marker } from 'react-map-gl/maplibre';
 import { Button } from '@/components/ui/button';
-import { tileUrl } from '@/lib/map';
 import { getRouteApi } from '@tanstack/react-router';
 import { ExternalLinkIcon } from 'lucide-react';
-import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
+import mapPinIcon from '@/map-pin.svg';
+import { createStyle } from '@/lib/map';
 
 export function Map() {
   const route = getRouteApi('/p/$id/');
@@ -33,32 +33,29 @@ export function Map() {
         </Button>
       </div>
       <MapContainer
-        center={[lat, lng]}
-        zoom={18}
-        minZoom={1}
-        style={{
-          height: '400px',
-          marginTop: '16px',
-          zIndex: 0,
-          width: '100%',
+        initialViewState={{
+          longitude: lng,
+          latitude: lat,
+          zoom,
         }}
+        dragPan={false}
+        pitch={0}
+        dragRotate={false}
+        minZoom={14}
+        style={{ width: '100%', height: '400px', marginTop: '16px', zIndex: 0 }}
+        mapStyle={createStyle('streets-v2-light')}
       >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url={tileUrl}
-        />
         <Marker
-          position={[lat, lng]}
-          icon={icon}
+          latitude={lat}
+          longitude={lng}
         >
-          <Tooltip
-            direction="bottom"
-            opacity={1}
-          >
-            {poi.name}
-          </Tooltip>
+          <img
+            src={mapPinIcon}
+            alt="map pin"
+          />
         </Marker>
       </MapContainer>
     </div>
   );
 }
+
