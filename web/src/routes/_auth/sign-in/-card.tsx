@@ -1,57 +1,45 @@
 import { AuthLegalText } from '@/components/blocks/auth/legal-text';
 import { AuthLink } from '@/components/blocks/auth/link';
 import { OAuthButton } from '@/components/blocks/auth/oauth-button';
-import { InputError } from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useFeatureFlags } from '@/providers/flags-provider';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useSignInForm, useSignInMutation } from './-hooks';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import { Controller } from 'react-hook-form';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
   isModal: boolean;
 };
-
-const schema = z.object({
-  email: z.string().min(1, { message: 'Email is required' }).email(),
-  password: z.string().min(1, { message: 'Password is required' }),
-});
 
 export function SignInCard({ isModal }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const flags = useFeatureFlags();
   const showOAuthButtons = flags['allow-oauth-logins'] === true;
 
-  const { formState, register, handleSubmit } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
-  const loginMutation = api.useMutation(
-    'post',
-    '/api/v2/auth/credentials/login',
-    {
-      onSuccess: () => {
-        globalThis.window.location.href = '/';
-        globalThis.window.location.search = '';
-      },
-    },
-  );
+  const form = useSignInForm();
+  const mutation = useSignInMutation();
 
   return (
     <Card
-      className={cn('mx-auto my-8 flex flex-col ', {
+      className={cn('mx-auto my-8 flex flex-col gap-2', {
         'max-w-lg p-8 my-32': !isModal,
         'shadow-none border-none': isModal,
       })}
@@ -62,7 +50,7 @@ export function SignInCard({ isModal }: Props) {
         className="size-12 min-h-16 min-w-16"
       />
       <h2 className="mt-4 text-xl font-bold">Sign in to Wanderlust</h2>
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground -mt-2">
         Don&apos;t have an account?{' '}
         <AuthLink
           href="/sign-up"
@@ -70,69 +58,86 @@ export function SignInCard({ isModal }: Props) {
         />
       </div>
       <form
-        onSubmit={handleSubmit((data) => {
-          loginMutation.mutate({
+        onSubmit={form.handleSubmit((data) => {
+          mutation.mutate({
             body: data,
           });
         })}
-        className="mt-4 w-full"
+        className="w-full mt-4"
       >
-        <Label htmlFor="email">Email</Label>
-        <Input
-          type="email"
-          id="email"
-          placeholder="Email"
-          autoComplete="email"
-          className="mt-1"
-          {...register('email')}
-        />
-        <InputError error={formState.errors.email} />
-        <div className="my-4" />
-
-        <Label htmlFor="password">Password</Label>
-        <div className="relative">
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            placeholder="Password"
-            autoComplete="current-password"
-            className="pr-10 mt-1"
-            {...register('password')}
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-0 top-0"
-            onClick={() => setShowPassword((prev) => !prev)}
-            type="button"
-          >
-            {showPassword ? (
-              <EyeIcon className="size-4" />
-            ) : (
-              <EyeOffIcon className="size-4" />
+        <FieldGroup className="gap-4">
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  {...field}
+                  id="email"
+                  placeholder="Email"
+                  autoComplete="email"
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
-          </Button>
-        </div>
-        <div className="flex items-center">
-          <InputError
-            error={formState.errors.password}
-            className="self-start"
           />
-          <AuthLink
-            href="/forgot-password"
-            text="Forgot password?"
-            className="ml-auto"
-          />
-        </div>
 
-        <div className="my-4" />
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    {...field}
+                    id="password"
+                    placeholder="Password"
+                    aria-invalid={fieldState.invalid}
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? (
+                        <EyeIcon className="size-4" />
+                      ) : (
+                        <EyeOffIcon className="size-4" />
+                      )}
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+                <AuthLink
+                  href="/forgot-password"
+                  text="Forgot password?"
+                  className="justify-end"
+                />
+              </Field>
+            )}
+          />
+        </FieldGroup>
 
         <Button
           variant="default"
-          className="w-full"
+          className="w-full mt-4"
           type="submit"
+          disabled={!form.formState.isValid || mutation.isPending}
         >
-          Sign In
+          {mutation.isPending && <Spinner />}
+          <span>Sign In</span>
         </Button>
 
         <Separator className="my-4" />
