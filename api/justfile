@@ -55,20 +55,6 @@ default:
 @fake-id:
 	./scripts/fake-id.sh
 
-# Run E2E tests
-@e2e-run:
-	cd tests && go test -v
-
-# Setup E2E test environment
-@e2e-setup:
-	docker compose -f ./docker-compose.test.yml --env-file .env.test up -d
-	goose up -env=.env.test
-	air -c conf/.air.toml -- --env-file=.env.test
-
-# Teardown E2E test environment
-@e2e-teardown:
-	docker compose down
-
 # Run vulnerability check tool GoSec
 @gosec:
 	gosec -fmt=html -out=gosec-results.html -exclude-generated ./...; open gosec-results.html
