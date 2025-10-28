@@ -26,23 +26,21 @@ func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAg
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	var cacheRes dto.HomeAggregatorOutput
-
-	err := s.app.Cache.ReadObj(ctx, cache.KeyHomeAggregations, &cacheRes)
+	res, err := s.app.Cache.Read(ctx, cache.KeyHomeAggregations)
 
 	if err == nil {
-		return &cacheRes, nil
+		return res.(*dto.HomeAggregatorOutput), nil
 	}
 
 	return nil, err
 }
 
 func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
-	spanCtx, sp := tracing.NewSpan(ctx)
+	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	s.cacheMutex.RLock()
-	cacheRes, err := s.checkCacheForHomeAggregation(spanCtx)
+	cacheRes, err := s.checkCacheForHomeAggregation(ctx)
 	s.cacheMutex.RUnlock()
 
 	if err == nil {
@@ -50,18 +48,17 @@ func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOu
 	}
 
 	result, err, _ := s.requestGroup.Do("home-aggregation", func() (any, error) {
-		obj, err := s.getHomeAggregationFromDb(spanCtx)
+		obj, err := s.getHomeAggregationFromDb(ctx)
 
 		if err != nil {
 			sp.RecordError(err)
 			return nil, err
 		}
 
-		// Save to cache
 		s.cacheMutex.Lock()
 		defer s.cacheMutex.Unlock()
 
-		err = s.app.Cache.SetObj(ctx, cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
+		err = s.app.Cache.Write(ctx, cache.KeyHomeAggregations, obj, cache.TTLHomeAggregations)
 
 		if err != nil {
 			sp.RecordError(err)
