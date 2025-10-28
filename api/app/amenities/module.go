@@ -14,9 +14,10 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app,
-		app.Db.Queries,
-		app.Db.Pool,
+		&Repository{
+			app.Db.Queries,
+			app.Db.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {

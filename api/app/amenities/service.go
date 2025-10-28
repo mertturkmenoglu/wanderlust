@@ -2,36 +2,23 @@ package amenities
 
 import (
 	"context"
-	"errors"
-	"wanderlust/pkg/core"
-	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
-
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	*core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	repo *Repository
 }
 
 func (s *Service) list(ctx context.Context) (*dto.ListAmenitiesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.db.GetAllAmenities(ctx)
+	res, err := s.repo.list(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFoundMany
-		}
-
-		return nil, ErrFailedToList
+		return nil, err
 	}
 
 	amenities := make([]dto.Amenity, len(res))
@@ -54,16 +41,11 @@ func (s *Service) create(ctx context.Context, body dto.CreateAmenityInputBody) (
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.db.CreateAmenity(ctx, body.Name)
+	res, err := s.repo.create(ctx, body.Name)
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, ErrAlreadyExists
-		}
-
-		return nil, ErrCreateAmenity
+		return nil, err
 	}
 
 	return &dto.CreateAmenityOutput{
@@ -81,19 +63,14 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateAmenityIn
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.UpdateAmenity(ctx, db.UpdateAmenityParams{
+	err := s.repo.update(ctx, UpdateParams{
 		ID:   id,
 		Name: body.Name,
 	})
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
-		}
-
-		return nil, ErrFailedToUpdate
+		return nil, err
 	}
 
 	return &dto.UpdateAmenityOutput{
@@ -110,17 +87,5 @@ func (s *Service) remove(ctx context.Context, id int32) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.DeleteAmenity(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return ErrNotFound
-		}
-
-		return ErrFailedToDelete
-	}
-
-	return nil
+	return s.repo.remove(ctx, id)
 }
