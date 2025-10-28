@@ -12,8 +12,8 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
+	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/upload"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -297,7 +297,14 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	}
 
 	for _, m := range diary.Images {
-		err = s.Upload.RemoveFileFromUrl(m.Url, upload.BUCKET_DIARIES)
+		bucket, err := storage.OpenBucket(ctx, storage.BUCKET_DIARIES)
+
+		if err != nil {
+			tracing.Slog.Error("error deleting diary image. cannot open bucket", slog.Any("error", err))
+			continue
+		}
+
+		err = bucket.Delete(ctx, m.Url)
 
 		if err != nil {
 			tracing.Slog.Error("error deleting diary image. cannot remove object from bucket", slog.Any("error", err))
@@ -328,7 +335,7 @@ func (s *Service) uploadImage(ctx context.Context, id string, body dto.UploadDia
 	}
 
 	// Check if the file is uploaded
-	ok := s.Upload.FileExists(upload.BUCKET_DIARIES, body.FileName)
+	ok := storage.FileExists(ctx, storage.BUCKET_DIARIES, body.FileName)
 
 	if !ok {
 		err = huma.Error400BadRequest("File not uploaded")
@@ -351,7 +358,13 @@ func (s *Service) uploadImage(ctx context.Context, id string, body dto.UploadDia
 		return nil, huma.Error500InternalServerError("Failed to delete cached information")
 	}
 
-	url := s.Upload.GetUrlForFile(upload.BUCKET_DIARIES, body.FileName)
+	url, err := storage.GetUrl(ctx, storage.BUCKET_DIARIES, body.FileName)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get url")
+	}
+
 	lastOrder, err := s.Db.Queries.GetDiaryLastImageIndex(ctx, id)
 
 	if err != nil {
@@ -476,10 +489,21 @@ func (s *Service) removeImage(ctx context.Context, id string, mediaId int64) err
 	}
 
 	if toBeRemoved != nil {
-		err = s.Upload.RemoveFileFromUrl(toBeRemoved.Url, upload.BUCKET_DIARIES)
+		filename := storage.GetFilename(ctx, toBeRemoved.Url)
+		bucket, err := storage.OpenBucket(ctx, storage.BUCKET_DIARIES)
 
 		if err != nil {
 			s.Log.Error("Diary media removal failed.", zap.String("url", toBeRemoved.Url), zap.Error(err))
+			return nil
+		}
+
+		defer bucket.Close()
+
+		err = bucket.Delete(ctx, filename)
+
+		if err != nil {
+			s.Log.Error("Diary media removal failed.", zap.String("url", toBeRemoved.Url), zap.Error(err))
+			return nil
 		}
 	}
 
