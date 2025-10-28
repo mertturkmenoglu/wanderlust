@@ -11,7 +11,6 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 
-	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -38,10 +37,10 @@ func (s *Service) create(ctx context.Context, body dto.CreateBookmarkInputBody) 
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, huma.Error422UnprocessableEntity("Point of Interest is already bookmarked")
+			return nil, ErrAlreadyBookmarked
 		}
 
-		return nil, huma.Error500InternalServerError("Failed to create bookmark")
+		return nil, ErrCreateBookmark
 	}
 
 	return &dto.CreateBookmarkOutput{
@@ -69,10 +68,10 @@ func (s *Service) remove(ctx context.Context, poiId string) error {
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrNoRows) {
-			return huma.Error404NotFound("Point of Interest is not bookmarked")
+			return ErrNotBookmarked
 		}
 
-		return huma.Error500InternalServerError("Failed to delete bookmark")
+		return ErrDeleteBookmark
 	}
 
 	return nil
@@ -94,10 +93,10 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("User not found")
+			return nil, ErrUserNotFound
 		}
 
-		return nil, huma.Error500InternalServerError("Failed to get bookmarks")
+		return nil, ErrFailedToList
 	}
 
 	count, err := s.db.CountUserBookmarks(ctx, userId)
@@ -106,10 +105,10 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("User not found")
+			return nil, ErrUserNotFound
 		}
 
-		return nil, huma.Error500InternalServerError("Failed to get bookmarks")
+		return nil, ErrFailedToList
 	}
 
 	poiIds := make([]string, len(res))
@@ -122,7 +121,7 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 
 	if err != nil {
 		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get bookmarks")
+		return nil, ErrFailedToList
 	}
 
 	bookmarks := make([]dto.Bookmark, len(res))
