@@ -30,6 +30,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "List Amenities",
 			Description:   "Get all amenities",
 			DefaultStatus: http.StatusOK,
+			Errors:        []int{404, 500},
 		},
 		func(ctx context.Context, input *struct{}) (*dto.ListAmenitiesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -58,6 +59,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActAmenityCreate),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 409, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateAmenityInput) (*dto.CreateAmenityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -86,6 +88,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActAmenityUpdate),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.UpdateAmenityInput) (*dto.UpdateAmenityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -114,6 +117,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActAmenityDelete),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.DeleteAmenityInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
