@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
 
-	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -29,10 +28,10 @@ func (s *Service) list(ctx context.Context) (*dto.ListAmenitiesOutput, error) {
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("no amenities found")
+			return nil, ErrNotFoundMany
 		}
 
-		return nil, huma.Error500InternalServerError("failed to get all amenities")
+		return nil, ErrFailedToList
 	}
 
 	amenities := make([]dto.Amenity, len(res))
@@ -61,10 +60,10 @@ func (s *Service) create(ctx context.Context, body dto.CreateAmenityInputBody) (
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, huma.Error422UnprocessableEntity("amenity already exists")
+			return nil, ErrAlreadyExists
 		}
 
-		return nil, huma.Error500InternalServerError("failed to create amenity")
+		return nil, ErrCreateAmenity
 	}
 
 	return &dto.CreateAmenityOutput{
@@ -91,10 +90,10 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateAmenityIn
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("amenity not found")
+			return nil, ErrNotFound
 		}
 
-		return nil, huma.Error500InternalServerError("failed to update amenity")
+		return nil, ErrFailedToUpdate
 	}
 
 	return &dto.UpdateAmenityOutput{
@@ -117,10 +116,10 @@ func (s *Service) remove(ctx context.Context, id int32) error {
 		sp.RecordError(err)
 
 		if errors.Is(err, pgx.ErrNoRows) {
-			return huma.Error404NotFound("amenity not found")
+			return ErrNotFound
 		}
 
-		return huma.Error500InternalServerError("failed to delete amenity")
+		return ErrFailedToDelete
 	}
 
 	return nil
