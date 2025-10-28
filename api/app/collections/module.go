@@ -15,8 +15,10 @@ import (
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		app,
-		app.Db.Queries,
-		app.Db.Pool,
+		&Repository{
+			app.Db.Queries,
+			app.Db.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -35,6 +37,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.GetCollectionsInput) (*dto.GetCollectionsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -58,6 +61,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "Get Collection by ID",
 			Description:   "Get a collection by ID",
 			DefaultStatus: http.StatusOK,
+			Errors:        []int{400, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.GetCollectionByIdInput) (*dto.GetCollectionByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -86,6 +90,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 409, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateCollectionInput) (*dto.CreateCollectionOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -114,6 +119,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.DeleteCollectionInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -142,6 +148,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.UpdateCollectionInput) (*dto.UpdateCollectionOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -170,6 +177,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateCollectionItemInput) (*dto.CreateCollectionItemOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -198,6 +206,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.DeleteCollectionItemInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -226,6 +235,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.UpdateCollectionItemsInput) (*dto.UpdateCollectionItemsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -254,6 +264,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateCollectionPoiRelationInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -282,6 +293,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateCollectionCityRelationInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -310,6 +322,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.RemoveCollectionPoiRelationInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -338,6 +351,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.RemoveCollectionCityRelationInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -361,12 +375,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "Get Collections For a POI",
 			Description:   "Get collections for a POI",
 			DefaultStatus: http.StatusOK,
+			Errors:        []int{400, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.GetCollectionsForPoiInput) (*dto.GetCollectionsForPoiOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getCollectionsForPoi(ctx, input.PoiID)
+			res, err := s.listPoiCollections(ctx, input.PoiID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -384,12 +399,13 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "Get Collections For a City",
 			Description:   "Get collections for a city",
 			DefaultStatus: http.StatusOK,
+			Errors:        []int{400, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.GetCollectionsForCityInput) (*dto.GetCollectionsForCityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getCollectionsForCity(ctx, input.CityID)
+			res, err := s.listCityCollections(ctx, input.CityID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -412,12 +428,13 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetAllPoiCollectionsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getAllPoiCollections(ctx)
+			res, err := s.listAllPoiCollections(ctx)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -440,12 +457,13 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCollectionCRUD),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *struct{}) (*dto.GetAllCityCollectionsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getAllCityCollections(ctx)
+			res, err := s.listAllCityCollections(ctx)
 
 			if err != nil {
 				sp.RecordError(err)
