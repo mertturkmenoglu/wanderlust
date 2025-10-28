@@ -14,9 +14,10 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app,
-		app.Db.Queries,
-		app.Db.Pool,
+		&Repository{
+			app.Db.Queries,
+			app.Db.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -30,6 +31,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "List Categories",
 			Description:   "Get all categories",
 			DefaultStatus: http.StatusOK,
+			Errors:        []int{404, 500},
 		},
 		func(ctx context.Context, input *struct{}) (*dto.ListCategoriesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -58,6 +60,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCategoryCreate),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 409, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateCategoryInput) (*dto.CreateCategoryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -86,6 +89,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCategoryUpdate),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.UpdateCategoryInput) (*dto.UpdateCategoryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -114,6 +118,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.Authz(grp.API, authz.ActCategoryDelete),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.DeleteCategoryInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)

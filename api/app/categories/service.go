@@ -2,37 +2,23 @@ package categories
 
 import (
 	"context"
-	"errors"
-	"wanderlust/pkg/core"
-	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
-
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	*core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	repo *Repository
 }
 
 func (s *Service) list(ctx context.Context) (*dto.ListCategoriesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.db.GetCategories(ctx)
+	res, err := s.repo.list(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("No categories found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get all categories")
+		return nil, err
 	}
 
 	categories := make([]dto.Category, len(res))
@@ -56,7 +42,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateCategoryInputBody) 
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.db.CreateCategory(ctx, db.CreateCategoryParams{
+	res, err := s.repo.create(ctx, CreateParams{
 		ID:    body.ID,
 		Name:  body.Name,
 		Image: body.Image,
@@ -64,12 +50,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateCategoryInputBody) 
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, huma.Error422UnprocessableEntity("Category already exists")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to create category")
+		return nil, err
 	}
 
 	return &dto.CreateCategoryOutput{
@@ -88,7 +69,7 @@ func (s *Service) update(ctx context.Context, id int16, body dto.UpdateCategoryI
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbCategory, err := s.db.UpdateCategory(ctx, db.UpdateCategoryParams{
+	res, err := s.repo.update(ctx, UpdateParams{
 		ID:    id,
 		Name:  body.Name,
 		Image: body.Image,
@@ -96,20 +77,15 @@ func (s *Service) update(ctx context.Context, id int16, body dto.UpdateCategoryI
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("Category not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to update category")
+		return nil, err
 	}
 
 	return &dto.UpdateCategoryOutput{
 		Body: dto.UpdateCategoryOutputBody{
 			Category: dto.Category{
-				ID:    dbCategory.ID,
-				Name:  dbCategory.Name,
-				Image: dbCategory.Image,
+				ID:    res.ID,
+				Name:  res.Name,
+				Image: res.Image,
 			},
 		},
 	}, nil
@@ -119,17 +95,5 @@ func (s *Service) remove(ctx context.Context, id int16) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := s.db.DeleteCategory(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return huma.Error404NotFound("Category not found")
-		}
-
-		return huma.Error500InternalServerError("Failed to delete category")
-	}
-
-	return nil
+	return s.repo.remove(ctx, id)
 }
