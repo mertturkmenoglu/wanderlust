@@ -2,11 +2,11 @@ package upload
 
 import (
 	"context"
-	"log"
+	// "log"
 	"wanderlust/pkg/cfg"
 
 	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	// "github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 type UploadService struct {
@@ -18,36 +18,36 @@ type UploadService struct {
 
 func New() *UploadService {
 	var (
-		endpoint          = cfg.Env.MinioEndpoint
-		id                = cfg.Env.MinioUser
-		secret            = cfg.Env.MinioPassword
-		autocreateBuckets = cfg.Env.MinioAutocreateBuckets
-		location          = cfg.Env.MinioLocation
+		// endpoint          = cfg.Env.MinioEndpoint
+		// id                = cfg.Env.MinioUser
+		// secret            = cfg.Env.MinioPassword
+		// autocreateBuckets = cfg.Env.MinioAutocreateBuckets
+		location = cfg.Env.MinioLocation
 	)
 
-	client, err := minio.New(endpoint, &minio.Options{
-		Creds: credentials.NewStaticV4(id, secret, ""),
-	})
+	// client, err := minio.New(endpoint, &minio.Options{
+	// 	Creds: credentials.NewStaticV4(id, secret, ""),
+	// })
 
-	if err != nil {
-		log.Fatal("cannot create minio client", err.Error())
-	}
+	// if err != nil {
+	// 	log.Fatal("cannot create minio client", err.Error())
+	// }
 
 	svc := &UploadService{
-		Client:   client,
+		Client:   nil,
 		Context:  context.Background(),
 		buckets:  Buckets,
 		location: location,
 	}
 
-	// if autocreate buckets environment variable is true, try to create buckets
-	if autocreateBuckets {
-		_, err = svc.autocreateBuckets()
+	// // if autocreate buckets environment variable is true, try to create buckets
+	// if autocreateBuckets {
+	// 	_, err = svc.autocreateBuckets()
 
-		if err != nil {
-			log.Fatal("cannot create buckets", err.Error())
-		}
-	}
+	// 	if err != nil {
+	// 		log.Fatal("cannot create buckets", err.Error())
+	// 	}
+	// }
 
 	return svc
 }
