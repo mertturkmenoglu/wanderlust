@@ -5,10 +5,12 @@ import (
 	"time"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/middlewares"
+	"wanderlust/pkg/storage"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
+	"gocloud.dev/blob"
 )
 
 func (w *Wanderlust) SetupEcho() {
@@ -38,4 +40,38 @@ func (w *Wanderlust) SetupEcho() {
 			return c.String(http.StatusOK, API_DOCS_SCALAR_HTML)
 		})
 	}
+
+	// TODO: make it better
+	w.echo.PUT("/uploads", func(c echo.Context) error {
+		b, err := storage.OpenBucket(c.Request().Context(), storage.BUCKET_DEFAULT)
+
+		if err != nil {
+			return err
+		}
+
+		defer b.Close()
+
+		err = b.Upload(
+			c.Request().Context(),
+			c.QueryParam("obj"),
+			c.Request().Body,
+			&blob.WriterOptions{
+				ContentType: c.QueryParam("contentType"),
+			},
+		)
+
+		if err != nil {
+			return err
+		}
+
+		url, err := storage.GetUrl(c.Request().Context(), storage.BUCKET_DEFAULT, "hi.png")
+
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusCreated, map[string]any{
+			"url": url,
+		})
+	})
 }
