@@ -34,20 +34,6 @@ services:
       timeout: 5s
       retries: 3
 
-  wl-minio:
-    container_name: wl-minio
-    restart: unless-stopped
-    ports:
-      - ${MINIO_PORT}:9000
-      - ${MINIO_CONSOLE_PORT}:9001
-    volumes:
-      - wl-minio-data:/data
-    environment:
-      - MINIO_ROOT_USER=wanderlust
-      - MINIO_ROOT_PASSWORD=wanderlust
-    image: quay.io/minio/minio
-    command: server /data --console-address ":${MINIO_CONSOLE_PORT}"
-
   wl-typesense:
     container_name: wl-typesense
     image: typesense/typesense:26.0
@@ -114,6 +100,5 @@ networks:
 
 volumes:
   wl-pg-data:
-  wl-minio-data:
   wl-typesense-data:
   wl-mailpit-data:
