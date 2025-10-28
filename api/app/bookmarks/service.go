@@ -2,24 +2,16 @@ package bookmarks
 
 import (
 	"context"
-	"errors"
 	"wanderlust/app/pois"
-	"wanderlust/pkg/core"
-	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
-
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	*core.Application
 	poiService *pois.Service
-	db         *db.Queries
-	pool       *pgxpool.Pool
+	repo       *Repository
 }
 
 func (s *Service) create(ctx context.Context, body dto.CreateBookmarkInputBody) (*dto.CreateBookmarkOutput, error) {
@@ -28,19 +20,14 @@ func (s *Service) create(ctx context.Context, body dto.CreateBookmarkInputBody) 
 
 	userId := ctx.Value("userId").(string)
 
-	res, err := s.db.CreateBookmark(ctx, db.CreateBookmarkParams{
+	res, err := s.repo.create(ctx, CreateParams{
 		PoiID:  body.PoiId,
 		UserID: userId,
 	})
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, ErrAlreadyBookmarked
-		}
-
-		return nil, ErrCreateBookmark
+		return nil, err
 	}
 
 	return &dto.CreateBookmarkOutput{
@@ -59,31 +46,19 @@ func (s *Service) remove(ctx context.Context, poiId string) error {
 
 	userId := ctx.Value("userId").(string)
 
-	err := s.db.DeleteBookmarkByPoiId(ctx, db.DeleteBookmarkByPoiIdParams{
+	return s.repo.remove(ctx, RemoveParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return ErrNotBookmarked
-		}
-
-		return ErrDeleteBookmark
-	}
-
-	return nil
 }
 
-func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetUserBookmarksOutput, error) {
+func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetUserBookmarksOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	res, err := s.db.GetBookmarksByUserId(ctx, db.GetBookmarksByUserIdParams{
+	res, err := s.repo.list(ctx, ListParams{
 		UserID: userId,
 		Offset: pagination.GetOffset(params),
 		Limit:  params.PageSize,
@@ -91,24 +66,14 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrUserNotFound
-		}
-
-		return nil, ErrFailedToList
+		return nil, err
 	}
 
-	count, err := s.db.CountUserBookmarks(ctx, userId)
+	count, err := s.repo.count(ctx, userId)
 
 	if err != nil {
 		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrUserNotFound
-		}
-
-		return nil, ErrFailedToList
+		return nil, err
 	}
 
 	poiIds := make([]string, len(res))

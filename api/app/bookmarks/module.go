@@ -14,10 +14,11 @@ import (
 
 func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
-		app,
 		pois.NewService(app),
-		app.Db.Queries,
-		app.Db.Pool,
+		&Repository{
+			app.Db.Queries,
+			app.Db.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -35,6 +36,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 409, 422, 500},
 		},
 		func(ctx context.Context, input *dto.CreateBookmarkInput) (*dto.CreateBookmarkOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -62,6 +64,7 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.DeleteBookmarkInput) (*struct{}, error) {
 			ctx, sp := tracing.NewSpan(ctx)
@@ -89,12 +92,13 @@ func Register(grp *huma.Group, app *core.Application) {
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
+			Errors:   []int{400, 401, 404, 422, 500},
 		},
 		func(ctx context.Context, input *dto.GetUserBookmarksInput) (*dto.GetUserBookmarksOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.get(ctx, input.PaginationQueryParams)
+			res, err := s.list(ctx, input.PaginationQueryParams)
 
 			if err != nil {
 				sp.RecordError(err)
