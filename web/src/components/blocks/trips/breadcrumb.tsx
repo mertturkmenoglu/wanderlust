@@ -29,7 +29,7 @@ export function Breadcrumb({ items }: Readonly<Props>) {
         {items.slice(0, -1).map((item) => (
           <div
             key={item.href}
-            className="flex items-center flex-wrap gap-1.5 break-words sm:gap-2.5"
+            className="flex items-center flex-wrap gap-1.5 wrap-break-word sm:gap-2.5"
           >
             <BreadcrumbSeparator className="text-primary" />
             <BreadcrumbItem key={item.name}>
