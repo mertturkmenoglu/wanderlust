@@ -41,6 +41,8 @@ export function Map() {
         dragPan={false}
         pitch={0}
         dragRotate={false}
+        latitude={lat}
+        longitude={lng}
         minZoom={14}
         style={{ width: '100%', height: '400px', marginTop: '16px', zIndex: 0 }}
         mapStyle={createStyle('streets-v2-light')}
@@ -58,4 +60,3 @@ export function Map() {
     </div>
   );
 }
-
