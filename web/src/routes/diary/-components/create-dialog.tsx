@@ -1,4 +1,3 @@
-import { InputError } from '@/components/kit/input-error';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,15 +8,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { isAfter } from 'date-fns';
 import { PlusIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -47,7 +51,7 @@ export function CreateDialog() {
     resolver: zodResolver(schema),
   });
 
-  const createDiaryEntryMutation = api.useMutation('post', '/api/v2/diary/', {
+  const mutation = api.useMutation('post', '/api/v2/diary/', {
     onSuccess: async (res) => {
       toast.success('Diary entry created');
       await invalidator.invalidate();
@@ -69,60 +73,78 @@ export function CreateDialog() {
         <DialogHeader>
           <DialogTitle>Add new diary entry</DialogTitle>
         </DialogHeader>
-        <div className="flex items-center space-x-2 text-sm w-full">
-          <form
-            onSubmit={form.handleSubmit((data) => {
-              createDiaryEntryMutation.mutate({
-                body: {
-                  title: data.title,
-                  date: new Date(data.date).toISOString(),
-                },
-              });
-            })}
-            className="w-full"
+
+        <form
+          id="create-diary-entry-form"
+          onSubmit={form.handleSubmit((data) => {
+            mutation.mutate({
+              body: {
+                title: data.title,
+                date: new Date(data.date).toISOString(),
+              },
+            });
+          })}
+        >
+          <FieldGroup className="gap-4">
+            <Controller
+              name="title"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="entry-title">Title</FieldLabel>
+                  <Input
+                    {...field}
+                    id="entry-title"
+                    placeholder="Italy Trip with the family in 2022"
+                    autoComplete="off"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              name="date"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="entry-date">Date</FieldLabel>
+                  <Input
+                    {...field}
+                    id="entry-date"
+                    type="date"
+                    placeholder="YYYY-MM-DD"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </form>
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="ghost"
+            >
+              Close
+            </Button>
+          </DialogClose>
+          <Button
+            form="create-diary-entry-form"
+            type="submit"
+            variant="default"
           >
-            <div className="mt-4">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                type="text"
-                id="title"
-                placeholder="Italy Trip with the family in 2022"
-                autoComplete="off"
-                className="mt-1"
-                {...form.register('title')}
-              />
-              <InputError error={form.formState.errors.title} />
-            </div>
-
-            <div className="mt-4">
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                className="mt-1"
-                {...form.register('date')}
-              />
-              <InputError error={form.formState.errors.date} />
-            </div>
-
-            <DialogFooter className="mt-4">
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                >
-                  Close
-                </Button>
-              </DialogClose>
-              <Button
-                type="submit"
-                variant="default"
-              >
-                Create
-              </Button>
-            </DialogFooter>
-          </form>
-        </div>
+            Create
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
