@@ -33,7 +33,7 @@ function RouteComponent() {
       <h2 className="mt-8 text-4xl font-bold text-center">
         Plan your next trip with
         <br />
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-sky-600">
+        <span className="bg-clip-text text-transparent bg-linear-to-r from-primary to-sky-600">
           Wanderlust
         </span>
       </h2>
@@ -46,10 +46,9 @@ function RouteComponent() {
           className={buttonVariants({
             variant: 'ghost',
             size: 'lg',
-            className: 'flex items-center gap-2',
           })}
         >
-          <MapIcon className="mr-2 size-4" />
+          <MapIcon />
           My Trips
         </Link>
 
@@ -58,10 +57,9 @@ function RouteComponent() {
           className={buttonVariants({
             variant: 'ghost',
             size: 'lg',
-            className: 'flex items-center gap-2',
           })}
         >
-          <SearchIcon className="mr-2 size-4" />
+          <SearchIcon />
           Discover
         </Link>
 
@@ -70,10 +68,9 @@ function RouteComponent() {
           className={buttonVariants({
             variant: 'ghost',
             size: 'lg',
-            className: 'flex items-center gap-2',
           })}
         >
-          <MailsIcon className="mr-2 size-4" />
+          <MailsIcon />
           Invites
         </Link>
       </div>
