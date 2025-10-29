@@ -26,10 +26,12 @@ func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAg
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.app.Cache.Read(ctx, cache.KeyHomeAggregations)
+	var res dto.HomeAggregatorOutput
+
+	err := s.app.Cache.ReadObj(ctx, cache.KeyHomeAggregations, &res)
 
 	if err == nil {
-		return res.(*dto.HomeAggregatorOutput), nil
+		return &res, nil
 	}
 
 	return nil, err
