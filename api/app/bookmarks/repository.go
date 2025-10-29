@@ -2,10 +2,10 @@ package bookmarks
 
 import (
 	"context"
-	"errors"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -24,13 +24,11 @@ func (r *Repository) create(ctx context.Context, params CreateParams) (*db.Bookm
 	res, err := r.db.CreateBookmark(ctx, params)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, ErrAlreadyBookmarked
+			return nil, errors.Wrap(ErrAlreadyBookmarked, err.Error())
 		}
 
-		return nil, ErrCreateBookmark
+		return nil, errors.Wrap(ErrCreateBookmark, err.Error())
 	}
 
 	return &res, nil
@@ -45,13 +43,11 @@ func (r *Repository) remove(ctx context.Context, params RemoveParams) error {
 	err := r.db.DeleteBookmarkByPoiId(ctx, params)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrNoRows) {
-			return ErrNotBookmarked
+			return errors.Wrap(ErrNotBookmarked, err.Error())
 		}
 
-		return ErrDeleteBookmark
+		return errors.Wrap(ErrDeleteBookmark, err.Error())
 	}
 
 	return nil
@@ -66,13 +62,11 @@ func (r *Repository) list(ctx context.Context, params ListParams) ([]db.Bookmark
 	res, err := r.db.GetBookmarksByUserId(ctx, params)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrUserNotFound
+			return nil, errors.Wrap(ErrUserNotFound, err.Error())
 		}
 
-		return nil, ErrFailedToList
+		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	return res, nil
@@ -85,13 +79,11 @@ func (r *Repository) count(ctx context.Context, userId string) (int64, error) {
 	res, err := r.db.CountUserBookmarks(ctx, userId)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, ErrUserNotFound
+			return 0, errors.Wrap(ErrUserNotFound, err.Error())
 		}
 
-		return 0, ErrFailedToList
+		return 0, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	return res, nil
