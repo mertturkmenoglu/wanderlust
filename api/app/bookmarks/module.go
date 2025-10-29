@@ -2,6 +2,7 @@ package bookmarks
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
@@ -9,6 +10,7 @@ import (
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/danielgtaylor/huma/v2"
 )
 
@@ -45,7 +47,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -73,7 +75,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.remove(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -101,7 +103,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.list(ctx, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
