@@ -17,7 +17,7 @@ export function Header({ showNewListButton = true }: Props) {
 
   return (
     <div className="flex items-center justify-between">
-      <h2 className="text-2xl">My Lists</h2>
+      <h2 className="text-2xl">Your Lists</h2>
       {showNewListButton && (
         <CreateListDialog
           open={open}
