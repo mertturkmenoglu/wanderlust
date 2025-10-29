@@ -111,7 +111,7 @@ export function MenuContent({ fullName, username }: Readonly<Props>) {
         >
           <Link to="/lists">
             <ListIcon className="size-4 group-focus:text-primary" />
-            <span className="ml-2 group-focus:text-primary">My Lists</span>
+            <span className="ml-2 group-focus:text-primary">Lists</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
