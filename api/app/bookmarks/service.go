@@ -7,6 +7,8 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+
+	"github.com/cockroachdb/errors"
 )
 
 type Service struct {
@@ -26,7 +28,6 @@ func (s *Service) create(ctx context.Context, body dto.CreateBookmarkInputBody) 
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -65,14 +66,12 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	count, err := s.repo.count(ctx, userId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -85,14 +84,26 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 	pois, err := s.poiService.FindMany(ctx, poiIds)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, ErrFailedToList
+		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	bookmarks := make([]dto.Bookmark, len(res))
 
 	for i, v := range res {
-		bookmarks[i] = mapper.ToBookmark(v, pois[i])
+		var poi *dto.Poi = nil
+
+		for _, p := range pois {
+			if p.ID == v.PoiID {
+				poi = &p
+				break
+			}
+		}
+
+		if poi == nil {
+			return nil, errors.Wrap(ErrFailedToList, "failed to find poi for bookmark")
+		}
+
+		bookmarks[i] = mapper.ToBookmark(v, *poi)
 	}
 
 	return &dto.GetUserBookmarksOutput{
