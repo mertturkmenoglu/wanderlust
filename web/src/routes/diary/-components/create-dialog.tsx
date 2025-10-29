@@ -60,10 +60,7 @@ export function CreateDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-        >
+        <Button variant="default">
           <PlusIcon className="mr-2 size-4" />
           New Entry
         </Button>

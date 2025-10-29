@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { BookMarkedIcon, CalendarIcon, XIcon } from 'lucide-react';
+import { CalendarIcon, XIcon } from 'lucide-react';
 import { useDiaryContext } from '../-hooks';
 import { CreateDialog } from './create-dialog';
 
@@ -19,10 +19,7 @@ export function Header() {
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:gap-0 items-center justify-between">
-      <div className="flex items-center gap-2">
-        <BookMarkedIcon className="size-8 text-primary " />
-        <h2 className="text-2xl">My Diary</h2>
-      </div>
+      <h2 className="text-2xl">Your Diary</h2>
 
       <div className="flex items-center gap-2">
         {date !== undefined && (
@@ -40,7 +37,7 @@ export function Header() {
               id="date"
               variant="outline"
               className={cn(
-                'w-[192px] sm:w-[256px] justify-start text-left font-normal',
+                'w-48 sm:w-[256px] justify-start text-left font-normal',
                 !date && 'text-muted-foreground',
               )}
             >
@@ -64,12 +61,10 @@ export function Header() {
             align="start"
           >
             <Calendar
-              initialFocus
               mode="range"
               defaultMonth={date?.from}
               selected={date}
               onSelect={setDate}
-              numberOfMonths={2}
             />
           </PopoverContent>
         </Popover>
