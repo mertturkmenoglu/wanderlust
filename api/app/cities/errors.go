@@ -1,8 +1,12 @@
 package cities
 
-import "github.com/danielgtaylor/huma/v2"
+import (
+	"github.com/cockroachdb/errors"
+	"github.com/danielgtaylor/huma/v2"
+)
 
 var (
+	ErrorDomain             = errors.NamedDomain("cities")
 	ErrNoCityFound          = huma.Error404NotFound("No city found")
 	ErrFailedToList         = huma.Error500InternalServerError("Failed to list cities")
 	ErrNoFeaturedCityFound  = huma.Error404NotFound("No featured city found")
