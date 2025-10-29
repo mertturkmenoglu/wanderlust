@@ -1,5 +1,3 @@
-import { InputError } from '@/components/kit/input-error';
-import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,8 +8,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -19,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
@@ -109,11 +115,14 @@ export function CreateDialog() {
 
   const mutation = api.useMutation('post', '/api/v2/trips/', {
     onSuccess: async (res) => {
-      toast.success('Trip created');
       await invalidator.invalidate();
       await navigate({
-        to: `/trips/${res.trip.id}`,
+        to: '/trips/$id',
+        params: {
+          id: res.trip.id,
+        },
       });
+      toast.success('Trip created');
     },
   });
 
@@ -132,7 +141,7 @@ export function CreateDialog() {
           variant="ghost"
           size="lg"
         >
-          <SquarePlusIcon className="mr-2 size-4" />
+          <SquarePlusIcon />
           Create trip
         </Button>
       </DialogTrigger>
@@ -142,6 +151,7 @@ export function CreateDialog() {
         </DialogHeader>
         <div className="flex items-center space-x-2 text-sm w-full">
           <form
+            id="create-trip-form"
             onSubmit={form.handleSubmit((data) => {
               mutation.mutate({
                 body: {
@@ -153,117 +163,158 @@ export function CreateDialog() {
             })}
             className="w-full"
           >
-            <div className="mt-4">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                type="text"
-                id="title"
-                placeholder="My Awesome Trip"
-                autoComplete="off"
-                className="mt-1"
-                {...form.register('title')}
+            <FieldGroup className="gap-4">
+              <Controller
+                name="title"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="title">Title</FieldLabel>
+                    <Input
+                      {...field}
+                      id="title"
+                      placeholder="My Awesome Trip"
+                      autoComplete="off"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
-              <InputError error={form.formState.errors.title} />
-            </div>
 
-            <div className="mt-4">
-              <Label htmlFor="desc">Description</Label>
-              <Textarea
-                id="desc"
-                placeholder="You can add a description for you trip."
-                autoComplete="off"
-                className="mt-1"
-                {...form.register('description')}
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="description">Description</FieldLabel>
+                    <Textarea
+                      {...field}
+                      id="description"
+                      placeholder="You can add a description for your trip."
+                      autoComplete="off"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
-              <InputError error={form.formState.errors.description} />
-            </div>
 
-            <div className="mt-4">
               <Controller
                 name="visibility"
                 control={form.control}
-                render={({ field }) => {
-                  return (
-                    <div>
-                      <Label htmlFor="visibility">Visibility</Label>
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    orientation="horizontal"
+                  >
+                    <FieldContent>
+                      <FieldLabel htmlFor="visibility">Visibility</FieldLabel>
+                      <FieldDescription>
+                        {visibilityOptions.find(
+                          (op) => op.value === field.value,
+                        )?.info ?? 'Change who can see your trip'}
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </FieldDescription>
+                    </FieldContent>
 
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value ?? undefined}
+                    <Select
+                      name={field.name}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger
+                        id="visibility"
+                        aria-invalid={fieldState.invalid}
+                        className="min-w-32"
                       >
-                        <SelectTrigger
-                          id="visibility"
-                          className="mt-1 w-full"
-                        >
-                          <SelectValue placeholder="Select a visibility" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {visibilityOptions.map((op) => (
-                            <SelectItem
-                              key={op.value}
-                              value={op.value}
-                            >
-                              {op.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <InputInfo
-                        text={
-                          visibilityOptions.find(
-                            (op) => op.value === field.value,
-                          )?.info ?? ''
-                        }
-                        className="mt-1"
-                      />
-                    </div>
-                  );
-                }}
+                        <SelectValue placeholder="Select a visibility" />
+                      </SelectTrigger>
+                      <SelectContent
+                        position="popper"
+                        align="end"
+                      >
+                        {visibilityOptions.map((op) => (
+                          <SelectItem
+                            key={op.value}
+                            value={op.value}
+                          >
+                            {op.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
               />
-              <InputError error={form.formState.errors.visibility} />
-            </div>
 
-            <div className="mt-4">
-              <Label htmlFor="startAt">Start Date</Label>
-              <Input
-                id="startAt"
-                type="datetime-local"
-                className="mt-1"
-                {...form.register('startAt')}
+              <Controller
+                name="startAt"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="startAt">Start Date</FieldLabel>
+                    <Input
+                      {...field}
+                      id="startAt"
+                      aria-invalid={fieldState.invalid}
+                      type="datetime-local"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
-              <InputError error={form.formState.errors.startAt} />
-            </div>
 
-            <div className="mt-4">
-              <Label htmlFor="endAt">End Date</Label>
-              <Input
-                id="endAt"
-                type="datetime-local"
-                placeholder='Format: "YYYY-MM-DD"'
-                className="mt-1"
-                {...form.register('endAt')}
+              <Controller
+                name="endAt"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="endAt">End Date</FieldLabel>
+                    <Input
+                      {...field}
+                      id="endAt"
+                      aria-invalid={fieldState.invalid}
+                      type="datetime-local"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
-              <InputError error={form.formState.errors.endAt} />
-            </div>
-
-            <DialogFooter className="mt-4">
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                >
-                  Close
-                </Button>
-              </DialogClose>
-              <Button
-                type="submit"
-                variant="default"
-              >
-                Create
-              </Button>
-            </DialogFooter>
+            </FieldGroup>
           </form>
         </div>
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={mutation.isPending}
+            >
+              Close
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            variant="default"
+            form="create-trip-form"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending && <Spinner />}
+            <span>Create</span>
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
