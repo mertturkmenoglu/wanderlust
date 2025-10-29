@@ -2,10 +2,10 @@ package cities
 
 import (
 	"context"
-	"errors"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -23,10 +23,10 @@ func (r *Repository) list(ctx context.Context) ([]db.City, error) {
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoCityFound
+			return nil, errors.Wrap(ErrNoCityFound, err.Error())
 		}
 
-		return nil, ErrFailedToList
+		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	return res, nil
@@ -55,10 +55,10 @@ func (r *Repository) listFeatured(ctx context.Context) ([]db.City, error) {
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoCityFound
+			return nil, errors.Wrap(ErrNoCityFound, err.Error())
 		}
 
-		return nil, ErrFailedToListFeatured
+		return nil, errors.Wrap(ErrFailedToListFeatured, err.Error())
 	}
 
 	return res, nil
@@ -72,10 +72,10 @@ func (r *Repository) get(ctx context.Context, id int32) (*db.City, error) {
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, errors.Wrap(ErrNotFound, err.Error())
 		}
 
-		return nil, ErrFailedToList
+		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	return &res, nil
@@ -91,10 +91,10 @@ func (r *Repository) create(ctx context.Context, params CreateParams) (*db.City,
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, ErrAlreadyExists
+			return nil, errors.Wrap(ErrAlreadyExists, err.Error())
 		}
 
-		return nil, ErrFailedToCreate
+		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
 	}
 
 	return &res, nil
@@ -108,10 +108,10 @@ func (r *Repository) remove(ctx context.Context, id int32) error {
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return ErrNotFound
+			return errors.Wrap(ErrNotFound, err.Error())
 		}
 
-		return ErrFailedToDelete
+		return errors.Wrap(ErrFailedToDelete, err.Error())
 	}
 
 	return nil
@@ -127,10 +127,10 @@ func (r *Repository) update(ctx context.Context, params UpdateParams) (*db.City,
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, errors.Wrap(ErrNotFound, err.Error())
 		}
 
-		return nil, ErrFailedToUpdate
+		return nil, errors.Wrap(ErrFailedToUpdate, err.Error())
 	}
 
 	return &res, nil
