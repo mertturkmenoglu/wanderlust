@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
+import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { AuthContext } from '@/providers/auth-provider';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
@@ -51,9 +52,11 @@ function RouteComponent() {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const isOwner = auth.user?.id === list.userId;
+  const invalidator = useInvalidator();
 
   const deleteMutation = api.useMutation('delete', '/api/v2/lists/{id}', {
-    onSuccess: () => {
+    onSuccess: async () => {
+      await invalidator.invalidate();
       toast.success('List is deleted.');
       navigate({
         to: '/lists',
