@@ -8,6 +8,7 @@ import { useDiaryContext, useDiaryEntriesQuery } from './-hooks';
 import { Spinner } from '@/components/ui/spinner';
 import { ItemGroup } from '@/components/ui/item';
 import { EntryItem } from './-components/item';
+import { EmptyState } from './-components/empty';
 
 export const Route = createFileRoute('/diary/')({
   component: RouteComponent,
@@ -39,12 +40,7 @@ function Layout() {
   const loadMoreText = useLoadMoreText(query);
 
   if (isEmpty) {
-    return (
-      <AppMessage
-        emptyMessage="You have no entries yet"
-        showBackButton={false}
-      />
-    );
+    return <EmptyState />;
   }
 
   if (query.isError) {
