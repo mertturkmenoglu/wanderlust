@@ -1,14 +1,13 @@
 import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import React from 'react';
 import { EntryCard } from './-components/entry-card';
 import { Header } from './-components/header';
-import { Loading } from './-components/loading';
 import { DiaryContextProvider } from './-context';
 import { useDiaryContext, useDiaryEntriesQuery } from './-hooks';
+import { Spinner } from '@/components/ui/spinner';
 
 export const Route = createFileRoute('/diary/')({
   component: RouteComponent,
@@ -24,10 +23,8 @@ export const Route = createFileRoute('/diary/')({
 function RouteComponent() {
   return (
     <DiaryContextProvider>
-      <div className="max-w-7xl mx-auto my-8">
+      <div className="max-w-7xl mx-auto my-8 space-y-4">
         <Header />
-
-        <Separator className="my-4" />
 
         <Layout />
       </div>
@@ -42,7 +39,7 @@ function Layout() {
   const loadMoreText = useLoadMoreText(query);
 
   if (query.isPending) {
-    return <Loading />;
+    return <Spinner className="mx-auto my-8 text-primary size-12" />;
   }
 
   if (isEmpty) {
