@@ -1,23 +1,17 @@
-// oxlint-disable prefer-await-to-then
 import { AppMessage } from '@/components/blocks/app-message';
-import { buttonVariants } from '@/components/ui/button';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from '@/components/ui/pagination';
-import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
-import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  LoaderCircleIcon,
-} from 'lucide-react';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
-import { BookmarkCard } from './-card';
+import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
+import { useBookmarksQuery } from './-hooks';
+import { Spinner } from '@/components/ui/spinner';
+import { Navigation } from './-navigation';
+import { ItemGroup } from '@/components/ui/item';
+import { useEffect } from 'react';
+import { PoiCard } from '@/components/blocks/poi-card';
+import { BookmarksContextProvider, useBookmarksContext } from './-context';
+import { BookmarkItem } from './-item';
+import { Actions } from './-actions';
+import { BookmarkItemMap } from './-map';
 
 const bookmarksSearchSchema = z.object({
   page: z.number().min(1).max(100).default(1).catch(1),
@@ -33,58 +27,32 @@ export const Route = createFileRoute('/bookmarks/')({
       });
     }
   },
-  loader: ({ context: { queryClient } }) => {
-    return queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/bookmarks/', {
-        params: {
-          query: {
-            page: 1,
-            pageSize: 10,
-          },
-        },
-      }),
-    );
-  },
   validateSearch: bookmarksSearchSchema,
 });
 
 function RouteComponent() {
   return (
-    <div className="max-w-7xl mx-auto my-16">
-      <h2 className="text-2xl font-bold capitalize tracking-tight">
-        Your Bookmarks
-      </h2>
-      <div className="my-8">
-        <Bookmarks />
+    <BookmarksContextProvider>
+      <div className="max-w-7xl mx-auto my-8">
+        <h2 className="text-2xl">Your Bookmarks</h2>
+        <SuspenseWrapper>
+          <div className="my-4">
+            <Bookmarks />
+          </div>
+        </SuspenseWrapper>
       </div>
-    </div>
+    </BookmarksContextProvider>
   );
 }
 
 function Bookmarks() {
-  const { page, pageSize } = Route.useSearch();
-  const query = useQuery(
-    api.queryOptions(
-      'get',
-      '/api/v2/bookmarks/',
-      {
-        params: {
-          query: {
-            page,
-            pageSize,
-          },
-        },
-      },
-      {
-        retry: false,
-      },
-    ),
-  );
+  const { page } = Route.useSearch();
+  const query = useBookmarksQuery();
+  const ctx = useBookmarksContext();
 
-  const nums = usePaginationNumbers(
-    page,
-    query.data?.pagination.totalPages ?? 1,
-  );
+  useEffect(() => {
+    ctx.setIndex(0);
+  }, [page]);
 
   if (query.error) {
     return (
@@ -108,94 +76,38 @@ function Bookmarks() {
     const { bookmarks, pagination } = query.data;
 
     return (
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {bookmarks.map((bookmark) => (
-          <Link
-            to="/p/$id"
-            params={{
-              id: bookmark.poiId,
-            }}
-            key={bookmark.poiId}
-            className="block"
-          >
-            <BookmarkCard bookmark={bookmark} />
-          </Link>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl">
+        <ItemGroup className="gap-2">
+          {bookmarks.map((bookmark, i) => (
+            <BookmarkItem
+              key={bookmark.poiId}
+              bookmark={bookmark}
+              itemIndex={i}
+            />
+          ))}
 
-        <div className="mt-4 flex justify-center col-span-full">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <Link
-                  data-slot="pagination-link"
-                  className={cn(
-                    buttonVariants({
-                      variant: 'ghost',
-                    }),
-                    'gap-1 px-2.5 sm:pl-2.5',
-                  )}
-                  aria-label="Go to previous page"
-                  to="/bookmarks"
-                  search={{
-                    page: pagination.hasPrevious ? page - 1 : 1,
-                    pageSize,
-                  }}
-                >
-                  <ChevronLeftIcon />
-                  <span className="hidden sm:block">Previous</span>
-                </Link>
-              </PaginationItem>
+          <div className="mt-4 flex justify-center col-span-full">
+            <Navigation
+              totalPages={pagination.totalPages}
+              hasPrevious={pagination.hasPrevious}
+              hasNext={pagination.hasNext}
+            />
+          </div>
+        </ItemGroup>
 
-              {nums.map((x) => (
-                <PaginationItem key={`pagination-${x}`}>
-                  <Link
-                    aria-current={x === page ? 'page' : undefined}
-                    data-slot="pagination-link"
-                    data-active={x === page}
-                    className={cn(
-                      buttonVariants({
-                        variant: x === page ? 'outline' : 'ghost',
-                      }),
-                    )}
-                    to="/bookmarks"
-                    search={{
-                      page: x,
-                      pageSize,
-                    }}
-                  >
-                    {x}
-                  </Link>
-                </PaginationItem>
-              ))}
+        <div className="hidden md:block">
+          <PoiCard
+            poi={bookmarks[ctx.index]!.poi}
+            hoverEffects={false}
+          />
 
-              <PaginationItem>
-                <Link
-                  data-slot="pagination-link"
-                  className={cn(
-                    buttonVariants({
-                      variant: 'ghost',
-                    }),
-                    'gap-1 px-2.5 sm:pl-2.5',
-                  )}
-                  aria-label="Go to next page"
-                  to="/bookmarks"
-                  search={{
-                    page: pagination.hasNext ? page + 1 : page,
-                    pageSize,
-                  }}
-                >
-                  <span className="hidden sm:block">Next</span>
-                  <ChevronRightIcon />
-                </Link>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <Actions bookmark={bookmarks[ctx.index]!} />
+
+          <BookmarkItemMap bookmark={bookmarks[ctx.index]!} />
         </div>
       </div>
     );
   }
 
-  return (
-    <LoaderCircleIcon className="size-8 animate-spin my-16 text-primary mx-auto" />
-  );
+  return <Spinner className="text-primary mx-auto my-16 size-12" />;
 }
