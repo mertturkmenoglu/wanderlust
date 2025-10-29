@@ -17,8 +17,10 @@ func ToListWithoutItems(dbList db.List, dbUser db.User) dto.List {
 			FullName:     dbUser.FullName,
 			ProfileImage: utils.TextToStr(dbUser.ProfileImage),
 		},
-		Items:    []dto.ListItem{},
-		IsPublic: dbList.IsPublic,
+		Items:     []dto.ListItem{},
+		IsPublic:  dbList.IsPublic,
+		CreatedAt: dbList.CreatedAt.Time,
+		UpdatedAt: dbList.UpdatedAt.Time,
 	}
 }
 
