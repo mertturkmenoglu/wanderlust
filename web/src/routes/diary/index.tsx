@@ -1,13 +1,13 @@
 import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
-import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import React from 'react';
-import { EntryCard } from './-components/entry-card';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Header } from './-components/header';
 import { DiaryContextProvider } from './-context';
 import { useDiaryContext, useDiaryEntriesQuery } from './-hooks';
 import { Spinner } from '@/components/ui/spinner';
+import { ItemGroup } from '@/components/ui/item';
+import { EntryItem } from './-components/item';
 
 export const Route = createFileRoute('/diary/')({
   component: RouteComponent,
@@ -38,10 +38,6 @@ function Layout() {
   const isEmpty = query.data && query.data.pages[0]?.diaries.length === 0;
   const loadMoreText = useLoadMoreText(query);
 
-  if (query.isPending) {
-    return <Spinner className="mx-auto my-8 text-primary size-12" />;
-  }
-
   if (isEmpty) {
     return (
       <AppMessage
@@ -51,38 +47,43 @@ function Layout() {
     );
   }
 
-  return (
-    <div>
-      <div className="flex flex-col gap-4">
-        {query.data &&
-          query.data.pages.map((page, i) => (
-            <React.Fragment key={i}>
-              {page.diaries.map((diary) => (
-                <Link
-                  to="/diary/$id"
-                  params={{
-                    id: diary.id,
-                  }}
-                  key={diary.id}
-                  className="block"
-                >
-                  <EntryCard entry={diary} />
-                </Link>
-              ))}
-            </React.Fragment>
-          ))}
-      </div>
+  if (query.isError) {
+    return (
+      <AppMessage
+        errorMessage="Error loading diary entries"
+        showBackButton={false}
+      />
+    );
+  }
 
-      {query.hasNextPage && (
-        <div className="mt-4 flex justify-center">
-          <Button
-            onClick={() => query.fetchNextPage()}
-            disabled={!query.hasNextPage || query.isFetchingNextPage}
-          >
-            {loadMoreText}
-          </Button>
-        </div>
-      )}
-    </div>
-  );
+  if (query.data) {
+    const { pages } = query.data;
+    const entries = pages.flatMap((page) => page.diaries);
+
+    return (
+      <div>
+        <ItemGroup className="gap-2">
+          {entries.map((entry) => (
+            <EntryItem
+              key={entry.id}
+              entry={entry}
+            />
+          ))}
+        </ItemGroup>
+
+        {query.hasNextPage && (
+          <div className="mt-4 flex justify-center">
+            <Button
+              onClick={() => query.fetchNextPage()}
+              disabled={!query.hasNextPage || query.isFetchingNextPage}
+            >
+              {loadMoreText}
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return <Spinner className="mx-auto my-8 text-primary size-12" />;
 }
