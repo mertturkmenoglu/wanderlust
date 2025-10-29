@@ -1,6 +1,7 @@
 package authz
 
 import (
+	"github.com/cockroachdb/errors"
 	"github.com/danielgtaylor/huma/v2"
 )
 
@@ -8,13 +9,13 @@ func IsAdmin(s *Authz, c huma.Context) (bool, error) {
 	userId, ok := c.Context().Value("userId").(string)
 
 	if !ok {
-		return false, huma.Error401Unauthorized("unauthorized")
+		return false, errors.Wrap(huma.Error401Unauthorized("Unauthorized"), "userId not found")
 	}
 
 	res, err := s.Db.Queries.IsAdmin(c.Context(), userId)
 
 	if err != nil {
-		return false, err
+		return false, errors.Wrap(huma.Error500InternalServerError("Authorization check failed"), err.Error())
 	}
 
 	return res, nil
