@@ -18,7 +18,6 @@ func (s *Service) list(ctx context.Context) (*dto.CitiesListOutput, error) {
 	res, err := s.repo.list(ctx)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -42,7 +41,6 @@ func (s *Service) featured(ctx context.Context) (*dto.CitiesFeaturedOutput, erro
 	res, err := s.repo.listFeatured(ctx)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -66,7 +64,6 @@ func (s *Service) get(ctx context.Context, id int32) (*dto.GetCityByIdOutput, er
 	res, err := s.repo.get(ctx, id)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -95,7 +92,6 @@ func (s *Service) create(ctx context.Context, body dto.CreateCityInputBody) (*dt
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -131,7 +127,6 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateCityInput
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
