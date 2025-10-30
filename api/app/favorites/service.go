@@ -2,71 +2,25 @@ package favorites
 
 import (
 	"context"
-	"errors"
-	"wanderlust/app/pois"
-	"wanderlust/pkg/core"
-	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
-
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	*core.Application
-	poiService *pois.Service
-	db         *db.Queries
-	pool       *pgxpool.Pool
+	repo *Repository
 }
 
 func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavoriteOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	tx, err := s.pool.Begin(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to create transaction")
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := s.db.WithTx(tx)
-
 	userId := ctx.Value("userId").(string)
 
-	res, err := qtx.CreateFavorite(ctx, db.CreateFavoriteParams{
-		PoiID:  poiId,
-		UserID: userId,
-	})
+	res, err := s.repo.create(ctx, userId, poiId)
 
 	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, huma.Error422UnprocessableEntity("Point of Interest is already favorited")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to create favorite")
-	}
-
-	err = qtx.IncrementFavorites(ctx, poiId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to increment favorites")
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+		return nil, err
 	}
 
 	return &dto.CreateFavoriteOutput{
@@ -82,49 +36,9 @@ func (s *Service) remove(ctx context.Context, poiId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	tx, err := s.pool.Begin(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to create transaction")
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := s.db.WithTx(tx)
-
 	userId := ctx.Value("userId").(string)
 
-	err = qtx.DeleteFavoriteByPoiId(ctx, db.DeleteFavoriteByPoiIdParams{
-		PoiID:  poiId,
-		UserID: userId,
-	})
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return huma.Error404NotFound("Point of Interest not found")
-		}
-
-		return huma.Error500InternalServerError("Failed to delete favorite")
-	}
-
-	err = qtx.DecrementFavorites(ctx, poiId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to increment favorites")
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to commit transaction")
-	}
-
-	return nil
+	return s.repo.remove(ctx, userId, poiId)
 }
 
 func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
@@ -133,27 +47,19 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 
 	userId := ctx.Value("userId").(string)
 
-	res, err := s.db.GetFavoritesByUserId(ctx, db.GetFavoritesByUserIdParams{
-		UserID: userId,
-		Offset: int32(pagination.GetOffset(params)),
-		Limit:  int32(params.PageSize),
-	})
+	offset := int32(pagination.GetOffset(params))
+	limit := int32(params.PageSize)
+
+	res, err := s.repo.listByUserId(ctx, userId, offset, limit)
 
 	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("User not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get favorites")
+		return nil, err
 	}
 
-	count, err := s.db.CountUserFavorites(ctx, userId)
+	count, err := s.repo.countByUserId(ctx, userId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get favorites count")
+		return nil, err
 	}
 
 	poiIds := make([]string, len(res))
@@ -162,17 +68,10 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 		poiIds[i] = v.PoiID
 	}
 
-	pois, err := s.poiService.FindMany(ctx, poiIds)
+	favorites, err := s.repo.populateWithPois(ctx, res, poiIds)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get favorites")
-	}
-
-	favorites := make([]dto.Favorite, len(res))
-
-	for i, v := range res {
-		favorites[i] = mapper.ToFavorite(v, pois[i])
+		return nil, err
 	}
 
 	return &dto.GetUserFavoritesOutput{
@@ -187,34 +86,24 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	user, err := s.db.GetUserByUsername(ctx, username)
+	user, err := s.repo.getUserByUsername(ctx, username)
 
 	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("User not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get favorites")
+		return nil, err
 	}
 
-	res, err := s.db.GetFavoritesByUserId(ctx, db.GetFavoritesByUserIdParams{
-		UserID: user.ID,
-		Offset: int32(pagination.GetOffset(params)),
-		Limit:  int32(params.PageSize),
-	})
+	offset := int32(pagination.GetOffset(params))
+	limit := int32(params.PageSize)
+	res, err := s.repo.listByUserId(ctx, user.ID, offset, limit)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get favorites")
+		return nil, err
 	}
 
-	count, err := s.db.CountUserFavorites(ctx, user.ID)
+	count, err := s.repo.countByUserId(ctx, user.ID)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get favorites count")
+		return nil, err
 	}
 
 	poiIds := make([]string, len(res))
@@ -223,18 +112,7 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 		poiIds[i] = v.PoiID
 	}
 
-	pois, err := s.poiService.FindMany(ctx, poiIds)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get favorites")
-	}
-
-	favorites := make([]dto.Favorite, len(res))
-
-	for i, v := range res {
-		favorites[i] = mapper.ToFavorite(v, pois[i])
-	}
+	favorites, err := s.repo.populateWithPois(ctx, res, poiIds)
 
 	return &dto.GetUserFavoritesOutput{
 		Body: dto.GetUserFavoritesOutputBody{
