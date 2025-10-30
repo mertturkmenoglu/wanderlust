@@ -2,6 +2,7 @@ package aggregator
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"sync"
 	"wanderlust/app/pois"
@@ -12,6 +13,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/danielgtaylor/huma/v2"
 	"golang.org/x/sync/singleflight"
 )
@@ -49,7 +51,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getHomeAggregation(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
