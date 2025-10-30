@@ -1,8 +1,6 @@
 import { BackLink } from '@/components/blocks/back-link';
-import { Button } from '@/components/ui/button';
 import { AuthContext } from '@/providers/auth-provider';
-import { getRouteApi, Link } from '@tanstack/react-router';
-import { Settings2Icon } from 'lucide-react';
+import { getRouteApi } from '@tanstack/react-router';
 import { useContext } from 'react';
 
 export function Header() {
@@ -29,26 +27,6 @@ export function Header() {
               })}
             </div>
           </div>
-        </div>
-
-        <div className="space-x-2">
-          {isOwner && (
-            <Button
-              asChild
-              variant="ghost"
-              size="default"
-            >
-              <Link
-                to="/diary/$id/edit"
-                params={{
-                  id: diary.id,
-                }}
-              >
-                <Settings2Icon className="size-4" />
-                <span>Edit</span>
-              </Link>
-            </Button>
-          )}
         </div>
       </div>
     </>
