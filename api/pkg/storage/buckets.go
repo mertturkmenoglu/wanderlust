@@ -21,3 +21,24 @@ const (
 	BUCKET_DIARIES        BucketName = "diaries"
 	BUCKET_EXPORTS        BucketName = "exports"
 )
+
+func ToBucketName(str string) (BucketName, error) {
+	switch str {
+	case string(BUCKET_DEFAULT):
+		return BUCKET_DEFAULT, nil
+	case string(BUCKET_PROFILE_IMAGES):
+		return BUCKET_PROFILE_IMAGES, nil
+	case string(BUCKET_BANNER_IMAGES):
+		return BUCKET_BANNER_IMAGES, nil
+	case string(BUCKET_POIS):
+		return BUCKET_POIS, nil
+	case string(BUCKET_REVIEWS):
+		return BUCKET_REVIEWS, nil
+	case string(BUCKET_DIARIES):
+		return BUCKET_DIARIES, nil
+	case string(BUCKET_EXPORTS):
+		return BUCKET_EXPORTS, nil
+	default:
+		return "", ErrInvalidBucketType
+	}
+}
