@@ -10,6 +10,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -32,7 +33,7 @@ func (s *Service) startNewExportTask(ctx context.Context, body dto.StartNewExpor
 	}
 
 	exportTask := dto.ExportTaskMetadata{
-		ID:        s.ID.UUID(),
+		ID:        uid.UUID(),
 		CreatedAt: time.Now(),
 		Status:    "pending",
 		Progress:  0,

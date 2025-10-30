@@ -13,6 +13,7 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
@@ -192,7 +193,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 	userId := ctx.Value("userId").(string)
 
 	dbRes, err := s.db.CreateTrip(ctx, db.CreateTripParams{
-		ID:              s.ID.Flake(),
+		ID:              uid.Flake(),
 		OwnerID:         userId,
 		Title:           body.Title,
 		Description:     body.Description,
@@ -299,7 +300,7 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 	expiresAt := sentAt.Add(time.Hour * 24 * 7)
 
 	dbRes, err := s.db.CreateTripInvite(ctx, db.CreateTripInviteParams{
-		ID:     s.ID.Flake(),
+		ID:     uid.Flake(),
 		TripID: tripId,
 		FromID: userId,
 		ToID:   body.ToID,
@@ -461,7 +462,7 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 			}
 
 			_, err = qtx.AddParticipantToTrip(ctx, db.AddParticipantToTripParams{
-				ID:     s.ID.Flake(),
+				ID:     uid.Flake(),
 				UserID: userId,
 				TripID: tripId,
 				Role:   string(inviteDetail.Body.InviteDetail.Role),
@@ -625,7 +626,7 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 	}
 
 	res, err := s.db.CreateTripComment(ctx, db.CreateTripCommentParams{
-		ID:      s.ID.Flake(),
+		ID:      uid.Flake(),
 		TripID:  tripId,
 		FromID:  userId,
 		Content: body.Content,
@@ -1045,7 +1046,7 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 	}
 
 	res, err := s.db.CreateTripLocation(ctx, db.CreateTripLocationParams{
-		ID:     s.ID.Flake(),
+		ID:     uid.Flake(),
 		TripID: tripId,
 		PoiID:  body.PoiID,
 		ScheduledTime: pgtype.Timestamptz{

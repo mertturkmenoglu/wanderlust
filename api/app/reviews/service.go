@@ -14,6 +14,7 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -125,7 +126,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateReviewInputBody) (*
 	userId := ctx.Value("userId").(string)
 
 	dbReview, err := qtx.CreateReview(ctx, db.CreateReviewParams{
-		ID:      s.ID.Flake(),
+		ID:      uid.Flake(),
 		PoiID:   body.PoiID,
 		UserID:  userId,
 		Content: body.Content,

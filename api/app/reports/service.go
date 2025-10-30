@@ -13,6 +13,7 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	sq "github.com/Masterminds/squirrel"
@@ -134,7 +135,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateReportInputBody) (*
 	}
 
 	dbRes, err := s.db.CreateReport(ctx, db.CreateReportParams{
-		ID:           s.ID.Flake(),
+		ID:           uid.Flake(),
 		ResourceID:   body.ResourceID,
 		ResourceType: body.ResourceType,
 		Description:  pgtype.Text{String: body.Description, Valid: true},

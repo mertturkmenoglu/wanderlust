@@ -10,6 +10,7 @@ import (
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -244,7 +245,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateListInputBody) (*dt
 	}
 
 	res, err := s.db.CreateList(ctx, db.CreateListParams{
-		ID:       s.ID.Flake(),
+		ID:       uid.Flake(),
 		Name:     body.Name,
 		UserID:   userId,
 		IsPublic: body.IsPublic,

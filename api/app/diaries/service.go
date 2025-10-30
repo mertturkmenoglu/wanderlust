@@ -14,6 +14,7 @@ import (
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -83,7 +84,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateDiaryInputBody) (*d
 	userId := ctx.Value("userId").(string)
 
 	dbDiary, err := s.db.CreateNewDiary(ctx, db.CreateNewDiaryParams{
-		ID:               s.ID.Flake(),
+		ID:               uid.Flake(),
 		UserID:           userId,
 		Title:            body.Title,
 		Description:      "",

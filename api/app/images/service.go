@@ -9,6 +9,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 
 	"github.com/danielgtaylor/huma/v2"
 	"gocloud.dev/blob"
@@ -29,7 +30,7 @@ func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlIn
 		return nil, huma.Error500InternalServerError("Failed to get mime type")
 	}
 
-	id := s.app.ID.UUID()
+	id := uid.UUID()
 	fileName := id + "." + input.FileExt
 
 	bucket, err := storage.OpenBucket(ctx, storage.BucketName(input.Bucket))

@@ -15,6 +15,7 @@ import (
 	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/tokens"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -377,7 +378,7 @@ func (s *Service) createUserFromCredentialsInfo(ctx context.Context, dto dto.Reg
 	}
 
 	saved, err := s.db.CreateUser(ctx, db.CreateUserParams{
-		ID:           s.ID.Flake(),
+		ID:           uid.Flake(),
 		Email:        dto.Email,
 		FullName:     dto.FullName,
 		Username:     dto.Username,
@@ -718,7 +719,7 @@ func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthU
 	}
 
 	saved, err := s.db.CreateUser(ctx, db.CreateUserParams{
-		ID:           s.ID.Flake(),
+		ID:           uid.Flake(),
 		Email:        oauthUser.email,
 		Username:     username,
 		FullName:     oauthUser.name,

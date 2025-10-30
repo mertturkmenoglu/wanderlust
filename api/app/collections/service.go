@@ -6,6 +6,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 )
 
 type Service struct {
@@ -53,7 +54,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateCollectionInputBody
 	defer sp.End()
 
 	res, err := s.repo.create(ctx, CreateParams{
-		ID:          s.ID.Flake(),
+		ID:          uid.Flake(),
 		Name:        body.Name,
 		Description: body.Description,
 	})
