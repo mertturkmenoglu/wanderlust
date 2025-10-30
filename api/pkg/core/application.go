@@ -23,7 +23,7 @@ type Application struct {
 	Tasks      *tasks.TasksService
 }
 
-func NewApp() *Application {
+func NewApplication() *Application {
 	mailSvc := mail.New()
 	cacheSvc := cache.New()
 	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
