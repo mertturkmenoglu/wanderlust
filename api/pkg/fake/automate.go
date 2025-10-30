@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"time"
 	"wanderlust/pkg/fake/handlers"
-	"wanderlust/pkg/id"
 
 	"github.com/pterm/pterm"
-	"github.com/sony/sonyflake"
 )
 
 const (
@@ -46,8 +44,6 @@ var steps = [...]string{
 
 func Automate() error {
 	f := handlers.NewFake()
-	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
-	idgen := id.NewGenerator(flake)
 
 	fakers := map[string]handlers.IFaker{
 		"addresses": &handlers.FakeAddresses{
@@ -74,7 +70,6 @@ func Automate() error {
 			Fake: f,
 		},
 		"collections": &handlers.FakeCollections{
-			ID:   idgen,
 			Fake: f,
 		},
 		"collection-items": &handlers.FakeCollectionItems{
@@ -107,7 +102,6 @@ func Automate() error {
 		},
 		"lists": &handlers.FakeLists{
 			UsersPath: usersPath,
-			ID:        idgen,
 			Fake:      f,
 		},
 		"list-items": &handlers.FakeListItems{
@@ -118,7 +112,6 @@ func Automate() error {
 		"pois": &handlers.FakePois{
 			Count: 10_000,
 			Step:  1000,
-			ID:    idgen,
 			Fake:  f,
 		},
 		"reviews": &handlers.FakeReviews{

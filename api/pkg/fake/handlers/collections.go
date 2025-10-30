@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-	"wanderlust/pkg/id"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -15,7 +15,6 @@ import (
 )
 
 type FakeCollections struct {
-	ID *id.Generator
 	*Fake
 }
 
@@ -26,7 +25,7 @@ func (f *FakeCollections) Generate() (int64, error) {
 
 	for range count {
 		batch = append(batch, db.BatchCreateCollectionsParams{
-			ID:          f.ID.Flake(),
+			ID:          uid.Flake(),
 			Name:        gofakeit.Name(),
 			Description: gofakeit.Paragraph(10, 8, 6, " "),
 		})

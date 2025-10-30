@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-	"wanderlust/pkg/id"
+	"wanderlust/pkg/uid"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"golang.org/x/sync/errgroup"
@@ -15,7 +15,6 @@ import (
 
 type FakeLists struct {
 	UsersPath string
-	ID        *id.Generator
 	*Fake
 }
 
@@ -52,7 +51,7 @@ func (f *FakeLists) createLists(ctx context.Context, userIds []string) (int64, e
 		n := gofakeit.Number(1, 5)
 		for range n {
 			batch = append(batch, db.BatchCreateListsParams{
-				ID:       f.ID.Flake(),
+				ID:       uid.Flake(),
 				Name:     gofakeit.HipsterSentence(4),
 				UserID:   userId,
 				IsPublic: gofakeit.Bool(),

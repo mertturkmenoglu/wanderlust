@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
-	"wanderlust/pkg/id"
+	"wanderlust/pkg/uid"
 	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -14,7 +14,6 @@ import (
 type FakePois struct {
 	Count int32
 	Step  int32
-	ID    *id.Generator
 	*Fake
 }
 
@@ -44,7 +43,7 @@ func (f *FakePois) Generate() (int64, error) {
 			}
 
 			batch = append(batch, db.BatchCreatePoisParams{
-				ID:                 f.ID.Flake(),
+				ID:                 uid.Flake(),
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
 				Description:        gofakeit.LoremIpsumSentence(32),
