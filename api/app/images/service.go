@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
@@ -16,7 +15,7 @@ import (
 )
 
 type Service struct {
-	app *core.Application
+	cache *cache.Cache
 }
 
 func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlInput) (*dto.PresignedUrlOutput, error) {
@@ -65,7 +64,7 @@ func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlIn
 		FileName:      fileName,
 	}
 
-	err = s.app.Cache.SetObj(ctx, cache.KeyBuilder(cache.KeyImageUpload, id), out, 0)
+	err = s.cache.SetObj(ctx, cache.KeyBuilder(cache.KeyImageUpload, id), out, 0)
 
 	if err != nil {
 		sp.RecordError(err)

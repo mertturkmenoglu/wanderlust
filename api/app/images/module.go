@@ -3,7 +3,9 @@ package images
 import (
 	"context"
 	"net/http"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
@@ -12,13 +14,15 @@ import (
 )
 
 func Register(grp *huma.Group, app *core.Application) {
+	cacheSvc := app.Get(di.SVC_CACHE).(*cache.Cache)
+
+	s := Service{
+		cache: cacheSvc,
+	}
+
 	grp.UseSimpleModifier(func(op *huma.Operation) {
 		op.Tags = []string{"Images"}
 	})
-
-	s := Service{
-		app: app,
-	}
 
 	huma.Register(grp,
 		huma.Operation{
