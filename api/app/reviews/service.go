@@ -12,8 +12,8 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
+	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/upload"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -217,11 +217,23 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	}
 
 	for _, m := range review.Images {
-		err = s.Upload.RemoveFileFromUrl(m.Url, upload.BUCKET_REVIEWS)
+		filename := storage.GetFilename(ctx, m.Url)
+		bucket, err := storage.OpenBucket(ctx, storage.BUCKET_REVIEWS)
+
+		if err != nil {
+			tracing.Slog.Error("Failed to open review images bucket",
+				slog.String("bucket", string(storage.BUCKET_REVIEWS)),
+				slog.String("object", m.Url),
+				slog.Any("error", err),
+			)
+			continue
+		}
+
+		err = bucket.Delete(ctx, filename)
 
 		if err != nil {
 			tracing.Slog.Error("Failed to delete review image",
-				slog.String("bucket", string(upload.BUCKET_REVIEWS)),
+				slog.String("bucket", string(storage.BUCKET_REVIEWS)),
 				slog.String("object", m.Url),
 				slog.Any("error", err),
 			)
@@ -441,10 +453,22 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 		return nil, err
 	}
 
-	bucket := upload.BUCKET_REVIEWS
+	bucket, err := storage.OpenBucket(ctx, storage.BUCKET_REVIEWS)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to open review images bucket")
+	}
 
 	// Check if the file is uploaded
-	if !s.Upload.FileExists(bucket, input.FileName) {
+	ok, err := bucket.Exists(ctx, input.FileName)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to check if file exists")
+	}
+
+	if !ok {
 		err = huma.Error400BadRequest("file not uploaded")
 		sp.RecordError(err)
 		return nil, err
@@ -488,7 +512,12 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 	}
 
 	order := ordInt16 + 1
-	url := s.Upload.GetUrlForFile(bucket, input.FileName)
+	url, err := storage.GetUrl(ctx, storage.BUCKET_REVIEWS, input.FileName)
+
+	if err != nil {
+		sp.RecordError(err)
+		return nil, huma.Error500InternalServerError("Failed to get file url")
+	}
 
 	_, err = s.db.BatchCreateReviewImage(ctx, []db.BatchCreateReviewImageParams{
 		{
