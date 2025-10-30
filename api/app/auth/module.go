@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
@@ -12,6 +13,7 @@ import (
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/danielgtaylor/huma/v2"
 )
 
@@ -51,7 +53,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getMe(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -73,7 +75,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.login(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -100,7 +102,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.logout(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -123,7 +125,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.refresh(ctx, input.CookieRefreshToken)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -146,7 +148,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.register(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -169,7 +171,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.sendForgotPasswordEmail(ctx, input.Body.Email)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -192,7 +194,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.resetPassword(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -215,7 +217,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.startOAuthFlow(ctx, input.Provider)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -239,7 +241,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.oauthCallback(ctx, input)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -266,7 +268,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.changePassword(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
