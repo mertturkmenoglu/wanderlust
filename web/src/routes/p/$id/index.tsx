@@ -42,7 +42,7 @@ export const Route = createFileRoute('/p/$id/')({
 
 function RouteComponent() {
   return (
-    <main className="max-w-7xl mx-auto mt-8 md:mt-16">
+    <main className="max-w-7xl mx-auto mt-8">
       <Breadcrumb />
 
       <Header className="mt-8" />
