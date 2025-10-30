@@ -43,7 +43,8 @@ func (w *Wanderlust) SetupEcho() {
 
 	// TODO: make it better
 	w.echo.PUT("/uploads", func(c echo.Context) error {
-		b, err := storage.OpenBucket(c.Request().Context(), storage.BUCKET_DEFAULT)
+		bn := storage.BucketName(c.QueryParam("bucket"))
+		b, err := storage.OpenBucket(c.Request().Context(), bn)
 
 		if err != nil {
 			return err
@@ -64,7 +65,7 @@ func (w *Wanderlust) SetupEcho() {
 			return err
 		}
 
-		url, err := storage.GetUrl(c.Request().Context(), storage.BUCKET_DEFAULT, "hi.png")
+		url, err := storage.GetUrl(c.Request().Context(), bn, c.QueryParam("obj"))
 
 		if err != nil {
 			return err
