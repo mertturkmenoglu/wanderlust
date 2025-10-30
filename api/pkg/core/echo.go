@@ -75,4 +75,6 @@ func (w *Wanderlust) SetupEcho() {
 			"url": url,
 		})
 	})
+
+	w.echo.Static("/uploads", "tmp/storage")
 }
