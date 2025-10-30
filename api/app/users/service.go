@@ -22,6 +22,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/zap"
 )
 
 type Service struct {
@@ -117,7 +118,7 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 		err = bucket.Delete(ctx, objectName)
 
 		if err != nil {
-			return nil, errors.Wrap(huma.Error500InternalServerError("Failed to delete previous profile image"), err.Error())
+			s.app.Log.Error("Failed to delete previous banner image", zap.String("objectName", objectName), zap.Error(err))
 		}
 	} else if updateType == "profile" && prevProfileImage != nil {
 		objectName := storage.GetFilename(ctx, *prevProfileImage)
@@ -125,7 +126,7 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 		err = bucket.Delete(ctx, objectName)
 
 		if err != nil {
-			return nil, errors.Wrap(huma.Error500InternalServerError("Failed to delete previous profile image"), err.Error())
+			s.app.Log.Error("Failed to delete previous profile image", zap.String("objectName", objectName), zap.Error(err))
 		}
 	}
 
