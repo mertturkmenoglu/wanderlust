@@ -9,7 +9,6 @@ import (
 	"wanderlust/pkg/mail"
 	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/upload"
 
 	"github.com/pterm/pterm"
 	"github.com/sony/sonyflake"
@@ -26,12 +25,10 @@ type Application struct {
 	Log        *zap.Logger
 	PLog       *pterm.Logger
 	Tasks      *tasks.TasksService
-	Upload     *upload.UploadService
 }
 
 func NewApp() *Application {
 	mailSvc := mail.New()
-	uploadSvc := upload.New()
 	cacheSvc := cache.New()
 	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
 	flake := sonyflake.NewSonyflake(sonyflake.Settings{})
@@ -46,7 +43,6 @@ func NewApp() *Application {
 		Mail:       mailSvc,
 		Log:        logger,
 		PLog:       logs.NewPTermLogger(),
-		Tasks:      tasks.New(mailSvc, uploadSvc, database, cacheSvc),
-		Upload:     uploadSvc,
+		Tasks:      tasks.New(mailSvc, database, cacheSvc),
 	}
 }
