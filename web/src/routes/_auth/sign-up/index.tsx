@@ -174,7 +174,7 @@ function RouteComponent() {
           disabled={!form.formState.isValid || mutation.isPending}
         >
           {mutation.isPending && <Spinner />}
-          <span>Sign In</span>
+          <span>Sign Up</span>
         </Button>
 
         <Separator className="my-4" />
