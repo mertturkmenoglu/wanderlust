@@ -12,47 +12,47 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Wanderlust struct {
+type Server struct {
 	app  *Application
 	api  *huma.API
 	echo *echo.Echo
 }
 
-func New() *Wanderlust {
+func New() *Server {
 	e := echo.New()
 	e.HideBanner = true
 	huma.DefaultArrayNullable = false
 
-	w := Wanderlust{
+	w := Server{
 		echo: e,
-		app:  NewApp(),
+		app:  NewApplication(),
 		api:  NewHumaApi(e),
 	}
 
 	return &w
 }
 
-func (w *Wanderlust) StartServer() {
-	go w.app.Tasks.Run()
-	defer w.app.Tasks.Close()
+func (s *Server) StartServer() {
+	go s.app.Tasks.Run()
+	defer s.app.Tasks.Close()
 
-	go w.app.Tasks.RunScheduler()
-	w.RegisterPeriodicTasks()
+	go s.app.Tasks.RunScheduler()
+	s.RegisterPeriodicTasks()
 
 	tracingShutdown := tracing.Init()
 	defer tracingShutdown()
 
-	defer w.app.Log.Sync()
+	defer s.app.Log.Sync()
 
 	port := fmt.Sprintf(":%d", cfg.Env.Port)
-	w.echo.Logger.Fatal(w.echo.Start(port))
+	s.echo.Logger.Fatal(s.echo.Start(port))
 }
 
-func (w *Wanderlust) StopServer() {
+func (s *Server) StopServer() {
 	// Give the server 5 seconds to gracefully shut down, then give up.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	err := w.echo.Shutdown(ctx)
+	err := s.echo.Shutdown(ctx)
 
 	if err != nil {
 		log.Fatal(err.Error())
