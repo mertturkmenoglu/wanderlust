@@ -8,7 +8,6 @@ import (
 	"wanderlust/app/pois"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
@@ -20,14 +19,19 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
 type Service struct {
-	app        *core.Application
 	poiService *pois.Service
+	cache      *cache.Cache
+	db         *db.Queries
+	pool       *pgxpool.Pool
+	log        *zap.Logger
+	activities *activities.ActivityService
 }
 
 func (s *Service) updateImage(ctx context.Context, updateType string, input dto.UpdateUserProfileImageInputBody) (*dto.UpdateUserProfileImageOutput, error) {
@@ -40,11 +44,15 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 		return nil, errors.Wrap(huma.Error500InternalServerError("Cannot update picture"), err.Error())
 	}
 
+	defer profileBucket.Close()
+
 	bannerBucket, err := storage.OpenBucket(ctx, storage.BUCKET_BANNER_IMAGES)
 
 	if err != nil {
 		return nil, errors.Wrap(huma.Error500InternalServerError("Cannot update picture"), err.Error())
 	}
+
+	defer bannerBucket.Close()
 
 	var bucket = profileBucket
 	var bucketName = storage.BUCKET_PROFILE_IMAGES
@@ -65,13 +73,13 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.app.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
+	if !s.cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
 		err := huma.Error400BadRequest("Incorrect file")
 		return nil, errors.Wrap(err, "request data and cache data doesn't match")
 	}
 
 	// Delete cached information
-	err = s.app.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)).Err()
+	err = s.cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)).Err()
 
 	if err != nil {
 		return nil, errors.Wrap(huma.Error500InternalServerError("Failed to delete cache"), err.Error())
@@ -85,7 +93,7 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 
 	// Get previous profile/banner image information from the database
 	userId := ctx.Value("userId").(string)
-	dbUser, err := s.app.Db.Queries.GetUserById(ctx, userId)
+	dbUser, err := s.db.GetUserById(ctx, userId)
 
 	if err != nil {
 		return nil, errors.Wrap(huma.Error500InternalServerError("Failed to get user by id"), err.Error())
@@ -96,12 +104,12 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 
 	// Update database
 	if updateType == "banner" {
-		err = s.app.Db.Queries.UpdateUserBannerImage(ctx, db.UpdateUserBannerImageParams{
+		err = s.db.UpdateUserBannerImage(ctx, db.UpdateUserBannerImageParams{
 			ID:          userId,
 			BannerImage: pgtype.Text{String: url, Valid: true},
 		})
 	} else {
-		err = s.app.Db.Queries.UpdateUserProfileImage(ctx, db.UpdateUserProfileImageParams{
+		err = s.db.UpdateUserProfileImage(ctx, db.UpdateUserProfileImageParams{
 			ID:           userId,
 			ProfileImage: pgtype.Text{String: url, Valid: true},
 		})
@@ -118,7 +126,7 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 		err = bucket.Delete(ctx, objectName)
 
 		if err != nil {
-			s.app.Log.Error("Failed to delete previous banner image", zap.String("objectName", objectName), zap.Error(err))
+			s.log.Error("Failed to delete previous banner image", zap.String("objectName", objectName), zap.Error(err))
 		}
 	} else if updateType == "profile" && prevProfileImage != nil {
 		objectName := storage.GetFilename(ctx, *prevProfileImage)
@@ -126,7 +134,7 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 		err = bucket.Delete(ctx, objectName)
 
 		if err != nil {
-			s.app.Log.Error("Failed to delete previous profile image", zap.String("objectName", objectName), zap.Error(err))
+			s.log.Error("Failed to delete previous profile image", zap.String("objectName", objectName), zap.Error(err))
 		}
 	}
 
@@ -143,7 +151,7 @@ func (s *Service) getTopPois(ctx context.Context, username string) (*dto.GetUser
 
 	var cacheRes []dto.Poi
 
-	err := s.app.Cache.ReadObj(ctx, cache.KeyBuilder("user-top-pois", username), &cacheRes)
+	err := s.cache.ReadObj(ctx, cache.KeyBuilder("user-top-pois", username), &cacheRes)
 
 	if err == nil {
 		sp.AddEvent("cache.hit", trace.WithAttributes(
@@ -161,7 +169,7 @@ func (s *Service) getTopPois(ctx context.Context, username string) (*dto.GetUser
 		attribute.String("cache-key", cache.KeyBuilder("user-top-pois", username)),
 	))
 
-	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+	dbProfile, err := s.db.GetUserProfileByUsername(ctx, username)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -173,7 +181,7 @@ func (s *Service) getTopPois(ctx context.Context, username string) (*dto.GetUser
 		return nil, huma.Error500InternalServerError("Failed to get user profile")
 	}
 
-	topPois, err := s.app.Db.Queries.GetUserTopPois(ctx, dbProfile.ID)
+	topPois, err := s.db.GetUserTopPois(ctx, dbProfile.ID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -193,7 +201,7 @@ func (s *Service) getTopPois(ctx context.Context, username string) (*dto.GetUser
 		return nil, huma.Error500InternalServerError("Failed to get user top pois")
 	}
 
-	err = s.app.Cache.SetObj(ctx, cache.KeyBuilder("user-top-pois", username), res, cache.TTLUserTopPois)
+	err = s.cache.SetObj(ctx, cache.KeyBuilder("user-top-pois", username), res, cache.TTLUserTopPois)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -221,7 +229,7 @@ func (s *Service) updateTopPois(ctx context.Context, body dto.UpdateUserTopPoisI
 		return nil, huma.Error404NotFound("Point of interests not found")
 	}
 
-	tx, err := s.app.Db.Pool.Begin(ctx)
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -230,7 +238,7 @@ func (s *Service) updateTopPois(ctx context.Context, body dto.UpdateUserTopPoisI
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	err = qtx.DeleteUserAllTopPois(ctx, userId)
 
@@ -258,7 +266,7 @@ func (s *Service) updateTopPois(ctx context.Context, body dto.UpdateUserTopPoisI
 		}
 	}
 
-	err = s.app.Cache.SetObj(ctx, cache.KeyBuilder("user-top-pois", username), pois, cache.TTLUserTopPois)
+	err = s.cache.SetObj(ctx, cache.KeyBuilder("user-top-pois", username), pois, cache.TTLUserTopPois)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -283,7 +291,7 @@ func (s *Service) getUserProfile(ctx context.Context, username string) (*dto.Get
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+	dbProfile, err := s.db.GetUserProfileByUsername(ctx, username)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -325,7 +333,7 @@ func (s *Service) isFollowing(ctx context.Context, thisId string, otherId string
 		return false, nil
 	}
 
-	return s.app.Db.Queries.IsUserFollowing(ctx, db.IsUserFollowingParams{
+	return s.db.IsUserFollowing(ctx, db.IsUserFollowingParams{
 		FollowerID:  thisId,
 		FollowingID: otherId,
 	})
@@ -335,7 +343,7 @@ func (s *Service) getFollowers(ctx context.Context, username string) (*dto.GetUs
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+	dbProfile, err := s.db.GetUserProfileByUsername(ctx, username)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -347,7 +355,7 @@ func (s *Service) getFollowers(ctx context.Context, username string) (*dto.GetUs
 		return nil, huma.Error500InternalServerError("Failed to get user followers")
 	}
 
-	res, err := s.app.Db.Queries.GetUserFollowers(ctx, dbProfile.ID)
+	res, err := s.db.GetUserFollowers(ctx, dbProfile.ID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -365,7 +373,7 @@ func (s *Service) getFollowing(ctx context.Context, username string) (*dto.GetUs
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+	dbProfile, err := s.db.GetUserProfileByUsername(ctx, username)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -377,7 +385,7 @@ func (s *Service) getFollowing(ctx context.Context, username string) (*dto.GetUs
 		return nil, huma.Error500InternalServerError("Failed to get user followers")
 	}
 
-	res, err := s.app.Db.Queries.GetUserFollowing(ctx, dbProfile.ID)
+	res, err := s.db.GetUserFollowing(ctx, dbProfile.ID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -395,7 +403,7 @@ func (s *Service) getActivities(ctx context.Context, username string) (*dto.GetU
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+	dbProfile, err := s.db.GetUserProfileByUsername(ctx, username)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -409,7 +417,7 @@ func (s *Service) getActivities(ctx context.Context, username string) (*dto.GetU
 
 	key := cache.KeyBuilder("activities", dbProfile.ID)
 
-	res, err := s.app.Cache.Client.LRange(ctx, key, 0, 100).Result()
+	res, err := s.cache.LRange(ctx, key, 0, 100).Result()
 
 	if err != nil {
 		sp.RecordError(err)
@@ -443,7 +451,7 @@ func (s *Service) searchFollowing(ctx context.Context, username string) (*dto.Se
 
 	userId := ctx.Value("userId").(string)
 
-	res, err := s.app.Db.Queries.SearchUserFollowing(ctx, db.SearchUserFollowingParams{
+	res, err := s.db.SearchUserFollowing(ctx, db.SearchUserFollowingParams{
 		FollowerID: userId,
 		Username:   fmt.Sprintf("%%%s%%", username),
 	})
@@ -464,7 +472,7 @@ func (s *Service) makeVerified(ctx context.Context, username string) (*dto.MakeU
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbProfile, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, username)
+	dbProfile, err := s.db.GetUserProfileByUsername(ctx, username)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -476,7 +484,7 @@ func (s *Service) makeVerified(ctx context.Context, username string) (*dto.MakeU
 		return nil, huma.Error500InternalServerError("Failed to get user profile")
 	}
 
-	err = s.app.Db.Queries.MakeUserVerified(ctx, dbProfile.ID)
+	err = s.db.MakeUserVerified(ctx, dbProfile.ID)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -497,7 +505,7 @@ func (s *Service) changeFollow(ctx context.Context, otherUsername string) (*dto.
 	thisUserId := ctx.Value("userId").(string)
 	thisUsername := ctx.Value("username").(string)
 
-	otherUser, err := s.app.Db.Queries.GetUserProfileByUsername(ctx, otherUsername)
+	otherUser, err := s.db.GetUserProfileByUsername(ctx, otherUsername)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -509,7 +517,7 @@ func (s *Service) changeFollow(ctx context.Context, otherUsername string) (*dto.
 		return nil, huma.Error500InternalServerError("Failed to get user profile")
 	}
 
-	isFollowing, err := s.app.Db.Queries.IsUserFollowing(ctx, db.IsUserFollowingParams{
+	isFollowing, err := s.db.IsUserFollowing(ctx, db.IsUserFollowingParams{
 		FollowerID:  thisUserId,
 		FollowingID: otherUser.ID,
 	})
@@ -536,7 +544,7 @@ func (s *Service) changeFollow(ctx context.Context, otherUsername string) (*dto.
 	}
 
 	if !isFollowing {
-		err = s.app.Activities.Add(ctx, activities.Activity{
+		err = s.activities.Add(ctx, activities.Activity{
 			UserID: thisUserId,
 			Type:   activities.ActivityFollow,
 			Payload: activities.FollowPayload{
@@ -561,7 +569,7 @@ func (s *Service) follow(ctx context.Context, thisUserId string, otherUserId str
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	tx, err := s.app.Db.Pool.Begin(ctx)
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -570,7 +578,7 @@ func (s *Service) follow(ctx context.Context, thisUserId string, otherUserId str
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	err = qtx.Follow(ctx, db.FollowParams{
 		FollowerID:  thisUserId,
@@ -610,7 +618,7 @@ func (s *Service) unfollow(ctx context.Context, thisUserId string, otherUserId s
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	tx, err := s.app.Db.Pool.Begin(ctx)
+	tx, err := s.pool.Begin(ctx)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -619,7 +627,7 @@ func (s *Service) unfollow(ctx context.Context, thisUserId string, otherUserId s
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.app.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	err = qtx.Unfollow(ctx, db.UnfollowParams{
 		FollowerID:  thisUserId,
@@ -661,7 +669,7 @@ func (s *Service) updateProfile(ctx context.Context, body dto.UpdateUserProfileI
 
 	userId := ctx.Value("userId").(string)
 
-	dbUser, err := s.app.Db.Queries.UpdateUserProfile(ctx, db.UpdateUserProfileParams{
+	dbUser, err := s.db.UpdateUserProfile(ctx, db.UpdateUserProfileParams{
 		ID:       userId,
 		FullName: body.FullName,
 		Bio:      utils.NilStrToText(body.Bio),
