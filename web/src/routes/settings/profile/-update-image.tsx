@@ -126,10 +126,13 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
                 }
 
                 // Upload file to S3
-                const s3Res = await fetch(res.data.url, {
-                  method: 'PUT',
-                  body: file,
-                });
+                const s3Res = await fetch(
+                  res.data.url + '&bucket=profile-images',
+                  {
+                    method: 'PUT',
+                    body: file,
+                  },
+                );
 
                 if (!s3Res.ok) {
                   toast.error('Something went wrong');
