@@ -10,8 +10,8 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
+	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/upload"
 	"wanderlust/pkg/utils"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -435,12 +435,21 @@ func (s *Service) uploadImage(ctx context.Context, input *dto.UploadPoiImageInpu
 		return nil, err
 	}
 
-	bucket := upload.BUCKET_POIS
+	bucket, err := storage.OpenBucket(ctx, storage.BUCKET_POIS)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to open bucket")
+	}
 
 	// Check if the file is uploaded
-	if !s.App.Upload.FileExists(bucket, input.Body.FileName) {
+	ok, err := bucket.Exists(ctx, input.Body.FileName)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to check if file exists")
+	}
+
+	if !ok {
 		err = huma.Error400BadRequest("File not uploaded")
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -469,7 +478,11 @@ func (s *Service) uploadImage(ctx context.Context, input *dto.UploadPoiImageInpu
 
 	newIndex := lastIndex + 1
 
-	url := s.App.Upload.GetUrlForFile(bucket, input.Body.FileName)
+	url, err := storage.GetUrl(ctx, storage.BUCKET_POIS, input.Body.FileName)
+
+	if err != nil {
+		return nil, huma.Error500InternalServerError("Failed to get file url")
+	}
 
 	_, err = s.db.CreatePoiImage(ctx, db.CreatePoiImageParams{
 		PoiID: poi.ID,
@@ -644,11 +657,22 @@ func (s *Service) deleteImage(ctx context.Context, input *dto.DeletePoiMediaInpu
 		return huma.Error500InternalServerError("Failed to reorder images")
 	}
 
-	err = s.App.Upload.RemoveFileFromUrl(imgUrl, upload.BUCKET_POIS)
+	filename := storage.GetFilename(ctx, imgUrl)
+
+	bucket, err := storage.OpenBucket(ctx, storage.BUCKET_POIS)
+
+	if err != nil {
+		tracing.Slog.Error("Failed to open bucket",
+			slog.String("bucket", string(storage.BUCKET_POIS)),
+			slog.Any("error", err),
+		)
+	}
+
+	err = bucket.Delete(ctx, filename)
 
 	if err != nil {
 		tracing.Slog.Error("Failed to delete image",
-			slog.String("bucket", string(upload.BUCKET_POIS)),
+			slog.String("bucket", string(storage.BUCKET_POIS)),
 			slog.String("object", imgUrl),
 			slog.Any("error", err),
 		)
