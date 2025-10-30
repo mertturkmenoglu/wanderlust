@@ -184,6 +184,8 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 		return err
 	}
 
+	defer bucket.Close()
+
 	// Put buf (Zip file) to MinIO
 	err = bucket.Upload(ctx, p.TaskMetadata.ID+".zip", reader, &blob.WriterOptions{
 		BufferSize:  buf.Len(),
