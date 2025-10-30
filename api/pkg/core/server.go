@@ -4,12 +4,16 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 	"wanderlust/pkg/cfg"
+	"wanderlust/pkg/di"
+	"wanderlust/pkg/durable"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/zap"
 )
 
 type Server struct {
@@ -33,19 +37,17 @@ func New() *Server {
 }
 
 func (s *Server) StartServer() {
-	go s.app.Tasks.Run()
-	defer s.app.Tasks.Close()
+	durableSvc := s.app.Get(di.SVC_DURABLE).(*durable.Durable)
+	log := s.app.Get(di.SVC_LOG).(*zap.Logger)
 
-	go s.app.Tasks.RunScheduler()
-	s.RegisterPeriodicTasks()
+	go http.ListenAndServe(":8080", (*durableSvc.Client).Serve())
 
 	tracingShutdown := tracing.Init()
 	defer tracingShutdown()
 
-	defer s.app.Log.Sync()
+	defer log.Sync()
 
-	port := fmt.Sprintf(":%d", cfg.Env.Port)
-	s.echo.Logger.Fatal(s.echo.Start(port))
+	s.echo.Logger.Fatal(s.echo.Start(fmt.Sprintf(":%d", cfg.Env.Port)))
 }
 
 func (s *Server) StopServer() {
