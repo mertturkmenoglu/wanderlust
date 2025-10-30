@@ -8,25 +8,17 @@ import (
 	"github.com/sony/sonyflake"
 )
 
-type Generator struct {
-	flake *sonyflake.Sonyflake
-}
+var defaultFlake = sonyflake.NewSonyflake(sonyflake.Settings{})
 
-func NewGenerator(flake *sonyflake.Sonyflake) *Generator {
-	return &Generator{
-		flake: flake,
-	}
-}
-
-func (g *Generator) UUID() string {
+func UUID() string {
 	return uuid.NewString()
 }
 
-func (g *Generator) Flake() string {
-	return generateFlake(g.flake)
+func Flake() string {
+	return generateFlake(defaultFlake)
 }
 
-func (g *Generator) Base62(n int) string {
+func Base62(n int) string {
 	return random.FromBase62(n)
 }
 
