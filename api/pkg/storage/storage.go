@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"wanderlust/pkg/cfg"
 
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/fileblob"
@@ -20,7 +19,7 @@ func OpenBucket(ctx context.Context, bucket BucketName) (*blob.Bucket, error) {
 			CreateDir: true,
 			URLSigner: fileblob.NewURLSignerHMAC(&url.URL{
 				Scheme: "http",
-				Host:   cfg.Env.URL,
+				Host:   "localhost:5000",
 				Path:   "/uploads",
 			}, []byte("secret")),
 		})
