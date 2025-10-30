@@ -3,10 +3,8 @@ package users
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log/slog"
-	"strings"
 	"wanderlust/app/pois"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
@@ -14,14 +12,14 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
+	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
-	"wanderlust/pkg/upload"
 	"wanderlust/pkg/utils"
 
+	"github.com/cockroachdb/errors"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/minio/minio-go/v7"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -35,44 +33,61 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	bucket := upload.BUCKET_PROFILE_IMAGES
+	profileBucket, err := storage.OpenBucket(ctx, storage.BUCKET_PROFILE_IMAGES)
 
-	if updateType == "banner" {
-		bucket = upload.BUCKET_BANNER_IMAGES
+	if err != nil {
+		return nil, errors.Wrap(huma.Error500InternalServerError("Cannot update picture"), err.Error())
 	}
 
-	ok := s.app.Upload.FileExists(bucket, input.FileName)
+	bannerBucket, err := storage.OpenBucket(ctx, storage.BUCKET_BANNER_IMAGES)
 
-	if !ok {
-		err := huma.Error400BadRequest("File not uploaded")
-		sp.RecordError(err)
-		return nil, err
+	if err != nil {
+		return nil, errors.Wrap(huma.Error500InternalServerError("Cannot update picture"), err.Error())
+	}
+
+	var bucket = profileBucket
+	var bucketName = storage.BUCKET_PROFILE_IMAGES
+
+	if updateType == "banner" {
+		bucket = bannerBucket
+		bucketName = storage.BUCKET_BANNER_IMAGES
+	}
+
+	exists, err := bucket.Exists(ctx, input.FileName)
+
+	if err != nil {
+		return nil, errors.Wrap(huma.Error500InternalServerError("Cannot update picture"), err.Error())
+	}
+
+	if !exists {
+		return nil, errors.Wrap(huma.Error400BadRequest("File not uploaded"), "user hasn't uploaded file")
 	}
 
 	// Check if user uploaded the correct file using cached information
 	if !s.app.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
 		err := huma.Error400BadRequest("Incorrect file")
-		sp.RecordError(err)
-		return nil, err
+		return nil, errors.Wrap(err, "request data and cache data doesn't match")
 	}
 
 	// Delete cached information
-	err := s.app.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)).Err()
+	err = s.app.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)).Err()
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to delete cache")
+		return nil, errors.Wrap(huma.Error500InternalServerError("Failed to delete cache"), err.Error())
 	}
 
-	url := s.app.Upload.GetUrlForFile(bucket, input.FileName)
+	url, err := storage.GetUrl(ctx, bucketName, input.FileName)
+
+	if err != nil {
+		return nil, errors.Wrap(huma.Error500InternalServerError("Failed to update picture"), err.Error())
+	}
 
 	// Get previous profile/banner image information from the database
 	userId := ctx.Value("userId").(string)
 	dbUser, err := s.app.Db.Queries.GetUserById(ctx, userId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get user by id")
+		return nil, errors.Wrap(huma.Error500InternalServerError("Failed to get user by id"), err.Error())
 	}
 
 	prevBannerImage := utils.TextToStr(dbUser.BannerImage)
@@ -92,34 +107,25 @@ func (s *Service) updateImage(ctx context.Context, updateType string, input dto.
 	}
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update profile image")
+		return nil, errors.Wrap(huma.Error500InternalServerError("Failed to update profile image"), err.Error())
 	}
 
 	// Delete previous image from S3
-	endpoint := s.app.Upload.Client.EndpointURL().String()
-	removePrefix := endpoint + "/" + string(bucket) + "/"
-	objectName := ""
-
 	if updateType == "banner" && prevBannerImage != nil {
-		after, _ := strings.CutPrefix(*prevBannerImage, removePrefix)
-		objectName = after
+		objectName := storage.GetFilename(ctx, *prevBannerImage)
 
-		err = s.app.Upload.Client.RemoveObject(ctx, string(bucket), objectName, minio.RemoveObjectOptions{})
+		err = bucket.Delete(ctx, objectName)
 
 		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete previous profile image")
+			return nil, errors.Wrap(huma.Error500InternalServerError("Failed to delete previous profile image"), err.Error())
 		}
 	} else if updateType == "profile" && prevProfileImage != nil {
-		after, _ := strings.CutPrefix(*prevProfileImage, removePrefix)
-		objectName = after
+		objectName := storage.GetFilename(ctx, *prevProfileImage)
 
-		err = s.app.Upload.Client.RemoveObject(ctx, string(bucket), objectName, minio.RemoveObjectOptions{})
+		err = bucket.Delete(ctx, objectName)
 
 		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete previous profile image")
+			return nil, errors.Wrap(huma.Error500InternalServerError("Failed to delete previous profile image"), err.Error())
 		}
 	}
 
