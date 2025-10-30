@@ -17,7 +17,6 @@ func (s *Service) list(ctx context.Context) (*dto.ListCategoriesOutput, error) {
 	res, err := s.repo.list(ctx)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -49,7 +48,6 @@ func (s *Service) create(ctx context.Context, body dto.CreateCategoryInputBody) 
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -76,7 +74,6 @@ func (s *Service) update(ctx context.Context, id int16, body dto.UpdateCategoryI
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
