@@ -3,9 +3,9 @@ package tasks
 import (
 	"context"
 	"errors"
+	"wanderlust/pkg/storage"
 
 	"github.com/hibiken/asynq"
-	"github.com/minio/minio-go/v7"
 )
 
 const (
@@ -23,11 +23,17 @@ func (ts *TasksService) HandleDeleteDiaryMediaTask(ctx context.Context, t *asynq
 		return err
 	}
 
-	const bucket = "diaries"
 	errs := make([]error, 0)
 
 	for _, name := range p.ObjectNames {
-		err = ts.uploadSvc.Client.RemoveObject(ctx, bucket, name, minio.RemoveObjectOptions{})
+		bucket, err := storage.OpenBucket(ctx, storage.BUCKET_DIARIES)
+
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		err = bucket.Delete(ctx, name)
 
 		if err != nil {
 			errs = append(errs, err)

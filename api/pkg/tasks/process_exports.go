@@ -11,11 +11,11 @@ import (
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
-	"wanderlust/pkg/upload"
+	"wanderlust/pkg/storage"
 	"wanderlust/pkg/utils"
 
 	"github.com/hibiken/asynq"
-	"github.com/minio/minio-go/v7"
+	"gocloud.dev/blob"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -174,17 +174,21 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 	// Create a reader so we can use it with MinIO
 	reader := bytes.NewReader(buf.Bytes())
 
+	bucket, err := storage.OpenBucket(ctx, storage.BUCKET_EXPORTS)
+
+	if err != nil {
+		p.TaskMetadata.Status = "failed"
+		errMsg := err.Error()
+		p.TaskMetadata.Error = &errMsg
+		_ = svc.cache.SetObj(ctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)
+		return err
+	}
+
 	// Put buf (Zip file) to MinIO
-	_, err = svc.uploadSvc.Client.PutObject(
-		ctx,
-		string(upload.BUCKET_EXPORTS),
-		p.TaskMetadata.ID+".zip",
-		reader,
-		int64(buf.Len()),
-		minio.PutObjectOptions{
-			ContentType: "application/zip",
-		},
-	)
+	err = bucket.Upload(ctx, p.TaskMetadata.ID+".zip", reader, &blob.WriterOptions{
+		BufferSize:  buf.Len(),
+		ContentType: "application/zip",
+	})
 
 	if err != nil {
 		p.TaskMetadata.Status = "failed"
@@ -197,7 +201,17 @@ func (svc *TasksService) ExportPoisTask(ctx context.Context, t *asynq.Task) erro
 	// Set as completed
 	p.TaskMetadata.Status = "completed"
 	p.TaskMetadata.Error = nil
-	var file = svc.uploadSvc.GetUrlForFile(upload.BUCKET_EXPORTS, p.TaskMetadata.ID+".zip")
+
+	file, err := storage.GetUrl(ctx, storage.BUCKET_EXPORTS, p.TaskMetadata.ID+".zip")
+
+	if err != nil {
+		p.TaskMetadata.Status = "failed"
+		errMsg := err.Error()
+		p.TaskMetadata.Error = &errMsg
+		_ = svc.cache.SetObj(ctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)
+		return err
+	}
+
 	p.TaskMetadata.File = &file
 	p.TaskMetadata.Progress = 100
 	_ = svc.cache.SetObj(ctx, cache.KeyBuilder("export", p.TaskMetadata.ID), p.TaskMetadata, 0)

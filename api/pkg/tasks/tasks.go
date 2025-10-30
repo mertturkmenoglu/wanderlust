@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/logs"
 	"wanderlust/pkg/mail"
-	"wanderlust/pkg/upload"
 
 	"github.com/hibiken/asynq"
 	"github.com/pterm/pterm"
@@ -18,14 +17,13 @@ type TasksService struct {
 	client    *asynq.Client
 	scheduler *asynq.Scheduler
 	mailSvc   *mail.MailService
-	uploadSvc *upload.UploadService
 	cache     *cache.Cache
 	db        *db.Db
 	addr      string
 	logger    *pterm.Logger
 }
 
-func New(mailSvc *mail.MailService, upload *upload.UploadService, db *db.Db, cacheSvc *cache.Cache) *TasksService {
+func New(mailSvc *mail.MailService, db *db.Db, cacheSvc *cache.Cache) *TasksService {
 	return &TasksService{
 		client: asynq.NewClient(asynq.RedisClientOpt{
 			Addr: cfg.Env.RedisAddr,
@@ -33,12 +31,11 @@ func New(mailSvc *mail.MailService, upload *upload.UploadService, db *db.Db, cac
 		scheduler: asynq.NewScheduler(asynq.RedisClientOpt{
 			Addr: cfg.Env.RedisAddr,
 		}, nil),
-		mailSvc:   mailSvc,
-		uploadSvc: upload,
-		addr:      cfg.Env.RedisAddr,
-		db:        db,
-		cache:     cacheSvc,
-		logger:    logs.NewPTermLogger(),
+		mailSvc: mailSvc,
+		addr:    cfg.Env.RedisAddr,
+		db:      db,
+		cache:   cacheSvc,
+		logger:  logs.NewPTermLogger(),
 	}
 }
 
