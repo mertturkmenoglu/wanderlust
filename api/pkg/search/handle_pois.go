@@ -7,7 +7,6 @@ import (
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/utils"
 
-	"github.com/sony/sonyflake"
 	tsapi "github.com/typesense/typesense-go/v2/typesense/api"
 )
 
@@ -21,16 +20,9 @@ func handlePoiSync() error {
 		return err
 	}
 
-	flake, err := sonyflake.New(sonyflake.Settings{})
-
-	if err != nil {
-		return err
-	}
-
 	searchService := New()
 	s := pois.NewService(&core.Application{
-		Db:    d,
-		Flake: flake,
+		Db: d,
 	})
 
 	const step int32 = 1000
