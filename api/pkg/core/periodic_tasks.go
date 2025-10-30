@@ -6,8 +6,8 @@ import (
 	"github.com/hibiken/asynq"
 )
 
-func (w *Wanderlust) RegisterPeriodicTasks() {
-	_, err := w.app.Tasks.Schedule(
+func (s *Server) RegisterPeriodicTasks() {
+	_, err := s.app.Tasks.Schedule(
 		cronFor(tasks.TypeFindExpiredTripInvites),
 		asynq.NewTask(tasks.TypeFindExpiredTripInvites, []byte{}, asynq.MaxRetry(1)),
 	)

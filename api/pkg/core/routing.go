@@ -8,12 +8,12 @@ import (
 
 type RegisterFunc func(grp *huma.Group, app *Application)
 
-func (w *Wanderlust) Routing(fns ...RegisterFunc) {
-	grp := huma.NewGroup(*w.api, API_PREFIX)
+func (s *Server) Routing(fns ...RegisterFunc) {
+	grp := huma.NewGroup(*s.api, API_PREFIX)
 
 	grp.UseMiddleware(middlewares.HumaOperationID())
 
 	for _, fn := range fns {
-		fn(grp, w.app)
+		fn(grp, s.app)
 	}
 }
