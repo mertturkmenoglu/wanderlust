@@ -5,10 +5,8 @@ import (
 	"encoding/json"
 	"time"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
 
@@ -17,9 +15,9 @@ import (
 )
 
 type Service struct {
-	core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	cache *cache.Cache
+	db    *db.Queries
+	pool  *pgxpool.Pool
 }
 
 func (s *Service) startNewExportTask(ctx context.Context, body dto.StartNewExportTaskInputBody) (*dto.StartNewExportTaskOutput, error) {
@@ -45,7 +43,7 @@ func (s *Service) startNewExportTask(ctx context.Context, body dto.StartNewExpor
 
 	key := cache.KeyBuilder("export", exportTask.ID)
 
-	err := s.Cache.SetObj(
+	err := s.cache.SetObj(
 		ctx,
 		key,
 		exportTask,
@@ -57,24 +55,25 @@ func (s *Service) startNewExportTask(ctx context.Context, body dto.StartNewExpor
 		return nil, huma.Error500InternalServerError("Failed to create export task")
 	}
 
-	err = s.Cache.LPush(ctx, "exports", key).Err()
+	err = s.cache.LPush(ctx, "exports", key).Err()
 
 	if err != nil {
 		sp.RecordError(err)
 		return nil, huma.Error500InternalServerError("Failed to add export task to exports queue")
 	}
 
-	_, err = s.Tasks.CreateAndEnqueue(tasks.Job{
-		Type: tasks.TypeExportPois,
-		Data: tasks.ExportPoisPayload{
-			TaskMetadata: exportTask,
-		},
-	})
+	// TODO: Convert it to Inngest
+	// _, err = s.Tasks.CreateAndEnqueue(tasks.Job{
+	// 	Type: tasks.TypeExportPois,
+	// 	Data: tasks.ExportPoisPayload{
+	// 		TaskMetadata: exportTask,
+	// 	},
+	// })
 
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to enqueue export task")
-	}
+	// if err != nil {
+	// 	sp.RecordError(err)
+	// 	return nil, huma.Error500InternalServerError("Failed to enqueue export task")
+	// }
 
 	return &dto.StartNewExportTaskOutput{
 		Body: dto.StartNewExportTaskOutputBody{
@@ -96,7 +95,7 @@ func (s *Service) get(ctx context.Context, id string) (*dto.GetExportByIdOutput,
 	key := cache.KeyBuilder("export", id)
 	var metadata dto.ExportTaskMetadata
 
-	err := s.Cache.ReadObj(ctx, key, &metadata)
+	err := s.cache.ReadObj(ctx, key, &metadata)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -128,7 +127,7 @@ func (s *Service) list(ctx context.Context) (*dto.GetListOfExportsOutput, error)
 		var batch []string
 		var err error
 
-		batch, cursor, err = s.Cache.Scan(ctx, cursor, pattern, 1000).Result()
+		batch, cursor, err = s.cache.Scan(ctx, cursor, pattern, 1000).Result()
 
 		if err != nil {
 			sp.RecordError(err)
@@ -150,7 +149,7 @@ func (s *Service) list(ctx context.Context) (*dto.GetListOfExportsOutput, error)
 		}, nil
 	}
 
-	values, err := s.Cache.MGet(ctx, keys...).Result()
+	values, err := s.cache.MGet(ctx, keys...).Result()
 
 	if err != nil {
 		sp.RecordError(err)
