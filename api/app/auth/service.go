@@ -6,7 +6,6 @@ import (
 	"time"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/cfg"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/durable"
@@ -20,14 +19,11 @@ import (
 	"github.com/cockroachdb/errors"
 	"github.com/inngest/inngestgo"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	*core.Application
-	repo    *Repository
-	db      *db.Queries
-	pool    *pgxpool.Pool
+	repo *Repository
+
 	cache   *cache.Cache
 	durable *durable.Durable
 }
@@ -548,8 +544,8 @@ func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthU
 	defer sp.End()
 
 	username, err := generateUsernameFromEmail(ctx, &db.Db{
-		Queries: s.db,
-		Pool:    s.pool,
+		Queries: s.repo.db,
+		Pool:    s.repo.pool,
 	}, oauthUser.email)
 
 	if err != nil {

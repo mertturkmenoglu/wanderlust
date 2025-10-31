@@ -26,10 +26,11 @@ func New() *Server {
 	e := echo.New()
 	e.HideBanner = true
 	huma.DefaultArrayNullable = false
+	app := NewApplication()
 
 	w := Server{
 		echo: e,
-		app:  NewApplication(),
+		app:  app,
 		api:  NewHumaApi(e),
 	}
 

@@ -23,10 +23,12 @@ func Register(grp *huma.Group, app *core.Application) {
 	durableSvc := app.Get(di.SVC_DURABLE).(*durable.Durable)
 
 	s := Service{
-		db:      dbSvc.Queries,
-		pool:    dbSvc.Pool,
 		cache:   cacheSvc,
 		durable: durableSvc,
+		repo: &Repository{
+			db:   dbSvc.Queries,
+			pool: dbSvc.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
