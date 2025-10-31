@@ -8,6 +8,7 @@ import (
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/storage"
@@ -20,16 +21,19 @@ import (
 )
 
 type Service struct {
-	App  *core.Application
-	db   *db.Queries
-	pool *pgxpool.Pool
+	db    *db.Queries
+	pool  *pgxpool.Pool
+	cache *cache.Cache
 }
 
 func NewService(app *core.Application) *Service {
+	dbSvc := app.Get(di.SVC_DB).(*db.Db)
+	cacheSvc := app.Get(di.SVC_CACHE).(*cache.Cache)
+
 	return &Service{
-		App:  app,
-		db:   app.Db.Queries,
-		pool: app.Db.Pool,
+		db:    dbSvc.Queries,
+		pool:  dbSvc.Pool,
+		cache: cacheSvc,
 	}
 }
 
@@ -128,7 +132,7 @@ func (s *Service) isFavorite(ctx context.Context, poiId string) bool {
 
 	userId := ctx.Value("userId").(string)
 
-	isFav, err := s.App.Db.Queries.IsFavorite(ctx, db.IsFavoriteParams{
+	isFav, err := s.db.IsFavorite(ctx, db.IsFavoriteParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -142,7 +146,7 @@ func (s *Service) isBookmarked(ctx context.Context, poiId string) bool {
 
 	userId := ctx.Value("userId").(string)
 
-	_, err := s.App.Db.Queries.IsBookmarked(ctx, db.IsBookmarkedParams{
+	_, err := s.db.IsBookmarked(ctx, db.IsBookmarkedParams{
 		PoiID:  poiId,
 		UserID: userId,
 	})
@@ -441,6 +445,8 @@ func (s *Service) uploadImage(ctx context.Context, input *dto.UploadPoiImageInpu
 		return nil, huma.Error500InternalServerError("Failed to open bucket")
 	}
 
+	defer bucket.Close()
+
 	// Check if the file is uploaded
 	ok, err := bucket.Exists(ctx, input.Body.FileName)
 
@@ -454,14 +460,14 @@ func (s *Service) uploadImage(ctx context.Context, input *dto.UploadPoiImageInpu
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.App.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)) {
+	if !s.cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)) {
 		err = huma.Error400BadRequest("Incorrect file")
 		sp.RecordError(err)
 		return nil, err
 	}
 
 	// delete cached information
-	err = s.App.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)).Err()
+	err = s.cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.Body.ID)).Err()
 
 	if err != nil {
 		sp.RecordError(err)
@@ -667,6 +673,8 @@ func (s *Service) deleteImage(ctx context.Context, input *dto.DeletePoiMediaInpu
 			slog.Any("error", err),
 		)
 	}
+
+	defer bucket.Close()
 
 	err = bucket.Delete(ctx, filename)
 
