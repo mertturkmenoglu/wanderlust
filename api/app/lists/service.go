@@ -450,7 +450,7 @@ func (s *Service) updateListItems(ctx context.Context, listId string, poiIds []s
 
 	defer tx.Rollback(ctx)
 
-	qtx := s.Db.Queries.WithTx(tx)
+	qtx := s.db.WithTx(tx)
 
 	err = qtx.DeleteAllListItems(ctx, listId)
 
