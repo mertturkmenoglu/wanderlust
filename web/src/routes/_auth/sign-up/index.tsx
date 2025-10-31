@@ -24,6 +24,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import { normalizeMultipleErrors } from '@/lib/form';
 
 export const Route = createFileRoute('/_auth/sign-up/')({
   component: RouteComponent,
@@ -160,7 +161,9 @@ function RouteComponent() {
                   </InputGroupAddon>
                 </InputGroup>
                 {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
+                  <FieldError
+                    errors={normalizeMultipleErrors(fieldState.error?.types)}
+                  />
                 )}
               </Field>
             )}
