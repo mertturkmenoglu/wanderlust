@@ -4,7 +4,11 @@ import (
 	"context"
 	"net/http"
 	"wanderlust/app/pois"
+	"wanderlust/pkg/activities"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
@@ -13,11 +17,16 @@ import (
 )
 
 func Register(grp *huma.Group, app *core.Application) {
+	dbSvc := app.Get(di.SVC_DB).(*db.Db)
+	cacheSvc := app.Get(di.SVC_CACHE).(*cache.Cache)
+	activitiesSvc := app.Get(di.SVC_ACTIVITIES).(*activities.ActivityService)
+
 	s := Service{
-		app,
-		pois.NewService(app),
-		app.Db.Queries,
-		app.Db.Pool,
+		poiService: pois.NewService(app),
+		db:         dbSvc.Queries,
+		pool:       dbSvc.Pool,
+		cache:      cacheSvc,
+		activities: activitiesSvc,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {

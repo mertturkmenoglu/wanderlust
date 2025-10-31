@@ -7,7 +7,6 @@ import (
 	"wanderlust/app/pois"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
@@ -23,10 +22,11 @@ import (
 )
 
 type Service struct {
-	*core.Application
 	poiService *pois.Service
 	db         *db.Queries
 	pool       *pgxpool.Pool
+	cache      *cache.Cache
+	activities *activities.ActivityService
 }
 
 func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Review, error) {
@@ -171,7 +171,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateReviewInputBody) (*
 
 	r := getRes.Body.Review
 
-	err = s.Activities.Add(ctx, activities.Activity{
+	err = s.activities.Add(ctx, activities.Activity{
 		UserID: userId,
 		Type:   activities.ActivityReview,
 		Payload: activities.ReviewPayload{
@@ -229,6 +229,8 @@ func (s *Service) remove(ctx context.Context, id string) error {
 			)
 			continue
 		}
+
+		defer bucket.Close()
 
 		err = bucket.Delete(ctx, filename)
 
@@ -461,6 +463,8 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 		return nil, huma.Error500InternalServerError("Failed to open review images bucket")
 	}
 
+	defer bucket.Close()
+
 	// Check if the file is uploaded
 	ok, err := bucket.Exists(ctx, input.FileName)
 
@@ -476,14 +480,14 @@ func (s *Service) uploadMedia(ctx context.Context, id string, input dto.UploadRe
 	}
 
 	// Check if user uploaded the correct file using cached information
-	if !s.Cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
+	if !s.cache.Has(ctx, cache.KeyBuilder(cache.KeyImageUpload, input.ID)) {
 		err = huma.Error400BadRequest("incorrect file")
 		sp.RecordError(err)
 		return nil, err
 	}
 
 	// delete cached information
-	err = s.Cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)).Err()
+	err = s.cache.Del(ctx, cache.KeyBuilder(cache.KeyImageUpload, userId, input.ID)).Err()
 
 	if err != nil {
 		sp.RecordError(err)
