@@ -4,24 +4,38 @@ import (
 	"context"
 	"net/http"
 	"wanderlust/app/pois"
+	"wanderlust/pkg/activities"
 	"wanderlust/pkg/authz"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
+	"go.uber.org/zap"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
+	cacheSvc := app.Get(di.SVC_CACHE).(*cache.Cache)
+	dbSvc := app.Get(di.SVC_DB).(*db.Db)
+	logSvc := app.Get(di.SVC_LOG).(*zap.Logger)
+	activitiesSvc := app.Get(di.SVC_ACTIVITIES).(*activities.ActivityService)
+
+	s := Service{
+		poiService: pois.NewService(app),
+		cache:      cacheSvc,
+		db:         dbSvc.Queries,
+		pool:       dbSvc.Pool,
+		log:        logSvc,
+		activities: activitiesSvc,
+	}
+
 	grp.UseSimpleModifier(func(op *huma.Operation) {
 		op.Tags = []string{"Users"}
 	})
-
-	s := Service{
-		app:        app,
-		poiService: pois.NewService(app),
-	}
 
 	huma.Register(grp,
 		huma.Operation{

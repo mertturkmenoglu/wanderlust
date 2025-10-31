@@ -4,38 +4,30 @@ import (
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
+	"wanderlust/pkg/durable"
 	"wanderlust/pkg/logs"
 	"wanderlust/pkg/mail"
-	"wanderlust/pkg/tasks"
 	"wanderlust/pkg/tracing"
-
-	"github.com/pterm/pterm"
-	"go.uber.org/zap"
 )
 
 type Application struct {
-	Activities *activities.ActivityService
-	Db         *db.Db
-	Cache      *cache.Cache
-	Mail       *mail.MailService
-	Log        *zap.Logger
-	PLog       *pterm.Logger
-	Tasks      *tasks.TasksService
+	*di.Container
 }
 
-func NewApp() *Application {
-	mailSvc := mail.New()
-	cacheSvc := cache.New()
-	logger := logs.NewZapLogger(tracing.NewOtlpWriter())
-	database := db.NewDb()
+func NewApplication() *Application {
+	ioc := di.New()
+
+	ioc.Set(di.SVC_DB, db.NewDb())
+	ioc.Set(di.SVC_CACHE, cache.New())
+	ioc.Set(di.SVC_MAIL, mail.New())
+	ioc.Set(di.SVC_DURABLE, durable.New())
+	ioc.Set(di.SVC_LOG, logs.NewZapLogger(tracing.NewOtlpWriter()))
+	ioc.Set(di.SVC_PLOG, logs.NewPTermLogger())
+	ioc.Set(di.SVC_ACTIVITIES, activities.New(ioc.Get(di.SVC_CACHE).(*cache.Cache)))
+	ioc.Set(di.SVC_PLOG, logs.NewPTermLogger())
 
 	return &Application{
-		Activities: activities.New(cacheSvc),
-		Db:         database,
-		Cache:      cacheSvc,
-		Mail:       mailSvc,
-		Log:        logger,
-		PLog:       logs.NewPTermLogger(),
-		Tasks:      tasks.New(mailSvc, database, cacheSvc),
+		ioc,
 	}
 }

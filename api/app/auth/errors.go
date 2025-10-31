@@ -1,0 +1,30 @@
+package auth
+
+import "github.com/danielgtaylor/huma/v2"
+
+var (
+	ErrNotFound                                   = huma.Error404NotFound("User not found")
+	ErrFailedToGet                                = huma.Error500InternalServerError("Failed to get user")
+	ErrFailedToGetRole                            = huma.Error500InternalServerError("Failed to get user role")
+	ErrLogin                                      = huma.Error400BadRequest("Invalid email or password")
+	ErrFailedToCreateJWT                          = huma.Error500InternalServerError("Failed to create JWT")
+	ErrFailedToStoreJWT                           = huma.Error500InternalServerError("Failed to store JWT in cache")
+	ErrInvalidRefreshToken                        = huma.Error401Unauthorized("Invalid refresh token")
+	ErrFailedToRemoveJWT                          = huma.Error500InternalServerError("Failed to remove JWT from cache")
+	ErrHandleTaken                                = huma.Error400BadRequest("Username or email is already taken")
+	ErrUsernameChars                              = huma.Error422UnprocessableEntity("Username contains invalid characters")
+	ErrFailedToCreate                             = huma.Error500InternalServerError("Failed to create user")
+	ErrFailedToHash                               = huma.Error500InternalServerError("Failed to hash password")
+	ErrFailedToGenerateVerificationCode           = huma.Error500InternalServerError("Failed to generate verification code")
+	ErrFailedToStoreVerificationCode              = huma.Error500InternalServerError("Failed to store verification code")
+	ErrFailedToEnqueueSendForgotPasswordEmailTask = huma.Error500InternalServerError("Failed to enqueue send forgot password email task")
+	ErrInvalidOrExpiredVerificationCode           = huma.Error422UnprocessableEntity("Invalid or expired verification code")
+	ErrFailedToDeleteVerificationCode             = huma.Error500InternalServerError("Failed to delete verification code")
+	ErrFailedToCreateOAuthState                   = huma.Error500InternalServerError("Failed to create OAuth state")
+	ErrFailedToGetOAuthToken                      = huma.Error500InternalServerError("Failed to get OAuth token")
+	ErrFailedToFetchOAuthUserInfo                 = huma.Error500InternalServerError("Failed to fetch OAuth user info")
+	ErrFailedToUpdateSocialID                     = huma.Error500InternalServerError("Failed to update social ID")
+	ErrFailedToGenerateUsername                   = huma.Error500InternalServerError("Failed to generate username")
+	ErrPasswordsDoNotMatch                        = huma.Error422UnprocessableEntity("Passwords do not match")
+	ErrInvalidCurrentPassword                     = huma.Error422UnprocessableEntity("Current password is incorrect")
+)

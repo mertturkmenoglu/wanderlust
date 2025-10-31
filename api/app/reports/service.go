@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	"time"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mail"
@@ -24,9 +23,9 @@ import (
 )
 
 type Service struct {
-	core.Application
 	db   *db.Queries
 	pool *pgxpool.Pool
+	mail *mail.MailService
 }
 
 func (s *Service) findPaginated(ctx context.Context, offset int32, limit int32) ([]dto.Report, error) {
@@ -155,7 +154,7 @@ func (s *Service) create(ctx context.Context, body dto.CreateReportInputBody) (*
 		return nil, err
 	}
 
-	err = s.Mail.Send(mail.MailInfo{
+	err = s.mail.Send(mail.MailInfo{
 		TemplatePath: "templates/report-acknowledge.html",
 		Subject:      "We receieved your report!",
 		To:           user.Email,

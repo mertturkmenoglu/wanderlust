@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 	"wanderlust/app/pois"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
@@ -23,7 +22,6 @@ import (
 )
 
 type Service struct {
-	core.Application
 	poisService *pois.Service
 	wg          *sync.WaitGroup
 	db          *db.Queries

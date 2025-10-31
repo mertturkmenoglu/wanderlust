@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
@@ -12,10 +14,11 @@ import (
 )
 
 func Register(grp *huma.Group, app *core.Application) {
+	dbSvc := app.Get(di.SVC_DB).(*db.Db)
+
 	s := Service{
-		app,
-		app.Db.Queries,
-		app.Db.Pool,
+		db:   dbSvc.Queries,
+		pool: dbSvc.Pool,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {

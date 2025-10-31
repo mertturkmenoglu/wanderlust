@@ -17,7 +17,6 @@ func (s *Service) list(ctx context.Context) (*dto.ListAmenitiesOutput, error) {
 	res, err := s.repo.list(ctx)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -44,7 +43,6 @@ func (s *Service) create(ctx context.Context, body dto.CreateAmenityInputBody) (
 	res, err := s.repo.create(ctx, body.Name)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
@@ -69,7 +67,6 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateAmenityIn
 	})
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 

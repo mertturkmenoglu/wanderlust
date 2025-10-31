@@ -17,13 +17,13 @@ func Handler(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	b, err := storage.OpenBucket(ctx, bucketName)
+	bucket, err := storage.OpenBucket(ctx, bucketName)
 
 	if err != nil {
 		return err
 	}
 
-	defer b.Close()
+	defer bucket.Close()
 
 	fileName := c.QueryParam("obj")
 
@@ -31,7 +31,7 @@ func Handler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "obj query param is required")
 	}
 
-	err = b.Upload(
+	err = bucket.Upload(
 		ctx,
 		fileName,
 		c.Request().Body,

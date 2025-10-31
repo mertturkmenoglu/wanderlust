@@ -94,6 +94,14 @@ services:
     stdin_open: true
     image: grafana/otel-lgtm
 
+  wl-inngest:
+    container_name: wl-inngest
+    image: inngest/inngest
+    restart: unless-stopped
+    ports:
+      - 8288:8288
+    command: inngest dev -u http://host.docker.internal:8080
+
 networks:
   wl-redisnet:
   wl-searchnet:

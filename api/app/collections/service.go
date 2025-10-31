@@ -2,7 +2,6 @@ package collections
 
 import (
 	"context"
-	"wanderlust/pkg/core"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
@@ -10,7 +9,6 @@ import (
 )
 
 type Service struct {
-	*core.Application
 	repo *Repository
 }
 

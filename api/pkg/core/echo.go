@@ -12,35 +12,35 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 
-func (w *Wanderlust) SetupEcho() {
-	w.echo.Use(middlewares.CustomRecovery())
+func (s *Server) SetupEcho() {
+	s.echo.Use(middlewares.CustomRecovery())
 
 	if cfg.Env.Env == "dev" {
-		w.echo.Use(otelecho.Middleware("wanderlust", otelecho.WithSkipper(func(c echo.Context) bool {
+		s.echo.Use(otelecho.Middleware("wanderlust", otelecho.WithSkipper(func(c echo.Context) bool {
 			return c.Request().Method == http.MethodOptions
 		})))
 
-		w.echo.Use(middleware.RequestID())
-		w.echo.Use(middlewares.Cors())
-		w.echo.Use(middlewares.PTermLogger)
-		w.echo.Use(middlewares.CustomBodyDump())
+		s.echo.Use(middleware.RequestID())
+		s.echo.Use(middlewares.Cors())
+		s.echo.Use(middlewares.PTermLogger)
+		s.echo.Use(middlewares.CustomBodyDump())
 	}
 
-	w.echo.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+	s.echo.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
 		Timeout: 10 * time.Second,
 	}))
-	w.echo.Use(middleware.Secure())
-	w.echo.Use(middleware.BodyLimit("1MB"))
+	s.echo.Use(middleware.Secure())
+	s.echo.Use(middleware.BodyLimit("1MB"))
 
 	if cfg.Env.DocsType == "scalar" {
-		w.echo.Static("/", "assets")
-		w.echo.GET("/docs", func(c echo.Context) error {
+		s.echo.Static("/", "assets")
+		s.echo.GET("/docs", func(c echo.Context) error {
 			c.Response().Header().Set("Content-Type", "text/html")
 			return c.String(http.StatusOK, API_DOCS_SCALAR_HTML)
 		})
 	}
 
-	w.echo.PUT("/uploads", uploads.Handler)
+	s.echo.PUT("/uploads", uploads.Handler)
 
-	w.echo.Static("/uploads", "tmp/storage")
+	s.echo.Static("/uploads", "tmp/storage")
 }

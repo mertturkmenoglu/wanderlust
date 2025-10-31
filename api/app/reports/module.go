@@ -5,7 +5,10 @@ import (
 	"net/http"
 	"wanderlust/pkg/authz"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
+	"wanderlust/pkg/mail"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -13,10 +16,13 @@ import (
 )
 
 func Register(grp *huma.Group, app *core.Application) {
+	dbSvc := app.Get(di.SVC_DB).(*db.Db)
+	mailSvc := app.Get(di.SVC_MAIL).(*mail.MailService)
+
 	s := Service{
-		*app,
-		app.Db.Queries,
-		app.Db.Pool,
+		db:   dbSvc.Queries,
+		pool: dbSvc.Pool,
+		mail: mailSvc,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {

@@ -5,6 +5,7 @@ import (
 	"wanderlust/app/pois"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/utils"
 
 	tsapi "github.com/typesense/typesense-go/v2/typesense/api"
@@ -20,9 +21,13 @@ func handlePoiSync() error {
 		return err
 	}
 
+	ioc := di.New()
+
+	ioc.Set(di.SVC_DB, d)
+
 	searchService := New()
 	s := pois.NewService(&core.Application{
-		Db: d,
+		Container: ioc,
 	})
 
 	const step int32 = 1000
