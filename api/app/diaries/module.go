@@ -2,20 +2,30 @@ package diaries
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/db"
+	"wanderlust/pkg/di"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/danielgtaylor/huma/v2"
 )
 
 func Register(grp *huma.Group, app *core.Application) {
+	dbSvc := app.Get(di.SVC_DB).(*db.Db)
+	cacheSvc := app.Get(di.SVC_CACHE).(*cache.Cache)
+
 	s := Service{
-		app,
-		app.Db.Queries,
-		app.Db.Pool,
+		repo: &Repository{
+			db:   dbSvc.Queries,
+			pool: dbSvc.Pool,
+		},
+		cache: cacheSvc,
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -42,7 +52,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -70,7 +80,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.list(ctx, input.PaginationQueryParams, input.DiaryDateFilterQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -98,7 +108,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -126,7 +136,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.remove(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -154,7 +164,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.uploadImage(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -182,7 +192,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeImage(ctx, input.ID, input.ImageID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -210,7 +220,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateImage(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -238,7 +248,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -266,7 +276,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateFriends(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
@@ -294,7 +304,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateLocations(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
 				return nil, err
 			}
 
