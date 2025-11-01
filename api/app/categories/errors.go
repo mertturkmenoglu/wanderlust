@@ -9,4 +9,5 @@ var (
 	ErrFailedToCreate  = huma.Error500InternalServerError("Failed to create category")
 	ErrNotFound        = huma.Error404NotFound("Category not found")
 	ErrFailedToDelete  = huma.Error500InternalServerError("Failed to delete category")
+	ErrFailedToUpdate  = huma.Error500InternalServerError("Failed to update category")
 )

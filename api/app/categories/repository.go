@@ -2,10 +2,10 @@ package categories
 
 import (
 	"context"
-	"errors"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/tracing"
 
+	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -19,16 +19,14 @@ func (r *Repository) list(ctx context.Context) ([]db.Category, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetCategories(ctx)
+	res, err := r.db.FindManyCategories(ctx)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoCategoryFound
+			return nil, errors.Wrap(ErrNoCategoryFound, err.Error())
 		}
 
-		return nil, ErrFailedToList
+		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	return res, nil
@@ -43,13 +41,11 @@ func (r *Repository) create(ctx context.Context, params CreateParams) (*db.Categ
 	res, err := r.db.CreateCategory(ctx, params)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrTooManyRows) {
-			return nil, ErrAlreadyExists
+			return nil, errors.Wrap(ErrAlreadyExists, err.Error())
 		}
 
-		return nil, ErrFailedToCreate
+		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
 	}
 
 	return &res, nil
@@ -61,16 +57,20 @@ func (r *Repository) update(ctx context.Context, params UpdateParams) (*db.Categ
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.UpdateCategory(ctx, params)
+	_, err := r.db.UpdateCategory(ctx, params)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, errors.Wrap(ErrNotFound, err.Error())
 		}
 
-		return nil, ErrFailedToCreate
+		return nil, errors.Wrap(ErrFailedToUpdate, err.Error())
+	}
+
+	res, err := r.db.FindCategoryById(ctx, params.ID)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrNotFound, err.Error())
 	}
 
 	return &res, nil
@@ -80,16 +80,18 @@ func (r *Repository) remove(ctx context.Context, id int16) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.DeleteCategory(ctx, id)
+	tag, err := r.db.RemoveCategoryById(ctx, id)
 
 	if err != nil {
-		sp.RecordError(err)
-
 		if errors.Is(err, pgx.ErrNoRows) {
-			return ErrNotFound
+			return errors.Wrap(ErrNotFound, err.Error())
 		}
 
-		return ErrFailedToDelete
+		return errors.Wrap(ErrFailedToDelete, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
 	}
 
 	return nil
