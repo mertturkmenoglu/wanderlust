@@ -36,7 +36,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodPost,
 			Path:          "/bookmarks/",
 			Summary:       "Create Bookmark",
-			Description:   "Create a bookmark for a point of interest",
+			Description:   "Create a bookmark for a place",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -64,7 +64,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodDelete,
 			Path:          "/bookmarks/{id}",
 			Summary:       "Delete Bookmark",
-			Description:   "Delete a bookmark for a point of interest",
+			Description:   "Delete a bookmark for a place",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
