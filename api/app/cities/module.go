@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -38,7 +37,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "List cities",
 			Description:   "List cities",
 		},
-		func(ctx context.Context, input *struct{}) (*dto.CitiesListOutput, error) {
+		func(ctx context.Context, input *ListCitiesInput) (*ListCitiesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -61,7 +60,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "Featured cities",
 			Description:   "Get featured cities",
 		},
-		func(ctx context.Context, input *struct{}) (*dto.CitiesFeaturedOutput, error) {
+		func(ctx context.Context, input *ListFeaturedCitiesInput) (*ListFeaturedCitiesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -84,7 +83,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "Get city",
 			Description:   "Get city by ID",
 		},
-		func(ctx context.Context, input *dto.GetCityByIdInput) (*dto.GetCityByIdOutput, error) {
+		func(ctx context.Context, input *GetCityByIdInput) (*GetCityByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -112,7 +111,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateCityInput) (*dto.CreateCityOutput, error) {
+		func(ctx context.Context, input *CreateCityInput) (*CreateCityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -140,7 +139,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteCityInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteCityInput) (*DeleteCityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -168,7 +167,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateCityInput) (*dto.UpdateCityOutput, error) {
+		func(ctx context.Context, input *UpdateCityInput) (*UpdateCityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
