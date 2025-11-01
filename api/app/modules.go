@@ -2,7 +2,6 @@ package app
 
 import (
 	"wanderlust/app/aggregator"
-	"wanderlust/app/amenities"
 	"wanderlust/app/auth"
 	"wanderlust/app/bookmarks"
 	"wanderlust/app/categories"
@@ -24,7 +23,6 @@ import (
 
 var Modules = []core.RegisterFunc{
 	aggregator.Register,
-	amenities.Register,
 	auth.Register,
 	bookmarks.Register,
 	categories.Register,
