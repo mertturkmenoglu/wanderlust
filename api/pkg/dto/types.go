@@ -105,17 +105,6 @@ type DiaryLocation struct {
 	Index       int16   `json:"index" example:"1" doc:"The list index of the location"`
 }
 
-type ExportTaskMetadata struct {
-	ID        string    `json:"id" example:"7323488942953598976" doc:"ID of export"`
-	CreatedAt time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of export"`
-	Status    string    `json:"status" example:"pending" doc:"Status of export"`
-	Progress  int32     `json:"progress" example:"0" doc:"Progress of export"`
-	Error     *string   `json:"error" example:"Failed to export" doc:"Error of export"`
-	File      *string   `json:"file" example:"https://example.com/export.zip" doc:"File of export"`
-	IDs       []string  `json:"ids" doc:"IDs of exported data"`
-	Include   []string  `json:"include" doc:"Which data to include"`
-}
-
 type Favorite struct {
 	ID        int32     `json:"id" example:"1234" doc:"ID of favorite"`
 	PlaceID   string    `json:"placeId" example:"7323488942953598976" doc:"ID of the place"`

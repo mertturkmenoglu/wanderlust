@@ -17,14 +17,12 @@ const (
 )
 
 var steps = [...]string{
-	"amenities",
 	"categories",
 	"cities",
 	"addresses",
 	"users",
 	"pois",
 	"fake-id", // run fake id to get user and poi ids
-	"amenities-pois",
 	"images",
 	"follows",
 	"reviews",
@@ -50,13 +48,6 @@ func Automate() error {
 			Count: 10_000,
 			Step:  1000,
 			Fake:  f,
-		},
-		"amenities": &handlers.FakeAmenities{
-			Fake: f,
-		},
-		"amenities-pois": &handlers.FakeAmenitiesPois{
-			PoisPath: poisPath,
-			Fake:     f,
 		},
 		"bookmarks": &handlers.FakeBookmarks{
 			UsersPath: usersPath,
