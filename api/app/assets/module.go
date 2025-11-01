@@ -1,4 +1,4 @@
-package images
+package assets
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -21,22 +20,22 @@ func Register(grp *huma.Group, app *core.Application) {
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
-		op.Tags = []string{"Images"}
+		op.Tags = []string{"Assets"}
 	})
 
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/images/upload/",
+			Path:          "/assets/upload/",
 			Summary:       "Get Presigned URL",
-			Description:   "Get a presigned URL for uploading an image",
+			Description:   "Get a presigned URL for uploading an asset",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.PresignedUrlInput) (*dto.PresignedUrlOutput, error) {
+		func(ctx context.Context, input *GetPresignedUrlInput) (*GetPresignedUrlOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

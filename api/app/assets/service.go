@@ -1,11 +1,10 @@
-package images
+package assets
 
 import (
 	"context"
 	"net/http"
 	"time"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/storage"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
@@ -18,7 +17,7 @@ type Service struct {
 	cache *cache.Cache
 }
 
-func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlInput) (*dto.PresignedUrlOutput, error) {
+func (s *Service) getPresignedURL(ctx context.Context, input *GetPresignedUrlInput) (*GetPresignedUrlOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -56,7 +55,7 @@ func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlIn
 		return nil, huma.Error500InternalServerError("Failed to get presigned URL")
 	}
 
-	out := dto.PresignedUrlOutputBody{
+	out := GetPresignedUrlOutputBody{
 		Url:           url,
 		Id:            id,
 		Bucket:        input.Bucket,
@@ -71,7 +70,7 @@ func (s *Service) getPresignedURL(ctx context.Context, input *dto.PresignedUrlIn
 		return nil, huma.Error500InternalServerError("Failed to save presigned URL to cache")
 	}
 
-	return &dto.PresignedUrlOutput{
+	return &GetPresignedUrlOutput{
 		Body: out,
 	}, nil
 }
