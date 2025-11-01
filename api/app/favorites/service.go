@@ -11,7 +11,7 @@ type Service struct {
 	repo *Repository
 }
 
-func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavoriteOutput, error) {
+func (s *Service) create(ctx context.Context, poiId string) (*CreateFavoriteOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -23,9 +23,10 @@ func (s *Service) create(ctx context.Context, poiId string) (*dto.CreateFavorite
 		return nil, err
 	}
 
-	return &dto.CreateFavoriteOutput{
-		Body: dto.CreateFavoriteOutputBody{
-			PoiID:     res.PoiID,
+	return &CreateFavoriteOutput{
+		Body: CreateFavoriteOutputBody{
+			ID:        res.ID,
+			PlaceID:   res.PlaceID,
 			UserID:    res.UserID,
 			CreatedAt: res.CreatedAt.Time,
 		},
@@ -41,7 +42,7 @@ func (s *Service) remove(ctx context.Context, poiId string) error {
 	return s.repo.remove(ctx, userId, poiId)
 }
 
-func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
+func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*GetCurrentUserFavoritesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -62,27 +63,27 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*d
 		return nil, err
 	}
 
-	poiIds := make([]string, len(res))
+	placeIds := make([]string, len(res))
 
 	for i, v := range res {
-		poiIds[i] = v.PoiID
+		placeIds[i] = v.PlaceID
 	}
 
-	favorites, err := s.repo.populateWithPois(ctx, res, poiIds)
+	favorites, err := s.repo.populateWithPois(ctx, res, placeIds)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &dto.GetUserFavoritesOutput{
-		Body: dto.GetUserFavoritesOutputBody{
+	return &GetCurrentUserFavoritesOutput{
+		Body: GetCurrentUserFavoritesOutputBody{
 			Favorites:  favorites,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
 }
 
-func (s *Service) getByUsername(ctx context.Context, username string, params dto.PaginationQueryParams) (*dto.GetUserFavoritesOutput, error) {
+func (s *Service) getByUsername(ctx context.Context, username string, params dto.PaginationQueryParams) (*GetUserFavoritesByUsernameOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -106,16 +107,16 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 		return nil, err
 	}
 
-	poiIds := make([]string, len(res))
+	placeIds := make([]string, len(res))
 
 	for i, v := range res {
-		poiIds[i] = v.PoiID
+		placeIds[i] = v.PlaceID
 	}
 
-	favorites, err := s.repo.populateWithPois(ctx, res, poiIds)
+	favorites, err := s.repo.populateWithPois(ctx, res, placeIds)
 
-	return &dto.GetUserFavoritesOutput{
-		Body: dto.GetUserFavoritesOutputBody{
+	return &GetUserFavoritesByUsernameOutput{
+		Body: GetUserFavoritesByUsernameOutputBody{
 			Favorites:  favorites,
 			Pagination: pagination.Compute(params, count),
 		},
