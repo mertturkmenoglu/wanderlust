@@ -9,17 +9,16 @@ INSERT INTO categories (
   $3
 ) RETURNING *;
 
--- name: GetCategories :many
+-- name: FinyManyCategories :many
 SELECT * FROM categories;
 
--- name: DeleteCategory :exec
+-- name: RemoveCategoryById :execresult
 DELETE FROM categories
 WHERE id = $1;
 
--- name: UpdateCategory :one
+-- name: UpdateCategory :execresult
 UPDATE categories
-SET 
+SET
   name = $2,
   image = $3
-WHERE id = $1
-RETURNING *;
+WHERE id = $1;
