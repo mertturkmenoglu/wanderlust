@@ -34,13 +34,13 @@ func (r *Repository) create(ctx context.Context, params CreateParams) (*db.Bookm
 	return &res, nil
 }
 
-type RemoveParams = db.DeleteBookmarkByPoiIdParams
+type RemoveParams = db.RemoveBookmarkByPlaceIdAndUserIdParams
 
 func (r *Repository) remove(ctx context.Context, params RemoveParams) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.DeleteBookmarkByPoiId(ctx, params)
+	_, err := r.db.RemoveBookmarkByPlaceIdAndUserId(ctx, params)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -53,13 +53,13 @@ func (r *Repository) remove(ctx context.Context, params RemoveParams) error {
 	return nil
 }
 
-type ListParams = db.GetBookmarksByUserIdParams
+type ListParams = db.FindManyBookmarksByUserIdParams
 
 func (r *Repository) list(ctx context.Context, params ListParams) ([]db.Bookmark, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetBookmarksByUserId(ctx, params)
+	res, err := r.db.FindManyBookmarksByUserId(ctx, params)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -76,7 +76,7 @@ func (r *Repository) count(ctx context.Context, userId string) (int64, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.CountUserBookmarks(ctx, userId)
+	res, err := r.db.CountBookmarksByUserId(ctx, userId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

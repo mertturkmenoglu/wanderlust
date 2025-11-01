@@ -4,7 +4,6 @@ import (
 	"context"
 	"wanderlust/app/pois"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 
@@ -12,48 +11,48 @@ import (
 )
 
 type Service struct {
-	poiService *pois.Service
-	repo       *Repository
+	placesService *pois.Service
+	repo          *Repository
 }
 
-func (s *Service) create(ctx context.Context, body dto.CreateBookmarkInputBody) (*dto.CreateBookmarkOutput, error) {
+func (s *Service) create(ctx context.Context, body CreateBookmarkInputBody) (*CreateBookmarkOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
 	res, err := s.repo.create(ctx, CreateParams{
-		PoiID:  body.PoiId,
-		UserID: userId,
+		PlaceID: body.PlaceID,
+		UserID:  userId,
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &dto.CreateBookmarkOutput{
-		Body: dto.CreateBookmarkOutputBody{
+	return &CreateBookmarkOutput{
+		Body: CreateBookmarkOutputBody{
 			ID:        res.ID,
-			PoiID:     res.PoiID,
+			PlaceID:   res.PlaceID,
 			UserID:    res.UserID,
 			CreatedAt: res.CreatedAt.Time,
 		},
 	}, nil
 }
 
-func (s *Service) remove(ctx context.Context, poiId string) error {
+func (s *Service) remove(ctx context.Context, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
 	return s.repo.remove(ctx, RemoveParams{
-		PoiID:  poiId,
-		UserID: userId,
+		PlaceID: placeId,
+		UserID:  userId,
 	})
 }
 
-func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetUserBookmarksOutput, error) {
+func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*GetUserBookmarksOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -75,13 +74,13 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 		return nil, err
 	}
 
-	poiIds := make([]string, len(res))
+	placeIds := make([]string, len(res))
 
 	for i, v := range res {
-		poiIds[i] = v.PoiID
+		placeIds[i] = v.PlaceID
 	}
 
-	pois, err := s.poiService.FindMany(ctx, poiIds)
+	places, err := s.placesService.FindMany(ctx, placeIds)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToList, err.Error())
@@ -90,24 +89,24 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 	bookmarks := make([]dto.Bookmark, len(res))
 
 	for i, v := range res {
-		var poi *dto.Poi = nil
+		var place *dto.Place = nil
 
-		for _, p := range pois {
-			if p.ID == v.PoiID {
-				poi = &p
+		for _, p := range places {
+			if p.ID == v.PlaceID {
+				place = &p
 				break
 			}
 		}
 
-		if poi == nil {
-			return nil, errors.Wrap(ErrFailedToList, "failed to find poi for bookmark")
+		if place == nil {
+			return nil, errors.Wrap(ErrFailedToList, "failed to find place for bookmark")
 		}
 
-		bookmarks[i] = mapper.ToBookmark(v, *poi)
+		bookmarks[i] = dto.ToBookmark(v, *place)
 	}
 
-	return &dto.GetUserBookmarksOutput{
-		Body: dto.GetUserBookmarksOutputBody{
+	return &GetUserBookmarksOutput{
+		Body: GetUserBookmarksOutputBody{
 			Bookmarks:  bookmarks,
 			Pagination: pagination.Compute(params, count),
 		},

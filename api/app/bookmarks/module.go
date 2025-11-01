@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -44,7 +43,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 409, 422, 500},
 		},
-		func(ctx context.Context, input *dto.CreateBookmarkInput) (*dto.CreateBookmarkOutput, error) {
+		func(ctx context.Context, input *CreateBookmarkInput) (*CreateBookmarkOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -72,11 +71,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.DeleteBookmarkInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteBookmarkInput) (*DeleteBookmarkOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.remove(ctx, input.ID)
+			err := s.remove(ctx, input.PlaceID)
 
 			if err != nil {
 				sp.RecordError(errors.New(fmt.Sprintf("%+v", err)))
@@ -100,7 +99,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.GetUserBookmarksInput) (*dto.GetUserBookmarksOutput, error) {
+		func(ctx context.Context, input *GetUserBookmarksInput) (*GetUserBookmarksOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
