@@ -32,7 +32,11 @@ func (r *Repository) list(ctx context.Context, ids []string) ([]dto.Diary, error
 		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
-	diaries := make([]dto.Diary, 0, len(dbDiaries))
+	if len(dbDiaries) == 0 {
+		return []dto.Diary{}, nil
+	}
+
+	diaries := make([]dto.Diary, len(dbDiaries))
 
 	for i, dbDiary := range dbDiaries {
 		res, err := mapper.ToDiary(dbDiary)
@@ -57,7 +61,7 @@ func (r *Repository) get(ctx context.Context, id string) (*dto.Diary, error) {
 		return nil, err
 	}
 
-	if len(res) != 0 {
+	if len(res) != 1 {
 		return nil, ErrNotFound
 	}
 
@@ -88,6 +92,10 @@ func (r *Repository) listAll(ctx context.Context, userId string, params dto.Pagi
 		Limit:  int32(params.PageSize),
 		Offset: int32(pagination.GetOffset(params)),
 	})
+
+	if len(dbRes) == 0 {
+		return []dto.Diary{}, 0, nil
+	}
 
 	if err != nil {
 		return nil, 0, errors.Wrap(ErrFailedToList, err.Error())
