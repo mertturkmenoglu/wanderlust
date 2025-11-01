@@ -2,25 +2,28 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
+
   email VARCHAR (128) UNIQUE NOT NULL,
   username VARCHAR (32) UNIQUE NOT NULL,
   full_name VARCHAR (128) NOT NULL,
+
   password_hash VARCHAR (256),
   google_id VARCHAR(64) UNIQUE,
   fb_id VARCHAR(64) UNIQUE,
+
   is_verified BOOLEAN DEFAULT FALSE NOT NULL,
   bio VARCHAR(256),
-  pronouns VARCHAR(32),
-  website VARCHAR(256),
-  profile_image VARCHAR(256),
-  banner_image VARCHAR(256),
+
+  profile_image TEXT,
+  banner_image TEXT,
+
   followers_count INT DEFAULT 0 NOT NULL,
   following_count INT DEFAULT 0 NOT NULL,
+
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Create indexes
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
@@ -47,10 +50,26 @@ CREATE TABLE IF NOT EXISTS follows (
 CREATE INDEX IF NOT EXISTS idx_follows_follower ON follows(follower_id);
 
 CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id);
+
+CREATE OR REPLACE VIEW profile AS
+SELECT 
+  id,
+  username,
+  full_name,
+  is_verified,
+  bio,
+  profile_image,
+  banner_image,
+  followers_count,
+  following_count,
+  created_at
+FROM users;
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
+DROP VIEW IF EXISTS profile;
+
 DROP TABLE IF EXISTS follows;
 
 DROP TABLE IF EXISTS admins;
