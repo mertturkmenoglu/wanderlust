@@ -10,6 +10,8 @@ const redirectTimeout = 3000;
 function usePasswordResetForm() {
   return useForm<FormInput>({
     resolver: zodResolver(FormSchema),
+    criteriaMode: 'all',
+    mode: 'onBlur',
     defaultValues: {
       email:
         globalThis.window.sessionStorage.getItem('forgot-password-email') ?? '',
