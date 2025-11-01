@@ -84,7 +84,7 @@ func (r *Repository) listNewPoisIDs(ctx context.Context) ([]string, error) {
 	return arr, nil
 }
 
-func (r *Repository) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
+func (r *Repository) getHomeAggregation(ctx context.Context) (*HomeAggregatorOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -140,10 +140,10 @@ func (r *Repository) getHomeAggregation(ctx context.Context) (*dto.HomeAggregato
 		return nil, errors.Wrap(ErrAggregation, err.Error())
 	}
 
-	poisNew := make([]dto.Poi, 0, len(dbNew))
-	poisPopular := make([]dto.Poi, 0, len(dbPopular))
-	poisFeatured := make([]dto.Poi, 0, len(dbFeatured))
-	poisFavorites := make([]dto.Poi, 0, len(dbFavorites))
+	poisNew := make([]dto.Place, 0, len(dbNew))
+	poisPopular := make([]dto.Place, 0, len(dbPopular))
+	poisFeatured := make([]dto.Place, 0, len(dbFeatured))
+	poisFavorites := make([]dto.Place, 0, len(dbFavorites))
 
 	for _, v := range allPois {
 		if contains(dbNew, v.ID) {
@@ -163,8 +163,8 @@ func (r *Repository) getHomeAggregation(ctx context.Context) (*dto.HomeAggregato
 		}
 	}
 
-	obj := &dto.HomeAggregatorOutput{
-		Body: dto.HomeAggregatorOutputBody{
+	obj := &HomeAggregatorOutput{
+		Body: HomeAggregatorOutputBody{
 			New:       poisNew,
 			Popular:   poisPopular,
 			Featured:  poisFeatured,
