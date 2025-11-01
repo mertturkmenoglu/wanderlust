@@ -1,24 +1,85 @@
 import { Button } from '@/components/ui/button';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Spinner } from '@/components/ui/spinner';
 import { api } from '@/lib/api';
+import { normalizeMultipleErrors } from '@/lib/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 const schema = z
   .object({
-    currentPassword: z.string().min(1),
-    newPassword: z.string().min(6).max(128),
-    confirmPassword: z.string().min(6).max(128),
+    currentPassword: z
+      .string()
+      .min(1, { message: 'Current password is required' })
+      .max(128, { message: 'Password is too long' }),
+    newPassword: z
+      .string()
+      .min(8, { message: 'At least 8 characters' })
+      .max(128, { message: 'Password is too long' })
+      .superRefine((data, ctx) => {
+        let flag = false;
+        if (data.includes(' ')) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Password cannot contain spaces',
+          });
+          flag = true;
+        }
+
+        if (!/[A-Z]/.test(data)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'At least one uppercase letter',
+          });
+          flag = true;
+        }
+
+        if (!/[a-z]/.test(data)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'At least one lowercase letter',
+          });
+          flag = true;
+        }
+
+        if (!/[0-9]/.test(data)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'At least one number',
+          });
+          flag = true;
+        }
+
+        if (!/[^A-Za-z0-9]/.test(data)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'At least one special character',
+          });
+          flag = true;
+        }
+
+        if (flag) {
+          return z.NEVER;
+        }
+
+        return true;
+      }),
+    confirmPassword: z.string().min(1).max(128),
   })
   .superRefine((data, ctx) => {
     if (data.newPassword !== data.confirmPassword) {
@@ -41,91 +102,157 @@ const schema = z
   });
 
 export function ChangePasswordForm() {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(schema),
+    mode: 'onBlur',
+    criteriaMode: 'all',
   });
 
-  const changePasswordMutation = api.useMutation(
-    'post',
-    '/api/v2/auth/password/change',
-    {
-      onSuccess: () => {
-        toast.success('Password changed successfully.');
-      },
+  const mutation = api.useMutation('post', '/api/v2/auth/password/change', {
+    onSuccess: () => {
+      toast.success('Password changed successfully.');
     },
-  );
+  });
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => {
-          changePasswordMutation.mutate({
-            body: data,
-          });
-        })}
-      >
-        <FormField
-          control={form.control}
+    <form
+      onSubmit={form.handleSubmit((data) => {
+        mutation.mutate({
+          body: data,
+        });
+      })}
+    >
+      <FieldGroup className="gap-4">
+        <Controller
           name="currentPassword"
-          render={({ field }) => (
-            <FormItem className="mt-4">
-              <FormLabel>Current Password</FormLabel>
-              <FormControl>
-                <Input
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="current-password">
+                Current Password
+              </FieldLabel>
+
+              <InputGroup>
+                <InputGroupInput
+                  {...field}
+                  id="current-password"
                   placeholder="Current Password"
-                  type="password"
-                  {...field}
+                  autoComplete="current-password"
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  aria-invalid={fieldState.invalid}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setShowCurrentPassword((prev) => !prev)}
+                  >
+                    {showCurrentPassword ? (
+                      <EyeIcon className="size-4" />
+                    ) : (
+                      <EyeOffIcon className="size-4" />
+                    )}
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
         />
 
-        <FormField
-          control={form.control}
+        <Controller
           name="newPassword"
-          render={({ field }) => (
-            <FormItem className="mt-4">
-              <FormLabel>New Password</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="New Password"
-                  type="password"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="new-password">New Password</FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   {...field}
+                  id="new-password"
+                  placeholder="New Password"
+                  autoComplete="new-password"
+                  type={showNewPassword ? 'text' : 'password'}
+                  aria-invalid={fieldState.invalid}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                  >
+                    {showNewPassword ? (
+                      <EyeIcon className="size-4" />
+                    ) : (
+                      <EyeOffIcon className="size-4" />
+                    )}
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+              {fieldState.invalid && (
+                <FieldError
+                  errors={normalizeMultipleErrors(fieldState.error?.types)}
+                />
+              )}
+            </Field>
           )}
         />
 
-        <FormField
-          control={form.control}
+        <Controller
           name="confirmPassword"
-          render={({ field }) => (
-            <FormItem className="mt-4">
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Confirm Password"
-                  type="password"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="confirm-password">
+                Confirm Password
+              </FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   {...field}
+                  id="confirm-password"
+                  placeholder="Confirm Password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  aria-invalid={fieldState.invalid}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeIcon className="size-4" />
+                    ) : (
+                      <EyeOffIcon className="size-4" />
+                    )}
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+              {fieldState.invalid && (
+                <FieldError
+                  errors={normalizeMultipleErrors(fieldState.error?.types)}
+                />
+              )}
+            </Field>
           )}
         />
 
         <Button
           type="submit"
           className="mt-4"
-          disabled={!form.formState.isDirty}
+          disabled={mutation.isPending}
         >
-          Change Password
+          {mutation.isPending && <Spinner />}
+          <span>Change Password</span>
         </Button>
-      </form>
-    </Form>
+      </FieldGroup>
+    </form>
   );
 }
