@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"wanderlust/pkg/core"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -23,12 +22,12 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "A simple health check mechanism to verify that the API is operational",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.HealthInput) (*dto.HealthOutput, error) {
+		func(ctx context.Context, input *HealthInput) (*HealthOutput, error) {
 			_, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			return &dto.HealthOutput{
-				Body: dto.HealthOutputBody{
+			return &HealthOutput{
+				Body: HealthOutputBody{
 					Message: "OK",
 				},
 			}, nil
