@@ -1,11 +1,11 @@
--- name: IsUserFollowing :one
+-- name: IsFollowing :one
 SELECT EXISTS (
   SELECT 1
   FROM follows
   WHERE follower_id = $1 AND following_id = $2
 );
 
--- name: Follow :exec
+-- name: Follow :execresult
 INSERT INTO follows (
   follower_id,
   following_id
@@ -23,19 +23,19 @@ INSERT INTO follows (
   $2
 );
 
--- name: GetFollowersCount :one
+-- name: CountFollowers :one
 SELECT COUNT(*) FROM follows
 WHERE following_id = $1;
 
--- name: GetFollowingCount :one
+-- name: CountFollowing :one
 SELECT COUNT(*) FROM follows
 WHERE follower_id = $1;
 
--- name: Unfollow :exec
+-- name: Unfollow :execresult
 DELETE FROM follows
 WHERE follower_id = $1 AND following_id = $2;
 
--- name: GetUserFollowers :many
+-- name: FinyManyFollowers :many
 SELECT
   sqlc.embed(profile)
 FROM follows
@@ -43,7 +43,7 @@ FROM follows
 WHERE follows.following_id = $1
 ORDER BY follows.created_at DESC;
 
--- name: GetUserFollowing :many
+-- name: FindManyFollowing :many
 SELECT
   sqlc.embed(profile)
 FROM follows
@@ -51,7 +51,7 @@ FROM follows
 WHERE follows.follower_id = $1
 ORDER BY follows.created_at DESC;
 
--- name: SearchUserFollowing :many
+-- name: SearchFollowing :many
 SELECT
   sqlc.embed(profile)
 FROM follows

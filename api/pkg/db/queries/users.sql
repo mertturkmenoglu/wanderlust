@@ -1,34 +1,44 @@
--- name: GetUserByEmail :one
-SELECT * FROM users
-WHERE email = $1 LIMIT 1;
+-- name: FindUserByEmail :one
+SELECT *
+FROM users
+WHERE email = $1
+LIMIT 1;
 
--- name: GetUserById :one
-SELECT * FROM users
-WHERE id = $1 LIMIT 1;
+-- name: FindUserById :one
+SELECT *
+FROM users
+WHERE id = $1
+LIMIT 1;
 
--- name: GetUserByGoogleId :one
-SELECT * FROM users
-WHERE google_id = $1 LIMIT 1;
+-- name: FindUserByUsername :one
+SELECT *
+FROM users
+WHERE username = $1
+LIMIT 1;
 
--- name: GetUserByFbId :one
-SELECT * FROM users
-WHERE fb_id = $1 LIMIT 1;
+-- name: FindUserByGoogleId :one
+SELECT *
+FROM users
+WHERE google_id = $1
+LIMIT 1;
 
--- name: GetUserByUsername :one
-SELECT * FROM users
-WHERE username = $1 LIMIT 1;
+-- name: FindUserByFbId :one
+SELECT *
+FROM users
+WHERE fb_id = $1
+LIMIT 1;
 
--- name: UpdateUserGoogleId :exec
+-- name: UpdateUserGoogleId :execresult
 UPDATE users
 SET google_id = $2
 WHERE id = $1;
 
--- name: UpdateUserFbId :exec
+-- name: UpdateUserFbId :execresult
 UPDATE users
 SET fb_id = $2
 WHERE id = $1;
 
--- name: UpdateUserPassword :exec
+-- name: UpdateUserPassword :execresult
 UPDATE users
 SET password_hash = $2
 WHERE id = $1;
@@ -75,10 +85,11 @@ INSERT INTO users (
   $8
 );
 
--- name: GetUserProfileByUsername :one
+-- name: FindProfileByUsername :one
 SELECT *
 FROM profile
-WHERE username = $1 LIMIT 1;
+WHERE username = $1
+LIMIT 1;
 
 -- name: IsAdmin :one
 SELECT EXISTS (
@@ -87,74 +98,72 @@ SELECT EXISTS (
   WHERE user_id = $1
 );
 
--- name: MakeUserVerified :exec
+-- name: UpdateUserIsVerified :execresult
 UPDATE users
-SET is_verified = true
+SET is_verified = $2
 WHERE id = $1;
 
--- name: UpdateUserProfile :one
+-- name: UpdateUserProfile :execresult
 UPDATE users
 SET
   full_name = $2,
-  bio = $3,
-  pronouns = $4,
-  website = $5
-WHERE id = $1
-RETURNING *;
+  bio = $3
+WHERE id = $1;
 
--- name: UpdateUserProfileImage :exec
+-- name: UpdateUserProfileImage :execresult
 UPDATE users
 SET profile_image = $2
 WHERE id = $1;
 
--- name: UpdateUserBannerImage :exec
+-- name: UpdateUserBannerImage :execresult
 UPDATE users
 SET banner_image = $2
 WHERE id = $1;
 
--- name: IncrUserFollowers :exec
+-- name: IncrementUserFollowers :execresult
 UPDATE users
 SET followers_count = followers_count + 1
 WHERE id = $1;
 
--- name: DecrUserFollowers :exec
+-- name: DecrementUserFollowers :execresult
 UPDATE users
 SET followers_count = followers_count - 1
 WHERE id = $1;
 
--- name: IncrUserFollowing :exec
+-- name: IncrementUserFollowing :execresult
 UPDATE users
 SET following_count = following_count + 1
 WHERE id = $1;
 
--- name: DecrUserFollowing :exec
+-- name: DecrementUserFollowing :execresult
 UPDATE users
 SET following_count = following_count - 1
 WHERE id = $1;
 
--- name: SetFollowersCount :exec
+-- name: UpdateUserFollowersCount :execresult
 UPDATE users
 SET followers_count = $2
 WHERE id = $1;
 
--- name: SetFollowingCount :exec
+-- name: UpdateUserFollowingCount :execresult
 UPDATE users
 SET following_count = $2
 WHERE id = $1;
 
--- name: GetUserTopPois :many
-SELECT * FROM user_top_pois
+-- name: FindManyUserTopPlaces :many
+SELECT *
+FROM user_top_places
 WHERE user_id = $1
 ORDER BY index ASC;
 
--- name: DeleteUserAllTopPois :exec
-DELETE FROM user_top_pois
+-- name: RemoveUserTopPlacesByUserId :execresult
+DELETE FROM user_top_places
 WHERE user_id = $1;
 
--- name: CreateUserTopPoi :one
-INSERT INTO user_top_pois (
+-- name: CreateUserTopPlace :one
+INSERT INTO user_top_places (
   user_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,

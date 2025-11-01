@@ -32,11 +32,15 @@ INSERT INTO reports (
   $6
 );
 
--- name: GetReportById :one
-SELECT * FROM reports WHERE id = $1 LIMIT 1;
+-- name: FindReportById :one
+SELECT *
+FROM reports
+WHERE id = $1
+LIMIT 1;
 
--- name: GetReportsPaginated :many
-SELECT * FROM reports
+-- name: FindManyReports :many
+SELECT *
+FROM reports
 ORDER BY created_at DESC
 OFFSET $1
 LIMIT $2;
@@ -44,7 +48,7 @@ LIMIT $2;
 -- name: CountReports :one
 SELECT COUNT(*) FROM reports;
 
--- name: UpdateReport :exec
+-- name: UpdateReport :execresult
 UPDATE reports SET
   description = $2,
   reason = $3,
@@ -53,5 +57,6 @@ UPDATE reports SET
   updated_at = $6
 WHERE id = $1;
 
--- name: DeleteReport :exec
-DELETE FROM reports WHERE id = $1;
+-- name: RemoveReportById :execresult
+DELETE FROM reports
+WHERE id = $1;

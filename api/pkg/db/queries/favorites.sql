@@ -1,44 +1,44 @@
 -- name: CreateFavorite :one
 INSERT INTO favorites (
   user_id,
-  poi_id
+  place_id
 ) VALUES (
   $1,
   $2
-)
-RETURNING *;
+) RETURNING *;
 
 -- name: BatchCreateFavorites :copyfrom
 INSERT INTO favorites (
   user_id,
-  poi_id
+  place_id
 ) VALUES (
   $1,
   $2
 );
 
--- name: DeleteFavoriteByPoiId :exec
+-- name: RemoveFavoriteByPlaceIdAndUserId :execresult
 DELETE FROM favorites
-WHERE poi_id = $1 AND user_id = $2;
+WHERE place_id = $1 AND user_id = $2;
 
--- name: GetFavoritesByUserId :many
-SELECT *
+-- name: FindManyFavoritesByUserId :many
+SELECT
+  *
 FROM favorites
 WHERE user_id = $1
 ORDER BY created_at DESC
 OFFSET $2
 LIMIT $3;
 
--- name: CountUserFavorites :one
+-- name: CountFavoritesByUserId :one
 SELECT COUNT(*) FROM favorites
 WHERE user_id = $1;
 
--- name: IsFavorite :one
+-- name: IsPlaceFavorited :one
 SELECT EXISTS (
   SELECT 1 FROM favorites
-  WHERE poi_id = $1 AND user_id = $2
+  WHERE place_id = $1 AND user_id = $2
 );
 
--- name: GetPoiFavoritesCount :one
+-- name: CountFavoritesByPlaceId :one
 SELECT COUNT(*) FROM favorites
-WHERE poi_id = $1;
+WHERE place_id = $1;
