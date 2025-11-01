@@ -51,6 +51,7 @@ function RouteComponent() {
           />
           <Button
             variant="link"
+            type="button"
             onClick={() => setIsChangePasswordOpen((prev) => !prev)}
           >
             {isChangePasswordOpen ? 'Hide' : 'Change'}
