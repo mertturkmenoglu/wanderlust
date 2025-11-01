@@ -56,8 +56,6 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 			FacebookID:     utils.TextToStr(user.FbID),
 			IsVerified:     user.IsVerified,
 			Bio:            utils.TextToStr(user.Bio),
-			Pronouns:       utils.TextToStr(user.Pronouns),
-			Website:        utils.TextToStr(user.Website),
 			ProfileImage:   utils.TextToStr(user.ProfileImage),
 			BannerImage:    utils.TextToStr(user.BannerImage),
 			FollowersCount: user.FollowersCount,
