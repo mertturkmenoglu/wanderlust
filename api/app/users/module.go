@@ -10,7 +10,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -27,10 +26,12 @@ func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		poiService: pois.NewService(app),
 		cache:      cacheSvc,
-		db:         dbSvc.Queries,
-		pool:       dbSvc.Pool,
 		log:        logSvc,
 		activities: activitiesSvc,
+		repo: &Repository{
+			db:   dbSvc.Queries,
+			pool: dbSvc.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -49,7 +50,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateUserProfileImageInput) (*dto.UpdateUserProfileImageOutput, error) {
+		func(ctx context.Context, input *UpdateUserImageInput) (*UpdateUserImageOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -76,7 +77,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetUserProfileInput) (*dto.GetUserProfileOutput, error) {
+		func(ctx context.Context, input *GetUserProfileInput) (*GetUserProfileOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -99,7 +100,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get user followers by username",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetUserFollowersInput) (*dto.GetUserFollowersOutput, error) {
+		func(ctx context.Context, input *GetUserFollowersInput) (*GetUserFollowersOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -118,15 +119,15 @@ func Register(grp *huma.Group, app *core.Application) {
 		huma.Operation{
 			Method:        http.MethodGet,
 			Path:          "/users/{username}/top",
-			Summary:       "Get User Top Point of Interests",
-			Description:   "Get user top point of interests by username",
+			Summary:       "Get User Top Places",
+			Description:   "Get user top places by username",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetUserTopPoisInput) (*dto.GetUserTopPoisOutput, error) {
+		func(ctx context.Context, input *GetUserTopPlacesInput) (*GetUserTopPlacesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getTopPois(ctx, input.Username)
+			res, err := s.getTopPlaces(ctx, input.Username)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -141,19 +142,19 @@ func Register(grp *huma.Group, app *core.Application) {
 		huma.Operation{
 			Method:        http.MethodPatch,
 			Path:          "/users/top",
-			Summary:       "Update User Top Point of Interests",
-			Description:   "Update user top point of interests",
+			Summary:       "Update User Top Places",
+			Description:   "Update user top places",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateUserTopPoisInput) (*dto.UpdateUserTopPoisOutput, error) {
+		func(ctx context.Context, input *UpdateUserTopPlacesInput) (*UpdateUserTopPlacesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.updateTopPois(ctx, input.Body)
+			res, err := s.updateTopPlaces(ctx, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -172,7 +173,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get user following by username",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetUserFollowingInput) (*dto.GetUserFollowingOutput, error) {
+		func(ctx context.Context, input *GetUserFollowingInput) (*GetUserFollowingOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -195,7 +196,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get user activities by username",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetUserActivitiesInput) (*dto.GetUserActivitiesOutput, error) {
+		func(ctx context.Context, input *GetUserActivitiesInput) (*GetUserActivitiesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -222,7 +223,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.SearchUserFollowingInput) (*dto.SearchUserFollowingOutput, error) {
+		func(ctx context.Context, input *SearchUserFollowingInput) (*SearchUserFollowingOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -250,7 +251,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.MakeUserVerifiedInput) (*dto.MakeUserVerifiedOutput, error) {
+		func(ctx context.Context, input *MakeUserVerifiedInput) (*MakeUserVerifiedOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -277,7 +278,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.FollowUserInput) (*dto.FollowUserOutput, error) {
+		func(ctx context.Context, input *FollowUserInput) (*FollowUserOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -304,7 +305,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateUserProfileInput) (*dto.UpdateUserProfileOutput, error) {
+		func(ctx context.Context, input *UpdateUserProfileInput) (*UpdateUserProfileOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
