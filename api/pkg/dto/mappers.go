@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"encoding/json"
 	"time"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/utils"
@@ -63,6 +64,107 @@ func ToFavorite(dbFavorite db.Favorite, place Place) Favorite {
 		UserID:    dbFavorite.UserID,
 		CreatedAt: dbFavorite.CreatedAt.Time,
 	}
+}
+
+func ToListWithoutItems(dbList db.List, dbUser db.Profile) List {
+	return List{
+		ID:     dbList.ID,
+		Name:   dbList.Name,
+		UserID: dbList.UserID,
+		User: ListUser{
+			ID:           dbUser.ID,
+			Username:     dbUser.Username,
+			FullName:     dbUser.FullName,
+			ProfileImage: utils.TextToStr(dbUser.ProfileImage),
+		},
+		Items:     []ListItem{},
+		IsPublic:  dbList.IsPublic,
+		CreatedAt: dbList.CreatedAt.Time,
+		UpdatedAt: dbList.UpdatedAt.Time,
+	}
+}
+
+func ToListsWithoutItems(dbLists []db.List, dbUser db.Profile) []List {
+	lists := make([]List, len(dbLists))
+
+	for i, v := range dbLists {
+		lists[i] = ToListWithoutItems(v, dbUser)
+	}
+
+	return lists
+}
+
+func ToListWithItems(dbList db.FindListByIdRow, dbItems []db.FindManyListItemsRow, places []Place) List {
+	list := List{
+		ID:     dbList.List.ID,
+		Name:   dbList.List.Name,
+		UserID: dbList.List.UserID,
+		User: ListUser{
+			ID:           dbList.List.UserID,
+			Username:     dbList.Profile.Username,
+			FullName:     dbList.Profile.FullName,
+			ProfileImage: utils.TextToStr(dbList.Profile.ProfileImage),
+		},
+		Items:     make([]ListItem, len(dbItems)),
+		IsPublic:  dbList.List.IsPublic,
+		CreatedAt: dbList.List.CreatedAt.Time,
+		UpdatedAt: dbList.List.UpdatedAt.Time,
+	}
+
+	for i, v := range dbItems {
+		var place *Place
+
+		for _, p := range places {
+			if p.ID == v.ListItem.PlaceID {
+				place = &p
+				break
+			}
+		}
+
+		if place == nil {
+			continue
+		}
+
+		list.Items[i] = ListItem{
+			ListID:    v.ListItem.ListID,
+			PlaceID:   v.ListItem.PlaceID,
+			Index:     v.ListItem.Index,
+			CreatedAt: v.ListItem.CreatedAt.Time,
+			Place:     *place,
+		}
+	}
+
+	return list
+}
+
+func ToPlaces(data []byte) ([]Place, error) {
+	if len(data) == 0 {
+		return []Place{}, nil
+	}
+
+	var places []Place
+
+	err := json.Unmarshal(data, &places)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for i, p := range places {
+		if p.Hours == nil {
+			places[i].Hours = make(map[string]*string)
+		}
+
+		if p.Amenities == nil {
+			places[i].Amenities = make(map[string]*string)
+		}
+
+		if p.Assets == nil {
+			places[i].Assets = []Asset{}
+		}
+	}
+
+	return places, nil
 }
 
 func ToReport(r db.Report) Report {
