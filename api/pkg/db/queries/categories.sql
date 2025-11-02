@@ -9,8 +9,14 @@ INSERT INTO categories (
   $3
 ) RETURNING *;
 
--- name: FinyManyCategories :many
+-- name: FindManyCategories :many
 SELECT * FROM categories;
+
+-- name: FindCategoryById :one
+SELECT *
+FROM categories
+WHERE id = $1
+LIMIT 1;
 
 -- name: RemoveCategoryById :execresult
 DELETE FROM categories
