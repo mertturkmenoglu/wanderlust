@@ -2,6 +2,7 @@ package dto
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/utils"
@@ -55,6 +56,49 @@ func ToCity(dbCity db.City) City {
 		Lng:         dbCity.Lng,
 		Description: dbCity.Description,
 	}
+}
+
+func ToCollection(dbCollection db.FindManyCollectionsRow) (Collection, error) {
+	items := make([]CollectionItem, 0)
+
+	if len(dbCollection.Items) > 0 {
+		err := json.Unmarshal(dbCollection.Items, &items)
+
+		if err != nil {
+			return Collection{}, err
+		}
+	}
+
+	places, err := ToPlaces(dbCollection.Places)
+
+	if err != nil {
+		return Collection{}, err
+	}
+
+	for i, item := range items {
+		var place *Place
+
+		for _, p := range places {
+			if p.ID == item.PlaceID {
+				place = &p
+				break
+			}
+		}
+
+		if place == nil {
+			return Collection{}, fmt.Errorf("place not found: %s", item.PlaceID)
+		}
+
+		items[i].Place = *place
+	}
+
+	return Collection{
+		ID:          dbCollection.Collection.ID,
+		Name:        dbCollection.Collection.Name,
+		Description: dbCollection.Collection.Description,
+		CreatedAt:   dbCollection.Collection.CreatedAt.Time,
+		Items:       items,
+	}, nil
 }
 
 func ToFavorite(dbFavorite db.Favorite, place Place) Favorite {
