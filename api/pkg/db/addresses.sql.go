@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -69,15 +70,15 @@ func (q *Queries) CreateAddress(ctx context.Context, arg CreateAddressParams) (A
 	return i, err
 }
 
-const randSelectAddresses = `-- name: RandSelectAddresses :many
+const findManyAddressIdsByRand = `-- name: FindManyAddressIdsByRand :many
 SELECT id
 FROM addresses
 ORDER BY RANDOM()
 LIMIT $1
 `
 
-func (q *Queries) RandSelectAddresses(ctx context.Context, limit int32) ([]int32, error) {
-	rows, err := q.db.Query(ctx, randSelectAddresses, limit)
+func (q *Queries) FindManyAddressIdsByRand(ctx context.Context, limit int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, findManyAddressIdsByRand, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +97,7 @@ func (q *Queries) RandSelectAddresses(ctx context.Context, limit int32) ([]int32
 	return items, nil
 }
 
-const updateAddress = `-- name: UpdateAddress :exec
+const updateAddress = `-- name: UpdateAddress :execresult
 UPDATE addresses
 SET
   city_id = $1,
@@ -118,8 +119,8 @@ type UpdateAddressParams struct {
 	ID         int32
 }
 
-func (q *Queries) UpdateAddress(ctx context.Context, arg UpdateAddressParams) error {
-	_, err := q.db.Exec(ctx, updateAddress,
+func (q *Queries) UpdateAddress(ctx context.Context, arg UpdateAddressParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateAddress,
 		arg.CityID,
 		arg.Line1,
 		arg.Line2,
@@ -128,5 +129,4 @@ func (q *Queries) UpdateAddress(ctx context.Context, arg UpdateAddressParams) er
 		arg.Lng,
 		arg.ID,
 	)
-	return err
 }

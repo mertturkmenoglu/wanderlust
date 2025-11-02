@@ -7,20 +7,34 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type BatchCreateFavoritesParams struct {
-	UserID string
-	PoiID  string
+	UserID  string
+	PlaceID string
 }
 
-const countUserFavorites = `-- name: CountUserFavorites :one
+const countFavoritesByPlaceId = `-- name: CountFavoritesByPlaceId :one
+SELECT COUNT(*) FROM favorites
+WHERE place_id = $1
+`
+
+func (q *Queries) CountFavoritesByPlaceId(ctx context.Context, placeID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countFavoritesByPlaceId, placeID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countFavoritesByUserId = `-- name: CountFavoritesByUserId :one
 SELECT COUNT(*) FROM favorites
 WHERE user_id = $1
 `
 
-func (q *Queries) CountUserFavorites(ctx context.Context, userID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countUserFavorites, userID)
+func (q *Queries) CountFavoritesByUserId(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countFavoritesByUserId, userID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -29,43 +43,33 @@ func (q *Queries) CountUserFavorites(ctx context.Context, userID string) (int64,
 const createFavorite = `-- name: CreateFavorite :one
 INSERT INTO favorites (
   user_id,
-  poi_id
+  place_id
 ) VALUES (
   $1,
   $2
-)
-RETURNING poi_id, user_id, created_at
+) RETURNING id, place_id, user_id, created_at
 `
 
 type CreateFavoriteParams struct {
-	UserID string
-	PoiID  string
+	UserID  string
+	PlaceID string
 }
 
 func (q *Queries) CreateFavorite(ctx context.Context, arg CreateFavoriteParams) (Favorite, error) {
-	row := q.db.QueryRow(ctx, createFavorite, arg.UserID, arg.PoiID)
+	row := q.db.QueryRow(ctx, createFavorite, arg.UserID, arg.PlaceID)
 	var i Favorite
-	err := row.Scan(&i.PoiID, &i.UserID, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.PlaceID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
-const deleteFavoriteByPoiId = `-- name: DeleteFavoriteByPoiId :exec
-DELETE FROM favorites
-WHERE poi_id = $1 AND user_id = $2
-`
-
-type DeleteFavoriteByPoiIdParams struct {
-	PoiID  string
-	UserID string
-}
-
-func (q *Queries) DeleteFavoriteByPoiId(ctx context.Context, arg DeleteFavoriteByPoiIdParams) error {
-	_, err := q.db.Exec(ctx, deleteFavoriteByPoiId, arg.PoiID, arg.UserID)
-	return err
-}
-
-const getFavoritesByUserId = `-- name: GetFavoritesByUserId :many
-SELECT poi_id, user_id, created_at
+const findManyFavoritesByUserId = `-- name: FindManyFavoritesByUserId :many
+SELECT
+  id, place_id, user_id, created_at
 FROM favorites
 WHERE user_id = $1
 ORDER BY created_at DESC
@@ -73,14 +77,14 @@ OFFSET $2
 LIMIT $3
 `
 
-type GetFavoritesByUserIdParams struct {
+type FindManyFavoritesByUserIdParams struct {
 	UserID string
 	Offset int32
 	Limit  int32
 }
 
-func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUserIdParams) ([]Favorite, error) {
-	rows, err := q.db.Query(ctx, getFavoritesByUserId, arg.UserID, arg.Offset, arg.Limit)
+func (q *Queries) FindManyFavoritesByUserId(ctx context.Context, arg FindManyFavoritesByUserIdParams) ([]Favorite, error) {
+	rows, err := q.db.Query(ctx, findManyFavoritesByUserId, arg.UserID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +92,12 @@ func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUs
 	var items []Favorite
 	for rows.Next() {
 		var i Favorite
-		if err := rows.Scan(&i.PoiID, &i.UserID, &i.CreatedAt); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.PlaceID,
+			&i.UserID,
+			&i.CreatedAt,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -99,33 +108,35 @@ func (q *Queries) GetFavoritesByUserId(ctx context.Context, arg GetFavoritesByUs
 	return items, nil
 }
 
-const getPoiFavoritesCount = `-- name: GetPoiFavoritesCount :one
-SELECT COUNT(*) FROM favorites
-WHERE poi_id = $1
-`
-
-func (q *Queries) GetPoiFavoritesCount(ctx context.Context, poiID string) (int64, error) {
-	row := q.db.QueryRow(ctx, getPoiFavoritesCount, poiID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const isFavorite = `-- name: IsFavorite :one
+const isPlaceFavorited = `-- name: IsPlaceFavorited :one
 SELECT EXISTS (
   SELECT 1 FROM favorites
-  WHERE poi_id = $1 AND user_id = $2
+  WHERE place_id = $1 AND user_id = $2
 )
 `
 
-type IsFavoriteParams struct {
-	PoiID  string
-	UserID string
+type IsPlaceFavoritedParams struct {
+	PlaceID string
+	UserID  string
 }
 
-func (q *Queries) IsFavorite(ctx context.Context, arg IsFavoriteParams) (bool, error) {
-	row := q.db.QueryRow(ctx, isFavorite, arg.PoiID, arg.UserID)
+func (q *Queries) IsPlaceFavorited(ctx context.Context, arg IsPlaceFavoritedParams) (bool, error) {
+	row := q.db.QueryRow(ctx, isPlaceFavorited, arg.PlaceID, arg.UserID)
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const removeFavoriteByPlaceIdAndUserId = `-- name: RemoveFavoriteByPlaceIdAndUserId :execresult
+DELETE FROM favorites
+WHERE place_id = $1 AND user_id = $2
+`
+
+type RemoveFavoriteByPlaceIdAndUserIdParams struct {
+	PlaceID string
+	UserID  string
+}
+
+func (q *Queries) RemoveFavoriteByPlaceIdAndUserId(ctx context.Context, arg RemoveFavoriteByPlaceIdAndUserIdParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeFavoriteByPlaceIdAndUserId, arg.PlaceID, arg.UserID)
 }

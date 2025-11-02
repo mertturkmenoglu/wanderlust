@@ -7,9 +7,11 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
-type CreateCitiesParams struct {
+type BatchCreateCitiesParams struct {
 	ID          int32
 	Name        string
 	StateCode   string
@@ -17,8 +19,8 @@ type CreateCitiesParams struct {
 	CountryCode string
 	CountryName string
 	Image       string
-	Latitude    float64
-	Longitude   float64
+	Lat         float64
+	Lng         float64
 	Description string
 }
 
@@ -31,8 +33,8 @@ INSERT INTO cities (
   country_code,
   country_name,
   image,
-  latitude,
-  longitude,
+  lat,
+  lng,
   description
 ) VALUES (
   $1,
@@ -45,7 +47,7 @@ INSERT INTO cities (
   $8,
   $9,
   $10
-) RETURNING id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description
+) RETURNING id, name, state_code, state_name, country_code, country_name, image, lat, lng, description
 `
 
 type CreateCityParams struct {
@@ -56,8 +58,8 @@ type CreateCityParams struct {
 	CountryCode string
 	CountryName string
 	Image       string
-	Latitude    float64
-	Longitude   float64
+	Lat         float64
+	Lng         float64
 	Description string
 }
 
@@ -70,8 +72,8 @@ func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, e
 		arg.CountryCode,
 		arg.CountryName,
 		arg.Image,
-		arg.Latitude,
-		arg.Longitude,
+		arg.Lat,
+		arg.Lng,
 		arg.Description,
 	)
 	var i City
@@ -83,66 +85,20 @@ func (q *Queries) CreateCity(ctx context.Context, arg CreateCityParams) (City, e
 		&i.CountryCode,
 		&i.CountryName,
 		&i.Image,
-		&i.Latitude,
-		&i.Longitude,
+		&i.Lat,
+		&i.Lng,
 		&i.Description,
 	)
 	return i, err
 }
 
-const deleteCity = `-- name: DeleteCity :exec
-DELETE FROM cities
-WHERE id = $1
-`
-
-func (q *Queries) DeleteCity(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteCity, id)
-	return err
-}
-
-const getCities = `-- name: GetCities :many
-SELECT id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description FROM cities
-ORDER BY id
-`
-
-func (q *Queries) GetCities(ctx context.Context) ([]City, error) {
-	rows, err := q.db.Query(ctx, getCities)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []City
-	for rows.Next() {
-		var i City
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.StateCode,
-			&i.StateName,
-			&i.CountryCode,
-			&i.CountryName,
-			&i.Image,
-			&i.Latitude,
-			&i.Longitude,
-			&i.Description,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getCityById = `-- name: GetCityById :one
-SELECT id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description FROM cities
+const findCityById = `-- name: FindCityById :one
+SELECT id, name, state_code, state_name, country_code, country_name, image, lat, lng, description FROM cities
 WHERE cities.id = $1 LIMIT 1
 `
 
-func (q *Queries) GetCityById(ctx context.Context, id int32) (City, error) {
-	row := q.db.QueryRow(ctx, getCityById, id)
+func (q *Queries) FindCityById(ctx context.Context, id int32) (City, error) {
+	row := q.db.QueryRow(ctx, findCityById, id)
 	var i City
 	err := row.Scan(
 		&i.ID,
@@ -152,20 +108,20 @@ func (q *Queries) GetCityById(ctx context.Context, id int32) (City, error) {
 		&i.CountryCode,
 		&i.CountryName,
 		&i.Image,
-		&i.Latitude,
-		&i.Longitude,
+		&i.Lat,
+		&i.Lng,
 		&i.Description,
 	)
 	return i, err
 }
 
-const getFeaturedCities = `-- name: GetFeaturedCities :many
-SELECT id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description FROM cities
-WHERE id = ANY($1::int[])
+const findManyCities = `-- name: FindManyCities :many
+SELECT id, name, state_code, state_name, country_code, country_name, image, lat, lng, description FROM cities
+ORDER BY id
 `
 
-func (q *Queries) GetFeaturedCities(ctx context.Context, dollar_1 []int32) ([]City, error) {
-	rows, err := q.db.Query(ctx, getFeaturedCities, dollar_1)
+func (q *Queries) FindManyCities(ctx context.Context) ([]City, error) {
+	rows, err := q.db.Query(ctx, findManyCities)
 	if err != nil {
 		return nil, err
 	}
@@ -181,8 +137,8 @@ func (q *Queries) GetFeaturedCities(ctx context.Context, dollar_1 []int32) ([]Ci
 			&i.CountryCode,
 			&i.CountryName,
 			&i.Image,
-			&i.Latitude,
-			&i.Longitude,
+			&i.Lat,
+			&i.Lng,
 			&i.Description,
 		); err != nil {
 			return nil, err
@@ -195,15 +151,51 @@ func (q *Queries) GetFeaturedCities(ctx context.Context, dollar_1 []int32) ([]Ci
 	return items, nil
 }
 
-const randSelectCities = `-- name: RandSelectCities :many
+const findManyCitiesById = `-- name: FindManyCitiesById :many
+SELECT id, name, state_code, state_name, country_code, country_name, image, lat, lng, description FROM cities
+WHERE id = ANY($1::int[])
+`
+
+func (q *Queries) FindManyCitiesById(ctx context.Context, dollar_1 []int32) ([]City, error) {
+	rows, err := q.db.Query(ctx, findManyCitiesById, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []City
+	for rows.Next() {
+		var i City
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.StateCode,
+			&i.StateName,
+			&i.CountryCode,
+			&i.CountryName,
+			&i.Image,
+			&i.Lat,
+			&i.Lng,
+			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findManyCityIdsByRand = `-- name: FindManyCityIdsByRand :many
 SELECT id
 FROM cities
 ORDER BY RANDOM()
 LIMIT $1
 `
 
-func (q *Queries) RandSelectCities(ctx context.Context, limit int32) ([]int32, error) {
-	rows, err := q.db.Query(ctx, randSelectCities, limit)
+func (q *Queries) FindManyCityIdsByRand(ctx context.Context, limit int32) ([]int32, error) {
+	rows, err := q.db.Query(ctx, findManyCityIdsByRand, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -222,20 +214,28 @@ func (q *Queries) RandSelectCities(ctx context.Context, limit int32) ([]int32, e
 	return items, nil
 }
 
-const updateCity = `-- name: UpdateCity :one
+const removeCityById = `-- name: RemoveCityById :execresult
+DELETE FROM cities
+WHERE id = $1
+`
+
+func (q *Queries) RemoveCityById(ctx context.Context, id int32) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCityById, id)
+}
+
+const updateCity = `-- name: UpdateCity :execresult
 UPDATE cities
-SET 
+SET
   name = $2,
   state_code = $3,
   state_name = $4,
   country_code = $5,
   country_name = $6,
   image = $7,
-  latitude = $8,
-  longitude = $9,
+  lat = $8,
+  lng = $9,
   description = $10
 WHERE id = $1
-RETURNING id, name, state_code, state_name, country_code, country_name, image, latitude, longitude, description
 `
 
 type UpdateCityParams struct {
@@ -246,13 +246,13 @@ type UpdateCityParams struct {
 	CountryCode string
 	CountryName string
 	Image       string
-	Latitude    float64
-	Longitude   float64
+	Lat         float64
+	Lng         float64
 	Description string
 }
 
-func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (City, error) {
-	row := q.db.QueryRow(ctx, updateCity,
+func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateCity,
 		arg.ID,
 		arg.Name,
 		arg.StateCode,
@@ -260,22 +260,8 @@ func (q *Queries) UpdateCity(ctx context.Context, arg UpdateCityParams) (City, e
 		arg.CountryCode,
 		arg.CountryName,
 		arg.Image,
-		arg.Latitude,
-		arg.Longitude,
+		arg.Lat,
+		arg.Lng,
 		arg.Description,
 	)
-	var i City
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.StateCode,
-		&i.StateName,
-		&i.CountryCode,
-		&i.CountryName,
-		&i.Image,
-		&i.Latitude,
-		&i.Longitude,
-		&i.Description,
-	)
-	return i, err
 }
