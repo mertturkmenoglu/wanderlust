@@ -12,7 +12,7 @@ type Service struct {
 	repo *Repository
 }
 
-func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetCollectionsOutput, error) {
+func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*GetCollectionsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -22,15 +22,15 @@ func (s *Service) list(ctx context.Context, params dto.PaginationQueryParams) (*
 		return nil, err
 	}
 
-	return &dto.GetCollectionsOutput{
-		Body: dto.GetCollectionsOutputBody{
+	return &GetCollectionsOutput{
+		Body: GetCollectionsOutputBody{
 			Collections: res,
 			Pagination:  pagination.Compute(params, count),
 		},
 	}, nil
 }
 
-func (s *Service) get(ctx context.Context, id string) (*dto.GetCollectionByIdOutput, error) {
+func (s *Service) get(ctx context.Context, id string) (*GetCollectionByIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -40,14 +40,14 @@ func (s *Service) get(ctx context.Context, id string) (*dto.GetCollectionByIdOut
 		return nil, err
 	}
 
-	return &dto.GetCollectionByIdOutput{
-		Body: dto.GetCollectionByIdOutputBody{
+	return &GetCollectionByIdOutput{
+		Body: GetCollectionByIdOutputBody{
 			Collection: *collection,
 		},
 	}, nil
 }
 
-func (s *Service) create(ctx context.Context, body dto.CreateCollectionInputBody) (*dto.CreateCollectionOutput, error) {
+func (s *Service) create(ctx context.Context, body CreateCollectionInputBody) (*CreateCollectionOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -61,8 +61,8 @@ func (s *Service) create(ctx context.Context, body dto.CreateCollectionInputBody
 		return nil, err
 	}
 
-	return &dto.CreateCollectionOutput{
-		Body: dto.CreateCollectionOutputBody{
+	return &CreateCollectionOutput{
+		Body: CreateCollectionOutputBody{
 			Collection: *res,
 		},
 	}, nil
@@ -81,7 +81,7 @@ func (s *Service) remove(ctx context.Context, id string) error {
 	return s.repo.remove(ctx, id)
 }
 
-func (s *Service) update(ctx context.Context, id string, body dto.UpdateCollectionInputBody) (*dto.UpdateCollectionOutput, error) {
+func (s *Service) update(ctx context.Context, id string, body UpdateCollectionInputBody) (*UpdateCollectionOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -101,25 +101,25 @@ func (s *Service) update(ctx context.Context, id string, body dto.UpdateCollecti
 		return nil, err
 	}
 
-	return &dto.UpdateCollectionOutput{
-		Body: dto.UpdateCollectionOutputBody{
+	return &UpdateCollectionOutput{
+		Body: UpdateCollectionOutputBody{
 			Collection: *res,
 		},
 	}, nil
 }
 
-func (s *Service) createItem(ctx context.Context, collectionId string, body dto.CreateCollectionItemInputBody) (*dto.CreateCollectionItemOutput, error) {
+func (s *Service) createItem(ctx context.Context, collectionId string, body CreateCollectionItemInputBody) (*CreateCollectionItemOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.repo.createItem(ctx, collectionId, body.PoiID)
+	res, err := s.repo.createItem(ctx, collectionId, body.PlaceID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &dto.CreateCollectionItemOutput{
-		Body: dto.CreateCollectionItemOutputBody{
+	return &CreateCollectionItemOutput{
+		Body: CreateCollectionItemOutputBody{
 			Collection: *res,
 		},
 	}, nil
@@ -132,7 +132,7 @@ func (s *Service) removeItem(ctx context.Context, collectionId string, index int
 	return s.repo.removeItem(ctx, collectionId, index)
 }
 
-func (s *Service) updateItems(ctx context.Context, collectionId string, body dto.UpdateCollectionItemsInputBody) (*dto.UpdateCollectionItemsOutput, error) {
+func (s *Service) updateItems(ctx context.Context, collectionId string, body UpdateCollectionItemsInputBody) (*UpdateCollectionItemsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -142,18 +142,18 @@ func (s *Service) updateItems(ctx context.Context, collectionId string, body dto
 		return nil, err
 	}
 
-	return &dto.UpdateCollectionItemsOutput{
-		Body: dto.UpdateCollectionItemsOutputBody{
+	return &UpdateCollectionItemsOutput{
+		Body: UpdateCollectionItemsOutputBody{
 			Collection: *res,
 		},
 	}, nil
 }
 
-func (s *Service) createPoiRelation(ctx context.Context, collectionId string, poiId string) error {
+func (s *Service) createPlaceRelation(ctx context.Context, collectionId string, poiId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	return s.repo.createPoiRelation(ctx, collectionId, poiId)
+	return s.repo.createPlaceRelation(ctx, collectionId, poiId)
 }
 
 func (s *Service) createCityRelation(ctx context.Context, collectionId string, cityId int32) error {
@@ -163,11 +163,11 @@ func (s *Service) createCityRelation(ctx context.Context, collectionId string, c
 	return s.repo.createCityRelation(ctx, collectionId, cityId)
 }
 
-func (s *Service) removePoiRelation(ctx context.Context, collectionId string, poiId string) error {
+func (s *Service) removePlaceRelation(ctx context.Context, collectionId string, poiId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	return s.repo.removePoiRelation(ctx, collectionId, poiId)
+	return s.repo.removePlaceRelation(ctx, collectionId, poiId)
 }
 
 func (s *Service) removeCityRelation(ctx context.Context, collectionId string, cityId int32) error {
@@ -177,24 +177,24 @@ func (s *Service) removeCityRelation(ctx context.Context, collectionId string, c
 	return s.repo.removeCityRelation(ctx, collectionId, cityId)
 }
 
-func (s *Service) listPoiCollections(ctx context.Context, poiId string) (*dto.GetCollectionsForPoiOutput, error) {
+func (s *Service) listPlaceCollections(ctx context.Context, placeId string) (*GetCollectionsForPlaceOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.repo.listPoiCollections(ctx, poiId)
+	res, err := s.repo.listPlaceCollections(ctx, placeId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &dto.GetCollectionsForPoiOutput{
-		Body: dto.GetCollectionsForPoiOutputBody{
+	return &GetCollectionsForPlaceOutput{
+		Body: GetCollectionsForPlaceOutputBody{
 			Collections: res,
 		},
 	}, nil
 }
 
-func (s *Service) listCityCollections(ctx context.Context, cityId int32) (*dto.GetCollectionsForCityOutput, error) {
+func (s *Service) listCityCollections(ctx context.Context, cityId int32) (*GetCollectionsForCityOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -204,31 +204,31 @@ func (s *Service) listCityCollections(ctx context.Context, cityId int32) (*dto.G
 		return nil, err
 	}
 
-	return &dto.GetCollectionsForCityOutput{
-		Body: dto.GetCollectionsForCityOutputBody{
+	return &GetCollectionsForCityOutput{
+		Body: GetCollectionsForCityOutputBody{
 			Collections: res,
 		},
 	}, nil
 }
 
-func (s *Service) listAllPoiCollections(ctx context.Context) (*dto.GetAllPoiCollectionsOutput, error) {
+func (s *Service) listAllPlaceCollections(ctx context.Context) (*GetAllPlaceCollectionsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.repo.listAllPoiCollections(ctx)
+	res, err := s.repo.listAllPlaceCollections(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &dto.GetAllPoiCollectionsOutput{
-		Body: dto.GetAllPoiCollectionsOutputBody{
+	return &GetAllPlaceCollectionsOutput{
+		Body: GetAllPlaceCollectionsOutputBody{
 			Collections: res,
 		},
 	}, nil
 }
 
-func (s *Service) listAllCityCollections(ctx context.Context) (*dto.GetAllCityCollectionsOutput, error) {
+func (s *Service) listAllCityCollections(ctx context.Context) (*GetAllCityCollectionsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -238,8 +238,8 @@ func (s *Service) listAllCityCollections(ctx context.Context) (*dto.GetAllCityCo
 		return nil, err
 	}
 
-	return &dto.GetAllCityCollectionsOutput{
-		Body: dto.GetAllCityCollectionsOutputBody{
+	return &GetAllCityCollectionsOutput{
+		Body: GetAllCityCollectionsOutputBody{
 			Collections: res,
 		},
 	}, nil
