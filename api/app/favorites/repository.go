@@ -45,7 +45,7 @@ func (r *Repository) create(ctx context.Context, userId string, placeId string) 
 		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
 	}
 
-	err = qtx.IncrementFavorites(ctx, placeId)
+	_, err = qtx.IncrementPlaceTotalFavorites(ctx, placeId)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
@@ -87,7 +87,7 @@ func (r *Repository) remove(ctx context.Context, userId string, placeId string) 
 		return errors.Wrap(ErrFailedToDelete, err.Error())
 	}
 
-	err = qtx.DecrementFavorites(ctx, placeId)
+	_, err = qtx.DecrementPlaceTotalFavorites(ctx, placeId)
 
 	if err != nil {
 		return errors.Wrap(ErrFailedToDelete, err.Error())
