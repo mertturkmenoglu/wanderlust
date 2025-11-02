@@ -20,6 +20,31 @@ INSERT INTO collections (
   $3
 );
 
+-- name: FindManyCollections :many
+SELECT 
+  sqlc.embed(collections),
+  (SELECT json_agg(DISTINCT jsonb_build_object(
+    'collectionId', items.collection_id,
+    'placeId', items.place_id,
+    'index', items.index,
+    'createdAt', items.created_at
+  ))
+  FROM collection_items items
+  WHERE items.collection_id = collections.id
+  ) AS items,
+  (SELECT get_places(
+    ARRAY(
+      SELECT 
+        DISTINCT place_id
+      FROM collection_items 
+      WHERE collection_id = collections.id
+    )
+  )) AS places
+FROM collections
+WHERE collections.id = ANY($1::TEXT[])
+GROUP BY collections.id;
+
+
 -- name: RemoveCollectionById :execresult
 DELETE FROM collections
 WHERE id = $1;
