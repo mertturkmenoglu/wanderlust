@@ -24,42 +24,6 @@ type BatchCreateListsParams struct {
 	IsPublic bool
 }
 
-const checkManyPlaceInListStatus = `-- name: CheckManyPlaceInListStatus :many
-SELECT list_id, place_id
-FROM list_items
-WHERE list_items.place_id = $1 AND list_items.list_id = ANY($2::TEXT[])
-`
-
-type CheckManyPlaceInListStatusParams struct {
-	PlaceID string
-	Column2 []string
-}
-
-type CheckManyPlaceInListStatusRow struct {
-	ListID  string
-	PlaceID string
-}
-
-func (q *Queries) CheckManyPlaceInListStatus(ctx context.Context, arg CheckManyPlaceInListStatusParams) ([]CheckManyPlaceInListStatusRow, error) {
-	rows, err := q.db.Query(ctx, checkManyPlaceInListStatus, arg.PlaceID, arg.Column2)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []CheckManyPlaceInListStatusRow
-	for rows.Next() {
-		var i CheckManyPlaceInListStatusRow
-		if err := rows.Scan(&i.ListID, &i.PlaceID); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const countListItemsByListId = `-- name: CountListItemsByListId :one
 SELECT COUNT(*)
 FROM list_items
@@ -396,6 +360,42 @@ func (q *Queries) FindManyListsByUserIdAndIsPublic(ctx context.Context, arg Find
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findPlaceInListStatus = `-- name: FindPlaceInListStatus :many
+SELECT list_id, place_id
+FROM list_items
+WHERE list_items.place_id = $1 AND list_items.list_id = ANY($2::TEXT[])
+`
+
+type FindPlaceInListStatusParams struct {
+	PlaceID string
+	Column2 []string
+}
+
+type FindPlaceInListStatusRow struct {
+	ListID  string
+	PlaceID string
+}
+
+func (q *Queries) FindPlaceInListStatus(ctx context.Context, arg FindPlaceInListStatusParams) ([]FindPlaceInListStatusRow, error) {
+	rows, err := q.db.Query(ctx, findPlaceInListStatus, arg.PlaceID, arg.Column2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindPlaceInListStatusRow
+	for rows.Next() {
+		var i FindPlaceInListStatusRow
+		if err := rows.Scan(&i.ListID, &i.PlaceID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

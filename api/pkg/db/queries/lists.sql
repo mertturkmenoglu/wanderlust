@@ -131,7 +131,7 @@ SELECT id, name
 FROM lists
 WHERE user_id = $1;
 
--- name: CheckManyPlaceInListStatus :many
+-- name: FindPlaceInListStatus :many
 SELECT list_id, place_id
 FROM list_items
 WHERE list_items.place_id = $1 AND list_items.list_id = ANY($2::TEXT[]);
