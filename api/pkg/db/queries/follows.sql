@@ -35,7 +35,7 @@ WHERE follower_id = $1;
 DELETE FROM follows
 WHERE follower_id = $1 AND following_id = $2;
 
--- name: FinyManyFollowers :many
+-- name: FindManyFollowers :many
 SELECT
   sqlc.embed(profile)
 FROM follows

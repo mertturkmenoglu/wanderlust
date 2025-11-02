@@ -40,28 +40,28 @@ func (q *Queries) CountFollowing(ctx context.Context, followerID string) (int64,
 	return count, err
 }
 
-const findManyFollowing = `-- name: FindManyFollowing :many
+const findManyFollowers = `-- name: FindManyFollowers :many
 SELECT
   profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM follows
-  LEFT JOIN profile ON profile.id = follows.following_id
-WHERE follows.follower_id = $1
+  LEFT JOIN profile ON profile.id = follows.follower_id
+WHERE follows.following_id = $1
 ORDER BY follows.created_at DESC
 `
 
-type FindManyFollowingRow struct {
+type FindManyFollowersRow struct {
 	Profile Profile
 }
 
-func (q *Queries) FindManyFollowing(ctx context.Context, followerID string) ([]FindManyFollowingRow, error) {
-	rows, err := q.db.Query(ctx, findManyFollowing, followerID)
+func (q *Queries) FindManyFollowers(ctx context.Context, followingID string) ([]FindManyFollowersRow, error) {
+	rows, err := q.db.Query(ctx, findManyFollowers, followingID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FindManyFollowingRow
+	var items []FindManyFollowersRow
 	for rows.Next() {
-		var i FindManyFollowingRow
+		var i FindManyFollowersRow
 		if err := rows.Scan(
 			&i.Profile.ID,
 			&i.Profile.Username,
@@ -84,28 +84,28 @@ func (q *Queries) FindManyFollowing(ctx context.Context, followerID string) ([]F
 	return items, nil
 }
 
-const finyManyFollowers = `-- name: FinyManyFollowers :many
+const findManyFollowing = `-- name: FindManyFollowing :many
 SELECT
   profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM follows
-  LEFT JOIN profile ON profile.id = follows.follower_id
-WHERE follows.following_id = $1
+  LEFT JOIN profile ON profile.id = follows.following_id
+WHERE follows.follower_id = $1
 ORDER BY follows.created_at DESC
 `
 
-type FinyManyFollowersRow struct {
+type FindManyFollowingRow struct {
 	Profile Profile
 }
 
-func (q *Queries) FinyManyFollowers(ctx context.Context, followingID string) ([]FinyManyFollowersRow, error) {
-	rows, err := q.db.Query(ctx, finyManyFollowers, followingID)
+func (q *Queries) FindManyFollowing(ctx context.Context, followerID string) ([]FindManyFollowingRow, error) {
+	rows, err := q.db.Query(ctx, findManyFollowing, followerID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FinyManyFollowersRow
+	var items []FindManyFollowingRow
 	for rows.Next() {
-		var i FinyManyFollowersRow
+		var i FindManyFollowingRow
 		if err := rows.Scan(
 			&i.Profile.ID,
 			&i.Profile.Username,
