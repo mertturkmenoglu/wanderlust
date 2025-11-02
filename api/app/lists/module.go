@@ -6,7 +6,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -17,8 +16,10 @@ func Register(grp *huma.Group, app *core.Application) {
 	dbSvc := app.Get(di.SVC_DB).(*db.Db)
 
 	s := Service{
-		db:   dbSvc.Queries,
-		pool: dbSvc.Pool,
+		repo: &Repository{
+			db:   dbSvc.Queries,
+			pool: dbSvc.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -37,7 +38,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetAllListsOfUserInput) (*dto.GetAllListsOfUserOutput, error) {
+		func(ctx context.Context, input *GetAllListsOfUserInput) (*GetAllListsOfUserOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -64,7 +65,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetListByIdInput) (*dto.GetListByIdOutput, error) {
+		func(ctx context.Context, input *GetListByIdInput) (*GetListByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -91,7 +92,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetListStatusesInput) (*dto.GetListStatusesOutput, error) {
+		func(ctx context.Context, input *GetListStatusesInput) (*GetListStatusesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -114,7 +115,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get public lists of user with username",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetPublicListsOfUserInput) (*dto.GetPublicListsOfUserOutput, error) {
+		func(ctx context.Context, input *GetPublicListsOfUserInput) (*GetPublicListsOfUserOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -141,7 +142,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateListInput) (*dto.CreateListOutput, error) {
+		func(ctx context.Context, input *CreateListInput) (*CreateListOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -168,7 +169,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateListInput) (*dto.UpdateListOutput, error) {
+		func(ctx context.Context, input *UpdateListInput) (*UpdateListOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -195,7 +196,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteListInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteListInput) (*DeleteListOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -222,7 +223,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateListItemInput) (*dto.CreateListItemOutput, error) {
+		func(ctx context.Context, input *CreateListItemInput) (*CreateListItemOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -249,11 +250,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateListItemsInput) (*dto.UpdateListItemsOutput, error) {
+		func(ctx context.Context, input *UpdateListItemsInput) (*UpdateListItemsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.updateListItems(ctx, input.ID, input.Body.PoiIds)
+			res, err := s.updateListItems(ctx, input.ID, input.Body.PlaceIDs)
 
 			if err != nil {
 				sp.RecordError(err)
