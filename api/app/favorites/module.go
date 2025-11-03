@@ -33,7 +33,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodPost,
 			Path:          "/favorites/",
 			Summary:       "Create Favorite",
-			Description:   "Create a favorite for a point of interest",
+			Description:   "Favorite a place",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -60,7 +60,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodDelete,
 			Path:          "/favorites/{id}",
 			Summary:       "Delete Favorite",
-			Description:   "Delete a favorite for a point of interest",
+			Description:   "Remove a place from favorites",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),

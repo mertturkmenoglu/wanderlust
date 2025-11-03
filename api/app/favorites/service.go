@@ -11,13 +11,13 @@ type Service struct {
 	repo *Repository
 }
 
-func (s *Service) create(ctx context.Context, poiId string) (*CreateFavoriteOutput, error) {
+func (s *Service) create(ctx context.Context, placeId string) (*CreateFavoriteOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	res, err := s.repo.create(ctx, userId, poiId)
+	res, err := s.repo.create(ctx, userId, placeId)
 
 	if err != nil {
 		return nil, err
@@ -33,13 +33,13 @@ func (s *Service) create(ctx context.Context, poiId string) (*CreateFavoriteOutp
 	}, nil
 }
 
-func (s *Service) remove(ctx context.Context, poiId string) error {
+func (s *Service) remove(ctx context.Context, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	return s.repo.remove(ctx, userId, poiId)
+	return s.repo.remove(ctx, userId, placeId)
 }
 
 func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*GetCurrentUserFavoritesOutput, error) {
@@ -69,7 +69,7 @@ func (s *Service) get(ctx context.Context, params dto.PaginationQueryParams) (*G
 		placeIds[i] = v.PlaceID
 	}
 
-	favorites, err := s.repo.populateWithPois(ctx, res, placeIds)
+	favorites, err := s.repo.populateWithPlaces(ctx, res, placeIds)
 
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func (s *Service) getByUsername(ctx context.Context, username string, params dto
 		placeIds[i] = v.PlaceID
 	}
 
-	favorites, err := s.repo.populateWithPois(ctx, res, placeIds)
+	favorites, err := s.repo.populateWithPlaces(ctx, res, placeIds)
 
 	return &GetUserFavoritesByUsernameOutput{
 		Body: GetUserFavoritesByUsernameOutputBody{

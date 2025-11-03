@@ -13,8 +13,8 @@ import (
 )
 
 type Repository struct {
-	db         *db.Queries
-	pool       *pgxpool.Pool
+	db            *db.Queries
+	pool          *pgxpool.Pool
 	placesService *places.Service
 }
 
@@ -136,7 +136,7 @@ func (r *Repository) countByUserId(ctx context.Context, userId string) (int64, e
 	return count, nil
 }
 
-func (r *Repository) populateWithPois(ctx context.Context, favorites []db.Favorite, placeIds []string) ([]dto.Favorite, error) {
+func (r *Repository) populateWithPlaces(ctx context.Context, favorites []db.Favorite, placeIds []string) ([]dto.Favorite, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
