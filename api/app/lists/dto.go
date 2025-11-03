@@ -31,7 +31,7 @@ type GetListByIdOutputBody struct {
 }
 
 type GetListStatusesInput struct {
-	PoiID string `path:"poiId" required:"true" minLength:"1" maxLength:"128"`
+	PlaceID string `path:"placeId" required:"true" minLength:"1" maxLength:"128"`
 }
 
 type GetListStatusesOutput struct {

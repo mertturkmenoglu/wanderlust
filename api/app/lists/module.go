@@ -83,9 +83,9 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/lists/status/{poiId}",
-			Summary:       "Check if List Includes POI",
-			Description:   "Check if list includes given poi id",
+			Path:          "/lists/status/{placeId}",
+			Summary:       "Check if List Includes a Place",
+			Description:   "Check if list includes given place id",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -96,7 +96,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getListStatus(ctx, input.PoiID)
+			res, err := s.getListStatus(ctx, input.PlaceID)
 
 			if err != nil {
 				sp.RecordError(err)
