@@ -2,7 +2,7 @@ package aggregator
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
@@ -12,8 +12,8 @@ import (
 )
 
 type Repository struct {
-	db         *db.Queries
-	poiService *pois.Service
+	db            *db.Queries
+	placesService *places.Service
 }
 
 func (r *Repository) listFavoritePlaceIDs(ctx context.Context) ([]string, error) {
@@ -134,7 +134,7 @@ func (r *Repository) getHomeAggregation(ctx context.Context) (*HomeAggregatorOut
 	allIds = append(allIds, dbFeatured...)
 	allIds = append(allIds, dbFavorites...)
 
-	allPlaces, err := r.poiService.FindMany(ctx, allIds)
+	allPlaces, err := r.placesService.FindMany(ctx, allIds)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrAggregation, err.Error())

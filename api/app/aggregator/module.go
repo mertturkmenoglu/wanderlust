@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
@@ -24,7 +24,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		repo: &Repository{
 			db:         dbSvc.Queries,
-			poiService: pois.NewService(app),
+			placesService: places.NewService(app),
 		},
 		cacheMutex:   sync.RWMutex{},
 		requestGroup: singleflight.Group{},
