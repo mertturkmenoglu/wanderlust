@@ -12,7 +12,7 @@ import (
 	"wanderlust/app/favorites"
 	"wanderlust/app/health"
 	"wanderlust/app/lists"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/app/reports"
 	"wanderlust/app/reviews"
 	"wanderlust/app/trips"
@@ -32,7 +32,7 @@ var Modules = []core.RegisterFunc{
 	favorites.Register,
 	health.Register,
 	lists.Register,
-	pois.Register,
+	places.Register,
 	reports.Register,
 	reviews.Register,
 	trips.Register,
