@@ -377,3 +377,186 @@ func ToReview(dbReview db.FindManyReviewsByIdRow, places []Place) (Review, error
 		UpdatedAt: dbReview.Review.UpdatedAt.Time,
 	}, nil
 }
+
+func ToTripVisibilityLevel(lvl string) TripVisibilityLevel {
+	switch lvl {
+	case "public":
+		return TRIP_VISIBILITY_LEVEL_PUBLIC
+	case "friends":
+		return TRIP_VISIBILITY_LEVEL_FRIENDS
+	case "private":
+		return TRIP_VISIBILITY_LEVEL_PRIVATE
+	default:
+		return TRIP_VISIBILITY_LEVEL_PRIVATE
+	}
+}
+
+func ToTrip(dbTrip db.FindManyTripsByIdsPopulatedRow) (Trip, error) {
+	var owner TripUser
+
+	err := json.Unmarshal(dbTrip.Owner, &owner)
+
+	if err != nil {
+		return Trip{}, err
+	}
+
+	participants := make([]TripUser, 0)
+
+	if len(dbTrip.Participants) > 0 {
+		err := json.Unmarshal(dbTrip.Participants, &participants)
+
+		if err != nil {
+			return Trip{}, err
+		}
+	}
+
+	locations := make([]TripPlace, 0)
+
+	if len(dbTrip.Tripplaces) > 0 {
+		err := json.Unmarshal(dbTrip.Tripplaces, &locations)
+
+		if err != nil {
+			return Trip{}, err
+		}
+	}
+
+	places := make([]Place, 0)
+
+	if len(dbTrip.Places) > 0 {
+		places, err = ToPlaces(dbTrip.Places)
+
+		if err != nil {
+			return Trip{}, err
+		}
+	}
+
+	for i, loc := range locations {
+		var place *Place
+
+		for _, p := range places {
+			if p.ID == loc.PlaceID {
+				place = &p
+				break
+			}
+		}
+
+		if place == nil {
+			return Trip{}, fmt.Errorf("place not found: %s", loc.PlaceID)
+		}
+
+		locations[i].Place = *place
+	}
+
+	var status = "upcoming"
+
+	now := time.Now()
+
+	if dbTrip.Trip.EndAt.Time.Before(now) {
+		status = "ended"
+	} else if dbTrip.Trip.StartAt.Time.Before(now) {
+		status = "started"
+	}
+
+	return Trip{
+		ID:                 dbTrip.Trip.ID,
+		OwnerID:            dbTrip.Trip.OwnerID,
+		Title:              dbTrip.Trip.Title,
+		Description:        dbTrip.Trip.Description,
+		VisibilityLevel:    ToTripVisibilityLevel(dbTrip.Trip.VisibilityLevel),
+		StartAt:            dbTrip.Trip.StartAt.Time,
+		EndAt:              dbTrip.Trip.EndAt.Time,
+		CreatedAt:          dbTrip.Trip.CreatedAt.Time,
+		UpdatedAt:          dbTrip.Trip.UpdatedAt.Time,
+		Owner:              owner,
+		Participants:       participants,
+		RequestedAmenities: dbTrip.Trip.RequestedAmenities,
+		Locations:          locations,
+		Status:             status,
+	}, nil
+}
+
+func ToTripInviteFromInvitesByUserIdRow(dbInvite db.FindManyTripInvitesByToUserIdRow) (TripInvite, error) {
+	var fromUser TripUser
+
+	err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
+
+	if err != nil {
+		return TripInvite{}, err
+	}
+
+	return TripInvite{
+		ID:        dbInvite.TripInvite.ID,
+		TripID:    dbInvite.TripInvite.TripID,
+		From:      fromUser,
+		To:        TripUser{},
+		SentAt:    dbInvite.TripInvite.SentAt.Time,
+		ExpiresAt: dbInvite.TripInvite.ExpiresAt.Time,
+		TripTitle: dbInvite.TripInvite.TripTitle,
+		Role:      TripRole(dbInvite.TripInvite.Role),
+	}, nil
+}
+
+func ToTripInviteFromInvitesByTripIdRow(dbInvite db.FindManyTripInvitesByTripIdRow) (TripInvite, error) {
+	var fromUser TripUser
+
+	err := json.Unmarshal(dbInvite.Fromuser, &fromUser)
+
+	if err != nil {
+		return TripInvite{}, err
+	}
+
+	var toUser TripUser
+
+	err = json.Unmarshal(dbInvite.Touser, &toUser)
+
+	if err != nil {
+		return TripInvite{}, err
+	}
+
+	return TripInvite{
+		ID:        dbInvite.TripInvite.ID,
+		TripID:    dbInvite.TripInvite.TripID,
+		From:      fromUser,
+		To:        toUser,
+		SentAt:    dbInvite.TripInvite.SentAt.Time,
+		ExpiresAt: dbInvite.TripInvite.ExpiresAt.Time,
+		TripTitle: dbInvite.TripInvite.TripTitle,
+		Role:      TripRole(dbInvite.TripInvite.Role),
+	}, nil
+}
+
+func ToTripComment(dbComment db.FindManyTripCommentsByTripIdRow) (TripComment, error) {
+	var user TripUser
+
+	err := json.Unmarshal(dbComment.User, &user)
+
+	if err != nil {
+		return TripComment{}, err
+	}
+
+	return TripComment{
+		ID:        dbComment.TripComment.ID,
+		TripID:    dbComment.TripComment.TripID,
+		From:      user,
+		Content:   dbComment.TripComment.Content,
+		CreatedAt: dbComment.TripComment.CreatedAt.Time,
+	}, nil
+}
+
+func ToTripCommentFromCommentByIdRow(dbComment db.FindTripCommentByIdRow) (TripComment, error) {
+	var user TripUser
+
+	err := json.Unmarshal(dbComment.User, &user)
+
+	if err != nil {
+		return TripComment{}, err
+	}
+
+	return TripComment{
+		ID:        dbComment.TripComment.ID,
+		TripID:    dbComment.TripComment.TripID,
+		From:      user,
+		Content:   dbComment.TripComment.Content,
+		CreatedAt: dbComment.TripComment.CreatedAt.Time,
+	}, nil
+}
