@@ -13,13 +13,13 @@ import (
 )
 
 type FakeFavorites struct {
-	UsersPath string
-	PoisPath  string
+	UsersPath  string
+	PlacesPath string
 	*Fake
 }
 
 func (f *FakeFavorites) Generate() (int64, error) {
-	userIds, poiIds, err := f.readFiles()
+	userIds, placeIds, err := f.readFiles()
 
 	if err != nil {
 		return 0, err
@@ -31,7 +31,7 @@ func (f *FakeFavorites) Generate() (int64, error) {
 
 	for chunk := range slices.Chunk(userIds, 100) {
 		g.Go(func() error {
-			count, err := f.createFavorites(gctx, chunk, poiIds)
+			count, err := f.createFavorites(gctx, chunk, placeIds)
 			total.Add(count)
 			return err
 		})
@@ -44,7 +44,7 @@ func (f *FakeFavorites) Generate() (int64, error) {
 	g, gctx = errgroup.WithContext(context.Background())
 	g.SetLimit(10)
 
-	for chunk := range slices.Chunk(poiIds, 100) {
+	for chunk := range slices.Chunk(placeIds, 100) {
 		g.Go(func() error {
 			err := f.updateFavoritesCount(gctx, chunk)
 			return err
@@ -60,26 +60,26 @@ func (f *FakeFavorites) Generate() (int64, error) {
 
 func (f *FakeFavorites) readFiles() ([]string, []string, error) {
 	userIds, err1 := fakeutils.ReadFile(f.UsersPath)
-	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
+	placeIds, err2 := fakeutils.ReadFile(f.PlacesPath)
 
 	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
-	return userIds, poiIds, nil
+	return userIds, placeIds, nil
 }
 
-func (f *FakeFavorites) createFavorites(ctx context.Context, userIds []string, poiIds []string) (int64, error) {
+func (f *FakeFavorites) createFavorites(ctx context.Context, userIds []string, placeIds []string) (int64, error) {
 	batch := make([]db.BatchCreateFavoritesParams, 0)
 
 	for _, userId := range userIds {
 		n := fakeutils.RandInt32Range(10, 20)
-		randPois := fakeutils.RandElems(poiIds, n)
+		randPlaces := fakeutils.RandElems(placeIds, n)
 
 		for i := range n {
 			batch = append(batch, db.BatchCreateFavoritesParams{
-				UserID: userId,
-				PoiID:  randPois[i],
+				UserID:  userId,
+				PlaceID: randPlaces[i],
 			})
 		}
 	}
@@ -87,7 +87,7 @@ func (f *FakeFavorites) createFavorites(ctx context.Context, userIds []string, p
 	return f.db.Queries.BatchCreateFavorites(ctx, batch)
 }
 
-func (f *FakeFavorites) updateFavoritesCount(ctx context.Context, poiIds []string) error {
+func (f *FakeFavorites) updateFavoritesCount(ctx context.Context, placeIds []string) error {
 	tx, err := f.db.Pool.Begin(ctx)
 
 	if err != nil {
@@ -98,16 +98,16 @@ func (f *FakeFavorites) updateFavoritesCount(ctx context.Context, poiIds []strin
 
 	qtx := f.db.Queries.WithTx(tx)
 
-	for _, poiId := range poiIds {
-		count, err1 := qtx.GetPoiFavoritesCount(ctx, poiId)
+	for _, placeId := range placeIds {
+		count, err1 := qtx.CountFavoritesByPlaceId(ctx, placeId)
 		total, err2 := utils.SafeInt64ToInt32(count)
 
 		if err := cmp.Or(err1, err2); err != nil {
 			return err
 		}
 
-		err = qtx.SetPoiFavoritesCount(ctx, db.SetPoiFavoritesCountParams{
-			ID:             poiId,
+		_, err = qtx.UpdatePlaceTotalFavorites(ctx, db.UpdatePlaceTotalFavoritesParams{
+			ID:             placeId,
 			TotalFavorites: total,
 		})
 

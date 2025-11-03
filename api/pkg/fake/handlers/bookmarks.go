@@ -12,8 +12,8 @@ import (
 )
 
 type FakeBookmarks struct {
-	UsersPath string
-	PoisPath  string
+	UsersPath  string
+	PlacesPath string
 	*Fake
 }
 
@@ -45,26 +45,26 @@ func (f *FakeBookmarks) Generate() (int64, error) {
 
 func (f *FakeBookmarks) readFiles() ([]string, []string, error) {
 	userIds, err1 := fakeutils.ReadFile(f.UsersPath)
-	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
+	placeIds, err2 := fakeutils.ReadFile(f.PlacesPath)
 
 	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
-	return userIds, poiIds, nil
+	return userIds, placeIds, nil
 }
 
-func (f *FakeBookmarks) createBookmarks(ctx context.Context, userIds []string, poiIds []string) (int64, error) {
+func (f *FakeBookmarks) createBookmarks(ctx context.Context, userIds []string, placeIds []string) (int64, error) {
 	batch := make([]db.BatchCreateBookmarksParams, 0)
 
 	for _, userId := range userIds {
 		n := fakeutils.RandInt32Range(10, 20)
-		randPois := fakeutils.RandElems(poiIds, n)
+		randPlaces := fakeutils.RandElems(placeIds, n)
 
 		for i := range n {
 			batch = append(batch, db.BatchCreateBookmarksParams{
-				UserID: userId,
-				PoiID:  randPois[i],
+				UserID:  userId,
+				PlaceID: randPlaces[i],
 			})
 		}
 	}

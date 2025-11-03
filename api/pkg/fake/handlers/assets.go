@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // Got from picsum list endpoint
@@ -30,33 +32,38 @@ func getRandomImageUrl() string {
 	return fmt.Sprintf("https://picsum.photos/id/%d/960/720", fakeutils.RandElem(imageIds))
 }
 
-type FakeImages struct {
-	PoisPath string
+type FakeAssets struct {
+	PlacesPath string
 	*Fake
 }
 
-func (f *FakeImages) Generate() (int64, error) {
-	poiIds, err := fakeutils.ReadFile(f.PoisPath)
+func (f *FakeAssets) Generate() (int64, error) {
+	placeIds, err := fakeutils.ReadFile(f.PlacesPath)
 
 	if err != nil {
 		return 0, err
 	}
 
-	batch := make([]db.BatchCreatePoiImagesParams, 0)
+	batch := make([]db.BatchCreatePlaceAssetsParams, 0)
 
-	for _, id := range poiIds {
+	for _, id := range placeIds {
 		n := fakeutils.RandInt16Range(2, 10)
 
 		for i := range n {
 			istr := strconv.FormatInt(int64(i), 10)
-			batch = append(batch, db.BatchCreatePoiImagesParams{
-				PoiID: id,
+			batch = append(batch, db.BatchCreatePlaceAssetsParams{
+				EntityType: "place",
+				EntityID:   id,
+				AssetType:  "image",
+				Description: pgtype.Text{
+					String: "Alt text for image " + istr,
+					Valid:  true,
+				},
 				Url:   getRandomImageUrl(),
-				Alt:   "Alt text for image " + istr,
-				Index: i + 1,
+				Order: int32(i + 1),
 			})
 		}
 	}
 
-	return f.db.Queries.BatchCreatePoiImages(context.Background(), batch)
+	return f.db.Queries.BatchCreatePlaceAssets(context.Background(), batch)
 }
