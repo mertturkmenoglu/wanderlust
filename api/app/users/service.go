@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/dto"
@@ -19,11 +19,11 @@ import (
 )
 
 type Service struct {
-	poiService *pois.Service
-	cache      *cache.Cache
-	log        *zap.Logger
-	activities *activities.ActivityService
-	repo       *Repository
+	placesService *places.Service
+	cache         *cache.Cache
+	log           *zap.Logger
+	activities    *activities.ActivityService
+	repo          *Repository
 }
 
 func (s *Service) updateImage(ctx context.Context, updateType string, input UpdateUserImageInputBody) (*UpdateUserImageOutput, error) {
@@ -167,7 +167,7 @@ func (s *Service) getTopPlaces(ctx context.Context, username string) (*GetUserTo
 		ids[i] = v.PlaceID
 	}
 
-	res, err := s.poiService.FindMany(ctx, ids)
+	res, err := s.placesService.FindMany(ctx, ids)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToListTopPlaces, err.Error())
@@ -194,7 +194,7 @@ func (s *Service) updateTopPlaces(ctx context.Context, body UpdateUserTopPlacesI
 	username := ctx.Value("username").(string)
 
 	// Fetch places to ensure they all exist
-	places, err := s.poiService.FindMany(ctx, body.PlaceIds)
+	places, err := s.placesService.FindMany(ctx, body.PlaceIds)
 
 	if err != nil {
 		return nil, ErrPlaceNotFound

@@ -3,7 +3,7 @@ package users
 import (
 	"context"
 	"net/http"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/authz"
 	"wanderlust/pkg/cache"
@@ -24,10 +24,10 @@ func Register(grp *huma.Group, app *core.Application) {
 	activitiesSvc := app.Get(di.SVC_ACTIVITIES).(*activities.ActivityService)
 
 	s := Service{
-		poiService: pois.NewService(app),
-		cache:      cacheSvc,
-		log:        logSvc,
-		activities: activitiesSvc,
+		placesService: places.NewService(app),
+		cache:         cacheSvc,
+		log:           logSvc,
+		activities:    activitiesSvc,
 		repo: &Repository{
 			db:   dbSvc.Queries,
 			pool: dbSvc.Pool,
