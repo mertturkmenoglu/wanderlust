@@ -22,3 +22,37 @@ INSERT INTO assets (
   $4,
   $5
 ) RETURNING *;
+
+-- name: BatchCreateReviewAssets :copyfrom
+INSERT INTO assets (
+  entity_type,
+  entity_id,
+  url,
+  asset_type,
+  description,
+  "order"
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6
+);
+
+-- name: BatchCreatePlaceAssets :copyfrom
+INSERT INTO assets (
+  entity_type,
+  entity_id,
+  url,
+  asset_type,
+  description,
+  "order"
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6
+);

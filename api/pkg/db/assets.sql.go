@@ -11,6 +11,24 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type BatchCreatePlaceAssetsParams struct {
+	EntityType  string
+	EntityID    string
+	Url         string
+	AssetType   string
+	Description pgtype.Text
+	Order       int32
+}
+
+type BatchCreateReviewAssetsParams struct {
+	EntityType  string
+	EntityID    string
+	Url         string
+	AssetType   string
+	Description pgtype.Text
+	Order       int32
+}
+
 const createReviewAsset = `-- name: CreateReviewAsset :one
 INSERT INTO assets (
   entity_type,
