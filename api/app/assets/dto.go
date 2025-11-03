@@ -3,7 +3,7 @@ package assets
 import "wanderlust/pkg/storage"
 
 type GetPresignedUrlInput struct {
-	Bucket    storage.BucketName `query:"bucket" required:"true" example:"default" enum:"default,profile-images,banner-images,pois,reviews,diaries"`
+	Bucket    storage.BucketName `query:"bucket" required:"true" example:"default" enum:"default,profile-images,banner-images,places,reviews,diaries"`
 	AssetType string             `query:"assetType" required:"true" example:"image" enum:"image,video"`
 	FileExt   string             `query:"fileExt" required:"true" example:"png" enum:"jpg,png,webp,jpeg,mp4"`
 }
