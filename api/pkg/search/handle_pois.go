@@ -2,7 +2,7 @@ package search
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
@@ -15,7 +15,7 @@ func handlePoiSync() error {
 	d := db.NewDb()
 	ctx := context.Background()
 
-	totalCount, err := d.Queries.CountPois(ctx)
+	totalCount, err := d.Queries.CountPlaces(ctx)
 
 	if err != nil {
 		return err
@@ -26,13 +26,13 @@ func handlePoiSync() error {
 	ioc.Set(di.SVC_DB, d)
 
 	searchService := New()
-	s := pois.NewService(&core.Application{
+	s := places.NewService(&core.Application{
 		Container: ioc,
 	})
 
 	const step int32 = 1000
 
-	_, err = searchService.Client.Collection(string(CollectionPois)).Delete(ctx)
+	_, err = searchService.Client.Collection(string(CollectionPlaces)).Delete(ctx)
 
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func handlePoiSync() error {
 	}
 
 	for i = 0; i <= n; i += step {
-		ids, err := d.Queries.GetPaginatedPoiIds(ctx, db.GetPaginatedPoiIdsParams{
+		ids, err := d.Queries.FindManyPlaceIds(ctx, db.FindManyPlaceIdsParams{
 			Offset: i,
 			Limit:  step,
 		})
@@ -78,7 +78,7 @@ func handlePoiSync() error {
 		}
 
 		_, err = searchService.Client.
-			Collection(string(CollectionPois)).
+			Collection(string(CollectionPlaces)).
 			Documents().
 			Import(ctx, docs, &tsapi.ImportDocumentsParams{})
 
