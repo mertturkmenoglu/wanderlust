@@ -324,3 +324,56 @@ func ToProfileFromUser(dbUser db.User) Profile {
 		CreatedAt:      dbUser.CreatedAt.Time,
 	}
 }
+
+func ToReviews(dbReviews []db.FindManyReviewsByIdRow, places []Place) ([]Review, error) {
+	reviews := make([]Review, len(dbReviews))
+
+	for i, v := range dbReviews {
+		r, err := ToReview(v, places)
+
+		if err != nil {
+			return nil, err
+		}
+
+		reviews[i] = r
+	}
+
+	return reviews, nil
+}
+
+func ToReview(dbReview db.FindManyReviewsByIdRow, places []Place) (Review, error) {
+	place := places[0]
+
+	for _, v := range places {
+		if v.ID == dbReview.Review.PlaceID {
+			place = v
+			break
+		}
+	}
+
+	assets := make([]Asset, 0)
+
+	if len(dbReview.Assets) > 0 {
+		err := json.Unmarshal(dbReview.Assets, &assets)
+
+		if err != nil {
+			return Review{}, err
+		}
+	}
+
+	return Review{
+		ID:      dbReview.Review.ID,
+		PlaceID: dbReview.Review.PlaceID,
+		UserID:  dbReview.Review.UserID,
+		Content: dbReview.Review.Content,
+		Rating:  dbReview.Review.Rating,
+		Place: ReviewPlace{
+			ID:   place.ID,
+			Name: place.Name,
+		},
+		Assets:    assets,
+		User:      ToProfile(dbReview.Profile),
+		CreatedAt: dbReview.Review.CreatedAt.Time,
+		UpdatedAt: dbReview.Review.UpdatedAt.Time,
+	}, nil
+}
