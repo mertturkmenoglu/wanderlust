@@ -149,11 +149,11 @@ func (s *Service) updateItems(ctx context.Context, collectionId string, body Upd
 	}, nil
 }
 
-func (s *Service) createPlaceRelation(ctx context.Context, collectionId string, poiId string) error {
+func (s *Service) createPlaceRelation(ctx context.Context, collectionId string, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	return s.repo.createPlaceRelation(ctx, collectionId, poiId)
+	return s.repo.createPlaceRelation(ctx, collectionId, placeId)
 }
 
 func (s *Service) createCityRelation(ctx context.Context, collectionId string, cityId int32) error {
@@ -163,11 +163,11 @@ func (s *Service) createCityRelation(ctx context.Context, collectionId string, c
 	return s.repo.createCityRelation(ctx, collectionId, cityId)
 }
 
-func (s *Service) removePlaceRelation(ctx context.Context, collectionId string, poiId string) error {
+func (s *Service) removePlaceRelation(ctx context.Context, collectionId string, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	return s.repo.removePlaceRelation(ctx, collectionId, poiId)
+	return s.repo.removePlaceRelation(ctx, collectionId, placeId)
 }
 
 func (s *Service) removeCityRelation(ctx context.Context, collectionId string, cityId int32) error {
