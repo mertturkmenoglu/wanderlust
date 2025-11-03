@@ -148,7 +148,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getByPoiID(ctx, input)
+			res, err := s.getByPlaceId(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
