@@ -6,8 +6,8 @@
 
 Welcome to Wanderlust, a travel and location discovery platform designed to inspire exploration and connection. With Wanderlust, you can:
 
-- Explore cities and point of interest (POI) guides, curated with insider tips and recommendations.
-- Collect and organize POIs into favorites, bookmarks, and custom lists.
+- Explore cities and places (POI) guides, curated with insider tips and recommendations.
+- Collect and organize places into favorites, bookmarks, and custom lists.
 - Follow fellow travelers, send messages, and stay up-to-date on their adventures.
 - Record your own trips with diary entries, complete with photos and memories.
 - Plan future trips using our intuitive trip planner tool.
@@ -22,10 +22,10 @@ It's open source and free.
 - Exploration:
   - Search for places.
   - Explore cities and countries.
-  - Explore point of interests (POIs).
+  - Explore places/point of interests (POIs).
   - Explore places by category.
-  - Explore curated collections of POIs.
-  - Discover nearby POIs.
+  - Explore curated collections of places.
+  - Discover nearby places.
 - User:
   - Create an account.
   - Follow other users.
@@ -41,19 +41,19 @@ It's open source and free.
     - Public Lists
 - Reviews:
   - Create reviews.
-  - Rate POIs.
+  - Rate places.
   - Upload images.
   - Filter reviews by rating and date.
   - Sort reviews by rating and date.
 - Lists, Bookmarks, Favorites:
   - Create lists.
-  - Add POIs to your lists.
+  - Add places to your lists.
   - View other users' public lists.
   - Create bookmarks.
-  - Add POIs to your favorites.
+  - Add places to your favorites.
 - Trip planning:
   - Create trips.
-  - Add POIs to your trips.
+  - Add places to your trips.
   - Invite friends to your trips.
   - View other users' trips.
   - Add requested amenities.
@@ -68,9 +68,9 @@ It's open source and free.
 - Notifications.
 - In app messaging.
 - Trip itinerary.
-- Better POI and user search.
+- Better place and user search.
 - Better map interactions.
-- Better POI reviews.
+- Better place reviews.
 - Better L10n support.
 - Better timezone support.
 
@@ -80,12 +80,12 @@ It's open source and free.
 
 <img src="https://i.imgur.com/kGinaVY.png" alt="Homepage" width="100%">
 
-### Point of Interests
+### Places
 
-<img src="https://i.imgur.com/004GWJJ.png" alt="Point of Interests" width="100%">
-<img src="https://i.imgur.com/aDkugS0.png" alt="Point of Interests" width="100%">
-<img src="https://i.imgur.com/7gvZwGl.png" alt="Point of Interests" width="100%">
-<img src="https://i.imgur.com/QQMJLai.png" alt="Point of Interests" width="100%">
+<img src="https://i.imgur.com/004GWJJ.png" alt="Places" width="100%">
+<img src="https://i.imgur.com/aDkugS0.png" alt="Places" width="100%">
+<img src="https://i.imgur.com/7gvZwGl.png" alt="Places" width="100%">
+<img src="https://i.imgur.com/QQMJLai.png" alt="Places" width="100%">
 
 ### Trip Planner
 
