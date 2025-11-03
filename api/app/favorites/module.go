@@ -3,7 +3,7 @@ package favorites
 import (
 	"context"
 	"net/http"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
@@ -20,7 +20,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		&Repository{
 			dbSvc.Queries,
 			dbSvc.Pool,
-			pois.NewService(app),
+			places.NewService(app),
 		},
 	}
 

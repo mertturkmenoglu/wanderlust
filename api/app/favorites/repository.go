@@ -2,7 +2,7 @@ package favorites
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
@@ -15,7 +15,7 @@ import (
 type Repository struct {
 	db         *db.Queries
 	pool       *pgxpool.Pool
-	poiService *pois.Service
+	placesService *places.Service
 }
 
 func (r *Repository) create(ctx context.Context, userId string, placeId string) (*db.Favorite, error) {
@@ -140,7 +140,7 @@ func (r *Repository) populateWithPois(ctx context.Context, favorites []db.Favori
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	places, err := r.poiService.FindMany(ctx, placeIds)
+	places, err := r.placesService.FindMany(ctx, placeIds)
 
 	if err != nil {
 		return nil, err
