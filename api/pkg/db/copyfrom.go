@@ -547,6 +547,45 @@ func (q *Queries) BatchCreateReviews(ctx context.Context, arg []BatchCreateRevie
 	return q.db.CopyFrom(ctx, []string{"reviews"}, []string{"id", "place_id", "user_id", "content", "rating"}, &iteratorForBatchCreateReviews{rows: arg})
 }
 
+// iteratorForBatchCreateTrips implements pgx.CopyFromSource.
+type iteratorForBatchCreateTrips struct {
+	rows                 []BatchCreateTripsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateTrips) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateTrips) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].OwnerID,
+		r.rows[0].Title,
+		r.rows[0].Description,
+		r.rows[0].VisibilityLevel,
+		r.rows[0].RequestedAmenities,
+		r.rows[0].StartAt,
+		r.rows[0].EndAt,
+	}, nil
+}
+
+func (r iteratorForBatchCreateTrips) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateTrips(ctx context.Context, arg []BatchCreateTripsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "title", "description", "visibility_level", "requested_amenities", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
+}
+
 // iteratorForBatchCreateUsers implements pgx.CopyFromSource.
 type iteratorForBatchCreateUsers struct {
 	rows                 []BatchCreateUsersParams
