@@ -2,7 +2,7 @@ package bookmarks
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
@@ -11,7 +11,7 @@ import (
 )
 
 type Service struct {
-	placesService *pois.Service
+	placesService *places.Service
 	repo          *Repository
 }
 

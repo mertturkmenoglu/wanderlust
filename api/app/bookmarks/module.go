@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
@@ -19,7 +19,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	dbSvc := app.Get(di.SVC_DB).(*db.Db)
 
 	s := Service{
-		pois.NewService(app),
+		places.NewService(app),
 		&Repository{
 			dbSvc.Queries,
 			dbSvc.Pool,
