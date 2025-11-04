@@ -273,77 +273,21 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 	inviteDetail, err := s.getInviteDetail(ctx, tripId, inviteId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, err
+		return nil, errors.Wrap(ErrFailedToAcceptOrDeclineInvite, err.Error())
 	}
 
 	userId := ctx.Value("userId").(string)
 
-	if inviteDetail.Body.InviteDetail.ExpiresAt.Before(time.Now()) {
-		err = s.db.DeleteInvite(ctx, inviteId)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Invite expired and failed to delete invite")
-		}
-
-		return nil, huma.Error410Gone("Invite expired")
-	}
-
-	tx, err := s.pool.Begin(ctx)
+	err = s.repo.acceptOrDeclineInvite(ctx, AcceptOrDeclineInviteParams{
+		UserID:   userId,
+		Action:   action,
+		InviteID: inviteId,
+		TripID:   tripId,
+		Role:     string(inviteDetail.Body.InviteDetail.Role),
+	})
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to create transaction")
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := s.db.WithTx(tx)
-
-	switch action {
-	case "accept":
-		{
-			err = qtx.DeleteInvite(ctx, inviteId)
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, huma.Error500InternalServerError("Failed to delete invite")
-			}
-
-			_, err = qtx.AddParticipantToTrip(ctx, db.AddParticipantToTripParams{
-				ID:     uid.Flake(),
-				UserID: userId,
-				TripID: tripId,
-				Role:   string(inviteDetail.Body.InviteDetail.Role),
-			})
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, huma.Error500InternalServerError("Failed to add participant to trip")
-			}
-		}
-	case "decline":
-		{
-			err = qtx.DeleteInvite(ctx, inviteId)
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, huma.Error500InternalServerError("Failed to delete invite")
-			}
-		}
-	default:
-		{
-			err = huma.Error400BadRequest("Invalid action")
-			sp.RecordError(err)
-			return nil, err
-		}
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to commit transaction")
+		return nil, err
 	}
 
 	var accepted bool = true
@@ -365,27 +309,17 @@ func (s *Service) removeInvite(ctx context.Context, tripId string, inviteId stri
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return err
 	}
 
-	if !canCreateInvite(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to remove this invite")
-		sp.RecordError(err)
-		return err
+	if !canRemoveInvite(trip, userId) {
+		return ErrNotAuthorizedToDeleteInvite
 	}
 
-	err = s.db.DeleteInvite(ctx, inviteId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to delete invite")
-	}
-
-	return nil
+	return s.repo.removeInvite(ctx, inviteId)
 }
 
 func (s *Service) removeParticipant(ctx context.Context, tripId string, participantId string) error {

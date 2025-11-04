@@ -6,6 +6,7 @@ import (
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
+	"wanderlust/pkg/uid"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
@@ -191,6 +192,77 @@ func (r *Repository) removeInvite(ctx context.Context, id string) error {
 
 	if tag.RowsAffected() == 0 {
 		return ErrInviteNotFound
+	}
+
+	return nil
+}
+
+type AcceptOrDeclineInviteParams struct {
+	UserID   string
+	Action   string
+	InviteID string
+	TripID   string
+	Role     string
+}
+
+func (r *Repository) acceptOrDeclineInvite(ctx context.Context, params AcceptOrDeclineInviteParams) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tx, err := r.pool.Begin(ctx)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToAcceptOrDeclineInvite, err.Error())
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := r.db.WithTx(tx)
+
+	switch params.Action {
+	case "accept":
+		{
+			tag, err := qtx.RemoveTripInviteById(ctx, params.InviteID)
+
+			if err != nil {
+				return errors.Wrap(ErrFailedToAcceptOrDeclineInvite, err.Error())
+			}
+
+			if tag.RowsAffected() == 0 {
+				return ErrInviteNotFound
+			}
+
+			_, err = qtx.CreateTripParticipant(ctx, db.CreateTripParticipantParams{
+				ID:     uid.Flake(),
+				UserID: params.UserID,
+				TripID: params.TripID,
+				Role:   params.Role,
+			})
+
+			if err != nil {
+				return errors.Wrap(ErrFailedToAcceptOrDeclineInvite, err.Error())
+			}
+		}
+	case "decline":
+		{
+			tag, err := qtx.RemoveTripInviteById(ctx, params.InviteID)
+
+			if err != nil {
+				return errors.Wrap(ErrFailedToAcceptOrDeclineInvite, err.Error())
+			}
+
+			if tag.RowsAffected() == 0 {
+				return ErrInviteNotFound
+			}
+		}
+	default:
+		return ErrInvalidInviteAction
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToAcceptOrDeclineInvite, err.Error())
 	}
 
 	return nil

@@ -21,6 +21,10 @@ func canCreateInvite(trip *dto.Trip, userId string) bool {
 	return isPrivilegedUser(trip, userId)
 }
 
+func canRemoveInvite(trip *dto.Trip, userId string) bool {
+	return isPrivilegedUser(trip, userId)
+}
+
 func canRemoveParticipant(trip *dto.Trip, userId string, participantId string) bool {
 	// You cannot remove the owner
 	if participantId == trip.OwnerID {
@@ -106,7 +110,7 @@ func canDeleteComment(trip *dto.Trip, comment *dto.TripComment, userId string) b
 		if p.ID == userId && p.Role == "editor" {
 			return true
 		}
-		
+
 		if p.ID == comment.From.ID && p.ID == userId {
 			return true
 		}
