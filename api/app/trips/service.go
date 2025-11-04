@@ -4,9 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mapper"
@@ -18,173 +17,76 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Service struct {
-	poisService *pois.Service
-	wg          *sync.WaitGroup
-	db          *db.Queries
-	pool        *pgxpool.Pool
+	placesService *places.Service
+	repo          *Repository
 }
 
-func (s *Service) findMany(ctx context.Context, ids []string) ([]dto.Trip, error) {
+func (s *Service) getTripById(ctx context.Context, id string) (*GetTripByIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
-
-	res, err := s.db.GetTripsByIdsPopulated(ctx, ids)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, err
-	}
-
-	trips := make([]dto.Trip, len(res))
-
-	for i, r := range res {
-		trip, err := mapper.ToTrip(r)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, err
-		}
-
-		trips[i] = trip
-	}
-
-	return trips, nil
-}
-
-func (s *Service) find(ctx context.Context, id string) (*dto.Trip, error) {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	res, err := s.findMany(ctx, []string{id})
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("Trip not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get trip")
-	}
-
-	if len(res) != 1 {
-		err = huma.Error404NotFound("Trip not found")
-		sp.RecordError(err)
-		return nil, err
-	}
-
-	return &res[0], nil
-}
-
-func (s *Service) getTripById(ctx context.Context, id string) (*dto.GetTripByIdOutput, error) {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	trip, err := s.find(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, err
-	}
 
 	userId := ctx.Value("userId").(string)
 
-	if !canRead(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip")
-		sp.RecordError(err)
+	trip, err := s.repo.get(ctx, id)
+
+	if err != nil {
 		return nil, err
 	}
 
-	return &dto.GetTripByIdOutput{
-		Body: dto.GetTripByIdOutputBody{
+	if !canRead(trip, userId) {
+		return nil, ErrNotAuthorizedToAccess
+	}
+
+	return &GetTripByIdOutput{
+		Body: GetTripByIdOutputBody{
 			Trip: *trip,
 		},
 	}, nil
 }
 
-func (s *Service) getAllTrips(ctx context.Context, params dto.PaginationQueryParams) (*dto.GetAllTripsOutput, error) {
+func (s *Service) getAllTrips(ctx context.Context, params dto.PaginationQueryParams) (*GetAllTripsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	rows, err := s.db.GetAllTripsIds(ctx, db.GetAllTripsIdsParams{
-		OwnerID: userId,
-		Offset:  int32(pagination.GetOffset(params)),
-		Limit:   int32(params.PageSize),
-	})
+	trips, count, err := s.repo.listMyTrips(ctx, userId, params)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get trips")
-	}
-
-	tripIds := make([]string, len(rows))
-
-	for i, row := range rows {
-		tripIds[i] = row.ID
-	}
-
-	trips, err := s.findMany(ctx, tripIds)
-
-	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
-	count, err := s.db.CountMyTrips(ctx, userId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get trips count")
-	}
-
-	return &dto.GetAllTripsOutput{
-		Body: dto.GetAllTripsOutputBody{
+	return &GetAllTripsOutput{
+		Body: GetAllTripsOutputBody{
 			Trips:      trips,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
 }
 
-func (s *Service) getMyInvites(ctx context.Context) (*dto.GetMyTripInvitesOutput, error) {
+func (s *Service) getMyInvites(ctx context.Context) (*GetMyTripInvitesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	dbInvites, err := s.db.GetInvitesByToUserId(ctx, userId)
+	invites, err := s.repo.listMyInvites(ctx, userId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get invites")
+		return nil, err
 	}
 
-	invites := make([]dto.TripInvite, len(dbInvites))
-
-	for i, dbInvite := range dbInvites {
-		res, err := mapper.ToTripInviteFromInvitesByUserIdRow(dbInvite)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to get invites")
-		}
-
-		invites[i] = res
-	}
-
-	return &dto.GetMyTripInvitesOutput{
-		Body: dto.GetMyTripInvitesOutputBody{
+	return &GetMyTripInvitesOutput{
+		Body: GetMyTripInvitesOutputBody{
 			Invites: invites,
 		},
 	}, nil
 }
 
-func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dto.CreateTripOutput, error) {
+func (s *Service) create(ctx context.Context, body CreateTripInputBody) (*CreateTripOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -212,14 +114,14 @@ func (s *Service) create(ctx context.Context, body dto.CreateTripInputBody) (*dt
 		return nil, huma.Error500InternalServerError("Failed to get trip")
 	}
 
-	return &dto.CreateTripOutput{
-		Body: dto.CreateTripOutputBody{
+	return &CreateTripOutput{
+		Body: CreateTripOutputBody{
 			Trip: *res,
 		},
 	}, nil
 }
 
-func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.GetTripInvitesByTripIdOutput, error) {
+func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*GetTripInvitesByTripIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -244,7 +146,7 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		return nil, huma.Error500InternalServerError("Failed to get invites")
 	}
 
-	invites := make([]dto.TripInvite, len(dbInvites))
+	invites := make([]TripInvite, len(dbInvites))
 
 	for i, dbInvite := range dbInvites {
 		res, err := mapper.ToTripInviteFromInvitesByTripIdRow(dbInvite)
@@ -257,14 +159,14 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*dto.G
 		invites[i] = res
 	}
 
-	return &dto.GetTripInvitesByTripIdOutput{
-		Body: dto.GetTripInvitesByTripIdOutputBody{
+	return &GetTripInvitesByTripIdOutput{
+		Body: GetTripInvitesByTripIdOutputBody{
 			Invites: invites,
 		},
 	}, nil
 }
 
-func (s *Service) createInvite(ctx context.Context, tripId string, body dto.CreateTripInviteInputBody) (*dto.CreateTripInviteOutput, error) {
+func (s *Service) createInvite(ctx context.Context, tripId string, body CreateTripInviteInputBody) (*CreateTripInviteOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -288,7 +190,7 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 		return nil, err
 	}
 
-	if trip.VisibilityLevel == dto.TRIP_VISIBILITY_LEVEL_PRIVATE {
+	if trip.VisibilityLevel == TRIP_VISIBILITY_LEVEL_PRIVATE {
 		err = huma.Error400BadRequest("You cannot invite users to a private trip")
 		sp.RecordError(err)
 		return nil, err
@@ -328,8 +230,8 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 
 	for _, invite := range res.Body.Invites {
 		if invite.ID == dbRes.ID {
-			return &dto.CreateTripInviteOutput{
-				Body: dto.CreateTripInviteOutputBody{
+			return &CreateTripInviteOutput{
+				Body: CreateTripInviteOutputBody{
 					Invite: invite,
 				},
 			}, nil
@@ -339,7 +241,7 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body dto.Crea
 	return nil, huma.Error500InternalServerError("Failed to get invites")
 }
 
-func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId string) (*dto.GetTripInviteDetailsOutput, error) {
+func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId string) (*GetTripInviteDetailsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -386,13 +288,13 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 
 	userId := ctx.Value("userId").(string)
 
-	if inviteDto.To.ID != userId {
+	if inviteTo.ID != userId {
 		err = huma.Error403Forbidden("You are not authorized to access this invite")
 		sp.RecordError(err)
 		return nil, err
 	}
 
-	if inviteDto.ExpiresAt.Before(time.Now()) {
+	if inviteExpiresAt.Before(time.Now()) {
 		err = s.db.DeleteInvite(ctx, inviteId)
 
 		if err != nil {
@@ -403,9 +305,9 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 		return nil, huma.Error410Gone("Invite expired")
 	}
 
-	return &dto.GetTripInviteDetailsOutput{
-		Body: dto.GetTripInviteDetailsOutputBody{
-			InviteDetail: dto.TripInviteDetail{
+	return &GetTripInviteDetailsOutput{
+		Body: GetTripInviteDetailsOutputBody{
+			InviteDetail: TripInviteDetail{
 				TripInvite: inviteDto,
 				TripTitle:  trip.Title,
 				StartAt:    trip.StartAt,
@@ -415,7 +317,7 @@ func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId s
 	}, nil
 }
 
-func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, inviteId string, action string) (*dto.TripInviteActionOutput, error) {
+func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, inviteId string, action string) (*TripInviteActionOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -501,8 +403,8 @@ func (s *Service) acceptOrDeclineInvite(ctx context.Context, tripId string, invi
 		accepted = false
 	}
 
-	return &dto.TripInviteActionOutput{
-		Body: dto.TripInviteActionOutputBody{
+	return &TripInviteActionOutput{
+		Body: TripInviteActionOutputBody{
 			Accepted: accepted,
 		},
 	}, nil
@@ -604,7 +506,7 @@ func (s *Service) removeTrip(ctx context.Context, id string) error {
 	return nil
 }
 
-func (s *Service) createComment(ctx context.Context, tripId string, body dto.CreateTripCommentInputBody) (*dto.CreateTripCommentOutput, error) {
+func (s *Service) createComment(ctx context.Context, tripId string, body CreateTripCommentInputBody) (*CreateTripCommentOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -639,12 +541,12 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 		return nil, huma.Error500InternalServerError("Failed to create comment")
 	}
 
-	return &dto.CreateTripCommentOutput{
-		Body: dto.CreateTripCommentOutputBody{
-			Comment: dto.TripComment{
+	return &CreateTripCommentOutput{
+		Body: CreateTripCommentOutputBody{
+			Comment: TripComment{
 				ID:        res.ID,
 				TripID:    tripId,
-				From:      dto.TripUser{ID: userId},
+				From:      TripUser{ID: userId},
 				Content:   body.Content,
 				CreatedAt: res.CreatedAt.Time,
 			},
@@ -652,7 +554,7 @@ func (s *Service) createComment(ctx context.Context, tripId string, body dto.Cre
 	}, nil
 }
 
-func (s *Service) getComments(ctx context.Context, tripId string, params dto.PaginationQueryParams) (*dto.GetTripCommentsOutput, error) {
+func (s *Service) getComments(ctx context.Context, tripId string, params PaginationQueryParams) (*GetTripCommentsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -688,7 +590,7 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 		return nil, huma.Error500InternalServerError("Failed to get comments")
 	}
 
-	comments := make([]dto.TripComment, len(dbComments))
+	comments := make([]TripComment, len(dbComments))
 
 	for i, dbComment := range dbComments {
 		res, err := mapper.ToTripComment(dbComment)
@@ -708,15 +610,15 @@ func (s *Service) getComments(ctx context.Context, tripId string, params dto.Pag
 		return nil, huma.Error500InternalServerError("Failed to get comments count")
 	}
 
-	return &dto.GetTripCommentsOutput{
-		Body: dto.GetTripCommentsOutputBody{
+	return &GetTripCommentsOutput{
+		Body: GetTripCommentsOutputBody{
 			Comments:   comments,
 			Pagination: pagination.Compute(params, count),
 		},
 	}, nil
 }
 
-func (s *Service) findCommentById(ctx context.Context, id string) (*dto.TripComment, error) {
+func (s *Service) findCommentById(ctx context.Context, id string) (*TripComment, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -742,7 +644,7 @@ func (s *Service) findCommentById(ctx context.Context, id string) (*dto.TripComm
 	return &res, nil
 }
 
-func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommentInput) (*dto.UpdateTripCommentOutput, error) {
+func (s *Service) updateComment(ctx context.Context, input *UpdateTripCommentInput) (*UpdateTripCommentOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -779,8 +681,8 @@ func (s *Service) updateComment(ctx context.Context, input *dto.UpdateTripCommen
 		return nil, huma.Error500InternalServerError("Failed to get comment")
 	}
 
-	return &dto.UpdateTripCommentOutput{
-		Body: dto.UpdateTripCommentOutputBody{
+	return &UpdateTripCommentOutput{
+		Body: UpdateTripCommentOutputBody{
 			Comment: *updatedComment,
 		},
 	}, nil
@@ -827,7 +729,7 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 	return nil
 }
 
-func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.UpdateTripAmenitiesInputBody) (*dto.UpdateTripAmenitiesOutput, error) {
+func (s *Service) updateAmenities(ctx context.Context, tripId string, body UpdateTripAmenitiesInputBody) (*UpdateTripAmenitiesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -893,14 +795,14 @@ func (s *Service) updateAmenities(ctx context.Context, tripId string, body dto.U
 		return nil, huma.Error500InternalServerError("Failed to get trip")
 	}
 
-	return &dto.UpdateTripAmenitiesOutput{
-		Body: dto.UpdateTripAmenitiesOutputBody{
+	return &UpdateTripAmenitiesOutput{
+		Body: UpdateTripAmenitiesOutputBody{
 			Amenities: trip.RequestedAmenities,
 		},
 	}, nil
 }
 
-func (s *Service) updateTrip(ctx context.Context, id string, body dto.UpdateTripInputBody) (*dto.UpdateTripOutput, error) {
+func (s *Service) updateTrip(ctx context.Context, id string, body UpdateTripInputBody) (*UpdateTripOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -1006,7 +908,7 @@ func (s *Service) updateTrip(ctx context.Context, id string, body dto.UpdateTrip
 	return nil, nil
 }
 
-func (s *Service) createTripLocation(ctx context.Context, tripId string, body dto.CreateTripLocationInputBody) (*dto.CreateTripLocationOutput, error) {
+func (s *Service) createTripLocation(ctx context.Context, tripId string, body CreateTripLocationInputBody) (*CreateTripLocationOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -1071,21 +973,21 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body dt
 		return nil, huma.Error400BadRequest("Failed to create location")
 	}
 
-	return &dto.CreateTripLocationOutput{
-		Body: dto.CreateTripLocationOutputBody{
-			Location: dto.TripLocation{
+	return &CreateTripLocationOutput{
+		Body: CreateTripLocationOutputBody{
+			Location: TripPlace{
 				ID:            res.ID,
 				TripID:        tripId,
 				ScheduledTime: res.ScheduledTime.Time,
 				Description:   res.Description,
 				PoiID:         res.PoiID,
-				Poi:           dto.Poi{},
+				Poi:           Poi{},
 			},
 		},
 	}, nil
 }
 
-func (s *Service) findTripLocationById(ctx context.Context, id string) (*dto.TripLocation, error) {
+func (s *Service) findTripLocationById(ctx context.Context, id string) (*TripPlace, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -1117,7 +1019,7 @@ func (s *Service) findTripLocationById(ctx context.Context, id string) (*dto.Tri
 
 	poi := pois[0]
 
-	return &dto.TripLocation{
+	return &TripPlace{
 		ID:            location.TripLocation.ID,
 		TripID:        location.TripLocation.TripID,
 		ScheduledTime: location.TripLocation.ScheduledTime.Time,
@@ -1127,7 +1029,7 @@ func (s *Service) findTripLocationById(ctx context.Context, id string) (*dto.Tri
 	}, nil
 }
 
-func (s *Service) updateTripLocation(ctx context.Context, input *dto.UpdateTripLocationInput) (*dto.UpdateTripLocationOutput, error) {
+func (s *Service) updateTripLocation(ctx context.Context, input *UpdateTripLocationInput) (*UpdateTripLocationOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -1204,8 +1106,8 @@ func (s *Service) updateTripLocation(ctx context.Context, input *dto.UpdateTripL
 		return nil, err
 	}
 
-	return &dto.UpdateTripLocationOutput{
-		Body: dto.UpdateTripLocationOutputBody{
+	return &UpdateTripLocationOutput{
+		Body: UpdateTripLocationOutputBody{
 			Location: *location,
 		},
 	}, nil
