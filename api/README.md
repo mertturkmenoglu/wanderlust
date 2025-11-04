@@ -8,7 +8,6 @@
 - Sqlc: https://sqlc.dev/
 - Goose: https://github.com/pressly/goose
 - Go Air: https://github.com/air-verse/air
-- Infisical: https://infisical.com/docs/documentation/getting-started/introduction
 
 Optional:
 

@@ -5,7 +5,6 @@
 - (Node.js LTS version)[https://nodejs.org/en/download]
 - (PNPM)[https://pnpm.io/installation]
 - (Just)[https://github.com/casey/just]
-- (Infisical CLI)[https://infisical.com/docs/cli/overview]
 
 ## Setup
 
@@ -43,7 +42,6 @@ Inside the `docs` folder, you can find documentation files.
 
 Read these documentation files in this specific order:
 
-- Read `infisical.md` file.
 - Read `type-gen.md` file.
 - Read `ipx.md` file.
 - Read `flags.md` file.

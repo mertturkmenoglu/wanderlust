@@ -125,7 +125,6 @@ It's open source and free.
 - Goose (https://github.com/pressly/goose)
 - Node.js (https://nodejs.org/en/download)
 - pnpm (https://pnpm.io/installation)
-- Infisical CLI (https://infisical.com/docs/documentation/getting-started/introduction)
 - Concurrently (https://www.npmjs.com/package/concurrently)
 
 Optional:
@@ -139,7 +138,6 @@ Optional:
 - Make sure you have all the requirements installed.
   - You can run `requirements.sh` script to check if you have all the requirements installed.
   - `chmod u+x ./requirements.sh && ./requirements.sh`
-  - Login to Infisical.
   - Start Docker service or Docker Desktop.
 - Run `just setup` to setup the project.
 - Run `just watch` to start the servers.
