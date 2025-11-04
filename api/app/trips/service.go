@@ -2,7 +2,6 @@ package trips
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 	"wanderlust/app/places"
@@ -17,6 +16,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/pkg/errors"
 )
 
 type Service struct {
@@ -148,35 +148,28 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body CreateTr
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canRead(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToAccess
 	}
 
 	if !canCreateInvite(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to invite users to this trip")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAutorizedToCreateInvite
 	}
 
-	if trip.VisibilityLevel == TRIP_VISIBILITY_LEVEL_PRIVATE {
-		err = huma.Error400BadRequest("You cannot invite users to a private trip")
-		sp.RecordError(err)
-		return nil, err
+	if trip.VisibilityLevel == dto.TRIP_VISIBILITY_LEVEL_PRIVATE {
+		return nil, ErrCannotInviteToPrivateTrip
 	}
 
 	sentAt := time.Now()
 	expiresAt := sentAt.Add(time.Hour * 24 * 7)
 
-	dbRes, err := s.db.CreateTripInvite(ctx, db.CreateTripInviteParams{
+	dbRes, err := s.repo.createInvite(ctx, CreateInviteParams{
 		ID:     uid.Flake(),
 		TripID: tripId,
 		FromID: userId,
@@ -194,18 +187,16 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body CreateTr
 	})
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("failed to create invite")
+		return nil, err
 	}
 
-	res, err := s.getInvitesByTripId(ctx, tripId)
+	invites, err := s.repo.listInvitesByTripId(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get invites")
+		return nil, errors.Wrap(ErrFailedToCreateInvite, err.Error())
 	}
 
-	for _, invite := range res.Body.Invites {
+	for _, invite := range invites {
 		if invite.ID == dbRes.ID {
 			return &CreateTripInviteOutput{
 				Body: CreateTripInviteOutputBody{
@@ -215,77 +206,58 @@ func (s *Service) createInvite(ctx context.Context, tripId string, body CreateTr
 		}
 	}
 
-	return nil, huma.Error500InternalServerError("Failed to get invites")
+	return nil, errors.Wrap(ErrFailedToCreateInvite, "Invite not found after creation")
 }
 
 func (s *Service) getInviteDetail(ctx context.Context, tripId string, inviteId string) (*GetTripInviteDetailsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbInvites, err := s.db.GetInvitesByTripId(ctx, tripId)
+	invites, err := s.repo.listInvitesByTripId(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("Invite not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get invites")
+		return nil, err
 	}
 
-	var dbInvite *db.GetInvitesByTripIdRow = nil
+	var invite *dto.TripInvite = nil
 
-	for _, inv := range dbInvites {
-		if inv.TripInvite.ID == inviteId {
-			dbInvite = &inv
+	for _, inv := range invites {
+		if inv.ID == inviteId {
+			invite = &inv
 			break
 		}
 	}
 
-	if dbInvite == nil {
-		err = huma.Error404NotFound("Invite not found")
-		sp.RecordError(err)
-		return nil, err
+	if invite == nil {
+		return nil, ErrInviteNotFound
 	}
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error404NotFound("Trip not found")
-	}
-
-	inviteDto, err := mapper.ToTripInviteFromInvitesByTripIdRow(*dbInvite)
-
-	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	userId := ctx.Value("userId").(string)
 
-	if inviteTo.ID != userId {
-		err = huma.Error403Forbidden("You are not authorized to access this invite")
-		sp.RecordError(err)
-		return nil, err
+	if invite.To.ID != userId {
+		return nil, ErrNotAuthorizedToAccessInvite
 	}
 
-	if inviteExpiresAt.Before(time.Now()) {
-		err = s.db.DeleteInvite(ctx, inviteId)
+	if invite.ExpiresAt.Before(time.Now()) {
+		err = s.repo.removeInvite(ctx, inviteId)
 
 		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Invite expired and failed to delete invite")
+			return nil, err
 		}
 
-		return nil, huma.Error410Gone("Invite expired")
+		return nil, ErrInviteExpired
 	}
 
 	return &GetTripInviteDetailsOutput{
 		Body: GetTripInviteDetailsOutputBody{
-			InviteDetail: TripInviteDetail{
-				TripInvite: inviteDto,
+			InviteDetail: dto.TripInviteDetail{
+				TripInvite: *invite,
 				TripTitle:  trip.Title,
 				StartAt:    trip.StartAt,
 				EndAt:      trip.EndAt,

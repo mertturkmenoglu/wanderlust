@@ -163,3 +163,35 @@ func (r *Repository) listInvitesByTripId(ctx context.Context, tripId string) ([]
 
 	return invites, nil
 }
+
+type CreateInviteParams = db.CreateTripInviteParams
+
+func (r *Repository) createInvite(ctx context.Context, params CreateInviteParams) (*db.TripInvite, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := r.db.CreateTripInvite(ctx, params)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToCreateInvite, err.Error())
+	}
+
+	return &res, nil
+}
+
+func (r *Repository) removeInvite(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.RemoveTripInviteById(ctx, id)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToDeleteInvite, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrInviteNotFound
+	}
+
+	return nil
+}
