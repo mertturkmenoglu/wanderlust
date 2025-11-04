@@ -8,4 +8,5 @@ var (
 	ErrFailedToGet           = huma.Error500InternalServerError("Failed to get trip")
 	ErrNotAuthorizedToAccess = huma.Error403Forbidden("Not authorized to access trip")
 	ErrFailedToListInvites   = huma.Error500InternalServerError("Failed to list trip invites")
+	ErrFailedToCreate        = huma.Error500InternalServerError("Failed to create trip")
 )

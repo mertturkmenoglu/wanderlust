@@ -92,26 +92,19 @@ func (s *Service) create(ctx context.Context, body CreateTripInputBody) (*Create
 
 	userId := ctx.Value("userId").(string)
 
-	dbRes, err := s.db.CreateTrip(ctx, db.CreateTripParams{
-		ID:              uid.Flake(),
-		OwnerID:         userId,
-		Title:           body.Title,
-		Description:     body.Description,
-		VisibilityLevel: body.Visibility,
-		StartAt:         pgtype.Timestamptz{Time: body.StartAt, Valid: true},
-		EndAt:           pgtype.Timestamptz{Time: body.EndAt, Valid: true},
+	res, err := s.repo.create(ctx, CreateParams{
+		ID:                 uid.Flake(),
+		OwnerID:            userId,
+		Title:              body.Title,
+		Description:        body.Description,
+		VisibilityLevel:    body.Visibility,
+		StartAt:            pgtype.Timestamptz{Time: body.StartAt, Valid: true},
+		EndAt:              pgtype.Timestamptz{Time: body.EndAt, Valid: true},
+		RequestedAmenities: make(pgtype.Hstore),
 	})
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to create trip")
-	}
-
-	res, err := s.find(ctx, dbRes.ID)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get trip")
+		return nil, err
 	}
 
 	return &CreateTripOutput{
@@ -126,37 +119,21 @@ func (s *Service) getInvitesByTripId(ctx context.Context, tripId string) (*GetTr
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
-	trip, err := s.find(ctx, tripId)
+
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error404NotFound("Trip not found")
-	}
-
-	if !canRead(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip")
-		sp.RecordError(err)
 		return nil, err
 	}
 
-	dbInvites, err := s.db.GetInvitesByTripId(ctx, tripId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get invites")
+	if !canRead(trip, userId) {
+		return nil, ErrNotAuthorizedToAccess
 	}
 
-	invites := make([]TripInvite, len(dbInvites))
+	invites, err := s.repo.listInvitesByTripId(ctx, tripId)
 
-	for i, dbInvite := range dbInvites {
-		res, err := mapper.ToTripInviteFromInvitesByTripIdRow(dbInvite)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, err
-		}
-
-		invites[i] = res
+	if err != nil {
+		return nil, err
 	}
 
 	return &GetTripInvitesByTripIdOutput{

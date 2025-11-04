@@ -117,3 +117,49 @@ func (r *Repository) listMyInvites(ctx context.Context, userId string) ([]dto.Tr
 
 	return invites, nil
 }
+
+type CreateParams = db.CreateTripParams
+
+func (r *Repository) create(ctx context.Context, params CreateParams) (*dto.Trip, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := r.db.CreateTrip(ctx, params)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
+	}
+
+	invite, err := r.get(ctx, res.ID)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
+	}
+
+	return invite, nil
+}
+
+func (r *Repository) listInvitesByTripId(ctx context.Context, tripId string) ([]dto.TripInvite, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbInvites, err := r.db.FindManyTripInvitesByTripId(ctx, tripId)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToListInvites, err.Error())
+	}
+
+	invites := make([]dto.TripInvite, len(dbInvites))
+
+	for i, dbInvite := range dbInvites {
+		res, err := dto.ToTripInviteFromInvitesByTripIdRow(dbInvite)
+
+		if err != nil {
+			return nil, errors.Wrap(ErrFailedToListInvites, err.Error())
+		}
+
+		invites[i] = res
+	}
+
+	return invites, nil
+}
