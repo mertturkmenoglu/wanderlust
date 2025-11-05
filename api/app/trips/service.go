@@ -328,36 +328,21 @@ func (s *Service) removeParticipant(ctx context.Context, tripId string, particip
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return err
 	}
 
 	if !canRead(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip")
-		sp.RecordError(err)
-		return err
+		return ErrNotAuthorizedToAccess
 	}
 
 	if !canRemoveParticipant(trip, userId, participantId) {
-		err = huma.Error403Forbidden("You are not authorized to remove this participant")
-		sp.RecordError(err)
-		return err
+		return ErrNotAuthorizedToRemoveParticipant
 	}
 
-	err = s.db.DeleteParticipant(ctx, db.DeleteParticipantParams{
-		TripID: tripId,
-		UserID: participantId,
-	})
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to delete participant")
-	}
-
-	return nil
+	return s.repo.removeParticipant(ctx, tripId, participantId)
 }
 
 func (s *Service) removeTrip(ctx context.Context, id string) error {
@@ -366,27 +351,17 @@ func (s *Service) removeTrip(ctx context.Context, id string) error {
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, id)
+	trip, err := s.repo.get(ctx, id)
 
 	if err != nil {
-		sp.RecordError(err)
 		return err
 	}
 
 	if trip.OwnerID != userId {
-		err = huma.Error403Forbidden("You are not authorized to delete this trip")
-		sp.RecordError(err)
-		return err
+		return ErrNotAuthorizedToDelete
 	}
 
-	err = s.db.DeleteTrip(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-		return huma.Error500InternalServerError("Failed to delete trip")
-	}
-
-	return nil
+	return s.repo.remove(ctx, id)
 }
 
 func (s *Service) createComment(ctx context.Context, tripId string, body CreateTripCommentInputBody) (*CreateTripCommentOutput, error) {

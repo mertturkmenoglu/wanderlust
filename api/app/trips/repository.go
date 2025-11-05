@@ -267,3 +267,40 @@ func (r *Repository) acceptOrDeclineInvite(ctx context.Context, params AcceptOrD
 
 	return nil
 }
+
+func (r *Repository) removeParticipant(ctx context.Context, tripId string, participantId string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.RemoveTripParticipantByTripIdAndUserId(ctx, db.RemoveTripParticipantByTripIdAndUserIdParams{
+		TripID: tripId,
+		UserID: participantId,
+	})
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToRemoveparticipant, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrParticipantNotFound
+	}
+
+	return nil
+}
+
+func (r *Repository) remove(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.RemoveTripById(ctx, id)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToDelete, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+
+	return nil
+}
