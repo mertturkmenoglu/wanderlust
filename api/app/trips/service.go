@@ -370,20 +370,17 @@ func (s *Service) createComment(ctx context.Context, tripId string, body CreateT
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canCreateComment(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to create a comment")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToCreateComment
 	}
 
-	res, err := s.db.CreateTripComment(ctx, db.CreateTripCommentParams{
+	res, err := s.repo.createComment(ctx, CreateCommentParams{
 		ID:      uid.Flake(),
 		TripID:  tripId,
 		FromID:  userId,
@@ -395,19 +392,12 @@ func (s *Service) createComment(ctx context.Context, tripId string, body CreateT
 	})
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to create comment")
+		return nil, err
 	}
 
 	return &CreateTripCommentOutput{
 		Body: CreateTripCommentOutputBody{
-			Comment: TripComment{
-				ID:        res.ID,
-				TripID:    tripId,
-				From:      TripUser{ID: userId},
-				Content:   body.Content,
-				CreatedAt: res.CreatedAt.Time,
-			},
+			Comment: *res,
 		},
 	}, nil
 }

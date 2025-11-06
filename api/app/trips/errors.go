@@ -24,4 +24,6 @@ var (
 	ErrParticipantNotFound              = huma.Error404NotFound("Participant not found in trip")
 	ErrNotAuthorizedToDelete            = huma.Error403Forbidden("Not authorized to delete trip")
 	ErrFailedToDelete                   = huma.Error500InternalServerError("Failed to delete trip")
+	ErrNotAuthorizedToCreateComment     = huma.Error403Forbidden("Not authorized to create comment on trip")
+	ErrFailedToCreateComment            = huma.Error500InternalServerError("Failed to create comment on trip")
 )

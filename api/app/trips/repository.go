@@ -304,3 +304,26 @@ func (r *Repository) remove(ctx context.Context, id string) error {
 
 	return nil
 }
+
+type CreateCommentParams = db.CreateTripCommentParams
+
+func (r *Repository) createComment(ctx context.Context, params CreateCommentParams) (*dto.TripComment, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := r.db.CreateTripComment(ctx, params)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToCreateComment, err.Error())
+	}
+
+	return &dto.TripComment{
+		ID:     res.ID,
+		TripID: res.TripID,
+		From: dto.TripUser{
+			ID: res.FromID,
+		},
+		Content:   res.Content,
+		CreatedAt: res.CreatedAt.Time,
+	}, nil
+}
