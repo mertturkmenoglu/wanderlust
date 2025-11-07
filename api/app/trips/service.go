@@ -528,35 +528,28 @@ func (s *Service) updateTrip(ctx context.Context, id string, body UpdateTripInpu
 	return nil, nil
 }
 
-func (s *Service) createTripLocation(ctx context.Context, tripId string, body CreateTripLocationInputBody) (*CreateTripLocationOutput, error) {
+func (s *Service) createTripPlace(ctx context.Context, tripId string, body CreateTripPlaceInputBody) (*CreateTripPlaceOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canCreateLocation(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to create a location for this trip")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToCreatePlace
 	}
 
 	if body.ScheduledTime.Before(trip.StartAt) {
-		err = huma.Error400BadRequest("Scheduled time must be after the trip start time")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrInvalidScheduledTimeBeforeTripStart
 	}
 
 	if body.ScheduledTime.After(trip.EndAt) {
-		err = huma.Error400BadRequest("Scheduled time must be before the trip end time")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrInvalidScheduledTimeAfterTripEnd
 	}
 
 	var description = ""
@@ -565,10 +558,10 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body Cr
 		description = *body.Description
 	}
 
-	res, err := s.db.CreateTripLocation(ctx, db.CreateTripLocationParams{
-		ID:     uid.Flake(),
-		TripID: tripId,
-		PoiID:  body.PoiID,
+	res, err := s.repo.createTripPlace(ctx, CreateTripPlaceParams{
+		ID:      uid.Flake(),
+		TripID:  tripId,
+		PlaceID: body.PlaceID,
 		ScheduledTime: pgtype.Timestamptz{
 			Time:  body.ScheduledTime,
 			Valid: true,
@@ -577,32 +570,12 @@ func (s *Service) createTripLocation(ctx context.Context, tripId string, body Cr
 	})
 
 	if err != nil {
-		sp.RecordError(err)
-
-		var pgErr *pgconn.PgError
-
-		if errors.As(err, &pgErr) {
-			switch pgErr.Code {
-			case db.FOREIGN_KEY_VIOLATION:
-				return nil, huma.Error404NotFound(fmt.Sprintf("Point of Interest with the ID %s not found", body.PoiID))
-			case db.UNIQUE_VIOLATION:
-				return nil, huma.Error400BadRequest(fmt.Sprintf("Location with the Point of Interest ID %s already exists", body.PoiID))
-			}
-		}
-
-		return nil, huma.Error400BadRequest("Failed to create location")
+		return nil, err
 	}
 
-	return &CreateTripLocationOutput{
-		Body: CreateTripLocationOutputBody{
-			Location: TripPlace{
-				ID:            res.ID,
-				TripID:        tripId,
-				ScheduledTime: res.ScheduledTime.Time,
-				Description:   res.Description,
-				PoiID:         res.PoiID,
-				Poi:           Poi{},
-			},
+	return &CreateTripPlaceOutput{
+		Body: CreateTripPlaceOutputBody{
+			Place: *res,
 		},
 	}, nil
 }

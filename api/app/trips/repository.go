@@ -8,6 +8,7 @@ import (
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
@@ -537,4 +538,37 @@ func (r *Repository) update(ctx context.Context, trip *dto.Trip, data UpdateTrip
 	}
 
 	return nil
+}
+
+type CreateTripPlaceParams = db.CreateTripPlaceParams
+
+func (r *Repository) createTripPlace(ctx context.Context, params CreateTripPlaceParams) (*dto.TripPlace, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := r.db.CreateTripPlace(ctx, params)
+
+	if err != nil {
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr) {
+			switch pgErr.Code {
+			case db.FOREIGN_KEY_VIOLATION:
+				return nil, errors.Wrap(ErrFailedToCreatePlace, "Place not found")
+			case db.UNIQUE_VIOLATION:
+				return nil, errors.Wrap(ErrFailedToCreatePlace, "Place already exists in trip")
+			}
+		}
+
+		return nil, errors.Wrap(ErrFailedToCreatePlace, err.Error())
+	}
+
+	return &dto.TripPlace{
+		ID:            res.ID,
+		TripID:        res.TripID,
+		ScheduledTime: res.ScheduledTime.Time,
+		Description:   res.Description,
+		PlaceID:       res.PlaceID,
+		Place:         dto.Place{},
+	}, nil
 }
