@@ -503,180 +503,26 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 	return s.repo.removeComment(ctx, commentId)
 }
 
-func (s *Service) updateAmenities(ctx context.Context, tripId string, body UpdateTripAmenitiesInputBody) (*UpdateTripAmenitiesOutput, error) {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	userId := ctx.Value("userId").(string)
-	trip, err := s.find(ctx, tripId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, err
-	}
-
-	if !canManageAmenities(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to manage this trip")
-		sp.RecordError(err)
-		return nil, err
-	}
-
-	tx, err := s.pool.Begin(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update amenities")
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := s.db.WithTx(tx)
-
-	err = qtx.DeleteTripAllAmenities(ctx, tripId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update amenities")
-	}
-
-	batch := make([]db.BatchCreateTripAmenitiesParams, len(body.AmenityIds))
-
-	for i, id := range body.AmenityIds {
-		batch[i] = db.BatchCreateTripAmenitiesParams{
-			TripID:    tripId,
-			AmenityID: id,
-		}
-	}
-
-	_, err = qtx.BatchCreateTripAmenities(ctx, batch)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update amenities")
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update amenities")
-	}
-
-	trip, err = s.find(ctx, tripId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get trip")
-	}
-
-	return &UpdateTripAmenitiesOutput{
-		Body: UpdateTripAmenitiesOutputBody{
-			Amenities: trip.RequestedAmenities,
-		},
-	}, nil
-}
-
 func (s *Service) updateTrip(ctx context.Context, id string, body UpdateTripInputBody) (*UpdateTripOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, id)
+	trip, err := s.repo.get(ctx, id)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canUpdateTrip(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to update this trip")
-		sp.RecordError(err)
+		return nil, ErrNotAuthorizedToUpdate
+	}
+
+	err = s.repo.update(ctx, trip, body)
+
+	if err != nil {
 		return nil, err
-	}
-
-	var isDateChanged = false
-
-	if !body.StartAt.Equal(trip.StartAt) {
-		isDateChanged = true
-	}
-
-	if !body.EndAt.Equal(trip.EndAt) {
-		isDateChanged = true
-	}
-
-	tx, err := s.pool.Begin(ctx)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to create transaction")
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := s.db.WithTx(tx)
-
-	updateResult, err := qtx.UpdateTrip(ctx, db.UpdateTripParams{
-		ID:              trip.ID,
-		Title:           body.Title,
-		Description:     body.Description,
-		VisibilityLevel: body.VisibilityLevel,
-		StartAt: pgtype.Timestamptz{
-			Time:  body.StartAt,
-			Valid: true,
-		},
-		EndAt: pgtype.Timestamptz{
-			Time:  body.EndAt,
-			Valid: true,
-		},
-	})
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update trip")
-	}
-
-	if isDateChanged {
-		err = qtx.MoveDanglingLocations(ctx, db.MoveDanglingLocationsParams{
-			TripID:          trip.ID,
-			ScheduledTime:   updateResult.StartAt,
-			ScheduledTime_2: updateResult.StartAt,
-			ScheduledTime_3: updateResult.EndAt,
-		})
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to move dangling locations")
-		}
-	}
-
-	if updateResult.VisibilityLevel == "private" {
-		err = qtx.DeleteTripAllParticipants(ctx, trip.ID)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete trip all participants")
-		}
-
-		err = qtx.DeleteTripAllComments(ctx, trip.ID)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete trip all comments")
-		}
-
-		err = qtx.DeleteTripAllInvites(ctx, trip.ID)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to delete trip all invites")
-		}
-	}
-
-	err = tx.Commit(ctx)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to commit transaction")
 	}
 
 	return nil, nil

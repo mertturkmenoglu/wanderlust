@@ -34,4 +34,6 @@ var (
 	ErrCommentNotFound                  = huma.Error404NotFound("Comment not found on trip")
 	ErrNotAuthorizedToDeleteComment     = huma.Error403Forbidden("Not authorized to delete comment on trip")
 	ErrFailedToDeleteComment            = huma.Error500InternalServerError("Failed to delete comment on trip")
+	ErrNotAuthorizedToUpdate            = huma.Error403Forbidden("Not authorized to update trip")
+	ErrFailedToUpdate                   = huma.Error500InternalServerError("Failed to update trip")
 )

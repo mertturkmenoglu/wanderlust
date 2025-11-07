@@ -8,6 +8,7 @@ import (
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
 )
@@ -429,6 +430,110 @@ func (r *Repository) removeComment(ctx context.Context, id string) error {
 
 	if tag.RowsAffected() == 0 {
 		return ErrCommentNotFound
+	}
+
+	return nil
+}
+
+func (r *Repository) update(ctx context.Context, trip *dto.Trip, data UpdateTripInputBody) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	var isDateChanged = false
+
+	if !data.StartAt.Equal(trip.StartAt) {
+		isDateChanged = true
+	}
+
+	if !data.EndAt.Equal(trip.EndAt) {
+		isDateChanged = true
+	}
+
+	tx, err := r.pool.Begin(ctx)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToUpdate, err.Error())
+	}
+
+	defer tx.Rollback(ctx)
+
+	qtx := r.db.WithTx(tx)
+
+	tag, err := qtx.UpdateTrip(ctx, db.UpdateTripParams{
+		ID:              trip.ID,
+		Title:           data.Title,
+		Description:     data.Description,
+		VisibilityLevel: data.VisibilityLevel,
+		StartAt: pgtype.Timestamptz{
+			Time:  data.StartAt,
+			Valid: true,
+		},
+		EndAt: pgtype.Timestamptz{
+			Time:  data.EndAt,
+			Valid: true,
+		},
+	})
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToUpdate, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+
+	updateResult, err := r.get(ctx, trip.ID)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToUpdate, err.Error())
+	}
+
+	if isDateChanged {
+		_, err = qtx.MoveDanglingTripPlaces(ctx, db.MoveDanglingTripPlacesParams{
+			TripID: trip.ID,
+			ScheduledTime: pgtype.Timestamptz{
+				Time:  updateResult.StartAt,
+				Valid: true,
+			},
+			ScheduledTime_2: pgtype.Timestamptz{
+				Time:  updateResult.StartAt,
+				Valid: true,
+			},
+			ScheduledTime_3: pgtype.Timestamptz{
+				Time:  updateResult.EndAt,
+				Valid: true,
+			},
+		})
+
+		if err != nil {
+			return errors.Wrap(ErrFailedToUpdate, err.Error())
+		}
+	}
+
+	if updateResult.VisibilityLevel == dto.TRIP_VISIBILITY_LEVEL_PRIVATE {
+		_, err = qtx.RemoveTripParticipantsByTripId(ctx, trip.ID)
+
+		if err != nil {
+			return errors.Wrap(ErrFailedToUpdate, err.Error())
+		}
+
+		_, err = qtx.RemoveTripCommentsByTripId(ctx, trip.ID)
+
+		if err != nil {
+			return errors.Wrap(ErrFailedToUpdate, err.Error())
+		}
+
+		_, err = qtx.RemoveTripInvitesByTripId(ctx, trip.ID)
+
+		if err != nil {
+			return errors.Wrap(ErrFailedToUpdate, err.Error())
+		}
+	}
+
+	err = tx.Commit(ctx)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToUpdate, err.Error())
 	}
 
 	return nil
