@@ -24,7 +24,6 @@ ALTER TABLE assets
   ADD CONSTRAINT chk_assets_entity_type
   CHECK (entity_type IN (
     'place', 
-    'diary',
     'review'
   ));
 -- +goose StatementEnd
