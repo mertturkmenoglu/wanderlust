@@ -76,35 +76,6 @@ type CollectionItem struct {
 	CreatedAt    time.Time `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"Created at time of collection item"`
 }
 
-type Diary struct {
-	ID               string          `json:"id" example:"7323488942953598976" doc:"The ID of the diary entry"`
-	UserID           string          `json:"userId" example:"7323488942953598976" doc:"The ID of the user"`
-	Owner            DiaryUser       `json:"user"`
-	Friends          []DiaryUser     `json:"friends"`
-	Locations        []DiaryLocation `json:"locations"`
-	Assets           []Asset         `json:"assets"`
-	Title            string          `json:"title" example:"My diary entry" doc:"The title of the diary entry"`
-	Description      string          `json:"description" example:"My diary entry description" doc:"The description of the diary entry"`
-	ShareWithFriends bool            `json:"shareWithFriends" example:"true" doc:"Whether the diary entry is shared with friends or not"`
-	Date             time.Time       `json:"date" example:"2023-05-01T00:00:00Z" doc:"The date of the diary entry"`
-	CreatedAt        time.Time       `json:"createdAt" example:"2023-05-01T00:00:00Z" doc:"The created at time of the diary entry"`
-	UpdatedAt        time.Time       `json:"updatedAt" example:"2023-05-01T00:00:00Z" doc:"The updated at time of the diary entry"`
-}
-
-type DiaryUser struct {
-	ID           string  `json:"id" example:"7323488942953598976" doc:"User ID"`
-	FullName     string  `json:"fullName" example:"John Doe" doc:"User full name"`
-	Username     string  `json:"username" example:"johndoe" doc:"Username"`
-	ProfileImage *string `json:"profileImage" example:"http://example.com/image.png" doc:"Profile image URL of the user"`
-}
-
-type DiaryLocation struct {
-	PlaceID     string `json:"placeId" example:"7323488942953598976" doc:"ID of the place"`
-	Place       `json:"place"`
-	Description *string `json:"description" example:"My location description" doc:"The description of the location"`
-	Index       int16   `json:"index" example:"1" doc:"The list index of the location"`
-}
-
 type Favorite struct {
 	ID        int32     `json:"id" example:"1234" doc:"ID of favorite"`
 	PlaceID   string    `json:"placeId" example:"7323488942953598976" doc:"ID of the place"`
