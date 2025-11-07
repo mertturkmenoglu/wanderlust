@@ -296,13 +296,12 @@ INSERT INTO trip_places (
   $5
 ) RETURNING *;
 
--- name: UpdateTripPlace :one
+-- name: UpdateTripPlace :execresult
 UPDATE trip_places
 SET
   description = $2,
   scheduled_time = $3
-WHERE id = $1 AND trip_id = $4
-RETURNING *;
+WHERE id = $1 AND trip_id = $4;
 
 -- name: FindTripPlaceById :one
 SELECT

@@ -850,13 +850,12 @@ func (q *Queries) UpdateTripComment(ctx context.Context, arg UpdateTripCommentPa
 	return q.db.Exec(ctx, updateTripComment, arg.ID, arg.Content, arg.TripID)
 }
 
-const updateTripPlace = `-- name: UpdateTripPlace :one
+const updateTripPlace = `-- name: UpdateTripPlace :execresult
 UPDATE trip_places
 SET
   description = $2,
   scheduled_time = $3
 WHERE id = $1 AND trip_id = $4
-RETURNING id, trip_id, scheduled_time, place_id, description
 `
 
 type UpdateTripPlaceParams struct {
@@ -866,20 +865,11 @@ type UpdateTripPlaceParams struct {
 	TripID        string
 }
 
-func (q *Queries) UpdateTripPlace(ctx context.Context, arg UpdateTripPlaceParams) (TripPlace, error) {
-	row := q.db.QueryRow(ctx, updateTripPlace,
+func (q *Queries) UpdateTripPlace(ctx context.Context, arg UpdateTripPlaceParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateTripPlace,
 		arg.ID,
 		arg.Description,
 		arg.ScheduledTime,
 		arg.TripID,
 	)
-	var i TripPlace
-	err := row.Scan(
-		&i.ID,
-		&i.TripID,
-		&i.ScheduledTime,
-		&i.PlaceID,
-		&i.Description,
-	)
-	return i, err
 }
