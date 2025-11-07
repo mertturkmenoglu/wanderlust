@@ -4,7 +4,7 @@ var Buckets = []string{
 	"default",
 	"profile-images",
 	"banner-images",
-	"pois",
+	"places",
 	"reviews",
 	"diaries",
 	"exports",
@@ -16,7 +16,7 @@ const (
 	BUCKET_DEFAULT        BucketName = "default"
 	BUCKET_PROFILE_IMAGES BucketName = "profile-images"
 	BUCKET_BANNER_IMAGES  BucketName = "banner-images"
-	BUCKET_POIS           BucketName = "pois"
+	BUCKET_PLACES         BucketName = "places"
 	BUCKET_REVIEWS        BucketName = "reviews"
 	BUCKET_DIARIES        BucketName = "diaries"
 	BUCKET_EXPORTS        BucketName = "exports"
@@ -30,8 +30,8 @@ func ToBucketName(str string) (BucketName, error) {
 		return BUCKET_PROFILE_IMAGES, nil
 	case string(BUCKET_BANNER_IMAGES):
 		return BUCKET_BANNER_IMAGES, nil
-	case string(BUCKET_POIS):
-		return BUCKET_POIS, nil
+	case string(BUCKET_PLACES):
+		return BUCKET_PLACES, nil
 	case string(BUCKET_REVIEWS):
 		return BUCKET_REVIEWS, nil
 	case string(BUCKET_DIARIES):
