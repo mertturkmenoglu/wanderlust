@@ -32,7 +32,7 @@ var steps = [...]string{
 	"fake-id", // run fake id again to get collection ids
 	"collection-items",
 	"collections-cities",
-	"collections-pois",
+	"collections-places",
 	"lists",
 	"fake-id", // run fake id again to get list ids
 	"list-items",
@@ -72,7 +72,7 @@ func Automate() error {
 			CollectionsPath: collectionsPath,
 			Fake:            f,
 		},
-		"collections-pois": &handlers.FakeCollectionsPlaces{
+		"collections-places": &handlers.FakeCollectionsPlaces{
 			CollectionsPath: collectionsPath,
 			PlacesPath:      placesPath,
 			Fake:            f,
