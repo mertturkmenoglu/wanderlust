@@ -9,7 +9,6 @@ Welcome to Wanderlust, a travel and location discovery platform designed to insp
 - Explore cities and places (POI) guides, curated with insider tips and recommendations.
 - Collect and organize places into favorites, bookmarks, and custom lists.
 - Follow fellow travelers, send messages, and stay up-to-date on their adventures.
-- Record your own trips with diary entries, complete with photos and memories.
 - Plan future trips using our intuitive trip planner tool.
 - Search and filter results using powerful facets and filters.
 
@@ -58,10 +57,6 @@ It's open source and free.
   - View other users' trips.
   - Add requested amenities.
   - Comment on trips.
-- Diary:
-  - Record your previous trips.
-  - Add photos and memories to your diary.
-  - Add other users to your diary.
 
 ## Planned Features
 
@@ -105,10 +100,6 @@ It's open source and free.
 
 <img src="https://i.imgur.com/WPZpdXZ.png" alt="Cities" width="100%">
 <img src="https://i.imgur.com/89srSoL.png" alt="Countries" width="100%">
-
-### Diary
-
-<img src="https://i.imgur.com/hHSrMOC.png" alt="Diary" width="100%">
 
 ### Bookmarks and Lists
 
