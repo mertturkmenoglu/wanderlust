@@ -402,60 +402,32 @@ func (s *Service) createComment(ctx context.Context, tripId string, body CreateT
 	}, nil
 }
 
-func (s *Service) getComments(ctx context.Context, tripId string, params PaginationQueryParams) (*GetTripCommentsOutput, error) {
+func (s *Service) getComments(ctx context.Context, tripId string, params dto.PaginationQueryParams) (*GetTripCommentsOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canRead(trip, userId) {
 		err = huma.Error403Forbidden("You are not authorized to access this trip")
 		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToAccess
 	}
 
 	if !canReadComment(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip's comments")
-		sp.RecordError(err)
+		return nil, ErrNotAuthorizedToAccessComments
+	}
+
+	comments, count, err := s.repo.listComments(ctx, tripId, params)
+
+	if err != nil {
 		return nil, err
-	}
-
-	dbComments, err := s.db.GetTripComments(ctx, db.GetTripCommentsParams{
-		TripID: tripId,
-		Offset: int32(pagination.GetOffset(params)),
-		Limit:  int32(params.PageSize),
-	})
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get comments")
-	}
-
-	comments := make([]TripComment, len(dbComments))
-
-	for i, dbComment := range dbComments {
-		res, err := mapper.ToTripComment(dbComment)
-
-		if err != nil {
-			sp.RecordError(err)
-			return nil, huma.Error500InternalServerError("Failed to get comment")
-		}
-
-		comments[i] = res
-	}
-
-	count, err := s.db.GetTripCommentsCount(ctx, tripId)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get comments count")
 	}
 
 	return &GetTripCommentsOutput{
@@ -466,67 +438,36 @@ func (s *Service) getComments(ctx context.Context, tripId string, params Paginat
 	}, nil
 }
 
-func (s *Service) findCommentById(ctx context.Context, id string) (*TripComment, error) {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	comment, err := s.db.GetTripCommentById(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("Comment not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get comment")
-	}
-
-	res, err := mapper.ToTripCommentFromCommentByIdRow(comment)
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get comment")
-	}
-
-	return &res, nil
-}
-
 func (s *Service) updateComment(ctx context.Context, input *UpdateTripCommentInput) (*UpdateTripCommentOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	comment, err := s.findCommentById(ctx, input.CommentID)
+	comment, err := s.repo.getComment(ctx, input.CommentID)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canUpdateComment(comment, userId) {
-		err = huma.Error403Forbidden("You are not authorized to update this comment")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToUpdateComment
 	}
 
-	_, err = s.db.UpdateTripComment(ctx, db.UpdateTripCommentParams{
+	err = s.repo.updateComment(ctx, UpdateCommentParams{
 		ID:      input.CommentID,
 		TripID:  input.TripID,
 		Content: input.Body.Content,
 	})
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update comment")
+		return nil, err
 	}
 
-	updatedComment, err := s.findCommentById(ctx, input.CommentID)
+	updatedComment, err := s.repo.getComment(ctx, input.CommentID)
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get comment")
+		return nil, errors.Wrap(ErrFailedToUpdateComment, err.Error())
 	}
 
 	return &UpdateTripCommentOutput{
@@ -542,14 +483,13 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 
 	userId := ctx.Value("userId").(string)
 
-	comment, err := s.findCommentById(ctx, commentId)
+	comment, err := s.repo.getComment(ctx, commentId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return err
 	}
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -557,24 +497,10 @@ func (s *Service) removeComment(ctx context.Context, tripId string, commentId st
 	}
 
 	if !canDeleteComment(trip, comment, userId) {
-		err = huma.Error403Forbidden("You are not authorized to delete this comment")
-		sp.RecordError(err)
-		return err
+		return ErrNotAuthorizedToDeleteComment
 	}
 
-	err = s.db.DeleteTripComment(ctx, commentId)
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return huma.Error404NotFound("Comment not found")
-		}
-
-		return huma.Error500InternalServerError("Failed to delete comment")
-	}
-
-	return nil
+	return s.repo.removeComment(ctx, commentId)
 }
 
 func (s *Service) updateAmenities(ctx context.Context, tripId string, body UpdateTripAmenitiesInputBody) (*UpdateTripAmenitiesOutput, error) {

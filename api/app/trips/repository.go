@@ -327,3 +327,109 @@ func (r *Repository) createComment(ctx context.Context, params CreateCommentPara
 		CreatedAt: res.CreatedAt.Time,
 	}, nil
 }
+
+func (r *Repository) listComments(ctx context.Context, tripId string, params dto.PaginationQueryParams) ([]dto.TripComment, int64, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	dbComments, err := r.db.FindManyTripCommentsByTripId(ctx, db.FindManyTripCommentsByTripIdParams{
+		TripID: tripId,
+		Offset: int32(pagination.GetOffset(params)),
+		Limit:  int32(params.PageSize),
+	})
+
+	if err != nil {
+		return nil, 0, errors.Wrap(ErrFailedToCreateComment, err.Error())
+	}
+
+	comments := make([]dto.TripComment, len(dbComments))
+
+	for i, dbComment := range dbComments {
+		res, err := dto.ToTripComment(dbComment)
+
+		if err != nil {
+			return nil, 0, errors.Wrap(ErrFailedToListComments, err.Error())
+		}
+
+		comments[i] = res
+	}
+
+	count, err := r.db.CountTripCommentsByTripId(ctx, tripId)
+
+	if err != nil {
+		return nil, 0, errors.Wrap(ErrFailedToListComments, err.Error())
+	}
+
+	return comments, count, nil
+}
+
+func (r *Repository) getComment(ctx context.Context, id string) (*dto.TripComment, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := r.db.FindTripCommentById(ctx, id)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToGetComment, err.Error())
+	}
+
+	comment, err := dto.ToTripCommentFromCommentByIdRow(res)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToGetComment, err.Error())
+	}
+
+	trip, err := r.get(ctx, comment.TripID)
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToGetComment, err.Error())
+	}
+
+	userId := ctx.Value("userId").(string)
+
+	if !canRead(trip, userId) {
+		return nil, ErrNotAuthorizedToAccess
+	}
+
+	if !canReadComment(trip, userId) {
+		return nil, ErrNotAuthorizedToAccessComments
+	}
+
+	return &comment, nil
+}
+
+type UpdateCommentParams = db.UpdateTripCommentParams
+
+func (r *Repository) updateComment(ctx context.Context, params UpdateCommentParams) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.UpdateTripComment(ctx, params)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToUpdateComment, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrCommentNotFound
+	}
+
+	return nil
+}
+
+func (r *Repository) removeComment(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.RemoveTripCommentById(ctx, id)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToDeleteComment, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrCommentNotFound
+	}
+
+	return nil
+}
