@@ -86,35 +86,6 @@ type CollectionsPlace struct {
 	Index        int32
 }
 
-type Diary struct {
-	ID               string
-	UserID           string
-	Title            string
-	Description      pgtype.Text
-	ShareWithFriends bool
-	StartDate        pgtype.Date
-	EndDate          pgtype.Date
-	DateRange        pgtype.Range[pgtype.Date]
-	CreatedAt        pgtype.Timestamptz
-	UpdatedAt        pgtype.Timestamptz
-}
-
-type DiaryMention struct {
-	DiaryID string
-	UserID  string
-	Index   int32
-}
-
-type DiaryPlace struct {
-	DiaryID     string
-	PlaceID     string
-	Description pgtype.Text
-	Index       int32
-	VisitDate   pgtype.Date
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
-}
-
 type Favorite struct {
 	ID        int64
 	PlaceID   string
