@@ -2,19 +2,14 @@ package trips
 
 import (
 	"context"
-	"fmt"
 	"time"
 	"wanderlust/app/places"
-	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pkg/errors"
 )
@@ -580,82 +575,34 @@ func (s *Service) createTripPlace(ctx context.Context, tripId string, body Creat
 	}, nil
 }
 
-func (s *Service) findTripLocationById(ctx context.Context, id string) (*TripPlace, error) {
-	ctx, sp := tracing.NewSpan(ctx)
-	defer sp.End()
-
-	location, err := s.db.GetTripLocationById(ctx, id)
-
-	if err != nil {
-		sp.RecordError(err)
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, huma.Error404NotFound("Location not found")
-		}
-
-		return nil, huma.Error500InternalServerError("Failed to get location")
-	}
-
-	dbPoi, err := s.db.GetPoisByIdsPopulated(ctx, []string{location.TripLocation.PoiID})
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get poi")
-	}
-
-	pois, err := mapper.ToPois(dbPoi[0])
-
-	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to get poi")
-	}
-
-	poi := pois[0]
-
-	return &TripPlace{
-		ID:            location.TripLocation.ID,
-		TripID:        location.TripLocation.TripID,
-		ScheduledTime: location.TripLocation.ScheduledTime.Time,
-		Description:   location.TripLocation.Description,
-		PoiID:         location.TripLocation.PoiID,
-		Poi:           poi,
-	}, nil
-}
-
-func (s *Service) updateTripLocation(ctx context.Context, input *UpdateTripLocationInput) (*UpdateTripLocationOutput, error) {
+func (s *Service) updateTripPlace(ctx context.Context, input *UpdateTripPlaceInput) (*UpdateTripPlaceOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, input.TripID)
+	trip, err := s.repo.get(ctx, input.TripID)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
 	if !canRead(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToAccess
 	}
 
 	if !canUpdateTripLocation(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to update this trip location")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrNotAuthorizedToUpdateTripPlace
 	}
 
-	location, err := s.findTripLocationById(ctx, input.LocationID)
+	tripPlace, err := s.repo.getTripPlace(ctx, input.TripPlaceID)
 
 	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
-	var description = location.Description
-	var scheduledTime = location.ScheduledTime
+	var description = tripPlace.Description
+	var scheduledTime = tripPlace.ScheduledTime
 
 	if input.Body.Description != nil {
 		description = *input.Body.Description
@@ -666,19 +613,15 @@ func (s *Service) updateTripLocation(ctx context.Context, input *UpdateTripLocat
 	}
 
 	if scheduledTime.Before(trip.StartAt) {
-		err = huma.Error400BadRequest("Scheduled time must be after the trip start time")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrInvalidScheduledTimeBeforeTripStart
 	}
 
 	if scheduledTime.After(trip.EndAt) {
-		err = huma.Error400BadRequest("Scheduled time must be before the trip end time")
-		sp.RecordError(err)
-		return nil, err
+		return nil, ErrInvalidScheduledTimeAfterTripEnd
 	}
 
-	_, err = s.db.UpdateTripLocation(ctx, db.UpdateTripLocationParams{
-		ID:          input.LocationID,
+	err = s.repo.updateTripPlace(ctx, UpdateTripPlaceParams{
+		ID:          input.TripPlaceID,
 		TripID:      input.TripID,
 		Description: description,
 		ScheduledTime: pgtype.Timestamptz{
@@ -688,68 +631,41 @@ func (s *Service) updateTripLocation(ctx context.Context, input *UpdateTripLocat
 	})
 
 	if err != nil {
-		sp.RecordError(err)
-		return nil, huma.Error500InternalServerError("Failed to update location")
-	}
-
-	location, err = s.findTripLocationById(ctx, input.LocationID)
-
-	if err != nil {
-		sp.RecordError(err)
 		return nil, err
 	}
 
-	return &UpdateTripLocationOutput{
-		Body: UpdateTripLocationOutputBody{
-			Location: *location,
+	tripPlace, err = s.repo.getTripPlace(ctx, input.TripPlaceID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &UpdateTripPlaceOutput{
+		Body: UpdateTripPlaceOutputBody{
+			Place: *tripPlace,
 		},
 	}, nil
 }
 
-func (s *Service) removeTripLocation(ctx context.Context, tripId string, locationId string) error {
+func (s *Service) removeTripPlace(ctx context.Context, tripId string, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	userId := ctx.Value("userId").(string)
 
-	trip, err := s.find(ctx, tripId)
+	trip, err := s.repo.get(ctx, tripId)
 
 	if err != nil {
-		sp.RecordError(err)
 		return err
 	}
 
 	if !canRead(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to access this trip")
-		sp.RecordError(err)
-		return err
+		return ErrNotAuthorizedToAccess
 	}
 
 	if !canDeleteTripLocation(trip, userId) {
-		err = huma.Error403Forbidden("You are not authorized to update this trip location")
-		sp.RecordError(err)
-		return err
+		return ErrNotAuthorizedToDeleteTripPlace
 	}
 
-	ct, err := s.db.DeleteTripLocation(ctx, locationId)
-
-	if err != nil {
-		sp.RecordError(err)
-
-		pgErr, ok := err.(*pgconn.PgError)
-
-		if !ok {
-			return huma.Error500InternalServerError("Failed to delete location")
-		}
-
-		return huma.Error500InternalServerError("Failed to delete location " + pgErr.Code + ": " + pgErr.Message)
-	}
-
-	if ct.RowsAffected() != 1 {
-		err = huma.Error404NotFound("Location with id " + locationId + " not found")
-		sp.RecordError(err)
-		return err
-	}
-
-	return nil
+	return s.repo.RemoveTripPlace(ctx, placeId)
 }

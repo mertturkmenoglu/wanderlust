@@ -8,6 +8,7 @@ import (
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -571,4 +572,80 @@ func (r *Repository) createTripPlace(ctx context.Context, params CreateTripPlace
 		PlaceID:       res.PlaceID,
 		Place:         dto.Place{},
 	}, nil
+}
+
+func (r *Repository) getTripPlace(ctx context.Context, id string) (*dto.TripPlace, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tripPlace, err := r.db.FindTripPlaceById(ctx, id)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errors.Wrap(ErrTripPlaceNotFound, err.Error())
+		}
+
+		return nil, errors.Wrap(ErrFailedToGetTripPlace, err.Error())
+	}
+
+	dbPlaces, err := r.db.FindManyPlacesPopulated(ctx, []string{
+		tripPlace.TripPlace.PlaceID,
+	})
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToGetTripPlace, err.Error())
+	}
+
+	places, err := dto.ToPlaces(dbPlaces[0])
+
+	if err != nil {
+		return nil, errors.Wrap(ErrFailedToGetTripPlace, err.Error())
+	}
+
+	place := places[0]
+
+	return &dto.TripPlace{
+		ID:            tripPlace.TripPlace.ID,
+		TripID:        tripPlace.TripPlace.TripID,
+		ScheduledTime: tripPlace.TripPlace.ScheduledTime.Time,
+		Description:   tripPlace.TripPlace.Description,
+		PlaceID:       tripPlace.TripPlace.PlaceID,
+		Place:         place,
+	}, nil
+}
+
+type UpdateTripPlaceParams = db.UpdateTripPlaceParams
+
+func (r *Repository) updateTripPlace(ctx context.Context, params UpdateTripPlaceParams) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.UpdateTripPlace(ctx, params)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToUpdateTripPlace, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrTripPlaceNotFound
+	}
+
+	return nil
+}
+
+func (r *Repository) RemoveTripPlace(ctx context.Context, id string) error {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	tag, err := r.db.RemoveTripPlaceById(ctx, id)
+
+	if err != nil {
+		return errors.Wrap(ErrFailedToDeleteTripPlace, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrTripPlaceNotFound
+	}
+
+	return nil
 }

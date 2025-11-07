@@ -549,7 +549,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.removeTripPlace(ctx, input)
+			err := s.removeTripPlace(ctx, input.TripID, input.TripPlaceID)
 
 			if err != nil {
 				sp.RecordError(err)
