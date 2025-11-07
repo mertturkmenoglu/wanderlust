@@ -1,11 +1,12 @@
--- name: CountPoiReviews :one
-SELECT COUNT(*) FROM reviews
-WHERE poi_id = $1;
+-- name: CountReviewsByPlaceId :one
+SELECT COUNT(*)
+FROM reviews
+WHERE place_id = $1;
 
 -- name: CreateReview :one
 INSERT INTO reviews (
   id,
-  poi_id,
+  place_id,
   user_id,
   content,
   rating
@@ -20,7 +21,7 @@ INSERT INTO reviews (
 -- name: BatchCreateReviews :copyfrom
 INSERT INTO reviews (
   id,
-  poi_id,
+  place_id,
   user_id,
   content,
   rating
@@ -32,16 +33,16 @@ INSERT INTO reviews (
   $5
 );
 
--- name: DeleteReview :exec
+-- name: RemoveReview :execresult
 DELETE FROM reviews
 WHERE id = $1;
 
--- name: GetReviewIdsByPoiIdFiltered :many
-SELECT 
+-- name: FindManyReviewIdsByPlaceIdAndRating :many
+SELECT
   id
 FROM reviews
-WHERE 
-    poi_id = sqlc.arg(poiId)::TEXT
+WHERE
+    place_id = sqlc.arg(placeId)::TEXT
   AND
     (rating >= COALESCE(sqlc.arg(minRating), rating))
   AND
@@ -54,84 +55,73 @@ ORDER BY
 OFFSET $1
 LIMIT $2;
 
--- name: CountReviewsByPoiIdFiltered :one
-SELECT COUNT(*) FROM reviews
+-- name: CountReviewsByPlaceIdAndRating :one
+SELECT COUNT(*)
+FROM reviews
 WHERE
-    poi_id = sqlc.arg(poiId)::TEXT
+    place_id = sqlc.arg(placeId)::TEXT
   AND
     (rating >= COALESCE(sqlc.arg(minRating), rating))
   AND
     (rating <= COALESCE(sqlc.arg(maxRating), rating));
 
--- name: CountReviewsByPoiId :one
-SELECT COUNT(*) FROM reviews
-WHERE poi_id = $1;
-
--- name: GetLastReviewImageIndex :one
-SELECT COALESCE(MAX(index), 0)
-FROM review_images
-WHERE review_id = $1;
-
--- name: BatchCreateReviewImage :copyfrom
-INSERT INTO review_images(
-  review_id,
-  url,
-  index
-) VALUES (
-  $1,
-  $2,
-  $3
-);
-
--- name: GetReviewIdsByUsername :many
-SELECT 
+-- name: FindManyReviewIdsByUsername :many
+SELECT
   reviews.id
 FROM reviews
-JOIN profile ON reviews.user_id = profile.id
+  JOIN profile ON reviews.user_id = profile.id
 WHERE profile.username = $1
 ORDER BY reviews.created_at DESC
 OFFSET $2
 LIMIT $3;
 
 -- name: CountReviewsByUsername :one
-SELECT COUNT(*) FROM reviews
+SELECT COUNT(*)
+FROM reviews
 WHERE user_id = (
   SELECT id FROM profile
   WHERE username = $1
 );
 
--- name: GetPoiRatings :many
-SELECT rating, COUNT(rating) FROM reviews
-WHERE poi_id = $1
+-- name: FindPlaceRatings :many
+SELECT
+  rating,
+  COUNT(rating)
+FROM reviews
+WHERE place_id = $1
 GROUP BY rating;
 
--- name: GetReviewsByIds :many
+-- name: FindManyReviewsById :many
 SELECT
   sqlc.embed(reviews),
   sqlc.embed(profile),
-  images_agg.images
+  assets_agg.assets
 FROM
   reviews
-LEFT JOIN profile ON reviews.user_id = profile.id
+LEFT JOIN
+  profile ON reviews.user_id = profile.id
 LEFT JOIN LATERAL (
   SELECT json_agg(jsonb_build_object(
-    'id', m.id,
-    'reviewId', m.review_id,
-    'url', m.url,
-    'index', m.index
-  ) ORDER BY m.index) AS images
-  FROM public.review_images m
-  WHERE m.review_id = reviews.id
-) images_agg ON true
+    'id', a.id,
+    'reviewId', a.entity_id
+    'url', a.url,
+    'order', a.order
+  ) ORDER BY a.order) AS assets
+  FROM public.assets a
+  WHERE a.review_id = reviews.id AND a.entity_type = 'review'
+) assets_agg ON true
 WHERE reviews.id = ANY($1::TEXT[])
 ORDER BY reviews.created_at DESC;
 
--- name: GetReviewImagesByPoiId :many
-SELECT * FROM review_images WHERE review_id IN (
-  SELECT id FROM reviews WHERE poi_id = $1
+-- name: FindManyReviewAssetsByPlaceId :many
+SELECT *
+FROM assets
+WHERE entity_type = 'review' AND entity_id IN (
+  SELECT id FROM reviews WHERE place_id = $1
   ORDER BY created_at DESC
 ) LIMIT 20;
 
--- name: GetPoiTotalRating :one
-SELECT COALESCE(SUM(rating), 0) FROM reviews
-WHERE poi_id = $1;
+-- name: FindPlaceTotalRating :one
+SELECT COALESCE(SUM(rating), 0)
+FROM reviews
+WHERE place_id = $1;

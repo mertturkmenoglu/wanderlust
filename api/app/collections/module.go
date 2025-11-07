@@ -7,7 +7,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -42,7 +41,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.GetCollectionsInput) (*dto.GetCollectionsOutput, error) {
+		func(ctx context.Context, input *GetCollectionsInput) (*GetCollectionsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -66,7 +65,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Errors:        []int{400, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.GetCollectionByIdInput) (*dto.GetCollectionByIdOutput, error) {
+		func(ctx context.Context, input *GetCollectionByIdInput) (*GetCollectionByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -95,7 +94,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 409, 422, 500},
 		},
-		func(ctx context.Context, input *dto.CreateCollectionInput) (*dto.CreateCollectionOutput, error) {
+		func(ctx context.Context, input *CreateCollectionInput) (*CreateCollectionOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -124,7 +123,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.DeleteCollectionInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteCollectionInput) (*DeleteCollectionOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -153,7 +152,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.UpdateCollectionInput) (*dto.UpdateCollectionOutput, error) {
+		func(ctx context.Context, input *UpdateCollectionInput) (*UpdateCollectionOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -182,7 +181,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.CreateCollectionItemInput) (*dto.CreateCollectionItemOutput, error) {
+		func(ctx context.Context, input *CreateCollectionItemInput) (*CreateCollectionItemOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -211,7 +210,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.DeleteCollectionItemInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteCollectionItemInput) (*DeleteCollectionItemOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -240,7 +239,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.UpdateCollectionItemsInput) (*dto.UpdateCollectionItemsOutput, error) {
+		func(ctx context.Context, input *UpdateCollectionItemsInput) (*UpdateCollectionItemsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -258,9 +257,9 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/collections/{id}/poi/{poiId}",
-			Summary:       "Create Collection POI Relation",
-			Description:   "Create collection POI relation",
+			Path:          "/collections/{id}/place/{placeId}",
+			Summary:       "Create Collection Place Relation",
+			Description:   "Create collection Place relation",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -269,11 +268,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.CreateCollectionPoiRelationInput) (*struct{}, error) {
+		func(ctx context.Context, input *CreateCollectionPlaceRelationInput) (*CreateCollectionPlaceRelationOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.createPoiRelation(ctx, input.CollectionID, input.PoiID)
+			err := s.createPlaceRelation(ctx, input.CollectionID, input.PlaceID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -298,7 +297,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.CreateCollectionCityRelationInput) (*struct{}, error) {
+		func(ctx context.Context, input *CreateCollectionCityRelationInput) (*CreateCollectionCityRelationOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -316,9 +315,9 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
-			Path:          "/collections/{id}/poi/{poiId}",
-			Summary:       "Delete Collection POI Relation",
-			Description:   "Delete collection POI relation",
+			Path:          "/collections/{id}/place/{placeId}",
+			Summary:       "Delete Collection Place Relation",
+			Description:   "Delete collection Place relation",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -327,11 +326,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.RemoveCollectionPoiRelationInput) (*struct{}, error) {
+		func(ctx context.Context, input *RemoveCollectionPlaceRelationInput) (*RemoveCollectionPlaceRelationOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.removePoiRelation(ctx, input.CollectionID, input.PoiID)
+			err := s.removePlaceRelation(ctx, input.CollectionID, input.PlaceID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -356,7 +355,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.RemoveCollectionCityRelationInput) (*struct{}, error) {
+		func(ctx context.Context, input *RemoveCollectionCityRelationInput) (*RemoveCollectionCityRelationOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -374,17 +373,17 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/collections/poi/{id}",
-			Summary:       "Get Collections For a POI",
-			Description:   "Get collections for a POI",
+			Path:          "/collections/place/{id}",
+			Summary:       "Get Collections For a Place",
+			Description:   "Get collections for a Place",
 			DefaultStatus: http.StatusOK,
 			Errors:        []int{400, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.GetCollectionsForPoiInput) (*dto.GetCollectionsForPoiOutput, error) {
+		func(ctx context.Context, input *GetCollectionsForPlaceInput) (*GetCollectionsForPlaceOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.listPoiCollections(ctx, input.PoiID)
+			res, err := s.listPlaceCollections(ctx, input.PlaceID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -404,7 +403,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Errors:        []int{400, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.GetCollectionsForCityInput) (*dto.GetCollectionsForCityOutput, error) {
+		func(ctx context.Context, input *GetCollectionsForCityInput) (*GetCollectionsForCityOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -422,9 +421,9 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/collections/poi/all",
-			Summary:       "Get All POI Collections",
-			Description:   "Get all POI collections",
+			Path:          "/collections/place/all",
+			Summary:       "Get All Place Collections",
+			Description:   "Get all Place collections",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
@@ -433,11 +432,11 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *struct{}) (*dto.GetAllPoiCollectionsOutput, error) {
+		func(ctx context.Context, input *GetAllPlaceCollectionsInput) (*GetAllPlaceCollectionsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.listAllPoiCollections(ctx)
+			res, err := s.listAllPlaceCollections(ctx)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -462,7 +461,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *struct{}) (*dto.GetAllCityCollectionsOutput, error) {
+		func(ctx context.Context, input *GetAllCityCollectionsInput) (*GetAllCityCollectionsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

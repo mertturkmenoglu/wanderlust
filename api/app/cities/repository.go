@@ -19,7 +19,7 @@ func (r *Repository) list(ctx context.Context) ([]db.City, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetCities(ctx)
+	res, err := r.db.FindManyCities(ctx)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -51,7 +51,7 @@ func (r *Repository) listFeatured(ctx context.Context) ([]db.City, error) {
 		7010, // Barcelona
 	}
 
-	res, err := r.db.GetFeaturedCities(ctx, featuredCitiesIds)
+	res, err := r.db.FindManyCitiesById(ctx, featuredCitiesIds)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -68,7 +68,7 @@ func (r *Repository) get(ctx context.Context, id int32) (*db.City, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetCityById(ctx, id)
+	res, err := r.db.FindCityById(ctx, id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -104,7 +104,7 @@ func (r *Repository) remove(ctx context.Context, id int32) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.DeleteCity(ctx, id)
+	_, err := r.db.RemoveCityById(ctx, id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -119,19 +119,19 @@ func (r *Repository) remove(ctx context.Context, id int32) error {
 
 type UpdateParams = db.UpdateCityParams
 
-func (r *Repository) update(ctx context.Context, params UpdateParams) (*db.City, error) {
+func (r *Repository) update(ctx context.Context, params UpdateParams) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.UpdateCity(ctx, params)
+	_, err := r.db.UpdateCity(ctx, params)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, errors.Wrap(ErrNotFound, err.Error())
+			return errors.Wrap(ErrNotFound, err.Error())
 		}
 
-		return nil, errors.Wrap(ErrFailedToUpdate, err.Error())
+		return errors.Wrap(ErrFailedToUpdate, err.Error())
 	}
 
-	return &res, nil
+	return nil
 }

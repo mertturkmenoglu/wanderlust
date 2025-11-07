@@ -5,6 +5,7 @@ INSERT INTO trips (
   title,
   description,
   visibility_level,
+  requested_amenities,
   start_at,
   end_at
 ) VALUES (
@@ -14,16 +15,18 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7
+  $7,
+  $8
 ) RETURNING *;
 
 -- name: BatchCreateTrips :copyfrom
 INSERT INTO trips (
   id,
   owner_id,
-  description,
   title,
+  description,
   visibility_level,
+  requested_amenities,
   start_at,
   end_at
 ) VALUES (
@@ -33,13 +36,16 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7
+  $7,
+  $8
 );
 
--- name: GetTripById :one
-SELECT * FROM trips WHERE id = $1;
+-- name: FindTripById :one
+SELECT *
+FROM trips
+WHERE id = $1;
 
--- name: GetTripsByIdsPopulated :many
+-- name: FindManyTripsByIdsPopulated :many
 SELECT
   sqlc.embed(trips),
   jsonb_build_object(
@@ -47,8 +53,8 @@ SELECT
     'fullName', u.full_name,
     'username', u.username,
     'profileImage', u.profile_image
-  ) AS owner,
-  (SELECT json_agg(DISTINCT jsonb_build_object(
+  ) as owner,
+   (SELECT json_agg(DISTINCT jsonb_build_object(
     'id', par.id,
     'fullName', par.full_name,
     'username', par.username,
@@ -59,65 +65,62 @@ SELECT
   JOIN profile par ON par.id = tp.user_id
   WHERE tp.trip_id = trips.id
   ) AS participants,
-  (SELECT json_agg(to_jsonb(am.*))
-  FROM trip_amenities ta
-  JOIN amenities am ON am.id = ta.amenity_id
-  WHERE ta.trip_id = trips.id
-  ) AS amenities,
   (SELECT json_agg(jsonb_build_object(
-    'id', tlocations.id,
-    'tripId', tlocations.trip_id,
-    'scheduledTime', tlocations.scheduled_time,
-    'poiId', tlocations.poi_id,
-    'description', tlocations.description
+    'id', tplaces.id,
+    'tripId', tplaces.trip_id,
+    'scheduledTime', tplaces.scheduled_time,
+    'placeId', tplaces.place_id,
+    'description', tplaces.description
   ))
-  FROM trip_locations tlocations
-  WHERE tlocations.trip_id = trips.id
-  ) AS locations,
-  (SELECT get_pois(
+  FROM trip_places tplaces
+  WHERE tplaces.trip_id = trips.id
+  ) AS tripPlaces,
+  (SELECT get_places(
     ARRAY(
       SELECT 
-        DISTINCT poi_id 
-      FROM trip_locations
-      WHERE trip_locations.trip_id = trips.id
+        DISTINCT place_id 
+      FROM trip_places
+      WHERE trip_places.trip_id = trips.id
     )
-  )) AS pois
+  )) AS places
 FROM trips
 LEFT JOIN users u ON u.id = trips.owner_id
-LEFT JOIN trip_locations ON trip_locations.trip_id = trips.id
+LEFT JOIN trip_places ON trip_places.trip_id = trips.id
 WHERE trips.id = ANY($1::TEXT[])
 GROUP BY trips.id, u.id
 ORDER BY trips.created_at DESC;
 
--- name: GetAllTripsIds :many
-SELECT DISTINCT trips.id, trips.created_at
+-- name: FindManyTripsByOwnerIdOrParticipantId :many
+SELECT
+  DISTINCT trips.id, trips.created_at
 FROM trips
-LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
-WHERE trips.owner_id = $1 OR tp.user_id = $1
+LEFT JOIN trip_participants ON trip_participants.trip_id = trips.id
+WHERE trips.owner_id = $1 OR trip_participants.user_id = $1
 ORDER BY trips.created_at DESC
 OFFSET $2
 LIMIT $3;
 
--- name: CountMyTrips :one
-SELECT COUNT(*) FROM trips
-LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
-WHERE trips.owner_id = $1 OR tp.user_id = $1;
+-- name: CountTripsByOwnerIdOrParticipantId :one
+SELECT COUNT(*)
+FROM trips
+LEFT JOIN trip_participants ON trip_participants.trip_id = trips.id
+WHERE trips.owner_id = $1 OR trip_participants.user_id = $1;
 
--- name: GetInvitesByToUserId :many
+-- name: FindManyTripInvitesByToUserId :many
 SELECT
   sqlc.embed(invites),
   jsonb_build_object(
-    'id', p.id,
-    'fullName', p.full_name,
-    'username', p.username,
-    'profileImage', p.profile_image
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
   ) AS fromUser
 FROM trip_invites invites
-JOIN profile p ON p.id = invites.from_id
+LEFT JOIN users u ON u.id = invites.from_id
 WHERE invites.to_id = $1
 ORDER BY invites.sent_at DESC;
 
--- name: GetInvitesByTripId :many
+-- name: FindManyTripInvitesByTripId :many
 SELECT
   sqlc.embed(invites),
   jsonb_build_object(
@@ -144,10 +147,10 @@ INSERT INTO trip_invites (
   trip_id,
   from_id,
   to_id,
+  role,
   sent_at,
   expires_at,
-  trip_title,
-  role
+  trip_title
 ) VALUES (
   $1,
   $2,
@@ -159,13 +162,16 @@ INSERT INTO trip_invites (
   $8
 ) RETURNING *;
 
--- name: DeleteInvite :exec
-DELETE FROM trip_invites WHERE id = $1;
+-- name: RemoveTripInviteById :execresult
+DELETE FROM trip_invites
+WHERE id = $1;
 
--- name: FindExpiredTripInvites :many
-SELECT id FROM trip_invites WHERE expires_at < now();
+-- name: FindManyTripInvitesWhereExpired :many
+SELECT id
+FROM trip_invites
+WHERE expires_at < NOW();
 
--- name: AddParticipantToTrip :one
+-- name: CreateTripParticipant :one
 INSERT INTO trip_participants (
   id,
   user_id,
@@ -178,11 +184,13 @@ INSERT INTO trip_participants (
   $4
 ) RETURNING *;
 
--- name: DeleteParticipant :exec
-DELETE FROM trip_participants WHERE trip_id = $1 AND user_id = $2;
+-- name: RemoveTripParticipantByTripIdAndUserId :execresult
+DELETE FROM trip_participants
+WHERE trip_id = $1 AND user_id = $2;
 
--- name: DeleteTrip :exec
-DELETE FROM trips WHERE id = $1;
+-- name: RemoveTripById :execresult
+DELETE FROM trips
+WHERE id = $1;
 
 -- name: CreateTripComment :one
 INSERT INTO trip_comments (
@@ -199,7 +207,7 @@ INSERT INTO trip_comments (
   $5
 ) RETURNING *;
 
--- name: GetTripComments :many
+-- name: FindManyTripCommentsByTripId :many
 SELECT
   sqlc.embed(tc),
   (SELECT jsonb_build_object(
@@ -217,16 +225,17 @@ ORDER BY tc.created_at DESC
 OFFSET $2
 LIMIT $3;
 
--- name: GetTripCommentsCount :one
-SELECT COUNT(*) FROM trip_comments WHERE trip_id = $1;
+-- name: CountTripCommentsByTripId :one
+SELECT COUNT(*)
+FROM trip_comments
+WHERE trip_id = $1;
 
--- name: UpdateTripComment :one
-UPDATE trip_comments 
-SET content = $2 
-WHERE id = $1 AND trip_id = $3
-RETURNING *;
+-- name: UpdateTripComment :execresult
+UPDATE trip_comments
+SET content = $2
+WHERE id = $1 AND trip_id = $3;
 
--- name: GetTripCommentById :one
+-- name: FindTripCommentById :one
 SELECT
   sqlc.embed(tc),
   (SELECT jsonb_build_object(
@@ -240,51 +249,43 @@ FROM
 LEFT JOIN users u ON u.id = tc.from_id
 WHERE tc.id = $1;
 
--- name: DeleteTripComment :exec
-DELETE FROM trip_comments WHERE id = $1;
+-- name: RemoveTripCommentById :execresult
+DELETE FROM trip_comments
+WHERE id = $1;
 
--- name: DeleteTripAllAmenities :exec
-DELETE FROM trip_amenities WHERE trip_id = $1;
-
--- name: BatchCreateTripAmenities :copyfrom
-INSERT INTO trip_amenities (
-  trip_id,
-  amenity_id
-) VALUES (
-  $1,
-  $2
-);
-
--- name: UpdateTrip :one
+-- name: UpdateTrip :execresult
 UPDATE trips
 SET
   title = $2,
   description = $3,
   visibility_level = $4,
-  start_at = $5,
-  end_at = $6
-WHERE id = $1
-RETURNING *;
+  requested_amenities = $5,
+  start_at = $6,
+  end_at = $7
+WHERE id = $1;
 
--- name: MoveDanglingLocations :exec
-UPDATE trip_locations
+-- name: MoveDanglingTripPlaces :execresult
+UPDATE trip_places
 SET scheduled_time = $1
 WHERE trip_id = $2 AND (scheduled_time < $3 OR scheduled_time > $4);
 
--- name: DeleteTripAllParticipants :exec
-DELETE FROM trip_participants WHERE trip_id = $1;
+-- name: RemoveTripParticipantsByTripId :execresult
+DELETE FROM trip_participants
+WHERE trip_id = $1;
 
--- name: DeleteTripAllComments :exec
-DELETE FROM trip_comments WHERE trip_id = $1;
+-- name: RemoveTripCommentsByTripId :execresult
+DELETE FROM trip_comments
+WHERE trip_id = $1;
 
--- name: DeleteTripAllInvites :exec
-DELETE FROM trip_invites WHERE trip_id = $1;
+-- name: RemoveTripInvitesByTripId :execresult
+DELETE FROM trip_invites
+WHERE trip_id = $1;
 
--- name: CreateTripLocation :one
-INSERT INTO trip_locations (
+-- name: CreateTripPlace :one
+INSERT INTO trip_places (
   id,
   trip_id,
-  poi_id,
+  place_id,
   scheduled_time,
   description
 ) VALUES (
@@ -295,19 +296,20 @@ INSERT INTO trip_locations (
   $5
 ) RETURNING *;
 
--- name: UpdateTripLocation :one
-UPDATE trip_locations
-SET description = $2,
-    scheduled_time = $3
-WHERE id = $1 AND trip_id = $4
-RETURNING *;
+-- name: UpdateTripPlace :execresult
+UPDATE trip_places
+SET
+  description = $2,
+  scheduled_time = $3
+WHERE id = $1 AND trip_id = $4;
 
--- name: GetTripLocationById :one
+-- name: FindTripPlaceById :one
 SELECT
-  sqlc.embed(tl)
-FROM trip_locations tl
-WHERE tl.id = $1
+  sqlc.embed(tp)
+FROM trip_places tp
+WHERE tp.id = $1
 LIMIT 1;
 
--- name: DeleteTripLocation :execresult
-DELETE FROM trip_locations WHERE id = $1;
+-- name: RemoveTripPlaceById :execresult
+DELETE FROM trip_places
+WHERE id = $1;

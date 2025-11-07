@@ -63,13 +63,13 @@ func (f *FakeLists) createLists(ctx context.Context, userIds []string) (int64, e
 }
 
 type FakeListItems struct {
-	ListsPath string
-	PoisPath  string
+	ListsPath  string
+	PlacesPath string
 	*Fake
 }
 
 func (f *FakeListItems) Generate() (int64, error) {
-	listIds, poiIds, err := f.readFiles()
+	listIds, placeIds, err := f.readFiles()
 
 	if err != nil {
 		return 0, err
@@ -81,7 +81,7 @@ func (f *FakeListItems) Generate() (int64, error) {
 
 	for chunk := range slices.Chunk(listIds, 100) {
 		g.Go(func() error {
-			count, err := f.createListItems(gctx, chunk, poiIds)
+			count, err := f.createListItems(gctx, chunk, placeIds)
 			total.Add(count)
 			return err
 		})
@@ -96,27 +96,27 @@ func (f *FakeListItems) Generate() (int64, error) {
 
 func (f *FakeListItems) readFiles() ([]string, []string, error) {
 	listIds, err1 := fakeutils.ReadFile(f.ListsPath)
-	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
+	placeIds, err2 := fakeutils.ReadFile(f.PlacesPath)
 
 	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
-	return listIds, poiIds, nil
+	return listIds, placeIds, nil
 }
 
-func (f *FakeListItems) createListItems(ctx context.Context, listIds []string, poiIds []string) (int64, error) {
+func (f *FakeListItems) createListItems(ctx context.Context, listIds []string, placeIds []string) (int64, error) {
 	batch := make([]db.BatchCreateListItemsParams, 0)
 
 	for _, listId := range listIds {
 		n := fakeutils.RandInt32Range(4, 10)
-		randPois := fakeutils.RandElems(poiIds, n)
+		randPlaces := fakeutils.RandElems(placeIds, n)
 
 		for i := range n {
 			batch = append(batch, db.BatchCreateListItemsParams{
-				ListID: listId,
-				PoiID:  randPois[i],
-				Index:  i + 1,
+				ListID:  listId,
+				PlaceID: randPlaces[i],
+				Index:   i + 1,
 			})
 		}
 	}

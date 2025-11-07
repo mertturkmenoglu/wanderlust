@@ -32,13 +32,13 @@ INSERT INTO addresses (
   $6
 );
 
--- name: RandSelectAddresses :many
+-- name: FindManyAddressIdsByRand :many
 SELECT id
 FROM addresses
 ORDER BY RANDOM()
 LIMIT $1;
 
--- name: UpdateAddress :exec
+-- name: UpdateAddress :execresult
 UPDATE addresses
 SET
   city_id = $1,

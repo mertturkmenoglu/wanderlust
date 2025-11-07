@@ -24,64 +24,70 @@ INSERT INTO lists (
   $4
 );
 
--- name: GetListById :one
-SELECT 
-  sqlc.embed(lists), 
+-- name: FindListById :one
+SELECT
+  sqlc.embed(lists),
   sqlc.embed(profile)
 FROM lists
   LEFT JOIN profile ON profile.id = lists.user_id
-WHERE lists.id = $1 LIMIT 1;
+WHERE lists.id = $1
+LIMIT 1;
 
--- name: DeleteList :exec
+-- name: RemoveList :execresult
 DELETE FROM lists
 WHERE id = $1;
 
--- name: GetAllListsOfUser :many
-SELECT * FROM lists
+-- name: FindManyListsByUserId :many
+SELECT *
+FROM lists
 WHERE user_id = $1
 ORDER BY created_at DESC
 OFFSET $2
 LIMIT $3;
 
--- name: GetPublicListsOfUser :many
-SELECT * FROM lists
+-- name: FindManyListsByUserIdAndIsPublic :many
+SELECT *
+FROM lists
 WHERE user_id = $1 AND is_public = true
 ORDER BY created_at DESC
 OFFSET $2
 LIMIT $3;
 
--- name: UpdateList :exec
+-- name: UpdateList :execresult
 UPDATE lists
-SET 
+SET
   name = $2,
   is_public = $3
 WHERE id = $1;
 
--- name: GetListItems :many
-SELECT 
+-- name: FindManyListItems :many
+SELECT
   sqlc.embed(list_items),
-  get_pois(
+  get_places(
     ARRAY(
-      SELECT poi_id FROM list_items
+      SELECT place_id
+      FROM list_items
       WHERE list_items.list_id = $1
     )
-  ) as pois
+  ) as places
 FROM list_items
 WHERE list_id = $1
 ORDER BY index ASC;
 
--- name: CountAllListsOfUser :one
-SELECT COUNT(*) FROM lists
+-- name: CountListsByUserId :one
+SELECT COUNT(*)
+FROM lists
 WHERE user_id = $1;
 
--- name: CountPublicListsOfUser :one
-SELECT COUNT(*) FROM lists
+-- name: CountListsByUserIdAndIsPublic :one
+SELECT COUNT(*)
+FROM lists
 WHERE user_id = $1 AND is_public = true;
 
 -- name: CreateListItem :one
 INSERT INTO list_items (
   list_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,
@@ -92,7 +98,7 @@ INSERT INTO list_items (
 -- name: BatchCreateListItems :copyfrom
 INSERT INTO list_items (
   list_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,
@@ -100,28 +106,32 @@ INSERT INTO list_items (
   $3
 );
 
--- name: GetLastIndexOfList :one
+-- name: FindListLastIndexById :one
 SELECT COALESCE(MAX(index), 0)
 FROM list_items
 WHERE list_id = $1;
 
--- name: CountListItems :one
-SELECT COUNT(*) FROM list_items
+-- name: CountListItemsByListId :one
+SELECT COUNT(*)
+FROM list_items
 WHERE list_id = $1;
 
--- name: GetListItem :one
-SELECT * FROM list_items
-WHERE list_id = $1 AND poi_id = $2
+-- name: FindListItemByListIdAndPlaceId :one
+SELECT *
+FROM list_items
+WHERE list_id = $1 AND place_id = $2
 LIMIT 1;
 
--- name: DeleteAllListItems :exec
+-- name: RemoveListItemsByListId :execresult
 DELETE FROM list_items
 WHERE list_id = $1;
 
--- name: GetListIdsAndNamesOfUser :many
-SELECT id, name FROM lists
+-- name: FindListIdAndNameByUserId :many
+SELECT id, name
+FROM lists
 WHERE user_id = $1;
 
--- name: GetListItemsInListStatus :many
-SELECT list_id, poi_id FROM list_items
-WHERE list_items.poi_id = $1 AND list_items.list_id = ANY($2::TEXT[]);
+-- name: FindPlaceInListStatus :many
+SELECT list_id, place_id
+FROM list_items
+WHERE list_items.place_id = $1 AND list_items.list_id = ANY($2::TEXT[]);

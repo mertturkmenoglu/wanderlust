@@ -2,7 +2,7 @@ package search
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
@@ -11,11 +11,11 @@ import (
 	tsapi "github.com/typesense/typesense-go/v2/typesense/api"
 )
 
-func handlePoiSync() error {
+func handlePlacesSync() error {
 	d := db.NewDb()
 	ctx := context.Background()
 
-	totalCount, err := d.Queries.CountPois(ctx)
+	totalCount, err := d.Queries.CountPlaces(ctx)
 
 	if err != nil {
 		return err
@@ -26,13 +26,13 @@ func handlePoiSync() error {
 	ioc.Set(di.SVC_DB, d)
 
 	searchService := New()
-	s := pois.NewService(&core.Application{
+	s := places.NewService(&core.Application{
 		Container: ioc,
 	})
 
 	const step int32 = 1000
 
-	_, err = searchService.Client.Collection(string(CollectionPois)).Delete(ctx)
+	_, err = searchService.Client.Collection(string(CollectionPlaces)).Delete(ctx)
 
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func handlePoiSync() error {
 	}
 
 	for i = 0; i <= n; i += step {
-		ids, err := d.Queries.GetPaginatedPoiIds(ctx, db.GetPaginatedPoiIdsParams{
+		ids, err := d.Queries.FindManyPlaceIds(ctx, db.FindManyPlaceIdsParams{
 			Offset: i,
 			Limit:  step,
 		})
@@ -57,19 +57,19 @@ func handlePoiSync() error {
 			return err
 		}
 
-		pois, err := s.FindMany(ctx, ids)
+		places, err := s.FindMany(ctx, ids)
 
 		if err != nil {
 			return err
 		}
 
-		var docs = make([]any, len(pois))
+		var docs = make([]any, len(places))
 
-		for i, poi := range pois {
+		for i, place := range places {
 			docs[i] = map[string]any{
-				"name":     poi.Name,
-				"poi":      poi,
-				"location": []float64{poi.Address.Lat, poi.Address.Lng},
+				"name":     place.Name,
+				"place":    place,
+				"location": []float64{place.Address.Lat, place.Address.Lng},
 			}
 		}
 
@@ -78,7 +78,7 @@ func handlePoiSync() error {
 		}
 
 		_, err = searchService.Client.
-			Collection(string(CollectionPois)).
+			Collection(string(CollectionPlaces)).
 			Documents().
 			Import(ctx, docs, &tsapi.ImportDocumentsParams{})
 

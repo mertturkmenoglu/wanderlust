@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/durable"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
@@ -48,7 +47,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *struct{}) (*dto.GetMeOutput, error) {
+		func(ctx context.Context, input *GetMeInput) (*GetMeOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -70,7 +69,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Summary:       "Login with Credentials",
 			Description:   "Login with email and password",
 		},
-		func(ctx context.Context, input *dto.LoginInput) (*dto.LoginOutput, error) {
+		func(ctx context.Context, input *LoginInput) (*LoginOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -97,7 +96,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *struct{}) (*dto.LogoutOutput, error) {
+		func(ctx context.Context, input *LogoutInput) (*LogoutOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -120,7 +119,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Refresh the tokens of the user",
 			DefaultStatus: http.StatusNoContent,
 		},
-		func(ctx context.Context, input *dto.RefreshInput) (*dto.RefreshOutput, error) {
+		func(ctx context.Context, input *RefreshInput) (*RefreshOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -143,7 +142,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Register with email and password",
 			DefaultStatus: http.StatusCreated,
 		},
-		func(ctx context.Context, input *dto.RegisterInput) (*dto.RegisterOutput, error) {
+		func(ctx context.Context, input *RegisterInput) (*RegisterOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -166,7 +165,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Send forgot password email to the user",
 			DefaultStatus: http.StatusNoContent,
 		},
-		func(ctx context.Context, input *dto.SendForgotPasswordEmailInput) (*struct{}, error) {
+		func(ctx context.Context, input *SendForgotPasswordEmailInput) (*SendForgotPasswordEmailOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -189,7 +188,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Reset the password of the user",
 			DefaultStatus: http.StatusNoContent,
 		},
-		func(ctx context.Context, input *dto.ResetPasswordInput) (*struct{}, error) {
+		func(ctx context.Context, input *ResetPasswordInput) (*ResetPasswordOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -212,7 +211,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Start the OAuth flow for the given provider",
 			DefaultStatus: http.StatusTemporaryRedirect,
 		},
-		func(ctx context.Context, input *dto.OAuthInput) (*dto.OAuthOutput, error) {
+		func(ctx context.Context, input *OAuthInput) (*OAuthOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -236,7 +235,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Callback for the OAuth flow",
 			DefaultStatus: http.StatusTemporaryRedirect,
 		},
-		func(ctx context.Context, input *dto.OAuthCallbackInput) (*dto.OAuthCallbackOutput, error) {
+		func(ctx context.Context, input *OAuthCallbackInput) (*OAuthCallbackOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -263,7 +262,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.ChangePasswordInput) (*dto.ChangePasswordOutput, error) {
+		func(ctx context.Context, input *ChangePasswordInput) (*ChangePasswordOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

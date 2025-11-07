@@ -36,12 +36,12 @@ func (f *FakeCollections) Generate() (int64, error) {
 
 type FakeCollectionItems struct {
 	CollectionsPath string
-	PoisPath        string
+	PlacesPath      string
 	*Fake
 }
 
 func (f *FakeCollectionItems) Generate() (int64, error) {
-	collectionIds, poiIds, err := f.readFiles()
+	collectionIds, placeIds, err := f.readFiles()
 
 	if err != nil {
 		return 0, err
@@ -53,7 +53,7 @@ func (f *FakeCollectionItems) Generate() (int64, error) {
 
 	for chunk := range slices.Chunk(collectionIds, 100) {
 		g.Go(func() error {
-			count, err := f.createCollectionItems(gctx, chunk, poiIds)
+			count, err := f.createCollectionItems(gctx, chunk, placeIds)
 			total.Add(count)
 			return err
 		})
@@ -68,22 +68,22 @@ func (f *FakeCollectionItems) Generate() (int64, error) {
 
 func (f *FakeCollectionItems) readFiles() ([]string, []string, error) {
 	collectionIds, err1 := fakeutils.ReadFile(f.CollectionsPath)
-	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
+	placeIds, err2 := fakeutils.ReadFile(f.PlacesPath)
 
 	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
-	return collectionIds, poiIds, nil
+	return collectionIds, placeIds, nil
 }
 
-func (f *FakeCollectionItems) createCollectionItems(ctx context.Context, collectionIds []string, poiIds []string) (int64, error) {
+func (f *FakeCollectionItems) createCollectionItems(ctx context.Context, collectionIds []string, placeIds []string) (int64, error) {
 	batch := make([]db.BatchCreateCollectionItemsParams, 0)
 
 	for _, collectionId := range collectionIds {
-		pois := fakeutils.RandElems(poiIds, 10)
+		places := fakeutils.RandElems(placeIds, 10)
 
-		for i, poiId := range pois {
+		for i, placeId := range places {
 			index, err := utils.SafeInt64ToInt32(int64(i))
 
 			if err != nil {
@@ -92,7 +92,7 @@ func (f *FakeCollectionItems) createCollectionItems(ctx context.Context, collect
 
 			batch = append(batch, db.BatchCreateCollectionItemsParams{
 				CollectionID: collectionId,
-				PoiID:        poiId,
+				PlaceID:      placeId,
 				Index:        index + 1,
 			})
 		}
@@ -108,7 +108,7 @@ type FakeCollectionsCities struct {
 
 func (f *FakeCollectionsCities) Generate() (int64, error) {
 	collectionIds, err1 := fakeutils.ReadFile(f.CollectionsPath)
-	cities, err2 := f.db.Queries.GetCities(context.Background())
+	cities, err2 := f.db.Queries.FindManyCities(context.Background())
 
 	if err := cmp.Or(err1, err2); err != nil {
 		return 0, err
@@ -137,14 +137,14 @@ func (f *FakeCollectionsCities) Generate() (int64, error) {
 	return f.db.Queries.BatchCreateCollectionCityRelations(context.Background(), batch)
 }
 
-type FakeCollectionsPois struct {
+type FakeCollectionsPlaces struct {
 	CollectionsPath string
-	PoisPath        string
+	PlacesPath      string
 	*Fake
 }
 
-func (f *FakeCollectionsPois) Generate() (int64, error) {
-	collectionIds, poiIds, err := f.readFiles()
+func (f *FakeCollectionsPlaces) Generate() (int64, error) {
+	collectionIds, placeIds, err := f.readFiles()
 
 	if err != nil {
 		return 0, err
@@ -154,9 +154,9 @@ func (f *FakeCollectionsPois) Generate() (int64, error) {
 	g, gctx := errgroup.WithContext(context.Background())
 	g.SetLimit(10)
 
-	for chunk := range slices.Chunk(poiIds, 100) {
+	for chunk := range slices.Chunk(placeIds, 100) {
 		g.Go(func() error {
-			count, err := f.createCollectionsPois(gctx, chunk, collectionIds)
+			count, err := f.createCollectionsPlaces(gctx, chunk, collectionIds)
 			total.Add(count)
 			return err
 		})
@@ -169,21 +169,21 @@ func (f *FakeCollectionsPois) Generate() (int64, error) {
 	return total.Load(), nil
 }
 
-func (f *FakeCollectionsPois) readFiles() ([]string, []string, error) {
+func (f *FakeCollectionsPlaces) readFiles() ([]string, []string, error) {
 	collectionIds, err1 := fakeutils.ReadFile(f.CollectionsPath)
-	poiIds, err2 := fakeutils.ReadFile(f.PoisPath)
+	placeIds, err2 := fakeutils.ReadFile(f.PlacesPath)
 
 	if err := cmp.Or(err1, err2); err != nil {
 		return nil, nil, err
 	}
 
-	return collectionIds, poiIds, nil
+	return collectionIds, placeIds, nil
 }
 
-func (f *FakeCollectionsPois) createCollectionsPois(ctx context.Context, poiIds []string, collectionIds []string) (int64, error) {
-	batch := make([]db.BatchCreateCollectionPoiRelationsParams, 0)
+func (f *FakeCollectionsPlaces) createCollectionsPlaces(ctx context.Context, placeIds []string, collectionIds []string) (int64, error) {
+	batch := make([]db.BatchCreateCollectionPlaceRelationsParams, 0)
 
-	for _, poiId := range poiIds {
+	for _, placeId := range placeIds {
 		collections := fakeutils.RandElems(collectionIds, 5)
 
 		for i, collectionId := range collections {
@@ -193,13 +193,13 @@ func (f *FakeCollectionsPois) createCollectionsPois(ctx context.Context, poiIds 
 				return 0, err
 			}
 
-			batch = append(batch, db.BatchCreateCollectionPoiRelationsParams{
+			batch = append(batch, db.BatchCreateCollectionPlaceRelationsParams{
 				CollectionID: collectionId,
-				PoiID:        poiId,
+				PlaceID:      placeId,
 				Index:        index + 1,
 			})
 		}
 	}
 
-	return f.db.Queries.BatchCreateCollectionPoiRelations(ctx, batch)
+	return f.db.Queries.BatchCreateCollectionPlaceRelations(ctx, batch)
 }

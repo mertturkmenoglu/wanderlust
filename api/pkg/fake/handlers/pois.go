@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/fake/fakeutils"
 	"wanderlust/pkg/uid"
@@ -11,13 +11,13 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 )
 
-type FakePois struct {
+type FakePlaces struct {
 	Count int32
 	Step  int32
 	*Fake
 }
 
-func (f *FakePois) Generate() (int64, error) {
+func (f *FakePlaces) Generate() (int64, error) {
 	if f.Count < f.Step {
 		f.Step = f.Count
 	}
@@ -28,21 +28,21 @@ func (f *FakePois) Generate() (int64, error) {
 			f.Step = f.Count - i
 		}
 
-		batch := make([]db.BatchCreatePoisParams, 0, f.Step)
-		addressIds, err := f.db.Queries.RandSelectAddresses(context.Background(), f.Step)
+		batch := make([]db.BatchCreatePlacesParams, 0, f.Step)
+		addressIds, err := f.db.Queries.FindManyAddressIdsByRand(context.Background(), f.Step)
 
 		if err != nil {
 			return 0, err
 		}
 
 		for range f.Step {
-			ot, err := genRandOpenTimes()
+			hours := genRandOpenTimes()
 
 			if err != nil {
 				return 0, err
 			}
 
-			batch = append(batch, db.BatchCreatePoisParams{
+			batch = append(batch, db.BatchCreatePlacesParams{
 				ID:                 uid.Flake(),
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
@@ -51,15 +51,12 @@ func (f *FakePois) Generate() (int64, error) {
 				Website:            utils.StrToText(gofakeit.URL()),
 				PriceLevel:         fakeutils.RandInt16Range(1, 5),
 				AccessibilityLevel: fakeutils.RandInt16Range(1, 5),
-				TotalVotes:         0,
-				TotalPoints:        0,
-				TotalFavorites:     0,
 				CategoryID:         fakeutils.RandInt16Range(1, 23),
-				Hours:              ot,
+				Hours:              hours,
 			})
 		}
 
-		_, err = f.db.Queries.BatchCreatePois(context.Background(), batch)
+		_, err = f.db.Queries.BatchCreatePlaces(context.Background(), batch)
 
 		if err != nil {
 			return 0, err
@@ -87,20 +84,17 @@ var closings = [...]string{
 	"21:00",
 }
 
-func genRandOpenTimes() ([]byte, error) {
-	v := make(map[string]any)
+func genRandOpenTimes() map[string]*string {
+	v := make(map[string]*string)
 
 	for _, d := range days {
-		v[d] = genOpenTimesForDay()
+		s := genOpenTimesForDay()
+		v[d] = &s
 	}
 
-	return json.Marshal(v)
+	return v
 }
 
-func genOpenTimesForDay() map[string]string {
-
-	return map[string]string{
-		"opensAt":  openings[gofakeit.Number(0, len(openings)-1)],
-		"closesAt": closings[gofakeit.Number(0, len(closings)-1)],
-	}
+func genOpenTimesForDay() string {
+	return fmt.Sprintf("%s-%s", openings[gofakeit.Number(0, len(openings)-1)], closings[gofakeit.Number(0, len(closings)-1)])
 }

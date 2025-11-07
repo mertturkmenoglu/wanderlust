@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 const createCategory = `-- name: CreateCategory :one
@@ -34,22 +36,26 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 	return i, err
 }
 
-const deleteCategory = `-- name: DeleteCategory :exec
-DELETE FROM categories
+const findCategoryById = `-- name: FindCategoryById :one
+SELECT id, name, image
+FROM categories
 WHERE id = $1
+LIMIT 1
 `
 
-func (q *Queries) DeleteCategory(ctx context.Context, id int16) error {
-	_, err := q.db.Exec(ctx, deleteCategory, id)
-	return err
+func (q *Queries) FindCategoryById(ctx context.Context, id int16) (Category, error) {
+	row := q.db.QueryRow(ctx, findCategoryById, id)
+	var i Category
+	err := row.Scan(&i.ID, &i.Name, &i.Image)
+	return i, err
 }
 
-const getCategories = `-- name: GetCategories :many
+const findManyCategories = `-- name: FindManyCategories :many
 SELECT id, name, image FROM categories
 `
 
-func (q *Queries) GetCategories(ctx context.Context) ([]Category, error) {
-	rows, err := q.db.Query(ctx, getCategories)
+func (q *Queries) FindManyCategories(ctx context.Context) ([]Category, error) {
+	rows, err := q.db.Query(ctx, findManyCategories)
 	if err != nil {
 		return nil, err
 	}
@@ -68,13 +74,21 @@ func (q *Queries) GetCategories(ctx context.Context) ([]Category, error) {
 	return items, nil
 }
 
-const updateCategory = `-- name: UpdateCategory :one
+const removeCategoryById = `-- name: RemoveCategoryById :execresult
+DELETE FROM categories
+WHERE id = $1
+`
+
+func (q *Queries) RemoveCategoryById(ctx context.Context, id int16) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCategoryById, id)
+}
+
+const updateCategory = `-- name: UpdateCategory :execresult
 UPDATE categories
-SET 
+SET
   name = $2,
   image = $3
 WHERE id = $1
-RETURNING id, name, image
 `
 
 type UpdateCategoryParams struct {
@@ -83,9 +97,6 @@ type UpdateCategoryParams struct {
 	Image string
 }
 
-func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (Category, error) {
-	row := q.db.QueryRow(ctx, updateCategory, arg.ID, arg.Name, arg.Image)
-	var i Category
-	err := row.Scan(&i.ID, &i.Name, &i.Image)
-	return i, err
+func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateCategory, arg.ID, arg.Name, arg.Image)
 }

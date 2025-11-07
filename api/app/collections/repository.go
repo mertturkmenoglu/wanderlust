@@ -2,16 +2,14 @@ package collections
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"slices"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/pagination"
 	"wanderlust/pkg/tracing"
 
-	"github.com/danielgtaylor/huma/v2"
+	"github.com/cockroachdb/errors"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -25,23 +23,23 @@ func (r *Repository) findMany(ctx context.Context, ids []string) ([]dto.Collecti
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetCollections(ctx, ids)
+	res, err := r.db.FindManyCollections(ctx, ids)
 
 	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil, ErrNoCollectionFound
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errors.Wrap(ErrNoCollectionFound, err.Error())
 		}
 
-		return nil, ErrFailedToList
+		return nil, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	collections := make([]dto.Collection, len(res))
 
 	for i, row := range res {
-		val, err := mapper.ToCollection(row)
+		val, err := dto.ToCollection(row)
 
 		if err != nil {
-			return nil, ErrFailedToList
+			return nil, errors.Wrap(ErrFailedToList, err.Error())
 		}
 
 		collections[i] = val
@@ -71,17 +69,17 @@ func (r *Repository) list(ctx context.Context, page dto.PaginationQueryParams) (
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	ids, err := r.db.GetCollectionIds(ctx, db.GetCollectionIdsParams{
+	ids, err := r.db.FindManyCollectionIds(ctx, db.FindManyCollectionIdsParams{
 		Offset: int32(pagination.GetOffset(page)),
 		Limit:  int32(page.PageSize),
 	})
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, 0, ErrNoCollectionFound
+			return nil, 0, errors.Wrap(ErrNoCollectionFound, err.Error())
 		}
 
-		return nil, 0, ErrFailedToList
+		return nil, 0, errors.Wrap(ErrFailedToList, err.Error())
 	}
 
 	collections, err := r.findMany(ctx, ids)
@@ -93,7 +91,7 @@ func (r *Repository) list(ctx context.Context, page dto.PaginationQueryParams) (
 	count, err := r.db.CountCollections(ctx)
 
 	if err != nil {
-		return nil, 0, ErrFailedToCount
+		return nil, 0, errors.Wrap(ErrFailedToCount, err.Error())
 	}
 
 	return collections, count, nil
@@ -108,13 +106,13 @@ func (r *Repository) create(ctx context.Context, params CreateParams) (*dto.Coll
 	res, err := r.db.CreateCollection(ctx, params)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to create collection", err)
+		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
 	}
 
 	collection, err := r.find(ctx, res.ID)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get collection", err)
+		return nil, err
 	}
 
 	return collection, nil
@@ -124,10 +122,14 @@ func (r *Repository) remove(ctx context.Context, id string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.DeleteCollection(ctx, id)
+	tag, err := r.db.RemoveCollectionById(ctx, id)
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to delete collection", err)
+		return errors.Wrap(ErrFailedToDelete, err.Error())
+	}
+
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
 	}
 
 	return nil
@@ -139,54 +141,42 @@ func (r *Repository) update(ctx context.Context, params UpdateParams) (*dto.Coll
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.UpdateCollection(ctx, params)
+	_, err := r.db.UpdateCollection(ctx, params)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to update collection", err)
+		return nil, errors.Wrap(ErrFailedToUpdate, err.Error())
 	}
 
-	collection, err := r.find(ctx, params.ID)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get collection", err)
-	}
-
-	return collection, nil
+	return r.find(ctx, params.ID)
 }
 
-func (r *Repository) createItem(ctx context.Context, collectionId string, poiId string) (*dto.Collection, error) {
+func (r *Repository) createItem(ctx context.Context, collectionId string, placeId string) (*dto.Collection, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetLastIndexOfCollection(ctx, collectionId)
+	res, err := r.db.FindCollectionLastIndexById(ctx, collectionId)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to create item", err)
+		return nil, errors.Wrap(ErrFailedToCreateItem, err.Error())
 	}
 
 	asInt, ok := res.(int32)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("Failed to create item", err)
+		return nil, errors.Wrap(ErrFailedToCreateItem, err.Error())
 	}
 
 	_, err = r.db.CreateCollectionItem(ctx, db.CreateCollectionItemParams{
 		CollectionID: collectionId,
-		PoiID:        poiId,
+		PlaceID:      placeId,
 		Index:        asInt + 1,
 	})
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to create item", err)
+		return nil, errors.Wrap(ErrFailedToCreateItem, err.Error())
 	}
 
-	collection, err := r.find(ctx, collectionId)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get collection", err)
-	}
-
-	return collection, nil
+	return r.find(ctx, collectionId)
 }
 
 func (r *Repository) removeItem(ctx context.Context, collectionId string, index int32) error {
@@ -196,124 +186,125 @@ func (r *Repository) removeItem(ctx context.Context, collectionId string, index 
 	tx, err := r.pool.Begin(ctx)
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to remove item", err)
+		return errors.Wrap(ErrFailedToDeleteItem, err.Error())
 	}
 
 	defer tx.Rollback(ctx)
 
 	qtx := r.db.WithTx(tx)
 
-	err = qtx.DeleteCollectionItemAtIndex(ctx, db.DeleteCollectionItemAtIndexParams{
+	tag, err := qtx.RemoveCollectionItemByCollectionIdAndIndex(ctx, db.RemoveCollectionItemByCollectionIdAndIndexParams{
 		CollectionID: collectionId,
 		Index:        index,
 	})
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to remove item", err)
+		return errors.Wrap(ErrFailedToDeleteItem, err.Error())
 	}
 
-	err = qtx.DecrListIndexAfterDelete(ctx, db.DecrListIndexAfterDeleteParams{
+	if tag.RowsAffected() == 0 {
+		return ErrItemNotFound
+	}
+
+	_, err = qtx.DecrementCollectionIndexAfterDelete(ctx, db.DecrementCollectionIndexAfterDeleteParams{
 		CollectionID: collectionId,
 		Index:        index,
 	})
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to remove item", err)
+		return errors.Wrap(ErrFailedToDeleteItem, err.Error())
 	}
 
 	err = tx.Commit(ctx)
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to remove item", err)
+		return errors.Wrap(ErrFailedToDeleteItem, err.Error())
 	}
 
 	return nil
 }
 
-func (r *Repository) updateItems(ctx context.Context, collectionId string, data dto.UpdateCollectionItemsInputBody) (*dto.Collection, error) {
-	res, err := r.db.GetLastIndexOfCollection(ctx, collectionId)
+func (r *Repository) updateItems(ctx context.Context, collectionId string, data UpdateCollectionItemsInputBody) (*dto.Collection, error) {
+	ctx, sp := tracing.NewSpan(ctx)
+	defer sp.End()
+
+	res, err := r.db.FindCollectionLastIndexById(ctx, collectionId)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to update items", err)
+		return nil, errors.Wrap(ErrFailedToUpdateItems, err.Error())
 	}
 
 	lastIndex, ok := res.(int32)
 
 	if !ok {
-		return nil, huma.Error500InternalServerError("Failed to update items", fmt.Errorf("invalid type %T", res))
+		return nil, errors.Wrap(ErrFailedToUpdateItems, fmt.Sprintf("invalid type %T", res))
 	}
 
 	if len(data.NewOrder) != int(lastIndex) {
-		return nil, huma.Error422UnprocessableEntity("Invalid order")
+		return nil, ErrInvalidItemOrder
 	}
 
 	var i int32
 
 	for i = 1; i <= lastIndex; i++ {
-		ok := slices.ContainsFunc(data.NewOrder, func(item dto.NewOrderItem) bool {
+		ok := slices.ContainsFunc(data.NewOrder, func(item NewOrderItem) bool {
 			return item.ListIndex == int32(i)
 		})
 
 		if !ok {
-			return nil, huma.Error422UnprocessableEntity("Invalid order")
+			return nil, ErrInvalidItemOrder
 		}
 	}
 
 	tx, err := r.pool.Begin(ctx)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to update items", err)
+		return nil, errors.Wrap(ErrFailedToUpdateItems, err.Error())
 	}
 
 	defer tx.Rollback(ctx)
 
 	qtx := r.db.WithTx(tx)
 
-	err = qtx.DeleteAllCollectionItems(ctx, collectionId)
+	_, err = qtx.RemoveCollectionItemsByCollectionId(ctx, collectionId)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to update items", err)
+		return nil, errors.Wrap(ErrFailedToUpdateItems, err.Error())
 	}
 
 	for _, item := range data.NewOrder {
 		_, err = qtx.CreateCollectionItem(ctx, db.CreateCollectionItemParams{
 			CollectionID: collectionId,
-			PoiID:        item.PoiID,
+			PlaceID:      item.PlaceId,
 			Index:        item.ListIndex,
 		})
 
 		if err != nil {
-			return nil, huma.Error500InternalServerError("Failed to update items", err)
+			return nil, errors.Wrap(ErrFailedToUpdateItems, err.Error())
 		}
 	}
 
 	err = tx.Commit(ctx)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to update items", err)
+		return nil, errors.Wrap(ErrFailedToUpdateItems, err.Error())
 	}
 
-	collection, err := r.find(ctx, collectionId)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get collection", err)
-	}
-
-	return collection, nil
+	return r.find(ctx, collectionId)
 }
 
-func (r *Repository) createPoiRelation(ctx context.Context, collectionId string, poiId string) error {
+func (r *Repository) createPlaceRelation(ctx context.Context, collectionId string, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.CreateCollectionPoiRelation(ctx, db.CreateCollectionPoiRelationParams{
+	_, err := r.db.CreateCollectionPlaceRelation(ctx, db.CreateCollectionPlaceRelationParams{
 		CollectionID: collectionId,
-		PoiID:        poiId,
+		PlaceID:      placeId,
 		Index:        0,
 	})
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to create collection POI relation", err)
+		return errors.Wrap(ErrFailedToCreatePlaceRelation, err.Error())
 	}
 
 	return nil
@@ -323,30 +314,30 @@ func (r *Repository) createCityRelation(ctx context.Context, collectionId string
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.CreateCollectionCityRelation(ctx, db.CreateCollectionCityRelationParams{
+	_, err := r.db.CreateCollectionCityRelation(ctx, db.CreateCollectionCityRelationParams{
 		CollectionID: collectionId,
 		CityID:       cityId,
 		Index:        0,
 	})
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to create collection city relation", err)
+		return errors.Wrap(ErrFailedToCreateCityRelation, err.Error())
 	}
 
 	return nil
 }
 
-func (r *Repository) removePoiRelation(ctx context.Context, collectionId string, poiId string) error {
+func (r *Repository) removePlaceRelation(ctx context.Context, collectionId string, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.RemoveCollectionPoiRelation(ctx, db.RemoveCollectionPoiRelationParams{
+	_, err := r.db.RemoveCollectionPlaceRelation(ctx, db.RemoveCollectionPlaceRelationParams{
 		CollectionID: collectionId,
-		PoiID:        poiId,
+		PlaceID:      placeId,
 	})
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to remove collection POI relation", err)
+		return errors.Wrap(ErrFailedToDeletePlaceRelation, err.Error())
 	}
 
 	return nil
@@ -356,64 +347,52 @@ func (r *Repository) removeCityRelation(ctx context.Context, collectionId string
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.RemoveCollectionCityRelation(ctx, db.RemoveCollectionCityRelationParams{
+	_, err := r.db.RemoveCollectionCityRelation(ctx, db.RemoveCollectionCityRelationParams{
 		CollectionID: collectionId,
 		CityID:       cityId,
 	})
 
 	if err != nil {
-		return huma.Error500InternalServerError("Failed to remove collection city relation", err)
+		return errors.Wrap(ErrFailedToDeleteCityRelation, err.Error())
 	}
 
 	return nil
 }
 
-func (r *Repository) listPoiCollections(ctx context.Context, poiId string) ([]dto.Collection, error) {
+func (r *Repository) listPlaceCollections(ctx context.Context, placeId string) ([]dto.Collection, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	collectionIds, err := r.db.GetCollectionIdsForPoi(ctx, poiId)
+	ids, err := r.db.FindManyCollectionIdsByPlaceId(ctx, placeId)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to list collections for POI", err)
+		return nil, errors.Wrap(ErrFailedToListPlaceCollections, err.Error())
 	}
 
-	res, err := r.findMany(ctx, collectionIds)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to list collections for POI", err)
-	}
-
-	return res, nil
+	return r.findMany(ctx, ids)
 }
 
 func (r *Repository) listCityCollections(ctx context.Context, cityId int32) ([]dto.Collection, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	collectionIds, err := r.db.GetCollectionsIdsForCity(ctx, cityId)
+	ids, err := r.db.FindManyCollectionIdsByCityId(ctx, cityId)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to list collections for city", err)
+		return nil, errors.Wrap(ErrFailedToListCityCollections, err.Error())
 	}
 
-	res, err := r.findMany(ctx, collectionIds)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to list collections for city", err)
-	}
-
-	return res, nil
+	return r.findMany(ctx, ids)
 }
 
-func (r *Repository) listAllPoiCollections(ctx context.Context) ([]dto.Collection, error) {
+func (r *Repository) listAllPlaceCollections(ctx context.Context) ([]dto.Collection, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetAllPoiCollections(ctx)
+	res, err := r.db.FindManyCollectionPlaceRelations(ctx)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get all POI collections", err)
+		return nil, errors.Wrap(ErrFailedToListAllPlaceCollections, err.Error())
 	}
 
 	ids := make([]string, len(res))
@@ -422,23 +401,17 @@ func (r *Repository) listAllPoiCollections(ctx context.Context) ([]dto.Collectio
 		ids[i] = v.CollectionID
 	}
 
-	collections, err := r.findMany(ctx, ids)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get all POI collections", err)
-	}
-
-	return collections, nil
+	return r.findMany(ctx, ids)
 }
 
 func (r *Repository) listAllCityCollections(ctx context.Context) ([]dto.Collection, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetAllCityCollections(ctx)
+	res, err := r.db.FindManyCollectionCityRelations(ctx)
 
 	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get all city collections", err)
+		return nil, errors.Wrap(ErrFailedToListAllCityCollections, err.Error())
 	}
 
 	ids := make([]string, len(res))
@@ -447,11 +420,5 @@ func (r *Repository) listAllCityCollections(ctx context.Context) ([]dto.Collecti
 		ids[i] = v.CollectionID
 	}
 
-	collections, err := r.findMany(ctx, ids)
-
-	if err != nil {
-		return nil, huma.Error500InternalServerError("Failed to get all city collections", err)
-	}
-
-	return collections, nil
+	return r.findMany(ctx, ids)
 }

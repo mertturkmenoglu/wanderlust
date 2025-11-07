@@ -8,7 +8,6 @@ var (
 			<li>Explore cities and point of interest (POI) guides, curated with insider tips and recommendations.</li>
 			<li>Collect and organize POIs into favorites, bookmarks, and custom lists.</li>
 			<li>Follow fellow travelers, send messages, and stay up-to-date on their adventures.</li>
-			<li>Record your own trips with diary entries, complete with photos and memories.</li>
 			<li>Plan future trips using our intuitive trip planner tool.</li>
 			<li>Search and filter results using powerful facets and filters.</li>
 		</ul>

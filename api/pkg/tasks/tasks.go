@@ -49,7 +49,6 @@ func (t *TasksService) NewMux() *asynq.ServeMux {
 	mux.HandleFunc(TypeVerifyEmailEmail, t.HandleVerifyEmailEmailTask)
 	mux.HandleFunc(TypeFindExpiredTripInvites, t.FindExpiredTripInvitesTask)
 	mux.HandleFunc(TypeDeleteExpiredTripInvite, t.DeleteExpiredTripInviteTask)
-	mux.HandleFunc(TypeExportPois, t.ExportPoisTask)
 
 	return mux
 }

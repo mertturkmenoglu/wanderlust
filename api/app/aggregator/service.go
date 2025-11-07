@@ -4,7 +4,6 @@ import (
 	"context"
 	"sync"
 	"wanderlust/pkg/cache"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
 
 	"golang.org/x/sync/singleflight"
@@ -17,11 +16,11 @@ type Service struct {
 	repo         *Repository
 }
 
-func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
+func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*HomeAggregatorOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	var res dto.HomeAggregatorOutput
+	var res HomeAggregatorOutput
 
 	err := s.cache.ReadObj(ctx, cache.KeyHomeAggregations, &res)
 
@@ -32,7 +31,7 @@ func (s *Service) checkCacheForHomeAggregation(ctx context.Context) (*dto.HomeAg
 	return nil, err
 }
 
-func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
+func (s *Service) getHomeAggregation(ctx context.Context) (*HomeAggregatorOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -70,5 +69,5 @@ func (s *Service) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOu
 		return nil, err
 	}
 
-	return result.(*dto.HomeAggregatorOutput), nil
+	return result.(*HomeAggregatorOutput), nil
 }

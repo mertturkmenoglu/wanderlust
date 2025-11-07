@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -41,7 +42,7 @@ INSERT INTO users (
   $6,
   $7,
   $8
-) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at
+) RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -77,8 +78,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.FbID,
 		&i.IsVerified,
 		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
 		&i.ProfileImage,
 		&i.BannerImage,
 		&i.FollowersCount,
@@ -89,255 +88,68 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const createUserTopPoi = `-- name: CreateUserTopPoi :one
-INSERT INTO user_top_pois (
+const createUserTopPlace = `-- name: CreateUserTopPlace :one
+INSERT INTO user_top_places (
   user_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,
   $2,
   $3
-) RETURNING user_id, poi_id, index
+) RETURNING user_id, place_id, index
 `
 
-type CreateUserTopPoiParams struct {
-	UserID string
-	PoiID  string
-	Index  int32
+type CreateUserTopPlaceParams struct {
+	UserID  string
+	PlaceID string
+	Index   int32
 }
 
-func (q *Queries) CreateUserTopPoi(ctx context.Context, arg CreateUserTopPoiParams) (UserTopPoi, error) {
-	row := q.db.QueryRow(ctx, createUserTopPoi, arg.UserID, arg.PoiID, arg.Index)
-	var i UserTopPoi
-	err := row.Scan(&i.UserID, &i.PoiID, &i.Index)
+func (q *Queries) CreateUserTopPlace(ctx context.Context, arg CreateUserTopPlaceParams) (UserTopPlace, error) {
+	row := q.db.QueryRow(ctx, createUserTopPlace, arg.UserID, arg.PlaceID, arg.Index)
+	var i UserTopPlace
+	err := row.Scan(&i.UserID, &i.PlaceID, &i.Index)
 	return i, err
 }
 
-const decrUserFollowers = `-- name: DecrUserFollowers :exec
+const decrementUserFollowers = `-- name: DecrementUserFollowers :execresult
 UPDATE users
 SET followers_count = followers_count - 1
 WHERE id = $1
 `
 
-func (q *Queries) DecrUserFollowers(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, decrUserFollowers, id)
-	return err
+func (q *Queries) DecrementUserFollowers(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, decrementUserFollowers, id)
 }
 
-const decrUserFollowing = `-- name: DecrUserFollowing :exec
+const decrementUserFollowing = `-- name: DecrementUserFollowing :execresult
 UPDATE users
 SET following_count = following_count - 1
 WHERE id = $1
 `
 
-func (q *Queries) DecrUserFollowing(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, decrUserFollowing, id)
-	return err
+func (q *Queries) DecrementUserFollowing(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, decrementUserFollowing, id)
 }
 
-const deleteUserAllTopPois = `-- name: DeleteUserAllTopPois :exec
-DELETE FROM user_top_pois
-WHERE user_id = $1
-`
-
-func (q *Queries) DeleteUserAllTopPois(ctx context.Context, userID string) error {
-	_, err := q.db.Exec(ctx, deleteUserAllTopPois, userID)
-	return err
-}
-
-const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
-WHERE email = $1 LIMIT 1
-`
-
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByEmail, email)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Username,
-		&i.FullName,
-		&i.PasswordHash,
-		&i.GoogleID,
-		&i.FbID,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserByFbId = `-- name: GetUserByFbId :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
-WHERE fb_id = $1 LIMIT 1
-`
-
-func (q *Queries) GetUserByFbId(ctx context.Context, fbID pgtype.Text) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByFbId, fbID)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Username,
-		&i.FullName,
-		&i.PasswordHash,
-		&i.GoogleID,
-		&i.FbID,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserByGoogleId = `-- name: GetUserByGoogleId :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
-WHERE google_id = $1 LIMIT 1
-`
-
-func (q *Queries) GetUserByGoogleId(ctx context.Context, googleID pgtype.Text) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByGoogleId, googleID)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Username,
-		&i.FullName,
-		&i.PasswordHash,
-		&i.GoogleID,
-		&i.FbID,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserById = `-- name: GetUserById :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
-WHERE id = $1 LIMIT 1
-`
-
-func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserById, id)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Username,
-		&i.FullName,
-		&i.PasswordHash,
-		&i.GoogleID,
-		&i.FbID,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at FROM users
-WHERE username = $1 LIMIT 1
-`
-
-func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByUsername, username)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Username,
-		&i.FullName,
-		&i.PasswordHash,
-		&i.GoogleID,
-		&i.FbID,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserProfileByUsername = `-- name: GetUserProfileByUsername :one
-SELECT id, username, full_name, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at
-FROM profile
-WHERE username = $1 LIMIT 1
-`
-
-func (q *Queries) GetUserProfileByUsername(ctx context.Context, username string) (Profile, error) {
-	row := q.db.QueryRow(ctx, getUserProfileByUsername, username)
-	var i Profile
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.FullName,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
-const getUserTopPois = `-- name: GetUserTopPois :many
-SELECT user_id, poi_id, index FROM user_top_pois
+const findManyUserTopPlaces = `-- name: FindManyUserTopPlaces :many
+SELECT user_id, place_id, index
+FROM user_top_places
 WHERE user_id = $1
 ORDER BY index ASC
 `
 
-func (q *Queries) GetUserTopPois(ctx context.Context, userID string) ([]UserTopPoi, error) {
-	rows, err := q.db.Query(ctx, getUserTopPois, userID)
+func (q *Queries) FindManyUserTopPlaces(ctx context.Context, userID string) ([]UserTopPlace, error) {
+	rows, err := q.db.Query(ctx, findManyUserTopPlaces, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []UserTopPoi
+	var items []UserTopPlace
 	for rows.Next() {
-		var i UserTopPoi
-		if err := rows.Scan(&i.UserID, &i.PoiID, &i.Index); err != nil {
+		var i UserTopPlace
+		if err := rows.Scan(&i.UserID, &i.PlaceID, &i.Index); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -348,26 +160,199 @@ func (q *Queries) GetUserTopPois(ctx context.Context, userID string) ([]UserTopP
 	return items, nil
 }
 
-const incrUserFollowers = `-- name: IncrUserFollowers :exec
+const findProfileByUsername = `-- name: FindProfileByUsername :one
+SELECT id, username, full_name, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at
+FROM profile
+WHERE username = $1
+LIMIT 1
+`
+
+func (q *Queries) FindProfileByUsername(ctx context.Context, username string) (Profile, error) {
+	row := q.db.QueryRow(ctx, findProfileByUsername, username)
+	var i Profile
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.FullName,
+		&i.IsVerified,
+		&i.Bio,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const findUserByEmail = `-- name: FindUserByEmail :one
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at, updated_at
+FROM users
+WHERE email = $1
+LIMIT 1
+`
+
+func (q *Queries) FindUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, findUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsVerified,
+		&i.Bio,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const findUserByFbId = `-- name: FindUserByFbId :one
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at, updated_at
+FROM users
+WHERE fb_id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindUserByFbId(ctx context.Context, fbID pgtype.Text) (User, error) {
+	row := q.db.QueryRow(ctx, findUserByFbId, fbID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsVerified,
+		&i.Bio,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const findUserByGoogleId = `-- name: FindUserByGoogleId :one
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at, updated_at
+FROM users
+WHERE google_id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindUserByGoogleId(ctx context.Context, googleID pgtype.Text) (User, error) {
+	row := q.db.QueryRow(ctx, findUserByGoogleId, googleID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsVerified,
+		&i.Bio,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const findUserById = `-- name: FindUserById :one
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at, updated_at
+FROM users
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindUserById(ctx context.Context, id string) (User, error) {
+	row := q.db.QueryRow(ctx, findUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsVerified,
+		&i.Bio,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const findUserByUsername = `-- name: FindUserByUsername :one
+SELECT id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, profile_image, banner_image, followers_count, following_count, created_at, updated_at
+FROM users
+WHERE username = $1
+LIMIT 1
+`
+
+func (q *Queries) FindUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRow(ctx, findUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Username,
+		&i.FullName,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.FbID,
+		&i.IsVerified,
+		&i.Bio,
+		&i.ProfileImage,
+		&i.BannerImage,
+		&i.FollowersCount,
+		&i.FollowingCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const incrementUserFollowers = `-- name: IncrementUserFollowers :execresult
 UPDATE users
 SET followers_count = followers_count + 1
 WHERE id = $1
 `
 
-func (q *Queries) IncrUserFollowers(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, incrUserFollowers, id)
-	return err
+func (q *Queries) IncrementUserFollowers(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, incrementUserFollowers, id)
 }
 
-const incrUserFollowing = `-- name: IncrUserFollowing :exec
+const incrementUserFollowing = `-- name: IncrementUserFollowing :execresult
 UPDATE users
 SET following_count = following_count + 1
 WHERE id = $1
 `
 
-func (q *Queries) IncrUserFollowing(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, incrUserFollowing, id)
-	return err
+func (q *Queries) IncrementUserFollowing(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, incrementUserFollowing, id)
 }
 
 const isAdmin = `-- name: IsAdmin :one
@@ -385,50 +370,16 @@ func (q *Queries) IsAdmin(ctx context.Context, userID string) (bool, error) {
 	return exists, err
 }
 
-const makeUserVerified = `-- name: MakeUserVerified :exec
-UPDATE users
-SET is_verified = true
-WHERE id = $1
+const removeUserTopPlacesByUserId = `-- name: RemoveUserTopPlacesByUserId :execresult
+DELETE FROM user_top_places
+WHERE user_id = $1
 `
 
-func (q *Queries) MakeUserVerified(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, makeUserVerified, id)
-	return err
+func (q *Queries) RemoveUserTopPlacesByUserId(ctx context.Context, userID string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeUserTopPlacesByUserId, userID)
 }
 
-const setFollowersCount = `-- name: SetFollowersCount :exec
-UPDATE users
-SET followers_count = $2
-WHERE id = $1
-`
-
-type SetFollowersCountParams struct {
-	ID             string
-	FollowersCount int32
-}
-
-func (q *Queries) SetFollowersCount(ctx context.Context, arg SetFollowersCountParams) error {
-	_, err := q.db.Exec(ctx, setFollowersCount, arg.ID, arg.FollowersCount)
-	return err
-}
-
-const setFollowingCount = `-- name: SetFollowingCount :exec
-UPDATE users
-SET following_count = $2
-WHERE id = $1
-`
-
-type SetFollowingCountParams struct {
-	ID             string
-	FollowingCount int32
-}
-
-func (q *Queries) SetFollowingCount(ctx context.Context, arg SetFollowingCountParams) error {
-	_, err := q.db.Exec(ctx, setFollowingCount, arg.ID, arg.FollowingCount)
-	return err
-}
-
-const updateUserBannerImage = `-- name: UpdateUserBannerImage :exec
+const updateUserBannerImage = `-- name: UpdateUserBannerImage :execresult
 UPDATE users
 SET banner_image = $2
 WHERE id = $1
@@ -439,12 +390,11 @@ type UpdateUserBannerImageParams struct {
 	BannerImage pgtype.Text
 }
 
-func (q *Queries) UpdateUserBannerImage(ctx context.Context, arg UpdateUserBannerImageParams) error {
-	_, err := q.db.Exec(ctx, updateUserBannerImage, arg.ID, arg.BannerImage)
-	return err
+func (q *Queries) UpdateUserBannerImage(ctx context.Context, arg UpdateUserBannerImageParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserBannerImage, arg.ID, arg.BannerImage)
 }
 
-const updateUserFbId = `-- name: UpdateUserFbId :exec
+const updateUserFbId = `-- name: UpdateUserFbId :execresult
 UPDATE users
 SET fb_id = $2
 WHERE id = $1
@@ -455,12 +405,41 @@ type UpdateUserFbIdParams struct {
 	FbID pgtype.Text
 }
 
-func (q *Queries) UpdateUserFbId(ctx context.Context, arg UpdateUserFbIdParams) error {
-	_, err := q.db.Exec(ctx, updateUserFbId, arg.ID, arg.FbID)
-	return err
+func (q *Queries) UpdateUserFbId(ctx context.Context, arg UpdateUserFbIdParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserFbId, arg.ID, arg.FbID)
 }
 
-const updateUserGoogleId = `-- name: UpdateUserGoogleId :exec
+const updateUserFollowersCount = `-- name: UpdateUserFollowersCount :execresult
+UPDATE users
+SET followers_count = $2
+WHERE id = $1
+`
+
+type UpdateUserFollowersCountParams struct {
+	ID             string
+	FollowersCount int32
+}
+
+func (q *Queries) UpdateUserFollowersCount(ctx context.Context, arg UpdateUserFollowersCountParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserFollowersCount, arg.ID, arg.FollowersCount)
+}
+
+const updateUserFollowingCount = `-- name: UpdateUserFollowingCount :execresult
+UPDATE users
+SET following_count = $2
+WHERE id = $1
+`
+
+type UpdateUserFollowingCountParams struct {
+	ID             string
+	FollowingCount int32
+}
+
+func (q *Queries) UpdateUserFollowingCount(ctx context.Context, arg UpdateUserFollowingCountParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserFollowingCount, arg.ID, arg.FollowingCount)
+}
+
+const updateUserGoogleId = `-- name: UpdateUserGoogleId :execresult
 UPDATE users
 SET google_id = $2
 WHERE id = $1
@@ -471,12 +450,26 @@ type UpdateUserGoogleIdParams struct {
 	GoogleID pgtype.Text
 }
 
-func (q *Queries) UpdateUserGoogleId(ctx context.Context, arg UpdateUserGoogleIdParams) error {
-	_, err := q.db.Exec(ctx, updateUserGoogleId, arg.ID, arg.GoogleID)
-	return err
+func (q *Queries) UpdateUserGoogleId(ctx context.Context, arg UpdateUserGoogleIdParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserGoogleId, arg.ID, arg.GoogleID)
 }
 
-const updateUserPassword = `-- name: UpdateUserPassword :exec
+const updateUserIsVerified = `-- name: UpdateUserIsVerified :execresult
+UPDATE users
+SET is_verified = $2
+WHERE id = $1
+`
+
+type UpdateUserIsVerifiedParams struct {
+	ID         string
+	IsVerified bool
+}
+
+func (q *Queries) UpdateUserIsVerified(ctx context.Context, arg UpdateUserIsVerifiedParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserIsVerified, arg.ID, arg.IsVerified)
+}
+
+const updateUserPassword = `-- name: UpdateUserPassword :execresult
 UPDATE users
 SET password_hash = $2
 WHERE id = $1
@@ -487,62 +480,29 @@ type UpdateUserPasswordParams struct {
 	PasswordHash pgtype.Text
 }
 
-func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
-	_, err := q.db.Exec(ctx, updateUserPassword, arg.ID, arg.PasswordHash)
-	return err
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserPassword, arg.ID, arg.PasswordHash)
 }
 
-const updateUserProfile = `-- name: UpdateUserProfile :one
+const updateUserProfile = `-- name: UpdateUserProfile :execresult
 UPDATE users
 SET
   full_name = $2,
-  bio = $3,
-  pronouns = $4,
-  website = $5
+  bio = $3
 WHERE id = $1
-RETURNING id, email, username, full_name, password_hash, google_id, fb_id, is_verified, bio, pronouns, website, profile_image, banner_image, followers_count, following_count, created_at, updated_at
 `
 
 type UpdateUserProfileParams struct {
 	ID       string
 	FullName string
 	Bio      pgtype.Text
-	Pronouns pgtype.Text
-	Website  pgtype.Text
 }
 
-func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfileParams) (User, error) {
-	row := q.db.QueryRow(ctx, updateUserProfile,
-		arg.ID,
-		arg.FullName,
-		arg.Bio,
-		arg.Pronouns,
-		arg.Website,
-	)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Username,
-		&i.FullName,
-		&i.PasswordHash,
-		&i.GoogleID,
-		&i.FbID,
-		&i.IsVerified,
-		&i.Bio,
-		&i.Pronouns,
-		&i.Website,
-		&i.ProfileImage,
-		&i.BannerImage,
-		&i.FollowersCount,
-		&i.FollowingCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+func (q *Queries) UpdateUserProfile(ctx context.Context, arg UpdateUserProfileParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserProfile, arg.ID, arg.FullName, arg.Bio)
 }
 
-const updateUserProfileImage = `-- name: UpdateUserProfileImage :exec
+const updateUserProfileImage = `-- name: UpdateUserProfileImage :execresult
 UPDATE users
 SET profile_image = $2
 WHERE id = $1
@@ -553,7 +513,6 @@ type UpdateUserProfileImageParams struct {
 	ProfileImage pgtype.Text
 }
 
-func (q *Queries) UpdateUserProfileImage(ctx context.Context, arg UpdateUserProfileImageParams) error {
-	_, err := q.db.Exec(ctx, updateUserProfileImage, arg.ID, arg.ProfileImage)
-	return err
+func (q *Queries) UpdateUserProfileImage(ctx context.Context, arg UpdateUserProfileImageParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateUserProfileImage, arg.ID, arg.ProfileImage)
 }

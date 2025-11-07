@@ -5,7 +5,7 @@
 # Make sure you are running this script from the api project root directory.
 
 domains=(
-  "pois"
+  "places"
   "users"
   "reviews"
   "collections"

@@ -8,12 +8,12 @@ import (
 type CollectionName string
 
 const (
-	CollectionPois CollectionName = "pois"
+	CollectionPlaces CollectionName = "places"
 )
 
 var schemas = []*tsapi.CollectionSchema{
 	{
-		Name:               string(CollectionPois),
+		Name:               string(CollectionPlaces),
 		EnableNestedFields: pointer.True(),
 		Fields: []tsapi.Field{
 			{
@@ -25,7 +25,7 @@ var schemas = []*tsapi.CollectionSchema{
 				Type: "geopoint",
 			},
 			{
-				Name:  "poi",
+				Name:  "place",
 				Type:  "object",
 				Facet: pointer.True(),
 				Index: pointer.True(),

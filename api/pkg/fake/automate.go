@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	poisPath        = "tmp/pois.txt"
+	placesPath      = "tmp/places.txt"
 	usersPath       = "tmp/users.txt"
 	reviewsPath     = "tmp/reviews.txt"
 	collectionsPath = "tmp/collections.txt"
@@ -17,14 +17,12 @@ const (
 )
 
 var steps = [...]string{
-	"amenities",
 	"categories",
 	"cities",
 	"addresses",
 	"users",
-	"pois",
-	"fake-id", // run fake id to get user and poi ids
-	"amenities-pois",
+	"places",
+	"fake-id", // run fake id to get user and places ids
 	"images",
 	"follows",
 	"reviews",
@@ -34,7 +32,7 @@ var steps = [...]string{
 	"fake-id", // run fake id again to get collection ids
 	"collection-items",
 	"collections-cities",
-	"collections-pois",
+	"collections-places",
 	"lists",
 	"fake-id", // run fake id again to get list ids
 	"list-items",
@@ -51,17 +49,10 @@ func Automate() error {
 			Step:  1000,
 			Fake:  f,
 		},
-		"amenities": &handlers.FakeAmenities{
-			Fake: f,
-		},
-		"amenities-pois": &handlers.FakeAmenitiesPois{
-			PoisPath: poisPath,
-			Fake:     f,
-		},
 		"bookmarks": &handlers.FakeBookmarks{
-			UsersPath: usersPath,
-			PoisPath:  poisPath,
-			Fake:      f,
+			UsersPath:  usersPath,
+			PlacesPath: placesPath,
+			Fake:       f,
 		},
 		"categories": &handlers.FakeCategories{
 			Fake: f,
@@ -74,50 +65,50 @@ func Automate() error {
 		},
 		"collection-items": &handlers.FakeCollectionItems{
 			CollectionsPath: collectionsPath,
-			PoisPath:        poisPath,
+			PlacesPath:      placesPath,
 			Fake:            f,
 		},
 		"collections-cities": &handlers.FakeCollectionsCities{
 			CollectionsPath: collectionsPath,
 			Fake:            f,
 		},
-		"collections-pois": &handlers.FakeCollectionsPois{
+		"collections-places": &handlers.FakeCollectionsPlaces{
 			CollectionsPath: collectionsPath,
-			PoisPath:        poisPath,
+			PlacesPath:      placesPath,
 			Fake:            f,
 		},
 		"fake-id": &handlers.FakeID{},
 		"favorites": &handlers.FakeFavorites{
-			UsersPath: usersPath,
-			PoisPath:  poisPath,
-			Fake:      f,
+			UsersPath:  usersPath,
+			PlacesPath: placesPath,
+			Fake:       f,
 		},
 		"follows": &handlers.FakeFollows{
 			UsersPath: usersPath,
 			Fake:      f,
 		},
-		"images": &handlers.FakeImages{
-			PoisPath: poisPath,
-			Fake:     f,
+		"images": &handlers.FakeAssets{
+			PlacesPath: placesPath,
+			Fake:       f,
 		},
 		"lists": &handlers.FakeLists{
 			UsersPath: usersPath,
 			Fake:      f,
 		},
 		"list-items": &handlers.FakeListItems{
-			ListsPath: listsPath,
-			PoisPath:  poisPath,
-			Fake:      f,
+			ListsPath:  listsPath,
+			PlacesPath: placesPath,
+			Fake:       f,
 		},
-		"pois": &handlers.FakePois{
+		"places": &handlers.FakePlaces{
 			Count: 10_000,
 			Step:  1000,
 			Fake:  f,
 		},
 		"reviews": &handlers.FakeReviews{
-			PoisPath:  poisPath,
-			UsersPath: usersPath,
-			Fake:      f,
+			PlacesPath: placesPath,
+			UsersPath:  usersPath,
+			Fake:       f,
 		},
 		"review-images": &handlers.FakeReviewImages{
 			ReviewsPath: reviewsPath,

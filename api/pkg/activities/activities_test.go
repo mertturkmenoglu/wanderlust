@@ -66,8 +66,8 @@ func TestAddFavoriteActivityShouldPass(t *testing.T) {
 		UserID: "user-123",
 		Type:   ActivityFavorite,
 		Payload: FavoritePayload{
-			PoiName: "Lorem Ipsum",
-			PoiId:   "poi-123",
+			PlaceName: "Lorem Ipsum",
+			PlaceID:   "place-123",
 		},
 	}
 
@@ -103,9 +103,9 @@ func TestAddReviewActivityShouldPass(t *testing.T) {
 		UserID: "user-123",
 		Type:   ActivityReview,
 		Payload: ReviewPayload{
-			PoiName: "Lorem Ipsum",
-			PoiId:   "poi-123",
-			Rating:  5,
+			PlaceName: "Lorem Ipsum",
+			PlaceID:   "place-123",
+			Rating:    5,
 		},
 	}
 

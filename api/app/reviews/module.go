@@ -3,13 +3,12 @@ package reviews
 import (
 	"context"
 	"net/http"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/activities"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -20,11 +19,15 @@ func Register(grp *huma.Group, app *core.Application) {
 	dbSvc := app.Get(di.SVC_DB).(*db.Db)
 	cacheSvc := app.Get(di.SVC_CACHE).(*cache.Cache)
 	activitiesSvc := app.Get(di.SVC_ACTIVITIES).(*activities.ActivityService)
+	placesSvc := places.NewService(app)
 
 	s := Service{
-		poiService: pois.NewService(app),
-		db:         dbSvc.Queries,
-		pool:       dbSvc.Pool,
+		placesService: placesSvc,
+		repo: &Repository{
+			db:            dbSvc.Queries,
+			pool:          dbSvc.Pool,
+			placesService: placesSvc,
+		},
 		cache:      cacheSvc,
 		activities: activitiesSvc,
 	}
@@ -41,7 +44,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get a review by ID",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetReviewByIdInput) (*dto.GetReviewByIdOutput, error) {
+		func(ctx context.Context, input *GetReviewByIdInput) (*GetReviewByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -68,7 +71,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateReviewInput) (*dto.CreateReviewOutput, error) {
+		func(ctx context.Context, input *CreateReviewInput) (*CreateReviewOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -95,7 +98,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteReviewInput) (*dto.CreateReviewOutput, error) {
+		func(ctx context.Context, input *DeleteReviewInput) (*CreateReviewOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -118,7 +121,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get reviews by username",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetReviewsByUsernameInput) (*dto.GetReviewsByUsernameOutput, error) {
+		func(ctx context.Context, input *GetReviewsByUsernameInput) (*GetReviewsByUsernameOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -136,16 +139,16 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/reviews/poi/{id}",
-			Summary:       "Get Reviews by POI ID",
-			Description:   "Get reviews by POI ID",
+			Path:          "/reviews/place/{id}",
+			Summary:       "Get Reviews by Place ID",
+			Description:   "Get reviews by Place ID",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetReviewsByPoiIdInput) (*dto.GetReviewsByPoiIdOutput, error) {
+		func(ctx context.Context, input *GetReviewsByPlaceIdInput) (*GetReviewsByPlaceIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getByPoiID(ctx, input)
+			res, err := s.getByPlaceId(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -159,12 +162,12 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/reviews/poi/{id}/ratings",
-			Summary:       "Get POI ratings",
-			Description:   "Get ratings for a POI",
+			Path:          "/reviews/place/{id}/ratings",
+			Summary:       "Get Place ratings",
+			Description:   "Get ratings for a Place",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetRatingsByPoiIdInput) (*dto.GetRatingsByPoiIdOutput, error) {
+		func(ctx context.Context, input *GetRatingsByPlaceIdInput) (*GetRatingsByPlaceIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -182,16 +185,16 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodGet,
-			Path:          "/reviews/poi/{id}/images",
-			Summary:       "Get POI Reviews Images",
-			Description:   "Get images of the POI reviews",
+			Path:          "/reviews/place/{id}/assets",
+			Summary:       "Get Place Reviews Assets",
+			Description:   "Get assets of the Place reviews",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *dto.GetReviewImagesByPoiIdInput) (*dto.GetReviewImagesByPoiIdOutput, error) {
+		func(ctx context.Context, input *GetReviewAssetsByPlaceIdInput) (*GetReviewAssetsByPlaceIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.getImages(ctx, input.ID)
+			res, err := s.getAssets(ctx, input.ID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -205,20 +208,20 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/reviews/{id}/media",
-			Summary:       "Upload Media for a Review",
-			Description:   "Upload media for a review",
+			Path:          "/reviews/{id}/asset",
+			Summary:       "Upload Asset for a Review",
+			Description:   "Upload asset for a review",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UploadReviewMediaInput) (*dto.UploadReviewMediaOutput, error) {
+		func(ctx context.Context, input *UploadReviewAssetInput) (*UploadReviewAssetOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.uploadMedia(ctx, input.ID, input.Body)
+			res, err := s.uploadAsset(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)

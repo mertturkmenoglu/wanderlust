@@ -10,7 +10,7 @@ type Service struct {
 	repo *Repository
 }
 
-func (s *Service) list(ctx context.Context) (*dto.ListCategoriesOutput, error) {
+func (s *Service) list(ctx context.Context) (*ListCategoriesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -30,14 +30,14 @@ func (s *Service) list(ctx context.Context) (*dto.ListCategoriesOutput, error) {
 		}
 	}
 
-	return &dto.ListCategoriesOutput{
-		Body: dto.ListCategoriesOutputBody{
+	return &ListCategoriesOutput{
+		Body: ListCategoriesOutputBody{
 			Categories: categories,
 		},
 	}, nil
 }
 
-func (s *Service) create(ctx context.Context, body dto.CreateCategoryInputBody) (*dto.CreateCategoryOutput, error) {
+func (s *Service) create(ctx context.Context, body CreateCategoryInputBody) (*CreateCategoryOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -51,19 +51,15 @@ func (s *Service) create(ctx context.Context, body dto.CreateCategoryInputBody) 
 		return nil, err
 	}
 
-	return &dto.CreateCategoryOutput{
-		Body: dto.CreateCategoryOutputBody{
-			Category: dto.Category{
-				ID:    res.ID,
-				Name:  res.Name,
-				Image: res.Image,
-			},
+	return &CreateCategoryOutput{
+		Body: CreateCategoryOutputBody{
+			Category: dto.ToCategory(*res),
 		},
 	}, nil
 
 }
 
-func (s *Service) update(ctx context.Context, id int16, body dto.UpdateCategoryInputBody) (*dto.UpdateCategoryOutput, error) {
+func (s *Service) update(ctx context.Context, id int16, body UpdateCategoryInputBody) (*UpdateCategoryOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -77,13 +73,9 @@ func (s *Service) update(ctx context.Context, id int16, body dto.UpdateCategoryI
 		return nil, err
 	}
 
-	return &dto.UpdateCategoryOutput{
-		Body: dto.UpdateCategoryOutputBody{
-			Category: dto.Category{
-				ID:    res.ID,
-				Name:  res.Name,
-				Image: res.Image,
-			},
+	return &UpdateCategoryOutput{
+		Body: UpdateCategoryOutputBody{
+			Category: dto.ToCategory(*res),
 		},
 	}, nil
 }

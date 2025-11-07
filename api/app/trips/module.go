@@ -3,12 +3,10 @@ package trips
 import (
 	"context"
 	"net/http"
-	"sync"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -19,10 +17,11 @@ func Register(grp *huma.Group, app *core.Application) {
 	dbSvc := app.Get(di.SVC_DB).(*db.Db)
 
 	s := Service{
-		poisService: pois.NewService(app),
-		wg:          &sync.WaitGroup{},
-		db:          dbSvc.Queries,
-		pool:        dbSvc.Pool,
+		placesService: places.NewService(app),
+		repo: &Repository{
+			db:   dbSvc.Queries,
+			pool: dbSvc.Pool,
+		},
 	}
 
 	grp.UseSimpleModifier(func(op *huma.Operation) {
@@ -42,7 +41,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetTripByIdInput) (*dto.GetTripByIdOutput, error) {
+		func(ctx context.Context, input *GetTripByIdInput) (*GetTripByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -70,7 +69,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetTripInvitesByTripIdInput) (*dto.GetTripInvitesByTripIdOutput, error) {
+		func(ctx context.Context, input *GetTripInvitesByTripIdInput) (*GetTripInvitesByTripIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -98,7 +97,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateTripInviteInput) (*dto.CreateTripInviteOutput, error) {
+		func(ctx context.Context, input *CreateTripInviteInput) (*CreateTripInviteOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -126,7 +125,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetAllTripsInput) (*dto.GetAllTripsOutput, error) {
+		func(ctx context.Context, input *GetAllTripsInput) (*GetAllTripsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -154,7 +153,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *struct{}) (*dto.GetMyTripInvitesOutput, error) {
+		func(ctx context.Context, input *GetMyTripInvitesInput) (*GetMyTripInvitesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -182,7 +181,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateTripInput) (*dto.CreateTripOutput, error) {
+		func(ctx context.Context, input *CreateTripInput) (*CreateTripOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -210,7 +209,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetTripInviteDetailsInput) (*dto.GetTripInviteDetailsOutput, error) {
+		func(ctx context.Context, input *GetTripInviteDetailsInput) (*GetTripInviteDetailsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -238,7 +237,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.TripInviteActionInput) (*dto.TripInviteActionOutput, error) {
+		func(ctx context.Context, input *TripInviteActionInput) (*TripInviteActionOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -266,7 +265,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteTripInviteInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteTripInviteInput) (*DeleteTripInviteOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -294,7 +293,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteTripParticipantInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteTripParticipantInput) (*DeleteTripParticipantOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -322,7 +321,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteTripInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteTripInput) (*DeleteTripOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -350,7 +349,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateTripCommentInput) (*dto.CreateTripCommentOutput, error) {
+		func(ctx context.Context, input *CreateTripCommentInput) (*CreateTripCommentOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -378,7 +377,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetTripCommentsInput) (*dto.GetTripCommentsOutput, error) {
+		func(ctx context.Context, input *GetTripCommentsInput) (*GetTripCommentsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -406,7 +405,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateTripCommentInput) (*dto.UpdateTripCommentOutput, error) {
+		func(ctx context.Context, input *UpdateTripCommentInput) (*UpdateTripCommentOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -434,7 +433,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteTripCommentInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteTripCommentInput) (*DeleteTripCommentOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -446,34 +445,6 @@ func Register(grp *huma.Group, app *core.Application) {
 			}
 
 			return nil, nil
-		},
-	)
-
-	// Update Trip Amenities
-	huma.Register(grp,
-		huma.Operation{
-			Method:        http.MethodPatch,
-			Path:          "/trips/{id}/amenities",
-			Summary:       "Manage Trip Amenities",
-			Description:   "Manage trip amenities by trip id",
-			DefaultStatus: http.StatusCreated,
-			Middlewares: huma.Middlewares{
-				middlewares.IsAuth(grp.API),
-			},
-			Security: core.OpenApiJwtSecurity,
-		},
-		func(ctx context.Context, input *dto.UpdateTripAmenitiesInput) (*dto.UpdateTripAmenitiesOutput, error) {
-			ctx, sp := tracing.NewSpan(ctx)
-			defer sp.End()
-
-			res, err := s.updateAmenities(ctx, input.ID, input.Body)
-
-			if err != nil {
-				sp.RecordError(err)
-				return nil, err
-			}
-
-			return res, nil
 		},
 	)
 
@@ -490,7 +461,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateTripInput) (*dto.UpdateTripOutput, error) {
+		func(ctx context.Context, input *UpdateTripInput) (*UpdateTripOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -509,20 +480,20 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPost,
-			Path:          "/trips/{id}/locations",
-			Summary:       "Add Location to Trip",
-			Description:   "Add a location to a trip",
+			Path:          "/trips/{id}/places",
+			Summary:       "Add Place to Trip",
+			Description:   "Add a place to a trip",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateTripLocationInput) (*dto.CreateTripLocationOutput, error) {
+		func(ctx context.Context, input *CreateTripPlaceInput) (*CreateTripPlaceOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.createTripLocation(ctx, input.ID, input.Body)
+			res, err := s.createTripPlace(ctx, input.ID, input.Body)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -537,20 +508,20 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodPatch,
-			Path:          "/trips/{tripId}/locations/{locationId}",
-			Summary:       "Update Trip Location",
-			Description:   "Update a trip location",
+			Path:          "/trips/{tripId}/places/{tripPlaceId}",
+			Summary:       "Update Trip Place",
+			Description:   "Update a trip place",
 			DefaultStatus: http.StatusOK,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateTripLocationInput) (*dto.UpdateTripLocationOutput, error) {
+		func(ctx context.Context, input *UpdateTripPlaceInput) (*UpdateTripPlaceOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.updateTripLocation(ctx, input)
+			res, err := s.updateTripPlace(ctx, input)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -565,20 +536,20 @@ func Register(grp *huma.Group, app *core.Application) {
 	huma.Register(grp,
 		huma.Operation{
 			Method:        http.MethodDelete,
-			Path:          "/trips/{tripId}/locations/{locationId}",
-			Summary:       "Remove Trip Location",
-			Description:   "Remove a trip location",
+			Path:          "/trips/{tripId}/places/{tripPlaceId}",
+			Summary:       "Remove Trip Place",
+			Description:   "Remove a trip place",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteTripLocationInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteTripPlaceInput) (*DeleteTripPlaceOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			err := s.removeTripLocation(ctx, input.TripID, input.LocationID)
+			err := s.removeTripPlace(ctx, input.TripID, input.TripPlaceID)
 
 			if err != nil {
 				sp.RecordError(err)

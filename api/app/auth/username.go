@@ -20,7 +20,7 @@ func generateUsernameFromEmail(ctx context.Context, db *db.Db, email string) (st
 	validLocalPart := cleanEmailLocalPart(localPart)
 
 	// Check if a user with validLocalPart username exists
-	_, err := db.Queries.GetUserByUsername(ctx, validLocalPart)
+	_, err := db.Queries.FindUserByUsername(ctx, validLocalPart)
 
 	if err != nil {
 		if !errors.Is(err, pgx.ErrNoRows) {
@@ -55,7 +55,7 @@ func generateUsernameFromEmail(ctx context.Context, db *db.Db, email string) (st
 		return "", fmt.Errorf("username %s is not valid", newStr)
 	}
 
-	_, err = db.Queries.GetUserByUsername(ctx, newStr)
+	_, err = db.Queries.FindUserByUsername(ctx, newStr)
 
 	if err != nil {
 		return "", fmt.Errorf("username %s is already taken", newStr)

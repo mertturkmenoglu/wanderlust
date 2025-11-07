@@ -8,7 +8,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -39,7 +38,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			DefaultStatus: http.StatusOK,
 			Errors:        []int{404, 500},
 		},
-		func(ctx context.Context, input *struct{}) (*dto.ListCategoriesOutput, error) {
+		func(ctx context.Context, input *ListCategoriesInput) (*ListCategoriesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -68,7 +67,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 409, 422, 500},
 		},
-		func(ctx context.Context, input *dto.CreateCategoryInput) (*dto.CreateCategoryOutput, error) {
+		func(ctx context.Context, input *CreateCategoryInput) (*CreateCategoryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -97,7 +96,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.UpdateCategoryInput) (*dto.UpdateCategoryOutput, error) {
+		func(ctx context.Context, input *UpdateCategoryInput) (*UpdateCategoryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -126,7 +125,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Security: core.OpenApiJwtSecurity,
 			Errors:   []int{400, 401, 403, 404, 422, 500},
 		},
-		func(ctx context.Context, input *dto.DeleteCategoryInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteCategoryInput) (*DeleteCategoryOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

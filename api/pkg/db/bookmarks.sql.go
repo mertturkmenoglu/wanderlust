@@ -7,20 +7,22 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type BatchCreateBookmarksParams struct {
-	UserID string
-	PoiID  string
+	UserID  string
+	PlaceID string
 }
 
-const countUserBookmarks = `-- name: CountUserBookmarks :one
+const countBookmarksByUserId = `-- name: CountBookmarksByUserId :one
 SELECT COUNT(*) FROM bookmarks
 WHERE user_id = $1
 `
 
-func (q *Queries) CountUserBookmarks(ctx context.Context, userID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countUserBookmarks, userID)
+func (q *Queries) CountBookmarksByUserId(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countBookmarksByUserId, userID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -29,48 +31,33 @@ func (q *Queries) CountUserBookmarks(ctx context.Context, userID string) (int64,
 const createBookmark = `-- name: CreateBookmark :one
 INSERT INTO bookmarks (
   user_id,
-  poi_id
+  place_id
 ) VALUES (
   $1,
   $2
-) RETURNING id, poi_id, user_id, created_at
+) RETURNING id, place_id, user_id, created_at
 `
 
 type CreateBookmarkParams struct {
-	UserID string
-	PoiID  string
+	UserID  string
+	PlaceID string
 }
 
 func (q *Queries) CreateBookmark(ctx context.Context, arg CreateBookmarkParams) (Bookmark, error) {
-	row := q.db.QueryRow(ctx, createBookmark, arg.UserID, arg.PoiID)
+	row := q.db.QueryRow(ctx, createBookmark, arg.UserID, arg.PlaceID)
 	var i Bookmark
 	err := row.Scan(
 		&i.ID,
-		&i.PoiID,
+		&i.PlaceID,
 		&i.UserID,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const deleteBookmarkByPoiId = `-- name: DeleteBookmarkByPoiId :exec
-DELETE FROM bookmarks
-WHERE poi_id = $1 AND user_id = $2
-`
-
-type DeleteBookmarkByPoiIdParams struct {
-	PoiID  string
-	UserID string
-}
-
-func (q *Queries) DeleteBookmarkByPoiId(ctx context.Context, arg DeleteBookmarkByPoiIdParams) error {
-	_, err := q.db.Exec(ctx, deleteBookmarkByPoiId, arg.PoiID, arg.UserID)
-	return err
-}
-
-const getBookmarksByUserId = `-- name: GetBookmarksByUserId :many
-SELECT 
-  id, poi_id, user_id, created_at
+const findManyBookmarksByUserId = `-- name: FindManyBookmarksByUserId :many
+SELECT
+  id, place_id, user_id, created_at
 FROM bookmarks
 WHERE bookmarks.user_id = $1
 ORDER BY bookmarks.created_at DESC
@@ -78,14 +65,14 @@ OFFSET $2
 LIMIT $3
 `
 
-type GetBookmarksByUserIdParams struct {
+type FindManyBookmarksByUserIdParams struct {
 	UserID string
 	Offset int32
 	Limit  int32
 }
 
-func (q *Queries) GetBookmarksByUserId(ctx context.Context, arg GetBookmarksByUserIdParams) ([]Bookmark, error) {
-	rows, err := q.db.Query(ctx, getBookmarksByUserId, arg.UserID, arg.Offset, arg.Limit)
+func (q *Queries) FindManyBookmarksByUserId(ctx context.Context, arg FindManyBookmarksByUserIdParams) ([]Bookmark, error) {
+	rows, err := q.db.Query(ctx, findManyBookmarksByUserId, arg.UserID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +82,7 @@ func (q *Queries) GetBookmarksByUserId(ctx context.Context, arg GetBookmarksByUs
 		var i Bookmark
 		if err := rows.Scan(
 			&i.ID,
-			&i.PoiID,
+			&i.PlaceID,
 			&i.UserID,
 			&i.CreatedAt,
 		); err != nil {
@@ -109,19 +96,35 @@ func (q *Queries) GetBookmarksByUserId(ctx context.Context, arg GetBookmarksByUs
 	return items, nil
 }
 
-const isBookmarked = `-- name: IsBookmarked :one
-SELECT id FROM bookmarks
-WHERE poi_id = $1 AND user_id = $2
+const isPlaceBookmarked = `-- name: IsPlaceBookmarked :one
+SELECT EXISTS (
+  SELECT 1 FROM bookmarks
+  WHERE place_id = $1 AND user_id = $2
+)
 `
 
-type IsBookmarkedParams struct {
-	PoiID  string
-	UserID string
+type IsPlaceBookmarkedParams struct {
+	PlaceID string
+	UserID  string
 }
 
-func (q *Queries) IsBookmarked(ctx context.Context, arg IsBookmarkedParams) (int32, error) {
-	row := q.db.QueryRow(ctx, isBookmarked, arg.PoiID, arg.UserID)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+func (q *Queries) IsPlaceBookmarked(ctx context.Context, arg IsPlaceBookmarkedParams) (bool, error) {
+	row := q.db.QueryRow(ctx, isPlaceBookmarked, arg.PlaceID, arg.UserID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const removeBookmarkByPlaceIdAndUserId = `-- name: RemoveBookmarkByPlaceIdAndUserId :execresult
+DELETE FROM bookmarks
+WHERE place_id = $1 AND user_id = $2
+`
+
+type RemoveBookmarkByPlaceIdAndUserIdParams struct {
+	PlaceID string
+	UserID  string
+}
+
+func (q *Queries) RemoveBookmarkByPlaceIdAndUserId(ctx context.Context, arg RemoveBookmarkByPlaceIdAndUserIdParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeBookmarkByPlaceIdAndUserId, arg.PlaceID, arg.UserID)
 }

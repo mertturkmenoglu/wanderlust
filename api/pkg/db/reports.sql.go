@@ -8,6 +8,7 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -83,51 +84,21 @@ func (q *Queries) CreateReport(ctx context.Context, arg CreateReportParams) (Rep
 	return i, err
 }
 
-const deleteReport = `-- name: DeleteReport :exec
-DELETE FROM reports WHERE id = $1
-`
-
-func (q *Queries) DeleteReport(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteReport, id)
-	return err
-}
-
-const getReportById = `-- name: GetReportById :one
-SELECT id, resource_id, resource_type, reporter_id, description, reason, resolved, resolved_at, created_at, updated_at FROM reports WHERE id = $1 LIMIT 1
-`
-
-func (q *Queries) GetReportById(ctx context.Context, id string) (Report, error) {
-	row := q.db.QueryRow(ctx, getReportById, id)
-	var i Report
-	err := row.Scan(
-		&i.ID,
-		&i.ResourceID,
-		&i.ResourceType,
-		&i.ReporterID,
-		&i.Description,
-		&i.Reason,
-		&i.Resolved,
-		&i.ResolvedAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getReportsPaginated = `-- name: GetReportsPaginated :many
-SELECT id, resource_id, resource_type, reporter_id, description, reason, resolved, resolved_at, created_at, updated_at FROM reports
+const findManyReports = `-- name: FindManyReports :many
+SELECT id, resource_id, resource_type, reporter_id, description, reason, resolved, resolved_at, created_at, updated_at
+FROM reports
 ORDER BY created_at DESC
 OFFSET $1
 LIMIT $2
 `
 
-type GetReportsPaginatedParams struct {
+type FindManyReportsParams struct {
 	Offset int32
 	Limit  int32
 }
 
-func (q *Queries) GetReportsPaginated(ctx context.Context, arg GetReportsPaginatedParams) ([]Report, error) {
-	rows, err := q.db.Query(ctx, getReportsPaginated, arg.Offset, arg.Limit)
+func (q *Queries) FindManyReports(ctx context.Context, arg FindManyReportsParams) ([]Report, error) {
+	rows, err := q.db.Query(ctx, findManyReports, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +128,41 @@ func (q *Queries) GetReportsPaginated(ctx context.Context, arg GetReportsPaginat
 	return items, nil
 }
 
-const updateReport = `-- name: UpdateReport :exec
+const findReportById = `-- name: FindReportById :one
+SELECT id, resource_id, resource_type, reporter_id, description, reason, resolved, resolved_at, created_at, updated_at
+FROM reports
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindReportById(ctx context.Context, id string) (Report, error) {
+	row := q.db.QueryRow(ctx, findReportById, id)
+	var i Report
+	err := row.Scan(
+		&i.ID,
+		&i.ResourceID,
+		&i.ResourceType,
+		&i.ReporterID,
+		&i.Description,
+		&i.Reason,
+		&i.Resolved,
+		&i.ResolvedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const removeReportById = `-- name: RemoveReportById :execresult
+DELETE FROM reports
+WHERE id = $1
+`
+
+func (q *Queries) RemoveReportById(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeReportById, id)
+}
+
+const updateReport = `-- name: UpdateReport :execresult
 UPDATE reports SET
   description = $2,
   reason = $3,
@@ -176,8 +181,8 @@ type UpdateReportParams struct {
 	UpdatedAt   pgtype.Timestamptz
 }
 
-func (q *Queries) UpdateReport(ctx context.Context, arg UpdateReportParams) error {
-	_, err := q.db.Exec(ctx, updateReport,
+func (q *Queries) UpdateReport(ctx context.Context, arg UpdateReportParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateReport,
 		arg.ID,
 		arg.Description,
 		arg.Reason,
@@ -185,5 +190,4 @@ func (q *Queries) UpdateReport(ctx context.Context, arg UpdateReportParams) erro
 		arg.ResolvedAt,
 		arg.UpdatedAt,
 	)
-	return err
 }

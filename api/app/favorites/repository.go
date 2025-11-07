@@ -2,10 +2,9 @@ package favorites
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/tracing"
 
 	"github.com/cockroachdb/errors"
@@ -14,12 +13,12 @@ import (
 )
 
 type Repository struct {
-	db         *db.Queries
-	pool       *pgxpool.Pool
-	poiService *pois.Service
+	db            *db.Queries
+	pool          *pgxpool.Pool
+	placesService *places.Service
 }
 
-func (r *Repository) create(ctx context.Context, userId string, poiId string) (*db.Favorite, error) {
+func (r *Repository) create(ctx context.Context, userId string, placeId string) (*db.Favorite, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -34,8 +33,8 @@ func (r *Repository) create(ctx context.Context, userId string, poiId string) (*
 	qtx := r.db.WithTx(tx)
 
 	res, err := qtx.CreateFavorite(ctx, db.CreateFavoriteParams{
-		PoiID:  poiId,
-		UserID: userId,
+		PlaceID: placeId,
+		UserID:  userId,
 	})
 
 	if err != nil {
@@ -46,7 +45,7 @@ func (r *Repository) create(ctx context.Context, userId string, poiId string) (*
 		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
 	}
 
-	err = qtx.IncrementFavorites(ctx, poiId)
+	_, err = qtx.IncrementPlaceTotalFavorites(ctx, placeId)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
@@ -61,7 +60,7 @@ func (r *Repository) create(ctx context.Context, userId string, poiId string) (*
 	return &res, nil
 }
 
-func (r *Repository) remove(ctx context.Context, userId string, poiId string) error {
+func (r *Repository) remove(ctx context.Context, userId string, placeId string) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -75,9 +74,9 @@ func (r *Repository) remove(ctx context.Context, userId string, poiId string) er
 
 	qtx := r.db.WithTx(tx)
 
-	err = qtx.DeleteFavoriteByPoiId(ctx, db.DeleteFavoriteByPoiIdParams{
-		PoiID:  poiId,
-		UserID: userId,
+	_, err = qtx.RemoveFavoriteByPlaceIdAndUserId(ctx, db.RemoveFavoriteByPlaceIdAndUserIdParams{
+		PlaceID: placeId,
+		UserID:  userId,
 	})
 
 	if err != nil {
@@ -88,7 +87,7 @@ func (r *Repository) remove(ctx context.Context, userId string, poiId string) er
 		return errors.Wrap(ErrFailedToDelete, err.Error())
 	}
 
-	err = qtx.DecrementFavorites(ctx, poiId)
+	_, err = qtx.DecrementPlaceTotalFavorites(ctx, placeId)
 
 	if err != nil {
 		return errors.Wrap(ErrFailedToDelete, err.Error())
@@ -107,7 +106,7 @@ func (r *Repository) listByUserId(ctx context.Context, userId string, offset int
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetFavoritesByUserId(ctx, db.GetFavoritesByUserIdParams{
+	res, err := r.db.FindManyFavoritesByUserId(ctx, db.FindManyFavoritesByUserIdParams{
 		UserID: userId,
 		Offset: offset,
 		Limit:  limit,
@@ -128,7 +127,7 @@ func (r *Repository) countByUserId(ctx context.Context, userId string) (int64, e
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	count, err := r.db.CountUserFavorites(ctx, userId)
+	count, err := r.db.CountFavoritesByUserId(ctx, userId)
 
 	if err != nil {
 		return 0, errors.Wrap(ErrFailedToList, err.Error())
@@ -137,11 +136,11 @@ func (r *Repository) countByUserId(ctx context.Context, userId string) (int64, e
 	return count, nil
 }
 
-func (r *Repository) populateWithPois(ctx context.Context, favorites []db.Favorite, poiIds []string) ([]dto.Favorite, error) {
+func (r *Repository) populateWithPlaces(ctx context.Context, favorites []db.Favorite, placeIds []string) ([]dto.Favorite, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	pois, err := r.poiService.FindMany(ctx, poiIds)
+	places, err := r.placesService.FindMany(ctx, placeIds)
 
 	if err != nil {
 		return nil, err
@@ -150,20 +149,20 @@ func (r *Repository) populateWithPois(ctx context.Context, favorites []db.Favori
 	favoritesDtos := make([]dto.Favorite, len(favorites))
 
 	for i, v := range favorites {
-		var poi *dto.Poi = nil
+		var place *dto.Place = nil
 
-		for _, p := range pois {
-			if p.ID == v.PoiID {
-				poi = &p
+		for _, p := range places {
+			if p.ID == v.PlaceID {
+				place = &p
 				break
 			}
 		}
 
-		if poi == nil {
-			return nil, errors.Wrap(ErrFailedToList, "Failed to find POI for favorite")
+		if place == nil {
+			return nil, errors.Wrap(ErrFailedToList, "Failed to find Place for favorite")
 		}
 
-		favoritesDtos[i] = mapper.ToFavorite(v, *poi)
+		favoritesDtos[i] = dto.ToFavorite(v, *place)
 	}
 
 	return favoritesDtos, nil
@@ -173,7 +172,7 @@ func (r *Repository) getUserByUsername(ctx context.Context, username string) (*d
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	user, err := r.db.GetUserByUsername(ctx, username)
+	user, err := r.db.FindUserByUsername(ctx, username)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

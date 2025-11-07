@@ -100,21 +100,21 @@ func (f *FakeFollows) updateUsers(ctx context.Context, ids []string) error {
 	qtx := f.db.Queries.WithTx(tx)
 
 	for _, userId := range ids {
-		followingCount, err1 := qtx.GetFollowingCount(ctx, userId)
+		followingCount, err1 := qtx.CountFollowing(ctx, userId)
 		followingCountInt32, err2 := utils.SafeInt64ToInt32(followingCount)
-		followersCount, err3 := qtx.GetFollowersCount(ctx, userId)
+		followersCount, err3 := qtx.CountFollowers(ctx, userId)
 		followersCountInt32, err4 := utils.SafeInt64ToInt32(followersCount)
 
 		if err := cmp.Or(err1, err2, err3, err4); err != nil {
 			continue
 		}
 
-		_ = qtx.SetFollowersCount(ctx, db.SetFollowersCountParams{
+		_, _ = qtx.UpdateUserFollowersCount(ctx, db.UpdateUserFollowersCountParams{
 			ID:             userId,
 			FollowersCount: followersCountInt32,
 		})
 
-		_ = qtx.SetFollowingCount(ctx, db.SetFollowingCountParams{
+		_, _ = qtx.UpdateUserFollowingCount(ctx, db.UpdateUserFollowingCountParams{
 			ID:             userId,
 			FollowingCount: followingCountInt32,
 		})
