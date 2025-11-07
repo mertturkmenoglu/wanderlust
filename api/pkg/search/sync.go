@@ -11,7 +11,7 @@ func Sync() error {
 	spinner, _ := pterm.DefaultSpinner.Start("Syncing search index")
 	start := time.Now()
 
-	err := handlePoiSync()
+	err := handlePlacesSync()
 
 	elapsed := time.Since(start)
 

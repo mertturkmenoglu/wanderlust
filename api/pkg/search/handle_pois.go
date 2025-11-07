@@ -11,7 +11,7 @@ import (
 	tsapi "github.com/typesense/typesense-go/v2/typesense/api"
 )
 
-func handlePoiSync() error {
+func handlePlacesSync() error {
 	d := db.NewDb()
 	ctx := context.Background()
 
@@ -57,19 +57,19 @@ func handlePoiSync() error {
 			return err
 		}
 
-		pois, err := s.FindMany(ctx, ids)
+		places, err := s.FindMany(ctx, ids)
 
 		if err != nil {
 			return err
 		}
 
-		var docs = make([]any, len(pois))
+		var docs = make([]any, len(places))
 
-		for i, poi := range pois {
+		for i, place := range places {
 			docs[i] = map[string]any{
-				"name":     poi.Name,
-				"poi":      poi,
-				"location": []float64{poi.Address.Lat, poi.Address.Lng},
+				"name":     place.Name,
+				"place":    place,
+				"location": []float64{place.Address.Lat, place.Address.Lng},
 			}
 		}
 
