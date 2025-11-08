@@ -46,39 +46,6 @@ func (q *Queries) BatchCreateAddresses(ctx context.Context, arg []BatchCreateAdd
 	return q.db.CopyFrom(ctx, []string{"addresses"}, []string{"city_id", "line1", "line2", "postal_code", "lat", "lng"}, &iteratorForBatchCreateAddresses{rows: arg})
 }
 
-// iteratorForBatchCreateAmenitiesPois implements pgx.CopyFromSource.
-type iteratorForBatchCreateAmenitiesPois struct {
-	rows                 []BatchCreateAmenitiesPoisParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForBatchCreateAmenitiesPois) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForBatchCreateAmenitiesPois) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].AmenityID,
-		r.rows[0].PoiID,
-	}, nil
-}
-
-func (r iteratorForBatchCreateAmenitiesPois) Err() error {
-	return nil
-}
-
-func (q *Queries) BatchCreateAmenitiesPois(ctx context.Context, arg []BatchCreateAmenitiesPoisParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"amenities_pois"}, []string{"amenity_id", "poi_id"}, &iteratorForBatchCreateAmenitiesPois{rows: arg})
-}
-
 // iteratorForBatchCreateBookmarks implements pgx.CopyFromSource.
 type iteratorForBatchCreateBookmarks struct {
 	rows                 []BatchCreateBookmarksParams
@@ -100,7 +67,7 @@ func (r *iteratorForBatchCreateBookmarks) Next() bool {
 func (r iteratorForBatchCreateBookmarks) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].UserID,
-		r.rows[0].PoiID,
+		r.rows[0].PlaceID,
 	}, nil
 }
 
@@ -109,7 +76,48 @@ func (r iteratorForBatchCreateBookmarks) Err() error {
 }
 
 func (q *Queries) BatchCreateBookmarks(ctx context.Context, arg []BatchCreateBookmarksParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"bookmarks"}, []string{"user_id", "poi_id"}, &iteratorForBatchCreateBookmarks{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"bookmarks"}, []string{"user_id", "place_id"}, &iteratorForBatchCreateBookmarks{rows: arg})
+}
+
+// iteratorForBatchCreateCities implements pgx.CopyFromSource.
+type iteratorForBatchCreateCities struct {
+	rows                 []BatchCreateCitiesParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForBatchCreateCities) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForBatchCreateCities) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].Name,
+		r.rows[0].StateCode,
+		r.rows[0].StateName,
+		r.rows[0].CountryCode,
+		r.rows[0].CountryName,
+		r.rows[0].Image,
+		r.rows[0].Lat,
+		r.rows[0].Lng,
+		r.rows[0].Description,
+	}, nil
+}
+
+func (r iteratorForBatchCreateCities) Err() error {
+	return nil
+}
+
+func (q *Queries) BatchCreateCities(ctx context.Context, arg []BatchCreateCitiesParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"cities"}, []string{"id", "name", "state_code", "state_name", "country_code", "country_name", "image", "lat", "lng", "description"}, &iteratorForBatchCreateCities{rows: arg})
 }
 
 // iteratorForBatchCreateCollectionCityRelations implements pgx.CopyFromSource.
@@ -167,7 +175,7 @@ func (r *iteratorForBatchCreateCollectionItems) Next() bool {
 func (r iteratorForBatchCreateCollectionItems) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].CollectionID,
-		r.rows[0].PoiID,
+		r.rows[0].PlaceID,
 		r.rows[0].Index,
 	}, nil
 }
@@ -177,16 +185,16 @@ func (r iteratorForBatchCreateCollectionItems) Err() error {
 }
 
 func (q *Queries) BatchCreateCollectionItems(ctx context.Context, arg []BatchCreateCollectionItemsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"collection_items"}, []string{"collection_id", "poi_id", "index"}, &iteratorForBatchCreateCollectionItems{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"collection_items"}, []string{"collection_id", "place_id", "index"}, &iteratorForBatchCreateCollectionItems{rows: arg})
 }
 
-// iteratorForBatchCreateCollectionPoiRelations implements pgx.CopyFromSource.
-type iteratorForBatchCreateCollectionPoiRelations struct {
-	rows                 []BatchCreateCollectionPoiRelationsParams
+// iteratorForBatchCreateCollectionPlaceRelations implements pgx.CopyFromSource.
+type iteratorForBatchCreateCollectionPlaceRelations struct {
+	rows                 []BatchCreateCollectionPlaceRelationsParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForBatchCreateCollectionPoiRelations) Next() bool {
+func (r *iteratorForBatchCreateCollectionPlaceRelations) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -198,20 +206,20 @@ func (r *iteratorForBatchCreateCollectionPoiRelations) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForBatchCreateCollectionPoiRelations) Values() ([]interface{}, error) {
+func (r iteratorForBatchCreateCollectionPlaceRelations) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].CollectionID,
-		r.rows[0].PoiID,
+		r.rows[0].PlaceID,
 		r.rows[0].Index,
 	}, nil
 }
 
-func (r iteratorForBatchCreateCollectionPoiRelations) Err() error {
+func (r iteratorForBatchCreateCollectionPlaceRelations) Err() error {
 	return nil
 }
 
-func (q *Queries) BatchCreateCollectionPoiRelations(ctx context.Context, arg []BatchCreateCollectionPoiRelationsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"collections_pois"}, []string{"collection_id", "poi_id", "index"}, &iteratorForBatchCreateCollectionPoiRelations{rows: arg})
+func (q *Queries) BatchCreateCollectionPlaceRelations(ctx context.Context, arg []BatchCreateCollectionPlaceRelationsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"collections_places"}, []string{"collection_id", "place_id", "index"}, &iteratorForBatchCreateCollectionPlaceRelations{rows: arg})
 }
 
 // iteratorForBatchCreateCollections implements pgx.CopyFromSource.
@@ -248,75 +256,6 @@ func (q *Queries) BatchCreateCollections(ctx context.Context, arg []BatchCreateC
 	return q.db.CopyFrom(ctx, []string{"collections"}, []string{"id", "name", "description"}, &iteratorForBatchCreateCollections{rows: arg})
 }
 
-// iteratorForBatchCreateDiaryLocations implements pgx.CopyFromSource.
-type iteratorForBatchCreateDiaryLocations struct {
-	rows                 []BatchCreateDiaryLocationsParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForBatchCreateDiaryLocations) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForBatchCreateDiaryLocations) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].DiaryID,
-		r.rows[0].PoiID,
-		r.rows[0].Description,
-		r.rows[0].Index,
-	}, nil
-}
-
-func (r iteratorForBatchCreateDiaryLocations) Err() error {
-	return nil
-}
-
-func (q *Queries) BatchCreateDiaryLocations(ctx context.Context, arg []BatchCreateDiaryLocationsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"diary_pois"}, []string{"diary_id", "poi_id", "description", "index"}, &iteratorForBatchCreateDiaryLocations{rows: arg})
-}
-
-// iteratorForBatchCreateDiaryUsers implements pgx.CopyFromSource.
-type iteratorForBatchCreateDiaryUsers struct {
-	rows                 []BatchCreateDiaryUsersParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForBatchCreateDiaryUsers) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForBatchCreateDiaryUsers) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].DiaryID,
-		r.rows[0].UserID,
-		r.rows[0].Index,
-	}, nil
-}
-
-func (r iteratorForBatchCreateDiaryUsers) Err() error {
-	return nil
-}
-
-func (q *Queries) BatchCreateDiaryUsers(ctx context.Context, arg []BatchCreateDiaryUsersParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"diary_users"}, []string{"diary_id", "user_id", "index"}, &iteratorForBatchCreateDiaryUsers{rows: arg})
-}
-
 // iteratorForBatchCreateFavorites implements pgx.CopyFromSource.
 type iteratorForBatchCreateFavorites struct {
 	rows                 []BatchCreateFavoritesParams
@@ -338,7 +277,7 @@ func (r *iteratorForBatchCreateFavorites) Next() bool {
 func (r iteratorForBatchCreateFavorites) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].UserID,
-		r.rows[0].PoiID,
+		r.rows[0].PlaceID,
 	}, nil
 }
 
@@ -347,7 +286,7 @@ func (r iteratorForBatchCreateFavorites) Err() error {
 }
 
 func (q *Queries) BatchCreateFavorites(ctx context.Context, arg []BatchCreateFavoritesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"favorites"}, []string{"user_id", "poi_id"}, &iteratorForBatchCreateFavorites{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"favorites"}, []string{"user_id", "place_id"}, &iteratorForBatchCreateFavorites{rows: arg})
 }
 
 // iteratorForBatchCreateListItems implements pgx.CopyFromSource.
@@ -371,7 +310,7 @@ func (r *iteratorForBatchCreateListItems) Next() bool {
 func (r iteratorForBatchCreateListItems) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ListID,
-		r.rows[0].PoiID,
+		r.rows[0].PlaceID,
 		r.rows[0].Index,
 	}, nil
 }
@@ -381,7 +320,7 @@ func (r iteratorForBatchCreateListItems) Err() error {
 }
 
 func (q *Queries) BatchCreateListItems(ctx context.Context, arg []BatchCreateListItemsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"list_items"}, []string{"list_id", "poi_id", "index"}, &iteratorForBatchCreateListItems{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"list_items"}, []string{"list_id", "place_id", "index"}, &iteratorForBatchCreateListItems{rows: arg})
 }
 
 // iteratorForBatchCreateLists implements pgx.CopyFromSource.
@@ -419,13 +358,13 @@ func (q *Queries) BatchCreateLists(ctx context.Context, arg []BatchCreateListsPa
 	return q.db.CopyFrom(ctx, []string{"lists"}, []string{"id", "name", "user_id", "is_public"}, &iteratorForBatchCreateLists{rows: arg})
 }
 
-// iteratorForBatchCreatePoiImages implements pgx.CopyFromSource.
-type iteratorForBatchCreatePoiImages struct {
-	rows                 []BatchCreatePoiImagesParams
+// iteratorForBatchCreatePlaceAssets implements pgx.CopyFromSource.
+type iteratorForBatchCreatePlaceAssets struct {
+	rows                 []BatchCreatePlaceAssetsParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForBatchCreatePoiImages) Next() bool {
+func (r *iteratorForBatchCreatePlaceAssets) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -437,30 +376,32 @@ func (r *iteratorForBatchCreatePoiImages) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForBatchCreatePoiImages) Values() ([]interface{}, error) {
+func (r iteratorForBatchCreatePlaceAssets) Values() ([]interface{}, error) {
 	return []interface{}{
-		r.rows[0].PoiID,
+		r.rows[0].EntityType,
+		r.rows[0].EntityID,
 		r.rows[0].Url,
-		r.rows[0].Alt,
-		r.rows[0].Index,
+		r.rows[0].AssetType,
+		r.rows[0].Description,
+		r.rows[0].Order,
 	}, nil
 }
 
-func (r iteratorForBatchCreatePoiImages) Err() error {
+func (r iteratorForBatchCreatePlaceAssets) Err() error {
 	return nil
 }
 
-func (q *Queries) BatchCreatePoiImages(ctx context.Context, arg []BatchCreatePoiImagesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"images"}, []string{"poi_id", "url", "alt", "index"}, &iteratorForBatchCreatePoiImages{rows: arg})
+func (q *Queries) BatchCreatePlaceAssets(ctx context.Context, arg []BatchCreatePlaceAssetsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"assets"}, []string{"entity_type", "entity_id", "url", "asset_type", "description", "order"}, &iteratorForBatchCreatePlaceAssets{rows: arg})
 }
 
-// iteratorForBatchCreatePois implements pgx.CopyFromSource.
-type iteratorForBatchCreatePois struct {
-	rows                 []BatchCreatePoisParams
+// iteratorForBatchCreatePlaces implements pgx.CopyFromSource.
+type iteratorForBatchCreatePlaces struct {
+	rows                 []BatchCreatePlacesParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForBatchCreatePois) Next() bool {
+func (r *iteratorForBatchCreatePlaces) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -472,30 +413,31 @@ func (r *iteratorForBatchCreatePois) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForBatchCreatePois) Values() ([]interface{}, error) {
+func (r iteratorForBatchCreatePlaces) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
 		r.rows[0].Name,
 		r.rows[0].Phone,
 		r.rows[0].Description,
-		r.rows[0].AddressID,
 		r.rows[0].Website,
+		r.rows[0].AddressID,
+		r.rows[0].CategoryID,
 		r.rows[0].PriceLevel,
 		r.rows[0].AccessibilityLevel,
+		r.rows[0].Hours,
+		r.rows[0].Amenities,
 		r.rows[0].TotalVotes,
 		r.rows[0].TotalPoints,
 		r.rows[0].TotalFavorites,
-		r.rows[0].CategoryID,
-		r.rows[0].Hours,
 	}, nil
 }
 
-func (r iteratorForBatchCreatePois) Err() error {
+func (r iteratorForBatchCreatePlaces) Err() error {
 	return nil
 }
 
-func (q *Queries) BatchCreatePois(ctx context.Context, arg []BatchCreatePoisParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"pois"}, []string{"id", "name", "phone", "description", "address_id", "website", "price_level", "accessibility_level", "total_votes", "total_points", "total_favorites", "category_id", "hours"}, &iteratorForBatchCreatePois{rows: arg})
+func (q *Queries) BatchCreatePlaces(ctx context.Context, arg []BatchCreatePlacesParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"places"}, []string{"id", "name", "phone", "description", "website", "address_id", "category_id", "price_level", "accessibility_level", "hours", "amenities", "total_votes", "total_points", "total_favorites"}, &iteratorForBatchCreatePlaces{rows: arg})
 }
 
 // iteratorForBatchCreateReports implements pgx.CopyFromSource.
@@ -535,13 +477,13 @@ func (q *Queries) BatchCreateReports(ctx context.Context, arg []BatchCreateRepor
 	return q.db.CopyFrom(ctx, []string{"reports"}, []string{"id", "resource_id", "resource_type", "reporter_id", "description", "reason"}, &iteratorForBatchCreateReports{rows: arg})
 }
 
-// iteratorForBatchCreateReviewImage implements pgx.CopyFromSource.
-type iteratorForBatchCreateReviewImage struct {
-	rows                 []BatchCreateReviewImageParams
+// iteratorForBatchCreateReviewAssets implements pgx.CopyFromSource.
+type iteratorForBatchCreateReviewAssets struct {
+	rows                 []BatchCreateReviewAssetsParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForBatchCreateReviewImage) Next() bool {
+func (r *iteratorForBatchCreateReviewAssets) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -553,20 +495,23 @@ func (r *iteratorForBatchCreateReviewImage) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForBatchCreateReviewImage) Values() ([]interface{}, error) {
+func (r iteratorForBatchCreateReviewAssets) Values() ([]interface{}, error) {
 	return []interface{}{
-		r.rows[0].ReviewID,
+		r.rows[0].EntityType,
+		r.rows[0].EntityID,
 		r.rows[0].Url,
-		r.rows[0].Index,
+		r.rows[0].AssetType,
+		r.rows[0].Description,
+		r.rows[0].Order,
 	}, nil
 }
 
-func (r iteratorForBatchCreateReviewImage) Err() error {
+func (r iteratorForBatchCreateReviewAssets) Err() error {
 	return nil
 }
 
-func (q *Queries) BatchCreateReviewImage(ctx context.Context, arg []BatchCreateReviewImageParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"review_images"}, []string{"review_id", "url", "index"}, &iteratorForBatchCreateReviewImage{rows: arg})
+func (q *Queries) BatchCreateReviewAssets(ctx context.Context, arg []BatchCreateReviewAssetsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"assets"}, []string{"entity_type", "entity_id", "url", "asset_type", "description", "order"}, &iteratorForBatchCreateReviewAssets{rows: arg})
 }
 
 // iteratorForBatchCreateReviews implements pgx.CopyFromSource.
@@ -590,7 +535,7 @@ func (r *iteratorForBatchCreateReviews) Next() bool {
 func (r iteratorForBatchCreateReviews) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
-		r.rows[0].PoiID,
+		r.rows[0].PlaceID,
 		r.rows[0].UserID,
 		r.rows[0].Content,
 		r.rows[0].Rating,
@@ -602,40 +547,7 @@ func (r iteratorForBatchCreateReviews) Err() error {
 }
 
 func (q *Queries) BatchCreateReviews(ctx context.Context, arg []BatchCreateReviewsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"reviews"}, []string{"id", "poi_id", "user_id", "content", "rating"}, &iteratorForBatchCreateReviews{rows: arg})
-}
-
-// iteratorForBatchCreateTripAmenities implements pgx.CopyFromSource.
-type iteratorForBatchCreateTripAmenities struct {
-	rows                 []BatchCreateTripAmenitiesParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForBatchCreateTripAmenities) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForBatchCreateTripAmenities) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].TripID,
-		r.rows[0].AmenityID,
-	}, nil
-}
-
-func (r iteratorForBatchCreateTripAmenities) Err() error {
-	return nil
-}
-
-func (q *Queries) BatchCreateTripAmenities(ctx context.Context, arg []BatchCreateTripAmenitiesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"trip_amenities"}, []string{"trip_id", "amenity_id"}, &iteratorForBatchCreateTripAmenities{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"reviews"}, []string{"id", "place_id", "user_id", "content", "rating"}, &iteratorForBatchCreateReviews{rows: arg})
 }
 
 // iteratorForBatchCreateTrips implements pgx.CopyFromSource.
@@ -660,9 +572,10 @@ func (r iteratorForBatchCreateTrips) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
 		r.rows[0].OwnerID,
-		r.rows[0].Description,
 		r.rows[0].Title,
+		r.rows[0].Description,
 		r.rows[0].VisibilityLevel,
+		r.rows[0].RequestedAmenities,
 		r.rows[0].StartAt,
 		r.rows[0].EndAt,
 	}, nil
@@ -673,7 +586,7 @@ func (r iteratorForBatchCreateTrips) Err() error {
 }
 
 func (q *Queries) BatchCreateTrips(ctx context.Context, arg []BatchCreateTripsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "description", "title", "visibility_level", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"trips"}, []string{"id", "owner_id", "title", "description", "visibility_level", "requested_amenities", "start_at", "end_at"}, &iteratorForBatchCreateTrips{rows: arg})
 }
 
 // iteratorForBatchCreateUsers implements pgx.CopyFromSource.
@@ -746,45 +659,4 @@ func (r iteratorForBatchFollow) Err() error {
 
 func (q *Queries) BatchFollow(ctx context.Context, arg []BatchFollowParams) (int64, error) {
 	return q.db.CopyFrom(ctx, []string{"follows"}, []string{"follower_id", "following_id"}, &iteratorForBatchFollow{rows: arg})
-}
-
-// iteratorForCreateCities implements pgx.CopyFromSource.
-type iteratorForCreateCities struct {
-	rows                 []CreateCitiesParams
-	skippedFirstNextCall bool
-}
-
-func (r *iteratorForCreateCities) Next() bool {
-	if len(r.rows) == 0 {
-		return false
-	}
-	if !r.skippedFirstNextCall {
-		r.skippedFirstNextCall = true
-		return true
-	}
-	r.rows = r.rows[1:]
-	return len(r.rows) > 0
-}
-
-func (r iteratorForCreateCities) Values() ([]interface{}, error) {
-	return []interface{}{
-		r.rows[0].ID,
-		r.rows[0].Name,
-		r.rows[0].StateCode,
-		r.rows[0].StateName,
-		r.rows[0].CountryCode,
-		r.rows[0].CountryName,
-		r.rows[0].Image,
-		r.rows[0].Latitude,
-		r.rows[0].Longitude,
-		r.rows[0].Description,
-	}, nil
-}
-
-func (r iteratorForCreateCities) Err() error {
-	return nil
-}
-
-func (q *Queries) CreateCities(ctx context.Context, arg []CreateCitiesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"cities"}, []string{"id", "name", "state_code", "state_name", "country_code", "country_name", "image", "latitude", "longitude", "description"}, &iteratorForCreateCities{rows: arg})
 }

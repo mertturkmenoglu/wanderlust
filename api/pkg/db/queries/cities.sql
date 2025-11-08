@@ -1,46 +1,3 @@
--- name: CreateCities :copyfrom
-INSERT INTO cities (
-  id,
-  name,
-  state_code,
-  state_name,
-  country_code,
-  country_name,
-  image,
-  latitude,
-  longitude,
-  description
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4,
-  $5,
-  $6,
-  $7,
-  $8,
-  $9,
-  $10
-);
-
--- name: GetCityById :one
-SELECT * FROM cities
-WHERE cities.id = $1 LIMIT 1;
-
--- name: RandSelectCities :many
-SELECT id
-FROM cities
-ORDER BY RANDOM()
-LIMIT $1;
-
--- name: GetCities :many
-SELECT * FROM cities
-ORDER BY id;
-
--- name: GetFeaturedCities :many
-SELECT * FROM cities
-WHERE id = ANY($1::int[]);
-
 -- name: CreateCity :one
 INSERT INTO cities (
   id,
@@ -50,8 +7,8 @@ INSERT INTO cities (
   country_code,
   country_name,
   image,
-  latitude,
-  longitude,
+  lat,
+  lng,
   description
 ) VALUES (
   $1,
@@ -66,21 +23,63 @@ INSERT INTO cities (
   $10
 ) RETURNING *;
 
--- name: UpdateCity :one
+-- name: BatchCreateCities :copyfrom
+INSERT INTO cities (
+  id,
+  name,
+  state_code,
+  state_name,
+  country_code,
+  country_name,
+  image,
+  lat,
+  lng,
+  description
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10
+);
+
+-- name: FindCityById :one
+SELECT * FROM cities
+WHERE cities.id = $1 LIMIT 1;
+
+-- name: FindManyCityIdsByRand :many
+SELECT id
+FROM cities
+ORDER BY RANDOM()
+LIMIT $1;
+
+-- name: FindManyCities :many
+SELECT * FROM cities
+ORDER BY id;
+
+-- name: FindManyCitiesById :many
+SELECT * FROM cities
+WHERE id = ANY($1::int[]);
+
+-- name: UpdateCity :execresult
 UPDATE cities
-SET 
+SET
   name = $2,
   state_code = $3,
   state_name = $4,
   country_code = $5,
   country_name = $6,
   image = $7,
-  latitude = $8,
-  longitude = $9,
+  lat = $8,
+  lng = $9,
   description = $10
-WHERE id = $1
-RETURNING *;
+WHERE id = $1;
 
--- name: DeleteCity :exec
+-- name: RemoveCityById :execresult
 DELETE FROM cities
 WHERE id = $1;

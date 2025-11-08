@@ -21,7 +21,7 @@ type Props = {
 
 export function PlanTripDialog({ className }: Props) {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const auth = useContext(AuthContext);
@@ -66,7 +66,7 @@ export function PlanTripDialog({ className }: Props) {
       <AlertDialogContent className={cn(className)}>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center justify-between gap-2">
-            <span>Plan a Trip to {poi.name}</span>
+            <span>Plan a Trip to {place.name}</span>
             <Button
               variant="ghost"
               onClick={() => setOpen(false)}
@@ -133,9 +133,9 @@ export function PlanTripDialog({ className }: Props) {
                         },
                         search: () => ({
                           isUpdate: false,
-                          poiId: poi.id,
+                          placeId: place.id,
                           showLocationDialog: true,
-                          description: `Trip to ${poi.name}`,
+                          description: `Trip to ${place.name}`,
                         }),
                       });
                     }}

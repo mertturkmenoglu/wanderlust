@@ -14,7 +14,7 @@ export function Card({ review, isLast }: Props) {
     <Link
       to="/p/$id"
       params={{
-        id: review.poiId,
+        id: review.placeId,
       }}
       className="block space-y-4"
     >
@@ -22,7 +22,7 @@ export function Card({ review, isLast }: Props) {
         <div className="col-span-10 grid grid-cols-12 items-center">
           <span className="hidden lg:block lg:col-span-1">Reviewed </span>
           <span className="text-primary lg:mx-4 col-span-6 md:col-span-4">
-            {review.poi.name}
+            {review.place.name}
           </span>
           <FormattedRating
             rating={review.rating}

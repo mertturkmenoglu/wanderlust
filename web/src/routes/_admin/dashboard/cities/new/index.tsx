@@ -73,7 +73,11 @@ function RouteComponent() {
         className="max-w-7xl mx-0 mt-8 grid grid-cols-1 gap-4 px-0 md:grid-cols-2"
         onSubmit={form.handleSubmit((data) => {
           mutation.mutate({
-            body: data,
+            body: {
+              ...data,
+              lat: data.latitude,
+              lng: data.longitude,
+            },
           });
         })}
       >

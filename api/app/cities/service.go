@@ -3,7 +3,6 @@ package cities
 import (
 	"context"
 	"wanderlust/pkg/dto"
-	"wanderlust/pkg/mapper"
 	"wanderlust/pkg/tracing"
 )
 
@@ -11,7 +10,7 @@ type Service struct {
 	repo *Repository
 }
 
-func (s *Service) list(ctx context.Context) (*dto.CitiesListOutput, error) {
+func (s *Service) list(ctx context.Context) (*ListCitiesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -24,17 +23,17 @@ func (s *Service) list(ctx context.Context) (*dto.CitiesListOutput, error) {
 	cities := make([]dto.City, len(res))
 
 	for i, c := range res {
-		cities[i] = mapper.ToCity(c)
+		cities[i] = dto.ToCity(c)
 	}
 
-	return &dto.CitiesListOutput{
-		Body: dto.CitiesListOutputBody{
+	return &ListCitiesOutput{
+		Body: ListCitiesOutputBody{
 			Cities: cities,
 		},
 	}, nil
 }
 
-func (s *Service) featured(ctx context.Context) (*dto.CitiesFeaturedOutput, error) {
+func (s *Service) featured(ctx context.Context) (*ListFeaturedCitiesOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -47,17 +46,17 @@ func (s *Service) featured(ctx context.Context) (*dto.CitiesFeaturedOutput, erro
 	cities := make([]dto.City, len(res))
 
 	for i, c := range res {
-		cities[i] = mapper.ToCity(c)
+		cities[i] = dto.ToCity(c)
 	}
 
-	return &dto.CitiesFeaturedOutput{
-		Body: dto.CitiesFeaturedOutputBody{
+	return &ListFeaturedCitiesOutput{
+		Body: ListFeaturedCitiesOutputBody{
 			Cities: cities,
 		},
 	}, nil
 }
 
-func (s *Service) get(ctx context.Context, id int32) (*dto.GetCityByIdOutput, error) {
+func (s *Service) get(ctx context.Context, id int32) (*GetCityByIdOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -67,14 +66,14 @@ func (s *Service) get(ctx context.Context, id int32) (*dto.GetCityByIdOutput, er
 		return nil, err
 	}
 
-	return &dto.GetCityByIdOutput{
-		Body: dto.GetCityByIdOutputBody{
-			City: mapper.ToCity(*res),
+	return &GetCityByIdOutput{
+		Body: GetCityByIdOutputBody{
+			City: dto.ToCity(*res),
 		},
 	}, nil
 }
 
-func (s *Service) create(ctx context.Context, body dto.CreateCityInputBody) (*dto.CreateCityOutput, error) {
+func (s *Service) create(ctx context.Context, body CreateCityInputBody) (*CreateCityOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -86,8 +85,8 @@ func (s *Service) create(ctx context.Context, body dto.CreateCityInputBody) (*dt
 		CountryCode: body.CountryCode,
 		CountryName: body.CountryName,
 		Image:       body.Image,
-		Latitude:    body.Latitude,
-		Longitude:   body.Longitude,
+		Lat:         body.Lat,
+		Lng:         body.Lng,
 		Description: body.Description,
 	})
 
@@ -95,9 +94,9 @@ func (s *Service) create(ctx context.Context, body dto.CreateCityInputBody) (*dt
 		return nil, err
 	}
 
-	return &dto.CreateCityOutput{
-		Body: dto.CreateCityOutputBody{
-			City: mapper.ToCity(*res),
+	return &CreateCityOutput{
+		Body: CreateCityOutputBody{
+			City: dto.ToCity(*res),
 		},
 	}, nil
 }
@@ -109,11 +108,11 @@ func (s *Service) remove(ctx context.Context, id int32) error {
 	return s.repo.remove(ctx, id)
 }
 
-func (s *Service) update(ctx context.Context, id int32, body dto.UpdateCityInputBody) (*dto.UpdateCityOutput, error) {
+func (s *Service) update(ctx context.Context, id int32, body UpdateCityInputBody) (*UpdateCityOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := s.repo.update(ctx, UpdateParams{
+	err := s.repo.update(ctx, UpdateParams{
 		ID:          id,
 		Name:        body.Name,
 		StateCode:   body.StateCode,
@@ -121,8 +120,8 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateCityInput
 		CountryCode: body.CountryCode,
 		CountryName: body.CountryName,
 		Image:       body.Image,
-		Latitude:    body.Latitude,
-		Longitude:   body.Longitude,
+		Lat:         body.Lat,
+		Lng:         body.Lng,
 		Description: body.Description,
 	})
 
@@ -130,9 +129,15 @@ func (s *Service) update(ctx context.Context, id int32, body dto.UpdateCityInput
 		return nil, err
 	}
 
-	return &dto.UpdateCityOutput{
-		Body: dto.UpdateCityOutputBody{
-			City: mapper.ToCity(*res),
+	res, err := s.repo.get(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &UpdateCityOutput{
+		Body: UpdateCityOutputBody{
+			City: dto.ToCity(*res),
 		},
 	}, nil
 }

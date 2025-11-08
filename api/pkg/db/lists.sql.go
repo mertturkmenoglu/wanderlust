@@ -7,12 +7,14 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type BatchCreateListItemsParams struct {
-	ListID string
-	PoiID  string
-	Index  int32
+	ListID  string
+	PlaceID string
+	Index   int32
 }
 
 type BatchCreateListsParams struct {
@@ -22,37 +24,40 @@ type BatchCreateListsParams struct {
 	IsPublic bool
 }
 
-const countAllListsOfUser = `-- name: CountAllListsOfUser :one
-SELECT COUNT(*) FROM lists
-WHERE user_id = $1
-`
-
-func (q *Queries) CountAllListsOfUser(ctx context.Context, userID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countAllListsOfUser, userID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const countListItems = `-- name: CountListItems :one
-SELECT COUNT(*) FROM list_items
+const countListItemsByListId = `-- name: CountListItemsByListId :one
+SELECT COUNT(*)
+FROM list_items
 WHERE list_id = $1
 `
 
-func (q *Queries) CountListItems(ctx context.Context, listID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countListItems, listID)
+func (q *Queries) CountListItemsByListId(ctx context.Context, listID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countListItemsByListId, listID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const countPublicListsOfUser = `-- name: CountPublicListsOfUser :one
-SELECT COUNT(*) FROM lists
+const countListsByUserId = `-- name: CountListsByUserId :one
+SELECT COUNT(*)
+FROM lists
+WHERE user_id = $1
+`
+
+func (q *Queries) CountListsByUserId(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countListsByUserId, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countListsByUserIdAndIsPublic = `-- name: CountListsByUserIdAndIsPublic :one
+SELECT COUNT(*)
+FROM lists
 WHERE user_id = $1 AND is_public = true
 `
 
-func (q *Queries) CountPublicListsOfUser(ctx context.Context, userID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countPublicListsOfUser, userID)
+func (q *Queries) CountListsByUserIdAndIsPublic(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countListsByUserIdAndIsPublic, userID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -101,124 +106,51 @@ func (q *Queries) CreateList(ctx context.Context, arg CreateListParams) (List, e
 const createListItem = `-- name: CreateListItem :one
 INSERT INTO list_items (
   list_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,
   $2,
   $3
-) RETURNING list_id, poi_id, index, created_at
+) RETURNING list_id, place_id, index, created_at
 `
 
 type CreateListItemParams struct {
-	ListID string
-	PoiID  string
-	Index  int32
+	ListID  string
+	PlaceID string
+	Index   int32
 }
 
 func (q *Queries) CreateListItem(ctx context.Context, arg CreateListItemParams) (ListItem, error) {
-	row := q.db.QueryRow(ctx, createListItem, arg.ListID, arg.PoiID, arg.Index)
+	row := q.db.QueryRow(ctx, createListItem, arg.ListID, arg.PlaceID, arg.Index)
 	var i ListItem
 	err := row.Scan(
 		&i.ListID,
-		&i.PoiID,
+		&i.PlaceID,
 		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const deleteAllListItems = `-- name: DeleteAllListItems :exec
-DELETE FROM list_items
-WHERE list_id = $1
-`
-
-func (q *Queries) DeleteAllListItems(ctx context.Context, listID string) error {
-	_, err := q.db.Exec(ctx, deleteAllListItems, listID)
-	return err
-}
-
-const deleteList = `-- name: DeleteList :exec
-DELETE FROM lists
-WHERE id = $1
-`
-
-func (q *Queries) DeleteList(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteList, id)
-	return err
-}
-
-const getAllListsOfUser = `-- name: GetAllListsOfUser :many
-SELECT id, name, user_id, is_public, created_at, updated_at FROM lists
-WHERE user_id = $1
-ORDER BY created_at DESC
-OFFSET $2
-LIMIT $3
-`
-
-type GetAllListsOfUserParams struct {
-	UserID string
-	Offset int32
-	Limit  int32
-}
-
-func (q *Queries) GetAllListsOfUser(ctx context.Context, arg GetAllListsOfUserParams) ([]List, error) {
-	rows, err := q.db.Query(ctx, getAllListsOfUser, arg.UserID, arg.Offset, arg.Limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []List
-	for rows.Next() {
-		var i List
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.UserID,
-			&i.IsPublic,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getLastIndexOfList = `-- name: GetLastIndexOfList :one
-SELECT COALESCE(MAX(index), 0)
-FROM list_items
-WHERE list_id = $1
-`
-
-func (q *Queries) GetLastIndexOfList(ctx context.Context, listID string) (interface{}, error) {
-	row := q.db.QueryRow(ctx, getLastIndexOfList, listID)
-	var coalesce interface{}
-	err := row.Scan(&coalesce)
-	return coalesce, err
-}
-
-const getListById = `-- name: GetListById :one
-SELECT 
-  lists.id, lists.name, lists.user_id, lists.is_public, lists.created_at, lists.updated_at, 
-  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
+const findListById = `-- name: FindListById :one
+SELECT
+  lists.id, lists.name, lists.user_id, lists.is_public, lists.created_at, lists.updated_at,
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at
 FROM lists
   LEFT JOIN profile ON profile.id = lists.user_id
-WHERE lists.id = $1 LIMIT 1
+WHERE lists.id = $1
+LIMIT 1
 `
 
-type GetListByIdRow struct {
+type FindListByIdRow struct {
 	List    List
 	Profile Profile
 }
 
-func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, error) {
-	row := q.db.QueryRow(ctx, getListById, id)
-	var i GetListByIdRow
+func (q *Queries) FindListById(ctx context.Context, id string) (FindListByIdRow, error) {
+	row := q.db.QueryRow(ctx, findListById, id)
+	var i FindListByIdRow
 	err := row.Scan(
 		&i.List.ID,
 		&i.List.Name,
@@ -231,8 +163,6 @@ func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, e
 		&i.Profile.FullName,
 		&i.Profile.IsVerified,
 		&i.Profile.Bio,
-		&i.Profile.Pronouns,
-		&i.Profile.Website,
 		&i.Profile.ProfileImage,
 		&i.Profile.BannerImage,
 		&i.Profile.FollowersCount,
@@ -242,25 +172,26 @@ func (q *Queries) GetListById(ctx context.Context, id string) (GetListByIdRow, e
 	return i, err
 }
 
-const getListIdsAndNamesOfUser = `-- name: GetListIdsAndNamesOfUser :many
-SELECT id, name FROM lists
+const findListIdAndNameByUserId = `-- name: FindListIdAndNameByUserId :many
+SELECT id, name
+FROM lists
 WHERE user_id = $1
 `
 
-type GetListIdsAndNamesOfUserRow struct {
+type FindListIdAndNameByUserIdRow struct {
 	ID   string
 	Name string
 }
 
-func (q *Queries) GetListIdsAndNamesOfUser(ctx context.Context, userID string) ([]GetListIdsAndNamesOfUserRow, error) {
-	rows, err := q.db.Query(ctx, getListIdsAndNamesOfUser, userID)
+func (q *Queries) FindListIdAndNameByUserId(ctx context.Context, userID string) ([]FindListIdAndNameByUserIdRow, error) {
+	rows, err := q.db.Query(ctx, findListIdAndNameByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetListIdsAndNamesOfUserRow
+	var items []FindListIdAndNameByUserIdRow
 	for rows.Next() {
-		var i GetListIdsAndNamesOfUserRow
+		var i FindListIdAndNameByUserIdRow
 		if err := rows.Scan(&i.ID, &i.Name); err != nil {
 			return nil, err
 		}
@@ -272,63 +203,78 @@ func (q *Queries) GetListIdsAndNamesOfUser(ctx context.Context, userID string) (
 	return items, nil
 }
 
-const getListItem = `-- name: GetListItem :one
-SELECT list_id, poi_id, index, created_at FROM list_items
-WHERE list_id = $1 AND poi_id = $2
+const findListItemByListIdAndPlaceId = `-- name: FindListItemByListIdAndPlaceId :one
+SELECT list_id, place_id, index, created_at
+FROM list_items
+WHERE list_id = $1 AND place_id = $2
 LIMIT 1
 `
 
-type GetListItemParams struct {
-	ListID string
-	PoiID  string
+type FindListItemByListIdAndPlaceIdParams struct {
+	ListID  string
+	PlaceID string
 }
 
-func (q *Queries) GetListItem(ctx context.Context, arg GetListItemParams) (ListItem, error) {
-	row := q.db.QueryRow(ctx, getListItem, arg.ListID, arg.PoiID)
+func (q *Queries) FindListItemByListIdAndPlaceId(ctx context.Context, arg FindListItemByListIdAndPlaceIdParams) (ListItem, error) {
+	row := q.db.QueryRow(ctx, findListItemByListIdAndPlaceId, arg.ListID, arg.PlaceID)
 	var i ListItem
 	err := row.Scan(
 		&i.ListID,
-		&i.PoiID,
+		&i.PlaceID,
 		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const getListItems = `-- name: GetListItems :many
-SELECT 
-  list_items.list_id, list_items.poi_id, list_items.index, list_items.created_at,
-  get_pois(
+const findListLastIndexById = `-- name: FindListLastIndexById :one
+SELECT COALESCE(MAX(index), 0)
+FROM list_items
+WHERE list_id = $1
+`
+
+func (q *Queries) FindListLastIndexById(ctx context.Context, listID string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, findListLastIndexById, listID)
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
+}
+
+const findManyListItems = `-- name: FindManyListItems :many
+SELECT
+  list_items.list_id, list_items.place_id, list_items.index, list_items.created_at,
+  get_places(
     ARRAY(
-      SELECT poi_id FROM list_items
+      SELECT place_id
+      FROM list_items
       WHERE list_items.list_id = $1
     )
-  ) as pois
+  ) as places
 FROM list_items
 WHERE list_id = $1
 ORDER BY index ASC
 `
 
-type GetListItemsRow struct {
+type FindManyListItemsRow struct {
 	ListItem ListItem
-	Pois     []byte
+	Places   []byte
 }
 
-func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListItemsRow, error) {
-	rows, err := q.db.Query(ctx, getListItems, listID)
+func (q *Queries) FindManyListItems(ctx context.Context, listID string) ([]FindManyListItemsRow, error) {
+	rows, err := q.db.Query(ctx, findManyListItems, listID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetListItemsRow
+	var items []FindManyListItemsRow
 	for rows.Next() {
-		var i GetListItemsRow
+		var i FindManyListItemsRow
 		if err := rows.Scan(
 			&i.ListItem.ListID,
-			&i.ListItem.PoiID,
+			&i.ListItem.PlaceID,
 			&i.ListItem.Index,
 			&i.ListItem.CreatedAt,
-			&i.Pois,
+			&i.Places,
 		); err != nil {
 			return nil, err
 		}
@@ -340,57 +286,23 @@ func (q *Queries) GetListItems(ctx context.Context, listID string) ([]GetListIte
 	return items, nil
 }
 
-const getListItemsInListStatus = `-- name: GetListItemsInListStatus :many
-SELECT list_id, poi_id FROM list_items
-WHERE list_items.poi_id = $1 AND list_items.list_id = ANY($2::TEXT[])
-`
-
-type GetListItemsInListStatusParams struct {
-	PoiID   string
-	Column2 []string
-}
-
-type GetListItemsInListStatusRow struct {
-	ListID string
-	PoiID  string
-}
-
-func (q *Queries) GetListItemsInListStatus(ctx context.Context, arg GetListItemsInListStatusParams) ([]GetListItemsInListStatusRow, error) {
-	rows, err := q.db.Query(ctx, getListItemsInListStatus, arg.PoiID, arg.Column2)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetListItemsInListStatusRow
-	for rows.Next() {
-		var i GetListItemsInListStatusRow
-		if err := rows.Scan(&i.ListID, &i.PoiID); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getPublicListsOfUser = `-- name: GetPublicListsOfUser :many
-SELECT id, name, user_id, is_public, created_at, updated_at FROM lists
-WHERE user_id = $1 AND is_public = true
+const findManyListsByUserId = `-- name: FindManyListsByUserId :many
+SELECT id, name, user_id, is_public, created_at, updated_at
+FROM lists
+WHERE user_id = $1
 ORDER BY created_at DESC
 OFFSET $2
 LIMIT $3
 `
 
-type GetPublicListsOfUserParams struct {
+type FindManyListsByUserIdParams struct {
 	UserID string
 	Offset int32
 	Limit  int32
 }
 
-func (q *Queries) GetPublicListsOfUser(ctx context.Context, arg GetPublicListsOfUserParams) ([]List, error) {
-	rows, err := q.db.Query(ctx, getPublicListsOfUser, arg.UserID, arg.Offset, arg.Limit)
+func (q *Queries) FindManyListsByUserId(ctx context.Context, arg FindManyListsByUserIdParams) ([]List, error) {
+	rows, err := q.db.Query(ctx, findManyListsByUserId, arg.UserID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -416,9 +328,105 @@ func (q *Queries) GetPublicListsOfUser(ctx context.Context, arg GetPublicListsOf
 	return items, nil
 }
 
-const updateList = `-- name: UpdateList :exec
+const findManyListsByUserIdAndIsPublic = `-- name: FindManyListsByUserIdAndIsPublic :many
+SELECT id, name, user_id, is_public, created_at, updated_at
+FROM lists
+WHERE user_id = $1 AND is_public = true
+ORDER BY created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type FindManyListsByUserIdAndIsPublicParams struct {
+	UserID string
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) FindManyListsByUserIdAndIsPublic(ctx context.Context, arg FindManyListsByUserIdAndIsPublicParams) ([]List, error) {
+	rows, err := q.db.Query(ctx, findManyListsByUserIdAndIsPublic, arg.UserID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []List
+	for rows.Next() {
+		var i List
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.UserID,
+			&i.IsPublic,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findPlaceInListStatus = `-- name: FindPlaceInListStatus :many
+SELECT list_id, place_id
+FROM list_items
+WHERE list_items.place_id = $1 AND list_items.list_id = ANY($2::TEXT[])
+`
+
+type FindPlaceInListStatusParams struct {
+	PlaceID string
+	Column2 []string
+}
+
+type FindPlaceInListStatusRow struct {
+	ListID  string
+	PlaceID string
+}
+
+func (q *Queries) FindPlaceInListStatus(ctx context.Context, arg FindPlaceInListStatusParams) ([]FindPlaceInListStatusRow, error) {
+	rows, err := q.db.Query(ctx, findPlaceInListStatus, arg.PlaceID, arg.Column2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindPlaceInListStatusRow
+	for rows.Next() {
+		var i FindPlaceInListStatusRow
+		if err := rows.Scan(&i.ListID, &i.PlaceID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const removeList = `-- name: RemoveList :execresult
+DELETE FROM lists
+WHERE id = $1
+`
+
+func (q *Queries) RemoveList(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeList, id)
+}
+
+const removeListItemsByListId = `-- name: RemoveListItemsByListId :execresult
+DELETE FROM list_items
+WHERE list_id = $1
+`
+
+func (q *Queries) RemoveListItemsByListId(ctx context.Context, listID string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeListItemsByListId, listID)
+}
+
+const updateList = `-- name: UpdateList :execresult
 UPDATE lists
-SET 
+SET
   name = $2,
   is_public = $3
 WHERE id = $1
@@ -430,7 +438,6 @@ type UpdateListParams struct {
 	IsPublic bool
 }
 
-func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) error {
-	_, err := q.db.Exec(ctx, updateList, arg.ID, arg.Name, arg.IsPublic)
-	return err
+func (q *Queries) UpdateList(ctx context.Context, arg UpdateListParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateList, arg.ID, arg.Name, arg.IsPublic)
 }

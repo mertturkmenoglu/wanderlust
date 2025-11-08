@@ -7,7 +7,6 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/mail"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
@@ -20,8 +19,10 @@ func Register(grp *huma.Group, app *core.Application) {
 	mailSvc := app.Get(di.SVC_MAIL).(*mail.MailService)
 
 	s := Service{
-		db:   dbSvc.Queries,
-		pool: dbSvc.Pool,
+		repo: &Repository{
+			db:   dbSvc.Queries,
+			pool: dbSvc.Pool,
+		},
 		mail: mailSvc,
 	}
 
@@ -42,7 +43,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetReportByIdInput) (*dto.GetReportByIdOutput, error) {
+		func(ctx context.Context, input *GetReportByIdInput) (*GetReportByIdOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -71,7 +72,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetReportsInput) (*dto.GetReportsOutput, error) {
+		func(ctx context.Context, input *GetReportsInput) (*GetReportsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -100,7 +101,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.SearchReportsInput) (*dto.SearchReportsOutput, error) {
+		func(ctx context.Context, input *SearchReportsInput) (*SearchReportsOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -128,7 +129,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateReportInput) (*dto.CreateReportOutput, error) {
+		func(ctx context.Context, input *CreateReportInput) (*CreateReportOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -157,7 +158,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteReportInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteReportInput) (*DeleteReportOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -186,7 +187,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.UpdateReportInput) (*dto.UpdateReportOutput, error) {
+		func(ctx context.Context, input *UpdateReportInput) (*UpdateReportOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

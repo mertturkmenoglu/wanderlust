@@ -16,7 +16,7 @@ type DeleteExpiredTripInvitePayload struct {
 }
 
 func (svc *TasksService) FindExpiredTripInvitesTask(ctx context.Context, t *asynq.Task) error {
-	ids, err := svc.db.Queries.FindExpiredTripInvites(ctx)
+	ids, err := svc.db.Queries.FindManyTripInvitesWhereExpired(ctx)
 
 	if err != nil {
 		return err
@@ -47,5 +47,7 @@ func (svc *TasksService) DeleteExpiredTripInviteTask(ctx context.Context, t *asy
 		return err
 	}
 
-	return svc.db.Queries.DeleteInvite(ctx, p.ID)
+	_, err = svc.db.Queries.RemoveTripInviteById(ctx, p.ID)
+
+	return err
 }

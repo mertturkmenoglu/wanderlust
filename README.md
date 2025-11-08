@@ -6,10 +6,9 @@
 
 Welcome to Wanderlust, a travel and location discovery platform designed to inspire exploration and connection. With Wanderlust, you can:
 
-- Explore cities and point of interest (POI) guides, curated with insider tips and recommendations.
-- Collect and organize POIs into favorites, bookmarks, and custom lists.
+- Explore cities and places (POI) guides, curated with insider tips and recommendations.
+- Collect and organize places into favorites, bookmarks, and custom lists.
 - Follow fellow travelers, send messages, and stay up-to-date on their adventures.
-- Record your own trips with diary entries, complete with photos and memories.
 - Plan future trips using our intuitive trip planner tool.
 - Search and filter results using powerful facets and filters.
 
@@ -22,10 +21,10 @@ It's open source and free.
 - Exploration:
   - Search for places.
   - Explore cities and countries.
-  - Explore point of interests (POIs).
+  - Explore places/point of interests (POIs).
   - Explore places by category.
-  - Explore curated collections of POIs.
-  - Discover nearby POIs.
+  - Explore curated collections of places.
+  - Discover nearby places.
 - User:
   - Create an account.
   - Follow other users.
@@ -41,36 +40,32 @@ It's open source and free.
     - Public Lists
 - Reviews:
   - Create reviews.
-  - Rate POIs.
+  - Rate places.
   - Upload images.
   - Filter reviews by rating and date.
   - Sort reviews by rating and date.
 - Lists, Bookmarks, Favorites:
   - Create lists.
-  - Add POIs to your lists.
+  - Add places to your lists.
   - View other users' public lists.
   - Create bookmarks.
-  - Add POIs to your favorites.
+  - Add places to your favorites.
 - Trip planning:
   - Create trips.
-  - Add POIs to your trips.
+  - Add places to your trips.
   - Invite friends to your trips.
   - View other users' trips.
   - Add requested amenities.
   - Comment on trips.
-- Diary:
-  - Record your previous trips.
-  - Add photos and memories to your diary.
-  - Add other users to your diary.
 
 ## Planned Features
 
 - Notifications.
 - In app messaging.
 - Trip itinerary.
-- Better POI and user search.
+- Better place and user search.
 - Better map interactions.
-- Better POI reviews.
+- Better place reviews.
 - Better L10n support.
 - Better timezone support.
 
@@ -80,12 +75,12 @@ It's open source and free.
 
 <img src="https://i.imgur.com/kGinaVY.png" alt="Homepage" width="100%">
 
-### Point of Interests
+### Places
 
-<img src="https://i.imgur.com/004GWJJ.png" alt="Point of Interests" width="100%">
-<img src="https://i.imgur.com/aDkugS0.png" alt="Point of Interests" width="100%">
-<img src="https://i.imgur.com/7gvZwGl.png" alt="Point of Interests" width="100%">
-<img src="https://i.imgur.com/QQMJLai.png" alt="Point of Interests" width="100%">
+<img src="https://i.imgur.com/004GWJJ.png" alt="Places" width="100%">
+<img src="https://i.imgur.com/aDkugS0.png" alt="Places" width="100%">
+<img src="https://i.imgur.com/7gvZwGl.png" alt="Places" width="100%">
+<img src="https://i.imgur.com/QQMJLai.png" alt="Places" width="100%">
 
 ### Trip Planner
 
@@ -106,10 +101,6 @@ It's open source and free.
 <img src="https://i.imgur.com/WPZpdXZ.png" alt="Cities" width="100%">
 <img src="https://i.imgur.com/89srSoL.png" alt="Countries" width="100%">
 
-### Diary
-
-<img src="https://i.imgur.com/hHSrMOC.png" alt="Diary" width="100%">
-
 ### Bookmarks and Lists
 
 <img src="https://i.imgur.com/ytravad.png" alt="Bookmarks" width="100%">
@@ -125,7 +116,6 @@ It's open source and free.
 - Goose (https://github.com/pressly/goose)
 - Node.js (https://nodejs.org/en/download)
 - pnpm (https://pnpm.io/installation)
-- Infisical CLI (https://infisical.com/docs/documentation/getting-started/introduction)
 - Concurrently (https://www.npmjs.com/package/concurrently)
 
 Optional:
@@ -139,7 +129,6 @@ Optional:
 - Make sure you have all the requirements installed.
   - You can run `requirements.sh` script to check if you have all the requirements installed.
   - `chmod u+x ./requirements.sh && ./requirements.sh`
-  - Login to Infisical.
   - Start Docker service or Docker Desktop.
 - Run `just setup` to setup the project.
 - Run `just watch` to start the servers.

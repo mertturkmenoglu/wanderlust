@@ -108,9 +108,10 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
                 }
 
                 // Get presigned URL
-                const res = await fetchClient.GET('/api/v2/images/upload/', {
+                const res = await fetchClient.GET('/api/v2/assets/upload/', {
                   params: {
                     query: {
+                      assetType: 'image',
                       bucket:
                         action === 'profile'
                           ? 'profile-images'

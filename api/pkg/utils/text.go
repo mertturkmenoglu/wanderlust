@@ -25,3 +25,7 @@ func NilStrToText(v *string) pgtype.Text {
 
 	return StrToText(*v)
 }
+
+func StrPtr(v string) *string {
+	return &v
+}

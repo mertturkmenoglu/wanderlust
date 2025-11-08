@@ -29,12 +29,12 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const [collectionId, setCollectionId] = useState('');
-  const [poiId, setPoiId] = useState('');
+  const [placeId, setPlaceId] = useState('');
   const invalidator = useInvalidator();
 
   const mutation = api.useMutation(
     'post',
-    '/api/v2/collections/{id}/poi/{poiId}',
+    '/api/v2/collections/{id}/place/{placeId}',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
@@ -49,8 +49,8 @@ function RouteComponent() {
         items={[
           { name: 'Collections', href: '/dashboard/collections' },
           {
-            name: 'Collection - POI Relations',
-            href: '/dashboard/collections/relations/poi',
+            name: 'Collection - Place Relations',
+            href: '/dashboard/collections/relations/place',
           },
         ]}
       />
@@ -74,10 +74,10 @@ function RouteComponent() {
                   onChange={(e) => setCollectionId(e.target.value)}
                 />
                 <Input
-                  placeholder="Poi ID"
+                  placeholder="Place ID"
                   className="mt-4"
-                  value={poiId}
-                  onChange={(e) => setPoiId(e.target.value)}
+                  value={placeId}
+                  onChange={(e) => setPlaceId(e.target.value)}
                 />
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -90,7 +90,7 @@ function RouteComponent() {
                       params: {
                         path: {
                           id: collectionId,
-                          poiId,
+                          placeId,
                         },
                       },
                     });
@@ -109,7 +109,7 @@ function RouteComponent() {
 }
 
 function Content() {
-  const query = api.useQuery('get', '/api/v2/collections/poi/all');
+  const query = api.useQuery('get', '/api/v2/collections/place/all');
   // const invalidator = useInvalidator();
   // const mutation = api.useMutation(
   //   'delete',

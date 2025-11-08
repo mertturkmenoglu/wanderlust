@@ -33,7 +33,7 @@ func (f *FakeAddresses) Generate() (int64, error) {
 
 func (f *FakeAddresses) batchInsert() (int64, error) {
 	arg := make([]db.BatchCreateAddressesParams, 0, f.Step)
-	cities, err := f.db.Queries.GetCities(context.Background())
+	cities, err := f.db.Queries.FindManyCities(context.Background())
 
 	if err != nil {
 		return 0, err
@@ -42,8 +42,8 @@ func (f *FakeAddresses) batchInsert() (int64, error) {
 	for range f.Step {
 		randCity := fakeutils.RandElem(cities)
 
-		lat := randCity.Latitude + gofakeit.Float64Range(-0.02, 0.02)
-		lng := randCity.Longitude + gofakeit.Float64Range(-0.02, 0.02)
+		lat := randCity.Lat + gofakeit.Float64Range(-0.02, 0.02)
+		lng := randCity.Lng + gofakeit.Float64Range(-0.02, 0.02)
 
 		arg = append(arg, db.BatchCreateAddressesParams{
 			CityID:     randCity.ID,

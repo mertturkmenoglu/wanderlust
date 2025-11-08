@@ -7,7 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Navigation } from './-navigation';
 import { ItemGroup } from '@/components/ui/item';
 import { useEffect } from 'react';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { BookmarksContextProvider, useBookmarksContext } from './-context';
 import { BookmarkItem } from './-item';
 import { Actions } from './-actions';
@@ -80,7 +80,7 @@ function Bookmarks() {
         <ItemGroup className="gap-2">
           {bookmarks.map((bookmark, i) => (
             <BookmarkItem
-              key={bookmark.poiId}
+              key={bookmark.placeId}
               bookmark={bookmark}
               itemIndex={i}
             />
@@ -96,8 +96,8 @@ function Bookmarks() {
         </ItemGroup>
 
         <div className="hidden md:block">
-          <PoiCard
-            poi={bookmarks[ctx.index]!.poi}
+          <PlaceCard
+            place={bookmarks[ctx.index]!.place}
             hoverEffects={false}
           />
 

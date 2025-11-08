@@ -7,7 +7,6 @@ import (
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/db"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/durable"
 	"wanderlust/pkg/hash"
 	"wanderlust/pkg/random"
@@ -28,7 +27,7 @@ type Service struct {
 	durable *durable.Durable
 }
 
-func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
+func (s *Service) getMe(ctx context.Context) (*GetMeOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -46,8 +45,8 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 		return nil, err
 	}
 
-	return &dto.GetMeOutput{
-		Body: dto.GetMeOutputBody{
+	return &GetMeOutput{
+		Body: GetMeOutputBody{
 			ID:             user.ID,
 			Email:          user.Email,
 			Username:       user.Username,
@@ -56,8 +55,6 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 			FacebookID:     utils.TextToStr(user.FbID),
 			IsVerified:     user.IsVerified,
 			Bio:            utils.TextToStr(user.Bio),
-			Pronouns:       utils.TextToStr(user.Pronouns),
-			Website:        utils.TextToStr(user.Website),
 			ProfileImage:   utils.TextToStr(user.ProfileImage),
 			BannerImage:    utils.TextToStr(user.BannerImage),
 			FollowersCount: user.FollowersCount,
@@ -69,7 +66,7 @@ func (s *Service) getMe(ctx context.Context) (*dto.GetMeOutput, error) {
 	}, nil
 }
 
-func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.LoginOutput, error) {
+func (s *Service) login(ctx context.Context, body LoginInputBody) (*LoginOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -115,7 +112,7 @@ func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.Logi
 		return nil, errors.Wrap(ErrFailedToStoreJWT, err.Error())
 	}
 
-	return &dto.LoginOutput{
+	return &LoginOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:     tokens.AccessTokenCookieName,
@@ -140,11 +137,11 @@ func (s *Service) login(ctx context.Context, body dto.LoginInputBody) (*dto.Logi
 
 }
 
-func (s *Service) logout(ctx context.Context) (*dto.LogoutOutput, error) {
+func (s *Service) logout(ctx context.Context) (*LogoutOutput, error) {
 	_, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	return &dto.LogoutOutput{
+	return &LogoutOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:    tokens.AccessTokenCookieName,
@@ -164,7 +161,7 @@ func (s *Service) logout(ctx context.Context) (*dto.LogoutOutput, error) {
 	}, nil
 }
 
-func (s *Service) refresh(ctx context.Context, cookieRefreshToken string) (*dto.RefreshOutput, error) {
+func (s *Service) refresh(ctx context.Context, cookieRefreshToken string) (*RefreshOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -218,7 +215,7 @@ func (s *Service) refresh(ctx context.Context, cookieRefreshToken string) (*dto.
 		return nil, errors.Wrap(ErrFailedToStoreJWT, err.Error())
 	}
 
-	return &dto.RefreshOutput{
+	return &RefreshOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:     tokens.AccessTokenCookieName,
@@ -242,7 +239,7 @@ func (s *Service) refresh(ctx context.Context, cookieRefreshToken string) (*dto.
 	}, nil
 }
 
-func (s *Service) register(ctx context.Context, body dto.RegisterInputBody) (*dto.RegisterOutput, error) {
+func (s *Service) register(ctx context.Context, body RegisterInputBody) (*RegisterOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -268,8 +265,8 @@ func (s *Service) register(ctx context.Context, body dto.RegisterInputBody) (*dt
 		return nil, errors.Wrap(ErrFailedToCreate, err.Error())
 	}
 
-	return &dto.RegisterOutput{
-		Body: dto.RegisterOutputBody{
+	return &RegisterOutput{
+		Body: RegisterOutputBody{
 			ID:        saved.ID,
 			Email:     saved.Email,
 			Username:  saved.Username,
@@ -280,7 +277,7 @@ func (s *Service) register(ctx context.Context, body dto.RegisterInputBody) (*dt
 	}, nil
 }
 
-func (s *Service) createUserFromCredentialsInfo(ctx context.Context, dto dto.RegisterInputBody) (*db.User, error) {
+func (s *Service) createUserFromCredentialsInfo(ctx context.Context, dto RegisterInputBody) (*db.User, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -340,7 +337,7 @@ func (s *Service) sendForgotPasswordEmail(ctx context.Context, email string) err
 	return nil
 }
 
-func (s *Service) resetPassword(ctx context.Context, body dto.ResetPasswordInputBody) error {
+func (s *Service) resetPassword(ctx context.Context, body ResetPasswordInputBody) error {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -382,7 +379,7 @@ func (s *Service) resetPassword(ctx context.Context, body dto.ResetPasswordInput
 	return nil
 }
 
-func (s *Service) startOAuthFlow(ctx context.Context, provider string) (*dto.OAuthOutput, error) {
+func (s *Service) startOAuthFlow(ctx context.Context, provider string) (*OAuthOutput, error) {
 	_, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -401,14 +398,14 @@ func (s *Service) startOAuthFlow(ctx context.Context, provider string) (*dto.OAu
 		HttpOnly: true,
 	}
 
-	return &dto.OAuthOutput{
+	return &OAuthOutput{
 		Status: http.StatusTemporaryRedirect,
 		Url:    url,
 		Cookie: c.String(),
 	}, nil
 }
 
-func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInput) (*dto.OAuthCallbackOutput, error) {
+func (s *Service) oauthCallback(ctx context.Context, input *OAuthCallbackInput) (*OAuthCallbackOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -460,7 +457,7 @@ func (s *Service) oauthCallback(ctx context.Context, input *dto.OAuthCallbackInp
 		return nil, errors.Wrap(ErrFailedToStoreJWT, err.Error())
 	}
 
-	return &dto.OAuthCallbackOutput{
+	return &OAuthCallbackOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:    "state",
@@ -555,7 +552,7 @@ func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthU
 	return s.repo.createUserFromOAuthInfo(ctx, oauthUser, username)
 }
 
-func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInputBody) (*dto.ChangePasswordOutput, error) {
+func (s *Service) changePassword(ctx context.Context, body ChangePasswordInputBody) (*ChangePasswordOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -618,7 +615,7 @@ func (s *Service) changePassword(ctx context.Context, body dto.ChangePasswordInp
 		return nil, errors.Wrap(ErrFailedToStoreJWT, err.Error())
 	}
 
-	return &dto.ChangePasswordOutput{
+	return &ChangePasswordOutput{
 		SetCookie: []http.Cookie{
 			{
 				Name:     tokens.AccessTokenCookieName,

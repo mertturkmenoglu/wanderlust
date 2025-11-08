@@ -22,19 +22,21 @@ type Admin struct {
 	UserID string
 }
 
-type AmenitiesPoi struct {
-	AmenityID int32
-	PoiID     string
-}
-
-type Amenity struct {
-	ID   int32
-	Name string
+type Asset struct {
+	ID          int64
+	EntityType  string
+	EntityID    string
+	Url         string
+	AssetType   string
+	Description pgtype.Text
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+	Order       int32
 }
 
 type Bookmark struct {
-	ID        int32
-	PoiID     string
+	ID        int64
+	PlaceID   string
 	UserID    string
 	CreatedAt pgtype.Timestamptz
 }
@@ -53,8 +55,8 @@ type City struct {
 	CountryCode string
 	CountryName string
 	Image       string
-	Latitude    float64
-	Longitude   float64
+	Lat         float64
+	Lng         float64
 	Description string
 }
 
@@ -67,7 +69,7 @@ type Collection struct {
 
 type CollectionItem struct {
 	CollectionID string
-	PoiID        string
+	PlaceID      string
 	Index        int32
 	CreatedAt    pgtype.Timestamptz
 }
@@ -78,46 +80,15 @@ type CollectionsCity struct {
 	Index        int32
 }
 
-type CollectionsPoi struct {
+type CollectionsPlace struct {
 	CollectionID string
-	PoiID        string
+	PlaceID      string
 	Index        int32
 }
 
-type Diary struct {
-	ID               string
-	UserID           string
-	Title            string
-	Description      string
-	ShareWithFriends bool
-	Date             pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-	UpdatedAt        pgtype.Timestamptz
-}
-
-type DiaryImage struct {
-	ID        int64
-	DiaryID   string
-	Url       string
-	Index     int16
-	CreatedAt pgtype.Timestamptz
-}
-
-type DiaryPoi struct {
-	DiaryID     string
-	PoiID       string
-	Description pgtype.Text
-	Index       int32
-}
-
-type DiaryUser struct {
-	DiaryID string
-	UserID  string
-	Index   int32
-}
-
 type Favorite struct {
-	PoiID     string
+	ID        int64
+	PlaceID   string
 	UserID    string
 	CreatedAt pgtype.Timestamptz
 }
@@ -126,15 +97,6 @@ type Follow struct {
 	FollowerID  string
 	FollowingID string
 	CreatedAt   pgtype.Timestamptz
-}
-
-type Image struct {
-	ID        int64
-	PoiID     string
-	Url       string
-	Alt       string
-	Index     int16
-	CreatedAt pgtype.Timestamptz
 }
 
 type List struct {
@@ -148,25 +110,26 @@ type List struct {
 
 type ListItem struct {
 	ListID    string
-	PoiID     string
+	PlaceID   string
 	Index     int32
 	CreatedAt pgtype.Timestamptz
 }
 
-type Poi struct {
+type Place struct {
 	ID                 string
 	Name               string
 	Phone              pgtype.Text
 	Description        string
-	AddressID          int32
 	Website            pgtype.Text
+	AddressID          int32
+	CategoryID         int16
 	PriceLevel         int16
 	AccessibilityLevel int16
 	TotalVotes         int32
 	TotalPoints        int32
 	TotalFavorites     int32
-	CategoryID         int16
-	Hours              []byte
+	Hours              pgtype.Hstore
+	Amenities          pgtype.Hstore
 	CreatedAt          pgtype.Timestamptz
 	UpdatedAt          pgtype.Timestamptz
 }
@@ -177,8 +140,6 @@ type Profile struct {
 	FullName       string
 	IsVerified     bool
 	Bio            pgtype.Text
-	Pronouns       pgtype.Text
-	Website        pgtype.Text
 	ProfileImage   pgtype.Text
 	BannerImage    pgtype.Text
 	FollowersCount int32
@@ -201,7 +162,7 @@ type Report struct {
 
 type Review struct {
 	ID        string
-	PoiID     string
+	PlaceID   string
 	UserID    string
 	Content   string
 	Rating    int16
@@ -209,28 +170,18 @@ type Review struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
-type ReviewImage struct {
-	ID       int64
-	ReviewID string
-	Url      string
-	Index    int16
-}
-
 type Trip struct {
-	ID              string
-	OwnerID         string
-	Title           string
-	Description     string
-	VisibilityLevel string
-	StartAt         pgtype.Timestamptz
-	EndAt           pgtype.Timestamptz
-	CreatedAt       pgtype.Timestamptz
-	UpdatedAt       pgtype.Timestamptz
-}
-
-type TripAmenity struct {
-	TripID    string
-	AmenityID int32
+	ID                 string
+	OwnerID            string
+	Title              string
+	Description        string
+	VisibilityLevel    string
+	RequestedAmenities pgtype.Hstore
+	StartAt            pgtype.Timestamptz
+	EndAt              pgtype.Timestamptz
+	DateRange          pgtype.Range[pgtype.Timestamptz]
+	CreatedAt          pgtype.Timestamptz
+	UpdatedAt          pgtype.Timestamptz
 }
 
 type TripComment struct {
@@ -252,19 +203,19 @@ type TripInvite struct {
 	Role      string
 }
 
-type TripLocation struct {
-	ID            string
-	TripID        string
-	ScheduledTime pgtype.Timestamptz
-	PoiID         string
-	Description   string
-}
-
 type TripParticipant struct {
 	ID     string
 	TripID string
 	UserID string
 	Role   string
+}
+
+type TripPlace struct {
+	ID            string
+	TripID        string
+	ScheduledTime pgtype.Timestamptz
+	PlaceID       string
+	Description   string
 }
 
 type User struct {
@@ -277,8 +228,6 @@ type User struct {
 	FbID           pgtype.Text
 	IsVerified     bool
 	Bio            pgtype.Text
-	Pronouns       pgtype.Text
-	Website        pgtype.Text
 	ProfileImage   pgtype.Text
 	BannerImage    pgtype.Text
 	FollowersCount int32
@@ -287,8 +236,8 @@ type User struct {
 	UpdatedAt      pgtype.Timestamptz
 }
 
-type UserTopPoi struct {
-	UserID string
-	PoiID  string
-	Index  int32
+type UserTopPlace struct {
+	UserID  string
+	PlaceID string
+	Index   int32
 }

@@ -7,71 +7,58 @@ package db
 
 import (
 	"context"
-)
 
-type BatchCreateReviewImageParams struct {
-	ReviewID string
-	Url      string
-	Index    int16
-}
+	"github.com/jackc/pgx/v5/pgconn"
+)
 
 type BatchCreateReviewsParams struct {
 	ID      string
-	PoiID   string
+	PlaceID string
 	UserID  string
 	Content string
 	Rating  int16
 }
 
-const countPoiReviews = `-- name: CountPoiReviews :one
-SELECT COUNT(*) FROM reviews
-WHERE poi_id = $1
+const countReviewsByPlaceId = `-- name: CountReviewsByPlaceId :one
+SELECT COUNT(*)
+FROM reviews
+WHERE place_id = $1
 `
 
-func (q *Queries) CountPoiReviews(ctx context.Context, poiID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countPoiReviews, poiID)
+func (q *Queries) CountReviewsByPlaceId(ctx context.Context, placeID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countReviewsByPlaceId, placeID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const countReviewsByPoiId = `-- name: CountReviewsByPoiId :one
-SELECT COUNT(*) FROM reviews
-WHERE poi_id = $1
-`
-
-func (q *Queries) CountReviewsByPoiId(ctx context.Context, poiID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countReviewsByPoiId, poiID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const countReviewsByPoiIdFiltered = `-- name: CountReviewsByPoiIdFiltered :one
-SELECT COUNT(*) FROM reviews
+const countReviewsByPlaceIdAndRating = `-- name: CountReviewsByPlaceIdAndRating :one
+SELECT COUNT(*)
+FROM reviews
 WHERE
-    poi_id = $1::TEXT
+    place_id = $1::TEXT
   AND
     (rating >= COALESCE($2, rating))
   AND
     (rating <= COALESCE($3, rating))
 `
 
-type CountReviewsByPoiIdFilteredParams struct {
-	Poiid     string
+type CountReviewsByPlaceIdAndRatingParams struct {
+	Placeid   string
 	Minrating int16
 	Maxrating int16
 }
 
-func (q *Queries) CountReviewsByPoiIdFiltered(ctx context.Context, arg CountReviewsByPoiIdFilteredParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countReviewsByPoiIdFiltered, arg.Poiid, arg.Minrating, arg.Maxrating)
+func (q *Queries) CountReviewsByPlaceIdAndRating(ctx context.Context, arg CountReviewsByPlaceIdAndRatingParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countReviewsByPlaceIdAndRating, arg.Placeid, arg.Minrating, arg.Maxrating)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
 const countReviewsByUsername = `-- name: CountReviewsByUsername :one
-SELECT COUNT(*) FROM reviews
+SELECT COUNT(*)
+FROM reviews
 WHERE user_id = (
   SELECT id FROM profile
   WHERE username = $1
@@ -88,7 +75,7 @@ func (q *Queries) CountReviewsByUsername(ctx context.Context, username string) (
 const createReview = `-- name: CreateReview :one
 INSERT INTO reviews (
   id,
-  poi_id,
+  place_id,
   user_id,
   content,
   rating
@@ -98,12 +85,12 @@ INSERT INTO reviews (
   $3,
   $4,
   $5
-) RETURNING id, poi_id, user_id, content, rating, created_at, updated_at
+) RETURNING id, place_id, user_id, content, rating, created_at, updated_at
 `
 
 type CreateReviewParams struct {
 	ID      string
-	PoiID   string
+	PlaceID string
 	UserID  string
 	Content string
 	Rating  int16
@@ -112,7 +99,7 @@ type CreateReviewParams struct {
 func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) (Review, error) {
 	row := q.db.QueryRow(ctx, createReview,
 		arg.ID,
-		arg.PoiID,
+		arg.PlaceID,
 		arg.UserID,
 		arg.Content,
 		arg.Rating,
@@ -120,7 +107,7 @@ func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) (Rev
 	var i Review
 	err := row.Scan(
 		&i.ID,
-		&i.PoiID,
+		&i.PlaceID,
 		&i.UserID,
 		&i.Content,
 		&i.Rating,
@@ -130,50 +117,35 @@ func (q *Queries) CreateReview(ctx context.Context, arg CreateReviewParams) (Rev
 	return i, err
 }
 
-const deleteReview = `-- name: DeleteReview :exec
-DELETE FROM reviews
-WHERE id = $1
+const findManyReviewAssetsByPlaceId = `-- name: FindManyReviewAssetsByPlaceId :many
+SELECT id, entity_type, entity_id, url, asset_type, description, created_at, updated_at, "order"
+FROM assets
+WHERE entity_type = 'review' AND entity_id IN (
+  SELECT id FROM reviews WHERE place_id = $1
+  ORDER BY created_at DESC
+) LIMIT 20
 `
 
-func (q *Queries) DeleteReview(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteReview, id)
-	return err
-}
-
-const getLastReviewImageIndex = `-- name: GetLastReviewImageIndex :one
-SELECT COALESCE(MAX(index), 0)
-FROM review_images
-WHERE review_id = $1
-`
-
-func (q *Queries) GetLastReviewImageIndex(ctx context.Context, reviewID string) (interface{}, error) {
-	row := q.db.QueryRow(ctx, getLastReviewImageIndex, reviewID)
-	var coalesce interface{}
-	err := row.Scan(&coalesce)
-	return coalesce, err
-}
-
-const getPoiRatings = `-- name: GetPoiRatings :many
-SELECT rating, COUNT(rating) FROM reviews
-WHERE poi_id = $1
-GROUP BY rating
-`
-
-type GetPoiRatingsRow struct {
-	Rating int16
-	Count  int64
-}
-
-func (q *Queries) GetPoiRatings(ctx context.Context, poiID string) ([]GetPoiRatingsRow, error) {
-	rows, err := q.db.Query(ctx, getPoiRatings, poiID)
+func (q *Queries) FindManyReviewAssetsByPlaceId(ctx context.Context, placeID string) ([]Asset, error) {
+	rows, err := q.db.Query(ctx, findManyReviewAssetsByPlaceId, placeID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetPoiRatingsRow
+	var items []Asset
 	for rows.Next() {
-		var i GetPoiRatingsRow
-		if err := rows.Scan(&i.Rating, &i.Count); err != nil {
+		var i Asset
+		if err := rows.Scan(
+			&i.ID,
+			&i.EntityType,
+			&i.EntityID,
+			&i.Url,
+			&i.AssetType,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Order,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -184,24 +156,12 @@ func (q *Queries) GetPoiRatings(ctx context.Context, poiID string) ([]GetPoiRati
 	return items, nil
 }
 
-const getPoiTotalRating = `-- name: GetPoiTotalRating :one
-SELECT COALESCE(SUM(rating), 0) FROM reviews
-WHERE poi_id = $1
-`
-
-func (q *Queries) GetPoiTotalRating(ctx context.Context, poiID string) (interface{}, error) {
-	row := q.db.QueryRow(ctx, getPoiTotalRating, poiID)
-	var coalesce interface{}
-	err := row.Scan(&coalesce)
-	return coalesce, err
-}
-
-const getReviewIdsByPoiIdFiltered = `-- name: GetReviewIdsByPoiIdFiltered :many
-SELECT 
+const findManyReviewIdsByPlaceIdAndRating = `-- name: FindManyReviewIdsByPlaceIdAndRating :many
+SELECT
   id
 FROM reviews
-WHERE 
-    poi_id = $3::TEXT
+WHERE
+    place_id = $3::TEXT
   AND
     (rating >= COALESCE($4, rating))
   AND
@@ -215,21 +175,21 @@ OFFSET $1
 LIMIT $2
 `
 
-type GetReviewIdsByPoiIdFilteredParams struct {
+type FindManyReviewIdsByPlaceIdAndRatingParams struct {
 	Offset    int32
 	Limit     int32
-	Poiid     string
+	Placeid   string
 	Minrating int16
 	Maxrating int16
 	Sortby    string
 	Sortord   string
 }
 
-func (q *Queries) GetReviewIdsByPoiIdFiltered(ctx context.Context, arg GetReviewIdsByPoiIdFilteredParams) ([]string, error) {
-	rows, err := q.db.Query(ctx, getReviewIdsByPoiIdFiltered,
+func (q *Queries) FindManyReviewIdsByPlaceIdAndRating(ctx context.Context, arg FindManyReviewIdsByPlaceIdAndRatingParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, findManyReviewIdsByPlaceIdAndRating,
 		arg.Offset,
 		arg.Limit,
-		arg.Poiid,
+		arg.Placeid,
 		arg.Minrating,
 		arg.Maxrating,
 		arg.Sortby,
@@ -253,25 +213,25 @@ func (q *Queries) GetReviewIdsByPoiIdFiltered(ctx context.Context, arg GetReview
 	return items, nil
 }
 
-const getReviewIdsByUsername = `-- name: GetReviewIdsByUsername :many
-SELECT 
+const findManyReviewIdsByUsername = `-- name: FindManyReviewIdsByUsername :many
+SELECT
   reviews.id
 FROM reviews
-JOIN profile ON reviews.user_id = profile.id
+  JOIN profile ON reviews.user_id = profile.id
 WHERE profile.username = $1
 ORDER BY reviews.created_at DESC
 OFFSET $2
 LIMIT $3
 `
 
-type GetReviewIdsByUsernameParams struct {
+type FindManyReviewIdsByUsernameParams struct {
 	Username string
 	Offset   int32
 	Limit    int32
 }
 
-func (q *Queries) GetReviewIdsByUsername(ctx context.Context, arg GetReviewIdsByUsernameParams) ([]string, error) {
-	rows, err := q.db.Query(ctx, getReviewIdsByUsername, arg.Username, arg.Offset, arg.Limit)
+func (q *Queries) FindManyReviewIdsByUsername(ctx context.Context, arg FindManyReviewIdsByUsernameParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, findManyReviewIdsByUsername, arg.Username, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -290,78 +250,47 @@ func (q *Queries) GetReviewIdsByUsername(ctx context.Context, arg GetReviewIdsBy
 	return items, nil
 }
 
-const getReviewImagesByPoiId = `-- name: GetReviewImagesByPoiId :many
-SELECT id, review_id, url, index FROM review_images WHERE review_id IN (
-  SELECT id FROM reviews WHERE poi_id = $1
-  ORDER BY created_at DESC
-) LIMIT 20
-`
-
-func (q *Queries) GetReviewImagesByPoiId(ctx context.Context, poiID string) ([]ReviewImage, error) {
-	rows, err := q.db.Query(ctx, getReviewImagesByPoiId, poiID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []ReviewImage
-	for rows.Next() {
-		var i ReviewImage
-		if err := rows.Scan(
-			&i.ID,
-			&i.ReviewID,
-			&i.Url,
-			&i.Index,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getReviewsByIds = `-- name: GetReviewsByIds :many
+const findManyReviewsById = `-- name: FindManyReviewsById :many
 SELECT
-  reviews.id, reviews.poi_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,
-  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.pronouns, profile.website, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at,
-  images_agg.images
+  reviews.id, reviews.place_id, reviews.user_id, reviews.content, reviews.rating, reviews.created_at, reviews.updated_at,
+  profile.id, profile.username, profile.full_name, profile.is_verified, profile.bio, profile.profile_image, profile.banner_image, profile.followers_count, profile.following_count, profile.created_at,
+  assets_agg.assets
 FROM
   reviews
-LEFT JOIN profile ON reviews.user_id = profile.id
+LEFT JOIN
+  profile ON reviews.user_id = profile.id
 LEFT JOIN LATERAL (
   SELECT json_agg(jsonb_build_object(
-    'id', m.id,
-    'reviewId', m.review_id,
-    'url', m.url,
-    'index', m.index
-  ) ORDER BY m.index) AS images
-  FROM public.review_images m
-  WHERE m.review_id = reviews.id
-) images_agg ON true
+    'id', a.id,
+    'reviewId', a.entity_id
+    'url', a.url,
+    'order', a.order
+  ) ORDER BY a.order) AS assets
+  FROM public.assets a
+  WHERE a.review_id = reviews.id AND a.entity_type = 'review'
+) assets_agg ON true
 WHERE reviews.id = ANY($1::TEXT[])
 ORDER BY reviews.created_at DESC
 `
 
-type GetReviewsByIdsRow struct {
+type FindManyReviewsByIdRow struct {
 	Review  Review
 	Profile Profile
-	Images  []byte
+	Assets  []byte
 }
 
-func (q *Queries) GetReviewsByIds(ctx context.Context, dollar_1 []string) ([]GetReviewsByIdsRow, error) {
-	rows, err := q.db.Query(ctx, getReviewsByIds, dollar_1)
+func (q *Queries) FindManyReviewsById(ctx context.Context, dollar_1 []string) ([]FindManyReviewsByIdRow, error) {
+	rows, err := q.db.Query(ctx, findManyReviewsById, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetReviewsByIdsRow
+	var items []FindManyReviewsByIdRow
 	for rows.Next() {
-		var i GetReviewsByIdsRow
+		var i FindManyReviewsByIdRow
 		if err := rows.Scan(
 			&i.Review.ID,
-			&i.Review.PoiID,
+			&i.Review.PlaceID,
 			&i.Review.UserID,
 			&i.Review.Content,
 			&i.Review.Rating,
@@ -372,14 +301,12 @@ func (q *Queries) GetReviewsByIds(ctx context.Context, dollar_1 []string) ([]Get
 			&i.Profile.FullName,
 			&i.Profile.IsVerified,
 			&i.Profile.Bio,
-			&i.Profile.Pronouns,
-			&i.Profile.Website,
 			&i.Profile.ProfileImage,
 			&i.Profile.BannerImage,
 			&i.Profile.FollowersCount,
 			&i.Profile.FollowingCount,
 			&i.Profile.CreatedAt,
-			&i.Images,
+			&i.Assets,
 		); err != nil {
 			return nil, err
 		}
@@ -389,4 +316,60 @@ func (q *Queries) GetReviewsByIds(ctx context.Context, dollar_1 []string) ([]Get
 		return nil, err
 	}
 	return items, nil
+}
+
+const findPlaceRatings = `-- name: FindPlaceRatings :many
+SELECT
+  rating,
+  COUNT(rating)
+FROM reviews
+WHERE place_id = $1
+GROUP BY rating
+`
+
+type FindPlaceRatingsRow struct {
+	Rating int16
+	Count  int64
+}
+
+func (q *Queries) FindPlaceRatings(ctx context.Context, placeID string) ([]FindPlaceRatingsRow, error) {
+	rows, err := q.db.Query(ctx, findPlaceRatings, placeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindPlaceRatingsRow
+	for rows.Next() {
+		var i FindPlaceRatingsRow
+		if err := rows.Scan(&i.Rating, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findPlaceTotalRating = `-- name: FindPlaceTotalRating :one
+SELECT COALESCE(SUM(rating), 0)
+FROM reviews
+WHERE place_id = $1
+`
+
+func (q *Queries) FindPlaceTotalRating(ctx context.Context, placeID string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, findPlaceTotalRating, placeID)
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
+}
+
+const removeReview = `-- name: RemoveReview :execresult
+DELETE FROM reviews
+WHERE id = $1
+`
+
+func (q *Queries) RemoveReview(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeReview, id)
 }

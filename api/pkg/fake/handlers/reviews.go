@@ -11,17 +11,18 @@ import (
 	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/sync/errgroup"
 )
 
 type FakeReviews struct {
-	PoisPath  string
-	UsersPath string
+	PlacesPath string
+	UsersPath  string
 	*Fake
 }
 
 func (f *FakeReviews) Generate() (int64, error) {
-	poiIds, userIds, err := f.readFiles()
+	placeIds, userIds, err := f.readFiles()
 
 	if err != nil {
 		return 0, err
@@ -31,7 +32,7 @@ func (f *FakeReviews) Generate() (int64, error) {
 	g, gctx := errgroup.WithContext(context.Background())
 	g.SetLimit(10)
 
-	for chunk := range slices.Chunk(poiIds, 100) {
+	for chunk := range slices.Chunk(placeIds, 100) {
 		g.Go(func() error {
 			count, err := f.createReviews(gctx, chunk, userIds)
 			total.Add(count)
@@ -46,9 +47,9 @@ func (f *FakeReviews) Generate() (int64, error) {
 	g, gctx = errgroup.WithContext(context.Background())
 	g.SetLimit(10)
 
-	for chunk := range slices.Chunk(poiIds, 100) {
+	for chunk := range slices.Chunk(placeIds, 100) {
 		g.Go(func() error {
-			err := f.updatePoiRateAndVotes(gctx, chunk)
+			err := f.updatePlaceRateAndVotes(gctx, chunk)
 			return err
 		})
 	}
@@ -61,7 +62,7 @@ func (f *FakeReviews) Generate() (int64, error) {
 }
 
 func (f *FakeReviews) readFiles() ([]string, []string, error) {
-	poiIds, err := fakeutils.ReadFile(f.PoisPath)
+	placeIds, err := fakeutils.ReadFile(f.PlacesPath)
 
 	if err != nil {
 		return nil, nil, err
@@ -73,13 +74,13 @@ func (f *FakeReviews) readFiles() ([]string, []string, error) {
 		return nil, nil, err
 	}
 
-	return poiIds, userIds, nil
+	return placeIds, userIds, nil
 }
 
-func (f *FakeReviews) createReviews(ctx context.Context, poiIds []string, userIds []string) (int64, error) {
+func (f *FakeReviews) createReviews(ctx context.Context, placeIds []string, userIds []string) (int64, error) {
 	batch := make([]db.BatchCreateReviewsParams, 0)
 
-	for _, poiId := range poiIds {
+	for _, placeId := range placeIds {
 		n := gofakeit.IntRange(1, 40)
 
 		for range n {
@@ -92,7 +93,7 @@ func (f *FakeReviews) createReviews(ctx context.Context, poiIds []string, userId
 
 			batch = append(batch, db.BatchCreateReviewsParams{
 				ID:      gofakeit.UUID(),
-				PoiID:   poiId,
+				PlaceID: placeId,
 				UserID:  userId,
 				Content: gofakeit.Paragraph(2, 4, 5, " "),
 				Rating:  rating,
@@ -103,7 +104,7 @@ func (f *FakeReviews) createReviews(ctx context.Context, poiIds []string, userId
 	return f.db.Queries.BatchCreateReviews(ctx, batch)
 }
 
-func (f *FakeReviews) updatePoiRateAndVotes(ctx context.Context, poiIds []string) error {
+func (f *FakeReviews) updatePlaceRateAndVotes(ctx context.Context, placeIds []string) error {
 	tx, err := f.db.Pool.Begin(ctx)
 
 	if err != nil {
@@ -114,9 +115,9 @@ func (f *FakeReviews) updatePoiRateAndVotes(ctx context.Context, poiIds []string
 
 	qtx := f.db.Queries.WithTx(tx)
 
-	for _, poiId := range poiIds {
-		count, err1 := qtx.CountReviewsByPoiId(ctx, poiId)
-		totalRating, err2 := qtx.GetPoiTotalRating(ctx, poiId)
+	for _, placeId := range placeIds {
+		count, err1 := qtx.CountReviewsByPlaceId(ctx, placeId)
+		totalRating, err2 := qtx.FindPlaceTotalRating(ctx, placeId)
 
 		if err := cmp.Or(err1, err2); err != nil {
 			return err
@@ -135,8 +136,8 @@ func (f *FakeReviews) updatePoiRateAndVotes(ctx context.Context, poiIds []string
 			return err
 		}
 
-		err = qtx.SetPoiRatingsAndVotes(ctx, db.SetPoiRatingsAndVotesParams{
-			ID:          poiId,
+		_, err = qtx.UpdatePlaceRatingsAndVotes(ctx, db.UpdatePlaceRatingsAndVotesParams{
+			ID:          placeId,
 			TotalVotes:  votesInt32,
 			TotalPoints: pointsInt32,
 		})
@@ -167,7 +168,7 @@ func (f *FakeReviewImages) Generate() (int64, error) {
 
 	for chunk := range slices.Chunk(reviewIds, 100) {
 		g.Go(func() error {
-			count, err := f.createReviewImages(gctx, chunk)
+			count, err := f.createReviewAssets(gctx, chunk)
 			total.Add(count)
 			return err
 		})
@@ -180,8 +181,8 @@ func (f *FakeReviewImages) Generate() (int64, error) {
 	return total.Load(), nil
 }
 
-func (f *FakeReviewImages) createReviewImages(ctx context.Context, chunk []string) (int64, error) {
-	batch := make([]db.BatchCreateReviewImageParams, 0)
+func (f *FakeReviewImages) createReviewAssets(ctx context.Context, chunk []string) (int64, error) {
+	batch := make([]db.BatchCreateReviewAssetsParams, 0)
 
 	for _, id := range chunk {
 		// Not all reviews should have media.
@@ -195,13 +196,16 @@ func (f *FakeReviewImages) createReviewImages(ctx context.Context, chunk []strin
 		n := fakeutils.RandInt16Range(0, 4)
 
 		for i := range n {
-			batch = append(batch, db.BatchCreateReviewImageParams{
-				ReviewID: id,
-				Url:      getRandomImageUrl(),
-				Index:    i + 1,
+			batch = append(batch, db.BatchCreateReviewAssetsParams{
+				EntityType:  "review",
+				EntityID:    id,
+				AssetType:   "image",
+				Description: pgtype.Text{},
+				Order:       int32(i + 1),
+				Url:         getRandomImageUrl(),
 			})
 		}
 	}
 
-	return f.db.Queries.BatchCreateReviewImage(ctx, batch)
+	return f.db.Queries.BatchCreateReviewAssets(ctx, batch)
 }

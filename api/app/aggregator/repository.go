@@ -2,7 +2,7 @@ package aggregator
 
 import (
 	"context"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
@@ -12,15 +12,15 @@ import (
 )
 
 type Repository struct {
-	db         *db.Queries
-	poiService *pois.Service
+	db            *db.Queries
+	placesService *places.Service
 }
 
-func (r *Repository) listFavoritePoisIDs(ctx context.Context) ([]string, error) {
+func (r *Repository) listFavoritePlaceIDs(ctx context.Context) ([]string, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	arr, err := r.db.GetFavoritePoisIds(ctx)
+	arr, err := r.db.FindManyFavoritePlaceIds(ctx)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrListFavorites, err.Error())
@@ -33,11 +33,11 @@ func (r *Repository) listFavoritePoisIDs(ctx context.Context) ([]string, error) 
 	return arr, nil
 }
 
-func (r *Repository) listFeaturedPoisIDs(ctx context.Context) ([]string, error) {
+func (r *Repository) listFeaturedPlaceIDs(ctx context.Context) ([]string, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	arr, err := r.db.GetFeaturedPoisIds(ctx)
+	arr, err := r.db.FindManyFeaturedPlaceIds(ctx)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrListFeatured, err.Error())
@@ -50,11 +50,11 @@ func (r *Repository) listFeaturedPoisIDs(ctx context.Context) ([]string, error) 
 	return arr, nil
 }
 
-func (r *Repository) listPopularPoisIDs(ctx context.Context) ([]string, error) {
+func (r *Repository) listPopularPlaceIDs(ctx context.Context) ([]string, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	arr, err := r.db.GetPopularPoisIds(ctx)
+	arr, err := r.db.FindManyPopularPlaceIds(ctx)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrListPopular, err.Error())
@@ -67,11 +67,11 @@ func (r *Repository) listPopularPoisIDs(ctx context.Context) ([]string, error) {
 	return arr, nil
 }
 
-func (r *Repository) listNewPoisIDs(ctx context.Context) ([]string, error) {
+func (r *Repository) listNewPlaceIDs(ctx context.Context) ([]string, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	arr, err := r.db.GetNewPoisIds(ctx)
+	arr, err := r.db.FindManyNewPlaceIds(ctx)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrListNew, err.Error())
@@ -84,7 +84,7 @@ func (r *Repository) listNewPoisIDs(ctx context.Context) ([]string, error) {
 	return arr, nil
 }
 
-func (r *Repository) getHomeAggregation(ctx context.Context) (*dto.HomeAggregatorOutput, error) {
+func (r *Repository) getHomeAggregation(ctx context.Context) (*HomeAggregatorOutput, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
@@ -99,25 +99,25 @@ func (r *Repository) getHomeAggregation(ctx context.Context) (*dto.HomeAggregato
 
 	g.Go(func() error {
 		var err error
-		dbNew, err = r.listNewPoisIDs(gctx)
+		dbNew, err = r.listNewPlaceIDs(gctx)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		dbPopular, err = r.listPopularPoisIDs(gctx)
+		dbPopular, err = r.listPopularPlaceIDs(gctx)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		dbFeatured, err = r.listFeaturedPoisIDs(gctx)
+		dbFeatured, err = r.listFeaturedPlaceIDs(gctx)
 		return err
 	})
 
 	g.Go(func() error {
 		var err error
-		dbFavorites, err = r.listFavoritePoisIDs(gctx)
+		dbFavorites, err = r.listFavoritePlaceIDs(gctx)
 		return err
 	})
 
@@ -134,41 +134,41 @@ func (r *Repository) getHomeAggregation(ctx context.Context) (*dto.HomeAggregato
 	allIds = append(allIds, dbFeatured...)
 	allIds = append(allIds, dbFavorites...)
 
-	allPois, err := r.poiService.FindMany(ctx, allIds)
+	allPlaces, err := r.placesService.FindMany(ctx, allIds)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrAggregation, err.Error())
 	}
 
-	poisNew := make([]dto.Poi, 0, len(dbNew))
-	poisPopular := make([]dto.Poi, 0, len(dbPopular))
-	poisFeatured := make([]dto.Poi, 0, len(dbFeatured))
-	poisFavorites := make([]dto.Poi, 0, len(dbFavorites))
+	newPlaces := make([]dto.Place, 0, len(dbNew))
+	popularPlaces := make([]dto.Place, 0, len(dbPopular))
+	featuredPlaces := make([]dto.Place, 0, len(dbFeatured))
+	favoritePlaces := make([]dto.Place, 0, len(dbFavorites))
 
-	for _, v := range allPois {
+	for _, v := range allPlaces {
 		if contains(dbNew, v.ID) {
-			poisNew = append(poisNew, v)
+			newPlaces = append(newPlaces, v)
 		}
 
 		if contains(dbPopular, v.ID) {
-			poisPopular = append(poisPopular, v)
+			popularPlaces = append(popularPlaces, v)
 		}
 
 		if contains(dbFeatured, v.ID) {
-			poisFeatured = append(poisFeatured, v)
+			featuredPlaces = append(featuredPlaces, v)
 		}
 
 		if contains(dbFavorites, v.ID) {
-			poisFavorites = append(poisFavorites, v)
+			favoritePlaces = append(favoritePlaces, v)
 		}
 	}
 
-	obj := &dto.HomeAggregatorOutput{
-		Body: dto.HomeAggregatorOutputBody{
-			New:       poisNew,
-			Popular:   poisPopular,
-			Featured:  poisFeatured,
-			Favorites: poisFavorites,
+	obj := &HomeAggregatorOutput{
+		Body: HomeAggregatorOutputBody{
+			New:       newPlaces,
+			Popular:   popularPlaces,
+			Featured:  featuredPlaces,
+			Favorites: favoritePlaces,
 		},
 	}
 

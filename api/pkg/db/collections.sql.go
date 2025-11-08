@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type BatchCreateCollectionCityRelationsParams struct {
@@ -17,13 +19,13 @@ type BatchCreateCollectionCityRelationsParams struct {
 
 type BatchCreateCollectionItemsParams struct {
 	CollectionID string
-	PoiID        string
+	PlaceID      string
 	Index        int32
 }
 
-type BatchCreateCollectionPoiRelationsParams struct {
+type BatchCreateCollectionPlaceRelationsParams struct {
 	CollectionID string
-	PoiID        string
+	PlaceID      string
 	Index        int32
 }
 
@@ -34,7 +36,7 @@ type BatchCreateCollectionsParams struct {
 }
 
 const countCollections = `-- name: CountCollections :one
-SELECT count(*) FROM collections
+SELECT COUNT(*) FROM collections
 `
 
 func (q *Queries) CountCollections(ctx context.Context) (int64, error) {
@@ -74,7 +76,7 @@ func (q *Queries) CreateCollection(ctx context.Context, arg CreateCollectionPara
 	return i, err
 }
 
-const createCollectionCityRelation = `-- name: CreateCollectionCityRelation :exec
+const createCollectionCityRelation = `-- name: CreateCollectionCityRelation :one
 INSERT INTO collections_cities (
   collection_id,
   city_id,
@@ -83,7 +85,7 @@ INSERT INTO collections_cities (
   $1,
   $2,
   $3
-)
+) RETURNING collection_id, city_id, index
 `
 
 type CreateCollectionCityRelationParams struct {
@@ -92,122 +94,127 @@ type CreateCollectionCityRelationParams struct {
 	Index        int32
 }
 
-func (q *Queries) CreateCollectionCityRelation(ctx context.Context, arg CreateCollectionCityRelationParams) error {
-	_, err := q.db.Exec(ctx, createCollectionCityRelation, arg.CollectionID, arg.CityID, arg.Index)
-	return err
+func (q *Queries) CreateCollectionCityRelation(ctx context.Context, arg CreateCollectionCityRelationParams) (CollectionsCity, error) {
+	row := q.db.QueryRow(ctx, createCollectionCityRelation, arg.CollectionID, arg.CityID, arg.Index)
+	var i CollectionsCity
+	err := row.Scan(&i.CollectionID, &i.CityID, &i.Index)
+	return i, err
 }
 
 const createCollectionItem = `-- name: CreateCollectionItem :one
 INSERT INTO collection_items (
   collection_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,
   $2,
   $3
-) RETURNING collection_id, poi_id, index, created_at
+) RETURNING collection_id, place_id, index, created_at
 `
 
 type CreateCollectionItemParams struct {
 	CollectionID string
-	PoiID        string
+	PlaceID      string
 	Index        int32
 }
 
 func (q *Queries) CreateCollectionItem(ctx context.Context, arg CreateCollectionItemParams) (CollectionItem, error) {
-	row := q.db.QueryRow(ctx, createCollectionItem, arg.CollectionID, arg.PoiID, arg.Index)
+	row := q.db.QueryRow(ctx, createCollectionItem, arg.CollectionID, arg.PlaceID, arg.Index)
 	var i CollectionItem
 	err := row.Scan(
 		&i.CollectionID,
-		&i.PoiID,
+		&i.PlaceID,
 		&i.Index,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const createCollectionPoiRelation = `-- name: CreateCollectionPoiRelation :exec
-INSERT INTO collections_pois (
+const createCollectionPlaceRelation = `-- name: CreateCollectionPlaceRelation :one
+INSERT INTO collections_places (
   collection_id,
-  poi_id,
+  place_id,
   index
 ) VALUES (
   $1,
   $2,
   $3
-)
+) RETURNING collection_id, place_id, index
 `
 
-type CreateCollectionPoiRelationParams struct {
+type CreateCollectionPlaceRelationParams struct {
 	CollectionID string
-	PoiID        string
+	PlaceID      string
 	Index        int32
 }
 
-func (q *Queries) CreateCollectionPoiRelation(ctx context.Context, arg CreateCollectionPoiRelationParams) error {
-	_, err := q.db.Exec(ctx, createCollectionPoiRelation, arg.CollectionID, arg.PoiID, arg.Index)
-	return err
+func (q *Queries) CreateCollectionPlaceRelation(ctx context.Context, arg CreateCollectionPlaceRelationParams) (CollectionsPlace, error) {
+	row := q.db.QueryRow(ctx, createCollectionPlaceRelation, arg.CollectionID, arg.PlaceID, arg.Index)
+	var i CollectionsPlace
+	err := row.Scan(&i.CollectionID, &i.PlaceID, &i.Index)
+	return i, err
 }
 
-const decrListIndexAfterDelete = `-- name: DecrListIndexAfterDelete :exec
+const decrementCollectionIndexAfterDelete = `-- name: DecrementCollectionIndexAfterDelete :execresult
 UPDATE collection_items
-SET 
-  list_index = list_index - 1
+SET
+  index = index - 1
 WHERE collection_id = $1 AND index > $2
 `
 
-type DecrListIndexAfterDeleteParams struct {
+type DecrementCollectionIndexAfterDeleteParams struct {
 	CollectionID string
 	Index        int32
 }
 
-func (q *Queries) DecrListIndexAfterDelete(ctx context.Context, arg DecrListIndexAfterDeleteParams) error {
-	_, err := q.db.Exec(ctx, decrListIndexAfterDelete, arg.CollectionID, arg.Index)
-	return err
+func (q *Queries) DecrementCollectionIndexAfterDelete(ctx context.Context, arg DecrementCollectionIndexAfterDeleteParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, decrementCollectionIndexAfterDelete, arg.CollectionID, arg.Index)
 }
 
-const deleteAllCollectionItems = `-- name: DeleteAllCollectionItems :exec
-DELETE FROM collection_items
+const findCollectionItemByCollectionIdAndPlaceId = `-- name: FindCollectionItemByCollectionIdAndPlaceId :one
+SELECT collection_id, place_id, index, created_at FROM collection_items
+WHERE collection_id = $1 AND place_id = $2
+LIMIT 1
+`
+
+type FindCollectionItemByCollectionIdAndPlaceIdParams struct {
+	CollectionID string
+	PlaceID      string
+}
+
+func (q *Queries) FindCollectionItemByCollectionIdAndPlaceId(ctx context.Context, arg FindCollectionItemByCollectionIdAndPlaceIdParams) (CollectionItem, error) {
+	row := q.db.QueryRow(ctx, findCollectionItemByCollectionIdAndPlaceId, arg.CollectionID, arg.PlaceID)
+	var i CollectionItem
+	err := row.Scan(
+		&i.CollectionID,
+		&i.PlaceID,
+		&i.Index,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const findCollectionLastIndexById = `-- name: FindCollectionLastIndexById :one
+SELECT
+  COALESCE(MAX(index), 0)
+FROM collection_items
 WHERE collection_id = $1
 `
 
-func (q *Queries) DeleteAllCollectionItems(ctx context.Context, collectionID string) error {
-	_, err := q.db.Exec(ctx, deleteAllCollectionItems, collectionID)
-	return err
+func (q *Queries) FindCollectionLastIndexById(ctx context.Context, collectionID string) (interface{}, error) {
+	row := q.db.QueryRow(ctx, findCollectionLastIndexById, collectionID)
+	var coalesce interface{}
+	err := row.Scan(&coalesce)
+	return coalesce, err
 }
 
-const deleteCollection = `-- name: DeleteCollection :exec
-DELETE FROM collections
-WHERE id = $1
-`
-
-func (q *Queries) DeleteCollection(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteCollection, id)
-	return err
-}
-
-const deleteCollectionItemAtIndex = `-- name: DeleteCollectionItemAtIndex :exec
-DELETE FROM collection_items
-WHERE collection_id = $1 AND index = $2
-`
-
-type DeleteCollectionItemAtIndexParams struct {
-	CollectionID string
-	Index        int32
-}
-
-func (q *Queries) DeleteCollectionItemAtIndex(ctx context.Context, arg DeleteCollectionItemAtIndexParams) error {
-	_, err := q.db.Exec(ctx, deleteCollectionItemAtIndex, arg.CollectionID, arg.Index)
-	return err
-}
-
-const getAllCityCollections = `-- name: GetAllCityCollections :many
+const findManyCollectionCityRelations = `-- name: FindManyCollectionCityRelations :many
 SELECT collection_id, city_id, index FROM collections_cities
 `
 
-func (q *Queries) GetAllCityCollections(ctx context.Context) ([]CollectionsCity, error) {
-	rows, err := q.db.Query(ctx, getAllCityCollections)
+func (q *Queries) FindManyCollectionCityRelations(ctx context.Context) ([]CollectionsCity, error) {
+	rows, err := q.db.Query(ctx, findManyCollectionCityRelations)
 	if err != nil {
 		return nil, err
 	}
@@ -226,43 +233,20 @@ func (q *Queries) GetAllCityCollections(ctx context.Context) ([]CollectionsCity,
 	return items, nil
 }
 
-const getAllPoiCollections = `-- name: GetAllPoiCollections :many
-SELECT collection_id, poi_id, index FROM collections_pois
-`
-
-func (q *Queries) GetAllPoiCollections(ctx context.Context) ([]CollectionsPoi, error) {
-	rows, err := q.db.Query(ctx, getAllPoiCollections)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []CollectionsPoi
-	for rows.Next() {
-		var i CollectionsPoi
-		if err := rows.Scan(&i.CollectionID, &i.PoiID, &i.Index); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getCollectionIds = `-- name: GetCollectionIds :many
+const findManyCollectionIds = `-- name: FindManyCollectionIds :many
 SELECT id FROM collections
+ORDER BY created_at DESC
 OFFSET $1
 LIMIT $2
 `
 
-type GetCollectionIdsParams struct {
+type FindManyCollectionIdsParams struct {
 	Offset int32
 	Limit  int32
 }
 
-func (q *Queries) GetCollectionIds(ctx context.Context, arg GetCollectionIdsParams) ([]string, error) {
-	rows, err := q.db.Query(ctx, getCollectionIds, arg.Offset, arg.Limit)
+func (q *Queries) FindManyCollectionIds(ctx context.Context, arg FindManyCollectionIdsParams) ([]string, error) {
+	rows, err := q.db.Query(ctx, findManyCollectionIds, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -281,13 +265,13 @@ func (q *Queries) GetCollectionIds(ctx context.Context, arg GetCollectionIdsPara
 	return items, nil
 }
 
-const getCollectionIdsForPoi = `-- name: GetCollectionIdsForPoi :many
-SELECT collection_id FROM collections_pois
-WHERE poi_id = $1
+const findManyCollectionIdsByCityId = `-- name: FindManyCollectionIdsByCityId :many
+SELECT collection_id FROM collections_cities
+WHERE city_id = $1
 `
 
-func (q *Queries) GetCollectionIdsForPoi(ctx context.Context, poiID string) ([]string, error) {
-	rows, err := q.db.Query(ctx, getCollectionIdsForPoi, poiID)
+func (q *Queries) FindManyCollectionIdsByCityId(ctx context.Context, cityID int32) ([]string, error) {
+	rows, err := q.db.Query(ctx, findManyCollectionIdsByCityId, cityID)
 	if err != nil {
 		return nil, err
 	}
@@ -306,76 +290,102 @@ func (q *Queries) GetCollectionIdsForPoi(ctx context.Context, poiID string) ([]s
 	return items, nil
 }
 
-const getCollectionItem = `-- name: GetCollectionItem :one
-SELECT collection_id, poi_id, index, created_at FROM collection_items
-WHERE collection_id = $1 AND poi_id = $2
-LIMIT 1
+const findManyCollectionIdsByPlaceId = `-- name: FindManyCollectionIdsByPlaceId :many
+SELECT collection_id FROM collections_places
+WHERE place_id = $1
 `
 
-type GetCollectionItemParams struct {
-	CollectionID string
-	PoiID        string
+func (q *Queries) FindManyCollectionIdsByPlaceId(ctx context.Context, placeID string) ([]string, error) {
+	rows, err := q.db.Query(ctx, findManyCollectionIdsByPlaceId, placeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var collection_id string
+		if err := rows.Scan(&collection_id); err != nil {
+			return nil, err
+		}
+		items = append(items, collection_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
-func (q *Queries) GetCollectionItem(ctx context.Context, arg GetCollectionItemParams) (CollectionItem, error) {
-	row := q.db.QueryRow(ctx, getCollectionItem, arg.CollectionID, arg.PoiID)
-	var i CollectionItem
-	err := row.Scan(
-		&i.CollectionID,
-		&i.PoiID,
-		&i.Index,
-		&i.CreatedAt,
-	)
-	return i, err
+const findManyCollectionPlaceRelations = `-- name: FindManyCollectionPlaceRelations :many
+SELECT collection_id, place_id, index FROM collections_places
+`
+
+func (q *Queries) FindManyCollectionPlaceRelations(ctx context.Context) ([]CollectionsPlace, error) {
+	rows, err := q.db.Query(ctx, findManyCollectionPlaceRelations)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CollectionsPlace
+	for rows.Next() {
+		var i CollectionsPlace
+		if err := rows.Scan(&i.CollectionID, &i.PlaceID, &i.Index); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
-const getCollections = `-- name: GetCollections :many
+const findManyCollections = `-- name: FindManyCollections :many
 SELECT 
   collections.id, collections.name, collections.description, collections.created_at,
   (SELECT json_agg(DISTINCT jsonb_build_object(
     'collectionId', items.collection_id,
-    'poiId', items.poi_id,
+    'placeId', items.place_id,
     'index', items.index,
     'createdAt', items.created_at
   ))
   FROM collection_items items
   WHERE items.collection_id = collections.id
   ) AS items,
-  (SELECT get_pois(
+  (SELECT get_places(
     ARRAY(
       SELECT 
-        DISTINCT poi_id 
+        DISTINCT place_id
       FROM collection_items 
       WHERE collection_id = collections.id
     )
-  )) AS pois
+  )) AS places
 FROM collections
 WHERE collections.id = ANY($1::TEXT[])
 GROUP BY collections.id
 `
 
-type GetCollectionsRow struct {
+type FindManyCollectionsRow struct {
 	Collection Collection
 	Items      []byte
-	Pois       []byte
+	Places     []byte
 }
 
-func (q *Queries) GetCollections(ctx context.Context, dollar_1 []string) ([]GetCollectionsRow, error) {
-	rows, err := q.db.Query(ctx, getCollections, dollar_1)
+func (q *Queries) FindManyCollections(ctx context.Context, dollar_1 []string) ([]FindManyCollectionsRow, error) {
+	rows, err := q.db.Query(ctx, findManyCollections, dollar_1)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetCollectionsRow
+	var items []FindManyCollectionsRow
 	for rows.Next() {
-		var i GetCollectionsRow
+		var i FindManyCollectionsRow
 		if err := rows.Scan(
 			&i.Collection.ID,
 			&i.Collection.Name,
 			&i.Collection.Description,
 			&i.Collection.CreatedAt,
 			&i.Items,
-			&i.Pois,
+			&i.Places,
 		); err != nil {
 			return nil, err
 		}
@@ -387,45 +397,16 @@ func (q *Queries) GetCollections(ctx context.Context, dollar_1 []string) ([]GetC
 	return items, nil
 }
 
-const getCollectionsIdsForCity = `-- name: GetCollectionsIdsForCity :many
-SELECT collection_id FROM collections_cities
-WHERE city_id = $1
+const removeCollectionById = `-- name: RemoveCollectionById :execresult
+DELETE FROM collections
+WHERE id = $1
 `
 
-func (q *Queries) GetCollectionsIdsForCity(ctx context.Context, cityID int32) ([]string, error) {
-	rows, err := q.db.Query(ctx, getCollectionsIdsForCity, cityID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []string
-	for rows.Next() {
-		var collection_id string
-		if err := rows.Scan(&collection_id); err != nil {
-			return nil, err
-		}
-		items = append(items, collection_id)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) RemoveCollectionById(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCollectionById, id)
 }
 
-const getLastIndexOfCollection = `-- name: GetLastIndexOfCollection :one
-SELECT COALESCE(MAX(list_index), 0)
-FROM collection_items
-WHERE collection_id = $1
-`
-
-func (q *Queries) GetLastIndexOfCollection(ctx context.Context, collectionID string) (interface{}, error) {
-	row := q.db.QueryRow(ctx, getLastIndexOfCollection, collectionID)
-	var coalesce interface{}
-	err := row.Scan(&coalesce)
-	return coalesce, err
-}
-
-const removeCollectionCityRelation = `-- name: RemoveCollectionCityRelation :exec
+const removeCollectionCityRelation = `-- name: RemoveCollectionCityRelation :execresult
 DELETE FROM collections_cities
 WHERE collection_id = $1 AND city_id = $2
 `
@@ -435,29 +416,50 @@ type RemoveCollectionCityRelationParams struct {
 	CityID       int32
 }
 
-func (q *Queries) RemoveCollectionCityRelation(ctx context.Context, arg RemoveCollectionCityRelationParams) error {
-	_, err := q.db.Exec(ctx, removeCollectionCityRelation, arg.CollectionID, arg.CityID)
-	return err
+func (q *Queries) RemoveCollectionCityRelation(ctx context.Context, arg RemoveCollectionCityRelationParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCollectionCityRelation, arg.CollectionID, arg.CityID)
 }
 
-const removeCollectionPoiRelation = `-- name: RemoveCollectionPoiRelation :exec
-DELETE FROM collections_pois
-WHERE collection_id = $1 AND poi_id = $2
+const removeCollectionItemByCollectionIdAndIndex = `-- name: RemoveCollectionItemByCollectionIdAndIndex :execresult
+DELETE FROM collection_items
+WHERE collection_id = $1 AND index = $2
 `
 
-type RemoveCollectionPoiRelationParams struct {
+type RemoveCollectionItemByCollectionIdAndIndexParams struct {
 	CollectionID string
-	PoiID        string
+	Index        int32
 }
 
-func (q *Queries) RemoveCollectionPoiRelation(ctx context.Context, arg RemoveCollectionPoiRelationParams) error {
-	_, err := q.db.Exec(ctx, removeCollectionPoiRelation, arg.CollectionID, arg.PoiID)
-	return err
+func (q *Queries) RemoveCollectionItemByCollectionIdAndIndex(ctx context.Context, arg RemoveCollectionItemByCollectionIdAndIndexParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCollectionItemByCollectionIdAndIndex, arg.CollectionID, arg.Index)
 }
 
-const updateCollection = `-- name: UpdateCollection :exec
+const removeCollectionItemsByCollectionId = `-- name: RemoveCollectionItemsByCollectionId :execresult
+DELETE FROM collection_items
+WHERE collection_id = $1
+`
+
+func (q *Queries) RemoveCollectionItemsByCollectionId(ctx context.Context, collectionID string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCollectionItemsByCollectionId, collectionID)
+}
+
+const removeCollectionPlaceRelation = `-- name: RemoveCollectionPlaceRelation :execresult
+DELETE FROM collections_places
+WHERE collection_id = $1 AND place_id = $2
+`
+
+type RemoveCollectionPlaceRelationParams struct {
+	CollectionID string
+	PlaceID      string
+}
+
+func (q *Queries) RemoveCollectionPlaceRelation(ctx context.Context, arg RemoveCollectionPlaceRelationParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeCollectionPlaceRelation, arg.CollectionID, arg.PlaceID)
+}
+
+const updateCollection = `-- name: UpdateCollection :execresult
 UPDATE collections
-SET 
+SET
   name = $1,
   description = $2
 WHERE id = $3
@@ -469,7 +471,6 @@ type UpdateCollectionParams struct {
 	ID          string
 }
 
-func (q *Queries) UpdateCollection(ctx context.Context, arg UpdateCollectionParams) error {
-	_, err := q.db.Exec(ctx, updateCollection, arg.Name, arg.Description, arg.ID)
-	return err
+func (q *Queries) UpdateCollection(ctx context.Context, arg UpdateCollectionParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateCollection, arg.Name, arg.Description, arg.ID)
 }

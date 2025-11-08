@@ -10,7 +10,7 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 
 export function Breadcrumb() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
 
   return (
     <ShadcnBreadcrumb>
@@ -28,10 +28,10 @@ export function Breadcrumb() {
             <Link
               to="/cities/$"
               params={{
-                _splat: `${poi.address.cityId}`,
+                _splat: `${place.address.cityId}`,
               }}
             >
-              {poi.address.city.name}
+              {place.address.city.name}
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -43,10 +43,10 @@ export function Breadcrumb() {
             <Link
               to="/search"
               search={{
-                category: poi.category.name,
+                category: place.category.name,
               }}
             >
-              {poi.category.name}
+              {place.category.name}
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -54,7 +54,7 @@ export function Breadcrumb() {
         <BreadcrumbSeparator />
 
         <BreadcrumbItem>
-          <BreadcrumbPage className="capitalize">{poi.name}</BreadcrumbPage>
+          <BreadcrumbPage className="capitalize">{place.name}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </ShadcnBreadcrumb>

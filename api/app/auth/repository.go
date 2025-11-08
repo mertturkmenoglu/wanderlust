@@ -21,7 +21,7 @@ func (r *Repository) get(ctx context.Context, id string) (*db.User, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetUserById(ctx, id)
+	res, err := r.db.FindUserById(ctx, id)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -38,7 +38,7 @@ func (r *Repository) getByEmail(ctx context.Context, email string) (*db.User, er
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetUserByEmail(ctx, email)
+	res, err := r.db.FindUserByEmail(ctx, email)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -55,7 +55,7 @@ func (r *Repository) getByUsername(ctx context.Context, username string) (*db.Us
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	res, err := r.db.GetUserByUsername(ctx, username)
+	res, err := r.db.FindUserByUsername(ctx, username)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -101,6 +101,10 @@ func (r *Repository) checkIfEmailOrUsernameIsTaken(ctx context.Context, email, u
 		return true, nil
 	}
 
+	if errors.Is(errEmail, ErrNotFound) && errors.Is(errUsername, ErrNotFound) {
+		return false, nil
+	}
+
 	return false, errors.Join(errEmail, errUsername)
 }
 
@@ -123,7 +127,7 @@ func (r *Repository) updatePassword(ctx context.Context, userId string, hashedPa
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	err := r.db.UpdateUserPassword(ctx, db.UpdateUserPasswordParams{
+	_, err := r.db.UpdateUserPassword(ctx, db.UpdateUserPasswordParams{
 		ID: userId,
 		PasswordHash: pgtype.Text{
 			String: hashedPassword,
@@ -145,7 +149,7 @@ func (r *Repository) getUserBySocialId(ctx context.Context, provider string, id 
 	switch provider {
 	case "google":
 		{
-			user, err := r.db.GetUserByGoogleId(ctx, pgtype.Text{
+			user, err := r.db.FindUserByGoogleId(ctx, pgtype.Text{
 				String: id,
 				Valid:  true,
 			})
@@ -163,7 +167,7 @@ func (r *Repository) getUserBySocialId(ctx context.Context, provider string, id 
 		}
 	case "facebook":
 		{
-			user, err := r.db.GetUserByFbId(ctx, pgtype.Text{
+			user, err := r.db.FindUserByFbId(ctx, pgtype.Text{
 				String: id,
 				Valid:  true,
 			})
@@ -190,7 +194,7 @@ func (r *Repository) updateSocialId(ctx context.Context, userId string, provider
 	switch provider {
 	case "google":
 		{
-			err := r.db.UpdateUserGoogleId(ctx, db.UpdateUserGoogleIdParams{
+			_, err := r.db.UpdateUserGoogleId(ctx, db.UpdateUserGoogleIdParams{
 				ID: userId,
 				GoogleID: pgtype.Text{
 					String: socialId,
@@ -206,7 +210,7 @@ func (r *Repository) updateSocialId(ctx context.Context, userId string, provider
 		}
 	case "facebook":
 		{
-			err := r.db.UpdateUserFbId(ctx, db.UpdateUserFbIdParams{
+			_, err := r.db.UpdateUserFbId(ctx, db.UpdateUserFbIdParams{
 				ID: userId,
 				FbID: pgtype.Text{
 					String: socialId,

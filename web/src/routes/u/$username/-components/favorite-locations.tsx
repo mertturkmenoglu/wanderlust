@@ -1,5 +1,5 @@
 import { Autocomplete } from '@/components/blocks/autocomplete';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
@@ -26,37 +26,41 @@ export function FavoriteLocations({ className }: Props) {
   const rootRoute = getRouteApi('/u/$username');
   const route = getRouteApi('/u/$username/');
   const { profile } = rootRoute.useLoaderData();
-  const { pois } = route.useLoaderData();
+  const { places } = route.useLoaderData();
   const invalidator = useInvalidator();
   const searchClient = useSearchClient();
 
   const form = useForm({
     defaultValues: {
-      pois,
+      places,
     },
   });
 
   const array = useFieldArray({
     control: form.control,
-    name: 'pois',
+    name: 'places',
   });
 
   useEffect(() => {
-    form.setValue('pois', pois);
-  }, [pois, form]);
+    form.setValue('places', places);
+  }, [places, form]);
 
   const [isEditMode, setIsEditMode] = useState(false);
 
   const auth = useContext(AuthContext);
   const isThisUser = auth.user?.username === profile.username;
 
-  const updateTopPoisMutation = api.useMutation('patch', '/api/v2/users/top', {
-    onSuccess: async () => {
-      await invalidator.invalidate();
-      toast.success('Successfully updated favorite locations');
-      setIsEditMode(false);
+  const updateTopPlacesMutation = api.useMutation(
+    'patch',
+    '/api/v2/users/top',
+    {
+      onSuccess: async () => {
+        await invalidator.invalidate();
+        toast.success('Successfully updated favorite locations');
+        setIsEditMode(false);
+      },
     },
-  });
+  );
 
   return (
     <div className={cn(className)}>
@@ -80,9 +84,9 @@ export function FavoriteLocations({ className }: Props) {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                updateTopPoisMutation.mutate({
+                updateTopPlacesMutation.mutate({
                   body: {
-                    poiIds: form.getValues('pois').map((poi) => poi.id),
+                    placeIds: form.getValues('places').map((place) => place.id),
                   },
                 });
               }}
@@ -102,10 +106,10 @@ export function FavoriteLocations({ className }: Props) {
           </div>
         )}
 
-        {isEditMode && form.watch('pois').length < 4 && (
+        {isEditMode && form.watch('places').length < 4 && (
           <div className="col-span-2">
             <InstantSearch
-              indexName="pois"
+              indexName="places"
               searchClient={searchClient}
               routing={false}
               future={{
@@ -134,10 +138,10 @@ export function FavoriteLocations({ className }: Props) {
                     return;
                   }
 
-                  updateTopPoisMutation.mutate({
+                  updateTopPlacesMutation.mutate({
                     body: {
-                      poiIds: [
-                        ...form.getValues('pois').map((poi) => poi.id),
+                      placeIds: [
+                        ...form.getValues('places').map((place) => place.id),
                         v.id,
                       ],
                     },
@@ -148,7 +152,7 @@ export function FavoriteLocations({ className }: Props) {
           </div>
         )}
 
-        {form.watch('pois').length === 0 && (
+        {form.watch('places').length === 0 && (
           <div className="flex flex-col items-center justify-center gap-4 col-span-full">
             <span className="text-muted-foreground">
               {isThisUser ? 'You' : 'This user'} haven&apos;t added any favorite
@@ -157,20 +161,20 @@ export function FavoriteLocations({ className }: Props) {
           </div>
         )}
 
-        {form.watch('pois').map((poi, i) => (
+        {form.watch('places').map((place, i) => (
           <Link
             to="/p/$id"
-            key={poi.id}
+            key={place.id}
             className={cn('flex flex-row items-center gap-4 justify-between', {
               'col-span-2': isEditMode,
             })}
             params={{
-              id: poi.id,
+              id: place.id,
             }}
           >
-            <PoiCard
-              key={poi.id}
-              poi={poi}
+            <PlaceCard
+              key={place.id}
+              place={place}
               hoverEffects={!isEditMode}
             />
 
@@ -191,7 +195,7 @@ export function FavoriteLocations({ className }: Props) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  disabled={i === form.watch('pois').length - 1}
+                  disabled={i === form.watch('places').length - 1}
                   onClick={(e) => {
                     e.preventDefault();
                     array.swap(i, i + 1);

@@ -20,8 +20,8 @@ function useWebsiteHostname(s: string): [string, boolean] {
 
 export function Information({ className }: Props) {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
-  const [host, ok] = useWebsiteHostname(poi.website ?? '');
+  const { place } = route.useLoaderData();
+  const [host, ok] = useWebsiteHostname(place.website ?? '');
 
   return (
     <div className={cn(className)}>
@@ -30,30 +30,30 @@ export function Information({ className }: Props) {
         <div className="font-medium">Address</div>
         <div className="text-muted-foreground text-sm">
           <div className="text-right">
-            {poi.address.line1} {poi.address.line2}
+            {place.address.line1} {place.address.line2}
             <br />
-            {poi.address.city.name}, {poi.address.city.state.name} /{' '}
-            {poi.address.city.country.name}
+            {place.address.city.name}, {place.address.city.state.name} /{' '}
+            {place.address.city.country.name}
             <br />
-            {poi.address.postalCode}
+            {place.address.postalCode}
           </div>
         </div>
 
-        {poi.phone && (
+        {place.phone && (
           <>
             <div className="font-medium">Phone</div>
             <div className="text-muted-foreground text-sm">
-              <div className="text-right">{poi.phone}</div>
+              <div className="text-right">{place.phone}</div>
             </div>
           </>
         )}
 
-        {poi.website && ok && (
+        {place.website && ok && (
           <>
             <div className="font-medium">Website</div>
             <div className="text-right break-all">
               <a
-                href={poi.website}
+                href={place.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline inline-flex items-center gap-1"

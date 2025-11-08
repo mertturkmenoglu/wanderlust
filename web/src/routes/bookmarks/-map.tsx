@@ -6,12 +6,12 @@ type Props = {
   bookmark: components['schemas']['GetUserBookmarksOutputBody']['bookmarks'][number];
 };
 
-export function BookmarkItemMap({ bookmark: { poi } }: Props) {
+export function BookmarkItemMap({ bookmark: { place } }: Props) {
   return (
     <MapContainer
       initialViewState={{
-        latitude: poi.address.lat,
-        longitude: poi.address.lng,
+        latitude: place.address.lat,
+        longitude: place.address.lng,
         zoom: 15,
       }}
       dragPan={false}
@@ -21,14 +21,14 @@ export function BookmarkItemMap({ bookmark: { poi } }: Props) {
         zIndex: 0,
         marginTop: '16px',
       }}
-      latitude={poi.address.lat}
-      longitude={poi.address.lng}
+      latitude={place.address.lat}
+      longitude={place.address.lng}
       minZoom={12}
       mapStyle={createStyle('streets-v2-light')}
     >
       <Marker
-        latitude={poi.address.lat}
-        longitude={poi.address.lng}
+        latitude={place.address.lat}
+        longitude={place.address.lng}
       />
     </MapContainer>
   );

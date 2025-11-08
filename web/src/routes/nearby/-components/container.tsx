@@ -1,6 +1,6 @@
 // oxlint-disable avoid-new
 import { AppMessage } from '@/components/blocks/app-message';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { useQuery } from '@tanstack/react-query';
@@ -100,12 +100,12 @@ export function Container() {
               {items.map((item) => (
                 <Link
                   to="/p/$id"
-                  key={item.poi.id}
+                  key={item.place.id}
                   params={{
-                    id: item.poi.id,
+                    id: item.place.id,
                   }}
                 >
-                  <PoiCard poi={item.poi} />
+                  <PlaceCard place={item.place} />
                 </Link>
               ))}
             </div>

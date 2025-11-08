@@ -43,7 +43,7 @@ export const Route = createFileRoute('/_admin/dashboard/cities/$id/edit/')({
 });
 
 function RouteComponent() {
-  const city = Route.useLoaderData();
+  const { city } = Route.useLoaderData();
   const [previewUrl, setPreviewUrl] = useState(city.image);
   const navigate = useNavigate();
   const invalidator = useInvalidator();
@@ -52,8 +52,8 @@ function RouteComponent() {
     resolver: zodResolver(schema),
     defaultValues: {
       ...city,
-      latitude: city.coordinates.latitude,
-      longitude: city.coordinates.longitude,
+      latitude: city.lat,
+      longitude: city.lng,
       stateCode: city.state.code,
       stateName: city.state.name,
       countryCode: city.country.code,
@@ -109,7 +109,17 @@ function RouteComponent() {
                 id: city.id,
               },
             },
-            body: data,
+            body: {
+              name: data.name,
+              stateCode: data.stateCode,
+              stateName: data.stateName,
+              countryCode: data.countryCode,
+              countryName: data.countryName,
+              image: data.image,
+              lat: data.latitude,
+              lng: data.longitude,
+              description: data.description,
+            },
           });
         })}
       >

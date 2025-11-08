@@ -14,12 +14,12 @@ type FollowPayload struct {
 }
 
 type FavoritePayload struct {
-	PoiName string `json:"poiName"`
-	PoiId   string `json:"poiId"`
+	PlaceName string `json:"placeName"`
+	PlaceID   string `json:"placeId"`
 }
 
 type ReviewPayload struct {
-	PoiName string `json:"poiName"`
-	PoiId   string `json:"poiId"`
-	Rating  int16  `json:"rating"`
+	PlaceName string `json:"placeName"`
+	PlaceID   string `json:"placeId"`
+	Rating    int16  `json:"rating"`
 }

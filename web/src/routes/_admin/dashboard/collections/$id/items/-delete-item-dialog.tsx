@@ -15,11 +15,11 @@ import { toast } from 'sonner';
 
 type Props = {
   collectionId: string;
-  poiName: string;
+  placeName: string;
   index: number;
 };
 
-export function DeleteItemDialog({ collectionId, poiName, index }: Props) {
+export function DeleteItemDialog({ collectionId, placeName, index }: Props) {
   const invalidator = useInvalidator();
 
   const mutation = api.useMutation(
@@ -51,7 +51,7 @@ export function DeleteItemDialog({ collectionId, poiName, index }: Props) {
           <div>
             Are you sure you want to remove this item from the collection?
           </div>
-          <div className="mt-2 font-bold">{poiName}</div>
+          <div className="mt-2 font-bold">{placeName}</div>
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>

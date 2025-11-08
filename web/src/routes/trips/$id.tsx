@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 const schema = z.object({
   showLocationDialog: z.boolean().optional(),
-  poiId: z.string().optional(),
+  placeId: z.string().optional(),
   isUpdate: z.boolean().optional(),
   description: z.string().optional(),
   scheduledTime: z.string().optional(),

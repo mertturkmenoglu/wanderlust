@@ -52,7 +52,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/amenities/": {
+    "/api/v2/assets/upload/": {
         parameters: {
             query?: never;
             header?: never;
@@ -60,12 +60,19 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Amenities
-         * @description Get all amenities
+         * Get Presigned URL
+         * @description Get a presigned URL for uploading an asset
          */
         get: {
             parameters: {
-                query?: never;
+                query: {
+                    /** @example default */
+                    bucket: "default" | "profile-images" | "banner-images" | "places" | "reviews" | "diaries";
+                    /** @example image */
+                    assetType: "image" | "video";
+                    /** @example png */
+                    fileExt: "jpg" | "png" | "webp" | "jpeg" | "mp4";
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -78,20 +85,11 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ListAmenitiesOutputBody"];
+                        "application/json": components["schemas"]["GetPresignedUrlOutputBody"];
                     };
                 };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
+                /** @description Error */
+                default: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -102,276 +100,11 @@ export interface paths {
             };
         };
         put?: never;
-        /**
-         * Create Amenity
-         * @description Create a new amenity
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateAmenityInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CreateAmenityOutputBody"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Conflict */
-                409: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Unprocessable Entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/api/v2/amenities/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Amenity
-         * @description Delete an amenity by id
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of the amenity
-                     * @example 15
-                     */
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Unprocessable Entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        /**
-         * Update Amenity
-         * @description Update an amenity by id
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of the amenity
-                     * @example 15
-                     */
-                    id: number;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateAmenityInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateAmenityOutputBody"];
-                    };
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Not Found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Unprocessable Entity */
-                422: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-                /** @description Internal Server Error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
         trace?: never;
     };
     "/api/v2/auth/credentials/login": {
@@ -1024,7 +757,7 @@ export interface paths {
         put?: never;
         /**
          * Create Bookmark
-         * @description Create a bookmark for a point of interest
+         * @description Create a bookmark for a place
          */
         post: {
             parameters: {
@@ -1113,7 +846,7 @@ export interface paths {
         post?: never;
         /**
          * Delete Bookmark
-         * @description Delete a bookmark for a point of interest
+         * @description Delete a bookmark for a place
          */
         delete: {
             parameters: {
@@ -1121,7 +854,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description Place ID
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -1537,7 +1270,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["CitiesListOutputBody"];
+                        "application/json": components["schemas"]["ListCitiesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -1621,7 +1354,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["CitiesFeaturedOutputBody"];
+                        "application/json": components["schemas"]["ListFeaturedCitiesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -2134,7 +1867,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/collections/poi/all": {
+    "/api/v2/collections/place/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -2142,8 +1875,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get All POI Collections
-         * @description Get all POI collections
+         * Get All Place Collections
+         * @description Get all Place collections
          */
         get: {
             parameters: {
@@ -2160,7 +1893,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetAllPoiCollectionsOutputBody"];
+                        "application/json": components["schemas"]["GetAllPlaceCollectionsOutputBody"];
                     };
                 };
                 /** @description Bad Request */
@@ -2227,7 +1960,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/collections/poi/{id}": {
+    "/api/v2/collections/place/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -2235,8 +1968,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Collections For a POI
-         * @description Get collections for a POI
+         * Get Collections For a Place
+         * @description Get collections for a Place
          */
         get: {
             parameters: {
@@ -2244,7 +1977,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -2259,7 +1992,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetCollectionsForPoiOutputBody"];
+                        "application/json": components["schemas"]["GetCollectionsForPlaceOutputBody"];
                     };
                 };
                 /** @description Bad Request */
@@ -3037,7 +2770,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/collections/{id}/poi/{poiId}": {
+    "/api/v2/collections/{id}/place/{placeId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -3047,8 +2780,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Create Collection POI Relation
-         * @description Create collection POI relation
+         * Create Collection Place Relation
+         * @description Create collection Place relation
          */
         post: {
             parameters: {
@@ -3061,10 +2794,10 @@ export interface paths {
                      */
                     id: string;
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
-                    poiId: string;
+                    placeId: string;
                 };
                 cookie?: never;
             };
@@ -3134,8 +2867,8 @@ export interface paths {
             };
         };
         /**
-         * Delete Collection POI Relation
-         * @description Delete collection POI relation
+         * Delete Collection Place Relation
+         * @description Delete collection Place relation
          */
         delete: {
             parameters: {
@@ -3148,10 +2881,10 @@ export interface paths {
                      */
                     id: string;
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
-                    poiId: string;
+                    placeId: string;
                 };
                 cookie?: never;
             };
@@ -3220,654 +2953,6 @@ export interface paths {
                 };
             };
         };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/diary/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Diaries
-         * @description List diaries for the current user
-         */
-        get: {
-            parameters: {
-                query?: {
-                    /**
-                     * @description Page number
-                     * @example 2
-                     */
-                    page?: number;
-                    /**
-                     * @description Page size
-                     * @example 20
-                     */
-                    pageSize?: number;
-                    /**
-                     * @description Start date of the date range
-                     * @example 2023-01-01
-                     */
-                    from?: string;
-                    /**
-                     * @description End date of the date range
-                     * @example 2024-01-01
-                     */
-                    to?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetDiariesOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Create Diary
-         * @description Create a diary
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["CreateDiaryInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["CreateDiaryOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/diary/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Diary
-         * @description Get a diary by ID
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetDiaryByIdOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        /**
-         * Delete Diary
-         * @description Delete a diary
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        /**
-         * Update Diary
-         * @description Update a diary
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of the diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateDiaryInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateDiaryOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/diary/{id}/friends": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update Diary Friends
-         * @description Update a diary friends
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of the diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateDiaryFriendsInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateDiaryFriendsOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/diary/{id}/image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Upload Image to a Diary
-         * @description Add image to a diary
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UploadDiaryImageInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UploadDiaryImageOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update Diary Image
-         * @description Update a diary image
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateDiaryImageInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateDiaryImageOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/diary/{id}/image/{imageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Diary Image
-         * @description Delete a diary image
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description ID of media
-                     * @example 123
-                     */
-                    imageId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/diary/{id}/locations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update Diary Locations
-         * @description Update a diary locations
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of the diary entry
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateDiaryLocationsInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateDiaryLocationsOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/export/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get List of Exports
-         * @description Get list of exports
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetListOfExportsOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        /**
-         * Start New Export Task
-         * @description Start a new export task
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["StartNewExportTaskInputBody"];
-                };
-            };
-            responses: {
-                /** @description Accepted */
-                202: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["StartNewExportTaskOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/export/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Export Metadata
-         * @description Get export metadata
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description Export ID
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["GetExportByIdOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3910,7 +2995,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetUserFavoritesOutputBody"];
+                        "application/json": components["schemas"]["GetCurrentUserFavoritesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -3927,7 +3012,7 @@ export interface paths {
         put?: never;
         /**
          * Create Favorite
-         * @description Create a favorite for a point of interest
+         * @description Favorite a place
          */
         post: {
             parameters: {
@@ -3980,7 +3065,7 @@ export interface paths {
         post?: never;
         /**
          * Delete Favorite
-         * @description Delete a favorite for a point of interest
+         * @description Remove a place from favorites
          */
         delete: {
             parameters: {
@@ -3988,7 +3073,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description Place ID
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -4063,7 +3148,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetUserFavoritesOutputBody"];
+                        "application/json": components["schemas"]["GetUserFavoritesByUsernameOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4112,59 +3197,6 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["HealthOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/images/upload/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Presigned URL
-         * @description Get a presigned URL for uploading an image
-         */
-        get: {
-            parameters: {
-                query: {
-                    /** @example default */
-                    bucket: "default" | "profile-images" | "banner-images" | "pois" | "reviews" | "diaries";
-                    /** @example png */
-                    fileExt: "jpg" | "png" | "webp" | "jpeg";
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["PresignedUrlOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4281,7 +3313,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/lists/status/{poiId}": {
+    "/api/v2/lists/status/{placeId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -4289,15 +3321,15 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Check if List Includes POI
-         * @description Check if list includes given poi id
+         * Check if List Includes a Place
+         * @description Check if list includes given place id
          */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    poiId: string;
+                    placeId: string;
                 };
                 cookie?: never;
             };
@@ -4604,7 +3636,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/pois/peek": {
+    "/api/v2/places/peek": {
         parameters: {
             query?: never;
             header?: never;
@@ -4612,8 +3644,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Peek Point of Interests
-         * @description Get 25 pois
+         * Peek Places
+         * @description Get 25 places
          */
         get: {
             parameters: {
@@ -4630,7 +3662,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["PeekPoisOutputBody"];
+                        "application/json": components["schemas"]["PeekPlacesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4652,7 +3684,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/pois/{id}": {
+    "/api/v2/places/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -4660,8 +3692,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Point of Interest
-         * @description Get a point of interest by ID
+         * Get Place
+         * @description Get a place by ID
          */
         get: {
             parameters: {
@@ -4669,7 +3701,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -4684,7 +3716,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetPoiByIdOutputBody"];
+                        "application/json": components["schemas"]["GetPlaceByIdOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4706,7 +3738,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/pois/{id}/address": {
+    "/api/v2/places/{id}/address": {
         parameters: {
             query?: never;
             header?: never;
@@ -4720,8 +3752,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update Point of Interest Address
-         * @description Update a point of interest address
+         * Update Place Address
+         * @description Update a place address
          */
         patch: {
             parameters: {
@@ -4729,7 +3761,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of POI
+                     * @description ID of the place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -4738,7 +3770,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdatePoiAddressInputBody"];
+                    "application/json": components["schemas"]["UpdatePlaceAddressInputBody"];
                 };
             };
             responses: {
@@ -4748,7 +3780,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdatePoiAddressOutputBody"];
+                        "application/json": components["schemas"]["UpdatePlaceAddressOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4764,7 +3796,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/pois/{id}/amenities": {
+    "/api/v2/places/{id}/amenities": {
         parameters: {
             query?: never;
             header?: never;
@@ -4778,8 +3810,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update Point of Interest Amenities
-         * @description Update a point of interest amenities
+         * Update Place Amenities
+         * @description Update a place amenities
          */
         patch: {
             parameters: {
@@ -4787,7 +3819,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of POI
+                     * @description ID of the place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -4796,7 +3828,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdatePoiAmenitiesInputBody"];
+                    "application/json": components["schemas"]["UpdatePlaceAmenitiesInputBody"];
                 };
             };
             responses: {
@@ -4806,7 +3838,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdatePoiAmenitiesOutputBody"];
+                        "application/json": components["schemas"]["UpdatePlaceAmenitiesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4822,7 +3854,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/pois/{id}/hours": {
+    "/api/v2/places/{id}/hours": {
         parameters: {
             query?: never;
             header?: never;
@@ -4836,8 +3868,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update Point of Interest Hours
-         * @description Update a point of interest hours
+         * Update Place Hours
+         * @description Update a place hours
          */
         patch: {
             parameters: {
@@ -4845,7 +3877,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of POI
+                     * @description ID of Place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -4854,7 +3886,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdatePoiHoursInputBody"];
+                    "application/json": components["schemas"]["UpdatePlaceHoursInputBody"];
                 };
             };
             responses: {
@@ -4864,7 +3896,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdatePoiHoursOutputBody"];
+                        "application/json": components["schemas"]["UpdatePlaceHoursOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -4880,65 +3912,7 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/pois/{id}/images": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Upload Point of Interest Image
-         * @description Upload a point of interest image
-         */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of POI
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UploadPoiImageInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UploadPoiImageOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v2/pois/{id}/images/reorder": {
+    "/api/v2/places/{id}/info": {
         parameters: {
             query?: never;
             header?: never;
@@ -4952,8 +3926,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Reorder Point of Interest Images
-         * @description Reorder a point of interest images
+         * Update Place General Information
+         * @description Update a place general information
          */
         patch: {
             parameters: {
@@ -4961,7 +3935,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of POI
+                     * @description ID of Place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -4970,7 +3944,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["ReorderPoiImagesInputBody"];
+                    "application/json": components["schemas"]["UpdatePlaceInfoInputBody"];
                 };
             };
             responses: {
@@ -4980,169 +3954,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ReorderPoiImagesOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/pois/{id}/images/{imageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Point of Interest Image
-         * @description Delete a point of interest image
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of POI
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description ID of image
-                     * @example 1
-                     */
-                    imageId: number;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        /**
-         * Update Point of Interest Image
-         * @description Update a point of interest image
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of POI
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                    /**
-                     * @description ID of image
-                     * @example 7323488
-                     */
-                    imageId: number;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdatePoiImageInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdatePoiImageOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
-    "/api/v2/pois/{id}/info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update Point of Interest General Information
-         * @description Update a point of interest general information
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description ID of POI
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdatePoiInfoInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdatePoiInfoOutputBody"];
+                        "application/json": components["schemas"]["UpdatePlaceInfoOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -5284,7 +4096,7 @@ export interface paths {
                     reporterId?: string;
                     /**
                      * @description Type of the resource
-                     * @example poi
+                     * @example place
                      */
                     resourceType?: string;
                     /**
@@ -5516,7 +4328,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/reviews/poi/{id}": {
+    "/api/v2/reviews/place/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -5524,8 +4336,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Reviews by POI ID
-         * @description Get reviews by POI ID
+         * Get Reviews by Place ID
+         * @description Get reviews by Place ID
          */
         get: {
             parameters: {
@@ -5564,7 +4376,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -5579,7 +4391,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetReviewsByPoiIdOutputBody"];
+                        "application/json": components["schemas"]["GetReviewsByPlaceIdOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -5601,7 +4413,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/reviews/poi/{id}/images": {
+    "/api/v2/reviews/place/{id}/assets": {
         parameters: {
             query?: never;
             header?: never;
@@ -5609,8 +4421,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get POI Reviews Images
-         * @description Get images of the POI reviews
+         * Get Place Reviews Assets
+         * @description Get assets of the Place reviews
          */
         get: {
             parameters: {
@@ -5618,7 +4430,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -5633,7 +4445,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetReviewImagesByPoiIdOutputBody"];
+                        "application/json": components["schemas"]["GetReviewAssetsByPlaceIdOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -5655,7 +4467,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/reviews/poi/{id}/ratings": {
+    "/api/v2/reviews/place/{id}/ratings": {
         parameters: {
             query?: never;
             header?: never;
@@ -5663,8 +4475,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get POI ratings
-         * @description Get ratings for a POI
+         * Get Place ratings
+         * @description Get ratings for a Place
          */
         get: {
             parameters: {
@@ -5672,7 +4484,7 @@ export interface paths {
                 header?: never;
                 path: {
                     /**
-                     * @description ID of point of interest
+                     * @description ID of place
                      * @example 7323488942953598976
                      */
                     id: string;
@@ -5687,7 +4499,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetRatingsByPoiIdOutputBody"];
+                        "application/json": components["schemas"]["GetRatingsByPlaceIdOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -5866,7 +4678,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/reviews/{id}/media": {
+    "/api/v2/reviews/{id}/asset": {
         parameters: {
             query?: never;
             header?: never;
@@ -5876,8 +4688,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Upload Media for a Review
-         * @description Upload media for a review
+         * Upload Asset for a Review
+         * @description Upload asset for a review
          */
         post: {
             parameters: {
@@ -5894,7 +4706,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UploadReviewMediaInputBody"];
+                    "application/json": components["schemas"]["UploadReviewAssetInputBody"];
                 };
             };
             responses: {
@@ -5904,7 +4716,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UploadReviewMediaOutputBody"];
+                        "application/json": components["schemas"]["UploadReviewAssetOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -6199,64 +5011,6 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/v2/trips/{id}/amenities": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Manage Trip Amenities
-         * @description Manage trip amenities by trip id
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description Trip ID
-                     * @example 7323488942953598976
-                     */
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateTripAmenitiesInputBody"];
-                };
-            };
-            responses: {
-                /** @description Created */
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateTripAmenitiesOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
     "/api/v2/trips/{id}/comments/": {
         parameters: {
             query?: never;
@@ -6476,7 +5230,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/trips/{id}/locations": {
+    "/api/v2/trips/{id}/places": {
         parameters: {
             query?: never;
             header?: never;
@@ -6486,8 +5240,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Add Location to Trip
-         * @description Add a location to a trip
+         * Add Place to Trip
+         * @description Add a place to a trip
          */
         post: {
             parameters: {
@@ -6504,7 +5258,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["CreateTripLocationInputBody"];
+                    "application/json": components["schemas"]["CreateTripPlaceInputBody"];
                 };
             };
             responses: {
@@ -6514,7 +5268,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["CreateTripLocationOutputBody"];
+                        "application/json": components["schemas"]["CreateTripPlaceOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -6802,110 +5556,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v2/trips/{tripId}/locations/{locationId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Remove Trip Location
-         * @description Remove a trip location
-         */
-        delete: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description Trip ID
-                     * @example 7323488942953598976
-                     */
-                    tripId: string;
-                    /**
-                     * @description Location ID
-                     * @example 7323488942953598976
-                     */
-                    locationId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description No Content */
-                204: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        options?: never;
-        head?: never;
-        /**
-         * Update Trip Location
-         * @description Update a trip location
-         */
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    /**
-                     * @description Trip ID
-                     * @example 7323488942953598976
-                     */
-                    tripId: string;
-                    /**
-                     * @description Location ID
-                     * @example 7323488942953598976
-                     */
-                    locationId: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["UpdateTripLocationInputBody"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["UpdateTripLocationOutputBody"];
-                    };
-                };
-                /** @description Error */
-                default: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/problem+json": components["schemas"]["ErrorModel"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
     "/api/v2/trips/{tripId}/participants/{participantId}": {
         parameters: {
             query?: never;
@@ -6961,6 +5611,110 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v2/trips/{tripId}/places/{tripPlaceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove Trip Place
+         * @description Remove a trip place
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Trip place ID
+                     * @example 7323488942953598976
+                     */
+                    tripPlaceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Update Trip Place
+         * @description Update a trip place
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /**
+                     * @description Trip ID
+                     * @example 7323488942953598976
+                     */
+                    tripId: string;
+                    /**
+                     * @description Trip Place ID
+                     * @example 7323488942953598976
+                     */
+                    tripPlaceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTripPlaceInputBody"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["UpdateTripPlaceOutputBody"];
+                    };
+                };
+                /** @description Error */
+                default: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": components["schemas"]["ErrorModel"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/v2/users/follow/{username}": {
@@ -7045,7 +5799,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdateUserProfileImageInputBody"];
+                    "application/json": components["schemas"]["UpdateUserImageInputBody"];
                 };
             };
             responses: {
@@ -7055,7 +5809,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdateUserProfileImageOutputBody"];
+                        "application/json": components["schemas"]["UpdateUserImageOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -7195,8 +5949,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Update User Top Point of Interests
-         * @description Update user top point of interests
+         * Update User Top Places
+         * @description Update user top places
          */
         patch: {
             parameters: {
@@ -7207,7 +5961,7 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["UpdateUserTopPoisInputBody"];
+                    "application/json": components["schemas"]["UpdateUserTopPlacesInputBody"];
                 };
             };
             responses: {
@@ -7217,7 +5971,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UpdateUserTopPoisOutputBody"];
+                        "application/json": components["schemas"]["UpdateUserTopPlacesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -7511,8 +6265,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get User Top Point of Interests
-         * @description Get user top point of interests by username
+         * Get User Top Places
+         * @description Get user top places by username
          */
         get: {
             parameters: {
@@ -7535,7 +6289,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["GetUserTopPoisOutputBody"];
+                        "application/json": components["schemas"]["GetUserTopPlacesOutputBody"];
                     };
                 };
                 /** @description Error */
@@ -7565,338 +6319,451 @@ export interface components {
             city: components["schemas"]["City"];
             /**
              * Format: int32
-             * @description ID of city of address of point of interest
+             * @description ID of city of address of the place
+             * @example 1234
              */
             cityId: number;
             /**
              * Format: int32
-             * @description ID of address of point of interest
+             * @description ID of address of the place
+             * @example 1234
              */
             id: number;
             /**
              * Format: double
-             * @description Latitude of address of point of interest
+             * @description Latitude of the place
+             * @example 12.3456
              */
             lat: number;
-            /** @description Line 1 of address of point of interest */
+            /**
+             * @description Line 1 of address of the place
+             * @example Example Street
+             */
             line1: string;
-            /** @description Line 2 of address of point of interest */
+            /**
+             * @description Line 2 of address of the place
+             * @example Example Street
+             */
             line2: string | null;
             /**
              * Format: double
-             * @description Longitude of address of point of interest
+             * @description Longitude of the place
+             * @example 12.3456
              */
             lng: number;
-            /** @description Postal code of address of point of interest */
+            /**
+             * @description Postal code of address of the place
+             * @example 12345
+             */
             postalCode: string | null;
         };
-        Amenity: {
+        Asset: {
             /**
-             * Format: int32
-             * @description ID of the amenity
+             * @description Type of the asset
+             * @example image
+             */
+            assetType: string;
+            /**
+             * Format: date-time
+             * @description Created at time of the asset
+             * @example 2023-05-01T00:00:00Z
+             */
+            createdAt: string;
+            /**
+             * @description Description of the asset
+             * @example An image of the place
+             */
+            description: string | null;
+            /**
+             * @description ID of the related entity
+             * @example 7323488942953598976
+             */
+            entityId: string;
+            /**
+             * @description Type of the related entity
+             * @example place
+             */
+            entityType: string;
+            /**
+             * Format: int64
+             * @description ID of the asset
+             * @example 1
              */
             id: number;
-            /** @description Name of the amenity */
-            name: string;
+            /**
+             * Format: int32
+             * @description Order of the asset
+             * @example 1
+             */
+            order: number;
+            /**
+             * Format: date-time
+             * @description Updated at time of the asset
+             * @example 2023-05-01T00:00:00Z
+             */
+            updatedAt: string;
+            /**
+             * @description URL of the asset
+             * @example https://example.com/media.jpg
+             */
+            url: string;
         };
         Bookmark: {
             /**
              * Format: date-time
              * @description Created at time of bookmark
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             /**
-             * Format: int32
+             * Format: int64
              * @description ID of bookmark
+             * @example 1234
              */
             id: number;
-            poi: components["schemas"]["Poi"];
-            /** @description ID of point of interest */
-            poiId: string;
-            /** @description ID of user */
+            place: components["schemas"]["Place"];
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
+            /**
+             * @description ID of user
+             * @example 7323488942953598976
+             */
             userId: string;
         };
         Category: {
             /**
              * Format: int32
              * @description ID of the category
+             * @example 4
              */
             id: number;
-            /** @description Image URL */
+            /**
+             * @description Image URL
+             * @example https://example.com/image.jpg
+             */
             image: string;
-            /** @description Name of the category */
+            /**
+             * @description Name of the category
+             * @example Natural landmarks
+             */
             name: string;
         };
         ChangePasswordInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/ChangePasswordInputBody.json
              */
             readonly $schema?: string;
-            /** @description Confirm password of the user */
+            /**
+             * @description Confirm password of the user
+             * @example newpassword123
+             */
             confirmPassword: string;
-            /** @description Current password of the user */
+            /**
+             * @description Current password of the user
+             * @example password123
+             */
             currentPassword: string;
-            /** @description New password of the user */
+            /**
+             * @description New password of the user
+             * @example newpassword123
+             */
             newPassword: string;
         };
-        CitiesFeaturedOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            cities: components["schemas"]["City"][];
-        };
-        CitiesListOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            cities: components["schemas"]["City"][];
-        };
         City: {
-            coordinates: components["schemas"]["CityCoordinates"];
             country: components["schemas"]["CityCountry"];
-            /** @description City description */
+            /**
+             * @description City description
+             * @example A big metropolis.
+             */
             description: string;
             /**
              * Format: int32
              * @description City ID
+             * @example 8102
              */
             id: number;
             image: string;
-            /** @description City name */
-            name: string;
-            state: components["schemas"]["CityState"];
-        };
-        CityCoordinates: {
             /**
              * Format: double
              * @description Latitude
+             * @example 40.7128
              */
-            latitude: number;
+            lat: number;
             /**
              * Format: double
              * @description Longitude
+             * @example -74.006
              */
-            longitude: number;
+            lng: number;
+            /**
+             * @description City name
+             * @example New York
+             */
+            name: string;
+            state: components["schemas"]["CityState"];
         };
         CityCountry: {
-            /** @description Country code */
+            /**
+             * @description Country code
+             * @example US
+             */
             code: string;
-            /** @description Country name */
+            /**
+             * @description Country name
+             * @example United States
+             */
             name: string;
         };
         CityState: {
-            /** @description State code */
+            /**
+             * @description State code
+             * @example NY
+             */
             code: string;
-            /** @description State name */
+            /**
+             * @description State name
+             * @example New York
+             */
             name: string;
         };
         Collection: {
             /**
              * Format: date-time
              * @description Created at time of collection
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
-            /** @description Description of collection */
+            /**
+             * @description Description of collection
+             * @example My collection description
+             */
             description: string;
-            /** @description ID of collection */
+            /**
+             * @description ID of collection
+             * @example 7323488942953598976
+             */
             id: string;
             items: components["schemas"]["CollectionItem"][];
-            /** @description Name of collection */
+            /**
+             * @description Name of collection
+             * @example My collection
+             */
             name: string;
         };
         CollectionItem: {
-            /** @description ID of collection */
+            /**
+             * @description ID of the collection
+             * @example 7323488942953598976
+             */
             collectionId: string;
             /**
              * Format: date-time
              * @description Created at time of collection item
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             /**
              * Format: int32
              * @description Index of collection item in the list
+             * @example 1
              */
             index: number;
-            poi: components["schemas"]["Poi"];
-            /** @description ID of point of interest */
-            poiId: string;
-        };
-        CreateAmenityInputBody: {
+            place: components["schemas"]["Place"];
             /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
+             * @description ID of the place
+             * @example 7323488942953598976
              */
-            readonly $schema?: string;
-            /** @description Name of the amenity */
-            name: string;
-        };
-        CreateAmenityOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /**
-             * Format: int32
-             * @description ID of the amenity
-             */
-            id: number;
-            /** @description Name of the amenity */
-            name: string;
+            placeId: string;
         };
         CreateBookmarkInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateBookmarkInputBody.json
              */
             readonly $schema?: string;
-            /** @description ID of point of interest */
-            poiId: string;
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
         };
         CreateBookmarkOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateBookmarkOutputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: date-time
              * @description Created at time of bookmark
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             /**
-             * Format: int32
+             * Format: int64
              * @description ID of bookmark
+             * @example 1234
              */
             id: number;
-            /** @description ID of point of interest */
-            poiId: string;
-            /** @description ID of user */
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
+            /**
+             * @description ID of user
+             * @example 7323488942953598976
+             */
             userId: string;
         };
         CreateCategoryInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCategoryInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: int32
              * @description ID of the category
+             * @example 4
              */
             id: number;
             /**
              * Format: uri
              * @description Image URL
+             * @example https://example.com/image.jpg
              */
             image: string;
-            /** @description Name of the category */
+            /**
+             * @description Name of the category
+             * @example Natural landmarks
+             */
             name: string;
         };
         CreateCategoryOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCategoryOutputBody.json
              */
             readonly $schema?: string;
-            /**
-             * Format: int32
-             * @description ID of the category
-             */
-            id: number;
-            /** @description Image URL */
-            image: string;
-            /** @description Name of the category */
-            name: string;
+            category: components["schemas"]["Category"];
         };
         CreateCityInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCityInputBody.json
              */
             readonly $schema?: string;
-            /** @description Country code */
+            /**
+             * @description Country code
+             * @example US
+             */
             countryCode: string;
-            /** @description Country name */
+            /**
+             * @description Country name
+             * @example United States
+             */
             countryName: string;
-            /** @description City description */
+            /**
+             * @description City description
+             * @example A big metropolis.
+             */
             description: string;
             /**
              * Format: int32
              * @description City ID
+             * @example 8102
              */
             id: number;
             /**
              * Format: uri
              * @description Image URL
+             * @example https://example.com/image.jpg
              */
             image: string;
             /**
              * Format: double
              * @description Latitude
+             * @example 40.7128
              */
-            latitude: number;
+            lat: number;
             /**
              * Format: double
              * @description Longitude
+             * @example -74.006
              */
-            longitude: number;
-            /** @description City name */
+            lng: number;
+            /**
+             * @description City name
+             * @example New York
+             */
             name: string;
-            /** @description State code */
+            /**
+             * @description State code
+             * @example NY
+             */
             stateCode: string;
-            /** @description State name */
+            /**
+             * @description State name
+             * @example New York
+             */
             stateName: string;
         };
         CreateCityOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCityOutputBody.json
              */
             readonly $schema?: string;
-            coordinates: components["schemas"]["CityCoordinates"];
-            country: components["schemas"]["CityCountry"];
-            /** @description City description */
-            description: string;
-            /**
-             * Format: int32
-             * @description City ID
-             */
-            id: number;
-            image: string;
-            /** @description City name */
-            name: string;
-            state: components["schemas"]["CityState"];
+            city: components["schemas"]["City"];
         };
         CreateCollectionInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCollectionInputBody.json
              */
             readonly $schema?: string;
-            /** @description Description of the collection */
+            /**
+             * @description Description of the collection
+             * @example My collection description
+             */
             description: string;
-            /** @description Name of the collection */
+            /**
+             * @description Name of the collection
+             * @example My collection
+             */
             name: string;
         };
         CreateCollectionItemInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCollectionItemInputBody.json
              */
             readonly $schema?: string;
-            /** @description ID of point of interest */
-            poiId: string;
+            /**
+             * @description ID of place
+             * @example 7323488942953598976
+             */
+            placeId: string;
         };
         CreateCollectionItemOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCollectionItemOutputBody.json
              */
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
@@ -7905,66 +6772,59 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateCollectionOutputBody.json
              */
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
-        };
-        CreateDiaryInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /**
-             * Format: date-time
-             * @description The date of the diary entry
-             */
-            date: string;
-            /** @description The title of the diary entry */
-            title: string;
-        };
-        CreateDiaryOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
         };
         CreateFavoriteInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateFavoriteInputBody.json
              */
             readonly $schema?: string;
-            /** @description ID of point of interest */
-            poiId: string;
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
         };
         CreateFavoriteOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateFavoriteOutputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: date-time
              * @description Created at time of favorite
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             /**
-             * Format: int32
+             * Format: int64
              * @description ID of favorite
+             * @example 1234
              */
             id: number;
-            /** @description ID of point of interest */
-            poiId: string;
-            /** @description ID of user */
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
+            /**
+             * @description ID of user
+             * @example 7323488942953598976
+             */
             userId: string;
         };
         CreateListInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateListInputBody.json
              */
             readonly $schema?: string;
             isPublic: boolean;
@@ -7974,35 +6834,46 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateListItemInputBody.json
              */
             readonly $schema?: string;
-            poiId: string;
+            placeId: string;
         };
         CreateListItemOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateListItemOutputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: date-time
              * @description Created at time of list item
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             /**
              * Format: int32
-             * @description Index of the POI in the list
+             * @description Index of the Place in the list
+             * @example 1
              */
             index: number;
-            /** @description ID of the list */
+            /**
+             * @description ID of the list
+             * @example 7323488942953598976
+             */
             listId: string;
-            /** @description ID of the POI */
-            poiId: string;
+            /**
+             * @description ID of the Place
+             * @example 7323488942953598976
+             */
+            placeId: string;
         };
         CreateListOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateListOutputBody.json
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
@@ -8011,24 +6882,36 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateReportInputBody.json
              */
             readonly $schema?: string;
-            /** @description Description of the report */
+            /**
+             * @description Description of the report
+             * @example Lorem ipsum dolor sit amet
+             */
             description: string;
             /**
              * Format: int32
              * @description Reason for the report
+             * @example 1
              */
             reason: number;
-            /** @description ID of the resource */
+            /**
+             * @description ID of the resource
+             * @example 564457817990234127
+             */
             resourceId: string;
-            /** @description Type of the resource */
+            /**
+             * @description Type of the resource
+             * @example place
+             */
             resourceType: string;
         };
         CreateReportOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateReportOutputBody.json
              */
             readonly $schema?: string;
             report: components["schemas"]["Report"];
@@ -8037,15 +6920,23 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateReviewInputBody.json
              */
             readonly $schema?: string;
-            /** @description Content of the review */
+            /**
+             * @description Content of the review
+             * @example Lorem ipsum dolor sit amet
+             */
             content: string;
-            /** @description ID of point of interest */
-            poiId: string;
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
             /**
              * Format: int32
              * @description Rating of the review
+             * @example 1
              */
             rating: number;
         };
@@ -8053,6 +6944,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateReviewOutputBody.json
              */
             readonly $schema?: string;
             review: components["schemas"]["Review"];
@@ -8061,15 +6953,20 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripCommentInputBody.json
              */
             readonly $schema?: string;
-            /** @description Content of comment */
+            /**
+             * @description Content of comment
+             * @example This is a comment
+             */
             content: string;
         };
         CreateTripCommentOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripCommentOutputBody.json
              */
             readonly $schema?: string;
             comment: components["schemas"]["TripComment"];
@@ -8078,24 +6975,34 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripInputBody.json
              */
             readonly $schema?: string;
-            /** @description Description of the trip */
+            /**
+             * @description Description of the trip
+             * @example Lorem ipsum dolor sit amet
+             */
             description: string;
             /**
              * Format: date-time
              * @description End datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             endAt: string;
             /**
              * Format: date-time
              * @description Start datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             startAt: string;
-            /** @description Title of the trip */
+            /**
+             * @description Title of the trip
+             * @example My Awesome Trip
+             */
             title: string;
             /**
              * @description Visibility level of the trip
+             * @example friends
              * @enum {string}
              */
             visibility: "public" | "private" | "friends";
@@ -8104,129 +7011,71 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripInviteInputBody.json
              */
             readonly $schema?: string;
             /**
              * @description Role of invite
+             * @example participant
              * @enum {string}
              */
             role: "participant" | "editor";
-            /** @description User ID */
+            /**
+             * @description User ID
+             * @example 7323488942953598976
+             */
             toId: string;
         };
         CreateTripInviteOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripInviteOutputBody.json
              */
             readonly $schema?: string;
             invite: components["schemas"]["TripInvite"];
-        };
-        CreateTripLocationInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Description of the location */
-            description?: string | null;
-            /** @description Point of Interest ID */
-            poiId: string;
-            /**
-             * Format: date-time
-             * @description Scheduled time of the location visit
-             */
-            scheduledTime: string;
-        };
-        CreateTripLocationOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            location: components["schemas"]["TripLocation"];
         };
         CreateTripOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripOutputBody.json
              */
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
         };
-        Diary: {
+        CreateTripPlaceInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripPlaceInputBody.json
+             */
+            readonly $schema?: string;
+            /**
+             * @description Description of the location
+             * @example My awesome location
+             */
+            description?: string | null;
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
             /**
              * Format: date-time
-             * @description The created at time of the diary entry
+             * @description Scheduled time of the location visit
+             * @example 2023-05-01T00:00:00Z
              */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description The date of the diary entry
-             */
-            date: string;
-            /** @description The description of the diary entry */
-            description: string;
-            friends: components["schemas"]["DiaryUser"][];
-            /** @description The ID of the diary entry */
-            id: string;
-            images: components["schemas"]["DiaryImage"][];
-            locations: components["schemas"]["DiaryLocation"][];
-            /** @description Whether the diary entry is shared with friends or not */
-            shareWithFriends: boolean;
-            /** @description The title of the diary entry */
-            title: string;
-            /**
-             * Format: date-time
-             * @description The updated at time of the diary entry
-             */
-            updatedAt: string;
-            user: components["schemas"]["DiaryUser"];
-            /** @description The ID of the user */
-            userId: string;
+            scheduledTime: string;
         };
-        DiaryImage: {
+        CreateTripPlaceOutputBody: {
             /**
-             * Format: date-time
-             * @description The created at time of the media
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/CreateTripPlaceOutputBody.json
              */
-            createdAt: string;
-            /** @description The ID of the diary entry */
-            diaryId: string;
-            /**
-             * Format: int64
-             * @description The ID of the media
-             */
-            id: number;
-            /**
-             * Format: int32
-             * @description The media order of the media
-             */
-            index: number;
-            /** @description The URL of the media */
-            url: string;
-        };
-        DiaryLocation: {
-            /** @description The description of the location */
-            description: string | null;
-            /**
-             * Format: int32
-             * @description The list index of the location
-             */
-            index: number;
-            poi: components["schemas"]["Poi"];
-            /** @description Point of Interest ID */
-            poiId: string;
-        };
-        DiaryUser: {
-            /** @description User full name */
-            fullName: string;
-            /** @description User ID */
-            id: string;
-            /** @description Profile image URL of the user */
-            profileImage: string | null;
-            /** @description Username */
-            username: string;
+            readonly $schema?: string;
+            place: components["schemas"]["TripPlace"];
         };
         ErrorDetail: {
             /** @description Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id' */
@@ -8240,76 +7089,71 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/ErrorModel.json
              */
             readonly $schema?: string;
-            /** @description A human-readable explanation specific to this occurrence of the problem. */
+            /**
+             * @description A human-readable explanation specific to this occurrence of the problem.
+             * @example Property foo is required but is missing.
+             */
             detail?: string;
             /** @description Optional list of individual error details */
             errors?: components["schemas"]["ErrorDetail"][];
             /**
              * Format: uri
              * @description A URI reference that identifies the specific occurrence of the problem.
+             * @example https://example.com/error-log/abc123
              */
             instance?: string;
             /**
              * Format: int64
              * @description HTTP status code
+             * @example 400
              */
             status?: number;
-            /** @description A short, human-readable summary of the problem type. This value should not change between occurrences of the error. */
+            /**
+             * @description A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+             * @example Bad Request
+             */
             title?: string;
             /**
              * Format: uri
              * @description A URI reference to human-readable documentation for the error.
              * @default about:blank
+             * @example https://example.com/errors/example
              */
             type: string;
-        };
-        ExportTaskMetadata: {
-            /**
-             * Format: date-time
-             * @description Created at time of export
-             */
-            createdAt: string;
-            /** @description Error of export */
-            error: string | null;
-            /** @description File of export */
-            file: string | null;
-            /** @description ID of export */
-            id: string;
-            /** @description IDs of exported data */
-            ids: string[];
-            /** @description Which data to include */
-            include: string[];
-            /**
-             * Format: int32
-             * @description Progress of export
-             */
-            progress: number;
-            /** @description Status of export */
-            status: string;
         };
         Favorite: {
             /**
              * Format: date-time
              * @description Created at time of favorite
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             /**
              * Format: int32
              * @description ID of favorite
+             * @example 1234
              */
             id: number;
-            poi: components["schemas"]["Poi"];
-            /** @description ID of point of interest */
-            poiId: string;
-            /** @description ID of user */
+            place: components["schemas"]["Place"];
+            /**
+             * @description ID of the place
+             * @example 7323488942953598976
+             */
+            placeId: string;
+            /**
+             * @description ID of user
+             * @example 7323488942953598976
+             */
             userId: string;
         };
         FollowUserOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/FollowUserOutputBody.json
              */
             readonly $schema?: string;
             isFollowing: boolean;
@@ -8318,6 +7162,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetAllCityCollectionsOutputBody.json
              */
             readonly $schema?: string;
             collections: components["schemas"]["Collection"][];
@@ -8326,15 +7171,17 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetAllListsOfUserOutputBody.json
              */
             readonly $schema?: string;
             lists: components["schemas"]["List"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
-        GetAllPoiCollectionsOutputBody: {
+        GetAllPlaceCollectionsOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetAllPlaceCollectionsOutputBody.json
              */
             readonly $schema?: string;
             collections: components["schemas"]["Collection"][];
@@ -8343,6 +7190,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetAllTripsOutputBody.json
              */
             readonly $schema?: string;
             pagination: components["schemas"]["PaginationInfo"];
@@ -8352,26 +7200,16 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetCityByIdOutputBody.json
              */
             readonly $schema?: string;
-            coordinates: components["schemas"]["CityCoordinates"];
-            country: components["schemas"]["CityCountry"];
-            /** @description City description */
-            description: string;
-            /**
-             * Format: int32
-             * @description City ID
-             */
-            id: number;
-            image: string;
-            /** @description City name */
-            name: string;
-            state: components["schemas"]["CityState"];
+            city: components["schemas"]["City"];
         };
         GetCollectionByIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetCollectionByIdOutputBody.json
              */
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
@@ -8380,14 +7218,16 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetCollectionsForCityOutputBody.json
              */
             readonly $schema?: string;
             collections: components["schemas"]["Collection"][];
         };
-        GetCollectionsForPoiOutputBody: {
+        GetCollectionsForPlaceOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetCollectionsForPlaceOutputBody.json
              */
             readonly $schema?: string;
             collections: components["schemas"]["Collection"][];
@@ -8396,56 +7236,36 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetCollectionsOutputBody.json
              */
             readonly $schema?: string;
             collections: components["schemas"]["Collection"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
-        GetDiariesOutputBody: {
+        GetCurrentUserFavoritesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetCurrentUserFavoritesOutputBody.json
              */
             readonly $schema?: string;
-            diaries: components["schemas"]["Diary"][];
+            favorites: components["schemas"]["Favorite"][];
             pagination: components["schemas"]["PaginationInfo"];
-        };
-        GetDiaryByIdOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
-        };
-        GetExportByIdOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            export: components["schemas"]["ExportTaskMetadata"];
         };
         GetListByIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetListByIdOutputBody.json
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
-        };
-        GetListOfExportsOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            exports: components["schemas"]["ExportTaskMetadata"][];
         };
         GetListStatusesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetListStatusesOutputBody.json
              */
             readonly $schema?: string;
             statuses: components["schemas"]["ListStatus"][];
@@ -8454,89 +7274,160 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetMeOutputBody.json
              */
             readonly $schema?: string;
-            /** @description Banner image of the user */
+            /**
+             * @description Banner image of the user
+             * @example https://example.com/banner.jpg
+             */
             bannerImage: string | null;
-            /** @description Bio of the user */
+            /**
+             * @description Bio of the user
+             * @example Lorem ipsum
+             */
             bio: string | null;
             /**
              * Format: date-time
              * @description Creation date of the user
+             * @example 2023-01-01T00:00:00Z
              */
             createdAt: string;
-            /** @description Email of the user */
+            /**
+             * @description Email of the user
+             * @example john@example.com
+             */
             email: string;
-            /** @description Facebook ID of the user */
+            /**
+             * @description Facebook ID of the user
+             * @example 1234567890
+             */
             facebookId: string | null;
             /**
              * Format: int32
              * @description Number of followers
+             * @example 100
              */
             followersCount: number;
             /**
              * Format: int32
              * @description Number of following
+             * @example 50
              */
             followingCount: number;
-            /** @description Full name of the user */
+            /**
+             * @description Full name of the user
+             * @example John Doe
+             */
             fullName: string;
-            /** @description Google ID of the user */
+            /**
+             * @description Google ID of the user
+             * @example 1234567890
+             */
             googleId: string | null;
-            /** @description ID of the user */
+            /**
+             * @description ID of the user
+             * @example 564457817990234127
+             */
             id: string;
-            /** @description Is the user verified */
+            /**
+             * @description Is the user verified
+             * @example false
+             */
             isVerified: boolean;
-            /** @description Profile image of the user */
+            /**
+             * @description Profile image of the user
+             * @example https://example.com/profile.jpg
+             */
             profileImage: string | null;
-            /** @description Pronouns of the user */
-            pronouns: string | null;
-            /** @description The user's role */
+            /**
+             * @description The user's role
+             * @example user
+             */
             role: string;
             /**
              * Format: date-time
              * @description Last update date of the user
+             * @example 2023-01-01T00:00:00Z
              */
             updatedAt: string;
-            /** @description Username of the user */
+            /**
+             * @description Username of the user
+             * @example johndoe
+             */
             username: string;
-            /** @description Website of the user */
-            website: string | null;
         };
         GetMyTripInvitesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetMyTripInvitesOutputBody.json
              */
             readonly $schema?: string;
             invites: components["schemas"]["TripInvite"][];
         };
-        GetPoiByIdMeta: {
+        GetPlaceByIdMeta: {
             isBookmarked: boolean;
             isFavorite: boolean;
         };
-        GetPoiByIdOutputBody: {
+        GetPlaceByIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetPlaceByIdOutputBody.json
              */
             readonly $schema?: string;
-            meta: components["schemas"]["GetPoiByIdMeta"];
-            poi: components["schemas"]["Poi"];
+            meta: components["schemas"]["GetPlaceByIdMeta"];
+            place: components["schemas"]["Place"];
+        };
+        GetPresignedUrlOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetPresignedUrlOutputBody.json
+             */
+            readonly $schema?: string;
+            /**
+             * @description Bucket of the asset
+             * @example default
+             */
+            bucket: string;
+            /**
+             * @description File extension of the asset
+             * @example png
+             */
+            fileExtension: string;
+            /**
+             * @description File name of the asset
+             * @example 7323488942953598976.png
+             */
+            fileName: string;
+            /**
+             * @description ID of the asset
+             * @example 7323488942953598976
+             */
+            id: string;
+            /**
+             * @description URL of asset upload endpoint
+             * @example https://example.com/image.jpg
+             */
+            url: string;
         };
         GetPublicListsOfUserOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetPublicListsOfUserOutputBody.json
              */
             readonly $schema?: string;
             lists: components["schemas"]["List"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
-        GetRatingsByPoiIdOutputBody: {
+        GetRatingsByPlaceIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetRatingsByPlaceIdOutputBody.json
              */
             readonly $schema?: string;
             ratings: {
@@ -8549,6 +7440,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetReportByIdOutputBody.json
              */
             readonly $schema?: string;
             report: components["schemas"]["Report"];
@@ -8557,31 +7449,35 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetReportsOutputBody.json
              */
             readonly $schema?: string;
             pagination: components["schemas"]["PaginationInfo"];
             reports: components["schemas"]["Report"][];
         };
+        GetReviewAssetsByPlaceIdOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetReviewAssetsByPlaceIdOutputBody.json
+             */
+            readonly $schema?: string;
+            assets: components["schemas"]["Asset"][];
+        };
         GetReviewByIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetReviewByIdOutputBody.json
              */
             readonly $schema?: string;
             review: components["schemas"]["Review"];
         };
-        GetReviewImagesByPoiIdOutputBody: {
+        GetReviewsByPlaceIdOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            images: components["schemas"]["ReviewImage"][];
-        };
-        GetReviewsByPoiIdOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetReviewsByPlaceIdOutputBody.json
              */
             readonly $schema?: string;
             pagination: components["schemas"]["PaginationInfo"];
@@ -8591,6 +7487,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetReviewsByUsernameOutputBody.json
              */
             readonly $schema?: string;
             pagination: components["schemas"]["PaginationInfo"];
@@ -8600,6 +7497,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetTripByIdOutputBody.json
              */
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
@@ -8608,6 +7506,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetTripCommentsOutputBody.json
              */
             readonly $schema?: string;
             comments: components["schemas"]["TripComment"][];
@@ -8617,6 +7516,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetTripInviteDetailsOutputBody.json
              */
             readonly $schema?: string;
             inviteDetail: components["schemas"]["TripInviteDetail"];
@@ -8625,6 +7525,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetTripInvitesByTripIdOutputBody.json
              */
             readonly $schema?: string;
             invites: components["schemas"]["TripInvite"][];
@@ -8633,6 +7534,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserActivitiesOutputBody.json
              */
             readonly $schema?: string;
             activities: {
@@ -8643,15 +7545,17 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserBookmarksOutputBody.json
              */
             readonly $schema?: string;
             bookmarks: components["schemas"]["Bookmark"][];
             pagination: components["schemas"]["PaginationInfo"];
         };
-        GetUserFavoritesOutputBody: {
+        GetUserFavoritesByUsernameOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserFavoritesByUsernameOutputBody.json
              */
             readonly $schema?: string;
             favorites: components["schemas"]["Favorite"][];
@@ -8661,6 +7565,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserFollowersOutputBody.json
              */
             readonly $schema?: string;
             followers: components["schemas"]["Profile"][];
@@ -8669,6 +7574,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserFollowingOutputBody.json
              */
             readonly $schema?: string;
             following: components["schemas"]["Profile"][];
@@ -8677,6 +7583,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserProfileOutputBody.json
              */
             readonly $schema?: string;
             meta: components["schemas"]["GetUserProfileOutputMeta"];
@@ -8685,87 +7592,102 @@ export interface components {
         GetUserProfileOutputMeta: {
             isFollowing: boolean;
         };
-        GetUserTopPoisOutputBody: {
+        GetUserTopPlacesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/GetUserTopPlacesOutputBody.json
              */
             readonly $schema?: string;
-            pois: components["schemas"]["Poi"][];
+            places: components["schemas"]["Place"][];
         };
         HealthOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/HealthOutputBody.json
              */
             readonly $schema?: string;
-            /** @description Health message of the API */
+            /**
+             * @description Health message of the API
+             * @example OK
+             */
             message: string;
         };
         HomeAggregatorOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/HomeAggregatorOutputBody.json
              */
             readonly $schema?: string;
-            favorites: components["schemas"]["Poi"][];
-            featured: components["schemas"]["Poi"][];
-            new: components["schemas"]["Poi"][];
-            popular: components["schemas"]["Poi"][];
-        };
-        Image: {
-            /** @description Alt text of image */
-            alt: string;
-            /**
-             * Format: int64
-             * @description Image ID
-             */
-            id: number;
-            /**
-             * Format: int32
-             * @description Order of image
-             */
-            index: number;
-            /** @description Image URL */
-            url: string;
+            favorites: components["schemas"]["Place"][];
+            featured: components["schemas"]["Place"][];
+            new: components["schemas"]["Place"][];
+            popular: components["schemas"]["Place"][];
         };
         List: {
             /**
              * Format: date-time
              * @description Date and time when the list was created
+             * @example 2021-01-01T00:00:00Z
              */
             createdAt: string;
-            /** @description ID of the list */
+            /**
+             * @description ID of the list
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Whether the list is public or not */
+            /**
+             * @description Whether the list is public or not
+             * @example true
+             */
             isPublic: boolean;
             items: components["schemas"]["ListItem"][];
-            /** @description Name of the list */
+            /**
+             * @description Name of the list
+             * @example My List
+             */
             name: string;
             /**
              * Format: date-time
              * @description Date and time when the list was last updated
+             * @example 2021-01-01T00:00:00Z
              */
             updatedAt: string;
             user: components["schemas"]["ListUser"];
-            /** @description ID of the user that owns the list */
-            userId: string;
-        };
-        ListAmenitiesOutputBody: {
             /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
+             * @description ID of the user that owns the list
+             * @example 7323488942953598976
              */
-            readonly $schema?: string;
-            amenities: components["schemas"]["Amenity"][];
+            userId: string;
         };
         ListCategoriesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/ListCategoriesOutputBody.json
              */
             readonly $schema?: string;
             categories: components["schemas"]["Category"][];
+        };
+        ListCitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/ListCitiesOutputBody.json
+             */
+            readonly $schema?: string;
+            cities: components["schemas"]["City"][];
+        };
+        ListFeaturedCitiesOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/ListFeaturedCitiesOutputBody.json
+             */
+            readonly $schema?: string;
+            cities: components["schemas"]["City"][];
         };
         ListItem: {
             /** Format: date-time */
@@ -8773,314 +7695,410 @@ export interface components {
             /** Format: int32 */
             index: number;
             listId: string;
-            poi: components["schemas"]["Poi"];
-            poiId: string;
+            place: components["schemas"]["Place"];
+            placeId: string;
         };
         ListStatus: {
-            /** @description ID of the list */
+            /**
+             * @description ID of the list
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Whether the POI is included in the list */
+            /**
+             * @description Whether the POI is included in the list
+             * @example true
+             */
             includes: boolean;
-            /** @description Name of the list */
+            /**
+             * @description Name of the list
+             * @example My List
+             */
             name: string;
         };
         ListUser: {
-            /** @description Full name of the user */
+            /**
+             * @description Full name of the user
+             * @example John Doe
+             */
             fullName: string;
-            /** @description ID of the user */
+            /**
+             * @description ID of the user
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Profile image of the user */
+            /**
+             * @description Profile image of the user
+             * @example https://example.com/profile.jpg
+             */
             profileImage: string | null;
-            /** @description Username of the user */
+            /**
+             * @description Username of the user
+             * @example johndoe
+             */
             username: string;
         };
         LoginInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/LoginInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: email
              * @description Email of the user
+             * @example john@example.com
              */
             email: string;
-            /** @description Password of the user */
+            /**
+             * @description Password of the user
+             * @example strongpassword123
+             */
             password: string;
         };
         LoginOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/LoginOutputBody.json
              */
             readonly $schema?: string;
-            /** @description JWT token for the user */
+            /**
+             * @description JWT token for the user
+             * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+             */
             token: string;
         };
         MakeUserVerifiedOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/MakeUserVerifiedOutputBody.json
              */
             readonly $schema?: string;
             isVerified: boolean;
         };
         NewOrderItem: {
-            /** Format: int32 */
+            /**
+             * Format: int32
+             * @example 1
+             */
             listIndex: number;
-            poiId: string;
-        };
-        OpenClose: {
-            /** @description Closing time of POI in 24H format */
-            closesAt: string;
-            /** @description Opening time of POI in 24H format */
-            opensAt: string;
+            /** @example 7323488942953598976 */
+            placeId: string;
         };
         PaginationInfo: {
-            /** @description Has next page */
+            /**
+             * @description Has next page
+             * @example true
+             */
             hasNext: boolean;
-            /** @description Has previous page */
+            /**
+             * @description Has previous page
+             * @example false
+             */
             hasPrevious: boolean;
             /**
              * Format: int32
              * @description Page number
+             * @example 1
              */
             page: number;
             /**
              * Format: int32
              * @description Page size
+             * @example 10
              */
             pageSize: number;
             /**
              * Format: int64
              * @description Total pages
+             * @example 10
              */
             totalPages: number;
             /**
              * Format: int64
              * @description Total records
+             * @example 100
              */
             totalRecords: number;
         };
-        PeekPoisOutputBody: {
+        PeekPlacesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/PeekPlacesOutputBody.json
              */
             readonly $schema?: string;
-            pois: components["schemas"]["Poi"][];
+            places: components["schemas"]["Place"][];
         };
-        Poi: {
+        Place: {
             /**
              * Format: int32
-             * @description Accessibility level of point of interest
+             * @description Accessibility level of the place
+             * @example 2
              */
             accessibilityLevel: number;
             address: components["schemas"]["Address"];
             /**
              * Format: int32
-             * @description ID of address of point of interest
+             * @description ID of address of the place
+             * @example 123456789
              */
             addressId: number;
-            amenities: components["schemas"]["Amenity"][];
+            amenities: {
+                [key: string]: string | null;
+            };
+            assets: components["schemas"]["Asset"][];
             category: components["schemas"]["Category"];
             /**
              * Format: int32
-             * @description ID of category of point of interest
+             * @description ID of category of the place
+             * @example 1
              */
             categoryId: number;
             /**
              * Format: date-time
-             * @description Created at time of point of interest
+             * @description Created at time of the place
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
-            /** @description Description of point of interest */
+            /**
+             * @description Description of the place
+             * @example The Great Wall of China is a series of fortifications built along the northern borders of China to protect against the northern invasions.
+             */
             description: string;
             hours: {
-                [key: string]: components["schemas"]["OpenClose"];
+                [key: string]: string | null;
             };
-            /** @description ID of point of interest */
+            /**
+             * @description ID of the place
+             * @example 7323488942953598976
+             */
             id: string;
-            images: components["schemas"]["Image"][];
-            /** @description Name of point of interest */
+            /**
+             * @description Name of the place
+             * @example The Great Wall of China
+             */
             name: string;
-            /** @description Phone number of point of interest */
+            /**
+             * @description Phone number of the place
+             * @example +989123456789
+             */
             phone: string | null;
             /**
              * Format: int32
-             * @description Price level of point of interest
+             * @description Price level of the place
+             * @example 2
              */
             priceLevel: number;
             /**
              * Format: int32
-             * @description Total favorites of point of interest
+             * @description Total favorites of the place
+             * @example 100
              */
             totalFavorites: number;
             /**
              * Format: int32
-             * @description Total points of point of interest
+             * @description Total points of the place
+             * @example 100
              */
             totalPoints: number;
             /**
              * Format: int32
-             * @description Total votes of point of interest
+             * @description Total votes of the place
+             * @example 100
              */
             totalVotes: number;
             /**
              * Format: date-time
-             * @description Updated at time of point of interest
+             * @description Updated at time of the place
+             * @example 2023-05-01T00:00:00Z
              */
             updatedAt: string;
-            /** @description Website of point of interest */
+            /**
+             * @description Website of the place
+             * @example https://example.com
+             */
             website: string | null;
         };
-        PresignedUrlOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Bucket of image */
-            bucket: string;
-            /** @description File extension of image */
-            fileExtension: string;
-            /** @description File name of image */
-            fileName: string;
-            /** @description ID of image */
-            id: string;
-            /** @description URL of image upload endpoint */
-            url: string;
-        };
         Profile: {
-            /** @description Banner image of user */
+            /**
+             * @description Banner image of user
+             * @example https://example.com/banner.jpg
+             */
             bannerImage: string | null;
-            /** @description Bio of user */
+            /**
+             * @description Bio of user
+             * @example Lorem ipsum
+             */
             bio: string | null;
             /**
              * Format: date-time
              * @description Created at time of user
+             * @example 2023-01-01T00:00:00Z
              */
             createdAt: string;
             /**
              * Format: int32
              * @description Number of followers
+             * @example 100
              */
             followersCount: number;
             /**
              * Format: int32
              * @description Number of following
+             * @example 50
              */
             followingCount: number;
-            /** @description Full name of user */
+            /**
+             * @description Full name of user
+             * @example John Doe
+             */
             fullName: string;
-            /** @description ID of user */
+            /**
+             * @description ID of user
+             * @example 564457817990234127
+             */
             id: string;
-            /** @description Is user a business account */
-            isBusinessAccount: boolean;
-            /** @description Is user verified */
+            /**
+             * @description Is user verified
+             * @example false
+             */
             isVerified: boolean;
-            /** @description Phone number of user */
-            phone: string | null;
-            /** @description Profile image of user */
+            /**
+             * @description Profile image of user
+             * @example https://example.com/profile.jpg
+             */
             profileImage: string | null;
-            /** @description Pronouns of user */
-            pronouns: string | null;
-            /** @description Username of user */
+            /**
+             * @description Username of user
+             * @example johndoe
+             */
             username: string;
-            /** @description Website of user */
-            website: string | null;
         };
         RegisterInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/RegisterInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: email
              * @description Email of the user
+             * @example john@example.com
              */
             email: string;
-            /** @description Full name of the user */
+            /**
+             * @description Full name of the user
+             * @example John Doe
+             */
             fullName: string;
-            /** @description Password of the user */
+            /**
+             * @description Password of the user
+             * @example password123
+             */
             password: string;
-            /** @description Username of the user */
+            /**
+             * @description Username of the user
+             * @example johndoe
+             */
             username: string;
         };
         RegisterOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/RegisterOutputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: date-time
              * @description Creation date of the user
+             * @example 2023-01-01T00:00:00Z
              */
             createdAt: string;
-            /** @description Email of the user */
+            /**
+             * @description Email of the user
+             * @example john@example.com
+             */
             email: string;
-            /** @description Full name of the user */
+            /**
+             * @description Full name of the user
+             * @example John Doe
+             */
             fullName: string;
-            /** @description ID of the user */
+            /**
+             * @description ID of the user
+             * @example 564457817990234127
+             */
             id: string;
             /**
              * Format: date-time
              * @description Last update date of the user
+             * @example 2023-01-01T00:00:00Z
              */
             updatedAt: string;
-            /** @description Username of the user */
+            /**
+             * @description Username of the user
+             * @example johndoe
+             */
             username: string;
-        };
-        ReorderPoiImagesInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description IDs of images */
-            images: number[];
-        };
-        ReorderPoiImagesOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
         };
         Report: {
             /**
              * Format: date-time
              * @description Date the report was created
+             * @example 2023-01-01T00:00:00Z
              */
             createdAt: string;
-            /** @description Description of the report */
+            /**
+             * @description Description of the report
+             * @example Lorem ipsum dolor sit amet
+             */
             description: string | null;
-            /** @description ID of the report */
+            /**
+             * @description ID of the report
+             * @example 564457817990234127
+             */
             id: string;
             /**
              * Format: int32
              * @description Reason for the report
+             * @example 1
              */
             reason: number;
-            /** @description ID of the reporter */
+            /**
+             * @description ID of the reporter
+             * @example 564457817990234127
+             */
             reporterId: string | null;
-            /** @description Whether the report is resolved */
+            /**
+             * @description Whether the report is resolved
+             * @example false
+             */
             resolved: boolean;
             /**
              * Format: date-time
              * @description Date the report was resolved
+             * @example 2023-01-01T00:00:00Z
              */
             resolvedAt: string | null;
-            /** @description ID of the resource */
+            /**
+             * @description ID of the resource
+             * @example 564457817990234127
+             */
             resourceId: string;
-            /** @description Type of the resource */
+            /**
+             * @description Type of the resource
+             * @example poi
+             */
             resourceType: string;
             /**
              * Format: date-time
              * @description Date the report was last updated
+             * @example 2023-01-01T00:00:00Z
              */
             updatedAt: string;
         };
@@ -9088,66 +8106,86 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/ResetPasswordInputBody.json
              */
             readonly $schema?: string;
-            /** @description Verification code */
+            /**
+             * @description Verification code
+             * @example 123456
+             */
             code: string;
             /**
              * Format: email
              * @description Email of the user
+             * @example john@example.com
              */
             email: string;
-            /** @description New password of the user */
+            /**
+             * @description New password of the user
+             * @example newpassword123
+             */
             newPassword: string;
         };
         Review: {
-            /** @description Content of the review */
+            assets: components["schemas"]["Asset"][];
+            /**
+             * @description Content of the review
+             * @example Lorem ipsum dolor sit amet
+             */
             content: string;
             /**
              * Format: date-time
              * @description Created at time of review
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
-            /** @description ID of review */
+            /**
+             * @description Review ID
+             * @example 7323488942953598976
+             */
             id: string;
-            images: components["schemas"]["ReviewImage"][];
-            poi: components["schemas"]["Poi"];
-            /** @description ID of point of interest */
-            poiId: string;
+            place: components["schemas"]["ReviewPlace"];
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
             /**
              * Format: int32
              * @description Rating of the review
+             * @example 1
              */
             rating: number;
             /**
              * Format: date-time
              * @description Updated at time of review
+             * @example 2023-05-01T00:00:00Z
              */
             updatedAt: string;
             user: components["schemas"]["Profile"];
-            /** @description ID of user */
+            /**
+             * @description User ID
+             * @example 7323488942953598976
+             */
             userId: string;
         };
-        ReviewImage: {
+        ReviewPlace: {
             /**
-             * Format: int64
-             * @description ID of media of review
+             * @description ID of the place
+             * @example 7323488942953598976
              */
-            id: number;
+            id: string;
             /**
-             * Format: int32
-             * @description Media order of media of review
+             * @description Name of the place
+             * @example The Great Wall of China
              */
-            index: number;
-            /** @description ID of review */
-            reviewId: string;
-            /** @description URL of media of review */
-            url: string;
+            name: string;
         };
         SearchReportsOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/SearchReportsOutputBody.json
              */
             readonly $schema?: string;
             pagination: components["schemas"]["PaginationInfo"];
@@ -9157,6 +8195,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/SearchUserFollowingOutputBody.json
              */
             readonly $schema?: string;
             friends: components["schemas"]["Profile"][];
@@ -9165,111 +8204,143 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/SendForgotPasswordEmailInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: email
              * @description Email of the user
+             * @example john@example.com
              */
             email: string;
-        };
-        StartNewExportTaskInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Which data to include */
-            include: string[];
-            /** @description IDs of the POIs to export */
-            poiIds: string[];
-        };
-        StartNewExportTaskOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            task: components["schemas"]["ExportTaskMetadata"];
         };
         Trip: {
             /**
              * Format: date-time
              * @description Created at time of trip
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
-            /** @description Description of the trip */
+            /**
+             * @description Description of the trip
+             * @example Lorem ipsum dolor sit amet
+             */
             description: string;
             /**
              * Format: date-time
              * @description End datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             endAt: string;
-            /** @description Trip ID */
+            /**
+             * @description Trip ID
+             * @example 7323488942953598976
+             */
             id: string;
-            locations: components["schemas"]["TripLocation"][];
+            locations: components["schemas"]["TripPlace"][];
             owner: components["schemas"]["TripUser"];
-            /** @description Owner User ID */
+            /**
+             * @description Owner User ID
+             * @example 7323488942953598976
+             */
             ownerId: string;
             participants: components["schemas"]["TripUser"][];
-            requestedAmenities: components["schemas"]["Amenity"][];
+            requestedAmenities: {
+                [key: string]: string | null;
+            };
             /**
              * Format: date-time
              * @description Start datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             startAt: string;
-            /** @description Status of the trip */
+            /**
+             * @description Status of the trip
+             * @example draft
+             */
             status: string;
-            /** @description Title of the trip */
+            /**
+             * @description Title of the trip
+             * @example My Awesome Trip
+             */
             title: string;
             /**
              * Format: date-time
              * @description Updated at time of trip
+             * @example 2023-05-01T00:00:00Z
              */
             updatedAt: string;
-            /** @description Visibility level of the trip */
+            /**
+             * @description Visibility level of the trip
+             * @example friends
+             */
             visibilityLevel: string;
         };
         TripComment: {
-            /** @description Content of comment */
+            /**
+             * @description Content of comment
+             * @example This is a comment
+             */
             content: string;
             /**
              * Format: date-time
              * @description Created at time of the comment
+             * @example 2023-05-01T00:00:00Z
              */
             createdAt: string;
             from: components["schemas"]["TripUser"];
-            /** @description ID of comment */
+            /**
+             * @description ID of comment
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Trip ID */
+            /**
+             * @description Trip ID
+             * @example 7323488942953598976
+             */
             tripId: string;
         };
         TripInvite: {
             /**
              * Format: date-time
              * @description Expires at time of invite
+             * @example 2023-05-01T00:00:00Z
              */
             expiresAt: string;
             from: components["schemas"]["TripUser"];
-            /** @description ID of invite */
+            /**
+             * @description ID of invite
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Role of invite */
+            /**
+             * @description Role of invite
+             * @example participant
+             */
             role: string;
             /**
              * Format: date-time
              * @description Sent at time of invite
+             * @example 2023-05-01T00:00:00Z
              */
             sentAt: string;
             to: components["schemas"]["TripUser"];
-            /** @description Trip ID */
+            /**
+             * @description Trip ID
+             * @example 7323488942953598976
+             */
             tripId: string;
-            /** @description Title of the trip */
+            /**
+             * @description Title of the trip
+             * @example My Awesome Trip
+             */
             tripTitle: string;
         };
         TripInviteActionOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/TripInviteActionOutputBody.json
              */
             readonly $schema?: string;
             accepted: boolean;
@@ -9278,187 +8349,223 @@ export interface components {
             /**
              * Format: date-time
              * @description End datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             endAt: string;
             /**
              * Format: date-time
              * @description Expires at time of invite
+             * @example 2023-05-01T00:00:00Z
              */
             expiresAt: string;
             from: components["schemas"]["TripUser"];
-            /** @description ID of invite */
+            /**
+             * @description ID of invite
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Role of invite */
+            /**
+             * @description Role of invite
+             * @example participant
+             */
             role: string;
             /**
              * Format: date-time
              * @description Sent at time of invite
+             * @example 2023-05-01T00:00:00Z
              */
             sentAt: string;
             /**
              * Format: date-time
              * @description Start datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             startAt: string;
             to: components["schemas"]["TripUser"];
-            /** @description Trip ID */
+            /**
+             * @description Trip ID
+             * @example 7323488942953598976
+             */
             tripId: string;
-            /** @description Title of the trip */
+            /**
+             * @description Title of the trip
+             * @example My Awesome Trip
+             */
             tripTitle: string;
         };
-        TripLocation: {
-            /** @description Description of the location */
+        TripPlace: {
+            /**
+             * @description Description of the place
+             * @example Lorem ipsum dolor sit amet
+             */
             description: string;
-            /** @description ID of location */
+            /**
+             * @description ID of the trip place
+             * @example 7323488942953598976
+             */
             id: string;
-            poi: components["schemas"]["Poi"];
-            /** @description Point of Interest ID */
-            poiId: string;
+            place: components["schemas"]["Place"];
+            /**
+             * @description Place ID
+             * @example 7323488942953598976
+             */
+            placeId: string;
             /**
              * Format: date-time
-             * @description Scheduled time of the location
+             * @description Scheduled time of the place
+             * @example 2023-05-01T00:00:00Z
              */
             scheduledTime: string;
-            /** @description Trip ID */
+            /**
+             * @description Trip ID
+             * @example 7323488942953598976
+             */
             tripId: string;
         };
         TripUser: {
-            /** @description User full name */
+            /**
+             * @description User full name
+             * @example John Doe
+             */
             fullName: string;
-            /** @description User ID */
+            /**
+             * @description User ID
+             * @example 7323488942953598976
+             */
             id: string;
-            /** @description Profile image URL of the user */
+            /**
+             * @description Profile image URL of the user
+             * @example http://example.com/image.png
+             */
             profileImage: string;
             /**
              * @description Role of the user
+             * @example participant
              * @enum {string}
              */
             role: "participant" | "editor";
-            /** @description Username */
+            /**
+             * @description Username
+             * @example johndoe
+             */
             username: string;
-        };
-        UpdateAmenityInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Name of the amenity */
-            name: string;
-        };
-        UpdateAmenityOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /**
-             * Format: int32
-             * @description ID of the amenity
-             */
-            id: number;
-            /** @description Name of the amenity */
-            name: string;
         };
         UpdateCategoryInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCategoryInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: uri
              * @description Image URL
+             * @example https://example.com/image.jpg
              */
             image: string;
-            /** @description Name of the category */
+            /**
+             * @description Name of the category
+             * @example Natural landmarks
+             */
             name: string;
         };
         UpdateCategoryOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCategoryOutputBody.json
              */
             readonly $schema?: string;
-            /**
-             * Format: int32
-             * @description ID of the category
-             */
-            id: number;
-            /** @description Image URL */
-            image: string;
-            /** @description Name of the category */
-            name: string;
+            category: components["schemas"]["Category"];
         };
         UpdateCityInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCityInputBody.json
              */
             readonly $schema?: string;
-            /** @description Country code */
+            /**
+             * @description Country code
+             * @example US
+             */
             countryCode: string;
-            /** @description Country name */
+            /**
+             * @description Country name
+             * @example United States
+             */
             countryName: string;
-            /** @description City description */
+            /**
+             * @description City description
+             * @example A big metropolis.
+             */
             description: string;
             /**
              * Format: uri
              * @description Image URL
+             * @example https://example.com/image.jpg
              */
             image: string;
             /**
              * Format: double
              * @description Latitude
+             * @example 40.7128
              */
-            latitude: number;
+            lat: number;
             /**
              * Format: double
              * @description Longitude
+             * @example -74.006
              */
-            longitude: number;
-            /** @description City name */
+            lng: number;
+            /**
+             * @description City name
+             * @example New York
+             */
             name: string;
-            /** @description State code */
+            /**
+             * @description State code
+             * @example NY
+             */
             stateCode: string;
-            /** @description State name */
+            /**
+             * @description State name
+             * @example New York
+             */
             stateName: string;
         };
         UpdateCityOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCityOutputBody.json
              */
             readonly $schema?: string;
-            coordinates: components["schemas"]["CityCoordinates"];
-            country: components["schemas"]["CityCountry"];
-            /** @description City description */
-            description: string;
-            /**
-             * Format: int32
-             * @description City ID
-             */
-            id: number;
-            image: string;
-            /** @description City name */
-            name: string;
-            state: components["schemas"]["CityState"];
+            city: components["schemas"]["City"];
         };
         UpdateCollectionInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCollectionInputBody.json
              */
             readonly $schema?: string;
-            /** @description Description of the collection */
+            /**
+             * @description Description of the collection
+             * @example My collection description
+             */
             description: string;
-            /** @description Name of the collection */
+            /**
+             * @description Name of the collection
+             * @example My collection
+             */
             name: string;
         };
         UpdateCollectionItemsInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCollectionItemsInputBody.json
              */
             readonly $schema?: string;
             newOrder: components["schemas"]["NewOrderItem"][];
@@ -9467,6 +8574,7 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCollectionItemsOutputBody.json
              */
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
@@ -9475,97 +8583,16 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateCollectionOutputBody.json
              */
             readonly $schema?: string;
             collection: components["schemas"]["Collection"];
-        };
-        UpdateDiaryFriendsInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description IDs of the friends */
-            friends: string[];
-        };
-        UpdateDiaryFriendsOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
-        };
-        UpdateDiaryImageInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description IDs of the images */
-            ids: number[];
-        };
-        UpdateDiaryImageOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
-        };
-        UpdateDiaryInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /**
-             * Format: date-time
-             * @description The date of the diary entry
-             */
-            date: string;
-            /** @description The description of the diary entry */
-            description?: string;
-            /** @description Whether the diary entry is shared with friends or not */
-            shareWithFriends: boolean;
-            /** @description The title of the diary entry */
-            title: string;
-        };
-        UpdateDiaryLocationItem: {
-            /** @description Description of the location */
-            description?: string | null;
-            /** @description ID of the point of interest */
-            poiId: string;
-        };
-        UpdateDiaryLocationsInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description IDs of the locations */
-            locations: components["schemas"]["UpdateDiaryLocationItem"][];
-        };
-        UpdateDiaryLocationsOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
-        };
-        UpdateDiaryOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
         };
         UpdateListInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateListInputBody.json
              */
             readonly $schema?: string;
             isPublic: boolean;
@@ -9575,14 +8602,16 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateListItemsInputBody.json
              */
             readonly $schema?: string;
-            poiIds: string[];
+            placeIds: string[];
         };
         UpdateListItemsOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateListItemsOutputBody.json
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
@@ -9591,200 +8620,209 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateListOutputBody.json
              */
             readonly $schema?: string;
             list: components["schemas"]["List"];
         };
-        UpdatePoiAddressInputBody: {
+        UpdatePlaceAddressInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceAddressInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: int32
              * @description ID of city
+             * @example 1234
              */
             cityId: number;
             /**
              * Format: double
              * @description Latitude
+             * @example 12.3456
              */
             lat: number;
-            /** @description Line 1 */
+            /**
+             * @description Line 1
+             * @example Example Street
+             */
             line1: string;
-            /** @description Line 2 */
+            /**
+             * @description Line 2
+             * @example Example Street
+             */
             line2: string | null;
             /**
              * Format: double
              * @description Longitude
+             * @example 12.3456
              */
             lng: number;
-            /** @description Postal code */
+            /**
+             * @description Postal code
+             * @example 12345
+             */
             postalCode: string | null;
         };
-        UpdatePoiAddressOutputBody: {
+        UpdatePlaceAddressOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceAddressOutputBody.json
              */
             readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
+            place: components["schemas"]["Place"];
         };
-        UpdatePoiAmenitiesInputBody: {
+        UpdatePlaceAmenitiesInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceAmenitiesInputBody.json
              */
             readonly $schema?: string;
-            /** @description IDs of amenities */
-            amenityIds: number[];
+            /** @description Amenities of the place */
+            amenities: {
+                [key: string]: string | null;
+            };
         };
-        UpdatePoiAmenitiesOutputBody: {
+        UpdatePlaceAmenitiesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceAmenitiesOutputBody.json
              */
             readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
+            place: components["schemas"]["Place"];
         };
-        UpdatePoiHoursHour: {
-            /** @description Closes at */
-            closesAt: string;
-            /**
-             * @description Day
-             * @enum {string}
-             */
-            day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-            /** @description Opens at */
-            opensAt: string;
-        };
-        UpdatePoiHoursInputBody: {
+        UpdatePlaceHoursInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceHoursInputBody.json
              */
             readonly $schema?: string;
-            /** @description Hours */
-            hours: components["schemas"]["UpdatePoiHoursHour"][];
+            /** @description Hours of the place */
+            hours: {
+                [key: string]: string | null;
+            };
         };
-        UpdatePoiHoursOutputBody: {
+        UpdatePlaceHoursOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceHoursOutputBody.json
              */
             readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
+            place: components["schemas"]["Place"];
         };
-        UpdatePoiImageInputBody: {
+        UpdatePlaceInfoInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Alt of image */
-            alt: string;
-        };
-        UpdatePoiImageOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
-        };
-        UpdatePoiInfoInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceInfoInputBody.json
              */
             readonly $schema?: string;
             /**
              * Format: int32
              * @description Accessibility level
+             * @example 2
              */
             accessibilityLevel: number;
             /**
              * Format: int32
              * @description ID of category
+             * @example 1
              */
             categoryId: number;
-            /** @description Description of point of interest */
+            /**
+             * @description Description of the place
+             * @example The Great Wall of China is a series of fortifications.
+             */
             description: string;
-            /** @description Name of point of interest */
+            /**
+             * @description Name of place
+             * @example The Great Wall of China
+             */
             name: string;
-            /** @description Phone number */
+            /**
+             * @description Phone number
+             * @example +989123456789
+             */
             phone: string | null;
             /**
              * Format: int32
              * @description Price level
+             * @example 2
              */
             priceLevel: number;
-            /** @description Website */
+            /**
+             * @description Website
+             * @example https://example.com
+             */
             website: string | null;
         };
-        UpdatePoiInfoOutputBody: {
+        UpdatePlaceInfoOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdatePlaceInfoOutputBody.json
              */
             readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
+            place: components["schemas"]["Place"];
         };
         UpdateReportInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateReportInputBody.json
              */
             readonly $schema?: string;
-            /** @description Description of the report */
+            /**
+             * @description Description of the report
+             * @example Lorem ipsum dolor sit amet
+             */
             description: string;
             /**
              * Format: int32
              * @description Reason for the report
+             * @example 1
              */
             reason: number;
-            /** @description Whether the report is resolved */
+            /**
+             * @description Whether the report is resolved
+             * @example false
+             */
             resolved: boolean;
         };
         UpdateReportOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateReportOutputBody.json
              */
             readonly $schema?: string;
             report: components["schemas"]["Report"];
-        };
-        UpdateTripAmenitiesInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Amenities IDs */
-            amenityIds: number[];
-        };
-        UpdateTripAmenitiesOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            amenities: components["schemas"]["Amenity"][];
         };
         UpdateTripCommentInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateTripCommentInputBody.json
              */
             readonly $schema?: string;
-            /** @description Content of comment */
+            /**
+             * @description Content of comment
+             * @example This is a comment
+             */
             content: string;
         };
         UpdateTripCommentOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateTripCommentOutputBody.json
              */
             readonly $schema?: string;
             comment: components["schemas"]["TripComment"];
@@ -9793,190 +8831,175 @@ export interface components {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateTripInputBody.json
              */
             readonly $schema?: string;
-            /** @description Trip description */
+            /**
+             * @description Trip description
+             * @example My trip description
+             */
             description: string;
             /**
              * Format: date-time
              * @description End datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             endAt: string;
             /**
              * Format: date-time
              * @description Start datetime of the trip
+             * @example 2023-05-01T00:00:00Z
              */
             startAt: string;
-            /** @description Trip title */
+            /**
+             * @description Trip title
+             * @example My Trip
+             */
             title: string;
             /**
              * @description Trip visibility level
+             * @example public
              * @enum {string}
              */
             visibilityLevel: "public" | "friends" | "private";
-        };
-        UpdateTripLocationInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Description of the location */
-            description?: string | null;
-            /**
-             * Format: date-time
-             * @description Scheduled time of the location
-             */
-            scheduledTime?: string | null;
-        };
-        UpdateTripLocationOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            location: components["schemas"]["TripLocation"];
         };
         UpdateTripOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateTripOutputBody.json
              */
             readonly $schema?: string;
             trip: components["schemas"]["Trip"];
         };
-        UpdateUserProfileImageInputBody: {
+        UpdateTripPlaceInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateTripPlaceInputBody.json
              */
             readonly $schema?: string;
-            /** @description File name of image */
+            /**
+             * @description Description of the place
+             * @example My awesome place
+             */
+            description?: string | null;
+            /**
+             * Format: date-time
+             * @description Scheduled time of the place
+             * @example 2023-05-01T00:00:00Z
+             */
+            scheduledTime?: string | null;
+        };
+        UpdateTripPlaceOutputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateTripPlaceOutputBody.json
+             */
+            readonly $schema?: string;
+            place: components["schemas"]["TripPlace"];
+        };
+        UpdateUserImageInputBody: {
+            /**
+             * Format: uri
+             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateUserImageInputBody.json
+             */
+            readonly $schema?: string;
+            /**
+             * @description File name of image
+             * @example 7323488942953598976.png
+             */
             fileName: string;
-            /** @description ID of image */
+            /**
+             * @description ID of image
+             * @example 7323488942953598976
+             */
             id: string;
         };
-        UpdateUserProfileImageOutputBody: {
+        UpdateUserImageOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateUserImageOutputBody.json
              */
             readonly $schema?: string;
-            /** @description URL of image upload endpoint */
+            /**
+             * @description URL of the image
+             * @example https://example.com/image.jpg
+             */
             url: string;
         };
         UpdateUserProfileInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateUserProfileInputBody.json
              */
             readonly $schema?: string;
-            /** @description Bio of the user */
-            bio?: string | null;
-            /** @description Full name of the user */
-            fullName: string;
-            /** @description Phone number of the user */
-            phone?: string | null;
-            /** @description Pronouns of the user */
-            pronouns?: string | null;
             /**
-             * Format: uri
-             * @description Website of the user
+             * @description Bio of the user
+             * @example Lorem ipsum dolor sit amet
              */
-            website?: string | null;
+            bio?: string | null;
+            /**
+             * @description Full name of the user
+             * @example John Doe
+             */
+            fullName: string;
         };
         UpdateUserProfileOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateUserProfileOutputBody.json
              */
             readonly $schema?: string;
             profile: components["schemas"]["Profile"];
         };
-        UpdateUserTopPoisInputBody: {
+        UpdateUserTopPlacesInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateUserTopPlacesInputBody.json
              */
             readonly $schema?: string;
-            /** @description IDs of points of interests */
-            poiIds: string[];
+            /** @description IDs of places */
+            placeIds: string[];
         };
-        UpdateUserTopPoisOutputBody: {
+        UpdateUserTopPlacesOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UpdateUserTopPlacesOutputBody.json
              */
             readonly $schema?: string;
-            pois: components["schemas"]["Poi"][];
+            places: components["schemas"]["Place"][];
         };
-        UploadDiaryImageInputBody: {
+        UploadReviewAssetInputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UploadReviewAssetInputBody.json
              */
             readonly $schema?: string;
-            /** @description File name of image */
+            /**
+             * @description File name of image
+             * @example 7323488942953598976.png
+             */
             fileName: string;
-            /** @description ID of image */
+            /**
+             * @description ID of image
+             * @example 7323488942953598976
+             */
             id: string;
-            /**
-             * Format: int32
-             * @description Size of media of point of interest
-             */
-            size: number;
         };
-        UploadDiaryImageOutputBody: {
+        UploadReviewAssetOutputBody: {
             /**
              * Format: uri
              * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            diary: components["schemas"]["Diary"];
-        };
-        UploadPoiImageInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description Alt of image */
-            alt: string;
-            /** @description File name of image */
-            fileName: string;
-            /** @description ID of image */
-            id: string;
-            /** @description URL of image */
-            url: string;
-        };
-        UploadPoiImageOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            poi: components["schemas"]["Poi"];
-        };
-        UploadReviewMediaInputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
-             */
-            readonly $schema?: string;
-            /** @description File name of image */
-            fileName: string;
-            /** @description ID of image */
-            id: string;
-            /**
-             * Format: int32
-             * @description Size of media of point of interest
-             */
-            size: number;
-        };
-        UploadReviewMediaOutputBody: {
-            /**
-             * Format: uri
-             * @description A URL to the JSON Schema for this object.
+             * @example https://example.com/schemas/UploadReviewAssetOutputBody.json
              */
             readonly $schema?: string;
             review: components["schemas"]["Review"];

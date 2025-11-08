@@ -2,9 +2,7 @@ package durable
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"wanderlust/pkg/storage"
 
 	"github.com/inngest/inngestgo"
 	"github.com/inngest/inngestgo/step"
@@ -40,46 +38,6 @@ func testFn(client inngestgo.Client) (inngestgo.ServableFunction, error) {
 	)
 }
 
-func deleteDiaryMedia(client inngestgo.Client) (inngestgo.ServableFunction, error) {
-	return inngestgo.CreateFunction(
-		client,
-		inngestgo.FunctionOpts{
-			ID:   "delete-diary-media",
-			Name: "Delete Diary Media",
-		},
-		inngestgo.EventTrigger(EventDeleteDiaryMedia, nil),
-		func(ctx context.Context, input inngestgo.Input[DeleteDiaryMediaPayload]) (any, error) {
-			return step.Run(ctx, "step-delete-diary-media", func(ctx context.Context) (any, error) {
-				errs := make([]error, 0)
-
-				bucket, err := storage.OpenBucket(ctx, storage.BUCKET_DIARIES)
-
-				if err != nil {
-					return nil, fmt.Errorf("failed to open diary media bucket: %w", err)
-				}
-
-				defer bucket.Close()
-
-				for _, name := range input.Event.Data.ObjectNames {
-
-					err = bucket.Delete(ctx, name)
-
-					if err != nil {
-						errs = append(errs, err)
-					}
-				}
-
-				if len(errs) > 0 {
-					return nil, fmt.Errorf("errors deleting diary media: %w", errors.Join(errs...))
-				}
-
-				return nil, nil
-
-			})
-		},
-	)
-}
-
 func sendForgotPasswordEmail(client inngestgo.Client) (inngestgo.ServableFunction, error) {
 	return inngestgo.CreateFunction(
 		client,
@@ -99,6 +57,5 @@ func sendForgotPasswordEmail(client inngestgo.Client) (inngestgo.ServableFunctio
 
 var functions = []func(client inngestgo.Client) (inngestgo.ServableFunction, error){
 	testFn,
-	deleteDiaryMedia,
 	sendForgotPasswordEmail,
 }

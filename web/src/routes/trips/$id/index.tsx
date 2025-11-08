@@ -1,6 +1,6 @@
 import { AppMessage } from '@/components/blocks/app-message';
 import { CollapsibleText } from '@/components/blocks/collapsible-text';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import {
   Accordion,
   AccordionContent,
@@ -150,13 +150,13 @@ function RouteComponent() {
                         <Link
                           to="/p/$id"
                           params={{
-                            id: loc.poi.id,
+                            id: loc.placeId,
                           }}
                         >
-                          <PoiCard
+                          <PlaceCard
                             className="max-w-xs"
                             hoverEffects={false}
-                            poi={loc.poi}
+                            place={loc.place}
                           />
                         </Link>
                         <div className="mt-4">
@@ -174,7 +174,7 @@ function RouteComponent() {
                                 search: () => ({
                                   showLocationDialog: true,
                                   isUpdate: true,
-                                  poiId: loc.poi.id,
+                                  placeId: loc.placeId,
                                   description: loc.description,
                                   scheduledTime: loc.scheduledTime,
                                   locId: loc.id,

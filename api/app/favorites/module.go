@@ -3,11 +3,10 @@ package favorites
 import (
 	"context"
 	"net/http"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -21,7 +20,7 @@ func Register(grp *huma.Group, app *core.Application) {
 		&Repository{
 			dbSvc.Queries,
 			dbSvc.Pool,
-			pois.NewService(app),
+			places.NewService(app),
 		},
 	}
 
@@ -34,18 +33,18 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodPost,
 			Path:          "/favorites/",
 			Summary:       "Create Favorite",
-			Description:   "Create a favorite for a point of interest",
+			Description:   "Favorite a place",
 			DefaultStatus: http.StatusCreated,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.CreateFavoriteInput) (*dto.CreateFavoriteOutput, error) {
+		func(ctx context.Context, input *CreateFavoriteInput) (*CreateFavoriteOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
-			res, err := s.create(ctx, input.Body.PoiId)
+			res, err := s.create(ctx, input.Body.PlaceID)
 
 			if err != nil {
 				sp.RecordError(err)
@@ -61,14 +60,14 @@ func Register(grp *huma.Group, app *core.Application) {
 			Method:        http.MethodDelete,
 			Path:          "/favorites/{id}",
 			Summary:       "Delete Favorite",
-			Description:   "Delete a favorite for a point of interest",
+			Description:   "Remove a place from favorites",
 			DefaultStatus: http.StatusNoContent,
 			Middlewares: huma.Middlewares{
 				middlewares.IsAuth(grp.API),
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.DeleteFavoriteInput) (*struct{}, error) {
+		func(ctx context.Context, input *DeleteFavoriteInput) (*DeleteFavoriteOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -95,7 +94,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetUserFavoritesInput) (*dto.GetUserFavoritesOutput, error) {
+		func(ctx context.Context, input *GetCurrentUserFavoritesInput) (*GetCurrentUserFavoritesOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 
@@ -122,7 +121,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			},
 			Security: core.OpenApiJwtSecurity,
 		},
-		func(ctx context.Context, input *dto.GetUserFavoritesByUsernameInput) (*dto.GetUserFavoritesOutput, error) {
+		func(ctx context.Context, input *GetUserFavoritesByUsernameInput) (*GetUserFavoritesByUsernameOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

@@ -8,7 +8,6 @@ import {
 import { Link } from '@tanstack/react-router';
 import {
   BellIcon,
-  BookMarkedIcon,
   BookmarkIcon,
   CircleHelpIcon,
   ListIcon,
@@ -112,15 +111,6 @@ export function MenuContent({ fullName, username }: Readonly<Props>) {
           <Link to="/lists">
             <ListIcon className="size-4 group-focus:text-primary" />
             <span className="ml-2 group-focus:text-primary">Lists</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          asChild
-          className="cursor-pointer group focus:bg-primary/10"
-        >
-          <Link to="/diary">
-            <BookMarkedIcon className="size-4 group-focus:text-primary" />
-            <span className="ml-2 group-focus:text-primary">Diary</span>
           </Link>
         </DropdownMenuItem>
       </DropdownMenuGroup>

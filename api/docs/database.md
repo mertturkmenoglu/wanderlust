@@ -87,7 +87,7 @@ func foo(id int32) (db.Squirrel, error) {
 - You can do this by running the following command:
 
 ```bash
-docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM pois" --csv -o /home/file.csv
+docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM places" --csv -o /home/file.csv
 docker cp wl-postgres:/home/file.csv tmp/file.csv
 ```
 

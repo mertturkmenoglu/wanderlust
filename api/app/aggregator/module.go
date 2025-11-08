@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
-	"wanderlust/app/pois"
+	"wanderlust/app/places"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
-	"wanderlust/pkg/dto"
 	"wanderlust/pkg/tracing"
 
 	"github.com/cockroachdb/errors"
@@ -25,7 +24,7 @@ func Register(grp *huma.Group, app *core.Application) {
 	s := Service{
 		repo: &Repository{
 			db:         dbSvc.Queries,
-			poiService: pois.NewService(app),
+			placesService: places.NewService(app),
 		},
 		cacheMutex:   sync.RWMutex{},
 		requestGroup: singleflight.Group{},
@@ -44,7 +43,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			Description:   "Get home aggregation",
 			DefaultStatus: http.StatusOK,
 		},
-		func(ctx context.Context, input *struct{}) (*dto.HomeAggregatorOutput, error) {
+		func(ctx context.Context, input *HomeAggregatorInput) (*HomeAggregatorOutput, error) {
 			ctx, sp := tracing.NewSpan(ctx)
 			defer sp.End()
 

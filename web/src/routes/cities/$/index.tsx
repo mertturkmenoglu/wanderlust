@@ -1,6 +1,6 @@
 import { ErrorComponent } from '@/components/blocks/error-component';
 import { OverlayBanner } from '@/components/blocks/overlay-banner';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { TagNavigation } from '@/components/blocks/tag-navigation';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -40,7 +40,7 @@ export const Route = createFileRoute('/cities/$/')({
 });
 
 function RouteComponent() {
-  const city = Route.useLoaderData();
+  const { city } = Route.useLoaderData();
 
   return (
     <div className="max-w-7xl mx-auto py-8">
@@ -68,7 +68,10 @@ function RouteComponent() {
         </div>
       </div>
 
-      <Map {...city.coordinates} />
+      <Map
+        latitude={city.lat}
+        longitude={city.lng}
+      />
 
       <div className="mt-8">
         <h3 className="text-2xl font-bold mb-8">Discover {city.name}</h3>
@@ -126,7 +129,9 @@ function RouteComponent() {
 }
 
 function CollectionsContent() {
-  const { id } = Route.useLoaderData();
+  const {
+    city: { id },
+  } = Route.useLoaderData();
   const query = api.useSuspenseQuery('get', '/api/v2/collections/city/{id}', {
     params: {
       path: {
@@ -159,14 +164,14 @@ function CollectionsContent() {
             <div className="flex gap-8 my-4">
               {collection.items.map((item) => (
                 <Link
-                  key={item.poiId}
+                  key={item.placeId}
                   to="/p/$id"
                   params={{
-                    id: item.poiId,
+                    id: item.placeId,
                   }}
                 >
-                  <PoiCard
-                    poi={item.poi}
+                  <PlaceCard
+                    place={item.place}
                     className="w-[256px]"
                     hoverEffects={false}
                   />

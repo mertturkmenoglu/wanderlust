@@ -12,67 +12,39 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const addParticipantToTrip = `-- name: AddParticipantToTrip :one
-INSERT INTO trip_participants (
-  id,
-  user_id,
-  trip_id,
-  role
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4
-) RETURNING id, trip_id, user_id, role
-`
-
-type AddParticipantToTripParams struct {
-	ID     string
-	UserID string
-	TripID string
-	Role   string
-}
-
-func (q *Queries) AddParticipantToTrip(ctx context.Context, arg AddParticipantToTripParams) (TripParticipant, error) {
-	row := q.db.QueryRow(ctx, addParticipantToTrip,
-		arg.ID,
-		arg.UserID,
-		arg.TripID,
-		arg.Role,
-	)
-	var i TripParticipant
-	err := row.Scan(
-		&i.ID,
-		&i.TripID,
-		&i.UserID,
-		&i.Role,
-	)
-	return i, err
-}
-
-type BatchCreateTripAmenitiesParams struct {
-	TripID    string
-	AmenityID int32
-}
-
 type BatchCreateTripsParams struct {
-	ID              string
-	OwnerID         string
-	Description     string
-	Title           string
-	VisibilityLevel string
-	StartAt         pgtype.Timestamptz
-	EndAt           pgtype.Timestamptz
+	ID                 string
+	OwnerID            string
+	Title              string
+	Description        string
+	VisibilityLevel    string
+	RequestedAmenities pgtype.Hstore
+	StartAt            pgtype.Timestamptz
+	EndAt              pgtype.Timestamptz
 }
 
-const countMyTrips = `-- name: CountMyTrips :one
-SELECT COUNT(*) FROM trips
-LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
-WHERE trips.owner_id = $1 OR tp.user_id = $1
+const countTripCommentsByTripId = `-- name: CountTripCommentsByTripId :one
+SELECT COUNT(*)
+FROM trip_comments
+WHERE trip_id = $1
 `
 
-func (q *Queries) CountMyTrips(ctx context.Context, ownerID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countMyTrips, ownerID)
+func (q *Queries) CountTripCommentsByTripId(ctx context.Context, tripID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countTripCommentsByTripId, tripID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countTripsByOwnerIdOrParticipantId = `-- name: CountTripsByOwnerIdOrParticipantId :one
+SELECT COUNT(*)
+FROM trips
+LEFT JOIN trip_participants ON trip_participants.trip_id = trips.id
+WHERE trips.owner_id = $1 OR trip_participants.user_id = $1
+`
+
+func (q *Queries) CountTripsByOwnerIdOrParticipantId(ctx context.Context, ownerID string) (int64, error) {
+	row := q.db.QueryRow(ctx, countTripsByOwnerIdOrParticipantId, ownerID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -85,6 +57,7 @@ INSERT INTO trips (
   title,
   description,
   visibility_level,
+  requested_amenities,
   start_at,
   end_at
 ) VALUES (
@@ -94,18 +67,20 @@ INSERT INTO trips (
   $4,
   $5,
   $6,
-  $7
-) RETURNING id, owner_id, title, description, visibility_level, start_at, end_at, created_at, updated_at
+  $7,
+  $8
+) RETURNING id, owner_id, title, description, visibility_level, requested_amenities, start_at, end_at, date_range, created_at, updated_at
 `
 
 type CreateTripParams struct {
-	ID              string
-	OwnerID         string
-	Title           string
-	Description     string
-	VisibilityLevel string
-	StartAt         pgtype.Timestamptz
-	EndAt           pgtype.Timestamptz
+	ID                 string
+	OwnerID            string
+	Title              string
+	Description        string
+	VisibilityLevel    string
+	RequestedAmenities pgtype.Hstore
+	StartAt            pgtype.Timestamptz
+	EndAt              pgtype.Timestamptz
 }
 
 func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, error) {
@@ -115,6 +90,7 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 		arg.Title,
 		arg.Description,
 		arg.VisibilityLevel,
+		arg.RequestedAmenities,
 		arg.StartAt,
 		arg.EndAt,
 	)
@@ -125,8 +101,10 @@ func (q *Queries) CreateTrip(ctx context.Context, arg CreateTripParams) (Trip, e
 		&i.Title,
 		&i.Description,
 		&i.VisibilityLevel,
+		&i.RequestedAmenities,
 		&i.StartAt,
 		&i.EndAt,
+		&i.DateRange,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -182,10 +160,10 @@ INSERT INTO trip_invites (
   trip_id,
   from_id,
   to_id,
+  role,
   sent_at,
   expires_at,
-  trip_title,
-  role
+  trip_title
 ) VALUES (
   $1,
   $2,
@@ -203,10 +181,10 @@ type CreateTripInviteParams struct {
 	TripID    string
 	FromID    string
 	ToID      string
+	Role      string
 	SentAt    pgtype.Timestamptz
 	ExpiresAt pgtype.Timestamptz
 	TripTitle string
-	Role      string
 }
 
 func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInviteParams) (TripInvite, error) {
@@ -215,10 +193,10 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 		arg.TripID,
 		arg.FromID,
 		arg.ToID,
+		arg.Role,
 		arg.SentAt,
 		arg.ExpiresAt,
 		arg.TripTitle,
-		arg.Role,
 	)
 	var i TripInvite
 	err := row.Scan(
@@ -234,11 +212,49 @@ func (q *Queries) CreateTripInvite(ctx context.Context, arg CreateTripInvitePara
 	return i, err
 }
 
-const createTripLocation = `-- name: CreateTripLocation :one
-INSERT INTO trip_locations (
+const createTripParticipant = `-- name: CreateTripParticipant :one
+INSERT INTO trip_participants (
+  id,
+  user_id,
+  trip_id,
+  role
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4
+) RETURNING id, trip_id, user_id, role
+`
+
+type CreateTripParticipantParams struct {
+	ID     string
+	UserID string
+	TripID string
+	Role   string
+}
+
+func (q *Queries) CreateTripParticipant(ctx context.Context, arg CreateTripParticipantParams) (TripParticipant, error) {
+	row := q.db.QueryRow(ctx, createTripParticipant,
+		arg.ID,
+		arg.UserID,
+		arg.TripID,
+		arg.Role,
+	)
+	var i TripParticipant
+	err := row.Scan(
+		&i.ID,
+		&i.TripID,
+		&i.UserID,
+		&i.Role,
+	)
+	return i, err
+}
+
+const createTripPlace = `-- name: CreateTripPlace :one
+INSERT INTO trip_places (
   id,
   trip_id,
-  poi_id,
+  place_id,
   scheduled_time,
   description
 ) VALUES (
@@ -247,176 +263,83 @@ INSERT INTO trip_locations (
   $3,
   $4,
   $5
-) RETURNING id, trip_id, scheduled_time, poi_id, description
+) RETURNING id, trip_id, scheduled_time, place_id, description
 `
 
-type CreateTripLocationParams struct {
+type CreateTripPlaceParams struct {
 	ID            string
 	TripID        string
-	PoiID         string
+	PlaceID       string
 	ScheduledTime pgtype.Timestamptz
 	Description   string
 }
 
-func (q *Queries) CreateTripLocation(ctx context.Context, arg CreateTripLocationParams) (TripLocation, error) {
-	row := q.db.QueryRow(ctx, createTripLocation,
+func (q *Queries) CreateTripPlace(ctx context.Context, arg CreateTripPlaceParams) (TripPlace, error) {
+	row := q.db.QueryRow(ctx, createTripPlace,
 		arg.ID,
 		arg.TripID,
-		arg.PoiID,
+		arg.PlaceID,
 		arg.ScheduledTime,
 		arg.Description,
 	)
-	var i TripLocation
+	var i TripPlace
 	err := row.Scan(
 		&i.ID,
 		&i.TripID,
 		&i.ScheduledTime,
-		&i.PoiID,
+		&i.PlaceID,
 		&i.Description,
 	)
 	return i, err
 }
 
-const deleteInvite = `-- name: DeleteInvite :exec
-DELETE FROM trip_invites WHERE id = $1
-`
-
-func (q *Queries) DeleteInvite(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteInvite, id)
-	return err
-}
-
-const deleteParticipant = `-- name: DeleteParticipant :exec
-DELETE FROM trip_participants WHERE trip_id = $1 AND user_id = $2
-`
-
-type DeleteParticipantParams struct {
-	TripID string
-	UserID string
-}
-
-func (q *Queries) DeleteParticipant(ctx context.Context, arg DeleteParticipantParams) error {
-	_, err := q.db.Exec(ctx, deleteParticipant, arg.TripID, arg.UserID)
-	return err
-}
-
-const deleteTrip = `-- name: DeleteTrip :exec
-DELETE FROM trips WHERE id = $1
-`
-
-func (q *Queries) DeleteTrip(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteTrip, id)
-	return err
-}
-
-const deleteTripAllAmenities = `-- name: DeleteTripAllAmenities :exec
-DELETE FROM trip_amenities WHERE trip_id = $1
-`
-
-func (q *Queries) DeleteTripAllAmenities(ctx context.Context, tripID string) error {
-	_, err := q.db.Exec(ctx, deleteTripAllAmenities, tripID)
-	return err
-}
-
-const deleteTripAllComments = `-- name: DeleteTripAllComments :exec
-DELETE FROM trip_comments WHERE trip_id = $1
-`
-
-func (q *Queries) DeleteTripAllComments(ctx context.Context, tripID string) error {
-	_, err := q.db.Exec(ctx, deleteTripAllComments, tripID)
-	return err
-}
-
-const deleteTripAllInvites = `-- name: DeleteTripAllInvites :exec
-DELETE FROM trip_invites WHERE trip_id = $1
-`
-
-func (q *Queries) DeleteTripAllInvites(ctx context.Context, tripID string) error {
-	_, err := q.db.Exec(ctx, deleteTripAllInvites, tripID)
-	return err
-}
-
-const deleteTripAllParticipants = `-- name: DeleteTripAllParticipants :exec
-DELETE FROM trip_participants WHERE trip_id = $1
-`
-
-func (q *Queries) DeleteTripAllParticipants(ctx context.Context, tripID string) error {
-	_, err := q.db.Exec(ctx, deleteTripAllParticipants, tripID)
-	return err
-}
-
-const deleteTripComment = `-- name: DeleteTripComment :exec
-DELETE FROM trip_comments WHERE id = $1
-`
-
-func (q *Queries) DeleteTripComment(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteTripComment, id)
-	return err
-}
-
-const deleteTripLocation = `-- name: DeleteTripLocation :execresult
-DELETE FROM trip_locations WHERE id = $1
-`
-
-func (q *Queries) DeleteTripLocation(ctx context.Context, id string) (pgconn.CommandTag, error) {
-	return q.db.Exec(ctx, deleteTripLocation, id)
-}
-
-const findExpiredTripInvites = `-- name: FindExpiredTripInvites :many
-SELECT id FROM trip_invites WHERE expires_at < now()
-`
-
-func (q *Queries) FindExpiredTripInvites(ctx context.Context) ([]string, error) {
-	rows, err := q.db.Query(ctx, findExpiredTripInvites)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []string
-	for rows.Next() {
-		var id string
-		if err := rows.Scan(&id); err != nil {
-			return nil, err
-		}
-		items = append(items, id)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getAllTripsIds = `-- name: GetAllTripsIds :many
-SELECT DISTINCT trips.id, trips.created_at
-FROM trips
-LEFT JOIN trip_participants tp ON tp.trip_id = trips.id
-WHERE trips.owner_id = $1 OR tp.user_id = $1
-ORDER BY trips.created_at DESC
+const findManyTripCommentsByTripId = `-- name: FindManyTripCommentsByTripId :many
+SELECT
+  tc.id, tc.trip_id, tc.from_id, tc.content, tc.created_at,
+  (SELECT jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  )) AS user
+FROM
+  trip_comments tc
+LEFT JOIN users u ON u.id = tc.from_id
+WHERE
+  tc.trip_id = $1
+ORDER BY tc.created_at DESC
 OFFSET $2
 LIMIT $3
 `
 
-type GetAllTripsIdsParams struct {
-	OwnerID string
-	Offset  int32
-	Limit   int32
+type FindManyTripCommentsByTripIdParams struct {
+	TripID string
+	Offset int32
+	Limit  int32
 }
 
-type GetAllTripsIdsRow struct {
-	ID        string
-	CreatedAt pgtype.Timestamptz
+type FindManyTripCommentsByTripIdRow struct {
+	TripComment TripComment
+	User        []byte
 }
 
-func (q *Queries) GetAllTripsIds(ctx context.Context, arg GetAllTripsIdsParams) ([]GetAllTripsIdsRow, error) {
-	rows, err := q.db.Query(ctx, getAllTripsIds, arg.OwnerID, arg.Offset, arg.Limit)
+func (q *Queries) FindManyTripCommentsByTripId(ctx context.Context, arg FindManyTripCommentsByTripIdParams) ([]FindManyTripCommentsByTripIdRow, error) {
+	rows, err := q.db.Query(ctx, findManyTripCommentsByTripId, arg.TripID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetAllTripsIdsRow
+	var items []FindManyTripCommentsByTripIdRow
 	for rows.Next() {
-		var i GetAllTripsIdsRow
-		if err := rows.Scan(&i.ID, &i.CreatedAt); err != nil {
+		var i FindManyTripCommentsByTripIdRow
+		if err := rows.Scan(
+			&i.TripComment.ID,
+			&i.TripComment.TripID,
+			&i.TripComment.FromID,
+			&i.TripComment.Content,
+			&i.TripComment.CreatedAt,
+			&i.User,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -427,35 +350,35 @@ func (q *Queries) GetAllTripsIds(ctx context.Context, arg GetAllTripsIdsParams) 
 	return items, nil
 }
 
-const getInvitesByToUserId = `-- name: GetInvitesByToUserId :many
+const findManyTripInvitesByToUserId = `-- name: FindManyTripInvitesByToUserId :many
 SELECT
   invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.trip_title, invites.role,
   jsonb_build_object(
-    'id', p.id,
-    'fullName', p.full_name,
-    'username', p.username,
-    'profileImage', p.profile_image
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
   ) AS fromUser
 FROM trip_invites invites
-JOIN profile p ON p.id = invites.from_id
+LEFT JOIN users u ON u.id = invites.from_id
 WHERE invites.to_id = $1
 ORDER BY invites.sent_at DESC
 `
 
-type GetInvitesByToUserIdRow struct {
+type FindManyTripInvitesByToUserIdRow struct {
 	TripInvite TripInvite
 	Fromuser   []byte
 }
 
-func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetInvitesByToUserIdRow, error) {
-	rows, err := q.db.Query(ctx, getInvitesByToUserId, toID)
+func (q *Queries) FindManyTripInvitesByToUserId(ctx context.Context, toID string) ([]FindManyTripInvitesByToUserIdRow, error) {
+	rows, err := q.db.Query(ctx, findManyTripInvitesByToUserId, toID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetInvitesByToUserIdRow
+	var items []FindManyTripInvitesByToUserIdRow
 	for rows.Next() {
-		var i GetInvitesByToUserIdRow
+		var i FindManyTripInvitesByToUserIdRow
 		if err := rows.Scan(
 			&i.TripInvite.ID,
 			&i.TripInvite.TripID,
@@ -477,7 +400,7 @@ func (q *Queries) GetInvitesByToUserId(ctx context.Context, toID string) ([]GetI
 	return items, nil
 }
 
-const getInvitesByTripId = `-- name: GetInvitesByTripId :many
+const findManyTripInvitesByTripId = `-- name: FindManyTripInvitesByTripId :many
 SELECT
   invites.id, invites.trip_id, invites.from_id, invites.to_id, invites.sent_at, invites.expires_at, invites.trip_title, invites.role,
   jsonb_build_object(
@@ -499,21 +422,21 @@ WHERE invites.trip_id = $1
 ORDER BY invites.sent_at DESC
 `
 
-type GetInvitesByTripIdRow struct {
+type FindManyTripInvitesByTripIdRow struct {
 	TripInvite TripInvite
 	Fromuser   []byte
 	Touser     []byte
 }
 
-func (q *Queries) GetInvitesByTripId(ctx context.Context, tripID string) ([]GetInvitesByTripIdRow, error) {
-	rows, err := q.db.Query(ctx, getInvitesByTripId, tripID)
+func (q *Queries) FindManyTripInvitesByTripId(ctx context.Context, tripID string) ([]FindManyTripInvitesByTripIdRow, error) {
+	rows, err := q.db.Query(ctx, findManyTripInvitesByTripId, tripID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetInvitesByTripIdRow
+	var items []FindManyTripInvitesByTripIdRow
 	for rows.Next() {
-		var i GetInvitesByTripIdRow
+		var i FindManyTripInvitesByTripIdRow
 		if err := rows.Scan(
 			&i.TripInvite.ID,
 			&i.TripInvite.TripID,
@@ -536,12 +459,172 @@ func (q *Queries) GetInvitesByTripId(ctx context.Context, tripID string) ([]GetI
 	return items, nil
 }
 
-const getTripById = `-- name: GetTripById :one
-SELECT id, owner_id, title, description, visibility_level, start_at, end_at, created_at, updated_at FROM trips WHERE id = $1
+const findManyTripInvitesWhereExpired = `-- name: FindManyTripInvitesWhereExpired :many
+SELECT id
+FROM trip_invites
+WHERE expires_at < NOW()
 `
 
-func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
-	row := q.db.QueryRow(ctx, getTripById, id)
+func (q *Queries) FindManyTripInvitesWhereExpired(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, findManyTripInvitesWhereExpired)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findManyTripsByIdsPopulated = `-- name: FindManyTripsByIdsPopulated :many
+SELECT
+  trips.id, trips.owner_id, trips.title, trips.description, trips.visibility_level, trips.requested_amenities, trips.start_at, trips.end_at, trips.date_range, trips.created_at, trips.updated_at,
+  jsonb_build_object(
+    'id', u.id,
+    'fullName', u.full_name,
+    'username', u.username,
+    'profileImage', u.profile_image
+  ) as owner,
+   (SELECT json_agg(DISTINCT jsonb_build_object(
+    'id', par.id,
+    'fullName', par.full_name,
+    'username', par.username,
+    'profileImage', par.profile_image,
+    'role', tp.role
+  ))
+  FROM trip_participants tp
+  JOIN profile par ON par.id = tp.user_id
+  WHERE tp.trip_id = trips.id
+  ) AS participants,
+  (SELECT json_agg(jsonb_build_object(
+    'id', tplaces.id,
+    'tripId', tplaces.trip_id,
+    'scheduledTime', tplaces.scheduled_time,
+    'placeId', tplaces.place_id,
+    'description', tplaces.description
+  ))
+  FROM trip_places tplaces
+  WHERE tplaces.trip_id = trips.id
+  ) AS tripPlaces,
+  (SELECT get_places(
+    ARRAY(
+      SELECT 
+        DISTINCT place_id 
+      FROM trip_places
+      WHERE trip_places.trip_id = trips.id
+    )
+  )) AS places
+FROM trips
+LEFT JOIN users u ON u.id = trips.owner_id
+LEFT JOIN trip_places ON trip_places.trip_id = trips.id
+WHERE trips.id = ANY($1::TEXT[])
+GROUP BY trips.id, u.id
+ORDER BY trips.created_at DESC
+`
+
+type FindManyTripsByIdsPopulatedRow struct {
+	Trip         Trip
+	Owner        []byte
+	Participants []byte
+	Tripplaces   []byte
+	Places       []byte
+}
+
+func (q *Queries) FindManyTripsByIdsPopulated(ctx context.Context, dollar_1 []string) ([]FindManyTripsByIdsPopulatedRow, error) {
+	rows, err := q.db.Query(ctx, findManyTripsByIdsPopulated, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindManyTripsByIdsPopulatedRow
+	for rows.Next() {
+		var i FindManyTripsByIdsPopulatedRow
+		if err := rows.Scan(
+			&i.Trip.ID,
+			&i.Trip.OwnerID,
+			&i.Trip.Title,
+			&i.Trip.Description,
+			&i.Trip.VisibilityLevel,
+			&i.Trip.RequestedAmenities,
+			&i.Trip.StartAt,
+			&i.Trip.EndAt,
+			&i.Trip.DateRange,
+			&i.Trip.CreatedAt,
+			&i.Trip.UpdatedAt,
+			&i.Owner,
+			&i.Participants,
+			&i.Tripplaces,
+			&i.Places,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findManyTripsByOwnerIdOrParticipantId = `-- name: FindManyTripsByOwnerIdOrParticipantId :many
+SELECT
+  DISTINCT trips.id, trips.created_at
+FROM trips
+LEFT JOIN trip_participants ON trip_participants.trip_id = trips.id
+WHERE trips.owner_id = $1 OR trip_participants.user_id = $1
+ORDER BY trips.created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type FindManyTripsByOwnerIdOrParticipantIdParams struct {
+	OwnerID string
+	Offset  int32
+	Limit   int32
+}
+
+type FindManyTripsByOwnerIdOrParticipantIdRow struct {
+	ID        string
+	CreatedAt pgtype.Timestamptz
+}
+
+func (q *Queries) FindManyTripsByOwnerIdOrParticipantId(ctx context.Context, arg FindManyTripsByOwnerIdOrParticipantIdParams) ([]FindManyTripsByOwnerIdOrParticipantIdRow, error) {
+	rows, err := q.db.Query(ctx, findManyTripsByOwnerIdOrParticipantId, arg.OwnerID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindManyTripsByOwnerIdOrParticipantIdRow
+	for rows.Next() {
+		var i FindManyTripsByOwnerIdOrParticipantIdRow
+		if err := rows.Scan(&i.ID, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findTripById = `-- name: FindTripById :one
+SELECT id, owner_id, title, description, visibility_level, requested_amenities, start_at, end_at, date_range, created_at, updated_at
+FROM trips
+WHERE id = $1
+`
+
+func (q *Queries) FindTripById(ctx context.Context, id string) (Trip, error) {
+	row := q.db.QueryRow(ctx, findTripById, id)
 	var i Trip
 	err := row.Scan(
 		&i.ID,
@@ -549,15 +632,17 @@ func (q *Queries) GetTripById(ctx context.Context, id string) (Trip, error) {
 		&i.Title,
 		&i.Description,
 		&i.VisibilityLevel,
+		&i.RequestedAmenities,
 		&i.StartAt,
 		&i.EndAt,
+		&i.DateRange,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const getTripCommentById = `-- name: GetTripCommentById :one
+const findTripCommentById = `-- name: FindTripCommentById :one
 SELECT
   tc.id, tc.trip_id, tc.from_id, tc.content, tc.created_at,
   (SELECT jsonb_build_object(
@@ -572,14 +657,14 @@ LEFT JOIN users u ON u.id = tc.from_id
 WHERE tc.id = $1
 `
 
-type GetTripCommentByIdRow struct {
+type FindTripCommentByIdRow struct {
 	TripComment TripComment
 	User        []byte
 }
 
-func (q *Queries) GetTripCommentById(ctx context.Context, id string) (GetTripCommentByIdRow, error) {
-	row := q.db.QueryRow(ctx, getTripCommentById, id)
-	var i GetTripCommentByIdRow
+func (q *Queries) FindTripCommentById(ctx context.Context, id string) (FindTripCommentByIdRow, error) {
+	row := q.db.QueryRow(ctx, findTripCommentById, id)
+	var i FindTripCommentByIdRow
 	err := row.Scan(
 		&i.TripComment.ID,
 		&i.TripComment.TripID,
@@ -591,267 +676,168 @@ func (q *Queries) GetTripCommentById(ctx context.Context, id string) (GetTripCom
 	return i, err
 }
 
-const getTripComments = `-- name: GetTripComments :many
+const findTripPlaceById = `-- name: FindTripPlaceById :one
 SELECT
-  tc.id, tc.trip_id, tc.from_id, tc.content, tc.created_at,
-  (SELECT jsonb_build_object(
-    'id', u.id,
-    'fullName', u.full_name,
-    'username', u.username,
-    'profileImage', u.profile_image
-  )) AS user
-FROM
-  trip_comments tc
-LEFT JOIN users u ON u.id = tc.from_id
-WHERE
-  tc.trip_id = $1
-ORDER BY tc.created_at DESC
-OFFSET $2
-LIMIT $3
-`
-
-type GetTripCommentsParams struct {
-	TripID string
-	Offset int32
-	Limit  int32
-}
-
-type GetTripCommentsRow struct {
-	TripComment TripComment
-	User        []byte
-}
-
-func (q *Queries) GetTripComments(ctx context.Context, arg GetTripCommentsParams) ([]GetTripCommentsRow, error) {
-	rows, err := q.db.Query(ctx, getTripComments, arg.TripID, arg.Offset, arg.Limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetTripCommentsRow
-	for rows.Next() {
-		var i GetTripCommentsRow
-		if err := rows.Scan(
-			&i.TripComment.ID,
-			&i.TripComment.TripID,
-			&i.TripComment.FromID,
-			&i.TripComment.Content,
-			&i.TripComment.CreatedAt,
-			&i.User,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getTripCommentsCount = `-- name: GetTripCommentsCount :one
-SELECT COUNT(*) FROM trip_comments WHERE trip_id = $1
-`
-
-func (q *Queries) GetTripCommentsCount(ctx context.Context, tripID string) (int64, error) {
-	row := q.db.QueryRow(ctx, getTripCommentsCount, tripID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const getTripLocationById = `-- name: GetTripLocationById :one
-SELECT
-  tl.id, tl.trip_id, tl.scheduled_time, tl.poi_id, tl.description
-FROM trip_locations tl
-WHERE tl.id = $1
+  tp.id, tp.trip_id, tp.scheduled_time, tp.place_id, tp.description
+FROM trip_places tp
+WHERE tp.id = $1
 LIMIT 1
 `
 
-type GetTripLocationByIdRow struct {
-	TripLocation TripLocation
+type FindTripPlaceByIdRow struct {
+	TripPlace TripPlace
 }
 
-func (q *Queries) GetTripLocationById(ctx context.Context, id string) (GetTripLocationByIdRow, error) {
-	row := q.db.QueryRow(ctx, getTripLocationById, id)
-	var i GetTripLocationByIdRow
+func (q *Queries) FindTripPlaceById(ctx context.Context, id string) (FindTripPlaceByIdRow, error) {
+	row := q.db.QueryRow(ctx, findTripPlaceById, id)
+	var i FindTripPlaceByIdRow
 	err := row.Scan(
-		&i.TripLocation.ID,
-		&i.TripLocation.TripID,
-		&i.TripLocation.ScheduledTime,
-		&i.TripLocation.PoiID,
-		&i.TripLocation.Description,
+		&i.TripPlace.ID,
+		&i.TripPlace.TripID,
+		&i.TripPlace.ScheduledTime,
+		&i.TripPlace.PlaceID,
+		&i.TripPlace.Description,
 	)
 	return i, err
 }
 
-const getTripsByIdsPopulated = `-- name: GetTripsByIdsPopulated :many
-SELECT
-  trips.id, trips.owner_id, trips.title, trips.description, trips.visibility_level, trips.start_at, trips.end_at, trips.created_at, trips.updated_at,
-  jsonb_build_object(
-    'id', u.id,
-    'fullName', u.full_name,
-    'username', u.username,
-    'profileImage', u.profile_image
-  ) AS owner,
-  (SELECT json_agg(DISTINCT jsonb_build_object(
-    'id', par.id,
-    'fullName', par.full_name,
-    'username', par.username,
-    'profileImage', par.profile_image,
-    'role', tp.role
-  ))
-  FROM trip_participants tp
-  JOIN profile par ON par.id = tp.user_id
-  WHERE tp.trip_id = trips.id
-  ) AS participants,
-  (SELECT json_agg(to_jsonb(am.*))
-  FROM trip_amenities ta
-  JOIN amenities am ON am.id = ta.amenity_id
-  WHERE ta.trip_id = trips.id
-  ) AS amenities,
-  (SELECT json_agg(jsonb_build_object(
-    'id', tlocations.id,
-    'tripId', tlocations.trip_id,
-    'scheduledTime', tlocations.scheduled_time,
-    'poiId', tlocations.poi_id,
-    'description', tlocations.description
-  ))
-  FROM trip_locations tlocations
-  WHERE tlocations.trip_id = trips.id
-  ) AS locations,
-  (SELECT get_pois(
-    ARRAY(
-      SELECT 
-        DISTINCT poi_id 
-      FROM trip_locations
-      WHERE trip_locations.trip_id = trips.id
-    )
-  )) AS pois
-FROM trips
-LEFT JOIN users u ON u.id = trips.owner_id
-LEFT JOIN trip_locations ON trip_locations.trip_id = trips.id
-WHERE trips.id = ANY($1::TEXT[])
-GROUP BY trips.id, u.id
-ORDER BY trips.created_at DESC
-`
-
-type GetTripsByIdsPopulatedRow struct {
-	Trip         Trip
-	Owner        []byte
-	Participants []byte
-	Amenities    []byte
-	Locations    []byte
-	Pois         []byte
-}
-
-func (q *Queries) GetTripsByIdsPopulated(ctx context.Context, dollar_1 []string) ([]GetTripsByIdsPopulatedRow, error) {
-	rows, err := q.db.Query(ctx, getTripsByIdsPopulated, dollar_1)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetTripsByIdsPopulatedRow
-	for rows.Next() {
-		var i GetTripsByIdsPopulatedRow
-		if err := rows.Scan(
-			&i.Trip.ID,
-			&i.Trip.OwnerID,
-			&i.Trip.Title,
-			&i.Trip.Description,
-			&i.Trip.VisibilityLevel,
-			&i.Trip.StartAt,
-			&i.Trip.EndAt,
-			&i.Trip.CreatedAt,
-			&i.Trip.UpdatedAt,
-			&i.Owner,
-			&i.Participants,
-			&i.Amenities,
-			&i.Locations,
-			&i.Pois,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const moveDanglingLocations = `-- name: MoveDanglingLocations :exec
-UPDATE trip_locations
+const moveDanglingTripPlaces = `-- name: MoveDanglingTripPlaces :execresult
+UPDATE trip_places
 SET scheduled_time = $1
 WHERE trip_id = $2 AND (scheduled_time < $3 OR scheduled_time > $4)
 `
 
-type MoveDanglingLocationsParams struct {
+type MoveDanglingTripPlacesParams struct {
 	ScheduledTime   pgtype.Timestamptz
 	TripID          string
 	ScheduledTime_2 pgtype.Timestamptz
 	ScheduledTime_3 pgtype.Timestamptz
 }
 
-func (q *Queries) MoveDanglingLocations(ctx context.Context, arg MoveDanglingLocationsParams) error {
-	_, err := q.db.Exec(ctx, moveDanglingLocations,
+func (q *Queries) MoveDanglingTripPlaces(ctx context.Context, arg MoveDanglingTripPlacesParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, moveDanglingTripPlaces,
 		arg.ScheduledTime,
 		arg.TripID,
 		arg.ScheduledTime_2,
 		arg.ScheduledTime_3,
 	)
-	return err
 }
 
-const updateTrip = `-- name: UpdateTrip :one
+const removeTripById = `-- name: RemoveTripById :execresult
+DELETE FROM trips
+WHERE id = $1
+`
+
+func (q *Queries) RemoveTripById(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripById, id)
+}
+
+const removeTripCommentById = `-- name: RemoveTripCommentById :execresult
+DELETE FROM trip_comments
+WHERE id = $1
+`
+
+func (q *Queries) RemoveTripCommentById(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripCommentById, id)
+}
+
+const removeTripCommentsByTripId = `-- name: RemoveTripCommentsByTripId :execresult
+DELETE FROM trip_comments
+WHERE trip_id = $1
+`
+
+func (q *Queries) RemoveTripCommentsByTripId(ctx context.Context, tripID string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripCommentsByTripId, tripID)
+}
+
+const removeTripInviteById = `-- name: RemoveTripInviteById :execresult
+DELETE FROM trip_invites
+WHERE id = $1
+`
+
+func (q *Queries) RemoveTripInviteById(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripInviteById, id)
+}
+
+const removeTripInvitesByTripId = `-- name: RemoveTripInvitesByTripId :execresult
+DELETE FROM trip_invites
+WHERE trip_id = $1
+`
+
+func (q *Queries) RemoveTripInvitesByTripId(ctx context.Context, tripID string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripInvitesByTripId, tripID)
+}
+
+const removeTripParticipantByTripIdAndUserId = `-- name: RemoveTripParticipantByTripIdAndUserId :execresult
+DELETE FROM trip_participants
+WHERE trip_id = $1 AND user_id = $2
+`
+
+type RemoveTripParticipantByTripIdAndUserIdParams struct {
+	TripID string
+	UserID string
+}
+
+func (q *Queries) RemoveTripParticipantByTripIdAndUserId(ctx context.Context, arg RemoveTripParticipantByTripIdAndUserIdParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripParticipantByTripIdAndUserId, arg.TripID, arg.UserID)
+}
+
+const removeTripParticipantsByTripId = `-- name: RemoveTripParticipantsByTripId :execresult
+DELETE FROM trip_participants
+WHERE trip_id = $1
+`
+
+func (q *Queries) RemoveTripParticipantsByTripId(ctx context.Context, tripID string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripParticipantsByTripId, tripID)
+}
+
+const removeTripPlaceById = `-- name: RemoveTripPlaceById :execresult
+DELETE FROM trip_places
+WHERE id = $1
+`
+
+func (q *Queries) RemoveTripPlaceById(ctx context.Context, id string) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, removeTripPlaceById, id)
+}
+
+const updateTrip = `-- name: UpdateTrip :execresult
 UPDATE trips
 SET
   title = $2,
   description = $3,
   visibility_level = $4,
-  start_at = $5,
-  end_at = $6
+  requested_amenities = $5,
+  start_at = $6,
+  end_at = $7
 WHERE id = $1
-RETURNING id, owner_id, title, description, visibility_level, start_at, end_at, created_at, updated_at
 `
 
 type UpdateTripParams struct {
-	ID              string
-	Title           string
-	Description     string
-	VisibilityLevel string
-	StartAt         pgtype.Timestamptz
-	EndAt           pgtype.Timestamptz
+	ID                 string
+	Title              string
+	Description        string
+	VisibilityLevel    string
+	RequestedAmenities pgtype.Hstore
+	StartAt            pgtype.Timestamptz
+	EndAt              pgtype.Timestamptz
 }
 
-func (q *Queries) UpdateTrip(ctx context.Context, arg UpdateTripParams) (Trip, error) {
-	row := q.db.QueryRow(ctx, updateTrip,
+func (q *Queries) UpdateTrip(ctx context.Context, arg UpdateTripParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateTrip,
 		arg.ID,
 		arg.Title,
 		arg.Description,
 		arg.VisibilityLevel,
+		arg.RequestedAmenities,
 		arg.StartAt,
 		arg.EndAt,
 	)
-	var i Trip
-	err := row.Scan(
-		&i.ID,
-		&i.OwnerID,
-		&i.Title,
-		&i.Description,
-		&i.VisibilityLevel,
-		&i.StartAt,
-		&i.EndAt,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
 }
 
-const updateTripComment = `-- name: UpdateTripComment :one
-UPDATE trip_comments 
-SET content = $2 
+const updateTripComment = `-- name: UpdateTripComment :execresult
+UPDATE trip_comments
+SET content = $2
 WHERE id = $1 AND trip_id = $3
-RETURNING id, trip_id, from_id, content, created_at
 `
 
 type UpdateTripCommentParams struct {
@@ -860,48 +846,30 @@ type UpdateTripCommentParams struct {
 	TripID  string
 }
 
-func (q *Queries) UpdateTripComment(ctx context.Context, arg UpdateTripCommentParams) (TripComment, error) {
-	row := q.db.QueryRow(ctx, updateTripComment, arg.ID, arg.Content, arg.TripID)
-	var i TripComment
-	err := row.Scan(
-		&i.ID,
-		&i.TripID,
-		&i.FromID,
-		&i.Content,
-		&i.CreatedAt,
-	)
-	return i, err
+func (q *Queries) UpdateTripComment(ctx context.Context, arg UpdateTripCommentParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateTripComment, arg.ID, arg.Content, arg.TripID)
 }
 
-const updateTripLocation = `-- name: UpdateTripLocation :one
-UPDATE trip_locations
-SET description = $2,
-    scheduled_time = $3
+const updateTripPlace = `-- name: UpdateTripPlace :execresult
+UPDATE trip_places
+SET
+  description = $2,
+  scheduled_time = $3
 WHERE id = $1 AND trip_id = $4
-RETURNING id, trip_id, scheduled_time, poi_id, description
 `
 
-type UpdateTripLocationParams struct {
+type UpdateTripPlaceParams struct {
 	ID            string
 	Description   string
 	ScheduledTime pgtype.Timestamptz
 	TripID        string
 }
 
-func (q *Queries) UpdateTripLocation(ctx context.Context, arg UpdateTripLocationParams) (TripLocation, error) {
-	row := q.db.QueryRow(ctx, updateTripLocation,
+func (q *Queries) UpdateTripPlace(ctx context.Context, arg UpdateTripPlaceParams) (pgconn.CommandTag, error) {
+	return q.db.Exec(ctx, updateTripPlace,
 		arg.ID,
 		arg.Description,
 		arg.ScheduledTime,
 		arg.TripID,
 	)
-	var i TripLocation
-	err := row.Scan(
-		&i.ID,
-		&i.TripID,
-		&i.ScheduledTime,
-		&i.PoiID,
-		&i.Description,
-	)
-	return i, err
 }

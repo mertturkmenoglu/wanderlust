@@ -27,7 +27,7 @@ export const Route = createFileRoute('/_admin/dashboard/cities/$id/')({
 });
 
 function RouteComponent() {
-  const city = Route.useLoaderData();
+  const { city } = Route.useLoaderData();
   const navigate = useNavigate();
   const invalidator = useInvalidator();
 

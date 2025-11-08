@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
 
 type KeyValueCols = {
@@ -17,14 +16,14 @@ const keyValueCols: ColumnDef<KeyValueCols>[] = [
   },
 ];
 
-type Poi = {
+type Place = {
   id: string;
   name: string;
   addressId: number;
   categoryId: number;
 };
 
-const poisCols: ColumnDef<Poi>[] = [
+const placesCols: ColumnDef<Place>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -99,13 +98,13 @@ const reportsCols: ColumnDef<Report>[] = [
   },
 ];
 
-type PoiDraft = {
+type PlaceDraft = {
   id: string;
   name: string;
   v: number;
 };
 
-const poisDraftsCols: ColumnDef<PoiDraft>[] = [
+const placeDraftCols: ColumnDef<PlaceDraft>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -156,73 +155,6 @@ const citiesCols: ColumnDef<City>[] = [
   },
 ];
 
-type Export = {
-  id: string;
-  createdAt: string;
-  status: string;
-  progress: string;
-  error: string | null;
-  file: string | null;
-  itemCount: number;
-};
-
-const exportsCols: ColumnDef<Export>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: ({ row }) => {
-      return (
-        <Link
-          to="/dashboard/exports/$id"
-          params={{
-            id: row.getValue('id') ?? '',
-          }}
-          className="text-primary hover:underline"
-        >
-          {row.getValue('id')}
-        </Link>
-      );
-    },
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Created At',
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue('createdAt')}</div>;
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-  },
-  {
-    accessorKey: 'progress',
-    header: 'Progress',
-  },
-  {
-    accessorKey: 'error',
-    header: 'Error',
-  },
-  {
-    accessorKey: 'file',
-    header: 'File',
-    cell: ({ row }) => {
-      return (
-        <a
-          href={row.getValue('file')}
-          className="text-primary hover:underline"
-        >
-          Download {row.getValue('')}
-        </a>
-      );
-    },
-  },
-  {
-    accessorKey: 'itemCount',
-    header: '# Items',
-  },
-];
-
 type Collection = {
   id: string;
   name: string;
@@ -252,16 +184,14 @@ const collectionsCols: ColumnDef<Collection>[] = [
 export {
   citiesCols,
   collectionsCols,
-  exportsCols,
   keyValueCols,
-  poisCols,
-  poisDraftsCols,
+  placesCols,
+  placeDraftCols,
   reportsCols,
   type City,
   type Collection,
-  type Export,
   type KeyValueCols,
-  type Poi,
-  type PoiDraft,
+  type Place,
+  type PlaceDraft,
   type Report,
 };

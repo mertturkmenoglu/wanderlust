@@ -12,12 +12,14 @@ type Props = {
   favorite: components['schemas']['Favorite'];
 };
 
-export function FavoriteCard({ favorite: { poi } }: Props) {
+export function FavoriteCard({ favorite: { place } }: Props) {
+  const image = place.assets[0];
+
   return (
     <Card className="group flex flex-col md:flex-row py-0">
       <img
-        src={ipx(poi.images[0]?.url ?? '', 'w_512')}
-        alt={poi.images[0]?.alt ?? ''}
+        src={ipx(image?.url ?? '', 'w_512')}
+        alt={image?.description ?? ''}
         className="aspect-video w-full rounded-t-md object-cover md:w-32 md:rounded-none md:rounded-l-md lg:w-32 2xl:w-64"
       />
 
@@ -25,18 +27,18 @@ export function FavoriteCard({ favorite: { poi } }: Props) {
         <CardHeader className="w-full">
           <CardTitle
             className="line-clamp-1 capitalize"
-            title={poi.name}
+            title={place.name}
           >
-            {poi.name}
+            {place.name}
           </CardTitle>
           <CardDescription className="line-clamp-1">
-            {poi.address.city.name} / {poi.address.city.country.name}
+            {place.address.city.name} / {place.address.city.country.name}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="mt-4">
           <p className="line-clamp-1 text-sm leading-none text-primary">
-            {poi.category.name}
+            {place.category.name}
           </p>
         </CardContent>
       </div>
