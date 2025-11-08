@@ -33,7 +33,7 @@ export function Actions({ bookmark }: Props) {
           mutation.mutate({
             params: {
               path: {
-                id: bookmark.poiId,
+                id: bookmark.placeId,
               },
             },
           });
@@ -45,7 +45,7 @@ export function Actions({ bookmark }: Props) {
 
       <Link
         to="/p/$id"
-        params={{ id: bookmark.poiId }}
+        params={{ id: bookmark.placeId }}
         className={cn(
           'flex-1',
           buttonVariants({ variant: 'default', size: 'sm' }),

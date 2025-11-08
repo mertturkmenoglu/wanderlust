@@ -1,4 +1,4 @@
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { Link } from '@tanstack/react-router';
 import type { MapLibreEvent } from 'maplibre-gl';
 import { useEffect, useState } from 'react';
@@ -46,17 +46,17 @@ export function GeoSearch(props: UseGeoSearchProps) {
         <Popup
           latitude={items[itemIndex]!._geoloc.lat}
           longitude={items[itemIndex]!._geoloc.lng}
-          className="min-w-md flex items-center !text-primary"
+          className="min-w-md flex items-center text-primary!"
         >
           <Link
             to="/p/$id"
             className="text-primary"
             params={{
-              id: items[itemIndex]!.poi.id,
+              id: items[itemIndex]!.place.id,
             }}
           >
-            <PoiCard
-              poi={items[itemIndex]!.poi}
+            <PlaceCard
+              place={items[itemIndex]!.place}
               hoverEffects={false}
             />
           </Link>

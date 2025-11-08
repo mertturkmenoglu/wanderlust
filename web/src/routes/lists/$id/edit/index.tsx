@@ -170,7 +170,7 @@ function RouteComponent() {
                       },
                     },
                     body: {
-                      poiIds: form.getValues('items').map((item) => item.poiId),
+                      placeIds: form.getValues('items').map((item) => item.placeId),
                     },
                   });
                 }}
@@ -190,19 +190,19 @@ function RouteComponent() {
         )}
         {form.watch('items').map((item, i) => (
           <div
-            key={item.poi.id}
+            key={item.place.id}
             className="flex items-center gap-2"
           >
             <div className={cn('group', 'flex items-center gap-4')}>
               <img
-                src={ipx(item.poi.images[0]?.url ?? '', 'w_512')}
-                alt={item.poi.images[0]?.alt ?? ''}
+                src={ipx(item.place.assets[0]?.url ?? '', 'w_512')}
+                alt={item.place.assets[0]?.description ?? ''}
                 className="aspect-video w-full rounded-md object-cover max-w-36"
               />
 
               <div className="my-2">
                 <div className="mt-2 text-lg font-semibold capitalize">
-                  {item.poi.name}
+                  {item.place.name}
                 </div>
               </div>
             </div>

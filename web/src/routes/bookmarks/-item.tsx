@@ -38,7 +38,7 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
       })}
     >
       <button
-        key={bookmark.poiId}
+        key={bookmark.placeId}
         className="block text-left"
         onClick={async () => {
           if (!isMobile) {
@@ -47,7 +47,7 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
             await navigate({
               to: '/p/$id',
               params: {
-                id: bookmark.poiId,
+                id: bookmark.placeId,
               },
             });
           }
@@ -55,27 +55,27 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
       >
         <ItemMedia variant="default">
           <Image
-            src={bookmark.poi.images[0]?.url ?? ''}
-            alt={bookmark.poi.images[0]?.alt ?? bookmark.poi.name}
+            src={bookmark.place.assets[0]?.url ?? ''}
+            alt={bookmark.place.assets[0]?.description ?? bookmark.place.name}
             className="aspect-video rounded-md object-cover w-32"
             width={512}
             height={288}
           />
         </ItemMedia>
         <ItemContent>
-          <ItemTitle>{bookmark.poi.name}</ItemTitle>
+          <ItemTitle>{bookmark.place.name}</ItemTitle>
           <ItemDescription>
-            {bookmark.poi.address.city.name} /{' '}
-            {bookmark.poi.address.city.country.name}
+            {bookmark.place.address.city.name} /{' '}
+            {bookmark.place.address.city.country.name}
           </ItemDescription>
           <ItemDescription className="text-sm text-primary">
-            {bookmark.poi.category.name}
+            {bookmark.place.category.name}
           </ItemDescription>
 
           <ItemFooter className="md:hidden">
             <Link
               to="/p/$id"
-              params={{ id: bookmark.poiId }}
+              params={{ id: bookmark.placeId }}
               className={cn(
                 'px-0!',
                 buttonVariants({ variant: 'link', size: 'sm' }),
