@@ -5,7 +5,7 @@ export type Props = {
     id: string;
     location: [number, number];
     name: string;
-    poi: {
+    place: {
       id: string;
       address: {
         city: {
@@ -19,13 +19,13 @@ export type Props = {
           };
         };
       };
-      amenities: unknown[];
+      amenities: Record<string, unknown>;
       category: {
         id: number;
         image: string;
         name: string;
       };
-      images: {
+      assets: {
         id: number;
         url: string;
       }[];
@@ -36,12 +36,12 @@ export type Props = {
 export function Hit({ hit }: Readonly<Props>) {
   return (
     <Card
-      id={hit.poi.id}
+      id={hit.place.id}
       name={hit.name}
-      categoryName={hit.poi.category.name}
-      image={hit.poi.images[0]?.url ?? ''}
-      city={hit.poi.address.city.name}
-      state={hit.poi.address.city.state.name}
+      categoryName={hit.place.category.name}
+      image={hit.place.assets[0]?.url ?? ''}
+      city={hit.place.address.city.name}
+      state={hit.place.address.city.state.name}
       isCardClickable={false}
     />
   );

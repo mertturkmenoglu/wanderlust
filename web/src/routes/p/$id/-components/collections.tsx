@@ -1,4 +1,4 @@
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
@@ -24,7 +24,7 @@ type ContentProps = {
 function Content({ className }: ContentProps) {
   const route = getRouteApi('/p/$id/');
   const { id } = route.useParams();
-  const query = api.useSuspenseQuery('get', '/api/v2/collections/poi/{id}', {
+  const query = api.useSuspenseQuery('get', '/api/v2/collections/place/{id}', {
     params: {
       path: {
         id: id,
@@ -57,14 +57,14 @@ function Content({ className }: ContentProps) {
               <div className="flex gap-8 my-4">
                 {collection.items.map((item) => (
                   <Link
-                    key={item.poiId}
+                    key={item.placeId}
                     to="/p/$id"
                     params={{
-                      id: item.poiId,
+                      id: item.placeId,
                     }}
                   >
-                    <PoiCard
-                      poi={item.poi}
+                    <PlaceCard
+                      place={item.place}
                       className="w-[256px]"
                       hoverEffects={false}
                     />

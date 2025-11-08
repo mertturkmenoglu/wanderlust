@@ -33,18 +33,18 @@ import { toast } from 'sonner';
 
 export function AddToListButton() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
   const auth = useContext(AuthContext);
   const [listId, setListId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const query = api.useQuery(
     'get',
-    '/api/v2/lists/status/{poiId}',
+    '/api/v2/lists/status/{placeId}',
     {
       params: {
         path: {
-          poiId: poi.id,
+          placeId: place.id,
         },
       },
     },
@@ -99,7 +99,7 @@ export function AddToListButton() {
                       value={listStatus.id}
                       key={listStatus.id}
                       disabled={listStatus.includes}
-                      className="break-words"
+                      className="wrap-break-word"
                     >
                       {listStatus.name}
                     </SelectItem>
@@ -143,7 +143,7 @@ export function AddToListButton() {
                   },
                 },
                 body: {
-                  poiId: poi.id,
+                  placeId: place.id,
                 },
               });
             }}

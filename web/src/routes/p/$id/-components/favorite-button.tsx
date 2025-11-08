@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 
 export function FavoriteButton() {
   const route = getRouteApi('/p/$id/');
-  const { poi, meta } = route.useLoaderData();
+  const { place, meta } = route.useLoaderData();
   const [fav, setFav] = useState(meta.isFavorite);
   const auth = useContext(AuthContext);
   const invalidator = useInvalidator();
@@ -48,7 +48,7 @@ export function FavoriteButton() {
       deleteMutation.mutate({
         params: {
           path: {
-            id: poi.id,
+            id: place.id,
           },
         },
       });
@@ -58,7 +58,7 @@ export function FavoriteButton() {
 
     createMutation.mutate({
       body: {
-        poiId: poi.id,
+        placeId: place.id,
       },
     });
   };

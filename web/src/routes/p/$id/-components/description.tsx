@@ -13,8 +13,8 @@ type Props = {
 
 export function Description({ className }: Props) {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
-  const rating = computeRating(poi.totalPoints, poi.totalVotes);
+  const { place } = route.useLoaderData();
+  const rating = computeRating(place.totalPoints, place.totalVotes);
   const fmt = Intl.NumberFormat('en-US', {
     style: 'decimal',
     compactDisplay: 'short',
@@ -26,7 +26,7 @@ export function Description({ className }: Props) {
       <div className="flex flex-col">
         <h3 className="text-xl font-semibold">Description</h3>
         <CollapsibleText
-          text={poi.description}
+          text={place.description}
           charLimit={1000}
         />
 
@@ -37,16 +37,16 @@ export function Description({ className }: Props) {
         <InfoCard.Root>
           <InfoCard.Content>
             <InfoCard.NumberColumn>
-              {computeRating(poi.totalPoints, poi.totalVotes)}
+              {computeRating(place.totalPoints, place.totalVotes)}
             </InfoCard.NumberColumn>
             <InfoCard.DescriptionColumn>
               <FormattedRating
                 rating={Number.parseFloat(rating)}
-                votes={poi.totalVotes}
+                votes={place.totalVotes}
                 showNumbers={false}
               />
               <span className="text-xs text-muted-foreground tracking-tight">
-                {fmt.format(poi.totalVotes)} reviews
+                {fmt.format(place.totalVotes)} reviews
               </span>
             </InfoCard.DescriptionColumn>
           </InfoCard.Content>
@@ -55,7 +55,7 @@ export function Description({ className }: Props) {
         <InfoCard.Root>
           <InfoCard.Content>
             <InfoCard.NumberColumn>
-              {fmt.format(poi.totalFavorites)}
+              {fmt.format(place.totalFavorites)}
             </InfoCard.NumberColumn>
             <InfoCard.DescriptionColumn>
               <div className="flex items-center gap-1">
@@ -72,10 +72,10 @@ export function Description({ className }: Props) {
 
         <InfoCard.Root>
           <InfoCard.Content>
-            <InfoCard.NumberColumn>{poi.priceLevel}/5</InfoCard.NumberColumn>
+            <InfoCard.NumberColumn>{place.priceLevel}/5</InfoCard.NumberColumn>
             <InfoCard.DescriptionColumn>
               <div className="flex items-center">
-                {Array.from({ length: poi.priceLevel }).map((_, i) => (
+                {Array.from({ length: place.priceLevel }).map((_, i) => (
                   <DollarSignIcon
                     className="text-primary size-4"
                     key={i}
@@ -93,16 +93,18 @@ export function Description({ className }: Props) {
         <InfoCard.Root>
           <InfoCard.Content>
             <InfoCard.NumberColumn>
-              {poi.accessibilityLevel}/5
+              {place.accessibilityLevel}/5
             </InfoCard.NumberColumn>
             <InfoCard.DescriptionColumn>
               <div className="flex items-center">
-                {Array.from({ length: poi.accessibilityLevel }).map((_, i) => (
-                  <PersonStandingIcon
-                    className="text-primary size-4"
-                    key={i}
-                  />
-                ))}
+                {Array.from({ length: place.accessibilityLevel }).map(
+                  (_, i) => (
+                    <PersonStandingIcon
+                      className="text-primary size-4"
+                      key={i}
+                    />
+                  ),
+                )}
               </div>
 
               <span className="text-xs text-muted-foreground tracking-tight">

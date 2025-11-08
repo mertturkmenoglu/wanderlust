@@ -29,17 +29,17 @@ const headers = {
 
 function useNearbyPois() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
 
   return useQuery({
-    queryKey: ['poi-nearby', poi.id],
+    queryKey: ['place-nearby', place.id],
     queryFn: async () => {
       const sp = new URLSearchParams();
       sp.append('q', '*');
       sp.append('query_by', 'name');
       sp.append(
         'filter_by',
-        `location:(${poi.address.lat},${poi.address.lng},50 km)`,
+        `location:(${place.address.lat},${place.address.lng},50 km)`,
       );
       const url = `${searchApiUrl}/collections/pois/documents/search?${sp.toString()}`;
       const res = await fetch(url, {
@@ -66,13 +66,13 @@ export function NearbyPois({ className }: Props) {
               <Link
                 to="/p/$id"
                 params={{
-                  id: p.poi.id,
+                  id: p.place.id,
                 }}
-                key={p.poi.id}
+                key={p.place.id}
               >
                 <div className="group w-[256px]">
                   <img
-                    src={ipx(p.poi.images[0]?.url ?? '', 'w_512')}
+                    src={ipx(p.place.assets[0]?.url ?? '', 'w_512')}
                     alt=""
                     className="aspect-video w-full rounded-md object-cover"
                   />
@@ -82,15 +82,15 @@ export function NearbyPois({ className }: Props) {
                       {p.name}
                     </div>
                     <div className="line-clamp-1 text-sm text-muted-foreground">
-                      {p.poi.address.city.name} /{' '}
-                      {p.poi.address.city.country.name}
+                      {p.place.address.city.name} /{' '}
+                      {p.place.address.city.country.name}
                     </div>
                   </div>
 
                   <div>
                     <div className="flex-1 space-y-2">
                       <div className="text-sm text-primary">
-                        {p.poi.category.name}
+                        {p.place.category.name}
                       </div>
                     </div>
                   </div>

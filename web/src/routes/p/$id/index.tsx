@@ -27,7 +27,7 @@ export const Route = createFileRoute('/p/$id/')({
   component: RouteComponent,
   loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/pois/{id}', {
+      api.queryOptions('get', '/api/v2/places/{id}', {
         params: {
           path: {
             id: params.id,

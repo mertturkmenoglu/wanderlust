@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 
 export function BookmarkButton() {
   const route = getRouteApi('/p/$id/');
-  const { poi, meta } = route.useLoaderData();
+  const { place, meta } = route.useLoaderData();
   const [booked, setBooked] = useState(meta.isBookmarked);
   const auth = useContext(AuthContext);
   const invalidator = useInvalidator();
@@ -48,7 +48,7 @@ export function BookmarkButton() {
       deleteMutation.mutate({
         params: {
           path: {
-            id: poi.id,
+            id: place.id,
           },
         },
       });
@@ -58,7 +58,7 @@ export function BookmarkButton() {
 
     createMutation.mutate({
       body: {
-        poiId: poi.id,
+        placeId: place.id,
       },
     });
   };

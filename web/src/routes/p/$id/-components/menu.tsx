@@ -16,7 +16,7 @@ async function handleShareClick() {
 
 export function Menu() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
 
   return (
     <DropdownMenu>
@@ -59,8 +59,8 @@ export function Menu() {
             <Link
               to="/report"
               search={{
-                id: poi.id,
-                type: 'poi',
+                id: place.id,
+                type: 'place',
               }}
             >
               <FlagIcon className="mr-2 size-4" />
