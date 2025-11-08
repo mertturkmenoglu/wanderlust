@@ -27,7 +27,7 @@ const headers = {
   'X-TYPESENSE-API-KEY': searchApiKey,
 };
 
-function useNearbyPois() {
+function useNearbyPlaces() {
   const route = getRouteApi('/p/$id/');
   const { place } = route.useLoaderData();
 
@@ -41,7 +41,7 @@ function useNearbyPois() {
         'filter_by',
         `location:(${place.address.lat},${place.address.lng},50 km)`,
       );
-      const url = `${searchApiUrl}/collections/pois/documents/search?${sp.toString()}`;
+      const url = `${searchApiUrl}/collections/places/documents/search?${sp.toString()}`;
       const res = await fetch(url, {
         headers,
       });
@@ -51,8 +51,8 @@ function useNearbyPois() {
   });
 }
 
-export function NearbyPois({ className }: Props) {
-  const query = useNearbyPois();
+export function NearbyPlaces({ className }: Props) {
+  const query = useNearbyPlaces();
 
   if (query.data) {
     return (

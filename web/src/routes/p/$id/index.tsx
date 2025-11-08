@@ -12,7 +12,7 @@ import { Header } from './-components/header';
 import { ImageGrid } from './-components/image-grid';
 import { Information } from './-components/information';
 import { Map } from './-components/map';
-import { NearbyPois } from './-components/nearby-pois';
+import { NearbyPlaces } from './-components/nearby-places';
 import { Reviews } from './-components/reviews';
 
 const schema = z.object({
@@ -69,7 +69,7 @@ function RouteComponent() {
 
       <Separator className="my-4" />
 
-      <NearbyPois className="my-4" />
+      <NearbyPlaces className="my-4" />
 
       <Separator className="my-4" />
 
