@@ -9,6 +9,7 @@ import (
 	"wanderlust/pkg/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type FakePlaces struct {
@@ -22,27 +23,35 @@ func (f *FakePlaces) Generate() (int64, error) {
 		f.Step = f.Count
 	}
 
+	ctx := context.Background()
+
 	var i int32
 	for i = 0; i < f.Count; i += f.Step {
 		if i+f.Step >= f.Count {
 			f.Step = f.Count - i
 		}
 
-		batch := make([]db.BatchCreatePlacesParams, 0, f.Step)
-		addressIds, err := f.db.Queries.FindManyAddressIdsByRand(context.Background(), f.Step)
+		addressIds, err := f.db.Queries.FindManyAddressIdsByRand(ctx, f.Step)
 
 		if err != nil {
 			return 0, err
 		}
 
+		tx, err := f.db.Pool.Begin(ctx)
+
+		if err != nil {
+			return 0, err
+		}
+
+		defer tx.Rollback(ctx)
+
+		qtx := f.db.Queries.WithTx(tx)
+
 		for range f.Step {
-			hours := genRandOpenTimes()
+			hours := genRandHours()
+			amenities := genRandAmenities()
 
-			if err != nil {
-				return 0, err
-			}
-
-			batch = append(batch, db.BatchCreatePlacesParams{
+			params := db.CreatePlaceParams{
 				ID:                 uid.Flake(),
 				Name:               gofakeit.Sentence(3),
 				Phone:              utils.StrToText(gofakeit.Phone()),
@@ -53,10 +62,20 @@ func (f *FakePlaces) Generate() (int64, error) {
 				AccessibilityLevel: fakeutils.RandInt16Range(1, 5),
 				CategoryID:         fakeutils.RandInt16Range(1, 23),
 				Hours:              hours,
-			})
+				Amenities:          amenities,
+				TotalVotes:         0,
+				TotalPoints:        0,
+				TotalFavorites:     0,
+			}
+
+			_, err = qtx.CreatePlace(context.Background(), params)
+
+			if err != nil {
+				return 0, err
+			}
 		}
 
-		_, err = f.db.Queries.BatchCreatePlaces(context.Background(), batch)
+		err = tx.Commit(ctx)
 
 		if err != nil {
 			return 0, err
@@ -84,17 +103,84 @@ var closings = [...]string{
 	"21:00",
 }
 
-func genRandOpenTimes() map[string]*string {
-	v := make(map[string]*string)
+func genRandHours() pgtype.Hstore {
+	hours := pgtype.Hstore{}
 
 	for _, d := range days {
-		s := genOpenTimesForDay()
-		v[d] = &s
+		str := fmt.Sprintf("%s-%s", openings[gofakeit.Number(0, len(openings)-1)], closings[gofakeit.Number(0, len(closings)-1)])
+		hours[d] = &str
 	}
 
-	return v
+	return hours
 }
 
-func genOpenTimesForDay() string {
-	return fmt.Sprintf("%s-%s", openings[gofakeit.Number(0, len(openings)-1)], closings[gofakeit.Number(0, len(closings)-1)])
+var amenities = map[string]string{
+	"wifi":                  "Wi-Fi",
+	"freeParking":           "Free Parking",
+	"paidParking":           "Paid Parking",
+	"wheelchair":            "Wheelchair Access",
+	"restrooms":             "Restrooms",
+	"ac":                    "AC",
+	"outdoor":               "Outdoor Seating",
+	"indoor":                "Indoor Seating",
+	"bar":                   "Bar Area",
+	"pet":                   "Pet friendly",
+	"kidsPlay":              "Kids' Play Area",
+	"driveThru":             "Drive-Thru",
+	"loyalty":               "Loyalty Program",
+	"allWeekService":        "24/7 Service",
+	"delivery":              "Delivery Service",
+	"vegan":                 "Vegan",
+	"liveMusic":             "Live Music",
+	"privateRooms":          "Private Rooms",
+	"onlineOrdering":        "Online Ordering",
+	"evCharging":            "EV Charging",
+	"selfService":           "Self-Service",
+	"smoking":               "Smoking",
+	"guidedTours":           "Guided Tours",
+	"giftShop":              "Gift Shop",
+	"snackBar":              "Snack Bar",
+	"informationDesk":       "Information Desk",
+	"specialExhibitions":    "Special Exhibitions",
+	"observationDecks":      "Observation Decks",
+	"atm":                   "ATM",
+	"photographyArea":       "Photography Area",
+	"a11yServices":          "A11Y Services",
+	"studyRoom":             "Study Room",
+	"romanticAtmosphere":    "Romantic Atmosphere",
+	"familyFriendly":        "Family-Friendly",
+	"concierge":             "Concierge Services",
+	"fitness":               "Fitness Facilities",
+	"spa":                   "Spa Services",
+	"workspaces":            "Workspaces",
+	"groupActivities":       "Group Activities",
+	"ecoFriendly":           "Eco Friendly",
+	"publicTransportation":  "Public Transportation Access",
+	"garden":                "Garden",
+	"complimentaryTasting":  "Complimentary Tasting",
+	"gamingStations":        "Gaming Stations",
+	"onlineReservation":     "Online Reservation",
+	"valetParking":          "Valet Parking",
+	"catering":              "Catering Services",
+	"specialDietaryOptions": "Special Dietary Options",
+	"childrensMenu":         "Children's Menu",
+	"wineList":              "Wine List",
+	"liveCookingStations":   "Live Cooking Stations",
+	"happyHourSpecials":     "Happy Hour Specials",
+	"chefsSpecials":         "Chef's Specials",
+	"communalTables":        "Communal Tables",
+	"brunchOptions":         "Brunch Options",
+	"eventHosting":          "Event Hosting",
+}
+
+func genRandAmenities() pgtype.Hstore {
+	amenitiesStore := pgtype.Hstore{}
+
+	for key := range amenities {
+		if gofakeit.Bool() {
+			amenitiesStore[key] = utils.StrPtr(amenities[key])
+		}
+	}
+
+	return amenitiesStore
 }
