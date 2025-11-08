@@ -1,35 +1,35 @@
 import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { poisCols } from '@/components/blocks/dashboard/columns';
+import { placesCols } from '@/components/blocks/dashboard/columns';
 import { DataTable } from '@/components/blocks/dashboard/data-table';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/_admin/dashboard/pois/')({
+export const Route = createFileRoute('/_admin/dashboard/places/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const query = api.useQuery('get', '/api/v2/pois/peek');
+  const query = api.useQuery('get', '/api/v2/places/peek');
 
   return (
     <div>
       <DashboardBreadcrumb
-        items={[{ name: 'Point of Interests', href: '/dashboard/pois' }]}
+        items={[{ name: 'Places', href: '/dashboard/places' }]}
       />
       <Separator className="my-2" />
 
-      {query.data?.pois && (
+      {query.data?.places && (
         <DataTable
-          columns={poisCols}
+          columns={placesCols}
           filterColumnId="name"
-          data={query.data.pois.map((poi) => ({
-            id: poi.id,
-            name: poi.name,
-            addressId: poi.addressId,
-            categoryId: poi.categoryId,
+          data={query.data.places.map((place) => ({
+            id: place.id,
+            name: place.name,
+            addressId: place.addressId,
+            categoryId: place.categoryId,
           }))}
-          hrefPrefix="/dashboard/pois"
+          hrefPrefix="/dashboard/places"
         />
       )}
     </div>

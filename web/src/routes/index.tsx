@@ -1,7 +1,7 @@
 // oxlint-disable no-nested-ternary
 import { ActionBanner } from '@/components/blocks/action-banner';
 import { OverlayBanner } from '@/components/blocks/overlay-banner';
-import { PoiGrid } from '@/components/blocks/poi-grid';
+import { PlacesGrid } from '@/components/blocks/places-grid';
 import { QuickActions } from '@/components/blocks/quick-actions';
 import { Search } from '@/components/blocks/search';
 import { TagNavigation } from '@/components/blocks/tag-navigation';
@@ -112,7 +112,7 @@ function Content() {
         imgClassName="aspect-[3]"
       />
 
-      <PoiGrid
+      <PlacesGrid
         dataKey="featured"
         data={aggregations.featured}
       />
@@ -140,7 +140,7 @@ function Content() {
         }
       />
 
-      <PoiGrid
+      <PlacesGrid
         dataKey="popular"
         data={aggregations.popular}
       />
@@ -174,7 +174,7 @@ function Content() {
         imgClassName=""
       />
 
-      <PoiGrid
+      <PlacesGrid
         dataKey="favorite"
         data={aggregations.favorites}
       />
@@ -204,7 +204,7 @@ function Content() {
         lefty={false}
       />
 
-      <PoiGrid
+      <PlacesGrid
         dataKey="new"
         data={aggregations.new}
       />

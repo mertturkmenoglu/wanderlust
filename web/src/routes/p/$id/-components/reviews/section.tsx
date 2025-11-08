@@ -20,13 +20,13 @@ import { ReviewCard } from './card';
 
 export function Section() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
   const search = route.useSearch();
 
-  const query = api.useQuery('get', '/api/v2/reviews/poi/{id}', {
+  const query = api.useQuery('get', '/api/v2/reviews/place/{id}', {
     params: {
       path: {
-        id: poi.id,
+        id: place.id,
       },
       query: {
         pageSize: 10,
@@ -118,7 +118,7 @@ export function Section() {
                 aria-label="Go to previous page"
                 to="/p/$id"
                 params={{
-                  id: poi.id,
+                  id: place.id,
                 }}
                 hash="reviews"
                 search={(prev) => ({
@@ -144,7 +144,7 @@ export function Section() {
                   )}
                   to="/p/$id"
                   params={{
-                    id: poi.id,
+                    id: place.id,
                   }}
                   hash="reviews"
                   search={(prev) => ({
@@ -169,7 +169,7 @@ export function Section() {
                 aria-label="Go to next page"
                 to="/p/$id"
                 params={{
-                  id: poi.id,
+                  id: place.id,
                 }}
                 hash="reviews"
                 search={(prev) => ({

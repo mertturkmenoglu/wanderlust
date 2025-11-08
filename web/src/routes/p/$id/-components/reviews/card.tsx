@@ -50,10 +50,10 @@ export function ReviewCard({ review }: Props) {
         />
         <div
           className={cn('flex items-center gap-4', {
-            'mt-4': review.images.length > 0,
+            'mt-4': review.assets.length > 0,
           })}
         >
-          {review.images.map((m, i) => (
+          {review.assets.map((m, i) => (
             <button
               type="button"
               key={m.url}
@@ -75,7 +75,7 @@ export function ReviewCard({ review }: Props) {
         <Lightbox
           open={open}
           close={() => setOpen(false)}
-          slides={review.images.map((m) => ({
+          slides={review.assets.map((m) => ({
             src: m.url,
           }))}
           carousel={{

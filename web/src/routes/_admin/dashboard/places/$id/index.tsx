@@ -10,11 +10,11 @@ import { cn } from '@/lib/utils';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
 
-export const Route = createFileRoute('/_admin/dashboard/pois/$id/')({
+export const Route = createFileRoute('/_admin/dashboard/places/$id/')({
   component: RouteComponent,
   loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/pois/{id}', {
+      api.queryOptions('get', '/api/v2/places/{id}', {
         params: {
           path: {
             id: params.id,
@@ -26,16 +26,16 @@ export const Route = createFileRoute('/_admin/dashboard/pois/$id/')({
 });
 
 function RouteComponent() {
-  const { poi } = Route.useLoaderData();
+  const { place } = Route.useLoaderData();
 
   return (
     <div>
       <DashboardBreadcrumb
         items={[
-          { name: 'Point of Interests', href: '/dashboard/pois' },
+          { name: 'Places', href: '/dashboard/places' },
           {
-            name: poi.name,
-            href: `/dashboard/pois/${poi.id}`,
+            name: place.name,
+            href: `/dashboard/places/${place.id}`,
           },
         ]}
       />
@@ -46,7 +46,7 @@ function RouteComponent() {
           <Link
             to="/p/$id"
             params={{
-              id: poi.id,
+              id: place.id,
             }}
             className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
           >
@@ -54,9 +54,9 @@ function RouteComponent() {
           </Link>
 
           <Link
-            to="/dashboard/pois/$id/edit"
+            to="/dashboard/places/$id/edit"
             params={{
-              id: poi.id,
+              id: place.id,
             }}
             className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
           >
@@ -66,8 +66,8 @@ function RouteComponent() {
       </DashboardActions>
 
       <img
-        src={ipx(poi.images[0]?.url ?? '', 'w_512')}
-        alt={poi.images[0]?.alt}
+        src={ipx(place.assets[0]?.url ?? '', 'w_512')}
+        alt={place.assets[0]?.description ?? ''}
         className="mt-4 w-64 rounded-md aspect-video object-cover"
       />
 
@@ -78,75 +78,75 @@ function RouteComponent() {
           data={[
             {
               k: 'ID',
-              v: poi.id,
+              v: place.id,
             },
             {
               k: 'Name',
-              v: poi.name,
+              v: place.name,
             },
             {
               k: 'Phone',
-              v: poi.phone ?? '-',
+              v: place.phone ?? '-',
             },
             {
               k: 'Description',
-              v: poi.description,
+              v: place.description,
             },
             {
               k: 'Address ID',
-              v: `${poi.addressId}`,
+              v: `${place.addressId}`,
             },
             {
               k: 'Website',
-              v: poi.website ?? '-',
+              v: place.website ?? '-',
             },
             {
               k: 'Price Level',
-              v: `${poi.priceLevel}`,
+              v: `${place.priceLevel}`,
             },
             {
               k: 'Accessibility Level',
-              v: `${poi.accessibilityLevel}`,
+              v: `${place.accessibilityLevel}`,
             },
             {
               k: 'Total Votes',
-              v: `${poi.totalVotes}`,
+              v: `${place.totalVotes}`,
             },
             {
               k: 'Total Points',
-              v: `${poi.totalPoints}`,
+              v: `${place.totalPoints}`,
             },
             {
               k: 'Total Favorites',
-              v: `${poi.totalFavorites}`,
+              v: `${place.totalFavorites}`,
             },
             {
               k: 'Category ID',
-              v: `${poi.categoryId}`,
+              v: `${place.categoryId}`,
             },
             {
               k: 'Hours',
-              v: Object.keys(poi.hours).join(', ').toUpperCase(),
+              v: Object.keys(place.hours).join(', ').toUpperCase(),
             },
             {
               k: 'Created At',
-              v: `${formatDistanceToNow(new Date(poi.createdAt))} ago`,
+              v: `${formatDistanceToNow(new Date(place.createdAt))} ago`,
             },
             {
               k: 'Updated At',
-              v: `${formatDistanceToNow(new Date(poi.updatedAt))} ago`,
+              v: `${formatDistanceToNow(new Date(place.updatedAt))} ago`,
             },
             {
               k: 'Total Amenities',
-              v: `${poi.amenities.length}`,
+              v: `${place.amenities.length}`,
             },
             {
               k: 'Total Media',
-              v: `${poi.images.length}`,
+              v: `${place.assets.length}`,
             },
             {
               k: 'Address',
-              v: JSON.stringify(poi.address, null, 2),
+              v: JSON.stringify(place.address, null, 2),
             },
           ]}
         />

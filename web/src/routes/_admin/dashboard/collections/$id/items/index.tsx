@@ -1,6 +1,5 @@
 import { AppMessage } from '@/components/blocks/app-message';
 import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { PoiCard } from '@/components/blocks/poi-card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
@@ -9,9 +8,10 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { GripVerticalIcon, LinkIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { utils } from 'swapy';
+// import { utils } from 'swapy';
 import { AddItemDialog } from './-add-item-dialog';
 import { DeleteItemDialog } from './-delete-item-dialog';
+import { PlaceCard } from '@/components/blocks/place-card';
 
 export const Route = createFileRoute(
   '/_admin/dashboard/collections/$id/items/',
@@ -35,15 +35,15 @@ function RouteComponent() {
   const { items, id } = collection;
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [slotItemMap] = useState(utils.initSlotItemMap(items, 'poiId'));
+  // const [slotItemMap] = useState(utils.initSlotItemMap(items, 'placeId'));
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const mutation = api.useMutation('patch', '/api/v2/collections/{id}/items', {
-    onSuccess: () => {
-      toast.success('Collection items updated');
-      setIsEditMode(false);
-    },
-  });
+  // const mutation = api.useMutation('patch', '/api/v2/collections/{id}/items', {
+  //   onSuccess: () => {
+  //     toast.success('Collection items updated');
+  //     setIsEditMode(false);
+  //   },
+  // });
 
   // useEffect(() => {
   //   if (!isEditMode) {
@@ -118,19 +118,19 @@ function RouteComponent() {
             <Button
               variant="default"
               onClick={() => {
-                mutation.mutate({
-                  params: {
-                    path: {
-                      id,
-                    },
-                  },
-                  body: {
-                    newOrder: slotItemMap.map((el) => ({
-                      listIndex: +el.slot + 1,
-                      poiId: el.item,
-                    })),
-                  },
-                });
+                //   mutation.mutate({
+                //     params: {
+                //       path: {
+                //         id,
+                //       },
+                //     },
+                //     body: {
+                //       newOrder: slotItemMap.map((el) => ({
+                //         listIndex: +el.slot + 1,
+                //         poiId: el.item,
+                //       })),
+                //     },
+                //   });
               }}
             >
               Save
@@ -148,19 +148,19 @@ function RouteComponent() {
       >
         {items.map((item, i) => (
           <div
-            key={item.poiId}
+            key={item.placeId}
             className="flex flex-col gap-2"
             data-swapy-slot={`${i}`}
           >
-            <div data-swapy-item={item.poiId}>
+            <div data-swapy-item={item.placeId}>
               {!isEditMode && (
                 <Link
                   to="/p/$id"
                   params={{
-                    id: item.poiId,
+                    id: item.placeId,
                   }}
                 >
-                  <PoiCard poi={item.poi} />
+                  <PlaceCard place={item.place} />
                 </Link>
               )}
 
@@ -169,7 +169,7 @@ function RouteComponent() {
                   <div className="cursor-grabbing">
                     <GripVerticalIcon className="size-6" />
                   </div>
-                  <PoiCard poi={item.poi} />
+                  <PlaceCard place={item.place} />
                 </div>
               )}
 
@@ -177,7 +177,7 @@ function RouteComponent() {
                 <div className="flex flex-row gap-2">
                   <DeleteItemDialog
                     collectionId={id}
-                    poiName={item.poi.name}
+                    placeName={item.place.name}
                     index={i}
                   />
 
@@ -187,7 +187,7 @@ function RouteComponent() {
                     onClick={async () => {
                       await globalThis.window.navigator.clipboard.writeText(
                         new URL(
-                          `/p/${item.poiId}`,
+                          `/p/${item.placeId}`,
                           globalThis.window.location.origin,
                         ).toString(),
                       );

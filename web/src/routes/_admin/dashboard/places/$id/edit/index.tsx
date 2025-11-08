@@ -37,13 +37,13 @@ const schema = z.object({
   categoryId: z.number(),
 });
 
-export const Route = createFileRoute('/_admin/dashboard/pois/$id/edit/')({
+export const Route = createFileRoute('/_admin/dashboard/places/$id/edit/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const route = getRouteApi('/_admin/dashboard/pois/$id/edit');
-  const { poi } = route.useLoaderData();
+  const route = getRouteApi('/_admin/dashboard/places/$id/edit');
+  const { place } = route.useLoaderData();
   const invalidator = useInvalidator();
   const {
     data: { categories },
@@ -52,19 +52,19 @@ function RouteComponent() {
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: poi.name,
-      description: poi.description,
-      phone: poi.phone ?? undefined,
-      website: poi.website ?? undefined,
-      priceLevel: poi.priceLevel,
-      accessibilityLevel: poi.accessibilityLevel,
-      categoryId: poi.categoryId,
+      name: place.name,
+      description: place.description,
+      phone: place.phone ?? undefined,
+      website: place.website ?? undefined,
+      priceLevel: place.priceLevel,
+      accessibilityLevel: place.accessibilityLevel,
+      categoryId: place.categoryId,
     },
   });
 
   const updateInfoMutation = api.useMutation(
     'patch',
-    '/api/v2/pois/{id}/info',
+    '/api/v2/places/{id}/info',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
@@ -85,7 +85,7 @@ function RouteComponent() {
             updateInfoMutation.mutate({
               params: {
                 path: {
-                  id: poi.id,
+                  id: place.id,
                 },
               },
               body: {

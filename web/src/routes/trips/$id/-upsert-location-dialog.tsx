@@ -41,7 +41,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
   const {
     showLocationDialog,
     isUpdate,
-    poiId,
+    placeId,
     description,
     scheduledTime,
     locId,
@@ -53,16 +53,16 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 
   const query = api.useQuery(
     'get',
-    '/api/v2/pois/{id}',
+    '/api/v2/places/{id}',
     {
       params: {
         path: {
-          id: poiId ?? '',
+          id: placeId ?? '',
         },
       },
     },
     {
-      enabled: poiId !== undefined,
+      enabled: placeId !== undefined,
       retry: false,
     },
   );
@@ -102,7 +102,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 
   const addLocationMutation = api.useMutation(
     'post',
-    '/api/v2/trips/{id}/locations',
+    '/api/v2/trips/{id}/places',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
@@ -115,7 +115,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 
   const updateLocationMutation = api.useMutation(
     'patch',
-    '/api/v2/trips/{tripId}/locations/{locationId}',
+    '/api/v2/trips/{tripId}/places/{tripPlaceId}',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
@@ -126,7 +126,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 
   const deleteLocationMutation = api.useMutation(
     'delete',
-    '/api/v2/trips/{tripId}/locations/{locationId}',
+    '/api/v2/trips/{tripId}/places/{tripPlaceId}',
     {
       onSuccess: async () => {
         await invalidator.invalidate();
@@ -174,13 +174,13 @@ export function UpsertLocationDialog({ onOpen }: Props) {
             {isUpdate ? 'Update Location' : 'Add Location to Trip'}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {poiId !== undefined ? (
+            {placeId !== undefined ? (
               <div>
                 {!isUpdate && (
                   <Button
                     variant="link"
                     size="sm"
-                    className="!px-0"
+                    className="px-0!"
                     onClick={() => {
                       navigate({
                         to: '.',
@@ -202,21 +202,21 @@ export function UpsertLocationDialog({ onOpen }: Props) {
                 {query.data && (
                   <>
                     <img
-                      src={query.data.poi.images[0]?.url ?? ''}
+                      src={query.data.place.assets[0]?.url ?? ''}
                       alt=""
-                      className="aspect-[5/2] w-full rounded-md mt-4 object-cover"
+                      className="aspect-5/2 w-full rounded-md mt-4 object-cover"
                     />
                     <div className="mt-4">
                       <div className="text-lg font-semibold leading-none tracking-tight text-black">
-                        {query.data.poi.name}
+                        {query.data.place.name}
                       </div>
                       <div className="my-1 line-clamp-1 text-sm text-muted-foreground">
-                        {query.data.poi.address.city.name} /{' '}
-                        {query.data.poi.address.city.country.name}
+                        {query.data.place.address.city.name} /{' '}
+                        {query.data.place.address.city.country.name}
                       </div>
 
                       <div className="text-sm font-semibold leading-none tracking-tight text-primary">
-                        {query.data.poi.category.name}
+                        {query.data.place.category.name}
                       </div>
                     </div>
                   </>
@@ -289,7 +289,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
                     params: {
                       path: {
                         tripId,
-                        locationId: locId,
+                        tripPlaceId: locId,
                       },
                     },
                   });
@@ -302,7 +302,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
           )}
           <AlertDialogCancel className="ml-auto">Cancel</AlertDialogCancel>
           <AlertDialogAction
-            disabled={poiId === undefined || addLocationMutation.isPending}
+            disabled={placeId === undefined || addLocationMutation.isPending}
             onClick={(e) => {
               e.preventDefault();
               if (isUpdate && locId !== undefined) {
@@ -310,7 +310,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
                   params: {
                     path: {
                       tripId,
-                      locationId: locId,
+                      tripPlaceId: locId,
                     },
                   },
                   body: {
@@ -326,7 +326,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
                     },
                   },
                   body: {
-                    poiId: poiId ?? '',
+                    placeId: placeId ?? '',
                     scheduledTime: new Date(time).toISOString(),
                     description: desc,
                   },
