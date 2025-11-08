@@ -7,9 +7,9 @@ import { createStyle } from '@/lib/map';
 
 export function Map() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
-  const lat = poi.address.lat;
-  const lng = poi.address.lng;
+  const { place } = route.useLoaderData();
+  const lat = place.address.lat;
+  const lng = place.address.lng;
   const zoom = 17;
 
   return (

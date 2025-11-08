@@ -1,4 +1,4 @@
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -24,22 +24,22 @@ type Props = {
 
 export function AddItemDialog({ collectionId, open, setOpen }: Props) {
   const [text, setText] = useState('');
-  const [poiId, setPoiId] = useState('');
+  const [placeId, setPlaceId] = useState('');
   const [ok, setOk] = useState(false);
   const invalidator = useInvalidator();
 
   const query = api.useQuery(
     'get',
-    '/api/v2/pois/{id}',
+    '/api/v2/places/{id}',
     {
       params: {
         path: {
-          id: poiId,
+          id: placeId,
         },
       },
     },
     {
-      enabled: poiId !== '',
+      enabled: placeId !== '',
       retry: false,
     },
   );
@@ -86,28 +86,28 @@ export function AddItemDialog({ collectionId, open, setOpen }: Props) {
               onChange={(e) => {
                 setText(e.target.value);
                 setOk(false);
-                setPoiId('');
+                setPlaceId('');
               }}
             />
             <Button
               className="px-0"
               type="button"
               variant="link"
-              onClick={() => setPoiId(text)}
+              onClick={() => setPlaceId(text)}
             >
               Preview
             </Button>
             {query.isError && (
               <div className="text-xs text-destructive">
                 <div>An error happened:</div>
-                <pre className="break-words flex-wrap text-wrap whitespace-pre-wrap mt-2">
+                <pre className="wrap-break-word flex-wrap text-wrap whitespace-pre-wrap mt-2">
                   {query.error.title}
                 </pre>
               </div>
             )}
             {query.isSuccess && (
               <div>
-                <PoiCard poi={query.data.poi} />
+                <PlaceCard place={query.data.place} />
               </div>
             )}
           </div>
@@ -133,7 +133,7 @@ export function AddItemDialog({ collectionId, open, setOpen }: Props) {
                   },
                 },
                 body: {
-                  poiId,
+                  placeId,
                 },
               })
             }

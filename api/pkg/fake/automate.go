@@ -23,7 +23,7 @@ var steps = [...]string{
 	"users",
 	"places",
 	"fake-id", // run fake id to get user and places ids
-	"images",
+	"assets",
 	"follows",
 	"reviews",
 	"fake-id", // run fake id again to get review ids
@@ -87,7 +87,7 @@ func Automate() error {
 			UsersPath: usersPath,
 			Fake:      f,
 		},
-		"images": &handlers.FakeAssets{
+		"assets": &handlers.FakeAssets{
 			PlacesPath: placesPath,
 			Fake:       f,
 		},

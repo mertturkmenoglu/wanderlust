@@ -1,6 +1,6 @@
 import { AppMessage } from '@/components/blocks/app-message';
 import { BackLink } from '@/components/blocks/back-link';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Dialog,
@@ -187,11 +187,11 @@ function RouteComponent() {
             <Link
               to="/p/$id"
               params={{
-                id: listItem.poiId,
+                id: listItem.placeId,
               }}
-              key={listItem.poiId}
+              key={listItem.placeId}
             >
-              <PoiCard poi={listItem.poi} />
+              <PlaceCard place={listItem.place} />
             </Link>
           ))}
         </div>

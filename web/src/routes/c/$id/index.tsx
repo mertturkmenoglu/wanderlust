@@ -1,5 +1,5 @@
 import { AppMessage } from '@/components/blocks/app-message';
-import { PoiCard } from '@/components/blocks/poi-card';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { api } from '@/lib/api';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import Markdown from 'react-markdown';
@@ -39,11 +39,11 @@ function RouteComponent() {
           <Link
             to="/p/$id"
             params={{
-              id: item.poiId,
+              id: item.placeId,
             }}
-            key={item.poiId}
+            key={item.placeId}
           >
-            <PoiCard poi={item.poi} />
+            <PlaceCard place={item.place} />
           </Link>
         ))}
       </div>

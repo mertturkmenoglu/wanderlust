@@ -17,7 +17,7 @@ function useUpload() {
   return fileUpload.connect(service, normalizeProps);
 }
 
-type UseUpload = ReturnType<typeof useUpload>;
+export type UseUpload = ReturnType<typeof useUpload>;
 
 function usePreviews(up: UseUpload) {
   return up.acceptedFiles.map((file) => URL.createObjectURL(file));
@@ -54,11 +54,12 @@ async function doFileUpload(files: File[], reviewId: string) {
     let ext = extensions.at(i)!;
     let file = files.at(i)!;
 
-    const res = await fetchClient.GET('/api/v2/images/upload/', {
+    const res = await fetchClient.GET('/api/v2/assets/upload/', {
       params: {
         query: {
           bucket: 'reviews',
           fileExt: ext,
+          assetType: 'image',
         },
       },
     });
@@ -78,7 +79,7 @@ async function doFileUpload(files: File[], reviewId: string) {
       return false;
     }
 
-    const updateRes = await fetchClient.POST('/api/v2/reviews/{id}/media', {
+    const updateRes = await fetchClient.POST('/api/v2/reviews/{id}/asset', {
       params: {
         path: {
           id: reviewId,

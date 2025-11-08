@@ -132,7 +132,7 @@ export function CreateDialog() {
       onOpenChange={(o) =>
         navigate({
           to: '.',
-          search: (prev) => ({ ...prev, showNewDialog: o }),
+          search: (prev: any) => ({ ...prev, showNewDialog: o }),
         })
       }
     >

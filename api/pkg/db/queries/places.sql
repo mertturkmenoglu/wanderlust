@@ -10,7 +10,10 @@ INSERT INTO places (
   price_level,
   accessibility_level,
   hours,
-  amenities
+  amenities,
+  total_votes,
+  total_points,
+  total_favorites
 ) VALUES (
   $1,
   $2,
@@ -22,8 +25,44 @@ INSERT INTO places (
   $8,
   $9,
   $10,
-  $11
+  $11,
+  $12,
+  $13,
+  $14
 );
+
+-- name: CreatePlace :one
+INSERT INTO places (
+  id,
+  name,
+  phone,
+  description,
+  website,
+  address_id,
+  category_id,
+  price_level,
+  accessibility_level,
+  hours,
+  amenities,
+  total_votes,
+  total_points,
+  total_favorites
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10,
+  $11,
+  $12,
+  $13,
+  $14
+) RETURNING *;
 
 -- name: FindManyPlaceIdsByRand :many
 SELECT id

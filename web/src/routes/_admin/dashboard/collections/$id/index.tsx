@@ -41,7 +41,10 @@ function RouteComponent() {
     },
   });
 
-  const img = collection.items[0]?.poi.images[0] ?? { url: '', alt: '' };
+  const img = collection.items[0]?.place.assets[0] ?? {
+    url: '',
+    description: '',
+  };
 
   return (
     <>
@@ -107,7 +110,7 @@ function RouteComponent() {
       {img.url !== '' && (
         <img
           src={ipx(img.url, 'w_512')}
-          alt={img.alt}
+          alt={img.description ?? ''}
           className="mt-4 w-64 rounded-md aspect-video object-cover"
         />
       )}

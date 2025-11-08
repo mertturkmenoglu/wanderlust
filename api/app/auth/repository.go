@@ -101,6 +101,10 @@ func (r *Repository) checkIfEmailOrUsernameIsTaken(ctx context.Context, email, u
 		return true, nil
 	}
 
+	if errors.Is(errEmail, ErrNotFound) && errors.Is(errUsername, ErrNotFound) {
+		return false, nil
+	}
+
 	return false, errors.Join(errEmail, errUsername)
 }
 

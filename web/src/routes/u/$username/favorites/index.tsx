@@ -77,8 +77,8 @@ function RouteComponent() {
           {flatten.map((favorite) => (
             <Link
               to="/p/$id"
-              key={favorite.poiId}
-              params={{ id: favorite.poiId }}
+              key={favorite.placeId}
+              params={{ id: favorite.placeId }}
             >
               <FavoriteCard favorite={favorite} />
             </Link>

@@ -57,7 +57,7 @@ export function CreateReviewDialog() {
 
 function Content() {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
   const [rating, setRating] = useState(0);
   const up = useUpload();
   const files = up.acceptedFiles;
@@ -98,7 +98,7 @@ function Content() {
         <AlertDialogHeader>
           <AlertDialogTitle>Add a review</AlertDialogTitle>
           <AlertDialogDescription>
-            Add a review to {poi.name}
+            Add a review to {place.name}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="grid gap-4 py-2">
@@ -146,7 +146,7 @@ function Content() {
               createReviewMutation.mutate({
                 body: {
                   content: form.getValues('content'),
-                  poiId: poi.id,
+                  placeId: place.id,
                   rating: rating,
                 },
               });

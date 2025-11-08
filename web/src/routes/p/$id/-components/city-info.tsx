@@ -8,26 +8,26 @@ type Props = {
 
 export function CityInfo({ className }: Props) {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
+  const { place } = route.useLoaderData();
 
   return (
     <div className={cn(className)}>
       <div className="grid grid-cols-5 gap-8">
         <div className="col-span-5 md:col-span-2">
           <img
-            src={ipx(poi.address.city.image, 'f_webp,w_1024')}
+            src={ipx(place.address.city.image, 'f_webp,w_1024')}
             alt=""
             className="rounded-md object-cover aspect-video"
           />
         </div>
 
         <div className="col-span-5 md:col-span-3">
-          <h2 className="text-6xl font-bold">{poi.address.city.name}</h2>
+          <h2 className="text-6xl font-bold">{place.address.city.name}</h2>
           <div className="mt-2 text-sm text-muted-foreground">
-            {poi.address.city.state.name}/{poi.address.city.country.name}
+            {place.address.city.state.name}/{place.address.city.country.name}
           </div>
           <div className="mt-4 text-lg text-muted-foreground">
-            {poi.address.city.description}
+            {place.address.city.description}
           </div>
         </div>
       </div>

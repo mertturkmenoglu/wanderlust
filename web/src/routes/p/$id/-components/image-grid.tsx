@@ -12,16 +12,17 @@ type Props = {
 
 export function ImageGrid({ className }: Props) {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
-  const images = poi.images;
+  const { place } = route.useLoaderData();
+  const images = place.assets;
   const first = images[0];
 
   const rest = useMemo(() => {
     const slice = images.slice(1, 5) as {
       id: number;
       url: string;
-      alt: string;
+      description: string;
     }[];
+
     if (slice.length < 4) {
       let pad = 4 - slice.length;
 
@@ -29,7 +30,7 @@ export function ImageGrid({ className }: Props) {
         slice.push({
           id: Math.random(),
           url: '',
-          alt: '',
+          description: '',
         });
       }
     }
@@ -46,7 +47,7 @@ export function ImageGrid({ className }: Props) {
   return (
     <div
       className={cn(
-        'grid grid-cols-4 grid-rows-2 gap-2 rounded-xl h-[256px] md:h-[384px] lg:h-[512px] relative',
+        'grid grid-cols-4 grid-rows-2 gap-2 rounded-xl h-64 md:h-96 lg:h-[512px] relative',
         className,
       )}
     >
@@ -63,7 +64,7 @@ export function ImageGrid({ className }: Props) {
         >
           <img
             src={ipx(first.url, 'w_1024')}
-            alt={first.alt}
+            alt={first.description ?? ''}
             className="w-full h-full object-cover rounded-l-xl"
           />
         </button>
@@ -85,7 +86,7 @@ export function ImageGrid({ className }: Props) {
           {img.url !== '' ? (
             <img
               src={ipx(img.url, 'w_512')}
-              alt={img.alt}
+              alt={img.description ?? ''}
               className={cn('w-full h-full object-cover', {
                 'rounded-tr-xl': i === 1,
                 'rounded-br-xl': i === 3,

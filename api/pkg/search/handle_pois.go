@@ -3,6 +3,7 @@ package search
 import (
 	"context"
 	"wanderlust/app/places"
+	"wanderlust/pkg/cache"
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
@@ -24,6 +25,7 @@ func handlePlacesSync() error {
 	ioc := di.New()
 
 	ioc.Set(di.SVC_DB, d)
+	ioc.Set(di.SVC_CACHE, cache.New())
 
 	searchService := New()
 	s := places.NewService(&core.Application{

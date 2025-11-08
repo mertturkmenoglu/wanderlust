@@ -2,7 +2,7 @@ import { InfoCard } from '@/components/kit/info-card';
 import { cn } from '@/lib/utils';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { formatDate } from 'date-fns';
-import { LeafIcon, Link2Icon, SpeechIcon } from 'lucide-react';
+import { LeafIcon } from 'lucide-react';
 
 type Props = {
   className?: string;
@@ -51,7 +51,7 @@ export function InfoCardGroup({ className }: Props) {
         </InfoCard.Root>
       </Link>
 
-      <InfoCard.Root>
+      <InfoCard.Root className="col-span-full">
         <InfoCard.Content>
           <InfoCard.NumberColumn>
             <LeafIcon className="text-primary size-16" />
@@ -65,46 +65,6 @@ export function InfoCardGroup({ className }: Props) {
           </InfoCard.DescriptionColumn>
         </InfoCard.Content>
       </InfoCard.Root>
-
-      {profile.pronouns && (
-        <InfoCard.Root>
-          <InfoCard.Content>
-            <InfoCard.NumberColumn>
-              <SpeechIcon className="text-primary size-16" />
-            </InfoCard.NumberColumn>
-            <InfoCard.DescriptionColumn>
-              <div className="flex items-center text-primary">Pronouns</div>
-
-              <span className="text-xs text-muted-foreground tracking-tight capitalize">
-                {profile.pronouns}
-              </span>
-            </InfoCard.DescriptionColumn>
-          </InfoCard.Content>
-        </InfoCard.Root>
-      )}
-
-      {profile.website && (
-        <InfoCard.Root>
-          <InfoCard.Content>
-            <InfoCard.NumberColumn>
-              <Link2Icon className="text-primary size-16" />
-            </InfoCard.NumberColumn>
-            <InfoCard.DescriptionColumn>
-              <div className="flex items-center text-primary">Website</div>
-
-              <a
-                className="text-xs text-muted-foreground tracking-tight"
-                title={profile.website}
-                href={profile.website}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Go to website
-              </a>
-            </InfoCard.DescriptionColumn>
-          </InfoCard.Content>
-        </InfoCard.Root>
-      )}
     </div>
   );
 }

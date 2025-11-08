@@ -27,7 +27,7 @@ function Content({ className }: ContentProps) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
-  const query = api.useSuspenseQuery('get', '/api/v2/reviews/poi/{id}/images', {
+  const query = api.useSuspenseQuery('get', '/api/v2/reviews/place/{id}/assets', {
     params: {
       path: {
         id,
@@ -35,7 +35,7 @@ function Content({ className }: ContentProps) {
     },
   });
 
-  const images = query.data.images;
+  const images = query.data.assets;
   const showMoreCount = Math.min(images.length - 4, 20);
 
   return (

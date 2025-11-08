@@ -24,13 +24,13 @@ const fmt = Intl.NumberFormat('en-US', {
 
 export function RatingsSection({ className }: Props) {
   const route = getRouteApi('/p/$id/');
-  const { poi } = route.useLoaderData();
-  const rating = computeRating(poi.totalPoints, poi.totalVotes);
+  const { place } = route.useLoaderData();
+  const rating = computeRating(place.totalPoints, place.totalVotes);
 
-  const query = api.useQuery('get', '/api/v2/reviews/poi/{id}/ratings', {
+  const query = api.useQuery('get', '/api/v2/reviews/place/{id}/ratings', {
     params: {
       path: {
-        id: poi.id,
+        id: place.id,
       },
     },
   });
@@ -39,7 +39,7 @@ export function RatingsSection({ className }: Props) {
     <div className={cn(className)}>
       <div
         className={cn(
-          'bg-gradient-to-r from-accent/50 to-primary/10',
+          'bg-linear-to-r from-accent/50 to-primary/10',
           'flex flex-col gap-8',
           'p-6 h-min rounded-md',
         )}
@@ -56,11 +56,11 @@ export function RatingsSection({ className }: Props) {
             <div>
               <FormattedRating
                 rating={Number.parseFloat(rating)}
-                votes={poi.totalVotes}
+                votes={place.totalVotes}
                 showNumbers={false}
               />
               <span className="text-xs text-muted-foreground tracking-tight">
-                {fmt.format(poi.totalVotes)} reviews
+                {fmt.format(place.totalVotes)} reviews
               </span>
             </div>
           </div>
@@ -83,7 +83,7 @@ export function RatingsSection({ className }: Props) {
 }
 
 type RatingsProps = {
-  ratings: components['schemas']['GetRatingsByPoiIdOutputBody'];
+  ratings: components['schemas']['GetRatingsByPlaceIdOutputBody'];
 };
 
 function Ratings({ ratings }: RatingsProps) {

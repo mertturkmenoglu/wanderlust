@@ -4,25 +4,15 @@ import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { pronounGroups } from './-pronouns';
 import { UpdateImage } from './-update-image';
 
 const schema = z.object({
@@ -47,8 +37,6 @@ function RouteComponent() {
     defaultValues: {
       fullName: user.fullName,
       bio: user.bio ?? '',
-      pronouns: user.pronouns ?? '',
-      website: user.website ?? '',
     },
   });
 
@@ -92,15 +80,11 @@ function RouteComponent() {
       <form
         onSubmit={form.handleSubmit((data) => {
           let bio = data.bio === '' ? null : data.bio;
-          let pronouns = data.pronouns === '' ? null : data.pronouns;
-          let website = data.website === '' ? null : data.website;
 
           mutation.mutate({
             body: {
               fullName: data.fullName,
               bio,
-              pronouns,
-              website,
             },
           });
         })}
@@ -140,66 +124,6 @@ function RouteComponent() {
           <InputInfo text="Let us know about you" />
           <InputError error={form.formState.errors.bio} />
         </div>
-
-        <Label
-          htmlFor="website"
-          className="mt-2"
-        >
-          Website
-        </Label>
-        <div className="col-span-2">
-          <Input
-            id="website"
-            type="url"
-            placeholder="https://example.com"
-            autoComplete="off"
-            {...form.register('website')}
-          />
-          <InputError error={form.formState.errors.website} />
-        </div>
-
-        <Label
-          htmlFor="pronouns"
-          className="mt-2"
-        >
-          Pronouns
-        </Label>
-        <div className="col-span-2">
-          <Controller
-            name="pronouns"
-            control={form.control}
-            render={({ field }) => {
-              return (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value ?? undefined}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a pronoun" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {pronounGroups.map((pgroup) => (
-                      <SelectGroup key={pgroup.label}>
-                        <SelectLabel>{pgroup.label}</SelectLabel>
-                        {pgroup.options.map((p) => (
-                          <SelectItem
-                            key={p.value}
-                            value={p.value}
-                          >
-                            {p.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ))}
-                  </SelectContent>
-                </Select>
-              );
-            }}
-          />
-          <InputError error={form.formState.errors.pronouns} />
-        </div>
-
-        <div className="col-span-2" />
 
         <Button
           type="submit"
