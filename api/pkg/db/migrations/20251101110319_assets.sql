@@ -13,9 +13,8 @@ CREATE TABLE IF NOT EXISTS assets (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
-  "order" INT NOT NULL DEFAULT 0,
+  "order" INT NOT NULL DEFAULT 0
 
-  UNIQUE (entity_type, entity_id, url)
 );
 
 CREATE INDEX idx_assets_entity ON assets (entity_type, entity_id);
