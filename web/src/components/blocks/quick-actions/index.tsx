@@ -1,10 +1,5 @@
 import { AuthContext } from '@/providers/auth-provider';
-import {
-  BookMarkedIcon,
-  ListIcon,
-  MapIcon,
-  MapPinHouseIcon,
-} from 'lucide-react';
+import { BookmarkIcon, ListIcon, MapIcon, MapPinHouseIcon } from 'lucide-react';
 import { useContext } from 'react';
 import { Card } from './card';
 
@@ -15,7 +10,7 @@ export function QuickActions() {
     <div className="my-8">
       <div className="text-4xl">
         Hello{' '}
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-sky-600 font-bold">
+        <span className="bg-clip-text text-transparent bg-linear-to-r from-primary to-sky-600 font-bold">
           {auth.user?.fullName ?? ''}
         </span>
       </div>
@@ -33,9 +28,9 @@ export function QuickActions() {
           text="Discover Nearby"
         />
         <Card
-          to="/diary"
-          Icon={BookMarkedIcon}
-          text="Diary"
+          to="/bookmarks"
+          Icon={BookmarkIcon}
+          text="Bookmarks"
         />
         <Card
           to="/lists"
