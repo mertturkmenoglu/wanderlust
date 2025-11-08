@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
-import { usePoiCardContext } from './context';
+import { usePlaceCardContext } from './context';
 
 export function DotNavigation() {
-  const ctx = usePoiCardContext();
-  const count = ctx.poi.images.length;
+  const ctx = usePlaceCardContext();
+  const count = ctx.place.assets.length;
 
   return (
     <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 opacity-0 group-hover:opacity-80 duration-200">

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { usePoiCardContext } from './context';
+import { usePlaceCardContext } from './context';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 type Props = {
@@ -7,11 +7,11 @@ type Props = {
 };
 
 export function NavigationButton({ type }: Props) {
-  const ctx = usePoiCardContext();
+  const ctx = usePlaceCardContext();
   const disabled =
     type === 'previous'
       ? ctx.index === 0
-      : ctx.index === ctx.poi.images.length - 1;
+      : ctx.index === ctx.place.assets.length - 1;
 
   return (
     <button

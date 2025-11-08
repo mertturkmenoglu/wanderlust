@@ -1,25 +1,25 @@
 import { cn } from '@/lib/utils';
 import type { Props } from './types';
-import { PoiCardContextProvider, usePoiCardContext } from './context';
+import { PlaceCardContextProvider, usePlaceCardContext } from './context';
 import { NavigationButton } from './navigation-button';
 import { DotNavigation } from './dot-navigation';
 import { Info } from './info';
 import { Images } from './images';
 
-export function PoiCard(props: Props) {
+export function PlaceCard(props: Props) {
   return (
-    <PoiCardContextProvider poi={props.poi}>
+    <PlaceCardContextProvider place={props.place}>
       <Content {...props} />
-    </PoiCardContextProvider>
+    </PlaceCardContextProvider>
   );
 }
 
 function Content({ className, hoverEffects = true, ...props }: Props) {
-  const ctx = usePoiCardContext();
+  const ctx = usePlaceCardContext();
 
   return (
     <div
-      key={ctx.poi.id}
+      key={ctx.place.id}
       className={cn(
         'group transition duration-300 ease-in-out rounded-md',
         {

@@ -1,28 +1,28 @@
 import { ipx } from '@/lib/ipx';
-import { usePoiCardContext } from './context';
+import { usePlaceCardContext } from './context';
 import { Image } from '@unpic/react';
 
 export function Images() {
-  const ctx = usePoiCardContext();
-  const { poi, index, image } = ctx;
+  const ctx = usePlaceCardContext();
+  const { place, index, asset } = ctx;
 
   return (
     <>
       {/* Preload previous and next images */}
       {index !== 0 && (
         <Image
-          src={ipx(poi.images[index - 1]?.url ?? '', 'w_512')}
-          alt={poi.images[index - 1]?.alt}
+          src={ipx(place.assets[index - 1]?.url ?? '', 'w_512')}
+          alt={place.assets[index - 1]?.description ?? ''}
           className="hidden"
           width={512}
           aspectRatio={16 / 9}
         />
       )}
 
-      {index !== poi.images.length - 1 && (
+      {index !== place.assets.length - 1 && (
         <Image
-          src={ipx(poi.images[index + 1]?.url ?? '', 'w_512')}
-          alt={poi.images[index + 1]?.alt}
+          src={ipx(place.assets[index + 1]?.url ?? '', 'w_512')}
+          alt={place.assets[index + 1]?.description ?? ''}
           className="hidden"
           width={512}
           aspectRatio={16 / 9}
@@ -30,8 +30,8 @@ export function Images() {
       )}
 
       <Image
-        src={ipx(image.url, 'w_512')}
-        alt={image.alt}
+        src={ipx(asset.url, 'w_512')}
+        alt={asset.description ?? ''}
         className="aspect-video w-full rounded-md object-cover"
         width={512}
         aspectRatio={16 / 9}

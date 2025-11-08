@@ -1,17 +1,17 @@
 import type { components } from '@/lib/api-types';
 
-export type Poi = Pick<
-  components['schemas']['Poi'],
+export type Place = Pick<
+  components['schemas']['Place'],
   | 'id'
   | 'name'
   | 'category'
   | 'address'
   | 'totalVotes'
   | 'totalPoints'
-  | 'images'
+  | 'assets'
 >;
 
 export type Props = {
-  poi: Poi;
+  place: Place;
   hoverEffects?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
