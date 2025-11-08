@@ -4,7 +4,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import {
   ArchiveIcon,
   ClipboardListIcon,
-  ComponentIcon,
   ImportIcon,
   LibraryIcon,
   MapIcon,
@@ -26,12 +25,6 @@ function RouteComponent() {
       <Separator className="my-2" />
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4 mb-96">
-        <Item
-          href="/dashboard/amenities"
-          text="Amenities"
-          icon={ComponentIcon}
-        />
-
         <Item
           href="/dashboard/categories"
           text="Categories"
