@@ -59,63 +59,63 @@ import {
 
 type LucideIconType = typeof WifiIcon;
 
-const iconMapping = new Map<number, LucideIconType>([
-  [1, WifiIcon],
-  [2, SquareParkingIcon],
-  [3, ParkingMeterIcon],
-  [4, AccessibilityIcon],
-  [5, ToiletIcon],
-  [6, WindIcon],
-  [7, RockingChairIcon],
-  [8, ArmchairIcon],
-  [9, MartiniIcon],
-  [10, PawPrintIcon],
-  [11, BlocksIcon],
-  [12, CarFrontIcon],
-  [13, HandCoinsIcon],
-  [14, CalendarCheckIcon],
-  [15, PackageIcon],
-  [16, VeganIcon],
-  [17, MicVocalIcon],
-  [18, LockIcon],
-  [19, GlobeIcon],
-  [20, PlugZapIcon],
-  [21, HandPlatterIcon],
-  [22, CigaretteIcon],
-  [23, RouteIcon],
-  [24, GiftIcon],
-  [25, DonutIcon],
-  [26, InfoIcon],
-  [27, GemIcon],
-  [28, TelescopeIcon],
-  [29, CircleDollarSignIcon],
-  [30, CameraIcon],
-  [31, PersonStandingIcon],
-  [32, GraduationCapIcon],
-  [33, HeartIcon],
-  [34, UsersIcon],
-  [35, ConciergeBellIcon],
-  [36, DumbbellIcon],
-  [37, DropletsIcon],
-  [38, BriefcaseBusinessIcon],
-  [39, UsersIcon],
-  [40, LeafIcon],
-  [41, BusIcon],
-  [42, FenceIcon],
-  [43, HandPlatterIcon],
-  [44, Gamepad2Icon],
-  [45, GlobeIcon],
-  [46, TicketIcon],
-  [47, UtensilsIcon],
-  [48, WheatOffIcon],
-  [49, SquareMenuIcon],
-  [50, WineIcon],
-  [51, CookingPotIcon],
-  [52, CupSodaIcon],
-  [53, ChefHatIcon],
-  [54, Columns2Icon],
-  [55, EggIcon],
-  [56, PartyPopperIcon],
+const iconMapping = new Map<string, LucideIconType>([
+  ['wifi', WifiIcon],
+  ['freeParking', SquareParkingIcon],
+  ['paidParking', ParkingMeterIcon],
+  ['wheelchair', AccessibilityIcon],
+  ['restrooms', ToiletIcon],
+  ['ac', WindIcon],
+  ['outdoor', RockingChairIcon],
+  ['indoor', ArmchairIcon],
+  ['bar', MartiniIcon],
+  ['pet', PawPrintIcon],
+  ['kidsPlay', BlocksIcon],
+  ['driveThru', CarFrontIcon],
+  ['loyalty', HandCoinsIcon],
+  ['allWeekService', CalendarCheckIcon],
+  ['delivery', PackageIcon],
+  ['vegan', VeganIcon],
+  ['liveMusic', MicVocalIcon],
+  ['privateRooms', LockIcon],
+  ['onlineOrdering', GlobeIcon],
+  ['evCharging', PlugZapIcon],
+  ['selfService', HandPlatterIcon],
+  ['smoking', CigaretteIcon],
+  ['guidedTours', RouteIcon],
+  ['giftShop', GiftIcon],
+  ['snackBar', DonutIcon],
+  ['informationDesk', InfoIcon],
+  ['specialExhibitions', GemIcon],
+  ['observationDecks', TelescopeIcon],
+  ['atm', CircleDollarSignIcon],
+  ['photographyArea', CameraIcon],
+  ['a11yServices', PersonStandingIcon],
+  ['studyRoom', GraduationCapIcon],
+  ['romanticAtmosphere', HeartIcon],
+  ['familyFriendly', UsersIcon],
+  ['concierge', ConciergeBellIcon],
+  ['fitness', DumbbellIcon],
+  ['spa', DropletsIcon],
+  ['workspaces', BriefcaseBusinessIcon],
+  ['groupActivities', UsersIcon],
+  ['ecoFriendly', LeafIcon],
+  ['publicTransportation', BusIcon],
+  ['garden', FenceIcon],
+  ['complimentaryTasting', HandPlatterIcon],
+  ['gamingStations', Gamepad2Icon],
+  ['onlineReservation', GlobeIcon],
+  ['valetParking', TicketIcon],
+  ['catering', UtensilsIcon],
+  ['specialDietaryOptions', WheatOffIcon],
+  ['childrensMenu', SquareMenuIcon],
+  ['wineList', WineIcon],
+  ['liveCookingStations', CookingPotIcon],
+  ['happyHourSpecials', CupSodaIcon],
+  ['chefsSpecials', ChefHatIcon],
+  ['communalTables', Columns2Icon],
+  ['brunchOptions', EggIcon],
+  ['eventHosting', PartyPopperIcon],
 ]);
 
 type Props = {
@@ -138,8 +138,8 @@ export function Amenities({ className }: Props) {
           Object.keys(amenities).map((key) => (
             <Item
               key={key}
-              id={Number(key)}
-              name={amenities[Number(key)] ?? ''}
+              id={key}
+              name={amenities[key] ?? ''}
             />
           ))
         )}
@@ -148,7 +148,7 @@ export function Amenities({ className }: Props) {
   );
 }
 
-function Item({ id, name }: { id: number; name: string }) {
+function Item({ id, name }: { id: string; name: string }) {
   const Icon = iconMapping.get(id) ?? CheckIcon;
 
   return (
