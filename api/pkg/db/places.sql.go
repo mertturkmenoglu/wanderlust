@@ -24,6 +24,9 @@ type BatchCreatePlacesParams struct {
 	AccessibilityLevel int16
 	Hours              pgtype.Hstore
 	Amenities          pgtype.Hstore
+	TotalVotes         int32
+	TotalPoints        int32
+	TotalFavorites     int32
 }
 
 const countPlaces = `-- name: CountPlaces :one
@@ -35,6 +38,96 @@ func (q *Queries) CountPlaces(ctx context.Context) (int64, error) {
 	var count int64
 	err := row.Scan(&count)
 	return count, err
+}
+
+const createPlace = `-- name: CreatePlace :one
+INSERT INTO places (
+  id,
+  name,
+  phone,
+  description,
+  website,
+  address_id,
+  category_id,
+  price_level,
+  accessibility_level,
+  hours,
+  amenities,
+  total_votes,
+  total_points,
+  total_favorites
+) VALUES (
+  $1,
+  $2,
+  $3,
+  $4,
+  $5,
+  $6,
+  $7,
+  $8,
+  $9,
+  $10,
+  $11,
+  $12,
+  $13,
+  $14
+) RETURNING id, name, phone, description, website, address_id, category_id, price_level, accessibility_level, total_votes, total_points, total_favorites, hours, amenities, created_at, updated_at
+`
+
+type CreatePlaceParams struct {
+	ID                 string
+	Name               string
+	Phone              pgtype.Text
+	Description        string
+	Website            pgtype.Text
+	AddressID          int32
+	CategoryID         int16
+	PriceLevel         int16
+	AccessibilityLevel int16
+	Hours              pgtype.Hstore
+	Amenities          pgtype.Hstore
+	TotalVotes         int32
+	TotalPoints        int32
+	TotalFavorites     int32
+}
+
+func (q *Queries) CreatePlace(ctx context.Context, arg CreatePlaceParams) (Place, error) {
+	row := q.db.QueryRow(ctx, createPlace,
+		arg.ID,
+		arg.Name,
+		arg.Phone,
+		arg.Description,
+		arg.Website,
+		arg.AddressID,
+		arg.CategoryID,
+		arg.PriceLevel,
+		arg.AccessibilityLevel,
+		arg.Hours,
+		arg.Amenities,
+		arg.TotalVotes,
+		arg.TotalPoints,
+		arg.TotalFavorites,
+	)
+	var i Place
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Phone,
+		&i.Description,
+		&i.Website,
+		&i.AddressID,
+		&i.CategoryID,
+		&i.PriceLevel,
+		&i.AccessibilityLevel,
+		&i.TotalVotes,
+		&i.TotalPoints,
+		&i.TotalFavorites,
+		&i.Hours,
+		&i.Amenities,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const decrementPlaceTotalFavorites = `-- name: DecrementPlaceTotalFavorites :execresult

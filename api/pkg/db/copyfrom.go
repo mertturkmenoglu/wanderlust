@@ -426,6 +426,9 @@ func (r iteratorForBatchCreatePlaces) Values() ([]interface{}, error) {
 		r.rows[0].AccessibilityLevel,
 		r.rows[0].Hours,
 		r.rows[0].Amenities,
+		r.rows[0].TotalVotes,
+		r.rows[0].TotalPoints,
+		r.rows[0].TotalFavorites,
 	}, nil
 }
 
@@ -434,7 +437,7 @@ func (r iteratorForBatchCreatePlaces) Err() error {
 }
 
 func (q *Queries) BatchCreatePlaces(ctx context.Context, arg []BatchCreatePlacesParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"places"}, []string{"id", "name", "phone", "description", "website", "address_id", "category_id", "price_level", "accessibility_level", "hours", "amenities"}, &iteratorForBatchCreatePlaces{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"places"}, []string{"id", "name", "phone", "description", "website", "address_id", "category_id", "price_level", "accessibility_level", "hours", "amenities", "total_votes", "total_points", "total_favorites"}, &iteratorForBatchCreatePlaces{rows: arg})
 }
 
 // iteratorForBatchCreateReports implements pgx.CopyFromSource.
