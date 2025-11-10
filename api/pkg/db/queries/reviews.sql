@@ -103,12 +103,12 @@ LEFT JOIN
 LEFT JOIN LATERAL (
   SELECT json_agg(jsonb_build_object(
     'id', a.id,
-    'reviewId', a.entity_id
+    'reviewId', a.entity_id,
     'url', a.url,
     'order', a.order
   ) ORDER BY a.order) AS assets
   FROM public.assets a
-  WHERE a.review_id = reviews.id AND a.entity_type = 'review'
+  WHERE a.entity_id = reviews.id AND a.entity_type = 'review'
 ) assets_agg ON true
 WHERE reviews.id = ANY($1::TEXT[])
 ORDER BY reviews.created_at DESC;
