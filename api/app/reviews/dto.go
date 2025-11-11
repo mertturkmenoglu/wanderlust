@@ -20,7 +20,7 @@ type CreateReviewInput struct {
 
 type CreateReviewInputBody struct {
 	PlaceID string `json:"placeId" example:"7323488942953598976" doc:"Place ID" minLength:"1" maxLength:"32"`
-	Content string `json:"content" example:"Lorem ipsum dolor sit amet" doc:"Content of the review" minLength:"5" maxLength:"2048"`
+	Content string `json:"content" example:"Lorem ipsum dolor sit amet" doc:"Content of the review" minLength:"1" maxLength:"2048"`
 	Rating  int16  `json:"rating" example:"1" doc:"Rating of the review" min:"1" max:"5"`
 }
 
