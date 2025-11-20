@@ -19,6 +19,15 @@ func New(err error) *Fault {
 	}
 }
 
+// Create a new error with formatted message. Useful for wrapping errors and retaining stack trace.
+//
+// Do NOT use it to return public errors.
+//
+// Can be used to report internal errors with stack trace.
+func Format(err error) error {
+	return errors.New(fmt.Sprintf("%+v", err))
+}
+
 func (f *Fault) Domain(domain errors.Domain) *Fault {
 	f.err = errors.WithDomain(f.err, domain)
 	return f
