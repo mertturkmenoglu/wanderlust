@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"wanderlust/app/auth/oauth"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/tracing"
 	"wanderlust/pkg/uid"
@@ -229,26 +230,26 @@ func (r *Repository) updateSocialId(ctx context.Context, userId string, provider
 	}
 }
 
-func (r *Repository) createUserFromOAuthInfo(ctx context.Context, oauthUser *oauthUser, username string) (*db.User, error) {
+func (r *Repository) createUserFromOAuthInfo(ctx context.Context, oauthUser *oauth.User, username string) (*db.User, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	user, err := r.db.CreateUser(ctx, db.CreateUserParams{
 		ID:           uid.Flake(),
-		Email:        oauthUser.email,
+		Email:        oauthUser.Email,
 		Username:     username,
-		FullName:     oauthUser.name,
+		FullName:     oauthUser.Name,
 		PasswordHash: pgtype.Text{},
 		GoogleID: pgtype.Text{
-			String: oauthUser.id,
-			Valid:  oauthUser.provider == "google",
+			String: oauthUser.ID,
+			Valid:  oauthUser.Provider == "google",
 		},
 		FbID: pgtype.Text{
-			String: oauthUser.id,
-			Valid:  oauthUser.provider == "facebook",
+			String: oauthUser.ID,
+			Valid:  oauthUser.Provider == "facebook",
 		},
 		ProfileImage: pgtype.Text{
-			String: oauthUser.picture,
+			String: oauthUser.Picture,
 			Valid:  true,
 		},
 	})

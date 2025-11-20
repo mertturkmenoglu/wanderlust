@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"time"
+	"wanderlust/app/auth/oauth"
 	"wanderlust/pkg/cache"
 	"wanderlust/pkg/cfg"
 	"wanderlust/pkg/db"
@@ -383,7 +384,7 @@ func (s *Service) startOAuthFlow(ctx context.Context, provider string) (*OAuthOu
 	_, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	state, url, err := getOAuthStateAndRedirectUrl(provider)
+	state, url, err := oauth.GetStateAndRedirectUrl(provider)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToCreateOAuthState, err.Error())
@@ -409,18 +410,18 @@ func (s *Service) oauthCallback(ctx context.Context, input *OAuthCallbackInput) 
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	token, err := getOAuthToken(ctx, getOAuthTokenParams{
-		provider:    input.Provider,
-		state:       input.QueryState,
-		code:        input.Code,
-		cookieState: input.CookieState,
+	token, err := oauth.GetToken(ctx, oauth.GetTokenParams{
+		Provider:    input.Provider,
+		State:       input.QueryState,
+		Code:        input.Code,
+		CookieState: input.CookieState,
 	})
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToGetOAuthToken, err.Error())
 	}
 
-	userInfo, err := fetchUserInfo(ctx, input.Provider, token)
+	userInfo, err := oauth.FetchUserInfo(ctx, input.Provider, token)
 
 	if err != nil {
 		sp.RecordError(err)
@@ -490,11 +491,11 @@ func (s *Service) oauthCallback(ctx context.Context, input *OAuthCallbackInput) 
 	}, nil
 }
 
-func (s *Service) getOrCreateUserFromOAuthUser(ctx context.Context, user *oauthUser) (*db.User, error) {
+func (s *Service) getOrCreateUserFromOAuthUser(ctx context.Context, user *oauth.User) (*db.User, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
-	dbUser, err := s.repo.getUserBySocialId(ctx, user.provider, user.id)
+	dbUser, err := s.repo.getUserBySocialId(ctx, user.Provider, user.ID)
 
 	if err == nil {
 		// User exists, return it
@@ -513,11 +514,11 @@ func (s *Service) getOrCreateUserFromOAuthUser(ctx context.Context, user *oauthU
 	// credentials login and now they logged in with OAuth.
 	// Check if the user registered with the same email address
 	// they have in their OAuth profile. If so, merge accounts.
-	dbUser, err = s.repo.getByEmail(ctx, user.email)
+	dbUser, err = s.repo.getByEmail(ctx, user.Email)
 
 	if err == nil && dbUser.ID != "" {
 		// Merge accounts
-		err = s.repo.updateSocialId(ctx, dbUser.ID, user.provider, user.id)
+		err = s.repo.updateSocialId(ctx, dbUser.ID, user.Provider, user.ID)
 
 		if err != nil {
 			return nil, err
@@ -536,14 +537,14 @@ func (s *Service) getOrCreateUserFromOAuthUser(ctx context.Context, user *oauthU
 	return saved, nil
 }
 
-func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauthUser) (*db.User, error) {
+func (s *Service) createUserFromOAuthUser(ctx context.Context, oauthUser *oauth.User) (*db.User, error) {
 	ctx, sp := tracing.NewSpan(ctx)
 	defer sp.End()
 
 	username, err := generateUsernameFromEmail(ctx, &db.Db{
 		Queries: s.repo.db,
 		Pool:    s.repo.pool,
-	}, oauthUser.email)
+	}, oauthUser.Email)
 
 	if err != nil {
 		return nil, errors.Wrap(ErrFailedToGenerateUsername, err.Error())
