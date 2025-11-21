@@ -163,7 +163,7 @@ func (r *Repository) createItem(ctx context.Context, collectionId string, placeI
 	asInt, ok := res.(int32)
 
 	if !ok {
-		return nil, errors.Wrap(ErrFailedToCreateItem, err.Error())
+		return nil, errors.Wrap(ErrFailedToCreateItem, "invalid type")
 	}
 
 	_, err = r.db.CreateCollectionItem(ctx, db.CreateCollectionItemParams{

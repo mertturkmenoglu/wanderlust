@@ -10,6 +10,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
+	"wanderlust/pkg/fault"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -57,7 +58,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateImage(ctx, input.Type, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -84,7 +85,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getUserProfile(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -107,7 +108,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getFollowers(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -130,7 +131,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getTopPlaces(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -157,7 +158,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateTopPlaces(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -180,7 +181,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getFollowing(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -203,7 +204,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getActivities(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -230,7 +231,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.searchFollowing(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -258,7 +259,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.makeVerified(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -285,7 +286,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.changeFollow(ctx, input.Username)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -312,7 +313,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateProfile(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 

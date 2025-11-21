@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"wanderlust/pkg/core"
+	"wanderlust/pkg/fault"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -35,7 +36,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -58,7 +59,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.peek(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -85,7 +86,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateInfo(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -112,7 +113,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateAddress(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -139,7 +140,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateAmenities(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -166,7 +167,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateHours(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 

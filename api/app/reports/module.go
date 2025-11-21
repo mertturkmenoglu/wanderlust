@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
+	"wanderlust/pkg/fault"
 	"wanderlust/pkg/mail"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
@@ -50,7 +51,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -79,7 +80,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.list(ctx, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -108,7 +109,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.search(ctx, input)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -136,7 +137,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -165,7 +166,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.remove(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -194,7 +195,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 

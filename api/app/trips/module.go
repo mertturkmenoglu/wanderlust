@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
+	"wanderlust/pkg/fault"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -48,7 +49,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getTripById(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -76,7 +77,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getInvitesByTripId(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -104,7 +105,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.createInvite(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -132,7 +133,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getAllTrips(ctx, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -160,7 +161,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getMyInvites(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -188,7 +189,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -216,7 +217,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getInviteDetail(ctx, input.TripID, input.InviteID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -244,7 +245,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.acceptOrDeclineInvite(ctx, input.TripID, input.InviteID, input.Action)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -272,7 +273,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeInvite(ctx, input.TripID, input.InviteID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -300,7 +301,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeParticipant(ctx, input.TripID, input.ParticipantID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -328,7 +329,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeTrip(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -356,7 +357,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.createComment(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -384,7 +385,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getComments(ctx, input.ID, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -412,7 +413,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateComment(ctx, input)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -440,7 +441,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeComment(ctx, input.TripID, input.CommentID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -468,7 +469,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateTrip(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -496,7 +497,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.createTripPlace(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -524,7 +525,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateTripPlace(ctx, input)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -552,7 +553,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeTripPlace(ctx, input.TripID, input.TripPlaceID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 

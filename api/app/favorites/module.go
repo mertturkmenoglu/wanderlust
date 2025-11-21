@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
+	"wanderlust/pkg/fault"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -47,7 +48,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body.PlaceID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -74,7 +75,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.remove(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -101,7 +102,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.get(ctx, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -128,7 +129,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.getByUsername(ctx, input.Username, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 

@@ -7,6 +7,7 @@ import (
 	"wanderlust/pkg/core"
 	"wanderlust/pkg/db"
 	"wanderlust/pkg/di"
+	"wanderlust/pkg/fault"
 	"wanderlust/pkg/middlewares"
 	"wanderlust/pkg/tracing"
 
@@ -48,7 +49,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.list(ctx, input.PaginationQueryParams)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -72,7 +73,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.get(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -101,7 +102,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.create(ctx, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -130,7 +131,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.remove(ctx, input.ID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -159,7 +160,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.update(ctx, input.ID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -188,7 +189,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.createItem(ctx, input.CollectionID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -217,7 +218,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeItem(ctx, input.CollectionID, input.Index)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -246,7 +247,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.updateItems(ctx, input.CollectionID, input.Body)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -275,7 +276,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.createPlaceRelation(ctx, input.CollectionID, input.PlaceID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -304,7 +305,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.createCityRelation(ctx, input.CollectionID, input.CityID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -333,7 +334,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removePlaceRelation(ctx, input.CollectionID, input.PlaceID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -362,7 +363,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			err := s.removeCityRelation(ctx, input.CollectionID, input.CityID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -386,7 +387,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.listPlaceCollections(ctx, input.PlaceID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -410,7 +411,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.listCityCollections(ctx, input.CityID)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -439,7 +440,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.listAllPlaceCollections(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
@@ -468,7 +469,7 @@ func Register(grp *huma.Group, app *core.Application) {
 			res, err := s.listAllCityCollections(ctx)
 
 			if err != nil {
-				sp.RecordError(err)
+				sp.RecordError(fault.Format(err))
 				return nil, err
 			}
 
