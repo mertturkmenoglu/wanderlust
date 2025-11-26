@@ -3,13 +3,13 @@ import { schema } from "./schema";
 import { ConfigFileValidationError } from "./errors";
 import { Container, type IServiceProvider } from "../di";
 
-export class ConfigServiceProvider implements IServiceProvider<TConfig> {
-  async createInstance(ioc: Container): Promise<TConfig> {
+export class ConfigProvider implements IServiceProvider<TConfig> {
+  static async createInstance(ioc: Container) {
     return await init();
   }
 
-  static getIdentifier() {
-    return Container.createIdentifier<TConfig>();
+  static get id() {
+    return Container.createIdentifier<TConfig>("config");
   }
 }
 

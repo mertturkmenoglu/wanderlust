@@ -8,18 +8,19 @@ export type ServiceType<T extends ServiceIdentifier<unknown>> = NonNullable<
 >;
 
 export class Container {
-  private services = new Map<symbol, unknown>();
+  private services = new Map<string, unknown>();
 
   provide<T>(t: ServiceIdentifier<T>, instance: T) {
-    this.services.set(t.key, instance);
+    this.services.set(t.key.toString(), instance);
   }
 
   async provideAsync<T>(t: ServiceIdentifier<T>, instance: Promise<T>) {
-    this.services.set(t.key, await instance);
+    const res = await instance;
+    this.services.set(t.key.toString(), res);
   }
 
   resolve<T>(t: ServiceIdentifier<T>): T {
-    const instance = this.services.get(t.key);
+    const instance = this.services.get(t.key.toString());
 
     if (!instance) {
       throw new Error(`No provider found for service: ${t.key.toString()}`);
@@ -28,13 +29,11 @@ export class Container {
     return instance as T;
   }
 
-  static createIdentifier<T>(): ServiceIdentifier<T> {
+  static createIdentifier<T>(s: string): ServiceIdentifier<T> {
     return {
-      key: Symbol(),
+      key: Symbol(s),
     };
   }
 }
 
-export interface IServiceProvider<T> {
-  createInstance(ioc: Container): T | Promise<T>;
-}
+export interface IServiceProvider<T> {}

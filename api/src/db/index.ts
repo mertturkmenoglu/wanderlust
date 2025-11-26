@@ -1,18 +1,16 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
-import { ConfigServiceProvider, type TConfig } from "@/lib/config";
+import { ConfigProvider, type TConfig } from "@/lib/config";
 import { Container, type IServiceProvider } from "@/lib/di";
 
-export class DatabaseServiceProvider
-  implements IServiceProvider<TDatabaseService>
-{
-  createInstance(ioc: Container) {
-    const cfg = ioc.resolve(ConfigServiceProvider.getIdentifier());
+export class DbProvider implements IServiceProvider<TDatabaseService> {
+  constructor(ioc: Container) {
+    const cfg = ioc.resolve(ConfigProvider.id);
     return init(cfg);
   }
 
-  static getIdentifier() {
-    return Container.createIdentifier<TDatabaseService>();
+  static get id() {
+    return Container.createIdentifier<TDatabaseService>("db");
   }
 }
 

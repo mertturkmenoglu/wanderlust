@@ -1,15 +1,15 @@
-import { ConfigServiceProvider, type TConfig } from "../config";
+import { ConfigProvider, type TConfig } from "../config";
 import { Container, type IServiceProvider } from "../di";
 import nodemailer from "nodemailer";
 
-export class EmailServiceProvider implements IServiceProvider<TEmailService> {
-  createInstance(ioc: Container) {
-    const cfg = ioc.resolve(ConfigServiceProvider.getIdentifier());
+export class EmailProvider implements IServiceProvider<TEmailService> {
+  constructor(ioc: Container) {
+    const cfg = ioc.resolve(ConfigProvider.id);
     return init(cfg);
   }
 
-  static getIdentifier() {
-    return Container.createIdentifier<TEmailService>();
+  static get id() {
+    return Container.createIdentifier<TEmailService>("email");
   }
 }
 

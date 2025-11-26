@@ -1,17 +1,16 @@
-import type { Context as ElysiaContext } from "elysia";
 import type { Container } from "../di";
-import { AuthServiceProvider } from "../auth";
+import { AuthProvider } from "../auth";
 
 export type CreateContextOptions = {
-  context: ElysiaContext;
+  request: Request;
   ioc: Container;
 };
 
-export async function createContext({ context, ioc }: CreateContextOptions) {
-  const auth = ioc.resolve(AuthServiceProvider.getIdentifier());
+export async function createContext({ request, ioc }: CreateContextOptions) {
+  const auth = ioc.resolve(AuthProvider.id);
 
   const session = await auth.api.getSession({
-    headers: context.request.headers,
+    headers: request.headers,
   });
 
   return {
@@ -24,4 +23,5 @@ export type Context = Awaited<ReturnType<typeof createContext>>;
 
 export type AuthContext = {
   session: NonNullable<Context["session"]>;
+  ioc: Container;
 };

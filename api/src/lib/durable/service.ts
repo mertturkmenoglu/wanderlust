@@ -1,18 +1,16 @@
 import { type GetEvents, Inngest } from "inngest";
-import { ConfigServiceProvider, type TConfig } from "../config";
+import { ConfigProvider, type TConfig } from "../config";
 import { schemas } from "./schemas";
 import { Container, type IServiceProvider } from "../di";
 
-export class DurableServiceProvider
-  implements IServiceProvider<TDurableService>
-{
-  createInstance(ioc: Container) {
-    const cfg = ioc.resolve(ConfigServiceProvider.getIdentifier());
+export class DurableProvider implements IServiceProvider<TDurableService> {
+  constructor(ioc: Container) {
+    const cfg = ioc.resolve(ConfigProvider.id);
     return init(cfg);
   }
 
-  static getIdentifier() {
-    return Container.createIdentifier<TDurableService>();
+  static get id() {
+    return Container.createIdentifier<TDurableService>("durable");
   }
 }
 

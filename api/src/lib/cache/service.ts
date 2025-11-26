@@ -1,17 +1,17 @@
 import { BentoCache, bentostore } from "bentocache";
 import { memoryDriver } from "bentocache/drivers/memory";
 import superjson from "superjson";
-import { ConfigServiceProvider, type TConfig } from "../config";
+import { ConfigProvider, type TConfig } from "../config";
 import { Container, type IServiceProvider } from "../di";
 
-export class CacheServiceProvider implements IServiceProvider<TCacheService> {
-  createInstance(ioc: Container) {
-    const cfg = ioc.resolve(ConfigServiceProvider.getIdentifier());
+export class CacheProvider implements IServiceProvider<TCacheService> {
+  constructor(ioc: Container) {
+    const cfg = ioc.resolve(ConfigProvider.id);
     return init(cfg);
   }
 
-  static getIdentifier() {
-    return Container.createIdentifier<TCacheService>();
+  static get id() {
+    return Container.createIdentifier<TCacheService>("cache");
   }
 }
 

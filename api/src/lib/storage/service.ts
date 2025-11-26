@@ -2,18 +2,16 @@ import { Disk } from "flydrive";
 import { FSDriver } from "flydrive/drivers/fs";
 import type { SignedURLOptions } from "flydrive/types";
 import { Container, type IServiceProvider } from "../di";
-import { ConfigServiceProvider, type TConfig } from "../config";
+import { ConfigProvider, type TConfig } from "../config";
 
-export class StorageServiceProvider
-  implements IServiceProvider<TStorageService>
-{
-  createInstance(ioc: Container) {
-    const cfg = ioc.resolve(ConfigServiceProvider.getIdentifier());
+export class StorageProvider implements IServiceProvider<TStorageService> {
+  constructor(ioc: Container) {
+    const cfg = ioc.resolve(ConfigProvider.id);
     return init(cfg);
   }
 
-  static getIdentifier() {
-    return Container.createIdentifier<TStorageService>();
+  static get id() {
+    return Container.createIdentifier<TStorageService>("storage");
   }
 }
 
