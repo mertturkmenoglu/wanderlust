@@ -3,25 +3,33 @@ import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { appRouter } from ".";
+import { getAppRouter } from ".";
 
-export const api = new OpenAPIHandler(appRouter, {
-  plugins: [
-    new OpenAPIReferencePlugin({
-      schemaConverters: [new ZodToJsonSchemaConverter()],
-    }),
-  ],
-  interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
-  ],
-});
+export function getApiHandler() {
+  const appRouter = getAppRouter();
 
-export const rpc = new RPCHandler(appRouter, {
-  interceptors: [
-    onError((error) => {
-      console.error(error);
-    }),
-  ],
-});
+  return new OpenAPIHandler(appRouter, {
+    plugins: [
+      new OpenAPIReferencePlugin({
+        schemaConverters: [new ZodToJsonSchemaConverter()],
+      }),
+    ],
+    interceptors: [
+      onError((error) => {
+        console.error(error);
+      }),
+    ],
+  });
+}
+
+export function getRpcHandler() {
+  const appRouter = getAppRouter();
+
+  return new RPCHandler(appRouter, {
+    interceptors: [
+      onError((error) => {
+        console.error(error);
+      }),
+    ],
+  });
+}
