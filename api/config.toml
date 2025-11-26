@@ -11,15 +11,15 @@ l1MaxSize = "50mb"
 allowedOrigins = ["http://localhost:3000"]
 
 [database]
-url = "postgresql://postgres:postgres@localhost:5432/fiesta"
+url = "postgresql://postgres:postgres@localhost:5432/wanderlust"
 ssl = false
 
 [durable]
-id = "fiesta"
+id = "wanderlust"
 appVersion = "1.0.0"
 
 [email]
-from = "Fiesta <noreply@example.com>"
+from = "Wanderlust <noreply@example.com>"
 host = "localhost"
 port = 1025
 ssl = false
