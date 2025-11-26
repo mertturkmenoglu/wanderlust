@@ -1,0 +1,25 @@
+[api]
+port = 5000
+url = "http://localhost:5000"
+
+[cache]
+grace = "30m"
+graceBackoff = "30s"
+l1MaxSize = "50mb"
+
+[cors]
+allowedOrigins = ["http://localhost:3000"]
+
+[database]
+url = "postgresql://postgres:postgres@localhost:5432/fiesta"
+ssl = false
+
+[durable]
+id = "fiesta"
+appVersion = "1.0.0"
+
+[email]
+from = "Fiesta <noreply@example.com>"
+host = "localhost"
+port = 1025
+ssl = false
