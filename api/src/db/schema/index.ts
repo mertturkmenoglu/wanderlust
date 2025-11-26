@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   bigint,
   boolean,
@@ -14,6 +15,7 @@ import {
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -33,6 +35,15 @@ export const users = pgTable("users", {
     .defaultNow()
     .$onUpdateFn(() => new Date()),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  bookmarks: many(bookmarks),
+  favorites: many(favorites),
+  lists: many(lists),
+  reviews: many(reviews),
+  trips: many(trips),
+  topPlaces: many(userTopPlaces),
+}));
 
 export const admins = pgTable("admins", {
   userId: text()
@@ -162,6 +173,13 @@ export const addresses = pgTable("addresses", {
   lng: doublePrecision().notNull(),
 });
 
+export const addressesRelations = relations(addresses, ({ one }) => ({
+  city: one(cities, {
+    fields: [addresses.cityId],
+    references: [cities.id],
+  }),
+}));
+
 export const places = pgTable(
   "places",
   {
@@ -192,6 +210,17 @@ export const places = pgTable(
   (table) => [index().on(table.addressId), index().on(table.categoryId)]
 );
 
+export const placesRelations = relations(places, ({ one }) => ({
+  address: one(addresses, {
+    fields: [places.addressId],
+    references: [addresses.id],
+  }),
+  category: one(categories, {
+    fields: [places.categoryId],
+    references: [categories.id],
+  }),
+}));
+
 export const bookmarks = pgTable(
   "bookmarks",
   {
@@ -206,6 +235,17 @@ export const bookmarks = pgTable(
   },
   (table) => [unique().on(table.userId, table.placeId)]
 );
+
+export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
+  place: one(places, {
+    fields: [bookmarks.placeId],
+    references: [places.id],
+  }),
+  user: one(users, {
+    fields: [bookmarks.userId],
+    references: [users.id],
+  }),
+}));
 
 export const favorites = pgTable(
   "favorites",
@@ -222,12 +262,27 @@ export const favorites = pgTable(
   (table) => [unique().on(table.userId, table.placeId)]
 );
 
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  place: one(places, {
+    fields: [favorites.placeId],
+    references: [places.id],
+  }),
+  user: one(users, {
+    fields: [favorites.userId],
+    references: [users.id],
+  }),
+}));
+
 export const collections = pgTable("collections", {
   id: text().primaryKey(),
   name: text().notNull(),
   description: text().notNull(),
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 });
+
+export const collectionsRelations = relations(collections, ({ many }) => ({
+  items: many(collectionItems),
+}));
 
 export const collectionItems = pgTable(
   "collection_items",
@@ -245,6 +300,20 @@ export const collectionItems = pgTable(
     primaryKey({ columns: [table.collectionId, table.placeId] }),
     unique().on(table.collectionId, table.index),
   ]
+);
+
+export const collectionItemsRelations = relations(
+  collectionItems,
+  ({ one }) => ({
+    collection: one(collections, {
+      fields: [collectionItems.collectionId],
+      references: [collections.id],
+    }),
+    place: one(places, {
+      fields: [collectionItems.placeId],
+      references: [places.id],
+    }),
+  })
 );
 
 export const collectionsPlaces = pgTable(
@@ -265,6 +334,20 @@ export const collectionsPlaces = pgTable(
   ]
 );
 
+export const collectionsPlacesRelations = relations(
+  collectionsPlaces,
+  ({ one }) => ({
+    collection: one(collections, {
+      fields: [collectionsPlaces.collectionId],
+      references: [collections.id],
+    }),
+    place: one(places, {
+      fields: [collectionsPlaces.placeId],
+      references: [places.id],
+    }),
+  })
+);
+
 export const collectionsCities = pgTable(
   "collections_cities",
   {
@@ -281,6 +364,20 @@ export const collectionsCities = pgTable(
     primaryKey({ columns: [table.collectionId, table.cityId] }),
     unique().on(table.collectionId, table.index),
   ]
+);
+
+export const collectionsCitiesRelations = relations(
+  collectionsCities,
+  ({ one }) => ({
+    collection: one(collections, {
+      fields: [collectionsCities.collectionId],
+      references: [collections.id],
+    }),
+    city: one(cities, {
+      fields: [collectionsCities.cityId],
+      references: [cities.id],
+    }),
+  })
 );
 
 export const lists = pgTable(
@@ -301,6 +398,14 @@ export const lists = pgTable(
   (table) => [index().on(table.userId)]
 );
 
+export const listsRelations = relations(lists, ({ many, one }) => ({
+  items: many(listItems),
+  user: one(users, {
+    fields: [lists.userId],
+    references: [users.id],
+  }),
+}));
+
 export const listItems = pgTable(
   "list_items",
   {
@@ -318,6 +423,17 @@ export const listItems = pgTable(
     unique().on(table.listId, table.index),
   ]
 );
+
+export const listItemsRelations = relations(listItems, ({ one }) => ({
+  list: one(lists, {
+    fields: [listItems.listId],
+    references: [lists.id],
+  }),
+  place: one(places, {
+    fields: [listItems.placeId],
+    references: [places.id],
+  }),
+}));
 
 export const reviews = pgTable(
   "reviews",
@@ -339,6 +455,17 @@ export const reviews = pgTable(
   },
   (table) => [index().on(table.placeId), index().on(table.userId)]
 );
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  place: one(places, {
+    fields: [reviews.placeId],
+    references: [places.id],
+  }),
+  user: one(users, {
+    fields: [reviews.userId],
+    references: [users.id],
+  }),
+}));
 
 export const tripVisibilityLevel = pgEnum("trip_visibility_level", [
   "private",
@@ -363,6 +490,17 @@ export const trips = pgTable("trips", {
     .defaultNow()
     .$onUpdateFn(() => new Date()),
 });
+
+export const tripsRelations = relations(trips, ({ many, one }) => ({
+  participants: many(tripParticipants),
+  invites: many(tripInvites),
+  locations: many(tripLocations),
+  comments: many(tripComments),
+  owner: one(users, {
+    fields: [trips.ownerId],
+    references: [users.id],
+  }),
+}));
 
 export const tripRole = pgEnum("trip_role", ["member", "editor"]);
 
@@ -392,6 +530,21 @@ export const tripInvites = pgTable(
   ]
 );
 
+export const tripInvitesRelations = relations(tripInvites, ({ one }) => ({
+  trip: one(trips, {
+    fields: [tripInvites.tripId],
+    references: [trips.id],
+  }),
+  fromUser: one(users, {
+    fields: [tripInvites.fromId],
+    references: [users.id],
+  }),
+  toUser: one(users, {
+    fields: [tripInvites.toId],
+    references: [users.id],
+  }),
+}));
+
 export const tripComments = pgTable(
   "trip_comments",
   {
@@ -411,6 +564,17 @@ export const tripComments = pgTable(
   },
   (table) => [index().on(table.tripId), index().on(table.userId)]
 );
+
+export const tripCommentsRelations = relations(tripComments, ({ one }) => ({
+  trip: one(trips, {
+    fields: [tripComments.tripId],
+    references: [trips.id],
+  }),
+  user: one(users, {
+    fields: [tripComments.userId],
+    references: [users.id],
+  }),
+}));
 
 export const tripLocations = pgTable(
   "trip_locations",
@@ -432,6 +596,17 @@ export const tripLocations = pgTable(
   ]
 );
 
+export const tripLocationsRelations = relations(tripLocations, ({ one }) => ({
+  trip: one(trips, {
+    fields: [tripLocations.tripId],
+    references: [trips.id],
+  }),
+  place: one(places, {
+    fields: [tripLocations.placeId],
+    references: [places.id],
+  }),
+}));
+
 export const tripParticipants = pgTable(
   "trip_participants",
   {
@@ -445,6 +620,20 @@ export const tripParticipants = pgTable(
     role: tripRole().notNull(),
   },
   (table) => [unique().on(table.tripId, table.userId)]
+);
+
+export const tripParticipantsRelations = relations(
+  tripParticipants,
+  ({ one }) => ({
+    trip: one(trips, {
+      fields: [tripParticipants.tripId],
+      references: [trips.id],
+    }),
+    user: one(users, {
+      fields: [tripParticipants.userId],
+      references: [users.id],
+    }),
+  })
 );
 
 export const reports = pgTable(
@@ -490,3 +679,38 @@ export const userTopPlaces = pgTable(
     unique().on(table.userId, table.placeId, table.index),
   ]
 );
+
+export const userTopPlacesRelations = relations(userTopPlaces, ({ one }) => ({
+  user: one(users, {
+    fields: [userTopPlaces.userId],
+    references: [users.id],
+  }),
+  place: one(places, {
+    fields: [userTopPlaces.placeId],
+    references: [places.id],
+  }),
+}));
+
+export const $ = {
+  user: createSelectSchema(users),
+  asset: createSelectSchema(assets),
+  follows: createSelectSchema(follows),
+  category: createSelectSchema(categories),
+  city: createSelectSchema(cities),
+  address: createSelectSchema(addresses),
+  place: createSelectSchema(places),
+  bookmark: createSelectSchema(bookmarks),
+  favorite: createSelectSchema(favorites),
+  collection: createSelectSchema(collections),
+  collectionItem: createSelectSchema(collectionItems),
+  list: createSelectSchema(lists),
+  listItem: createSelectSchema(listItems),
+  review: createSelectSchema(reviews),
+  trip: createSelectSchema(trips),
+  tripInvite: createSelectSchema(tripInvites),
+  tripComment: createSelectSchema(tripComments),
+  tripLocation: createSelectSchema(tripLocations),
+  tripParticipant: createSelectSchema(tripParticipants),
+  userTopPlaces: createSelectSchema(userTopPlaces),
+  report: createSelectSchema(reports),
+};
