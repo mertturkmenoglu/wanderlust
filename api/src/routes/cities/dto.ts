@@ -17,8 +17,8 @@ export const listFeaturedOutput = z.object({
 
 export type ListFeaturedOutput = z.infer<typeof listFeaturedOutput>;
 
-export const getInput = z.object({
-  id: z.number().int(),
+export const getInput = $.city.pick({
+  id: true,
 });
 
 export type GetInput = z.infer<typeof getInput>;
@@ -29,18 +29,7 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
-export const createInput = z.object({
-  id: z.number().int(),
-  name: z.string().min(1).max(64),
-  stateCode: z.string().min(1).max(16),
-  stateName: z.string().min(1).max(64),
-  countryCode: z.string().length(2),
-  countryName: z.string().min(1).max(64),
-  image: z.url(),
-  lat: z.number().min(-90).max(90),
-  lng: z.number().min(-180).max(180),
-  description: z.string().min(1),
-});
+export const createInput = $.city;
 
 export type CreateInput = z.infer<typeof createInput>;
 
@@ -58,8 +47,8 @@ export const updateOutput = createOutput;
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const deleteInput = z.object({
-  id: z.number().int(),
+export const deleteInput = $.city.pick({
+  id: true,
 });
 
 export type DeleteInput = z.infer<typeof deleteInput>;

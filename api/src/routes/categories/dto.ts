@@ -9,10 +9,10 @@ export const listOutput = z.object({
 
 export type ListOutput = z.infer<typeof listOutput>;
 
-export const createInput = z.object({
-  id: z.number().int().min(1).max(32767),
-  name: z.string().min(1).max(100),
-  image: z.string().max(500),
+export const createInput = $.category.pick({
+  id: true,
+  name: true,
+  image: true,
 });
 
 export type CreateInput = z.infer<typeof createInput>;
@@ -31,8 +31,8 @@ export const updateOutput = createOutput;
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const deleteInput = z.object({
-  id: z.number().int().min(1).max(32767),
+export const deleteInput = $.category.pick({
+  id: true,
 });
 
 export type DeleteInput = z.infer<typeof deleteInput>;

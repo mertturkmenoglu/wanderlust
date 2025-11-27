@@ -2,8 +2,8 @@ import { $ } from "@/db/schema";
 import { Pagination } from "@/lib/pagination";
 import z from "zod";
 
-export const createInput = z.object({
-  placeId: z.string().min(1),
+export const createInput = $.favorite.pick({
+  placeId: true,
 });
 
 export type CreateInput = z.infer<typeof createInput>;
@@ -14,8 +14,8 @@ export const createOutput = z.object({
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = z.object({
-  placeId: z.string().min(1),
+export const deleteInput = $.favorite.pick({
+  placeId: true,
 });
 
 export type DeleteInput = z.infer<typeof deleteInput>;
@@ -46,7 +46,7 @@ export const listOutput = z.object({
 export type ListOutput = z.infer<typeof listOutput>;
 
 export const listByUsernameInput = Pagination.queryParamsSchema.extend({
-  username: z.string().min(1),
+  username: $.user.pick({ username: true }).shape.username,
 });
 
 export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;

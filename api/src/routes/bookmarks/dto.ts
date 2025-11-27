@@ -2,8 +2,8 @@ import { $ } from "@/db/schema";
 import { Pagination } from "@/lib/pagination";
 import z from "zod";
 
-export const createInput = z.object({
-  placeId: z.string().min(1),
+export const createInput = $.bookmark.pick({
+  placeId: true,
 });
 
 export type CreateInput = z.infer<typeof createInput>;
@@ -14,8 +14,8 @@ export const createOutput = z.object({
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = z.object({
-  placeId: z.string().min(1),
+export const deleteInput = $.bookmark.pick({
+  placeId: true,
 });
 
 export type DeleteInput = z.infer<typeof deleteInput>;

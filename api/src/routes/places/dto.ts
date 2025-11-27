@@ -7,8 +7,8 @@ const place = $.place.extend({
   address: $.address,
 });
 
-export const getInput = z.object({
-  id: z.string(),
+export const getInput = $.place.pick({
+  id: true,
 });
 
 export type GetInput = z.infer<typeof getInput>;
@@ -16,8 +16,14 @@ export type GetInput = z.infer<typeof getInput>;
 export const getOutput = z.object({
   place: place,
   meta: z.object({
-    isFavorite: z.boolean(),
-    isBookmarked: z.boolean(),
+    isFavorite: z.boolean().meta({
+      description: "Whether the place is marked as favorite by the user",
+      examples: [true],
+    }),
+    isBookmarked: z.boolean().meta({
+      description: "Whether the place is bookmarked in any of the user's lists",
+      examples: [false],
+    }),
   }),
 });
 
@@ -31,16 +37,15 @@ export const peekOutput = z.object({
 
 export type PeekOutput = z.infer<typeof peekOutput>;
 
-export const updateInput = z.object({
-  id: z.string(),
-  name: z.string().min(1).max(128),
-  categoryId: z.number().int().min(1).max(32767),
-  description: z.string().min(1),
-  phone: z.string().min(1).max(32).optional(),
-  email: z.email().optional(),
-  website: z.url().optional(),
-  accessibilityLevel: z.number().int().min(1).max(5),
-  priceLevel: z.number().int().min(1).max(5),
+export const updateInput = $.place.pick({
+  id: true,
+  name: true,
+  categoryId: true,
+  description: true,
+  phone: true,
+  website: true,
+  accessibilityLevel: true,
+  priceLevel: true,
 });
 
 export type UpdateInput = z.infer<typeof updateInput>;
@@ -51,14 +56,14 @@ export const updateOutput = z.object({
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const updateAddressInput = z.object({
-  id: z.string(),
-  cityId: z.number().int().min(1),
-  line1: z.string().min(1).max(128),
-  line2: z.string().max(128).optional(),
-  postalCode: z.string().min(1).max(16).optional(),
-  lat: z.number().min(-90).max(90),
-  lng: z.number().min(-180).max(180),
+export const updateAddressInput = $.address.pick({
+  id: true,
+  cityId: true,
+  line1: true,
+  line2: true,
+  postalCode: true,
+  lat: true,
+  lng: true,
 });
 
 export type UpdateAddressInput = z.infer<typeof updateAddressInput>;
@@ -69,9 +74,9 @@ export const updateAddressOutput = z.object({
 
 export type UpdateAddressOutput = z.infer<typeof updateAddressOutput>;
 
-export const updateAmenitiesInput = z.object({
-  id: z.string(),
-  amenities: z.string().array(),
+export const updateAmenitiesInput = $.place.pick({
+  id: true,
+  amenities: true,
 });
 
 export type UpdateAmenitiesInput = z.infer<typeof updateAmenitiesInput>;
@@ -82,9 +87,9 @@ export const updateAmenitiesOutput = z.object({
 
 export type UpdateAmenitiesOutput = z.infer<typeof updateAmenitiesOutput>;
 
-export const updateHoursInput = z.object({
-  id: z.string(),
-  hours: z.record(z.string(), z.string()),
+export const updateHoursInput = $.place.pick({
+  id: true,
+  hours: true,
 });
 
 export type UpdateHoursInput = z.infer<typeof updateHoursInput>;
