@@ -1,14 +1,16 @@
 import type { RouterClient } from "@orpc/server";
-import { router as healthRouter } from "./health";
+import { getRouter as getBookmarksRouter } from "./bookmarks";
 import { getRouter as getCategoriesRouter } from "./categories";
 import { getRouter as getCitiesRouter } from "./cities";
+import { getRouter as getHealthRouter } from "./health";
 import { getRouter as getPlacesRouter } from "./places";
 
 export function getAppRouter() {
   return {
-    health: healthRouter,
+    bookmarks: getBookmarksRouter(),
     categories: getCategoriesRouter(),
     cities: getCitiesRouter(),
+    health: getHealthRouter(),
     places: getPlacesRouter(),
   };
 }
