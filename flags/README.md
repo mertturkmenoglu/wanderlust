@@ -8,9 +8,7 @@ To use the service, copy the content of `.env.example` to `.env` and fill in the
 
 ## Development
 
-- Install [just](https://github.com/casey/just)
-- Run `just setup` to install dependencies.
-- Run `just watch` to start the development server.
+// TODO
 
 ## Endpoints
 
