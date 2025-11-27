@@ -1,8 +1,8 @@
-import type { CategoriesRepository } from "./repository";
+import type { CitiesRepository } from "./repository";
 import * as dto from "./dto";
 
-export class CategoriesService {
-  constructor(private readonly repository: CategoriesRepository) {}
+export class CitiesService {
+  constructor(private readonly repository: CitiesRepository) {}
 
   async list(): Promise<dto.ListOutput> {
     const result = await this.repository.list();

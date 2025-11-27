@@ -2,8 +2,8 @@ import { implement } from "@orpc/server";
 import type { Context } from "@/lib/context";
 import { contract } from "./contract";
 import { DbProvider } from "@/db";
-import { CategoriesRepository } from "./repository";
-import { CategoriesService } from "./service";
+import { CitiesRepository } from "./repository";
+import { CitiesService } from "./service";
 import { ioc } from "@/ioc";
 import { requireAuth } from "@/middlewares/authn";
 import { isAdmin } from "@/middlewares/is-admin";
@@ -11,8 +11,8 @@ import { isAdmin } from "@/middlewares/is-admin";
 export function getRouter() {
   const os = implement(contract).$context<Context>();
   const db = ioc.resolve(DbProvider.id);
-  const repo = new CategoriesRepository(db);
-  const service = new CategoriesService(repo);
+  const repo = new CitiesRepository(db);
+  const service = new CitiesService(repo);
 
   return os.router({
     list: os.list.handler(async () => {

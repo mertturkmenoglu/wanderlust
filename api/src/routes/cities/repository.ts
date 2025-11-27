@@ -4,7 +4,7 @@ import * as dto from "./dto";
 import * as schema from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 
-export class CategoriesRepository {
+export class CitiesRepository {
   constructor(private readonly db: TDatabaseService) {}
 
   async list() {
