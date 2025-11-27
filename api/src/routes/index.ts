@@ -1,4 +1,5 @@
 import type { RouterClient } from "@orpc/server";
+import { getRouter as getAggregatorRouter } from "./aggregator";
 import { getRouter as getBookmarksRouter } from "./bookmarks";
 import { getRouter as getCategoriesRouter } from "./categories";
 import { getRouter as getCitiesRouter } from "./cities";
@@ -9,6 +10,7 @@ import { getRouter as getPlacesRouter } from "./places";
 
 export function getAppRouter() {
   return {
+    aggregator: getAggregatorRouter(),
     bookmarks: getBookmarksRouter(),
     categories: getCategoriesRouter(),
     cities: getCitiesRouter(),
