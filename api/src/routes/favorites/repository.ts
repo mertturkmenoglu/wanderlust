@@ -3,24 +3,35 @@ import * as dto from "./dto";
 import * as schema from "@/db/schema";
 import { ORPCError } from "@orpc/server";
 import { Pagination } from "@/lib/pagination";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export class FavoritesRepository {
   constructor(private readonly db: TDatabaseService) {}
 
   async create(userId: string, data: dto.CreateInput) {
     try {
-      const [result] = await this.db
-        .insert(schema.favorites)
-        .values({
-          userId: userId,
-          placeId: data.placeId,
-        })
-        .returning();
+      const result = await this.db.transaction(async (tx) => {
+        const [result] = await tx
+          .insert(schema.favorites)
+          .values({
+            userId: userId,
+            placeId: data.placeId,
+          })
+          .returning();
 
-      if (!result) {
-        throw new Error("No favorite returned after insertion");
-      }
+        if (!result) {
+          throw new Error("No favorite returned after insertion");
+        }
+
+        await tx
+          .update(schema.places)
+          .set({
+            totalFavorites: sql`${schema.places.totalFavorites} + 1`,
+          })
+          .where(eq(schema.places.id, data.placeId));
+
+        return result;
+      });
 
       return result;
     } catch (err) {
@@ -72,20 +83,29 @@ export class FavoritesRepository {
 
   async _delete(userId: string, data: dto.DeleteInput) {
     try {
-      const res = await this.db
-        .delete(schema.favorites)
-        .where(
-          and(
-            eq(schema.favorites.userId, userId),
-            eq(schema.favorites.placeId, data.placeId)
-          )
-        );
+      await this.db.transaction(async (tx) => {
+        const res = await tx
+          .delete(schema.favorites)
+          .where(
+            and(
+              eq(schema.favorites.userId, userId),
+              eq(schema.favorites.placeId, data.placeId)
+            )
+          );
 
-      if (res.rowCount === 0) {
-        throw new ORPCError("NOT_FOUND", {
-          message: "Favorite not found",
-        });
-      }
+        if (res.rowCount === 0) {
+          throw new ORPCError("NOT_FOUND", {
+            message: "Favorite not found",
+          });
+        }
+
+        await tx
+          .update(schema.places)
+          .set({
+            totalFavorites: sql`${schema.places.totalFavorites} - 1`,
+          })
+          .where(eq(schema.places.id, data.placeId));
+      });
     } catch (err) {
       if (err instanceof ORPCError) {
         throw err;
