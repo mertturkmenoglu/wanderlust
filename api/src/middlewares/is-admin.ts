@@ -1,9 +1,9 @@
 import { DbProvider } from "@/db";
-import type { Context } from "@/lib/context";
+import type { AuthContext } from "@/lib/context";
 import { ORPCError, os } from "@orpc/server";
 
 export const isAdmin = os
-  .$context<Context>()
+  .$context<AuthContext>()
   .middleware(async ({ context, next }) => {
     const user = context.session?.user;
     if (!user) {

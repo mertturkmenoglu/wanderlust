@@ -9,6 +9,9 @@ export const requireAuth = os
     }
 
     return next({
-      context,
+      context: {
+        ...context,
+        session: context.session,
+      },
     });
   });
