@@ -465,7 +465,7 @@ export class ListsRepository {
           data.placeIds.map((placeId, index) => ({
             listId: data.id,
             placeId: placeId,
-            index: index,
+            index: index + 1,
           }))
         );
       });
