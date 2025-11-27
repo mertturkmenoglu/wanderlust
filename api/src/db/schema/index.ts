@@ -796,10 +796,13 @@ export const $ = {
     description: "A user entity",
   }),
   asset: createSelectSchema(assets, {
-    id: z.bigint().meta({
-      description: "Asset ID",
-      examples: [12345678901234],
-    }),
+    id: z
+      .number()
+      .int()
+      .meta({
+        description: "Asset ID",
+        examples: [123456],
+      }),
     entityType: z.enum(["place", "review"]).meta({
       description: "Type of entity the asset is associated with",
       examples: ["place"],
@@ -1166,10 +1169,13 @@ export const $ = {
     description: "A place entity",
   }),
   bookmark: createSelectSchema(bookmarks, {
-    id: z.bigint().meta({
-      description: "Bookmark ID",
-      examples: [12345678901234],
-    }),
+    id: z
+      .number()
+      .int()
+      .meta({
+        description: "Bookmark ID",
+        examples: [12345678901234],
+      }),
     placeId: z
       .string()
       .min(1)
@@ -1192,10 +1198,13 @@ export const $ = {
     description: "A bookmark entity",
   }),
   favorite: createSelectSchema(favorites, {
-    id: z.bigint().meta({
-      description: "Favorite ID",
-      examples: [12345678901234],
-    }),
+    id: z
+      .number()
+      .int()
+      .meta({
+        description: "Favorite ID",
+        examples: [123456],
+      }),
     placeId: z
       .string()
       .min(1)
