@@ -16,6 +16,7 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
+import z from "zod";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -110,6 +111,17 @@ export const assets = pgTable(
   },
   (table) => [index().on(table.entityType, table.entityId)]
 );
+
+export const assetsRelations = relations(assets, ({ one }) => ({
+  reviews: one(reviews, {
+    fields: [assets.entityId],
+    references: [reviews.id],
+  }),
+  places: one(places, {
+    fields: [assets.entityId],
+    references: [places.id],
+  }),
+}));
 
 export const follows = pgTable(
   "follows",
@@ -693,25 +705,992 @@ export const userTopPlacesRelations = relations(userTopPlaces, ({ one }) => ({
 }));
 
 export const $ = {
-  user: createSelectSchema(users),
-  asset: createSelectSchema(assets),
-  follows: createSelectSchema(follows),
-  category: createSelectSchema(categories),
-  city: createSelectSchema(cities),
-  address: createSelectSchema(addresses),
-  place: createSelectSchema(places),
-  bookmark: createSelectSchema(bookmarks),
-  favorite: createSelectSchema(favorites),
-  collection: createSelectSchema(collections),
-  collectionItem: createSelectSchema(collectionItems),
-  list: createSelectSchema(lists),
-  listItem: createSelectSchema(listItems),
-  review: createSelectSchema(reviews),
-  trip: createSelectSchema(trips),
-  tripInvite: createSelectSchema(tripInvites),
-  tripComment: createSelectSchema(tripComments),
-  tripLocation: createSelectSchema(tripLocations),
-  tripParticipant: createSelectSchema(tripParticipants),
-  userTopPlaces: createSelectSchema(userTopPlaces),
-  report: createSelectSchema(reports),
+  user: createSelectSchema(users, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "User ID",
+        examples: ["abcdef1234"],
+      }),
+    name: z
+      .string()
+      .min(1)
+      .max(256)
+      .meta({
+        description: "Full name of the user",
+        examples: ["John Doe"],
+      }),
+    username: z
+      .string()
+      .min(1)
+      .max(32)
+      .meta({
+        description: "Unique username of the user",
+        examples: ["johndoe"],
+      }),
+    email: z.email().meta({
+      description: "Email address of the user",
+      examples: ["johndoe@example.com"],
+    }),
+    emailVerified: z.boolean().meta({
+      description: "Whether the user's email is verified",
+      examples: [true],
+    }),
+    image: z
+      .url()
+      .nullable()
+      .meta({
+        description: "Profile image URL of the user",
+        examples: ["https://example.com/images/johndoe.jpg"],
+      }),
+    banner: z
+      .url()
+      .nullable()
+      .meta({
+        description: "Banner image URL of the user",
+        examples: ["https://example.com/images/johndoe-banner.jpg"],
+      }),
+    bio: z
+      .string()
+      .max(512)
+      .nullable()
+      .meta({
+        description: "Short biography of the user",
+        examples: [
+          "Travel enthusiast and photographer. Love exploring new places!",
+        ],
+      }),
+    website: z
+      .url()
+      .nullable()
+      .meta({
+        description: "Personal website URL of the user",
+        examples: ["https://johndoe.com"],
+      }),
+    followersCount: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Number of followers the user has",
+        examples: [150],
+      }),
+    followingCount: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Number of users the user is following",
+        examples: [75],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the user was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the user was last updated",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A user entity",
+  }),
+  asset: createSelectSchema(assets, {
+    id: z.bigint().meta({
+      description: "Asset ID",
+      examples: [12345678901234],
+    }),
+    entityType: z.enum(["place", "review"]).meta({
+      description: "Type of entity the asset is associated with",
+      examples: ["place"],
+    }),
+    entityId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the associated entity",
+        examples: ["place123"],
+      }),
+    url: z.url().meta({
+      description: "URL of the asset",
+      examples: ["https://example.com/assets/image.jpg"],
+    }),
+    description: z
+      .string()
+      .max(512)
+      .nullable()
+      .meta({
+        description: "Description of the asset",
+        examples: ["A beautiful view of the city skyline."],
+      }),
+    order: z
+      .number()
+      .int()
+      .min(0)
+      .max(64)
+      .meta({
+        description:
+          "Order of the asset among other assets for the same entity",
+        examples: [0],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the asset was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the asset was last updated",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "An asset entity",
+  }),
+  follows: createSelectSchema(follows, {
+    followerId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the follower user",
+        examples: ["user123"],
+      }),
+    followingId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the following user",
+        examples: ["user456"],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the follow relationship was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }),
+  category: createSelectSchema(categories, {
+    id: z
+      .number()
+      .int()
+      .min(1)
+      .max(32767)
+      .meta({
+        description: "Category ID",
+        examples: [12],
+      }),
+    name: z
+      .string()
+      .min(1)
+      .max(64)
+      .meta({
+        description: "Name of the category",
+        examples: ["Museums"],
+      }),
+    image: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Image URL of the category",
+        examples: ["https://example.com/images/museums.jpg"],
+      }),
+  }).meta({
+    description: "A category entity",
+  }),
+  city: createSelectSchema(cities, {
+    id: z
+      .number()
+      .int()
+      .min(1)
+      .max(2147483647)
+      .meta({
+        description: "City ID",
+        examples: [1024],
+      }),
+    name: z
+      .string()
+      .min(1)
+      .max(128)
+      .meta({
+        description: "Name of the city",
+        examples: ["London"],
+      }),
+    stateCode: z
+      .string()
+      .min(1)
+      .max(16)
+      .meta({
+        description: "State code",
+        examples: ["ENG"],
+      }),
+    stateName: z
+      .string()
+      .min(1)
+      .max(64)
+      .meta({
+        description: "State name",
+        examples: ["England"],
+      }),
+    countryCode: z
+      .string()
+      .length(2)
+      .meta({
+        description: "Country code",
+        examples: ["GB"],
+      }),
+    countryName: z
+      .string()
+      .min(1)
+      .max(64)
+      .meta({
+        description: "Country name",
+        examples: ["United Kingdom"],
+      }),
+    image: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Image URL of the city",
+        examples: ["https://example.com/images/london.jpg"],
+      }),
+    lat: z
+      .number()
+      .min(-90)
+      .max(90)
+      .meta({
+        description: "Latitude",
+        examples: [51.5074],
+      }),
+    lng: z
+      .number()
+      .min(-180)
+      .max(180)
+      .meta({
+        description: "Longitude",
+        examples: [-0.1278],
+      }),
+    description: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Description of the city",
+        examples: [
+          "London is the capital city of the United Kingdom, known for its rich history and vibrant culture.",
+        ],
+      }),
+  }).meta({
+    description: "A city entity",
+  }),
+  address: createSelectSchema(addresses, {
+    id: z
+      .number()
+      .int()
+      .min(0)
+      .max(2147483647)
+      .meta({
+        description: "Address ID",
+        examples: [2048],
+      }),
+    cityId: z
+      .number()
+      .int()
+      .min(0)
+      .max(2147483647)
+      .meta({
+        description: "ID of the city associated with the address",
+        examples: [1024],
+      }),
+    line1: z
+      .string()
+      .min(1)
+      .max(256)
+      .meta({
+        description: "First line of the address",
+        examples: ["221B Baker Street"],
+      }),
+    line2: z
+      .string()
+      .max(256)
+      .nullable()
+      .meta({
+        description: "Second line of the address",
+        examples: ["Apartment 2"],
+      }),
+    postalCode: z
+      .string()
+      .max(20)
+      .nullable()
+      .meta({
+        description: "Postal code of the address",
+        examples: ["NW1 6XE"],
+      }),
+    lat: z
+      .number()
+      .min(-90)
+      .max(90)
+      .meta({
+        description: "Latitude of the address",
+        examples: [51.5074],
+      }),
+    lng: z
+      .number()
+      .min(-180)
+      .max(180)
+      .meta({
+        description: "Longitude of the address",
+        examples: [-0.1278],
+      }),
+  }),
+  place: createSelectSchema(places, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Place ID",
+        examples: ["place123"],
+      }),
+    name: z
+      .string()
+      .min(1)
+      .max(256)
+      .meta({
+        description: "Name of the place",
+        examples: ["The British Museum"],
+      }),
+    description: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Description of the place",
+        examples: [
+          "A world-famous museum showcasing art and artifacts from around the globe.",
+        ],
+      }),
+    phone: z
+      .string()
+      .max(32)
+      .nullable()
+      .meta({
+        description: "Contact phone number of the place",
+        examples: ["+90 500 123 4567"],
+      }),
+    website: z
+      .url()
+      .nullable()
+      .meta({
+        description: "Website URL of the place",
+        examples: ["https://www.example.com"],
+      }),
+    addressId: z
+      .number()
+      .int()
+      .min(0)
+      .max(2147483647)
+      .meta({
+        description: "ID of the address associated with the place",
+        examples: [2048],
+      }),
+    categoryId: z
+      .number()
+      .int()
+      .min(1)
+      .max(32767)
+      .meta({
+        description: "ID of the category associated with the place",
+        examples: [12],
+      }),
+    priceLevel: z
+      .number()
+      .int()
+      .min(1)
+      .max(5)
+      .meta({
+        description: "Price level of the place (1-5)",
+        examples: [1, 2, 3, 4, 5],
+      }),
+    accessibilityLevel: z
+      .number()
+      .int()
+      .min(1)
+      .max(5)
+      .meta({
+        description: "Accessibility level of the place (1-5)",
+        examples: [1, 2, 3, 4, 5],
+      }),
+    totalVotes: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Total number of votes the place has received",
+        examples: [250],
+      }),
+    totalPoints: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Total points accumulated from votes",
+        examples: [1125],
+      }),
+    totalFavorites: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Total number of times the place has been favorited",
+        examples: [75],
+      }),
+    hours: z.record(z.string(), z.string()).meta({
+      description: "Operating hours of the place",
+      examples: [
+        {
+          mon: "9:00 AM - 5:00 PM",
+          tue: "9:00 AM - 5:00 PM",
+          wed: "9:00 AM - 5:00 PM",
+          thu: "9:00 AM - 5:00 PM",
+          fri: "9:00 AM - 5:00 PM",
+          sat: "10:00 AM - 6:00 PM",
+          sun: "Closed",
+        },
+      ],
+    }),
+    amenities: z.array(z.string()).meta({
+      description: "List of amenities available at the place",
+      examples: [["WiFi", "Parking", "Restrooms"]],
+    }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the place was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the place was last updated",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A place entity",
+  }),
+  bookmark: createSelectSchema(bookmarks, {
+    id: z.bigint().meta({
+      description: "Bookmark ID",
+      examples: [12345678901234],
+    }),
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the bookmarked place",
+        examples: ["place123"],
+      }),
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who created the bookmark",
+        examples: ["user123"],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the bookmark was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A bookmark entity",
+  }),
+  favorite: createSelectSchema(favorites, {
+    id: z.bigint().meta({
+      description: "Favorite ID",
+      examples: [12345678901234],
+    }),
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the favorited place",
+        examples: ["place123"],
+      }),
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who favorited the place",
+        examples: ["user123"],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the favorite was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A favorite entity",
+  }),
+  collection: createSelectSchema(collections, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Collection ID",
+        examples: ["collection123"],
+      }),
+    name: z
+      .string()
+      .min(1)
+      .max(256)
+      .meta({
+        description: "Name of the collection",
+        examples: ["My Favorite Places"],
+      }),
+    description: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Description of the collection",
+        examples: ["A curated list of my favorite places to visit."],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the collection was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A collection entity",
+  }),
+  collectionItem: createSelectSchema(collectionItems, {
+    collectionId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the collection",
+        examples: ["collection123"],
+      }),
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Place ID",
+        examples: ["place123"],
+      }),
+    index: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Index of the item within the collection",
+        examples: [0],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the collection item was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A collection item entity",
+  }),
+  list: createSelectSchema(lists, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "List ID",
+        examples: ["list123"],
+      }),
+    name: z
+      .string()
+      .min(1)
+      .max(256)
+      .meta({
+        description: "Name of the list",
+        examples: ["London Attractions"],
+      }),
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who created the list",
+        examples: ["user123"],
+      }),
+    isPublic: z.boolean().meta({
+      description: "Whether the list is public",
+      examples: [true],
+    }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the list was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the list was last updated",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A list entity",
+  }),
+  listItem: createSelectSchema(listItems, {
+    listId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the list",
+        examples: ["list123"],
+      }),
+
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Place ID",
+        examples: ["place123"],
+      }),
+    index: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description: "Index of the item within the list",
+        examples: [0],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the list item was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A list item entity",
+  }),
+  review: createSelectSchema(reviews, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Review ID",
+        examples: ["review123"],
+      }),
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Place ID",
+        examples: ["place123"],
+      }),
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "User ID",
+        examples: ["user123"],
+      }),
+    content: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Content of the review",
+        examples: [
+          "Amazing place! Had a wonderful time exploring the exhibits.",
+        ],
+      }),
+    rating: z
+      .number()
+      .min(1)
+      .max(5)
+      .meta({
+        description: "Rating given by the user",
+        examples: [5],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the review was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the review was last updated",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A review entity",
+  }),
+  trip: createSelectSchema(trips, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Trip ID",
+        examples: ["trip123"],
+      }),
+    ownerId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who owns the trip",
+        examples: ["user123"],
+      }),
+    title: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Title of the trip",
+        examples: ["Summer Vacation in Europe"],
+      }),
+    description: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Description of the trip",
+        examples: [
+          "Exploring the beautiful cities and landscapes of Europe during summer.",
+        ],
+      }),
+    visibilityLevel: z.enum(["private", "friends", "public"]).meta({
+      description: "Visibility level of the trip",
+      examples: ["private"],
+    }),
+    requestedAmenities: z.array(z.string()).meta({
+      description: "List of requested amenities for the trip",
+      examples: [["WiFi", "Parking"]],
+    }),
+    startAt: z.date().meta({
+      description: "Start timestamp of the trip",
+      examples: [new Date("2023-06-01T10:00:00Z")],
+    }),
+    endAt: z.date().meta({
+      description: "End timestamp of the trip",
+      examples: [new Date("2023-06-15T18:00:00Z")],
+    }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the trip was created",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the trip was last updated",
+      examples: [new Date("2023-01-15T10:00:00Z")],
+    }),
+  }).meta({
+    description: "A trip entity",
+  }),
+  tripInvite: createSelectSchema(tripInvites, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Trip Invite ID",
+        examples: ["invite123"],
+      }),
+    tripId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the trip",
+        examples: ["trip123"],
+      }),
+    fromId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who sent the invite",
+        examples: ["user123"],
+      }),
+    toId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who received the invite",
+        examples: ["user456"],
+      }),
+    sentAt: z.date().meta({
+      description: "Timestamp when the invite was sent",
+      examples: [new Date("2023-05-01T12:00:00Z")],
+    }),
+    expiresAt: z.date().meta({
+      description: "Timestamp when the invite expires",
+      examples: [new Date("2023-05-15T12:00:00Z")],
+    }),
+    tripTitle: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Title of the trip",
+        examples: ["Summer Vacation in Europe"],
+      }),
+    role: z.enum(["member", "editor"]).meta({
+      description: "Role of the user in the trip",
+      examples: ["member"],
+    }),
+  }).meta({
+    description: "A trip invite entity",
+  }),
+  tripComment: createSelectSchema(tripComments, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Trip Comment ID",
+        examples: ["comment123"],
+      }),
+    tripId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the trip",
+        examples: ["trip123"],
+      }),
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who made the comment",
+        examples: ["user123"],
+      }),
+    content: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Content of the comment",
+        examples: ["Looking forward to this trip!"],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the comment was created",
+      examples: [new Date("2023-05-02T14:30:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the comment was last updated",
+      examples: [new Date("2023-05-02T14:30:00Z")],
+    }),
+  }).meta({
+    description: "A trip comment entity",
+  }),
+  tripLocation: createSelectSchema(tripLocations, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Trip Location ID",
+        examples: ["location123"],
+      }),
+    tripId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the trip",
+        examples: ["trip123"],
+      }),
+    scheduledTime: z.date().meta({
+      description: "Scheduled time for the location visit",
+      examples: [new Date("2023-06-05T10:00:00Z")],
+    }),
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the place",
+        examples: ["place123"],
+      }),
+    description: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Description of the location",
+        examples: ["Eiffel Tower"],
+      }),
+  }).meta({
+    description: "A trip location entity",
+  }),
+  tripParticipant: createSelectSchema(tripParticipants, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Trip Participant ID",
+        examples: ["participant123"],
+      }),
+    tripId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the trip",
+        examples: ["trip123"],
+      }),
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user",
+        examples: ["user123"],
+      }),
+    role: z.enum(["member", "editor"]).meta({
+      description: "Role of the participant in the trip",
+      examples: ["member"],
+    }),
+  }).meta({
+    description: "A trip participant entity",
+  }),
+  userTopPlaces: createSelectSchema(userTopPlaces, {
+    userId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "User ID",
+        examples: ["user123"],
+      }),
+    placeId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Place ID",
+        examples: ["place123"],
+      }),
+    index: z
+      .number()
+      .min(0)
+      .meta({
+        description: "Index of the place in the user's top places",
+        examples: [0],
+      }),
+  }).meta({
+    description: "A user top places entity",
+  }),
+  report: createSelectSchema(reports, {
+    id: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Report ID",
+        examples: ["report123"],
+      }),
+    resourceId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the reported resource",
+        examples: ["place123"],
+      }),
+    resourceType: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Type of the reported resource",
+        examples: ["place", "review", "comment", "user"],
+      }),
+    reporterId: z
+      .string()
+      .min(1)
+      .meta({
+        description: "ID of the user who reported the resource",
+        examples: ["user123"],
+      }),
+    reason: z
+      .string()
+      .min(1)
+      .meta({
+        description: "Reason for reporting the resource",
+        examples: ["Inappropriate content"],
+      }),
+    resolved: z.boolean().meta({
+      description: "Whether the report has been resolved",
+      examples: [false],
+    }),
+    resolvedAt: z
+      .date()
+      .nullable()
+      .meta({
+        description: "Timestamp when the report was resolved",
+        examples: [null],
+      }),
+    createdAt: z.date().meta({
+      description: "Timestamp when the report was created",
+      examples: [new Date("2023-05-10T09:00:00Z")],
+    }),
+    updatedAt: z.date().meta({
+      description: "Timestamp when the report was last updated",
+      examples: [new Date("2023-05-10T09:00:00Z")],
+    }),
+  }).meta({
+    description: "A report entity",
+  }),
 };
