@@ -199,8 +199,8 @@ export const places = pgTable(
     totalVotes: integer().notNull().default(0),
     totalPoints: integer().notNull().default(0),
     totalFavorites: integer().notNull().default(0),
-    hours: jsonb().notNull().default("{}"),
-    amenities: jsonb().notNull().default("[]"),
+    hours: jsonb().notNull().default("{}").$type<Record<string, string>>(),
+    amenities: jsonb().notNull().default("[]").$type<string[]>(),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true })
       .notNull()
@@ -210,7 +210,7 @@ export const places = pgTable(
   (table) => [index().on(table.addressId), index().on(table.categoryId)]
 );
 
-export const placesRelations = relations(places, ({ one }) => ({
+export const placesRelations = relations(places, ({ one, many }) => ({
   address: one(addresses, {
     fields: [places.addressId],
     references: [addresses.id],
@@ -219,6 +219,7 @@ export const placesRelations = relations(places, ({ one }) => ({
     fields: [places.categoryId],
     references: [categories.id],
   }),
+  assets: many(assets),
 }));
 
 export const bookmarks = pgTable(
