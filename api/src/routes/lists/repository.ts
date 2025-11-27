@@ -5,7 +5,7 @@ import { Pagination } from "@/lib/pagination";
 import * as schema from "@/db/schema";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { nanoid } from "@/lib/uid";
-import { MAX_ITEMS_PER_LIST } from "./consts";
+import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from "./consts";
 
 export class ListsRepository {
   constructor(private readonly db: TDatabaseService) {}
@@ -199,6 +199,17 @@ export class ListsRepository {
 
   async create(userId: string, data: dto.CreateInput) {
     try {
+      const count = await this.db.$count(
+        schema.lists,
+        eq(schema.lists.userId, userId)
+      );
+
+      if (count >= MAX_LISTS_PER_USER) {
+        throw new ORPCError("BAD_REQUEST", {
+          message: `You have reached the maximum number of lists (${MAX_LISTS_PER_USER})`,
+        });
+      }
+
       const [result] = await this.db
         .insert(schema.lists)
         .values({
