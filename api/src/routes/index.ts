@@ -4,6 +4,7 @@ import { getRouter as getCategoriesRouter } from "./categories";
 import { getRouter as getCitiesRouter } from "./cities";
 import { getRouter as getFavoritesRouter } from "./favorites";
 import { getRouter as getHealthRouter } from "./health";
+import { getRouter as getListsRouter } from "./lists";
 import { getRouter as getPlacesRouter } from "./places";
 
 export function getAppRouter() {
@@ -13,6 +14,7 @@ export function getAppRouter() {
     cities: getCitiesRouter(),
     favorites: getFavoritesRouter(),
     health: getHealthRouter(),
+    lists: getListsRouter(),
     places: getPlacesRouter(),
   };
 }
