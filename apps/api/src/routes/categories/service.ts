@@ -1,34 +1,34 @@
-import type { CategoriesRepository } from "./repository";
-import * as dto from "./dto";
+import type * as dto from './dto';
+import type { CategoriesRepository } from './repository';
 
 export class CategoriesService {
-  constructor(private readonly repository: CategoriesRepository) {}
+	constructor(private readonly repository: CategoriesRepository) {}
 
-  async list(): Promise<dto.ListOutput> {
-    const result = await this.repository.list();
+	async list(): Promise<dto.ListOutput> {
+		const result = await this.repository.list();
 
-    return {
-      categories: result,
-    };
-  }
+		return {
+			categories: result,
+		};
+	}
 
-  async create(data: dto.CreateInput): Promise<dto.CreateOutput> {
-    const result = await this.repository.create(data);
+	async create(data: dto.CreateInput): Promise<dto.CreateOutput> {
+		const result = await this.repository.create(data);
 
-    return {
-      category: result,
-    };
-  }
+		return {
+			category: result,
+		};
+	}
 
-  async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
-    const result = await this.repository.update(data);
+	async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
+		const result = await this.repository.update(data);
 
-    return {
-      category: result,
-    };
-  }
+		return {
+			category: result,
+		};
+	}
 
-  async _delete(data: dto.DeleteInput): Promise<void> {
-    await this.repository._delete(data);
-  }
+	async _delete(data: dto.DeleteInput): Promise<void> {
+		await this.repository._delete(data);
+	}
 }

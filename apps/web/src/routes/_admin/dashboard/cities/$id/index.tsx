@@ -1,3 +1,5 @@
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { DashboardActions } from '@/components/blocks/dashboard/actions';
 import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/blocks/dashboard/columns';
@@ -9,122 +11,120 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { toast } from 'sonner';
 
 export const Route = createFileRoute('/_admin/dashboard/cities/$id/')({
-  component: RouteComponent,
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(
-      api.queryOptions('get', '/api/v2/cities/{id}', {
-        params: {
-          path: {
-            id: +params.id,
-          },
-        },
-      }),
-    ),
+	component: RouteComponent,
+	loader: ({ context, params }) =>
+		context.queryClient.ensureQueryData(
+			api.queryOptions('get', '/api/v2/cities/{id}', {
+				params: {
+					path: {
+						id: +params.id,
+					},
+				},
+			}),
+		),
 });
 
 function RouteComponent() {
-  const { city } = Route.useLoaderData();
-  const navigate = useNavigate();
-  const invalidator = useInvalidator();
+	const { city } = Route.useLoaderData();
+	const navigate = useNavigate();
+	const invalidator = useInvalidator();
 
-  const mutation = api.useMutation('delete', '/api/v2/cities/{id}', {
-    onSuccess: async () => {
-      await invalidator.invalidate();
-      await navigate({ to: '/dashboard/cities' });
-      toast.success('City deleted');
-    },
-  });
+	const mutation = api.useMutation('delete', '/api/v2/cities/{id}', {
+		onSuccess: async () => {
+			await invalidator.invalidate();
+			await navigate({ to: '/dashboard/cities' });
+			toast.success('City deleted');
+		},
+	});
 
-  return (
-    <>
-      <DashboardBreadcrumb
-        items={[
-          { name: 'Cities', href: '/dashboard/cities' },
-          {
-            name: city.name,
-            href: `/dashboard/cities/${city.id}`,
-          },
-        ]}
-      />
-      <Separator className="my-2" />
+	return (
+		<>
+			<DashboardBreadcrumb
+				items={[
+					{ name: 'Cities', href: '/dashboard/cities' },
+					{
+						name: city.name,
+						href: `/dashboard/cities/${city.id}`,
+					},
+				]}
+			/>
+			<Separator className="my-2" />
 
-      <DashboardActions>
-        <div className="flex items-center gap-2 mt-4">
-          <Link
-            to="/cities/$"
-            params={{
-              _splat: `${city.id}`,
-            }}
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-          >
-            Visit Page
-          </Link>
+			<DashboardActions>
+				<div className="mt-4 flex items-center gap-2">
+					<Link
+						to="/cities/$"
+						params={{
+							_splat: `${city.id}`,
+						}}
+						className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+					>
+						Visit Page
+					</Link>
 
-          <Link
-            to="/dashboard/cities/$id/edit"
-            params={{
-              id: `${city.id}`,
-            }}
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-          >
-            Edit
-          </Link>
+					<Link
+						to="/dashboard/cities/$id/edit"
+						params={{
+							id: `${city.id}`,
+						}}
+						className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+					>
+						Edit
+					</Link>
 
-          <DeleteDialog
-            type="city"
-            onClick={() =>
-              mutation.mutate({
-                params: {
-                  path: {
-                    id: city.id,
-                  },
-                },
-              })
-            }
-          />
-        </div>
-      </DashboardActions>
+					<DeleteDialog
+						type="city"
+						onClick={() =>
+							mutation.mutate({
+								params: {
+									path: {
+										id: city.id,
+									},
+								},
+							})
+						}
+					/>
+				</div>
+			</DashboardActions>
 
-      <img
-        src={ipx(city.image, 'w_512')}
-        alt={city.name}
-        className="mt-4 w-64 rounded-md aspect-video object-cover"
-      />
+			<img
+				src={ipx(city.image, 'w_512')}
+				alt={city.name}
+				className="mt-4 aspect-video w-64 rounded-md object-cover"
+			/>
 
-      <DataTable
-        columns={keyValueCols}
-        filterColumnId=""
-        data={[
-          {
-            k: 'ID',
-            v: `${city.id}`,
-          },
-          {
-            k: 'Name',
-            v: city.name,
-          },
-          {
-            k: 'State Code',
-            v: city.state.code,
-          },
-          {
-            k: 'State Name',
-            v: city.state.name,
-          },
-          {
-            k: 'Country Code',
-            v: city.country.code,
-          },
-          {
-            k: 'Country Name',
-            v: city.country.name,
-          },
-        ]}
-      />
-    </>
-  );
+			<DataTable
+				columns={keyValueCols}
+				filterColumnId=""
+				data={[
+					{
+						k: 'ID',
+						v: `${city.id}`,
+					},
+					{
+						k: 'Name',
+						v: city.name,
+					},
+					{
+						k: 'State Code',
+						v: city.state.code,
+					},
+					{
+						k: 'State Name',
+						v: city.state.name,
+					},
+					{
+						k: 'Country Code',
+						v: city.country.code,
+					},
+					{
+						k: 'Country Name',
+						v: city.country.name,
+					},
+				]}
+			/>
+		</>
+	);
 }

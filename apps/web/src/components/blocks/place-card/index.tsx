@@ -1,45 +1,45 @@
 import { cn } from '@/lib/utils';
-import type { Props } from './types';
 import { PlaceCardContextProvider, usePlaceCardContext } from './context';
-import { NavigationButton } from './navigation-button';
 import { DotNavigation } from './dot-navigation';
-import { Info } from './info';
 import { Images } from './images';
+import { Info } from './info';
+import { NavigationButton } from './navigation-button';
+import type { Props } from './types';
 
 export function PlaceCard(props: Props) {
-  return (
-    <PlaceCardContextProvider place={props.place}>
-      <Content {...props} />
-    </PlaceCardContextProvider>
-  );
+	return (
+		<PlaceCardContextProvider place={props.place}>
+			<Content {...props} />
+		</PlaceCardContextProvider>
+	);
 }
 
 function Content({ className, hoverEffects = true, ...props }: Props) {
-  const ctx = usePlaceCardContext();
+	const ctx = usePlaceCardContext();
 
-  return (
-    <div
-      key={ctx.place.id}
-      className={cn(
-        'group transition duration-300 ease-in-out rounded-md',
-        {
-          'hover:bg-gray-100 hover:-m-2 hover:p-2': hoverEffects,
-        },
-        className,
-      )}
-      {...props}
-    >
-      <div className="relative">
-        <NavigationButton type="previous" />
+	return (
+		<div
+			key={ctx.place.id}
+			className={cn(
+				'group rounded-md transition duration-300 ease-in-out',
+				{
+					'hover:-m-2 hover:bg-gray-100 hover:p-2': hoverEffects,
+				},
+				className,
+			)}
+			{...props}
+		>
+			<div className="relative">
+				<NavigationButton type="previous" />
 
-        <Images />
+				<Images />
 
-        <NavigationButton type="next" />
+				<NavigationButton type="next" />
 
-        <DotNavigation />
-      </div>
+				<DotNavigation />
+			</div>
 
-      <Info />
-    </div>
-  );
+			<Info />
+		</div>
+	);
 }

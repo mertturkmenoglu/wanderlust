@@ -1,59 +1,59 @@
 import {
-  createContext,
-  useContext,
-  useState,
-  type Dispatch,
-  type SetStateAction,
+	createContext,
+	type Dispatch,
+	type SetStateAction,
+	useContext,
+	useState,
 } from 'react';
-import type { Place } from './types';
 import { computeRating } from '@/lib/rating';
+import type { Place } from './types';
 
 type State = {
-  place: Place;
-  rating: string;
-  index: number;
-  setIndex: Dispatch<SetStateAction<number>>;
-  asset: Place['assets'][number];
+	place: Place;
+	rating: string;
+	index: number;
+	setIndex: Dispatch<SetStateAction<number>>;
+	asset: Place['assets'][number];
 };
 
 export const PlaceCardContext = createContext<State | null>(null);
 
 type Props = React.PropsWithChildren & {
-  place: Place;
+	place: Place;
 };
 
 export function PlaceCardContextProvider({ children, place }: Props) {
-  const [index, setIndex] = useState(0);
-  const el = place.assets[index];
-  const rating = computeRating(place.totalPoints, place.totalVotes);
+	const [index, setIndex] = useState(0);
+	const el = place.assets[index];
+	const rating = computeRating(place.totalPoints, place.totalVotes);
 
-  if (!el) {
-    return null;
-  }
+	if (!el) {
+		return null;
+	}
 
-  return (
-    <PlaceCardContext.Provider
-      value={{
-        place,
-        asset: el,
-        index,
-        setIndex,
-        rating,
-      }}
-    >
-      {children}
-    </PlaceCardContext.Provider>
-  );
+	return (
+		<PlaceCardContext.Provider
+			value={{
+				place,
+				asset: el,
+				index,
+				setIndex,
+				rating,
+			}}
+		>
+			{children}
+		</PlaceCardContext.Provider>
+	);
 }
 
 export function usePlaceCardContext() {
-  const context = useContext(PlaceCardContext);
+	const context = useContext(PlaceCardContext);
 
-  if (!context) {
-    throw new Error(
-      'usePlaceCardContext must be used within a PlaceCardContextProvider',
-    );
-  }
+	if (!context) {
+		throw new Error(
+			'usePlaceCardContext must be used within a PlaceCardContextProvider',
+		);
+	}
 
-  return context;
+	return context;
 }

@@ -1,3 +1,3 @@
 export type ForgotPasswordParams = {
-  url: string;
+	url: string;
 };

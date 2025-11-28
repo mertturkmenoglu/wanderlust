@@ -1,16 +1,23 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { getRouteApi, Link } from '@tanstack/react-router';
+import { PencilIcon } from 'lucide-react';
+import { useContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import { InputError } from '@/components/kit/input-error';
 import { InputInfo } from '@/components/kit/input-info';
 import { Rating } from '@/components/kit/rating';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -19,143 +26,129 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { api, fetchClient } from '@/lib/api';
 import { lengthTracker } from '@/lib/form';
 import { AuthContext } from '@/providers/auth-provider';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { getRouteApi, Link } from '@tanstack/react-router';
-import { PencilIcon } from 'lucide-react';
-import { useContext, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
 import { doFileUpload, useUpload } from './hooks';
 import { ImageUploadArea } from './image-upload';
 
 const schema = z.object({
-  content: z.string().min(5).max(2048),
+	content: z.string().min(5).max(2048),
 });
 
 export function CreateReviewDialog() {
-  const auth = useContext(AuthContext);
-  const isAuthenticated = !auth.isLoading && auth.user;
+	const auth = useContext(AuthContext);
+	const isAuthenticated = !auth.isLoading && auth.user;
 
-  if (!isAuthenticated) {
-    return (
-      <Button
-        variant="default"
-        size="sm"
-        asChild
-      >
-        <Link to="/sign-in">
-          <PencilIcon className="size-4 mr-2" />
-          <span>Add a review</span>
-        </Link>
-      </Button>
-    );
-  }
+	if (!isAuthenticated) {
+		return (
+			<Button variant="default" size="sm" asChild>
+				<Link to="/sign-in">
+					<PencilIcon className="mr-2 size-4" />
+					<span>Add a review</span>
+				</Link>
+			</Button>
+		);
+	}
 
-  return <Content />;
+	return <Content />;
 }
 
 function Content() {
-  const route = getRouteApi('/p/$id/');
-  const { place } = route.useLoaderData();
-  const [rating, setRating] = useState(0);
-  const up = useUpload();
-  const files = up.acceptedFiles;
-  const invalidator = useInvalidator();
+	const route = getRouteApi('/p/$id/');
+	const { place } = route.useLoaderData();
+	const [rating, setRating] = useState(0);
+	const up = useUpload();
+	const files = up.acceptedFiles;
+	const invalidator = useInvalidator();
 
-  const form = useForm({
-    resolver: zodResolver(schema),
-  });
+	const form = useForm({
+		resolver: zodResolver(schema),
+	});
 
-  const createReviewMutation = api.useMutation('post', '/api/v2/reviews/', {
-    onSuccess: async (data) => {
-      const ok = await doFileUpload(files, data.review.id);
+	const createReviewMutation = api.useMutation('post', '/api/v2/reviews/', {
+		onSuccess: async (data) => {
+			const ok = await doFileUpload(files, data.review.id);
 
-      if (!ok) {
-        toast.error('Something went wrong');
-        return;
-      }
+			if (!ok) {
+				toast.error('Something went wrong');
+				return;
+			}
 
-      await invalidator.invalidate();
-      form.reset();
-      setRating(0);
-      toast.success('Review added');
-    },
-  });
+			await invalidator.invalidate();
+			form.reset();
+			setRating(0);
+			toast.success('Review added');
+		},
+	});
 
-  return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="default"
-          size="sm"
-        >
-          <PencilIcon className="size-4 mr-2" />
-          <span>Add a review</span>
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent className="sm:max-w-xl">
-        <AlertDialogHeader>
-          <AlertDialogTitle>Add a review</AlertDialogTitle>
-          <AlertDialogDescription>
-            Add a review to {place.name}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <div className="grid gap-4 py-2">
-          <div className="flex flex-row gap-2 items-center justify-center">
-            <span className="sr-only">Rating</span>
-            <Rating
-              id="rating"
-              defaultValue={0}
-              value={rating}
-              onChange={(v) => {
-                setRating(v.value);
-              }}
-              disabled={false}
-              starsClassName="size-8"
-            />
-          </div>
+	return (
+		<AlertDialog>
+			<AlertDialogTrigger asChild>
+				<Button variant="default" size="sm">
+					<PencilIcon className="mr-2 size-4" />
+					<span>Add a review</span>
+				</Button>
+			</AlertDialogTrigger>
+			<AlertDialogContent className="sm:max-w-xl">
+				<AlertDialogHeader>
+					<AlertDialogTitle>Add a review</AlertDialogTitle>
+					<AlertDialogDescription>
+						Add a review to {place.name}
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<div className="grid gap-4 py-2">
+					<div className="flex flex-row items-center justify-center gap-2">
+						<span className="sr-only">Rating</span>
+						<Rating
+							id="rating"
+							defaultValue={0}
+							value={rating}
+							onChange={(v) => {
+								setRating(v.value);
+							}}
+							disabled={false}
+							starsClassName="size-8"
+						/>
+					</div>
 
-          <div>
-            <Label htmlFor="content">Review</Label>
-            <Textarea
-              id="content"
-              rows={5}
-              placeholder="Leave a review"
-              className="mt-1"
-              {...form.register('content')}
-            />
-            <InputInfo text={lengthTracker(form.watch('content'), 2048)} />
-            <InputError error={form.formState.errors.content} />
-          </div>
+					<div>
+						<Label htmlFor="content">Review</Label>
+						<Textarea
+							id="content"
+							rows={5}
+							placeholder="Leave a review"
+							className="mt-1"
+							{...form.register('content')}
+						/>
+						<InputInfo text={lengthTracker(form.watch('content'), 2048)} />
+						<InputError error={form.formState.errors.content} />
+					</div>
 
-          <ImageUploadArea up={up} />
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              // Ensure the user is logged in
-              const res = await fetchClient.POST('/api/v2/auth/refresh');
+					<ImageUploadArea up={up} />
+				</div>
+				<AlertDialogFooter>
+					<AlertDialogCancel>Cancel</AlertDialogCancel>
+					<AlertDialogAction
+						onClick={async () => {
+							// Ensure the user is logged in
+							const res = await fetchClient.POST('/api/v2/auth/refresh');
 
-              if (res.error) {
-                toast.error('You must be logged in to create a review');
-                return;
-              }
+							if (res.error) {
+								toast.error('You must be logged in to create a review');
+								return;
+							}
 
-              createReviewMutation.mutate({
-                body: {
-                  content: form.getValues('content'),
-                  placeId: place.id,
-                  rating: rating,
-                },
-              });
-            }}
-          >
-            Create
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
+							createReviewMutation.mutate({
+								body: {
+									content: form.getValues('content'),
+									placeId: place.id,
+									rating: rating,
+								},
+							});
+						}}
+					>
+						Create
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
+	);
 }

@@ -1,3 +1,4 @@
 export function OpenHoursDialog() {
-  return <></>;
+	// biome-ignore lint/complexity/noUselessFragments: TODO
+	return <></>;
 }

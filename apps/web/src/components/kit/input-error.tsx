@@ -1,21 +1,18 @@
-import { cn } from '@/lib/utils';
 import type { FieldError } from 'react-hook-form';
+import { cn } from '@/lib/utils';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
-  error?: FieldError;
+	error?: FieldError;
 };
 
 export function InputError({ error, className, ...props }: Props) {
-  if (error === undefined) {
-    return null;
-  }
+	if (error === undefined) {
+		return null;
+	}
 
-  return (
-    <div
-      className={cn('mt-1 text-xs text-red-500', className)}
-      {...props}
-    >
-      {error.message}
-    </div>
-  );
+	return (
+		<div className={cn('mt-1 text-red-500 text-xs', className)} {...props}>
+			{error.message}
+		</div>
+	);
 }

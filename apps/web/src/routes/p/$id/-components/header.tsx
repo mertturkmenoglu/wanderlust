@@ -1,40 +1,40 @@
-import { cn } from '@/lib/utils';
 import { getRouteApi } from '@tanstack/react-router';
+import { cn } from '@/lib/utils';
 import { AddToListButton } from './add-to-list-button';
 import { BookmarkButton } from './bookmark-button';
 import { FavoriteButton } from './favorite-button';
 import { Menu } from './menu';
 
 type Props = {
-  className?: string;
+	className?: string;
 };
 
 export function Header({ className }: Props) {
-  const route = getRouteApi('/p/$id/');
-  const { place } = route.useLoaderData();
-  const auth = route.useRouteContext().auth;
+	const route = getRouteApi('/p/$id/');
+	const { place } = route.useLoaderData();
+	const auth = route.useRouteContext().auth;
 
-  return (
-    <div className={cn(className)}>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4">
-        <h2 className="line-clamp-2 scroll-m-20 text-3xl sm:text-4xl capitalize tracking-tight">
-          {place.name}
-        </h2>
+	return (
+		<div className={cn(className)}>
+			<div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<h2 className="line-clamp-2 scroll-m-20 text-3xl capitalize tracking-tight sm:text-4xl">
+					{place.name}
+				</h2>
 
-        <div className="flex items-center justify-between w-full sm:w-auto">
-          {!!auth.user && <AddToListButton />}
+				<div className="flex w-full items-center justify-between sm:w-auto">
+					{!!auth.user && <AddToListButton />}
 
-          <FavoriteButton />
+					<FavoriteButton />
 
-          <BookmarkButton />
+					<BookmarkButton />
 
-          <Menu />
-        </div>
-      </div>
+					<Menu />
+				</div>
+			</div>
 
-      <div className="mt-2 text-sm text-primary ml-auto hidden sm:block">
-        {place.category.name}
-      </div>
-    </div>
-  );
+			<div className="mt-2 ml-auto hidden text-primary text-sm sm:block">
+				{place.category.name}
+			</div>
+		</div>
+	);
 }

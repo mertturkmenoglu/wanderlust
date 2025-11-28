@@ -1,4 +1,5 @@
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+/** biome-ignore-all lint/style/noNonNullAssertion: We are sure these values will be defined */
+import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode, useContext } from 'react';
 import ReactDOM from 'react-dom/client';
 
@@ -14,12 +15,12 @@ import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
 import { Spinner } from './components/kit/spinner.tsx';
 import {
-  AuthContext,
-  AuthContextProvider,
+	AuthContext,
+	AuthContextProvider,
 } from './providers/auth-provider.tsx';
 import {
-  FlagsContext,
-  FlagsContextProvider,
+	FlagsContext,
+	FlagsContextProvider,
 } from './providers/flags-provider.tsx';
 import reportWebVitals from './reportWebVitals.ts';
 import './styles.css';
@@ -27,68 +28,63 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 // Create a new router instance
 const router = createRouter({
-  routeTree,
-  context: {
-    ...TanstackQuery.getContext(),
-    // oxlint-disable-next-line no-non-null-assertion
-    auth: undefined!,
-    // oxlint-disable-next-line no-non-null-assertion
-    flags: undefined!,
-  },
-  defaultPreload: false,
-  scrollRestoration: true,
-  defaultStructuralSharing: true,
-  defaultPreloadStaleTime: 0,
+	routeTree,
+	context: {
+		...TanstackQuery.getContext(),
+		auth: undefined!,
+		flags: undefined!,
+	},
+	defaultPreload: false,
+	scrollRestoration: true,
+	defaultStructuralSharing: true,
+	defaultPreloadStaleTime: 0,
 });
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
+	interface Register {
+		router: typeof router;
+	}
 }
 
 function App() {
-  return (
-    <FlagsContextProvider>
-      <AuthContextProvider>
-        <InnerApp />
-      </AuthContextProvider>
-    </FlagsContextProvider>
-  );
+	return (
+		<FlagsContextProvider>
+			<AuthContextProvider>
+				<InnerApp />
+			</AuthContextProvider>
+		</FlagsContextProvider>
+	);
 }
 
 function InnerApp() {
-  const auth = useContext(AuthContext);
-  const flags = useContext(FlagsContext);
+	const auth = useContext(AuthContext);
+	const flags = useContext(FlagsContext);
 
-  if (auth.isLoading && !auth.user) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Spinner className="fill-primary text-gray-200 size-12 animate-spin" />
-      </div>
-    );
-  }
+	if (auth.isLoading && !auth.user) {
+		return (
+			<div className="flex h-screen items-center justify-center">
+				<Spinner className="size-12 animate-spin fill-primary text-gray-200" />
+			</div>
+		);
+	}
 
-  return (
-    <RouterProvider
-      router={router}
-      context={{ auth, flags: flags.flags }}
-    />
-  );
+	return (
+		<RouterProvider router={router} context={{ auth, flags: flags.flags }} />
+	);
 }
 
 // Render the app
 const rootElement = globalThis.document.querySelector('#app');
 if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <TanstackQuery.Provider>
-        <App />
-      </TanstackQuery.Provider>
-    </StrictMode>,
-  );
+	const root = ReactDOM.createRoot(rootElement);
+	root.render(
+		<StrictMode>
+			<TanstackQuery.Provider>
+				<App />
+			</TanstackQuery.Provider>
+		</StrictMode>,
+	);
 }
 
 reportWebVitals();

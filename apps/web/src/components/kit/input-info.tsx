@@ -1,16 +1,16 @@
 import { cn } from '@/lib/utils';
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
-  text: string;
+	text: string;
 };
 
 export function InputInfo({ text, className, ...props }: Props) {
-  return (
-    <div
-      className={cn('mt-1 text-xs text-muted-foreground', className)}
-      {...props}
-    >
-      {text}
-    </div>
-  );
+	return (
+		<div
+			className={cn('mt-1 text-muted-foreground text-xs', className)}
+			{...props}
+		>
+			{text}
+		</div>
+	);
 }

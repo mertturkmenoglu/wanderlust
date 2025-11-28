@@ -1,1 +1,1 @@
-export * from "./nano-id";
+export * from './nano-id';

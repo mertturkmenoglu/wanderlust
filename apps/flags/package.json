@@ -1,21 +1,21 @@
 {
-  "name": "flags",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev": "bun run --hot index.ts",
-    "build": "tsdown",
-    "start": "NODE_ENV=production bun run dist/index.js",
-    "test": "bun test",
-    "check-types": "tsc -b",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./index.ts --outfile flags"
-  },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "tsdown": "^0.16.7"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+	"name": "flags",
+	"module": "index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "bun run --hot index.ts",
+		"build": "tsdown",
+		"start": "NODE_ENV=production bun run dist/index.js",
+		"test": "bun test",
+		"check-types": "tsc -b",
+		"compile": "bun build --compile --minify --sourcemap --bytecode ./index.ts --outfile flags"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"tsdown": "^0.16.7"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
 }

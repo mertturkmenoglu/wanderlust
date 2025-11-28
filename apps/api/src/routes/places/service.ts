@@ -1,77 +1,77 @@
-import type { PlacesRepository } from "./repository";
-import * as dto from "./dto";
+import type * as dto from './dto';
+import type { PlacesRepository } from './repository';
 
 export class PlacesService {
-  constructor(private readonly repository: PlacesRepository) {}
+	constructor(private readonly repository: PlacesRepository) {}
 
-  async get(data: dto.GetInput, userId: string | null): Promise<dto.GetOutput> {
-    const result = await this.repository.get(data);
+	async get(data: dto.GetInput, userId: string | null): Promise<dto.GetOutput> {
+		const result = await this.repository.get(data);
 
-    if (userId === null) {
-      return {
-        place: result,
-        meta: {
-          isBookmarked: false,
-          isFavorite: false,
-        },
-      };
-    }
+		if (userId === null) {
+			return {
+				place: result,
+				meta: {
+					isBookmarked: false,
+					isFavorite: false,
+				},
+			};
+		}
 
-    const isFavorite = await this.repository.isFavorite(data.id, userId);
-    const isBookmarked = await this.repository.isBookmarked(data.id, userId);
+		const isFavorite = await this.repository.isFavorite(data.id, userId);
+		const isBookmarked = await this.repository.isBookmarked(data.id, userId);
 
-    return {
-      place: result,
-      meta: {
-        isFavorite,
-        isBookmarked,
-      },
-    };
-  }
+		return {
+			place: result,
+			meta: {
+				isFavorite,
+				isBookmarked,
+			},
+		};
+	}
 
-  async peek(): Promise<dto.PeekOutput> {
-    const result = await this.repository.peek();
+	async peek(): Promise<dto.PeekOutput> {
+		const result = await this.repository.peek();
 
-    return {
-      places: result,
-    };
-  }
+		return {
+			places: result,
+		};
+	}
 
-  async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
-    const result = await this.repository.update(data);
+	async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
+		const result = await this.repository.update(data);
 
-    return {
-      place: result,
-    };
-  }
+		return {
+			place: result,
+		};
+	}
 
-  async updateAddress(
-    data: dto.UpdateAddressInput
-  ): Promise<dto.UpdateAddressOutput> {
-    const result = await this.repository.updateAddress(data);
+	async updateAddress(
+		data: dto.UpdateAddressInput,
+	): Promise<dto.UpdateAddressOutput> {
+		const result = await this.repository.updateAddress(data);
 
-    return {
-      place: result,
-    };
-  }
+		return {
+			place: result,
+		};
+	}
 
-  async updateAmenities(
-    data: dto.UpdateAmenitiesInput
-  ): Promise<dto.UpdateAmenitiesOutput> {
-    const result = await this.repository.updateAmenities(data);
+	async updateAmenities(
+		data: dto.UpdateAmenitiesInput,
+	): Promise<dto.UpdateAmenitiesOutput> {
+		const result = await this.repository.updateAmenities(data);
 
-    return {
-      place: result,
-    };
-  }
+		return {
+			place: result,
+		};
+	}
 
-  async updateHours(
-    data: dto.UpdateHoursInput
-  ): Promise<dto.UpdateHoursOutput> {
-    const result = await this.repository.updateHours(data);
+	async updateHours(
+		data: dto.UpdateHoursInput,
+	): Promise<dto.UpdateHoursOutput> {
+		const result = await this.repository.updateHours(data);
 
-    return {
-      place: result,
-    };
-  }
+		return {
+			place: result,
+		};
+	}
 }

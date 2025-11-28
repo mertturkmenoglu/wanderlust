@@ -1,24 +1,30 @@
-import { ConfigProvider, type TConfig } from "../config";
-import { Container, type IServiceProvider } from "../di";
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
+import { ConfigProvider, type TConfig } from '../config';
+import { Container, type IServiceProvider } from '../di';
 
 export class EmailProvider implements IServiceProvider<TEmailService> {
-  constructor(ioc: Container) {
-    const cfg = ioc.resolve(ConfigProvider.id);
-    return init(cfg);
-  }
+	private readonly instance: TEmailService;
 
-  static get id() {
-    return Container.createIdentifier<TEmailService>("email");
-  }
+	constructor(ioc: Container) {
+		const cfg = ioc.resolve(ConfigProvider.id);
+		this.instance = init(cfg);
+	}
+
+	get(): TEmailService {
+		return this.instance;
+	}
+
+	static get id() {
+		return Container.createIdentifier<TEmailService>('email');
+	}
 }
 
 function init(cfg: TConfig) {
-  return nodemailer.createTransport({
-    host: cfg.email.host,
-    port: cfg.email.port,
-    secure: cfg.email.ssl,
-  });
+	return nodemailer.createTransport({
+		host: cfg.email.host,
+		port: cfg.email.port,
+		secure: cfg.email.ssl,
+	});
 }
 
 export type TEmailService = ReturnType<typeof init>;

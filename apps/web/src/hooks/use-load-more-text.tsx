@@ -1,19 +1,19 @@
 type Indicators = {
-  isFetchingNextPage: boolean;
-  hasNextPage: boolean;
+	isFetchingNextPage: boolean;
+	hasNextPage: boolean;
 };
 
 export function useLoadMoreText({
-  isFetchingNextPage,
-  hasNextPage,
+	isFetchingNextPage,
+	hasNextPage,
 }: Indicators) {
-  if (isFetchingNextPage) {
-    return 'Loading more...';
-  }
+	if (isFetchingNextPage) {
+		return 'Loading more...';
+	}
 
-  if (hasNextPage) {
-    return 'Load More';
-  }
+	if (hasNextPage) {
+		return 'Load More';
+	}
 
-  return 'Nothing more to load';
+	return 'Nothing more to load';
 }

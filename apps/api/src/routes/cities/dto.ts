@@ -1,10 +1,10 @@
-import { $ } from "@/db/schema";
-import z from "zod";
+import z from 'zod';
+import { $ } from '@/db/schema';
 
 export const listInput = z.object({});
 
 export const listOutput = z.object({
-  cities: $.city.array(),
+	cities: $.city.array(),
 });
 
 export type ListOutput = z.infer<typeof listOutput>;
@@ -12,19 +12,19 @@ export type ListOutput = z.infer<typeof listOutput>;
 export const listFeaturedInput = z.object({});
 
 export const listFeaturedOutput = z.object({
-  cities: $.city.array(),
+	cities: $.city.array(),
 });
 
 export type ListFeaturedOutput = z.infer<typeof listFeaturedOutput>;
 
 export const getInput = $.city.pick({
-  id: true,
+	id: true,
 });
 
 export type GetInput = z.infer<typeof getInput>;
 
 export const getOutput = z.object({
-  city: $.city,
+	city: $.city,
 });
 
 export type GetOutput = z.infer<typeof getOutput>;
@@ -34,7 +34,7 @@ export const createInput = $.city;
 export type CreateInput = z.infer<typeof createInput>;
 
 export const createOutput = z.object({
-  city: $.city,
+	city: $.city,
 });
 
 export type CreateOutput = z.infer<typeof createOutput>;
@@ -48,7 +48,7 @@ export const updateOutput = createOutput;
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
 export const deleteInput = $.city.pick({
-  id: true,
+	id: true,
 });
 
 export type DeleteInput = z.infer<typeof deleteInput>;

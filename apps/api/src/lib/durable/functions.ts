@@ -22,6 +22,6 @@
 // );
 
 export const functions = [
-  // Add durable functions here
-  // sendResetPasswordEmail,
+	// Add durable functions here
+	// sendResetPasswordEmail,
 ];

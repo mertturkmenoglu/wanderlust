@@ -1,51 +1,44 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { createFileRoute } from '@tanstack/react-router';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion';
 import { faqData } from './-data';
 
 export const Route = createFileRoute('/help/')({
-  component: RouteComponent,
+	component: RouteComponent,
 });
 
 function RouteComponent() {
-  return (
-    <>
-      <div className="flex flex-col justify-center items-center mt-16">
-        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-          {faqData.title}
-        </h2>
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          {faqData.subtitle}
-        </h3>
-      </div>
-      <div className="max-w-xl mx-auto my-16">
-        {faqData.groups.map((group) => (
-          <div key={group.title}>
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight mt-8">
-              {group.title}
-            </h4>
-            <Accordion
-              type="single"
-              collapsible
-              className="w-full"
-            >
-              {group.items.map((item) => (
-                <AccordionItem
-                  value={item.question}
-                  key={item.question}
-                >
-                  <AccordionTrigger>{item.question}</AccordionTrigger>
-                  <AccordionContent>{item.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        ))}
-      </div>
-    </>
-  );
+	return (
+		<>
+			<div className="mt-16 flex flex-col items-center justify-center">
+				<h2 className="scroll-m-20 pb-2 font-semibold text-3xl tracking-tight first:mt-0">
+					{faqData.title}
+				</h2>
+				<h3 className="scroll-m-20 font-semibold text-2xl tracking-tight">
+					{faqData.subtitle}
+				</h3>
+			</div>
+			<div className="mx-auto my-16 max-w-xl">
+				{faqData.groups.map((group) => (
+					<div key={group.title}>
+						<h4 className="mt-8 scroll-m-20 font-semibold text-xl tracking-tight">
+							{group.title}
+						</h4>
+						<Accordion type="single" collapsible className="w-full">
+							{group.items.map((item) => (
+								<AccordionItem value={item.question} key={item.question}>
+									<AccordionTrigger>{item.question}</AccordionTrigger>
+									<AccordionContent>{item.answer}</AccordionContent>
+								</AccordionItem>
+							))}
+						</Accordion>
+					</div>
+				))}
+			</div>
+		</>
+	);
 }

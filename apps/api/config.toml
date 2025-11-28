@@ -23,3 +23,9 @@ from = "Wanderlust <noreply@example.com>"
 host = "localhost"
 port = 1025
 ssl = false
+
+[typesense]
+port = 8108
+apiKey = "wanderlust"
+dashboardPort = 3006
+url = "http://localhost:8108"
