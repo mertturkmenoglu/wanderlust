@@ -659,6 +659,7 @@ export const reports = pgTable(
       .notNull()
       .references(() => users.id),
     reason: integer().notNull(),
+    description: text(),
     resolved: boolean().notNull().default(false),
     resolvedAt: timestamp({ withTimezone: true }),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -1674,11 +1675,22 @@ export const $ = {
         examples: ["user123"],
       }),
     reason: z
-      .string()
+      .number()
+      .int()
       .min(1)
+      .max(32)
       .meta({
         description: "Reason for reporting the resource",
         examples: ["Inappropriate content"],
+      }),
+    description: z
+      .string()
+      .min(1)
+      .max(2048)
+      .nullable()
+      .meta({
+        description: "Additional description provided by the reporter",
+        examples: ["The content contains offensive language."],
       }),
     resolved: z.boolean().meta({
       description: "Whether the report has been resolved",
