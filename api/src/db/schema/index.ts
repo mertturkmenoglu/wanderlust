@@ -137,6 +137,17 @@ export const follows = pgTable(
   (table) => [primaryKey({ columns: [table.followerId, table.followingId] })]
 );
 
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, {
+    fields: [follows.followerId],
+    references: [users.id],
+  }),
+  following: one(users, {
+    fields: [follows.followingId],
+    references: [users.id],
+  }),
+}));
+
 export const profile = pgView("profile").as((qb) => {
   return qb
     .select({
