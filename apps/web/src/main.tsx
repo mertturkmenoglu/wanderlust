@@ -2,10 +2,10 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { StrictMode, useContext } from 'react';
 import ReactDOM from 'react-dom/client';
 
-import * as TanstackQuery from './integrations/tanstack-query/root-provider';
+import * as TanstackQuery from './integrations/tanstack-query/root-provider.tsx';
 
 // Import the generated route tree
-import { routeTree } from './routeTree.gen';
+import { routeTree } from './routeTree.gen.ts';
 
 import 'instantsearch.css/themes/reset.css';
 import 'react-datepicker/dist/react-datepicker.css';

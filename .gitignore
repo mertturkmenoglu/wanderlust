@@ -173,4 +173,4 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-api-v2/
+apps/api-v2/
