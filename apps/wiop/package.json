@@ -1,18 +1,21 @@
 {
   "name": "wiop",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Wanderlust image optimization proxy server",
-  "main": "index.js",
+  "module": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "node index.mjs"
+    "dev": "bun run --hot index.ts",
+    "start": "bun run index.ts"
   },
-  "author": "Mert Turkmenoglu",
-  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
   "dependencies": {
-    "h3": "^1.15.4",
-    "ipx": "^3.1.1",
-    "listhen": "^1.9.0"
+    "ipx": "^3.1.1"
   }
 }
