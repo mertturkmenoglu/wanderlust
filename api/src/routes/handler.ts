@@ -14,6 +14,7 @@ export function getApiHandler() {
         docsProvider: "scalar",
         schemaConverters: [new ZodToJsonSchemaConverter()],
         docsTitle: "Wanderlust API Documentation",
+        docsHead: `<link rel="icon" href="https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/refs/heads/main/web/public/favicon.ico" />`,
         specGenerateOptions: {
           info: {
             title: "Wanderlust API",
