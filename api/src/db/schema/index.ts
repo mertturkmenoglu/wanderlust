@@ -480,7 +480,7 @@ export const reviews = pgTable(
   (table) => [index().on(table.placeId), index().on(table.userId)]
 );
 
-export const reviewsRelations = relations(reviews, ({ one }) => ({
+export const reviewsRelations = relations(reviews, ({ one, many }) => ({
   place: one(places, {
     fields: [reviews.placeId],
     references: [places.id],
@@ -489,6 +489,7 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
     fields: [reviews.userId],
     references: [users.id],
   }),
+  assets: many(assets),
 }));
 
 export const tripVisibilityLevel = pgEnum("trip_visibility_level", [
