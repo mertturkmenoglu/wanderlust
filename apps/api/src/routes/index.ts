@@ -10,6 +10,7 @@ import { getRouter as getListsRouter } from './lists';
 import { getRouter as getPlacesRouter } from './places';
 import { getRouter as getReportsRouter } from './reports';
 import { getRouter as getReviewsRouter } from './reviews';
+import { getRouter as getTripsRouter } from './trips';
 import { getRouter as getUsersRouter } from './users';
 
 export function getAppRouter() {
@@ -25,6 +26,7 @@ export function getAppRouter() {
 		places: getPlacesRouter(),
 		reports: getReportsRouter(),
 		reviews: getReviewsRouter(),
+		trips: getTripsRouter(),
 		users: getUsersRouter(),
 	};
 }
