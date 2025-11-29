@@ -29,7 +29,7 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"useEditorconfig": true
 	},
 	"assist": {
 		"actions": {
