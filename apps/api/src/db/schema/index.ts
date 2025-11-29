@@ -506,7 +506,7 @@ export const trips = pgTable('trips', {
 	title: text().notNull(),
 	description: text().notNull().default(''),
 	visibilityLevel: tripVisibilityLevel().notNull().default('private'),
-	requestedAmenities: jsonb().notNull().default('[]'),
+	requestedAmenities: jsonb().notNull().default('[]').$type<string[]>(),
 	startAt: timestamp({ withTimezone: true }).notNull(),
 	endAt: timestamp({ withTimezone: true }).notNull(),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
