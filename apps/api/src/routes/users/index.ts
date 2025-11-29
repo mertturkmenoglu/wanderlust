@@ -30,6 +30,12 @@ export function getRouter() {
 
 			return result;
 		}),
+		getMe: os.getMe.handler(async ({ context }) => {
+			const userId = context.session.user.id;
+			const result = await service.getMe(userId);
+
+			return result;
+		}),
 		listFollowers: os.listFollowers.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
 			const result = await service.listFollowers(userId, input);

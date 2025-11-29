@@ -63,6 +63,14 @@ export class UsersService {
 		};
 	}
 
+	async getMe(userId: string): Promise<dto.GetMeOutput> {
+		const result = await this.repo.getMe(userId);
+
+		return {
+			profile: result.profile,
+		};
+	}
+
 	async listFollowers(
 		userId: string,
 		data: dto.ListFollowersInput,

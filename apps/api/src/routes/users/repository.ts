@@ -93,6 +93,33 @@ export class UsersRepository {
 		}
 	}
 
+	async getMe(userId: string) {
+		try {
+			const result = await this.db.query.users.findFirst({
+				where: (t, { eq }) => eq(t.id, userId),
+			});
+
+			if (!result) {
+				throw new ORPCError('NotFound', {
+					message: `User with id ${userId} not found`,
+				});
+			}
+
+			return {
+				profile: result,
+			};
+		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
+
+			throw new ORPCError('InternalServerError', {
+				message: 'Failed to get current user profile',
+				cause: err,
+			});
+		}
+	}
+
 	async listFollowers(_userId: string, data: dto.ListFollowersInput) {
 		const offset = Pagination.getOffset(data);
 

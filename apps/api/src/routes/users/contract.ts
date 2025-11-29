@@ -44,6 +44,27 @@ export const contract = {
 			successDescription: 'OK',
 			tags: ['Users'],
 		}),
+	getMe: oc
+		.input(dto.getMeInput)
+		.output(dto.getMeOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'GET',
+			path: '/users',
+			summary: 'Get Current User',
+			description: 'Retrieve the profile of the currently authenticated user',
+			successStatus: 200,
+			successDescription: 'OK',
+			tags: ['Users'],
+		}),
 	listFollowers: oc
 		.input(dto.listFollowersInput)
 		.output(dto.listFollowersOutput)

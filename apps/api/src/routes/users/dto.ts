@@ -50,6 +50,16 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
+export const getMeInput = z.object({});
+
+export type GetMeInput = z.infer<typeof getMeInput>;
+
+export const getMeOutput = z.object({
+	profile: profile,
+});
+
+export type GetMeOutput = z.infer<typeof getMeOutput>;
+
 export const listFollowersInput = profile
 	.pick({
 		username: true,
