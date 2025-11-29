@@ -15,7 +15,7 @@ import {
 	timestamp,
 	unique,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 
 export const users = pgTable('users', {
@@ -1726,4 +1726,31 @@ export const $ = {
 	}).meta({
 		description: 'A report entity',
 	}),
+};
+
+export const $insert = {
+	user: createInsertSchema(users),
+	account: createInsertSchema(accounts),
+	asset: createInsertSchema(assets),
+	follows: createInsertSchema(follows),
+	category: createInsertSchema(categories),
+	city: createInsertSchema(cities),
+	address: createInsertSchema(addresses),
+	place: createInsertSchema(places),
+	bookmark: createInsertSchema(bookmarks),
+	favorite: createInsertSchema(favorites),
+	collection: createInsertSchema(collections),
+	collectionItem: createInsertSchema(collectionItems),
+	collectionsCities: createInsertSchema(collectionsCities),
+	collectionsPlaces: createInsertSchema(collectionsPlaces),
+	list: createInsertSchema(lists),
+	listItem: createInsertSchema(listItems),
+	review: createInsertSchema(reviews),
+	trip: createInsertSchema(trips),
+	tripInvite: createInsertSchema(tripInvites),
+	tripComment: createInsertSchema(tripComments),
+	tripLocation: createInsertSchema(tripLocations),
+	tripParticipant: createInsertSchema(tripParticipants),
+	userTopPlaces: createInsertSchema(userTopPlaces),
+	report: createInsertSchema(reports),
 };
