@@ -1,5 +1,4 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: TODO */
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { z } from 'zod';
 import { AppMessage } from '@/components/blocks/app-message';
@@ -7,6 +6,7 @@ import { PlaceCard } from '@/components/blocks/place-card';
 import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 import { ItemGroup } from '@/components/ui/item';
 import { Spinner } from '@/components/ui/spinner';
+import { authGuard } from '@/lib/auth';
 import { Actions } from './-actions';
 import { BookmarksContextProvider, useBookmarksContext } from './-context';
 import { useBookmarksQuery } from './-hooks';
@@ -21,13 +21,7 @@ const bookmarksSearchSchema = z.object({
 
 export const Route = createFileRoute('/bookmarks/')({
 	component: RouteComponent,
-	beforeLoad: ({ context: { auth } }) => {
-		if (!auth.user) {
-			throw redirect({
-				to: '/sign-in',
-			});
-		}
-	},
+	beforeLoad: authGuard,
 	validateSearch: bookmarksSearchSchema,
 });
 
@@ -57,7 +51,7 @@ function Bookmarks() {
 	if (query.error) {
 		return (
 			<AppMessage
-				errorMessage={query.error.title ?? 'Something went wrong'}
+				errorMessage={query.error.message ?? 'Something went wrong'}
 				showBackButton={false}
 			/>
 		);
@@ -74,6 +68,12 @@ function Bookmarks() {
 		}
 
 		const { bookmarks, pagination } = query.data;
+
+		const bookmark = bookmarks[ctx.index];
+
+		if (!bookmark) {
+			return null;
+		}
 
 		return (
 			<div className="grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
@@ -96,11 +96,11 @@ function Bookmarks() {
 				</ItemGroup>
 
 				<div className="hidden md:block">
-					<PlaceCard place={bookmarks[ctx.index]!.place} hoverEffects={false} />
+					<PlaceCard place={bookmark.place} hoverEffects={false} />
 
-					<Actions bookmark={bookmarks[ctx.index]!} />
+					<Actions bookmark={bookmark} />
 
-					<BookmarkItemMap bookmark={bookmarks[ctx.index]!} />
+					<BookmarkItemMap bookmark={bookmark} />
 				</div>
 			</div>
 		);

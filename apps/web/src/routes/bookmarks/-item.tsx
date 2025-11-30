@@ -12,12 +12,12 @@ import {
 	ItemTitle,
 } from '@/components/ui/item';
 import { useIsMobile } from '@/hooks/use-mobile';
-import type { components } from '@/lib/api-types';
 import { cn } from '@/lib/utils';
 import { useBookmarksContext } from './-context';
+import type { TBookmark } from './-types';
 
 type Props = {
-	bookmark: components['schemas']['GetUserBookmarksOutputBody']['bookmarks'][number];
+	bookmark: TBookmark;
 	itemIndex: number;
 };
 
@@ -67,7 +67,7 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 					<ItemTitle>{bookmark.place.name}</ItemTitle>
 					<ItemDescription>
 						{bookmark.place.address.city.name} /{' '}
-						{bookmark.place.address.city.country.name}
+						{bookmark.place.address.city.countryName}
 					</ItemDescription>
 					<ItemDescription className="text-primary text-sm">
 						{bookmark.place.category.name}

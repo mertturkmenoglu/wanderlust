@@ -1,24 +1,19 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 
 export function useBookmarksQuery() {
 	const { page, pageSize } = useSearch({
 		from: '/bookmarks/',
 	});
 
-	return api.useSuspenseQuery(
-		'get',
-		'/api/v2/bookmarks/',
-		{
-			params: {
-				query: {
-					page,
-					pageSize,
-				},
+	return useSuspenseQuery(
+		orpc.bookmarks.list.queryOptions({
+			input: {
+				page,
+				pageSize,
 			},
-		},
-		{
 			retry: false,
-		},
+		}),
 	);
 }

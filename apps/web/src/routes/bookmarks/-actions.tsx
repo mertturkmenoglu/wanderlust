@@ -1,28 +1,31 @@
+import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
-import type { components } from '@/lib/api-types';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 import { useBookmarksContext } from './-context';
+import type { TBookmark } from './-types';
 
 type Props = {
-	bookmark: components['schemas']['GetUserBookmarksOutputBody']['bookmarks'][number];
+	bookmark: TBookmark;
 };
 
 export function Actions({ bookmark }: Props) {
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 	const ctx = useBookmarksContext();
 
-	const mutation = api.useMutation('delete', '/api/v2/bookmarks/{id}', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			ctx.setIndex(0);
-			toast.success('Bookmark removed');
-		},
-	});
+	const mutation = useMutation(
+		orpc.bookmarks.delete.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				ctx.setIndex(0);
+				toast.success('Bookmark removed');
+			},
+		}),
+	);
 
 	return (
 		<div className="my-4 flex items-center justify-between gap-4">
@@ -31,11 +34,7 @@ export function Actions({ bookmark }: Props) {
 				size="sm"
 				onClick={() => {
 					mutation.mutate({
-						params: {
-							path: {
-								id: bookmark.placeId,
-							},
-						},
+						placeId: bookmark.placeId,
 					});
 				}}
 			>

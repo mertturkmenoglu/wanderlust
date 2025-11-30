@@ -5,11 +5,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import type { components } from '@/lib/api-types';
 import { ipx } from '@/lib/ipx';
+import type { TBookmark } from './-types';
 
 type Props = {
-	bookmark: components['schemas']['Bookmark'];
+	bookmark: TBookmark;
 };
 
 export function BookmarkCard({ bookmark: { place } }: Props) {
@@ -27,7 +27,7 @@ export function BookmarkCard({ bookmark: { place } }: Props) {
 						{place.name}
 					</CardTitle>
 					<CardDescription className="line-clamp-1">
-						{place.address.city.name} / {place.address.city.country.name}
+						{place.address.city.name} / {place.address.city.countryName}
 					</CardDescription>
 				</CardHeader>
 

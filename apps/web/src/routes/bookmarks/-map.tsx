@@ -1,9 +1,9 @@
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
-import type { components } from '@/lib/api-types';
 import { createStyle } from '@/lib/map';
+import type { TBookmark } from './-types';
 
 type Props = {
-	bookmark: components['schemas']['GetUserBookmarksOutputBody']['bookmarks'][number];
+	bookmark: TBookmark;
 };
 
 export function BookmarkItemMap({ bookmark: { place } }: Props) {
