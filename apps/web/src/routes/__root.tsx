@@ -1,41 +1,21 @@
 import type { QueryClient } from '@tanstack/react-query';
 import {
 	createRootRouteWithContext,
+	HeadContent,
 	Outlet,
-	useSearch,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { Toaster } from 'sonner';
 import { ErrorComponent } from '@/components/blocks/error-component';
 import { Footer } from '@/components/blocks/footer';
 import { Header } from '@/components/blocks/header';
-import { TanstackQueryLayout } from '@/integrations/tanstack-query/layout';
-import type { AuthContextState } from '@/providers/auth-provider';
+import type { orpc } from '@/lib/orpc';
 import type { FlagsResponse } from '@/providers/flags-provider';
-import { SignInModal } from './_auth/sign-in/-modal';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
-	auth: AuthContextState;
 	flags: FlagsResponse;
-}
-
-function Component() {
-	const search = useSearch({ strict: false });
-
-	return (
-		<div className="flex min-h-screen flex-col">
-			<Header />
-			<main className="flex-1">
-				<Outlet />
-			</main>
-			<Footer />
-			<TanStackRouterDevtools />
-			<TanstackQueryLayout />
-			{search.signInModal && <SignInModal />}
-			<Toaster position="bottom-center" richColors />
-		</div>
-	);
+	orpc: typeof orpc;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
@@ -58,4 +38,38 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			/>
 		);
 	},
+	head: () => ({
+		meta: [
+			{
+				title: 'Wanderlust',
+			},
+			{
+				name: 'description',
+				content: 'Inspiring explorations, one spark of Wanderlust!',
+			},
+		],
+		links: [
+			{
+				rel: 'icon',
+				href: '/favicon.ico',
+			},
+		],
+	}),
 });
+
+function Component() {
+	return (
+		<>
+			<HeadContent />
+			<div className="flex min-h-screen flex-col">
+				<Header />
+				<main className="flex-1">
+					<Outlet />
+				</main>
+				<Footer />
+				<TanStackRouterDevtools position="bottom-left" />
+				<Toaster position="bottom-center" richColors />
+			</div>
+		</>
+	);
+}
