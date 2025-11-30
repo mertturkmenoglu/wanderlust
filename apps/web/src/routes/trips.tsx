@@ -1,14 +1,9 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { authGuard } from '@/lib/auth';
 
 export const Route = createFileRoute('/trips')({
 	component: RouteComponent,
-	beforeLoad: ({ context: { auth } }) => {
-		if (!auth.user) {
-			throw redirect({
-				to: '/',
-			});
-		}
-	},
+	beforeLoad: authGuard,
 });
 
 function RouteComponent() {

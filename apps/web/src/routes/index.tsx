@@ -1,8 +1,6 @@
-// oxlint-disable no-nested-ternary
-
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { useContext } from 'react';
 import { ActionBanner } from '@/components/blocks/action-banner';
 import { OverlayBanner } from '@/components/blocks/overlay-banner';
 import { PlacesGrid } from '@/components/blocks/places-grid';
@@ -13,17 +11,17 @@ import { TagNavigation } from '@/components/blocks/tag-navigation';
 import { VerticalBanner } from '@/components/blocks/vertical-banner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { api } from '@/lib/api';
+import { authClient } from '@/lib/auth';
 import { ipx } from '@/lib/ipx';
-import { AuthContext } from '@/providers/auth-provider';
+import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/')({
 	component: App,
 });
 
 function App() {
-	const auth = useContext(AuthContext);
-	const isAuthenticated = !auth.isLoading && auth.user !== null;
+	const session = authClient.useSession();
+	const isAuthenticated = !session.isPending && session.data !== null;
 
 	return (
 		<div className="mx-auto mt-8 max-w-7xl">
@@ -31,7 +29,7 @@ function App() {
 
 			<TagNavigation />
 
-			{auth.isLoading ? (
+			{session.isPending ? (
 				<Skeleton className="my-8 h-64 w-full" />
 			) : isAuthenticated ? (
 				<QuickActions />
@@ -52,14 +50,16 @@ function App() {
 }
 
 function Content() {
-	const { data: aggregations } = api.useSuspenseQuery(
-		'get',
-		'/api/v2/aggregator/home',
+	const { data: aggregations } = useSuspenseQuery(
+		orpc.aggregator.home.queryOptions({
+			input: {},
+		}),
 	);
 
-	const { data: cities } = api.useSuspenseQuery(
-		'get',
-		'/api/v2/cities/featured',
+	const { data: cities } = useSuspenseQuery(
+		orpc.cities.listFeatured.queryOptions({
+			input: {},
+		}),
 	);
 
 	return (
