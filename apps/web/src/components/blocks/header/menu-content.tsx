@@ -18,7 +18,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Logout } from './logout';
+import { SignOut } from './sign-out';
 import { useShortName } from './use-short-name';
 
 type Props = {
@@ -140,7 +140,7 @@ export function MenuContent({ fullName, username }: Readonly<Props>) {
 				</Link>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
-			<Logout />
+			<SignOut />
 		</DropdownMenuContent>
 	);
 }
