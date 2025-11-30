@@ -1,3 +1,4 @@
+import { ORPCError } from '@orpc/client';
 import { type ErrorComponentProps, Link } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import {
@@ -5,12 +6,11 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { isApiError } from '@/lib/api';
 
 export function ErrorComponent({ error }: ErrorComponentProps) {
 	const code = useMemo(() => {
-		if (isApiError(error)) {
-			return error.status ?? 500;
+		if (error instanceof ORPCError) {
+			return error.code;
 		}
 
 		if (error.name === 'Not Found') {
