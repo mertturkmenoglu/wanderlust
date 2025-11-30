@@ -174,3 +174,4 @@ dist
 .DS_Store
 
 apps/api-v2/
+apps/web-v2/
