@@ -43,7 +43,11 @@ export class BookmarksRepository {
 				with: {
 					place: {
 						with: {
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 							category: true,
 							assets: true,
 						},

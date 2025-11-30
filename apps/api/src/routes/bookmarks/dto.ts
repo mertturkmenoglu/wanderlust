@@ -31,7 +31,9 @@ export type ListInput = z.infer<typeof listInput>;
 const place = $.place.extend({
 	assets: $.asset.array(),
 	category: $.category,
-	address: $.address,
+	address: $.address.extend({
+		city: $.city,
+	}),
 });
 
 export const listOutput = z.object({
