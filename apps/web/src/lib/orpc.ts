@@ -1,4 +1,9 @@
-import { createORPCClient, ORPCError } from '@orpc/client';
+import {
+	createORPCClient,
+	type InferClientInputs,
+	type InferClientOutputs,
+	ORPCError,
+} from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
 import { createTanstackQueryUtils } from '@orpc/tanstack-query';
 import { QueryCache, QueryClient } from '@tanstack/react-query';
@@ -47,3 +52,7 @@ export const orpc = createTanstackQueryUtils(client);
 
 // Re-export types for convenience
 export type { AppRouterClient };
+
+export type Inputs = InferClientInputs<AppRouterClient>;
+
+export type Outputs = InferClientOutputs<AppRouterClient>;
