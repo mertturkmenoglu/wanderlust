@@ -4,7 +4,9 @@ import { $ } from '@/db/schema';
 const place = $.place.extend({
 	assets: $.asset.array(),
 	category: $.category,
-	address: $.address,
+	address: $.address.extend({
+		city: $.city,
+	}),
 });
 
 export const homeInput = z.object({});

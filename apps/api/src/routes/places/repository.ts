@@ -12,7 +12,11 @@ export class PlacesRepository {
 			const place = await this.db.query.places.findFirst({
 				where: (t) => eq(t.id, data.id),
 				with: {
-					address: true,
+					address: {
+						with: {
+							city: true,
+						},
+					},
 					category: true,
 					assets: {
 						where: (t) =>
@@ -61,7 +65,11 @@ export class PlacesRepository {
 		try {
 			const place = await this.db.query.places.findMany({
 				with: {
-					address: true,
+					address: {
+						with: {
+							city: true,
+						},
+					},
 					category: true,
 					assets: true,
 				},
@@ -109,20 +117,20 @@ export class PlacesRepository {
 	}
 
 	async updateAddress(data: dto.UpdateAddressInput) {
-		const { id, ...updateData } = data;
+		const { id: addressId, ...updateData } = data.address;
 
 		try {
-			const place = await this.get({ id });
+			const place = await this.get({ id: data.id });
 
 			const [address] = await this.db
 				.update(schema.addresses)
 				.set(updateData)
-				.where(eq(schema.addresses.id, place.addressId))
+				.where(eq(schema.addresses.id, addressId))
 				.returning();
 
 			if (!address) {
 				throw new ORPCError('NOT_FOUND', {
-					message: `Address for Place ID ${id} not found`,
+					message: `Address for Place ID ${data.id} not found`,
 				});
 			}
 

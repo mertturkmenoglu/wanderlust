@@ -18,7 +18,9 @@ const profile = $.user.pick({
 const place = $.place.extend({
 	assets: $.asset.array(),
 	category: $.category,
-	address: $.address,
+	address: $.address.extend({
+		city: $.city,
+	}),
 });
 
 export const updateImageInput = z.object({

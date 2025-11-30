@@ -42,7 +42,11 @@ export class TripsRepository {
 								with: {
 									assets: true,
 									category: true,
-									address: true,
+									address: {
+										with: {
+											city: true,
+										},
+									},
 								},
 							},
 						},
@@ -247,7 +251,11 @@ export class TripsRepository {
 								with: {
 									assets: true,
 									category: true,
-									address: true,
+									address: {
+										with: {
+											city: true,
+										},
+									},
 								},
 							},
 						},
@@ -399,7 +407,11 @@ export class TripsRepository {
 									with: {
 										assets: true,
 										category: true,
-										address: true,
+										address: {
+											with: {
+												city: true,
+											},
+										},
 									},
 								},
 							},
@@ -964,7 +976,11 @@ export class TripsRepository {
 						with: {
 							assets: true,
 							category: true,
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 						},
 					},
 				},

@@ -4,7 +4,9 @@ import { $ } from '@/db/schema';
 const place = $.place.extend({
 	assets: $.asset.array(),
 	category: $.category,
-	address: $.address,
+	address: $.address.extend({
+		city: $.city,
+	}),
 });
 
 export const getInput = $.place.pick({
@@ -56,15 +58,19 @@ export const updateOutput = z.object({
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const updateAddressInput = $.address.pick({
-	id: true,
-	cityId: true,
-	line1: true,
-	line2: true,
-	postalCode: true,
-	lat: true,
-	lng: true,
-});
+export const updateAddressInput = $.place.pick({ id: true }).extend(
+	z.object({
+		address: $.address.pick({
+			id: true,
+			cityId: true,
+			line1: true,
+			line2: true,
+			postalCode: true,
+			lat: true,
+			lng: true,
+		}),
+	}).shape,
+);
 
 export type UpdateAddressInput = z.infer<typeof updateAddressInput>;
 

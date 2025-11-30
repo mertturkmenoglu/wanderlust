@@ -44,7 +44,9 @@ const invite = $.tripInvite.extend(
 const place = $.place.extend({
 	assets: $.asset.array(),
 	category: $.category,
-	address: $.address,
+	address: $.address.extend({
+		city: $.city,
+	}),
 });
 
 const location = $.tripLocation.extend(

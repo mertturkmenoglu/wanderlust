@@ -16,7 +16,11 @@ export class ReviewsRepository {
 				with: {
 					place: {
 						with: {
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 							category: true,
 							assets: true,
 						},
@@ -172,7 +176,11 @@ export class ReviewsRepository {
 				with: {
 					place: {
 						with: {
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 							category: true,
 							assets: true,
 						},

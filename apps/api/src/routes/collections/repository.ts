@@ -49,7 +49,11 @@ export class CollectionsRepository {
 								with: {
 									assets: true,
 									category: true,
-									address: true,
+									address: {
+										with: {
+											city: true,
+										},
+									},
 								},
 							},
 						},
@@ -207,7 +211,11 @@ export class CollectionsRepository {
 						with: {
 							assets: true,
 							category: true,
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 						},
 					},
 				},
@@ -314,7 +322,11 @@ export class CollectionsRepository {
 								with: {
 									assets: true,
 									category: true,
-									address: true,
+									address: {
+										with: {
+											city: true,
+										},
+									},
 								},
 							},
 						},
@@ -576,7 +588,11 @@ export class CollectionsRepository {
 										with: {
 											assets: true,
 											category: true,
-											address: true,
+											address: {
+												with: {
+													city: true,
+												},
+											},
 										},
 									},
 								},
@@ -622,7 +638,11 @@ export class CollectionsRepository {
 										with: {
 											assets: true,
 											category: true,
-											address: true,
+											address: {
+												with: {
+													city: true,
+												},
+											},
 										},
 									},
 								},

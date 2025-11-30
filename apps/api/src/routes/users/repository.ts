@@ -256,7 +256,11 @@ export class UsersRepository {
 						with: {
 							assets: true,
 							category: true,
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 						},
 					},
 				},
@@ -300,7 +304,11 @@ export class UsersRepository {
 					with: {
 						assets: true,
 						category: true,
-						address: true,
+						address: {
+							with: {
+								city: true,
+							},
+						},
 					},
 				});
 

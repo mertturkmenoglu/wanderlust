@@ -15,7 +15,9 @@ const listWithItems = list.extend({
 	items: $.listItem
 		.extend({
 			place: $.place.extend({
-				address: $.address,
+				address: $.address.extend({
+					city: $.city,
+				}),
 				category: $.category,
 				assets: $.asset.array(),
 			}),

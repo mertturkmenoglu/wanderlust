@@ -46,7 +46,11 @@ export class AggregatorRepository {
 				],
 				limit: 25,
 				with: {
-					address: true,
+					address: {
+						with: {
+							city: true,
+						},
+					},
 					category: true,
 					assets: true,
 				},
@@ -67,7 +71,11 @@ export class AggregatorRepository {
 				orderBy: (t, { desc }) => [desc(t.totalVotes)],
 				limit: 25,
 				with: {
-					address: true,
+					address: {
+						with: {
+							city: true,
+						},
+					},
 					category: true,
 					assets: true,
 				},
@@ -88,7 +96,11 @@ export class AggregatorRepository {
 				orderBy: (t, { desc }) => [desc(t.createdAt)],
 				limit: 25,
 				with: {
-					address: true,
+					address: {
+						with: {
+							city: true,
+						},
+					},
 					category: true,
 					assets: true,
 				},
@@ -109,7 +121,11 @@ export class AggregatorRepository {
 				orderBy: (t, { desc }) => [desc(t.totalFavorites)],
 				limit: 25,
 				with: {
-					address: true,
+					address: {
+						with: {
+							city: true,
+						},
+					},
 					category: true,
 					assets: true,
 				},

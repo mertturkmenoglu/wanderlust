@@ -8,7 +8,9 @@ const collectionItem = $.collectionItem.extend({
 	place: $.place.extend({
 		assets: $.asset.array(),
 		category: $.category,
-		address: $.address,
+		address: $.address.extend({
+			city: $.city,
+		}),
 	}),
 });
 

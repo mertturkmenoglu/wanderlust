@@ -15,7 +15,9 @@ const review = $.review.extend({
 const place = $.place.extend({
 	assets: $.asset.array(),
 	category: $.category,
-	address: $.address,
+	address: $.address.extend({
+		city: $.city,
+	}),
 });
 
 export const getInput = $.review.pick({

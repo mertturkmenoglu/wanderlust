@@ -119,7 +119,11 @@ export class ListsRepository {
 						with: {
 							place: {
 								with: {
-									address: true,
+									address: {
+										with: {
+											city: true,
+										},
+									},
 									category: true,
 									assets: true,
 								},
@@ -403,7 +407,11 @@ export class ListsRepository {
 				with: {
 					place: {
 						with: {
-							address: true,
+							address: {
+								with: {
+									city: true,
+								},
+							},
 							category: true,
 							assets: true,
 						},
