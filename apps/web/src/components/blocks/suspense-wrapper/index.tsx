@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AppMessage } from '@/components/blocks/app-message';
-import { Spinner } from '@/components/kit/spinner';
+import { Spinner } from '@/components/ui/spinner';
 
 type Props = {
 	children: React.ReactNode;

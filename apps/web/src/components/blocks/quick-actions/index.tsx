@@ -1,17 +1,22 @@
 import { BookmarkIcon, ListIcon, MapIcon, MapPinHouseIcon } from 'lucide-react';
-import { useContext } from 'react';
-import { AuthContext } from '@/providers/auth-provider';
+import { authClient } from '@/lib/auth';
 import { Card } from './card';
 
 export function QuickActions() {
-	const auth = useContext(AuthContext);
+	const session = authClient.useSession();
+
+	if (!session.data?.user) {
+		return null;
+	}
+
+	const user = session.data.user;
 
 	return (
 		<div className="my-8">
 			<div className="text-4xl">
 				Hello{' '}
 				<span className="bg-linear-to-r from-primary to-sky-600 bg-clip-text font-bold text-transparent">
-					{auth.user?.fullName ?? ''}
+					{user.name ?? ''}
 				</span>
 			</div>
 			<div className="my-2 text-base">How can we help you today?</div>

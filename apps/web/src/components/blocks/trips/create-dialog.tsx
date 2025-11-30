@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: TODO */
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { isBefore } from 'date-fns';
 import { SquarePlusIcon } from 'lucide-react';
@@ -35,7 +36,7 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 
 const visibility = ['public', 'friends', 'private'] as const;
 
@@ -108,24 +109,26 @@ export function CreateDialog() {
 	const route = getRouteApi('/trips/');
 	const { showNewDialog } = route.useSearch();
 	const navigate = useNavigate();
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
 	const form = useForm({
 		resolver: zodResolver(schema),
 	});
 
-	const mutation = api.useMutation('post', '/api/v2/trips/', {
-		onSuccess: async (res) => {
-			await invalidator.invalidate();
-			await navigate({
-				to: '/trips/$id',
-				params: {
-					id: res.trip.id,
-				},
-			});
-			toast.success('Trip created');
-		},
-	});
+	const mutation = useMutation(
+		orpc.trips.create.mutationOptions({
+			onSuccess: async (res) => {
+				await invalidate();
+				await navigate({
+					to: '/trips/$id',
+					params: {
+						id: res.trip.id,
+					},
+				});
+				toast.success('Trip created');
+			},
+		}),
+	);
 
 	return (
 		<Dialog
@@ -152,11 +155,11 @@ export function CreateDialog() {
 						id="create-trip-form"
 						onSubmit={form.handleSubmit((data) => {
 							mutation.mutate({
-								body: {
-									...data,
-									startAt: new Date(data.startAt).toISOString(),
-									endAt: new Date(data.endAt).toISOString(),
-								},
+								description: data.description,
+								title: data.title,
+								visibilityLevel: data.visibility,
+								startAt: new Date(data.startAt),
+								endAt: new Date(data.endAt),
 							});
 						})}
 						className="w-full"

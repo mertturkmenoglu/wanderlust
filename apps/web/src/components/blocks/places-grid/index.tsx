@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { PlaceCard } from '@/components/blocks/place-card';
-import type { components } from '@/lib/api-types';
+import type { Outputs } from '@/lib/orpc';
 
 type Props = {
 	dataKey: 'new' | 'popular' | 'featured' | 'favorite';
-	data: components['schemas']['Place'][];
+	data: Outputs['places']['get']['place'][];
 };
 
 function getTitle(type: Props['dataKey']) {
