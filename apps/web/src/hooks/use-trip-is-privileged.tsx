@@ -1,7 +1,7 @@
-import type { components } from '@/lib/api-types';
+import type { Outputs } from '@/lib/orpc';
 
 export function useTripIsPrivileged(
-	trip: components['schemas']['Trip'],
+	trip: Outputs['trips']['get']['trip'],
 	userId: string,
 ) {
 	if (trip.ownerId === userId) {
