@@ -24,7 +24,8 @@
 			"!**/.alchemy",
 			"!**/wrangler.jsonc",
 			"!**/.source",
-			"!**/index.css"
+			"!**/index.css",
+			"!**/apps/web/src/components/ui"
 		]
 	},
 	"formatter": {
