@@ -1,8 +1,9 @@
 // oxlint-disable func-style
 
+import { useMutation } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { HeartIcon } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,55 +13,53 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { authClient } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
-import { AuthContext } from '@/providers/auth-provider';
 
 export function FavoriteButton() {
 	const route = getRouteApi('/p/$id/');
 	const { place, meta } = route.useLoaderData();
 	const [fav, setFav] = useState(meta.isFavorite);
-	const auth = useContext(AuthContext);
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
+	const session = authClient.useSession();
 
-	const createMutation = api.useMutation('post', '/api/v2/favorites/', {
-		onSuccess: async () => {
-			setFav((prev) => !prev);
-			await invalidator.invalidate();
-			toast.success('Added to favorites');
-		},
-	});
+	const createMutation = useMutation(
+		orpc.favorites.create.mutationOptions({
+			onSuccess: async () => {
+				setFav((prev) => !prev);
+				await invalidate();
+				toast.success('Added to favorites');
+			},
+		}),
+	);
 
-	const deleteMutation = api.useMutation('delete', '/api/v2/favorites/{id}', {
-		onSuccess: async () => {
-			setFav((prev) => !prev);
-			await invalidator.invalidate();
-			toast.success('Removed from favorites');
-		},
-	});
+	const deleteMutation = useMutation(
+		orpc.favorites.delete.mutationOptions({
+			onSuccess: async () => {
+				setFav((prev) => !prev);
+				await invalidate();
+				toast.success('Removed from favorites');
+			},
+		}),
+	);
 
 	const onClick = () => {
-		if (!auth.user) {
+		if (!session.data?.user) {
 			toast.warning('You need to be signed in.');
 			return;
 		}
 
 		if (fav) {
 			deleteMutation.mutate({
-				params: {
-					path: {
-						id: place.id,
-					},
-				},
+				placeId: place.id,
 			});
 
 			return;
 		}
 
 		createMutation.mutate({
-			body: {
-				placeId: place.id,
-			},
+			placeId: place.id,
 		});
 	};
 

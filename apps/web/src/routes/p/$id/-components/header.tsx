@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { authClient } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { AddToListButton } from './add-to-list-button';
 import { BookmarkButton } from './bookmark-button';
@@ -12,7 +13,8 @@ type Props = {
 export function Header({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
-	const auth = route.useRouteContext().auth;
+	const session = authClient.useSession();
+	const isAuth = !!session.data?.user;
 
 	return (
 		<div className={cn(className)}>
@@ -22,7 +24,7 @@ export function Header({ className }: Props) {
 				</h2>
 
 				<div className="flex w-full items-center justify-between sm:w-auto">
-					{!!auth.user && <AddToListButton />}
+					{isAuth && <AddToListButton />}
 
 					<FavoriteButton />
 

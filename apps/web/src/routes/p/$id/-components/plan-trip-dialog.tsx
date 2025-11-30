@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { MapIcon, PlusIcon, XIcon } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	AlertDialog,
 	AlertDialogContent,
@@ -11,9 +12,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { api } from '@/lib/api';
+import { authClient } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
-import { AuthContext } from '@/providers/auth-provider';
 
 type Props = {
 	className?: string;
@@ -24,25 +25,25 @@ export function PlanTripDialog({ className }: Props) {
 	const { place } = route.useLoaderData();
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
-	const auth = useContext(AuthContext);
+	const session = authClient.useSession();
 
 	useEffect(() => {
-		if (open && !auth.user) {
+		if (open && !session.data?.user) {
 			navigate({
 				to: '/sign-in',
 			});
 		}
-	}, [open, auth.user, navigate]);
+	}, [open, session.data?.user, navigate]);
 
 	const [state, setState] = useState<'choose' | 'new-trip' | 'add-to-trip'>(
 		'choose',
 	);
 
-	const query = api.useQuery(
-		'get',
-		'/api/v2/trips/',
-		{},
-		{ enabled: !!auth.user && open },
+	const query = useQuery(
+		orpc.trips.list.queryOptions({
+			input: {},
+			enabled: !!session.data?.user && open,
+		}),
 	);
 
 	return (
@@ -110,13 +111,13 @@ export function PlanTripDialog({ className }: Props) {
 					{state === 'add-to-trip' && (
 						<ScrollArea className="col-span-full h-96 pr-2">
 							{query.data?.trips
-								.filter(
-									(trip) =>
-										trip.ownerId === auth.user?.id ||
-										trip.participants.some(
-											(p) => p.id === auth.user?.id && p.role === 'editor',
-										),
-								)
+								// .filter(
+								// 	(trip) =>
+								// 		trip.ownerId === session.data?.user?.id ||
+								// 		trip.participants.some(
+								// 			(p) => p.id === session.data?.user?.id && p.role === 'editor',
+								// 		),
+								// )
 								.map((trip) => (
 									<button
 										key={trip.id}

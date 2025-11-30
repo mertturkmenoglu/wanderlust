@@ -33,8 +33,8 @@ export function Information({ className }: Props) {
 					<div className="text-right">
 						{place.address.line1} {place.address.line2}
 						<br />
-						{place.address.city.name}, {place.address.city.state.name} /{' '}
-						{place.address.city.country.name}
+						{place.address.city.name}, {place.address.city.stateName} /{' '}
+						{place.address.city.countryName}
 						<br />
 						{place.address.postalCode}
 					</div>
