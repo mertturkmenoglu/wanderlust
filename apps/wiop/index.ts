@@ -23,5 +23,5 @@ const server = Bun.serve({
 });
 
 console.log(
-	`IPX server is running on http://${server.hostname}:${server.port}/`,
+	`IPX service is running on http://${server.hostname}:${server.port}/`,
 );

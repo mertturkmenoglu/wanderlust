@@ -24,7 +24,7 @@ async function main() {
 		flags = obj;
 	}
 
-	Bun.serve({
+	const server = Bun.serve({
 		port: process.env.PORT ? Number(process.env.PORT) : 5001,
 		routes: {
 			'/flags': {
@@ -61,6 +61,10 @@ async function main() {
 			},
 		},
 	});
+
+	console.log(
+		`Flags service is running on http://${server.hostname}:${server.port}/`,
+	);
 }
 
 await main();

@@ -39,7 +39,9 @@ async function main() {
 		},
 	});
 
-	console.log(`Server running on ${server.hostname}:${server.port}`);
+	console.log(
+		`API server is running on http://${server.hostname}:${server.port}/`,
+	);
 }
 
 await main();
