@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import { useContext } from 'react';
+import { authClient } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { AuthContext } from '@/providers/auth-provider';
 import { Menu } from './menu';
 import { SignInButton } from './sign-in-button';
 import { SignedInLinks } from './signed-in';
@@ -9,8 +8,8 @@ import { SignedInLinks } from './signed-in';
 type Props = React.HTMLAttributes<HTMLElement>;
 
 export function Header({ className, ...props }: Readonly<Props>) {
-	const ctx = useContext(AuthContext);
-	const isSignedIn = !ctx.isLoading && ctx.user !== null;
+	const session = authClient.useSession();
+	const isSignedIn = !session.isPending && session.data?.user;
 
 	return (
 		<header
@@ -28,16 +27,16 @@ export function Header({ className, ...props }: Readonly<Props>) {
 				/>
 			</Link>
 
-			{ctx.isLoading ? (
+			{session.isPending ? (
 				<div className="h-8 w-16 animate-pulse rounded-full bg-primary" />
 			) : (
 				<div>
 					{!isSignedIn && <SignInButton />}
 
-					{isSignedIn && ctx.user && (
+					{isSignedIn && session.data?.user && (
 						<div className="flex items-center gap-2">
 							<SignedInLinks />
-							<Menu auth={ctx.user} />
+							<Menu />
 						</div>
 					)}
 				</div>

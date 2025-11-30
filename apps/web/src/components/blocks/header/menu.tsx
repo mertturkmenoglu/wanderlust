@@ -4,17 +4,19 @@ import {
 	DropdownMenu,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { components } from '@/lib/api-types';
+import { authClient } from '@/lib/auth';
 import { MenuContent } from './menu-content';
 import { useShortName } from './use-short-name';
 
-type Props = {
-	auth: components['schemas']['GetMeOutputBody'];
-};
-
-export function Menu({ auth }: Readonly<Props>) {
-	const firstName = auth.fullName.split(' ')[0] ?? '';
+export function Menu() {
+	const session = authClient.useSession();
+	const user = session.data?.user;
+	const firstName = user?.name.split(' ')[0] ?? '';
 	const shortName = useShortName(firstName, 20);
+
+	if (!user) {
+		return null;
+	}
 
 	return (
 		<div>
@@ -26,7 +28,7 @@ export function Menu({ auth }: Readonly<Props>) {
 						<span className="hidden sm:ml-2 sm:block">{shortName}</span>
 					</Button>
 				</DropdownMenuTrigger>
-				<MenuContent fullName={auth.fullName} username={auth.username} />
+				<MenuContent fullName={user.name} username={user.username} />
 			</DropdownMenu>
 		</div>
 	);
