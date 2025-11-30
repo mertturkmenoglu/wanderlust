@@ -7,7 +7,7 @@
 	],
 	"scripts": {
 		"check": "biome check --write .",
-		"dev": "concurrently -n api,web,flags,wiop -c red,green,blue,yellow 'bun run --cwd apps/api dev' 'bun run --cwd apps/web dev' 'bun run --cwd apps/flags dev' 'bun run --cwd apps/wiop dev'"
+		"dev": "concurrently -n api,web,wfs,wip -c red,green,blue,yellow 'bun run --cwd apps/api dev' 'bun run --cwd apps/web dev' 'bun run --cwd apps/flags dev' 'bun run --cwd apps/wiop dev'"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.4",
