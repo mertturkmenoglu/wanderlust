@@ -1,5 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -13,14 +13,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { api } from '@/lib/api';
-import type { components } from '@/lib/api-types';
+import { type Inputs, orpc } from '@/lib/orpc';
 
 type Props = {
 	children: React.ReactNode;
-	onSuccess: (
-		data: components['schemas']['CreateListOutputBody'],
-	) => Promise<void>;
+	onSuccess: (data: Inputs['lists']['create']) => Promise<void>;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -37,9 +34,16 @@ export function CreateListDialog({
 	const isErr = name.length > 128 || name.length === 0;
 	const showErr = isDirty && isErr;
 
-	const mutation = api.useMutation('post', '/api/v2/lists/', {
-		onSuccess,
-	});
+	const mutation = useMutation(
+		orpc.lists.create.mutationOptions({
+			onSuccess: async (data) => {
+				await onSuccess({
+					isPublic: data.list.isPublic,
+					name: data.list.name,
+				});
+			},
+		}),
+	);
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -80,7 +84,7 @@ export function CreateListDialog({
 						/>
 						<div className="ml-2">
 							<Label htmlFor="is-public">Public list</Label>
-							<InputInfo text="If you make your list public, other users can see it." />
+							<span>If you make your list public, other users can see it.</span>
 						</div>
 					</div>
 				</div>
@@ -97,10 +101,8 @@ export function CreateListDialog({
 						disabled={isErr}
 						onClick={() =>
 							mutation.mutate({
-								body: {
-									isPublic,
-									name,
-								},
+								isPublic,
+								name,
 							})
 						}
 					>
