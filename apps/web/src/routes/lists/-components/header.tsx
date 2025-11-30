@@ -12,7 +12,7 @@ type Props = {
 
 export function Header({ showNewListButton = true }: Props) {
 	const navigate = useNavigate();
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 	const [open, setOpen] = useState(false);
 
 	return (
@@ -24,7 +24,7 @@ export function Header({ showNewListButton = true }: Props) {
 					setOpen={setOpen}
 					onSuccess={async (res) => {
 						toast.success('List created');
-						await invalidator.invalidate();
+						await invalidate();
 						await navigate({
 							to: '/lists/$id',
 							params: {

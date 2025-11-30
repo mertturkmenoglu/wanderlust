@@ -1,13 +1,13 @@
-import type { components } from '@/lib/api-types';
+import type { Outputs } from '@/lib/orpc';
 
-type TCity = components['schemas']['City'];
+type TCity = Outputs['cities']['get']['city'];
 type TCities = TCity[];
 
 export function groupCitiesByCountry(cities: TCities) {
 	const countries = new Map<string, TCity[]>();
 
 	for (const city of cities) {
-		const country = city.country.name;
+		const country = city.countryName;
 		if (!countries.has(country)) {
 			countries.set(country, []);
 		}

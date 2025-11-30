@@ -1,8 +1,9 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { PlaceCard } from '@/components/blocks/place-card';
 import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -24,13 +25,13 @@ type ContentProps = {
 function Content({ className }: ContentProps) {
 	const route = getRouteApi('/p/$id/');
 	const { id } = route.useParams();
-	const query = api.useSuspenseQuery('get', '/api/v2/collections/place/{id}', {
-		params: {
-			path: {
-				id: id,
+	const query = useSuspenseQuery(
+		orpc.collections.listByPlaceId.queryOptions({
+			input: {
+				placeId: id,
 			},
-		},
-	});
+		}),
+	);
 
 	return (
 		<div className={cn(className)}>

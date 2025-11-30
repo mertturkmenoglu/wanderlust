@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ErrorComponent } from '@/components/blocks/error-component';
 import { OverlayBanner } from '@/components/blocks/overlay-banner';
@@ -6,8 +7,8 @@ import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
 import { TagNavigation } from '@/components/blocks/tag-navigation';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
+import { orpc } from '@/lib/orpc';
 import { CityBreadcrumb } from './-city-breadcrumb';
 import { MapComponent } from './-map';
 
@@ -27,11 +28,9 @@ export const Route = createFileRoute('/cities/$/')({
 		}
 
 		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/cities/{id}', {
-				params: {
-					path: {
-						id: +cityId,
-					},
+			context.orpc.cities.get.queryOptions({
+				input: {
+					id: +cityId,
 				},
 			}),
 		);
@@ -60,7 +59,7 @@ function RouteComponent() {
 				<div className="col-span-5 lg:col-span-3">
 					<h2 className="font-bold text-6xl">{city.name}</h2>
 					<div className="mt-2 text-muted-foreground text-sm">
-						{city.state.name}/{city.country.name}
+						{city.stateName}/{city.countryName}
 					</div>
 					<div className="mt-4 text-lg text-muted-foreground">
 						{city.description}
@@ -123,13 +122,9 @@ function CollectionsContent() {
 	const {
 		city: { id },
 	} = Route.useLoaderData();
-	const query = api.useSuspenseQuery('get', '/api/v2/collections/city/{id}', {
-		params: {
-			path: {
-				id,
-			},
-		},
-	});
+	const query = useSuspenseQuery(
+		orpc.collections.listByCityId.queryOptions({ input: { cityId: id } }),
+	);
 
 	return (
 		<div className="mt-8 space-y-8">

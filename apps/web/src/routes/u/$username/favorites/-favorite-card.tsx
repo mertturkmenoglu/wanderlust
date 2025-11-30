@@ -5,11 +5,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import type { components } from '@/lib/api-types';
 import { ipx } from '@/lib/ipx';
+import type { Outputs } from '@/lib/orpc';
 
 type Props = {
-	favorite: components['schemas']['Favorite'];
+	favorite: Outputs['favorites']['list']['favorites'][number];
 };
 
 export function FavoriteCard({ favorite: { place } }: Props) {
@@ -29,7 +29,7 @@ export function FavoriteCard({ favorite: { place } }: Props) {
 						{place.name}
 					</CardTitle>
 					<CardDescription className="line-clamp-1">
-						{place.address.city.name} / {place.address.city.country.name}
+						{place.address.city.name} / {place.address.city.countryName}
 					</CardDescription>
 				</CardHeader>
 

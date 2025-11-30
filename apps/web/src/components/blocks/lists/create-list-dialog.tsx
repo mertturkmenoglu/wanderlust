@@ -13,11 +13,11 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { type Inputs, orpc } from '@/lib/orpc';
+import { type Outputs, orpc } from '@/lib/orpc';
 
 type Props = {
 	children: React.ReactNode;
-	onSuccess: (data: Inputs['lists']['create']) => Promise<void>;
+	onSuccess: (data: Outputs['lists']['create']) => Promise<void>;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -36,12 +36,7 @@ export function CreateListDialog({
 
 	const mutation = useMutation(
 		orpc.lists.create.mutationOptions({
-			onSuccess: async (data) => {
-				await onSuccess({
-					isPublic: data.list.isPublic,
-					name: data.list.name,
-				});
-			},
+			onSuccess,
 		}),
 	);
 

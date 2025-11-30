@@ -1,6 +1,7 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { PlusIcon } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { CreateListDialog } from '@/components/blocks/lists/create-list-dialog';
 import { Button } from '@/components/ui/button';
@@ -27,40 +28,38 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { authClient } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
-import { AuthContext } from '@/providers/auth-provider';
 
 export function AddToListButton() {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
-	const auth = useContext(AuthContext);
 	const [listId, setListId] = useState<string | null>(null);
 	const [open, setOpen] = useState(false);
+	const session = authClient.useSession();
 
-	const query = api.useQuery(
-		'get',
-		'/api/v2/lists/status/{placeId}',
-		{
-			params: {
-				path: {
-					placeId: place.id,
-				},
+	const query = useQuery(
+		orpc.lists.checkStatus.queryOptions({
+			input: {
+				placeId: place.id,
 			},
-		},
-		{
-			enabled: !!auth.user && open,
-		},
+			enabled: !!session.data?.user && open,
+		}),
 	);
-	const invalidator = useInvalidator();
+
+	const invalidate = useInvalidator();
 	const [newListDialogOpen, setNewListDialogOpen] = useState(false);
-	const mutation = api.useMutation('post', '/api/v2/lists/{id}/items', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			toast.success('Added to the list');
-			setOpen(false);
-		},
-	});
+
+	const mutation = useMutation(
+		orpc.lists.appendItem.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('Added to the list');
+				setOpen(false);
+			},
+		}),
+	);
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -109,7 +108,7 @@ export function AddToListButton() {
 						setOpen={setNewListDialogOpen}
 						onSuccess={async () => {
 							toast.success('List created');
-							await invalidator.invalidate();
+							await invalidate();
 							setNewListDialogOpen(false);
 						}}
 					>
@@ -131,14 +130,8 @@ export function AddToListButton() {
 								return;
 							}
 							mutation.mutate({
-								params: {
-									path: {
-										id: listId,
-									},
-								},
-								body: {
-									placeId: place.id,
-								},
+								id: listId,
+								placeId: place.id,
 							});
 						}}
 						disabled={listId === null}

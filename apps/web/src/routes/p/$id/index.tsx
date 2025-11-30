@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { ErrorComponent } from '@/components/blocks/error-component';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
 import { CityInfo } from './-components/city-info';
@@ -27,11 +26,9 @@ export const Route = createFileRoute('/p/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/places/{id}', {
-				params: {
-					path: {
-						id: params.id,
-					},
+			context.orpc.places.get.queryOptions({
+				input: {
+					id: params.id,
 				},
 			}),
 		);

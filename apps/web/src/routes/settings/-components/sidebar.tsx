@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { useContext } from 'react';
-import { AuthContext } from '@/providers/auth-provider';
+import { authClient } from '@/lib/auth';
 
 type Item = {
 	text: string;
@@ -28,7 +27,7 @@ const items = [
 
 export function Sidebar() {
 	const isDev = import.meta.env.DEV;
-	const auth = useContext(AuthContext);
+	const session = authClient.useSession();
 
 	const links = items.filter((x) => {
 		const protectedRoutes = ['/admin', '/dashboard'];
@@ -38,7 +37,7 @@ export function Sidebar() {
 		}
 
 		if (x.href === '/admin') {
-			return isDev && auth.user?.role === 'admin';
+			return isDev && session.data?.user.role === 'admin';
 		}
 
 		if (x.href === '/dashboard') {

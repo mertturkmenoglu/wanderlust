@@ -1,20 +1,20 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { api } from '@/lib/api';
 import { ipx } from '@/lib/ipx';
 
 export const Route = createFileRoute('/categories/')({
 	component: RouteComponent,
-	loader: ({ context: { queryClient } }) =>
-		queryClient.ensureQueryData(api.queryOptions('get', '/api/v2/categories/')),
+	loader: ({ context: { queryClient, orpc } }) =>
+		queryClient.ensureQueryData(
+			orpc.categories.list.queryOptions({
+				input: {},
+			}),
+		),
 });
 
 function RouteComponent() {
-	const query = useSuspenseQuery(
-		api.queryOptions('get', '/api/v2/categories/'),
-	);
+	const query = Route.useLoaderData();
 
-	const categories = query.data.categories;
+	const categories = query.categories;
 
 	return (
 		<div className="mx-auto max-w-7xl">

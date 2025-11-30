@@ -2,17 +2,14 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import Markdown from 'react-markdown';
 import { AppMessage } from '@/components/blocks/app-message';
 import { PlaceCard } from '@/components/blocks/place-card';
-import { api } from '@/lib/api';
 
 export const Route = createFileRoute('/c/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/collections/{id}', {
-				params: {
-					path: {
-						id: params.id,
-					},
+			context.orpc.collections.get.queryOptions({
+				input: {
+					id: params.id,
 				},
 			}),
 		);

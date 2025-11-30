@@ -10,7 +10,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { api, fetchClient } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 type Props = {

@@ -1,18 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ErrorComponent } from '@/components/blocks/error-component';
-import { api } from '@/lib/api';
+import { authGuard } from '@/lib/auth';
 import { FavoriteLocations } from './-components/favorite-locations';
 import { InfoCardGroup } from './-components/info-card-group';
 
 export const Route = createFileRoute('/u/$username/')({
 	component: RouteComponent,
+	beforeLoad: authGuard,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/users/{username}/top', {
-				params: {
-					path: {
-						username: params.username,
-					},
+			context.orpc.users.get.queryOptions({
+				input: {
+					username: params.username,
 				},
 			}),
 		);

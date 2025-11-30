@@ -1,10 +1,11 @@
 // oxlint-disable no-nested-ternary
 
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import React from 'react';
 import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/u/$username/lists/')({
 	component: RouteComponent,
@@ -12,28 +13,22 @@ export const Route = createFileRoute('/u/$username/lists/')({
 
 function RouteComponent() {
 	const { username } = Route.useParams();
-	const query = api.useInfiniteQuery(
-		'get',
-		'/api/v2/lists/user/{username}',
-		{
-			params: {
-				path: {
-					username,
-				},
-				query: {
-					pageSize: 10,
-				},
-			},
-		},
-		{
+	const query = useInfiniteQuery(
+		orpc.lists.listPublic.infiniteOptions({
+			input: (page) => ({
+				username,
+				page,
+				pageSize: 10,
+			}),
 			initialPageParam: 1,
-			getNextPageParam: (lastPage: {
-				pagination: { hasNext: boolean; page: number };
-			}) => (lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : null),
-			pageParamName: 'page',
+			getNextPageParam: (lastPage) => {
+				return lastPage.pagination.hasNext
+					? lastPage.pagination.page + 1
+					: null;
+			},
 			retry: false,
 			enabled: username !== '',
-		},
+		}),
 	);
 
 	return (

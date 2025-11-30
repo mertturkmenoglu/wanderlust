@@ -1,13 +1,13 @@
 // oxlint-disable prefer-await-to-then
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { AppMessage } from '@/components/blocks/app-message';
-import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
@@ -26,8 +26,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { api } from '@/lib/api';
+import { authGuard } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 
 const searchSchema = z.object({
 	id: z.string().catch(''),
@@ -62,13 +64,7 @@ const reasons = [
 
 export const Route = createFileRoute('/report/')({
 	component: RouteComponent,
-	beforeLoad: ({ context }) => {
-		if (!context.auth.user) {
-			throw redirect({
-				to: '/sign-in',
-			});
-		}
-	},
+	beforeLoad: authGuard,
 	validateSearch: searchSchema,
 });
 
@@ -84,12 +80,14 @@ function RouteComponent() {
 		},
 	});
 
-	const mutation = api.useMutation('post', '/api/v2/reports/', {
-		onSuccess: () => {
-			toast.success('Reported successfully');
-			setSubmitted(true);
-		},
-	});
+	const mutation = useMutation(
+		orpc.reports.create.mutationOptions({
+			onSuccess: () => {
+				toast.success('Reported successfully');
+				setSubmitted(true);
+			},
+		}),
+	);
 
 	if (id === '' || type === '') {
 		return (
@@ -121,10 +119,10 @@ function RouteComponent() {
 				<form
 					onSubmit={form.handleSubmit((data) => {
 						mutation.mutate({
-							body: {
-								...data,
-								reason: +data.reason,
-							},
+							description: data.description,
+							resourceId: data.resourceId,
+							resourceType: data.resourceType,
+							reason: +data.reason,
 						});
 					})}
 				>

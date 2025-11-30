@@ -24,7 +24,7 @@ export function CityInfo({ className }: Props) {
 				<div className="col-span-5 md:col-span-3">
 					<h2 className="font-bold text-6xl">{place.address.city.name}</h2>
 					<div className="mt-2 text-muted-foreground text-sm">
-						{place.address.city.state.name}/{place.address.city.country.name}
+						{place.address.city.stateName}/{place.address.city.countryName}
 					</div>
 					<div className="mt-4 text-lg text-muted-foreground">
 						{place.address.city.description}

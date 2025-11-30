@@ -53,7 +53,7 @@ export function UserTabs({ username, className }: Props) {
 							<TabsTrigger
 								key={t.id}
 								value={t.id}
-								className="!shadow-none bg-transparent px-1 first-of-type:pl-0"
+								className="bg-transparent px-1 shadow-none! first-of-type:pl-0"
 							>
 								<Link
 									to={t.href}

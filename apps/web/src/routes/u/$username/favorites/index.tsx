@@ -1,9 +1,10 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 import { AppMessage } from '@/components/blocks/app-message';
 import { Button } from '@/components/ui/button';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { FavoriteCard } from './-favorite-card';
 
 export const Route = createFileRoute('/u/$username/favorites/')({
@@ -12,20 +13,13 @@ export const Route = createFileRoute('/u/$username/favorites/')({
 
 function RouteComponent() {
 	const { username } = Route.useParams();
-	const query = api.useInfiniteQuery(
-		'get',
-		'/api/v2/favorites/{username}',
-		{
-			params: {
-				path: {
-					username,
-				},
-				query: {
-					pageSize: 10,
-				},
-			},
-		},
-		{
+	const query = useInfiniteQuery(
+		orpc.favorites.listByUsername.infiniteOptions({
+			input: (page) => ({
+				username,
+				page: page ?? 1,
+				pageSize: 10,
+			}),
 			initialPageParam: 1,
 			getNextPageParam: (lastPage: {
 				pagination: { hasNext: boolean; page: number };
@@ -38,7 +32,7 @@ function RouteComponent() {
 			pageParamName: 'page',
 			retry: false,
 			enabled: username !== null,
-		},
+		}),
 	);
 
 	const btnText = useLoadMoreText({

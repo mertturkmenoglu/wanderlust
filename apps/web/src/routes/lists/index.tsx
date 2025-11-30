@@ -1,9 +1,10 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
+import { authGuard } from '@/lib/auth';
 import { EmptyState } from './-components/empty';
 import { Header } from './-components/header';
 import { ListItem } from './-components/item';
@@ -11,13 +12,7 @@ import { useListsQuery } from './-hooks';
 
 export const Route = createFileRoute('/lists/')({
 	component: RouteComponent,
-	beforeLoad: ({ context: { auth } }) => {
-		if (!auth.user) {
-			throw redirect({
-				to: '/sign-in',
-			});
-		}
-	},
+	beforeLoad: authGuard,
 });
 
 function RouteComponent() {

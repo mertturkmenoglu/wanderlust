@@ -2,10 +2,10 @@ import { Link } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedRating } from '@/components/kit/formatted-rating';
 import { Separator } from '@/components/ui/separator';
-import type { components } from '@/lib/api-types';
+import type { Outputs } from '@/lib/orpc';
 
 type Props = {
-	review: components['schemas']['Review'];
+	review: Outputs['reviews']['get']['review'];
 	isLast: boolean;
 };
 

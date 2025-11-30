@@ -1,28 +1,21 @@
-import { api } from '@/lib/api';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { orpc } from '@/lib/orpc';
 
 export function useListsQuery() {
-	return api.useInfiniteQuery(
-		'get',
-		'/api/v2/lists/',
-		{
-			params: {
-				query: {
-					pageSize: 10,
-				},
-			},
-		},
-		{
+	return useInfiniteQuery(
+		orpc.lists.listAll.infiniteOptions({
+			input: (p) => ({
+				page: p,
+				pageSize: 10,
+			}),
 			initialPageParam: 1,
-			getNextPageParam: (lastPage: {
-				pagination: { hasNext: boolean; page: number };
-			}) => {
+			getNextPageParam: (lastPage) => {
 				if (!lastPage.pagination.hasNext) {
 					return null;
 				}
 				return lastPage.pagination.page + 1;
 			},
-			pageParamName: 'page',
 			retry: false,
-		},
+		}),
 	);
 }

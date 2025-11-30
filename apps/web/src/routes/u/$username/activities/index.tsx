@@ -1,8 +1,9 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 import { AppMessage } from '@/components/blocks/app-message';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { ActivityCard, type UserActivityType } from './-activity-card';
 
 export const Route = createFileRoute('/u/$username/activities/')({
@@ -11,13 +12,14 @@ export const Route = createFileRoute('/u/$username/activities/')({
 
 function RouteComponent() {
 	const { username } = Route.useParams();
-	const query = api.useQuery('get', '/api/v2/users/{username}/activities', {
-		params: {
-			path: {
+
+	const query = useQuery(
+		orpc.users.listActivities.queryOptions({
+			input: {
 				username,
 			},
-		},
-	});
+		}),
+	);
 
 	if (query.error) {
 		return (

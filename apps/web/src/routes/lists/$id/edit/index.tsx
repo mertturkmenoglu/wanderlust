@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { ArrowDownIcon, ArrowUpIcon, SaveIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
@@ -5,40 +6,33 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { AppMessage } from '@/components/blocks/app-message';
 import { BackLink } from '@/components/blocks/back-link';
-import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { authGuard } from '@/lib/auth';
 import { ipx } from '@/lib/ipx';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/lists/$id/edit/')({
 	component: RouteComponent,
-	beforeLoad: ({ context }) => {
-		if (!context.auth.user) {
-			throw new Error('You are not signed in');
-		}
-	},
-	loader: ({ context, params }) => {
-		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/lists/{id}', {
-				params: {
-					path: {
-						id: params.id,
-					},
+	beforeLoad: authGuard,
+	loader: ({ context, params }) =>
+		context.queryClient.ensureQueryData(
+			context.orpc.lists.get.queryOptions({
+				input: {
+					id: params.id,
 				},
 			}),
-		);
-	},
+		),
 });
 
 function RouteComponent() {
 	const { list } = Route.useLoaderData();
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
 	const [name, setName] = useState(list.name);
 	const form = useForm({
@@ -56,23 +50,23 @@ function RouteComponent() {
 	const isErr = name.length > 128 || name.length === 0;
 	const showErr = isListDirty && isErr;
 
-	const updateListMutation = api.useMutation('patch', '/api/v2/lists/{id}', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			setIsListDirty(false);
-			toast.success('List updated');
-		},
-	});
-
-	const updateListItemsMutation = api.useMutation(
-		'patch',
-		'/api/v2/lists/{id}/items',
-		{
+	const updateListMutation = useMutation(
+		orpc.lists.update.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
+				setIsListDirty(false);
+				toast.success('List updated');
+			},
+		}),
+	);
+
+	const updateListItemsMutation = useMutation(
+		orpc.lists.updateItems.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
 				toast.success('List items updated');
 			},
-		},
+		}),
 	);
 
 	return (
@@ -82,7 +76,7 @@ function RouteComponent() {
 				<div>
 					<h2 className="text-2xl tracking-tighter">Editing: {list.name}</h2>
 					<div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
-						<div>Created by: {list.user.fullName}</div>
+						<div>Created by: {list.user.name}</div>
 						<div>{new Date(list.createdAt).toLocaleDateString()}</div>
 					</div>
 				</div>
@@ -121,7 +115,7 @@ function RouteComponent() {
 						/>
 						<div>
 							<Label htmlFor="is-public">Public list</Label>
-							<InputInfo text="If you make your list public, other users can see it." />
+							<span>If you make your list public, other users can see it.</span>
 						</div>
 					</div>
 
@@ -130,15 +124,9 @@ function RouteComponent() {
 						disabled={!isListDirty}
 						onClick={() =>
 							updateListMutation.mutate({
-								params: {
-									path: {
-										id: list.id,
-									},
-								},
-								body: {
-									isPublic,
-									name,
-								},
+								id: list.id,
+								isPublic,
+								name,
 							})
 						}
 					>
@@ -161,16 +149,10 @@ function RouteComponent() {
 								disabled={!form.formState.isDirty}
 								onClick={() => {
 									updateListItemsMutation.mutate({
-										params: {
-											path: {
-												id: list.id,
-											},
-										},
-										body: {
-											placeIds: form
-												.getValues('items')
-												.map((item) => item.placeId),
-										},
+										id: list.id,
+										placeIds: form
+											.getValues('items')
+											.map((item) => item.placeId),
 									});
 								}}
 							>

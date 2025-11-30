@@ -10,10 +10,10 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from '@/components/ui/item';
-import type { components } from '@/lib/api-types';
+import type { Outputs } from '@/lib/orpc';
 
 type Props = {
-	list: components['schemas']['GetAllListsOfUserOutputBody']['lists'][number];
+	list: Outputs['lists']['listAll']['lists'][number];
 };
 
 export function ListItem({ list }: Props) {

@@ -126,7 +126,7 @@ export function Amenities({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
 	const { amenities } = place;
-	const isEmpty = Object.keys(amenities).length === 0;
+	const isEmpty = amenities.length === 0;
 
 	return (
 		<div className={cn(className)}>
@@ -135,8 +135,8 @@ export function Amenities({ className }: Props) {
 				{isEmpty ? (
 					<EmptyState />
 				) : (
-					Object.keys(amenities).map((key) => (
-						<Item key={key} id={key} name={amenities[key] ?? ''} />
+					amenities.map((amenity) => (
+						<Item key={amenity} id={amenity} name={amenity} />
 					))
 				)}
 			</div>

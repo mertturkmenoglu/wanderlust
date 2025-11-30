@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import {
 	EllipsisVerticalIcon,
@@ -5,7 +6,6 @@ import {
 	PencilIcon,
 	TrashIcon,
 } from 'lucide-react';
-import { useContext } from 'react';
 import { toast } from 'sonner';
 import { AppMessage } from '@/components/blocks/app-message';
 import { BackLink } from '@/components/blocks/back-link';
@@ -29,18 +29,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
-import { AuthContext } from '@/providers/auth-provider';
+import { authClient } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/lists/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/lists/{id}', {
-				params: {
-					path: {
-						id: params.id,
-					},
+			context.orpc.lists.get.queryOptions({
+				input: {
+					id: params.id,
 				},
 			}),
 		);
@@ -49,20 +47,22 @@ export const Route = createFileRoute('/lists/$id/')({
 
 function RouteComponent() {
 	const { list } = Route.useLoaderData();
-	const auth = useContext(AuthContext);
 	const navigate = useNavigate();
-	const isOwner = auth.user?.id === list.userId;
-	const invalidator = useInvalidator();
+	const session = authClient.useSession();
+	const isOwner = session.data?.user.id === list.userId;
+	const invalidate = useInvalidator();
 
-	const deleteMutation = api.useMutation('delete', '/api/v2/lists/{id}', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			toast.success('List is deleted.');
-			navigate({
-				to: '/lists',
-			});
-		},
-	});
+	const deleteMutation = useMutation(
+		orpc.lists.delete.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('List is deleted.');
+				navigate({
+					to: '/lists',
+				});
+			},
+		}),
+	);
 
 	return (
 		<div className="mx-auto my-8 max-w-7xl">
@@ -71,7 +71,7 @@ function RouteComponent() {
 				<div>
 					<h2 className="text-2xl tracking-tighter">{list.name}</h2>
 					<div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
-						<div>Created by: {list.user.fullName}</div>
+						<div>Created by: {list.user.name}</div>
 						<div>{new Date(list.createdAt).toLocaleDateString()}</div>
 					</div>
 					<div className="mt-1 text-muted-foreground text-xs" />
@@ -149,11 +149,7 @@ function RouteComponent() {
 								variant="destructive"
 								onClick={() =>
 									deleteMutation.mutate({
-										params: {
-											path: {
-												id: list.id,
-											},
-										},
+										id: list.id,
 									})
 								}
 							>

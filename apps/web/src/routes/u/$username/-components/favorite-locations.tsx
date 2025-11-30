@@ -1,3 +1,4 @@
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import {
 	ChevronDownIcon,
@@ -5,7 +6,7 @@ import {
 	Settings2Icon,
 	XIcon,
 } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { InstantSearch } from 'react-instantsearch';
 import { toast } from 'sonner';
@@ -14,9 +15,8 @@ import { PlaceCard } from '@/components/blocks/place-card';
 import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
-import { AuthContext } from '@/providers/auth-provider';
 
 type Props = {
 	className?: string;
@@ -24,10 +24,17 @@ type Props = {
 
 export function FavoriteLocations({ className }: Props) {
 	const rootRoute = getRouteApi('/u/$username');
-	const route = getRouteApi('/u/$username/');
-	const { profile } = rootRoute.useLoaderData();
-	const { places } = route.useLoaderData();
-	const invalidator = useInvalidator();
+	const { profile, meta } = rootRoute.useLoaderData();
+	const invalidate = useInvalidator();
+	const {
+		data: { places },
+	} = useSuspenseQuery(
+		orpc.users.listTopPlaces.queryOptions({
+			input: {
+				username: profile.username,
+			},
+		}),
+	);
 	const searchClient = useSearchClient();
 
 	const form = useForm({
@@ -47,19 +54,16 @@ export function FavoriteLocations({ className }: Props) {
 
 	const [isEditMode, setIsEditMode] = useState(false);
 
-	const auth = useContext(AuthContext);
-	const isThisUser = auth.user?.username === profile.username;
+	const isThisUser = meta.isSelf;
 
-	const updateTopPlacesMutation = api.useMutation(
-		'patch',
-		'/api/v2/users/top',
-		{
+	const updateTopPlacesMutation = useMutation(
+		orpc.users.updateTopPlaces.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				toast.success('Successfully updated favorite locations');
 				setIsEditMode(false);
 			},
-		},
+		}),
 	);
 
 	return (
@@ -85,9 +89,7 @@ export function FavoriteLocations({ className }: Props) {
 							onClick={(e) => {
 								e.preventDefault();
 								updateTopPlacesMutation.mutate({
-									body: {
-										placeIds: form.getValues('places').map((place) => place.id),
-									},
+									placesIds: form.getValues('places').map((place) => place.id),
 								});
 							}}
 						>
@@ -139,12 +141,10 @@ export function FavoriteLocations({ className }: Props) {
 									}
 
 									updateTopPlacesMutation.mutate({
-										body: {
-											placeIds: [
-												...form.getValues('places').map((place) => place.id),
-												v.id,
-											],
-										},
+										placesIds: [
+											...form.getValues('places').map((place) => place.id),
+											v.id,
+										],
 									});
 								}}
 							/>

@@ -1,10 +1,11 @@
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 
 type Props = {
 	loading: boolean;
@@ -19,22 +20,20 @@ export function ActionButtons({
 	isFollowing,
 	username,
 }: Props) {
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
-	const mutation = api.useMutation('post', '/api/v2/users/follow/{username}', {
-		onSettled: async () => {
-			await invalidator.invalidate();
-			toast.success(isFollowing ? 'Unfollowed' : 'Followed');
-		},
-	});
+	const mutation = useMutation(
+		orpc.users.follow.mutationOptions({
+			onSettled: async () => {
+				await invalidate();
+				toast.success(isFollowing ? 'Unfollowed' : 'Followed');
+			},
+		}),
+	);
 
 	function handleFollowClick() {
 		mutation.mutate({
-			params: {
-				path: {
-					username,
-				},
-			},
+			username,
 		});
 	}
 
