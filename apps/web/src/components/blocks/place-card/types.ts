@@ -1,7 +1,7 @@
-import type { components } from '@/lib/api-types';
+import type { Outputs } from '@/lib/orpc';
 
 export type Place = Pick<
-	components['schemas']['Place'],
+	Outputs['places']['get']['place'],
 	| 'id'
 	| 'name'
 	| 'category'
