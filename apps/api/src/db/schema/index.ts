@@ -18,24 +18,28 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 
-export const users = pgTable('users', {
-	id: text('id').primaryKey(),
-	name: text('name').notNull(),
-	username: text('username').notNull().unique(),
-	email: text('email').notNull().unique(),
-	emailVerified: boolean('email_verified').notNull(),
-	image: text('image'),
-	banner: text('banner'),
-	bio: text('bio'),
-	website: text('website'),
-	followersCount: integer('followers_count').notNull().default(0),
-	followingCount: integer('following_count').notNull().default(0),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	updatedAt: timestamp('updated_at')
-		.notNull()
-		.defaultNow()
-		.$onUpdateFn(() => new Date()),
-});
+export const users = pgTable(
+	'users',
+	{
+		id: text('id').primaryKey(),
+		name: text('name').notNull(),
+		username: text('username').notNull().unique(),
+		email: text('email').notNull().unique(),
+		emailVerified: boolean('email_verified').notNull(),
+		image: text('image'),
+		banner: text('banner'),
+		bio: text('bio'),
+		website: text('website'),
+		followersCount: integer('followers_count').notNull().default(0),
+		followingCount: integer('following_count').notNull().default(0),
+		createdAt: timestamp('created_at').notNull().defaultNow(),
+		updatedAt: timestamp('updated_at')
+			.notNull()
+			.defaultNow()
+			.$onUpdateFn(() => new Date()),
+	},
+	(t) => [index().on(t.username)],
+);
 
 export const usersRelations = relations(users, ({ many }) => ({
 	bookmarks: many(bookmarks),
@@ -109,7 +113,7 @@ export const assets = pgTable(
 			.defaultNow()
 			.$onUpdateFn(() => new Date()),
 	},
-	(table) => [index().on(table.entityType, table.entityId)],
+	(table) => [index().on(table.entityType), index().on(table.entityId)],
 );
 
 export const assetsRelations = relations(assets, ({ one }) => ({
