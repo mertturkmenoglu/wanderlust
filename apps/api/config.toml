@@ -30,3 +30,6 @@ port = 8108
 apiKey = "wanderlust"
 dashboardPort = 3006
 url = "http://localhost:8108"
+
+[web]
+url = "http://localhost:3000"

@@ -34,4 +34,7 @@ export const schema = z.object({
 		dashboardPort: z.number(),
 		url: z.string(),
 	}),
+	web: z.object({
+		url: z.string(),
+	}),
 });
