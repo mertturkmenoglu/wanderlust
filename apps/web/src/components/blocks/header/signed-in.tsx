@@ -9,7 +9,6 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useFeatureFlags } from '@/providers/flags-provider';
 
 const hideSearchPaths = new Set(['/', '/search']);
 
@@ -17,8 +16,7 @@ export function SignedInLinks() {
 	const [open, setOpen] = useState(false);
 	const location = useLocation();
 	const showSearch = !hideSearchPaths.has(location.pathname);
-	const flags = useFeatureFlags();
-	const showIcons = flags['app-bar-show-wip-icons'] === true;
+	const showIcons = true;
 
 	return (
 		<div className="flex items-center gap-2">
