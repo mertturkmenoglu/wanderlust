@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import handlebars from 'handlebars';
-import type { ForgotPasswordParams } from './types';
+import type { ForgotPasswordParams, WelcomeEmailParams } from './types';
 
 function compile<T>(name: string) {
 	const templatePath = path.join(import.meta.dirname, '..', '..', 'templates');
@@ -11,4 +11,5 @@ function compile<T>(name: string) {
 
 export const templates = {
 	forgotPassword: compile<ForgotPasswordParams>('forgot-password.hbs'),
+	welcome: compile<WelcomeEmailParams>('welcome-email.hbs'),
 } satisfies Record<string, HandlebarsTemplateDelegate>;
