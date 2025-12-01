@@ -14,10 +14,6 @@ allowedOrigins = ["http://localhost:3000"]
 url = "postgresql://postgres:postgres@localhost:5432/wanderlust"
 ssl = false
 
-[durable]
-id = "wanderlust"
-appVersion = "1.0.0"
-
 [email]
 from = "Wanderlust <noreply@example.com>"
 host = "localhost"
