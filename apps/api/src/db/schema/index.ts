@@ -230,7 +230,12 @@ export const places = pgTable(
 			.defaultNow()
 			.$onUpdateFn(() => new Date()),
 	},
-	(table) => [index().on(table.addressId), index().on(table.categoryId)],
+	(table) => [
+		index().on(table.addressId),
+		index().on(table.categoryId),
+		index().on(table.createdAt),
+		index().on(table.name),
+	],
 );
 
 export const placesRelations = relations(places, ({ one, many }) => ({
