@@ -1,5 +1,6 @@
 import { BentoCache, bentostore } from 'bentocache';
 import { memoryDriver } from 'bentocache/drivers/memory';
+import { redisBusDriver, redisDriver } from 'bentocache/drivers/redis';
 import superjson from 'superjson';
 import { ConfigProvider, type TConfig } from '../config';
 import { Container, type IServiceProvider } from '../di';
@@ -31,9 +32,24 @@ function init(cfg: TConfig) {
 			deserialize: superjson.parse,
 		},
 		stores: {
-			cache: bentostore().useL1Layer(
-				memoryDriver({ maxSize: cfg.cache.l1MaxSize }),
-			),
+			cache: bentostore()
+				.useL1Layer(memoryDriver({ maxSize: cfg.cache.l1MaxSize }))
+				.useL2Layer(
+					redisDriver({
+						connection: {
+							host: cfg.redis.host,
+							port: cfg.redis.port,
+						},
+					}),
+				)
+				.useBus(
+					redisBusDriver({
+						connection: {
+							host: cfg.redis.host,
+							port: cfg.redis.port,
+						},
+					}),
+				),
 		},
 	});
 }
