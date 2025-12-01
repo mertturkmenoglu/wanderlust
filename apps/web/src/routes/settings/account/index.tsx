@@ -1,13 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
-import { FacebookIcon } from '@/components/icons/facebook';
-import { GoogleIcon } from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { useFeatureFlags } from '@/providers/flags-provider';
 import { ChangePasswordForm } from './-change-password';
 
 export const Route = createFileRoute('/settings/account/')({
@@ -17,7 +12,6 @@ export const Route = createFileRoute('/settings/account/')({
 function RouteComponent() {
 	const { auth } = Route.useRouteContext();
 	const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-	const flags = useFeatureFlags();
 
 	return (
 		<div>
@@ -50,7 +44,7 @@ function RouteComponent() {
 
 				{isChangePasswordOpen && <ChangePasswordForm />}
 
-				{flags['allow-oauth-logins'] === true && (
+				{/* {flags['allow-oauth-logins'] === true && (
 					<>
 						<Separator className="col-span-full my-4" />
 
@@ -69,7 +63,7 @@ function RouteComponent() {
 							/>
 						</div>
 					</>
-				)}
+				)} */}
 			</div>
 		</div>
 	);
