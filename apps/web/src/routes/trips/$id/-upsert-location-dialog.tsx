@@ -1,5 +1,4 @@
-// oxlint-disable func-style
-
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { formatDate } from 'date-fns';
 import {
@@ -11,7 +10,6 @@ import {
 import { useEffect, useState } from 'react';
 import { InstantSearch } from 'react-instantsearch';
 import { Autocomplete } from '@/components/blocks/autocomplete';
-import { Spinner } from '@/components/kit/spinner';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -26,10 +24,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 
 const fmtString = "yyyy-MM-dd'T'HH:mm";
 
@@ -49,23 +48,17 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 	} = route.useSearch();
 	const { id: tripId } = route.useParams();
 	const searchClient = useSearchClient();
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 	const navigate = useNavigate();
 
-	const query = api.useQuery(
-		'get',
-		'/api/v2/places/{id}',
-		{
-			params: {
-				path: {
-					id: placeId ?? '',
-				},
+	const query = useQuery(
+		orpc.places.get.queryOptions({
+			input: {
+				id: placeId ?? '',
 			},
-		},
-		{
 			enabled: placeId !== undefined,
 			retry: false,
-		},
+		}),
 	);
 
 	const [desc, setDesc] = useState('');
@@ -101,39 +94,33 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 		});
 	};
 
-	const addLocationMutation = api.useMutation(
-		'post',
-		'/api/v2/trips/{id}/places',
-		{
+	const addLocationMutation = useMutation(
+		orpc.trips.createLocation.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				setDesc('');
 				setTime(formatDate(new Date(), fmtString));
 				closeDialog();
 			},
-		},
+		}),
 	);
 
-	const updateLocationMutation = api.useMutation(
-		'patch',
-		'/api/v2/trips/{tripId}/places/{tripPlaceId}',
-		{
+	const updateLocationMutation = useMutation(
+		orpc.trips.updateLocation.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				closeDialog();
 			},
-		},
+		}),
 	);
 
-	const deleteLocationMutation = api.useMutation(
-		'delete',
-		'/api/v2/trips/{tripId}/places/{tripPlaceId}',
-		{
+	const deleteLocationMutation = useMutation(
+		orpc.trips.deleteLocation.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				closeDialog();
 			},
-		},
+		}),
 	);
 
 	return (
@@ -210,7 +197,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 											</div>
 											<div className="my-1 line-clamp-1 text-muted-foreground text-sm">
 												{query.data.place.address.city.name} /{' '}
-												{query.data.place.address.city.country.name}
+												{query.data.place.address.city.countryName}
 											</div>
 
 											<div className="font-semibold text-primary text-sm leading-none tracking-tight">
@@ -284,12 +271,8 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 										return;
 									}
 									deleteLocationMutation.mutate({
-										params: {
-											path: {
-												tripId,
-												tripPlaceId: locId,
-											},
-										},
+										id: tripId,
+										locationId: locId,
 									});
 								}
 							}}
@@ -305,29 +288,17 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 							e.preventDefault();
 							if (isUpdate && locId !== undefined) {
 								updateLocationMutation.mutate({
-									params: {
-										path: {
-											tripId,
-											tripPlaceId: locId,
-										},
-									},
-									body: {
-										scheduledTime: new Date(time).toISOString(),
-										description: desc,
-									},
+									id: tripId,
+									locationId: locId,
+									scheduledTime: new Date(time),
+									description: desc,
 								});
 							} else {
 								addLocationMutation.mutate({
-									params: {
-										path: {
-											id: tripId,
-										},
-									},
-									body: {
-										placeId: placeId ?? '',
-										scheduledTime: new Date(time).toISOString(),
-										description: desc,
-									},
+									id: tripId,
+									placeId: placeId ?? '',
+									scheduledTime: new Date(time),
+									description: desc,
 								});
 							}
 						}}

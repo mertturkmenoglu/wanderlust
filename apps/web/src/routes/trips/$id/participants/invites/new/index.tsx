@@ -1,11 +1,12 @@
 import { useDebouncedValue } from '@tanstack/react-pacer';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { AppMessage } from '@/components/blocks/app-message';
-import { Spinner } from '@/components/kit/spinner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { api } from '@/lib/api';
+import { Spinner } from '@/components/ui/spinner';
+import { orpc } from '@/lib/orpc';
 import { Header } from './-header';
 import { Item } from './-item';
 
@@ -19,19 +20,13 @@ function RouteComponent() {
 		wait: 500,
 	});
 
-	const searchQuery = api.useQuery(
-		'get',
-		'/api/v2/users/search/following',
-		{
-			params: {
-				query: {
-					username: debouncedSearch,
-				},
+	const searchQuery = useQuery(
+		orpc.users.searchFollowing.queryOptions({
+			input: {
+				username: debouncedSearch,
 			},
-		},
-		{
 			enabled: debouncedSearch.length > 1,
-		},
+		}),
 	);
 
 	if (searchQuery.isFetching) {
@@ -74,8 +69,8 @@ function RouteComponent() {
 						{users?.map((user) => (
 							<Item
 								key={user.id}
-								image={user.profileImage ?? ''}
-								name={user.fullName}
+								image={user.image ?? ''}
+								name={user.name}
 								username={user.username}
 								userId={user.id}
 								className="mt-2"

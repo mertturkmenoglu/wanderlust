@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { SendHorizonalIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -17,18 +18,16 @@ export function NewComment({ className }: Props) {
 	const route = getRouteApi('/trips/$id');
 	const { trip } = route.useLoaderData();
 	const [content, setContent] = useState('');
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
-	const createCommentMutation = api.useMutation(
-		'post',
-		'/api/v2/trips/{id}/comments/',
-		{
+	const mutation = useMutation(
+		orpc.trips.createComment.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				toast.success('Comment created successfully');
 				setContent('');
 			},
-		},
+		}),
 	);
 
 	return (
@@ -45,15 +44,9 @@ export function NewComment({ className }: Props) {
 					variant="default"
 					size="icon"
 					onClick={() => {
-						createCommentMutation.mutate({
-							params: {
-								path: {
-									id: trip.id,
-								},
-							},
-							body: {
-								content,
-							},
+						mutation.mutate({
+							id: trip.id,
+							content,
 						});
 					}}
 					disabled={content.length === 0}

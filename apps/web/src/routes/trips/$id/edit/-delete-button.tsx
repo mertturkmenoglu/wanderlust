@@ -1,9 +1,10 @@
+import { useMutation } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -13,18 +14,20 @@ type Props = {
 export function DeleteButton({ className }: Props) {
 	const route = getRouteApi('/trips/$id');
 	const { id } = route.useParams();
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 	const navigate = useNavigate();
 
-	const deleteTripMutation = api.useMutation('delete', '/api/v2/trips/{id}', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			await navigate({
-				to: '/trips',
-			});
-			toast.success('Trip deleted');
-		},
-	});
+	const mutation = useMutation(
+		orpc.trips.delete.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				await navigate({
+					to: '/trips',
+				});
+				toast.success('Trip deleted');
+			},
+		}),
+	);
 
 	return (
 		<Button
@@ -38,12 +41,8 @@ export function DeleteButton({ className }: Props) {
 						'Are you sure you want to delete this trip? This action is irreversible.',
 					)
 				) {
-					deleteTripMutation.mutate({
-						params: {
-							path: {
-								id,
-							},
-						},
+					mutation.mutate({
+						id,
 					});
 				}
 			}}

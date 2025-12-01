@@ -1,8 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
 import { AppMessage } from '@/components/blocks/app-message';
-import { Spinner } from '@/components/kit/spinner';
+import { Spinner } from '@/components/ui/spinner';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { Header } from './-header';
 import { Item } from './-item';
 
@@ -16,13 +17,13 @@ function RouteComponent() {
 	const { auth } = route.useRouteContext();
 	const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
 
-	const invitesQuery = api.useQuery('get', '/api/v2/trips/{id}/invites', {
-		params: {
-			path: {
+	const invitesQuery = useQuery(
+		orpc.trips.listInvites.queryOptions({
+			input: {
 				id: trip.id,
 			},
-		},
-	});
+		}),
+	);
 
 	if (invitesQuery.isPending) {
 		return (
@@ -71,9 +72,9 @@ function RouteComponent() {
 				{invites.map((invite) => (
 					<Item
 						key={invite.id}
-						image={invite.to.profileImage}
-						name={invite.to.fullName}
-						username={invite.to.username}
+						image={invite.toUser.image ?? ''}
+						name={invite.toUser.name}
+						username={invite.toUser.username}
 						role={`As: ${invite.role}`}
 						isPrivileged={isPrivileged}
 						className="mt-2"

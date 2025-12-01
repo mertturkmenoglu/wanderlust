@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Settings2Icon, UserMinusIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,9 +14,9 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -39,16 +40,14 @@ export function Item({
 	id,
 	tripId,
 }: Props) {
-	const invalidator = useInvalidator();
-	const removeInviteMutation = api.useMutation(
-		'delete',
-		'/api/v2/trips/{tripId}/invites/{inviteId}',
-		{
+	const invalidate = useInvalidator();
+	const removeInviteMutation = useMutation(
+		orpc.trips.deleteInvite.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				toast.success('Invite removed');
 			},
-		},
+		}),
 	);
 
 	return (
@@ -91,12 +90,8 @@ export function Item({
 								onClick={(e) => {
 									e.preventDefault();
 									removeInviteMutation.mutate({
-										params: {
-											path: {
-												inviteId: id,
-												tripId,
-											},
-										},
+										id: tripId,
+										inviteId: id,
 									});
 								}}
 							>

@@ -1,27 +1,25 @@
+import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { CheckIcon, XIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
-import type { components } from '@/lib/api-types';
+import { type Outputs, orpc } from '@/lib/orpc';
 
 type Props = {
-	invite: components['schemas']['TripInvite'];
+	invite: Outputs['trips']['listMyInvites']['invites'][number];
 };
 
 export function InviteCard({ invite }: Props) {
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
-	const mutation = api.useMutation(
-		'post',
-		'/api/v2/trips/{tripId}/invites/{inviteId}/{action}',
-		{
+	const mutation = useMutation(
+		orpc.trips.acceptOrDeclineInvite.mutationOptions({
 			onSuccess: async ({ accepted }) => {
 				toast.success(accepted ? 'Invite accepted' : 'Invite declined');
-				await invalidator.invalidate();
+				await invalidate();
 			},
-		},
+		}),
 	);
 
 	return (
@@ -31,11 +29,11 @@ export function InviteCard({ invite }: Props) {
 					<Link
 						to="/u/$username"
 						params={{
-							username: invite.from.username,
+							username: invite.fromUser.username,
 						}}
 						className="text-primary"
 					>
-						{invite.from.fullName}
+						{invite.fromUser.name}
 					</Link>{' '}
 					invited you to join{' '}
 					<span className="text-primary">{invite.tripTitle}</span> as a{' '}
@@ -47,13 +45,9 @@ export function InviteCard({ invite }: Props) {
 						size="sm"
 						onClick={() => {
 							mutation.mutate({
-								params: {
-									path: {
-										action: 'accept',
-										inviteId: invite.id,
-										tripId: invite.tripId,
-									},
-								},
+								accept: true,
+								id: invite.tripId,
+								inviteId: invite.id,
 							});
 						}}
 					>
@@ -66,13 +60,9 @@ export function InviteCard({ invite }: Props) {
 						variant="destructive"
 						onClick={() => {
 							mutation.mutate({
-								params: {
-									path: {
-										action: 'decline',
-										inviteId: invite.id,
-										tripId: invite.tripId,
-									},
-								},
+								accept: false,
+								id: invite.tripId,
+								inviteId: invite.id,
 							});
 						}}
 					>

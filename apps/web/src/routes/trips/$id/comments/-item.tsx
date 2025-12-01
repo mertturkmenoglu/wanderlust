@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import {
 	CheckIcon,
@@ -6,7 +7,7 @@ import {
 	Trash2Icon,
 	XIcon,
 } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { UserImage } from '@/components/blocks/user-image';
 import { Button } from '@/components/ui/button';
@@ -18,60 +19,55 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
-import type { components } from '@/lib/api-types';
+import { authClient } from '@/lib/auth';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
-import { AuthContext } from '@/providers/auth-provider';
+import { type Outputs, orpc } from '@/lib/orpc';
 
 type Props = {
-	comment: components['schemas']['TripComment'];
+	comment: Outputs['trips']['listComments']['comments'][number];
 	isPrivileged: boolean;
 };
 
 export function Item({ comment, isPrivileged }: Props) {
-	const auth = useContext(AuthContext);
-	const isOwner = comment.from.id === auth.user?.id;
-	const invalidator = useInvalidator();
+	const session = authClient.useSession();
+	const isOwner = comment.userId === session.data?.user.id;
+	const invalidate = useInvalidator();
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [content, setContent] = useState(comment.content);
 
-	const deleteCommentMutation = api.useMutation(
-		'delete',
-		'/api/v2/trips/{tripId}/comments/{commentId}',
-		{
+	const deleteCommentMutation = useMutation(
+		orpc.trips.deleteComment.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				toast.success('Comment removed');
 			},
-		},
+		}),
 	);
 
-	const updateCommentMutation = api.useMutation(
-		'patch',
-		'/api/v2/trips/{tripId}/comments/{commentId}',
-		{
+	const updateCommentMutation = useMutation(
+		orpc.trips.updateComment.mutationOptions({
 			onSuccess: async () => {
-				await invalidator.invalidate();
+				await invalidate();
 				toast.success('Comment updated');
 			},
-		},
+		}),
 	);
 
 	return (
 		<div className="border-border not-first:border-t py-4">
 			<div className="flex items-start gap-4">
 				<UserImage
-					src={ipx(userImage(comment.from.profileImage), 'w_512')}
+					src={ipx(userImage(comment.user.image), 'w_512')}
 					imgClassName="size-16"
 					fallbackClassName="size-16 rounded-md"
 					className="size-16 rounded-md"
 				/>
 				<div className="w-full">
-					<div className="font-bold">{comment.from.fullName}</div>
+					<div className="font-bold">{comment.user.name}</div>
 					<div
 						className="text-muted-foreground text-xs"
-						title={comment.createdAt}
+						title={comment.createdAt.toISOString()}
 					>
 						{formatDistanceToNow(comment.createdAt)} ago
 					</div>
@@ -93,15 +89,9 @@ export function Item({ comment, isPrivileged }: Props) {
 								className=""
 								onClick={() => {
 									updateCommentMutation.mutate({
-										params: {
-											path: {
-												commentId: comment.id,
-												tripId: comment.tripId,
-											},
-										},
-										body: {
-											content,
-										},
+										id: comment.tripId,
+										commentId: comment.id,
+										content,
 									});
 									setIsEditMode(false);
 								}}
@@ -157,12 +147,8 @@ export function Item({ comment, isPrivileged }: Props) {
 											confirm('Are you sure you want to delete this comment?')
 										) {
 											deleteCommentMutation.mutate({
-												params: {
-													path: {
-														commentId: comment.id,
-														tripId: comment.tripId,
-													},
-												},
+												id: comment.tripId,
+												commentId: comment.id,
 											});
 										}
 									}}

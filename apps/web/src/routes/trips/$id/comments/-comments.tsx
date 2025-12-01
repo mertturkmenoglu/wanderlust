@@ -1,10 +1,11 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { AppMessage } from '@/components/blocks/app-message';
-import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 import { Item } from './-item';
 
@@ -18,28 +19,18 @@ export function Comments({ className }: Props) {
 	const { auth } = route.useRouteContext();
 	const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
 
-	const query = api.useInfiniteQuery(
-		'get',
-		'/api/v2/trips/{id}/comments/',
-		{
-			params: {
-				path: {
-					id: trip.id,
-				},
-				query: {
-					pageSize: 10,
-				},
-			},
-		},
-		{
+	const query = useInfiniteQuery(
+		orpc.trips.listComments.infiniteOptions({
+			input: (page) => ({
+				id: trip.id,
+				pageSize: 10,
+				page: page,
+			}),
 			initialPageParam: 1,
-			getNextPageParam: (lastPage: {
-				pagination: { hasNext: boolean; page: number };
-			}) =>
-				lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : undefined,
-			pageParamName: 'page',
+			getNextPageParam: (last) =>
+				last.pagination.hasNext ? last.pagination.page + 1 : undefined,
 			retry: false,
-		},
+		}),
 	);
 
 	const btnText = useLoadMoreText({

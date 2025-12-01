@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
 import { formatDate } from 'date-fns';
 import { AlertTriangleIcon } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { InputError } from '@/components/kit/input-error';
-import { InputInfo } from '@/components/kit/input-info';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,7 +17,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { DeleteButton } from './-delete-button';
 import { asVisibility, schema, visibilityOptions } from './-schema';
 
@@ -31,7 +30,7 @@ const datetimeFormat = "yyyy-MM-dd'T'HH:mm";
 function RouteComponent() {
 	const rootRoute = getRouteApi('/trips/$id');
 	const { trip } = rootRoute.useLoaderData();
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
 	const form = useForm({
 		resolver: zodResolver(schema),
@@ -44,30 +43,26 @@ function RouteComponent() {
 		},
 	});
 
-	const updateTripMutation = api.useMutation('patch', '/api/v2/trips/{id}', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			toast.success('Trip updated');
-		},
-	});
+	const updateTripMutation = useMutation(
+		orpc.trips.update.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('Trip updated');
+			},
+		}),
+	);
 
 	return (
 		<div>
 			<form
 				onSubmit={form.handleSubmit((data) => {
 					updateTripMutation.mutate({
-						params: {
-							path: {
-								id: trip.id,
-							},
-						},
-						body: {
-							title: data.title,
-							description: data.description,
-							visibilityLevel: data.visibility,
-							startAt: new Date(data.startAt).toISOString(),
-							endAt: new Date(data.endAt).toISOString(),
-						},
+						id: trip.id,
+						description: data.description,
+						endAt: new Date(data.endAt),
+						startAt: new Date(data.startAt),
+						title: data.title,
+						visibilityLevel: data.visibility,
 					});
 				})}
 				className="flex w-full flex-col"
@@ -84,7 +79,9 @@ function RouteComponent() {
 						className="mt-1"
 						{...form.register('title')}
 					/>
-					<InputError error={form.formState.errors.title} />
+					{form.formState.errors.title && (
+						<span>{form.formState.errors.title.message}</span>
+					)}
 				</div>
 
 				<div className="mt-4">
@@ -96,7 +93,9 @@ function RouteComponent() {
 						className="mt-1"
 						{...form.register('description')}
 					/>
-					<InputError error={form.formState.errors.description} />
+					{form.formState.errors.description && (
+						<span>{form.formState.errors.description.message}</span>
+					)}
 				</div>
 
 				<div className="mt-4">
@@ -123,18 +122,17 @@ function RouteComponent() {
 											))}
 										</SelectContent>
 									</Select>
-									<InputInfo
-										text={
-											visibilityOptions.find((op) => op.value === field.value)
-												?.info ?? ''
-										}
-										className="mt-1"
-									/>
+									<span>
+										{visibilityOptions.find((op) => op.value === field.value)
+											?.info ?? ''}
+									</span>
 								</div>
 							);
 						}}
 					/>
-					<InputError error={form.formState.errors.visibility} />
+					{form.formState.errors.visibility && (
+						<span>{form.formState.errors.visibility.message}</span>
+					)}
 				</div>
 
 				<div className="mt-4">
@@ -145,7 +143,9 @@ function RouteComponent() {
 						className="mt-1"
 						{...form.register('startAt')}
 					/>
-					<InputError error={form.formState.errors.startAt} />
+					{form.formState.errors.startAt && (
+						<span>{form.formState.errors.startAt.message}</span>
+					)}
 				</div>
 
 				<div className="mt-4">
@@ -157,7 +157,9 @@ function RouteComponent() {
 						className="mt-1"
 						{...form.register('endAt')}
 					/>
-					<InputError error={form.formState.errors.endAt} />
+					{form.formState.errors.endAt && (
+						<span>{form.formState.errors.endAt.message}</span>
+					)}
 				</div>
 
 				<div className="mt-4 flex items-center">

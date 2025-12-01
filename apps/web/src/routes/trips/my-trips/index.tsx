@@ -1,9 +1,10 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { AppMessage } from '@/components/blocks/app-message';
 import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
-import { Spinner } from '@/components/kit/spinner';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
+import { Spinner } from '@/components/ui/spinner';
+import { orpc } from '@/lib/orpc';
 import { TripCard } from './-components/card';
 
 export const Route = createFileRoute('/trips/my-trips/')({
@@ -20,24 +21,16 @@ function RouteComponent() {
 }
 
 function Content() {
-	const query = api.useInfiniteQuery(
-		'get',
-		'/api/v2/trips/',
-		{
-			params: {
-				query: {
-					pageSize: 10,
-				},
-			},
-		},
-		{
+	const query = useInfiniteQuery(
+		orpc.trips.list.infiniteOptions({
+			input: (page) => ({
+				page,
+				pageSize: 10,
+			}),
 			initialPageParam: 1,
-			pageParamName: 'page',
-			getNextPageParam: (lastPage: {
-				pagination: { hasNext: boolean; page: number };
-			}) =>
-				lastPage.pagination.hasNext ? lastPage.pagination.page + 1 : undefined,
-		},
+			getNextPageParam: (last) =>
+				last.pagination.hasNext ? last.pagination.page + 1 : undefined,
+		}),
 	);
 
 	if (query.isPending) {
@@ -51,7 +44,7 @@ function Content() {
 	if (query.error) {
 		return (
 			<AppMessage
-				errorMessage={query.error.title ?? 'Something went wrong'}
+				errorMessage={query.error.message ?? 'Something went wrong'}
 				backLink="/trips"
 				backLinkText="Go to Trips page"
 				className="my-16"

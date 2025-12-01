@@ -38,8 +38,8 @@ function RouteComponent() {
 			<div className="mt-4">
 				{/** biome-ignore lint/a11y/useValidAriaRole: Not applicable, role is a prop */}
 				<Item
-					image={trip.owner.profileImage}
-					name={trip.owner.fullName}
+					image={trip.owner.image ?? ''}
+					name={trip.owner.name}
 					role="Owner"
 					isPrivileged={false}
 					username={trip.owner.username}
@@ -50,10 +50,10 @@ function RouteComponent() {
 				{trip.participants.map((p) => (
 					<Item
 						key={p.id}
-						image={p.profileImage}
-						name={p.fullName}
+						image={p.user.image ?? ''}
+						name={p.user.name}
 						role={p.role}
-						username={p.username}
+						username={p.user.username}
 						isPrivileged={isPrivileged}
 						id={p.id}
 						tripId={trip.id}

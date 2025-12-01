@@ -2,23 +2,22 @@
 
 import { Link } from '@tanstack/react-router';
 import { GlobeIcon, LockIcon, UsersIcon } from 'lucide-react';
-import { useContext } from 'react';
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
-import type { components } from '@/lib/api-types';
-import { AuthContext } from '@/providers/auth-provider';
+import { authClient } from '@/lib/auth';
+import type { Outputs } from '@/lib/orpc';
 
 type Props = {
-	trip: components['schemas']['Trip'];
+	trip: Outputs['trips']['list']['trips'][number];
 };
 
 export function TripCard({ trip }: Props) {
-	const auth = useContext(AuthContext);
-	const isOwner = trip.ownerId === auth.user?.id;
+	const session = authClient.useSession();
+	const isOwner = trip.ownerId === session.data?.user.id;
 	const ownerName = isOwner ? 'you' : `@${trip.owner.username}`;
 
 	return (

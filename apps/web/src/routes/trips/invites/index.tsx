@@ -1,14 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AppMessage } from '@/components/blocks/app-message';
 import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
-import { api } from '@/lib/api';
 import { InviteCard } from './-card';
 
 export const Route = createFileRoute('/trips/invites/')({
 	component: RouteComponent,
 	loader: ({ context }) => {
 		return context.queryClient.ensureQueryData(
-			api.queryOptions('get', '/api/v2/trips/invites'),
+			context.orpc.trips.listMyInvites.queryOptions({
+				input: {},
+			}),
 		);
 	},
 });

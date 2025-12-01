@@ -17,7 +17,7 @@ export function InfoCard({ type, count }: Props) {
 
 	return (
 		<div
-			className={cn('flex flex-col gap-2 rounded-md sm:aspect-[9/2]', {
+			className={cn('flex flex-col gap-2 rounded-md sm:aspect-9/2', {
 				'bg-pink-900': type === 'days',
 				'bg-emerald-900': type === 'locations',
 				'bg-sky-900': type === 'participants',

@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { PlusIcon, SendHorizonalIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -13,9 +14,9 @@ import {
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -30,14 +31,16 @@ export function Item({ image, name, username, className, userId }: Props) {
 	const route = getRouteApi('/trips/$id');
 	const { trip } = route.useLoaderData();
 	const [role, setRole] = useState('participant');
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
-	const inviteMutation = api.useMutation('post', '/api/v2/trips/{id}/invite', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			toast.success('Invite sent successfully');
-		},
-	});
+	const inviteMutation = useMutation(
+		orpc.trips.createInvite.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('Invite sent successfully');
+			},
+		}),
+	);
 
 	return (
 		<Collapsible className={cn('rounded p-2 focus:outline-primary', className)}>
@@ -83,15 +86,9 @@ export function Item({ image, name, username, className, userId }: Props) {
 						onClick={(e) => {
 							e.preventDefault();
 							inviteMutation.mutate({
-								params: {
-									path: {
-										id: trip.id,
-									},
-								},
-								body: {
-									toId: userId,
-									role: role === 'editor' ? 'editor' : 'participant',
-								},
+								id: trip.id,
+								role: role === 'editor' ? 'editor' : 'member',
+								toUserId: userId,
 							});
 						}}
 					>

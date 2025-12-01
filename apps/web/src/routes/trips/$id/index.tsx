@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
 import {
 	createFileRoute,
 	getRouteApi,
@@ -94,7 +93,7 @@ function RouteComponent() {
 					{days.map(({ day, locations }, i) => (
 						<AccordionItem
 							value={`day-${i}`}
-							key={`day-${i}`}
+							key={`day-${day.toISOString()}`}
 							className="mt-2 border-none"
 						>
 							<AccordionTrigger className="flex w-full items-center">
@@ -126,7 +125,7 @@ function RouteComponent() {
 									)
 									.map((loc) => (
 										<div
-											key={loc.scheduledTime}
+											key={loc.scheduledTime.toISOString()}
 											className="ml-2 flex items-center gap-4"
 										>
 											<div className="mt-20 flex items-center gap-2 self-start">
@@ -165,7 +164,8 @@ function RouteComponent() {
 																	isUpdate: true,
 																	placeId: loc.placeId,
 																	description: loc.description,
-																	scheduledTime: loc.scheduledTime,
+																	scheduledTime:
+																		loc.scheduledTime.toISOString(),
 																	locId: loc.id,
 																}),
 															});
