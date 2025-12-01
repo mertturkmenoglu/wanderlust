@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
+import z from 'zod';
 import { AuthLink } from '@/components/blocks/auth/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,7 +12,6 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -19,21 +19,28 @@ import {
 	InputGroupInput,
 } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import { authClient } from '@/lib/auth';
 import { normalizeMultipleErrors } from '@/lib/form';
 import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
-export const Route = createFileRoute('/_auth/forgot-password/reset/')({
+export const Route = createFileRoute('/_auth/password/reset/')({
 	component: RouteComponent,
-	beforeLoad: ({ context: { auth } }) => {
-		if (auth.user) {
+	beforeLoad: async () => {
+		const session = await authClient.getSession();
+
+		if (session.data?.user) {
 			throw redirect({
 				to: '/',
 			});
 		}
 	},
+	validateSearch: z.object({
+		token: z.string(),
+	}),
 });
 
 function RouteComponent() {
+	const { token } = Route.useSearch();
 	const [showPassword, setShowPassword] = useState(false);
 	const form = usePasswordResetForm();
 	const mutation = usePasswordResetMutation();
@@ -50,51 +57,15 @@ function RouteComponent() {
 				Already have an account? <AuthLink href="/sign-in" text="Sign In" />
 			</div>
 			<form
-				onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
+				onSubmit={form.handleSubmit((data) =>
+					mutation.mutate({
+						...data,
+						token,
+					}),
+				)}
 				className="mt-4 w-full"
 			>
 				<FieldGroup className="gap-4">
-					<Controller
-						name="email"
-						control={form.control}
-						disabled={true}
-						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="email">Email</FieldLabel>
-								<Input
-									{...field}
-									id="email"
-									placeholder="Email"
-									autoComplete="email"
-									aria-invalid={fieldState.invalid}
-								/>
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
-						)}
-					/>
-
-					<Controller
-						name="code"
-						control={form.control}
-						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="code">Code</FieldLabel>
-								<Input
-									{...field}
-									id="code"
-									placeholder="Code"
-									autoComplete="off"
-									aria-invalid={fieldState.invalid}
-								/>
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
-						)}
-					/>
-
 					<Controller
 						name="newPassword"
 						control={form.control}

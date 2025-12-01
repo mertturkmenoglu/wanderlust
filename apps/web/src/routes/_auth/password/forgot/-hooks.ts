@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { fetchClient } from '@/lib/api';
+import { toast } from 'sonner';
+import { authClient } from '@/lib/auth';
 import { type FormInput, FormSchema } from './-schema';
 
 function useForgotPasswordForm() {
@@ -15,23 +15,19 @@ function useForgotPasswordForm() {
 }
 
 function useForgotPasswordMutation() {
-	const navigate = useNavigate();
-
 	return useMutation({
 		mutationKey: ['forgot-password'],
 		mutationFn: async (data: FormInput) => {
-			return await fetchClient.POST('/api/v2/auth/forgot-password/send', {
-				body: {
-					email: data.email,
+			await authClient.requestPasswordReset({
+				email: data.email,
+				redirectTo: `${globalThis.location.origin}/password/reset`,
+				fetchOptions: {
+					throw: true,
 				},
 			});
 		},
-		onSuccess: (_, variables) => {
-			globalThis.window.sessionStorage.setItem(
-				'forgot-password-email',
-				variables.email,
-			);
-			navigate({ to: '/forgot-password/reset' });
+		onSuccess: () => {
+			toast.success('Check your email for instructions');
 		},
 	});
 }

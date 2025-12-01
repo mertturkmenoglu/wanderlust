@@ -11,15 +11,18 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import { authClient } from '@/lib/auth';
 import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
 
-export const Route = createFileRoute('/_auth/forgot-password/')({
+export const Route = createFileRoute('/_auth/password/forgot/')({
 	component: RouteComponent,
-	beforeLoad: ({ context: { auth } }) => {
-		if (auth.user) {
+	beforeLoad: async () => {
+		const session = await authClient.getSession();
+
+		if (session.data?.user) {
 			throw redirect({
 				to: '/',
-			});
+			})
 		}
 	},
 });
@@ -45,16 +48,16 @@ function RouteComponent() {
 			>
 				<FieldGroup>
 					<Controller
-						name="email"
+						name='email'
 						control={form.control}
 						render={({ field, fieldState }) => (
 							<Field data-invalid={fieldState.invalid}>
 								<FieldLabel htmlFor="email">Email</FieldLabel>
 								<Input
 									{...field}
-									id="email"
-									placeholder="Email"
-									autoComplete="email"
+									id='email'
+									placeholder='Email'
+									autoComplete='email'
 									aria-invalid={fieldState.invalid}
 								/>
 								{fieldState.invalid && (
@@ -68,7 +71,7 @@ function RouteComponent() {
 				<Button
 					variant="default"
 					className="mt-4 w-full"
-					type="submit"
+					type='submit'
 					disabled={!form.formState.isValid || mutation.isPending}
 				>
 					{mutation.isPending && <Spinner />}
@@ -76,5 +79,5 @@ function RouteComponent() {
 				</Button>
 			</form>
 		</Card>
-	);
+	)
 }

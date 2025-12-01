@@ -144,7 +144,7 @@ function RouteComponent() {
 									<FieldError errors={[fieldState.error]} />
 								)}
 								<AuthLink
-									href="/forgot-password"
+									href="/password/forgot"
 									text="Forgot password?"
 									className="justify-end"
 								/>
