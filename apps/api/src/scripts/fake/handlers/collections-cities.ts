@@ -38,5 +38,10 @@ export async function generate() {
 		}
 	}
 
-	await db.insert(schema.collectionsCities).values(batch);
+	try {
+		await db.insert(schema.collectionsCities).values(batch);
+	} catch (_err) {
+		// Key collision errors are expected here due to the random nature of the data generation
+		// Ignore the error
+	}
 }

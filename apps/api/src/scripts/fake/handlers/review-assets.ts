@@ -4,7 +4,7 @@ import { DbProvider } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
 import { ioc } from '@/ioc';
-import { readFile } from '@/lib/fake/utils';
+import { chunkArray, readFile } from '@/lib/fake/utils';
 import { paths } from '..';
 
 const imageIds = [
@@ -45,6 +45,20 @@ type Insert = z.infer<typeof $insert.asset>;
 export async function generate() {
 	const reviewIds = await readFile(paths.reviews);
 
+	const chunks = chunkArray(reviewIds, 500);
+
+	const results = await Promise.allSettled(
+		chunks.map((chunk) => processChunk(chunk)),
+	);
+
+	for (const result of results) {
+		if (result.status === 'rejected') {
+			console.error('Failed to generate review assets', result.reason);
+		}
+	}
+}
+
+async function processChunk(reviewIds: string[]) {
 	const batch: Insert[] = [];
 
 	for (const reviewId of reviewIds) {

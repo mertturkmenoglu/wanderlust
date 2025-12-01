@@ -45,5 +45,10 @@ async function processChunk(collectionIds: string[], placeIds: string[]) {
 		}
 	}
 
-	await db.insert(schema.collectionsPlaces).values(batch);
+	try {
+		await db.insert(schema.collectionsPlaces).values(batch);
+	} catch (_err) {
+		// Key collision errors are expected here due to the random nature of the data generation
+		// Ignore the error
+	}
 }

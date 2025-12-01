@@ -75,7 +75,9 @@ export async function generate() {
 			});
 			const emailRandomness = faker.string.alpha(5);
 			const email = `${emailRandomness}${emailBase}`;
-			const username = faker.internet.username({ firstName, lastName });
+			const usernameBase = faker.internet.username({ firstName, lastName });
+			const usernameRandomness = faker.string.alpha(4);
+			const username = `${usernameBase}${usernameRandomness}`;
 			const image = faker.image.personPortrait();
 			const name = `${firstName} ${lastName}`;
 			const userId = nanoid();
