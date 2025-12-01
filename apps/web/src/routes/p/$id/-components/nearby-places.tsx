@@ -83,7 +83,7 @@ export function NearbyPlaces({ className }: Props) {
 										</div>
 										<div className="line-clamp-1 text-muted-foreground text-sm">
 											{p.place.address.city.name} /{' '}
-											{p.place.address.city.country.name}
+											{p.place.address.city.countryName}
 										</div>
 									</div>
 

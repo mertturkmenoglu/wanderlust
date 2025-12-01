@@ -11,15 +11,11 @@ export type Props = {
 				city: {
 					id: number;
 					name: string;
-					country: {
-						name: string;
-					};
-					state: {
-						name: string;
-					};
+					countryName: string;
+					stateName: string;
 				};
 			};
-			amenities: Record<string, unknown>;
+			amenities: string[];
 			category: {
 				id: number;
 				image: string;
@@ -41,7 +37,7 @@ export function Hit({ hit }: Readonly<Props>) {
 			categoryName={hit.place.category.name}
 			image={hit.place.assets[0]?.url ?? ''}
 			city={hit.place.address.city.name}
-			state={hit.place.address.city.state.name}
+			state={hit.place.address.city.stateName}
 			isCardClickable={false}
 		/>
 	);
