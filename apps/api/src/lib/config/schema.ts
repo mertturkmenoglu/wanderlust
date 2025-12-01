@@ -23,4 +23,15 @@ export const schema = z.object({
 		port: z.number(),
 		ssl: z.boolean(),
 	}),
+	redis: z.object({
+		host: z.string(),
+		port: z.number(),
+		db: z.number(),
+	}),
+	typesense: z.object({
+		port: z.number(),
+		apiKey: z.string(),
+		dashboardPort: z.number(),
+		url: z.string(),
+	}),
 });
