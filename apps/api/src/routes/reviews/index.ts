@@ -1,7 +1,9 @@
 import { implement } from '@orpc/server';
 import { DbProvider } from '@/db';
 import { ioc } from '@/ioc';
+import { CacheProvider } from '@/lib/cache';
 import type { Context } from '@/lib/context';
+import { StorageProvider } from '@/lib/storage';
 import { requireAuth } from '@/middlewares/authn';
 import { contract } from './contract';
 import { ReviewsRepository } from './repository';
@@ -10,8 +12,10 @@ import { ReviewsService } from './service';
 export function getRouter() {
 	const os = implement(contract).$context<Context>();
 	const db = ioc.resolve(DbProvider.id);
+	const cache = ioc.resolve(CacheProvider.id);
+	const storage = ioc.resolve(StorageProvider.id);
 	const repo = new ReviewsRepository(db);
-	const service = new ReviewsService(repo);
+	const service = new ReviewsService(repo, storage, cache);
 
 	return os.router({
 		get: os.get.handler(async ({ input }) => {
