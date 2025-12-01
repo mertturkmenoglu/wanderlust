@@ -14,7 +14,8 @@
 		"db:studio": "bunx --bun drizzle-kit studio",
 		"db:generate": "bunx --bun drizzle-kit generate",
 		"db:migrate": "bunx --bun drizzle-kit migrate",
-		"fake:generate": "bun run src/scripts/fake/index.ts"
+		"fake": "bun run src/scripts/fake/index.ts",
+		"search": "bun run src/scripts/search/index.ts"
 	},
 	"dependencies": {
 		"@orpc/client": "^1.11.3",
@@ -36,6 +37,7 @@
 		"pg": "^8.16.3",
 		"sharp": "^0.34.5",
 		"superjson": "^2.2.5",
+		"typesense": "^2.1.0",
 		"zod": "^4.1.13"
 	},
 	"devDependencies": {
