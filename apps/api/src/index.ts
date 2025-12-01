@@ -25,6 +25,10 @@ async function main() {
 			const start = performance.now();
 			const url = new URL(request.url);
 
+			if (url.pathname.startsWith('/uploads')) {
+				return new Response(Bun.file(`./${url.pathname}`));
+			}
+
 			if (url.pathname.startsWith('/api/auth/')) {
 				const res = await auth.handler(request);
 				return withCors(res);
