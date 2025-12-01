@@ -1,7 +1,7 @@
 import { FacebookIcon } from '@/components/icons/facebook';
 import { GoogleIcon } from '@/components/icons/google';
 import { Button } from '@/components/ui/button';
-import { env } from '@/lib/env';
+import { authClient } from '@/lib/auth';
 
 type Props = {
 	provider: 'google' | 'facebook';
@@ -9,14 +9,15 @@ type Props = {
 };
 
 export function OAuthButton({ provider, text }: Readonly<Props>) {
-	const baseUrl = env.VITE_API_URL;
-
 	return (
 		<Button
 			variant="outline"
 			className="w-full"
-			onClick={() => {
-				globalThis.window.location.href = `${baseUrl}/api/v2/auth/${provider}`;
+			onClick={async () => {
+				authClient.signIn.social({
+					provider,
+					callbackURL: window.location.origin,
+				});
 			}}
 			type="button"
 		>
