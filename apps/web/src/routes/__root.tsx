@@ -10,23 +10,14 @@ import { ErrorComponent } from '@/components/blocks/error-component';
 import { Footer } from '@/components/blocks/footer';
 import { Header } from '@/components/blocks/header';
 import type { orpc } from '@/lib/orpc';
-import type { FlagsResponse } from '@/providers/flags-provider';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
-	flags: FlagsResponse;
 	orpc: typeof orpc;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	component: Component,
-	loader: ({ context: { flags } }) => {
-		const isRedirect = flags.flags['redirect-to-wip'] === true;
-
-		if (isRedirect && globalThis.window.location.pathname !== '/wip') {
-			globalThis.window.location.href = '/wip';
-		}
-	},
 	errorComponent: ErrorComponent,
 	notFoundComponent: () => {
 		return (

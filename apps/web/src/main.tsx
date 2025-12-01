@@ -2,7 +2,6 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { FlagsContextProvider } from './providers/flags-provider.tsx';
 import reportWebVitals from './reportWebVitals.ts';
 import { routeTree } from './routeTree.gen.ts';
 
@@ -20,7 +19,6 @@ import { orpc, queryClient } from './lib/orpc';
 const router = createRouter({
 	routeTree,
 	context: {
-		flags: undefined!,
 		orpc,
 		queryClient,
 	},
@@ -32,7 +30,7 @@ const router = createRouter({
 	Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
 		return (
 			<QueryClientProvider client={queryClient}>
-				<FlagsContextProvider>{children}</FlagsContextProvider>
+				{children}
 			</QueryClientProvider>
 		);
 	},
