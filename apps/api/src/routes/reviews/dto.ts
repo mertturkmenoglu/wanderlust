@@ -140,7 +140,7 @@ export const getRatingsInput = $.place.pick({
 export type GetRatingsInput = z.infer<typeof getRatingsInput>;
 
 export const getRatingsOutput = z.object({
-	ratings: z.record(z.number().int().min(1).max(5), z.number().int()).meta({
+	ratings: z.record(z.string(), z.number().int()).meta({
 		description: 'A mapping of rating values to their respective counts',
 		examples: [
 			{
