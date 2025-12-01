@@ -72,9 +72,6 @@ function init(db: TDatabaseService, durable: TDurableService, cfg: TConfig) {
 		},
 		trustedOrigins: cfg.cors.allowedOrigins,
 		appName: 'Wanderlust',
-		experimental: {
-			joins: true,
-		},
 		emailAndPassword: {
 			enabled: true,
 			sendResetPassword: async ({ url, user }) => {
