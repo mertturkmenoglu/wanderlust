@@ -17,10 +17,6 @@ export const schema = z.object({
 		url: z.string(),
 		ssl: z.boolean(),
 	}),
-	durable: z.object({
-		id: z.string(),
-		appVersion: z.string(),
-	}),
 	email: z.object({
 		from: z.string(),
 		host: z.string(),
