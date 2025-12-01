@@ -1,4 +1,5 @@
 import { Queue, Worker } from 'bullmq';
+import IORedis from 'ioredis';
 import z from 'zod';
 import { ConfigProvider } from '@/lib/config';
 import type { Container } from '@/lib/di';
@@ -24,8 +25,14 @@ type DataType = Schemas[JobName];
 export function initJobs(ioc: Container) {
 	const cfg = ioc.resolve(ConfigProvider.id);
 	const email = ioc.resolve(EmailProvider.id);
+	const connection = new IORedis({
+		host: cfg.redis.host,
+		port: cfg.redis.port,
+		db: cfg.redis.db,
+		maxRetriesPerRequest: null,
+	});
 
-	const queue = new Queue<DataType, unknown, JobName>('email');
+	const queue = new Queue<DataType, unknown, JobName>('email', { connection });
 	const worker = new Worker<DataType, unknown, JobName>(
 		'email',
 		async (job) => {
@@ -56,6 +63,7 @@ export function initJobs(ioc: Container) {
 				}
 			}
 		},
+		{ connection },
 	);
 
 	return {
