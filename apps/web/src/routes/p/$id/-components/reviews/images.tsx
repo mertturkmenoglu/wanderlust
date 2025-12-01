@@ -1,8 +1,9 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -27,16 +28,12 @@ function Content({ className }: ContentProps) {
 	const [open, setOpen] = useState(false);
 	const [index, setIndex] = useState(0);
 
-	const query = api.useSuspenseQuery(
-		'get',
-		'/api/v2/reviews/place/{id}/assets',
-		{
-			params: {
-				path: {
-					id,
-				},
+	const query = useSuspenseQuery(
+		orpc.reviews.listAssetsByPlaceId.queryOptions({
+			input: {
+				id,
 			},
-		},
+		}),
 	);
 
 	const images = query.data.assets;

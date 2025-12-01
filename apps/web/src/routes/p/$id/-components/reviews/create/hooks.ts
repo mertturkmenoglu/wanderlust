@@ -1,12 +1,7 @@
-// oxlint-disable no-non-null-assertion
-/** biome-ignore-all lint/style/noNonNullAssertion: TODO */
-// oxlint-disable no-await-in-loop
-
 import * as fileUpload from '@zag-js/file-upload';
 import { normalizeProps, useMachine } from '@zag-js/react';
 import { useId } from 'react';
 import { toast } from 'sonner';
-import { fetchClient } from '@/lib/api';
 
 function useUpload() {
 	const service = useMachine(fileUpload.machine, {
@@ -45,62 +40,4 @@ function checkExtensions(
 	return true;
 }
 
-async function doFileUpload(files: File[], reviewId: string) {
-	const extensions = files.map((file) => file.name.split('.').at(-1));
-
-	if (!checkExtensions(extensions)) {
-		return false;
-	}
-
-	for (let i = 0; i < files.length; i += 1) {
-		const ext = extensions.at(i)!;
-		const file = files.at(i)!;
-
-		const res = await fetchClient.GET('/api/v2/assets/upload/', {
-			params: {
-				query: {
-					bucket: 'reviews',
-					fileExt: ext,
-					assetType: 'image',
-				},
-			},
-		});
-
-		if (res.error) {
-			toast.error(res.error.title ?? 'Something went wrong');
-			return false;
-		}
-
-		const uploadRes = await fetch(res.data.url, {
-			method: 'PUT',
-			body: file,
-		});
-
-		if (!uploadRes.ok) {
-			toast.error('Something went wrong');
-			return false;
-		}
-
-		const updateRes = await fetchClient.POST('/api/v2/reviews/{id}/asset', {
-			params: {
-				path: {
-					id: reviewId,
-				},
-			},
-			body: {
-				fileName: res.data.fileName,
-				id: res.data.id,
-				size: 0,
-			},
-		});
-
-		if (updateRes.error) {
-			toast.error(updateRes.error.title ?? 'Something went wrong');
-			return false;
-		}
-	}
-
-	return true;
-}
-
-export { checkExtensions, doFileUpload, usePreviews, useUpload };
+export { checkExtensions, usePreviews, useUpload };

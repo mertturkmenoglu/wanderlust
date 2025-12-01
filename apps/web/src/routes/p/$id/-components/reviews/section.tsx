@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import {
 	ChevronLeftIcon,
@@ -13,22 +14,21 @@ import {
 } from '@/components/ui/pagination';
 import { Separator } from '@/components/ui/separator';
 import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
-import { api } from '@/lib/api';
-import type { components } from '@/lib/api-types';
+import { type Outputs, orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 import { ReviewCard } from './card';
+
+type Review = Outputs['reviews']['listByPlaceId']['reviews'][number];
 
 export function Section() {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
 	const search = route.useSearch();
 
-	const query = api.useQuery('get', '/api/v2/reviews/place/{id}', {
-		params: {
-			path: {
+	const query = useQuery(
+		orpc.reviews.listByPlaceId.queryOptions({
+			input: {
 				id: place.id,
-			},
-			query: {
 				pageSize: 10,
 				page: search.page ?? 1,
 				maxRating: search.maxRating,
@@ -36,8 +36,8 @@ export function Section() {
 				sortBy: search.sortBy,
 				sortOrd: search.sortOrd,
 			},
-		},
-	});
+		}),
+	);
 
 	const nums = usePaginationNumbers(
 		search.page ?? 1,
@@ -77,7 +77,7 @@ export function Section() {
 	const { reviews, pagination } = query.data;
 	const sortedReviews = (() => {
 		if (search.sortOrd === 'asc' && search.sortBy === 'created_at') {
-			const sorted: components['schemas']['Review'][] = [];
+			const sorted: Review[] = [];
 			for (const v of reviews) {
 				sorted.unshift(v);
 			}

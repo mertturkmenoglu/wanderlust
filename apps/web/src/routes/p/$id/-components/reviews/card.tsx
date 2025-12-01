@@ -5,13 +5,13 @@ import Lightbox from 'yet-another-react-lightbox';
 import { CollapsibleText } from '@/components/blocks/collapsible-text';
 import { UserImage } from '@/components/blocks/user-image';
 import { FormattedRating } from '@/components/kit/formatted-rating';
-import type { components } from '@/lib/api-types';
 import { ipx } from '@/lib/ipx';
+import type { Outputs } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 import { Menu } from './menu';
 
 type Props = {
-	review: components['schemas']['Review'];
+	review: Outputs['reviews']['listByPlaceId']['reviews'][number];
 };
 
 export function ReviewCard({ review }: Props) {
@@ -23,7 +23,7 @@ export function ReviewCard({ review }: Props) {
 			<div className="flex flex-row items-center gap-4">
 				<UserImage
 					className="size-16 rounded-full"
-					src={review.user.profileImage ?? ''}
+					src={review.user.image ?? ''}
 				/>
 				<Link
 					to="/u/$username"
@@ -31,7 +31,7 @@ export function ReviewCard({ review }: Props) {
 						username: review.user.username,
 					}}
 				>
-					<div className="font-medium">{review.user.fullName}</div>
+					<div className="font-medium">{review.user.name}</div>
 					<div className="text-primary text-xs tracking-tight">
 						<span className="">@{review.user.username}</span>
 					</div>

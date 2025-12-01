@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { PencilIcon } from 'lucide-react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { InputError } from '@/components/kit/input-error';
-import { InputInfo } from '@/components/kit/input-info';
 import { Rating } from '@/components/kit/rating';
 import {
 	AlertDialog,
@@ -23,10 +22,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api, fetchClient } from '@/lib/api';
+import { authClient } from '@/lib/auth';
 import { lengthTracker } from '@/lib/form';
-import { AuthContext } from '@/providers/auth-provider';
-import { doFileUpload, useUpload } from './hooks';
+import { orpc } from '@/lib/orpc';
+import { useUpload } from './hooks';
 import { ImageUploadArea } from './image-upload';
 
 const schema = z.object({
@@ -34,8 +33,8 @@ const schema = z.object({
 });
 
 export function CreateReviewDialog() {
-	const auth = useContext(AuthContext);
-	const isAuthenticated = !auth.isLoading && auth.user;
+	const session = authClient.useSession();
+	const isAuthenticated = !session.isPending && session.data?.user != null;
 
 	if (!isAuthenticated) {
 		return (
@@ -57,27 +56,22 @@ function Content() {
 	const [rating, setRating] = useState(0);
 	const up = useUpload();
 	const files = up.acceptedFiles;
-	const invalidator = useInvalidator();
+	const invalidate = useInvalidator();
 
 	const form = useForm({
 		resolver: zodResolver(schema),
 	});
 
-	const createReviewMutation = api.useMutation('post', '/api/v2/reviews/', {
-		onSuccess: async (data) => {
-			const ok = await doFileUpload(files, data.review.id);
-
-			if (!ok) {
-				toast.error('Something went wrong');
-				return;
-			}
-
-			await invalidator.invalidate();
-			form.reset();
-			setRating(0);
-			toast.success('Review added');
-		},
-	});
+	const createReviewMutation = useMutation(
+		orpc.reviews.create.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				form.reset();
+				setRating(0);
+				toast.success('Review added');
+			},
+		}),
+	);
 
 	return (
 		<AlertDialog>
@@ -118,8 +112,10 @@ function Content() {
 							className="mt-1"
 							{...form.register('content')}
 						/>
-						<InputInfo text={lengthTracker(form.watch('content'), 2048)} />
-						<InputError error={form.formState.errors.content} />
+						<span>{lengthTracker(form.watch('content'), 2048)}</span>
+						{form.formState.errors.content && (
+							<span>{form.formState.errors.content.message}</span>
+						)}
 					</div>
 
 					<ImageUploadArea up={up} />
@@ -128,20 +124,11 @@ function Content() {
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
 					<AlertDialogAction
 						onClick={async () => {
-							// Ensure the user is logged in
-							const res = await fetchClient.POST('/api/v2/auth/refresh');
-
-							if (res.error) {
-								toast.error('You must be logged in to create a review');
-								return;
-							}
-
 							createReviewMutation.mutate({
-								body: {
-									content: form.getValues('content'),
-									placeId: place.id,
-									rating: rating,
-								},
+								files,
+								content: form.getValues('content'),
+								placeId: place.id,
+								rating,
 							});
 						}}
 					>

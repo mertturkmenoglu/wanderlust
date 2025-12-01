@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { LoaderCircleIcon, StarIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -5,8 +6,7 @@ import { FormattedRating } from '@/components/kit/formatted-rating';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
-import { api } from '@/lib/api';
-import type { components } from '@/lib/api-types';
+import { type Outputs, orpc } from '@/lib/orpc';
 import { computeRating } from '@/lib/rating';
 import { cn } from '@/lib/utils';
 import { CreateReviewDialog } from './create/create-dialog';
@@ -27,13 +27,13 @@ export function RatingsSection({ className }: Props) {
 	const { place } = route.useLoaderData();
 	const rating = computeRating(place.totalPoints, place.totalVotes);
 
-	const query = api.useQuery('get', '/api/v2/reviews/place/{id}/ratings', {
-		params: {
-			path: {
+	const query = useQuery(
+		orpc.reviews.getRatings.queryOptions({
+			input: {
 				id: place.id,
 			},
-		},
-	});
+		}),
+	);
 
 	return (
 		<div className={cn(className)}>
@@ -80,7 +80,7 @@ export function RatingsSection({ className }: Props) {
 }
 
 type RatingsProps = {
-	ratings: components['schemas']['GetRatingsByPlaceIdOutputBody'];
+	ratings: Outputs['reviews']['getRatings'];
 };
 
 function Ratings({ ratings }: RatingsProps) {
