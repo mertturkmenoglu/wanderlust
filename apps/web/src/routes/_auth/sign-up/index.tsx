@@ -22,14 +22,16 @@ import {
 } from '@/components/ui/input-group';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
+import { authClient } from '@/lib/auth';
 import { normalizeMultipleErrors } from '@/lib/form';
-import { useFeatureFlags } from '@/providers/flags-provider';
 import { useSignUpForm, useSignUpMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/sign-up/')({
 	component: RouteComponent,
-	beforeLoad: ({ context: { auth } }) => {
-		if (auth.user) {
+	beforeLoad: async () => {
+		const session = await authClient.getSession();
+
+		if (session.data?.user) {
 			throw redirect({
 				to: '/',
 			});
@@ -39,8 +41,7 @@ export const Route = createFileRoute('/_auth/sign-up/')({
 
 function RouteComponent() {
 	const [showPassword, setShowPassword] = useState(false);
-	const flags = useFeatureFlags();
-	const showOAuthButtons = flags['allow-oauth-logins'] === true;
+	const showOAuthButtons = true;
 
 	const form = useSignUpForm();
 	const mutation = useSignUpMutation();
@@ -59,7 +60,10 @@ function RouteComponent() {
 			<form
 				onSubmit={form.handleSubmit((data) => {
 					mutation.mutate({
-						body: data,
+						email: data.email,
+						username: data.username,
+						fullName: data.fullName,
+						password: data.password,
 					});
 				})}
 				className="mt-4 w-full"

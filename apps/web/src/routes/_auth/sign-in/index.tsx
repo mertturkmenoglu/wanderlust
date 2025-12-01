@@ -26,7 +26,6 @@ import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/lib/auth';
 import { cn } from '@/lib/utils';
-import { useFeatureFlags } from '@/providers/flags-provider';
 import { useSignInForm } from './-hooks';
 
 export const Route = createFileRoute('/_auth/sign-in/')({
@@ -44,8 +43,7 @@ export const Route = createFileRoute('/_auth/sign-in/')({
 
 function RouteComponent() {
 	const [showPassword, setShowPassword] = useState(false);
-	const flags = useFeatureFlags();
-	const showOAuthButtons = flags['allow-oauth-logins'] === true;
+	const showOAuthButtons = true;
 
 	const form = useSignInForm();
 	const mutation = useMutation({

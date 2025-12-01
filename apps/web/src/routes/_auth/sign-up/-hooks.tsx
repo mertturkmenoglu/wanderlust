@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
-import { api } from '@/lib/api';
+import { authClient } from '@/lib/auth';
 
 const schema = z.object({
 	fullName: z
@@ -86,9 +88,32 @@ export function useSignUpForm() {
 }
 
 export function useSignUpMutation() {
-	return api.useMutation('post', '/api/v2/auth/credentials/register', {
+	return useMutation({
+		mutationKey: ['sign-up'],
+		mutationFn: async (data: {
+			fullName: string;
+			username: string;
+			email: string;
+			password: string;
+		}) => {
+			await authClient.signUp.email(
+				{
+					name: data.fullName,
+					username: data.username,
+					email: data.email,
+					password: data.password,
+				},
+				{
+					throw: true,
+				},
+			);
+		},
 		onSuccess: () => {
-			globalThis.window.location.href = '/sign-in';
+			window.location.href = '/sign-in';
+			window.location.reload();
+		},
+		onError: (err) => {
+			toast.error(err.message || 'Something went wrong');
 		},
 	});
 }
