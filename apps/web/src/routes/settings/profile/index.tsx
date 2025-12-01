@@ -1,24 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { InputError } from '@/components/kit/input-error';
-import { InputInfo } from '@/components/kit/input-info';
-import { Spinner } from '@/components/kit/spinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { api } from '@/lib/api';
+import { orpc } from '@/lib/orpc';
 import { UpdateImage } from './-update-image';
 
 const schema = z.object({
 	fullName: z.string().min(1).max(128),
 	bio: z.string().max(255).nullable(),
-	pronouns: z.string().max(32).nullable(),
 	website: z.string().max(255).nullable(),
 });
 
@@ -28,24 +26,25 @@ export const Route = createFileRoute('/settings/profile/')({
 
 function RouteComponent() {
 	const { auth } = Route.useRouteContext();
-	// biome-ignore lint/style/noNonNullAssertion: TODO
-	const user = auth.user!;
-	const invalidator = useInvalidator();
+	const user = auth.user;
+	const invalidate = useInvalidator();
 
 	const form = useForm({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			fullName: user.fullName,
+			fullName: user.name,
 			bio: user.bio ?? '',
 		},
 	});
 
-	const mutation = api.useMutation('patch', '/api/v2/users/profile', {
-		onSuccess: async () => {
-			await invalidator.invalidate();
-			toast.success('Profile updated');
-		},
-	});
+	const mutation = useMutation(
+		orpc.users.update.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('Profile updated');
+			},
+		}),
+	);
 
 	return (
 		<div>
@@ -57,8 +56,8 @@ function RouteComponent() {
 				<Label>Profile Image</Label>
 				<div className="col-span-2 flex">
 					<UpdateImage
-						fullName={user.fullName}
-						image={user.profileImage}
+						fullName={user.name}
+						image={user.image ?? null}
 						fallbackImage="/profile.png"
 						action="profile"
 					/>
@@ -67,8 +66,8 @@ function RouteComponent() {
 				<Label>Banner Image</Label>
 				<div className="col-span-2 flex">
 					<UpdateImage
-						fullName={user.fullName}
-						image={user.bannerImage}
+						fullName={user.name}
+						image={user.banner ?? null}
 						fallbackImage="https://i.imgur.com/EwvUEmR.jpg"
 						action="banner"
 					/>
@@ -82,10 +81,9 @@ function RouteComponent() {
 					const bio = data.bio === '' ? null : data.bio;
 
 					mutation.mutate({
-						body: {
-							fullName: data.fullName,
-							bio,
-						},
+						bio: bio,
+						name: data.fullName,
+						website: data.website,
 					});
 				})}
 				className="mt-4 grid grid-cols-3 gap-4 md:gap-8"
@@ -101,7 +99,9 @@ function RouteComponent() {
 						autoComplete="name"
 						{...form.register('fullName')}
 					/>
-					<InputError error={form.formState.errors.fullName} />
+					{form.formState.errors.fullName && (
+						<span>{form.formState.errors.fullName.message}</span>
+					)}
 				</div>
 
 				<Label htmlFor="bio" className="mt-2">
@@ -115,8 +115,25 @@ function RouteComponent() {
 						rows={6}
 						{...form.register('bio')}
 					/>
-					<InputInfo text="Let us know about you" />
-					<InputError error={form.formState.errors.bio} />
+					{form.formState.errors.bio && (
+						<span>{form.formState.errors.bio.message}</span>
+					)}
+				</div>
+
+				<Label htmlFor="website" className="mt-2">
+					Website
+				</Label>
+				<div className="col-span-2">
+					<Input
+						id="website"
+						type="url"
+						placeholder="Your website"
+						autoComplete="url"
+						{...form.register('website')}
+					/>
+					{form.formState.errors.website && (
+						<span>{form.formState.errors.website.message}</span>
+					)}
 				</div>
 
 				<Button
