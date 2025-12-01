@@ -33,30 +33,33 @@ export function TripInfo({ className }: Props) {
 			<div className="text-muted-foreground text-sm">Trip Owner</div>
 			<div className="mt-2 flex items-center gap-4">
 				<UserImage
-					src={ipx(userImage(trip.owner.profileImage), 'w_512')}
+					src={ipx(userImage(trip.owner.image), 'w_512')}
 					imgClassName="size-16"
 					fallbackClassName="size-16"
 					className="size-16 rounded-md"
 				/>
 
 				<div>
-					<div className="font-bold text-xl">{trip.owner.fullName}</div>
+					<div className="font-bold text-xl">{trip.owner.name}</div>
 					<div className="text-primary text-xs">@{trip.owner.username}</div>
 				</div>
 			</div>
 
 			<div className="my-4 space-y-2">
-				<LineItem icon={ActivityIcon} text={`Status: ${trip.status}`} />
+				<LineItem
+					icon={ActivityIcon}
+					text={`Status: ${trip.startAt.getTime() > Date.now() ? 'Upcoming' : 'Completed'}`}
+				/>
 				<LineItem icon={EyeIcon} text={`Visibility: ${trip.visibilityLevel}`} />
 				<LineItem
 					icon={ClockIcon}
 					text={`Start Date: ${formatDate(trip.startAt, 'dd MMM yyyy')}`}
-					title={trip.startAt}
+					title={trip.startAt.toISOString()}
 				/>
 				<LineItem
 					icon={ClockFadingIcon}
 					text={`End Date: ${formatDate(trip.endAt, 'dd MMM yyyy')}`}
-					title={trip.endAt}
+					title={trip.endAt.toISOString()}
 				/>
 			</div>
 
