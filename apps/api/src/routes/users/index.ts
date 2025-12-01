@@ -36,6 +36,12 @@ export function getRouter() {
 
 			return result;
 		}),
+		getRole: os.getRole.handler(async ({ context }) => {
+			const userId = context.session.user.id;
+			const result = await service.getRole(userId);
+
+			return result;
+		}),
 		listFollowers: os.listFollowers.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
 			const result = await service.listFollowers(userId, input);

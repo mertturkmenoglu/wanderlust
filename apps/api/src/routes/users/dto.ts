@@ -62,6 +62,16 @@ export const getMeOutput = z.object({
 
 export type GetMeOutput = z.infer<typeof getMeOutput>;
 
+export const getRoleInput = z.object({});
+
+export type GetRoleInput = z.infer<typeof getRoleInput>;
+
+export const getRoleOutput = z.object({
+	role: z.enum(['user', 'admin']),
+});
+
+export type GetRoleOutput = z.infer<typeof getRoleOutput>;
+
 export const listFollowersInput = profile
 	.pick({
 		username: true,

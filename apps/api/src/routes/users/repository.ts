@@ -120,6 +120,29 @@ export class UsersRepository {
 		}
 	}
 
+	async getRole(userId: string) {
+		try {
+			const result = await this.db.query.admins.findFirst({
+				where: (t, { eq }) => eq(t.userId, userId),
+			});
+
+			const role: 'admin' | 'user' = result ? 'admin' : 'user';
+
+			return {
+				role,
+			};
+		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
+
+			throw new ORPCError('InternalServerError', {
+				message: 'Failed to get user role',
+				cause: err,
+			});
+		}
+	}
+
 	async listFollowers(_userId: string, data: dto.ListFollowersInput) {
 		const offset = Pagination.getOffset(data);
 

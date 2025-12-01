@@ -23,6 +23,27 @@ export const contract = {
 			successDescription: 'Created',
 			tags: ['Users'],
 		}),
+	getRole: oc
+		.input(dto.getRoleInput)
+		.output(dto.getRoleOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'GET',
+			path: '/users/me/role',
+			summary: 'Get User Role',
+			description: 'Retrieve the role of the currently authenticated user',
+			successStatus: 200,
+			successDescription: 'OK',
+			tags: ['Users'],
+		}),
 	get: oc
 		.input(dto.getInput)
 		.output(dto.getOutput)

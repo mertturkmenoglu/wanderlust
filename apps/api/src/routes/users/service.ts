@@ -71,6 +71,14 @@ export class UsersService {
 		};
 	}
 
+	async getRole(userId: string): Promise<dto.GetRoleOutput> {
+		const result = await this.repo.getRole(userId);
+
+		return {
+			role: result.role,
+		};
+	}
+
 	async listFollowers(
 		userId: string,
 		data: dto.ListFollowersInput,
