@@ -745,7 +745,7 @@ export const $ = {
 			}),
 		username: z
 			.string()
-			.min(1)
+			.min(4)
 			.max(32)
 			.meta({
 				description: 'Unique username of the user',
