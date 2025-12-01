@@ -14,7 +14,7 @@
 		"db:studio": "bunx --bun drizzle-kit studio",
 		"db:generate": "bunx --bun drizzle-kit generate",
 		"db:migrate": "bunx --bun drizzle-kit migrate",
-		"fake:generate":"bun run src/scripts/fake/index.ts"
+		"fake:generate": "bun run src/scripts/fake/index.ts"
 	},
 	"dependencies": {
 		"@orpc/client": "^1.11.3",
@@ -24,12 +24,12 @@
 		"@orpc/zod": "^1.11.3",
 		"bentocache": "^1.5.0",
 		"better-auth": "^1.4.1",
+		"bullmq": "^5.65.0",
 		"drizzle-orm": "^0.44.7",
 		"drizzle-zod": "^0.8.3",
 		"file-type": "^21.1.1",
 		"flydrive": "^1.3.0",
 		"handlebars": "^4.7.8",
-		"inngest": "^3.46.0",
 		"nanoid": "^5.1.6",
 		"nodemailer": "^7.0.10",
 		"pg": "^8.16.3",
