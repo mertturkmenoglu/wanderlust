@@ -5,6 +5,7 @@ import * as schema from '../../db/schema';
 import { ConfigProvider, type TConfig } from '../config';
 import { Container, type IServiceProvider } from '../di';
 import { JobsProvider, type TJobsService } from '../jobs';
+import { nanoid } from '../uid';
 
 export class AuthProvider implements IServiceProvider<TAuthService> {
 	private readonly instance: TAuthService;
@@ -81,6 +82,35 @@ function init(db: TDatabaseService, jobs: TJobsService, cfg: TConfig) {
 				});
 			},
 		},
+		socialProviders: {
+			google: {
+				clientId: process.env.GOOGLE_CLIENT_ID as string,
+				clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+				prompt: 'select_account',
+				mapProfileToUser: (profile: TGoogleUser): TUser => {
+					return {
+						email: profile.email,
+						image: profile.picture,
+						name: profile.name,
+						username: profile.email.split('@')[0] ?? nanoid(10),
+					};
+				},
+			},
+			facebook: {
+				clientId: process.env.FACEBOOK_CLIENT_ID as string,
+				clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
+				prompt: 'select_account',
+				scope: ['email', 'public_profile'],
+				mapProfileToUser: (profile: TFacebookUser): TUser => {
+					return {
+						email: profile.email,
+						image: profile.picture.data.url,
+						name: profile.name,
+						username: profile.email.split('@')[0] ?? nanoid(10),
+					};
+				},
+			},
+		},
 		advanced: {
 			defaultCookieAttributes: {
 				sameSite: 'Lax',
@@ -90,5 +120,28 @@ function init(db: TDatabaseService, jobs: TJobsService, cfg: TConfig) {
 		},
 	});
 }
+
+type TUser = {
+	email: string;
+	image: string;
+	name: string;
+	username: string;
+};
+
+type TGoogleUser = {
+	email: string;
+	picture: string;
+	name: string;
+};
+
+type TFacebookUser = {
+	email: string;
+	picture: {
+		data: {
+			url: string;
+		};
+	};
+	name: string;
+};
 
 export type TAuthService = ReturnType<typeof init>;
