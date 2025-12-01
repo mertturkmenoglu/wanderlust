@@ -56,16 +56,23 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
-  wl-inngest:
-    container_name: wl-inngest
-    image: inngest/inngest
+  wl-redis:
+    image: redis:7.4.0-alpine
+    container_name: wl-redis
     restart: unless-stopped
+    networks:
+      - wl-redisnet
     ports:
-      - 8288:8288
-    command: inngest dev -u http://host.docker.internal:5000/api/v3/inngest
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   wl-searchnet:
+  wl-redisnet:
 
 volumes:
   wl-pg-data:
