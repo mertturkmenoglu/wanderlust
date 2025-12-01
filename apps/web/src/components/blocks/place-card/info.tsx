@@ -21,7 +21,7 @@ export function Info() {
 				</div>
 
 				<div className="line-clamp-1 text-muted-foreground text-sm">
-					{place.address.city.name} / {place.address.city.country.name}
+					{place.address.city.name} / {place.address.city.countryName}
 				</div>
 			</div>
 
