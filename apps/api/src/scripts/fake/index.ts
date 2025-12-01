@@ -1,3 +1,4 @@
+import { bootstrapServices } from '@/ioc';
 import { generate as generateAddresses } from './handlers/addresses';
 import { generate as generateAssets } from './handlers/assets';
 import { generate as generateBookmarks } from './handlers/bookmarks';
@@ -73,6 +74,7 @@ const steps: Step[] = [
 ];
 
 async function main() {
+	await bootstrapServices();
 	const start = Date.now();
 
 	for (const step of steps) {
@@ -89,13 +91,13 @@ async function main() {
 			'Step',
 			step,
 			'completed in',
-			stepElapsed.toString(2),
+			stepElapsed.toFixed(2),
 			'seconds',
 		);
 	}
 
 	const elapsed = (Date.now() - start) / 1000;
-	console.log('Total elapsed time:', elapsed.toString(2), 'seconds');
+	console.log('Total elapsed time:', elapsed.toFixed(2), 'seconds');
 }
 
 await main();
