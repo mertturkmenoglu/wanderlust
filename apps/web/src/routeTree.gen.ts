@@ -44,7 +44,6 @@ import { Route as CitiesSplatIndexRouteImport } from './routes/cities/$/index'
 import { Route as CIdIndexRouteImport } from './routes/c/$id/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
-import { Route as AuthForgotPasswordIndexRouteImport } from './routes/_auth/forgot-password/index'
 import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
 import { Route as UUsernameListsIndexRouteImport } from './routes/u/$username/lists/index'
 import { Route as UUsernameFollowingIndexRouteImport } from './routes/u/$username/following/index'
@@ -55,7 +54,8 @@ import { Route as TripsIdParticipantsIndexRouteImport } from './routes/trips/$id
 import { Route as TripsIdEditIndexRouteImport } from './routes/trips/$id/edit/index'
 import { Route as TripsIdCommentsIndexRouteImport } from './routes/trips/$id/comments/index'
 import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/index'
-import { Route as AuthForgotPasswordResetIndexRouteImport } from './routes/_auth/forgot-password/reset/index'
+import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
+import { Route as AuthPasswordForgotIndexRouteImport } from './routes/_auth/password/forgot/index'
 import { Route as TripsIdParticipantsInvitesIndexRouteImport } from './routes/trips/$id/participants/invites/index'
 import { Route as TripsIdParticipantsInvitesNewIndexRouteImport } from './routes/trips/$id/participants/invites/new/index'
 
@@ -234,11 +234,6 @@ const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
   path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthForgotPasswordIndexRoute = AuthForgotPasswordIndexRouteImport.update({
-  id: '/_auth/forgot-password/',
-  path: '/forgot-password/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const UUsernameReviewsIndexRoute = UUsernameReviewsIndexRouteImport.update({
   id: '/reviews/',
   path: '/reviews/',
@@ -291,12 +286,16 @@ const ListsIdEditIndexRoute = ListsIdEditIndexRouteImport.update({
   path: '/lists/$id/edit/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthForgotPasswordResetIndexRoute =
-  AuthForgotPasswordResetIndexRouteImport.update({
-    id: '/_auth/forgot-password/reset/',
-    path: '/forgot-password/reset/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const AuthPasswordResetIndexRoute = AuthPasswordResetIndexRouteImport.update({
+  id: '/_auth/password/reset/',
+  path: '/password/reset/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthPasswordForgotIndexRoute = AuthPasswordForgotIndexRouteImport.update({
+  id: '/_auth/password/forgot/',
+  path: '/password/forgot/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TripsIdParticipantsInvitesIndexRoute =
   TripsIdParticipantsInvitesIndexRouteImport.update({
     id: '/participants/invites/',
@@ -330,7 +329,6 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
-  '/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/c/$id': typeof CIdIndexRoute
@@ -347,7 +345,8 @@ export interface FileRoutesByFullPath {
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
-  '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/password/forgot': typeof AuthPasswordForgotIndexRoute
+  '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
@@ -377,7 +376,6 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
-  '/forgot-password': typeof AuthForgotPasswordIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/c/$id': typeof CIdIndexRoute
@@ -394,7 +392,8 @@ export interface FileRoutesByTo {
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
-  '/forgot-password/reset': typeof AuthForgotPasswordResetIndexRoute
+  '/password/forgot': typeof AuthPasswordForgotIndexRoute
+  '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
@@ -429,7 +428,6 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
-  '/_auth/forgot-password/': typeof AuthForgotPasswordIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/c/$id/': typeof CIdIndexRoute
@@ -446,7 +444,8 @@ export interface FileRoutesById {
   '/trips/my-trips/': typeof TripsMyTripsIndexRoute
   '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
-  '/_auth/forgot-password/reset/': typeof AuthForgotPasswordResetIndexRoute
+  '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
+  '/_auth/password/reset/': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit/': typeof TripsIdEditIndexRoute
@@ -482,7 +481,6 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms'
     | '/trips/'
-    | '/forgot-password'
     | '/sign-in'
     | '/sign-up'
     | '/c/$id'
@@ -499,7 +497,8 @@ export interface FileRouteTypes {
     | '/trips/my-trips'
     | '/trips/planner'
     | '/u/$username/'
-    | '/forgot-password/reset'
+    | '/password/forgot'
+    | '/password/reset'
     | '/lists/$id/edit'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
@@ -529,7 +528,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/trips'
-    | '/forgot-password'
     | '/sign-in'
     | '/sign-up'
     | '/c/$id'
@@ -546,7 +544,8 @@ export interface FileRouteTypes {
     | '/trips/my-trips'
     | '/trips/planner'
     | '/u/$username'
-    | '/forgot-password/reset'
+    | '/password/forgot'
+    | '/password/reset'
     | '/lists/$id/edit'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
@@ -580,7 +579,6 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
-    | '/_auth/forgot-password/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
     | '/c/$id/'
@@ -597,7 +595,8 @@ export interface FileRouteTypes {
     | '/trips/my-trips/'
     | '/trips/planner/'
     | '/u/$username/'
-    | '/_auth/forgot-password/reset/'
+    | '/_auth/password/forgot/'
+    | '/_auth/password/reset/'
     | '/lists/$id/edit/'
     | '/trips/$id/comments/'
     | '/trips/$id/edit/'
@@ -629,7 +628,6 @@ export interface RootRouteChildren {
   ReportIndexRoute: typeof ReportIndexRoute
   SearchIndexRoute: typeof SearchIndexRoute
   TermsIndexRoute: typeof TermsIndexRoute
-  AuthForgotPasswordIndexRoute: typeof AuthForgotPasswordIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
   CIdIndexRoute: typeof CIdIndexRoute
@@ -638,7 +636,8 @@ export interface RootRouteChildren {
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
-  AuthForgotPasswordResetIndexRoute: typeof AuthForgotPasswordResetIndexRoute
+  AuthPasswordForgotIndexRoute: typeof AuthPasswordForgotIndexRoute
+  AuthPasswordResetIndexRoute: typeof AuthPasswordResetIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
 }
 
@@ -889,13 +888,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/forgot-password/': {
-      id: '/_auth/forgot-password/'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof AuthForgotPasswordIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/u/$username/reviews/': {
       id: '/u/$username/reviews/'
       path: '/reviews'
@@ -966,11 +958,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListsIdEditIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/forgot-password/reset/': {
-      id: '/_auth/forgot-password/reset/'
-      path: '/forgot-password/reset'
-      fullPath: '/forgot-password/reset'
-      preLoaderRoute: typeof AuthForgotPasswordResetIndexRouteImport
+    '/_auth/password/reset/': {
+      id: '/_auth/password/reset/'
+      path: '/password/reset'
+      fullPath: '/password/reset'
+      preLoaderRoute: typeof AuthPasswordResetIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/password/forgot/': {
+      id: '/_auth/password/forgot/'
+      path: '/password/forgot'
+      fullPath: '/password/forgot'
+      preLoaderRoute: typeof AuthPasswordForgotIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trips/$id/participants/invites/': {
@@ -1089,7 +1088,6 @@ const rootRouteChildren: RootRouteChildren = {
   ReportIndexRoute: ReportIndexRoute,
   SearchIndexRoute: SearchIndexRoute,
   TermsIndexRoute: TermsIndexRoute,
-  AuthForgotPasswordIndexRoute: AuthForgotPasswordIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
   CIdIndexRoute: CIdIndexRoute,
@@ -1098,7 +1096,8 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
-  AuthForgotPasswordResetIndexRoute: AuthForgotPasswordResetIndexRoute,
+  AuthPasswordForgotIndexRoute: AuthPasswordForgotIndexRoute,
+  AuthPasswordResetIndexRoute: AuthPasswordResetIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
 }
 export const routeTree = rootRouteImport
