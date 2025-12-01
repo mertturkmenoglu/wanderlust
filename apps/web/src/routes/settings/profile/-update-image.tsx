@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { UploadIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -10,6 +11,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+import { orpc } from '@/lib/orpc';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -24,12 +26,14 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 		image === null ? fallbackImage : image,
 	);
 	const [file, setFile] = useState<File | null>(null);
-	const mutation = api.useMutation('post', '/api/v2/users/image/{type}', {
-		onSuccess: () => {
-			toast.success('Image updated');
-			globalThis.window.location.reload();
-		},
-	});
+	const mutation = useMutation(
+		orpc.users.updateImage.mutationOptions({
+			onSuccess: () => {
+				toast.success('Image updated');
+				globalThis.window.location.reload();
+			},
+		}),
+	);
 
 	return (
 		<div className="ml-auto flex max-w-xl gap-4">
@@ -95,60 +99,9 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 									return;
 								}
 
-								const form = new FormData();
-
-								form.append('files', file);
-
-								const ext = file.type.split('/')[1];
-
-								if (ext !== 'png' && ext !== 'jpg' && ext !== 'jpeg') {
-									toast.error('Only PNG, JPG, and JPEG are supported');
-									return;
-								}
-
-								// Get presigned URL
-								const res = await fetchClient.GET('/api/v2/assets/upload/', {
-									params: {
-										query: {
-											assetType: 'image',
-											bucket:
-												action === 'profile'
-													? 'profile-images'
-													: 'banner-images',
-											fileExt: ext,
-										},
-									},
-								});
-
-								if (res.error) {
-									toast.error('Something went wrong');
-									return;
-								}
-
-								// Upload file to S3
-								const s3Res = await fetch(
-									`${res.data.url}&bucket=profile-images`,
-									{
-										method: 'PUT',
-										body: file,
-									},
-								);
-
-								if (!s3Res.ok) {
-									toast.error('Something went wrong');
-									return;
-								}
-
 								mutation.mutate({
-									params: {
-										path: {
-											type: action,
-										},
-									},
-									body: {
-										id: res.data.id,
-										fileName: `${res.data.id}.${ext}`,
-									},
+									type: action,
+									file: file,
 								});
 							}}
 							disabled={!file || mutation.isPending}
