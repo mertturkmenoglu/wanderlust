@@ -12,9 +12,9 @@ export const ioc = new Container();
 export async function bootstrapServices() {
 	await ioc.provideAsync(ConfigProvider.id, ConfigProvider.createInstance(ioc));
 	ioc.provide(DatabaseProvider.id, new DatabaseProvider(ioc).get());
-	ioc.provide(JobsProvider.id, new JobsProvider(ioc).get());
 	ioc.provide(StorageProvider.id, new StorageProvider(ioc).get());
 	ioc.provide(EmailProvider.id, new EmailProvider(ioc).get());
 	ioc.provide(CacheProvider.id, new CacheProvider(ioc).get());
+	ioc.provide(JobsProvider.id, new JobsProvider(ioc).get());
 	ioc.provide(AuthProvider.id, new AuthProvider(ioc).get());
 }
