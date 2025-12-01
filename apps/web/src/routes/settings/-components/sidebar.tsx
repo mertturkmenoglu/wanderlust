@@ -1,5 +1,6 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { authClient } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 
 type Item = {
 	text: string;
@@ -27,7 +28,13 @@ const items = [
 
 export function Sidebar() {
 	const isDev = import.meta.env.DEV;
-	const session = authClient.useSession();
+	const {
+		data: { role },
+	} = useSuspenseQuery(
+		orpc.users.getRole.queryOptions({
+			input: {},
+		}),
+	);
 
 	const links = items.filter((x) => {
 		const protectedRoutes = ['/admin', '/dashboard'];
@@ -37,11 +44,11 @@ export function Sidebar() {
 		}
 
 		if (x.href === '/admin') {
-			return isDev && session.data?.user.role === 'admin';
+			return isDev && role === 'admin';
 		}
 
 		if (x.href === '/dashboard') {
-			return auth.user?.role === 'admin';
+			return role === 'admin';
 		}
 
 		return false;
@@ -51,6 +58,7 @@ export function Sidebar() {
 		<nav className="grid gap-4 text-muted-foreground text-sm">
 			{links.map((el) => (
 				<Link
+					// @ts-expect-error There will be errors temporarily until we finish migrating
 					to={el.href}
 					activeProps={{
 						className: 'font-semibold text-primary',
