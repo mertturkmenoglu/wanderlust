@@ -18,40 +18,44 @@ async function main() {
 	const server = Bun.serve({
 		port: config.api.port,
 		async fetch(request) {
-			if (request.method === 'OPTIONS') {
-				return withCors(new Response(null, { status: 204 }));
-			}
-
 			const start = performance.now();
-			const url = new URL(request.url);
 
-			if (url.pathname.startsWith('/uploads')) {
-				return new Response(Bun.file(`./${url.pathname}`));
-			}
+			const res = await (async () => {
+				if (request.method === 'OPTIONS') {
+					return withCors(new Response(null, { status: 204 }));
+				}
 
-			if (url.pathname.startsWith('/api/auth/')) {
-				const res = await auth.handler(request);
-				return withCors(res);
-			}
+				const url = new URL(request.url);
 
-			const isRpcRequest = url.pathname.startsWith('/rpc');
-			const handler = isRpcRequest ? rpc : api;
-			const prefix = isRpcRequest ? '/rpc' : '/api';
+				if (url.pathname.startsWith('/uploads')) {
+					return new Response(Bun.file(`./${url.pathname}`));
+				}
 
-			const res = await handler.handle(request, {
-				prefix,
-				// @ts-expect-error Context type inference
-				context: await createContext({ request, ioc }),
-			});
+				if (url.pathname.startsWith('/api/auth/')) {
+					const res = await auth.handler(request);
+					return withCors(res);
+				}
 
-			const response = res.matched
-				? res.response
-				: new Response('Not Found', { status: 404 });
+				const isRpcRequest = url.pathname.startsWith('/rpc');
+				const handler = isRpcRequest ? rpc : api;
+
+				const res = await handler.handle(request, {
+					prefix: isRpcRequest ? '/rpc' : '/api',
+					// @ts-expect-error Context type inference
+					context: await createContext({ request, ioc }),
+				});
+
+				const response = res.matched
+					? res.response
+					: new Response('Not Found', { status: 404 });
+
+				return withCors(response);
+			})();
 
 			const duration = Math.round(performance.now() - start);
 
-			logger(request, response, duration);
-			return withCors(response);
+			logger(request, res, duration);
+			return res;
 		},
 	});
 
