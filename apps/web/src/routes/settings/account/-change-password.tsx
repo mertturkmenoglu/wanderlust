@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -18,7 +19,7 @@ import {
 	InputGroupInput,
 } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
-import { api } from '@/lib/api';
+import { authClient } from '@/lib/auth';
 import { normalizeMultipleErrors } from '@/lib/form';
 
 const schema = z
@@ -112,7 +113,17 @@ export function ChangePasswordForm() {
 		criteriaMode: 'all',
 	});
 
-	const mutation = api.useMutation('post', '/api/v2/auth/password/change', {
+	const mutation = useMutation({
+		mutationKey: ['change-password'],
+		mutationFn: async (data: { body: z.infer<typeof schema> }) => {
+			await authClient.changePassword({
+				currentPassword: data.body.currentPassword,
+				newPassword: data.body.newPassword,
+				fetchOptions: {
+					throw: true,
+				},
+			});
+		},
 		onSuccess: () => {
 			toast.success('Password changed successfully.');
 		},
