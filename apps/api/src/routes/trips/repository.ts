@@ -444,7 +444,7 @@ export class TripsRepository {
 	async getInviteDetails(userId: string, data: dto.GetInviteDetailsInput) {
 		try {
 			const result = await this.db.query.tripInvites.findFirst({
-				where: (t, { eq, and }) => and(eq(t.id, data.id), eq(t.toId, userId)),
+				where: (t, { eq, and }) => and(eq(t.id, data.inviteId), eq(t.toId, userId)),
 				with: {
 					fromUser: {
 						columns: {
