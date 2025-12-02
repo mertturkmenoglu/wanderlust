@@ -1,8 +1,12 @@
+import type { TCacheService } from '@/lib/cache';
 import type * as dto from './dto';
 import type { CitiesRepository } from './repository';
 
 export class CitiesService {
-	constructor(private readonly repository: CitiesRepository) {}
+	constructor(
+		private readonly repository: CitiesRepository,
+		private readonly cache: TCacheService,
+	) {}
 
 	async list(): Promise<dto.ListOutput> {
 		const result = await this.repository.list();
@@ -13,7 +17,11 @@ export class CitiesService {
 	}
 
 	async listFeatured(): Promise<dto.ListFeaturedOutput> {
-		const result = await this.repository.listFeatured();
+		const result = await this.cache.getOrSet({
+			key: 'cities:featured',
+			ttl: '1h',
+			factory: () => this.repository.listFeatured(),
+		});
 
 		return {
 			cities: result,
