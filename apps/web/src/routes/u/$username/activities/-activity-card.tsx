@@ -26,11 +26,11 @@ function ActivityCard({ activity: { type, payload } }: Props) {
 					<Link
 						to="/p/$id"
 						params={{
-							id: payload.poiId,
+							id: payload.placeId,
 						}}
 						className="text-primary"
 					>
-						{payload.poiName}
+						{payload.placeName}
 					</Link>{' '}
 					to favorites.
 				</div>
@@ -65,10 +65,10 @@ function ActivityCard({ activity: { type, payload } }: Props) {
 					Reviewed{' '}
 					<Link
 						to="/p/$id"
-						params={{ id: payload.poiId }}
+						params={{ id: payload.placeId }}
 						className="text-primary"
 					>
-						{payload.poiName}
+						{payload.placeName}
 					</Link>
 					<span className="ml-2">{payload.rating} stars</span>
 				</div>

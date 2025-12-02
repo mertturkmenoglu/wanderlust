@@ -32,39 +32,39 @@ const routing: RouterProps = {
 	stateMapping: {
 		// @ts-expect-error TODO: fix it
 		stateToRoute(uiState) {
-			const s = uiState.pois;
+			const s = uiState.places;
 			return {
 				q: s?.query,
 				page: s?.page,
 				pageSize: s?.hitsPerPage,
-				category: serializeParams(s?.refinementList?.['poi.category.name']),
-				amenity: serializeParams(s?.refinementList?.['poi.amenities.name']),
-				price: serializeParams(s?.refinementList?.['poi.priceLevel']),
-				a11y: serializeParams(s?.refinementList?.['poi.accessibilityLevel']),
+				category: serializeParams(s?.refinementList?.['place.category.name']),
+				amenity: serializeParams(s?.refinementList?.['place.amenities']),
+				price: serializeParams(s?.refinementList?.['place.priceLevel']),
+				a11y: serializeParams(s?.refinementList?.['place.accessibilityLevel']),
 				state: serializeParams(
-					s?.refinementList?.['poi.address.city.state.name'],
+					s?.refinementList?.['place.address.city.stateName'],
 				),
-				city: serializeParams(s?.refinementList?.['poi.address.city.name']),
+				city: serializeParams(s?.refinementList?.['place.address.city.name']),
 				country: serializeParams(
-					s?.refinementList?.['poi.address.city.country.name'],
+					s?.refinementList?.['place.address.city.countryName'],
 				),
 			};
 		},
 		// @ts-expect-error TODO: fix it
 		routeToState(routeState) {
 			return {
-				pois: {
+				places: {
 					query: routeState.q,
 					page: routeState.page,
 					hitsPerPage: routeState.pageSize,
 					refinementList: {
-						'poi.category.name': deserializeParams(routeState.category),
-						'poi.amenities.name': deserializeParams(routeState.amenity),
-						'poi.priceLevel': deserializeParams(routeState.price),
-						'poi.accessibilityLevel': deserializeParams(routeState.a11y),
-						'poi.address.city.state.name': deserializeParams(routeState.state),
-						'poi.address.city.name': deserializeParams(routeState.city),
-						'poi.address.city.country.name': deserializeParams(
+						'place.category.name': deserializeParams(routeState.category),
+						'place.amenities': deserializeParams(routeState.amenity),
+						'place.priceLevel': deserializeParams(routeState.price),
+						'place.accessibilityLevel': deserializeParams(routeState.a11y),
+						'place.address.city.stateName': deserializeParams(routeState.state),
+						'place.address.city.name': deserializeParams(routeState.city),
+						'place.address.city.countryName': deserializeParams(
 							routeState.country,
 						),
 					},
@@ -80,7 +80,7 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto my-16 max-w-7xl">
 			<InstantSearch
-				indexName="pois"
+				indexName="places"
 				searchClient={searchClient}
 				routing={routing}
 				future={{

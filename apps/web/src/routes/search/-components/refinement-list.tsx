@@ -11,13 +11,13 @@ import { cn } from '@/lib/utils';
 
 type Props = {
 	attribute:
-		| 'poi.category.name'
-		| 'poi.priceLevel'
-		| 'poi.accessibilityLevel'
-		| 'poi.address.city.state.name'
-		| 'poi.address.city.name'
-		| 'poi.amenities.name'
-		| 'poi.address.city.country.name';
+		| 'place.category.name'
+		| 'place.priceLevel'
+		| 'place.accessibilityLevel'
+		| 'place.address.city.stateName'
+		| 'place.address.city.name'
+		| 'place.amenities'
+		| 'place.address.city.countryName';
 	className?: string;
 };
 
@@ -58,8 +58,8 @@ function getAccessibilityLevelLabel(x: number): string {
 }
 
 export function RefinementList({ attribute, className }: Props) {
-	const limit = attribute === 'poi.category.name' ? 10 : 5;
-	const showMoreLimit = attribute === 'poi.category.name' ? 20 : 10;
+	const limit = attribute === 'place.category.name' ? 10 : 5;
+	const showMoreLimit = attribute === 'place.category.name' ? 20 : 10;
 
 	const {
 		canToggleShowMore,
@@ -79,19 +79,19 @@ export function RefinementList({ attribute, className }: Props) {
 
 	const title = useMemo(() => {
 		switch (attribute) {
-			case 'poi.category.name':
+			case 'place.category.name':
 				return 'Categories';
-			case 'poi.priceLevel':
+			case 'place.priceLevel':
 				return 'Price Level';
-			case 'poi.accessibilityLevel':
+			case 'place.accessibilityLevel':
 				return 'Accessibility Level';
-			case 'poi.address.city.state.name':
+			case 'place.address.city.stateName':
 				return 'States';
-			case 'poi.address.city.name':
+			case 'place.address.city.name':
 				return 'Cities';
-			case 'poi.amenities.name':
+			case 'place.amenities':
 				return 'Amenities';
-			case 'poi.address.city.country.name':
+			case 'place.address.city.countryName':
 				return 'Countries';
 			default:
 				return attribute;
@@ -100,7 +100,7 @@ export function RefinementList({ attribute, className }: Props) {
 
 	const searchPlaceholder = useMemo(() => {
 		switch (attribute) {
-			case 'poi.category.name':
+			case 'place.category.name':
 				return 'Search a category';
 			default:
 				return attribute;
@@ -108,23 +108,23 @@ export function RefinementList({ attribute, className }: Props) {
 	}, [attribute]);
 
 	const showInput = useMemo(() => {
-		const searchable: Attribute[] = ['poi.category.name'];
+		const searchable: Attribute[] = ['place.category.name'];
 		return searchable.includes(attribute);
 	}, [attribute]);
 
 	const shouldRenderButton = useMemo(() => {
 		const dontRenderButton: Attribute[] = [
-			'poi.priceLevel',
-			'poi.accessibilityLevel',
+			'place.priceLevel',
+			'place.accessibilityLevel',
 		];
 		return !dontRenderButton.includes(attribute);
 	}, [attribute]);
 
 	const getLabel = (item: RefinementListItem) => {
 		switch (attribute) {
-			case 'poi.priceLevel':
+			case 'place.priceLevel':
 				return getPriceLevelLabel(+item.value);
-			case 'poi.accessibilityLevel':
+			case 'place.accessibilityLevel':
 				return getAccessibilityLevelLabel(+item.value);
 			default:
 				return item.label;

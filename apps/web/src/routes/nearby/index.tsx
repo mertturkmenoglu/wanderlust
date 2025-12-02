@@ -17,7 +17,7 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto my-16 max-w-7xl">
 			<h2 className="font-bold text-2xl">Nearby Locations</h2>
-			<InstantSearch indexName="pois" searchClient={searchClient} routing>
+			<InstantSearch indexName="places" searchClient={searchClient} routing>
 				<Container />
 			</InstantSearch>
 		</div>

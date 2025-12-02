@@ -29,19 +29,19 @@ export function Filters() {
 				</div>
 			</div>
 
-			<RefinementList attribute="poi.category.name" />
+			<RefinementList attribute="place.category.name" />
 
-			<RefinementList attribute="poi.amenities.name" />
+			<RefinementList attribute="place.amenities" />
 
-			<RefinementList attribute="poi.priceLevel" />
+			<RefinementList attribute="place.priceLevel" />
 
-			<RefinementList attribute="poi.accessibilityLevel" />
+			<RefinementList attribute="place.accessibilityLevel" />
 
-			<RefinementList attribute="poi.address.city.state.name" />
+			<RefinementList attribute="place.address.city.stateName" />
 
-			<RefinementList attribute="poi.address.city.name" />
+			<RefinementList attribute="place.address.city.name" />
 
-			<RefinementList attribute="poi.address.city.country.name" />
+			<RefinementList attribute="place.address.city.countryName" />
 		</>
 	);
 }

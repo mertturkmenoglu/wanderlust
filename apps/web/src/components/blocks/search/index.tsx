@@ -26,7 +26,7 @@ export function Search({
 			)}
 		>
 			<InstantSearch
-				indexName="pois"
+				indexName="places"
 				searchClient={searchClient}
 				routing={false}
 				future={{

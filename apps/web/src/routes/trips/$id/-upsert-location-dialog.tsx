@@ -169,7 +169,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 										onClick={() => {
 											navigate({
 												to: '.',
-												search: (prev) => ({ ...prev, poiId: undefined }),
+												search: (prev) => ({ ...prev, placeId: undefined }),
 											});
 										}}
 									>
@@ -238,7 +238,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 							</div>
 						) : (
 							<InstantSearch
-								indexName="pois"
+								indexName="places"
 								searchClient={searchClient}
 								routing={false}
 								future={{
@@ -252,7 +252,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 									onCardClick={(v) => {
 										navigate({
 											to: '.',
-											search: (prev) => ({ ...prev, poiId: v.id }),
+											search: (prev) => ({ ...prev, placeId: v.id }),
 										});
 									}}
 								/>
