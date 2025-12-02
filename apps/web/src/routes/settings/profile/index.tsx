@@ -33,7 +33,8 @@ function RouteComponent() {
 		resolver: zodResolver(schema),
 		defaultValues: {
 			fullName: user.name,
-			bio: user.bio ?? '',
+			bio: user.bio ?? undefined,
+			website: user.website ?? undefined,
 		},
 	});
 
@@ -78,12 +79,10 @@ function RouteComponent() {
 
 			<form
 				onSubmit={form.handleSubmit((data) => {
-					const bio = data.bio === '' ? null : data.bio;
-
 					mutation.mutate({
-						bio: bio,
+						bio: data.bio || null,
 						name: data.fullName,
-						website: data.website,
+						website: data.website || null,
 					});
 				})}
 				className="mt-4 grid grid-cols-3 gap-4 md:gap-8"
