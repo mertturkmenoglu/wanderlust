@@ -18,6 +18,18 @@ export class UsersRepository {
 		url: string,
 	) {
 		try {
+			const user = await this.db.query.users.findFirst({
+				where: (t, { eq }) => eq(t.id, userId),
+			});
+
+			if (!user) {
+				throw new ORPCError('NotFound', {
+					message: `User with id ${userId} not found`,
+				});
+			}
+
+			const previousUrl = type === 'profile' ? user.image : user.banner;
+
 			await this.db
 				.update(schema.users)
 				.set(type === 'profile' ? { image: url } : { banner: url })
@@ -35,6 +47,7 @@ export class UsersRepository {
 
 			return {
 				profile: result,
+				previousUrl,
 			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
