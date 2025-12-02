@@ -118,6 +118,13 @@ function init(db: TDatabaseService, jobs: TJobsService, cfg: TConfig) {
 				httpOnly: true,
 			},
 		},
+		session: {
+			cookieCache: {
+				enabled: true,
+				maxAge: 5 * 60,
+				strategy: 'compact',
+			},
+		},
 	});
 }
 
