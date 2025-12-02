@@ -4,6 +4,7 @@ import { AppMessage } from '@/components/blocks/app-message';
 import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
 import { Spinner } from '@/components/ui/spinner';
 import { orpc } from '@/lib/orpc';
+import { EmptyState } from './-components/empty';
 import { TripItem } from './-components/item';
 
 export const Route = createFileRoute('/trips/my-trips/')({
@@ -54,14 +55,7 @@ function Content() {
 	const trips = query.data.pages.flatMap((page) => page.trips);
 
 	if (trips.length === 0) {
-		return (
-			<AppMessage
-				emptyMessage="You haven't created or joined any trips yet"
-				backLink="/trips"
-				backLinkText="Go to Trips page"
-				className="my-16"
-			/>
-		);
+		return <EmptyState />;
 	}
 
 	return (
