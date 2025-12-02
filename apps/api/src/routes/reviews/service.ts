@@ -3,7 +3,11 @@ import path from 'node:path';
 import { ORPCError } from '@orpc/server';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import type { TCacheService } from '@/lib/cache';
-import { getFilenameFromUrl, type TStorageService } from '@/lib/storage';
+import {
+	createPathname,
+	getFilenameFromUrl,
+	type TStorageService,
+} from '@/lib/storage';
 import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
 import type { ReviewsRepository } from './repository';
@@ -79,6 +83,10 @@ export class ReviewsService {
 
 		const result = await this.repo.create(userId, data, urls);
 
+		await this.cache.namespace('reviews-ratings').delete({
+			key: `place-${data.placeId}`,
+		});
+
 		return {
 			review: result,
 		};
@@ -93,7 +101,7 @@ export class ReviewsService {
 			});
 		}
 
-		await this.repo._delete(userId, data);
+		const deleted = await this.repo._delete(userId, data);
 
 		try {
 			const filenames = existing.assets.map((asset) =>
@@ -102,12 +110,17 @@ export class ReviewsService {
 
 			if (filenames.length > 0) {
 				for (const filename of filenames) {
-					await this.storage.delete(`reviews/${filename}`);
+					const pathname = createPathname('reviews', filename);
+					await this.storage.delete(pathname);
 				}
 			}
 		} catch (err) {
 			console.error('Failed to delete review assets from storage', err);
 		}
+
+		await this.cache.namespace('reviews-ratings').delete({
+			key: `place-${deleted.placeId}`,
+		});
 	}
 
 	async listByUsername(
