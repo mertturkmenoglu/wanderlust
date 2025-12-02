@@ -1,5 +1,5 @@
 import { ORPCError } from '@orpc/client';
-import { and, count, eq, gte, lte } from 'drizzle-orm';
+import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 import type { TDatabaseService } from '@/db';
 import * as schema from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
@@ -87,6 +87,14 @@ export class ReviewsRepository {
 					);
 				}
 
+				await this.db
+					.update(schema.places)
+					.set({
+						totalVotes: sql`${schema.places.totalVotes} + 1`,
+						totalPoints: sql`${schema.places.totalPoints} + ${data.rating}`,
+					})
+					.where(eq(schema.places.id, data.placeId));
+
 				const res = await tx.query.reviews.findFirst({
 					where: (reviews, { eq }) => eq(reviews.id, review.id),
 					with: {
@@ -126,15 +134,22 @@ export class ReviewsRepository {
 
 	async _delete(userId: string, data: dto.DeleteInput) {
 		try {
-			await this.db.transaction(async (tx) => {
-				await tx
+			return await this.db.transaction(async (tx) => {
+				const [deleted] = await tx
 					.delete(schema.reviews)
 					.where(
 						and(
 							eq(schema.reviews.id, data.id),
 							eq(schema.reviews.userId, userId),
 						),
-					);
+					)
+					.returning();
+
+				if (!deleted) {
+					throw new ORPCError('NOT_FOUND', {
+						message: `Review with id ${data.id} not found or you are not authorized to delete it`,
+					});
+				}
 
 				await tx
 					.delete(schema.assets)
@@ -144,6 +159,16 @@ export class ReviewsRepository {
 							eq(schema.assets.entityType, 'review'),
 						),
 					);
+
+				await tx
+					.update(schema.places)
+					.set({
+						totalVotes: sql`${schema.places.totalVotes} - 1`,
+						totalPoints: sql`${schema.places.totalPoints} - ${deleted.rating}`,
+					})
+					.where(eq(schema.places.id, deleted.placeId));
+
+					return deleted;
 			});
 		} catch (err) {
 			if (err instanceof ORPCError) {
