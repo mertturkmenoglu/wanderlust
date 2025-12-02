@@ -162,10 +162,10 @@ export const followOutput = z.object({
 
 export type FollowOutput = z.infer<typeof followOutput>;
 
-export const updateInput = profile.pick({
-	name: true,
-	bio: true,
-	website: true,
+export const updateInput = z.object({
+	name: profile.pick({ name: true }).shape.name,
+	bio: profile.pick({ bio: true }).shape.bio,
+	website: profile.pick({ website: true }).shape.website,
 });
 
 export type UpdateInput = z.infer<typeof updateInput>;
