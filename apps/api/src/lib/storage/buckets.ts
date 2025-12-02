@@ -1,7 +1,9 @@
 export const buckets = [
 	// Add buckets here
 	'default',
-	'avatars',
+	'profile-images',
+	'banner-images',
+	'reviews',
 ] as const;
 
 export const Buckets: Record<string, Bucket> = Object.fromEntries(
