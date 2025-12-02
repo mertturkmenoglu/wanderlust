@@ -1,7 +1,12 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/client';
 import { fileTypeFromBlob } from 'file-type';
-import type { TStorageService } from '@/lib/storage';
+import {
+	createPathname,
+	getFilenameFromUrl,
+	type TStorageService,
+} from '@/lib/storage';
+import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
 import type { UsersRepository } from './repository';
 
@@ -25,7 +30,7 @@ export class UsersService {
 
 		const filepath = path.join(
 			data.type === 'profile' ? 'profile-images' : 'banner-images',
-			`${userId}.${res.ext}`,
+			`${nanoid()}.${res.ext}`,
 		);
 
 		try {
@@ -39,6 +44,25 @@ export class UsersService {
 
 			const url = await this.storage.getUrl(filepath);
 			const result = await this.repo.updateImage(userId, data.type, url);
+
+			try {
+				if (result.previousUrl) {
+					const filename = getFilenameFromUrl(result.previousUrl);
+
+					if (filename !== '') {
+						const pathname = createPathname(
+							data.type ? 'profile-images' : 'banner-images',
+							filename,
+						);
+						await this.storage.delete(pathname);
+					}
+				}
+			} catch (err) {
+				// If the deletion fails and the previous URL is not null, then log the error but do not fail the whole operation
+				if (result.previousUrl !== null) {
+					console.error('Failed to delete previous image from storage', err);
+				}
+			}
 
 			return {
 				profile: result.profile,
