@@ -217,8 +217,8 @@ export class TripsRepository {
 				.offset(offset)
 				.limit(data.pageSize);
 
-			// Get unique trip IDs
-			const ids = [...new Set(...idsResult.map((r) => r.id)).values()];
+			// Get unique trip ids
+			const ids = Array.from(new Set(idsResult.map((r) => r.id)));
 
 			const trips = await this.db.query.trips.findMany({
 				where: (t, { inArray }) => inArray(t.id, ids),
