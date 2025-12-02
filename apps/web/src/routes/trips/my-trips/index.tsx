@@ -2,10 +2,9 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { AppMessage } from '@/components/blocks/app-message';
 import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
-import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { orpc } from '@/lib/orpc';
-import { TripCard } from './-components/card';
+import { TripItem } from './-components/item';
 
 export const Route = createFileRoute('/trips/my-trips/')({
 	component: RouteComponent,
@@ -66,12 +65,9 @@ function Content() {
 	}
 
 	return (
-		<div className="mt-8">
-			{trips.map((trip, i) => (
-				<div key={trip.id}>
-					<TripCard trip={trip} />
-					{i !== trips.length - 1 && <Separator className="my-1" />}
-				</div>
+		<div className="mt-4">
+			{trips.map((trip) => (
+				<TripItem key={trip.id} trip={trip} />
 			))}
 		</div>
 	);
