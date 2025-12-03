@@ -468,14 +468,16 @@ export class ListsRepository {
 					.delete(schema.listItems)
 					.where(eq(schema.listItems.listId, data.id));
 
-				// Insert new items
-				await tx.insert(schema.listItems).values(
-					data.placeIds.map((placeId, index) => ({
-						listId: data.id,
-						placeId: placeId,
-						index: index + 1,
-					})),
-				);
+				if (data.placeIds.length > 0) {
+					// Insert new items
+					await tx.insert(schema.listItems).values(
+						data.placeIds.map((placeId, index) => ({
+							listId: data.id,
+							placeId: placeId,
+							index: index + 1,
+						})),
+					);
+				}
 			});
 
 			const updatedList = await this.db.query.lists.findFirst({
