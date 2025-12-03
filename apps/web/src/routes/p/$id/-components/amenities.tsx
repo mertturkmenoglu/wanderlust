@@ -55,6 +55,7 @@ import {
 	WindIcon,
 	WineIcon,
 } from 'lucide-react';
+import { amenitiesDisplayNames } from '@/lib/amenities';
 import { cn } from '@/lib/utils';
 
 type LucideIconType = typeof WifiIcon;
@@ -135,17 +136,16 @@ export function Amenities({ className }: Props) {
 				{isEmpty ? (
 					<EmptyState />
 				) : (
-					amenities.map((amenity) => (
-						<Item key={amenity} id={amenity} name={amenity} />
-					))
+					amenities.map((amenity) => <Item key={amenity} id={amenity} />)
 				)}
 			</div>
 		</div>
 	);
 }
 
-function Item({ id, name }: { id: string; name: string }) {
+function Item({ id }: { id: string }) {
 	const Icon = iconMapping.get(id) ?? CheckIcon;
+	const displayName = amenitiesDisplayNames.get(id) ?? id;
 
 	return (
 		<div className="flex items-center gap-2">
@@ -153,11 +153,11 @@ function Item({ id, name }: { id: string; name: string }) {
 			<Link
 				to="/search"
 				search={{
-					amenity: name,
+					amenity: id,
 				}}
 				className="line-clamp-2 text-muted-foreground text-sm hover:text-primary hover:underline"
 			>
-				{name}
+				{displayName}
 			</Link>
 		</div>
 	);

@@ -7,6 +7,7 @@ import { useRefinementList } from 'react-instantsearch';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { amenitiesDisplayNames } from '@/lib/amenities';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -126,6 +127,8 @@ export function RefinementList({ attribute, className }: Props) {
 				return getPriceLevelLabel(+item.value);
 			case 'place.accessibilityLevel':
 				return getAccessibilityLevelLabel(+item.value);
+			case 'place.amenities':
+				return amenitiesDisplayNames.get(item.value) ?? item.value;
 			default:
 				return item.label;
 		}
