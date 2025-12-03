@@ -45,6 +45,9 @@ export function CreateListDialog({
 }: Props) {
 	const form = useForm({
 		resolver: zodResolver(schema),
+		defaultValues: {
+			isPublic: false,
+		},
 	});
 
 	const mutation = useMutation(
