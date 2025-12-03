@@ -95,6 +95,7 @@ export function AddToListButton() {
 											className="wrap-break-word"
 										>
 											{listStatus.name}
+											{listStatus.includes ? ' (Already added)' : ''}
 										</SelectItem>
 									))}
 								</SelectContent>
