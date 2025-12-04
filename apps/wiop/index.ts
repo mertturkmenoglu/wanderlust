@@ -20,6 +20,7 @@ const server = Bun.serve({
 	fetch: (request) => {
 		return handler(request);
 	},
+	idleTimeout: 10,
 });
 
 console.log(
