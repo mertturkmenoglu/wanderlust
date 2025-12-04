@@ -8,11 +8,24 @@ export type Props = {
 		place: {
 			id: string;
 			address: {
+				id: number;
+				cityId: number;
+				line1: string;
+				line2: string | null;
+				postalCode: string | null;
+				lat: number;
+				lng: number;
 				city: {
 					id: number;
 					name: string;
 					countryName: string;
+					countryCode: string;
 					stateName: string;
+					stateCode: string;
+					image: string;
+					lat: number;
+					lng: number;
+					description: string;
 				};
 			};
 			amenities: string[];
@@ -24,6 +37,12 @@ export type Props = {
 			assets: {
 				id: number;
 				url: string;
+				entityType: 'place' | 'review';
+				entityId: string;
+				description: string | null;
+				order: number;
+				createdAt: string;
+				updatedAt: string;
 			}[];
 		};
 	};
