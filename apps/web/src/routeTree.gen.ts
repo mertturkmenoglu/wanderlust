@@ -59,9 +59,11 @@ import { Route as TripsIdCommentsIndexRouteImport } from './routes/trips/$id/com
 import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/index'
 import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
 import { Route as AuthPasswordForgotIndexRouteImport } from './routes/_auth/password/forgot/index'
+import { Route as AdminDashboardReportsIndexRouteImport } from './routes/_admin/dashboard/reports/index'
 import { Route as AdminDashboardCitiesIndexRouteImport } from './routes/_admin/dashboard/cities/index'
 import { Route as AdminDashboardCategoriesIndexRouteImport } from './routes/_admin/dashboard/categories/index'
 import { Route as TripsIdParticipantsInvitesIndexRouteImport } from './routes/trips/$id/participants/invites/index'
+import { Route as AdminDashboardReportsIdIndexRouteImport } from './routes/_admin/dashboard/reports/$id/index'
 import { Route as AdminDashboardCitiesNewIndexRouteImport } from './routes/_admin/dashboard/cities/new/index'
 import { Route as AdminDashboardCitiesIdIndexRouteImport } from './routes/_admin/dashboard/cities/$id/index'
 import { Route as AdminDashboardCategoriesNewIndexRouteImport } from './routes/_admin/dashboard/categories/new/index'
@@ -322,6 +324,12 @@ const AuthPasswordForgotIndexRoute = AuthPasswordForgotIndexRouteImport.update({
   path: '/password/forgot/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardReportsIndexRoute =
+  AdminDashboardReportsIndexRouteImport.update({
+    id: '/reports/',
+    path: '/reports/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
 const AdminDashboardCitiesIndexRoute =
   AdminDashboardCitiesIndexRouteImport.update({
     id: '/cities/',
@@ -339,6 +347,12 @@ const TripsIdParticipantsInvitesIndexRoute =
     id: '/participants/invites/',
     path: '/participants/invites/',
     getParentRoute: () => TripsIdRoute,
+  } as any)
+const AdminDashboardReportsIdIndexRoute =
+  AdminDashboardReportsIdIndexRouteImport.update({
+    id: '/reports/$id/',
+    path: '/reports/$id/',
+    getParentRoute: () => AdminDashboardRoute,
   } as any)
 const AdminDashboardCitiesNewIndexRoute =
   AdminDashboardCitiesNewIndexRouteImport.update({
@@ -424,6 +438,7 @@ export interface FileRoutesByFullPath {
   '/u/$username/': typeof UUsernameIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
+  '/dashboard/reports': typeof AdminDashboardReportsIndexRoute
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
@@ -440,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/categories/new': typeof AdminDashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id': typeof AdminDashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof AdminDashboardCitiesNewIndexRoute
+  '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -481,6 +497,7 @@ export interface FileRoutesByTo {
   '/u/$username': typeof UUsernameIndexRoute
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
+  '/dashboard/reports': typeof AdminDashboardReportsIndexRoute
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
@@ -497,6 +514,7 @@ export interface FileRoutesByTo {
   '/dashboard/categories/new': typeof AdminDashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id': typeof AdminDashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof AdminDashboardCitiesNewIndexRoute
+  '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -544,6 +562,7 @@ export interface FileRoutesById {
   '/u/$username/': typeof UUsernameIndexRoute
   '/_admin/dashboard/categories/': typeof AdminDashboardCategoriesIndexRoute
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
+  '/_admin/dashboard/reports/': typeof AdminDashboardReportsIndexRoute
   '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/_auth/password/reset/': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
@@ -560,6 +579,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/categories/new/': typeof AdminDashboardCategoriesNewIndexRoute
   '/_admin/dashboard/cities/$id/': typeof AdminDashboardCitiesIdIndexRoute
   '/_admin/dashboard/cities/new/': typeof AdminDashboardCitiesNewIndexRoute
+  '/_admin/dashboard/reports/$id/': typeof AdminDashboardReportsIdIndexRoute
   '/trips/$id/participants/invites/': typeof TripsIdParticipantsInvitesIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/_admin/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -608,6 +628,7 @@ export interface FileRouteTypes {
     | '/u/$username/'
     | '/dashboard/categories'
     | '/dashboard/cities'
+    | '/dashboard/reports'
     | '/password/forgot'
     | '/password/reset'
     | '/lists/$id/edit'
@@ -624,6 +645,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories/new'
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
+    | '/dashboard/reports/$id'
     | '/trips/$id/participants/invites'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
@@ -665,6 +687,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/dashboard/categories'
     | '/dashboard/cities'
+    | '/dashboard/reports'
     | '/password/forgot'
     | '/password/reset'
     | '/lists/$id/edit'
@@ -681,6 +704,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories/new'
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
+    | '/dashboard/reports/$id'
     | '/trips/$id/participants/invites'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
@@ -727,6 +751,7 @@ export interface FileRouteTypes {
     | '/u/$username/'
     | '/_admin/dashboard/categories/'
     | '/_admin/dashboard/cities/'
+    | '/_admin/dashboard/reports/'
     | '/_auth/password/forgot/'
     | '/_auth/password/reset/'
     | '/lists/$id/edit/'
@@ -743,6 +768,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/categories/new/'
     | '/_admin/dashboard/cities/$id/'
     | '/_admin/dashboard/cities/new/'
+    | '/_admin/dashboard/reports/$id/'
     | '/trips/$id/participants/invites/'
     | '/_admin/dashboard/categories/$id/edit/'
     | '/_admin/dashboard/cities/$id/edit/'
@@ -1133,6 +1159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthPasswordForgotIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/dashboard/reports/': {
+      id: '/_admin/dashboard/reports/'
+      path: '/reports'
+      fullPath: '/dashboard/reports'
+      preLoaderRoute: typeof AdminDashboardReportsIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
+    }
     '/_admin/dashboard/cities/': {
       id: '/_admin/dashboard/cities/'
       path: '/cities'
@@ -1153,6 +1186,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/trips/$id/participants/invites'
       preLoaderRoute: typeof TripsIdParticipantsInvitesIndexRouteImport
       parentRoute: typeof TripsIdRoute
+    }
+    '/_admin/dashboard/reports/$id/': {
+      id: '/_admin/dashboard/reports/$id/'
+      path: '/reports/$id'
+      fullPath: '/dashboard/reports/$id'
+      preLoaderRoute: typeof AdminDashboardReportsIdIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
     }
     '/_admin/dashboard/cities/new/': {
       id: '/_admin/dashboard/cities/new/'
@@ -1268,10 +1308,12 @@ interface AdminDashboardRouteChildren {
   AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
   AdminDashboardCategoriesIndexRoute: typeof AdminDashboardCategoriesIndexRoute
   AdminDashboardCitiesIndexRoute: typeof AdminDashboardCitiesIndexRoute
+  AdminDashboardReportsIndexRoute: typeof AdminDashboardReportsIndexRoute
   AdminDashboardCategoriesIdIndexRoute: typeof AdminDashboardCategoriesIdIndexRoute
   AdminDashboardCategoriesNewIndexRoute: typeof AdminDashboardCategoriesNewIndexRoute
   AdminDashboardCitiesIdIndexRoute: typeof AdminDashboardCitiesIdIndexRoute
   AdminDashboardCitiesNewIndexRoute: typeof AdminDashboardCitiesNewIndexRoute
+  AdminDashboardReportsIdIndexRoute: typeof AdminDashboardReportsIdIndexRoute
   AdminDashboardCategoriesIdEditIndexRoute: typeof AdminDashboardCategoriesIdEditIndexRoute
   AdminDashboardCitiesIdEditIndexRoute: typeof AdminDashboardCitiesIdEditIndexRoute
 }
@@ -1280,10 +1322,12 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardIndexRoute: AdminDashboardIndexRoute,
   AdminDashboardCategoriesIndexRoute: AdminDashboardCategoriesIndexRoute,
   AdminDashboardCitiesIndexRoute: AdminDashboardCitiesIndexRoute,
+  AdminDashboardReportsIndexRoute: AdminDashboardReportsIndexRoute,
   AdminDashboardCategoriesIdIndexRoute: AdminDashboardCategoriesIdIndexRoute,
   AdminDashboardCategoriesNewIndexRoute: AdminDashboardCategoriesNewIndexRoute,
   AdminDashboardCitiesIdIndexRoute: AdminDashboardCitiesIdIndexRoute,
   AdminDashboardCitiesNewIndexRoute: AdminDashboardCitiesNewIndexRoute,
+  AdminDashboardReportsIdIndexRoute: AdminDashboardReportsIdIndexRoute,
   AdminDashboardCategoriesIdEditIndexRoute:
     AdminDashboardCategoriesIdEditIndexRoute,
   AdminDashboardCitiesIdEditIndexRoute: AdminDashboardCitiesIdEditIndexRoute,
