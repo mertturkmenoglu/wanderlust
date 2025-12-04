@@ -104,8 +104,8 @@ export const listByPlaceIdInput = Pagination.queryParamsSchema
 			minRating: z
 				.number()
 				.int()
-				.min(1)
-				.max(5)
+				.min(0)
+				.max(4)
 				.optional()
 				.meta({
 					description: 'Minimum rating filter',

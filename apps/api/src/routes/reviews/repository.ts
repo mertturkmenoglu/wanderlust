@@ -168,7 +168,7 @@ export class ReviewsRepository {
 					})
 					.where(eq(schema.places.id, deleted.placeId));
 
-					return deleted;
+				return deleted;
 			});
 		} catch (err) {
 			if (err instanceof ORPCError) {
@@ -253,10 +253,10 @@ export class ReviewsRepository {
 
 		try {
 			const result = await this.db.query.reviews.findMany({
-				where: (reviews, { eq, and, gte, lte }) =>
+				where: (reviews, { eq, and, gt, lte }) =>
 					and(
 						eq(reviews.placeId, data.id),
-						gte(reviews.rating, min),
+						gt(reviews.rating, min),
 						lte(reviews.rating, max),
 					),
 				with: {
