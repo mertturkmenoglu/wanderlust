@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
 import { AppMessage } from '@/components/blocks/app-message';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { PlaceCard } from '@/components/blocks/place-card';
 import { env } from '@/lib/env';
-import { ipx } from '@/lib/ipx';
 import { cn } from '@/lib/utils';
 import type { Props as THit } from '@/routes/search/-components/hit';
 
@@ -60,9 +59,9 @@ export function NearbyPlaces({ className }: Props) {
 				<h3 className="font-semibold text-xl tracking-tight">
 					Nearby Locations
 				</h3>
-				<ScrollArea>
-					<div className="my-4 flex gap-8">
-						{(query.data.hits ?? []).slice(0, 6).map(({ document: p }) => (
+				<div className="">
+					<div className="my-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+						{(query.data.hits ?? []).slice(0, 5).map(({ document: p }) => (
 							<Link
 								to="/p/$id"
 								params={{
@@ -70,36 +69,24 @@ export function NearbyPlaces({ className }: Props) {
 								}}
 								key={p.place.id}
 							>
-								<div className="group w-[256px]">
-									<img
-										src={ipx(p.place.assets[0]?.url ?? '', 'w_512')}
-										alt=""
-										className="aspect-video w-full rounded-md object-cover"
-									/>
-
-									<div className="my-2">
-										<div className="mt-2 line-clamp-1 font-semibold text-lg capitalize">
-											{p.name}
-										</div>
-										<div className="line-clamp-1 text-muted-foreground text-sm">
-											{p.place.address.city.name} /{' '}
-											{p.place.address.city.countryName}
-										</div>
-									</div>
-
-									<div>
-										<div className="flex-1 space-y-2">
-											<div className="text-primary text-sm">
-												{p.place.category.name}
-											</div>
-										</div>
-									</div>
-								</div>
+								<PlaceCard
+									place={{
+										...p.place,
+										name: p.name,
+										totalVotes: 0,
+										totalPoints: 0,
+										assets: p.place.assets.map((a) => ({
+											...a,
+											createdAt: new Date(a.createdAt),
+											updatedAt: new Date(a.updatedAt),
+										})),
+									}}
+								/>
 							</Link>
 						))}
 					</div>
-					<ScrollBar orientation="horizontal" className="mt-8" />
-				</ScrollArea>
+					{/* <ScrollBar orientation="horizontal" className="mt-8" /> */}
+				</div>
 			</div>
 		);
 	}
