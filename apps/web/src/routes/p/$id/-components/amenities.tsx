@@ -132,7 +132,7 @@ export function Amenities({ className }: Props) {
 	return (
 		<div className={cn(className)}>
 			<h3 className="font-semibold text-xl tracking-tight">Amenities</h3>
-			<div className="mt-4 grid grid-cols-2 gap-4">
+			<div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
 				{isEmpty ? (
 					<EmptyState />
 				) : (
