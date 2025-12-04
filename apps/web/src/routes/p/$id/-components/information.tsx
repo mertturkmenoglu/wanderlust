@@ -1,8 +1,12 @@
-// oxlint-disable prefer-optional-catch-binding
-// oxlint-disable no-unused-vars
-
 import { getRouteApi } from '@tanstack/react-router';
-import { ExternalLinkIcon } from 'lucide-react';
+import {
+	BikeIcon,
+	CarFrontIcon,
+	ExternalLinkIcon,
+	PersonStandingIcon,
+	TramFrontIcon,
+} from 'lucide-react';
+import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item';
 import { cn } from '@/lib/utils';
 import { OpenHoursDialog } from './open-hours-dialog';
 
@@ -23,6 +27,7 @@ export function Information({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
 	const [host, ok] = useWebsiteHostname(place.website ?? '');
+	const gmDirBase = `https://maps.google.com/?saddr=Current+Location&daddr=${place.address.lat},${place.address.lng}`;
 
 	return (
 		<div className={cn(className)}>
@@ -70,6 +75,68 @@ export function Information({ className }: Props) {
 				<div className="text-right">
 					<OpenHoursDialog />
 				</div>
+			</div>
+
+			<h3 className="mt-4 font-semibold text-xl tracking-tight">
+				How to get here
+			</h3>
+
+			<div className="mt-4 grid grid-cols-2 gap-4">
+				<a
+					href={`${gmDirBase}&mode=transit&dirflg=r`}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<Item variant="outline" size="sm">
+						<ItemMedia variant="icon">
+							<TramFrontIcon />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>Transit</ItemTitle>
+						</ItemContent>
+					</Item>
+				</a>
+
+				<a
+					href={`${gmDirBase}&mode=bicycling&dirflg=b`}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<Item variant="outline" size="sm">
+						<ItemMedia variant="icon">
+							<BikeIcon />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>Cycling</ItemTitle>
+						</ItemContent>
+					</Item>
+				</a>
+
+				<a
+					href={`${gmDirBase}&dirflg=w`}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<Item variant="outline" size="sm">
+						<ItemMedia variant="icon">
+							<PersonStandingIcon />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>Walking</ItemTitle>
+						</ItemContent>
+					</Item>
+				</a>
+
+				<a href={`${gmDirBase}`} target="_blank" rel="noopener noreferrer">
+					<Item variant="outline" size="sm">
+						<ItemMedia variant="icon">
+							<CarFrontIcon />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>Driving</ItemTitle>
+						</ItemContent>
+					</Item>
+				</a>
 			</div>
 		</div>
 	);
