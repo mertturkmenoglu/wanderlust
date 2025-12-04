@@ -1,8 +1,8 @@
-import type { SetStateAction } from 'jotai';
 import {
 	createContext,
 	type Dispatch,
 	type PropsWithChildren,
+	type SetStateAction,
 	useContext,
 	useState,
 } from 'react';
