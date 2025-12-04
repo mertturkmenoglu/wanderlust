@@ -1,5 +1,3 @@
-// oxlint-disable avoid-new
-
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
@@ -101,7 +99,7 @@ export function Container() {
 							{items.map((item) => (
 								<Link
 									to="/p/$id"
-									key={item.place.id}
+									key={`item-${item.place.id}`}
 									params={{
 										id: item.place.id,
 									}}

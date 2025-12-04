@@ -17,6 +17,7 @@ export function GeoSearch(props: UseGeoSearchProps) {
 				northEast: target.getBounds().getNorthEast(),
 				southWest: target.getBounds().getSouthWest(),
 			});
+			setItemIndex(-1);
 		},
 		[refine],
 	);
@@ -36,7 +37,7 @@ export function GeoSearch(props: UseGeoSearchProps) {
 		<>
 			{items.map((item, i) => (
 				<Marker
-					key={item.objectID}
+					key={`marker-${item.objectID}`}
 					latitude={item._geoloc.lat}
 					longitude={item._geoloc.lng}
 					onClick={(e) => {
@@ -46,10 +47,11 @@ export function GeoSearch(props: UseGeoSearchProps) {
 				/>
 			))}
 
-			{itemIndex !== -1 && (
+			{itemIndex !== -1 && items[itemIndex] && (
 				<Popup
-					latitude={items[itemIndex]!._geoloc.lat}
-					longitude={items[itemIndex]!._geoloc.lng}
+					onClose={() => setItemIndex(-1)}
+					latitude={items[itemIndex]._geoloc.lat}
+					longitude={items[itemIndex]._geoloc.lng}
 					className="flex min-w-md items-center text-primary!"
 				>
 					<Link
