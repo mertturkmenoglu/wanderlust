@@ -1,3 +1,4 @@
+import { ArrowRightIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -8,6 +9,13 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemMedia,
+	ItemTitle,
+} from '@/components/ui/item';
 
 type Props = {
 	type: 'city' | 'collection' | 'amenity' | 'category' | 'draft' | 'report';
@@ -18,9 +26,19 @@ export function DeleteDialog({ type, onClick }: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button variant="destructive" size="sm">
-					Delete
-				</Button>
+				<Item variant="outline" className="cursor-pointer hover:bg-muted">
+					<ItemMedia variant="icon">
+						<Trash2Icon className="text-destructive" />
+					</ItemMedia>
+					<ItemContent>
+						<ItemTitle className="text-destructive">Delete {type}</ItemTitle>
+					</ItemContent>
+					<ItemActions>
+						<Button variant="ghost">
+							<ArrowRightIcon className="text-destructive" />
+						</Button>
+					</ItemActions>
+				</Item>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
