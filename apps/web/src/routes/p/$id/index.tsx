@@ -50,23 +50,23 @@ function RouteComponent() {
 
 			<Separator className="my-4" />
 
-			<MapComponent />
+			<div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-16">
+				<Information className="col-span-1" />
 
-			<Separator className="my-4" />
-
-			<CityInfo className="my-4" />
-
-			<Separator className="my-4" />
-
-			<div className="my-4 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-2">
-				<Amenities className="col-span-2" />
-
-				<Information />
+				<MapComponent className="col-span-2" />
 			</div>
 
 			<Separator className="my-4" />
 
-			<NearbyPlaces className="my-4" />
+			<Amenities className="" />
+
+			<Separator className="my-4" />
+
+			<NearbyPlaces className="col-span-2" />
+
+			<Separator className="my-4" />
+
+			<CityInfo className="my-4" />
 
 			<Separator className="my-4" />
 
