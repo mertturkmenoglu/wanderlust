@@ -28,6 +28,8 @@ import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
 import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
 import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as TripsIdRouteImport } from './routes/trips/$id'
+import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
+import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
 import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexRouteImport } from './routes/trips/planner/index'
 import { Route as TripsMyTripsIndexRouteImport } from './routes/trips/my-trips/index'
@@ -44,6 +46,7 @@ import { Route as CitiesSplatIndexRouteImport } from './routes/cities/$/index'
 import { Route as CIdIndexRouteImport } from './routes/c/$id/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
+import { Route as AdminDashboardIndexRouteImport } from './routes/_admin/dashboard/index'
 import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
 import { Route as UUsernameListsIndexRouteImport } from './routes/u/$username/lists/index'
 import { Route as UUsernameFollowingIndexRouteImport } from './routes/u/$username/following/index'
@@ -154,6 +157,16 @@ const TripsIdRoute = TripsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => TripsRoute,
 } as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/_admin/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAdminRoute = AdminAdminRouteImport.update({
+  id: '/_admin/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UUsernameIndexRoute = UUsernameIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -233,6 +246,11 @@ const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
   id: '/_auth/sign-in/',
   path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminDashboardRoute,
 } as any)
 const UUsernameReviewsIndexRoute = UUsernameReviewsIndexRouteImport.update({
   id: '/reviews/',
@@ -314,6 +332,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/wip': typeof WipRoute
+  '/admin': typeof AdminAdminRoute
+  '/dashboard': typeof AdminDashboardRouteWithChildren
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks': typeof BookmarksIndexRoute
@@ -329,6 +349,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/dashboard/': typeof AdminDashboardIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/c/$id': typeof CIdIndexRoute
@@ -363,6 +384,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/wip': typeof WipRoute
+  '/admin': typeof AdminAdminRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/help': typeof HelpIndexRoute
@@ -376,6 +398,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
+  '/dashboard': typeof AdminDashboardIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
   '/c/$id': typeof CIdIndexRoute
@@ -413,6 +436,8 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/wip': typeof WipRoute
+  '/_admin/admin': typeof AdminAdminRoute
+  '/_admin/dashboard': typeof AdminDashboardRouteWithChildren
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
@@ -428,6 +453,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/_admin/dashboard/': typeof AdminDashboardIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/c/$id/': typeof CIdIndexRoute
@@ -466,6 +492,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/trips'
     | '/wip'
+    | '/admin'
+    | '/dashboard'
     | '/trips/$id'
     | '/u/$username'
     | '/bookmarks'
@@ -481,6 +509,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms'
     | '/trips/'
+    | '/dashboard/'
     | '/sign-in'
     | '/sign-up'
     | '/c/$id'
@@ -515,6 +544,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/wip'
+    | '/admin'
     | '/bookmarks'
     | '/categories'
     | '/help'
@@ -528,6 +558,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/terms'
     | '/trips'
+    | '/dashboard'
     | '/sign-in'
     | '/sign-up'
     | '/c/$id'
@@ -564,6 +595,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/trips'
     | '/wip'
+    | '/_admin/admin'
+    | '/_admin/dashboard'
     | '/trips/$id'
     | '/u/$username'
     | '/bookmarks/'
@@ -579,6 +612,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
+    | '/_admin/dashboard/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
     | '/c/$id/'
@@ -616,6 +650,8 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   TripsRoute: typeof TripsRouteWithChildren
   WipRoute: typeof WipRoute
+  AdminAdminRoute: typeof AdminAdminRoute
+  AdminDashboardRoute: typeof AdminDashboardRouteWithChildren
   UUsernameRoute: typeof UUsernameRouteWithChildren
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
@@ -776,6 +812,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdRouteImport
       parentRoute: typeof TripsRoute
     }
+    '/_admin/dashboard': {
+      id: '/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin/admin': {
+      id: '/_admin/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/u/$username/': {
       id: '/u/$username/'
       path: '/'
@@ -887,6 +937,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sign-in'
       preLoaderRoute: typeof AuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_admin/dashboard/': {
+      id: '/_admin/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AdminDashboardIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
     }
     '/u/$username/reviews/': {
       id: '/u/$username/reviews/'
@@ -1047,6 +1104,18 @@ const TripsRouteChildren: TripsRouteChildren = {
 
 const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
 
+interface AdminDashboardRouteChildren {
+  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
+}
+
+const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
+  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
+}
+
+const AdminDashboardRouteWithChildren = AdminDashboardRoute._addFileChildren(
+  AdminDashboardRouteChildren,
+)
+
 interface UUsernameRouteChildren {
   UUsernameIndexRoute: typeof UUsernameIndexRoute
   UUsernameActivitiesIndexRoute: typeof UUsernameActivitiesIndexRoute
@@ -1076,6 +1145,8 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   TripsRoute: TripsRouteWithChildren,
   WipRoute: WipRoute,
+  AdminAdminRoute: AdminAdminRoute,
+  AdminDashboardRoute: AdminDashboardRouteWithChildren,
   UUsernameRoute: UUsernameRouteWithChildren,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
