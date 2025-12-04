@@ -58,7 +58,6 @@ export function Sidebar() {
 		<nav className="grid gap-4 text-muted-foreground text-sm">
 			{links.map((el) => (
 				<Link
-					// @ts-expect-error There will be errors temporarily until we finish migrating
 					to={el.href}
 					activeProps={{
 						className: 'font-semibold text-primary',
