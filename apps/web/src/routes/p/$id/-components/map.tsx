@@ -3,9 +3,14 @@ import { ExternalLinkIcon } from 'lucide-react';
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
 import { Button } from '@/components/ui/button';
 import { createStyle } from '@/lib/map';
+import { cn } from '@/lib/utils';
 import mapPinIcon from '@/map-pin.svg';
 
-export function MapComponent() {
+type Props = {
+	className?: string;
+};
+
+export function MapComponent({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
 	const lat = place.address.lat;
@@ -13,7 +18,7 @@ export function MapComponent() {
 	const zoom = 17;
 
 	return (
-		<div>
+		<div className={cn(className)}>
 			<div className="flex items-end justify-between">
 				<h3 className="font-semibold text-xl">Location</h3>
 				<Button variant="link" className="px-0" size="sm" asChild>
