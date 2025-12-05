@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useRouteContext } from '@tanstack/react-router';
 import { formatDistanceToNow } from 'date-fns';
 import {
 	CheckIcon,
@@ -19,7 +20,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { authClient } from '@/lib/auth';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { type Outputs, orpc } from '@/lib/orpc';
@@ -30,8 +30,10 @@ type Props = {
 };
 
 export function Item({ comment, isPrivileged }: Props) {
-	const session = authClient.useSession();
-	const isOwner = comment.userId === session.data?.user.id;
+	const { auth } = useRouteContext({
+		from: '/trips/$id/comments/',
+	});
+	const isOwner = comment.userId === auth.user.id;
 	const invalidate = useInvalidator();
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [content, setContent] = useState(comment.content);
