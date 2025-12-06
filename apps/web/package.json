@@ -10,6 +10,8 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
+		"@dnd-kit/helpers": "^0.1.21",
+		"@dnd-kit/react": "^0.1.21",
 		"@hookform/resolvers": "^5.2.2",
 		"@mdxeditor/editor": "^3.48.0",
 		"@orpc/client": "^1.11.3",
