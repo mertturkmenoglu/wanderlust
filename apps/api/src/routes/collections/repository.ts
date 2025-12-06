@@ -3,6 +3,7 @@ import { and, eq, gt, sql } from 'drizzle-orm';
 import type { TDatabaseService } from '@/db';
 import * as schema from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
+import { codes, isPgError } from '@/lib/pgerr';
 import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
 
@@ -231,6 +232,14 @@ export class CollectionsRepository {
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;
+			}
+
+			if (isPgError(err)) {
+				if (err.cause.code === codes.UNIQUE_VIOLATION) {
+					throw new ORPCError('CONFLICT', {
+						message: `Item with place id ${data.placeId} already exists in collection ${data.id}`,
+					});
+				}
 			}
 
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
