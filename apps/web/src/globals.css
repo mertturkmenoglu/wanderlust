@@ -2,6 +2,8 @@
 
 @plugin "tailwindcss-animate";
 
+@source "../../../packages/ui";
+
 @custom-variant dark (&:is(.dark *));
 
 body {

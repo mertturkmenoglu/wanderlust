@@ -10,7 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
-import '@wanderlust/ui/globals.css';
+import './globals.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Spinner } from '@wanderlust/ui/components/spinner';
