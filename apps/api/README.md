@@ -1,15 +1,50 @@
-# api
+# Wanderlust API
 
-To install dependencies:
+## Prerequisites
+
+- Bun (https://bun.sh/)
+
+## Setup
+
+- Add `.env` file and fill the missing values (you can refer to `.env.example`).
+- Create `tmp` and `uploads` folders:
 
 ```bash
-bun install
+mkdir tmp uploads
 ```
 
-To run:
+- Start the Docker daemon and run:
 
 ```bash
-bun run src/index.ts
+docker compose up -d
 ```
 
-This project was created using `bun init` in bun v1.3.0. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+- Apply schema to the database:
+
+```bash
+bun run db:push
+```
+
+- Generate fake data:
+
+```bash
+bun run fake
+```
+
+- Sync primary database with Typesense:
+
+```bash
+bun run search
+```
+
+## Running
+
+- Run `bun dev` to start the development server.
+
+## Next Steps
+
+Inside the `docs` folder, you can find documentation files.
+
+Read these documentation files in this specific order:
+
+- `ipx.md`

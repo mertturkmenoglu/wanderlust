@@ -109,29 +109,15 @@ It's open source and free.
 ## Requirements
 
 - Docker (https://docs.docker.com/desktop/setup/install/linux/ubuntu/)
-- Go (https://go.dev/dl/)
-- sqlc (https://sqlc.dev/)
-- Just (https://github.com/casey/just)
-- Air (https://github.com/air-verse/air)
-- Goose (https://github.com/pressly/goose)
-- Node.js (https://nodejs.org/en/download)
-- pnpm (https://pnpm.io/installation)
-- Concurrently (https://www.npmjs.com/package/concurrently)
-
-Optional:
-
-- gosec (https://github.com/securego/gosec)
-- staticcheck (https://staticcheck.dev/docs/getting-started/)
+- Bun (https://bun.sh/)
 
 ## Installation and Running
 
-- Check each subproject's README file.
+- Check each subproject's README file AND **FOLLOW** THE INSTRUCTIONS IN ORDER.
 - Make sure you have all the requirements installed.
-  - You can run `requirements.sh` script to check if you have all the requirements installed.
-  - `chmod u+x ./requirements.sh && ./requirements.sh`
   - Start Docker service or Docker Desktop.
-- Run `just setup` to setup the project.
-- Run `just watch` to start the servers.
+- Run `bun install` to install dependencies.
+- Run `bun dev` to start the development servers.
 
 ## License
 
