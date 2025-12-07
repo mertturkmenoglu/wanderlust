@@ -14,7 +14,7 @@
 		"@dnd-kit/react": "^0.1.21",
 		"@hookform/resolvers": "^5.2.2",
 		"@mdxeditor/editor": "^3.48.0",
-		"@orpc/client": "^1.11.3",
+		"@orpc/client": "catalog:",
 		"@orpc/tanstack-query": "^1.11.3",
 		"@radix-ui/react-icons": "^1.3.2",
 		"@tailwindcss/vite": "^4.1.16",
@@ -31,7 +31,7 @@
 		"@zag-js/file-upload": "^1.26.4",
 		"@zag-js/rating-group": "^1.26.4",
 		"@zag-js/react": "^1.26.4",
-		"better-auth": "^1.4.3",
+		"better-auth": "catalog:",
 		"date-fns": "^4.1.0",
 		"instantsearch.css": "^8.6.0",
 		"instantsearch.js": "^4.81.0",
@@ -51,7 +51,7 @@
 		"tailwindcss-animate": "^1.0.7",
 		"typesense-instantsearch-adapter": "^2.9.0",
 		"yet-another-react-lightbox": "^3.25.0",
-		"zod": "^3.25.76",
+		"zod": "catalog:",
 		"zustand": "^5.0.8"
 	},
 	"devDependencies": {

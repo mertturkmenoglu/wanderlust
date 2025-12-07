@@ -18,13 +18,13 @@
 		"search": "bun run src/scripts/search/index.ts"
 	},
 	"dependencies": {
-		"@orpc/client": "^1.11.3",
-		"@orpc/contract": "^1.11.3",
-		"@orpc/openapi": "^1.11.3",
-		"@orpc/server": "^1.11.3",
-		"@orpc/zod": "^1.11.3",
+		"@orpc/client": "catalog:",
+		"@orpc/contract": "catalog:",
+		"@orpc/openapi": "catalog:",
+		"@orpc/server": "catalog:",
+		"@orpc/zod": "catalog:",
 		"bentocache": "^1.5.0",
-		"better-auth": "^1.4.1",
+		"better-auth": "catalog:",
 		"bullmq": "^5.65.0",
 		"drizzle-orm": "^0.44.7",
 		"drizzle-zod": "^0.8.3",
@@ -38,7 +38,7 @@
 		"sharp": "^0.34.5",
 		"superjson": "^2.2.5",
 		"typesense": "^2.1.0",
-		"zod": "^4.1.13"
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^10.1.0",
