@@ -19,7 +19,6 @@ const transformMap = {
 	gzip: zlib.createGzip,
 };
 
-// @ts-expect-error: Bun doesn't have CompressionStream yet
 globalThis.CompressionStream ??= class CompressionStream {
 	readable;
 	writable;
