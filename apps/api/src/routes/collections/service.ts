@@ -123,7 +123,7 @@ export class CollectionsService {
 		const result = await this.repo.listAllPlaceCollections(data);
 
 		return {
-			collections: result.collections,
+			relations: result.relations,
 			pagination: result.pagination,
 		};
 	}

@@ -692,7 +692,7 @@ export class CollectionsRepository {
 			const totalRecords = await this.db.$count(schema.collectionsPlaces);
 
 			return {
-				collections: result.map((x) => x.collection),
+				relations: result,
 				pagination: Pagination.compute(data, totalRecords),
 			};
 		} catch (err) {

@@ -234,7 +234,20 @@ export type ListAllPlaceCollectionsInput = z.infer<
 >;
 
 export const ListAllPlaceCollectionsOutput = z.object({
-	collections: collection.array(),
+	relations: z
+		.object({
+			createdAt: z.date(),
+			placeId: z.string(),
+			collectionId: z.string(),
+			index: z.number().int(),
+			collection: z.object({
+				id: z.string(),
+				name: z.string(),
+				createdAt: z.date(),
+				description: z.string(),
+			}),
+		})
+		.array(),
 	pagination: Pagination.schema,
 });
 
