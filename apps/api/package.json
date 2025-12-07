@@ -1,5 +1,5 @@
 {
-	"name": "api",
+	"name": "@wanderlust/api",
 	"module": "src/index.ts",
 	"type": "module",
 	"private": true,
@@ -45,10 +45,17 @@
 		"@types/bun": "latest",
 		"@types/nodemailer": "^7.0.4",
 		"@types/pg": "^8.15.6",
+		"@wanderlust/config": "workspace:*",
 		"drizzle-kit": "^0.31.7",
-		"tsdown": "^0.16.6"
+		"tsdown": "^0.16.6",
+		"typescript": "^5.9.3"
 	},
-	"peerDependencies": {
-		"typescript": "^5"
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
 	}
 }
