@@ -1,5 +1,5 @@
+import { cn } from '@wanderlust/ui/lib/utils';
 import { BadgeCheckIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

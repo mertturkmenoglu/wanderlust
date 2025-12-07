@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { PlaceCard } from '@/components/blocks/place-card';
-import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { PlaceCard } from '@/components/place-card';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

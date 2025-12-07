@@ -1,23 +1,26 @@
 import { useMutation } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { PlusIcon, SendHorizonalIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { UserImage } from '@/components/blocks/user-image';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@wanderlust/ui/components/badge';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+} from '@wanderlust/ui/components/collapsible';
+import { Label } from '@wanderlust/ui/components/label';
+import {
+	RadioGroup,
+	RadioGroupItem,
+} from '@wanderlust/ui/components/radio-group';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { PlusIcon, SendHorizonalIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { UserImage } from '@/components/user-image';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	image: string;

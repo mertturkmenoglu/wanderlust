@@ -1,13 +1,13 @@
 import { Link } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
-import { CollapsibleText } from '@/components/blocks/collapsible-text';
-import { UserImage } from '@/components/blocks/user-image';
-import { FormattedRating } from '@/components/kit/formatted-rating';
+import { CollapsibleText } from '@/components/collapsible-text';
+import { FormattedRating } from '@/components/formatted-rating';
+import { UserImage } from '@/components/user-image';
 import { ipx } from '@/lib/ipx';
 import type { Outputs } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 import { Menu } from './menu';
 
 type Props = {

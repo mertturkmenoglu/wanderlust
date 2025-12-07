@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import z from 'zod';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { reportsCols } from '@/components/blocks/dashboard/columns';
-import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
+import { reportsCols } from '@/components/dashboard/columns';
+import { DataTable } from '@/components/dashboard/data-table';
 
 const schema = z.object({
 	page: z.coerce.number().catch(1),

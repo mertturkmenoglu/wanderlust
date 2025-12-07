@@ -1,5 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouteContext } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@wanderlust/ui/components/dropdown-menu';
+import { Input } from '@wanderlust/ui/components/input';
 import { formatDistanceToNow } from 'date-fns';
 import {
 	CheckIcon,
@@ -10,15 +18,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { UserImage } from '@/components/blocks/user-image';
-import { Button } from '@/components/ui/button';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+import { UserImage } from '@/components/user-image';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';

@@ -1,5 +1,5 @@
+import { cn } from '@wanderlust/ui/lib/utils';
 import { CalendarIcon, MapPinnedIcon, UsersIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	type: 'participants' | 'days' | 'locations';

@@ -1,9 +1,9 @@
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
 

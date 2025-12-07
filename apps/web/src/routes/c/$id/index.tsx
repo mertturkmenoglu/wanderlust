@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import Markdown from 'react-markdown';
-import { AppMessage } from '@/components/blocks/app-message';
-import { PlaceCard } from '@/components/blocks/place-card';
+import { AppMessage } from '@/components/app-message';
+import { PlaceCard } from '@/components/place-card';
 
 export const Route = createFileRoute('/c/$id/')({
 	component: RouteComponent,

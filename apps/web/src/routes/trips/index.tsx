@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
 import { z } from 'zod';
-import { ErrorComponent } from '@/components/blocks/error-component';
-import { CreateDialog } from '@/components/blocks/trips/create-dialog';
-import { buttonVariants } from '@/components/ui/button';
+import { ErrorComponent } from '@/components/error-component';
+import { CreateDialog } from '@/components/trips/create-dialog';
 import { authGuard } from '@/lib/auth';
 
 const schema = z.object({

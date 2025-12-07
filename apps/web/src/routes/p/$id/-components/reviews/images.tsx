@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
-import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

@@ -1,14 +1,14 @@
 import { Link } from '@tanstack/react-router';
-import type { ComponentIcon } from 'lucide-react';
-import { ArrowRightIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
 	ItemContent,
 	ItemMedia,
 	ItemTitle,
-} from '@/components/ui/item';
+} from '@wanderlust/ui/components/item';
+import type { ComponentIcon } from 'lucide-react';
+import { ArrowRightIcon } from 'lucide-react';
 
 type TIcon = typeof ComponentIcon;
 

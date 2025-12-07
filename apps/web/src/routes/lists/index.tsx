@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { authGuard } from '@/lib/auth';
 import { EmptyState } from './-components/empty';

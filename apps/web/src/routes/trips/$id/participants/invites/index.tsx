@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi } from '@tanstack/react-router';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { AppMessage } from '@/components/app-message';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { orpc } from '@/lib/orpc';
 import { Header } from './-header';

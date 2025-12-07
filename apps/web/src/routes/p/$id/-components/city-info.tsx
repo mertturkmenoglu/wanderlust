@@ -1,7 +1,7 @@
 import { getRouteApi } from '@tanstack/react-router';
-import { CollapsibleText } from '@/components/blocks/collapsible-text';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { CollapsibleText } from '@/components/collapsible-text';
 import { ipx } from '@/lib/ipx';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

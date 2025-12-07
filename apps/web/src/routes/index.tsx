@@ -1,19 +1,19 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { ActionBanner } from '@/components/blocks/action-banner';
-import { OverlayBanner } from '@/components/blocks/overlay-banner';
-import { PlacesGrid } from '@/components/blocks/places-grid';
-import { QuickActions } from '@/components/blocks/quick-actions';
-import { Search } from '@/components/blocks/search';
-import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
-import { TagNavigation } from '@/components/blocks/tag-navigation';
-import { VerticalBanner } from '@/components/blocks/vertical-banner';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@wanderlust/ui/components/skeleton';
+import { ActionBanner } from '@/components/action-banner';
+import { OverlayBanner } from '@/components/overlay-banner';
+import { PlacesGrid } from '@/components/places-grid';
+import { QuickActions } from '@/components/quick-actions';
+import { Search } from '@/components/search';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
+import { TagNavigation } from '@/components/tag-navigation';
+import { VerticalBanner } from '@/components/vertical-banner';
 import { authClient } from '@/lib/auth';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
+import { Button } from '@wanderlust/ui/components/button';
 
 export const Route = createFileRoute('/')({
 	component: App,

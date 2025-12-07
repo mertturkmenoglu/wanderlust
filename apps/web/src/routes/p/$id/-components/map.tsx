@@ -1,9 +1,9 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { ExternalLinkIcon } from 'lucide-react';
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
-import { Button } from '@/components/ui/button';
 import { createStyle } from '@/lib/map';
-import { cn } from '@/lib/utils';
 import mapPinIcon from '@/map-pin.svg';
 
 type Props = {

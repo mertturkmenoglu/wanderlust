@@ -1,27 +1,27 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import z from 'zod';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+} from '@wanderlust/ui/components/field';
+import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
-} from '@/components/ui/input-group';
-import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
+} from '@wanderlust/ui/components/input-group';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import z from 'zod';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { ipx } from '@/lib/ipx';
 import { type Outputs, orpc } from '@/lib/orpc';

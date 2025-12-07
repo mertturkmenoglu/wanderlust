@@ -1,10 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { CreateListDialog } from '@/components/blocks/lists/create-list-dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
 	DialogContent,
@@ -13,24 +9,28 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@wanderlust/ui/components/dialog';
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select';
+} from '@wanderlust/ui/components/select';
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@wanderlust/ui/components/tooltip';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { CreateListDialog } from '@/components/lists/create-list-dialog';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 export function AddToListButton() {
 	const route = getRouteApi('/p/$id/');

@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
 import { getRouteApi } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { DollarSignIcon, HeartIcon, PersonStandingIcon } from 'lucide-react';
-import { CollapsibleText } from '@/components/blocks/collapsible-text';
-import { FormattedRating } from '@/components/kit/formatted-rating';
-import { InfoCard } from '@/components/kit/info-card';
+import { CollapsibleText } from '@/components/collapsible-text';
+import { FormattedRating } from '@/components/formatted-rating';
+import { InfoCard } from '@/components/info-card';
 import { computeRating } from '@/lib/rating';
-import { cn } from '@/lib/utils';
 import { PlanTripDialog } from './plan-trip-dialog';
 
 type Props = {

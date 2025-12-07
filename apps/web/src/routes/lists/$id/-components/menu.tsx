@@ -1,11 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import {
-	EllipsisVerticalIcon,
-	FlagIcon,
-	PencilIcon,
-	TrashIcon,
-} from 'lucide-react';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
 	DialogClose,
@@ -14,14 +8,20 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@wanderlust/ui/components/dialog';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@wanderlust/ui/components/dropdown-menu';
+import {
+	EllipsisVerticalIcon,
+	FlagIcon,
+	PencilIcon,
+	TrashIcon,
+} from 'lucide-react';
 import { useDeleteMutation } from './hooks';
 
 type Props = {

@@ -1,27 +1,27 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
-import { AuthLegalText } from '@/components/blocks/auth/legal-text';
-import { AuthLink } from '@/components/blocks/auth/link';
-import { OAuthButton } from '@/components/blocks/auth/oauth-button';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '@wanderlust/ui/components/button';
+import { Card } from '@wanderlust/ui/components/card';
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+} from '@wanderlust/ui/components/field';
+import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
-} from '@/components/ui/input-group';
-import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
+} from '@wanderlust/ui/components/input-group';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useState } from 'react';
+import { Controller } from 'react-hook-form';
+import { AuthLegalText } from '@/components/auth/legal-text';
+import { AuthLink } from '@/components/auth/link';
+import { OAuthButton } from '@/components/auth/oauth-button';
 import { authClient } from '@/lib/auth';
 import { normalizeMultipleErrors } from '@/lib/form';
 import { useSignUpForm, useSignUpMutation } from './-hooks';

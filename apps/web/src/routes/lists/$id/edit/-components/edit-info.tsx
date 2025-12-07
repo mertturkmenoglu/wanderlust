@@ -1,11 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@wanderlust/ui/components/button';
+import { Checkbox } from '@wanderlust/ui/components/checkbox';
 import {
 	Field,
 	FieldDescription,
@@ -14,11 +11,14 @@ import {
 	FieldLabel,
 	FieldLegend,
 	FieldSet,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+} from '@wanderlust/ui/components/field';
+import { Input } from '@wanderlust/ui/components/input';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import z from 'zod';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

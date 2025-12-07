@@ -1,13 +1,18 @@
 import { getRouteApi } from '@tanstack/react-router';
 import {
+	Item,
+	ItemContent,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
+import { cn } from '@wanderlust/ui/lib/utils';
+import {
 	BikeIcon,
 	CarFrontIcon,
 	ExternalLinkIcon,
 	PersonStandingIcon,
 	TramFrontIcon,
 } from 'lucide-react';
-import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item';
-import { cn } from '@/lib/utils';
 import { OpenHoursDialog } from './open-hours-dialog';
 
 type Props = {

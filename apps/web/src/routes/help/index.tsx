@@ -4,7 +4,7 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from '@/components/ui/accordion';
+} from '@wanderlust/ui/components/accordion';
 import { faqData } from './-data';
 
 export const Route = createFileRoute('/help/')({

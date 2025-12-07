@@ -4,7 +4,7 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from '@/components/ui/card';
+} from '@wanderlust/ui/components/card';
 import { ipx } from '@/lib/ipx';
 import type { TBookmark } from './-types';
 

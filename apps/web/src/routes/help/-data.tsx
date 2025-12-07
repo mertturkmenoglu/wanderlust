@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 
 type FAQ = {
 	title: string;

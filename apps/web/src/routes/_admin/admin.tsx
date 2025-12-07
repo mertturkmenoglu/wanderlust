@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { authGuard } from '@/lib/auth';
-import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/_admin/admin')({
 	component: RouteComponent,

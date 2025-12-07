@@ -1,6 +1,6 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { authClient } from '@/lib/auth';
-import { cn } from '@/lib/utils';
 import { AddToListButton } from './add-to-list-button';
 import { BookmarkButton } from './bookmark-button';
 import { FavoriteButton } from './favorite-button';

@@ -1,11 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import {
+	Item,
+	ItemContent,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { PlusIcon } from 'lucide-react';
-import { DashboardActions } from '@/components/blocks/dashboard/actions';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { citiesCols } from '@/components/blocks/dashboard/columns';
-import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item';
-import { Separator } from '@/components/ui/separator';
+import { DashboardActions } from '@/components/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
+import { citiesCols } from '@/components/dashboard/columns';
+import { DataTable } from '@/components/dashboard/data-table';
 
 export const Route = createFileRoute('/_admin/dashboard/cities/')({
 	component: RouteComponent,

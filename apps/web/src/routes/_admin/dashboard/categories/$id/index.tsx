@@ -5,22 +5,22 @@ import {
 	notFound,
 	useNavigate,
 } from '@tanstack/react-router';
-import { ArrowRightIcon, Edit2Icon, PaperclipIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { DashboardActions } from '@/components/blocks/dashboard/actions';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { keyValueCols } from '@/components/blocks/dashboard/columns';
-import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { DeleteDialog } from '@/components/blocks/dashboard/delete-dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
 	ItemContent,
 	ItemMedia,
 	ItemTitle,
-} from '@/components/ui/item';
-import { Separator } from '@/components/ui/separator';
+} from '@wanderlust/ui/components/item';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { ArrowRightIcon, Edit2Icon, PaperclipIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { DashboardActions } from '@/components/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
+import { keyValueCols } from '@/components/dashboard/columns';
+import { DataTable } from '@/components/dashboard/data-table';
+import { DeleteDialog } from '@/components/dashboard/delete-dialog';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';

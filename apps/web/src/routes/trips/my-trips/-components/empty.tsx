@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { PlusIcon } from 'lucide-react';
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Empty,
 	EmptyContent,
@@ -8,7 +7,8 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from '@/components/ui/empty';
+} from '@wanderlust/ui/components/empty';
+import { PlusIcon } from 'lucide-react';
 
 export function EmptyState() {
 	return (

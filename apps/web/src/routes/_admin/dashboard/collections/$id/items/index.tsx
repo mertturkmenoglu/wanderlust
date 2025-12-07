@@ -2,14 +2,14 @@ import { arrayMove } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { AppMessage } from '@/components/blocks/app-message';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { Separator } from '@/components/ui/separator';
+import { AppMessage } from '@/components/app-message';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 import { AddItemDialog } from './-add-item-dialog';
 import { SortableItem } from './-sortable-item';
 

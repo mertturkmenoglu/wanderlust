@@ -1,4 +1,4 @@
-import { Card } from '@/components/blocks/autocomplete/card';
+import { Card } from '@/components/autocomplete/card';
 
 export type Props = {
 	hit: {

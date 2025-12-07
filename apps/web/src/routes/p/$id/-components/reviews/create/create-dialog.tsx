@@ -1,12 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { PencilIcon } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { Rating } from '@/components/kit/rating';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -17,10 +11,16 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from '@wanderlust/ui/components/alert-dialog';
+import { Button } from '@wanderlust/ui/components/button';
+import { Label } from '@wanderlust/ui/components/label';
+import { Textarea } from '@wanderlust/ui/components/textarea';
+import { PencilIcon } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { Rating } from '@/components/rating';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 import { lengthTracker } from '@/lib/form';

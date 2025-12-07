@@ -1,12 +1,12 @@
 import { Link } from '@tanstack/react-router';
-import { EllipsisVerticalIcon, FlagIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@wanderlust/ui/components/dropdown-menu';
+import { EllipsisVerticalIcon, FlagIcon } from 'lucide-react';
 
 type Props = {
 	userId: string;

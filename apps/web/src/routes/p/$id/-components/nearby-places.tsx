@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { LoaderCircleIcon } from 'lucide-react';
-import { AppMessage } from '@/components/blocks/app-message';
-import { PlaceCard } from '@/components/blocks/place-card';
+import { AppMessage } from '@/components/app-message';
+import { PlaceCard } from '@/components/place-card';
 import { env } from '@/lib/env';
-import { cn } from '@/lib/utils';
 import type { Props as THit } from '@/routes/search/-components/hit';
 
 type SearchResponse = {

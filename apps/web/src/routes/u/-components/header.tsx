@@ -1,8 +1,8 @@
 import { getRouteApi } from '@tanstack/react-router';
-import { UserImage } from '@/components/blocks/user-image';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { UserImage } from '@/components/user-image';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
-import { cn } from '@/lib/utils';
 import { ActionButtons } from './action-buttons';
 import { BioDropdown } from './bio-dropdown';
 import { UserTabs as Tabs } from './tabs';

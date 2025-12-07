@@ -6,7 +6,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 	Breadcrumb as ShadcnBreadcrumb,
-} from '@/components/ui/breadcrumb';
+} from '@wanderlust/ui/components/breadcrumb';
 
 export function Breadcrumb() {
 	const route = getRouteApi('/p/$id/');

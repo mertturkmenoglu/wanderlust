@@ -1,11 +1,11 @@
-import { TrashIcon, UploadIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { cn } from '@/lib/utils';
+} from '@wanderlust/ui/components/collapsible';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { TrashIcon, UploadIcon } from 'lucide-react';
 import { type UseUpload, usePreviews } from './hooks';
 
 type Props = {

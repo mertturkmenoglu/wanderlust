@@ -1,8 +1,8 @@
 import { Link, useSearch } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
+import { PaginationItem } from '@wanderlust/ui/components/pagination';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { buttonVariants } from '@/components/ui/button';
-import { PaginationItem } from '@/components/ui/pagination';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	type: 'previous' | 'next';

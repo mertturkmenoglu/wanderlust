@@ -1,15 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { formatDate } from 'date-fns';
-import {
-	ArrowLeftIcon,
-	MapPinPlusIcon,
-	Settings2Icon,
-	Trash2Icon,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { InstantSearch } from 'react-instantsearch';
-import { Autocomplete } from '@/components/blocks/autocomplete';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,12 +10,22 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import { Textarea } from '@/components/ui/textarea';
+} from '@wanderlust/ui/components/alert-dialog';
+import { Button } from '@wanderlust/ui/components/button';
+import { Input } from '@wanderlust/ui/components/input';
+import { Label } from '@wanderlust/ui/components/label';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { Textarea } from '@wanderlust/ui/components/textarea';
+import { formatDate } from 'date-fns';
+import {
+	ArrowLeftIcon,
+	MapPinPlusIcon,
+	Settings2Icon,
+	Trash2Icon,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { InstantSearch } from 'react-instantsearch';
+import { Autocomplete } from '@/components/autocomplete';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
 import { orpc } from '@/lib/orpc';

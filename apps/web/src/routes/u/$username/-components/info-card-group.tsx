@@ -1,8 +1,8 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDate } from 'date-fns';
 import { LeafIcon } from 'lucide-react';
-import { InfoCard } from '@/components/kit/info-card';
-import { cn } from '@/lib/utils';
+import { InfoCard } from '@/components/info-card';
 
 type Props = {
 	className?: string;

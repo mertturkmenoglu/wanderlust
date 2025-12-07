@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { LoaderCircleIcon } from 'lucide-react';
-import { AppMessage } from '@/components/blocks/app-message';
+import { AppMessage } from '@/components/app-message';
 import { orpc } from '@/lib/orpc';
 import { ActivityCard, type UserActivityType } from './-activity-card';
 

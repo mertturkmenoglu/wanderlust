@@ -1,7 +1,5 @@
 import { useSortable } from '@dnd-kit/react/sortable';
-import { GripVerticalIcon, LinkIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -9,7 +7,9 @@ import {
 	ItemDescription,
 	ItemMedia,
 	ItemTitle,
-} from '@/components/ui/item';
+} from '@wanderlust/ui/components/item';
+import { GripVerticalIcon, LinkIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import type { Outputs } from '@/lib/orpc';
 import { DeleteItemDialog } from './-delete-item-dialog';
 

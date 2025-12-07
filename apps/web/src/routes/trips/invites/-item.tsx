@@ -1,9 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { CheckIcon, XIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from '@wanderlust/ui/components/avatar';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -11,7 +13,9 @@ import {
 	ItemDescription,
 	ItemMedia,
 	ItemTitle,
-} from '@/components/ui/item';
+} from '@wanderlust/ui/components/item';
+import { CheckIcon, XIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { type Outputs, orpc } from '@/lib/orpc';
 

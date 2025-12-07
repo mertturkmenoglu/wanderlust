@@ -1,7 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
-import { MapIcon, PlusIcon, XIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import {
 	AlertDialog,
 	AlertDialogContent,
@@ -9,12 +7,14 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+} from '@wanderlust/ui/components/alert-dialog';
+import { Button } from '@wanderlust/ui/components/button';
+import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { MapIcon, PlusIcon, XIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

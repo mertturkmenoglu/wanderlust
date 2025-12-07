@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { BackLink } from '@/components/blocks/back-link';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { BackLink } from '@/components/back-link';
 import { authGuard } from '@/lib/auth';
 import { EditInfo } from './-components/edit-info';
 import { EditItems } from './-components/edit-items';

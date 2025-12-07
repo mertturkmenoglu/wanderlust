@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { formatDistanceToNow } from 'date-fns';
-import { FormattedRating } from '@/components/kit/formatted-rating';
-import { Separator } from '@/components/ui/separator';
+import { FormattedRating } from '@/components/formatted-rating';
 import type { Outputs } from '@/lib/orpc';
 
 type Props = {

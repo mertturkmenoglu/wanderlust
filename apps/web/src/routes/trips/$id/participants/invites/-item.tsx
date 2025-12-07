@@ -1,10 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { Settings2Icon, UserMinusIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { UserImage } from '@/components/blocks/user-image';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@wanderlust/ui/components/badge';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -12,12 +9,15 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@wanderlust/ui/components/dropdown-menu';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { Settings2Icon, UserMinusIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { UserImage } from '@/components/user-image';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	image: string;

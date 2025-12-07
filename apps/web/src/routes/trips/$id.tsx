@@ -1,9 +1,9 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { z } from 'zod';
-import { ErrorComponent } from '@/components/blocks/error-component';
-import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
-import { TripInfo } from '@/components/blocks/trips/trip-info';
-import { Separator } from '@/components/ui/separator';
+import { ErrorComponent } from '@/components/error-component';
+import { Breadcrumb } from '@/components/trips/breadcrumb';
+import { TripInfo } from '@/components/trips/trip-info';
 
 const schema = z.object({
 	showLocationDialog: z.boolean().optional(),

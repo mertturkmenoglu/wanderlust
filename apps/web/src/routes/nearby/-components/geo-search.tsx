@@ -4,7 +4,7 @@ import type { MapLibreEvent } from 'maplibre-gl';
 import { useCallback, useEffect, useState } from 'react';
 import { type UseGeoSearchProps, useGeoSearch } from 'react-instantsearch';
 import { Marker, Popup, useMap } from 'react-map-gl/maplibre';
-import { PlaceCard } from '@/components/blocks/place-card';
+import { PlaceCard } from '@/components/place-card';
 
 export function GeoSearch(props: UseGeoSearchProps) {
 	const { items, refine } = useGeoSearch(props);

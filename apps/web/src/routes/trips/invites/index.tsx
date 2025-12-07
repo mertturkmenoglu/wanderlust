@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
+import { Breadcrumb } from '@/components/trips/breadcrumb';
 import { EmptyState } from './-empty';
 import { InviteItem } from './-item';
 

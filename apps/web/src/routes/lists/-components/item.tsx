@@ -1,7 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { formatDistanceToNow } from 'date-fns';
-import { ArrowRightIcon, GlobeIcon, LockIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -9,7 +7,9 @@ import {
 	ItemDescription,
 	ItemMedia,
 	ItemTitle,
-} from '@/components/ui/item';
+} from '@wanderlust/ui/components/item';
+import { formatDistanceToNow } from 'date-fns';
+import { ArrowRightIcon, GlobeIcon, LockIcon } from 'lucide-react';
 import type { Outputs } from '@/lib/orpc';
 
 type Props = {

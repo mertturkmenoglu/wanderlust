@@ -1,8 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { UploadIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
 	DialogContent,
@@ -10,9 +7,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@wanderlust/ui/components/dialog';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { UploadIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	image: string | null;

@@ -3,12 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Form,
 	FormControl,
@@ -17,17 +12,22 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@wanderlust/ui/components/form';
+import { Input } from '@wanderlust/ui/components/input';
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
-import { Textarea } from '@/components/ui/textarea';
+} from '@wanderlust/ui/components/select';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { Textarea } from '@wanderlust/ui/components/textarea';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { AppMessage } from '@/components/app-message';
 import { authGuard } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
 

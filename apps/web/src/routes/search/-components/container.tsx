@@ -1,9 +1,5 @@
-import { FilterIcon } from 'lucide-react';
-import React from 'react';
-import { useCurrentRefinements } from 'react-instantsearch';
-import { CustomSearchBox } from '@/components/blocks/custom-search-box';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@wanderlust/ui/components/button';
+import { ScrollArea } from '@wanderlust/ui/components/scroll-area';
 import {
 	Sheet,
 	SheetContent,
@@ -11,7 +7,11 @@ import {
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
-} from '@/components/ui/sheet';
+} from '@wanderlust/ui/components/sheet';
+import { FilterIcon } from 'lucide-react';
+import React from 'react';
+import { useCurrentRefinements } from 'react-instantsearch';
+import { CustomSearchBox } from '@/components/custom-search-box';
 import { Filters } from './filters';
 import { Results } from './results';
 

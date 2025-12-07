@@ -1,19 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { BookmarkIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@wanderlust/ui/components/tooltip';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { BookmarkIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 export function BookmarkButton() {
 	const route = getRouteApi('/p/$id/');

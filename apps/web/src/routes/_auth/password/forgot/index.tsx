@@ -1,16 +1,16 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Controller } from 'react-hook-form';
-import { AuthLink } from '@/components/blocks/auth/link';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '@wanderlust/ui/components/button';
+import { Card } from '@wanderlust/ui/components/card';
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
+} from '@wanderlust/ui/components/field';
+import { Input } from '@wanderlust/ui/components/input';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { Controller } from 'react-hook-form';
+import { AuthLink } from '@/components/auth/link';
 import { authClient } from '@/lib/auth';
 import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
 
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/_auth/password/forgot/')({
 		if (session.data?.user) {
 			throw redirect({
 				to: '/',
-			})
+			});
 		}
 	},
 });
@@ -48,16 +48,16 @@ function RouteComponent() {
 			>
 				<FieldGroup>
 					<Controller
-						name='email'
+						name="email"
 						control={form.control}
 						render={({ field, fieldState }) => (
 							<Field data-invalid={fieldState.invalid}>
 								<FieldLabel htmlFor="email">Email</FieldLabel>
 								<Input
 									{...field}
-									id='email'
-									placeholder='Email'
-									autoComplete='email'
+									id="email"
+									placeholder="Email"
+									autoComplete="email"
 									aria-invalid={fieldState.invalid}
 								/>
 								{fieldState.invalid && (
@@ -71,7 +71,7 @@ function RouteComponent() {
 				<Button
 					variant="default"
 					className="mt-4 w-full"
-					type='submit'
+					type="submit"
 					disabled={!form.formState.isValid || mutation.isPending}
 				>
 					{mutation.isPending && <Spinner />}
@@ -79,5 +79,5 @@ function RouteComponent() {
 				</Button>
 			</form>
 		</Card>
-	)
+	);
 }

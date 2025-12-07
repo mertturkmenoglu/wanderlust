@@ -5,23 +5,23 @@ import {
 	useNavigate,
 } from '@tanstack/react-router';
 import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@wanderlust/ui/components/accordion';
+import { cn } from '@wanderlust/ui/lib/utils';
+import {
 	addDays,
 	eachDayOfInterval,
 	formatDate,
 	isWithinInterval,
 } from 'date-fns';
 import { useMemo } from 'react';
-import { AppMessage } from '@/components/blocks/app-message';
-import { CollapsibleText } from '@/components/blocks/collapsible-text';
-import { PlaceCard } from '@/components/blocks/place-card';
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '@/components/ui/accordion';
+import { AppMessage } from '@/components/app-message';
+import { CollapsibleText } from '@/components/collapsible-text';
+import { PlaceCard } from '@/components/place-card';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
-import { cn } from '@/lib/utils';
 import { InfoCard } from './-info-card';
 import { UpsertLocationDialog } from './-upsert-location-dialog';
 

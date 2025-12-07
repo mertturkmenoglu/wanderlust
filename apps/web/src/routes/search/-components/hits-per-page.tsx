@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-import { useHitsPerPage } from 'react-instantsearch';
 import {
 	Select,
 	SelectContent,
@@ -8,7 +6,9 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select';
+} from '@wanderlust/ui/components/select';
+import { useCallback } from 'react';
+import { useHitsPerPage } from 'react-instantsearch';
 
 export function HitsPerPage() {
 	const { items, refine } = useHitsPerPage({

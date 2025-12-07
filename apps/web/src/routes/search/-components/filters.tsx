@@ -1,6 +1,6 @@
+import { Button } from '@wanderlust/ui/components/button';
 import { XIcon } from 'lucide-react';
 import { useClearRefinements } from 'react-instantsearch';
-import { Button } from '@/components/ui/button';
 import { RefinementList } from './refinement-list';
 
 export function Filters() {

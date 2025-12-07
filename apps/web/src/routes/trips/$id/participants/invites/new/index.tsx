@@ -1,11 +1,11 @@
 import { useDebouncedValue } from '@tanstack/react-pacer';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { Input } from '@wanderlust/ui/components/input';
+import { Label } from '@wanderlust/ui/components/label';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import { useState } from 'react';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
+import { AppMessage } from '@/components/app-message';
 import { orpc } from '@/lib/orpc';
 import { Header } from './-header';
 import { Item } from './-item';

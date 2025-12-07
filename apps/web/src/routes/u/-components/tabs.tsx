@@ -1,8 +1,8 @@
 import { Link, useMatches } from '@tanstack/react-router';
-import { buttonVariants } from '@/components/ui/button';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
+import { buttonVariants } from '@wanderlust/ui/components/button';
+import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
+import { Tabs, TabsList, TabsTrigger } from '@wanderlust/ui/components/tabs';
+import { cn } from '@wanderlust/ui/lib/utils';
 
 type Props = {
 	username: string;

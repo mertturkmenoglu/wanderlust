@@ -1,6 +1,6 @@
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { DockIcon, UsersIcon } from 'lucide-react';
-import { buttonVariants } from '@/components/ui/button';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { Item } from './-item';
 

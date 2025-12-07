@@ -1,9 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { CreateListDialog } from '@/components/blocks/lists/create-list-dialog';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Empty,
 	EmptyContent,
@@ -11,7 +7,11 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from '@/components/ui/empty';
+} from '@wanderlust/ui/components/empty';
+import { PlusIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { CreateListDialog } from '@/components/lists/create-list-dialog';
 import { useInvalidator } from '@/hooks/use-invalidator';
 
 export function EmptyState() {

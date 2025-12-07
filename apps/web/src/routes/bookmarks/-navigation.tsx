@@ -1,12 +1,12 @@
 import { Link, useSearch } from '@tanstack/react-router';
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Pagination,
 	PaginationContent,
 	PaginationItem,
-} from '@/components/ui/pagination';
+} from '@wanderlust/ui/components/pagination';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
-import { cn } from '@/lib/utils';
 import { NavigationButton } from './-navigation-button';
 
 type Props = {

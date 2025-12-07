@@ -10,10 +10,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'yet-another-react-lightbox/styles.css';
-import './styles.css';
+import '@wanderlust/ui/globals.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Spinner } from './components/ui/spinner.tsx';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import { orpc, queryClient } from './lib/orpc';
 
 const router = createRouter({
@@ -29,9 +29,7 @@ const router = createRouter({
 	defaultPendingComponent: () => <Spinner />,
 	Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
 		return (
-			<QueryClientProvider client={queryClient}>
-				{children}
-			</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 		);
 	},
 });

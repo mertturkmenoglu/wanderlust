@@ -1,14 +1,14 @@
 // oxlint-disable func-style
 /** biome-ignore-all lint/a11y/noLabelWithoutControl: TODO */
 
+import { Button } from '@wanderlust/ui/components/button';
+import { Checkbox } from '@wanderlust/ui/components/checkbox';
+import { Input } from '@wanderlust/ui/components/input';
+import { cn } from '@wanderlust/ui/lib/utils';
 import type { RefinementListItem } from 'instantsearch.js/es/connectors/refinement-list/connectRefinementList';
 import { useMemo } from 'react';
 import { useRefinementList } from 'react-instantsearch';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { amenitiesDisplayNames } from '@/lib/amenities';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	attribute:

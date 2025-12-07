@@ -1,4 +1,5 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import {
 	AccessibilityIcon,
 	ArmchairIcon,
@@ -56,7 +57,6 @@ import {
 	WineIcon,
 } from 'lucide-react';
 import { amenitiesDisplayNames } from '@/lib/amenities';
-import { cn } from '@/lib/utils';
 
 type LucideIconType = typeof WifiIcon;
 

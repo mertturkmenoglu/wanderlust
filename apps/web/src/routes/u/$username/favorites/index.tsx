@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
 import { LoaderCircleIcon } from 'lucide-react';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Button } from '@/components/ui/button';
+import { AppMessage } from '@/components/app-message';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { orpc } from '@/lib/orpc';
 import { FavoriteCard } from './-favorite-card';

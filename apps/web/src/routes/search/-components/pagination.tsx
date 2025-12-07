@@ -1,4 +1,3 @@
-import { usePagination } from 'react-instantsearch';
 import {
 	Pagination,
 	PaginationContent,
@@ -7,7 +6,8 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from '@/components/ui/pagination';
+} from '@wanderlust/ui/components/pagination';
+import { usePagination } from 'react-instantsearch';
 
 export function SearchPagination() {
 	const {

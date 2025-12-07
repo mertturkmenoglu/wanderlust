@@ -1,24 +1,24 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
-import z from 'zod';
-import { AuthLink } from '@/components/blocks/auth/link';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '@wanderlust/ui/components/button';
+import { Card } from '@wanderlust/ui/components/card';
 import {
 	Field,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-} from '@/components/ui/field';
+} from '@wanderlust/ui/components/field';
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
-} from '@/components/ui/input-group';
-import { Spinner } from '@/components/ui/spinner';
+} from '@wanderlust/ui/components/input-group';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useState } from 'react';
+import { Controller } from 'react-hook-form';
+import z from 'zod';
+import { AuthLink } from '@/components/auth/link';
 import { authClient } from '@/lib/auth';
 import { normalizeMultipleErrors } from '@/lib/form';
 import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';

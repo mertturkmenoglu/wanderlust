@@ -6,9 +6,9 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { Toaster } from 'sonner';
-import { ErrorComponent } from '@/components/blocks/error-component';
-import { Footer } from '@/components/blocks/footer';
-import { Header } from '@/components/blocks/header';
+import { ErrorComponent } from '@/components/error-component';
+import { Footer } from '@/components/footer';
+import { Header } from '@/components/header';
 import type { orpc } from '@/lib/orpc';
 
 interface MyRouterContext {

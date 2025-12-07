@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ItemGroup } from '@wanderlust/ui/components/item';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import { useEffect } from 'react';
 import { z } from 'zod';
-import { AppMessage } from '@/components/blocks/app-message';
-import { PlaceCard } from '@/components/blocks/place-card';
-import { SuspenseWrapper } from '@/components/blocks/suspense-wrapper';
-import { ItemGroup } from '@/components/ui/item';
-import { Spinner } from '@/components/ui/spinner';
+import { AppMessage } from '@/components/app-message';
+import { PlaceCard } from '@/components/place-card';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { authGuard } from '@/lib/auth';
 import { Actions } from './-actions';
 import { BookmarksContextProvider, useBookmarksContext } from './-context';

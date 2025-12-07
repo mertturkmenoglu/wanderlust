@@ -1,21 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
+import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+} from '@wanderlust/ui/components/pagination';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { cn } from '@wanderlust/ui/lib/utils';
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	LoaderCircleIcon,
 } from 'lucide-react';
-import { AppMessage } from '@/components/blocks/app-message';
-import { buttonVariants } from '@/components/ui/button';
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-} from '@/components/ui/pagination';
-import { Separator } from '@/components/ui/separator';
+import { AppMessage } from '@/components/app-message';
 import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
 import { type Outputs, orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 import { ReviewCard } from './card';
 
 type Review = Outputs['reviews']['listByPlaceId']['reviews'][number];

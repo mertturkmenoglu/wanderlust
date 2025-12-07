@@ -2,9 +2,9 @@
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
 import { useMemo } from 'react';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Button } from '@/components/ui/button';
+import { AppMessage } from '@/components/app-message';
 import { orpc } from '@/lib/orpc';
 import { Card } from './-card';
 

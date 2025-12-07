@@ -1,5 +1,7 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { cn } from '@wanderlust/ui/lib/utils';
 import {
 	ChevronDownIcon,
 	ChevronUpIcon,
@@ -10,13 +12,11 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { InstantSearch } from 'react-instantsearch';
 import { toast } from 'sonner';
-import { Autocomplete } from '@/components/blocks/autocomplete';
-import { PlaceCard } from '@/components/blocks/place-card';
-import { Button } from '@/components/ui/button';
+import { Autocomplete } from '@/components/autocomplete';
+import { PlaceCard } from '@/components/place-card';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useSearchClient } from '@/hooks/use-search-client';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

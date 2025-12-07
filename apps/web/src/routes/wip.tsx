@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { WipComponent } from '@/components/blocks/wip';
+import { WipComponent } from '@/components/wip';
 
 export const Route = createFileRoute('/wip')({
 	component: RouteComponent,

@@ -1,13 +1,13 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { EllipsisVerticalIcon, FlagIcon, Share2Icon } from 'lucide-react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@wanderlust/ui/components/dropdown-menu';
+import { EllipsisVerticalIcon, FlagIcon, Share2Icon } from 'lucide-react';
+import { toast } from 'sonner';
 
 async function handleShareClick() {
 	await navigator.clipboard.writeText(globalThis.window.location.href);

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ErrorComponent } from '@/components/blocks/error-component';
+import { ErrorComponent } from '@/components/error-component';
 import { authGuard } from '@/lib/auth';
 import { FavoriteLocations } from './-components/favorite-locations';
 import { InfoCardGroup } from './-components/info-card-group';

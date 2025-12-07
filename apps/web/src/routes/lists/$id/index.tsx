@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { AppMessage } from '@/components/blocks/app-message';
-import { BackLink } from '@/components/blocks/back-link';
-import { PlaceCard } from '@/components/blocks/place-card';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { AppMessage } from '@/components/app-message';
+import { BackLink } from '@/components/back-link';
+import { PlaceCard } from '@/components/place-card';
 import { authGuard } from '@/lib/auth';
 import { Menu } from './-components/menu';
 

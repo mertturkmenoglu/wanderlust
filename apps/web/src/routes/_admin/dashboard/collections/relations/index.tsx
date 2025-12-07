@@ -1,11 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { PlusIcon, TrashIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import z from 'zod';
-import { AppMessage } from '@/components/blocks/app-message';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -16,11 +10,17 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
+} from '@wanderlust/ui/components/alert-dialog';
+import { Button } from '@wanderlust/ui/components/button';
+import { Input } from '@wanderlust/ui/components/input';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { PlusIcon, TrashIcon } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import z from 'zod';
+import { AppMessage } from '@/components/app-message';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
 

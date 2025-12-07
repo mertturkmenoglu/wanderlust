@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { Progress } from '@wanderlust/ui/components/progress';
+import { Slider } from '@wanderlust/ui/components/slider';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { LoaderCircleIcon, StarIcon } from 'lucide-react';
 import { useState } from 'react';
-import { FormattedRating } from '@/components/kit/formatted-rating';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Slider } from '@/components/ui/slider';
+import { FormattedRating } from '@/components/formatted-rating';
 import { type Outputs, orpc } from '@/lib/orpc';
 import { computeRating } from '@/lib/rating';
-import { cn } from '@/lib/utils';
 import { CreateReviewDialog } from './create/create-dialog';
 import { ReviewImages } from './images';
 

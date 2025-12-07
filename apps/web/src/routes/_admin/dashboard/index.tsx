@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
 import {
 	ClipboardListIcon,
 	LibraryIcon,
@@ -7,8 +8,7 @@ import {
 	TagIcon,
 	UsersIcon,
 } from 'lucide-react';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { Separator } from '@/components/ui/separator';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { DashboardItem } from './-item';
 
 export const Route = createFileRoute('/_admin/dashboard/')({

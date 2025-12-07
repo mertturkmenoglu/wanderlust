@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { Input } from '@wanderlust/ui/components/input';
+import { Label } from '@wanderlust/ui/components/label';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { useState } from 'react';
 import { FacebookIcon } from '@/components/icons/facebook';
 import { GoogleIcon } from '@/components/icons/google';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { authClient } from '@/lib/auth';
-import { cn } from '@/lib/utils';
 import { ChangePasswordForm } from './-change-password';
 
 export const Route = createFileRoute('/settings/account/')({

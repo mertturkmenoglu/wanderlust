@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { z } from 'zod';
-import { ErrorComponent } from '@/components/blocks/error-component';
-import { Separator } from '@/components/ui/separator';
+import { ErrorComponent } from '@/components/error-component';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
 import { CityInfo } from './-components/city-info';

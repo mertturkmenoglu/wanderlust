@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { AppMessage } from '@/components/blocks/app-message';
-import { UserImage } from '@/components/blocks/user-image';
+import { AppMessage } from '@/components/app-message';
+import { UserImage } from '@/components/user-image';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
 

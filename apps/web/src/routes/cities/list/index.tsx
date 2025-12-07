@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { OverlayBanner } from '@/components/blocks/overlay-banner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
+import { OverlayBanner } from '@/components/overlay-banner';
 import { ipx } from '@/lib/ipx';
 import { groupCitiesByCountry } from './-utils';
 

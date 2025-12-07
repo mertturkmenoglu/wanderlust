@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { ArrowLeftRightIcon, PlusIcon } from 'lucide-react';
-import { DashboardActionItem } from '@/components/blocks/dashboard/action-item';
-import { DashboardActions } from '@/components/blocks/dashboard/actions';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { collectionsCols } from '@/components/blocks/dashboard/columns';
-import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { Separator } from '@/components/ui/separator';
+import { DashboardActionItem } from '@/components/dashboard/action-item';
+import { DashboardActions } from '@/components/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
+import { collectionsCols } from '@/components/dashboard/columns';
+import { DataTable } from '@/components/dashboard/data-table';
 
 export const Route = createFileRoute('/_admin/dashboard/collections/')({
 	component: RouteComponent,

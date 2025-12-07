@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button, buttonVariants } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 import { useBookmarksContext } from './-context';
 import type { TBookmark } from './-types';
 

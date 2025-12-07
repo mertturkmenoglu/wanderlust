@@ -1,12 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+import { Button } from '@wanderlust/ui/components/button';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { AppMessage } from '@/components/app-message';
 import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 import { Item } from './-item';
 
 type Props = {

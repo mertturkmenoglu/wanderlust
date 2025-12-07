@@ -1,9 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { PlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { PlaceCard } from '@/components/blocks/place-card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
 	DialogClose,
@@ -12,12 +8,16 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@wanderlust/ui/components/dialog';
+import { Input } from '@wanderlust/ui/components/input';
+import { Label } from '@wanderlust/ui/components/label';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { PlusIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { PlaceCard } from '@/components/place-card';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	collectionId: string;

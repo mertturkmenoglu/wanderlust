@@ -1,21 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
-import { formatDate } from 'date-fns';
-import { AlertTriangleIcon } from 'lucide-react';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@wanderlust/ui/components/button';
+import { Input } from '@wanderlust/ui/components/input';
+import { Label } from '@wanderlust/ui/components/label';
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+} from '@wanderlust/ui/components/select';
+import { Textarea } from '@wanderlust/ui/components/textarea';
+import { formatDate } from 'date-fns';
+import { AlertTriangleIcon } from 'lucide-react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
 import { DeleteButton } from './-delete-button';

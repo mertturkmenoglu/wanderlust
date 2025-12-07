@@ -5,17 +5,22 @@ import {
 	linkOptions,
 	useNavigate,
 } from '@tanstack/react-router';
+import {
+	Item,
+	ItemContent,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
+import { Separator } from '@wanderlust/ui/components/separator';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import { CheckIcon, PaperclipIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
-import { DashboardActions } from '@/components/blocks/dashboard/actions';
-import { DashboardBreadcrumb } from '@/components/blocks/dashboard/breadcrumb';
-import { keyValueCols } from '@/components/blocks/dashboard/columns';
-import { DataTable } from '@/components/blocks/dashboard/data-table';
-import { DeleteDialog } from '@/components/blocks/dashboard/delete-dialog';
-import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item';
-import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
+import { DashboardActions } from '@/components/dashboard/actions';
+import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
+import { keyValueCols } from '@/components/dashboard/columns';
+import { DataTable } from '@/components/dashboard/data-table';
+import { DeleteDialog } from '@/components/dashboard/delete-dialog';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
 

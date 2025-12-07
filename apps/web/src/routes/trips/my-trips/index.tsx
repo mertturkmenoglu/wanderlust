@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { AppMessage } from '@/components/blocks/app-message';
-import { Breadcrumb } from '@/components/blocks/trips/breadcrumb';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { AppMessage } from '@/components/app-message';
+import { Breadcrumb } from '@/components/trips/breadcrumb';
 import { orpc } from '@/lib/orpc';
 import { EmptyState } from './-components/empty';
 import { TripItem } from './-components/item';

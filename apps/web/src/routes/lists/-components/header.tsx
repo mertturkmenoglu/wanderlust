@@ -1,9 +1,9 @@
 import { useNavigate } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { CreateListDialog } from '@/components/blocks/lists/create-list-dialog';
-import { Button } from '@/components/ui/button';
+import { CreateListDialog } from '@/components/lists/create-list-dialog';
 import { useInvalidator } from '@/hooks/use-invalidator';
 
 type Props = {

@@ -1,8 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from 'lucide-react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,7 +8,9 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@wanderlust/ui/components/dropdown-menu';
+import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { authClient } from '@/lib/auth';
 import { type Outputs, orpc } from '@/lib/orpc';
 

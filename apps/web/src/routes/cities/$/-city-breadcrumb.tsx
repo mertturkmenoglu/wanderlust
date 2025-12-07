@@ -6,7 +6,7 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+} from '@wanderlust/ui/components/breadcrumb';
 
 type Props = {
 	cityName: string;

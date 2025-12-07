@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

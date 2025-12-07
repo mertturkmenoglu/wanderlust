@@ -1,7 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -10,9 +9,10 @@ import {
 	ItemFooter,
 	ItemMedia,
 	ItemTitle,
-} from '@/components/ui/item';
+} from '@wanderlust/ui/components/item';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
 import { useBookmarksContext } from './-context';
 import type { TBookmark } from './-types';
 

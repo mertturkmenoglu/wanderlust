@@ -1,10 +1,10 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { useMemo, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
-import { Button } from '@/components/ui/button';
 import { ipx } from '@/lib/ipx';
-import { cn } from '@/lib/utils';
 
 type Props = {
 	className?: string;

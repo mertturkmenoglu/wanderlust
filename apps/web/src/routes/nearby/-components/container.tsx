@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useGeoSearch } from 'react-instantsearch';
 import MapContainer from 'react-map-gl/maplibre';
-import { AppMessage } from '@/components/blocks/app-message';
-import { PlaceCard } from '@/components/blocks/place-card';
-import { Button } from '@/components/ui/button';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { AppMessage } from '@/components/app-message';
+import { PlaceCard } from '@/components/place-card';
 import { createStyle } from '@/lib/map';
 import { GeoSearch } from './geo-search';
 
