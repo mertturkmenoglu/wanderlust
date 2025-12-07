@@ -1,7 +1,7 @@
 import { redirect } from '@tanstack/react-router';
+import type { TAuthService } from '@wanderlust/api/lib/auth/index';
 import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
-import type { TAuthService } from '../../../api/src/lib/auth';
 
 export const authClient = createAuthClient({
 	baseURL: import.meta.env.VITE_API_URL,
