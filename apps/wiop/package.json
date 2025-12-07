@@ -10,7 +10,8 @@
 		"start": "bun run index.ts"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@wanderlust/config": "workspace:*"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
