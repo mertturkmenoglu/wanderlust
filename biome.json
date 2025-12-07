@@ -25,7 +25,8 @@
 			"!**/wrangler.jsonc",
 			"!**/.source",
 			"!**/index.css",
-			"!**/apps/web/src/components/ui"
+			"!**/apps/web/src/components/ui",
+			"!**/packages/ui"
 		]
 	},
 	"formatter": {
@@ -34,7 +35,9 @@
 	},
 	"assist": {
 		"actions": {
-			"source": { "organizeImports": "on" }
+			"source": {
+				"organizeImports": "on"
+			}
 		}
 	},
 	"linter": {
@@ -50,7 +53,11 @@
 					"level": "warn",
 					"fix": "safe",
 					"options": {
-						"functions": ["clsx", "cva", "cn"]
+						"functions": [
+							"clsx",
+							"cva",
+							"cn"
+						]
 					}
 				}
 			},
