@@ -27,7 +27,7 @@ const schema = z.object({
 			let flag = false;
 			if (data.includes(' ')) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: 'custom',
 					message: 'Password cannot contain spaces',
 				});
 				flag = true;
@@ -35,7 +35,7 @@ const schema = z.object({
 
 			if (!/[A-Z]/.test(data)) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: 'custom',
 					message: 'At least one uppercase letter',
 				});
 				flag = true;
@@ -43,7 +43,7 @@ const schema = z.object({
 
 			if (!/[a-z]/.test(data)) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: 'custom',
 					message: 'At least one lowercase letter',
 				});
 				flag = true;
@@ -51,7 +51,7 @@ const schema = z.object({
 
 			if (!/[0-9]/.test(data)) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: 'custom',
 					message: 'At least one number',
 				});
 				flag = true;
@@ -59,7 +59,7 @@ const schema = z.object({
 
 			if (!/[^A-Za-z0-9]/.test(data)) {
 				ctx.addIssue({
-					code: z.ZodIssueCode.custom,
+					code: 'custom',
 					message: 'At least one special character',
 				});
 				flag = true;
@@ -68,8 +68,6 @@ const schema = z.object({
 			if (flag) {
 				return z.NEVER;
 			}
-
-			return true;
 		}),
 });
 

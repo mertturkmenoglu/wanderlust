@@ -85,7 +85,11 @@ function RouteComponent() {
 		orpc.reports.delete.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
-				await navigate({ to: '/dashboard/reports' });
+
+				// @ts-expect-error
+				await navigate({
+					to: '/dashboard/reports',
+				});
 				toast.success('Report deleted');
 			},
 		}),

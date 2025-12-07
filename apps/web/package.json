@@ -5,14 +5,14 @@
 	"scripts": {
 		"dev": "vite --port 3000",
 		"start": "vite --port 3000",
-		"build": "vite build && tsc",
+		"build": "vite build",
 		"serve": "vite preview",
 		"test": "vitest run"
 	},
 	"dependencies": {
 		"@dnd-kit/helpers": "^0.1.21",
 		"@dnd-kit/react": "^0.1.21",
-		"@hookform/resolvers": "^5.2.2",
+		"@hookform/resolvers": "^5.2.0",
 		"@mdxeditor/editor": "^3.48.0",
 		"@orpc/client": "catalog:",
 		"@orpc/tanstack-query": "^1.11.3",

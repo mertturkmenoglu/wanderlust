@@ -27,9 +27,9 @@ import { ipx } from '@/lib/ipx';
 import { type Outputs, orpc } from '@/lib/orpc';
 
 const schema = z.object({
-	id: z.coerce.number().min(1),
+	id: z.transform(Number).pipe(z.number().min(1)),
 	name: z.string().min(1).max(64),
-	image: z.string().min(1).max(256).url(),
+	image: z.url().min(1).max(256),
 });
 
 type Props = {

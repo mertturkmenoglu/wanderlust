@@ -1,5 +1,3 @@
-// oxlint-disable no-nested-ternary
-
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';

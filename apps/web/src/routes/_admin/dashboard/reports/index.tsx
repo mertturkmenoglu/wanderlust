@@ -9,10 +9,10 @@ import { reportsCols } from '@/components/dashboard/columns';
 import { DataTable } from '@/components/dashboard/data-table';
 
 const schema = z.object({
-	page: z.coerce.number().catch(1),
-	pageSize: z.coerce.number().multipleOf(10).catch(10),
+	page: z.transform(Number).pipe(z.number().min(1)).catch(1),
+	pageSize: z.transform(Number).pipe(z.number().multipleOf(10)).catch(10),
 	resourceType: z.string().catch(''),
-	reason: z.coerce.number().catch(0),
+	reason: z.transform(Number).pipe(z.number()).catch(0),
 	reporterId: z.string().catch(''),
 	resolved: z.boolean().catch(false),
 });

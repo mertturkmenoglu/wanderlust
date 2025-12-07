@@ -1,5 +1,3 @@
-// oxlint-disable func-style
-
 import { useMutation } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';

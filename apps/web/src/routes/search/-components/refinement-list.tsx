@@ -1,4 +1,3 @@
-// oxlint-disable func-style
 /** biome-ignore-all lint/a11y/noLabelWithoutControl: TODO */
 
 import { Button } from '@wanderlust/ui/components/button';

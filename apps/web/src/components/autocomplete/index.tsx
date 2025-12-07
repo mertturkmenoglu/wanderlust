@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	type UseAutocompleteProps,
 	useAutocomplete,
@@ -6,7 +7,6 @@ import {
 import { ipx } from '@/lib/ipx';
 import { CustomSearchBox } from '../custom-search-box';
 import { type AutocompleteItemInfo, Card } from './card';
-import { Button } from '@wanderlust/ui/components/button';
 
 type Props = {
 	showAdvancedSearch?: boolean;

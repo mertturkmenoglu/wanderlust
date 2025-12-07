@@ -76,18 +76,20 @@ const schema = z
 	})
 	.superRefine((data, ctx) => {
 		if (!isBefore(data.startAt, data.endAt)) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.invalid_date,
+			ctx.issues.push({
+				code: 'custom',
 				message: 'Start date must be before end date',
 				path: ['startAt'],
-				fatal: true,
+				input: data.startAt,
+				continue: false,
 			});
 
-			ctx.addIssue({
-				code: z.ZodIssueCode.invalid_date,
+			ctx.issues.push({
+				code: 'custom',
 				message: 'Start date must be before end date',
 				path: ['endAt'],
-				fatal: true,
+				input: data.endAt,
+				continue: false,
 			});
 
 			return z.NEVER;

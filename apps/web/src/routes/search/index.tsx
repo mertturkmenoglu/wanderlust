@@ -9,8 +9,8 @@ import { Container } from './-components/container';
 
 const schema = z.object({
 	q: z.string().optional(),
-	page: z.coerce.number().optional(),
-	pageSize: z.coerce.number().optional(),
+	page: z.transform(Number).pipe(z.number()).optional(),
+	pageSize: z.transform(Number).pipe(z.number()).optional(),
 	category: z.string().optional(),
 	amenity: z.string().optional(),
 	price: z.string().or(z.number()).optional(),

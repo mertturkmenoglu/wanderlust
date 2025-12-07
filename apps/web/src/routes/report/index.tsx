@@ -1,5 +1,3 @@
-// oxlint-disable prefer-await-to-then
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';

@@ -28,15 +28,15 @@ import { ipx } from '@/lib/ipx';
 import { type Outputs, orpc } from '@/lib/orpc';
 
 const schema = z.object({
-	id: z.coerce.number().min(1),
+	id: z.transform(Number).pipe(z.number().min(1)),
 	name: z.string().min(1).max(64),
 	stateCode: z.string().min(1).max(16),
 	stateName: z.string().min(1).max(64),
 	countryCode: z.string().length(2),
 	countryName: z.string().min(1).max(64),
 	image: z.string().min(1).max(256),
-	lat: z.coerce.number().min(-90).max(90),
-	lng: z.coerce.number().min(-180).max(180),
+	lat: z.transform(Number).pipe(z.number().min(-90).max(90)),
+	lng: z.transform(Number).pipe(z.number().min(-180).max(180)),
 	description: z.string().min(1).max(4096),
 });
 

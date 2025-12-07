@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
+import { Button } from '@wanderlust/ui/components/button';
 import { Skeleton } from '@wanderlust/ui/components/skeleton';
 import { ActionBanner } from '@/components/action-banner';
 import { OverlayBanner } from '@/components/overlay-banner';
@@ -13,7 +14,6 @@ import { VerticalBanner } from '@/components/vertical-banner';
 import { authClient } from '@/lib/auth';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
-import { Button } from '@wanderlust/ui/components/button';
 
 export const Route = createFileRoute('/')({
 	component: App,

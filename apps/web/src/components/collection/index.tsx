@@ -1,6 +1,6 @@
+import { cn } from '@wanderlust/ui/lib/utils';
 import { HeartIcon } from 'lucide-react';
 import { ipx } from '@/lib/ipx';
-import { cn } from '@wanderlust/ui/lib/utils';
 
 type TItem = {
 	id: string;
