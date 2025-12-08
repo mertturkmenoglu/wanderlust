@@ -1,5 +1,4 @@
 import { Link, useMatches } from '@tanstack/react-router';
-import { buttonVariants } from '@wanderlust/ui/components/button';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from '@wanderlust/ui/components/tabs';
 import { cn } from '@wanderlust/ui/lib/utils';
@@ -48,8 +47,8 @@ export function UserTabs({ username, className }: Props) {
 		<div className={cn(className)}>
 			<ScrollArea>
 				<Tabs value={activeTab?.id} className="my-4 w-full bg-transparent">
-					<TabsList className="bg-transparent">
-						{tabs.map((t) => (
+					<TabsList className="space-x-4 bg-transparent">
+						{tabs.map((t, i) => (
 							<TabsTrigger
 								key={t.id}
 								value={t.id}
@@ -57,8 +56,11 @@ export function UserTabs({ username, className }: Props) {
 							>
 								<Link
 									to={t.href}
-									className={buttonVariants({
-										variant: activeTab?.id === t.id ? 'default' : 'ghost',
+									className={cn('text-base', {
+										'text-primary underline underline-offset-8':
+											activeTab?.id === t.id,
+										'hover:text-primary hover:underline hover:decoration-primary hover:underline-offset-8':
+											activeTab?.id !== t.id,
 									})}
 								>
 									{t.label}
