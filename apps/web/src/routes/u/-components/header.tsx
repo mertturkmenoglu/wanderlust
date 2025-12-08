@@ -1,5 +1,6 @@
 import { getRouteApi } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { ExternalLinkIcon } from 'lucide-react';
 import { UserImage } from '@/components/user-image';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
@@ -55,6 +56,18 @@ export function Header({ className }: Props) {
 
 			{profile.bio && (
 				<div className="mt-4 text-muted-foreground text-sm">{profile.bio}</div>
+			)}
+
+			{profile.website && (
+				<a
+					href={profile.website}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="mt-4 flex items-center gap-1 text-primary text-sm hover:underline"
+				>
+					<ExternalLinkIcon className="size-3" />
+					<span>{profile.website}</span>
+				</a>
 			)}
 
 			<Tabs className="md:max-w-5xl" username={profile.username} />
