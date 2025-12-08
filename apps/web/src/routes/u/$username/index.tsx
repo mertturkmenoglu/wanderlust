@@ -1,8 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ErrorComponent } from '@/components/error-component';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { authGuard } from '@/lib/auth';
-import { FavoriteLocations } from './-components/favorite-locations';
 import { InfoCardGroup } from './-components/info-card-group';
+import { TopPlaces } from './-components/top-places';
 
 export const Route = createFileRoute('/u/$username/')({
 	component: RouteComponent,
@@ -29,9 +30,9 @@ function RouteComponent() {
 					<InfoCardGroup className="mt-4" />
 				</div>
 
-				<div>
-					<FavoriteLocations />
-				</div>
+				<SuspenseWrapper>
+					<TopPlaces />
+				</SuspenseWrapper>
 			</div>
 		</div>
 	);
