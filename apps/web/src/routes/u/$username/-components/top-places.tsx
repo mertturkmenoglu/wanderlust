@@ -167,6 +167,7 @@ export function TopPlaces({ className }: Props) {
 										e.preventDefault();
 										setMode((prev) => (prev === 'items' ? 'search' : 'items'));
 									}}
+									disabled={items.length === 4}
 								>
 									{mode === 'items' ? 'Add Place' : 'Switch to Items'}
 								</Button>
