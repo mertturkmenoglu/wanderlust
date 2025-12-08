@@ -18,9 +18,9 @@ export function InfoCardGroup({ className }: Props) {
 	});
 
 	return (
-		<div className={cn('grid grid-cols-2 gap-4', className)}>
+		<div className={cn('grid grid-cols-1 gap-4', className)}>
 			<Link to="/u/$username/followers" params={{ username: profile.username }}>
-				<InfoCard.Root>
+				<InfoCard.Root className="aspect-9/2">
 					<InfoCard.Content>
 						<InfoCard.NumberColumn>
 							{formatter.format(profile.followersCount)}
@@ -33,7 +33,7 @@ export function InfoCardGroup({ className }: Props) {
 			</Link>
 
 			<Link to="/u/$username/following" params={{ username: profile.username }}>
-				<InfoCard.Root>
+				<InfoCard.Root className="aspect-9/2">
 					<InfoCard.Content>
 						<InfoCard.NumberColumn>
 							{formatter.format(profile.followingCount)}
@@ -45,7 +45,7 @@ export function InfoCardGroup({ className }: Props) {
 				</InfoCard.Root>
 			</Link>
 
-			<InfoCard.Root className="col-span-full">
+			<InfoCard.Root className="aspect-9/2">
 				<InfoCard.Content>
 					<InfoCard.NumberColumn>
 						<LeafIcon className="size-16 text-primary" />
