@@ -6,6 +6,8 @@ type Props = {
 	bookmark: TBookmark;
 };
 
+const style = createStyle('streets-v2-light');
+
 export function BookmarkItemMap({ bookmark: { place } }: Props) {
 	return (
 		<MapContainer
@@ -24,7 +26,7 @@ export function BookmarkItemMap({ bookmark: { place } }: Props) {
 			latitude={place.address.lat}
 			longitude={place.address.lng}
 			minZoom={12}
-			mapStyle={createStyle('streets-v2-light')}
+			mapStyle={style}
 		>
 			<Marker latitude={place.address.lat} longitude={place.address.lng} />
 		</MapContainer>
