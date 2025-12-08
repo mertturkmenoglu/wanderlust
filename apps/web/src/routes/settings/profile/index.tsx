@@ -104,7 +104,7 @@ function RouteComponent() {
 				</div>
 
 				<Label htmlFor="bio" className="mt-2">
-					Bio
+					About You
 				</Label>
 				<div className="col-span-2">
 					<Textarea
@@ -135,8 +135,12 @@ function RouteComponent() {
 					)}
 				</div>
 
+				<div />
+				<div />
+
 				<Button
 					type="submit"
+					className=""
 					disabled={!form.formState.isDirty || mutation.isPending}
 				>
 					{mutation.isPending && <Spinner className="mr-2" />}
