@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -37,8 +38,13 @@ export function Actions({ bookmark }: Props) {
 						placeId: bookmark.placeId,
 					});
 				}}
+				disabled={mutation.isPending}
 			>
-				<BookmarkIcon className="fill-primary text-primary" />
+				{mutation.isPending ? (
+					<Spinner />
+				) : (
+					<BookmarkIcon className="fill-primary text-primary" />
+				)}
 				Remove Bookmark
 			</Button>
 
