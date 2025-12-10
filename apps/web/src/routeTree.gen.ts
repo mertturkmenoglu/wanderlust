@@ -56,6 +56,7 @@ import { Route as UUsernameActivitiesIndexRouteImport } from './routes/u/$userna
 import { Route as TripsIdParticipantsIndexRouteImport } from './routes/trips/$id/participants/index'
 import { Route as TripsIdEditIndexRouteImport } from './routes/trips/$id/edit/index'
 import { Route as TripsIdCommentsIndexRouteImport } from './routes/trips/$id/comments/index'
+import { Route as TripsIdAmenitiesIndexRouteImport } from './routes/trips/$id/amenities/index'
 import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/index'
 import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
 import { Route as AuthPasswordForgotIndexRouteImport } from './routes/_auth/password/forgot/index'
@@ -315,6 +316,11 @@ const TripsIdCommentsIndexRoute = TripsIdCommentsIndexRouteImport.update({
   path: '/comments/',
   getParentRoute: () => TripsIdRoute,
 } as any)
+const TripsIdAmenitiesIndexRoute = TripsIdAmenitiesIndexRouteImport.update({
+  id: '/amenities/',
+  path: '/amenities/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
 const ListsIdEditIndexRoute = ListsIdEditIndexRouteImport.update({
   id: '/lists/$id/edit/',
   path: '/lists/$id/edit/',
@@ -485,6 +491,7 @@ export interface FileRoutesByFullPath {
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
+  '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
   '/trips/$id/participants': typeof TripsIdParticipantsIndexRoute
@@ -550,6 +557,7 @@ export interface FileRoutesByTo {
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
+  '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit': typeof TripsIdEditIndexRoute
   '/trips/$id/participants': typeof TripsIdParticipantsIndexRoute
@@ -621,6 +629,7 @@ export interface FileRoutesById {
   '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/_auth/password/reset/': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
+  '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
   '/trips/$id/edit/': typeof TripsIdEditIndexRoute
   '/trips/$id/participants/': typeof TripsIdParticipantsIndexRoute
@@ -693,6 +702,7 @@ export interface FileRouteTypes {
     | '/password/forgot'
     | '/password/reset'
     | '/lists/$id/edit'
+    | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
     | '/trips/$id/participants'
@@ -758,6 +768,7 @@ export interface FileRouteTypes {
     | '/password/forgot'
     | '/password/reset'
     | '/lists/$id/edit'
+    | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/edit'
     | '/trips/$id/participants'
@@ -828,6 +839,7 @@ export interface FileRouteTypes {
     | '/_auth/password/forgot/'
     | '/_auth/password/reset/'
     | '/lists/$id/edit/'
+    | '/trips/$id/amenities/'
     | '/trips/$id/comments/'
     | '/trips/$id/edit/'
     | '/trips/$id/participants/'
@@ -1216,6 +1228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdCommentsIndexRouteImport
       parentRoute: typeof TripsIdRoute
     }
+    '/trips/$id/amenities/': {
+      id: '/trips/$id/amenities/'
+      path: '/amenities'
+      fullPath: '/trips/$id/amenities'
+      preLoaderRoute: typeof TripsIdAmenitiesIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
     '/lists/$id/edit/': {
       id: '/lists/$id/edit/'
       path: '/lists/$id/edit'
@@ -1384,6 +1403,7 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 interface TripsIdRouteChildren {
   TripsIdIndexRoute: typeof TripsIdIndexRoute
+  TripsIdAmenitiesIndexRoute: typeof TripsIdAmenitiesIndexRoute
   TripsIdCommentsIndexRoute: typeof TripsIdCommentsIndexRoute
   TripsIdEditIndexRoute: typeof TripsIdEditIndexRoute
   TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
@@ -1393,6 +1413,7 @@ interface TripsIdRouteChildren {
 
 const TripsIdRouteChildren: TripsIdRouteChildren = {
   TripsIdIndexRoute: TripsIdIndexRoute,
+  TripsIdAmenitiesIndexRoute: TripsIdAmenitiesIndexRoute,
   TripsIdCommentsIndexRoute: TripsIdCommentsIndexRoute,
   TripsIdEditIndexRoute: TripsIdEditIndexRoute,
   TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
