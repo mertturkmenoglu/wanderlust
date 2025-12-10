@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
+import { format } from 'date-fns';
 import { z } from 'zod';
 import { ErrorComponent } from '@/components/error-component';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
@@ -47,8 +48,11 @@ function RouteComponent() {
 				<div className="col-span-full w-full md:col-span-3">
 					<div className="">
 						<div className="text-2xl">{trip.title}</div>
-						<div className="mt-1 text-muted-foreground text-xs">
-							Created by: {trip.owner.name}
+						<div
+							className="mt-1 text-muted-foreground text-xs"
+							title={`${format(trip.startAt, 'PPP')} - ${format(trip.endAt, 'PPP')}`}
+						>
+							{format(trip.startAt, 'PPP')} - {format(trip.endAt, 'PPP')}
 						</div>
 
 						<Separator className="my-2" />

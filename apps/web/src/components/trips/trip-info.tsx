@@ -1,11 +1,8 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { formatDate } from 'date-fns';
 import {
 	ActivityIcon,
-	ClockFadingIcon,
-	ClockIcon,
 	ConciergeBellIcon,
 	EyeIcon,
 	ReplyIcon,
@@ -30,8 +27,11 @@ export function TripInfo({ className }: Props) {
 
 	return (
 		<div className={cn(className)}>
-			<div className="text-muted-foreground text-sm">Trip Owner</div>
-			<div className="mt-2 flex items-center gap-4">
+			<Link
+				to="/u/$username"
+				params={{ username: trip.owner.username }}
+				className="hover:-m-2 flex items-center gap-4 hover:rounded-md hover:bg-muted hover:p-2"
+			>
 				<UserImage
 					src={ipx(userImage(trip.owner.image), 'w_512')}
 					imgClassName="size-16"
@@ -43,7 +43,7 @@ export function TripInfo({ className }: Props) {
 					<div className="font-bold text-xl">{trip.owner.name}</div>
 					<div className="text-primary text-xs">@{trip.owner.username}</div>
 				</div>
-			</div>
+			</Link>
 
 			<div className="my-4 space-y-2">
 				<LineItem
@@ -51,16 +51,6 @@ export function TripInfo({ className }: Props) {
 					text={`Status: ${trip.startAt.getTime() > Date.now() ? 'Upcoming' : 'Completed'}`}
 				/>
 				<LineItem icon={EyeIcon} text={`Visibility: ${trip.visibilityLevel}`} />
-				<LineItem
-					icon={ClockIcon}
-					text={`Start Date: ${formatDate(trip.startAt, 'dd MMM yyyy')}`}
-					title={trip.startAt.toISOString()}
-				/>
-				<LineItem
-					icon={ClockFadingIcon}
-					text={`End Date: ${formatDate(trip.endAt, 'dd MMM yyyy')}`}
-					title={trip.endAt.toISOString()}
-				/>
 			</div>
 
 			<div className="-ml-2 mt-4 flex w-full flex-col items-start pr-2 text-left">

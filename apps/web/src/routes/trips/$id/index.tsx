@@ -69,12 +69,12 @@ function RouteComponent() {
 	return (
 		<div className="mt-4">
 			<div>
-				<div className="text-lg underline">Description</div>
 				<CollapsibleText
 					text={
 						trip.description.length > 0 ? trip.description : 'No description.'
 					}
 					className="mt-2"
+					charLimit={500}
 				/>
 			</div>
 
