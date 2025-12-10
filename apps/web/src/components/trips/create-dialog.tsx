@@ -68,11 +68,17 @@ const visibilityOptions: TVisibilityOption[] = [
 
 const schema = z
 	.object({
-		title: z.string().min(1).max(128),
-		description: z.string().min(0).max(1024),
-		startAt: z.string(),
-		endAt: z.string(),
-		visibility: z.enum(visibility),
+		title: z
+			.string('Required')
+			.min(1, 'Too short')
+			.max(128, 'At max 128 characters'),
+		description: z
+			.string('Required')
+			.min(1, 'Too short')
+			.max(1024, 'At max 1024 characters'),
+		startAt: z.string('Required'),
+		endAt: z.string('Required'),
+		visibility: z.enum(visibility, 'Choose an option'),
 	})
 	.superRefine((data, ctx) => {
 		if (!isBefore(data.startAt, data.endAt)) {
@@ -198,6 +204,8 @@ export function CreateDialog() {
 											id="description"
 											placeholder="You can add a description for your trip."
 											autoComplete="off"
+											rows={4}
+											className="max-h-32"
 											aria-invalid={fieldState.invalid}
 										/>
 										{fieldState.invalid && (
