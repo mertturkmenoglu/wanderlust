@@ -444,7 +444,8 @@ export class TripsRepository {
 	async getInviteDetails(userId: string, data: dto.GetInviteDetailsInput) {
 		try {
 			const result = await this.db.query.tripInvites.findFirst({
-				where: (t, { eq, and }) => and(eq(t.id, data.inviteId), eq(t.toId, userId)),
+				where: (t, { eq, and }) =>
+					and(eq(t.id, data.inviteId), eq(t.toId, userId)),
 				with: {
 					fromUser: {
 						columns: {
@@ -1065,6 +1066,40 @@ export class TripsRepository {
 
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to delete trip location',
+				cause: err,
+			});
+		}
+	}
+
+	async updateRequestedAmenities(
+		userId: string,
+		data: dto.UpdateRequestedAmenitiesInput,
+	) {
+		try {
+			const [updated] = await this.db
+				.update(schema.trips)
+				.set({
+					requestedAmenities: data.amenities,
+				})
+				.where(and(eq(schema.trips.id, data.id)))
+				.returning();
+
+			if (!updated) {
+				throw new ORPCError('NOT_FOUND', {
+					message: 'Trip not found or user is not the owner',
+				});
+			}
+
+			const result = await this.get(userId, { id: data.id });
+
+			return result;
+		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
+
+			throw new ORPCError('INTERNAL_SERVER_ERROR', {
+				message: 'Failed to update requested amenities',
 				cause: err,
 			});
 		}

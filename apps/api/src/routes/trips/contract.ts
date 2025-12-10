@@ -362,6 +362,27 @@ export const contract = {
 			successDescription: 'OK',
 			tags: ['Trips'],
 		}),
+	updateRequestedAmenities: oc
+		.input(dto.updateRequestedAmenitiesInput)
+		.output(dto.updateRequestedAmenitiesOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'PATCH',
+			path: '/trips/:id/amenities',
+			summary: 'Update Requested Amenities',
+			description: 'Update the requested amenities for a trip',
+			successStatus: 200,
+			successDescription: 'OK',
+			tags: ['Trips'],
+		}),
 	createLocation: oc
 		.input(dto.createLocationInput)
 		.output(dto.createLocationOutput)

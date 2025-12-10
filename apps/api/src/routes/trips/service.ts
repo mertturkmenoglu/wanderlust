@@ -487,4 +487,29 @@ export class TripsService {
 
 		return {};
 	}
+
+	async updateRequestedAmenities(
+		userId: string,
+		data: dto.UpdateRequestedAmenitiesInput,
+	): Promise<dto.UpdateRequestedAmenitiesOutput> {
+		const trip = await this.repo.get(userId, { id: data.id });
+
+		if (!authz.canRead(trip, userId)) {
+			throw new ORPCError('FORBIDDEN', {
+				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
+			});
+		}
+
+		if (!authz.canUpdateTrip(trip, userId)) {
+			throw new ORPCError('FORBIDDEN', {
+				message: `User with id ${userId} is not allowed to update requested amenities on trip with id ${data.id}`,
+			});
+		}
+
+		const result = await this.repo.updateRequestedAmenities(userId, data);
+
+		return {
+			trip: result,
+		};
+	}
 }

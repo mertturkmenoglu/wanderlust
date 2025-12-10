@@ -140,5 +140,13 @@ export function getRouter() {
 
 			return {};
 		}),
+		updateRequestedAmenities: os.updateRequestedAmenities.handler(
+			async ({ input, context }) => {
+				const userId = context.session.user.id;
+				const result = await service.updateRequestedAmenities(userId, input);
+
+				return result;
+			},
+		),
 	});
 }

@@ -1,6 +1,7 @@
 import z from 'zod';
 import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
+import { amenities } from '../amenities/consts';
 
 const trip = $.trip.extend(
 	z.object({
@@ -389,3 +390,20 @@ export type DeleteLocationInput = z.infer<typeof deleteLocationInput>;
 export const deleteLocationOutput = z.object({});
 
 export type DeleteLocationOutput = z.infer<typeof deleteLocationOutput>;
+
+export const updateRequestedAmenitiesInput = z.object({
+	id: trip.shape.id,
+	amenities: z.array(z.string()).min(0).max(amenities.length),
+});
+
+export type UpdateRequestedAmenitiesInput = z.infer<
+	typeof updateRequestedAmenitiesInput
+>;
+
+export const updateRequestedAmenitiesOutput = z.object({
+	trip: trip,
+});
+
+export type UpdateRequestedAmenitiesOutput = z.infer<
+	typeof updateRequestedAmenitiesOutput
+>;
