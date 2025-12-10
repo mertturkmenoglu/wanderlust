@@ -20,11 +20,11 @@ export function DeleteButton({ className }: Props) {
 	const mutation = useMutation(
 		orpc.trips.delete.mutationOptions({
 			onSuccess: async () => {
-				await invalidate();
 				await navigate({
 					to: '/trips',
 				});
 				toast.success('Trip deleted');
+				await invalidate();
 			},
 		}),
 	);
