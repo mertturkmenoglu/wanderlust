@@ -5,6 +5,7 @@ import { getRouter as getBookmarksRouter } from './bookmarks';
 import { getRouter as getCategoriesRouter } from './categories';
 import { getRouter as getCitiesRouter } from './cities';
 import { getRouter as getCollectionsRouter } from './collections';
+import { getRouter as getEventsRouter } from './events';
 import { getRouter as getFavoritesRouter } from './favorites';
 import { getRouter as getHealthRouter } from './health';
 import { getRouter as getListsRouter } from './lists';
@@ -22,6 +23,7 @@ export function getAppRouter() {
 		categories: getCategoriesRouter(),
 		cities: getCitiesRouter(),
 		collections: getCollectionsRouter(),
+		events: getEventsRouter(),
 		favorites: getFavoritesRouter(),
 		health: getHealthRouter(),
 		lists: getListsRouter(),
