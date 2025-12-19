@@ -1,8 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { AppMessage } from '@/components/app-message';
-import { UserImage } from '@/components/user-image';
-import { userImage } from '@/lib/image';
-import { ipx } from '@/lib/ipx';
+import { createFileRoute } from '@tanstack/react-router';
+import { ItemGroup } from '@wanderlust/ui/components/item';
+import { EmptyState } from './-components/empty';
+import { FollowingItem } from './-components/item';
 
 export const Route = createFileRoute('/u/$username/following/')({
 	component: RouteComponent,
@@ -24,35 +23,14 @@ function RouteComponent() {
 
 	return (
 		<div className="my-8">
-			{following.length === 0 && (
-				<AppMessage
-					emptyMessage="This user hasn't followed anyone yet"
-					showBackButton={false}
-				/>
-			)}
+			{following.length === 0 && <EmptyState />}
 
 			{following.length > 0 && (
-				<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<ItemGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					{following.map((following) => (
-						<Link
-							to="/u/$username"
-							params={{ username: following.username }}
-							key={following.id}
-							className="flex items-center gap-4 rounded-md p-2 hover:bg-muted"
-						>
-							<UserImage
-								src={ipx(userImage(following.image), 'w_512')}
-								className="size-32"
-							/>
-							<div>
-								<div className="text-lg">{following.name}</div>
-								<div className="text-muted-foreground">
-									@{following.username}
-								</div>
-							</div>
-						</Link>
+						<FollowingItem key={following.id} following={following} />
 					))}
-				</div>
+				</ItemGroup>
 			)}
 		</div>
 	);
