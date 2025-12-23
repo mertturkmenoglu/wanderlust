@@ -1,0 +1,60 @@
+# Abbreviations
+
+Here's a list of abbreviations used throughout the project (Note: List is not exhaustive):
+
+- `API`: Application Programming Interface
+- `Authn`: Authentication. Verifying the user is the same person they claim to be.
+- `Authz`: Authorization. Verifying the user has permissions to access a resource/perform an action.
+- `c` or `ctx`: Context. Usually used as the request context, that carries information accross API boundaries.
+- `CLI`: Command Line Interface
+- `CORS`: Cross-Origin Resource Sharing. Allows to access restricted resources from a server on a different domain.
+- `CWD`: Current Working Directory
+- `db`: Database
+- `dev`: Development
+- `DTO`: Data transfer object
+- `env`: Environment, usually refers to the environment variables/configurations.
+- `eq`: Equality
+- `ER`: Entity-relationship diagrams.
+- `err`: Error
+- `fs`: File system
+- `FB`: Facebook
+- `GIN`: Generalized Inverted Index
+- `hbs`: Handlebars file extension
+- `HTTP`: Hypertext Transfer Protocol
+- `ID`: Identifier
+- `IP`: Internet Protocol
+- `JSON`: JavaScript Object Notation
+- `L1`: Layer 1 cache
+- `L2`: Layer 2 cache
+- `Lat`: Latitude
+- `Lng`: Longitude
+- `net`: Network, usually refers to the Docker networks
+- `oc`: Usually refers to the `@orpc/contract` package and its exported member.
+- `OTLP`: The OpenTelemetry Protocol
+- `ORM`: Object-relational mapping
+- `oRPC`: Backend framework
+- `os`: Usually refers to the `@orpc/server` package and its exported member.
+- `OSM`: OpenStreetMap
+- `otel`: Open Telemetry
+- `pg`: PostgreSQL
+- `POI`: Point of Interest
+- `req`: Request
+- `res`: Response
+- `RPC`: Remote Procedure Call
+- `s3`: Simple Storage Service
+- `sdk`: Software Development Kit
+- `smtp`: Simple Mail Transfer Protocol
+- `SQL`: Structured Query Language
+- `src`: Source
+- `SSL`: Secure Sockets Layer
+- `stdin`: Standard input
+- `str`: String
+- `T`: Usually refers to the generic type parameter.
+- `toc`: Table of contents
+- `ttl`: Time to live. Used for expiring cache items after some time.
+- `tty`: Teletypewriter
+- `tx`: Transaction.
+- `url`: Uniform Resource Locator
+- `utf8`: Unicode Transformation Format – 8-bit
+- `uuid`: Universally unique identifier
+- `z`: Usually refers to the `zod` package.

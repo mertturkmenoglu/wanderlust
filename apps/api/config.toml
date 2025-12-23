@@ -1,0 +1,35 @@
+[api]
+port = 5000
+url = "http://localhost:5000"
+
+[cache]
+grace = "30m"
+graceBackoff = "30s"
+l1MaxSize = "50mb"
+
+[cors]
+allowedOrigins = ["http://localhost:3000"]
+
+[database]
+url = "postgresql://postgres:postgres@localhost:5432/wanderlust"
+ssl = false
+
+[email]
+from = "Wanderlust <noreply@example.com>"
+host = "localhost"
+port = 1025
+ssl = false
+
+[redis]
+host = "localhost"
+port = 6379
+db = 0
+
+[typesense]
+port = 8108
+apiKey = "wanderlust"
+dashboardPort = 3006
+url = "http://localhost:8108"
+
+[web]
+url = "http://localhost:3000"

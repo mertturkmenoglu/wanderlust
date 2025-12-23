@@ -1,0 +1,215 @@
+import { useQuery } from '@tanstack/react-query';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
+import { Progress } from '@wanderlust/ui/components/progress';
+import { Slider } from '@wanderlust/ui/components/slider';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { LoaderCircleIcon, StarIcon } from 'lucide-react';
+import { useState } from 'react';
+import { FormattedRating } from '@/components/formatted-rating';
+import { type Outputs, orpc } from '@/lib/orpc';
+import { computeRating } from '@/lib/rating';
+import { CreateReviewDialog } from './create/create-dialog';
+import { ReviewImages } from './images';
+
+type Props = {
+	className?: string;
+};
+
+const fmt = Intl.NumberFormat('en-US', {
+	style: 'decimal',
+	compactDisplay: 'short',
+	notation: 'compact',
+});
+
+export function RatingsSection({ className }: Props) {
+	const route = getRouteApi('/p/$id/');
+	const { place } = route.useLoaderData();
+	const rating = computeRating(place.totalPoints, place.totalVotes);
+
+	const query = useQuery(
+		orpc.reviews.getRatings.queryOptions({
+			input: {
+				id: place.id,
+			},
+		}),
+	);
+
+	return (
+		<div className={cn(className)}>
+			<div
+				className={cn(
+					'bg-linear-to-r from-accent/50 to-primary/10',
+					'flex flex-col gap-8',
+					'h-min rounded-md p-6',
+				)}
+			>
+				<div>
+					<h3 id="reviews" className="font-bold text-primary text-xl">
+						Reviews
+					</h3>
+					<div className="my-2 flex items-center gap-4">
+						<span className="font-bold text-6xl text-primary">{rating}</span>
+						<div>
+							<FormattedRating
+								rating={Number.parseFloat(rating)}
+								votes={place.totalVotes}
+								showNumbers={false}
+							/>
+							<span className="text-muted-foreground text-xs tracking-tight">
+								{fmt.format(place.totalVotes)} reviews
+							</span>
+						</div>
+					</div>
+					<CreateReviewDialog />
+				</div>
+
+				{query.isLoading && (
+					<LoaderCircleIcon className="mx-auto my-auto size-16 animate-spin text-primary" />
+				)}
+
+				{query.data && <Ratings ratings={query.data} />}
+				{query.data && <Filters />}
+			</div>
+
+			<div className="mt-4">
+				<ReviewImages />
+			</div>
+		</div>
+	);
+}
+
+type RatingsProps = {
+	ratings: Outputs['reviews']['getRatings'];
+};
+
+function Ratings({ ratings }: RatingsProps) {
+	const entries = Object.entries(ratings.ratings).map(
+		(v) => [+v[0], v[1]] as const,
+	);
+	const sorted = entries.sort((a, b) => b[0] - a[0]);
+
+	return (
+		<div className="w-full space-y-2">
+			{sorted.map(([rating, count]) => (
+				<div
+					key={rating}
+					className="grid grid-cols-12 items-center gap-2 text-right"
+				>
+					<div className="flex items-center justify-end gap-1 font-medium text-primary text-sm">
+						{rating} <StarIcon className="size-3 fill-primary text-primary" />
+					</div>
+					<Progress
+						value={(count * 100) / ratings.totalVotes}
+						className="col-span-10"
+					/>
+					<span className="col-span-1 text-primary text-xs tabular-nums">
+						({fmt.format(count)})
+					</span>
+				</div>
+			))}
+		</div>
+	);
+}
+
+function Filters() {
+	const route = getRouteApi('/p/$id/');
+	const search = route.useSearch();
+	const [minRating, setMinRating] = useState(search.minRating ?? 0);
+	const [maxRating, setMaxRating] = useState(search.maxRating ?? 5);
+	const [sortBy, setSortBy] = useState(search.sortBy ?? 'created_at');
+	const [sortOrd, setSortOrd] = useState(search.sortOrd ?? 'desc');
+	const navigate = useNavigate();
+
+	const isAllRatings = minRating === 0 && maxRating === 5;
+
+	return (
+		<div>
+			<div className="flex flex-col gap-2">
+				<div className="flex items-center justify-between gap-2">
+					<span className="font-semibold">Filters</span>
+					<Button
+						size="sm"
+						onClick={() => {
+							navigate({
+								to: '.',
+								hash: 'reviews',
+								search: (prev) => ({
+									...prev,
+									page: 1,
+									minRating: minRating,
+									maxRating: maxRating,
+									sortBy: sortBy,
+									sortOrd: sortOrd,
+								}),
+							});
+						}}
+					>
+						Apply
+					</Button>
+				</div>
+
+				<div className="flex flex-col gap-2">
+					<div className="font-semibold text-muted-foreground text-sm">
+						Rating {isAllRatings ? '' : `(${minRating} - ${maxRating})`}
+					</div>
+					<Slider
+						defaultValue={[0, 5]}
+						value={[minRating, maxRating]}
+						onValueChange={([min, max]) => {
+							setMinRating(min ?? 0);
+							setMaxRating(max ?? 5);
+						}}
+						minStepsBetweenThumbs={0}
+						max={5}
+						step={1}
+					/>
+				</div>
+
+				<div className="mt-4 flex flex-col gap-2">
+					<div className="font-semibold text-muted-foreground text-sm">
+						Sort By
+					</div>
+					<div className="flex items-center gap-2">
+						<Button
+							variant={sortBy === 'created_at' ? 'default' : 'ghost'}
+							size="sm"
+							onClick={() => setSortBy('created_at')}
+						>
+							Date
+						</Button>
+						<Button
+							variant={sortBy === 'rating' ? 'default' : 'ghost'}
+							size="sm"
+							onClick={() => setSortBy('rating')}
+						>
+							Rating
+						</Button>
+					</div>
+				</div>
+
+				<div className="mt-4 flex flex-col gap-2">
+					<div className="font-semibold text-muted-foreground text-sm">
+						Sort Order
+					</div>
+					<div className="flex items-center gap-2">
+						<Button
+							variant={sortOrd === 'desc' ? 'default' : 'ghost'}
+							size="sm"
+							onClick={() => setSortOrd('desc')}
+						>
+							{sortBy === 'created_at' ? 'Newest First' : 'Highest First'}
+						</Button>
+						<Button
+							variant={sortOrd === 'asc' ? 'default' : 'ghost'}
+							size="sm"
+							onClick={() => setSortOrd('asc')}
+						>
+							{sortBy === 'created_at' ? 'Oldest First' : 'Lowest First'}
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}

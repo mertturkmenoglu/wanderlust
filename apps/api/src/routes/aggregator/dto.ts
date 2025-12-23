@@ -1,0 +1,23 @@
+import z from 'zod';
+import { $ } from '@/db/schema';
+
+const place = $.place.extend({
+	assets: $.asset.array(),
+	category: $.category,
+	address: $.address.extend({
+		city: $.city,
+	}),
+});
+
+export const homeInput = z.object({});
+
+export type HomeInput = z.infer<typeof homeInput>;
+
+export const homeOutput = z.object({
+	new: place.array(),
+	popular: place.array(),
+	featured: place.array(),
+	favorites: place.array(),
+});
+
+export type HomeOutput = z.infer<typeof homeOutput>;

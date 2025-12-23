@@ -1,3 +1,0 @@
-api/pkg/db/* -linguist-generated
-web/src/lib/api-types.ts linguist-generated=true
-web/src/components/ui/* linguist-generated=true

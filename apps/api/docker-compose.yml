@@ -1,0 +1,80 @@
+name: wanderlust
+
+services:
+  wl-postgres:
+    container_name: wl-postgres
+    image: postgres:16.4-alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: wanderlust
+    volumes:
+      - wl-pg-data:/var/lib/postgresql/data
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  wl-typesense:
+    container_name: wl-typesense
+    image: typesense/typesense:26.0
+    restart: unless-stopped
+    ports:
+      - 8108:8108
+    volumes:
+      - wl-typesense-data:/data
+    command: "--data-dir /data --api-key=wanderlust --enable-cors"
+    networks:
+      - wl-searchnet
+
+  wl-typesense-dashboard:
+    container_name: wl-typesense-dashboard
+    restart: unless-stopped
+    ports:
+      - 3006:80
+    image: ghcr.io/bfritscher/typesense-dashboard:latest
+    networks:
+      - wl-searchnet
+
+  wl-mailpit:
+    image: axllent/mailpit
+    container_name: wl-mailpit
+    restart: unless-stopped
+    volumes:
+      - wl-mailpit-data:/data
+    ports:
+      - 8025:8025
+      - 1025:1025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  wl-redis:
+    image: redis:7.4.0-alpine
+    container_name: wl-redis
+    restart: unless-stopped
+    networks:
+      - wl-redisnet
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  wl-searchnet:
+  wl-redisnet:
+
+volumes:
+  wl-pg-data:
+  wl-typesense-data:
+  wl-mailpit-data:

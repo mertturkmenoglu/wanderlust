@@ -1,0 +1,64 @@
+import { useMutation } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { Spinner } from '@wanderlust/ui/components/spinner';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { useInvalidator } from '@/hooks/use-invalidator';
+import { orpc } from '@/lib/orpc';
+import { useBookmarksContext } from './-context';
+import type { TBookmark } from './-types';
+
+type Props = {
+	bookmark: TBookmark;
+};
+
+export function Actions({ bookmark }: Props) {
+	const invalidate = useInvalidator();
+	const ctx = useBookmarksContext();
+
+	const mutation = useMutation(
+		orpc.bookmarks.delete.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				ctx.setIndex(0);
+				toast.success('Bookmark removed');
+			},
+		}),
+	);
+
+	return (
+		<div className="my-4 flex items-center justify-between gap-4">
+			<Button
+				variant="outline"
+				size="sm"
+				onClick={() => {
+					mutation.mutate({
+						placeId: bookmark.placeId,
+					});
+				}}
+				disabled={mutation.isPending}
+			>
+				{mutation.isPending ? (
+					<Spinner />
+				) : (
+					<BookmarkIcon className="fill-primary text-primary" />
+				)}
+				Remove Bookmark
+			</Button>
+
+			<Link
+				to="/p/$id"
+				params={{ id: bookmark.placeId }}
+				className={cn(
+					'flex-1',
+					buttonVariants({ variant: 'default', size: 'sm' }),
+				)}
+			>
+				<span>See Details</span>
+				<ArrowRightIcon />
+			</Link>
+		</div>
+	);
+}

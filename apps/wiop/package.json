@@ -1,0 +1,22 @@
+{
+	"name": "wiop",
+	"private": true,
+	"version": "2.0.0",
+	"description": "Wanderlust image optimization proxy server",
+	"module": "index.ts",
+	"type": "module",
+	"scripts": {
+		"dev": "bun run --hot index.ts",
+		"start": "bun run index.ts"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@wanderlust/config": "workspace:*"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"ipx": "^3.1.1"
+	}
+}
