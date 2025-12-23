@@ -1,5 +1,5 @@
 <div style="display: flex; justify-content: center; align-items: center;">
-  <img width="192" src="https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/main/web/public/logo.png" alt="Wanderlust logo" />
+  <img width="192" src="https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/refs/heads/main/apps/web/public/logo.png" alt="Wanderlust logo" />
 </div>
 
 # Wanderlust
