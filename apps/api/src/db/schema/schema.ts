@@ -319,6 +319,10 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
 	ticketOptions: many(eventTicketOptions),
 	agenda: many(eventAgendaItems),
 	lineup: many(eventLineupItems),
+	place: one(places, {
+		fields: [events.placeId],
+		references: [places.id],
+	}),
 }));
 
 export const eventTicketOptions = pgTable(
