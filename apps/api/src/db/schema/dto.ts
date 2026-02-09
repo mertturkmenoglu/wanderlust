@@ -1040,7 +1040,7 @@ export const $ = {
 	}).meta({
 		description: 'A report entity',
 	}),
-	events: createSelectSchema(events, {
+	event: createSelectSchema(events, {
 		id: z
 			.string()
 			.min(1)
