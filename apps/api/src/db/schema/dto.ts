@@ -1324,6 +1324,7 @@ export const $ = {
 		title: z
 			.string()
 			.max(256)
+			.nullable()
 			.meta({
 				description: 'Title or role of the lineup item',
 				examples: ['CEO of Example Corp'],
