@@ -14,7 +14,7 @@ export function getRouter() {
 	const service = new EventsService(repo);
 
 	return os.router({
-		create: os.get.handler(async ({ input, context }) => {
+		create: os.create.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
 			const result = await service.create(userId, input);
 
