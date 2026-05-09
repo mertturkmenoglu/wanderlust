@@ -21,6 +21,8 @@
 		"noFallthroughCasesInSwitch": true,
 		"types": [
 			"bun"
-		]
+		],
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
 	}
 }
