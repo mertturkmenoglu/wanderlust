@@ -1,6 +1,6 @@
 # Project Structure
 
-This document describes the project structure of the Fringe API.
+This document describes the project structure of the Wanderlust API.
 
 ## Structure
 
@@ -11,7 +11,6 @@ This document describes the project structure of the Fringe API.
 │
 └── src (Source)
     ├── db
-    │   ├── migrations
     │   └── schema
     │
     ├── lib
@@ -22,7 +21,7 @@ This document describes the project structure of the Fringe API.
     │   ├── di
     │   ├── email
     │   ├── err
-    │   ├── fakse
+    │   ├── fake
     │   ├── jobs
     │   ├── pagination
     │   ├── pgerr
@@ -34,7 +33,7 @@ This document describes the project structure of the Fringe API.
     │
     ├── routes
     │   ├── aggregator
-    │   └── bookmarks
+    │   └── amenities
     │   ...
     │   ...
     │   ...
