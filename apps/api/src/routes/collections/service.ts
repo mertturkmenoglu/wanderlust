@@ -1,8 +1,10 @@
+import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
-import type { CollectionsRepository } from './repository';
+import { CollectionsRepository } from './repository';
 
+@injectable()
 export class CollectionsService {
-	constructor(private readonly repo: CollectionsRepository) {}
+	constructor(@inject(CollectionsRepository) private readonly repo: CollectionsRepository) { }
 
 	async list(data: dto.ListInput): Promise<dto.ListOutput> {
 		const result = await this.repo.list(data);

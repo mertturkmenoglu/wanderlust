@@ -1,8 +1,10 @@
+import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
-import type { BookmarksRepository } from './repository';
+import { BookmarksRepository } from './repository';
 
+@injectable()
 export class BookmarksService {
-	constructor(private readonly repo: BookmarksRepository) {}
+	constructor(@inject(BookmarksRepository) private readonly repo: BookmarksRepository) { }
 
 	async create(
 		userId: string,

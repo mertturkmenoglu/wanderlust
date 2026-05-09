@@ -1,9 +1,9 @@
 import { Queue, Worker } from 'bullmq';
+import type { Container } from 'inversify';
 import IORedis from 'ioredis';
 import z from 'zod';
-import { ConfigProvider } from '@/lib/config';
-import type { Container } from '@/lib/di';
-import { EmailProvider, subjects, templates } from '@/lib/email';
+import { ConfigService } from '@/lib/config';
+import { EmailService, subjects, templates } from '@/lib/email';
 
 const schemas = z.object({
 	'emails/password-reset': z.object({
@@ -22,9 +22,10 @@ type Schemas = z.infer<typeof schemas>;
 
 type DataType = Schemas[JobName];
 
-export function initJobs(ioc: Container) {
-	const cfg = ioc.resolve(ConfigProvider.id);
-	const email = ioc.resolve(EmailProvider.id);
+export function initJobs(container: Container) {
+	const cfg = container.get(ConfigService).get();
+	const email = container.get(EmailService).get();
+
 	const connection = new IORedis({
 		host: cfg.redis.host,
 		port: cfg.redis.port,

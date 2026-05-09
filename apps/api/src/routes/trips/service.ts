@@ -1,10 +1,14 @@
 import { ORPCError } from '@orpc/client';
+import { inject, injectable } from 'inversify';
 import * as authz from './authz';
 import type * as dto from './dto';
-import type { TripsRepository } from './repository';
+import { TripsRepository } from './repository';
 
+@injectable()
 export class TripsService {
-	constructor(private readonly repo: TripsRepository) {}
+	constructor(
+		@inject(TripsRepository) private readonly repo: TripsRepository,
+	) { }
 
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(userId, data);

@@ -1,7 +1,9 @@
+import 'reflect-metadata';
+
 import { getApiHandler, getRpcHandler } from '@/routes/handler';
-import { bootstrapServices, ioc } from './ioc';
-import { AuthProvider } from './lib/auth';
-import { ConfigProvider } from './lib/config';
+import { bootstrapServices, container } from './ioc';
+import { AuthService } from './lib/auth';
+import { ConfigService } from './lib/config';
 import { createContext } from './lib/context';
 import { withCors } from './middlewares/cors';
 import { logger } from './middlewares/logger';
@@ -9,14 +11,14 @@ import { logger } from './middlewares/logger';
 async function main() {
 	await bootstrapServices();
 
-	const config = ioc.resolve(ConfigProvider.id);
-	const auth = ioc.resolve(AuthProvider.id);
+	const cfg = container.get(ConfigService).get();
+	const auth = container.get(AuthService).get();
 
 	const api = getApiHandler();
 	const rpc = getRpcHandler();
 
 	const server = Bun.serve({
-		port: config.api.port,
+		port: cfg.api.port,
 		async fetch(request) {
 			const start = performance.now();
 
@@ -42,7 +44,7 @@ async function main() {
 				const res = await handler.handle(request, {
 					prefix: isRpcRequest ? '/rpc' : '/api',
 					// @ts-expect-error Context type inference
-					context: await createContext({ request, ioc }),
+					context: await createContext({ request, container }),
 				});
 
 				const response = res.matched

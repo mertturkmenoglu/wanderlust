@@ -1,16 +1,21 @@
 import { ORPCError } from '@orpc/client';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
-import type { TDatabaseService } from '@/db';
+import { inject, injectable } from 'inversify';
+import { DatabaseService, type TDatabaseService } from '@/db';
 import * as schema from '@/db/schema';
-import type { TCacheService } from '@/lib/cache';
+import { CacheService, type TCacheService } from '@/lib/cache';
 import { Pagination } from '@/lib/pagination';
 import type * as dto from './dto';
 
+@injectable()
 export class UsersRepository {
-	constructor(
-		private readonly db: TDatabaseService,
-		private readonly cache: TCacheService,
-	) {}
+	private readonly db: TDatabaseService;
+	private readonly cache: TCacheService;
+
+	constructor(@inject(DatabaseService) db: DatabaseService, @inject(CacheService) cache: CacheService) {
+		this.db = db.get();
+		this.cache = cache.get();
+	}
 
 	async updateImage(
 		userId: string,

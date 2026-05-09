@@ -1,28 +1,24 @@
 import { BentoCache, bentostore } from 'bentocache';
 import { memoryDriver } from 'bentocache/drivers/memory';
 import { redisBusDriver, redisDriver } from 'bentocache/drivers/redis';
+import { inject, injectable } from 'inversify';
 import superjson from 'superjson';
-import { ConfigProvider, type TConfig } from '../config';
-import { Container, type IServiceProvider } from '../di';
+import { ConfigService, type TConfigService } from '../config';
 
-export class CacheProvider implements IServiceProvider<TCacheService> {
+@injectable()
+export class CacheService {
 	private readonly instance: TCacheService;
 
-	constructor(ioc: Container) {
-		const cfg = ioc.resolve(ConfigProvider.id);
-		this.instance = init(cfg);
+	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
+		this.instance = init(this.cfg.get());
 	}
 
 	get(): TCacheService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TCacheService>('cache');
-	}
 }
 
-function init(cfg: TConfig) {
+function init(cfg: TConfigService) {
 	return new BentoCache({
 		default: 'cache',
 		grace: cfg.cache.grace,

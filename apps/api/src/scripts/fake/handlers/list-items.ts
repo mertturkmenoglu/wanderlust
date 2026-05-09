@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import type z from 'zod';
-import { DbProvider } from '@/db';
+import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { ioc } from '@/ioc';
+import { container } from '@/ioc';
 import { chunkArray, readFile } from '@/lib/fake/utils';
 import { paths } from '..';
 
@@ -27,7 +27,8 @@ export async function generate() {
 type Insert = z.infer<typeof $insert.listItem>;
 
 async function processChunk(listIds: string[], placeIds: string[]) {
-	const db = ioc.resolve(DbProvider.id);
+	const db = container.get(DatabaseService).get();
+
 	const batch: Insert[] = [];
 
 	for (const listId of listIds) {

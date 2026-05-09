@@ -1,14 +1,20 @@
 import { ORPCError } from '@orpc/server';
 import { and, eq, gt, sql } from 'drizzle-orm';
-import type { TDatabaseService } from '@/db';
+import { inject, injectable } from 'inversify';
+import { DatabaseService, type TDatabaseService } from '@/db';
 import * as schema from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 import { nanoid } from '@/lib/uid';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 import type * as dto from './dto';
 
+@injectable()
 export class ListsRepository {
-	constructor(private readonly db: TDatabaseService) {}
+	private readonly db: TDatabaseService;
+
+	constructor(@inject(DatabaseService) db: DatabaseService) {
+		this.db = db.get();
+	}
 
 	async listAll(userId: string, data: dto.ListAllInput) {
 		const offset = Pagination.getOffset(data);

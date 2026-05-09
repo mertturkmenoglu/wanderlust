@@ -1,27 +1,25 @@
 import { Disk } from 'flydrive';
 import { FSDriver } from 'flydrive/drivers/fs';
 import type { SignedURLOptions } from 'flydrive/types';
-import { ConfigProvider, type TConfig } from '../config';
-import { Container, type IServiceProvider } from '../di';
+import { inject, injectable } from 'inversify';
+import { ConfigService, type TConfigService } from '../config';
 
-export class StorageProvider implements IServiceProvider<TStorageService> {
+@injectable()
+export class StorageService {
 	private readonly instance: TStorageService;
 
-	constructor(ioc: Container) {
-		const cfg = ioc.resolve(ConfigProvider.id);
-		this.instance = init(cfg);
+	constructor(
+		@inject(ConfigService) private readonly cfg: ConfigService,
+	) {
+		this.instance = init(this.cfg.get());
 	}
 
 	get(): TStorageService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TStorageService>('storage');
-	}
 }
 
-function init(cfg: TConfig) {
+function init(cfg: TConfigService) {
 	const fsDriver = new FSDriver({
 		location: new URL('../../../uploads', import.meta.url),
 		visibility: 'public',

@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
 import { eq, sum } from 'drizzle-orm';
 import type z from 'zod';
-import { DbProvider } from '@/db';
+import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { ioc } from '@/ioc';
+import { container } from '@/ioc';
 import { chunkArray, readFile } from '@/lib/fake/utils';
 import { nanoid } from '@/lib/uid';
 import { paths } from '..';
@@ -39,7 +39,8 @@ export async function generate() {
 type Insert = z.infer<typeof $insert.review>;
 
 async function processChunk(placeIds: string[], userIds: string[]) {
-	const db = ioc.resolve(DbProvider.id);
+	const db = container.get(DatabaseService).get();
+
 	const batch: Insert[] = [];
 
 	for (const placeId of placeIds) {
@@ -63,7 +64,7 @@ async function processChunk(placeIds: string[], userIds: string[]) {
 }
 
 async function processUpdates(placeIds: string[]) {
-	const db = ioc.resolve(DbProvider.id);
+	const db = container.get(DatabaseService).get();
 
 	return db.transaction(async (tx) => {
 		for (const placeId of placeIds) {

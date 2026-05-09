@@ -1,25 +1,21 @@
+import { inject, injectable } from 'inversify';
 import nodemailer from 'nodemailer';
-import { ConfigProvider, type TConfig } from '../config';
-import { Container, type IServiceProvider } from '../di';
+import { ConfigService, type TConfigService } from '../config';
 
-export class EmailProvider implements IServiceProvider<TEmailService> {
+@injectable()
+export class EmailService {
 	private readonly instance: TEmailService;
 
-	constructor(ioc: Container) {
-		const cfg = ioc.resolve(ConfigProvider.id);
-		this.instance = init(cfg);
+	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
+		this.instance = init(this.cfg.get());
 	}
 
 	get(): TEmailService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TEmailService>('email');
-	}
 }
 
-function init(cfg: TConfig) {
+function init(cfg: TConfigService) {
 	return nodemailer.createTransport({
 		host: cfg.email.host,
 		port: cfg.email.port,

@@ -1,12 +1,18 @@
-import type { TCacheService } from '@/lib/cache';
+import { inject, injectable } from 'inversify';
+import { CacheService, type TCacheService } from '@/lib/cache';
 import type * as dto from './dto';
-import type { CitiesRepository } from './repository';
+import { CitiesRepository } from './repository';
 
+@injectable()
 export class CitiesService {
+	private readonly cache: TCacheService;
+
 	constructor(
-		private readonly repository: CitiesRepository,
-		private readonly cache: TCacheService,
-	) {}
+		@inject(CitiesRepository) private readonly repository: CitiesRepository,
+		@inject(CacheService) cache: CacheService,
+	) {
+		this.cache = cache.get();
+	}
 
 	async list(): Promise<dto.ListOutput> {
 		const result = await this.repository.list();

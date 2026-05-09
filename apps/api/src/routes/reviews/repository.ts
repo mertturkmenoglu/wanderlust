@@ -1,13 +1,19 @@
 import { ORPCError } from '@orpc/client';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
-import type { TDatabaseService } from '@/db';
+import { inject, injectable } from 'inversify';
+import { DatabaseService, type TDatabaseService } from '@/db';
 import * as schema from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
 
+@injectable()
 export class ReviewsRepository {
-	constructor(private readonly db: TDatabaseService) {}
+	private readonly db: TDatabaseService;
+
+	constructor(@inject(DatabaseService) db: DatabaseService) {
+		this.db = db.get();
+	}
 
 	async get(data: dto.GetInput) {
 		try {

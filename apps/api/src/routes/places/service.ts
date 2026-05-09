@@ -1,8 +1,10 @@
+import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
-import type { PlacesRepository } from './repository';
+import { PlacesRepository } from './repository';
 
+@injectable()
 export class PlacesService {
-	constructor(private readonly repository: PlacesRepository) {}
+	constructor(@inject(PlacesRepository) private readonly repository: PlacesRepository) { }
 
 	async get(data: dto.GetInput, userId: string | null): Promise<dto.GetOutput> {
 		const result = await this.repository.get(data);

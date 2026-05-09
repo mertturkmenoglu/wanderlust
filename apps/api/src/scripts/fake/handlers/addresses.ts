@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import type z from 'zod';
-import { DbProvider } from '@/db';
+import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { ioc } from '@/ioc';
+import { container } from '@/ioc';
 
 const COUNT = 10_000;
 const STEP = 1_000;
@@ -17,7 +17,7 @@ export async function generate() {
 }
 
 async function batchInsert() {
-	const db = ioc.resolve(DbProvider.id);
+	const db = container.get(DatabaseService).get();
 
 	const cities = await db.query.cities.findMany({
 		columns: {

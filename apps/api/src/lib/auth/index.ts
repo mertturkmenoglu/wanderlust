@@ -1,32 +1,34 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { DbProvider, type TDatabaseService } from '@/db';
+import { inject, injectable } from 'inversify';
+import { DatabaseService, type TDatabaseService } from '@/db';
 import * as schema from '../../db/schema';
-import { ConfigProvider, type TConfig } from '../config';
-import { Container, type IServiceProvider } from '../di';
-import { JobsProvider, type TJobsService } from '../jobs';
+import { ConfigService, type TConfigService } from '../config';
+import { JobsService, type TJobsService } from '../jobs';
 import { nanoid } from '../uid';
 
-export class AuthProvider implements IServiceProvider<TAuthService> {
+@injectable()
+export class AuthService {
 	private readonly instance: TAuthService;
 
-	constructor(ioc: Container) {
-		const db = ioc.resolve(DbProvider.id);
-		const cfg = ioc.resolve(ConfigProvider.id);
-		const jobs = ioc.resolve(JobsProvider.id);
-		this.instance = init(db, jobs, cfg);
+	constructor(
+		@inject(DatabaseService) private readonly db: DatabaseService,
+		@inject(ConfigService) private readonly cfg: ConfigService,
+		@inject(JobsService) private readonly jobs: JobsService,
+	) {
+		this.instance = init(
+			this.db.get(),
+			this.cfg.get(),
+			this.jobs.get(),
+		);
 	}
 
 	get(): TAuthService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TAuthService>('auth');
-	}
 }
 
-function init(db: TDatabaseService, jobs: TJobsService, cfg: TConfig) {
+function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 	return betterAuth({
 		database: drizzleAdapter(db, {
 			provider: 'pg',

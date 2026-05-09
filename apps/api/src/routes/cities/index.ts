@@ -1,34 +1,28 @@
 import { implement } from '@orpc/server';
-import { DbProvider } from '@/db';
-import { ioc } from '@/ioc';
-import { CacheProvider } from '@/lib/cache';
+import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { contract } from './contract';
-import { CitiesRepository } from './repository';
 import { CitiesService } from './service';
 
 export function getRouter() {
 	const os = implement(contract).$context<Context>();
-	const db = ioc.resolve(DbProvider.id);
-	const cache = ioc.resolve(CacheProvider.id);
-	const repo = new CitiesRepository(db);
-	const service = new CitiesService(repo, cache);
+	const svc = container.get(CitiesService);
 
 	return os.router({
 		list: os.list.handler(async () => {
-			const result = await service.list();
+			const result = await svc.list();
 
 			return result;
 		}),
 		listFeatured: os.listFeatured.handler(async () => {
-			const result = await service.listFeatured();
+			const result = await svc.listFeatured();
 
 			return result;
 		}),
 		get: os.get.handler(async ({ input }) => {
-			const result = await service.get(input);
+			const result = await svc.get(input);
 
 			return result;
 		}),
@@ -40,7 +34,7 @@ export function getRouter() {
 					throw errors.UNAUTHORIZED();
 				}
 
-				const result = await service.create(input);
+				const result = await svc.create(input);
 
 				return result;
 			}),
@@ -52,7 +46,7 @@ export function getRouter() {
 					throw errors.UNAUTHORIZED();
 				}
 
-				const result = await service.update(input);
+				const result = await svc.update(input);
 
 				return result;
 			}),
@@ -64,7 +58,7 @@ export function getRouter() {
 					throw errors.UNAUTHORIZED();
 				}
 
-				await service._delete(input);
+				await svc._delete(input);
 
 				return {};
 			}),

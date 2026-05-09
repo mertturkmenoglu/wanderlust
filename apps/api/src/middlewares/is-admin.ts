@@ -1,5 +1,5 @@
 import { ORPCError, os } from '@orpc/server';
-import { DbProvider } from '@/db';
+import { DatabaseService } from '@/db';
 import type { AuthContext } from '@/lib/context';
 
 export const isAdmin = os
@@ -10,7 +10,7 @@ export const isAdmin = os
 			throw new ORPCError('UNAUTHORIZED');
 		}
 
-		const db = context.ioc.resolve(DbProvider.id);
+		const db = context.container.get(DatabaseService).get();
 
 		const admin = await db.query.admins.findFirst({
 			where: (t, { eq }) => eq(t.userId, user.id),

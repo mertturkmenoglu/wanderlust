@@ -1,26 +1,24 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { ConfigProvider, type TConfig } from '@/lib/config';
-import { Container, type IServiceProvider } from '@/lib/di';
+import { inject, injectable } from 'inversify';
+import { ConfigService, type TConfigService } from '@/lib/config';
 import * as schema from './schema';
 
-export class DbProvider implements IServiceProvider<TDatabaseService> {
+@injectable()
+export class DatabaseService {
 	private readonly instance: TDatabaseService;
 
-	constructor(ioc: Container) {
-		const cfg = ioc.resolve(ConfigProvider.id);
-		this.instance = init(cfg);
+	constructor(
+		@inject(ConfigService) private readonly cfg: ConfigService,
+	) {
+		this.instance = init(this.cfg.get());
 	}
 
 	get(): TDatabaseService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TDatabaseService>('db');
-	}
 }
 
-function init(cfg: TConfig) {
+function init(cfg: TConfigService) {
 	return drizzle({
 		connection: {
 			connectionString: cfg.database.url,

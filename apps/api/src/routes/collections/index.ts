@@ -1,30 +1,26 @@
 import { implement } from '@orpc/server';
-import { DbProvider } from '@/db';
-import { ioc } from '@/ioc';
+import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { contract } from './contract';
-import { CollectionsRepository } from './repository';
 import { CollectionsService } from './service';
 
 export function getRouter() {
 	const os = implement(contract).$context<Context>();
-	const db = ioc.resolve(DbProvider.id);
-	const repo = new CollectionsRepository(db);
-	const service = new CollectionsService(repo);
+	const svc = container.get(CollectionsService);
 
 	return os.router({
 		list: os.list
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.list(input);
+				const result = await svc.list(input);
 
 				return result;
 			}),
 		get: os.get.handler(async ({ input }) => {
-			const result = await service.get(input);
+			const result = await svc.get(input);
 
 			return result;
 		}),
@@ -32,7 +28,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.create(input);
+				const result = await svc.create(input);
 
 				return result;
 			}),
@@ -40,7 +36,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				await service._delete(input);
+				await svc._delete(input);
 
 				return {};
 			}),
@@ -48,7 +44,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.update(input);
+				const result = await svc.update(input);
 
 				return result;
 			}),
@@ -56,7 +52,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.appendItem(input);
+				const result = await svc.appendItem(input);
 
 				return result;
 			}),
@@ -64,7 +60,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.removeItem(input);
+				const result = await svc.removeItem(input);
 
 				return result;
 			}),
@@ -72,7 +68,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.reorderItems(input);
+				const result = await svc.reorderItems(input);
 
 				return result;
 			}),
@@ -80,7 +76,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.createPlaceRelation(input);
+				const result = await svc.createPlaceRelation(input);
 
 				return result;
 			}),
@@ -88,7 +84,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.deletePlaceRelation(input);
+				const result = await svc.deletePlaceRelation(input);
 
 				return result;
 			}),
@@ -96,7 +92,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.createCityRelation(input);
+				const result = await svc.createCityRelation(input);
 
 				return result;
 			}),
@@ -104,17 +100,17 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.deleteCityRelation(input);
+				const result = await svc.deleteCityRelation(input);
 
 				return result;
 			}),
 		listByPlaceId: os.listByPlaceId.handler(async ({ input }) => {
-			const result = await service.listByPlaceId(input);
+			const result = await svc.listByPlaceId(input);
 
 			return result;
 		}),
 		listByCityId: os.listByCityId.handler(async ({ input }) => {
-			const result = await service.listByCityId(input);
+			const result = await svc.listByCityId(input);
 
 			return result;
 		}),
@@ -122,7 +118,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.listAllPlaceCollections(input);
+				const result = await svc.listAllPlaceCollections(input);
 
 				return result;
 			}),
@@ -130,7 +126,7 @@ export function getRouter() {
 			.use(requireAuth)
 			.use(isAdmin)
 			.handler(async ({ input }) => {
-				const result = await service.listAllCityCollections(input);
+				const result = await svc.listAllCityCollections(input);
 
 				return result;
 			}),

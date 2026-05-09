@@ -1,8 +1,10 @@
+import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
-import type { EventsRepository } from './repository';
+import { EventsRepository } from './repository';
 
+@injectable()
 export class EventsService {
-	constructor(private readonly repo: EventsRepository) {}
+	constructor(@inject(EventsRepository) private readonly repo: EventsRepository) { }
 
 	async create(
 		userId: string,

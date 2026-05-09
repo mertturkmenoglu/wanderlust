@@ -1,65 +1,61 @@
 import { implement } from '@orpc/server';
-import { DbProvider } from '@/db';
-import { ioc } from '@/ioc';
+import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { contract } from './contract';
-import { EventsRepository } from './repository';
 import { EventsService } from './service';
 
 export function getRouter() {
 	const os = implement(contract).$context<AuthContext>().use(requireAuth);
-	const db = ioc.resolve(DbProvider.id);
-	const repo = new EventsRepository(db);
-	const service = new EventsService(repo);
+	const svc = container.get(EventsService);
 
 	return os.router({
 		create: os.create.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.create(userId, input);
+			const result = await svc.create(userId, input);
 
 			return result;
 		}),
 		get: os.get.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.get(userId, input);
+			const result = await svc.get(userId, input);
 
 			return result;
 		}),
 		list: os.list.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.list(userId, input);
+			const result = await svc.list(userId, input);
 
 			return result;
 		}),
 		update: os.update.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.update(userId, input);
+			const result = await svc.update(userId, input);
 
 			return result;
 		}),
 		delete: os.delete.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.delete(userId, input);
+			const result = await svc.delete(userId, input);
 
 			return result;
 		}),
 		updateAmenities: os.updateAmenities.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.updateAmenities(userId, input);
+			const result = await svc.updateAmenities(userId, input);
 
 			return result;
 		}),
 		updateFaq: os.updateFaq.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.updateFaq(userId, input);
+			const result = await svc.updateFaq(userId, input);
 
 			return result;
 		}),
 		updateCategories: os.updateCategories.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.updateCategories(userId, input);
+				const result = await svc.updateCategories(userId, input);
 
 				return result;
 			},
@@ -67,45 +63,45 @@ export function getRouter() {
 		updateTicketOptions: os.updateTicketOptions.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.updateTicketOptions(userId, input);
+				const result = await svc.updateTicketOptions(userId, input);
 
 				return result;
 			},
 		),
 		updateAgenda: os.updateAgenda.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.updateAgenda(userId, input);
+			const result = await svc.updateAgenda(userId, input);
 
 			return result;
 		}),
 		updateLineup: os.updateLineup.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.updateLineup(userId, input);
+			const result = await svc.updateLineup(userId, input);
 
 			return result;
 		}),
 		createAsset: os.createAsset.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.createAsset(userId, input);
+			const result = await svc.createAsset(userId, input);
 
 			return result;
 		}),
 		updateAssets: os.updateAssets.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.updateAssets(userId, input);
+			const result = await svc.updateAssets(userId, input);
 
 			return result;
 		}),
 		deleteAsset: os.deleteAsset.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.deleteAsset(userId, input);
+			const result = await svc.deleteAsset(userId, input);
 
 			return result;
 		}),
 		addToInterestedEvents: os.addToInterestedEvents.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.addToInterestedEvents(userId, input);
+				const result = await svc.addToInterestedEvents(userId, input);
 
 				return result;
 			},
@@ -113,7 +109,7 @@ export function getRouter() {
 		listMyInterestedEvents: os.listMyInterestedEvents.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.listMyInterestedEvents(userId, input);
+				const result = await svc.listMyInterestedEvents(userId, input);
 
 				return result;
 			},
@@ -121,7 +117,7 @@ export function getRouter() {
 		deleteFromMyInterestedEvents: os.deleteFromMyInterestedEvents.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.deleteFromMyInterestedEvents(
+				const result = await svc.deleteFromMyInterestedEvents(
 					userId,
 					input,
 				);
@@ -131,14 +127,14 @@ export function getRouter() {
 		),
 		listByPlaceId: os.listByPlaceId.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
-			const result = await service.listByPlaceId(userId, input);
+			const result = await svc.listByPlaceId(userId, input);
 
 			return result;
 		}),
 		listByOrganizerId: os.listByOrganizerId.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.listByOrganizerId(userId, input);
+				const result = await svc.listByOrganizerId(userId, input);
 
 				return result;
 			},
@@ -146,7 +142,7 @@ export function getRouter() {
 		listInterestedFriends: os.listInterestedFriends.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await service.listInterestedFriends(userId, input);
+				const result = await svc.listInterestedFriends(userId, input);
 
 				return result;
 			},

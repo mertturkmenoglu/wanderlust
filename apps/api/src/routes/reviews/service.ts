@@ -2,22 +2,31 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/server';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
-import type { TCacheService } from '@/lib/cache';
+import { inject, injectable } from 'inversify';
+import { CacheService, type TCacheService } from '@/lib/cache';
 import {
 	createPathname,
 	getFilenameFromUrl,
-	type TStorageService,
+	StorageService,
+	type TStorageService
 } from '@/lib/storage';
 import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
-import type { ReviewsRepository } from './repository';
+import { ReviewsRepository } from './repository';
 
+@injectable()
 export class ReviewsService {
+	private readonly storage: TStorageService;
+	private readonly cache: TCacheService;
+
 	constructor(
-		private readonly repo: ReviewsRepository,
-		private readonly storage: TStorageService,
-		private readonly cache: TCacheService,
-	) {}
+		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
+		@inject(StorageService) storage: StorageService,
+		@inject(CacheService) cache: CacheService,
+	) {
+		this.storage = storage.get();
+		this.cache = cache.get();
+	}
 
 	async get(data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(data);

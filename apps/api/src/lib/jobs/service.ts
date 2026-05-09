@@ -1,24 +1,22 @@
-import { Container, type IServiceProvider } from '../di';
+import { injectable } from 'inversify';
+import { container } from '@/ioc';
 import { initJobs as initEmailJobs } from './email';
 
-export class JobsProvider implements IServiceProvider<TJobsService> {
+@injectable()
+export class JobsService {
 	private readonly instance: TJobsService;
 
-	constructor(ioc: Container) {
-		this.instance = init(ioc);
+	constructor() {
+		this.instance = init();
 	}
 
 	get(): TJobsService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TJobsService>('jobs');
-	}
 }
 
-function init(ioc: Container) {
-	const email = initEmailJobs(ioc);
+function init() {
+	const email = initEmailJobs(container);
 
 	return {
 		email,

@@ -1,20 +1,27 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/client';
 import { fileTypeFromBlob } from 'file-type';
+import { inject, injectable } from 'inversify';
 import {
 	createPathname,
 	getFilenameFromUrl,
+	StorageService,
 	type TStorageService,
 } from '@/lib/storage';
 import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
-import type { UsersRepository } from './repository';
+import { UsersRepository } from './repository';
 
+@injectable()
 export class UsersService {
+	private readonly storage: TStorageService;
+
 	constructor(
-		private readonly repo: UsersRepository,
-		private readonly storage: TStorageService,
-	) {}
+		@inject(UsersRepository) private readonly repo: UsersRepository,
+		@inject(StorageService) storage: StorageService,
+	) {
+		this.storage = storage.get();
+	}
 
 	async updateImage(
 		userId: string,

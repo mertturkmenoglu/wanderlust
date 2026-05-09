@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import type z from 'zod';
-import { DbProvider } from '@/db';
+import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { ioc } from '@/ioc';
+import { container } from '@/ioc';
 import { nanoid } from '@/lib/uid';
 
 // const userImagePrefix =
@@ -55,7 +55,7 @@ type AccountInsert = z.infer<typeof $insert.account>;
 
 export async function generate() {
 	let step = STEP;
-	const db = ioc.resolve(DbProvider.id);
+	const db = container.get(DatabaseService).get();
 
 	for (let i = 0; i < COUNT; i += step) {
 		if (i + step >= COUNT) {

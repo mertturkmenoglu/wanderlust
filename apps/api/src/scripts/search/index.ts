@@ -1,11 +1,11 @@
-import { bootstrapServices, ioc } from '@/ioc';
-import { SearchProvider } from '@/lib/search';
+import { bootstrapServices, container } from '@/ioc';
+import { SearchService } from '@/lib/search';
 import { handlePlaces } from './handle-places';
 
 async function main() {
 	await bootstrapServices();
 
-	const search = ioc.resolve(SearchProvider.id);
+	const search = container.get(SearchService).get();
 
 	const start = performance.now();
 

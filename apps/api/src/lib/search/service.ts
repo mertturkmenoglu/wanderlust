@@ -1,26 +1,24 @@
+import { injectable } from 'inversify';
 import Typesense from 'typesense';
-import { ioc } from '@/ioc';
-import { ConfigProvider } from '../config';
-import { Container, type IServiceProvider } from '../di';
+import { container } from '@/ioc';
+import { ConfigService } from '../config';
 
-export class SearchProvider implements IServiceProvider<TSearchService> {
+@injectable()
+export class SearchService {
 	private readonly instance: TSearchService;
 
-	constructor(ioc: Container) {
-		this.instance = init(ioc);
+	constructor() {
+		this.instance = init();
 	}
 
 	get(): TSearchService {
 		return this.instance;
 	}
-
-	static get id() {
-		return Container.createIdentifier<TSearchService>('search');
-	}
 }
 
-function init(_ioc: Container) {
-	const cfg = ioc.resolve(ConfigProvider.id);
+function init() {
+	const cfg = container.get(ConfigService).get();
+
 	return new Typesense.Client({
 		nodes: [
 			{
