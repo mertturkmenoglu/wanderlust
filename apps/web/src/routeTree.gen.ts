@@ -40,6 +40,7 @@ import { Route as SettingsProfileIndexRouteImport } from './routes/settings/prof
 import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
 import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
 import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
+import { Route as EIdIndexRouteImport } from './routes/e/$id/index'
 import { Route as DiscoverEventsIndexRouteImport } from './routes/discover/events/index'
 import { Route as CitiesListIndexRouteImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexRouteImport } from './routes/cities/$/index'
@@ -232,6 +233,11 @@ const PIdIndexRoute = PIdIndexRouteImport.update({
 const ListsIdIndexRoute = ListsIdIndexRouteImport.update({
   id: '/lists/$id/',
   path: '/lists/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EIdIndexRoute = EIdIndexRouteImport.update({
+  id: '/e/$id/',
+  path: '/e/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiscoverEventsIndexRoute = DiscoverEventsIndexRouteImport.update({
@@ -474,6 +480,7 @@ export interface FileRoutesByFullPath {
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/e/$id': typeof EIdIndexRoute
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
@@ -540,6 +547,7 @@ export interface FileRoutesByTo {
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
+  '/e/$id': typeof EIdIndexRoute
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
@@ -612,6 +620,7 @@ export interface FileRoutesById {
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
+  '/e/$id/': typeof EIdIndexRoute
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
@@ -685,6 +694,7 @@ export interface FileRouteTypes {
     | '/cities/$'
     | '/cities/list'
     | '/discover/events'
+    | '/e/$id'
     | '/lists/$id'
     | '/p/$id'
     | '/settings/account'
@@ -751,6 +761,7 @@ export interface FileRouteTypes {
     | '/cities/$'
     | '/cities/list'
     | '/discover/events'
+    | '/e/$id'
     | '/lists/$id'
     | '/p/$id'
     | '/settings/account'
@@ -822,6 +833,7 @@ export interface FileRouteTypes {
     | '/cities/$/'
     | '/cities/list/'
     | '/discover/events/'
+    | '/e/$id/'
     | '/lists/$id/'
     | '/p/$id/'
     | '/settings/account/'
@@ -890,6 +902,7 @@ export interface RootRouteChildren {
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
+  EIdIndexRoute: typeof EIdIndexRoute
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
   AuthPasswordForgotIndexRoute: typeof AuthPasswordForgotIndexRoute
@@ -1114,6 +1127,13 @@ declare module '@tanstack/react-router' {
       path: '/lists/$id'
       fullPath: '/lists/$id'
       preLoaderRoute: typeof ListsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e/$id/': {
+      id: '/e/$id/'
+      path: '/e/$id'
+      fullPath: '/e/$id'
+      preLoaderRoute: typeof EIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/discover/events/': {
@@ -1543,6 +1563,7 @@ const rootRouteChildren: RootRouteChildren = {
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
+  EIdIndexRoute: EIdIndexRoute,
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
   AuthPasswordForgotIndexRoute: AuthPasswordForgotIndexRoute,
