@@ -1,3 +1,4 @@
+import { consola } from 'consola';
 import { bootstrapServices, container } from '@/ioc';
 import { SearchService } from '@/lib/search';
 import { handlePlaces } from './handle-places';
@@ -9,13 +10,14 @@ async function main() {
 
 	const start = performance.now();
 
-	console.log('Syncing places with the search index...');
+	consola.start('Syncing primary database with Typesense');
 
 	await handlePlaces(search);
 
 	const end = performance.now();
-	console.log('Finished syncing places with the search index.');
-	console.log(`Time taken: ${(end - start).toFixed(2)} ms`);
+
+	consola.success('Finished syncing with Typesense');
+	consola.info(`Total time: ${(end - start).toFixed(2)} ms`);
 }
 
 await main();
