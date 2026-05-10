@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { eq } from 'drizzle-orm';
+import { count, eq, inArray } from 'drizzle-orm';
 import type z from 'zod';
 import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
@@ -66,16 +66,21 @@ function updateChunkFavoriteCounts(placeIds: string[]) {
 	const db = container.get(DatabaseService).get();
 
 	return db.transaction(async (tx) => {
-		for (const placeId of placeIds) {
-			const count = await tx.$count(
-				schema.favorites,
-				eq(schema.favorites.placeId, placeId),
-			);
+		const rows = await tx
+			.select({ placeId: schema.favorites.placeId, cnt: count() })
+			.from(schema.favorites)
+			.where(inArray(schema.favorites.placeId, placeIds))
+			.groupBy(schema.favorites.placeId);
 
-			await tx
-				.update(schema.places)
-				.set({ totalFavorites: count })
-				.where(eq(schema.places.id, placeId));
-		}
+		const countMap = new Map(rows.map((r) => [r.placeId, r.cnt]));
+
+		await Promise.all(
+			placeIds.map((placeId) =>
+				tx
+					.update(schema.places)
+					.set({ totalFavorites: countMap.get(placeId) ?? 0 })
+					.where(eq(schema.places.id, placeId)),
+			),
+		);
 	});
 }

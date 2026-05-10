@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { eq } from 'drizzle-orm';
+import { count, eq, inArray } from 'drizzle-orm';
 import type z from 'zod';
 import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
@@ -36,9 +36,9 @@ type Insert = z.infer<typeof $insert.follows>;
 
 async function processChunk(chunk: string[], allUserIds: string[]) {
 	const db = container.get(DatabaseService).get();
+	const batch: Insert[] = [];
 
 	for (const userId of chunk) {
-		const batch: Insert[] = [];
 		const targets = faker.helpers.arrayElements(allUserIds, 10);
 
 		for (const targetId of targets) {
@@ -49,36 +49,41 @@ async function processChunk(chunk: string[], allUserIds: string[]) {
 				followingId: targetId,
 			});
 		}
-
-		try {
-			await db.insert(schema.follows).values(batch);
-		} catch (_err) {
-			// Key collisions can happen. Ignore them.
-		}
 	}
+
+	await db.insert(schema.follows).values(batch).onConflictDoNothing();
 }
 
 function processFollows(userIds: string[]) {
 	const db = container.get(DatabaseService).get();
 
 	return db.transaction(async (tx) => {
-		for (const userId of userIds) {
-			const followingCount = await tx.$count(
-				schema.follows,
-				eq(schema.follows.followerId, userId),
-			);
-			const followersCount = await tx.$count(
-				schema.follows,
-				eq(schema.follows.followingId, userId),
-			);
+		const [followingRows, followersRows] = await Promise.all([
+			tx
+				.select({ userId: schema.follows.followerId, cnt: count() })
+				.from(schema.follows)
+				.where(inArray(schema.follows.followerId, userIds))
+				.groupBy(schema.follows.followerId),
+			tx
+				.select({ userId: schema.follows.followingId, cnt: count() })
+				.from(schema.follows)
+				.where(inArray(schema.follows.followingId, userIds))
+				.groupBy(schema.follows.followingId),
+		]);
 
-			await tx
-				.update(schema.users)
-				.set({
-					followingCount,
-					followersCount,
-				})
-				.where(eq(schema.users.id, userId));
-		}
+		const followingMap = new Map(followingRows.map((r) => [r.userId, r.cnt]));
+		const followersMap = new Map(followersRows.map((r) => [r.userId, r.cnt]));
+
+		await Promise.all(
+			userIds.map((userId) =>
+				tx
+					.update(schema.users)
+					.set({
+						followingCount: followingMap.get(userId) ?? 0,
+						followersCount: followersMap.get(userId) ?? 0,
+					})
+					.where(eq(schema.users.id, userId)),
+			),
+		);
 	});
 }

@@ -1,17 +1,16 @@
 import { faker } from '@faker-js/faker';
 import type z from 'zod';
-import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { container } from '@/ioc';
 import { readFile } from '@/lib/fake/utils';
 import { paths } from '..';
+import { getDb } from './common';
 
 type Insert = z.infer<typeof $insert.collectionsCities>;
 
 export async function generate() {
 	const collectionIds = await readFile(paths.collections);
-	const db = container.get(DatabaseService).get();
+	const db = await getDb();
 
 	const queryResult = await db.query.cities.findMany({
 		columns: {
@@ -38,10 +37,5 @@ export async function generate() {
 		}
 	}
 
-	try {
-		await db.insert(schema.collectionsCities).values(batch);
-	} catch (_err) {
-		// Key collision errors are expected here due to the random nature of the data generation
-		// Ignore the error
-	}
+	await db.insert(schema.collectionsCities).values(batch).onConflictDoNothing();
 }

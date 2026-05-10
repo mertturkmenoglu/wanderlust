@@ -1,36 +1,47 @@
 import { faker } from '@faker-js/faker';
+import pLimit from 'p-limit';
 import type z from 'zod';
-import { DatabaseService } from '@/db';
+import type { TDatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { container } from '@/ioc';
 import { chunkArray, readFile } from '@/lib/fake/utils';
 import { paths } from '..';
+import { getDb } from './common';
 
 export async function generate() {
+	const db = await getDb();
+
 	const collectionIds = await readFile(paths.collections);
 	const placeIds = await readFile(paths.places);
-	const chunks = chunkArray(collectionIds, 100);
+	const chunks = chunkArray(placeIds, 10);
+	const limit = pLimit(4);
 
 	const results = await Promise.allSettled(
-		chunks.map((chunk) => processChunk(chunk, placeIds)),
+		chunks.map((chunk) => limit(() => processChunk(db, chunk, collectionIds))),
 	);
 
 	for (const result of results) {
 		if (result.status === 'rejected') {
-			console.error('Failed to generate collections:', result.reason);
+			throw new Error('Failed to generate collections-places', {
+				cause: result.reason,
+			});
 		}
 	}
 }
 
 type Insert = z.infer<typeof $insert.collectionsPlaces>;
 
-async function processChunk(collectionIds: string[], placeIds: string[]) {
-	const db = container.get(DatabaseService).get();
+async function processChunk(
+	db: TDatabaseService,
+	placeIds: string[],
+	collectionIds: string[],
+) {
 	const batch: Insert[] = [];
 
 	for (const placeId of placeIds) {
-		const sampledCollectionIds = faker.helpers.arrayElements(collectionIds, 5);
+		if (Math.random() < 0.5) continue; // Randomly skip some places to create more variability
+
+		const sampledCollectionIds = faker.helpers.arrayElements(collectionIds, 10);
 
 		for (let i = 0; i < sampledCollectionIds.length; i++) {
 			const collectionId = sampledCollectionIds[i];
@@ -44,6 +55,8 @@ async function processChunk(collectionIds: string[], placeIds: string[]) {
 			});
 		}
 	}
+
+	if (batch.length === 0) return;
 
 	try {
 		await db.insert(schema.collectionsPlaces).values(batch);

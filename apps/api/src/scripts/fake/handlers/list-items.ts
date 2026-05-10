@@ -1,20 +1,23 @@
 import { faker } from '@faker-js/faker';
+import pLimit from 'p-limit';
 import type z from 'zod';
-import { DatabaseService } from '@/db';
+import type { TDatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
-import { container } from '@/ioc';
 import { chunkArray, readFile } from '@/lib/fake/utils';
 import { paths } from '..';
+import { getDb } from './common';
 
 export async function generate() {
+	const db = await getDb();
 	const listIds = await readFile(paths.lists);
 	const placeIds = await readFile(paths.places);
+	const limit = pLimit(4);
 
 	const chunks = chunkArray(listIds, 100);
 
 	const results = await Promise.allSettled(
-		chunks.map((chunk) => processChunk(chunk, placeIds)),
+		chunks.map((chunk) => limit(() => processChunk(db, chunk, placeIds))),
 	);
 
 	for (const result of results) {
@@ -26,12 +29,16 @@ export async function generate() {
 
 type Insert = z.infer<typeof $insert.listItem>;
 
-async function processChunk(listIds: string[], placeIds: string[]) {
-	const db = container.get(DatabaseService).get();
-
+async function processChunk(
+	db: TDatabaseService,
+	listIds: string[],
+	placeIds: string[],
+) {
 	const batch: Insert[] = [];
 
 	for (const listId of listIds) {
+		if (Math.random() < 0.1) continue; // Randomly skip some lists to create more variability
+
 		const n = faker.number.int({ min: 4, max: 10 });
 		const sampledPlaceIds = faker.helpers.arrayElements(placeIds, n);
 
@@ -47,6 +54,8 @@ async function processChunk(listIds: string[], placeIds: string[]) {
 			});
 		}
 	}
+
+	if (batch.length === 0) return;
 
 	await db.insert(schema.listItems).values(batch);
 }

@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { sql } from 'drizzle-orm';
 import type z from 'zod';
 import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
@@ -98,47 +97,47 @@ export async function generate() {
 	let step = STEP;
 	const db = container.get(DatabaseService).get();
 
+	const allAddresses = await db.query.addresses.findMany({
+		columns: {
+			id: true,
+		},
+	});
+
+	const addressIds = allAddresses.map((r) => r.id);
+
+	if (addressIds.length === 0) {
+		throw new Error('No addresses found. Generate addresses first.');
+	}
+
 	for (let i = 0; i < COUNT; i += step) {
 		if (i + step > COUNT) {
 			step = COUNT - i;
 		}
 
-		const queryResult = await db.query.addresses.findMany({
-			orderBy: sql`RANDOM()`,
-			limit: step,
-			columns: {
-				id: true,
-			},
-		});
+		const batch: Insert[] = [];
 
-		const addressIds = queryResult.map((r) => r.id);
+		for (let j = 0; j < step; j++) {
+			const hours = generateHours();
+			const amenities = generateAmenities();
 
-		await db.transaction(async (tx) => {
-			for (let j = 0; j < step; j++) {
-				const hours = generateHours();
-				const amenities = generateAmenities();
+			batch.push({
+				id: nanoid(),
+				name: faker.lorem.sentence({ min: 2, max: 6 }).replace('.', ''),
+				description: faker.lorem.paragraphs({ min: 1, max: 3 }),
+				addressId: faker.helpers.arrayElement(addressIds),
+				phone: faker.phone.number(),
+				accessibilityLevel: faker.number.int({ min: 1, max: 5 }),
+				priceLevel: faker.number.int({ min: 1, max: 5 }),
+				website: faker.internet.url(),
+				hours: hours,
+				amenities: amenities,
+				categoryId: faker.number.int({ min: 1, max: 23 }),
+				totalFavorites: 0,
+				totalPoints: 0,
+				totalVotes: 0,
+			});
+		}
 
-				const value: Insert = {
-					id: nanoid(),
-					name: faker.lorem.sentence({ min: 2, max: 6 }).replace('.', ''),
-					description: faker.lorem.paragraphs(
-						faker.number.int({ min: 1, max: 3 }),
-					),
-					addressId: faker.helpers.arrayElement(addressIds),
-					phone: faker.phone.number(),
-					accessibilityLevel: faker.number.int({ min: 1, max: 5 }),
-					priceLevel: faker.number.int({ min: 1, max: 5 }),
-					website: faker.internet.url(),
-					hours: hours,
-					amenities: amenities,
-					categoryId: faker.number.int({ min: 1, max: 23 }),
-					totalFavorites: 0,
-					totalPoints: 0,
-					totalVotes: 0,
-				};
-
-				await tx.insert(schema.places).values(value);
-			}
-		});
+		await db.insert(schema.places).values(batch);
 	}
 }
