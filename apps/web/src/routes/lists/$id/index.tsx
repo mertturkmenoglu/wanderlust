@@ -47,8 +47,8 @@ function RouteComponent() {
 				<AppMessage
 					emptyMessage="This list is empty"
 					className="my-16"
-					backLink="/lists"
-					backLinkText="Go back to the lists page"
+					backLink="/search"
+					backLinkText="Go to search page to find places to add"
 				/>
 			)}
 
