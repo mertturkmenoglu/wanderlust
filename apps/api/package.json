@@ -15,7 +15,8 @@
 		"db:generate": "bunx --bun drizzle-kit generate",
 		"db:migrate": "bunx --bun drizzle-kit migrate",
 		"fake": "bun run src/scripts/fake/index.ts",
-		"search": "bun run src/scripts/search/index.ts"
+		"search": "bun run src/scripts/search/index.ts",
+		"clean": "./src/scripts/clean.sh"
 	},
 	"dependencies": {
 		"@orpc/client": "catalog:",
