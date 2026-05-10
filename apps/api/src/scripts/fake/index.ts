@@ -7,6 +7,7 @@ import { generate as generateAssets } from './handlers/assets';
 import { generate as generateBookmarks } from './handlers/bookmarks';
 import { generate as generateCategories } from './handlers/categories';
 import { generate as generateCities } from './handlers/cities';
+import { generate as cleanup } from './handlers/cleanup';
 import { generate as generateCollectionItems } from './handlers/collection-items';
 import { generate as generateCollections } from './handlers/collections';
 import { generate as generateCollectionsCities } from './handlers/collections-cities';
@@ -48,6 +49,7 @@ const mapping = {
 	'collections-places': generateCollectionsPlaces,
 	lists: generateLists,
 	'list-items': generateListItems,
+	cleanup: cleanup,
 } as const satisfies Record<string, () => Promise<void>>;
 
 type Step = keyof typeof mapping;
@@ -74,6 +76,7 @@ const steps: Step[] = [
 	'list-items',
 	'favorites',
 	'bookmarks',
+	'cleanup',
 ];
 
 async function main() {
@@ -89,13 +92,19 @@ async function main() {
 
 		await oraPromise(handler(), {
 			text: `Running step: ${colorize('underline', step)}`,
-			successText: () => `${step} completed in ${colorize('cyan', ((Date.now() - stepStart) / 1000).toFixed(2))} seconds`,
-			failText: (err) => `${step} failed: ${err instanceof Error ? err.message : String(err)}`,
-		})
+			successText: () =>
+				`${step} completed in ${colorize('cyan', ((Date.now() - stepStart) / 1000).toFixed(2))} seconds`,
+			failText: (err) =>
+				`${step} failed: ${err instanceof Error ? err.message : String(err)}`,
+		});
 	}
 
 	const elapsed = (Date.now() - start) / 1000;
-	consola.info('Total elapsed time:', colorize('cyan', elapsed.toFixed(2)), 'seconds');
+	consola.info(
+		'Total elapsed time:',
+		colorize('cyan', elapsed.toFixed(2)),
+		'seconds',
+	);
 }
 
 await main();
