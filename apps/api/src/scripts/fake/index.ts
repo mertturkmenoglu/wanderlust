@@ -1,3 +1,6 @@
+import consola from 'consola';
+import { colorize } from 'consola/utils';
+import { oraPromise } from 'ora';
 import { bootstrapServices } from '@/ioc';
 import { generate as generateAddresses } from './handlers/addresses';
 import { generate as generateAssets } from './handlers/assets';
@@ -75,29 +78,24 @@ const steps: Step[] = [
 
 async function main() {
 	await bootstrapServices();
+
+	consola.start('Starting fake data generation');
+
 	const start = Date.now();
 
 	for (const step of steps) {
-		console.log('Running step:', step);
 		const stepStart = Date.now();
-
 		const handler = mapping[step];
 
-		await handler();
-
-		const stepElapsed = (Date.now() - stepStart) / 1000;
-
-		console.log(
-			'Step',
-			step,
-			'completed in',
-			stepElapsed.toFixed(2),
-			'seconds',
-		);
+		await oraPromise(handler(), {
+			text: `Running step: ${colorize('underline', step)}`,
+			successText: () => `${step} completed in ${colorize('cyan', ((Date.now() - stepStart) / 1000).toFixed(2))} seconds`,
+			failText: (err) => `${step} failed: ${err instanceof Error ? err.message : String(err)}`,
+		})
 	}
 
 	const elapsed = (Date.now() - start) / 1000;
-	console.log('Total elapsed time:', elapsed.toFixed(2), 'seconds');
+	consola.info('Total elapsed time:', colorize('cyan', elapsed.toFixed(2)), 'seconds');
 }
 
 await main();
