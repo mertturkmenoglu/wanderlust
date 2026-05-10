@@ -1,17 +1,16 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
 	ItemContent,
 	ItemDescription,
-	ItemFooter,
 	ItemMedia,
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { ArrowRightIcon, BookmarkIcon } from 'lucide-react';
+import { BookmarkIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useBookmarksContext } from './-context';
 import type { TBookmark } from './-types';
@@ -58,34 +57,20 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 					<Image
 						src={bookmark.place.assets[0]?.url ?? ''}
 						alt={bookmark.place.assets[0]?.description ?? bookmark.place.name}
-						className="aspect-video w-32 rounded-md object-cover"
+						className="aspect-video w-32 rounded-md object-cover md:w-16 lg:w-32"
 						width={512}
 						height={288}
 					/>
 				</ItemMedia>
 				<ItemContent>
-					<ItemTitle>{bookmark.place.name}</ItemTitle>
-					<ItemDescription>
+					<ItemTitle className="line-clamp-1">{bookmark.place.name}</ItemTitle>
+					<ItemDescription className="line-clamp-1">
 						{bookmark.place.address.city.name} /{' '}
 						{bookmark.place.address.city.countryName}
 					</ItemDescription>
-					<ItemDescription className="text-primary text-sm">
+					<ItemDescription className="text-primary text-xs lg:text-sm">
 						{bookmark.place.category.name}
 					</ItemDescription>
-
-					<ItemFooter className="md:hidden">
-						<Link
-							to="/p/$id"
-							params={{ id: bookmark.placeId }}
-							className={cn(
-								'px-0!',
-								buttonVariants({ variant: 'link', size: 'sm' }),
-							)}
-						>
-							<span>See Details</span>
-							<ArrowRightIcon />
-						</Link>
-					</ItemFooter>
 				</ItemContent>
 				<ItemActions>
 					<Button variant="secondary" size="icon">
