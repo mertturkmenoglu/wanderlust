@@ -47,7 +47,7 @@ import { nanoid } from '@/lib/uid';
 const defaultHashedPassword =
 	'd37a5b04011688b92687709e509f00eb8725942aafe409263f6e8171112cb6e0969cd209971f590e4a0b709438b80219ebe1616a5a82504e53f5e372d988be40';
 
-const COUNT = 10_000;
+const COUNT = 2_000;
 const STEP = 1_000;
 
 type UserInsert = z.infer<typeof $insert.user>;
@@ -110,4 +110,32 @@ export async function generate() {
 			await tx.insert(schema.accounts).values(accountBatch);
 		});
 	}
+
+	// After all users are created, insert a test user with known credentials
+	// for development and testing purposes.
+	await db.transaction(async (tx) => {
+		const userId = nanoid();
+
+		await tx.insert(schema.users).values({
+			id: userId,
+			email: 'test@test.com',
+			username: 'johndoe',
+			name: 'John Doe',
+			image: faker.image.personPortrait(),
+			emailVerified: true,
+			banner: faker.image.urlPicsumPhotos(),
+			bio: faker.lorem.sentence(),
+			website: faker.internet.url(),
+		});
+
+		await tx.insert(schema.accounts).values({
+			id: nanoid(),
+			userId: userId,
+			accountId: nanoid(),
+			createdAt: new Date(),
+			providerId: 'credentials',
+			updatedAt: new Date(),
+			password: defaultHashedPassword,
+		});
+	})
 }

@@ -88,7 +88,7 @@ function generateAmenities(): string[] {
 	return faker.helpers.arrayElements(amenities, { min: 5, max: 25 });
 }
 
-const COUNT = 10_000;
+const COUNT = 2_000;
 const STEP = 500;
 
 type Insert = z.infer<typeof $insert.place>;

@@ -6,7 +6,7 @@ import * as schema from '@/db/schema';
 import { container } from '@/ioc';
 import { nanoid } from '@/lib/uid';
 
-const COUNT = 10_000;
+const COUNT = 2_000;
 
 type Insert = z.infer<typeof $insert.collection>;
 
