@@ -105,6 +105,8 @@ async function main() {
 		colorize('cyan', elapsed.toFixed(2)),
 		'seconds',
 	);
+
+	process.exit(0);
 }
 
 await main();
