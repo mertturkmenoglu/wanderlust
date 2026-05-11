@@ -1,5 +1,4 @@
 import { $ } from "bun";
-import consola from "consola";
 
 async function main() {
 	const domains = [
@@ -11,8 +10,6 @@ async function main() {
 		'events',
 	];
 
-	consola.start('Exporting data from Docker container...');
-
 	for (const domain of domains) {
 		await $`docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM ${domain}" --csv -o /home/${domain}.csv`;
 
@@ -23,7 +20,6 @@ async function main() {
 		await $`rm tmp/${domain}.csv`;
 	}
 
-	consola.success('Data export complete. Files saved in tmp/ directory.');
 }
 
 await main();
