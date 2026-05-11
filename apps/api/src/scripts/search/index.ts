@@ -18,6 +18,8 @@ async function main() {
 
 	consola.success('Finished syncing with Typesense');
 	consola.info(`Total time: ${(end - start).toFixed(2)} ms`);
+
+	process.exit(0);
 }
 
 await main();
