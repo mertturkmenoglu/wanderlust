@@ -1,19 +1,28 @@
 {
 	"extends": "@wanderlust/config/tsconfig.base.json",
 	"compilerOptions": {
+		"rootDir": "../../",
 		"composite": true,
 		"outDir": "dist",
 		"paths": {
 			"@/*": [
 				"./src/*"
+			],
+			"@wanderlust/email/*": [
+				"../../packages/email/emails/*"
 			]
 		},
 		"jsx": "react-jsx",
-		"jsxImportSource": "hono/jsx",
+		"jsxImportSource": "react",
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
-	}
+	},
+	"references": [
+		{
+			"path": "../../packages/email"
+		}
+	]
 }
