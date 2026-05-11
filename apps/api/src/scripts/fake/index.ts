@@ -12,6 +12,12 @@ import { generate as generateCollectionItems } from './handlers/collection-items
 import { generate as generateCollections } from './handlers/collections';
 import { generate as generateCollectionsCities } from './handlers/collections-cities';
 import { generate as generateCollectionsPlaces } from './handlers/collections-places';
+import { generate as generateEventAgendaItems } from './handlers/event-agenda-items';
+import { generate as generateEventAssets } from './handlers/event-assets';
+import { generate as generateEventInterests } from './handlers/event-interests';
+import { generate as generateEventLineupItems } from './handlers/event-lineup-items';
+import { generate as generateEventTicketOptions } from './handlers/event-ticket-options';
+import { generate as generateEvents } from './handlers/events';
 import { generate as generateFavorites } from './handlers/favorites';
 import { generate as generateFollows } from './handlers/follows';
 import { generate as generateFakeIds } from './handlers/id';
@@ -28,6 +34,7 @@ export const paths = {
 	reviews: 'tmp/reviews.txt',
 	collections: 'tmp/collections.txt',
 	lists: 'tmp/lists.txt',
+	events: 'tmp/events.txt',
 } as const;
 
 const mapping = {
@@ -49,6 +56,12 @@ const mapping = {
 	'collections-places': generateCollectionsPlaces,
 	lists: generateLists,
 	'list-items': generateListItems,
+	events: generateEvents,
+	'event-ticket-options': generateEventTicketOptions,
+	'event-agenda-items': generateEventAgendaItems,
+	'event-lineup-items': generateEventLineupItems,
+	'event-assets': generateEventAssets,
+	'event-interests': generateEventInterests,
 	cleanup: cleanup,
 } as const satisfies Record<string, () => Promise<void>>;
 
@@ -76,6 +89,13 @@ const steps: Step[] = [
 	'list-items',
 	'favorites',
 	'bookmarks',
+	'events',
+	'fake-id', // run fake id again to get event ids
+	'event-ticket-options',
+	'event-agenda-items',
+	'event-lineup-items',
+	'event-assets',
+	'event-interests',
 	'cleanup',
 ];
 
