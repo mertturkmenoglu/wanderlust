@@ -1,5 +1,5 @@
 import { ORPCError } from '@orpc/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { DatabaseService, type TDatabaseService } from '@/db';
 import * as schema from '@/db/schema';
@@ -136,7 +136,10 @@ export class EventsRepository {
 				},
 			});
 
-			return events;
+			const totalItems = await this.db.$count(schema.events);
+			const pagination = Pagination.compute(data, totalItems);
+
+			return { events, pagination };
 		} catch (err) {
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to list events',
@@ -147,34 +150,67 @@ export class EventsRepository {
 
 	async create(userId: string, data: dto.CreateInput) {
 		try {
-			const [event] = await this.db
-				.insert(schema.events)
-				.values({
-					id: nanoid(),
-					title: data.title,
-					description: data.description,
-					startsAt: data.startsAt,
-					endsAt: data.endsAt,
-					addressId: data.addressId ?? null,
-					externalUrl: data.externalUrl ?? null,
-					ageRestriction: data.ageRestriction ?? null,
-					amenities: data.amenities ?? null,
-					refundPolicy: data.refundPolicy ?? null,
-					faq: data.faq ?? null,
-					placeId: data.placeId ?? null,
-					isOnline: data.isOnline ?? null,
-					recurrence: data.recurrence ?? null,
-					categories: data.categories ?? null,
-					organizerId: userId,
-				})
-				.returning();
+			const createdEvent = await this.db.transaction(async (tx) => {
+				const city = await tx.query.cities.findFirst({
+					where: (t, { eq }) => eq(t.id, data.address.cityId),
+				});
 
-			if (!event) {
-				throw new Error('No event returned after insertion');
-			}
+				if (!city) {
+					throw new ORPCError('NOT_FOUND', {
+						message: `City with id ${data.address.cityId} not found`,
+					});
+				}
 
-			return await this.get(userId, { id: event.id });
+				const [address] = await tx
+					.insert(schema.addresses)
+					.values({
+						cityId: data.address.cityId,
+						line1: data.address.line1,
+						line2: data.address.line2 ?? null,
+						postalCode: data.address.postalCode ?? null,
+						lat: city.lat,
+						lng: city.lng,
+					})
+					.returning();
+
+				if (!address) {
+					throw new Error('Failed to create address');
+				}
+
+				const [event] = await tx
+					.insert(schema.events)
+					.values({
+						id: nanoid(),
+						title: data.title,
+						description: data.description,
+						startsAt: data.startsAt,
+						endsAt: data.endsAt,
+						addressId: address.id,
+						externalUrl: data.externalUrl ?? null,
+						ageRestriction: data.ageRestriction ?? null,
+						amenities: data.amenities ?? null,
+						refundPolicy: data.refundPolicy ?? null,
+						faq: data.faq ?? null,
+						placeId: data.placeId ?? null,
+						isOnline: data.isOnline ?? null,
+						recurrence: data.recurrence ?? null,
+						categories: data.categories ?? null,
+						organizerId: userId,
+					})
+					.returning();
+
+				if (!event) {
+					throw new Error('Failed to create event');
+				}
+
+				return event;
+			});
+
+			return await this.get(userId, { id: createdEvent.id });
 		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to create event',
 				cause: err,
@@ -457,7 +493,7 @@ export class EventsRepository {
 				.insert(schema.assets)
 				.values({
 					entityType: 'event',
-					entityId: data.eventId,
+					entityId: data.id,
 					url: data.url,
 					description: data.description ?? null,
 					order: data.order ?? 1,
@@ -479,12 +515,15 @@ export class EventsRepository {
 
 	async updateAssets(_userId: string, data: dto.UpdateAssetsInput) {
 		try {
-			// Remove existing assets for this event
 			await this.db
 				.delete(schema.assets)
-				.where(eq(schema.assets.entityId, data.eventId));
+				.where(
+					and(
+						eq(schema.assets.entityId, data.id),
+						eq(schema.assets.entityType, 'event'),
+					),
+				);
 
-			// Insert new assets
 			let inserted: Array<typeof schema.assets.$inferSelect> = [];
 			if (data.assets.length > 0) {
 				inserted = await this.db
@@ -492,7 +531,7 @@ export class EventsRepository {
 					.values(
 						data.assets.map((a) => ({
 							entityType: 'event' as const,
-							entityId: data.eventId,
+							entityId: data.id,
 							url: a.url,
 							description: a.description ?? null,
 							order: a.order ?? 1,
@@ -514,11 +553,16 @@ export class EventsRepository {
 		try {
 			const res = await this.db
 				.delete(schema.assets)
-				.where(eq(schema.assets.id, data.id));
+				.where(
+					and(
+						eq(schema.assets.id, data.assetId),
+						eq(schema.assets.entityType, 'event'),
+					),
+				);
 
 			if (res.rowCount === 0) {
 				throw new ORPCError('NOT_FOUND', {
-					message: `Asset with id ${data.id} not found`,
+					message: `Asset with id ${data.assetId} not found`,
 				});
 			}
 		} catch (err) {
@@ -537,17 +581,13 @@ export class EventsRepository {
 		data: dto.AddToInterestedEventsInput,
 	) {
 		try {
-			const [favorite] = await this.db
-				.insert(schema.favorites)
+			await this.db
+				.insert(schema.eventInterests)
 				.values({
 					userId,
-					placeId: data.id,
+					eventId: data.id,
 				})
-				.returning();
-
-			if (!favorite) {
-				throw new Error('No favorite returned after insertion');
-			}
+				.onConflictDoNothing();
 		} catch (err) {
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to add to interested events',
@@ -557,48 +597,29 @@ export class EventsRepository {
 	}
 
 	async listMyInterestedEvents(
-		_userId: string,
+		userId: string,
 		data: dto.ListMyInterestedEventsInput,
 	) {
 		const offset = Pagination.getOffset(data);
 
 		try {
-			const events = await this.db.query.events.findMany({
+			const interests = await this.db.query.eventInterests.findMany({
+				where: (t, { eq }) => eq(t.userId, userId),
 				orderBy: (t, { desc }) => desc(t.createdAt),
 				offset,
 				limit: data.pageSize,
 				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					agenda: {
-						with: {},
-					},
-					organizer: {
-						columns: {
-							id: true,
-							name: true,
-							username: true,
-							image: true,
-						},
-					},
-					place: {
+					event: {
 						with: {
 							address: {
 								with: {
 									city: true,
 								},
 							},
-							assets: true,
-							category: true,
-						},
-					},
-					assets: true,
-					lineup: {
-						with: {
-							user: {
+							agenda: {
+								with: {},
+							},
+							organizer: {
 								columns: {
 									id: true,
 									name: true,
@@ -606,18 +627,45 @@ export class EventsRepository {
 									image: true,
 								},
 							},
+							place: {
+								with: {
+									address: {
+										with: {
+											city: true,
+										},
+									},
+									assets: true,
+									category: true,
+								},
+							},
+							assets: true,
+							lineup: {
+								with: {
+									user: {
+										columns: {
+											id: true,
+											name: true,
+											username: true,
+											image: true,
+										},
+									},
+								},
+							},
+							ticketOptions: true,
 						},
 					},
-					ticketOptions: true,
 				},
 			});
 
-			const totalItems = await this.db.$count(schema.events);
+			const totalItems = await this.db.$count(
+				schema.eventInterests,
+				eq(schema.eventInterests.userId, userId),
+			);
 
 			const pagination = Pagination.compute(data, totalItems);
 
 			return {
-				events,
+				events: interests.map((i) => i.event),
 				pagination,
 			};
 		} catch (err) {
@@ -629,13 +677,18 @@ export class EventsRepository {
 	}
 
 	async deleteFromMyInterestedEvents(
-		_userId: string,
+		userId: string,
 		data: dto.DeleteFromMyInterestedEventsInput,
 	) {
 		try {
 			const res = await this.db
-				.delete(schema.favorites)
-				.where(eq(schema.favorites.placeId, data.id));
+				.delete(schema.eventInterests)
+				.where(
+					and(
+						eq(schema.eventInterests.eventId, data.id),
+						eq(schema.eventInterests.userId, userId),
+					),
+				);
 
 			if (res.rowCount === 0) {
 				throw new ORPCError('NOT_FOUND', {
@@ -731,7 +784,7 @@ export class EventsRepository {
 
 		try {
 			const events = await this.db.query.events.findMany({
-				where: (t, { eq }) => eq(t.organizerId, data.organizerId),
+				where: (t, { eq }) => eq(t.organizerId, data.userId),
 				orderBy: (t, { desc }) => desc(t.createdAt),
 				offset,
 				limit: data.pageSize,
@@ -782,7 +835,7 @@ export class EventsRepository {
 
 			const totalItems = await this.db.$count(
 				schema.events,
-				eq(schema.events.organizerId, data.organizerId),
+				eq(schema.events.organizerId, data.userId),
 			);
 
 			const pagination = Pagination.compute(data, totalItems);
@@ -806,24 +859,32 @@ export class EventsRepository {
 		const offset = Pagination.getOffset(data);
 
 		try {
-			const users = await this.db.query.users.findMany({
+			const interests = await this.db.query.eventInterests.findMany({
+				where: (t, { eq }) => eq(t.eventId, data.id),
 				orderBy: (t, { desc }) => desc(t.createdAt),
 				offset,
 				limit: data.pageSize,
-				columns: {
-					id: true,
-					name: true,
-					username: true,
-					image: true,
+				with: {
+					user: {
+						columns: {
+							id: true,
+							name: true,
+							username: true,
+							image: true,
+						},
+					},
 				},
 			});
 
-			const totalItems = await this.db.$count(schema.users);
+			const totalItems = await this.db.$count(
+				schema.eventInterests,
+				eq(schema.eventInterests.eventId, data.id),
+			);
 
 			const pagination = Pagination.compute(data, totalItems);
 
 			return {
-				users,
+				users: interests.map((i) => i.user),
 				pagination,
 			};
 		} catch (err) {

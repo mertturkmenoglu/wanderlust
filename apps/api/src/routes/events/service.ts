@@ -4,7 +4,9 @@ import { EventsRepository } from './repository';
 
 @injectable()
 export class EventsService {
-	constructor(@inject(EventsRepository) private readonly repo: EventsRepository) { }
+	constructor(
+		@inject(EventsRepository) private readonly repo: EventsRepository,
+	) {}
 
 	async create(
 		userId: string,
@@ -29,7 +31,8 @@ export class EventsService {
 		const result = await this.repo.list(userId, data);
 
 		return {
-			events: result,
+			events: result.events,
+			pagination: result.pagination,
 		};
 	}
 

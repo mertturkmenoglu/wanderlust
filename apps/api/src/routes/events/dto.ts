@@ -13,6 +13,7 @@ const place = $.place.extend({
 const event = $.event.extend({
 	place: place.nullable(),
 	assets: $.asset.array(),
+	ticketOptions: $.eventTicketOption.array(),
 	lineup: $.eventLineupItem
 		.extend({
 			user: $.user
@@ -37,22 +38,30 @@ const event = $.event.extend({
 	}),
 });
 
-export const createInput = $.event.pick({
-	title: true,
-	description: true,
-	startsAt: true,
-	endsAt: true,
-	addressId: true,
-	externalUrl: true,
-	ageRestriction: true,
-	amenities: true,
-	refundPolicy: true,
-	faq: true,
-	placeId: true,
-	isOnline: true,
-	recurrence: true,
-	categories: true,
-});
+export const createInput = $.event
+	.pick({
+		title: true,
+		description: true,
+		startsAt: true,
+		endsAt: true,
+		externalUrl: true,
+		ageRestriction: true,
+		amenities: true,
+		refundPolicy: true,
+		faq: true,
+		placeId: true,
+		isOnline: true,
+		recurrence: true,
+		categories: true,
+	})
+	.extend({
+		address: z.object({
+			cityId: z.number().int().positive(),
+			line1: z.string().min(1),
+			line2: z.string().min(1).optional(),
+			postalCode: z.string().min(1).optional(),
+		}),
+	});
 
 export type CreateInput = z.infer<typeof createInput>;
 
@@ -80,6 +89,7 @@ export type ListInput = z.infer<typeof listInput>;
 
 export const listOutput = z.object({
 	events: event.array(),
+	pagination: Pagination.schema,
 });
 
 export type ListOutput = z.infer<typeof listOutput>;
@@ -243,7 +253,7 @@ export const updateLineupOutput = z.object({
 export type UpdateLineupOutput = z.infer<typeof updateLineupOutput>;
 
 export const createAssetInput = z.object({
-	eventId: $.event.shape.id,
+	id: $.event.shape.id,
 	url: $.asset.shape.url,
 	description: $.asset.shape.description.optional(),
 	order: $.asset.shape.order.optional(),
@@ -258,7 +268,7 @@ export const createAssetOutput = z.object({
 export type CreateAssetOutput = z.infer<typeof createAssetOutput>;
 
 export const updateAssetsInput = z.object({
-	eventId: $.event.shape.id,
+	id: $.event.shape.id,
 	assets: $.asset
 		.pick({
 			url: true,
@@ -280,8 +290,9 @@ export const updateAssetsOutput = z.object({
 
 export type UpdateAssetsOutput = z.infer<typeof updateAssetsOutput>;
 
-export const deleteAssetInput = $.asset.pick({
-	id: true,
+export const deleteAssetInput = z.object({
+	id: $.event.shape.id,
+	assetId: $.asset.shape.id,
 });
 
 export type DeleteAssetInput = z.infer<typeof deleteAssetInput>;
@@ -349,7 +360,7 @@ export const listByPlaceIdOutput = z.object({
 export type ListByPlaceIdOutput = z.infer<typeof listByPlaceIdOutput>;
 
 export const listByOrganizerIdInput = Pagination.queryParamsSchema.extend({
-	organizerId: $.user.shape.id,
+	userId: $.user.shape.id,
 });
 
 export type ListByOrganizerIdInput = z.infer<typeof listByOrganizerIdInput>;
@@ -362,7 +373,7 @@ export const listByOrganizerIdOutput = z.object({
 export type ListByOrganizerIdOutput = z.infer<typeof listByOrganizerIdOutput>;
 
 export const listInterestedFriendsInput = Pagination.queryParamsSchema.extend({
-	eventId: $.event.shape.id,
+	id: $.event.shape.id,
 });
 
 export type ListInterestedFriendsInput = z.infer<

@@ -117,10 +117,7 @@ export function getRouter() {
 		deleteFromMyInterestedEvents: os.deleteFromMyInterestedEvents.handler(
 			async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await svc.deleteFromMyInterestedEvents(
-					userId,
-					input,
-				);
+				const result = await svc.deleteFromMyInterestedEvents(userId, input);
 
 				return result;
 			},

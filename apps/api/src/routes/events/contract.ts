@@ -184,7 +184,7 @@ export const contract = {
 		})
 		.route({
 			method: 'PATCH',
-			path: '/events/:id/ticket-options/:optionId',
+			path: '/events/:id/ticket-options',
 			summary: 'Update Event Ticket Options',
 			description: 'Update the ticket options of an existing event.',
 			successStatus: 200,
