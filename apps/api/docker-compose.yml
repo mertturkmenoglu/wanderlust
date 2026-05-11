@@ -19,6 +19,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 10s
+      start_interval: 1s
 
   wl-typesense:
     container_name: wl-typesense
@@ -69,6 +71,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 10s
+      start_interval: 1s
 
 networks:
   wl-searchnet:
