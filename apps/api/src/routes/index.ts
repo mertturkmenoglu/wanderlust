@@ -15,7 +15,25 @@ import { getRouter as getReviewsRouter } from './reviews';
 import { getRouter as getTripsRouter } from './trips';
 import { getRouter as getUsersRouter } from './users';
 
-export function getAppRouter() {
+type AppRouterShape = {
+	aggregator: ReturnType<typeof getAggregatorRouter>;
+	amenities: ReturnType<typeof getAmenitiesRouter>;
+	bookmarks: ReturnType<typeof getBookmarksRouter>;
+	categories: ReturnType<typeof getCategoriesRouter>;
+	cities: ReturnType<typeof getCitiesRouter>;
+	collections: ReturnType<typeof getCollectionsRouter>;
+	events: ReturnType<typeof getEventsRouter>;
+	favorites: ReturnType<typeof getFavoritesRouter>;
+	health: ReturnType<typeof getHealthRouter>;
+	lists: ReturnType<typeof getListsRouter>;
+	places: ReturnType<typeof getPlacesRouter>;
+	reports: ReturnType<typeof getReportsRouter>;
+	reviews: ReturnType<typeof getReviewsRouter>;
+	trips: ReturnType<typeof getTripsRouter>;
+	users: ReturnType<typeof getUsersRouter>;
+};
+
+export function getAppRouter(): AppRouterShape {
 	return {
 		aggregator: getAggregatorRouter(),
 		amenities: getAmenitiesRouter(),
