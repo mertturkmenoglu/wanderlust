@@ -12,6 +12,7 @@ import {
 	collectionsCities,
 	collectionsPlaces,
 	eventAgendaItems,
+	eventInterests,
 	eventLineupItems,
 	events,
 	eventTicketOptions,
@@ -1282,6 +1283,7 @@ export const $ = {
 	}).meta({
 		description: 'An event agenda item entity',
 	}),
+	eventInterest: createSelectSchema(eventInterests),
 	eventLineupItem: createSelectSchema(eventLineupItems, {
 		id: z
 			.string()
@@ -1381,4 +1383,5 @@ export const $insert = {
 	eventTicketOption: createInsertSchema(eventTicketOptions),
 	eventAgendaItem: createInsertSchema(eventAgendaItems),
 	eventLineupItem: createInsertSchema(eventLineupItems),
+	eventInterest: createInsertSchema(eventInterests),
 };

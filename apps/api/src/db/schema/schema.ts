@@ -45,6 +45,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 	reviews: many(reviews),
 	trips: many(trips),
 	topPlaces: many(userTopPlaces),
+	eventInterests: many(eventInterests),
 }));
 
 export const admins = pgTable('admins', {
@@ -319,6 +320,7 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
 	ticketOptions: many(eventTicketOptions),
 	agenda: many(eventAgendaItems),
 	lineup: many(eventLineupItems),
+	interests: many(eventInterests),
 	place: one(places, {
 		fields: [events.placeId],
 		references: [places.id],
@@ -887,5 +889,31 @@ export const userTopPlacesRelations = relations(userTopPlaces, ({ one }) => ({
 	place: one(places, {
 		fields: [userTopPlaces.placeId],
 		references: [places.id],
+	}),
+}));
+
+export const eventInterests = pgTable(
+	'event_interests',
+	{
+		id: bigint({ mode: 'number' }).generatedAlwaysAsIdentity().primaryKey(),
+		eventId: text()
+			.notNull()
+			.references(() => events.id, { onDelete: 'cascade' }),
+		userId: text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(table) => [unique().on(table.userId, table.eventId)],
+);
+
+export const eventInterestsRelations = relations(eventInterests, ({ one }) => ({
+	event: one(events, {
+		fields: [eventInterests.eventId],
+		references: [events.id],
+	}),
+	user: one(users, {
+		fields: [eventInterests.userId],
+		references: [users.id],
 	}),
 }));
