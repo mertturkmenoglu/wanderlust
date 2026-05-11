@@ -108,17 +108,27 @@ export function PlanTripDialog({ className }: Props) {
 							</button>
 						</>
 					)}
-					{state === 'add-to-trip' && (
-						<ScrollArea className="col-span-full h-96 pr-2">
-							{query.data?.trips
-								// .filter(
-								// 	(trip) =>
-								// 		trip.ownerId === session.data?.user?.id ||
-								// 		trip.participants.some(
-								// 			(p) => p.id === session.data?.user?.id && p.role === 'editor',
-								// 		),
-								// )
-								.map((trip) => (
+					{state === 'add-to-trip' &&
+						(query.data?.trips.length === 0 ? (
+							<div className="col-span-full flex h-full w-full flex-col items-center justify-center gap-4">
+								<MapIcon className="size-6 text-muted-foreground" />
+								<span className="text-muted-foreground">
+									No trips found. Create a new trip first.
+								</span>
+								<Button
+									onClick={() =>
+										navigate({
+											to: '/trips',
+											search: () => ({ showNewDialog: true }),
+										})
+									}
+								>
+									Create New Trip
+								</Button>
+							</div>
+						) : (
+							<ScrollArea className="col-span-full flex h-96 pr-2">
+								{query.data?.trips.map((trip) => (
 									<button
 										key={trip.id}
 										type="button"
@@ -141,9 +151,9 @@ export function PlanTripDialog({ className }: Props) {
 										{trip.title}
 									</button>
 								))}
-							<ScrollBar />
-						</ScrollArea>
-					)}
+								<ScrollBar />
+							</ScrollArea>
+						))}
 				</AlertDialogDescription>
 			</AlertDialogContent>
 		</AlertDialog>
