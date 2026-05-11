@@ -1,0 +1,35 @@
+{
+	"name": "@wanderlust/email",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"build": "email build",
+		"dev": "email dev -p 4000",
+		"export": "email export",
+		"start": "email start"
+	},
+	"devDependencies": {
+		"@react-email/ui": "6.1.1",
+		"@types/bun": "latest",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"@wanderlust/email": "workspace:*"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"react": "19.2.6",
+		"react-dom": "19.2.6",
+		"react-email": "6.1.1"
+	},
+	"exports": {
+		".": {
+			"default": "./emails/email.tsx"
+		},
+		"./*": {
+			"default": "./emails/*.tsx"
+		}
+	}
+}
