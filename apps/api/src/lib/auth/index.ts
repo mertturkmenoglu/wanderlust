@@ -78,7 +78,8 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 		emailAndPassword: {
 			enabled: true,
 			sendResetPassword: async ({ url, user }) => {
-				await jobs.email.queue.add('emails/password-reset', {
+				await jobs.email.queue.add('password-reset', {
+					firstName: user.name,
 					email: user.email,
 					url,
 				});
