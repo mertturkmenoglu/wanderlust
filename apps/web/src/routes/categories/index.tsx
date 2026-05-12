@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ipx } from '@/lib/ipx';
+import { serializeParams } from '@/lib/search';
 
 export const Route = createFileRoute('/categories/')({
 	component: RouteComponent,
@@ -27,7 +28,7 @@ function RouteComponent() {
 					<Link
 						to="/search"
 						search={{
-							category: category.name,
+							category: serializeParams([category.name]),
 						}}
 						key={category.id}
 						className="rounded-md"
