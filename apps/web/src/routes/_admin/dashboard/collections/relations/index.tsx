@@ -118,15 +118,15 @@ function Content() {
 			},
 		}),
 	);
-	const invalidate = useInvalidator();
-	const mutation = useMutation(
-		orpc.collections.deletePlaceRelation.mutationOptions({
-			onSuccess: async () => {
-				await invalidate();
-				toast.success('Relation removed');
-			},
-		}),
-	);
+	// const invalidate = useInvalidator();
+	// const mutation = useMutation(
+	// 	orpc.collections.deletePlaceRelation.mutationOptions({
+	// 		onSuccess: async () => {
+	// 			await invalidate();
+	// 			toast.success('Relation removed');
+	// 		},
+	// 	}),
+	// );
 
 	if (query.error) {
 		return <AppMessage errorMessage="Something went wrong" />;

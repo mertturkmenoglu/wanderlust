@@ -48,7 +48,7 @@ export function UserTabs({ username, className }: Props) {
 			<ScrollArea>
 				<Tabs value={activeTab?.id} className="my-4 w-full bg-transparent">
 					<TabsList className="space-x-4 bg-transparent">
-						{tabs.map((t, i) => (
+						{tabs.map((t) => (
 							<TabsTrigger
 								key={t.id}
 								value={t.id}
