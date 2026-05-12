@@ -104,12 +104,12 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 				clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
 				prompt: 'select_account',
 				scope: ['email', 'public_profile'],
-				mapProfileToUser: (profile: TFacebookUser): TUser => {
+				mapProfileToUser: (profile): TUser => {
 					return {
-						email: profile.email,
+						email: profile.email ?? '',
 						image: profile.picture.data.url,
 						name: profile.name,
-						username: profile.email.split('@')[0] ?? nanoid(10),
+						username: profile.email?.split('@')[0] ?? nanoid(10),
 					};
 				},
 			},
@@ -131,20 +131,20 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 	});
 }
 
-type TUser = {
+export type TUser = {
 	email: string;
 	image: string;
 	name: string;
 	username: string;
 };
 
-type TGoogleUser = {
+export type TGoogleUser = {
 	email: string;
 	picture: string;
 	name: string;
 };
 
-type TFacebookUser = {
+export type TFacebookUser = {
 	email: string;
 	picture: {
 		data: {
