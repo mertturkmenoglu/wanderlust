@@ -35,6 +35,7 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 			schema: schema,
 			usePlural: true,
 		}),
+		baseURL: cfg.api.url,
 		user: {
 			// TODO: Investigate why defining these columns in the Drizzle table doesn't automatically
 			// add them to the user object and if there's a way to do it, we should do it.
