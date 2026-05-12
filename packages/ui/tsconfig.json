@@ -1,8 +1,9 @@
 {
 	"extends": "@wanderlust/config/tsconfig.base.json",
 	"compilerOptions": {
-		"baseUrl": ".",
+		"rootDir": "../../",
 		"jsx": "react-jsx",
+		"outDir": "dist",
 		"paths": {
 			"@wanderlust/ui/*": [
 				"./src/*"
@@ -15,7 +16,7 @@
 		]
 	},
 	"include": [
-		"."
+		"src"
 	],
 	"exclude": [
 		"node_modules",
