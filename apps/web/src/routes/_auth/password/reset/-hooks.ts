@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { authClient } from '@/lib/auth';
 import { type FormInput, FormSchema } from './-schema';
 
@@ -27,6 +28,10 @@ function usePasswordResetMutation() {
 					throw: true,
 				},
 			});
+
+			toast.success(
+				'Password reset successfully! Please sign in with your new password.',
+			);
 
 			await navigate({
 				to: '/sign-in',
