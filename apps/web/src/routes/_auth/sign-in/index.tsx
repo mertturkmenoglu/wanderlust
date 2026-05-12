@@ -25,7 +25,7 @@ import { toast } from 'sonner';
 import { AuthLegalText } from '@/components/auth/legal-text';
 import { AuthLink } from '@/components/auth/link';
 import { OAuthButton } from '@/components/auth/oauth-button';
-import { authClient } from '@/lib/auth';
+import { authClient, isAuthError } from '@/lib/auth';
 import { useSignInForm } from './-hooks';
 
 export const Route = createFileRoute('/_auth/sign-in/')({
@@ -49,7 +49,7 @@ function RouteComponent() {
 	const mutation = useMutation({
 		mutationKey: ['sign-in'],
 		mutationFn: async (data: { email: string; password: string }) => {
-			await authClient.signIn.email(
+			return await authClient.signIn.email(
 				{
 					email: data.email,
 					password: data.password,
@@ -63,7 +63,13 @@ function RouteComponent() {
 			window.location.href = '/';
 			window.location.reload();
 		},
+		retry: false,
 		onError: (err) => {
+			if (isAuthError(err) && err.error.code === 'INVALID_EMAIL_OR_PASSWORD') {
+				toast.error('Invalid email or password');
+				return;
+			}
+
 			toast.error(err.message || 'Something went wrong');
 		},
 	});
