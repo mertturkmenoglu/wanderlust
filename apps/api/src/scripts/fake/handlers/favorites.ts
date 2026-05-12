@@ -74,13 +74,11 @@ function updateChunkFavoriteCounts(placeIds: string[]) {
 
 		const countMap = new Map(rows.map((r) => [r.placeId, r.cnt]));
 
-		await Promise.all(
-			placeIds.map((placeId) =>
-				tx
-					.update(schema.places)
-					.set({ totalFavorites: countMap.get(placeId) ?? 0 })
-					.where(eq(schema.places.id, placeId)),
-			),
-		);
+		for (const placeId of placeIds) {
+			await tx
+				.update(schema.places)
+				.set({ totalFavorites: countMap.get(placeId) ?? 0 })
+				.where(eq(schema.places.id, placeId));
+		}
 	});
 }

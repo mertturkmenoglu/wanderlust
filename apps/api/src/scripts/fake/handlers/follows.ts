@@ -58,32 +58,29 @@ function processFollows(userIds: string[]) {
 	const db = container.get(DatabaseService).get();
 
 	return db.transaction(async (tx) => {
-		const [followingRows, followersRows] = await Promise.all([
-			tx
-				.select({ userId: schema.follows.followerId, cnt: count() })
-				.from(schema.follows)
-				.where(inArray(schema.follows.followerId, userIds))
-				.groupBy(schema.follows.followerId),
-			tx
-				.select({ userId: schema.follows.followingId, cnt: count() })
-				.from(schema.follows)
-				.where(inArray(schema.follows.followingId, userIds))
-				.groupBy(schema.follows.followingId),
-		]);
+		const followingRows = await tx
+			.select({ userId: schema.follows.followerId, cnt: count() })
+			.from(schema.follows)
+			.where(inArray(schema.follows.followerId, userIds))
+			.groupBy(schema.follows.followerId);
+
+		const followersRows = await tx
+			.select({ userId: schema.follows.followingId, cnt: count() })
+			.from(schema.follows)
+			.where(inArray(schema.follows.followingId, userIds))
+			.groupBy(schema.follows.followingId);
 
 		const followingMap = new Map(followingRows.map((r) => [r.userId, r.cnt]));
 		const followersMap = new Map(followersRows.map((r) => [r.userId, r.cnt]));
 
-		await Promise.all(
-			userIds.map((userId) =>
-				tx
-					.update(schema.users)
-					.set({
-						followingCount: followingMap.get(userId) ?? 0,
-						followersCount: followersMap.get(userId) ?? 0,
-					})
-					.where(eq(schema.users.id, userId)),
-			),
-		);
+		for (const userId of userIds) {
+			await tx
+				.update(schema.users)
+				.set({
+					followingCount: followingMap.get(userId) ?? 0,
+					followersCount: followersMap.get(userId) ?? 0,
+				})
+				.where(eq(schema.users.id, userId));
+		}
 	});
 }
