@@ -5,11 +5,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { type UseGeoSearchProps, useGeoSearch } from 'react-instantsearch';
 import { Marker, Popup, useMap } from 'react-map-gl/maplibre';
 import { PlaceCard } from '@/components/place-card';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function GeoSearch(props: UseGeoSearchProps) {
 	const { items, refine } = useGeoSearch(props);
 	const { current: map } = useMap();
 	const [itemIndex, setItemIndex] = useState(-1);
+	const isMobile = useIsMobile();
 
 	const onViewChange = useCallback(
 		({ target }: MapLibreEvent) => {
@@ -52,6 +54,7 @@ export function GeoSearch(props: UseGeoSearchProps) {
 					onClose={() => setItemIndex(-1)}
 					latitude={items[itemIndex]._geoloc.lat}
 					longitude={items[itemIndex]._geoloc.lng}
+					closeButton={false}
 					className="flex min-w-md items-center text-primary!"
 				>
 					<Link
@@ -61,7 +64,16 @@ export function GeoSearch(props: UseGeoSearchProps) {
 							id: items[itemIndex]!.place.id,
 						}}
 					>
-						<PlaceCard place={items[itemIndex]!.place} hoverEffects={false} />
+						{isMobile ? (
+							<div className="w-48">
+								<PlaceCard
+									place={items[itemIndex]!.place}
+									hoverEffects={false}
+								/>
+							</div>
+						) : (
+							<PlaceCard place={items[itemIndex]!.place} hoverEffects={false} />
+						)}
 					</Link>
 				</Popup>
 			)}
