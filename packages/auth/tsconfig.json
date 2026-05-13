@@ -1,0 +1,40 @@
+{
+	"extends": "../config/tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "dist",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"paths": {
+			"@wanderlust/db": [
+				"../db/src/index.ts"
+			],
+			"@wanderlust/uid": [
+				"../uid/src/index.ts"
+			],
+			"@wanderlust/config": [
+				"../config/src/index.ts"
+			],
+			"@wanderlust/jobs": [
+				"../jobs/src/index.ts"
+			]
+		}
+	},
+	"references": [
+		{
+			"path": "../db"
+		},
+		{
+			"path": "../uid"
+		},
+		{
+			"path": "../config"
+		},
+		{
+			"path": "../jobs"
+		}
+	]
+}

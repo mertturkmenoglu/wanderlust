@@ -1,0 +1,28 @@
+{
+	"name": "@wanderlust/auth",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc -b"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"@wanderlust/db": "workspace:*",
+		"@wanderlust/uid": "workspace:*",
+		"@wanderlust/config": "workspace:*",
+		"@wanderlust/jobs": "workspace:*",
+		"better-auth": "catalog:",
+		"inversify": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}
