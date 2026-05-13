@@ -1,0 +1,34 @@
+{
+	"extends": "../../packages/config/tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "dist",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"paths": {
+			"@wanderlust/db": [
+				"../../packages/db/src/index.ts"
+			],
+			"@wanderlust/common": [
+				"../../packages/common/src/index.ts"
+			],
+			"@wanderlust/uid": [
+				"../../packages/uid/src/index.ts"
+			]
+		}
+	},
+	"references": [
+		{
+			"path": "../../packages/db"
+		},
+		{
+			"path": "../../packages/common"
+		},
+		{
+			"path": "../../packages/uid"
+		}
+	]
+}

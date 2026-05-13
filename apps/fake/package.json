@@ -1,0 +1,30 @@
+{
+	"name": "@wanderlust/fake",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"fake": "bun run src/index.ts",
+		"check-types": "tsc -b"
+	},
+	"dependencies": {
+		"@faker-js/faker": "^10.4.0",
+		"@wanderlust/common": "workspace:*",
+		"@wanderlust/db": "workspace:*",
+		"@wanderlust/uid": "workspace:*",
+		"async-mutex": "^0.5.0",
+		"consola": "^3.4.2",
+		"drizzle-orm": "^0.45.2",
+		"drizzle-zod": "^0.8.3",
+		"inversify": "^8.1.0",
+		"ora": "^9.4.0",
+		"p-limit": "^7.3.0",
+		"pg": "^8.20.0",
+		"piscina": "^5.1.4",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@types/pg": "^8.20.0",
+		"typescript": "^6.0.3"
+	}
+}
