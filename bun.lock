@@ -19,6 +19,7 @@
         "@orpc/server": "catalog:",
         "@orpc/zod": "catalog:",
         "@react-email/components": "^1.0.12",
+        "@wanderlust/db": "workspace:*",
         "async-mutex": "^0.5.0",
         "bentocache": "^1.6.1",
         "better-auth": "catalog:",
@@ -133,9 +134,31 @@
         "typescript": "^6.0.3",
       },
     },
+    "packages/common": {
+      "name": "@wanderlust/common",
+      "dependencies": {
+        "@wanderlust/db": "workspace:*",
+        "drizzle-zod": "^0.8.3",
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "typescript": "^6.0.3",
+      },
+    },
     "packages/config": {
       "name": "@wanderlust/config",
       "version": "1.0.0",
+    },
+    "packages/db": {
+      "name": "@wanderlust/db",
+      "dependencies": {
+        "drizzle-orm": "^0.45.2",
+        "drizzle-zod": "^0.8.3",
+      },
+      "devDependencies": {
+        "drizzle-kit": "^0.31.10",
+        "typescript": "^6.0.3",
+      },
     },
     "packages/email": {
       "name": "@wanderlust/email",
@@ -1302,7 +1325,11 @@
 
     "@wanderlust/api": ["@wanderlust/api@workspace:apps/api"],
 
+    "@wanderlust/common": ["@wanderlust/common@workspace:packages/common"],
+
     "@wanderlust/config": ["@wanderlust/config@workspace:packages/config"],
+
+    "@wanderlust/db": ["@wanderlust/db@workspace:packages/db"],
 
     "@wanderlust/email": ["@wanderlust/email@workspace:packages/email"],
 
