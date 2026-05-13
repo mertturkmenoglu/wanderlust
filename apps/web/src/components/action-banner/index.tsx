@@ -44,7 +44,7 @@ export function ActionBanner({
 				aspectRatio={1}
 			/>
 			<div className="p-8 md:p-4 lg:p-8">
-				<div className="">{message} dsgdfhfdhd</div>
+				<div className="">{message}</div>
 			</div>
 		</div>
 	);
