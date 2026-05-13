@@ -15,11 +15,11 @@
 		}
 	},
 	"dependencies": {
-		"drizzle-zod": "^0.8.3",
+		"drizzle-zod": "catalog:",
 		"zod": "catalog:",
 		"@wanderlust/db": "workspace:*"
 	},
 	"devDependencies": {
-		"typescript": "^6.0.3"
+		"typescript": "catalog:"
 	}
 }

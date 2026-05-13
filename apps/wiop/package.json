@@ -11,13 +11,11 @@
 		"check-types": "tsc -b"
 	},
 	"devDependencies": {
-		"@types/bun": "latest",
+		"@types/bun": "catalog:",
 		"@wanderlust/config": "workspace:*"
 	},
-	"peerDependencies": {
-		"typescript": "^6.0.3"
-	},
 	"dependencies": {
-		"ipx": "^3.1.1"
+		"ipx": "^3.1.1",
+		"typescript": "catalog:"
 	}
 }
