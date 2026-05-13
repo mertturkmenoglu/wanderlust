@@ -19,7 +19,9 @@
         "@orpc/server": "catalog:",
         "@orpc/zod": "catalog:",
         "@react-email/components": "^1.0.12",
+        "@wanderlust/common": "workspace:*",
         "@wanderlust/db": "workspace:*",
+        "@wanderlust/uid": "workspace:*",
         "async-mutex": "^0.5.0",
         "bentocache": "^1.6.1",
         "better-auth": "catalog:",
@@ -54,6 +56,29 @@
         "@wanderlust/email": "workspace:*",
         "drizzle-kit": "^0.31.10",
         "tsdown": "^0.22.0",
+        "typescript": "^6.0.3",
+      },
+    },
+    "apps/fake": {
+      "name": "@wanderlust/fake",
+      "dependencies": {
+        "@faker-js/faker": "^10.4.0",
+        "@wanderlust/common": "workspace:*",
+        "@wanderlust/db": "workspace:*",
+        "@wanderlust/uid": "workspace:*",
+        "async-mutex": "^0.5.0",
+        "consola": "^3.4.2",
+        "drizzle-orm": "^0.45.2",
+        "drizzle-zod": "^0.8.3",
+        "inversify": "^8.1.0",
+        "ora": "^9.4.0",
+        "p-limit": "^7.3.0",
+        "pg": "^8.20.0",
+        "piscina": "^5.1.4",
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "@types/pg": "^8.20.0",
         "typescript": "^6.0.3",
       },
     },
@@ -207,6 +232,15 @@
         "@types/react-dom": "^19.2.2",
         "@wanderlust/config": "workspace:*",
         "tailwindcss": "^4.1.16",
+        "typescript": "^6.0.3",
+      },
+    },
+    "packages/uid": {
+      "name": "@wanderlust/uid",
+      "dependencies": {
+        "nanoid": "^5.1.11",
+      },
+      "devDependencies": {
         "typescript": "^6.0.3",
       },
     },
@@ -1333,7 +1367,11 @@
 
     "@wanderlust/email": ["@wanderlust/email@workspace:packages/email"],
 
+    "@wanderlust/fake": ["@wanderlust/fake@workspace:apps/fake"],
+
     "@wanderlust/ui": ["@wanderlust/ui@workspace:packages/ui"],
+
+    "@wanderlust/uid": ["@wanderlust/uid@workspace:packages/uid"],
 
     "@zag-js/anatomy": ["@zag-js/anatomy@1.40.0", "", {}, "sha512-oiB4uAaV//L38JluLVPtOHO3xvqambrfrXVOoq4kmNrBv1LLlCmFvrXA2HOR9lakn4ExK27XSUrKhUN7YlKjfQ=="],
 
