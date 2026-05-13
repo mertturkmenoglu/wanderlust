@@ -1,0 +1,23 @@
+{
+	"name": "@wanderlust/uid",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc -b"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"nanoid": "^5.1.11"
+	},
+	"devDependencies": {
+		"typescript": "^6.0.3"
+	}
+}
