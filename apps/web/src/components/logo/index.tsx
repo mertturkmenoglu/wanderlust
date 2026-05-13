@@ -7,7 +7,12 @@ type Props = {
 	className?: string;
 };
 
-export function Logo({ variant, grayscale, className, ...props }: Props) {
+export function Logo({
+	variant = 'default',
+	grayscale = false,
+	className,
+	...props
+}: Props) {
 	const height = (() => {
 		switch (variant) {
 			case 'small':
