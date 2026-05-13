@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { ErrorComponent } from '@/components/error-component';
@@ -48,10 +49,12 @@ function RouteComponent() {
 			<div className="mt-8 grid grid-cols-5 gap-8">
 				<div className="col-span-5 lg:col-span-2">
 					<div className="">
-						<img
-							src={ipx(city.image, 'f_webp,w_1024')}
+						<Image
+							src={ipx(city.image, 'w_512')}
 							alt=""
 							className="aspect-video rounded-md object-cover"
+							width={512}
+							aspectRatio={16 / 9}
 						/>
 					</div>
 				</div>

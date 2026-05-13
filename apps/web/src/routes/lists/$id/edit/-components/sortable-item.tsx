@@ -1,5 +1,6 @@
 import { useSortable } from '@dnd-kit/react/sortable';
 import { useMutation } from '@tanstack/react-query';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
@@ -58,9 +59,12 @@ export function SortableItem({ index, item }: Props) {
 			</ItemActions>
 
 			<ItemMedia variant="image">
-				<img
+				<Image
 					src={ipx(item.place.assets[0]?.url ?? '', 'w_512')}
 					alt={item.place.assets[0]?.description ?? ''}
+					layout="constrained"
+					width={512}
+					aspectRatio={16 / 9}
 				/>
 			</ItemMedia>
 

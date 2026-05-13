@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -153,7 +154,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 					</Button>
 				)}
 			</AlertDialogTrigger>
-			<AlertDialogContent className="min-h-[600px]">
+			<AlertDialogContent className="min-h-150">
 				<AlertDialogHeader>
 					<AlertDialogTitle>
 						{isUpdate ? 'Update Location' : 'Add Location to Trip'}
@@ -186,10 +187,13 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 
 								{query.data && (
 									<>
-										<img
+										<Image
 											src={query.data.place.assets[0]?.url ?? ''}
 											alt=""
 											className="mt-4 aspect-5/2 w-full rounded-md object-cover"
+											layout="constrained"
+											width={512}
+											aspectRatio={5 / 2}
 										/>
 										<div className="mt-4">
 											<div className="font-semibold text-black text-lg leading-none tracking-tight">

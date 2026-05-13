@@ -5,6 +5,8 @@ import {
 } from '@wanderlust/ui/components/avatar';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useEffect, useRef } from 'react';
+import { userImage } from '@/lib/image';
+import { ipx } from '@/lib/ipx';
 
 type Props = {
 	className?: string;
@@ -32,7 +34,7 @@ export function UserImage({
 	return (
 		<Avatar className={cn('rounded-full', className)}>
 			<AvatarImage
-				src={src ?? ''}
+				src={ipx(userImage(src), 'w_256') ?? ''}
 				referrerPolicy="no-referrer"
 				className={cn('object-cover', imgClassName)}
 			/>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
 import { z } from 'zod';
@@ -20,7 +21,14 @@ export const Route = createFileRoute('/trips/')({
 function RouteComponent() {
 	return (
 		<div className="flex w-full flex-col items-center justify-center">
-			<img src="/trip.png" className="size-64" alt="" />
+			<Image
+				src="/trip.png"
+				className="size-64"
+				alt=""
+				layout="constrained"
+				width={256}
+				aspectRatio={1}
+			/>
 			<h2 className="mt-8 text-center font-bold text-4xl">
 				Plan your next trip with
 				<br />

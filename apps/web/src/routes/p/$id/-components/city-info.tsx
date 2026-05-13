@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { ipx } from '@/lib/ipx';
@@ -15,10 +16,13 @@ export function CityInfo({ className }: Props) {
 		<div className={cn(className)}>
 			<div className="grid grid-cols-3 gap-8 md:gap-16">
 				<div className="col-span-3 md:col-span-1">
-					<img
-						src={ipx(place.address.city.image, 'f_webp,w_1024')}
+					<Image
+						src={ipx(place.address.city.image, 'w_512')}
 						alt=""
 						className="aspect-video rounded-md object-cover"
+						layout="constrained"
+						width={512}
+						aspectRatio={16 / 9}
 					/>
 				</div>
 

@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useMemo, useState } from 'react';
@@ -47,7 +48,7 @@ export function ImageGrid({ className }: Props) {
 	return (
 		<div
 			className={cn(
-				'relative grid h-64 grid-cols-4 grid-rows-2 gap-2 rounded-xl md:h-96 lg:h-[512px]',
+				'relative grid h-64 grid-cols-4 grid-rows-2 gap-2 rounded-xl md:h-96 lg:h-128',
 				className,
 			)}
 		>
@@ -62,10 +63,13 @@ export function ImageGrid({ className }: Props) {
 						})
 					}
 				>
-					<img
+					<Image
 						src={ipx(first.url, 'w_1024')}
 						alt={first.description ?? ''}
 						className="h-full w-full rounded-l-xl object-cover"
+						layout="constrained"
+						width={1024}
+						aspectRatio={16 / 9}
 					/>
 				</button>
 			</div>
@@ -84,13 +88,16 @@ export function ImageGrid({ className }: Props) {
 					}}
 				>
 					{img.url !== '' ? (
-						<img
+						<Image
 							src={ipx(img.url, 'w_512')}
 							alt={img.description ?? ''}
 							className={cn('h-full w-full object-cover', {
 								'rounded-tr-xl': i === 1,
 								'rounded-br-xl': i === 3,
 							})}
+							layout="constrained"
+							width={512}
+							aspectRatio={1}
 						/>
 					) : (
 						<div
