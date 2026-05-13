@@ -1,5 +1,5 @@
+import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { inject, injectable } from 'inversify';
-import { CacheService, type TCacheService } from '@/lib/cache';
 import type * as dto from './dto';
 import { AggregatorRepository } from './repository';
 
@@ -9,7 +9,10 @@ export class AggregatorService {
 	private readonly cache: TCacheService;
 	private readonly repo: AggregatorRepository;
 
-	constructor(@inject(CacheService) cache: CacheService, @inject(AggregatorRepository) repo: AggregatorRepository) {
+	constructor(
+		@inject(CacheService) cache: CacheService,
+		@inject(AggregatorRepository) repo: AggregatorRepository,
+	) {
 		this.cache = cache.get();
 		this.repo = repo;
 	}

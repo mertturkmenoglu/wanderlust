@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
+import { AuthService } from '@wanderlust/auth';
+import { ConfigService } from '@wanderlust/config';
 import { getApiHandler, getRpcHandler } from '@/routes/handler';
 import { bootstrapServices, container } from './ioc';
-import { AuthService } from './lib/auth';
-import { ConfigService } from './lib/config';
 import { createContext } from './lib/context';
 import { withCors } from './middlewares/cors';
 import { logger } from './middlewares/logger';

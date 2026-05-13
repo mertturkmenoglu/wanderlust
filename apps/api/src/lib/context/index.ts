@@ -1,12 +1,15 @@
+import { AuthService } from '@wanderlust/auth';
 import type { Container } from 'inversify';
-import { AuthService } from '../auth';
 
 export type CreateContextOptions = {
 	request: Request;
 	container: Container;
 };
 
-export async function createContext({ request, container }: CreateContextOptions) {
+export async function createContext({
+	request,
+	container,
+}: CreateContextOptions) {
 	const auth = container.get(AuthService).get();
 
 	const session = await auth.api.getSession({

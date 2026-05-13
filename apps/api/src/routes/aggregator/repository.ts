@@ -1,7 +1,7 @@
 import { ORPCError } from '@orpc/client';
+import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/lib/db';
 
 @injectable()
 export class AggregatorRepository {

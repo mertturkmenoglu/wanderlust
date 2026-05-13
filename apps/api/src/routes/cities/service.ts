@@ -1,5 +1,5 @@
+import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { inject, injectable } from 'inversify';
-import { CacheService, type TCacheService } from '@/lib/cache';
 import type * as dto from './dto';
 import { CitiesRepository } from './repository';
 

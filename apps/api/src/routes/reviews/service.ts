@@ -1,16 +1,16 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: TODO */
 import path from 'node:path';
 import { ORPCError } from '@orpc/server';
-import { nanoid } from '@wanderlust/uid';
-import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
-import { inject, injectable } from 'inversify';
-import { CacheService, type TCacheService } from '@/lib/cache';
+import { CacheService, type TCacheService } from '@wanderlust/cache';
 import {
 	createPathname,
 	getFilenameFromUrl,
 	StorageService,
 	type TStorageService,
-} from '@/lib/storage';
+} from '@wanderlust/storage';
+import { nanoid } from '@wanderlust/uid';
+import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
+import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
 import { ReviewsRepository } from './repository';
 

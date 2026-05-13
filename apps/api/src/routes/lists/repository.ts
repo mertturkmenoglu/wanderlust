@@ -1,10 +1,10 @@
 import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
+import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/lib/db';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 import type * as dto from './dto';
 

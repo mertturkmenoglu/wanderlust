@@ -1,14 +1,14 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/client';
-import { nanoid } from '@wanderlust/uid';
-import { fileTypeFromBlob } from 'file-type';
-import { inject, injectable } from 'inversify';
 import {
 	createPathname,
 	getFilenameFromUrl,
 	StorageService,
 	type TStorageService,
-} from '@/lib/storage';
+} from '@wanderlust/storage';
+import { nanoid } from '@wanderlust/uid';
+import { fileTypeFromBlob } from 'file-type';
+import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
 import { UsersRepository } from './repository';
 

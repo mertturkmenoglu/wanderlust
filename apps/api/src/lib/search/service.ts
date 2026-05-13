@@ -1,14 +1,13 @@
-import { injectable } from 'inversify';
+import { ConfigService, type TConfigService } from '@wanderlust/config';
+import { inject, injectable } from 'inversify';
 import Typesense from 'typesense';
-import { container } from '@/ioc';
-import { ConfigService } from '../config';
 
 @injectable()
 export class SearchService {
 	private readonly instance: TSearchService;
 
-	constructor() {
-		this.instance = init();
+	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
+		this.instance = init(this.cfg.get());
 	}
 
 	get(): TSearchService {
@@ -16,9 +15,7 @@ export class SearchService {
 	}
 }
 
-function init() {
-	const cfg = container.get(ConfigService).get();
-
+function init(cfg: TConfigService) {
 	return new Typesense.Client({
 		nodes: [
 			{
