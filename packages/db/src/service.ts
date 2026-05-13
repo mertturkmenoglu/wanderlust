@@ -1,7 +1,7 @@
-import * as schema from '@wanderlust/db';
+import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { inject, injectable } from 'inversify';
-import { ConfigService, type TConfigService } from '@/lib/config';
+import * as schema from './schema';
 
 @injectable()
 export class DatabaseService {

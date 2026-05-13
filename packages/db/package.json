@@ -16,9 +16,13 @@
 	},
 	"dependencies": {
 		"drizzle-orm": "catalog:",
-		"drizzle-zod": "catalog:"
+		"drizzle-zod": "catalog:",
+		"inversify": "catalog:",
+		"@wanderlust/config": "workspace:*",
+		"pg": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"@types/pg": "catalog:"
 	}
 }
