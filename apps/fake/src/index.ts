@@ -17,16 +17,15 @@ import { generate as generateEventInterests } from './handlers/event-interests';
 import { generate as generateEventLineupItems } from './handlers/event-lineup-items';
 import { generate as generateEventTicketOptions } from './handlers/event-ticket-options';
 import { generate as generateEvents } from './handlers/events';
+import { generate as generateFakeIds } from './handlers/fake-id';
 import { generate as generateFavorites } from './handlers/favorites';
 import { generate as generateFollows } from './handlers/follows';
-import { generate as generateFakeIds } from './handlers/id';
 import { generate as generateListItems } from './handlers/list-items';
 import { generate as generateLists } from './handlers/lists';
 import { generate as generatePlaces } from './handlers/places';
 import { generate as generateReviewAssets } from './handlers/review-assets';
 import { generate as generateReviews } from './handlers/reviews';
 import { generate as generateUsers } from './handlers/users';
-import { bootstrapServices } from './ioc';
 
 export const paths = {
 	places: 'tmp/places.txt',
@@ -100,8 +99,6 @@ const steps: Step[] = [
 ];
 
 async function main() {
-	await bootstrapServices();
-
 	consola.start('Starting fake data generation');
 
 	const start = Date.now();
