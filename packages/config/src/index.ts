@@ -19,7 +19,7 @@ export class ConfigService {
 	}
 
 	static async init() {
-		const data = await Bun.file('./config.toml').text();
+		const data = await Bun.file('config.toml').text();
 
 		const obj = Bun.TOML.parse(data);
 
