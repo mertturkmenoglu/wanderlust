@@ -1,8 +1,8 @@
 import { ORPCError } from '@orpc/server';
+import * as schema from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/db';
-import * as schema from '@/db/schema';
+import { DatabaseService, type TDatabaseService } from '@/lib/db';
 import { Pagination } from '@/lib/pagination';
 import type * as dto from './dto';
 
@@ -16,7 +16,8 @@ export class BookmarksRepository {
 
 	async create(userId: string, data: dto.CreateInput) {
 		try {
-			const [result] = await this.db.insert(schema.bookmarks)
+			const [result] = await this.db
+				.insert(schema.bookmarks)
 				.values({
 					userId: userId,
 					placeId: data.placeId,

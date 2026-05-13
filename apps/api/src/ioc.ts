@@ -1,8 +1,8 @@
 import { Container } from 'inversify';
-import { DatabaseService } from './db';
 import { AuthService } from './lib/auth';
 import { CacheService } from './lib/cache';
 import { ConfigService, type TConfigService } from './lib/config';
+import { DatabaseService } from './lib/db';
 import { EmailService } from './lib/email';
 import { JobsService } from './lib/jobs';
 import { SearchService } from './lib/search';

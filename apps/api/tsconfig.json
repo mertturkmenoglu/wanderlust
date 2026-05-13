@@ -10,6 +10,12 @@
 			],
 			"@wanderlust/email/*": [
 				"../../packages/email/emails/*"
+			],
+			"@wanderlust/db": [
+				"../../packages/db/src/index.ts"
+			],
+			"@wanderlust/common": [
+				"../../packages/common/src/index.ts"
 			]
 		},
 		"jsx": "react-jsx",
@@ -23,6 +29,12 @@
 	"references": [
 		{
 			"path": "../../packages/email"
+		},
+		{
+			"path": "../../packages/db"
+		},
+		{
+			"path": "../../packages/common"
 		}
 	]
 }

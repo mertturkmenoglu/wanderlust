@@ -1,20 +1,20 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-export const createInput = $.favorite.pick({
+export const createInput = $dto.favorite.pick({
 	placeId: true,
 });
 
 export type CreateInput = z.infer<typeof createInput>;
 
 export const createOutput = z.object({
-	favorite: $.favorite,
+	favorite: $dto.favorite,
 });
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $.favorite.pick({
+export const deleteInput = $dto.favorite.pick({
 	placeId: true,
 });
 
@@ -28,16 +28,16 @@ export const listInput = Pagination.queryParamsSchema.extend({});
 
 export type ListInput = z.infer<typeof listInput>;
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 
 export const listOutput = z.object({
-	favorites: $.favorite
+	favorites: $dto.favorite
 		.extend({
 			place: place,
 		})
@@ -48,13 +48,13 @@ export const listOutput = z.object({
 export type ListOutput = z.infer<typeof listOutput>;
 
 export const listByUsernameInput = Pagination.queryParamsSchema.extend({
-	username: $.user.pick({ username: true }).shape.username,
+	username: $dto.user.pick({ username: true }).shape.username,
 });
 
 export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
 
 export const listByUsernameOutput = z.object({
-	favorites: $.favorite
+	favorites: $dto.favorite
 		.extend({
 			place: place,
 		})

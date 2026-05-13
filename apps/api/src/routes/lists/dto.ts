@@ -1,9 +1,9 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-const list = $.list.extend({
-	user: $.user.pick({
+const list = $dto.list.extend({
+	user: $dto.user.pick({
 		id: true,
 		username: true,
 		name: true,
@@ -12,14 +12,14 @@ const list = $.list.extend({
 });
 
 const listWithItems = list.extend({
-	items: $.listItem
+	items: $dto.listItem
 		.extend({
-			place: $.place.extend({
-				address: $.address.extend({
-					city: $.city,
+			place: $dto.place.extend({
+				address: $dto.address.extend({
+					city: $dto.city,
 				}),
-				category: $.category,
-				assets: $.asset.array(),
+				category: $dto.category,
+				assets: $dto.asset.array(),
 			}),
 		})
 		.array(),
@@ -36,7 +36,7 @@ export const listAllOutput = z.object({
 
 export type ListAllOutput = z.infer<typeof listAllOutput>;
 
-export const getInput = $.list.pick({
+export const getInput = $dto.list.pick({
 	id: true,
 });
 
@@ -48,7 +48,7 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
-export const checkStatusInput = $.listItem.pick({ placeId: true });
+export const checkStatusInput = $dto.listItem.pick({ placeId: true });
 
 export type CheckStatusInput = z.infer<typeof checkStatusInput>;
 
@@ -73,7 +73,7 @@ export const checkStatusOutput = z.object({
 export type CheckStatusOutput = z.infer<typeof checkStatusOutput>;
 
 export const listPublicInput = Pagination.queryParamsSchema.extend(
-	$.user.pick({ username: true }).shape,
+	$dto.user.pick({ username: true }).shape,
 );
 
 export type ListPublicInput = z.infer<typeof listPublicInput>;
@@ -85,7 +85,7 @@ export const listPublicOutput = z.object({
 
 export type ListPublicOutput = z.infer<typeof listPublicOutput>;
 
-export const createInput = $.list.pick({
+export const createInput = $dto.list.pick({
 	name: true,
 	isPublic: true,
 });
@@ -98,7 +98,7 @@ export const createOutput = z.object({
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const updateInput = $.list.pick({
+export const updateInput = $dto.list.pick({
 	id: true,
 	name: true,
 	isPublic: true,
@@ -112,7 +112,7 @@ export const updateOutput = z.object({
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const deleteInput = $.list.pick({
+export const deleteInput = $dto.list.pick({
 	id: true,
 });
 
@@ -122,20 +122,20 @@ export const deleteOutput = z.object({});
 
 export type DeleteOutput = z.infer<typeof deleteOutput>;
 
-export const appendItemInput = $.list
+export const appendItemInput = $dto.list
 	.pick({ id: true })
-	.extend($.listItem.pick({ placeId: true }).shape);
+	.extend($dto.listItem.pick({ placeId: true }).shape);
 
 export type AppendItemInput = z.infer<typeof appendItemInput>;
 
 export const appendItemOutput = z.object({
-	item: $.listItem,
+	item: $dto.listItem,
 });
 
 export type AppendItemOutput = z.infer<typeof appendItemOutput>;
 
-export const updateItemsInput = $.list.pick({ id: true }).extend({
-	placeIds: $.place.pick({ id: true }).shape.id.array(),
+export const updateItemsInput = $dto.list.pick({ id: true }).extend({
+	placeIds: $dto.place.pick({ id: true }).shape.id.array(),
 });
 
 export type UpdateItemsInput = z.infer<typeof updateItemsInput>;
@@ -146,12 +146,12 @@ export const updateItemsOutput = z.object({
 
 export type UpdateItemsOutput = z.infer<typeof updateItemsOutput>;
 
-export const removeItemInput = $.list
+export const removeItemInput = $dto.list
 	.pick({
 		id: true,
 	})
 	.extend({
-		placeId: $.place.pick({ id: true }).shape.id,
+		placeId: $dto.place.pick({ id: true }).shape.id,
 	});
 
 export type RemoveItemInput = z.infer<typeof removeItemInput>;

@@ -1,7 +1,7 @@
+import * as schema from '@wanderlust/db';
 import type { Client } from 'typesense';
-import { DatabaseService } from '@/db';
-import * as schema from '@/db/schema';
 import { container } from '@/ioc';
+import { DatabaseService } from '@/lib/db';
 import { createSchemas } from './create-schemas';
 
 export async function handlePlaces(client: Client) {

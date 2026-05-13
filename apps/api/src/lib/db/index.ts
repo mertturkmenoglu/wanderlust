@@ -1,15 +1,13 @@
+import * as schema from '@wanderlust/db';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { inject, injectable } from 'inversify';
 import { ConfigService, type TConfigService } from '@/lib/config';
-import * as schema from './schema';
 
 @injectable()
 export class DatabaseService {
 	private readonly instance: TDatabaseService;
 
-	constructor(
-		@inject(ConfigService) private readonly cfg: ConfigService,
-	) {
+	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
 		this.instance = init(this.cfg.get());
 	}
 

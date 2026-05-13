@@ -1,11 +1,11 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 import { amenities } from '../amenities/consts';
 
-const trip = $.trip.extend(
+const trip = $dto.trip.extend(
 	z.object({
-		owner: $.user.pick({
+		owner: $dto.user.pick({
 			id: true,
 			name: true,
 			username: true,
@@ -14,9 +14,9 @@ const trip = $.trip.extend(
 	}).shape,
 );
 
-const tripParticipant = $.tripParticipant.extend(
+const tripParticipant = $dto.tripParticipant.extend(
 	z.object({
-		user: $.user.pick({
+		user: $dto.user.pick({
 			id: true,
 			name: true,
 			username: true,
@@ -25,15 +25,15 @@ const tripParticipant = $.tripParticipant.extend(
 	}).shape,
 );
 
-const invite = $.tripInvite.extend(
+const invite = $dto.tripInvite.extend(
 	z.object({
-		fromUser: $.user.pick({
+		fromUser: $dto.user.pick({
 			id: true,
 			name: true,
 			username: true,
 			image: true,
 		}),
-		toUser: $.user.pick({
+		toUser: $dto.user.pick({
 			id: true,
 			name: true,
 			username: true,
@@ -42,15 +42,15 @@ const invite = $.tripInvite.extend(
 	}).shape,
 );
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 
-const location = $.tripLocation.extend(
+const location = $dto.tripLocation.extend(
 	z.object({
 		place: place,
 	}).shape,
@@ -65,7 +65,7 @@ const extendedTrip = trip.extend(
 
 export type ExtendedTrip = z.infer<typeof extendedTrip>;
 
-export type Comment = z.infer<typeof $.tripComment>;
+export type Comment = z.infer<typeof $dto.tripComment>;
 
 export const getInput = trip.pick({
 	id: true,
@@ -96,8 +96,8 @@ export const createInviteInput = trip
 		id: true,
 	})
 	.extend({
-		toUserId: $.user.pick({ id: true }).shape.id,
-		role: $.tripParticipant.pick({ role: true }).shape.role,
+		toUserId: $dto.user.pick({ id: true }).shape.id,
+		role: $dto.tripParticipant.pick({ role: true }).shape.role,
 	});
 
 export type CreateInviteInput = z.infer<typeof createInviteInput>;
@@ -151,7 +151,7 @@ export const getInviteDetailsInput = trip
 		id: true,
 	})
 	.extend({
-		inviteId: $.tripInvite.pick({ id: true }).shape.id,
+		inviteId: $dto.tripInvite.pick({ id: true }).shape.id,
 	});
 
 export type GetInviteDetailsInput = z.infer<typeof getInviteDetailsInput>;
@@ -173,7 +173,7 @@ export const acceptOrDeclineInviteInput = trip
 		id: true,
 	})
 	.extend({
-		inviteId: $.tripInvite.pick({ id: true }).shape.id,
+		inviteId: $dto.tripInvite.pick({ id: true }).shape.id,
 		accept: z.boolean().meta({
 			description: 'Whether to accept or decline the invite',
 			examples: [true],
@@ -210,7 +210,7 @@ export const deleteInviteInput = trip
 		id: true,
 	})
 	.extend({
-		inviteId: $.tripInvite.pick({ id: true }).shape.id,
+		inviteId: $dto.tripInvite.pick({ id: true }).shape.id,
 	});
 
 export type DeleteInviteInput = z.infer<typeof deleteInviteInput>;
@@ -234,7 +234,7 @@ export const deleteParticipantInput = trip
 		id: true,
 	})
 	.extend({
-		userId: $.user.pick({ id: true }).shape.id,
+		userId: $dto.user.pick({ id: true }).shape.id,
 	});
 
 export type DeleteParticipantInput = z.infer<typeof deleteParticipantInput>;
@@ -248,13 +248,13 @@ export const createCommentInput = trip
 		id: true,
 	})
 	.extend({
-		content: $.tripComment.shape.content,
+		content: $dto.tripComment.shape.content,
 	});
 
 export type CreateCommentInput = z.infer<typeof createCommentInput>;
 
 export const createCommentOutput = z.object({
-	comment: $.tripComment,
+	comment: $dto.tripComment,
 });
 
 export type CreateCommentOutput = z.infer<typeof createCommentOutput>;
@@ -268,9 +268,9 @@ export const listCommentsInput = Pagination.queryParamsSchema.extend(
 export type ListCommentsInput = z.infer<typeof listCommentsInput>;
 
 export const listCommentsOutput = z.object({
-	comments: $.tripComment
+	comments: $dto.tripComment
 		.extend({
-			user: $.user.pick({
+			user: $dto.user.pick({
 				id: true,
 				name: true,
 				username: true,
@@ -288,14 +288,14 @@ export const updateCommentInput = trip
 		id: true,
 	})
 	.extend({
-		commentId: $.tripComment.pick({ id: true }).shape.id,
-		content: $.tripComment.shape.content,
+		commentId: $dto.tripComment.pick({ id: true }).shape.id,
+		content: $dto.tripComment.shape.content,
 	});
 
 export type UpdateCommentInput = z.infer<typeof updateCommentInput>;
 
 export const updateCommentOutput = z.object({
-	comment: $.tripComment,
+	comment: $dto.tripComment,
 });
 
 export type UpdateCommentOutput = z.infer<typeof updateCommentOutput>;
@@ -305,7 +305,7 @@ export const deleteCommentInput = trip
 		id: true,
 	})
 	.extend({
-		commentId: $.tripComment.pick({ id: true }).shape.id,
+		commentId: $dto.tripComment.pick({ id: true }).shape.id,
 	});
 
 export type DeleteCommentInput = z.infer<typeof deleteCommentInput>;
@@ -341,13 +341,13 @@ export const createLocationInput = trip
 		id: true,
 	})
 	.extend(
-		$.tripLocation
+		$dto.tripLocation
 			.pick({
 				placeId: true,
 				scheduledTime: true,
 			})
 			.extend({
-				description: $.tripLocation.shape.description.optional(),
+				description: $dto.tripLocation.shape.description.optional(),
 			}).shape,
 	);
 
@@ -364,9 +364,9 @@ export const updateLocationInput = trip
 		id: true,
 	})
 	.extend({
-		locationId: $.tripLocation.pick({ id: true }).shape.id,
-		description: $.tripLocation.shape.description.optional(),
-		scheduledTime: $.tripLocation.shape.scheduledTime.optional(),
+		locationId: $dto.tripLocation.pick({ id: true }).shape.id,
+		description: $dto.tripLocation.shape.description.optional(),
+		scheduledTime: $dto.tripLocation.shape.scheduledTime.optional(),
 	});
 
 export type UpdateLocationInput = z.infer<typeof updateLocationInput>;
@@ -382,7 +382,7 @@ export const deleteLocationInput = trip
 		id: true,
 	})
 	.extend({
-		locationId: $.tripLocation.pick({ id: true }).shape.id,
+		locationId: $dto.tripLocation.pick({ id: true }).shape.id,
 	});
 
 export type DeleteLocationInput = z.infer<typeof deleteLocationInput>;

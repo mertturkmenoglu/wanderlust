@@ -1,6 +1,6 @@
 import { ORPCError, os } from '@orpc/server';
-import { DatabaseService } from '@/db';
 import type { AuthContext } from '@/lib/context';
+import { DatabaseService } from '@/lib/db';
 
 export const isAdmin = os
 	.$context<AuthContext>()

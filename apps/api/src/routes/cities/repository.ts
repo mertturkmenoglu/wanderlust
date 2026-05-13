@@ -1,8 +1,8 @@
 import { ORPCError } from '@orpc/server';
+import * as schema from '@wanderlust/db';
 import { eq, inArray } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/db';
-import * as schema from '@/db/schema';
+import { DatabaseService, type TDatabaseService } from '@/lib/db';
 import type * as dto from './dto';
 
 @injectable()

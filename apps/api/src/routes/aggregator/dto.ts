@@ -1,11 +1,11 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 

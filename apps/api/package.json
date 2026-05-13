@@ -47,7 +47,9 @@
 		"sharp": "^0.34.5",
 		"superjson": "^2.2.5",
 		"typesense": "^3.0.6",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"@wanderlust/db": "workspace:*",
+		"@wanderlust/common": "workspace:*"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^10.4.0",

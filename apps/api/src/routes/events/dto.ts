@@ -1,22 +1,22 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 
-const event = $.event.extend({
+const event = $dto.event.extend({
 	place: place.nullable(),
-	assets: $.asset.array(),
-	ticketOptions: $.eventTicketOption.array(),
-	lineup: $.eventLineupItem
+	assets: $dto.asset.array(),
+	ticketOptions: $dto.eventTicketOption.array(),
+	lineup: $dto.eventLineupItem
 		.extend({
-			user: $.user
+			user: $dto.user
 				.pick({
 					id: true,
 					name: true,
@@ -26,11 +26,11 @@ const event = $.event.extend({
 				.nullable(),
 		})
 		.array(),
-	address: $.address.extend({
-		city: $.city,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
-	agenda: $.eventAgendaItem.array(),
-	organizer: $.user.pick({
+	agenda: $dto.eventAgendaItem.array(),
+	organizer: $dto.user.pick({
 		id: true,
 		name: true,
 		username: true,
@@ -38,7 +38,7 @@ const event = $.event.extend({
 	}),
 });
 
-export const createInput = $.event
+export const createInput = $dto.event
 	.pick({
 		title: true,
 		description: true,
@@ -94,7 +94,7 @@ export const listOutput = z.object({
 
 export type ListOutput = z.infer<typeof listOutput>;
 
-export const updateInput = $.event
+export const updateInput = $dto.event
 	.pick({
 		id: true,
 		title: true,
@@ -137,7 +137,7 @@ export const updateOutput = z.object({
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const deleteInput = $.event.pick({
+export const deleteInput = $dto.event.pick({
 	id: true,
 });
 
@@ -148,8 +148,8 @@ export const deleteOutput = z.object({});
 export type DeleteOutput = z.infer<typeof deleteOutput>;
 
 export const updateAmenitiesInput = z.object({
-	id: $.event.shape.id,
-	amenities: $.event.shape.amenities,
+	id: $dto.event.shape.id,
+	amenities: $dto.event.shape.amenities,
 });
 
 export type UpdateAmenitiesInput = z.infer<typeof updateAmenitiesInput>;
@@ -161,8 +161,8 @@ export const updateAmenitiesOutput = z.object({
 export type UpdateAmenitiesOutput = z.infer<typeof updateAmenitiesOutput>;
 
 export const updateFaqInput = z.object({
-	id: $.event.shape.id,
-	faq: $.event.shape.faq,
+	id: $dto.event.shape.id,
+	faq: $dto.event.shape.faq,
 });
 
 export type UpdateFaqInput = z.infer<typeof updateFaqInput>;
@@ -174,8 +174,8 @@ export const updateFaqOutput = z.object({
 export type UpdateFaqOutput = z.infer<typeof updateFaqOutput>;
 
 export const updateCategoriesInput = z.object({
-	id: $.event.shape.id,
-	categories: $.event.shape.categories,
+	id: $dto.event.shape.id,
+	categories: $dto.event.shape.categories,
 });
 
 export type UpdateCategoriesInput = z.infer<typeof updateCategoriesInput>;
@@ -187,8 +187,8 @@ export const updateCategoriesOutput = z.object({
 export type UpdateCategoriesOutput = z.infer<typeof updateCategoriesOutput>;
 
 export const updateTicketOptionsInput = z.object({
-	id: $.event.shape.id,
-	ticketOptions: $.eventTicketOption
+	id: $dto.event.shape.id,
+	ticketOptions: $dto.eventTicketOption
 		.pick({
 			name: true,
 			description: true,
@@ -203,7 +203,7 @@ export const updateTicketOptionsInput = z.object({
 export type UpdateTicketOptionsInput = z.infer<typeof updateTicketOptionsInput>;
 
 export const updateTicketOptionsOutput = z.object({
-	ticketOptions: $.eventTicketOption.array(),
+	ticketOptions: $dto.eventTicketOption.array(),
 });
 
 export type UpdateTicketOptionsOutput = z.infer<
@@ -211,8 +211,8 @@ export type UpdateTicketOptionsOutput = z.infer<
 >;
 
 export const updateAgendaInput = z.object({
-	id: $.event.shape.id,
-	agenda: $.eventAgendaItem
+	id: $dto.event.shape.id,
+	agenda: $dto.eventAgendaItem
 		.pick({
 			startsAt: true,
 			endsAt: true,
@@ -225,14 +225,14 @@ export const updateAgendaInput = z.object({
 export type UpdateAgendaInput = z.infer<typeof updateAgendaInput>;
 
 export const updateAgendaOutput = z.object({
-	agenda: $.eventAgendaItem.array(),
+	agenda: $dto.eventAgendaItem.array(),
 });
 
 export type UpdateAgendaOutput = z.infer<typeof updateAgendaOutput>;
 
 export const updateLineupInput = z.object({
-	id: $.event.shape.id,
-	lineup: $.eventLineupItem
+	id: $dto.event.shape.id,
+	lineup: $dto.eventLineupItem
 		.pick({
 			name: true,
 			userId: true,
@@ -247,29 +247,29 @@ export const updateLineupInput = z.object({
 export type UpdateLineupInput = z.infer<typeof updateLineupInput>;
 
 export const updateLineupOutput = z.object({
-	lineup: $.eventLineupItem.array(),
+	lineup: $dto.eventLineupItem.array(),
 });
 
 export type UpdateLineupOutput = z.infer<typeof updateLineupOutput>;
 
 export const createAssetInput = z.object({
-	id: $.event.shape.id,
-	url: $.asset.shape.url,
-	description: $.asset.shape.description.optional(),
-	order: $.asset.shape.order.optional(),
+	id: $dto.event.shape.id,
+	url: $dto.asset.shape.url,
+	description: $dto.asset.shape.description.optional(),
+	order: $dto.asset.shape.order.optional(),
 });
 
 export type CreateAssetInput = z.infer<typeof createAssetInput>;
 
 export const createAssetOutput = z.object({
-	asset: $.asset,
+	asset: $dto.asset,
 });
 
 export type CreateAssetOutput = z.infer<typeof createAssetOutput>;
 
 export const updateAssetsInput = z.object({
-	id: $.event.shape.id,
-	assets: $.asset
+	id: $dto.event.shape.id,
+	assets: $dto.asset
 		.pick({
 			url: true,
 			description: true,
@@ -285,14 +285,14 @@ export const updateAssetsInput = z.object({
 export type UpdateAssetsInput = z.infer<typeof updateAssetsInput>;
 
 export const updateAssetsOutput = z.object({
-	assets: $.asset.array(),
+	assets: $dto.asset.array(),
 });
 
 export type UpdateAssetsOutput = z.infer<typeof updateAssetsOutput>;
 
 export const deleteAssetInput = z.object({
-	id: $.event.shape.id,
-	assetId: $.asset.shape.id,
+	id: $dto.event.shape.id,
+	assetId: $dto.asset.shape.id,
 });
 
 export type DeleteAssetInput = z.infer<typeof deleteAssetInput>;
@@ -301,7 +301,7 @@ export const deleteAssetOutput = z.object({});
 
 export type DeleteAssetOutput = z.infer<typeof deleteAssetOutput>;
 
-export const addToInterestedEventsInput = $.event.pick({
+export const addToInterestedEventsInput = $dto.event.pick({
 	id: true,
 });
 
@@ -332,7 +332,7 @@ export type ListMyInterestedEventsOutput = z.infer<
 	typeof listMyInterestedEventsOutput
 >;
 
-export const deleteFromMyInterestedEventsInput = $.event.pick({
+export const deleteFromMyInterestedEventsInput = $dto.event.pick({
 	id: true,
 });
 
@@ -347,7 +347,7 @@ export type DeleteFromMyInterestedEventsOutput = z.infer<
 >;
 
 export const listByPlaceIdInput = Pagination.queryParamsSchema.extend({
-	placeId: $.place.shape.id,
+	placeId: $dto.place.shape.id,
 });
 
 export type ListByPlaceIdInput = z.infer<typeof listByPlaceIdInput>;
@@ -360,7 +360,7 @@ export const listByPlaceIdOutput = z.object({
 export type ListByPlaceIdOutput = z.infer<typeof listByPlaceIdOutput>;
 
 export const listByOrganizerIdInput = Pagination.queryParamsSchema.extend({
-	userId: $.user.shape.id,
+	userId: $dto.user.shape.id,
 });
 
 export type ListByOrganizerIdInput = z.infer<typeof listByOrganizerIdInput>;
@@ -373,7 +373,7 @@ export const listByOrganizerIdOutput = z.object({
 export type ListByOrganizerIdOutput = z.infer<typeof listByOrganizerIdOutput>;
 
 export const listInterestedFriendsInput = Pagination.queryParamsSchema.extend({
-	id: $.event.shape.id,
+	id: $dto.event.shape.id,
 });
 
 export type ListInterestedFriendsInput = z.infer<
@@ -381,7 +381,7 @@ export type ListInterestedFriendsInput = z.infer<
 >;
 
 export const listInterestedFriendsOutput = z.object({
-	users: $.user
+	users: $dto.user
 		.pick({
 			id: true,
 			name: true,

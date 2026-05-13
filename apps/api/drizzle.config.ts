@@ -1,5 +1,3 @@
-import './src/db/compression-stream-polyfill';
-
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({

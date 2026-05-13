@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import pLimit from 'p-limit';
 import type z from 'zod';
-import type { TDatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
+import type { TDatabaseService } from '@/lib/db';
 import { chunkArray, readFile } from '@/lib/fake/utils';
 import { nanoid } from '@/lib/uid';
 import { paths } from '..';

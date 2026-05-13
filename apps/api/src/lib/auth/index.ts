@@ -1,8 +1,8 @@
+import * as schema from '@wanderlust/db';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { inject, injectable } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/db';
-import * as schema from '../../db/schema';
+import { DatabaseService, type TDatabaseService } from '@/lib/db';
 import { ConfigService, type TConfigService } from '../config';
 import { JobsService, type TJobsService } from '../jobs';
 import { nanoid } from '../uid';
@@ -16,11 +16,7 @@ export class AuthService {
 		@inject(ConfigService) private readonly cfg: ConfigService,
 		@inject(JobsService) private readonly jobs: JobsService,
 	) {
-		this.instance = init(
-			this.db.get(),
-			this.cfg.get(),
-			this.jobs.get(),
-		);
+		this.instance = init(this.db.get(), this.cfg.get(), this.jobs.get());
 	}
 
 	get(): TAuthService {

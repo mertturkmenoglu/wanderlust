@@ -1,15 +1,15 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 
 export const listInput = z.object({});
 
 export const listOutput = z.object({
-	categories: $.category.array(),
+	categories: $dto.category.array(),
 });
 
 export type ListOutput = z.infer<typeof listOutput>;
 
-export const createInput = $.category.pick({
+export const createInput = $dto.category.pick({
 	id: true,
 	name: true,
 	image: true,
@@ -18,7 +18,7 @@ export const createInput = $.category.pick({
 export type CreateInput = z.infer<typeof createInput>;
 
 export const createOutput = z.object({
-	category: $.category,
+	category: $dto.category,
 });
 
 export type CreateOutput = z.infer<typeof createOutput>;
@@ -31,7 +31,7 @@ export const updateOutput = createOutput;
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const deleteInput = $.category.pick({
+export const deleteInput = $dto.category.pick({
 	id: true,
 });
 

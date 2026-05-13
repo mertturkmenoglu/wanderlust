@@ -1,7 +1,7 @@
 import { Mutex } from 'async-mutex';
 import { Container } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/db';
 import { ConfigService, type TConfigService } from '@/lib/config';
+import { DatabaseService, type TDatabaseService } from '@/lib/db';
 
 let db: TDatabaseService | null = null;
 const mutex = new Mutex();
@@ -18,10 +18,11 @@ export async function getDb(): Promise<TDatabaseService> {
 	}
 
 	try {
-
 		const configData = await ConfigService.init();
 
-		container.bind<TConfigService>('TConfigService').toConstantValue(configData);
+		container
+			.bind<TConfigService>('TConfigService')
+			.toConstantValue(configData);
 		container.bind<ConfigService>(ConfigService).toSelf().inSingletonScope();
 		container.get(ConfigService).set(configData);
 		container.bind(DatabaseService).toSelf().inSingletonScope();

@@ -1,15 +1,15 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 
-export const getInput = $.place.pick({
+export const getInput = $dto.place.pick({
 	id: true,
 });
 
@@ -39,7 +39,7 @@ export const peekOutput = z.object({
 
 export type PeekOutput = z.infer<typeof peekOutput>;
 
-export const updateInput = $.place.pick({
+export const updateInput = $dto.place.pick({
 	id: true,
 	name: true,
 	categoryId: true,
@@ -58,9 +58,9 @@ export const updateOutput = z.object({
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 
-export const updateAddressInput = $.place.pick({ id: true }).extend(
+export const updateAddressInput = $dto.place.pick({ id: true }).extend(
 	z.object({
-		address: $.address.pick({
+		address: $dto.address.pick({
 			id: true,
 			cityId: true,
 			line1: true,
@@ -80,7 +80,7 @@ export const updateAddressOutput = z.object({
 
 export type UpdateAddressOutput = z.infer<typeof updateAddressOutput>;
 
-export const updateAmenitiesInput = $.place.pick({
+export const updateAmenitiesInput = $dto.place.pick({
 	id: true,
 	amenities: true,
 });
@@ -93,7 +93,7 @@ export const updateAmenitiesOutput = z.object({
 
 export type UpdateAmenitiesOutput = z.infer<typeof updateAmenitiesOutput>;
 
-export const updateHoursInput = $.place.pick({
+export const updateHoursInput = $dto.place.pick({
 	id: true,
 	hours: true,
 });

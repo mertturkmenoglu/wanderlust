@@ -1,9 +1,9 @@
 import { ORPCError } from '@orpc/client';
+import * as schema from '@wanderlust/db';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { DatabaseService, type TDatabaseService } from '@/db';
-import * as schema from '@/db/schema';
 import { CacheService, type TCacheService } from '@/lib/cache';
+import { DatabaseService, type TDatabaseService } from '@/lib/db';
 import { Pagination } from '@/lib/pagination';
 import type * as dto from './dto';
 
@@ -12,7 +12,10 @@ export class UsersRepository {
 	private readonly db: TDatabaseService;
 	private readonly cache: TCacheService;
 
-	constructor(@inject(DatabaseService) db: DatabaseService, @inject(CacheService) cache: CacheService) {
+	constructor(
+		@inject(DatabaseService) db: DatabaseService,
+		@inject(CacheService) cache: CacheService,
+	) {
 		this.db = db.get();
 		this.cache = cache.get();
 	}

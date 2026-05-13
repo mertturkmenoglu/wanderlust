@@ -1,8 +1,8 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-const profile = $.user.pick({
+const profile = $dto.user.pick({
 	id: true,
 	username: true,
 	name: true,
@@ -15,11 +15,11 @@ const profile = $.user.pick({
 	createdAt: true,
 });
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 

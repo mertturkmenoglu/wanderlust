@@ -1,15 +1,15 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-const collection = $.collection;
+const collection = $dto.collection;
 
-const collectionItem = $.collectionItem.extend({
-	place: $.place.extend({
-		assets: $.asset.array(),
-		category: $.category,
-		address: $.address.extend({
-			city: $.city,
+const collectionItem = $dto.collectionItem.extend({
+	place: $dto.place.extend({
+		assets: $dto.asset.array(),
+		category: $dto.category,
+		address: $dto.address.extend({
+			city: $dto.city,
 		}),
 	}),
 });
@@ -29,7 +29,7 @@ export const listOutput = z.object({
 
 export type ListOutput = z.infer<typeof listOutput>;
 
-export const getInput = $.collection.pick({
+export const getInput = $dto.collection.pick({
 	id: true,
 });
 
@@ -41,7 +41,7 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
-export const createInput = $.collection.pick({
+export const createInput = $dto.collection.pick({
 	name: true,
 	description: true,
 });
@@ -54,7 +54,7 @@ export const createOutput = z.object({
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $.collection.pick({
+export const deleteInput = $dto.collection.pick({
 	id: true,
 });
 
@@ -64,7 +64,7 @@ export const deleteOutput = z.object({});
 
 export type DeleteOutput = z.infer<typeof deleteOutput>;
 
-export const updateInput = $.collection.pick({
+export const updateInput = $dto.collection.pick({
 	id: true,
 	name: true,
 	description: true,
@@ -82,7 +82,7 @@ export const appendItemInput = collection
 	.pick({
 		id: true,
 	})
-	.extend($.collectionItem.pick({ placeId: true }).shape);
+	.extend($dto.collectionItem.pick({ placeId: true }).shape);
 
 export type AppendItemInput = z.infer<typeof appendItemInput>;
 
@@ -96,7 +96,7 @@ export const removeItemInput = collection
 	.pick({
 		id: true,
 	})
-	.extend($.collectionItem.pick({ placeId: true }).shape);
+	.extend($dto.collectionItem.pick({ placeId: true }).shape);
 
 export type RemoveItemInput = z.infer<typeof removeItemInput>;
 
@@ -109,7 +109,7 @@ export const reorderItemsInput = collection
 		id: true,
 	})
 	.extend({
-		placeIds: $.place.pick({ id: true }).shape.id.array(),
+		placeIds: $dto.place.pick({ id: true }).shape.id.array(),
 	});
 
 export type ReorderItemsInput = z.infer<typeof reorderItemsInput>;
@@ -120,11 +120,11 @@ export const reorderItemsOutput = z.object({
 
 export type ReorderItemsOutput = z.infer<typeof reorderItemsOutput>;
 
-export const createPlaceRelationInput = $.collection
+export const createPlaceRelationInput = $dto.collection
 	.pick({
 		id: true,
 	})
-	.extend($.collectionItem.pick({ placeId: true }).shape);
+	.extend($dto.collectionItem.pick({ placeId: true }).shape);
 
 export type CreatePlaceRelationInput = z.infer<typeof createPlaceRelationInput>;
 
@@ -134,11 +134,11 @@ export type CreatePlaceRelationOutput = z.infer<
 	typeof createPlaceRelationOutput
 >;
 
-export const deletePlaceRelationInput = $.collection
+export const deletePlaceRelationInput = $dto.collection
 	.pick({
 		id: true,
 	})
-	.extend($.collectionItem.pick({ placeId: true }).shape);
+	.extend($dto.collectionItem.pick({ placeId: true }).shape);
 
 export type DeletePlaceRelationInput = z.infer<typeof deletePlaceRelationInput>;
 
@@ -148,7 +148,7 @@ export type DeletePlaceRelationOutput = z.infer<
 	typeof deletePlaceRelationOutput
 >;
 
-export const createCityRelationInput = $.collection
+export const createCityRelationInput = $dto.collection
 	.pick({
 		id: true,
 	})
@@ -171,7 +171,7 @@ export const createCityRelationOutput = z.object({});
 
 export type CreateCityRelationOutput = z.infer<typeof createCityRelationOutput>;
 
-export const deleteCityRelationInput = $.collection
+export const deleteCityRelationInput = $dto.collection
 	.pick({
 		id: true,
 	})
@@ -194,7 +194,7 @@ export const deleteCityRelationOutput = z.object({});
 
 export type DeleteCityRelationOutput = z.infer<typeof deleteCityRelationOutput>;
 
-export const listByPlaceIdInput = $.collectionItem.pick({
+export const listByPlaceIdInput = $dto.collectionItem.pick({
 	placeId: true,
 });
 

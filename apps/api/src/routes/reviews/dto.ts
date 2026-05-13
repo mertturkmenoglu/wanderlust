@@ -1,26 +1,26 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-const review = $.review.extend({
-	user: $.user.pick({
+const review = $dto.review.extend({
+	user: $dto.user.pick({
 		id: true,
 		username: true,
 		name: true,
 		image: true,
 	}),
-	assets: $.asset.array(),
+	assets: $dto.asset.array(),
 });
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 
-export const getInput = $.review.pick({
+export const getInput = $dto.review.pick({
 	id: true,
 });
 
@@ -38,7 +38,7 @@ const fileSchema = z
 	.file()
 	.max(1024 * 1024 * 5, 'File size must be less than 5MB'); // 5 MB
 
-export const createInput = $.review
+export const createInput = $dto.review
 	.pick({
 		placeId: true,
 		content: true,
@@ -56,7 +56,7 @@ export const createOutput = z.object({
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $.review.pick({
+export const deleteInput = $dto.review.pick({
 	id: true,
 });
 
@@ -67,7 +67,7 @@ export const deleteOutput = z.object({});
 export type DeleteOutput = z.infer<typeof deleteOutput>;
 
 export const listByUsernameInput = Pagination.queryParamsSchema.extend(
-	$.user.pick({ username: true }).shape,
+	$dto.user.pick({ username: true }).shape,
 );
 
 export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
@@ -84,7 +84,7 @@ export const listByUsernameOutput = z.object({
 export type ListByUsernameOutput = z.infer<typeof listByUsernameOutput>;
 
 export const listByPlaceIdInput = Pagination.queryParamsSchema
-	.extend($.place.pick({ id: true }).shape)
+	.extend($dto.place.pick({ id: true }).shape)
 	.extend(
 		z.object({
 			sortBy: z
@@ -133,7 +133,7 @@ export const listByPlaceIdOutput = z.object({
 
 export type ListByPlaceIdOutput = z.infer<typeof listByPlaceIdOutput>;
 
-export const getRatingsInput = $.place.pick({
+export const getRatingsInput = $dto.place.pick({
 	id: true,
 });
 
@@ -163,14 +163,14 @@ export const getRatingsOutput = z.object({
 
 export type GetRatingsOutput = z.infer<typeof getRatingsOutput>;
 
-export const listAssetsByPlaceIdInput = $.place.pick({
+export const listAssetsByPlaceIdInput = $dto.place.pick({
 	id: true,
 });
 
 export type ListAssetsByPlaceIdInput = z.infer<typeof listAssetsByPlaceIdInput>;
 
 export const listAssetsByPlaceIdOutput = z.object({
-	assets: $.asset.array(),
+	assets: $dto.asset.array(),
 });
 
 export type ListAssetsByPlaceIdOutput = z.infer<

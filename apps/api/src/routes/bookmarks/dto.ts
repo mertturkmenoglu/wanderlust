@@ -1,20 +1,20 @@
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
-import { $ } from '@/db/schema';
 import { Pagination } from '@/lib/pagination';
 
-export const createInput = $.bookmark.pick({
+export const createInput = $dto.bookmark.pick({
 	placeId: true,
 });
 
 export type CreateInput = z.infer<typeof createInput>;
 
 export const createOutput = z.object({
-	bookmark: $.bookmark,
+	bookmark: $dto.bookmark,
 });
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $.bookmark.pick({
+export const deleteInput = $dto.bookmark.pick({
 	placeId: true,
 });
 
@@ -28,16 +28,16 @@ export const listInput = Pagination.queryParamsSchema.extend({});
 
 export type ListInput = z.infer<typeof listInput>;
 
-const place = $.place.extend({
-	assets: $.asset.array(),
-	category: $.category,
-	address: $.address.extend({
-		city: $.city,
+const place = $dto.place.extend({
+	assets: $dto.asset.array(),
+	category: $dto.category,
+	address: $dto.address.extend({
+		city: $dto.city,
 	}),
 });
 
 export const listOutput = z.object({
-	bookmarks: $.bookmark
+	bookmarks: $dto.bookmark
 		.extend({
 			place: place,
 		})

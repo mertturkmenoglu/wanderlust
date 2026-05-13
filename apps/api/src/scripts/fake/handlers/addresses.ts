@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import type z from 'zod';
-import { DatabaseService } from '@/db';
 import type { $insert } from '@/db/schema';
 import * as schema from '@/db/schema';
 import { container } from '@/ioc';
+import { DatabaseService } from '@/lib/db';
 
 const COUNT = 10_000;
 const STEP = 1_000;
