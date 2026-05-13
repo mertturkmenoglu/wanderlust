@@ -1,0 +1,25 @@
+{
+	"name": "@wanderlust/storage",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc -b"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"@wanderlust/config": "workspace:*",
+		"flydrive": "^2.1.0",
+		"inversify": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}

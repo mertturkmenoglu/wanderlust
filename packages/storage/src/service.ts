@@ -1,16 +1,14 @@
+import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { Disk } from 'flydrive';
 import { FSDriver } from 'flydrive/drivers/fs';
 import type { SignedURLOptions } from 'flydrive/types';
 import { inject, injectable } from 'inversify';
-import { ConfigService, type TConfigService } from '../config';
 
 @injectable()
 export class StorageService {
 	private readonly instance: TStorageService;
 
-	constructor(
-		@inject(ConfigService) private readonly cfg: ConfigService,
-	) {
+	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
 		this.instance = init(this.cfg.get());
 	}
 
@@ -21,7 +19,7 @@ export class StorageService {
 
 function init(cfg: TConfigService) {
 	const fsDriver = new FSDriver({
-		location: new URL('../../../uploads', import.meta.url),
+		location: new URL('uploads/', import.meta.url),
 		visibility: 'public',
 		urlBuilder: {
 			async generateURL(key: string, _filePath: string) {
