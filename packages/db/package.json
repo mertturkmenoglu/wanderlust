@@ -1,0 +1,25 @@
+{
+	"name": "@wanderlust/db",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc -b"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"drizzle-orm": "^0.45.2",
+		"drizzle-zod": "^0.8.3"
+	},
+	"devDependencies": {
+		"drizzle-kit": "^0.31.10",
+		"typescript": "^6.0.3"
+	}
+}
