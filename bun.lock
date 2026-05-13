@@ -43,6 +43,7 @@
       "dependencies": {
         "@faker-js/faker": "^10.4.0",
         "@wanderlust/common": "workspace:*",
+        "@wanderlust/config": "workspace:*",
         "@wanderlust/db": "workspace:*",
         "@wanderlust/uid": "workspace:*",
         "async-mutex": "^0.5.0",
@@ -177,7 +178,6 @@
       "name": "@wanderlust/config",
       "version": "1.0.0",
       "dependencies": {
-        "@wanderlust/common": "workspace:*",
         "inversify": "catalog:",
         "zod": "catalog:",
       },

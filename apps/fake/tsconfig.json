@@ -15,6 +15,9 @@
 			"@wanderlust/common": [
 				"../../packages/common/src/index.ts"
 			],
+			"@wanderlust/config": [
+				"../../packages/config/src/index.ts"
+			],
 			"@wanderlust/uid": [
 				"../../packages/uid/src/index.ts"
 			]
@@ -26,6 +29,9 @@
 		},
 		{
 			"path": "../../packages/common"
+		},
+		{
+			"path": "../../packages/config"
 		},
 		{
 			"path": "../../packages/uid"
