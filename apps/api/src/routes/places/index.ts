@@ -1,9 +1,11 @@
 import { implement } from '@orpc/server';
+import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { contract } from './contract';
+import { PlacesRepository } from './repository';
 import { PlacesService } from './service';
 
 export function getRouter() {
@@ -72,3 +74,8 @@ export function getRouter() {
 			}),
 	});
 }
+
+export const module = new ContainerModule(({ bind }) => {
+	bind(PlacesService).toSelf();
+	bind(PlacesRepository).toSelf();
+});

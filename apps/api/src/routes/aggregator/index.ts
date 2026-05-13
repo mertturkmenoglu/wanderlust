@@ -1,7 +1,9 @@
 import { implement } from '@orpc/server';
+import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { contract } from './contract';
+import { AggregatorRepository } from './repository';
 import { AggregatorService } from './service';
 
 export function getRouter() {
@@ -16,3 +18,8 @@ export function getRouter() {
 		}),
 	});
 }
+
+export const module = new ContainerModule(({ bind }) => {
+	bind(AggregatorRepository).toSelf();
+	bind(AggregatorService).toSelf();
+});

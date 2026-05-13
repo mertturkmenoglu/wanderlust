@@ -1,8 +1,10 @@
 import { implement } from '@orpc/server';
+import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { contract } from './contract';
+import { BookmarksRepository } from './repository';
 import { BookmarksService } from './service';
 
 export function getRouter() {
@@ -30,3 +32,8 @@ export function getRouter() {
 		}),
 	});
 }
+
+export const module = new ContainerModule(({ bind }) => {
+	bind(BookmarksService).toSelf();
+	bind(BookmarksRepository).toSelf();
+});
