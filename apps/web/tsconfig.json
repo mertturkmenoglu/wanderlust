@@ -1,5 +1,5 @@
 {
-	"extends": "@wanderlust/config/tsconfig.base.json",
+	"extends": "../../packages/config/tsconfig.base.json",
 	"include": [
 		"**/*.ts",
 		"**/*.tsx",
@@ -47,6 +47,12 @@
 	"references": [
 		{
 			"path": "../api"
+		},
+		{
+			"path": "../../packages/config"
+		},
+		{
+			"path": "../../packages/ui"
 		}
 	]
 }

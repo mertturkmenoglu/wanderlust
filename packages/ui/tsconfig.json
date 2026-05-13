@@ -2,6 +2,7 @@
 	"extends": "@wanderlust/config/tsconfig.base.json",
 	"compilerOptions": {
 		"rootDir": "../../",
+		"composite": true,
 		"jsx": "react-jsx",
 		"outDir": "dist",
 		"paths": {
