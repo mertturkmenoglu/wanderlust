@@ -14,15 +14,17 @@
 		"@react-email/ui": "6.1.1",
 		"@types/bun": "catalog:",
 		"@types/react": "catalog:",
-		"@types/react-dom": "catalog:"
-	},
-	"peerDependencies": {
-		"typescript": "catalog:"
+		"@types/react-dom": "catalog:",
+		"typescript": "catalog:",
+		"@types/nodemailer": "^8.0.0"
 	},
 	"dependencies": {
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"react-email": "catalog:"
+		"react-email": "catalog:",
+		"nodemailer": "^8.0.7",
+		"inversify": "catalog:",
+		"@wanderlust/config": "workspace:*"
 	},
 	"exports": {
 		".": {

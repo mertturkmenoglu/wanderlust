@@ -19,3 +19,5 @@ export default function Email({ message }: Props) {
 		</Html>
 	);
 }
+
+export * from './service';

@@ -1,6 +1,6 @@
+import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { inject, injectable } from 'inversify';
 import nodemailer from 'nodemailer';
-import { ConfigService, type TConfigService } from '../config';
 
 @injectable()
 export class EmailService {

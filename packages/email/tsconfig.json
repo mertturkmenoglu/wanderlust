@@ -9,6 +9,16 @@
 		"declarationMap": true,
 		"sourceMap": true,
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
-	}
+		"emitDecoratorMetadata": true,
+		"paths": {
+			"@wanderlust/config": [
+				"../config/src/index.ts"
+			]
+		}
+	},
+	"references": [
+		{
+			"path": "../config"
+		}
+	]
 }
