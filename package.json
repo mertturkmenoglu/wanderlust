@@ -35,7 +35,10 @@
 		"check": "biome check --write .",
 		"dev": "turbo dev",
 		"build": "turbo build",
-		"check-types": "turbo check-types"
+		"check-types": "turbo check-types",
+		"clean": "bun run --filter='./apps/api' clean",
+		"fake": "bun run --filter='./apps/fake' fake",
+		"search": "bun run --filter='./apps/api' search"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.14",
