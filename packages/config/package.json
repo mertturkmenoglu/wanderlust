@@ -1,5 +1,27 @@
 {
 	"name": "@wanderlust/config",
 	"version": "1.0.0",
-	"private": true
+	"private": true,
+	"module": "src/index.ts",
+	"type": "module",
+	"scripts": {
+		"check-types": "tsc -b"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"zod": "catalog:",
+		"inversify": "catalog:",
+		"@wanderlust/common": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"typescript": "catalog:"
+	}
 }
