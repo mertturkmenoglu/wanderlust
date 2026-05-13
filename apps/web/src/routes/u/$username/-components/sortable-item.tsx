@@ -1,4 +1,5 @@
 import { useSortable } from '@dnd-kit/react/sortable';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
@@ -33,9 +34,11 @@ export function SortableItem({ index, item, onRemoveClick }: Props) {
 			</ItemActions>
 
 			<ItemMedia variant="image">
-				<img
+				<Image
 					src={ipx(item.assets[0]?.url ?? '', 'w_512')}
 					alt={item.assets[0]?.description ?? ''}
+					width={512}
+					aspectRatio={16 / 9}
 				/>
 			</ItemMedia>
 

@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { Edit2Icon, LibraryIcon, PaperclipIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -106,10 +107,12 @@ function RouteComponent() {
 			</DashboardActions>
 
 			{img.url !== '' && (
-				<img
-					src={ipx(img.url, 'w_512')}
+				<Image
+					src={ipx(img.url, 'w_256')}
 					alt={img.description ?? ''}
 					className="mt-4 aspect-video w-64 rounded-md object-cover"
+					width={256}
+					aspectRatio={16 / 9}
 				/>
 			)}
 

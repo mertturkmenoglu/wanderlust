@@ -5,6 +5,7 @@ import {
 	notFound,
 	useNavigate,
 } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
@@ -119,10 +120,13 @@ function RouteComponent() {
 				</div>
 			</DashboardActions>
 
-			<img
-				src={ipx(category.image, 'w_512')}
+			<Image
+				src={ipx(category.image, 'w_256')}
 				alt={category.name}
 				className="mt-4 aspect-video w-64 rounded-md object-cover"
+				layout="constrained"
+				width={256}
+				aspectRatio={16 / 9}
 			/>
 
 			<DataTable

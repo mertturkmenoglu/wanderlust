@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
@@ -61,10 +62,13 @@ export function ReviewCard({ review }: Props) {
 								});
 							}}
 						>
-							<img
+							<Image
 								src={ipx(m.url, 'w_96')}
 								alt=""
 								className="aspect-square rounded"
+								layout="constrained"
+								width={96}
+								aspectRatio={1}
 							/>
 						</button>
 					))}

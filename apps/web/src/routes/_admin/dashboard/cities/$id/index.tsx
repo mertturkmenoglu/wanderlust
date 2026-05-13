@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
@@ -115,10 +116,12 @@ function RouteComponent() {
 				</div>
 			</DashboardActions>
 
-			<img
-				src={ipx(city.image, 'w_512')}
+			<Image
+				src={ipx(city.image, 'w_256')}
 				alt={city.name}
 				className="mt-4 aspect-video w-64 rounded-md object-cover"
+				width={256}
+				aspectRatio={16 / 9}
 			/>
 
 			<DataTable

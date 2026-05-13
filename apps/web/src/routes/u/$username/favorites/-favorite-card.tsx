@@ -1,3 +1,4 @@
+import { Image } from '@unpic/react';
 import {
 	Card,
 	CardContent,
@@ -17,10 +18,13 @@ export function FavoriteCard({ favorite: { place } }: Props) {
 
 	return (
 		<Card className="group flex flex-col py-0 md:flex-row">
-			<img
-				src={ipx(image?.url ?? '', 'w_512')}
+			<Image
+				src={ipx(image?.url ?? '', '256')}
 				alt={image?.description ?? ''}
 				className="aspect-video w-full rounded-t-md object-cover md:w-32 md:rounded-none md:rounded-l-md lg:w-32 2xl:w-64"
+				layout="constrained"
+				width={256}
+				aspectRatio={16 / 9}
 			/>
 
 			<div className="w-full py-6">

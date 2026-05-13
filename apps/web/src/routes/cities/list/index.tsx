@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { OverlayBanner } from '@/components/overlay-banner';
 import { ipx } from '@/lib/ipx';
@@ -54,10 +55,13 @@ function RouteComponent() {
 									className="group overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md"
 								>
 									<div className="relative">
-										<img
+										<Image
 											src={ipx(city.image, 'w_512')}
 											alt=""
 											className="aspect-video w-full object-cover"
+											layout="constrained"
+											width={512}
+											aspectRatio={16 / 9}
 										/>
 										<div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
 										<div className="absolute right-0 bottom-0 left-0 p-4">

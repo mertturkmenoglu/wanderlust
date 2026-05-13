@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Field,
@@ -102,10 +103,13 @@ export function UpsertCategory({ action, category }: Props) {
 			<Separator className="my-4" />
 
 			{previewUrl !== '' && (
-				<img
-					src={ipx(previewUrl, 'w_512')}
+				<Image
+					src={ipx(previewUrl, 'w_256')}
 					alt="Preview"
 					className="mt-8 aspect-video w-64 rounded-md object-cover"
+					layout="constrained"
+					width={256}
+					aspectRatio={16 / 9}
 				/>
 			)}
 

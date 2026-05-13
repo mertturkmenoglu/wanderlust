@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
@@ -58,16 +59,19 @@ function Content({ className }: ContentProps) {
 					}}
 					className="relative"
 				>
-					<img
+					<Image
 						key={image.id}
 						src={image.url}
 						alt=""
 						className="aspect-square cursor-pointer rounded"
+						layout="constrained"
+						width={96}
+						aspectRatio={1}
 					/>
 					{i === 3 && images.length > 4 && (
 						<div
 							className={cn(
-								'-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2',
+								'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
 								'size-10 rounded-full bg-primary/90 p-1 text-sm text-white',
 								'flex flex-row items-center justify-center gap-0',
 							)}
