@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import z from 'zod';
 import { AuthLink } from '@/components/auth/link';
+import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
 import { normalizeMultipleErrors } from '@/lib/form';
 import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
@@ -47,11 +48,7 @@ function RouteComponent() {
 
 	return (
 		<Card className="mx-auto my-32 flex max-w-md flex-col gap-2 p-8">
-			<img
-				src="/logo.png"
-				alt="Wanderlust"
-				className="size-16 min-h-16 min-w-16"
-			/>
+			<Logo variant="medium" />
 			<h2 className="mt-4 font-bold text-xl">Reset Password</h2>
 			<div className="-mt-2 text-muted-foreground text-sm">
 				Already have an account? <AuthLink href="/sign-in" text="Sign In" />

@@ -11,6 +11,7 @@ import { Input } from '@wanderlust/ui/components/input';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { Controller } from 'react-hook-form';
 import { AuthLink } from '@/components/auth/link';
+import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
 import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
 
@@ -33,11 +34,7 @@ function RouteComponent() {
 
 	return (
 		<Card className="mx-auto my-32 flex max-w-lg flex-col gap-2 p-8">
-			<img
-				src="/logo.png"
-				alt="Wanderlust"
-				className="size-16 min-h-16 min-w-16"
-			/>
+			<Logo variant="medium" />
 			<h2 className="mt-4 font-bold text-xl">Forgot Password</h2>
 			<div className="-mt-2 text-muted-foreground text-sm">
 				Already have an account? <AuthLink href="/sign-in" text="Sign In" />

@@ -25,6 +25,7 @@ import { toast } from 'sonner';
 import { AuthLegalText } from '@/components/auth/legal-text';
 import { AuthLink } from '@/components/auth/link';
 import { OAuthButton } from '@/components/auth/oauth-button';
+import { Logo } from '@/components/logo';
 import { authClient, isAuthError } from '@/lib/auth';
 import { useSignInForm } from './-hooks';
 
@@ -76,11 +77,7 @@ function RouteComponent() {
 
 	return (
 		<Card className={cn('mx-auto my-32 flex max-w-lg flex-col gap-2 p-8')}>
-			<img
-				src="/logo.png"
-				alt="Wanderlust"
-				className="size-16 min-h-16 min-w-16"
-			/>
+			<Logo variant="medium" />
 			<h2 className="mt-4 font-bold text-xl">Sign in to Wanderlust</h2>
 			<div className="-mt-2 text-muted-foreground text-sm">
 				Don&apos;t have an account? <AuthLink href="/sign-up" text="Sign Up" />

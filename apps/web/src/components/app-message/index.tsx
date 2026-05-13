@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { Logo } from '../logo';
 
 type Props = {
 	className?: string;
@@ -30,16 +31,10 @@ export function AppMessage({
 				className,
 			)}
 		>
-			<img
-				src="/logo.png"
-				alt="Wanderlust"
-				className={cn(
-					'size-24',
-					{
-						grayscale: !successMessage,
-					},
-					imageClassName,
-				)}
+			<Logo
+				grayscale={!successMessage}
+				className={imageClassName}
+				variant="default"
 			/>
 			{errorMessage && (
 				<div className="font-semibold text-destructive text-lg">

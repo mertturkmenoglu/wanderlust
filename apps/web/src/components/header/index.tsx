@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { authClient } from '@/lib/auth';
+import { Logo } from '../logo';
 import { Menu } from './menu';
 import { SignInButton } from './sign-in-button';
 import { SignedInLinks } from './signed-in';
@@ -20,11 +21,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 			{...props}
 		>
 			<Link to="/" className="flex items-center gap-4">
-				<img
-					src="/logo.png"
-					alt="Wanderlust"
-					className="size-12 min-h-12 min-w-12"
-				/>
+				<Logo variant="small" />
 			</Link>
 
 			{session.isPending ? (

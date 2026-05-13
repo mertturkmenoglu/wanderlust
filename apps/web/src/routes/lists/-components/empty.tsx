@@ -12,6 +12,7 @@ import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { CreateListDialog } from '@/components/lists/create-list-dialog';
+import { Logo } from '@/components/logo';
 import { useInvalidator } from '@/hooks/use-invalidator';
 
 export function EmptyState() {
@@ -23,11 +24,7 @@ export function EmptyState() {
 		<Empty>
 			<EmptyHeader>
 				<EmptyMedia>
-					<img
-						src="/logo.png"
-						alt=""
-						className="size-24 min-h-24 min-w-24 grayscale"
-					/>
+					<Logo variant="default" grayscale />
 				</EmptyMedia>
 				<EmptyTitle>No lists found</EmptyTitle>
 				<EmptyDescription>

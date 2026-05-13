@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Logo } from '../logo';
 
 export function WipComponent() {
 	return (
@@ -24,11 +25,7 @@ export function WipComponent() {
 				</Link>
 			</div>
 			<div>
-				<img
-					src="/logo.png"
-					alt="Wanderlust"
-					className="size-48 min-h-48 min-w-48"
-				/>
+				<Logo variant="large" />
 			</div>
 		</div>
 	);

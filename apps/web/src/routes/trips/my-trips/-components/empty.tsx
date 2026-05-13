@@ -9,17 +9,14 @@ import {
 	EmptyTitle,
 } from '@wanderlust/ui/components/empty';
 import { PlusIcon } from 'lucide-react';
+import { Logo } from '@/components/logo';
 
 export function EmptyState() {
 	return (
 		<Empty>
 			<EmptyHeader>
 				<EmptyMedia>
-					<img
-						src="/logo.png"
-						alt=""
-						className="size-24 min-h-24 min-w-24 grayscale"
-					/>
+					<Logo variant="default" grayscale />
 				</EmptyMedia>
 				<EmptyTitle>No trips found</EmptyTitle>
 				<EmptyDescription>
