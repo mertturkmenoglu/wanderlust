@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { ipx } from '@/lib/ipx';
 import { serializeParams } from '@/lib/search';
 
@@ -33,10 +34,12 @@ function RouteComponent() {
 						key={category.id}
 						className="rounded-md"
 					>
-						<img
+						<Image
 							src={ipx(category.image, 'w_512')}
 							alt=""
 							className="aspect-video w-full rounded-md object-cover"
+							width={512}
+							aspectRatio={16 / 9}
 						/>
 						<div className="mt-2 font-bold text-xl lg:text-base">
 							{category.name}

@@ -1,4 +1,5 @@
-import { cn } from "@wanderlust/ui/lib/utils";
+import { Image } from '@unpic/react';
+import { cn } from '@wanderlust/ui/lib/utils';
 
 type Props = {
 	className?: string;
@@ -27,10 +28,10 @@ export function ActionBanner({
 				className,
 			)}
 		>
-			<img
+			<Image
 				src={image}
 				className={cn(
-					'aspect-video w-full rounded-t-xl object-cover md:aspect-square md:max-w-md md:rounded-t-none',
+					'aspect-square w-full rounded-t-xl object-cover md:aspect-square md:max-w-md md:rounded-t-none',
 					{
 						'md:rounded-l-xl md:rounded-tl-xl': lefty,
 						'md:rounded-r-xl md:rounded-tr-xl': !lefty,
@@ -38,9 +39,12 @@ export function ActionBanner({
 					imgClassName,
 				)}
 				alt={alt}
+				layout="constrained"
+				height={300}
+				aspectRatio={1}
 			/>
 			<div className="p-8 md:p-4 lg:p-8">
-				<div className="">{message}</div>
+				<div className="">{message} dsgdfhfdhd</div>
 			</div>
 		</div>
 	);

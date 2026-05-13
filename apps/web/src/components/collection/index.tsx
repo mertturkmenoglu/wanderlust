@@ -1,3 +1,4 @@
+import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { HeartIcon } from 'lucide-react';
 import { ipx } from '@/lib/ipx';
@@ -29,10 +30,13 @@ export function Collection({ className, title, actions, items }: Props) {
 				{items.map((item) => (
 					<div key={item.id}>
 						<div className="relative">
-							<img
+							<Image
 								src={ipx(item.image, 'w_512')}
 								alt=""
 								className="aspect-video w-full rounded-md object-cover"
+								layout="constrained"
+								width={512}
+								aspectRatio={16 / 9}
 							/>
 							<button
 								type="button"

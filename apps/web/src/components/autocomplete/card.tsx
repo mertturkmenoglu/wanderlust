@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { ipx } from '@/lib/ipx';
 
 export type AutocompleteItemInfo = {
@@ -27,10 +28,13 @@ export function Card({
 }: Props) {
 	const innerContent = (
 		<>
-			<img
+			<Image
 				src={ipx(image, 'w_256')}
 				alt=""
 				className="aspect-video w-24 rounded-lg object-cover md:w-48"
+				layout="constrained"
+				width={256}
+				aspectRatio={16 / 9}
 			/>
 
 			<div>

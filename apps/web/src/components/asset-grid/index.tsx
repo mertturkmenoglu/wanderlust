@@ -1,3 +1,4 @@
+import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useMemo, useState } from 'react';
@@ -48,7 +49,7 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 	return (
 		<div
 			className={cn(
-				'relative grid h-64 grid-cols-4 grid-rows-2 gap-2 rounded-xl md:h-96 lg:h-[512px]',
+				'relative grid h-64 grid-cols-4 grid-rows-2 gap-2 rounded-xl md:h-96 lg:h-128',
 				className,
 			)}
 		>
@@ -63,10 +64,13 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 						})
 					}
 				>
-					<img
+					<Image
 						src={ipx(first.url, 'w_1024')}
 						alt={first.description ?? ''}
 						className="h-full w-full rounded-l-xl object-cover"
+						layout="constrained"
+						height={768}
+						aspectRatio={4 / 3}
 					/>
 				</button>
 			</div>
@@ -85,13 +89,16 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 					}}
 				>
 					{asset.url !== '' ? (
-						<img
+						<Image
 							src={ipx(asset.url, 'w_512')}
 							alt={asset.description ?? ''}
 							className={cn('h-full w-full object-cover', {
 								'rounded-tr-xl': i === 1,
 								'rounded-br-xl': i === 3,
 							})}
+							layout="constrained"
+							width={512}
+							aspectRatio={1}
 						/>
 					) : (
 						<div

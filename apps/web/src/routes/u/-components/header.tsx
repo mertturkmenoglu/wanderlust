@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ExternalLinkIcon } from 'lucide-react';
 import { UserImage } from '@/components/user-image';
@@ -12,6 +13,8 @@ type Props = {
 	className?: string;
 };
 
+const defaultBanner = 'https://i.imgur.com/EwvUEmR.jpg';
+
 export function Header({ className }: Props) {
 	const parentRoute = getRouteApi('/u/$username');
 	const { profile, meta } = parentRoute.useLoaderData();
@@ -20,17 +23,21 @@ export function Header({ className }: Props) {
 	return (
 		<div className={cn('', className)}>
 			<div className="relative mx-auto">
-				<img
-					src={profile.banner ?? 'https://i.imgur.com/EwvUEmR.jpg'}
-					alt="banner"
+				<Image
+					src={profile.banner ?? defaultBanner}
+					alt=""
 					className="h-64 w-full rounded-lg object-cover object-center"
+					layout="constrained"
+					height={256}
+					aspectRatio={16 / 9}
+					background="auto"
 				/>
 
 				<UserImage
 					src={ipx(userImage(profile.image), 'w_512')}
 					imgClassName="size-48 md:size-32 ring-4 ring-white bg-white"
 					fallbackClassName="size-48 md:size-32 ring-4 ring-white bg-white"
-					className="-bottom-16 absolute inset-x-0 mx-auto size-32 bg-white ring-4 ring-white sm:mx-16"
+					className="absolute inset-x-0 -bottom-16 mx-auto size-32 bg-white ring-4 ring-white sm:mx-16"
 				/>
 			</div>
 
