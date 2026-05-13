@@ -49,7 +49,8 @@
 		"typesense": "^3.0.6",
 		"zod": "catalog:",
 		"@wanderlust/db": "workspace:*",
-		"@wanderlust/common": "workspace:*"
+		"@wanderlust/common": "workspace:*",
+		"@wanderlust/uid": "workspace:*"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^10.4.0",
