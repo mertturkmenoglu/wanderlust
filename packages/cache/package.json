@@ -1,0 +1,26 @@
+{
+	"name": "@wanderlust/cache",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc -b"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"bentocache": "^1.6.1",
+		"superjson": "^2.2.5",
+		"inversify": "catalog:",
+		"@wanderlust/config": "workspace:*"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}

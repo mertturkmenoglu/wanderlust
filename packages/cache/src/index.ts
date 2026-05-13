@@ -1,10 +1,11 @@
 /** biome-ignore-all lint/correctness/useHookAtTopLevel: Bentocache's useXYZ methods are not React hooks, it's a false positive output from Biome */
+
+import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { BentoCache, bentostore } from 'bentocache';
 import { memoryDriver } from 'bentocache/drivers/memory';
 import { redisBusDriver, redisDriver } from 'bentocache/drivers/redis';
 import { inject, injectable } from 'inversify';
 import superjson from 'superjson';
-import { ConfigService, type TConfigService } from '../config';
 
 @injectable()
 export class CacheService {
