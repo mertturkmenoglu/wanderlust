@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: TODO */
 import path from 'node:path';
 import { ORPCError } from '@orpc/server';
+import { nanoid } from '@wanderlust/uid';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { CacheService, type TCacheService } from '@/lib/cache';
@@ -8,9 +9,8 @@ import {
 	createPathname,
 	getFilenameFromUrl,
 	StorageService,
-	type TStorageService
+	type TStorageService,
 } from '@/lib/storage';
-import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
 import { ReviewsRepository } from './repository';
 
@@ -150,7 +150,9 @@ export class ReviewsService {
 		}
 
 		const deleted = await this.repo._delete(userId, data);
-		const allAssetsDeleted = await this.removeAssets(existing.assets.map((asset) => asset.url));
+		const allAssetsDeleted = await this.removeAssets(
+			existing.assets.map((asset) => asset.url),
+		);
 
 		if (!allAssetsDeleted) {
 			console.warn(

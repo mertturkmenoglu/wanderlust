@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/client';
+import { nanoid } from '@wanderlust/uid';
 import { fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import {
@@ -8,7 +9,6 @@ import {
 	StorageService,
 	type TStorageService,
 } from '@/lib/storage';
-import { nanoid } from '@/lib/uid';
 import type * as dto from './dto';
 import { UsersRepository } from './repository';
 

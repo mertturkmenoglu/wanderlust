@@ -1,9 +1,9 @@
 import { ORPCError } from '@orpc/server';
+import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
 import { and, eq, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { DatabaseService, type TDatabaseService } from '@/lib/db';
-import { Pagination } from '@/lib/pagination';
 import type * as dto from './dto';
 
 @injectable()

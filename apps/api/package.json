@@ -25,6 +25,9 @@
 		"@orpc/server": "catalog:",
 		"@orpc/zod": "catalog:",
 		"@react-email/components": "^1.0.12",
+		"@wanderlust/common": "workspace:*",
+		"@wanderlust/db": "workspace:*",
+		"@wanderlust/uid": "workspace:*",
 		"async-mutex": "^0.5.0",
 		"bentocache": "^1.6.1",
 		"better-auth": "catalog:",
@@ -36,7 +39,6 @@
 		"flydrive": "^2.1.0",
 		"inversify": "^8.1.0",
 		"ioredis": "^5.10.1",
-		"nanoid": "^5.1.11",
 		"nodemailer": "^8.0.7",
 		"ora": "^9.4.0",
 		"p-limit": "^7.3.0",
@@ -47,10 +49,7 @@
 		"sharp": "^0.34.5",
 		"superjson": "^2.2.5",
 		"typesense": "^3.0.6",
-		"zod": "catalog:",
-		"@wanderlust/db": "workspace:*",
-		"@wanderlust/common": "workspace:*",
-		"@wanderlust/uid": "workspace:*"
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^10.4.0",

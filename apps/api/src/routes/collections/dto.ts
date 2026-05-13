@@ -1,6 +1,5 @@
-import { $dto } from '@wanderlust/common';
+import { $dto, Pagination } from '@wanderlust/common';
 import z from 'zod';
-import { Pagination } from '@/lib/pagination';
 
 const collection = $dto.collection;
 
