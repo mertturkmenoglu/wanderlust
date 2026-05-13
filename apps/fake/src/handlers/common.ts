@@ -1,7 +1,7 @@
+import { ConfigService, type TConfigService } from '@wanderlust/config';
+import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { Mutex } from 'async-mutex';
 import { Container } from 'inversify';
-import { ConfigService, type TConfigService } from '../services/config';
-import { DatabaseService, type TDatabaseService } from '../services/database';
 
 let db: TDatabaseService | null = null;
 const mutex = new Mutex();
