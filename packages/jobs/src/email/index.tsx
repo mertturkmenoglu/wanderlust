@@ -1,13 +1,12 @@
 import { render } from '@react-email/components';
+import type { TConfigService } from '@wanderlust/config';
 import Email from '@wanderlust/email/email';
 import ForgotPasswordEmail from '@wanderlust/email/forgot-password';
+import type { TEmailService } from '@wanderlust/email/service';
 import WelcomeEmail from '@wanderlust/email/welcome';
 import { Queue, Worker } from 'bullmq';
-import type { Container } from 'inversify';
 import IORedis from 'ioredis';
 import z from 'zod';
-import { ConfigService } from '@/lib/config';
-import { EmailService } from '@/lib/email';
 
 const schemas = z.object({
 	test: z.object({
@@ -31,10 +30,7 @@ type Schemas = z.infer<typeof schemas>;
 
 type DataType = Schemas[JobName];
 
-export function initJobs(container: Container) {
-	const cfg = container.get(ConfigService).get();
-	const email = container.get(EmailService).get();
-
+export function initJobs(cfg: TConfigService, email: TEmailService) {
 	const connection = new IORedis({
 		host: cfg.redis.host,
 		port: cfg.redis.port,
