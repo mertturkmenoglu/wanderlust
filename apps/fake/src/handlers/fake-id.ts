@@ -10,6 +10,8 @@ export async function generate() {
 		'events',
 	];
 
+	await $`mkdir -p tmp`;
+
 	for (const domain of domains) {
 		await $`docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM ${domain}" --csv -o /home/${domain}.csv`;
 
