@@ -1,10 +1,6 @@
-import { configSchema, TaggedError } from '@wanderlust/common';
 import { injectable } from 'inversify';
 import { z } from 'zod';
-
-export class ConfigFileValidationError extends TaggedError(
-	'ConfigFileValidationError',
-) { }
+import { configSchema } from './config-schema';
 
 @injectable()
 export class ConfigService {
@@ -19,14 +15,14 @@ export class ConfigService {
 	}
 
 	static async init() {
-		const data = await Bun.file('config.toml').text();
+		const data = await Bun.file('../../config.toml').text();
 
 		const obj = Bun.TOML.parse(data);
 
 		const res = configSchema.safeParse(obj);
 
 		if (!res.success) {
-			throw new ConfigFileValidationError('Config file parse validation failed', {
+			throw new Error('Config file parse validation failed', {
 				cause: z.treeifyError(res.error),
 			});
 		}

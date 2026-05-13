@@ -17,8 +17,7 @@
 	},
 	"dependencies": {
 		"zod": "catalog:",
-		"inversify": "catalog:",
-		"@wanderlust/common": "workspace:*"
+		"inversify": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",

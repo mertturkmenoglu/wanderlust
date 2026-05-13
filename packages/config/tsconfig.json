@@ -8,15 +8,5 @@
 		"sourceMap": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"paths": {
-			"@wanderlust/common": [
-				"../common/src/index.ts"
-			]
-		}
-	},
-	"references": [
-		{
-			"path": "../common"
-		}
-	]
+	}
 }
