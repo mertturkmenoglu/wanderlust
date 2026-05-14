@@ -1,14 +1,11 @@
-export function withCors(response: Response): Response {
-	response.headers.set('Access-Control-Allow-Origin', 'http://localhost:3000');
-	response.headers.set(
-		'Access-Control-Allow-Methods',
-		'GET, POST, PUT, DELETE, OPTIONS',
-	);
-	response.headers.set(
-		'Access-Control-Allow-Headers',
-		'Content-Type, Authorization',
-	);
-	response.headers.set('Access-Control-Allow-Credentials', 'true');
+import type { TConfigService } from "@wanderlust/config";
+import { cors } from "hono/cors";
 
-	return response;
+export function getCorsConfig(cfg: TConfigService) {
+	return cors({
+		origin: cfg.cors.allowedOrigins,
+		allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
+	});
 }
