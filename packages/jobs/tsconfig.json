@@ -6,25 +6,7 @@
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
 		"jsx": "react-jsx",
-		"jsxImportSource": "react",
-		"paths": {
-			"@wanderlust/config": [
-				"../config/src/index.ts"
-			],
-			"@wanderlust/email/*": [
-				"../../packages/email/emails/*"
-			],
-		}
-	},
-	"references": [
-		{
-			"path": "../config"
-		},
-		{
-			"path": "../email"
-		}
-	]
+		"jsxImportSource": "react"
+	}
 }

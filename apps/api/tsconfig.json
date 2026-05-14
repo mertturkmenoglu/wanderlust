@@ -1,76 +1,14 @@
 {
 	"extends": "../../packages/config/tsconfig.base.json",
 	"compilerOptions": {
-		"rootDir": "../../",
 		"composite": true,
 		"outDir": "dist",
 		"paths": {
 			"@/*": [
 				"./src/*"
 			],
-			"@wanderlust/auth": [
-				"../../packages/auth/src/index.ts"
-			],
-			"@wanderlust/cache": [
-				"../../packages/cache/src/index.ts"
-			],
-			"@wanderlust/common": [
-				"../../packages/common/src/index.ts"
-			],
-			"@wanderlust/config": [
-				"../../packages/config/src/index.ts"
-			],
-			"@wanderlust/db": [
-				"../../packages/db/src/index.ts"
-			],
-			"@wanderlust/email/*": [
-				"../../packages/email/emails/*"
-			],
-			"@wanderlust/jobs": [
-				"../../packages/jobs/src/index.ts"
-			],
-			"@wanderlust/storage": [
-				"../../packages/storage/src/index.ts"
-			],
-			"@wanderlust/uid": [
-				"../../packages/uid/src/index.ts"
-			],
 		},
-		"jsx": "react-jsx",
-		"jsxImportSource": "react",
-		"declaration": true,
-		"declarationMap": true,
-		"sourceMap": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"references": [
-		{
-			"path": "../../packages/auth"
-		},
-		{
-			"path": "../../packages/cache"
-		},
-		{
-			"path": "../../packages/common"
-		},
-		{
-			"path": "../../packages/config"
-		},
-		{
-			"path": "../../packages/db"
-		},
-		{
-			"path": "../../packages/email"
-		},
-		{
-			"path": "../../packages/jobs"
-		},
-		{
-			"path": "../../packages/storage"
-		},
-		{
-			"path": "../../packages/uid"
-		},
-	]
 }

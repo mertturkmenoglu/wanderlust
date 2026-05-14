@@ -7,18 +7,6 @@
 		"jsxImportSource": "react",
 		"declaration": true,
 		"declarationMap": true,
-		"sourceMap": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"paths": {
-			"@wanderlust/config": [
-				"../config/src/index.ts"
-			]
-		}
-	},
-	"references": [
-		{
-			"path": "../config"
-		}
-	]
+		"sourceMap": true
+	}
 }

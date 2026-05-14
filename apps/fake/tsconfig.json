@@ -1,6 +1,10 @@
 {
-	"extends": "../../packages/config/tsconfig.base.json",
 	"compilerOptions": {
+		"strict": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
 		"composite": true,
 		"outDir": "dist",
 		"declaration": true,
@@ -8,33 +12,5 @@
 		"sourceMap": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"paths": {
-			"@wanderlust/db": [
-				"../../packages/db/src/index.ts"
-			],
-			"@wanderlust/common": [
-				"../../packages/common/src/index.ts"
-			],
-			"@wanderlust/config": [
-				"../../packages/config/src/index.ts"
-			],
-			"@wanderlust/uid": [
-				"../../packages/uid/src/index.ts"
-			]
-		}
 	},
-	"references": [
-		{
-			"path": "../../packages/db"
-		},
-		{
-			"path": "../../packages/common"
-		},
-		{
-			"path": "../../packages/config"
-		},
-		{
-			"path": "../../packages/uid"
-		}
-	]
 }

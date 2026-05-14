@@ -1,6 +1,9 @@
 {
 	"extends": "../../packages/config/tsconfig.base.json",
 	"compilerOptions": {
-		"outDir": "dist"
+		"composite": true,
+		"outDir": "dist",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
 	}
 }
