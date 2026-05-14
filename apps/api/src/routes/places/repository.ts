@@ -210,4 +210,15 @@ export class PlacesRepository {
 			});
 		}
 	}
+
+	async _delete(data: dto.DeleteInput) {
+		try {
+			await this.db.delete(schema.places).where(eq(schema.places.id, data.id));
+		} catch (err) {
+			throw new ORPCError('INTERNAL_SERVER_ERROR', {
+				message: 'Failed to delete the place',
+				cause: err,
+			});
+		}
+	}
 }

@@ -113,4 +113,25 @@ export const contract = {
 			successStatus: 200,
 			successDescription: 'Updated',
 		}),
+	delete: oc
+		.input(dto.deleteInput)
+		.output(dto.deleteOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			path: '/places/:id',
+			method: 'DELETE',
+			description: 'Delete a place',
+			summary: 'Delete a place',
+			tags: ['Places'],
+			successStatus: 204,
+			successDescription: 'No Content',
+		}),
 };

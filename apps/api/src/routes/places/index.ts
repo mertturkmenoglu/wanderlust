@@ -72,6 +72,18 @@ export function getRouter() {
 
 				return result;
 			}),
+		delete: os.delete
+			.use(requireAuth)
+			.use(isAdmin)
+			.handler(async ({ input, context, errors }) => {
+				if (!context.session?.user) {
+					throw errors.UNAUTHORIZED();
+				}
+
+				await svc._delete(input);
+
+				return {};
+			}),
 	});
 }
 

@@ -105,3 +105,11 @@ export const updateHoursOutput = z.object({
 });
 
 export type UpdateHoursOutput = z.infer<typeof updateHoursOutput>;
+
+export const deleteInput = $dto.place.pick({
+	id: true,
+});
+
+export type DeleteInput = z.infer<typeof deleteInput>;
+
+export const deleteOutput = z.object({});
