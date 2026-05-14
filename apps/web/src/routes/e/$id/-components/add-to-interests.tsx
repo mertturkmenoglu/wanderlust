@@ -3,14 +3,12 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { StarIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 
 export function AddToInterestsButton() {
 	// const route = getRouteApi('/p/$id/');
 	// const { place, meta } = route.useLoaderData();
-	const [added, setAdded] = useState(false);
-	const invalidate = useInvalidator();
+	const [added] = useState(false);
 	const session = authClient.useSession();
 
 	const onClick = () => {
