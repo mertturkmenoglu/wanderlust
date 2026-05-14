@@ -2,11 +2,6 @@ import { styleText } from 'node:util';
 
 export function logger(request: Request, response: Response, duration: number) {
 	const url = new URL(request.url);
-
-	if (url.pathname === '/api/v3/inngest') {
-		return;
-	}
-
 	const method = getStyledMethod(request.method);
 	const pathname = styleText('white', url.pathname.padEnd(40));
 	const status = getStyledStatus(response.status);
