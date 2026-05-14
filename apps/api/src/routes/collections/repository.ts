@@ -695,6 +695,11 @@ export class CollectionsRepository {
 				offset,
 				limit: data.pageSize,
 				with: {
+					place: {
+						columns: {
+							name: true,
+						}
+					},
 					collection: true,
 				},
 			});
@@ -726,6 +731,11 @@ export class CollectionsRepository {
 				offset,
 				limit: data.pageSize,
 				with: {
+					city: {
+						columns: {
+							name: true,
+						},
+					},
 					collection: true,
 				},
 			});
@@ -733,7 +743,7 @@ export class CollectionsRepository {
 			const totalRecords = await this.db.$count(schema.collectionsCities);
 
 			return {
-				collections: result.map((x) => x.collection),
+				relations: result,
 				pagination: Pagination.compute(data, totalRecords),
 			};
 		} catch (err) {

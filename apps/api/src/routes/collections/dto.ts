@@ -245,6 +245,8 @@ export const ListAllPlaceCollectionsOutput = z.object({
 				createdAt: z.date(),
 				description: z.string(),
 			}),
+		}).extend({
+			place: $dto.place.pick({ name: true }),
 		})
 		.array(),
 	pagination: Pagination.schema,
@@ -263,7 +265,23 @@ export type ListAllCityCollectionsInput = z.infer<
 >;
 
 export const ListAllCityCollectionsOutput = z.object({
-	collections: collection.array(),
+	relations: z
+		.object({
+			createdAt: z.date(),
+			cityId: z.int(),
+			collectionId: z.string(),
+			index: z.number().int(),
+			collection: z.object({
+				id: z.string(),
+				name: z.string(),
+				createdAt: z.date(),
+				description: z.string(),
+			}),
+		})
+		.extend({
+			city: $dto.city.pick({ name: true }),
+		})
+		.array(),
 	pagination: Pagination.schema,
 });
 

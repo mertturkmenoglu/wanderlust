@@ -6,7 +6,7 @@ import { CollectionsRepository } from './repository';
 export class CollectionsService {
 	constructor(
 		@inject(CollectionsRepository) private readonly repo: CollectionsRepository,
-	) {}
+	) { }
 
 	async list(data: dto.ListInput): Promise<dto.ListOutput> {
 		const result = await this.repo.list(data);
@@ -138,7 +138,7 @@ export class CollectionsService {
 		const result = await this.repo.listAllCityCollections(data);
 
 		return {
-			collections: result.collections,
+			relations: result.relations,
 			pagination: result.pagination,
 		};
 	}
