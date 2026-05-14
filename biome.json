@@ -9,24 +9,15 @@
 		"ignoreUnknown": false,
 		"includes": [
 			"**",
-			"!**/.next",
 			"!**/dist",
 			"!**/.turbo",
 			"!**/dev-dist",
 			"!**/.zed",
 			"!**/.vscode",
 			"!**/routeTree.gen.ts",
-			"!**/src-tauri",
-			"!**/.nuxt",
 			"!bts.jsonc",
-			"!**/.expo",
-			"!**/.wrangler",
-			"!**/.alchemy",
 			"!**/wrangler.jsonc",
-			"!**/.source",
-			"!**/index.css",
-			"!**/apps/web/src/components/ui",
-			"!**/packages/ui"
+			"!**/.source"
 		]
 	},
 	"formatter": {
