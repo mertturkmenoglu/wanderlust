@@ -19,7 +19,7 @@ export class StorageService {
 
 function init(cfg: TConfigService) {
 	const fsDriver = new FSDriver({
-		location: new URL('uploads/', import.meta.url),
+		location: new URL('../../../uploads/', import.meta.url),
 		visibility: 'public',
 		urlBuilder: {
 			async generateURL(key: string, _filePath: string) {

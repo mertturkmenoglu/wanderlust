@@ -28,7 +28,7 @@ const auth = container.get(AuthService).get();
 app.use(evlog());
 app.use('*', evlogAuth(auth));
 app.use('/*', getCorsConfig(cfg));
-app.use('/uploads/*', serveStatic({ root: './' }));
+app.use('/uploads/*', serveStatic({ root: '../../' }));
 app.use(compress());
 app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
 
