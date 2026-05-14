@@ -28,7 +28,7 @@ export function DashboardActions({ children }: Props) {
 				</Button>
 			</CollapsibleTrigger>
 			<CollapsibleContent className="mt-2">
-				{children}
+				<div className="grid grid-cols-2 gap-4 md:grid-cols-4">{children}</div>
 				<Separator className="mt-2" />
 			</CollapsibleContent>
 		</Collapsible>
