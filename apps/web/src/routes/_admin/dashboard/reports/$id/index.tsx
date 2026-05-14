@@ -105,7 +105,7 @@ function RouteComponent() {
 	);
 
 	return (
-		<div>
+		<>
 			<DashboardBreadcrumb
 				items={[
 					{ name: 'Reports', href: '/dashboard/reports' },
@@ -119,57 +119,55 @@ function RouteComponent() {
 			<Separator className="my-2" />
 
 			<DashboardActions>
-				<div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-					<Link {...link}>
-						<Item variant="outline" className="hover:bg-muted">
-							<ItemMedia variant="icon">
-								<PaperclipIcon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>Go to resource</ItemTitle>
-							</ItemContent>
-						</Item>
-					</Link>
+				<Link {...link}>
+					<Item variant="outline" className="hover:bg-muted">
+						<ItemMedia variant="icon">
+							<PaperclipIcon />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>Go to resource</ItemTitle>
+						</ItemContent>
+					</Item>
+				</Link>
 
-					<button
-						type="button"
-						disabled={updateMutation.isPending || report.resolved}
-						onClick={() => {
-							updateMutation.mutate({
-								id: report.id,
-								reason: report.reason,
+				<button
+					type="button"
+					disabled={updateMutation.isPending || report.resolved}
+					onClick={() => {
+						updateMutation.mutate({
+							id: report.id,
+							reason: report.reason,
 
-								resolved: true,
-								description: report.description ?? '',
-							});
-						}}
-						className="group disabled:cursor-not-allowed"
+							resolved: true,
+							description: report.description ?? '',
+						});
+					}}
+					className="group disabled:cursor-not-allowed"
+				>
+					<Item
+						variant="outline"
+						className="hover:bg-muted group-disabled:bg-muted"
 					>
-						<Item
-							variant="outline"
-							className="hover:bg-muted group-disabled:bg-muted"
-						>
-							<ItemMedia variant="icon">
-								<CheckIcon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>
-									{updateMutation.isPending && <Spinner className="size-4" />}
-									{report.resolved ? 'Resolved' : 'Mark as Resolved'}
-								</ItemTitle>
-							</ItemContent>
-						</Item>
-					</button>
+						<ItemMedia variant="icon">
+							<CheckIcon />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>
+								{updateMutation.isPending && <Spinner className="size-4" />}
+								{report.resolved ? 'Resolved' : 'Mark as Resolved'}
+							</ItemTitle>
+						</ItemContent>
+					</Item>
+				</button>
 
-					<DeleteDialog
-						type="report"
-						onClick={() => {
-							deleteMutation.mutate({
-								id: report.id,
-							});
-						}}
-					/>
-				</div>
+				<DeleteDialog
+					type="report"
+					onClick={() => {
+						deleteMutation.mutate({
+							id: report.id,
+						});
+					}}
+				/>
 			</DashboardActions>
 
 			<DataTable
@@ -218,6 +216,6 @@ function RouteComponent() {
 					},
 				]}
 			/>
-		</div>
+		</>
 	);
 }

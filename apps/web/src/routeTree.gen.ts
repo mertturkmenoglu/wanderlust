@@ -62,6 +62,7 @@ import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/in
 import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
 import { Route as AuthPasswordForgotIndexRouteImport } from './routes/_auth/password/forgot/index'
 import { Route as AdminDashboardReportsIndexRouteImport } from './routes/_admin/dashboard/reports/index'
+import { Route as AdminDashboardPlacesIndexRouteImport } from './routes/_admin/dashboard/places/index'
 import { Route as AdminDashboardCollectionsIndexRouteImport } from './routes/_admin/dashboard/collections/index'
 import { Route as AdminDashboardCitiesIndexRouteImport } from './routes/_admin/dashboard/cities/index'
 import { Route as AdminDashboardCategoriesIndexRouteImport } from './routes/_admin/dashboard/categories/index'
@@ -348,6 +349,12 @@ const AdminDashboardReportsIndexRoute =
     path: '/reports/',
     getParentRoute: () => AdminDashboardRoute,
   } as any)
+const AdminDashboardPlacesIndexRoute =
+  AdminDashboardPlacesIndexRouteImport.update({
+    id: '/places/',
+    path: '/places/',
+    getParentRoute: () => AdminDashboardRoute,
+  } as any)
 const AdminDashboardCollectionsIndexRoute =
   AdminDashboardCollectionsIndexRouteImport.update({
     id: '/collections/',
@@ -494,6 +501,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/categories/': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/collections/': typeof AdminDashboardCollectionsIndexRoute
+  '/dashboard/places/': typeof AdminDashboardPlacesIndexRoute
   '/dashboard/reports/': typeof AdminDashboardReportsIndexRoute
   '/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/password/reset/': typeof AuthPasswordResetIndexRoute
@@ -561,6 +569,7 @@ export interface FileRoutesByTo {
   '/dashboard/categories': typeof AdminDashboardCategoriesIndexRoute
   '/dashboard/cities': typeof AdminDashboardCitiesIndexRoute
   '/dashboard/collections': typeof AdminDashboardCollectionsIndexRoute
+  '/dashboard/places': typeof AdminDashboardPlacesIndexRoute
   '/dashboard/reports': typeof AdminDashboardReportsIndexRoute
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
@@ -634,6 +643,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/categories/': typeof AdminDashboardCategoriesIndexRoute
   '/_admin/dashboard/cities/': typeof AdminDashboardCitiesIndexRoute
   '/_admin/dashboard/collections/': typeof AdminDashboardCollectionsIndexRoute
+  '/_admin/dashboard/places/': typeof AdminDashboardPlacesIndexRoute
   '/_admin/dashboard/reports/': typeof AdminDashboardReportsIndexRoute
   '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/_auth/password/reset/': typeof AuthPasswordResetIndexRoute
@@ -708,6 +718,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories/'
     | '/dashboard/cities/'
     | '/dashboard/collections/'
+    | '/dashboard/places/'
     | '/dashboard/reports/'
     | '/password/forgot/'
     | '/password/reset/'
@@ -775,6 +786,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories'
     | '/dashboard/cities'
     | '/dashboard/collections'
+    | '/dashboard/places'
     | '/dashboard/reports'
     | '/password/forgot'
     | '/password/reset'
@@ -847,6 +859,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/categories/'
     | '/_admin/dashboard/cities/'
     | '/_admin/dashboard/collections/'
+    | '/_admin/dashboard/places/'
     | '/_admin/dashboard/reports/'
     | '/_auth/password/forgot/'
     | '/_auth/password/reset/'
@@ -1283,6 +1296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardReportsIndexRouteImport
       parentRoute: typeof AdminDashboardRoute
     }
+    '/_admin/dashboard/places/': {
+      id: '/_admin/dashboard/places/'
+      path: '/places'
+      fullPath: '/dashboard/places/'
+      preLoaderRoute: typeof AdminDashboardPlacesIndexRouteImport
+      parentRoute: typeof AdminDashboardRoute
+    }
     '/_admin/dashboard/collections/': {
       id: '/_admin/dashboard/collections/'
       path: '/collections'
@@ -1470,6 +1490,7 @@ interface AdminDashboardRouteChildren {
   AdminDashboardCategoriesIndexRoute: typeof AdminDashboardCategoriesIndexRoute
   AdminDashboardCitiesIndexRoute: typeof AdminDashboardCitiesIndexRoute
   AdminDashboardCollectionsIndexRoute: typeof AdminDashboardCollectionsIndexRoute
+  AdminDashboardPlacesIndexRoute: typeof AdminDashboardPlacesIndexRoute
   AdminDashboardReportsIndexRoute: typeof AdminDashboardReportsIndexRoute
   AdminDashboardCategoriesIdIndexRoute: typeof AdminDashboardCategoriesIdIndexRoute
   AdminDashboardCategoriesNewIndexRoute: typeof AdminDashboardCategoriesNewIndexRoute
@@ -1490,6 +1511,7 @@ const AdminDashboardRouteChildren: AdminDashboardRouteChildren = {
   AdminDashboardCategoriesIndexRoute: AdminDashboardCategoriesIndexRoute,
   AdminDashboardCitiesIndexRoute: AdminDashboardCitiesIndexRoute,
   AdminDashboardCollectionsIndexRoute: AdminDashboardCollectionsIndexRoute,
+  AdminDashboardPlacesIndexRoute: AdminDashboardPlacesIndexRoute,
   AdminDashboardReportsIndexRoute: AdminDashboardReportsIndexRoute,
   AdminDashboardCategoriesIdIndexRoute: AdminDashboardCategoriesIdIndexRoute,
   AdminDashboardCategoriesNewIndexRoute: AdminDashboardCategoriesNewIndexRoute,

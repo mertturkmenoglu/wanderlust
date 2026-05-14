@@ -3,49 +3,45 @@ import { Separator } from '@wanderlust/ui/components/separator';
 import { PlusIcon } from 'lucide-react';
 import { DashboardActions } from '@/components/dashboard/actions';
 import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
-import { keyValueCols } from '@/components/dashboard/columns';
+import { placesCols } from '@/components/dashboard/columns';
 import { DataTable } from '@/components/dashboard/data-table';
 import { DashboardLink } from '@/components/dashboard/link';
 
-export const Route = createFileRoute('/_admin/dashboard/categories/')({
+export const Route = createFileRoute('/_admin/dashboard/places/')({
 	component: RouteComponent,
-	loader: ({ context }) =>
+	loader: async ({ context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.categories.list.queryOptions({
+			context.orpc.places.peek.queryOptions({
 				input: {},
 			}),
 		),
 });
 
 function RouteComponent() {
-	const { categories } = Route.useLoaderData();
+	const { places } = Route.useLoaderData();
 
 	return (
-		<>
+		<div>
 			<DashboardBreadcrumb
-				items={[{ name: 'Categories', href: '/dashboard/categories' }]}
+				items={[{ name: 'Places', href: '/dashboard/places' }]}
 			/>
 
 			<Separator className="my-4" />
 
 			<DashboardActions>
 				<DashboardLink
-					to="/dashboard/categories/new"
+					to="/dashboard/places/new"
 					icon={PlusIcon}
-					title="New Category"
+					title="New Place"
 				/>
 			</DashboardActions>
 
 			<DataTable
-				columns={keyValueCols}
-				filterColumnId="v"
-				data={categories.map((c) => ({
-					k: `${c.id}`,
-					v: c.name,
-				}))}
-				hrefPrefix="/dashboard/categories"
-				hrefColumnId="k"
+				columns={placesCols}
+				filterColumnId="name"
+				data={places}
+				hrefPrefix="/dashboard/places"
 			/>
-		</>
+		</div>
 	);
 }

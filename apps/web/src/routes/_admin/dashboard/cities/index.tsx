@@ -1,16 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import {
-	Item,
-	ItemContent,
-	ItemMedia,
-	ItemTitle,
-} from '@wanderlust/ui/components/item';
+import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { PlusIcon } from 'lucide-react';
 import { DashboardActions } from '@/components/dashboard/actions';
 import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { citiesCols } from '@/components/dashboard/columns';
 import { DataTable } from '@/components/dashboard/data-table';
+import { DashboardLink } from '@/components/dashboard/link';
 
 export const Route = createFileRoute('/_admin/dashboard/cities/')({
 	component: RouteComponent,
@@ -34,18 +29,11 @@ function RouteComponent() {
 			<Separator className="my-4" />
 
 			<DashboardActions>
-				<div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-					<Link to="/dashboard/cities/new">
-						<Item variant="outline" className="max-w-sm hover:bg-muted">
-							<ItemMedia variant="icon">
-								<PlusIcon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>New City</ItemTitle>
-							</ItemContent>
-						</Item>
-					</Link>
-				</div>
+				<DashboardLink
+					to="/dashboard/cities/new"
+					icon={PlusIcon}
+					title="New City"
+				/>
 			</DashboardActions>
 
 			<DataTable

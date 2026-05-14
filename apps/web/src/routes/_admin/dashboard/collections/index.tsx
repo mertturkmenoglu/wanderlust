@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { ArrowLeftRightIcon, PlusIcon } from 'lucide-react';
-import { DashboardActionItem } from '@/components/dashboard/action-item';
 import { DashboardActions } from '@/components/dashboard/actions';
 import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { collectionsCols } from '@/components/dashboard/columns';
 import { DataTable } from '@/components/dashboard/data-table';
+import { DashboardLink } from '@/components/dashboard/link';
 
 export const Route = createFileRoute('/_admin/dashboard/collections/')({
 	component: RouteComponent,
@@ -31,8 +31,9 @@ function shortDescription(str: string) {
 
 function RouteComponent() {
 	const { collections } = Route.useLoaderData();
+
 	return (
-		<div>
+		<>
 			<DashboardBreadcrumb
 				items={[{ name: 'Collections', href: '/dashboard/collections' }]}
 			/>
@@ -40,25 +41,23 @@ function RouteComponent() {
 			<Separator className="my-2" />
 
 			<DashboardActions>
-				<div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-					<Link to="/dashboard/collections/new">
-						<DashboardActionItem icon={PlusIcon} text="New Collection" />
-					</Link>
+				<DashboardLink
+					to="/dashboard/collections/new"
+					icon={PlusIcon}
+					title="New Collection"
+				/>
 
-					<Link to="/dashboard/collections/relations">
-						<DashboardActionItem
-							icon={ArrowLeftRightIcon}
-							text="Place Relations"
-						/>
-					</Link>
+				<DashboardLink
+					to="/dashboard/collections/relations"
+					icon={ArrowLeftRightIcon}
+					title="Place Relations"
+				/>
 
-					<Link to="/dashboard/collections/relations">
-						<DashboardActionItem
-							icon={ArrowLeftRightIcon}
-							text="City Relations"
-						/>
-					</Link>
-				</div>
+				<DashboardLink
+					to="/dashboard/collections/relations"
+					icon={ArrowLeftRightIcon}
+					title="City Relations"
+				/>
 			</DashboardActions>
 
 			<DataTable
@@ -72,6 +71,6 @@ function RouteComponent() {
 				}))}
 				hrefPrefix="/dashboard/collections"
 			/>
-		</div>
+		</>
 	);
 }

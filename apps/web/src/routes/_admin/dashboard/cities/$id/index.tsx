@@ -1,14 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { Button } from '@wanderlust/ui/components/button';
-import {
-	Item,
-	ItemActions,
-	ItemContent,
-	ItemMedia,
-	ItemTitle,
-} from '@wanderlust/ui/components/item';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { ArrowRightIcon, Edit2Icon, PaperclipIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -17,6 +9,7 @@ import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/dashboard/columns';
 import { DataTable } from '@/components/dashboard/data-table';
 import { DeleteDialog } from '@/components/dashboard/delete-dialog';
+import { DashboardLink } from '@/components/dashboard/link';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
@@ -62,58 +55,34 @@ function RouteComponent() {
 			<Separator className="my-2" />
 
 			<DashboardActions>
-				<div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-					<Link
-						to="/cities/$"
-						params={{
-							_splat: `${city.id}`,
-						}}
-					>
-						<Item variant="outline" className="hover:bg-muted">
-							<ItemMedia variant="icon">
-								<PaperclipIcon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>Visit Page</ItemTitle>
-							</ItemContent>
-							<ItemActions>
-								<Button variant="ghost">
-									<ArrowRightIcon />
-								</Button>
-							</ItemActions>
-						</Item>
-					</Link>
+				<DashboardLink
+					to="/cities/$"
+					params={{
+						_splat: `${city.id}`,
+					}}
+					icon={PaperclipIcon}
+					title="Visit Page"
+					action={ArrowRightIcon}
+				/>
 
-					<Link
-						to="/dashboard/cities/$id/edit"
-						params={{
-							id: `${city.id}`,
-						}}
-					>
-						<Item variant="outline" className="max-w-sm hover:bg-muted">
-							<ItemMedia variant="icon">
-								<Edit2Icon />
-							</ItemMedia>
-							<ItemContent>
-								<ItemTitle>Edit</ItemTitle>
-							</ItemContent>
-							<ItemActions>
-								<Button variant="ghost">
-									<ArrowRightIcon />
-								</Button>
-							</ItemActions>
-						</Item>
-					</Link>
+				<DashboardLink
+					to="/dashboard/cities/$id/edit"
+					params={{
+						id: `${city.id}`,
+					}}
+					icon={Edit2Icon}
+					title="Edit"
+					action={ArrowRightIcon}
+				/>
 
-					<DeleteDialog
-						type="city"
-						onClick={() =>
-							mutation.mutate({
-								id: city.id,
-							})
-						}
-					/>
-				</div>
+				<DeleteDialog
+					type="city"
+					onClick={() =>
+						mutation.mutate({
+							id: city.id,
+						})
+					}
+				/>
 			</DashboardActions>
 
 			<Image

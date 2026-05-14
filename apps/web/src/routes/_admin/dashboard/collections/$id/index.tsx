@@ -1,15 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { Edit2Icon, LibraryIcon, PaperclipIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { DashboardActionItem } from '@/components/dashboard/action-item';
 import { DashboardActions } from '@/components/dashboard/actions';
 import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
 import { keyValueCols } from '@/components/dashboard/columns';
 import { DataTable } from '@/components/dashboard/data-table';
 import { DeleteDialog } from '@/components/dashboard/delete-dialog';
+import { DashboardLink } from '@/components/dashboard/link';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
@@ -64,46 +64,41 @@ function RouteComponent() {
 			<Separator className="my-4" />
 
 			<DashboardActions>
-				<div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-					<Link
-						to="/c/$id"
-						params={{
-							id: collection.id,
-						}}
-					>
-						<DashboardActionItem icon={PaperclipIcon} text="Visit Page" />
-					</Link>
+				<DashboardLink
+					to="/c/$id"
+					params={{
+						id: collection.id,
+					}}
+					icon={PaperclipIcon}
+					title="Visit Page"
+				/>
 
-					<Link
-						to="/dashboard/collections/$id/edit"
-						params={{
-							id: collection.id,
-						}}
-					>
-						<DashboardActionItem icon={Edit2Icon} text="Edit Collection" />
-					</Link>
+				<DashboardLink
+					to="/dashboard/collections/$id/edit"
+					params={{
+						id: collection.id,
+					}}
+					icon={Edit2Icon}
+					title="Edit Collection"
+				/>
 
-					<Link
-						to="/dashboard/collections/$id/items"
-						params={{
-							id: collection.id,
-						}}
-					>
-						<DashboardActionItem
-							icon={LibraryIcon}
-							text="See Collection Items"
-						/>
-					</Link>
+				<DashboardLink
+					to="/dashboard/collections/$id/items"
+					params={{
+						id: collection.id,
+					}}
+					title="See Collection Items"
+					icon={LibraryIcon}
+				/>
 
-					<DeleteDialog
-						type="collection"
-						onClick={() =>
-							mutation.mutate({
-								id: collection.id,
-							})
-						}
-					/>
-				</div>
+				<DeleteDialog
+					type="collection"
+					onClick={() =>
+						mutation.mutate({
+							id: collection.id,
+						})
+					}
+				/>
 			</DashboardActions>
 
 			{img.url !== '' && (
