@@ -1,11 +1,9 @@
 {
 	"name": "@wanderlust/config",
-	"version": "1.0.0",
-	"private": true,
-	"module": "src/index.ts",
 	"type": "module",
+	"private": true,
 	"scripts": {
-		"check-types": "tsc -b"
+		"check-types": "tsc --noEmit"
 	},
 	"exports": {
 		".": {
