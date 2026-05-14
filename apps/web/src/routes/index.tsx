@@ -20,32 +20,40 @@ export const Route = createFileRoute('/')({
 });
 
 function App() {
-	const session = authClient.useSession();
-	const isAuthenticated = !session.isPending && session.data !== null;
-
 	return (
 		<div className="mx-auto mt-8 max-w-7xl">
 			<Search />
 
 			<TagNavigation />
 
-			{session.isPending ? (
-				<Skeleton className="my-8 h-64 w-full" />
-			) : isAuthenticated ? (
-				<QuickActions />
-			) : (
-				<OverlayBanner
-					image="https://images.unsplash.com/photo-1524168272322-bf73616d9cb5?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-					alt="Wanderlust Banner Image"
-					message="Inspiring explorations, one spark of Wanderlust!"
-					className="my-8"
-				/>
-			)}
+			<Banner />
 
 			<SuspenseWrapper>
 				<Content />
 			</SuspenseWrapper>
 		</div>
+	);
+}
+
+function Banner() {
+	const session = authClient.useSession();
+	const isAuthenticated = !session.isPending && session.data !== null;
+
+	if (session.isPending) {
+		return <Skeleton className="my-8 h-64 w-full" />;
+	}
+
+	if (isAuthenticated) {
+		return <QuickActions />;
+	}
+
+	return (
+		<OverlayBanner
+			image="https://images.unsplash.com/photo-1524168272322-bf73616d9cb5?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+			alt="Wanderlust Banner Image"
+			message="Inspiring explorations, one spark of Wanderlust!"
+			className="my-8"
+		/>
 	);
 }
 
