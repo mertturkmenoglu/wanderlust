@@ -52,7 +52,8 @@ function RouteComponent() {
 					},
 				]}
 			/>
-			<Separator className="my-2" />
+
+			<Separator className="my-4" />
 
 			<DashboardActions>
 				<DashboardLink
