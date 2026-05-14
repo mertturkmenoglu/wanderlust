@@ -87,7 +87,7 @@ function CitiesContent() {
 		}
 
 		return (
-			<div className="mt-4 grid grid-cols-2 gap-2">
+			<div className="mt-4 grid grid-cols-1 gap-2">
 				{query.data.relations.map((c) => (
 					<RelationItem
 						key={cn(c.collectionId, c.cityId)}
