@@ -1,10 +1,9 @@
 {
 	"name": "@wanderlust/auth",
-	"module": "src/index.ts",
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"check-types": "tsc -b"
+		"check-types": "tsc --noEmit"
 	},
 	"exports": {
 		".": {
