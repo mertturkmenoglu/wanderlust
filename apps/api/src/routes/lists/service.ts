@@ -4,7 +4,9 @@ import { ListsRepository } from './repository';
 
 @injectable()
 export class ListsService {
-	constructor(@inject(ListsRepository) private readonly repo: ListsRepository) { }
+	constructor(
+		@inject(ListsRepository) private readonly repo: ListsRepository,
+	) {}
 
 	async listAll(
 		userId: string,

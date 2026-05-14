@@ -1,4 +1,4 @@
-import { $ } from "bun";
+import { $ } from 'bun';
 
 export async function generate() {
 	const domains = [
@@ -22,4 +22,3 @@ export async function generate() {
 		await $`rm tmp/${domain}.csv`;
 	}
 }
-

@@ -48,7 +48,6 @@ function RouteComponent() {
 			{query.data && (
 				<div className="grid grid-cols-1 gap-2">
 					{query.data.pages.map((page, i) => (
-						// biome-ignore lint/suspicious/noArrayIndexKey: TODO
 						<React.Fragment key={i}>
 							{page.lists.map((list) => (
 								<Link

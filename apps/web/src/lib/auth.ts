@@ -27,7 +27,7 @@ const authErrSchema = z.object({
 	}),
 	status: z.number(),
 	message: z.string(),
-})
+});
 
 type AuthError = z.infer<typeof authErrSchema>;
 

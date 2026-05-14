@@ -17,7 +17,7 @@ export function NavigationButton({ type }: Props) {
 		<button
 			type="button"
 			className={cn(
-				'-translate-y-1/2 absolute top-1/2 rounded-full bg-white p-1 opacity-0 duration-200 group-hover:opacity-80',
+				'absolute top-1/2 -translate-y-1/2 rounded-full bg-white p-1 opacity-0 duration-200 group-hover:opacity-80',
 				{
 					'left-4': type === 'previous',
 					'right-4': type === 'next',

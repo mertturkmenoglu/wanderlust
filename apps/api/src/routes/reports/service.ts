@@ -4,7 +4,9 @@ import { ReportsRepository } from './repository';
 
 @injectable()
 export class ReportsService {
-	constructor(@inject(ReportsRepository) private readonly repo: ReportsRepository) { }
+	constructor(
+		@inject(ReportsRepository) private readonly repo: ReportsRepository,
+	) {}
 
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(userId, data);

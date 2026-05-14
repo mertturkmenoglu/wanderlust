@@ -4,7 +4,9 @@ import { FavoritesRepository } from './repository';
 
 @injectable()
 export class FavoritesService {
-	constructor(@inject(FavoritesRepository) private readonly repo: FavoritesRepository) { }
+	constructor(
+		@inject(FavoritesRepository) private readonly repo: FavoritesRepository,
+	) {}
 
 	async create(
 		userId: string,

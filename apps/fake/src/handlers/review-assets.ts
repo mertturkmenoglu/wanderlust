@@ -13,7 +13,9 @@ export async function generate() {
 	});
 
 	const results = await Promise.allSettled(
-		chunks.map((chunk) => pool.run({ reviewIds: chunk }, { name: 'processChunk' })),
+		chunks.map((chunk) =>
+			pool.run({ reviewIds: chunk }, { name: 'processChunk' }),
+		),
 	);
 
 	for (const result of results) {

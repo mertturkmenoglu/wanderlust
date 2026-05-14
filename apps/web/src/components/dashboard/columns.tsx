@@ -182,16 +182,16 @@ const collectionsCols: ColumnDef<Collection>[] = [
 ];
 
 export {
-	citiesCols,
-	collectionsCols,
-	keyValueCols,
-	placesCols,
-	placeDraftCols,
-	reportsCols,
 	type City,
 	type Collection,
+	citiesCols,
+	collectionsCols,
 	type KeyValueCols,
+	keyValueCols,
 	type Place,
 	type PlaceDraft,
+	placeDraftCols,
+	placesCols,
 	type Report,
+	reportsCols,
 };

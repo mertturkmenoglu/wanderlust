@@ -30,7 +30,7 @@ export function TripInfo({ className }: Props) {
 			<Link
 				to="/u/$username"
 				params={{ username: trip.owner.username }}
-				className="hover:-m-2 flex items-center gap-4 hover:rounded-md hover:bg-muted hover:p-2"
+				className="flex items-center gap-4 hover:-m-2 hover:rounded-md hover:bg-muted hover:p-2"
 			>
 				<UserImage
 					src={ipx(userImage(trip.owner.image), 'w_512')}
@@ -53,7 +53,7 @@ export function TripInfo({ className }: Props) {
 				<LineItem icon={EyeIcon} text={`Visibility: ${trip.visibilityLevel}`} />
 			</div>
 
-			<div className="-ml-2 mt-4 flex w-full flex-col items-start pr-2 text-left">
+			<div className="mt-4 -ml-2 flex w-full flex-col items-start pr-2 text-left">
 				<TripLink to="" id={trip.id} />
 				<TripLink to="participants" id={trip.id} />
 				<TripLink to="amenities" id={trip.id} />

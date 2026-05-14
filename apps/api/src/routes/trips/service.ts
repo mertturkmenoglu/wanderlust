@@ -8,7 +8,7 @@ import { TripsRepository } from './repository';
 export class TripsService {
 	constructor(
 		@inject(TripsRepository) private readonly repo: TripsRepository,
-	) { }
+	) {}
 
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(userId, data);

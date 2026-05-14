@@ -15,7 +15,7 @@ export function Card({ to, Icon, text }: Props) {
 				to={to}
 				className={cn(
 					'flex aspect-[3] flex-col items-center justify-center gap-4 rounded-md bg-slate-50 p-4',
-					'group-hover:-translate-y-2 transition duration-200 group-hover:translate-x-2',
+					'transition duration-200 group-hover:translate-x-2 group-hover:-translate-y-2',
 				)}
 			>
 				<Icon className="size-6" />

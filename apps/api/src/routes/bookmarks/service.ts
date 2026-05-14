@@ -4,7 +4,9 @@ import { BookmarksRepository } from './repository';
 
 @injectable()
 export class BookmarksService {
-	constructor(@inject(BookmarksRepository) private readonly repo: BookmarksRepository) { }
+	constructor(
+		@inject(BookmarksRepository) private readonly repo: BookmarksRepository,
+	) {}
 
 	async create(
 		userId: string,

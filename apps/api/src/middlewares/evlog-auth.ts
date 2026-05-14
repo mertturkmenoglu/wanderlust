@@ -18,4 +18,4 @@ export const evlogAuth = (auth: TAuthService) => {
 		await identifyUser(c.get('log'), c.req.raw.headers, c.req.path);
 		await next();
 	});
-}
+};

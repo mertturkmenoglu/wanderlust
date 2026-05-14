@@ -4,11 +4,10 @@
 		"composite": true,
 		"outDir": "dist",
 		"paths": {
-			"@/*": [
-				"./src/*"
-			],
+			"@/*": ["./src/*"]
 		},
+		"jsx": "react-jsx",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
-	},
+	}
 }

@@ -26,4 +26,4 @@ function normalizeMultipleErrors(
 	});
 }
 
-export { lengthTracker, truncateWithEllipses, normalizeMultipleErrors };
+export { lengthTracker, normalizeMultipleErrors, truncateWithEllipses };

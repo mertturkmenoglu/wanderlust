@@ -50,6 +50,8 @@ function BreadcrumbLink({
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
 	return (
+		// biome-ignore lint/a11y/useFocusableInteractive: ShadCN code
+		// biome-ignore lint/a11y/useSemanticElements: ShadCN code
 		<span
 			data-slot="breadcrumb-page"
 			role="link"
@@ -99,10 +101,10 @@ function BreadcrumbEllipsis({
 
 export {
 	Breadcrumb,
-	BreadcrumbList,
+	BreadcrumbEllipsis,
 	BreadcrumbItem,
 	BreadcrumbLink,
+	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-	BreadcrumbEllipsis,
 };

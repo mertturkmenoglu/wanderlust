@@ -79,4 +79,4 @@ function ActivityCard({ activity: { type, payload } }: Props) {
 	return <div />;
 }
 
-export { ActivityCard, type Activity, type UserActivityType };
+export { type Activity, ActivityCard, type UserActivityType };

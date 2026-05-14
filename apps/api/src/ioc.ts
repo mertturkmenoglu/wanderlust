@@ -2,7 +2,7 @@ import { AuthService } from '@wanderlust/auth';
 import { CacheService } from '@wanderlust/cache';
 import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { DatabaseService } from '@wanderlust/db';
-import { EmailService } from '@wanderlust/email';
+import { EmailService } from '@wanderlust/email/email';
 import { JobsService } from '@wanderlust/jobs';
 import { StorageService } from '@wanderlust/storage';
 import { Container } from 'inversify';

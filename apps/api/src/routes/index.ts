@@ -69,6 +69,5 @@ export const modules = [
 	events.module,
 ];
 
-
 export type AppRouter = ReturnType<typeof getAppRouter>;
 export type AppRouterClient = RouterClient<AppRouter>;
