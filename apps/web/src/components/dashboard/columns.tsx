@@ -19,8 +19,9 @@ const keyValueCols: ColumnDef<KeyValueCols>[] = [
 type Place = {
 	id: string;
 	name: string;
-	addressId: number;
-	categoryId: number;
+	city: string;
+	country: string;
+	category: string;
 };
 
 const placesCols: ColumnDef<Place>[] = [
@@ -33,12 +34,16 @@ const placesCols: ColumnDef<Place>[] = [
 		header: 'Name',
 	},
 	{
-		accessorKey: 'addressId',
-		header: 'Address ID',
+		accessorKey: 'city',
+		header: 'City',
 	},
 	{
-		accessorKey: 'categoryId',
-		header: 'Category ID',
+		accessorKey: 'country',
+		header: 'Country',
+	},
+	{
+		accessorKey: 'category',
+		header: 'Category',
 	},
 ];
 
