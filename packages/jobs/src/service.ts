@@ -1,5 +1,5 @@
 import { ConfigService, type TConfigService } from '@wanderlust/config';
-import { EmailService, type TEmailService } from '@wanderlust/email/service';
+import { EmailService, type TEmailService } from '@wanderlust/email';
 import { inject, injectable } from 'inversify';
 import { initJobs } from './email';
 
