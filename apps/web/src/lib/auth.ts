@@ -1,5 +1,5 @@
 import { redirect } from '@tanstack/react-router';
-import type { TAuthService } from '@wanderlust/api/lib/auth/index';
+import type { TAuthService } from '@wanderlust/auth';
 import { inferAdditionalFields } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 import z from 'zod';
