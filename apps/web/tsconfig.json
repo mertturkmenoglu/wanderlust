@@ -7,11 +7,21 @@
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"skipLibCheck": true,
-		"types": ["vite/client"],
-		"rootDirs": ["."],
+		"types": [
+			"vite/client"
+		],
+		"rootDirs": [
+			"."
+		],
 		"paths": {
-			"@/*": ["./src/*"],
-			"@wanderlust/ui/*": ["../../packages/ui/src/*"]
-		}
+			"@/*": [
+				"./src/*"
+			],
+			"@wanderlust/ui/*": [
+				"../../packages/ui/src/*"
+			]
+		},
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 	}
 }
