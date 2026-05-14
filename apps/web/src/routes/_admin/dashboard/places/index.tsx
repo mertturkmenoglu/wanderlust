@@ -21,7 +21,7 @@ function RouteComponent() {
 	const { places } = Route.useLoaderData();
 
 	return (
-		<div>
+		<>
 			<DashboardBreadcrumb
 				items={[{ name: 'Places', href: '/dashboard/places' }]}
 			/>
@@ -39,9 +39,14 @@ function RouteComponent() {
 			<DataTable
 				columns={placesCols}
 				filterColumnId="name"
-				data={places}
+				data={places.map((p) => ({
+					...p,
+					city: p.address.city.name,
+					country: p.address.city.countryName,
+					category: p.category.name,
+				}))}
 				hrefPrefix="/dashboard/places"
 			/>
-		</div>
+		</>
 	);
 }
