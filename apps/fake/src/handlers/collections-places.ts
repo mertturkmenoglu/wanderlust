@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
 import type { $insert } from '@wanderlust/common';
+import type { TDatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db';
 import pLimit from 'p-limit';
 import type z from 'zod';
 import { paths } from '..';
-import type { TDatabaseService } from '../services/database';
 import { chunkArray, readFile } from '../utils';
 import { getDb } from './common';
 
