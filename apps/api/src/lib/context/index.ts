@@ -1,19 +1,20 @@
 import { AuthService } from '@wanderlust/auth';
+import type { Context as HonoContext } from 'hono';
 import type { Container } from 'inversify';
 
 export type CreateContextOptions = {
-	request: Request;
+	context: HonoContext;
 	container: Container;
 };
 
 export async function createContext({
-	request,
+	context,
 	container,
 }: CreateContextOptions) {
 	const auth = container.get(AuthService).get();
 
 	const session = await auth.api.getSession({
-		headers: request.headers,
+		headers: context.req.raw.headers,
 	});
 
 	return {
