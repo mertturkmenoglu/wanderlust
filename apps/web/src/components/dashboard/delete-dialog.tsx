@@ -18,7 +18,7 @@ import {
 import { ArrowRightIcon, Trash2Icon } from 'lucide-react';
 
 type Props = {
-	type: 'city' | 'collection' | 'amenity' | 'category' | 'draft' | 'report';
+	type: 'city' | 'collection' | 'amenity' | 'category' | 'place' | 'report';
 	onClick: () => void;
 };
 
