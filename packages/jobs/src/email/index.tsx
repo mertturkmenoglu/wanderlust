@@ -1,8 +1,8 @@
 import { render } from '@react-email/components';
 import type { TConfigService } from '@wanderlust/config';
+import type { TEmailService } from '@wanderlust/email/';
 import Email from '@wanderlust/email/email';
 import ForgotPasswordEmail from '@wanderlust/email/forgot-password';
-import type { TEmailService } from '@wanderlust/email/service';
 import WelcomeEmail from '@wanderlust/email/welcome';
 import { Queue, Worker } from 'bullmq';
 import IORedis from 'ioredis';
