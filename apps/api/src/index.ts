@@ -2,65 +2,55 @@ import 'reflect-metadata';
 
 import { AuthService } from '@wanderlust/auth';
 import { ConfigService } from '@wanderlust/config';
-import consola from 'consola';
+import { initLogger } from 'evlog';
+import { type EvlogVariables, evlog } from 'evlog/hono';
+import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
 import { getApiHandler, getRpcHandler } from '@/routes/handler';
 import { bootstrapServices, container } from './ioc';
 import { createContext } from './lib/context';
-import { timeFnAsync } from './lib/timer';
-import { withCors } from './middlewares/cors';
-import { logger } from './middlewares/logger';
+import { getCorsConfig } from './middlewares/cors';
+import { evlogAuth } from './middlewares/evlog-auth';
 
-async function main() {
-	await bootstrapServices();
+initLogger({
+	env: {
+		service: 'wanderlust-api',
+	},
+});
 
-	const cfg = container.get(ConfigService).get();
-	const auth = container.get(AuthService).get();
+await bootstrapServices();
 
-	const api = getApiHandler();
-	const rpc = getRpcHandler();
+const app = new Hono<EvlogVariables>();
+const cfg = container.get(ConfigService).get();
+const auth = container.get(AuthService).get();
 
-	const server = Bun.serve({
-		port: cfg.api.port,
-		routes: {
-			'/uploads/*': (req) => {
-				const url = new URL(req.url);
-				return new Response(Bun.file(`./${url.pathname}`));
-			},
-			'/api/auth/*': async (req) => {
-				const res = await auth.handler(req);
-				return withCors(res);
-			},
-		},
-		async fetch(request) {
-			const [res, duration] = await timeFnAsync(async () => {
-				if (request.method === 'OPTIONS') {
-					return withCors(new Response(null, { status: 204 }));
-				}
+app.use(evlog());
+app.use('*', evlogAuth(auth));
+app.use('/*', getCorsConfig(cfg));
+app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
+app.use('/uploads/*', serveStatic({ root: './' }));
 
-				const isRpcRequest = new URL(request.url).pathname.startsWith('/rpc');
-				const handler = isRpcRequest ? rpc : api;
+const api = getApiHandler();
+const rpc = getRpcHandler();
 
-				const res = await handler.handle(request, {
-					prefix: isRpcRequest ? '/rpc' : '/api',
-					// @ts-expect-error Context type inference
-					context: await createContext({ request, container }),
-				});
+app.use('/*', async (c, next) => {
+	const isRpcRequest = c.req.path.startsWith('/rpc');
+	const handler = isRpcRequest ? rpc : api;
 
-				const response = res.matched
-					? res.response
-					: new Response('Not Found', { status: 404 });
-
-				return withCors(response);
-			});
-
-			logger(request, res, duration);
-			return res;
-		},
+	const res = await handler.handle(c.req.raw, {
+		prefix: isRpcRequest ? '/rpc' : '/api',
+		// @ts-expect-error Context type inference
+		context: await createContext({ context: c, container }),
 	});
 
-	consola.info(
-		`API server is running on http://${server.hostname}:${server.port}/`,
-	);
-}
+	if (res.matched) {
+		return c.newResponse(res.response.body, res.response);
+	}
 
-await main();
+	await next();
+});
+
+export default {
+	port: cfg.api.port,
+	fetch: app.fetch,
+}
