@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,11 +21,23 @@ import { orpc } from '@/lib/orpc';
 
 export function NewRelationDialog() {
 	const [collectionId, setCollectionId] = useState('');
-	const [placeId, setPlaceId] = useState('');
+	const [id, setId] = useState('');
 	const invalidate = useInvalidator();
+	const { mode } = useSearch({
+		from: '/_admin/dashboard/collections/relations/',
+	});
 
-	const mutation = useMutation(
+	const placeMutation = useMutation(
 		orpc.collections.createPlaceRelation.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('Relation added');
+			},
+		}),
+	);
+
+	const cityMutation = useMutation(
+		orpc.collections.createCityRelation.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Relation added');
@@ -37,12 +50,12 @@ export function NewRelationDialog() {
 			<AlertDialogTrigger asChild>
 				<Button>
 					<PlusIcon className="size-4" />
-					<span className="ml-2">New</span>
+					<span className="ml-2">New {mode} relation</span>
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent className="sm:max-w-xl">
 				<AlertDialogHeader>
-					<AlertDialogTitle>Add new relation</AlertDialogTitle>
+					<AlertDialogTitle>Add new {mode} relation</AlertDialogTitle>
 					<AlertDialogDescription>
 						<Input
 							placeholder="Collection ID"
@@ -50,10 +63,10 @@ export function NewRelationDialog() {
 							onChange={(e) => setCollectionId(e.target.value)}
 						/>
 						<Input
-							placeholder="Place ID"
+							placeholder={mode === 'place' ? 'Place ID' : 'City ID'}
 							className="mt-4"
-							value={placeId}
-							onChange={(e) => setPlaceId(e.target.value)}
+							value={id}
+							onChange={(e) => setId(e.target.value)}
 						/>
 					</AlertDialogDescription>
 				</AlertDialogHeader>
@@ -62,9 +75,17 @@ export function NewRelationDialog() {
 					<Button asChild>
 						<AlertDialogAction
 							onClick={() => {
-								mutation.mutate({
+								if (mode === 'place') {
+									placeMutation.mutate({
+										id: collectionId,
+										placeId: id,
+									});
+									return;
+								}
+
+								cityMutation.mutate({
 									id: collectionId,
-									placeId,
+									cityId: +id,
 								});
 							}}
 						>
