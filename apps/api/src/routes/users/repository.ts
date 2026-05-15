@@ -333,14 +333,17 @@ export class UsersRepository {
 					.delete(schema.userTopPlaces)
 					.where(eq(schema.userTopPlaces.userId, userId));
 
-				// Insert new top places
-				const inserts = data.placesIds.map((placeId, index) => ({
-					userId,
-					placeId,
-					index: index + 1,
-				}));
+				// Only try to insert if there are places to insert
+				if (data.placesIds.length !== 0) {
+					// Insert new top places
+					const inserts = data.placesIds.map((placeId, index) => ({
+						userId,
+						placeId,
+						index: index + 1,
+					}));
 
-				await tx.insert(schema.userTopPlaces).values(inserts);
+					await tx.insert(schema.userTopPlaces).values(inserts);
+				}
 
 				// Fetch and return the updated top places
 				const topPlaces = await tx.query.places.findMany({
