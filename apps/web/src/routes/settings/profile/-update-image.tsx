@@ -71,17 +71,18 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 								{file ? 'Change selection' : `Upload a ${action} image`}
 							</label>
 							<div className="mt-2 text-muted-foreground text-xs">
-								PNG, JPEG, GIF, and WebP are supported. Maximum 5MB.
+								PNG, JPEG, and WebP are supported. Maximum 5MB.
 							</div>
 							<input
 								id={`${action}-image`}
 								type="file"
 								name="files"
-								accept="image/jpeg,image/png,image/jpg,image/webp,image/gif"
+								accept="image/jpeg,image/png,image/jpg,image/webp"
 								placeholder={`Upload a ${action} image`}
 								className="hidden"
 								onChange={(e) => {
 									const file = e.target.files?.[0];
+
 									if (file) {
 										setPreview(URL.createObjectURL(file));
 										setFile(file);
