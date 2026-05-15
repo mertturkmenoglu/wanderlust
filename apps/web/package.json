@@ -58,17 +58,19 @@
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
+		"@tanstack/devtools-vite": "^0.6.0",
+		"@tanstack/react-devtools": "^0.10.3",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/react": "^16.3.2",
 		"@types/node": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vitejs/plugin-react": "^6.0.1",
+		"@wanderlust/config": "workspace:*",
 		"jsdom": "^29.1.1",
 		"typescript": "catalog:",
 		"vite": "^8.0.11",
 		"vitest": "^4.1.5",
-		"web-vitals": "^5.2.0",
-		"@wanderlust/config": "workspace:*"
+		"web-vitals": "^5.2.0"
 	}
 }
