@@ -1,32 +1,38 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
+import { Image } from '@unpic/react';
 import {
 	AlertDialog,
 	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
-	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@wanderlust/ui/components/alert-dialog';
 import { Button } from '@wanderlust/ui/components/button';
-import { Label } from '@wanderlust/ui/components/label';
+import {
+	Field,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from '@wanderlust/ui/components/field';
 import { Textarea } from '@wanderlust/ui/components/textarea';
-import { PencilIcon } from 'lucide-react';
+import { ImagePlusIcon, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { AssetUploader } from '@/components/asset-uploader';
 import { Rating } from '@/components/rating';
 import { useInvalidator } from '@/hooks/use-invalidator';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { authClient } from '@/lib/auth';
-import { lengthTracker } from '@/lib/form';
+import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
 import { useUpload } from './hooks';
-import { ImageUploadArea } from './image-upload';
 
 const schema = z.object({
 	content: z.string().min(5).max(2048),
@@ -54,9 +60,11 @@ function Content() {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
 	const [rating, setRating] = useState(0);
-	const up = useUpload();
-	const files = up.acceptedFiles;
+	const uploader = useUpload();
+	const files = uploader.acceptedFiles;
 	const invalidate = useInvalidator();
+	const [showFileUpload, setShowFileUpload] = useState(false);
+	const isMobile = useIsMobile();
 
 	const form = useForm({
 		resolver: zodResolver(schema),
@@ -81,49 +89,87 @@ function Content() {
 					<span>Add a review</span>
 				</Button>
 			</AlertDialogTrigger>
-			<AlertDialogContent className="sm:max-w-xl">
+			<AlertDialogContent className="sm:max-w-5xl">
 				<AlertDialogHeader>
 					<AlertDialogTitle>Add a review</AlertDialogTitle>
-					<AlertDialogDescription>
-						Add a review to {place.name}
-					</AlertDialogDescription>
 				</AlertDialogHeader>
-				<div className="grid gap-4 py-2">
-					<div className="flex flex-row items-center justify-center gap-2">
-						<span className="sr-only">Rating</span>
-						<Rating
-							id="rating"
-							defaultValue={0}
-							value={rating}
-							onChange={(v) => {
-								setRating(v.value);
-							}}
-							disabled={false}
-							starsClassName="size-8"
+				<div className="grid gap-4 py-2 md:grid-cols-3">
+					<div className="md:col-span-1">
+						<Image
+							src={ipx(place.assets[0].url, 'w_512')}
+							alt={place.assets[0].description ?? ''}
+							className="aspect-5/2 w-full rounded-md object-cover md:aspect-video"
+							aspectRatio={16 / 9}
+							width={512}
 						/>
+						<div className="my-4 text-center text-muted-foreground">
+							{place.name}
+						</div>
+						<div className="flex flex-row items-center justify-center gap-2">
+							<span className="sr-only">Rating</span>
+							<Rating
+								id="rating"
+								defaultValue={0}
+								value={rating}
+								onChange={(v) => {
+									setRating(v.value);
+								}}
+								disabled={false}
+								starsClassName="size-6 md:size-8"
+							/>
+						</div>
 					</div>
+					<div className="flex flex-col md:col-span-2">
+						<FieldGroup>
+							<Controller
+								name="content"
+								control={form.control}
+								render={({ field, fieldState }) => (
+									<Field data-invalid={fieldState.invalid}>
+										<FieldLabel htmlFor="content">Review</FieldLabel>
+										<Textarea
+											{...field}
+											id="content"
+											placeholder="Leave a review"
+											rows={isMobile ? 4 : 6}
+											autoComplete="off"
+											className="min-h-18 md:min-h-36"
+											aria-invalid={fieldState.invalid}
+										/>
+										{fieldState.invalid && (
+											<FieldError errors={[fieldState.error]} />
+										)}
+									</Field>
+								)}
+							/>
+						</FieldGroup>
 
-					<div>
-						<Label htmlFor="content">Review</Label>
-						<Textarea
-							id="content"
-							rows={5}
-							placeholder="Leave a review"
-							className="mt-1"
-							{...form.register('content')}
-						/>
-						<span>{lengthTracker(form.watch('content'), 2048)}</span>
-						{form.formState.errors.content && (
-							<span>{form.formState.errors.content.message}</span>
+						{showFileUpload ? (
+							<AssetUploader uploader={uploader} className="py-2" />
+						) : (
+							<Button
+								variant="outline"
+								size="sm"
+								className="my-2 self-end"
+								onClick={() => setShowFileUpload(true)}
+							>
+								<ImagePlusIcon />
+								Add images
+							</Button>
 						)}
 					</div>
-
-					<ImageUploadArea up={up} />
 				</div>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
 					<AlertDialogAction
-						onClick={async () => {
+						onClick={async (e) => {
+							if (!form.formState.isValid) {
+								toast.error('Write a review');
+								e.preventDefault();
+								e.stopPropagation();
+								return;
+							}
+
 							createReviewMutation.mutate({
 								files,
 								content: form.getValues('content'),
