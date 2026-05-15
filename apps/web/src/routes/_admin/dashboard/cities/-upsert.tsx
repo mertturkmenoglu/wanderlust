@@ -77,7 +77,7 @@ export function UpsertCity({ action, city }: Props) {
 				await navigate({
 					to: '/dashboard/cities/$id',
 					params: {
-						id: '',
+						id: city?.id ? String(city.id) : '',
 					},
 				});
 				toast.success('City updated');
