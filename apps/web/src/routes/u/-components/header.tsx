@@ -57,7 +57,7 @@ export function Header({ className }: Props) {
 						username={profile.username}
 					/>
 
-					<BioDropdown userId={profile.id} />
+					<BioDropdown userId={profile.id} isThisUser={isThisUser} />
 				</div>
 			</div>
 

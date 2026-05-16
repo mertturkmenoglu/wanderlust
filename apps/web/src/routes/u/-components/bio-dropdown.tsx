@@ -6,13 +6,15 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { EllipsisVerticalIcon, FlagIcon } from 'lucide-react';
 
 type Props = {
 	userId: string;
+	isThisUser: boolean;
 };
 
-export function BioDropdown({ userId }: Props) {
+export function BioDropdown({ userId, isThisUser }: Props) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild className="block">
@@ -27,10 +29,14 @@ export function BioDropdown({ userId }: Props) {
 			<DropdownMenuContent className="w-48 space-y-2 p-2" align="end">
 				<DropdownMenuItem className="cursor-pointer p-0">
 					<Button
-						className="flex w-full justify-start hover:no-underline"
-						variant="link"
+						className={cn('flex w-full justify-start hover:no-underline', {
+							'disabled cursor-not-allowed bg-muted text-muted-foreground hover:text-muted-foreground':
+								isThisUser,
+						})}
+						variant={isThisUser ? 'ghost' : 'link'}
 						size="sm"
 						asChild
+						disabled={isThisUser}
 					>
 						<Link
 							to="/report"
