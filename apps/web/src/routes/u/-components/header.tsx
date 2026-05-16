@@ -37,12 +37,12 @@ export function Header({ className }: Props) {
 					src={ipx(userImage(profile.image), 'w_512')}
 					imgClassName="size-48 md:size-32 ring-4 ring-white bg-white"
 					fallbackClassName="size-48 md:size-32 ring-4 ring-white bg-white"
-					className="absolute inset-x-0 -bottom-16 mx-auto size-32 bg-white ring-4 ring-white sm:mx-16"
+					className="absolute inset-x-0 -bottom-16 mx-auto size-32 bg-white ring-4 ring-white md:mx-16"
 				/>
 			</div>
 
-			<div className="mt-20 flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-start">
-				<div className="flex flex-col items-center text-center sm:items-start">
+			<div className="mt-20 flex flex-col items-center justify-between gap-4 md:flex-row md:items-start">
+				<div className="flex flex-col items-center gap-4 text-center md:flex-row md:items-end">
 					<h2 className="flex items-center gap-4 font-semibold text-4xl">
 						{profile.name}
 					</h2>
