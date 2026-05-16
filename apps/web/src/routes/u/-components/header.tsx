@@ -70,7 +70,7 @@ export function Header({ className }: Props) {
 					href={profile.website}
 					target="_blank"
 					rel="noopener noreferrer"
-					className="mt-4 flex items-center gap-1 text-primary text-sm hover:underline"
+					className="mt-2 flex w-fit items-center gap-1 text-primary text-sm hover:underline"
 				>
 					<ExternalLinkIcon className="size-3" />
 					<span>{profile.website}</span>
