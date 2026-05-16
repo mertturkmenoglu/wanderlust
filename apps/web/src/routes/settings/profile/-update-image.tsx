@@ -12,6 +12,7 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { UploadIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { authClient } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
 
 type Props = {
@@ -28,7 +29,10 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 	const [file, setFile] = useState<File | null>(null);
 	const mutation = useMutation(
 		orpc.users.updateImage.mutationOptions({
-			onSuccess: () => {
+			onSuccess: async (res) => {
+				await authClient.updateUser({
+					image: res.profile.image,
+				});
 				toast.success('Image updated');
 				globalThis.window.location.reload();
 			},

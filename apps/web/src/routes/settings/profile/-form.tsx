@@ -15,6 +15,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 import { useInvalidator } from '@/hooks/use-invalidator';
+import { authClient } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
 
 const schema = z.object({
@@ -38,8 +39,15 @@ export function Form() {
 
 	const mutation = useMutation(
 		orpc.users.update.mutationOptions({
-			onSuccess: async () => {
+			onSuccess: async (newUser) => {
 				await invalidate();
+				await authClient.updateUser({
+					bio: newUser.profile.bio,
+					image: newUser.profile.image ?? undefined,
+					name: newUser.profile.name,
+					username: newUser.profile.username,
+					website: newUser.profile.website,
+				});
 				toast.success('Profile updated');
 			},
 		}),
