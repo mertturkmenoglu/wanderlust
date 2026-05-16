@@ -64,7 +64,11 @@ function RouteComponent() {
 
 				<div />
 
-				{isChangePasswordOpen && <ChangePasswordForm />}
+				{isChangePasswordOpen && (
+					<div className="col-span-full md:col-span-1">
+						<ChangePasswordForm />
+					</div>
+				)}
 
 				<Separator className="col-span-full my-4" />
 
