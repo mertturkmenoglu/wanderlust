@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
-import { FieldGroup } from '@wanderlust/ui/components/field';
+import { FieldGroup, FieldSeparator } from '@wanderlust/ui/components/field';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { FormProvider } from 'react-hook-form';
@@ -10,6 +10,7 @@ import { useCreatePlaceForm } from './-hooks';
 import { Step1 } from './-step-1';
 import { Step2 } from './-step-2';
 import { Step3 } from './-step-3';
+import { Step4 } from './-step-4';
 
 export const Route = createFileRoute('/_admin/dashboard/places/new/')({
 	component: RouteComponent,
@@ -47,6 +48,10 @@ function RouteComponent() {
 						<SuspenseWrapper placeholderVariant="skeleton">
 							<Step3 />
 						</SuspenseWrapper>
+
+						<FieldSeparator className="col-span-full" />
+
+						<Step4 />
 
 						<div />
 
