@@ -1,9 +1,13 @@
+import { createWriteStream } from 'node:fs';
+import { inspect } from 'node:util';
 import { OpenAPIHandler } from '@orpc/openapi/fetch';
 import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
 import { onError } from '@orpc/server';
 import { RPCHandler } from '@orpc/server/fetch';
 import { ZodToJsonSchemaConverter } from '@orpc/zod/zod4';
 import { getAppRouter } from '.';
+
+const errorLog = createWriteStream('errors.log', { flags: 'a' });
 
 export function getApiHandler() {
 	const appRouter = getAppRouter();
@@ -43,8 +47,21 @@ export function getRpcHandler() {
 
 	return new RPCHandler(appRouter, {
 		interceptors: [
-			onError((error) => {
-				console.error(error);
+			onError(async (error) => {
+				if (process.env.NODE_ENV === 'development') {
+					const entry = {
+						timestamp: new Date().toISOString(),
+						error,
+					};
+
+					const formatted = inspect(entry, {
+						depth: Number.POSITIVE_INFINITY,
+						breakLength: 120,
+						compact: false,
+					});
+
+					errorLog.write(`${formatted}\n----\n`);
+				}
 			}),
 		],
 	});
