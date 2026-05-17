@@ -1,6 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebouncedValue } from '@tanstack/react-pacer';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
+import { orpc } from '@/lib/orpc';
 
 const schema = z.object({
 	addressMode: z.enum(['select', 'create']),
@@ -92,10 +96,108 @@ const schema = z.object({
 	}),
 });
 
+const newAddressSchema = z.object({
+	id: z
+		.number()
+		.int()
+		.min(0)
+		.max(2147483647)
+		.meta({
+			description: 'Address ID',
+			examples: [2048],
+		}),
+	cityId: z
+		.number()
+		.int()
+		.min(0)
+		.max(2147483647)
+		.meta({
+			description: 'ID of the city associated with the address',
+			examples: [1024],
+		}),
+	line1: z
+		.string()
+		.min(1)
+		.max(256)
+		.meta({
+			description: 'First line of the address',
+			examples: ['221B Baker Street'],
+		}),
+	line2: z
+		.string()
+		.max(256)
+		.nullable()
+		.meta({
+			description: 'Second line of the address',
+			examples: ['Apartment 2'],
+		}),
+	postalCode: z
+		.string()
+		.max(20)
+		.nullable()
+		.meta({
+			description: 'Postal code of the address',
+			examples: ['NW1 6XE'],
+		}),
+	lat: z
+		.number()
+		.min(-90)
+		.max(90)
+		.meta({
+			description: 'Latitude of the address',
+			examples: [51.5074],
+		}),
+	lng: z
+		.number()
+		.min(-180)
+		.max(180)
+		.meta({
+			description: 'Longitude of the address',
+			examples: [-0.1278],
+		}),
+});
+
 export type FormInput = z.infer<typeof schema>;
+
+export type NewAddressFormInput = z.infer<typeof newAddressSchema>;
 
 export function useCreatePlaceForm() {
 	return useForm({
 		resolver: zodResolver(schema),
 	});
+}
+
+export function useNewAddressForm() {
+	return useForm({
+		resolver: zodResolver(newAddressSchema),
+	});
+}
+
+export function useCitiesQuery() {
+	return useSuspenseQuery(
+		orpc.cities.list.queryOptions({
+			input: {},
+			retry: false,
+		}),
+	);
+}
+
+export function useSearchTerm() {
+	const [searchTerm, setSearchTerm] = useState('');
+	const [debouncedSearchTerm] = useDebouncedValue(searchTerm, {
+		wait: 1000,
+	});
+	return [searchTerm, setSearchTerm, debouncedSearchTerm] as const;
+}
+
+export function useSearchQuery(debouncedSearchTerm: string) {
+	return useQuery(
+		orpc.places.searchAddresses.queryOptions({
+			input: {
+				query: debouncedSearchTerm,
+			},
+			enabled: debouncedSearchTerm.length > 1,
+			retry: false,
+		}),
+	);
 }
