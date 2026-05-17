@@ -134,4 +134,23 @@ export const contract = {
 			successStatus: 204,
 			successDescription: 'No Content',
 		}),
+	searchAddresses: oc
+		.input(dto.searchAddressesInput)
+		.output(dto.searchAddressesOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			path: '/places/search/addresses',
+			method: 'GET',
+			description: 'Search Place Addresses',
+			summary: 'Search Place Addresses',
+			tags: ['Places'],
+		}),
 };

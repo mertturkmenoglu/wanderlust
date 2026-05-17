@@ -1,7 +1,8 @@
 import { ORPCError } from '@orpc/server';
+import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
 
@@ -217,6 +218,48 @@ export class PlacesRepository {
 		} catch (err) {
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to delete the place',
+				cause: err,
+			});
+		}
+	}
+
+	async searchAddresses(
+		data: dto.SearchAddressesInput,
+	): Promise<dto.SearchAddressesOutput> {
+		try {
+			const addresses = await this.db.query.addresses.findMany({
+				where: (t, { ilike, or }) =>
+					or(
+						ilike(t.line1, `%${data.query}%`),
+						ilike(t.line2, `%${data.query}%`),
+						ilike(t.postalCode, `%${data.query}%`),
+					),
+				offset: 0,
+				limit: 30,
+				orderBy: (t, { desc }) => desc(t.id),
+			});
+
+			const totalRecords = await this.db.$count(
+				schema.addresses,
+				or(
+					ilike(schema.addresses.line1, `%${data.query}%`),
+					ilike(schema.addresses.line2, `%${data.query}%`),
+					ilike(schema.addresses.postalCode, `%${data.query}%`),
+				),
+			);
+
+			const pagination = Pagination.compute(
+				{ page: 1, pageSize: 30 },
+				totalRecords,
+			);
+
+			return {
+				addresses,
+				pagination,
+			};
+		} catch (err) {
+			throw new ORPCError('INTERNAL_SERVER_ERROR', {
+				message: 'Failed to search addresses',
 				cause: err,
 			});
 		}

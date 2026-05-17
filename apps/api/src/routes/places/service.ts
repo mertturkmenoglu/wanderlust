@@ -6,7 +6,7 @@ import { PlacesRepository } from './repository';
 export class PlacesService {
 	constructor(
 		@inject(PlacesRepository) private readonly repository: PlacesRepository,
-	) { }
+	) {}
 
 	async get(data: dto.GetInput, userId: string | null): Promise<dto.GetOutput> {
 		const result = await this.repository.get(data);
@@ -81,5 +81,16 @@ export class PlacesService {
 
 	async _delete(data: dto.DeleteInput): Promise<void> {
 		await this.repository._delete(data);
+	}
+
+	async searchAddresses(
+		data: dto.SearchAddressesInput,
+	): Promise<dto.SearchAddressesOutput> {
+		const result = await this.repository.searchAddresses(data);
+
+		return {
+			addresses: result.addresses,
+			pagination: result.pagination,
+		};
 	}
 }

@@ -1,4 +1,4 @@
-import { $dto } from '@wanderlust/common';
+import { $dto, Pagination } from '@wanderlust/common';
 import z from 'zod';
 
 const place = $dto.place.extend({
@@ -113,3 +113,16 @@ export const deleteInput = $dto.place.pick({
 export type DeleteInput = z.infer<typeof deleteInput>;
 
 export const deleteOutput = z.object({});
+
+export const searchAddressesInput = z.object({
+	query: z.string().min(1).max(128),
+});
+
+export type SearchAddressesInput = z.infer<typeof searchAddressesInput>;
+
+export const searchAddressesOutput = z.object({
+	addresses: z.array($dto.address),
+	pagination: Pagination.schema,
+});
+
+export type SearchAddressesOutput = z.infer<typeof searchAddressesOutput>;

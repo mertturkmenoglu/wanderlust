@@ -84,6 +84,18 @@ export function getRouter() {
 
 				return {};
 			}),
+		searchAddresses: os.searchAddresses
+			.use(requireAuth)
+			.use(isAdmin)
+			.handler(async ({ input, context, errors }) => {
+				if (!context.session?.user) {
+					throw errors.UNAUTHORIZED();
+				}
+
+				const result = await svc.searchAddresses(input);
+
+				return result;
+			}),
 	});
 }
 
