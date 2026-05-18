@@ -20,8 +20,11 @@ export function Header({ className, ...props }: Readonly<Props>) {
 			)}
 			{...props}
 		>
-			<Link to="/" className="flex items-center gap-4">
+			<Link to="/" className="flex items-center gap-2">
 				<Logo variant="small" />
+				<span className="bg-linear-to-r from-primary to-sky-600 bg-clip-text font-bold text-transparent">
+					Wanderlust
+				</span>
 			</Link>
 
 			{session.isPending ? (
