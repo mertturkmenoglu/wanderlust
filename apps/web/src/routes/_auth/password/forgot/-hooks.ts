@@ -2,8 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 import { authClient } from '@/lib/auth';
-import { type FormInput, FormSchema } from './-schema';
+
+export const FormSchema = z.object({
+	email: z.email().min(1, { message: 'Email is required' }),
+});
+
+export type FormInput = z.infer<typeof FormSchema>;
 
 function useForgotPasswordForm() {
 	return useForm<FormInput>({

@@ -1,6 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
+import { authClient, isAuthError } from '@/lib/auth';
 
 const schema = z.object({
 	email: z.email().min(1, { message: 'Email is required' }),
@@ -13,6 +16,36 @@ export function useSignInForm() {
 		defaultValues: {
 			email: '',
 			password: '',
+		},
+	});
+}
+
+export function useSignInMutation() {
+	return useMutation({
+		mutationKey: ['sign-in'],
+		mutationFn: async (data: { email: string; password: string }) => {
+			return await authClient.signIn.email(
+				{
+					email: data.email,
+					password: data.password,
+				},
+				{
+					throw: true,
+				},
+			);
+		},
+		onSuccess: () => {
+			window.location.href = '/';
+			window.location.reload();
+		},
+		retry: false,
+		onError: (err) => {
+			if (isAuthError(err) && err.error.code === 'INVALID_EMAIL_OR_PASSWORD') {
+				toast.error('Invalid email or password');
+				return;
+			}
+
+			toast.error(err.message || 'Something went wrong');
 		},
 	});
 }

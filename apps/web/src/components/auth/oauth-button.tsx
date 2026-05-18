@@ -5,14 +5,12 @@ import { authClient } from '@/lib/auth';
 
 type Props = {
 	provider: 'google' | 'facebook';
-	text: string;
 };
 
-export function OAuthButton({ provider, text }: Readonly<Props>) {
+export function OAuthButton({ provider }: Readonly<Props>) {
 	return (
 		<Button
 			variant="outline"
-			className="w-full"
 			onClick={async () => {
 				authClient.signIn.social({
 					provider,
@@ -20,10 +18,13 @@ export function OAuthButton({ provider, text }: Readonly<Props>) {
 				});
 			}}
 			type="button"
+			size="sm"
 		>
-			{provider === 'google' && <GoogleIcon className="mr-2 size-5" />}
-			{provider === 'facebook' && <FacebookIcon className="mr-2 size-5" />}
-			{text}
+			{provider === 'google' && <GoogleIcon className="size-4 shrink-0" />}
+			{provider === 'facebook' && <FacebookIcon className="size-4 shrink-0" />}
+			<span>
+				<span className="capitalize">{provider}</span>
+			</span>
 		</Button>
 	);
 }

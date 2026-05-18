@@ -1,11 +1,13 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
-import { Card } from '@wanderlust/ui/components/card';
 import {
 	Field,
+	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
+	FieldLegend,
+	FieldSet,
 } from '@wanderlust/ui/components/field';
 import { Input } from '@wanderlust/ui/components/input';
 import { Spinner } from '@wanderlust/ui/components/spinner';
@@ -33,48 +35,42 @@ function RouteComponent() {
 	const mutation = useForgotPasswordMutation();
 
 	return (
-		<Card className="mx-auto my-32 flex max-w-lg flex-col gap-2 p-8">
-			<Logo variant="medium" />
-			<h2 className="mt-4 font-bold text-xl">Forgot Password</h2>
-			<div className="-mt-2 text-muted-foreground text-sm">
-				Already have an account? <AuthLink href="/sign-in" text="Sign In" />
-			</div>
-			<form
-				onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
-				className="mt-4 w-full"
-			>
-				<FieldGroup>
-					<Controller
-						name="email"
-						control={form.control}
-						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="email">Email</FieldLabel>
-								<Input
-									{...field}
-									id="email"
-									placeholder="Email"
-									autoComplete="email"
-									aria-invalid={fieldState.invalid}
-								/>
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
-						)}
-					/>
-				</FieldGroup>
+		<form
+			onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
+			className="mx-auto my-32 max-w-lg"
+		>
+			<FieldGroup className="gap-4">
+				<Logo variant="medium" />
+				<FieldSet>
+					<FieldLegend>Forgot Password</FieldLegend>
+					<FieldDescription>
+						Already have an account? <AuthLink href="/sign-in" text="Sign In" />
+					</FieldDescription>
+				</FieldSet>
 
-				<Button
-					variant="default"
-					className="mt-4 w-full"
-					type="submit"
-					disabled={!form.formState.isValid || mutation.isPending}
-				>
+				<Controller
+					name="email"
+					control={form.control}
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="email">Email</FieldLabel>
+							<Input
+								{...field}
+								id="email"
+								placeholder="Email"
+								autoComplete="email"
+								aria-invalid={fieldState.invalid}
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
+					)}
+				/>
+
+				<Button type="submit" disabled={mutation.isPending}>
 					{mutation.isPending && <Spinner />}
 					<span>Send Code</span>
 				</Button>
-			</form>
-		</Card>
+			</FieldGroup>
+		</form>
 	);
 }
