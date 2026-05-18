@@ -1,6 +1,8 @@
 // Type-only file: imports contracts only, no server implementations.
 // Keeping this isolated means the IDE evaluates simpler types (no middleware
 // context chains) when resolving AppRouterClient in the web app.
+
+import type { Client } from '@orpc/client';
 import type {
 	AnyContractRouter,
 	ContractProcedure,
@@ -8,7 +10,6 @@ import type {
 	InferSchemaInput,
 	InferSchemaOutput,
 } from '@orpc/contract';
-import type { Client } from '@orpc/client';
 
 import { contract as aggregatorContract } from './aggregator/contract';
 import { contract as amenitiesContract } from './amenities/contract';
@@ -30,8 +31,17 @@ import { contract as usersContract } from './users/contract';
 // server-side types (middleware context, meta, etc.).
 type ContractRouterClient<T extends AnyContractRouter> =
 	T extends ContractProcedure<infer UInput, infer UOutput, infer UErrors, any>
-		? Client<Record<never, never>, InferSchemaInput<UInput>, InferSchemaOutput<UOutput>, ErrorFromErrorMap<UErrors>>
-		: { [K in keyof T]: T[K] extends AnyContractRouter ? ContractRouterClient<T[K]> : never };
+		? Client<
+				Record<never, never>,
+				InferSchemaInput<UInput>,
+				InferSchemaOutput<UOutput>,
+				ErrorFromErrorMap<UErrors>
+			>
+		: {
+				[K in keyof T]: T[K] extends AnyContractRouter
+					? ContractRouterClient<T[K]>
+					: never;
+			};
 
 const appContract = {
 	aggregator: aggregatorContract,
