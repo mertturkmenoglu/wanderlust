@@ -16,28 +16,17 @@ import type { Props } from './types';
 
 export function ItemVariant({
 	className,
-	hoverEffects = true,
 	variant = 'default',
 	...props
 }: Props) {
 	const ctx = usePlaceCardContext();
 
 	return (
-		<Item
-			variant="outline"
-			size="default"
-			className={cn(
-				{
-					'hover:bg-muted': hoverEffects,
-				},
-				className,
-			)}
-			{...props}
-		>
+		<Item variant="outline" size="default" className={cn(className)} {...props}>
 			<ItemMedia>
 				<Image
-					src={ipx(ctx.place.assets[0]?.url ?? '', 'w_256')}
-					alt={ctx.place.assets[0]?.description ?? ''}
+					src={ipx(ctx.asset.url, 'w_256')}
+					alt={ctx.asset.description ?? ''}
 					height={64}
 					aspectRatio={16 / 9}
 					className="aspect-video h-16 rounded-md object-cover"
