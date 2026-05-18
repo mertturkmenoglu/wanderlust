@@ -7,6 +7,11 @@
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
 			"outputs": ["dist/**"]
 		},
+		"build-types": {
+			"dependsOn": ["^build-types"],
+			"inputs": ["src/**/*.ts", "src/**/*.tsx", "emails/**/*.ts", "emails/**/*.tsx", "tsconfig.json", "tsconfig*.json"],
+			"outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map", "*.tsbuildinfo"]
+		},
 		"lint": {
 			"dependsOn": ["^lint"]
 		},
@@ -14,6 +19,7 @@
 			"dependsOn": ["^check-types"]
 		},
 		"dev": {
+			"dependsOn": ["^build-types"],
 			"cache": false,
 			"persistent": true
 		}
