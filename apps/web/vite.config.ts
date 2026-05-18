@@ -12,6 +12,9 @@ export default defineConfig({
 		viteReact(),
 		tailwindcss(),
 	],
+	server: {
+		hmr: { port: 3001 },
+	},
 	resolve: {
 		tsconfigPaths: true,
 	},
