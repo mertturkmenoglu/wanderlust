@@ -1,4 +1,5 @@
-import type { RouterClient } from '@orpc/server';
+export type { AppContract, AppRouterClient } from './client-types';
+
 import * as aggregator from './aggregator';
 import * as amenities from './amenities';
 import * as bookmarks from './bookmarks';
@@ -69,5 +70,6 @@ export const modules = [
 	events.module,
 ];
 
-export type AppRouter = ReturnType<typeof getAppRouter>;
-export type AppRouterClient = RouterClient<AppRouter>;
+// export type AppRouter = ReturnType<typeof getAppRouter>;
+// export type AppRouterClient = RouterClient<AppRouter>;
+export type AppRouter = AppRouterShape;
