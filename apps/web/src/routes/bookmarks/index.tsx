@@ -93,7 +93,7 @@ function Bookmarks() {
 			</ItemGroup>
 
 			<div className="hidden md:block">
-				<PlaceCard place={bookmark.place} hoverEffects={false} />
+				<PlaceCard place={bookmark.place} />
 
 				<Actions bookmark={bookmark} />
 

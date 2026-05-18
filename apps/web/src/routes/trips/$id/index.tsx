@@ -141,11 +141,7 @@ function RouteComponent() {
 														id: loc.placeId,
 													}}
 												>
-													<PlaceCard
-														className="max-w-xs"
-														hoverEffects={false}
-														place={loc.place}
-													/>
+													<PlaceCard className="max-w-xs" place={loc.place} />
 												</Link>
 												<div className="mt-4">
 													<div className="text-muted-foreground text-sm">

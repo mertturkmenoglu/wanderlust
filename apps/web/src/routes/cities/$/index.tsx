@@ -156,11 +156,7 @@ function CollectionsContent() {
 										id: item.placeId,
 									}}
 								>
-									<PlaceCard
-										place={item.place}
-										className="w-[256px]"
-										hoverEffects={false}
-									/>
+									<PlaceCard place={item.place} className="w-[256px]" />
 								</Link>
 							))}
 						</div>
