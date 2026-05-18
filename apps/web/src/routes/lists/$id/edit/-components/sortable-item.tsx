@@ -58,19 +58,27 @@ export function SortableItem({ index, item }: Props) {
 				</div>
 			</ItemActions>
 
-			<ItemMedia variant="image">
+			<ItemMedia variant="default">
 				<Image
 					src={ipx(item.place.assets[0]?.url ?? '', 'w_512')}
 					alt={item.place.assets[0]?.description ?? ''}
 					layout="constrained"
-					width={512}
+					height={64}
 					aspectRatio={16 / 9}
+					className="aspect-video h-16 rounded-md object-cover"
 				/>
 			</ItemMedia>
 
 			<ItemContent>
-				<ItemTitle>{item.place.name}</ItemTitle>
-				<ItemDescription>{item.place.category.name}</ItemDescription>
+				<ItemTitle className="line-clamp-2" title={item.place.name}>
+					{item.place.name}
+				</ItemTitle>
+				<ItemDescription className="line-clamp-1">
+					{item.place.address.city.name} / {item.place.address.city.countryName}
+				</ItemDescription>
+				<ItemDescription className="line-clamp-1 text-primary">
+					{item.place.category.name}
+				</ItemDescription>
 			</ItemContent>
 
 			<ItemActions>

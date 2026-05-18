@@ -34,11 +34,11 @@ function RouteComponent() {
 				</div>
 			</div>
 
-			<EditInfo className="my-4" />
+			<div className="mt-4 flex flex-col gap-4 md:flex-row">
+				<EditInfo className="flex-1/3" />
 
-			<Separator className="my-4" />
-
-			<EditItems className="my-4" />
+				<EditItems className="flex-2/3" />
+			</div>
 		</div>
 	);
 }

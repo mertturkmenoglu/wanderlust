@@ -62,7 +62,6 @@ export function EditInfo({ className }: Props) {
 						...data,
 					});
 				})}
-				className="max-w-md"
 			>
 				<FieldGroup>
 					<Controller
@@ -113,17 +112,16 @@ export function EditInfo({ className }: Props) {
 							</FieldSet>
 						)}
 					/>
-				</FieldGroup>
 
-				<Button
-					disabled={mutation.isPending}
-					type="submit"
-					form="edit-list-form"
-					className="mt-4"
-					size="sm"
-				>
-					Update
-				</Button>
+					<Button
+						disabled={mutation.isPending}
+						type="submit"
+						form="edit-list-form"
+						size="sm"
+					>
+						Update
+					</Button>
+				</FieldGroup>
 			</form>
 		</div>
 	);
