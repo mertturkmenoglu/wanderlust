@@ -50,9 +50,6 @@ export const client: AppRouterClient = createORPCClient(link);
 
 export const orpc = createTanstackQueryUtils(client);
 
-// Re-export types for convenience
-export type { AppRouterClient };
-
 export type Inputs = InferClientInputs<AppRouterClient>;
 
 export type Outputs = InferClientOutputs<AppRouterClient>;
