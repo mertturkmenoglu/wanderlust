@@ -27,7 +27,6 @@ export function ItemVariant({
 			variant="outline"
 			size="default"
 			className={cn(
-				'flex flex-col md:flex-row',
 				{
 					'hover:bg-muted': hoverEffects,
 				},
@@ -45,11 +44,13 @@ export function ItemVariant({
 				/>
 			</ItemMedia>
 			<ItemContent>
-				<ItemTitle>{ctx.place.name}</ItemTitle>
-				<ItemDescription>
-					{ctx.place.address.city.name}/{ctx.place.address.city.countryName}
+				<ItemTitle className="line-clamp-2" title={ctx.place.name}>
+					{ctx.place.name}
+				</ItemTitle>
+				<ItemDescription className="line-clamp-1">
+					{ctx.place.address.city.name} / {ctx.place.address.city.countryName}
 				</ItemDescription>
-				<ItemDescription className="text-primary">
+				<ItemDescription className="line-clamp-1 text-primary">
 					{ctx.place.category.name}
 				</ItemDescription>
 			</ItemContent>
