@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { OverlayBanner } from '@/components/overlay-banner';
-import { ipx } from '@/lib/ipx';
+import { CityItem } from './-item';
 import { groupCitiesByCountry } from './-utils';
 
 export const Route = createFileRoute('/cities/list/')({
@@ -36,41 +36,14 @@ function RouteComponent() {
 				imgClassName="aspect-[3]"
 			/>
 
-			<div className="flex items-baseline">
-				<h2 className="font-bold text-4xl">Browse by country</h2>
-			</div>
-
 			<div className="my-8">
 				{groups.map((group) => (
 					<div key={group[0]} className="my-8">
-						<h3 className="font-bold text-2xl">{group[0]}</h3>
-						<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+						<h3 className="font-semibold text-xl">{group[0]}</h3>
+						<Separator />
+						<div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
 							{group[1].map((city) => (
-								<Link
-									to="/cities/$"
-									params={{
-										_splat: `${city.id}/${city.name}`,
-									}}
-									key={city.id}
-									className="group overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md"
-								>
-									<div className="relative">
-										<Image
-											src={ipx(city.image, 'w_512')}
-											alt=""
-											className="aspect-video w-full object-cover"
-											layout="constrained"
-											width={512}
-											aspectRatio={16 / 9}
-										/>
-										<div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-										<div className="absolute right-0 bottom-0 left-0 p-4">
-											<div className="font-bold text-white text-xl drop-shadow-lg">
-												{city.name}
-											</div>
-										</div>
-									</div>
-								</Link>
+								<CityItem city={city} key={city.id} />
 							))}
 						</div>
 					</div>
