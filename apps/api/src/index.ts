@@ -11,7 +11,8 @@ import { getApiHandler, getRpcHandler } from '@/routes/handler';
 import { bootstrapServices, container } from './ioc';
 import { createContext } from './lib/context';
 import { getCorsConfig } from './middlewares/cors';
-import { evlogAuth } from './middlewares/evlog-auth';
+
+// import { evlogAuth } from './middlewares/evlog-auth';
 
 initLogger({
 	env: {
@@ -26,7 +27,7 @@ const cfg = container.get(ConfigService).get();
 const auth = container.get(AuthService).get();
 
 app.use(evlog());
-app.use('*', evlogAuth(auth));
+// app.use('*', evlogAuth(auth));
 app.use('/*', getCorsConfig(cfg));
 app.use('/uploads/*', serveStatic({ root: '../../' }));
 app.use(compress());
