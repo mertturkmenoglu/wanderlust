@@ -3,6 +3,8 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
+		"outDir": "dist",
+		
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
