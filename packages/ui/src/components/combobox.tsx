@@ -71,11 +71,12 @@ function ComboboxInput({
 					<InputGroupButton
 						size="icon-xs"
 						variant="ghost"
-						render={<ComboboxTrigger />}
 						data-slot="input-group-button"
 						className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
 						disabled={disabled}
-					/>
+					>
+						<ComboboxTrigger />
+					</InputGroupButton>
 				)}
 				{showClear && <ComboboxClear disabled={disabled} />}
 			</InputGroupAddon>
@@ -255,7 +256,7 @@ function ComboboxChip({
 					className="-ml-1 opacity-50 hover:opacity-100"
 					data-slot="combobox-chip-remove"
 					render={
-						<Button variant="ghost" size="icon-xs">
+						<Button variant="ghost" size="icon-sm">
 							<XIcon className="pointer-events-none" />
 						</Button>
 					}

@@ -4,7 +4,8 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"check-types": "tsc -b"
+		"check-types": "tsc -b",
+		"build-types": "tsc --build"
 	},
 	"dependencies": {
 		"@base-ui/react": "^1.4.1",

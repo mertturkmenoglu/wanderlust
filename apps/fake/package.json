@@ -5,7 +5,8 @@
 	"private": true,
 	"scripts": {
 		"fake": "bun run src/index.ts",
-		"check-types": "tsc --noEmit"
+		"check-types": "tsc --noEmit",
+		"build-types": "tsc --build"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.4.0",
