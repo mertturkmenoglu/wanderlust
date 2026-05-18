@@ -1,0 +1,68 @@
+import { Image } from '@unpic/react';
+import { Button } from '@wanderlust/ui/components/button';
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { StarIcon } from 'lucide-react';
+import { ipx } from '@/lib/ipx';
+import { usePlaceCardContext } from './context';
+import type { Props } from './types';
+
+export function ItemVariant({
+	className,
+	hoverEffects = true,
+	variant = 'default',
+	...props
+}: Props) {
+	const ctx = usePlaceCardContext();
+
+	return (
+		<Item
+			variant="outline"
+			size="default"
+			className={cn(
+				'flex flex-col md:flex-row',
+				{
+					'hover:bg-muted': hoverEffects,
+				},
+				className,
+			)}
+			{...props}
+		>
+			<ItemMedia>
+				<Image
+					src={ipx(ctx.place.assets[0]?.url ?? '', 'w_256')}
+					alt={ctx.place.assets[0]?.description ?? ''}
+					height={64}
+					aspectRatio={16 / 9}
+					className="aspect-video h-16 rounded-md object-cover"
+				/>
+			</ItemMedia>
+			<ItemContent>
+				<ItemTitle>{ctx.place.name}</ItemTitle>
+				<ItemDescription>
+					{ctx.place.address.city.name}/{ctx.place.address.city.countryName}
+				</ItemDescription>
+				<ItemDescription className="text-primary">
+					{ctx.place.category.name}
+				</ItemDescription>
+			</ItemContent>
+			<ItemActions>
+				<Button variant="outline">
+					{ctx.rating !== '0.0' && (
+						<div className="flex items-center gap-1">
+							<span className="font-medium text-sm">{ctx.rating}</span>
+							<StarIcon className="size-4 fill-primary text-white" />
+						</div>
+					)}
+				</Button>
+			</ItemActions>
+		</Item>
+	);
+}
