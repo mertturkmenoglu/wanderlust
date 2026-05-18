@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useLoaderData } from '@tanstack/react-router';
 import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
@@ -22,14 +22,11 @@ import {
 	PencilIcon,
 	TrashIcon,
 } from 'lucide-react';
-import { useDeleteMutation } from './hooks';
+import { useDeleteMutation, useIsOwner } from './-hooks';
 
-type Props = {
-	listId: string;
-	isOwner: boolean;
-};
-
-export function Menu({ listId, isOwner }: Props) {
+export function Menu() {
+	const { list } = useLoaderData({ from: '/lists/$id/' });
+	const isOwner = useIsOwner();
 	const mutation = useDeleteMutation();
 
 	return (
@@ -46,7 +43,7 @@ export function Menu({ listId, isOwner }: Props) {
 							to="/report"
 							search={{
 								type: 'list',
-								id: listId,
+								id: list.id,
 							}}
 							className="flex w-full items-center gap-2"
 						>
@@ -62,7 +59,7 @@ export function Menu({ listId, isOwner }: Props) {
 								<Link
 									to="/lists/$id/edit"
 									params={{
-										id: listId,
+										id: list.id,
 									}}
 									className="flex w-full items-center gap-2"
 								>
@@ -106,7 +103,7 @@ export function Menu({ listId, isOwner }: Props) {
 						variant="destructive"
 						onClick={() =>
 							mutation.mutate({
-								id: listId,
+								id: list.id,
 							})
 						}
 					>

@@ -14,4 +14,5 @@ export type Place = Pick<
 export type Props = {
 	place: Place;
 	hoverEffects?: boolean;
+	variant?: 'default' | 'item';
 } & React.HTMLAttributes<HTMLDivElement>;

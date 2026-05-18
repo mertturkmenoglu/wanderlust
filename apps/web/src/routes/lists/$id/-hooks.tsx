@@ -1,5 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import {
+	useLoaderData,
+	useNavigate,
+	useRouteContext,
+} from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
@@ -19,4 +23,10 @@ export function useDeleteMutation() {
 			},
 		}),
 	);
+}
+
+export function useIsOwner() {
+	const data = useLoaderData({ from: '/lists/$id/' });
+	const ctx = useRouteContext({ from: '/lists/$id/' });
+	return ctx.auth.user.id === data.list.userId;
 }
