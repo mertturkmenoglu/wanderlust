@@ -4,8 +4,8 @@ import {
 	type PropsWithChildren,
 	type SetStateAction,
 	useContext,
-	useState,
 } from 'react';
+import { useLocalStorage } from '@/hooks/use-localstorage';
 
 type State = {
 	view: 'list' | 'grid';
@@ -14,8 +14,10 @@ type State = {
 
 export const ListContext = createContext<State | null>(null);
 
+const key = 'wl-ldp-view';
+
 export function ListContextProvider({ children }: PropsWithChildren) {
-	const [view, setView] = useState<'list' | 'grid'>('grid');
+	const [view, setView] = useLocalStorage<'list' | 'grid'>(key, 'grid');
 
 	return (
 		<ListContext.Provider value={{ view, setView }}>
