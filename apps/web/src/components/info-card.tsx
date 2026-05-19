@@ -9,7 +9,7 @@ function InfoCardRoot({ className, children }: InfoCardProps) {
 	return (
 		<div
 			className={cn(
-				'flex aspect-video items-center rounded-lg bg-primary/5 p-4',
+				'flex aspect-5/2 items-center rounded-lg bg-primary/5 p-4',
 				className,
 			)}
 		>
