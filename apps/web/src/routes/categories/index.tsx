@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
+import { Item, ItemTitle } from '@wanderlust/ui/components/item';
 import { ipx } from '@/lib/ipx';
 import { serializeParams } from '@/lib/search';
 
@@ -21,10 +22,10 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto max-w-7xl">
 			<div className="flex items-baseline">
-				<h2 className="mt-8 font-bold text-4xl">Browse by category</h2>
+				<h2 className="mt-8 font-semibold text-xl">Browse by category</h2>
 			</div>
 
-			<div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+			<div className="grid grid-cols-2 gap-4">
 				{categories.map((category) => (
 					<Link
 						to="/search"
@@ -32,18 +33,22 @@ function RouteComponent() {
 							category: serializeParams([category.name]),
 						}}
 						key={category.id}
-						className="rounded-md"
 					>
-						<Image
-							src={ipx(category.image, 'w_512')}
-							alt=""
-							className="aspect-video w-full rounded-md object-cover"
-							width={512}
-							aspectRatio={16 / 9}
-						/>
-						<div className="mt-2 font-bold text-xl lg:text-base">
-							{category.name}
-						</div>
+						<Item
+							variant="default"
+							size="sm"
+							className="pl-0 hover:-ml-4 hover:bg-muted hover:pl-4"
+						>
+							<Image
+								src={ipx(category.image, 'w_512')}
+								alt=""
+								className="aspect-video w-48 rounded-md object-cover"
+								layout="constrained"
+								width={512}
+								aspectRatio={16 / 9}
+							/>
+							<ItemTitle className="line-clamp-1">{category.name}</ItemTitle>
+						</Item>
 					</Link>
 				))}
 			</div>
