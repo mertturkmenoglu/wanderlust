@@ -1,5 +1,9 @@
-import { Button } from '@wanderlust/ui/components/button';
-import { Input } from '@wanderlust/ui/components/input';
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
+} from '@wanderlust/ui/components/input-group';
 import { SearchIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { type UseSearchBoxProps, useSearchBox } from 'react-instantsearch';
@@ -55,26 +59,28 @@ export function CustomSearchBox({ isSearchOnType = false, ...props }: Props) {
 					}
 				}}
 			>
-				<Input
-					ref={inputRef}
-					autoComplete="off"
-					autoCorrect="off"
-					autoCapitalize="off"
-					className="rounded-md"
-					placeholder="Search a location"
-					spellCheck={false}
-					maxLength={128}
-					type="search"
-					value={inputValue}
-					onChange={(e) => {
-						setQuery(e.currentTarget.value);
-					}}
-				/>
-
-				<Button type="submit" className="rounded" size="default">
-					<SearchIcon className="size-4" />
-					<span className="sr-only md:not-sr-only md:ml-2">Search</span>
-				</Button>
+				<InputGroup>
+					<InputGroupInput
+						ref={inputRef}
+						autoComplete="off"
+						autoCorrect="off"
+						autoCapitalize="off"
+						className="rounded-md"
+						placeholder="Search a location"
+						spellCheck={false}
+						maxLength={128}
+						value={inputValue}
+						onChange={(e) => {
+							setQuery(e.currentTarget.value);
+						}}
+					/>
+					<InputGroupAddon align="inline-end">
+						<InputGroupButton type="submit" variant="ghost">
+							<SearchIcon />
+							<span className="sr-only md:not-sr-only">Search</span>
+						</InputGroupButton>
+					</InputGroupAddon>
+				</InputGroup>
 			</form>
 		</div>
 	);
