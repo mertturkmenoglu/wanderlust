@@ -1,11 +1,10 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { getRouteApi } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
-import { orpc } from '@/lib/orpc';
+import { useAssetsQuery } from './hooks';
 
 type Props = {
 	className?: string;
@@ -29,13 +28,7 @@ function Content({ className }: ContentProps) {
 	const [open, setOpen] = useState(false);
 	const [index, setIndex] = useState(0);
 
-	const query = useSuspenseQuery(
-		orpc.reviews.listAssetsByPlaceId.queryOptions({
-			input: {
-				id,
-			},
-		}),
-	);
+	const query = useAssetsQuery(id);
 
 	const images = query.data.assets;
 	const showMoreCount = Math.min(images.length - 4, 20);

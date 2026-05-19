@@ -1,5 +1,5 @@
+import { ReviewsList } from './list';
 import { RatingsSection } from './ratings-section';
-import { Section } from './section';
 
 export function Reviews() {
 	return (
@@ -8,7 +8,7 @@ export function Reviews() {
 				<RatingsSection className="sticky top-8" />
 			</div>
 			<div className="flex flex-col gap-4 md:col-span-2">
-				<Section />
+				<ReviewsList />
 			</div>
 		</div>
 	);

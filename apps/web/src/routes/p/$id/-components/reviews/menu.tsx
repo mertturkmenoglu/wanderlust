@@ -1,4 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
@@ -10,9 +9,9 @@ import {
 	DropdownMenuTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
 import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from 'lucide-react';
-import { toast } from 'sonner';
 import { authClient } from '@/lib/auth';
-import { type Outputs, orpc } from '@/lib/orpc';
+import type { Outputs } from '@/lib/orpc';
+import { useDeleteReviewMutation } from './hooks';
 
 type Props = {
 	review: Outputs['reviews']['listByPlaceId']['reviews'][number];
@@ -21,15 +20,7 @@ type Props = {
 export function Menu({ review }: Props) {
 	const session = authClient.useSession();
 	const isOwner = session.data?.user.id === review.userId;
-
-	const mutation = useMutation(
-		orpc.reviews.delete.mutationOptions({
-			onSuccess: () => {
-				toast.success('Review deleted');
-				globalThis.window.location.reload();
-			},
-		}),
-	);
+	const mutation = useDeleteReviewMutation();
 
 	return (
 		<DropdownMenu>

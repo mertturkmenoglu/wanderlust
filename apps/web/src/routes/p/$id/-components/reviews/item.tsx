@@ -1,5 +1,12 @@
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemFooter,
+	ItemHeader,
+} from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
@@ -15,36 +22,40 @@ type Props = {
 	review: Outputs['reviews']['listByPlaceId']['reviews'][number];
 };
 
-export function ReviewCard({ review }: Props) {
+export function ReviewItem({ review }: Props) {
 	const [open, setOpen] = useState(false);
 	const [index, setIndex] = useState(0);
 
 	return (
-		<div className="">
-			<div className="flex flex-row items-center gap-4">
-				<UserImage
-					className="size-16 rounded-full"
-					src={review.user.image ?? ''}
-				/>
+		<Item variant="default">
+			<ItemHeader>
 				<Link
 					to="/u/$username"
 					params={{
 						username: review.user.username,
 					}}
+					className="flex items-center gap-4"
 				>
-					<div className="font-medium">{review.user.name}</div>
-					<div className="text-primary text-xs tracking-tight">
-						<span className="">@{review.user.username}</span>
+					<UserImage
+						className="size-16 rounded-full"
+						src={review.user.image ?? ''}
+					/>
+					<div>
+						<div className="font-medium">{review.user.name}</div>
+						<div className="text-primary text-xs tracking-tight">
+							<span className="">@{review.user.username}</span>
+						</div>
+						<div className="mt-1 text-muted-foreground text-xs">{`${formatDistanceToNow(
+							review.createdAt,
+						)} ago`}</div>
 					</div>
-					<div className="mt-1 text-muted-foreground text-xs">{`${formatDistanceToNow(
-						review.createdAt,
-					)} ago`}</div>
 				</Link>
-				<div className="ml-auto">
+
+				<ItemActions>
 					<Menu review={review} />
-				</div>
-			</div>
-			<div className="mt-4">
+				</ItemActions>
+			</ItemHeader>
+			<ItemContent>
 				<CollapsibleText text={review.content} charLimit={512} />
 				<div
 					className={cn('flex items-center gap-4', {
@@ -92,8 +103,8 @@ export function ReviewCard({ review }: Props) {
 					}}
 					index={index}
 				/>
-			</div>
-			<div className="mt-4 flex items-center justify-between">
+			</ItemContent>
+			<ItemFooter>
 				<div className="flex items-center gap-2">
 					<FormattedRating
 						rating={review.rating}
@@ -102,7 +113,7 @@ export function ReviewCard({ review }: Props) {
 					/>
 					<span className="font-semibold text-sm">{review.rating}.0</span>
 				</div>
-			</div>
-		</div>
+			</ItemFooter>
+		</Item>
 	);
 }
