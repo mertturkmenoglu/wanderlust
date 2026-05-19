@@ -43,16 +43,16 @@ export function ItemVariant({
 					{ctx.place.category.name}
 				</ItemDescription>
 			</ItemContent>
-			<ItemActions>
-				<Button variant="outline">
-					{ctx.rating !== '0.0' && (
+			{ctx.rating !== '0.0' && (
+				<ItemActions>
+					<Button variant="outline">
 						<div className="flex items-center gap-1">
 							<span className="font-medium text-sm">{ctx.rating}</span>
 							<StarIcon className="size-4 fill-primary text-white" />
 						</div>
-					)}
-				</Button>
-			</ItemActions>
+					</Button>
+				</ItemActions>
+			)}
 		</Item>
 	);
 }
