@@ -125,8 +125,15 @@ export const updateTopPlacesOutput = z.object({
 
 export type UpdateTopPlacesOutput = z.infer<typeof updateTopPlacesOutput>;
 
-export const searchFollowingInput = profile.pick({
-	username: true,
+export const searchFollowingInput = z.object({
+	username: z
+		.string()
+		.min(1)
+		.max(32)
+		.meta({
+			description: 'Unique username of the user',
+			examples: ['johndoe'],
+		}),
 });
 
 export type SearchFollowingInput = z.infer<typeof searchFollowingInput>;
