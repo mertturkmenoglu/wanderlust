@@ -15,6 +15,8 @@ import { useEffect, useState } from 'react';
 export function Filters() {
 	const route = getRouteApi('/p/$id/');
 	const search = route.useSearch();
+
+	const [isDirty, setIsDirty] = useState(false);
 	const [minRating, setMinRating] = useState(
 		search.minRating ? search.minRating - 1 : 1,
 	);
@@ -29,19 +31,21 @@ export function Filters() {
 	const isAllRatings = minRating === 1 && maxRating === 5;
 
 	useEffect(() => {
-		navigate({
-			to: '.',
-			hash: 'reviews',
-			search: (prev) => ({
-				...prev,
-				page: 1,
-				minRating: minRating - 1,
-				maxRating: maxRating,
-				sortBy: sortBy,
-				sortOrd: sortOrd,
-			}),
-		});
-	}, [navigate, minRating, maxRating, sortBy, sortOrd]);
+		if (isDirty) {
+			navigate({
+				to: '.',
+				hash: 'reviews',
+				search: (prev) => ({
+					...prev,
+					page: 1,
+					minRating: minRating - 1,
+					maxRating: maxRating,
+					sortBy: sortBy,
+					sortOrd: sortOrd,
+				}),
+			});
+		}
+	}, [isDirty, navigate, minRating, maxRating, sortBy, sortOrd]);
 
 	return (
 		<div>
@@ -58,6 +62,7 @@ export function Filters() {
 							setMaxRateValue(max ?? 5);
 						}}
 						onValueCommit={([min, max]) => {
+							setIsDirty(true);
 							setMinRating(min ?? 0);
 							setMaxRating(max ?? 5);
 						}}
@@ -75,6 +80,7 @@ export function Filters() {
 					defaultValue={`${sortBy === 'created_at' ? 'date' : 'rating'}-${sortOrd}`}
 					onValueChange={(v) => {
 						const [newSortBy, newSortOrd] = v.split('-');
+						setIsDirty(true);
 						setSortBy(newSortBy === 'date' ? 'created_at' : 'rating');
 						setSortOrd(newSortOrd === 'desc' ? 'desc' : 'asc');
 					}}
