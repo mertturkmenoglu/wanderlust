@@ -5,6 +5,7 @@ import { AddToListButton } from './add-to-list-button';
 import { BookmarkButton } from './bookmark-button';
 import { FavoriteButton } from './favorite-button';
 import { Menu } from './menu';
+import { PlanTripDialog } from './plan-trip-dialog';
 
 type Props = {
 	className?: string;
@@ -24,6 +25,8 @@ export function Header({ className }: Props) {
 				</h2>
 
 				<div className="flex w-full items-center justify-between sm:w-auto">
+					{isAuth && <PlanTripDialog />}
+
 					{isAuth && <AddToListButton />}
 
 					<FavoriteButton />

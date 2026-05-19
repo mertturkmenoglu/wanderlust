@@ -2,6 +2,7 @@ import { getRouteApi } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { GripHorizontalIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
@@ -112,6 +113,7 @@ export function ImageGrid({ className }: Props) {
 			<Button
 				type="button"
 				className="absolute right-4 bottom-4"
+				variant="default"
 				size="sm"
 				onClick={() =>
 					setIndex(() => {
@@ -120,7 +122,8 @@ export function ImageGrid({ className }: Props) {
 					})
 				}
 			>
-				See all
+				<GripHorizontalIcon />
+				<span>Show all</span>
 			</Button>
 
 			<Lightbox

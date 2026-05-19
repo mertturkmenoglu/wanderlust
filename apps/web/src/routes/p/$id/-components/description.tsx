@@ -6,7 +6,6 @@ import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { InfoCard } from '@/components/info-card';
 import { computeRating } from '@/lib/rating';
-import { PlanTripDialog } from './plan-trip-dialog';
 
 type Props = {
 	className?: string;
@@ -23,18 +22,16 @@ export function Description({ className }: Props) {
 	});
 
 	return (
-		<div className={cn('grid grid-cols-1 gap-4 md:grid-cols-2', className)}>
+		<div className={cn('grid grid-cols-1 gap-4', className)}>
 			<div className="flex flex-col">
 				<h3 className="font-semibold text-xl">Description</h3>
 				<CollapsibleText text={place.description} charLimit={1000} />
-
-				<PlanTripDialog />
 			</div>
 
-			<div className="grid h-min grid-cols-2 grid-rows-2 gap-2">
+			<div className="grid h-min grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:grid-rows-1">
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn>
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
 							{computeRating(place.totalPoints, place.totalVotes)}
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
@@ -52,7 +49,7 @@ export function Description({ className }: Props) {
 
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn>
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
 							{fmt.format(place.totalFavorites)}
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
@@ -70,7 +67,9 @@ export function Description({ className }: Props) {
 
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn>{place.priceLevel}/5</InfoCard.NumberColumn>
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
+							{place.priceLevel}/5
+						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
 							<div className="flex items-center">
 								{Array.from({ length: place.priceLevel }).map((_, i) => (
@@ -87,7 +86,7 @@ export function Description({ className }: Props) {
 
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn>
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
 							{place.accessibilityLevel}/5
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
@@ -102,7 +101,7 @@ export function Description({ className }: Props) {
 								)}
 							</div>
 
-							<span className="text-muted-foreground text-xs tracking-tight">
+							<span className="line-clamp-1 text-muted-foreground text-xs tracking-tight">
 								Accessibility{' '}
 								<span className="sr-only md:not-sr-only">Level</span>
 							</span>

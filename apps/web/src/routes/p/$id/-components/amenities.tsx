@@ -132,7 +132,7 @@ export function Amenities({ className }: Props) {
 	return (
 		<div className={cn(className)}>
 			<h3 className="font-semibold text-xl tracking-tight">Amenities</h3>
-			<div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+			<div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 				{isEmpty ? (
 					<EmptyState />
 				) : (
@@ -148,14 +148,14 @@ function Item({ id }: { id: string }) {
 	const displayName = amenitiesDisplayNames.get(id) ?? id;
 
 	return (
-		<div className="flex items-center gap-2">
-			<Icon className="size-4 min-h-4 min-w-4 text-primary" />
+		<div className="group flex items-center gap-2">
+			<Icon className="size-6 min-h-6 min-w-6 text-muted-foreground group-hover:text-primary" />
 			<Link
 				to="/search"
 				search={{
 					amenity: id,
 				}}
-				className="line-clamp-2 text-muted-foreground text-sm hover:text-primary hover:underline"
+				className="line-clamp-2 text-muted-foreground group-hover:text-primary"
 			>
 				{displayName}
 			</Link>

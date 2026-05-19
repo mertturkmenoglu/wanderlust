@@ -37,7 +37,7 @@ export function Information({ className }: Props) {
 	return (
 		<div className={cn(className)}>
 			<h3 className="font-semibold text-xl tracking-tight">Information</h3>
-			<div className="mt-4 grid grid-cols-2 gap-2">
+			<div className="mt-4 grid grid-cols-2 items-baseline gap-2">
 				<div className="font-medium">Address</div>
 				<div className="text-muted-foreground text-sm">
 					<div className="text-right">
