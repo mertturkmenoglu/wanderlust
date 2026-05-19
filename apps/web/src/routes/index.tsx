@@ -1,8 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { Button } from '@wanderlust/ui/components/button';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import { Skeleton } from '@wanderlust/ui/components/skeleton';
+import { CompassIcon } from 'lucide-react';
 import { ActionBanner } from '@/components/action-banner';
 import { OverlayBanner } from '@/components/overlay-banner';
 import { PlacesGrid } from '@/components/places-grid';
@@ -106,9 +107,13 @@ function Content() {
 				message={
 					<div className="flex items-center gap-4">
 						<div>Discover the world around you</div>
-						<Button asChild variant="default">
-							<Link to="/categories">See categories</Link>
-						</Button>
+						<Link
+							to="/categories"
+							className={buttonVariants({ variant: 'outline' })}
+						>
+							<CompassIcon className="text-foreground" />
+							<span className="text-foreground">See categories</span>
+						</Link>
 					</div>
 				}
 				className="my-8"
