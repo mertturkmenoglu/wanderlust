@@ -31,7 +31,7 @@ export function HitsPerPage() {
 
 	return (
 		<Select onValueChange={onValueChange} value={String(currentValue)}>
-			<SelectTrigger className="w-[180px]">
+			<SelectTrigger className="w-45">
 				<SelectValue placeholder="Items per page" />
 			</SelectTrigger>
 			<SelectContent>

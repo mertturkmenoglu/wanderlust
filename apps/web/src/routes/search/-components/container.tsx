@@ -1,4 +1,5 @@
-import { Button } from '@wanderlust/ui/components/button';
+import { Link } from '@tanstack/react-router';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import { ScrollArea } from '@wanderlust/ui/components/scroll-area';
 import {
 	Sheet,
@@ -30,6 +31,30 @@ export function Container() {
 	return (
 		<>
 			<CustomSearchBox isSearchOnType />
+
+			<div className="my-4 flex flex-row items-center gap-4">
+				<span className="text-sm">See:</span>
+				<Link
+					to="/nearby"
+					className={buttonVariants({ variant: 'link', className: 'px-0!' })}
+				>
+					Nearby places
+				</Link>
+
+				<Link
+					to="/cities/list"
+					className={buttonVariants({ variant: 'link', className: 'px-0!' })}
+				>
+					Cities
+				</Link>
+
+				<Link
+					to="/categories"
+					className={buttonVariants({ variant: 'link', className: 'px-0!' })}
+				>
+					Categories
+				</Link>
+			</div>
 
 			<div className="my-8 flex flex-col gap-8 md:flex-row">
 				<Sheet>

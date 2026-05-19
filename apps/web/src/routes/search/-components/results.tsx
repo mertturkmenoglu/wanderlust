@@ -10,8 +10,13 @@ export function Results() {
 				<div className="font-semibold text-2xl tracking-tight">Results</div>
 				<HitsPerPage />
 			</div>
-			<hr className="my-2" />
-			<Hits hitComponent={Hit} />
+			<hr className="my-4" />
+			<Hits
+				hitComponent={Hit}
+				classNames={{
+					list: 'space-y-4',
+				}}
+			/>
 			<Pagination />
 		</>
 	);

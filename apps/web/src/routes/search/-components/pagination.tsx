@@ -1,76 +1,42 @@
-import {
-	Pagination,
-	PaginationContent,
-	PaginationEllipsis,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from '@wanderlust/ui/components/pagination';
+import { useNavigate } from '@tanstack/react-router';
 import { usePagination } from 'react-instantsearch';
+import { Pagination } from '@/components/pagination';
 
 export function SearchPagination() {
-	const {
-		pages,
-		currentRefinement,
-		nbPages,
-		isFirstPage,
-		isLastPage,
-		refine,
-		createURL,
-	} = usePagination();
+	const { currentRefinement, nbPages, isFirstPage, isLastPage, refine } =
+		usePagination();
 	const previousPageIndex = currentRefinement - 1;
 	const nextPageIndex = currentRefinement + 1;
+	const navigate = useNavigate({ from: '/search/' });
 
 	return (
-		<div className="my-4">
-			<Pagination>
-				<PaginationContent>
-					{!isFirstPage && (
-						<PaginationItem>
-							<PaginationPrevious
-								href={createURL(previousPageIndex)}
-								onClick={() => refine(previousPageIndex)}
-								aria-disabled={isFirstPage}
-							/>
-						</PaginationItem>
-					)}
-					{pages[0] !== 0 && (
-						<PaginationItem>
-							<PaginationEllipsis />
-						</PaginationItem>
-					)}
-					{pages.map((page) => (
-						<PaginationItem key={page}>
-							<PaginationLink
-								href={createURL(page)}
-								onClick={() => refine(page)}
-								aria-label={`Page ${page + 1}`}
-								isActive={currentRefinement === page}
-							>
-								{page + 1}
-							</PaginationLink>
-						</PaginationItem>
-					))}
-					{pages.at(-1) !== nbPages - 1 && (
-						<PaginationItem>
-							<PaginationEllipsis />
-						</PaginationItem>
-					)}
-					{!isLastPage && (
-						<PaginationItem>
-							<PaginationNext
-								href={createURL(nextPageIndex)}
-								onClick={() => refine(nextPageIndex)}
-								aria-disabled={isLastPage}
-							/>
-						</PaginationItem>
-					)}
-				</PaginationContent>
-			</Pagination>
-			<div className="mt-4 flex justify-center text-muted-foreground text-sm">
-				{currentRefinement + 1} / {nbPages} pages
-			</div>
+		<div className="my-4 flex flex-row justify-center">
+			<Pagination
+				hasNextPage={!isLastPage}
+				hasPreviousPage={!isFirstPage}
+				page={currentRefinement + 1}
+				totalPages={nbPages}
+				onPrevClick={() => {
+					refine(previousPageIndex);
+					navigate({
+						to: '.',
+						search: (prev) => ({
+							...prev,
+							page: previousPageIndex,
+						}),
+					});
+				}}
+				onNextClick={() => {
+					refine(nextPageIndex);
+					navigate({
+						to: '.',
+						search: (prev) => ({
+							...prev,
+							page: nextPageIndex,
+						}),
+					});
+				}}
+			/>
 		</div>
 	);
 }

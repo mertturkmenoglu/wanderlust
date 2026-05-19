@@ -1,4 +1,5 @@
-import { Card } from '@/components/autocomplete/card';
+import { Link } from '@tanstack/react-router';
+import { PlaceCard } from '@/components/place-card';
 
 export type Props = {
 	hit: {
@@ -50,14 +51,28 @@ export type Props = {
 
 export function Hit({ hit }: Readonly<Props>) {
 	return (
-		<Card
-			id={hit.place.id}
-			name={hit.name}
-			categoryName={hit.place.category.name}
-			image={hit.place.assets[0]?.url ?? ''}
-			city={hit.place.address.city.name}
-			state={hit.place.address.city.stateName}
-			isCardClickable={false}
-		/>
+		<Link
+			to="/p/$id"
+			params={{
+				id: hit.place.id,
+			}}
+		>
+			<PlaceCard
+				variant="item"
+				place={{
+					id: hit.place.id,
+					name: hit.name,
+					category: hit.place.category,
+					assets: hit.place.assets.map((a) => ({
+						...a,
+						createdAt: new Date(a.createdAt),
+						updatedAt: new Date(a.updatedAt),
+					})),
+					address: hit.place.address,
+					totalPoints: 0,
+					totalVotes: 0,
+				}}
+			/>
+		</Link>
 	);
 }
