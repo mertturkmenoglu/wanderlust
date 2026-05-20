@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
@@ -21,6 +22,8 @@ export function useSignInForm() {
 }
 
 export function useSignInMutation() {
+	const navigate = useNavigate();
+
 	return useMutation({
 		mutationKey: ['sign-in'],
 		mutationFn: async (data: { email: string; password: string }) => {
@@ -34,8 +37,8 @@ export function useSignInMutation() {
 				},
 			);
 		},
-		onSuccess: () => {
-			window.location.href = '/';
+		onSuccess: async () => {
+			await navigate({ to: '/' });
 			window.location.reload();
 		},
 		retry: false,
