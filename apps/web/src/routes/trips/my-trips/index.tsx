@@ -1,11 +1,12 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Spinner } from '@wanderlust/ui/components/spinner';
-import { AppMessage } from '@/components/app-message';
+import { ItemGroup } from '@wanderlust/ui/components/item';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
-import { orpc } from '@/lib/orpc';
-import { EmptyState } from './-components/empty';
-import { TripItem } from './-components/item';
+import { useFlattenedQuery } from '@/hooks/use-flattened-query';
+import { EmptyState } from './-empty';
+import { ErrorState } from './-error';
+import { useMyTripsQuery } from './-hooks';
+import { TripItem } from './-item';
+import { Loading } from './-loading';
 
 export const Route = createFileRoute('/trips/my-trips/')({
 	component: RouteComponent,
@@ -21,48 +22,26 @@ function RouteComponent() {
 }
 
 function Content() {
-	const query = useInfiniteQuery(
-		orpc.trips.list.infiniteOptions({
-			input: (page) => ({
-				page,
-				pageSize: 10,
-			}),
-			initialPageParam: 1,
-			getNextPageParam: (last) =>
-				last.pagination.hasNext ? last.pagination.page + 1 : undefined,
-		}),
-	);
+	const query = useMyTripsQuery();
+	const flat = useFlattenedQuery(query.data, (p) => p.trips);
 
 	if (query.isPending) {
-		return (
-			<div>
-				<Spinner className="mx-auto my-32 size-12" />
-			</div>
-		);
+		return <Loading />;
 	}
 
 	if (query.error) {
-		return (
-			<AppMessage
-				errorMessage={query.error.message ?? 'Something went wrong'}
-				backLink="/trips"
-				backLinkText="Go to Trips page"
-				className="my-16"
-			/>
-		);
+		return <ErrorState />;
 	}
 
-	const trips = query.data.pages.flatMap((page) => page.trips);
-
-	if (trips.length === 0) {
+	if (flat.length === 0) {
 		return <EmptyState />;
 	}
 
 	return (
-		<div className="mt-4">
-			{trips.map((trip) => (
+		<ItemGroup className="mt-4">
+			{flat.map((trip) => (
 				<TripItem key={trip.id} trip={trip} />
 			))}
-		</div>
+		</ItemGroup>
 	);
 }
