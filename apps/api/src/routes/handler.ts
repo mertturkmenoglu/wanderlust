@@ -9,6 +9,9 @@ import { getAppRouter } from '.';
 
 const errorLog = createWriteStream('errors.log', { flags: 'a' });
 
+const favicon =
+	'https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/refs/heads/main/web/public/favicon.ico';
+
 export function getApiHandler() {
 	const appRouter = getAppRouter();
 
@@ -18,7 +21,6 @@ export function getApiHandler() {
 				docsProvider: 'scalar',
 				schemaConverters: [new ZodToJsonSchemaConverter()],
 				docsTitle: 'Wanderlust API Documentation',
-				docsHead: `<link rel="icon" href="https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/refs/heads/main/web/public/favicon.ico" />`,
 				specGenerateOptions: {
 					info: {
 						title: 'Wanderlust API',
@@ -31,6 +33,31 @@ export function getApiHandler() {
 						summary:
 							'Wanderlust is a travel planning application that helps users organize and manage their trips effectively.',
 					},
+				},
+				renderDocsHtml: (specUrl, title, _head, scriptUrl) => {
+					const config = [
+						{ url: specUrl, title: 'Wanderlust API' },
+						{ url: '/api/auth/open-api/generate-schema', title: 'Auth API' },
+					];
+
+					return `
+					<html>
+					<head>
+						<meta charset="utf-8" />
+						<meta name="viewport" content="width=device-width, initial-scale=1" />
+						<title>${title}</title>
+						<link rel="icon" href="${favicon}" />
+					</head>
+					<body>
+						<div id="app"></div>
+						<script src="${scriptUrl}"></script>
+						<script>
+							const cfg = ${JSON.stringify(config)};
+							Scalar.createApiReference('#app', cfg);
+						</script>
+					</body>
+					</html>
+					`;
 				},
 			}),
 		],
