@@ -1,10 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from '@wanderlust/ui/components/avatar';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
@@ -14,9 +9,12 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
+import { format } from 'date-fns';
 import { CheckIcon, XIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { UserImage } from '@/components/user-image';
 import { useInvalidator } from '@/hooks/use-invalidator';
+import { userImage } from '@/lib/image';
 import { type Outputs, orpc } from '@/lib/orpc';
 
 type Props = {
@@ -38,13 +36,7 @@ export function InviteItem({ invite }: Props) {
 	return (
 		<Item variant="outline" className="hover:bg-muted">
 			<ItemMedia>
-				<Avatar className="size-12">
-					<AvatarImage
-						src={invite.fromUser.image ?? ''}
-						className="object-cover"
-					/>
-					<AvatarFallback>{invite.fromUser.name[0] ?? ''}</AvatarFallback>
-				</Avatar>
+				<UserImage src={userImage(invite.fromUser.image)} className="size-12" />
 			</ItemMedia>
 
 			<ItemContent>
@@ -61,8 +53,10 @@ export function InviteItem({ invite }: Props) {
 					invites you to join {invite.tripTitle}
 				</ItemTitle>
 				<ItemDescription>
-					<div>Role: {invite.role}</div>
-					<div>Expires at: {invite.expiresAt.toLocaleDateString()}</div>
+					<div>
+						Role: <span className="capitalize">{invite.role}</span>
+					</div>
+					<div>Expires at: {format(invite.expiresAt, 'PP p')}</div>
 				</ItemDescription>
 			</ItemContent>
 
