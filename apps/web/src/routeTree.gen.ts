@@ -24,6 +24,7 @@ import { Route as NearbyIndexRouteImport } from './routes/nearby/index'
 import { Route as MessagesIndexRouteImport } from './routes/messages/index'
 import { Route as ListsIndexRouteImport } from './routes/lists/index'
 import { Route as HelpIndexRouteImport } from './routes/help/index'
+import { Route as ChangeAccountsIndexRouteImport } from './routes/change-accounts/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
 import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
 import { Route as UUsernameRouteImport } from './routes/u/$username'
@@ -156,6 +157,11 @@ const ListsIndexRoute = ListsIndexRouteImport.update({
 const HelpIndexRoute = HelpIndexRouteImport.update({
   id: '/help/',
   path: '/help/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangeAccountsIndexRoute = ChangeAccountsIndexRouteImport.update({
+  id: '/change-accounts/',
+  path: '/change-accounts/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
@@ -483,6 +489,7 @@ export interface FileRoutesByFullPath {
   '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
+  '/change-accounts/': typeof ChangeAccountsIndexRoute
   '/help/': typeof HelpIndexRoute
   '/lists/': typeof ListsIndexRoute
   '/messages/': typeof MessagesIndexRoute
@@ -553,6 +560,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminAdminRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
+  '/change-accounts': typeof ChangeAccountsIndexRoute
   '/help': typeof HelpIndexRoute
   '/lists': typeof ListsIndexRoute
   '/messages': typeof MessagesIndexRoute
@@ -629,6 +637,7 @@ export interface FileRoutesById {
   '/u/$username': typeof UUsernameRouteWithChildren
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
+  '/change-accounts/': typeof ChangeAccountsIndexRoute
   '/help/': typeof HelpIndexRoute
   '/lists/': typeof ListsIndexRoute
   '/messages/': typeof MessagesIndexRoute
@@ -706,6 +715,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/bookmarks/'
     | '/categories/'
+    | '/change-accounts/'
     | '/help/'
     | '/lists/'
     | '/messages/'
@@ -776,6 +786,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookmarks'
     | '/categories'
+    | '/change-accounts'
     | '/help'
     | '/lists'
     | '/messages'
@@ -851,6 +862,7 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/bookmarks/'
     | '/categories/'
+    | '/change-accounts/'
     | '/help/'
     | '/lists/'
     | '/messages/'
@@ -926,6 +938,7 @@ export interface RootRouteChildren {
   UUsernameRoute: typeof UUsernameRouteWithChildren
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
+  ChangeAccountsIndexRoute: typeof ChangeAccountsIndexRoute
   HelpIndexRoute: typeof HelpIndexRoute
   ListsIndexRoute: typeof ListsIndexRoute
   MessagesIndexRoute: typeof MessagesIndexRoute
@@ -1054,6 +1067,13 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/help/'
       preLoaderRoute: typeof HelpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-accounts/': {
+      id: '/change-accounts/'
+      path: '/change-accounts'
+      fullPath: '/change-accounts/'
+      preLoaderRoute: typeof ChangeAccountsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categories/': {
@@ -1614,6 +1634,7 @@ const rootRouteChildren: RootRouteChildren = {
   UUsernameRoute: UUsernameRouteWithChildren,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
+  ChangeAccountsIndexRoute: ChangeAccountsIndexRoute,
   HelpIndexRoute: HelpIndexRoute,
   ListsIndexRoute: ListsIndexRoute,
   MessagesIndexRoute: MessagesIndexRoute,
