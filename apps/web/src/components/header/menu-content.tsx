@@ -16,6 +16,7 @@ import {
 	ScaleIcon,
 	SettingsIcon,
 	UserIcon,
+	UserKeyIcon,
 	UsersIcon,
 } from 'lucide-react';
 import { SignOut } from './sign-out';
@@ -140,6 +141,17 @@ export function MenuContent({ fullName, username }: Readonly<Props>) {
 				</Link>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
+
+			<DropdownMenuItem
+				asChild
+				className="group cursor-pointer focus:bg-primary/10"
+			>
+				<Link to="/change-accounts">
+					<UserKeyIcon className="size-4 group-focus:text-primary" />
+					<span className="ml-2 group-focus:text-primary">Change Accounts</span>
+				</Link>
+			</DropdownMenuItem>
+
 			<SignOut />
 		</DropdownMenuContent>
 	);
