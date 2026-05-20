@@ -34,7 +34,7 @@ export function Pagination({
 				Previous
 			</Button>
 			<Button variant="outline">
-				{page} / {totalPages}
+				{totalPages > 0 ? page : 0} / {totalPages}
 			</Button>
 			<Button
 				disabled={!hasNextPage}
