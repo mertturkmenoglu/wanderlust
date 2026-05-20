@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	DropdownMenu,
@@ -9,12 +9,9 @@ import {
 import { cn } from '@wanderlust/ui/lib/utils';
 import { EllipsisVerticalIcon, FlagIcon } from 'lucide-react';
 
-type Props = {
-	userId: string;
-	isThisUser: boolean;
-};
+export function BioDropdown() {
+	const { profile, meta } = useLoaderData({ from: '/u/$username' });
 
-export function BioDropdown({ userId, isThisUser }: Props) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild className="block">
@@ -31,17 +28,17 @@ export function BioDropdown({ userId, isThisUser }: Props) {
 					<Button
 						className={cn('flex w-full justify-start hover:no-underline', {
 							'disabled cursor-not-allowed bg-muted text-muted-foreground hover:text-muted-foreground':
-								isThisUser,
+								meta.isSelf,
 						})}
-						variant={isThisUser ? 'ghost' : 'link'}
+						variant={meta.isSelf ? 'ghost' : 'link'}
 						size="sm"
 						asChild
-						disabled={isThisUser}
+						disabled={meta.isSelf}
 					>
 						<Link
 							to="/report"
 							search={{
-								id: userId,
+								id: profile.id,
 								type: 'user',
 							}}
 						>

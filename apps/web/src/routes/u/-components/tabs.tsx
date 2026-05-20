@@ -1,14 +1,16 @@
-import { Link, useMatches } from '@tanstack/react-router';
+import { Link, useLoaderData, useMatches } from '@tanstack/react-router';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from '@wanderlust/ui/components/tabs';
 import { cn } from '@wanderlust/ui/lib/utils';
 
 type Props = {
-	username: string;
 	className?: string;
 };
 
-export function UserTabs({ username, className }: Props) {
+export function UserTabs({ className }: Props) {
+	const { profile } = useLoaderData({ from: '/u/$username' });
+	const username = profile.username;
+
 	const matches = useMatches();
 	const lastMatch = matches[matches.length - 1];
 
