@@ -28,7 +28,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<div>
+		<div className="flex flex-col">
 			<Listing />
 
 			{query.hasNextPage && <LoadMore />}
