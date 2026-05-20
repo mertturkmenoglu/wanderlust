@@ -39,50 +39,51 @@ function RouteComponent() {
 			{followers.length === 0 && <EmptyState />}
 
 			{followers.length > 0 && (
-				<ItemGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					{followers.map((follower) => (
-						<FollowersItem key={follower.id} follower={follower} />
-					))}
-				</ItemGroup>
+				<>
+					<ItemGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+						{followers.map((follower) => (
+							<FollowersItem key={follower.id} follower={follower} />
+						))}
+					</ItemGroup>
+					<ButtonGroup className="mx-auto my-4">
+						<Button
+							variant="outline"
+							className="w-32"
+							disabled={!pagination.hasPrevious}
+							onClick={() =>
+								navigate({
+									to: '.',
+									search: {
+										page: pagination.page - 1,
+									},
+								})
+							}
+						>
+							<ArrowLeftIcon />
+							Previous
+						</Button>
+						<Button variant="secondary" className="w-16">
+							{pagination.page} / {pagination.totalPages}
+						</Button>
+						<Button
+							variant="outline"
+							className="w-32"
+							disabled={!pagination.hasNext}
+							onClick={() =>
+								navigate({
+									to: '.',
+									search: {
+										page: pagination.page + 1,
+									},
+								})
+							}
+						>
+							Next
+							<ArrowRightIcon />
+						</Button>
+					</ButtonGroup>
+				</>
 			)}
-
-			<ButtonGroup className="mx-auto my-4">
-				<Button
-					variant="outline"
-					className="w-32"
-					disabled={!pagination.hasPrevious}
-					onClick={() =>
-						navigate({
-							to: '.',
-							search: {
-								page: pagination.page - 1,
-							},
-						})
-					}
-				>
-					<ArrowLeftIcon />
-					Previous
-				</Button>
-				<Button variant="secondary" className="w-16">
-					{pagination.page} / {pagination.totalPages}
-				</Button>
-				<Button
-					variant="outline"
-					className="w-32"
-					disabled={!pagination.hasNext}
-					onClick={() =>
-						navigate({
-							to: '.',
-							search: {
-								page: pagination.page + 1,
-							},
-						})
-					}
-				>
-					Next
-					<ArrowRightIcon />
-				</Button>
-			</ButtonGroup>
 		</div>
 	);
 }
