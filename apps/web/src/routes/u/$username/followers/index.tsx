@@ -1,11 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button } from '@wanderlust/ui/components/button';
-import { ButtonGroup } from '@wanderlust/ui/components/button-group';
 import { ItemGroup } from '@wanderlust/ui/components/item';
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { z } from 'zod';
-import { EmptyState } from './-components/empty';
-import { FollowersItem } from './-components/item';
+import { Pagination } from '@/components/pagination';
+import { EmptyState } from './-empty';
+import { FollowersItem } from './-item';
 
 const schema = z.object({
 	page: z.transform(Number).pipe(z.number()).optional(),
@@ -34,56 +32,40 @@ function RouteComponent() {
 	const { followers, pagination } = Route.useLoaderData();
 	const navigate = useNavigate();
 
+	if (followers.length === 0) {
+		return <EmptyState />;
+	}
+
 	return (
 		<div className="my-8">
-			{followers.length === 0 && <EmptyState />}
-
-			{followers.length > 0 && (
-				<>
-					<ItemGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-						{followers.map((follower) => (
-							<FollowersItem key={follower.id} follower={follower} />
-						))}
-					</ItemGroup>
-					<ButtonGroup className="mx-auto my-4">
-						<Button
-							variant="outline"
-							className="w-32"
-							disabled={!pagination.hasPrevious}
-							onClick={() =>
-								navigate({
-									to: '.',
-									search: {
-										page: pagination.page - 1,
-									},
-								})
-							}
-						>
-							<ArrowLeftIcon />
-							Previous
-						</Button>
-						<Button variant="secondary" className="w-16">
-							{pagination.page} / {pagination.totalPages}
-						</Button>
-						<Button
-							variant="outline"
-							className="w-32"
-							disabled={!pagination.hasNext}
-							onClick={() =>
-								navigate({
-									to: '.',
-									search: {
-										page: pagination.page + 1,
-									},
-								})
-							}
-						>
-							Next
-							<ArrowRightIcon />
-						</Button>
-					</ButtonGroup>
-				</>
-			)}
+			<ItemGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+				{followers.map((follower) => (
+					<FollowersItem key={follower.id} follower={follower} />
+				))}
+			</ItemGroup>
+			<Pagination
+				className="mx-auto my-4"
+				hasNextPage={pagination.hasNext}
+				hasPreviousPage={pagination.hasPrevious}
+				page={pagination.page}
+				totalPages={pagination.totalPages}
+				onPrevClick={() =>
+					navigate({
+						to: '.',
+						search: {
+							page: pagination.page - 1,
+						},
+					})
+				}
+				onNextClick={() =>
+					navigate({
+						to: '.',
+						search: {
+							page: pagination.page + 1,
+						},
+					})
+				}
+			/>
 		</div>
 	);
 }
