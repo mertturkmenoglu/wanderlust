@@ -1,18 +1,11 @@
 import { ItemGroup } from '@wanderlust/ui/components/item';
-import { useMemo } from 'react';
+import { useFlattenedQuery } from '@/hooks/use-flattened-query';
 import { useReviewsQuery } from './-hooks';
 import { ReviewItem } from './-item';
 
 export function List() {
 	const query = useReviewsQuery();
-
-	const flat = useMemo(() => {
-		if (!query.data) {
-			return [];
-		}
-
-		return query.data.pages.flatMap((p) => p.reviews);
-	}, [query.data]);
+	const flat = useFlattenedQuery(query.data, (p) => p.reviews);
 
 	return (
 		<ItemGroup className="gap-2">

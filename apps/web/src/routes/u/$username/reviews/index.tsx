@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useMemo } from 'react';
+import { useFlattenedQuery } from '@/hooks/use-flattened-query';
 import { EmptyState } from './-empty';
+import { ErrorState } from './-error';
 import { useReviewsQuery } from './-hooks';
 import { List } from './-list';
 import { LoadMore } from './-load-more';
@@ -12,22 +13,23 @@ export const Route = createFileRoute('/u/$username/reviews/')({
 
 function RouteComponent() {
 	const query = useReviewsQuery();
+	const flat = useFlattenedQuery(query.data, (p) => p.reviews);
 
-	const flat = useMemo(() => {
-		if (!query.data) {
-			return [];
-		}
+	if (query.isLoading) {
+		return <Loading />;
+	}
 
-		return query.data.pages.flatMap((p) => p.reviews);
-	}, [query.data]);
+	if (query.isError) {
+		return <ErrorState />;
+	}
+
+	if (flat.length === 0) {
+		return <EmptyState />;
+	}
 
 	return (
 		<div className="flex flex-col">
-			{query.isLoading && <Loading />}
-
-			{query.data && flat.length === 0 && <EmptyState />}
-
-			{query.data && <List />}
+			<List />
 
 			{query.hasNextPage && <LoadMore />}
 		</div>
