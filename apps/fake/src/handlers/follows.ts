@@ -29,6 +29,62 @@ export async function generate() {
 			console.error('Error updating follows for chunk:', result.reason);
 		}
 	}
+
+	const usernames = ['esin', 'hilal', 'lidya', 'mina', 'sueda', 'zoktay'];
+	const db = await getDb();
+	await db.transaction(async (tx) => {
+		const ids = await tx.query.users.findMany({
+			where: (users, { inArray }) => inArray(users.username, usernames),
+			columns: {
+				id: true,
+			},
+		});
+
+		for (const { id } of ids) {
+			for (const { id: targetId } of ids) {
+				if (id === targetId) continue;
+				await tx.insert(schema.follows).values({
+					followerId: id,
+					followingId: targetId,
+				});
+			}
+		}
+
+		const followingRows = await tx
+			.select({ userId: schema.follows.followerId, cnt: count() })
+			.from(schema.follows)
+			.where(
+				inArray(
+					schema.follows.followerId,
+					ids.map((x) => x.id),
+				),
+			)
+			.groupBy(schema.follows.followerId);
+
+		const followersRows = await tx
+			.select({ userId: schema.follows.followingId, cnt: count() })
+			.from(schema.follows)
+			.where(
+				inArray(
+					schema.follows.followingId,
+					ids.map((x) => x.id),
+				),
+			)
+			.groupBy(schema.follows.followingId);
+
+		const followingMap = new Map(followingRows.map((r) => [r.userId, r.cnt]));
+		const followersMap = new Map(followersRows.map((r) => [r.userId, r.cnt]));
+
+		for (const userId of userIds) {
+			await tx
+				.update(schema.users)
+				.set({
+					followingCount: followingMap.get(userId) ?? 0,
+					followersCount: followersMap.get(userId) ?? 0,
+				})
+				.where(eq(schema.users.id, userId));
+		}
+	});
 }
 
 type Insert = z.infer<typeof $insert.follows>;
