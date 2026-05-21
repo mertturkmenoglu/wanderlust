@@ -28,18 +28,19 @@ import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/password/reset/')({
 	component: RouteComponent,
-	beforeLoad: async () => {
+	validateSearch: z.object({
+		token: z.string(),
+		addSession: z.boolean().optional().catch(false),
+	}),
+	beforeLoad: async ({ search }) => {
 		const session = await authClient.getSession();
 
-		if (session.data?.user) {
+		if (session.data?.user && search.addSession !== true) {
 			throw redirect({
 				to: '/',
 			});
 		}
 	},
-	validateSearch: z.object({
-		token: z.string(),
-	}),
 });
 
 function RouteComponent() {

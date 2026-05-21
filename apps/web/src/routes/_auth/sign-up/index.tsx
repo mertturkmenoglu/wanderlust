@@ -21,6 +21,7 @@ import { Spinner } from '@wanderlust/ui/components/spinner';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
+import z from 'zod';
 import { AuthLegalText } from '@/components/auth/legal-text';
 import { AuthLink } from '@/components/auth/link';
 import { OAuthGroup } from '@/components/auth/oauth-group';
@@ -31,10 +32,13 @@ import { useSignUpForm, useSignUpMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/sign-up/')({
 	component: RouteComponent,
-	beforeLoad: async () => {
+	validateSearch: z.object({
+		addSession: z.boolean().optional().catch(false),
+	}),
+	beforeLoad: async ({ search }) => {
 		const session = await authClient.getSession();
 
-		if (session.data?.user) {
+		if (session.data?.user && search.addSession !== true) {
 			throw redirect({
 				to: '/',
 			});

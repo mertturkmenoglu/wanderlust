@@ -12,6 +12,7 @@ import {
 import { Input } from '@wanderlust/ui/components/input';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { Controller } from 'react-hook-form';
+import z from 'zod';
 import { AuthLink } from '@/components/auth/link';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
@@ -19,10 +20,13 @@ import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/password/forgot/')({
 	component: RouteComponent,
-	beforeLoad: async () => {
+	validateSearch: z.object({
+		addSession: z.boolean().optional().catch(false),
+	}),
+	beforeLoad: async ({ search }) => {
 		const session = await authClient.getSession();
 
-		if (session.data?.user) {
+		if (session.data?.user && search.addSession !== true) {
 			throw redirect({
 				to: '/',
 			});
