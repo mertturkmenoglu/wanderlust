@@ -52,6 +52,7 @@ export async function generate() {
 				username: username,
 				name: name,
 				image: image,
+				role: username === 'hilal' ? 'admin' : 'user',
 				emailVerified: faker.datatype.boolean(),
 				banner: null,
 				bio: faker.lorem.sentence(),
