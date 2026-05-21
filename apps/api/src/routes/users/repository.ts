@@ -153,7 +153,7 @@ export class UsersRepository {
 				});
 			}
 
-			const role = result.role === 'admin' ? 'admin' : 'user';
+			const role: 'admin' | 'user' = result.role === 'admin' ? 'admin' : 'user';
 
 			return {
 				role,
@@ -614,6 +614,31 @@ export class UsersRepository {
 
 			throw new ORPCError('InternalServerError', {
 				message: 'Failed to update user',
+				cause: err,
+			});
+		}
+	}
+
+	async checkUsernameAvailability(
+		data: dto.CheckUsernameAvailabilityInput,
+	): Promise<dto.CheckUsernameAvailabilityOutput> {
+		try {
+			const result = await this.db
+				.select({ id: schema.users.id })
+				.from(schema.users)
+				.where(eq(schema.users.username, data.username))
+				.limit(1);
+
+			return {
+				available: result.length === 0,
+			};
+		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
+
+			throw new ORPCError('InternalServerError', {
+				message: 'Failed to check username availability',
 				cause: err,
 			});
 		}

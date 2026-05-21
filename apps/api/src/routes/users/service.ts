@@ -197,4 +197,14 @@ export class UsersService {
 			profile: result.profile,
 		};
 	}
+
+	async checkUsernameAvailability(
+		data: dto.CheckUsernameAvailabilityInput,
+	): Promise<dto.CheckUsernameAvailabilityOutput> {
+		const result = await this.repo.checkUsernameAvailability(data);
+
+		return {
+			available: result.available,
+		};
+	}
 }

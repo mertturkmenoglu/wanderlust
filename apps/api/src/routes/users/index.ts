@@ -84,6 +84,13 @@ export function getRouter() {
 
 			return result;
 		}),
+		checkUsernameAvailability: os.checkUsernameAvailability.handler(
+			async ({ input }) => {
+				const result = await svc.checkUsernameAvailability(input);
+
+				return result;
+			},
+		),
 	});
 }
 

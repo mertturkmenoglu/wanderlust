@@ -181,3 +181,26 @@ export const updateOutput = z.object({
 });
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
+
+export const checkUsernameAvailabilityInput = z.object({
+	username: z
+		.string()
+		.min(1)
+		.max(32)
+		.meta({
+			description: 'Unique username of the user',
+			examples: ['johndoe'],
+		}),
+});
+
+export type CheckUsernameAvailabilityInput = z.infer<
+	typeof checkUsernameAvailabilityInput
+>;
+
+export const checkUsernameAvailabilityOutput = z.object({
+	available: z.boolean(),
+});
+
+export type CheckUsernameAvailabilityOutput = z.infer<
+	typeof checkUsernameAvailabilityOutput
+>;

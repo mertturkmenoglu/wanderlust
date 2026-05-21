@@ -254,4 +254,25 @@ export const contract = {
 			successDescription: 'OK',
 			tags: ['Users'],
 		}),
+	checkUsernameAvailability: oc
+		.input(dto.checkUsernameAvailabilityInput)
+		.output(dto.checkUsernameAvailabilityOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'GET',
+			path: '/users/check-username-availability',
+			summary: 'Check Username Availability',
+			description: 'Check if a username is available',
+			successStatus: 200,
+			successDescription: 'OK',
+			tags: ['Users'],
+		}),
 };
