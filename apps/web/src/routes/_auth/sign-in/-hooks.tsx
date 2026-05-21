@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
@@ -23,6 +23,7 @@ export function useSignInForm() {
 
 export function useSignInMutation() {
 	const navigate = useNavigate();
+	const search = useSearch({ from: '/_auth/sign-in/' });
 
 	return useMutation({
 		mutationKey: ['sign-in'],
@@ -38,6 +39,10 @@ export function useSignInMutation() {
 			);
 		},
 		onSuccess: async () => {
+			if (search.addSession === true) {
+				await authClient.updateSession();
+			}
+
 			await navigate({ to: '/' });
 			window.location.reload();
 		},
