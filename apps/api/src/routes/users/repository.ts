@@ -143,11 +143,17 @@ export class UsersRepository {
 
 	async getRole(userId: string) {
 		try {
-			const result = await this.db.query.admins.findFirst({
-				where: (t, { eq }) => eq(t.userId, userId),
+			const result = await this.db.query.users.findFirst({
+				where: (t, { eq }) => eq(t.id, userId),
 			});
 
-			const role: 'admin' | 'user' = result ? 'admin' : 'user';
+			if (!result) {
+				throw new ORPCError('NotFound', {
+					message: `User with id ${userId} not found`,
+				});
+			}
+
+			const role = result.role === 'admin' ? 'admin' : 'user';
 
 			return {
 				role,
