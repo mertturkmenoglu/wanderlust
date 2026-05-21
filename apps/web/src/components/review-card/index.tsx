@@ -19,15 +19,16 @@ import type { Outputs } from '@/lib/orpc';
 import { Menu } from './menu';
 
 type Props = {
+	className?: string;
 	review: Outputs['reviews']['listByPlaceId']['reviews'][number];
 };
 
-export function ReviewItem({ review }: Props) {
+export function ReviewCard({ review, className }: Props) {
 	const [open, setOpen] = useState(false);
 	const [index, setIndex] = useState(0);
 
 	return (
-		<Item variant="default">
+		<Item variant="default" className={cn(className)} size="sm">
 			<ItemHeader>
 				<Link
 					to="/u/$username"
@@ -45,9 +46,14 @@ export function ReviewItem({ review }: Props) {
 						<div className="text-primary text-xs tracking-tight">
 							<span className="">@{review.user.username}</span>
 						</div>
-						<div className="mt-1 text-muted-foreground text-xs">{`${formatDistanceToNow(
-							review.createdAt,
-						)} ago`}</div>
+						<Link
+							to="/p/$id/reviews/$reviewId"
+							params={{
+								id: review.placeId,
+								reviewId: review.id,
+							}}
+							className="mt-1 text-muted-foreground text-xs hover:underline"
+						>{`${formatDistanceToNow(review.createdAt)} ago`}</Link>
 					</div>
 				</Link>
 

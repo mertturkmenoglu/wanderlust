@@ -1,7 +1,7 @@
+import { ReviewCard } from '@/components/review-card';
 import { EmptyState } from './empty';
 import { ErrorState } from './error';
 import { useReviewsQuery, useSortedReviews } from './hooks';
-import { ReviewItem } from './item';
 import { Loading } from './loading';
 import { Pagination } from './pagination';
 
@@ -28,7 +28,7 @@ export function ReviewsList() {
 	return (
 		<>
 			{sortedReviews.map((review) => (
-				<ReviewItem review={review} key={review.id} />
+				<ReviewCard review={review} key={review.id} />
 			))}
 
 			<div className="col-span-full mt-4 flex justify-center">

@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useLoaderData, useSearch } from '@tanstack/react-router';
-import { toast } from 'sonner';
 import { type Outputs, orpc } from '@/lib/orpc';
 
 type Review = Outputs['reviews']['listByPlaceId']['reviews'][number];
@@ -10,17 +9,6 @@ export function useAssetsQuery(placeId: string) {
 		orpc.reviews.listAssetsByPlaceId.queryOptions({
 			input: {
 				id: placeId,
-			},
-		}),
-	);
-}
-
-export function useDeleteReviewMutation() {
-	return useMutation(
-		orpc.reviews.delete.mutationOptions({
-			onSuccess: () => {
-				toast.success('Review deleted');
-				globalThis.window.location.reload();
 			},
 		}),
 	);

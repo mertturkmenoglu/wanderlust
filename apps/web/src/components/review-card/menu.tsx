@@ -8,7 +8,13 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
-import { EllipsisVerticalIcon, FlagIcon, TrashIcon } from 'lucide-react';
+import {
+	EllipsisVerticalIcon,
+	FlagIcon,
+	Share2Icon,
+	TrashIcon,
+} from 'lucide-react';
+import { toast } from 'sonner';
 import { authClient } from '@/lib/auth';
 import type { Outputs } from '@/lib/orpc';
 import { useDeleteReviewMutation } from './hooks';
@@ -20,7 +26,7 @@ type Props = {
 export function Menu({ review }: Props) {
 	const session = authClient.useSession();
 	const isOwner = session.data?.user.id === review.userId;
-	const mutation = useDeleteReviewMutation();
+	const mutation = useDeleteReviewMutation(review.placeId);
 
 	return (
 		<DropdownMenu>
@@ -30,6 +36,24 @@ export function Menu({ review }: Props) {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56" align="end">
+				<DropdownMenuItem asChild>
+					<Button
+						className="flex w-full cursor-pointer items-center justify-between"
+						variant="ghost"
+						onClick={async () => {
+							await window.navigator.clipboard.writeText(
+								`${window.location.origin}/p/${review.placeId}/reviews/${review.id}`,
+							);
+							toast.success('Link copied to clipboard');
+						}}
+					>
+						Share
+						<DropdownMenuShortcut>
+							<Share2Icon className="size-3" />
+						</DropdownMenuShortcut>
+					</Button>
+				</DropdownMenuItem>
+
 				<DropdownMenuItem>
 					<Link
 						to="/report"
