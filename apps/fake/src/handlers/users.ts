@@ -29,19 +29,20 @@ export async function generate() {
 		const accountBatch: AccountInsert[] = [];
 
 		for (let j = 0; j < step; j++) {
-			const firstName = faker.person.firstName();
-			const lastName = faker.person.lastName();
+			const sex = Math.random() > 0.5 ? 'female' : 'male';
+			const firstName = faker.person.firstName(sex).slice(0, 14);
+			const lastName = faker.person.lastName(sex).slice(0, 14);
 			const emailBase = faker.internet.email({
 				firstName,
 				lastName,
 				allowSpecialCharacters: false,
 			});
-			const emailRandomness = faker.string.alpha(5);
+			const emailRandomness = faker.string.alpha(4);
 			const email = `${emailRandomness}${emailBase}`;
 			const usernameBase = faker.internet.username({ firstName, lastName });
 			const usernameRandomness = faker.string.alpha(4);
 			const username = `${usernameBase}${usernameRandomness}`;
-			const image = faker.image.personPortrait();
+			const image = faker.image.personPortrait({ sex });
 			const name = `${firstName} ${lastName}`;
 			const userId = nanoid();
 
