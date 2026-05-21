@@ -5,7 +5,7 @@ import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { multiSession, openAPI } from 'better-auth/plugins';
+import { admin, multiSession, openAPI } from 'better-auth/plugins';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -72,6 +72,7 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 			},
 		},
 		plugins: [
+			admin(),
 			multiSession({
 				maximumSessions: 3,
 			}),
