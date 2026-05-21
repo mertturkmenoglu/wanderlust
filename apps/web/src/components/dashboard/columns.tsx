@@ -2,7 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 type KeyValueCols = {
 	k: string;
-	v: string;
+	v: React.ReactNode;
 };
 
 const keyValueCols: ColumnDef<KeyValueCols>[] = [
@@ -13,6 +13,7 @@ const keyValueCols: ColumnDef<KeyValueCols>[] = [
 	{
 		accessorKey: 'v',
 		header: 'Value',
+		cell: ({ row }) => <div className="w-full">{row.getValue('v')}</div>,
 	},
 ];
 
