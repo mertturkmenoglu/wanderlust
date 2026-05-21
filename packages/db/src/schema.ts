@@ -30,6 +30,13 @@ export const users = pgTable(
 		followersCount: integer('followers_count').notNull().default(0),
 		followingCount: integer('following_count').notNull().default(0),
 		createdAt: timestamp('created_at').notNull().defaultNow(),
+		role: text('role'),
+		banned: boolean('banned'),
+		banReason: text('ban_reason'),
+		banExpires: timestamp('ban_expires', {
+			precision: 6,
+			withTimezone: true,
+		}),
 		updatedAt: timestamp('updated_at')
 			.notNull()
 			.defaultNow()
@@ -65,6 +72,7 @@ export const sessions = pgTable('sessions', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
+	impersonatedBy: text('impersonated_by'),
 });
 
 export const accounts = pgTable('accounts', {
