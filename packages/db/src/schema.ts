@@ -55,12 +55,6 @@ export const usersRelations = relations(users, ({ many }) => ({
 	eventInterests: many(eventInterests),
 }));
 
-export const admins = pgTable('admins', {
-	userId: text()
-		.primaryKey()
-		.references(() => users.id, { onDelete: 'cascade' }),
-});
-
 export const sessions = pgTable('sessions', {
 	id: text('id').primaryKey(),
 	expiresAt: timestamp('expires_at').notNull(),
