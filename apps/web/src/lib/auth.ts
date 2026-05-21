@@ -1,12 +1,20 @@
 import { redirect } from '@tanstack/react-router';
 import type { TAuthService } from '@wanderlust/auth';
-import { inferAdditionalFields, multiSessionClient } from 'better-auth/client/plugins';
+import {
+	adminClient,
+	inferAdditionalFields,
+	multiSessionClient,
+} from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 import z from 'zod';
 
 export const authClient = createAuthClient({
 	baseURL: import.meta.env.VITE_API_URL,
-	plugins: [inferAdditionalFields<TAuthService>(), multiSessionClient()],
+	plugins: [
+		inferAdditionalFields<TAuthService>(),
+		adminClient(),
+		multiSessionClient(),
+	],
 });
 
 export async function authGuard() {
