@@ -69,6 +69,7 @@ import { Route as AdminDashboardCollectionsIndexRouteImport } from './routes/_ad
 import { Route as AdminDashboardCitiesIndexRouteImport } from './routes/_admin/dashboard/cities/index'
 import { Route as AdminDashboardCategoriesIndexRouteImport } from './routes/_admin/dashboard/categories/index'
 import { Route as TripsIdParticipantsInvitesIndexRouteImport } from './routes/trips/$id/participants/invites/index'
+import { Route as PIdReviewsReviewIdIndexRouteImport } from './routes/p/$id/reviews/$reviewId/index'
 import { Route as AdminDashboardUsersIdIndexRouteImport } from './routes/_admin/dashboard/users/$id/index'
 import { Route as AdminDashboardReportsIdIndexRouteImport } from './routes/_admin/dashboard/reports/$id/index'
 import { Route as AdminDashboardPlacesNewIndexRouteImport } from './routes/_admin/dashboard/places/new/index'
@@ -395,6 +396,11 @@ const TripsIdParticipantsInvitesIndexRoute =
     path: '/participants/invites/',
     getParentRoute: () => TripsIdRoute,
   } as any)
+const PIdReviewsReviewIdIndexRoute = PIdReviewsReviewIdIndexRouteImport.update({
+  id: '/p/$id/reviews/$reviewId/',
+  path: '/p/$id/reviews/$reviewId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDashboardUsersIdIndexRoute =
   AdminDashboardUsersIdIndexRouteImport.update({
     id: '/users/$id/',
@@ -563,6 +569,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/places/new/': typeof AdminDashboardPlacesNewIndexRoute
   '/dashboard/reports/$id/': typeof AdminDashboardReportsIdIndexRoute
   '/dashboard/users/$id/': typeof AdminDashboardUsersIdIndexRoute
+  '/p/$id/reviews/$reviewId/': typeof PIdReviewsReviewIdIndexRoute
   '/trips/$id/participants/invites/': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -636,6 +643,7 @@ export interface FileRoutesByTo {
   '/dashboard/places/new': typeof AdminDashboardPlacesNewIndexRoute
   '/dashboard/reports/$id': typeof AdminDashboardReportsIdIndexRoute
   '/dashboard/users/$id': typeof AdminDashboardUsersIdIndexRoute
+  '/p/$id/reviews/$reviewId': typeof PIdReviewsReviewIdIndexRoute
   '/trips/$id/participants/invites': typeof TripsIdParticipantsInvitesIndexRoute
   '/dashboard/categories/$id/edit': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -715,6 +723,7 @@ export interface FileRoutesById {
   '/_admin/dashboard/places/new/': typeof AdminDashboardPlacesNewIndexRoute
   '/_admin/dashboard/reports/$id/': typeof AdminDashboardReportsIdIndexRoute
   '/_admin/dashboard/users/$id/': typeof AdminDashboardUsersIdIndexRoute
+  '/p/$id/reviews/$reviewId/': typeof PIdReviewsReviewIdIndexRoute
   '/trips/$id/participants/invites/': typeof TripsIdParticipantsInvitesIndexRoute
   '/_admin/dashboard/categories/$id/edit/': typeof AdminDashboardCategoriesIdEditIndexRoute
   '/_admin/dashboard/cities/$id/edit/': typeof AdminDashboardCitiesIdEditIndexRoute
@@ -795,6 +804,7 @@ export interface FileRouteTypes {
     | '/dashboard/places/new/'
     | '/dashboard/reports/$id/'
     | '/dashboard/users/$id/'
+    | '/p/$id/reviews/$reviewId/'
     | '/trips/$id/participants/invites/'
     | '/dashboard/categories/$id/edit/'
     | '/dashboard/cities/$id/edit/'
@@ -868,6 +878,7 @@ export interface FileRouteTypes {
     | '/dashboard/places/new'
     | '/dashboard/reports/$id'
     | '/dashboard/users/$id'
+    | '/p/$id/reviews/$reviewId'
     | '/trips/$id/participants/invites'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
@@ -946,6 +957,7 @@ export interface FileRouteTypes {
     | '/_admin/dashboard/places/new/'
     | '/_admin/dashboard/reports/$id/'
     | '/_admin/dashboard/users/$id/'
+    | '/p/$id/reviews/$reviewId/'
     | '/trips/$id/participants/invites/'
     | '/_admin/dashboard/categories/$id/edit/'
     | '/_admin/dashboard/cities/$id/edit/'
@@ -986,6 +998,7 @@ export interface RootRouteChildren {
   AuthPasswordForgotIndexRoute: typeof AuthPasswordForgotIndexRoute
   AuthPasswordResetIndexRoute: typeof AuthPasswordResetIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
+  PIdReviewsReviewIdIndexRoute: typeof PIdReviewsReviewIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1410,6 +1423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdParticipantsInvitesIndexRouteImport
       parentRoute: typeof TripsIdRoute
     }
+    '/p/$id/reviews/$reviewId/': {
+      id: '/p/$id/reviews/$reviewId/'
+      path: '/p/$id/reviews/$reviewId'
+      fullPath: '/p/$id/reviews/$reviewId/'
+      preLoaderRoute: typeof PIdReviewsReviewIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_admin/dashboard/users/$id/': {
       id: '/_admin/dashboard/users/$id/'
       path: '/users/$id'
@@ -1700,6 +1720,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthPasswordForgotIndexRoute: AuthPasswordForgotIndexRoute,
   AuthPasswordResetIndexRoute: AuthPasswordResetIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
+  PIdReviewsReviewIdIndexRoute: PIdReviewsReviewIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
