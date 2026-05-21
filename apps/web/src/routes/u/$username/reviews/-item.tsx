@@ -19,9 +19,10 @@ type Props = {
 export function ReviewItem({ review }: Props) {
 	return (
 		<Link
-			to="/p/$id"
+			to="/p/$id/reviews/$reviewId"
 			params={{
 				id: review.placeId,
+				reviewId: review.id,
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
