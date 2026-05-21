@@ -187,6 +187,42 @@ const collectionsCols: ColumnDef<Collection>[] = [
 	},
 ];
 
+type User = {
+	id: string;
+	name: string;
+	username: string;
+	email: string;
+	createdAt: string;
+	updatedAt: string;
+};
+
+const usersCols: ColumnDef<User>[] = [
+	{
+		accessorKey: 'id',
+		header: 'ID',
+	},
+	{
+		accessorKey: 'name',
+		header: 'Name',
+	},
+	{
+		accessorKey: 'username',
+		header: 'Username',
+	},
+	{
+		accessorKey: 'email',
+		header: 'Email',
+	},
+	{
+		accessorKey: 'createdAt',
+		header: 'Created At',
+	},
+	{
+		accessorKey: 'updatedAt',
+		header: 'Updated At',
+	},
+];
+
 export {
 	type City,
 	type Collection,
@@ -200,4 +236,6 @@ export {
 	placesCols,
 	type Report,
 	reportsCols,
+	type User,
+	usersCols,
 };
