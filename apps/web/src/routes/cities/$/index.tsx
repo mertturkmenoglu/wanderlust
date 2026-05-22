@@ -3,8 +3,9 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
+import { MapIcon } from 'lucide-react';
+import { OverlayBanner } from '@/components/banner/overlay';
 import { ErrorComponent } from '@/components/error-component';
-import { OverlayBanner } from '@/components/overlay-banner';
 import { PlaceCard } from '@/components/place-card';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { TagNavigation } from '@/components/tag-navigation';
@@ -78,18 +79,28 @@ function RouteComponent() {
 			</div>
 
 			<OverlayBanner
-				image="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+				image="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18"
 				alt="Cities Banner Image"
 				message={
-					<div className="flex items-center gap-4">
+					<div className="flex items-center gap-4 text-white">
 						<div>Plan a trip to {city.name}</div>
-						<Button asChild variant="default">
-							<Link to="/trips/planner">Start Planning</Link>
+						<Button
+							asChild
+							variant="outline"
+							className="bg-white text-midnight"
+						>
+							<Link to="/trips/planner">
+								<MapIcon />
+								Start Planning
+							</Link>
 						</Button>
 					</div>
 				}
-				className="my-8"
-				imgClassName="aspect-[3]"
+				classNames={{
+					root: 'my-8',
+					image: 'aspect-[3]',
+					messageContainer: 'bg-black/60',
+				}}
 			/>
 
 			<SuspenseWrapper>
@@ -100,22 +111,25 @@ function RouteComponent() {
 				image={city.image}
 				alt={`${city.name} image`}
 				message={
-					<div className="flex items-center gap-4">
-						<div>See all locations in {city.name}</div>
-						<Button asChild variant="default">
+					<div className="flex items-center gap-4 text-white">
+						<div>Find all places in {city.name}</div>
+						<Button asChild variant="warning">
 							<Link
 								to="/search"
 								search={{
 									city: city.name,
 								}}
 							>
-								Discover
+								Browse
 							</Link>
 						</Button>
 					</div>
 				}
-				className="my-8"
-				imgClassName="aspect-[3]"
+				classNames={{
+					root: 'my-8',
+					image: 'aspect-[3]',
+					messageContainer: 'bg-black/60',
+				}}
 			/>
 		</div>
 	);
