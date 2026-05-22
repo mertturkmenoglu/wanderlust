@@ -1,4 +1,4 @@
-import { useLoaderData } from '@tanstack/react-router';
+import { useLoaderData, useNavigate } from '@tanstack/react-router';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,6 +20,7 @@ import { authClient } from '@/lib/auth';
 
 export function RemoveUser() {
 	const { data } = useLoaderData({ from: '/_admin/dashboard/users/$id/' });
+	const navigate = useNavigate({ from: '/dashboard/users/$id/' });
 	const [open, setOpen] = useState(false);
 	const [text, setText] = useState('');
 	const invalidate = useInvalidator();
@@ -85,7 +86,7 @@ export function RemoveUser() {
 						<AlertDialogAction
 							disabled={text !== data.id}
 							onClick={async () => {
-								const { error } = await authClient.admin.revokeUserSessions({
+								const { error } = await authClient.admin.removeUser({
 									userId: data.id,
 								});
 
@@ -94,8 +95,12 @@ export function RemoveUser() {
 									return;
 								}
 
+								await navigate({
+									to: '/dashboard/users',
+								});
+
 								await invalidate();
-								toast.success('Revoked all sessions successfully');
+								toast.success('Removed user successfully');
 							}}
 						>
 							Hard Delete User
