@@ -1,6 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
-import { PlaceCard } from '@/components/place-card';
+import {
+	CategoriesBanner,
+	TripPlannerCta,
+} from '@/components/banner/common';
 import { ReviewCard } from '@/components/review-card';
 
 export const Route = createFileRoute('/p/$id/reviews/$reviewId/')({
@@ -24,10 +27,11 @@ function RouteComponent() {
 				href={`/p/${data.review.placeId}`}
 				text="Go back to place details"
 			/>
-			<div className="">
-				<PlaceCard place={data.review.place} variant="item" />
-				<ReviewCard review={data.review} className="my-16" />
+			<div className="mx-auto my-16 max-w-3xl">
+				<ReviewCard review={data.review} className="" />
 			</div>
+			<CategoriesBanner />
+			<TripPlannerCta />
 		</div>
 	);
 }
