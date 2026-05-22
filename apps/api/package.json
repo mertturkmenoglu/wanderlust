@@ -41,7 +41,8 @@
 		"inversify": "catalog:",
 		"reflect-metadata": "^0.2.2",
 		"typesense": "^3.0.6",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"date-fns": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",

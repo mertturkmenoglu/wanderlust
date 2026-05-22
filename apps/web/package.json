@@ -34,7 +34,7 @@
 		"@zag-js/rating-group": "^1.40.0",
 		"@zag-js/react": "^1.40.0",
 		"better-auth": "catalog:",
-		"date-fns": "^4.1.0",
+		"date-fns": "catalog:",
 		"instantsearch.css": "^8.16.1",
 		"instantsearch.js": "^4.96.2",
 		"lucide-react": "^1.14.0",
