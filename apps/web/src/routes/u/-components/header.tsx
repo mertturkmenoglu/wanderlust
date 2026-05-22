@@ -1,4 +1,4 @@
-import { getRouteApi } from '@tanstack/react-router';
+import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ExternalLinkIcon } from 'lucide-react';
 import { ActionButtons } from './action-buttons';
@@ -11,8 +11,7 @@ type Props = {
 };
 
 export function Header({ className }: Props) {
-	const parentRoute = getRouteApi('/u/$username');
-	const { profile } = parentRoute.useLoaderData();
+	const { profile } = useLoaderData({ from: '/u/$username' });
 
 	return (
 		<div className={cn(className)}>
@@ -49,7 +48,7 @@ export function Header({ className }: Props) {
 				</a>
 			)}
 
-			<Tabs className="md:max-w-5xl" />
+			<Tabs className="my-4" />
 		</div>
 	);
 }

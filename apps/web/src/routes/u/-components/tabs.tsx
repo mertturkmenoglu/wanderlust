@@ -1,71 +1,56 @@
-import { Link, useLoaderData, useMatches } from '@tanstack/react-router';
+import { Link, useMatches, useParams } from '@tanstack/react-router';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
+import { Separator } from '@wanderlust/ui/components/separator';
 import { Tabs, TabsList, TabsTrigger } from '@wanderlust/ui/components/tabs';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { useTabs } from './hooks';
 
 type Props = {
 	className?: string;
 };
 
 export function UserTabs({ className }: Props) {
-	const { profile } = useLoaderData({ from: '/u/$username' });
-	const username = profile.username;
-
+	const { username } = useParams({ from: '/u/$username' });
 	const matches = useMatches();
-	const lastMatch = matches[matches.length - 1];
+	const lastMatch = matches.at(-1);
 
 	if (!lastMatch) {
 		return null;
 	}
 
-	const base = `/u/${username}`;
-	const tabs = [
-		{ id: '/u/$username/', label: 'Profile', href: `${base}` },
-		{
-			id: '/u/$username/activities/',
-			label: 'Activities',
-			href: `${base}/activities`,
-		},
-		{
-			id: '/u/$username/reviews/',
-			label: 'Reviews',
-			href: `${base}/reviews`,
-		},
-		{
-			id: '/u/$username/lists/',
-			label: 'Lists',
-			href: `${base}/lists`,
-		},
-		{
-			id: '/u/$username/favorites/',
-			label: 'Favorites',
-			href: `${base}/favorites`,
-		},
-	];
-
-	const activeTab = tabs.find((tab) => tab.id === lastMatch.routeId);
+	const tabs = useTabs(username);
+	const activeTab = tabs.find((tab) => tab.to === lastMatch.routeId);
 
 	return (
 		<div className={cn(className)}>
 			<ScrollArea>
-				<Tabs value={activeTab?.id} className="my-4 w-full bg-transparent">
-					<TabsList className="space-x-4 bg-transparent">
+				<Tabs
+					value={activeTab?.to}
+					className="w-full overflow-y-clip bg-transparent"
+				>
+					<TabsList className="space-x-6 bg-transparent px-0!">
 						{tabs.map((t) => (
 							<TabsTrigger
-								key={t.id}
-								value={t.id}
-								className="bg-transparent px-1 shadow-none! first-of-type:pl-0"
+								key={t.to}
+								value={t.to}
+								className="bg-transparent px-0! shadow-none!"
 							>
 								<Link
-									to={t.href}
-									className={cn('text-base', {
-										'text-primary underline underline-offset-8':
-											activeTab?.id === t.id,
-										'hover:text-primary hover:underline hover:decoration-primary hover:underline-offset-8':
-											activeTab?.id !== t.id,
-									})}
+									to={t.to}
+									params={{ username }}
+									className="w-full text-base"
+									activeOptions={{
+										exact: t.to === '/u/$username',
+									}}
+									activeProps={{
+										className: 'text-primary underline underline-offset-8',
+									}}
+									inactiveProps={{
+										className:
+											'hover:text-primary hover:underline hover:decoration-primary hover:underline-offset-8',
+									}}
 								>
-									{t.label}
+									{t.title}
 								</Link>
 							</TabsTrigger>
 						))}
@@ -74,6 +59,8 @@ export function UserTabs({ className }: Props) {
 
 				<ScrollBar orientation="horizontal" />
 			</ScrollArea>
+
+			<Separator className="-mt-1" />
 		</div>
 	);
 }

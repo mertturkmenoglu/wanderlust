@@ -1,26 +1,14 @@
 import { ReloadIcon } from '@radix-ui/react-icons';
-import { useMutation } from '@tanstack/react-query';
 import { Link, useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
-import { toast } from 'sonner';
-import { useInvalidator } from '@/hooks/use-invalidator';
-import { orpc } from '@/lib/orpc';
+import { useFollowMutation } from './hooks';
 
 export function ActionButtons() {
 	const { profile, meta } = useLoaderData({
 		from: '/u/$username',
 	});
 
-	const invalidate = useInvalidator();
-
-	const mutation = useMutation(
-		orpc.users.follow.mutationOptions({
-			onSettled: async () => {
-				await invalidate();
-				toast.success(meta.isFollowing ? 'Unfollowed' : 'Followed');
-			},
-		}),
-	);
+	const mutation = useFollowMutation();
 
 	return (
 		<div>
