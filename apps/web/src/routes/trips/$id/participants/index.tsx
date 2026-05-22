@@ -1,8 +1,10 @@
 import { createFileRoute, getRouteApi, Link } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
-import { DockIcon, UsersIcon } from 'lucide-react';
+import { ItemGroup } from '@wanderlust/ui/components/item';
+import { DockIcon } from 'lucide-react';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
-import { Item } from './-item';
+import type { TripParticipant } from './-hooks';
+import { ParticipantItem } from './-item';
 
 export const Route = createFileRoute('/trips/$id/participants/')({
 	component: RouteComponent,
@@ -13,54 +15,51 @@ function RouteComponent() {
 	const { trip } = route.useLoaderData();
 	const { auth } = route.useRouteContext();
 	const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
+	const canInvite = isPrivileged && trip.visibilityLevel !== 'private';
+	const allParticipants: TripParticipant[] = [
+		{
+			id: '',
+			tripId: trip.id,
+			userId: trip.owner.id,
+			role: 'owner',
+			user: {
+				id: trip.owner.id,
+				name: trip.owner.name,
+				username: trip.owner.username,
+				image: trip.owner.image,
+			},
+		},
+		...trip.participants,
+	];
 
 	return (
-		<div className="mt-4">
-			<div className="flex items-center justify-between">
-				<div className="flex items-center">
-					<UsersIcon className="mr-2 size-5" />
-					<div className="font-medium">Participants</div>
-				</div>
-				{isPrivileged && trip.visibilityLevel !== 'private' && (
-					<Link
-						to="/trips/$id/participants/invites"
-						params={{
-							id: trip.id,
-						}}
-						className={buttonVariants({ variant: 'ghost', size: 'sm' })}
-					>
-						<DockIcon className="size-4" />
-						<span>Invites</span>
-					</Link>
-				)}
-			</div>
+		<div className="flex flex-col">
+			{canInvite && (
+				<Link
+					to="/trips/$id/participants/invites"
+					params={{
+						id: trip.id,
+					}}
+					className={buttonVariants({
+						variant: 'ghost',
+						size: 'sm',
+						className: 'ml-auto',
+					})}
+				>
+					<DockIcon className="size-4" />
+					<span>Invites</span>
+				</Link>
+			)}
 
-			<div className="mt-4">
-				{/** biome-ignore lint/a11y/useValidAriaRole: Not applicable, role is a prop */}
-				<Item
-					image={trip.owner.image ?? ''}
-					name={trip.owner.name}
-					role="Owner"
-					isPrivileged={false}
-					username={trip.owner.username}
-					id={trip.owner.id}
-					tripId={trip.id}
-				/>
-
-				{trip.participants.map((p) => (
-					<Item
-						key={p.id}
-						image={p.user.image ?? ''}
-						name={p.user.name}
-						role={p.role}
-						username={p.user.username}
+			<ItemGroup className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+				{allParticipants.map((p) => (
+					<ParticipantItem
+						key={p.userId}
+						participant={p}
 						isPrivileged={isPrivileged}
-						id={p.id}
-						tripId={trip.id}
-						className="mt-2"
 					/>
 				))}
-			</div>
+			</ItemGroup>
 		</div>
 	);
 }

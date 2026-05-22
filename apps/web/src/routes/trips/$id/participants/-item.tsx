@@ -1,4 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Badge } from '@wanderlust/ui/components/badge';
 import { Button } from '@wanderlust/ui/components/button';
@@ -10,103 +9,87 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
-import { cn } from '@wanderlust/ui/lib/utils';
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
 import { KeySquareIcon, Settings2Icon, UserMinusIcon } from 'lucide-react';
-import { toast } from 'sonner';
 import { UserImage } from '@/components/user-image';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
-import { orpc } from '@/lib/orpc';
+import { type TripParticipant, useRemoveParticipantMutation } from './-hooks';
 
 type Props = {
-	image: string;
-	name: string;
-	username: string;
-	role: string;
+	participant: TripParticipant;
 	isPrivileged: boolean;
 	className?: string;
-	id: string;
-	tripId: string;
 };
 
-export function Item({
-	image,
-	name,
-	username,
-	role,
+export function ParticipantItem({
+	participant,
 	isPrivileged,
 	className,
-	id,
-	tripId,
 }: Props) {
-	const invalidate = useInvalidator();
-	const removeParticipantMutation = useMutation(
-		orpc.trips.deleteParticipant.mutationOptions({
-			onSuccess: async () => {
-				await invalidate();
-				toast.success('Participant removed');
-			},
-		}),
-	);
+	const mutation = useRemoveParticipantMutation();
 
 	return (
 		<Link
 			to="/u/$username"
 			params={{
-				username,
+				username: participant.user.username,
 			}}
-			className={cn('flex items-center gap-4', className)}
+			className={className}
 		>
-			<UserImage
-				src={ipx(userImage(image), 'w_512')}
-				imgClassName="size-16"
-				fallbackClassName="size-16 rounded-md"
-				className="size-16 rounded-md"
-			/>
+			<Item variant="outline" className="hover:bg-muted">
+				<UserImage
+					src={ipx(userImage(participant.user.image), 'w_512')}
+					className="size-14"
+				/>
+				<ItemContent>
+					<ItemTitle>{participant.user.name}</ItemTitle>
+					<ItemDescription>@{participant.user.username}</ItemDescription>
+				</ItemContent>
+				<ItemActions>
+					<Badge variant="secondary" className="capitalize">
+						{participant.role}
+					</Badge>
+					{isPrivileged && participant.role !== 'owner' && (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="ghost" size="icon">
+									<Settings2Icon className="size-4" />
+									<span className="sr-only">Edit</span>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuLabel>Manage</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem variant="default">
+									<KeySquareIcon className="size-4" />
+									<span>Change Role</span>
+								</DropdownMenuItem>
 
-			<div>
-				<div className="font-bold text-xl">{name}</div>
-				<div className="text-primary text-xs">@{username}</div>
-			</div>
-
-			<div className="ml-auto flex items-center gap-2">
-				<Badge variant="secondary" className="capitalize">
-					{role}
-				</Badge>
-				{isPrivileged && (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" size="icon">
-								<Settings2Icon className="size-4" />
-								<span className="sr-only">Edit</span>
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							<DropdownMenuLabel>Manage</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem variant="default">
-								<KeySquareIcon className="size-4" />
-								<span>Change Role</span>
-							</DropdownMenuItem>
-
-							<DropdownMenuItem
-								variant="destructive"
-								onClick={(e) => {
-									e.preventDefault();
-									removeParticipantMutation.mutate({
-										id: tripId,
-										userId: id,
-									});
-								}}
-							>
-								<UserMinusIcon className="size-4" />
-								<span>Remove</span>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				)}
-			</div>
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={(e) => {
+										e.preventDefault();
+										mutation.mutate({
+											id: participant.tripId,
+											userId: participant.userId,
+										});
+									}}
+								>
+									<UserMinusIcon className="size-4" />
+									<span>Remove</span>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)}
+				</ItemActions>
+			</Item>
 		</Link>
 	);
 }
