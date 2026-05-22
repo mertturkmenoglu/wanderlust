@@ -39,7 +39,7 @@ export function CategoriesBanner({
 }: CategoriesBannerProps) {
 	return (
 		<OverlayBanner
-			image="/tourist.jpg"
+			image="https://img.magnific.com/free-photo/portrait-happy-tourist-woman-holding-passport-holiday-white-background_1258-112708.jpg?w=2000"
 			alt="Categories Banner Image"
 			message={
 				<div className="flex items-center gap-4">
