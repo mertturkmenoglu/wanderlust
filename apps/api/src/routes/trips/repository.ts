@@ -737,6 +737,26 @@ export class TripsRepository {
 		}
 	}
 
+	async countComments(tripId: string): Promise<number> {
+		try {
+			const count = await this.db.$count(
+				schema.tripComments,
+				eq(schema.tripComments.tripId, tripId),
+			);
+
+			return count;
+		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
+
+			throw new ORPCError('INTERNAL_SERVER_ERROR', {
+				message: 'Failed to count trip comments',
+				cause: err,
+			});
+		}
+	}
+
 	async getComment(commentId: string) {
 		try {
 			const result = await this.db.query.tripComments.findFirst({

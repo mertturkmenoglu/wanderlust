@@ -146,6 +146,12 @@ export function getRouter() {
 				return result;
 			},
 		),
+		getSummary: os.getSummary.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.getSummary(userId, input);
+
+			return result;
+		}),
 	});
 }
 

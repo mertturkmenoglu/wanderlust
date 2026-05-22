@@ -406,3 +406,20 @@ export const updateRequestedAmenitiesOutput = z.object({
 export type UpdateRequestedAmenitiesOutput = z.infer<
 	typeof updateRequestedAmenitiesOutput
 >;
+
+export const getSummaryInput = trip.pick({ id: true });
+
+export type GetSummaryInput = z.infer<typeof getSummaryInput>;
+
+export const getSummaryOutput = z.object({
+	trip: trip,
+	totalCities: z.number(),
+	totalDays: z.number(),
+	totalParticipants: z.number(),
+	totalLocations: z.number(),
+	totalComments: z.number(),
+	totalItineraryItems: z.number(),
+	totalAssets: z.number(),
+});
+
+export type GetSummaryOutput = z.infer<typeof getSummaryOutput>;

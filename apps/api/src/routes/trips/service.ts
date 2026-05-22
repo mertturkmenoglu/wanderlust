@@ -1,4 +1,5 @@
 import { ORPCError } from '@orpc/client';
+import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
 import * as authz from './authz';
 import type * as dto from './dto';
@@ -514,6 +515,43 @@ export class TripsService {
 
 		return {
 			trip: result,
+		};
+	}
+
+	async getSummary(
+		userId: string,
+		data: dto.GetSummaryInput,
+	): Promise<dto.GetSummaryOutput> {
+		const trip = await this.repo.get(userId, { id: data.id });
+
+		if (!authz.canRead(trip, userId)) {
+			throw new ORPCError('FORBIDDEN', {
+				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
+			});
+		}
+
+		const totalCities = new Set(
+			trip.locations.map((l) => l.place.address.cityId),
+		).size;
+		const totalDays = eachDayOfInterval({
+			start: trip.startAt,
+			end: trip.endAt,
+		}).length;
+		const totalParticipants = trip.participants.length + 1;
+		const totalLocations = new Set(trip.locations.map((l) => l.place.id)).size;
+		const totalComments = await this.repo.countComments(trip.id);
+		const totalItineraryItems = 0;
+		const totalAssets = 0;
+
+		return {
+			trip: trip,
+			totalCities,
+			totalDays,
+			totalParticipants,
+			totalLocations,
+			totalComments,
+			totalItineraryItems,
+			totalAssets,
 		};
 	}
 }

@@ -446,4 +446,25 @@ export const contract = {
 			successDescription: 'No Content',
 			tags: ['Trips'],
 		}),
+	getSummary: oc
+		.input(dto.getSummaryInput)
+		.output(dto.getSummaryOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'GET',
+			path: '/trips/:id/summary',
+			summary: 'Get Trip Summary',
+			description: 'Get a summary of the trip',
+			successStatus: 200,
+			successDescription: 'OK',
+			tags: ['Trips'],
+		}),
 };
