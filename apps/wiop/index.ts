@@ -5,11 +5,14 @@ import {
 	ipxHttpStorage,
 } from 'ipx';
 
+const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+
 const ipx = createIPX({
-	storage: ipxFSStorage({ dir: './public' }),
-	maxAge: 60 * 60 * 24,
+	storage: ipxFSStorage({ dir: './public', maxAge: MAX_AGE }),
+	maxAge: MAX_AGE,
 	httpStorage: ipxHttpStorage({
 		allowAllDomains: true,
+		maxAge: MAX_AGE,
 	}),
 });
 
