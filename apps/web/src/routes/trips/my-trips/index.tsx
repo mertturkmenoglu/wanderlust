@@ -38,7 +38,7 @@ function Content() {
 	}
 
 	return (
-		<ItemGroup className="mt-4">
+		<ItemGroup className="mt-4 gap-2">
 			{flat.map((trip) => (
 				<TripItem key={trip.id} trip={trip} />
 			))}
