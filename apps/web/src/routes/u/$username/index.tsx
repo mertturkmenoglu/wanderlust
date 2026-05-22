@@ -23,17 +23,15 @@ export const Route = createFileRoute('/u/$username/')({
 function RouteComponent() {
 	return (
 		<div>
-			<div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-				<div>
-					<div className="font-medium text-2xl">About</div>
+			<div>
+				<div className="text-2xl">About</div>
 
-					<InfoCardGroup className="mt-4" />
-				</div>
-
-				<SuspenseWrapper>
-					<TopPlaces />
-				</SuspenseWrapper>
+				<InfoCardGroup className="mt-4" />
 			</div>
+
+			<SuspenseWrapper>
+				<TopPlaces className="mt-8" />
+			</SuspenseWrapper>
 		</div>
 	);
 }

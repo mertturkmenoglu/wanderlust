@@ -33,7 +33,7 @@ function Container({ className }: Props) {
 
 	return (
 		<div className={cn(className)}>
-			<div className="font-medium text-2xl">
+			<div className="text-2xl">
 				<span>Favorite Places</span>
 				{isThisUser && <UpdateDialog />}
 			</div>

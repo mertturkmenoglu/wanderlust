@@ -18,7 +18,7 @@ export function InfoCardGroup({ className }: Props) {
 	});
 
 	return (
-		<div className={cn('grid grid-cols-1 gap-4', className)}>
+		<div className={cn('grid grid-cols-1 gap-4 md:grid-cols-3', className)}>
 			<Link to="/u/$username/followers" params={{ username: profile.username }}>
 				<InfoCard.Root className="aspect-9/2">
 					<InfoCard.Content>

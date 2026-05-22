@@ -14,9 +14,11 @@ export function Grid({ className }: Props) {
 	const isThisUser = meta.isSelf;
 
 	return (
-		<div className={cn('grid grid-cols-2 gap-4', className)}>
+		<div
+			className={cn('grid w-full grid-cols-1 gap-4 xl:grid-cols-2', className)}
+		>
 			{ctx.items.length === 0 && (
-				<div className="col-span-full flex flex-col items-center justify-center gap-4">
+				<div className="col-span-full mt-8 flex flex-col items-center justify-center gap-4">
 					<span className="text-muted-foreground">
 						{isThisUser ? "You haven't" : "This user hasn't"} added any favorite
 						locations yet.
@@ -28,12 +30,11 @@ export function Grid({ className }: Props) {
 				<Link
 					to="/p/$id"
 					key={place.id}
-					className={cn('flex flex-row items-center justify-between gap-4')}
 					params={{
 						id: place.id,
 					}}
 				>
-					<PlaceCard key={place.id} place={place} />
+					<PlaceCard key={place.id} place={place} variant="item" />
 				</Link>
 			))}
 		</div>
