@@ -28,8 +28,8 @@ export function PlacesGrid({ dataKey: key, data }: Props) {
 	const isEmpty = sliced.length === 0;
 
 	return (
-		<div className="mx-auto">
-			<h2 className="mt-12 scroll-m-20 font-semibold text-2xl text-accent-foreground tracking-tighter">
+		<div className="mx-auto my-12">
+			<h2 className="text-2xl text-accent-foreground tracking-tighter">
 				{title}
 			</h2>
 
