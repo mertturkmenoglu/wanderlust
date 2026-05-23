@@ -18,7 +18,7 @@ export function Card({ to, Icon, text }: Props) {
 					'transition duration-200 group-hover:translate-x-2 group-hover:-translate-y-2',
 				)}
 			>
-				<Icon className="size-6" />
+				<Icon className="size-4 md:size-6" />
 				<span className="text-sm">{text}</span>
 			</Link>
 		</div>

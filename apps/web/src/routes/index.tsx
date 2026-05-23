@@ -70,14 +70,14 @@ function Content() {
 
 	return (
 		<>
-			<div className="flex items-baseline">
-				<h2 className="text-2xl">Featured Cities</h2>
+			<div className="mt-4 flex items-baseline md:mt-8">
+				<h2 className="text-lg md:text-2xl">Featured Cities</h2>
 				<Button asChild variant="link">
 					<Link to="/cities/list">See all</Link>
 				</Button>
 			</div>
 
-			<div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+			<div className="mt-2 grid grid-cols-2 gap-4 md:mt-4 md:grid-cols-3 lg:grid-cols-6">
 				{cities.cities.map((city) => (
 					<Link
 						to="."
@@ -93,7 +93,7 @@ function Content() {
 							aspectRatio={16 / 9}
 							className="aspect-video w-full rounded-md object-cover"
 						/>
-						<div className="mt-2 font-bold text-base">{city.name}</div>
+						<div className="mt-2 text-sm md:text-base">{city.name}</div>
 					</Link>
 				))}
 			</div>
@@ -102,7 +102,11 @@ function Content() {
 
 			<PlacesGrid dataKey="featured" data={aggregations.featured} />
 
-			<TripPlannerCta />
+			<TripPlannerCta
+				classNames={{
+					root: 'mt-4 md:mt-8',
+				}}
+			/>
 
 			<PlacesGrid dataKey="popular" data={aggregations.popular} />
 

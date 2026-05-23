@@ -9,7 +9,7 @@ type Props = {
 export function MapComponent({ latitude, longitude }: Props) {
 	return (
 		<>
-			<h3 className="mt-8 font-bold text-2xl lg:mt-4">Location</h3>
+			<h3 className="mt-8 text-lg md:text-2xl lg:mt-4">Location</h3>
 			<div className="mt-4">
 				<MapContainer
 					initialViewState={{

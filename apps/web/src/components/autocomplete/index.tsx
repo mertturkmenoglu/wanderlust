@@ -33,7 +33,7 @@ export function Autocomplete({
 			{showAdvancedSearch && (
 				<div className="text-sm leading-none tracking-tight">
 					Need more power? Try our{' '}
-					<Button variant="link" className="px-0 underline" asChild>
+					<Button variant="link" className="px-0 underline" size="sm" asChild>
 						<Link to="/search">Advanced Search</Link>
 					</Button>
 				</div>

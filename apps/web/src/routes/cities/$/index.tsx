@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { Button } from '@wanderlust/ui/components/button';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { MapIcon } from 'lucide-react';
 import { OverlayBanner } from '@/components/banner/overlay';
@@ -9,6 +9,7 @@ import { ErrorComponent } from '@/components/error-component';
 import { PlaceCard } from '@/components/place-card';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { TagNavigation } from '@/components/tag-navigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
 import { CityBreadcrumb } from './-city-breadcrumb';
@@ -42,12 +43,13 @@ export const Route = createFileRoute('/cities/$/')({
 
 function RouteComponent() {
 	const { city } = Route.useLoaderData();
+	const isMobile = useIsMobile();
 
 	return (
 		<div className="mx-auto max-w-7xl py-8">
 			<CityBreadcrumb cityName={city.name} />
 
-			<div className="mt-8 grid grid-cols-5 gap-8">
+			<div className="mt-4 grid grid-cols-5 gap-4 md:mt-8 md:gap-8">
 				<div className="col-span-5 lg:col-span-2">
 					<div className="">
 						<Image
@@ -61,11 +63,11 @@ function RouteComponent() {
 				</div>
 
 				<div className="col-span-5 lg:col-span-3">
-					<h2 className="font-bold text-6xl">{city.name}</h2>
-					<div className="mt-2 text-muted-foreground text-sm">
+					<h2 className="font-bold text-3xl md:text-6xl">{city.name}</h2>
+					<div className="mt-2 text-muted-foreground text-sm md:font-semibold md:text-base">
 						{city.stateName}/{city.countryName}
 					</div>
-					<div className="mt-4 text-lg text-muted-foreground">
+					<div className="mt-4 text-base text-muted-foreground md:text-lg">
 						{city.description}
 					</div>
 				</div>
@@ -74,7 +76,7 @@ function RouteComponent() {
 			<MapComponent latitude={city.lat} longitude={city.lng} />
 
 			<div className="mt-8">
-				<h3 className="mb-8 font-bold text-2xl">Discover {city.name}</h3>
+				<h3 className="mb-8 text-lg md:text-2xl">Discover {city.name}</h3>
 				<TagNavigation urlSuffix={`&city=${city.name}`} />
 			</div>
 
@@ -83,15 +85,18 @@ function RouteComponent() {
 				alt="Cities Banner Image"
 				message={
 					<div className="flex items-center gap-4 text-white">
-						<div>Plan a trip to {city.name}</div>
+						<div className="text-sm md:text-base">
+							Plan a trip to {city.name}
+						</div>
 						<Button
 							asChild
 							variant="outline"
+							size={isMobile ? 'sm' : 'default'}
 							className="bg-white text-midnight"
 						>
 							<Link to="/trips/planner">
 								<MapIcon />
-								Start Planning
+								{isMobile ? 'Start' : 'Start Planning'}
 							</Link>
 						</Button>
 					</div>
@@ -112,8 +117,14 @@ function RouteComponent() {
 				alt={`${city.name} image`}
 				message={
 					<div className="flex items-center gap-4 text-white">
-						<div>Find all places in {city.name}</div>
-						<Button asChild variant="warning">
+						<div className="text-sm md:text-base">
+							Find all places in {city.name}
+						</div>
+						<Button
+							asChild
+							variant="warning"
+							size={isMobile ? 'sm' : 'default'}
+						>
 							<Link
 								to="/search"
 								search={{
@@ -147,14 +158,22 @@ function CollectionsContent() {
 		<div className="mt-8 space-y-8">
 			{query.data.collections.map((collection) => (
 				<div key={collection.id}>
-					<div key={collection.id} className="mb-4 flex items-baseline gap-4">
-						<h3 className="font-bold text-2xl">{collection.name}</h3>
+					<div
+						key={collection.id}
+						className="mb-4 flex items-baseline justify-between gap-4 md:justify-start"
+					>
+						<h3 className="line-clamp-1 text-lg md:text-2xl">
+							{collection.name}
+						</h3>
 						<Link
 							to="/c/$id"
 							params={{
 								id: collection.id,
 							}}
-							className="text-base text-primary decoration-2 decoration-primary underline-offset-4 hover:underline"
+							className={buttonVariants({
+								variant: 'link',
+								className: 'px-0!',
+							})}
 						>
 							See more
 						</Link>

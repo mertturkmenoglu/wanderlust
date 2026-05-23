@@ -8,7 +8,7 @@ type Props = {
 
 export function TagNavigation({ urlSuffix = '' }: Props) {
 	return (
-		<ScrollArea>
+		<ScrollArea className="mt-4 md:mt-8">
 			<ul className="flex items-center justify-center space-x-4">
 				{data.map((item) => (
 					<NavItem key={item.href} {...item} href={item.href + urlSuffix} />

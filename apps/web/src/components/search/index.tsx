@@ -21,7 +21,7 @@ export function Search({
 	return (
 		<nav
 			className={cn(
-				'mx-auto my-12 flex w-full items-center justify-center space-x-4',
+				'mx-auto mt-4 flex w-full items-center justify-center space-x-4 md:mt-8',
 				className,
 			)}
 		>

@@ -19,7 +19,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 	return (
 		<>
 			{isImpersonating && (
-				<div className="mx-auto my-4 flex w-full max-w-7xl flex-row items-center bg-warning p-4 text-warning-foreground">
+				<div className="mx-auto mt-4 flex w-full max-w-7xl flex-row items-center bg-warning p-4 text-warning-foreground">
 					<TriangleAlertIcon className="" />
 					<p className="ml-4">
 						You are impersonating a user. Any action taken will be performed as

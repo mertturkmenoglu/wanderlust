@@ -8,7 +8,7 @@ import { Link } from '@tanstack/react-router';
 export function Footer() {
 	return (
 		<footer className="my-20">
-			<ul className="mb-8 flex items-center justify-center gap-8 text-muted-foreground text-sm">
+			<ul className="mb-8 flex items-center justify-center gap-4 text-muted-foreground text-sm md:gap-8">
 				<li>
 					<Link to="." href="/about">
 						About

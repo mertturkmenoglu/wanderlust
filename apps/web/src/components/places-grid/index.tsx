@@ -28,12 +28,12 @@ export function PlacesGrid({ dataKey: key, data }: Props) {
 	const isEmpty = sliced.length === 0;
 
 	return (
-		<div className="mx-auto my-12">
-			<h2 className="text-2xl text-accent-foreground tracking-tighter">
+		<div className="mx-auto mt-4 md:mt-8">
+			<h2 className="text-accent-foreground text-lg tracking-tighter md:text-2xl">
 				{title}
 			</h2>
 
-			<div className="my-4 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-8">
+			<div className="mt-2 grid grid-cols-1 gap-4 md:mt-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
 				{isEmpty && <div>No data available.</div>}
 				{!isEmpty &&
 					data.slice(0, 6).map((place) => (

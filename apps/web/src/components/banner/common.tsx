@@ -43,7 +43,9 @@ export function CategoriesBanner({
 			alt="Categories Banner Image"
 			message={
 				<div className="flex items-center gap-4">
-					<div>Discover the world around you</div>
+					<div className="text-sm md:text-base">
+						Discover the world around you
+					</div>
 					<Link
 						to="/categories"
 						className={buttonVariants({

@@ -20,7 +20,7 @@ export function NavItem(props: Props): React.ReactElement {
 					'text-muted-foreground',
 				)}
 			>
-				<props.icon className="size-6 group-hover:text-primary" />
+				<props.icon className="size-4 group-hover:text-primary md:size-6" />
 				<span className="mt-1 line-clamp-1 text-center group-hover:text-primary">
 					{props.text}
 				</span>
