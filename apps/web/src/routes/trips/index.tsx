@@ -23,13 +23,13 @@ function RouteComponent() {
 		<div className="flex w-full flex-col items-center justify-center">
 			<Image
 				src="/trip.png"
-				className="size-64"
+				className="size-32 md:size-64"
 				alt=""
 				layout="constrained"
 				width={256}
 				aspectRatio={1}
 			/>
-			<h2 className="mt-8 text-center font-bold text-4xl">
+			<h2 className="mt-8 text-center font-bold text-2xl md:text-4xl">
 				Plan your next trip with
 				<br />
 				<span className="bg-linear-to-r from-primary to-sky-600 bg-clip-text text-transparent">

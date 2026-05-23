@@ -39,7 +39,7 @@ export function Information({ className }: Props) {
 			<h3 className="font-semibold text-xl tracking-tight">Information</h3>
 			<div className="mt-4 grid grid-cols-2 items-baseline gap-2">
 				<div className="font-medium">Address</div>
-				<div className="text-muted-foreground text-sm">
+				<div className="text-muted-foreground text-xs md:text-sm">
 					<div className="text-right">
 						{place.address.line1} {place.address.line2}
 						<br />
@@ -53,7 +53,7 @@ export function Information({ className }: Props) {
 				{place.phone && (
 					<>
 						<div className="font-medium">Phone</div>
-						<div className="text-muted-foreground text-sm">
+						<div className="text-muted-foreground text-xs md:text-sm">
 							<div className="text-right">{place.phone}</div>
 						</div>
 					</>
@@ -67,7 +67,7 @@ export function Information({ className }: Props) {
 								href={place.website}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="inline-flex items-center gap-1 text-primary hover:underline"
+								className="inline-flex items-center gap-1 text-primary text-xs hover:underline md:text-sm"
 							>
 								<span>{host}</span>
 								<ExternalLinkIcon className="size-3 min-h-3 min-w-3" />

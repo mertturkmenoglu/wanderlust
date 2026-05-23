@@ -155,7 +155,7 @@ function Item({ id }: { id: string }) {
 				search={{
 					amenity: id,
 				}}
-				className="line-clamp-2 text-muted-foreground group-hover:text-primary"
+				className="line-clamp-2 text-muted-foreground text-sm group-hover:text-primary md:text-base"
 			>
 				{displayName}
 			</Link>

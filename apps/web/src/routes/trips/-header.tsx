@@ -18,12 +18,12 @@ export function Header() {
 
 			<Item className="mt-4 p-0!">
 				<ItemContent>
-					<ItemTitle className="text-2xl">{trip.title}</ItemTitle>
-					<ItemDescription>
+					<ItemTitle className="md:text-2xl">{trip.title}</ItemTitle>
+					<ItemDescription className="text-xs md:text-sm">
 						{format(trip.startAt, 'LLL do p')} -{' '}
 						{format(trip.endAt, 'LLL do p')}
 					</ItemDescription>
-					<ItemDescription>
+					<ItemDescription className="text-xs md:text-sm">
 						Last updated:{' '}
 						{formatDistanceToNow(trip.updatedAt, { addSuffix: true })} by{' '}
 						<Link
