@@ -148,14 +148,14 @@ function Item({ id }: { id: string }) {
 	const displayName = amenitiesDisplayNames.get(id) ?? id;
 
 	return (
-		<div className="group flex items-center gap-2">
-			<Icon className="size-6 min-h-6 min-w-6 text-muted-foreground group-hover:text-primary" />
+		<div className="group flex items-center gap-2 text-muted-foreground hover:text-primary">
+			<Icon className="size-6 shrink-0" />
 			<Link
 				to="/search"
 				search={{
 					amenity: id,
 				}}
-				className="line-clamp-2 text-muted-foreground text-sm group-hover:text-primary md:text-base"
+				className="line-clamp-2 text-sm md:text-base"
 			>
 				{displayName}
 			</Link>
