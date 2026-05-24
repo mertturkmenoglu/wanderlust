@@ -66,10 +66,10 @@ export function GeoSearch(props: UseGeoSearchProps) {
 					>
 						{isMobile ? (
 							<div className="w-48">
-								<PlaceCard place={items[itemIndex]!.place} />
+								<PlaceCard place={items[itemIndex]!.place} variant="item" />
 							</div>
 						) : (
-							<PlaceCard place={items[itemIndex]!.place} />
+							<PlaceCard place={items[itemIndex]!.place} variant="item" />
 						)}
 					</Link>
 				</Popup>
