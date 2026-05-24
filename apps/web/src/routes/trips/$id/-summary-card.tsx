@@ -22,10 +22,10 @@ export function SummaryCard({
 }: SummaryCardProps) {
 	return (
 		<Card key="key" className="">
-			<CardContent className="items-center-safe flex flex-row justify-between p-6">
-				<div className="mt-4">
+			<CardContent className="flex flex-row items-start justify-between p-6">
+				<div>
 					<dt className="font-medium text-muted-foreground text-sm">{title}</dt>
-					<dd className="font-semibold text-3xl text-foreground tabular-nums">
+					<dd className="lineline-clamp-2 h-16 font-semibold text-3xl text-foreground tabular-nums">
 						{value}
 					</dd>
 				</div>
