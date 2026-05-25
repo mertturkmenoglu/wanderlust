@@ -14,4 +14,5 @@ export type Place = Pick<
 export type Props = {
 	place: Place;
 	variant?: 'default' | 'item';
+	as?: 'div' | 'link';
 } & React.HTMLAttributes<HTMLDivElement>;

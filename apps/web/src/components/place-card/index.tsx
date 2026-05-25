@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { PlaceCardContextProvider } from './context';
 import { DefaultVariant } from './default-variant';
 import { ItemVariant } from './item-variant';
@@ -12,6 +13,23 @@ export function PlaceCard(props: Props) {
 }
 
 function Content(props: Props) {
+	if (props.as === 'link') {
+		return (
+			<Link
+				to="/p/$id"
+				params={{
+					id: props.place.id,
+				}}
+			>
+				{props.variant === 'item' ? (
+					<ItemVariant {...props} />
+				) : (
+					<DefaultVariant {...props} />
+				)}
+			</Link>
+		);
+	}
+
 	if (props.variant === 'item') {
 		return <ItemVariant {...props} />;
 	}
