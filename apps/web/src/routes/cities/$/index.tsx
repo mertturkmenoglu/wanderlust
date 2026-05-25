@@ -182,15 +182,12 @@ function CollectionsContent() {
 					<ScrollArea>
 						<div className="my-4 flex gap-8">
 							{collection.items.map((item) => (
-								<Link
+								<PlaceCard
 									key={item.placeId}
-									to="/p/$id"
-									params={{
-										id: item.placeId,
-									}}
-								>
-									<PlaceCard place={item.place} className="w-[256px]" />
-								</Link>
+									place={item.place}
+									className="w-[256px]"
+									as="link"
+								/>
 							))}
 						</div>
 						<ScrollBar orientation="horizontal" className="mt-8" />

@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import { PlaceCard } from '@/components/place-card';
 import type { Outputs } from '@/lib/orpc';
 
@@ -36,10 +35,8 @@ export function PlacesGrid({ dataKey: key, data }: Props) {
 			<div className="mt-2 grid grid-cols-1 gap-4 md:mt-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
 				{isEmpty && <div>No data available.</div>}
 				{!isEmpty &&
-					data.slice(0, 6).map((place) => (
-						<Link key={place.id} to="/p/$id" params={{ id: place.id }}>
-							<PlaceCard place={place} />
-						</Link>
+					sliced.map((place) => (
+						<PlaceCard key={place.id} place={place} as="link" />
 					))}
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import Markdown from 'react-markdown';
 import { AppMessage } from '@/components/app-message';
 import { PlaceCard } from '@/components/place-card';
@@ -33,15 +33,7 @@ function RouteComponent() {
 			)}
 			<div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
 				{collection.items.map((item) => (
-					<Link
-						to="/p/$id"
-						params={{
-							id: item.placeId,
-						}}
-						key={item.placeId}
-					>
-						<PlaceCard place={item.place} />
-					</Link>
+					<PlaceCard place={item.place} key={item.placeId} as="link" />
 				))}
 			</div>
 		</div>
