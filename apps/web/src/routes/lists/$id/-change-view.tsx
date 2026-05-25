@@ -1,11 +1,11 @@
-import { Button } from "@wanderlust/ui/components/button";
-import { ButtonGroup } from "@wanderlust/ui/components/button-group";
-import { Grid2X2Icon, TextAlignJustifyIcon } from "lucide-react";
-import { useListContext } from "./-context";
+import { Button } from '@wanderlust/ui/components/button';
+import { ButtonGroup } from '@wanderlust/ui/components/button-group';
+import { Grid2X2Icon, TextAlignJustifyIcon } from 'lucide-react';
+import { useListContext } from './-context';
 
 export function ChangeView() {
 	const ctx = useListContext();
-	
+
 	return (
 		<ButtonGroup className="ml-auto">
 			<Button
