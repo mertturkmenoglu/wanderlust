@@ -1,5 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { Checkbox } from '@wanderlust/ui/components/checkbox';
@@ -14,55 +12,35 @@ import {
 } from '@wanderlust/ui/components/field';
 import { Input } from '@wanderlust/ui/components/input';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import z from 'zod';
-import { useInvalidator } from '@/hooks/use-invalidator';
-import { orpc } from '@/lib/orpc';
+import { Controller, type SubmitHandler } from 'react-hook-form';
+import {
+	type UpdateListInput,
+	useUpdateListForm,
+	useUpdateListMutation,
+} from './-hooks';
 
 type Props = {
 	className?: string;
 };
 
-const schema = z.object({
-	name: z.string().min(1).max(128),
-	isPublic: z.boolean(),
-});
-
 export function EditInfo({ className }: Props) {
-	const invalidate = useInvalidator();
 	const { list } = useLoaderData({
 		from: '/lists/$id/edit/',
 	});
 
-	const form = useForm({
-		resolver: zodResolver(schema),
-		defaultValues: {
-			name: list.name,
-			isPublic: list.isPublic,
-		},
-	});
+	const form = useUpdateListForm(list.name, list.isPublic);
+	const mutation = useUpdateListMutation();
 
-	const mutation = useMutation(
-		orpc.lists.update.mutationOptions({
-			onSuccess: async () => {
-				await invalidate();
-				toast.success('List updated');
-			},
-		}),
-	);
+	const onSubmit: SubmitHandler<UpdateListInput> = (data) => {
+		mutation.mutate({
+			id: list.id,
+			...data,
+		});
+	};
 
 	return (
 		<div className={cn(className)}>
-			<form
-				id="edit-list-form"
-				onSubmit={form.handleSubmit((data) => {
-					mutation.mutate({
-						id: list.id,
-						...data,
-					});
-				})}
-			>
+			<form id="edit-list-form" onSubmit={form.handleSubmit(onSubmit)}>
 				<FieldGroup>
 					<Controller
 						name="name"

@@ -1,21 +1,17 @@
 import { arrayMove } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
-import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 import { AppMessage } from '@/components/app-message';
-import { useInvalidator } from '@/hooks/use-invalidator';
-import { orpc } from '@/lib/orpc';
-import { SortableItem } from './sortable-item';
+import { useUpdateListItemsMutation } from './-hooks';
+import { SortableItem } from './-sortable-item';
 
 type Props = {
 	className?: string;
 };
 
 export function EditItems({ className }: Props) {
-	const invalidate = useInvalidator();
 	const { list } = useLoaderData({
 		from: '/lists/$id/edit/',
 	});
@@ -26,18 +22,9 @@ export function EditItems({ className }: Props) {
 		setItems(list.items);
 	}, [list.items]);
 
-	const mutation = useMutation(
-		orpc.lists.updateItems.mutationOptions({
-			onSuccess: async () => {
-				await invalidate();
-				toast.success('List items updated');
-			},
-		}),
-	);
+	const mutation = useUpdateListItemsMutation();
 
-	const initialIsEmpty = list.items.length === 0;
-
-	if (initialIsEmpty) {
+	if (list.items.length === 0) {
 		return (
 			<AppMessage
 				emptyMessage="This list is empty. Add some items to get started."
