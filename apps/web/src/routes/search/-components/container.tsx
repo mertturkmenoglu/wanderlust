@@ -13,6 +13,7 @@ import { FilterIcon } from 'lucide-react';
 import React from 'react';
 import { useCurrentRefinements } from 'react-instantsearch';
 import { CustomSearchBox } from '@/components/custom-search-box';
+import { CategoryBannerDisplay } from './category-banner-display';
 import { Filters } from './filters';
 import { Results } from './results';
 
@@ -30,6 +31,8 @@ export function Container() {
 
 	return (
 		<>
+			<CategoryBannerDisplay className="mb-4" />
+
 			<CustomSearchBox isSearchOnType />
 
 			<div className="my-4 flex flex-row items-center gap-4">
