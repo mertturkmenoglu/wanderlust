@@ -11,9 +11,10 @@ import {
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { BookmarkIcon } from 'lucide-react';
+import { useAsset } from '@/hooks/use-asset';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useBookmarksContext } from './-context';
-import type { TBookmark } from './-types';
+import type { TBookmark } from './-hooks';
 
 type Props = {
 	bookmark: TBookmark;
@@ -24,11 +25,25 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 	const ctx = useBookmarksContext();
 	const isMobile = useIsMobile();
 	const navigate = useNavigate();
+	const { place } = bookmark;
+	const asset = useAsset(place.assets);
+
+	const onClick = async () => {
+		if (!isMobile) {
+			ctx.setIndex(itemIndex);
+		} else {
+			await navigate({
+				to: '/p/$id',
+				params: {
+					id: bookmark.placeId,
+				},
+			});
+		}
+	};
 
 	return (
 		<Item
 			asChild
-			role="listitem"
 			variant="outline"
 			className={cn('max-h-32', {
 				'border border-primary bg-primary/5':
@@ -36,40 +51,23 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 				'hover:bg-muted': itemIndex !== ctx.index,
 			})}
 		>
-			<button
-				key={bookmark.placeId}
-				className="block text-left"
-				type="button"
-				onClick={async () => {
-					if (!isMobile) {
-						ctx.setIndex(itemIndex);
-					} else {
-						await navigate({
-							to: '/p/$id',
-							params: {
-								id: bookmark.placeId,
-							},
-						});
-					}
-				}}
-			>
+			<button className="block text-left" type="button" onClick={onClick}>
 				<ItemMedia variant="default">
 					<Image
-						src={bookmark.place.assets[0]?.url ?? ''}
-						alt={bookmark.place.assets[0]?.description ?? bookmark.place.name}
+						src={asset.url ?? ''}
+						alt={asset.description ?? place.name}
 						className="aspect-video w-32 rounded-md object-cover md:w-16 lg:w-32"
 						width={512}
 						height={288}
 					/>
 				</ItemMedia>
 				<ItemContent>
-					<ItemTitle className="line-clamp-1">{bookmark.place.name}</ItemTitle>
+					<ItemTitle className="line-clamp-1">{place.name}</ItemTitle>
 					<ItemDescription className="line-clamp-1">
-						{bookmark.place.address.city.name} /{' '}
-						{bookmark.place.address.city.countryName}
+						{place.address.city.name} / {place.address.city.countryName}
 					</ItemDescription>
 					<ItemDescription className="text-primary text-xs lg:text-sm">
-						{bookmark.place.category.name}
+						{place.category.name}
 					</ItemDescription>
 				</ItemContent>
 				<ItemActions>

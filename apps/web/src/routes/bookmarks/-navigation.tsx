@@ -1,56 +1,40 @@
-import { Link, useSearch } from '@tanstack/react-router';
-import { buttonVariants } from '@wanderlust/ui/components/button';
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-} from '@wanderlust/ui/components/pagination';
-import { cn } from '@wanderlust/ui/lib/utils';
-import { usePaginationNumbers } from '@/hooks/use-pagination-numbers';
-import { NavigationButton } from './-navigation-button';
+import { useNavigate } from '@tanstack/react-router';
+import { Pagination } from '@/components/pagination';
+import { useBookmarksContext } from './-context';
+import { useBookmarksQuery } from './-hooks';
 
-type Props = {
-	totalPages: number;
-	hasPrevious: boolean;
-	hasNext: boolean;
-};
-
-export function Navigation({ totalPages, hasPrevious, hasNext }: Props) {
-	const { page, pageSize } = useSearch({
-		from: '/bookmarks/',
-	});
-
-	const nums = usePaginationNumbers(page, totalPages);
+export function Navigation() {
+	const query = useBookmarksQuery();
+	const { totalPages, hasPrevious, hasNext, page } = query.data.pagination;
+	const navigate = useNavigate({ from: '/bookmarks/' });
+	const ctx = useBookmarksContext();
 
 	return (
-		<Pagination>
-			<PaginationContent>
-				<NavigationButton type="previous" hasPrevious={hasPrevious} />
-
-				{nums.map((x) => (
-					<PaginationItem key={`pagination-${x}`}>
-						<Link
-							aria-current={x === page ? 'page' : undefined}
-							data-slot="pagination-link"
-							data-active={x === page}
-							className={cn(
-								buttonVariants({
-									variant: x === page ? 'outline' : 'ghost',
-								}),
-							)}
-							to="/bookmarks"
-							search={{
-								page: x,
-								pageSize,
-							}}
-						>
-							{x}
-						</Link>
-					</PaginationItem>
-				))}
-
-				<NavigationButton type="next" hasNext={hasNext} />
-			</PaginationContent>
-		</Pagination>
+		<Pagination
+			hasNextPage={hasNext}
+			hasPreviousPage={hasPrevious}
+			page={page}
+			totalPages={totalPages}
+			onPrevClick={() => {
+				ctx.setIndex(0);
+				navigate({
+					to: '.',
+					search: (prev) => ({
+						...prev,
+						page: page - 1,
+					}),
+				});
+			}}
+			onNextClick={() => {
+				ctx.setIndex(0);
+				navigate({
+					to: '.',
+					search: (prev) => ({
+						...prev,
+						page: page + 1,
+					}),
+				});
+			}}
+		/>
 	);
 }

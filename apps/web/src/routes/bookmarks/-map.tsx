@@ -1,6 +1,6 @@
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
 import { createStyle } from '@/lib/map';
-import type { TBookmark } from './-types';
+import type { TBookmark } from './-hooks';
 
 type Props = {
 	bookmark: TBookmark;
@@ -8,12 +8,16 @@ type Props = {
 
 const style = createStyle('streets-v2-light');
 
-export function BookmarkItemMap({ bookmark: { place } }: Props) {
+export function BookmarkItemMap({ bookmark }: Props) {
+	const {
+		place: { address },
+	} = bookmark;
+
 	return (
 		<MapContainer
 			initialViewState={{
-				latitude: place.address.lat,
-				longitude: place.address.lng,
+				latitude: address.lat,
+				longitude: address.lng,
 				zoom: 15,
 			}}
 			dragPan={false}
@@ -23,12 +27,12 @@ export function BookmarkItemMap({ bookmark: { place } }: Props) {
 				zIndex: 0,
 				marginTop: '16px',
 			}}
-			latitude={place.address.lat}
-			longitude={place.address.lng}
+			latitude={address.lat}
+			longitude={address.lng}
 			minZoom={12}
 			mapStyle={style}
 		>
-			<Marker latitude={place.address.lat} longitude={place.address.lng} />
+			<Marker latitude={address.lat} longitude={address.lng} />
 		</MapContainer>
 	);
 }
