@@ -1,11 +1,12 @@
-import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { PlaceCard } from '@/components/place-card';
 import { ChangeView } from './-change-view';
 import { useListContext } from './-context';
+import { useListQuery } from './-hooks';
 
 export function Items() {
-	const { list } = useLoaderData({ from: '/lists/$id/' });
+	const query = useListQuery();
+	const { list } = query.data;
 	const ctx = useListContext();
 
 	return (
@@ -16,10 +17,10 @@ export function Items() {
 					'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4': ctx.view === 'grid',
 				})}
 			>
-				{list.items.map((listItem) => (
+				{list.items.map((item) => (
 					<PlaceCard
-						key={listItem.placeId}
-						place={listItem.place}
+						key={item.placeId}
+						place={item.place}
 						as="link"
 						variant={ctx.view === 'grid' ? 'default' : 'item'}
 					/>

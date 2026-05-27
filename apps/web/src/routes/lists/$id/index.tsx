@@ -4,13 +4,14 @@ import { authGuard } from '@/lib/auth';
 import { ListContextProvider } from './-context';
 import { EmptyState } from './-empty';
 import { Header } from './-header';
+import { useListQuery } from './-hooks';
 import { Items } from './-items';
 
 export const Route = createFileRoute('/lists/$id/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
 	loader: ({ context, params }) => {
-		return context.queryClient.ensureQueryData(
+		context.queryClient.prefetchQuery(
 			context.orpc.lists.get.queryOptions({
 				input: {
 					id: params.id,
@@ -21,7 +22,8 @@ export const Route = createFileRoute('/lists/$id/')({
 });
 
 function RouteComponent() {
-	const { list } = Route.useLoaderData();
+	const query = useListQuery();
+	const { list } = query.data;
 	const isEmpty = list.items.length === 0;
 
 	return (

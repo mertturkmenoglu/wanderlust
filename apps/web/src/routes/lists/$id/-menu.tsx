@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
@@ -22,10 +22,11 @@ import {
 	PencilIcon,
 	TrashIcon,
 } from 'lucide-react';
-import { useDeleteMutation, useIsOwner } from './-hooks';
+import { useDeleteMutation, useIsOwner, useListQuery } from './-hooks';
 
 export function Menu() {
-	const { list } = useLoaderData({ from: '/lists/$id/' });
+	const query = useListQuery();
+	const { list } = query.data;
 	const isOwner = useIsOwner();
 	const mutation = useDeleteMutation();
 

@@ -1,4 +1,3 @@
-import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { Checkbox } from '@wanderlust/ui/components/checkbox';
 import {
@@ -15,6 +14,7 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { Controller, type SubmitHandler } from 'react-hook-form';
 import {
 	type UpdateListInput,
+	useListQuery,
 	useUpdateListForm,
 	useUpdateListMutation,
 } from './-hooks';
@@ -24,9 +24,8 @@ type Props = {
 };
 
 export function EditInfo({ className }: Props) {
-	const { list } = useLoaderData({
-		from: '/lists/$id/edit/',
-	});
+	const query = useListQuery();
+	const { list } = query.data;
 
 	const form = useUpdateListForm(list.name, list.isPublic);
 	const mutation = useUpdateListMutation();

@@ -1,12 +1,24 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
-	useLoaderData,
 	useNavigate,
+	useParams,
 	useRouteContext,
 } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
+
+export function useListQuery() {
+	const params = useParams({ from: '/lists/$id/' });
+
+	return useSuspenseQuery(
+		orpc.lists.get.queryOptions({
+			input: {
+				id: params.id,
+			},
+		}),
+	);
+}
 
 export function useDeleteMutation() {
 	const invalidate = useInvalidator();
@@ -26,7 +38,8 @@ export function useDeleteMutation() {
 }
 
 export function useIsOwner() {
-	const data = useLoaderData({ from: '/lists/$id/' });
+	const query = useListQuery();
+	const data = query.data;
 	const ctx = useRouteContext({ from: '/lists/$id/' });
 	return ctx.auth.user.id === data.list.userId;
 }

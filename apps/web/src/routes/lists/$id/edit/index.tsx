@@ -4,22 +4,25 @@ import { authGuard } from '@/lib/auth';
 import { DateInfo } from './-date-info';
 import { EditInfo } from './-edit-info';
 import { EditItems } from './-edit-items';
+import { useListQuery } from './-hooks';
 
 export const Route = createFileRoute('/lists/$id/edit/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
-	loader: ({ context, params }) =>
-		context.queryClient.ensureQueryData(
+	loader: ({ context, params }) => {
+		context.queryClient.prefetchQuery(
 			context.orpc.lists.get.queryOptions({
 				input: {
 					id: params.id,
 				},
 			}),
-		),
+		);
+	},
 });
 
 function RouteComponent() {
-	const { list } = Route.useLoaderData();
+	const query = useListQuery();
+	const { list } = query.data;
 
 	return (
 		<div className="mx-auto my-8 max-w-7xl">

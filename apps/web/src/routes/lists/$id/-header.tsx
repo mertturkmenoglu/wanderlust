@@ -1,11 +1,13 @@
-import { Link, useLoaderData } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { formatDistanceToNow } from 'date-fns';
 import { BackLink } from '@/components/back-link';
+import { useListQuery } from './-hooks';
 import { Menu } from './-menu';
 
 export function Header() {
-	const { list } = useLoaderData({ from: '/lists/$id/' });
+	const query = useListQuery();
+	const { list } = query.data;
 
 	return (
 		<>

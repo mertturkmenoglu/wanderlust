@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
@@ -9,6 +10,18 @@ import { type Outputs, orpc } from '@/lib/orpc';
 export type List = Outputs['lists']['get']['list'];
 
 export type ListItem = List['items'][number];
+
+export function useListQuery() {
+	const params = useParams({ from: '/lists/$id/edit/' });
+
+	return useSuspenseQuery(
+		orpc.lists.get.queryOptions({
+			input: {
+				id: params.id,
+			},
+		}),
+	);
+}
 
 export function useRemoveListItemMutation() {
 	const invalidate = useInvalidator();

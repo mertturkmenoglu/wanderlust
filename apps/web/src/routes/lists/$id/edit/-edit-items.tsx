@@ -1,10 +1,9 @@
 import { arrayMove } from '@dnd-kit/helpers';
 import { DragDropProvider } from '@dnd-kit/react';
-import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useEffect, useState } from 'react';
 import { AppMessage } from '@/components/app-message';
-import { useUpdateListItemsMutation } from './-hooks';
+import { useListQuery, useUpdateListItemsMutation } from './-hooks';
 import { SortableItem } from './-sortable-item';
 
 type Props = {
@@ -12,9 +11,8 @@ type Props = {
 };
 
 export function EditItems({ className }: Props) {
-	const { list } = useLoaderData({
-		from: '/lists/$id/edit/',
-	});
+	const query = useListQuery();
+	const { list } = query.data;
 
 	const [items, setItems] = useState(list.items);
 

@@ -1,13 +1,14 @@
-import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
+import { useListQuery } from './-hooks';
 
 type Props = {
 	className?: string;
 };
 
 export function DateInfo({ className }: Props) {
-	const { list } = useLoaderData({ from: '/lists/$id/edit/' });
+	const query = useListQuery();
+	const { list } = query.data;
 
 	return (
 		<div

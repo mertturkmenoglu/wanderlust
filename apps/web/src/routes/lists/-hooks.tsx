@@ -1,5 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { orpc } from '@/lib/orpc';
+import { type Outputs, orpc } from '@/lib/orpc';
+
+export type TList = Outputs['lists']['listAll']['lists'][number];
 
 export function useListsQuery() {
 	return useInfiniteQuery(
@@ -9,12 +11,8 @@ export function useListsQuery() {
 				pageSize: 10,
 			}),
 			initialPageParam: 1,
-			getNextPageParam: (lastPage) => {
-				if (!lastPage.pagination.hasNext) {
-					return null;
-				}
-				return lastPage.pagination.page + 1;
-			},
+			getNextPageParam: ({ pagination }) =>
+				!pagination.hasNext ? null : pagination.page + 1,
 			retry: false,
 		}),
 	);
