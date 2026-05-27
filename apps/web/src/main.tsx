@@ -2,8 +2,8 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import reportWebVitals from './reportWebVitals.ts';
-import { routeTree } from './routeTree.gen.ts';
+import reportWebVitals from './reportWebVitals';
+import { routeTree } from './routeTree.gen';
 
 import 'instantsearch.css/themes/reset.css';
 import 'react-datepicker/dist/react-datepicker.css';
