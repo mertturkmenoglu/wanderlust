@@ -48,7 +48,7 @@ export function InfoCardGroup({ className }: Props) {
 			<InfoCard.Root className="aspect-9/2">
 				<InfoCard.Content>
 					<InfoCard.NumberColumn>
-						<LeafIcon className="size-16 text-primary" />
+						<LeafIcon className="size-8 text-primary md:size-16" />
 					</InfoCard.NumberColumn>
 					<InfoCard.DescriptionColumn>
 						<div className="flex items-center text-primary">Joined</div>
