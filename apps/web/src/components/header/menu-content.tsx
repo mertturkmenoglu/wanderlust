@@ -19,8 +19,8 @@ import {
 	UserKeyIcon,
 	UsersIcon,
 } from 'lucide-react';
+import { useShortName } from './hooks';
 import { SignOut } from './sign-out';
-import { useShortName } from './use-short-name';
 
 type Props = {
 	fullName: string;

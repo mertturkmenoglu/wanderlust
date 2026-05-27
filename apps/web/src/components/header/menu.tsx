@@ -5,8 +5,8 @@ import {
 } from '@wanderlust/ui/components/dropdown-menu';
 import { UserIcon } from 'lucide-react';
 import { authClient } from '@/lib/auth';
+import { useShortName } from './hooks';
 import { MenuContent } from './menu-content';
-import { useShortName } from './use-short-name';
 
 export function Menu() {
 	const session = authClient.useSession();

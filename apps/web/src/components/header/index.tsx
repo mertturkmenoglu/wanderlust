@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router';
-import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { TriangleAlertIcon, XIcon } from 'lucide-react';
+import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
 import { authClient } from '@/lib/auth';
 import { Logo } from '../logo';
+import { useIsImpersonating } from './hooks';
+import { ImpersonationBanner } from './impersonation-banner';
 import { Menu } from './menu';
 import { SignInButton } from './sign-in-button';
 import { SignedInLinks } from './signed-in';
@@ -12,31 +13,13 @@ type Props = React.HTMLAttributes<HTMLElement>;
 
 export function Header({ className, ...props }: Readonly<Props>) {
 	const session = authClient.useSession();
-	const isSignedIn = !session.isPending && session.data?.user;
-	const isImpersonating =
-		session.data && session.data.session.impersonatedBy !== null;
+	const isSignedIn = useIsAuthenticated();
+	const isImpersonating = useIsImpersonating();
 
 	return (
 		<>
 			{isImpersonating && (
-				<div className="mx-auto mt-4 flex w-full max-w-7xl flex-row items-center bg-warning p-4 text-warning-foreground">
-					<TriangleAlertIcon className="" />
-					<p className="ml-4">
-						You are impersonating a user. Any action taken will be performed as
-						the impersonated user.
-					</p>
-					<Button
-						className="ml-auto"
-						variant="midnight"
-						onClick={async () => {
-							await authClient.admin.stopImpersonating();
-							window.location.reload();
-						}}
-					>
-						<XIcon />
-						<span>Stop Impersonating</span>
-					</Button>
-				</div>
+				<ImpersonationBanner className="mx-auto mt-4 max-w-7xl" />
 			)}
 			<header
 				className={cn(
@@ -58,7 +41,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 					<div>
 						{!isSignedIn && <SignInButton />}
 
-						{isSignedIn && session.data?.user && (
+						{isSignedIn && (
 							<div className="flex items-center gap-2">
 								<SignedInLinks />
 								<Menu />
