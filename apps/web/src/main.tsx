@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: We are sure these values will be defined */
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -14,6 +13,7 @@ import './globals.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Spinner } from '@wanderlust/ui/components/spinner';
+import { ErrorComponent } from './components/error-component';
 import { orpc, queryClient } from './lib/orpc';
 
 const router = createRouter({
@@ -27,6 +27,9 @@ const router = createRouter({
 	defaultStructuralSharing: true,
 	defaultPreloadStaleTime: 0,
 	defaultPendingComponent: () => <Spinner />,
+	defaultErrorComponent: ({ error }) => (
+		<ErrorComponent error={error} reset={() => {}} />
+	),
 	Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {
 		return (
 			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
