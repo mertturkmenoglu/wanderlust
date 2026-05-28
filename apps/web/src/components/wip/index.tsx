@@ -1,12 +1,20 @@
 import { Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
+import { ConstructionIcon } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Logo } from '../logo';
 
 export function WipComponent() {
+	const isMobile = useIsMobile();
+
 	return (
-		<div className="my-64 flex flex-col-reverse items-center justify-center gap-24 lg:mx-32 lg:flex-row lg:gap-48">
-			<div className="text-sky-600">
-				<div className="font-bold text-2xl text-sky-600">Oopss</div>
-				<div className="mt-4 font-bold text-6xl text-sky-600">
+		<div className="my-8 flex flex-col-reverse items-center justify-center md:my-64 md:gap-24 lg:mx-32 lg:flex-row lg:gap-48">
+			<div className="text-midnight">
+				<div className="flex items-center gap-2">
+					<ConstructionIcon className="size-8" />
+					<div className="font-bold text-2xl">Oopss</div>
+				</div>
+				<div className="mt-4 font-bold text-2xl md:text-6xl">
 					Work in Progress
 				</div>
 				<div className="mt-8 text-xl">
@@ -19,13 +27,13 @@ export function WipComponent() {
 				</div>
 				<Link
 					to="/"
-					className="mt-8 flex rounded bg-sky-600 px-4 py-2 font-bold text-lg text-white hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+					className={buttonVariants({ variant: 'midnight', className: 'mt-8' })}
 				>
 					Country roads take me home
 				</Link>
 			</div>
 			<div>
-				<Logo variant="large" />
+				<Logo variant={isMobile ? 'default' : 'large'} grayscale />
 			</div>
 		</div>
 	);

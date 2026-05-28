@@ -40,7 +40,7 @@ export function ErrorComponent({ error }: ErrorComponentProps) {
 
 	return (
 		<>
-			<div className="my-64 flex flex-col-reverse items-center justify-center gap-24 lg:mx-32 lg:flex-row lg:gap-48">
+			<div className="flex flex-col-reverse items-center justify-center gap-24 md:my-64 lg:mx-32 lg:flex-row lg:gap-48">
 				<div className="text-sky-600">
 					<div className="font-bold text-2xl text-sky-600">Error {code}</div>
 					<div className="mt-4 font-bold text-6xl text-sky-600">{message}</div>
