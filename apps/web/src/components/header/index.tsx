@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
 import { authClient } from '@/lib/auth';
+import { GradientText } from '../gradient-text';
 import { Logo } from '../logo';
 import { useIsImpersonating } from './hooks';
 import { ImpersonationBanner } from './impersonation-banner';
@@ -30,9 +31,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 			>
 				<Link to="/" className="flex items-center gap-2">
 					<Logo variant="small" />
-					<span className="bg-linear-to-r from-primary to-sky-600 bg-clip-text font-bold text-transparent">
-						Wanderlust
-					</span>
+					<GradientText className="font-bold" text="Wanderlust" />
 				</Link>
 
 				{session.isPending ? (
