@@ -49,7 +49,7 @@ function Banner() {
 	}
 
 	if (isAuthenticated) {
-		return <QuickActions />;
+		return <QuickActions className="mt-4 md:mt-8" />;
 	}
 
 	return <AppBanner />;
