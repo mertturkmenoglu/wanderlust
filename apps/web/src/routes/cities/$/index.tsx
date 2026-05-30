@@ -77,7 +77,7 @@ function RouteComponent() {
 
 			<div className="mt-8">
 				<h3 className="mb-8 text-lg md:text-2xl">Discover {city.name}</h3>
-				<TagNavigation urlSuffix={`&city=${city.name}`} />
+				<TagNavigation cityName={city.name} />
 			</div>
 
 			<OverlayBanner
