@@ -3,15 +3,15 @@ import { data } from './data';
 import { NavItem } from './item';
 
 type Props = {
-	urlSuffix?: string;
+	cityName?: string;
 };
 
-export function TagNavigation({ urlSuffix = '' }: Props) {
+export function TagNavigation({ cityName }: Props) {
 	return (
 		<ScrollArea className="mt-4 md:mt-8">
 			<ul className="flex items-center justify-center space-x-4">
 				{data.map((item) => (
-					<NavItem key={item.href} {...item} href={item.href + urlSuffix} />
+					<NavItem key={item.text} {...item} cityName={cityName} />
 				))}
 			</ul>
 

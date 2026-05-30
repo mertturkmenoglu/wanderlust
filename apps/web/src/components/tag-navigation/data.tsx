@@ -13,33 +13,59 @@ import {
 } from 'lucide-react';
 import type { Props as NavItemProps } from './item';
 
-const base = '/search?category=';
-
 export const data = [
-	{ href: `${base}Hotels`, text: 'Hotels', icon: BedIcon },
-	{ href: `${base}Coffee shops`, text: 'Coffee', icon: CoffeeIcon },
-	{ href: `${base}Bars & Clubs`, text: 'Bars', icon: MartiniIcon },
-	{ href: `${base}Breweries`, text: 'Breweries', icon: BeerIcon },
-	{ href: `${base}Museums`, text: 'Museums', icon: LandmarkIcon },
-	{ href: `${base}Photography spots`, text: 'Photography', icon: CameraIcon },
-	{ href: `${base}Restaurants`, text: 'Restaurants', icon: UtensilsIcon },
 	{
-		href: `${base}Tourist Attractions`,
+		category: 'Hotels',
+		text: 'Hotels',
+		icon: BedIcon,
+	},
+	{
+		category: 'Coffee shops',
+		text: 'Coffee',
+		icon: CoffeeIcon,
+	},
+	{
+		category: 'Bars & Clubs',
+		text: 'Bars',
+		icon: MartiniIcon,
+	},
+	{
+		category: 'Breweries',
+		text: 'Breweries',
+		icon: BeerIcon,
+	},
+	{
+		category: 'Museums',
+		text: 'Museums',
+		icon: LandmarkIcon,
+	},
+	{
+		category: 'Photography spots',
+		text: 'Photography',
+		icon: CameraIcon,
+	},
+	{
+		category: 'Restaurants',
+		text: 'Restaurants',
+		icon: UtensilsIcon,
+	},
+	{
+		category: 'Tourist Attractions',
 		text: 'Attractions',
 		icon: MapPinnedIcon,
 	},
 	{
-		href: `${base}Coworking spaces`,
+		category: 'Coworking spaces',
 		text: 'Work Spaces',
 		icon: GraduationCapIcon,
 	},
 	{
-		href: `${base}Bookstores`,
+		category: 'Bookstores',
 		text: 'Bookstores',
 		icon: LibraryIcon,
 	},
 	{
-		href: `${base}Natural landmarks`,
+		category: 'Natural landmarks',
 		text: 'Landmarks',
 		icon: MountainSnowIcon,
 	},

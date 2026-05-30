@@ -1,18 +1,30 @@
-import { Link } from '@tanstack/react-router';
+import { Link, linkOptions } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import type { LucideIcon } from 'lucide-react';
+import { serializeParams } from '@/lib/search';
 
 export type Props = {
-	href: string;
 	text: string;
 	icon: LucideIcon;
+	category: string;
+	cityName?: string;
 };
 
 export function NavItem(props: Props): React.ReactElement {
+	const { category, cityName } = props;
+
+	const link = linkOptions({
+		to: '/search',
+		search: {
+			category: serializeParams([category]),
+			...(cityName ? { city: serializeParams([cityName]) } : {}),
+		},
+	});
+
 	return (
 		<li>
 			<Link
-				to={encodeURI(props.href)}
+				{...link}
 				className={cn(
 					'flex flex-col items-center p-1',
 					'transition-all duration-200',
