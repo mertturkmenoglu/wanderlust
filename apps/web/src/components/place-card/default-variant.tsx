@@ -29,7 +29,7 @@ export function DefaultVariant({
 					layout="constrained"
 					aspectRatio={16 / 9}
 					height={128}
-					className="aspect-video rounded-md object-cover"
+					className="aspect-video w-full rounded-md object-cover"
 				/>
 			</ItemHeader>
 			<ItemContent>
