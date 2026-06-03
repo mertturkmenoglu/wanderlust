@@ -5,6 +5,9 @@ export const Route = createFileRoute('/trips/planner/')({
 	loader: () => {
 		throw redirect({
 			to: '/trips',
+			search: {
+				showNewDialog: true,
+			},
 		});
 	},
 });
