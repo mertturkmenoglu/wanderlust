@@ -1,3 +1,4 @@
+import { Badge } from '@wanderlust/ui/components/badge';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
@@ -33,11 +34,15 @@ export function AccountItem({ item, isCurrentSession }: Props) {
 	return (
 		<Item
 			variant="outline"
-			className={cn({
-				'bg-muted': isCurrentSession,
+			className={cn('relative', {
+				'ring ring-primary/50': isCurrentSession,
 			})}
 		>
-			<ItemActions />
+			{isCurrentSession && (
+				<Badge variant="default" className="absolute -top-3">
+					Current
+				</Badge>
+			)}
 			<ItemMedia>
 				<UserImage
 					src={userImage(item.user.image ?? null)}
@@ -52,7 +57,6 @@ export function AccountItem({ item, isCurrentSession }: Props) {
 				<Button
 					variant="ghost"
 					size="sm"
-					disabled={isCurrentSession}
 					onClick={async () => {
 						await authClient.multiSession.revoke({
 							sessionToken: item.session.token,
@@ -75,14 +79,8 @@ export function AccountItem({ item, isCurrentSession }: Props) {
 						window.location.reload();
 					}}
 				>
-					{isCurrentSession ? (
-						<span>Current</span>
-					) : (
-						<>
-							<span className="">Switch</span>
-							<ChevronRightIcon />
-						</>
-					)}
+					<span className="">Switch</span>
+					<ChevronRightIcon />
 				</Button>
 			</ItemActions>
 		</Item>
