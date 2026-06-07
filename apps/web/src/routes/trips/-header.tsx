@@ -6,11 +6,13 @@ import {
 	ItemDescription,
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
-import { format, formatDistanceToNow } from 'date-fns';
 import { BackLink } from '@/components/back-link';
+import { RelativeTime } from '@/components/relative-time';
+import { useTripTimeFormatter } from './-hooks';
 
 export function Header() {
 	const { trip } = useLoaderData({ from: '/trips/$id' });
+	const format = useTripTimeFormatter();
 
 	return (
 		<>
@@ -20,12 +22,10 @@ export function Header() {
 				<ItemContent>
 					<ItemTitle className="md:text-2xl">{trip.title}</ItemTitle>
 					<ItemDescription className="text-xs md:text-sm">
-						{format(trip.startAt, 'LLL do p')} -{' '}
-						{format(trip.endAt, 'LLL do p')}
+						{format(trip.startAt)} - {format(trip.endAt)}
 					</ItemDescription>
 					<ItemDescription className="text-xs md:text-sm">
-						Last updated:{' '}
-						{formatDistanceToNow(trip.updatedAt, { addSuffix: true })} by{' '}
+						Last updated: <RelativeTime date={trip.updatedAt} /> by{' '}
 						<Link
 							to="/u/$username"
 							params={{
