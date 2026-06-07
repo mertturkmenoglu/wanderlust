@@ -21,7 +21,7 @@ import { type Outputs, orpc } from '@/lib/orpc';
 
 const schema = z.object({
 	name: z.string().min(1).max(128),
-	description: z.string().min(1).max(4096),
+	description: z.string().min(1),
 });
 
 type Props = {
