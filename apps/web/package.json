@@ -47,6 +47,7 @@
 		"react-instantsearch": "^7.32.2",
 		"react-map-gl": "^8.1.1",
 		"react-markdown": "^10.1.0",
+		"remark-gfm": "^4.0.1",
 		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.5.0",
 		"tailwindcss": "^4.1.16",
@@ -58,6 +59,7 @@
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
+		"@tailwindcss/typography": "^0.5.19",
 		"@tanstack/devtools-vite": "^0.6.0",
 		"@tanstack/react-devtools": "^0.10.3",
 		"@testing-library/dom": "^10.4.1",
