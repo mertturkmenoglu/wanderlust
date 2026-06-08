@@ -8,7 +8,7 @@ graceBackoff = "30s"
 l1MaxSize = "50mb"
 
 [cors]
-allowedOrigins = ["http://localhost:3000"]
+allowedOrigins = ["http://localhost:3000", "http://localhost:3001"]
 
 [database]
 url = "postgresql://postgres:postgres@localhost:5432/wanderlust"

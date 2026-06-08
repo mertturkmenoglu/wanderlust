@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
+		"jsx": "react-jsx",
+		"outDir": "dist",
+
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"skipLibCheck": true,
+		"types": ["vite/client"],
+		"rootDirs": ["."],
+		"paths": {
+			"@/*": ["./src/*"],
+			"@wanderlust/ui/*": ["../../packages/ui/src/*"]
+		},
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	},
+	"references": [
+		{ "path": "../../apps/api" },
+		{ "path": "../../packages/auth" },
+		{ "path": "../../packages/ui" },
+		{ "path": "../../packages/config" }
+	],
+	"include": ["src/**/*.ts", "src/**/*.tsx", "*.ts", "*.d.ts"],
+	"exclude": ["node_modules", "dist"]
+}
