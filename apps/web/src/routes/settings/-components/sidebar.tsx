@@ -1,69 +1,36 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { orpc } from '@/lib/orpc';
+import { Link, type LinkOptions, linkOptions } from '@tanstack/react-router';
 
 type Item = {
 	text: string;
-	href: string;
+	link: LinkOptions;
 };
 
-const items = [
+const links = [
 	{
 		text: 'Account',
-		href: '/settings/account',
+		link: linkOptions({
+			to: '/settings/account',
+		}),
 	},
 	{
 		text: 'Profile',
-		href: '/settings/profile',
-	},
-	{
-		text: 'Dashboard',
-		href: '/dashboard',
-	},
-	{
-		text: 'Admin Tools',
-		href: '/admin',
+		link: linkOptions({
+			to: '/settings/profile',
+		}),
 	},
 ] as const satisfies Item[];
 
 export function Sidebar() {
-	const isDev = import.meta.env.DEV;
-	const {
-		data: { role },
-	} = useSuspenseQuery(
-		orpc.users.getRole.queryOptions({
-			input: {},
-		}),
-	);
-
-	const links = items.filter((x) => {
-		const protectedRoutes = ['/admin', '/dashboard'];
-
-		if (!protectedRoutes.includes(x.href)) {
-			return true;
-		}
-
-		if (x.href === '/admin') {
-			return isDev && role === 'admin';
-		}
-
-		if (x.href === '/dashboard') {
-			return role === 'admin';
-		}
-
-		return false;
-	});
-
 	return (
 		<nav className="grid gap-4 text-muted-foreground text-sm">
 			{links.map((el) => (
 				<Link
-					to={el.href}
+					{...el.link}
+					key={el.link.to}
 					activeProps={{
 						className: 'font-semibold text-primary',
 					}}
 					className="hover:underline"
-					key={el.href}
 				>
 					{el.text}
 				</Link>
