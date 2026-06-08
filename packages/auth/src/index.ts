@@ -111,7 +111,7 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 				clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
 				prompt: 'select_account',
 				scope: ['email', 'public_profile'],
-				mapProfileToUser: (profile): TUser => {
+				mapProfileToUser: (profile: TFacebookUser): TUser => {
 					return {
 						email: profile.email ?? '',
 						image: profile.picture.data.url,
@@ -152,7 +152,7 @@ export type TGoogleUser = {
 };
 
 export type TFacebookUser = {
-	email: string;
+	email?: string | undefined;
 	picture: {
 		data: {
 			url: string;
