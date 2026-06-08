@@ -89,13 +89,13 @@ export function AppSidebar() {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/cities">List Cities</Link>
+											<Link to="/dashboard/cities">List Cities</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/cities/new">Create City</Link>
+											<Link to="/dashboard/cities/new">Create City</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
@@ -120,13 +120,13 @@ export function AppSidebar() {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/places">List Places</Link>
+											<Link to="/dashboard/places">List Places</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/places/new">Create Place</Link>
+											<Link to="/dashboard/places/new">Create Place</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
@@ -151,7 +151,7 @@ export function AppSidebar() {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/users">List Users</Link>
+											<Link to="/dashboard/users">List Users</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
@@ -180,25 +180,31 @@ export function AppSidebar() {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/collections">List Collections</Link>
+											<Link to="/dashboard/collections">List Collections</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/collections/new">Create Collection</Link>
+											<Link to="/dashboard/collections/new">
+												Create Collection
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/collections/relations">Place Relations</Link>
+											<Link to="/dashboard/collections/relations">
+												Place Relations
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/collections/relations">City Relations</Link>
+											<Link to="/dashboard/collections/relations">
+												City Relations
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
@@ -223,7 +229,9 @@ export function AppSidebar() {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton asChild isActive={false}>
-											<Link to="/reports">List Reports</Link>
+											<Link to="/dashboard/reports" search={{}}>
+												List Reports
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
