@@ -4,14 +4,14 @@ export const configSchema = z.object({
 	api: z.object({
 		port: z.number(),
 		url: z.string(),
-	}),
-	cache: z.object({
-		grace: z.string(),
-		graceBackoff: z.string(),
-		l1MaxSize: z.string(),
-	}),
-	cors: z.object({
-		allowedOrigins: z.array(z.string()),
+		cache: z.object({
+			grace: z.string(),
+			graceBackoff: z.string(),
+			l1MaxSize: z.string(),
+		}),
+		cors: z.object({
+			allowedOrigins: z.array(z.string()),
+		}),
 	}),
 	database: z.object({
 		url: z.string(),
@@ -36,5 +36,20 @@ export const configSchema = z.object({
 	}),
 	web: z.object({
 		url: z.string(),
+		apiUrl: z.string(),
+		ipx: z.object({
+			enabled: z.boolean(),
+			url: z.string(),
+		}),
+	}),
+	admin: z.object({
+		url: z.string(),
+	}),
+	notifications: z.object({
+		url: z.string(),
+		cors: z.object({
+			allowedOrigins: z.array(z.string()),
+		}),
+		capPeruser: z.number(),
 	}),
 });

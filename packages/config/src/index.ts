@@ -1,34 +1,31 @@
 import { injectable } from 'inversify';
 import { z } from 'zod';
+import configJson from '../../../config.json' with { type: 'json' };
 import { configSchema } from './config-schema';
 
 @injectable()
 export class ConfigService {
-	private instance!: TConfigService;
+	private readonly instance: TConfigService;
+
+	constructor() {
+		this.instance = init();
+	}
 
 	get(): TConfigService {
 		return this.instance;
 	}
-
-	set(config: TConfigService) {
-		this.instance = config;
-	}
-
-	static async init() {
-		const data = await Bun.file('../../config.toml').text();
-
-		const obj = Bun.TOML.parse(data);
-
-		const res = configSchema.safeParse(obj);
-
-		if (!res.success) {
-			throw new Error('Config file parse validation failed', {
-				cause: z.treeifyError(res.error),
-			});
-		}
-
-		return res.data;
-	}
 }
 
-export type TConfigService = z.infer<typeof configSchema>;
+function init() {
+	const res = configSchema.safeParse(configJson);
+
+	if (!res.success) {
+		throw new Error('Config file parse validation failed', {
+			cause: z.treeifyError(res.error),
+		});
+	}
+
+	return res.data;
+}
+
+export type TConfigService = ReturnType<typeof init>;
