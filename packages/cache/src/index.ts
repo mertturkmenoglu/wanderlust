@@ -23,15 +23,15 @@ export class CacheService {
 function init(cfg: TConfigService) {
 	return new BentoCache({
 		default: 'cache',
-		grace: cfg.cache.grace,
-		graceBackoff: cfg.cache.graceBackoff,
+		grace: cfg.api.cache.grace,
+		graceBackoff: cfg.api.cache.graceBackoff,
 		serializer: {
 			serialize: superjson.stringify,
 			deserialize: superjson.parse,
 		},
 		stores: {
 			cache: bentostore()
-				.useL1Layer(memoryDriver({ maxSize: cfg.cache.l1MaxSize }))
+				.useL1Layer(memoryDriver({ maxSize: cfg.api.cache.l1MaxSize }))
 				.useL2Layer(
 					redisDriver({
 						connection: {
@@ -53,3 +53,5 @@ function init(cfg: TConfigService) {
 }
 
 export type TCacheService = ReturnType<typeof init>;
+
+export * from './redis';
