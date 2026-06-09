@@ -19,7 +19,8 @@
 		"bentocache": "^1.6.1",
 		"superjson": "^2.2.5",
 		"inversify": "catalog:",
-		"@wanderlust/config": "workspace:*"
+		"@wanderlust/config": "workspace:*",
+		"ioredis": "catalog:"
 	},
 	"devDependencies": {
 		"typescript": "catalog:"
