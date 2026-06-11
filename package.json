@@ -33,7 +33,8 @@
 			"hono": "^4.12.18",
 			"reflect-metadata": "^0.2.2",
 			"evlog": "^2.17.0",
-			"ioredis": "^5.10.1"
+			"ioredis": "^5.10.1",
+			"superjson": "^2.2.5"
 		}
 	},
 	"scripts": {

@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"bentocache": "^1.6.1",
-		"superjson": "^2.2.5",
+		"superjson": "catalog:",
 		"inversify": "catalog:",
 		"@wanderlust/config": "workspace:*",
 		"ioredis": "catalog:"

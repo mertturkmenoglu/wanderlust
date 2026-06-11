@@ -24,7 +24,8 @@
 		"bullmq": "^5.76.6",
 		"ioredis": "catalog:",
 		"zod": "catalog:",
-		"react": "catalog:"
+		"react": "catalog:",
+		"superjson": "catalog:"
 	},
 	"devDependencies": {
 		"typescript": "catalog:",

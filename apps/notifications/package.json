@@ -25,7 +25,8 @@
 		"hono": "catalog:",
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"superjson": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
