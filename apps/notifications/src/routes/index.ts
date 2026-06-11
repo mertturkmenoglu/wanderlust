@@ -2,11 +2,14 @@ import { zValidator } from '@hono/zod-validator';
 import { RedisService } from '@wanderlust/cache';
 import type { $dto } from '@wanderlust/common';
 import { ConfigService } from '@wanderlust/config';
+import { JobsService } from '@wanderlust/jobs';
+import { nanoid } from '@wanderlust/uid';
 import { Hono } from 'hono';
 import SuperJSON from 'superjson';
 import z from 'zod';
 import { container } from '@/ioc';
 import type { THonoContext } from '@/lib/context';
+import { isAdmin } from '@/middlewares/is-admin';
 
 type TNotification = z.infer<typeof $dto.notification>;
 
@@ -105,4 +108,39 @@ export const router = new Hono<THonoContext>()
 			200,
 		);
 	})
+	.post(
+		'/create-dummy',
+		isAdmin,
+		zValidator(
+			'json',
+			z.object({
+				userId: z.string().min(1),
+			}),
+		),
+		async (c) => {
+			const { userId } = c.req.valid('json');
+			const jobs = container.get(JobsService).get();
+
+			await jobs.notification.queue.add('create-notification', {
+				actorId: null,
+				createdAt: new Date(),
+				data: {
+					message: 'This is a test message from the server',
+				},
+				entityId: userId,
+				entityType: 'user',
+				id: nanoid(),
+				readAt: null,
+				recipientId: userId,
+				type: 'wl_system',
+			});
+
+			return c.json(
+				{
+					message: 'Created',
+				},
+				201,
+			);
+		},
+	)
 	.get('/stream', async () => {});
