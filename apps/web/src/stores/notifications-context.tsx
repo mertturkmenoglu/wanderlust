@@ -49,44 +49,8 @@ const options = queryOptions({
 
 export const NotificationsContext = createContext<State | null>(null);
 
-async function clearAll() {
-	const qc = useQueryClient();
-	const res = await notificationsClient.clear.$delete();
-
-	if (!res.ok) {
-		throw new Error('Failed to clear notifications');
-	}
-
-	await qc.invalidateQueries(options);
-}
-
-async function markAllAsRead() {
-	const qc = useQueryClient();
-	const res = await notificationsClient['mark-all-read'].$post();
-
-	if (!res.ok) {
-		throw new Error('Failed to mark all as read');
-	}
-
-	await qc.invalidateQueries(options);
-}
-
-async function markAsRead(id: string) {
-	const qc = useQueryClient();
-	const res = await notificationsClient['mark-read'].$post({
-		json: {
-			id,
-		},
-	});
-
-	if (!res.ok) {
-		throw new Error('Failed to mark as read');
-	}
-
-	await qc.invalidateQueries(options);
-}
-
 export function NotificationsContextProvider({ children }: PropsWithChildren) {
+	const qc = useQueryClient();
 	const isAuthenticated = useIsAuthenticated();
 
 	const query = useQuery({
@@ -110,6 +74,40 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 
 		return query.data.filter((x) => x.readAt === null);
 	}, [query.data, mode]);
+
+	async function clearAll() {
+		const res = await notificationsClient.clear.$delete();
+
+		if (!res.ok) {
+			throw new Error('Failed to clear notifications');
+		}
+
+		await qc.invalidateQueries(options);
+	}
+
+	async function markAllAsRead() {
+		const res = await notificationsClient['mark-all-read'].$post();
+
+		if (!res.ok) {
+			throw new Error('Failed to mark all as read');
+		}
+
+		await qc.invalidateQueries(options);
+	}
+
+	async function markAsRead(id: string) {
+		const res = await notificationsClient['mark-read'].$post({
+			json: {
+				id,
+			},
+		});
+
+		if (!res.ok) {
+			throw new Error('Failed to mark as read');
+		}
+
+		await qc.invalidateQueries(options);
+	}
 
 	return (
 		<NotificationsContext.Provider
