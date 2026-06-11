@@ -41,13 +41,18 @@
 		}
 	},
 	"admin": {
-		"url": "http://localhost:3001"
+		"port": 3003,
+		"url": "http://localhost:3003"
 	},
 	"notifications": {
+		"port": 5001,
 		"url": "http://localhost:5001",
 		"cors": {
 			"allowedOrigins": ["http://localhost:3000"]
 		},
-		"capPerUser": 256
+		"capPerUser": 256,
+		"logger": {
+			"serviceName": "wl-notifications"
+		}
 	}
 }
