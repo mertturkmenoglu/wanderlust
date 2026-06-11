@@ -1377,19 +1377,17 @@ export const $dto = {
 					examples: ['u123'],
 				}),
 			type: z
-				.string()
-				.min(1)
+				.enum([
+					'user_follow',
+					'trip_add_user',
+					'trip_update',
+					'trip_invite',
+					'trip_add_comment',
+					'wl_event_suggest',
+					'wl_list_suggest',
+				])
 				.meta({
 					description: 'Notification type',
-					examples: [
-						'user_follow',
-						'trip_add_user',
-						'trip_update',
-						'trip_invite',
-						'trip_add_comment',
-						'wl_event_suggest',
-						'wl_list_suggest',
-					],
 				}),
 			entityType: z
 				.string()
@@ -1405,7 +1403,7 @@ export const $dto = {
 					description: 'Entity ID',
 					examples: ['p123', 't123', 'u123'],
 				}),
-			data: z.object({}).nullable().meta({
+			data: z.record(z.string(), z.any()).nullable().meta({
 				description: 'Notification data',
 			}),
 			readAt: z.date().nullable().meta({
@@ -1451,6 +1449,7 @@ export const $insert = {
 	eventLineupItem: createInsertSchema(eventLineupItems),
 	eventInterest: createInsertSchema(eventInterests),
 	notification: z.object({
+		id: z.string().min(1),
 		recipientId: z.string().min(1),
 		actorId: z.string().min(1).nullable(),
 		type: z.enum([
@@ -1464,6 +1463,8 @@ export const $insert = {
 		]),
 		entityType: z.enum(['place', 'trip', 'user']),
 		entityId: z.string().min(1),
+		readAt: z.date().nullable(),
+		createdAt: z.date().nullable(),
 		data: z.record(z.string(), z.any()).nullable(),
 	}),
 };
