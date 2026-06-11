@@ -1,7 +1,9 @@
+import { RedisService, type TRedisService } from '@wanderlust/cache';
 import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { EmailService, type TEmailService } from '@wanderlust/email';
 import { inject, injectable } from 'inversify';
-import { initJobs } from './email';
+import { initEmailJobs } from './email';
+import { initNotificationJobs } from './notification';
 
 @injectable()
 export class JobsService {
@@ -10,8 +12,9 @@ export class JobsService {
 	constructor(
 		@inject(ConfigService) private readonly cfg: ConfigService,
 		@inject(EmailService) private readonly email: EmailService,
+		@inject(RedisService) private readonly redis: RedisService,
 	) {
-		this.instance = init(this.cfg.get(), this.email.get());
+		this.instance = init(this.cfg.get(), this.email.get(), this.redis.get());
 	}
 
 	get(): TJobsService {
@@ -19,11 +22,13 @@ export class JobsService {
 	}
 }
 
-function init(cfg: TConfigService, email: TEmailService) {
-	const emailJobs = initJobs(cfg, email);
+function init(cfg: TConfigService, email: TEmailService, redis: TRedisService) {
+	const emailJobs = initEmailJobs(cfg, email);
+	const notificationJobs = initNotificationJobs(cfg, redis);
 
 	return {
 		email: emailJobs,
+		notification: notificationJobs,
 	};
 }
 

@@ -3,6 +3,7 @@ import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
@@ -11,13 +12,16 @@ import type * as dto from './dto';
 export class UsersRepository {
 	private readonly db: TDatabaseService;
 	private readonly cache: TCacheService;
+	private readonly jobs: TJobsService;
 
 	constructor(
 		@inject(DatabaseService) db: DatabaseService,
 		@inject(CacheService) cache: CacheService,
+		@inject(JobsService) jobs: JobsService,
 	) {
 		this.db = db.get();
 		this.cache = cache.get();
+		this.jobs = jobs.get();
 	}
 
 	async updateImage(
@@ -567,6 +571,26 @@ export class UsersRepository {
 					key: data.username,
 					value: activities.slice(0, 100),
 				});
+
+				console.log('creating notification');
+
+				await this.jobs.notification.queue.add('create-notification', {
+					type: 'user_follow',
+					actorId: thisUser.id,
+					recipientId: targetUser.id,
+					entityId: thisUser.id,
+					entityType: 'user',
+					data: {
+						follower: {
+							id: thisUser.id,
+							username: thisUser.username,
+							name: thisUser.name,
+							image: thisUser.image,
+						},
+					},
+				});
+
+				console.log('notification created');
 
 				return true;
 			});
