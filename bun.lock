@@ -335,6 +335,7 @@
         "@wanderlust/cache": "workspace:*",
         "@wanderlust/common": "workspace:*",
         "@wanderlust/config": "workspace:*",
+        "@wanderlust/db": "workspace:*",
         "@wanderlust/email": "workspace:*",
         "bullmq": "^5.76.6",
         "inversify": "catalog:",
