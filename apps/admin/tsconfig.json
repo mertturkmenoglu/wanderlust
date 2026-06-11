@@ -13,7 +13,8 @@
 		"rootDirs": ["."],
 		"paths": {
 			"@/*": ["./src/*"],
-			"@wanderlust/ui/*": ["../../packages/ui/src/*"]
+			"@wanderlust/ui/*": ["../../packages/ui/src/*"],
+			"@wanderlust/notifications/*": ["../../apps/notifications/src/*"]
 		},
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
@@ -22,7 +23,8 @@
 		{ "path": "../../apps/api" },
 		{ "path": "../../packages/auth" },
 		{ "path": "../../packages/ui" },
-		{ "path": "../../packages/config" }
+		{ "path": "../../packages/config" },
+		{ "path": "../../apps/notifications" }
 	],
 	"include": ["src/**/*.ts", "src/**/*.tsx", "*.ts", "*.d.ts"],
 	"exclude": ["node_modules", "dist"]

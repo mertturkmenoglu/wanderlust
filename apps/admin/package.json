@@ -30,6 +30,7 @@
 		"@wanderlust/api": "workspace:*",
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/ui": "workspace:*",
+		"@wanderlust/notifications": "workspace:*",
 		"@zag-js/file-upload": "^1.40.0",
 		"@zag-js/rating-group": "^1.40.0",
 		"@zag-js/react": "^1.40.0",
@@ -55,7 +56,8 @@
 		"typesense-instantsearch-adapter": "^3.0.2",
 		"yet-another-react-lightbox": "^3.32.0",
 		"zod": "catalog:",
-		"zustand": "^5.0.13"
+		"zustand": "^5.0.13",
+		"hono": "catalog:"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
