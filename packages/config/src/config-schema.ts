@@ -43,13 +43,18 @@ export const configSchema = z.object({
 		}),
 	}),
 	admin: z.object({
+		port: z.number(),
 		url: z.string(),
 	}),
 	notifications: z.object({
+		port: z.number(),
 		url: z.string(),
 		cors: z.object({
 			allowedOrigins: z.array(z.string()),
 		}),
-		capPeruser: z.number(),
+		capPerUser: z.number(),
+		logger: z.object({
+			serviceName: z.string(),
+		}),
 	}),
 });
