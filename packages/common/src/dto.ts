@@ -1385,6 +1385,7 @@ export const $dto = {
 					'trip_add_comment',
 					'wl_event_suggest',
 					'wl_list_suggest',
+					'wl_system',
 				])
 				.meta({
 					description: 'Notification type',
@@ -1460,6 +1461,7 @@ export const $insert = {
 			'trip_add_comment',
 			'wl_event_suggest',
 			'wl_list_suggest',
+			'wl_system',
 		]),
 		entityType: z.enum(['place', 'trip', 'user']),
 		entityId: z.string().min(1),
