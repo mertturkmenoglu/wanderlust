@@ -25,3 +25,5 @@ export default {
 	port: cfg.notifications.port,
 	fetch: app.fetch,
 };
+
+export type NotificationsAppType = typeof app;
