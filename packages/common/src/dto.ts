@@ -18,6 +18,9 @@ import {
 	follows,
 	listItems,
 	lists,
+	notificationEntityType,
+	notifications,
+	notificationType,
 	places,
 	reports,
 	reviews,
@@ -1352,71 +1355,47 @@ export const $dto = {
 	}).meta({
 		description: 'An event lineup item entity',
 	}),
-	notification: z
-		.object({
-			id: z
-				.string()
-				.min(1)
-				.meta({
-					description: 'Notification ID',
-					examples: ['n123'],
-				}),
-			recipientId: z
-				.string()
-				.min(1)
-				.meta({
-					description: 'Recipient ID',
-					examples: ['u123'],
-				}),
-			actorId: z
-				.string()
-				.min(1)
-				.nullable()
-				.meta({
-					description: 'Actor ID',
-					examples: ['u123'],
-				}),
-			type: z
-				.enum([
-					'user_follow',
-					'trip_add_user',
-					'trip_update',
-					'trip_invite',
-					'trip_add_comment',
-					'wl_event_suggest',
-					'wl_list_suggest',
-					'wl_system',
-				])
-				.meta({
-					description: 'Notification type',
-				}),
-			entityType: z
-				.string()
-				.min(1)
-				.meta({
-					description: 'Entity type',
-					examples: ['place', 'trip', 'user'],
-				}),
-			entityId: z
-				.string()
-				.min(1)
-				.meta({
-					description: 'Entity ID',
-					examples: ['p123', 't123', 'u123'],
-				}),
-			data: z.record(z.string(), z.any()).nullable().meta({
-				description: 'Notification data',
+	notification: createSelectSchema(notifications, {
+		id: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'Notification ID',
+				examples: ['n123'],
 			}),
-			readAt: z.date().nullable().meta({
-				description: 'Read at',
+		recipientId: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'Recipient ID',
+				examples: ['u123'],
 			}),
-			createdAt: z.date().meta({
-				description: 'Created at',
-			}),
-		})
-		.meta({
-			description: 'A notification entity',
+		type: z.enum(notificationType.enumValues).meta({
+			description: 'Notification type',
 		}),
+		entityType: z.enum(notificationEntityType.enumValues).meta({
+			description: 'Entity type',
+			examples: ['place', 'trip', 'user'],
+		}),
+		entityId: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'Entity ID',
+				examples: ['p123', 't123', 'u123'],
+			}),
+		data: z.record(z.string(), z.any()).nullable().meta({
+			description: 'Notification data',
+		}),
+		readAt: z.date().nullable().meta({
+			description: 'Read at',
+		}),
+		createdAt: z.date().meta({
+			description: 'Created at',
+		}),
+	}).meta({
+		description: 'A notification entity',
+	}),
 };
 
 export const $insert = {
@@ -1449,24 +1428,5 @@ export const $insert = {
 	eventAgendaItem: createInsertSchema(eventAgendaItems),
 	eventLineupItem: createInsertSchema(eventLineupItems),
 	eventInterest: createInsertSchema(eventInterests),
-	notification: z.object({
-		id: z.string().min(1),
-		recipientId: z.string().min(1),
-		actorId: z.string().min(1).nullable(),
-		type: z.enum([
-			'user_follow',
-			'trip_add_user',
-			'trip_update',
-			'trip_invite',
-			'trip_add_comment',
-			'wl_event_suggest',
-			'wl_list_suggest',
-			'wl_system',
-		]),
-		entityType: z.enum(['place', 'trip', 'user']),
-		entityId: z.string().min(1),
-		readAt: z.date().nullable(),
-		createdAt: z.date().nullable(),
-		data: z.record(z.string(), z.any()).nullable(),
-	}),
+	notification: createInsertSchema(notifications),
 };

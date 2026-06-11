@@ -919,3 +919,72 @@ export const eventInterestsRelations = relations(eventInterests, ({ one }) => ({
 		references: [users.id],
 	}),
 }));
+
+export const notificationType = pgEnum('notification_type', [
+	'user_follow',
+	'trip_add_user',
+	'trip_update',
+	'trip_invite',
+	'trip_add_comment',
+	'wl_event_suggest',
+	'wl_list_suggest',
+	'wl_system',
+]);
+
+export const notificationEntityType = pgEnum('notification_entity_type', [
+	'place',
+	'review',
+	'event',
+	'list',
+	'trip',
+	'user',
+]);
+
+export const notifications = pgTable(
+	'notifications',
+	{
+		id: text().notNull().primaryKey(),
+		recipientId: text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		type: notificationType().notNull(),
+		entityType: notificationEntityType().notNull(),
+		entityId: text().notNull(),
+		// biome-ignore lint/suspicious/noExplicitAny: any is ok here
+		data: jsonb().$type<Record<string, any>>(),
+		readAt: timestamp({ withTimezone: true }),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [index().on(t.recipientId)],
+);
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+	recipient: one(users, {
+		fields: [notifications.recipientId],
+		references: [users.id],
+	}),
+	review: one(reviews, {
+		fields: [notifications.entityId],
+		references: [reviews.id],
+	}),
+	place: one(places, {
+		fields: [notifications.entityId],
+		references: [places.id],
+	}),
+	event: one(events, {
+		fields: [notifications.entityId],
+		references: [events.id],
+	}),
+	list: one(lists, {
+		fields: [notifications.entityId],
+		references: [lists.id],
+	}),
+	trip: one(trips, {
+		fields: [notifications.entityId],
+		references: [trips.id],
+	}),
+	user: one(users, {
+		fields: [notifications.entityId],
+		references: [users.id],
+	}),
+}));
