@@ -9,30 +9,22 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
-import type { InferResponseType } from 'hono';
 import { CheckCheckIcon } from 'lucide-react';
 import { useMemo } from 'react';
+import { Logo } from '@/components/logo';
 import { UserImage } from '@/components/user-image';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { userImage } from '@/lib/image';
-import { notificationsClient } from '@/lib/notifications';
+import {
+	type TNotification,
+	useNotificationsContext,
+} from '@/stores/notifications-context';
 
 type Props = {
-	item: InferResponseType<typeof notificationsClient.list.$get>[number];
+	item: TNotification;
 };
 
 export function NotificationItem({ item }: Props) {
-	const invalidate = useInvalidator();
-
-	const markAsRead = async () => {
-		await notificationsClient['mark-read'].$post({
-			json: {
-				id: item.id,
-			},
-		});
-
-		await invalidate();
-	};
+	const { markAsRead } = useNotificationsContext();
 
 	const content = useMemo(() => {
 		switch (item.type) {
@@ -47,7 +39,7 @@ export function NotificationItem({ item }: Props) {
 						<Item variant="outline" className="hover:bg-muted">
 							<ItemActions>
 								{item.readAt === null ? (
-									<Badge variant="default">New</Badge>
+									<Badge variant="default">Unread</Badge>
 								) : null}
 							</ItemActions>
 							<ItemMedia variant="default">
@@ -70,7 +62,7 @@ export function NotificationItem({ item }: Props) {
 									onClick={async (e) => {
 										e.preventDefault();
 										e.stopPropagation();
-										await markAsRead();
+										await markAsRead(item.id);
 									}}
 								>
 									<CheckCheckIcon />
@@ -92,6 +84,41 @@ export function NotificationItem({ item }: Props) {
 				return <></>;
 			case 'wl_list_suggest':
 				return <></>;
+			case 'wl_system':
+				return (
+					<Item variant="outline" className="hover:bg-muted">
+						<ItemActions>
+							{item.readAt === null ? (
+								<Badge variant="default">New</Badge>
+							) : null}
+						</ItemActions>
+						<ItemMedia variant="default">
+							<Logo variant="xs" />
+						</ItemMedia>
+						<ItemContent>
+							<ItemTitle>{item.data?.message ?? ''}</ItemTitle>
+							<ItemDescription>
+								This notification is sent to you by the Wanderlust system.
+							</ItemDescription>
+						</ItemContent>
+						<ItemActions>
+							<Button
+								variant="default"
+								size="icon-sm"
+								type="button"
+								disabled={item.readAt !== null}
+								onClick={async (e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									await markAsRead(item.id);
+								}}
+							>
+								<CheckCheckIcon />
+								<span className="sr-only">Mark as read</span>
+							</Button>
+						</ItemActions>
+					</Item>
+				);
 			default:
 				return null;
 		}

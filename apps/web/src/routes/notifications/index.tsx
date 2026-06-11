@@ -17,48 +17,19 @@ import {
 	Settings2Icon,
 	TrashIcon,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
 import { Logo } from '@/components/logo';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { authGuard } from '@/lib/auth';
-import { notificationsClient } from '@/lib/notifications';
+import { useNotificationsContext } from '@/stores/notifications-context';
 import { NotificationItem } from './-item';
 
 export const Route = createFileRoute('/notifications/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
-	loader: async () => {
-		const res = await notificationsClient.list.$get();
-
-		if (!res.ok) {
-			throw new Error('Failed to fetch notifications');
-		}
-
-		return res.json();
-	},
 });
 
 function RouteComponent() {
-	const data = Route.useLoaderData();
-	const [mode, setMode] = useState<'all' | 'unread' | 'read'>('all');
-	const filtered = useMemo(() => {
-		if (mode === 'all') return data;
-		if (mode === 'read') return data.filter((n) => n.readAt !== null);
-		return data.filter((n) => n.readAt === null);
-	}, [data, mode]);
-
-	const invalidate = useInvalidator();
-
-	const clearAll = async () => {
-		await notificationsClient.clear.$delete();
-		await invalidate();
-	};
-
-	const markAllAsRead = async () => {
-		await notificationsClient['mark-all-read'].$post();
-		await invalidate();
-	};
-
+	const { mode, setMode, filtered, markAllAsRead, clearAll } =
+		useNotificationsContext();
 	const navigate = Route.useNavigate();
 
 	return (
@@ -88,11 +59,15 @@ function RouteComponent() {
 					</Button>
 				</ButtonGroup>
 				<ButtonGroup>
-					<Button variant="outline" type="button" onClick={markAllAsRead}>
+					<Button
+						variant="outline"
+						type="button"
+						onClick={() => markAllAsRead()}
+					>
 						<CheckCheckIcon />
 						<span>Mark All as Read</span>
 					</Button>
-					<Button variant="outline" type="button" onClick={clearAll}>
+					<Button variant="outline" type="button" onClick={() => clearAll()}>
 						<TrashIcon />
 						<span>Clear All</span>
 					</Button>
@@ -106,7 +81,7 @@ function RouteComponent() {
 					</Button>
 				</ButtonGroup>
 			</div>
-			<ItemGroup className="mt-4">
+			<ItemGroup className="mt-4 gap-2">
 				{filtered.map((item) => (
 					<NotificationItem key={item.id} item={item} />
 				))}
