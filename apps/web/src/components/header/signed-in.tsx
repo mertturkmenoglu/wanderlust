@@ -1,5 +1,7 @@
 import { linkOptions } from '@tanstack/react-router';
+import { Badge } from '@wanderlust/ui/components/badge';
 import { BellIcon, InboxIcon, SearchIcon } from 'lucide-react';
+import { useNotificationsContext } from '@/stores/notifications-context';
 import { IconLink, type IconLinkProps } from './icon-link';
 
 type Item = IconLinkProps & { key: string };
@@ -32,10 +34,19 @@ const items: Item[] = [
 ];
 
 export function SignedInLinks() {
+	const ctx = useNotificationsContext();
+
 	return (
-		<div className="flex items-center gap-2">
+		<div className="relative flex items-center gap-2">
 			{items.map((item) => (
-				<IconLink {...item} />
+				<div key={item.link.to}>
+					{item.key === 'notifications' && ctx.unreadCount !== 0 && (
+						<Badge className="absolute -right-3 -bottom-3 rounded-full text-xs">
+							{ctx.unreadCount > 10 ? '+' : ctx.unreadCount}
+						</Badge>
+					)}
+					<IconLink {...item} />
+				</div>
 			))}
 		</div>
 	);
