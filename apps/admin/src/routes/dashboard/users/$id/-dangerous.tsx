@@ -8,6 +8,7 @@ import { RemoveUser } from './-remove-user';
 import { RoleView } from './-role';
 import { SessionsView } from './-sessions';
 import { SetPassword } from './-set-password';
+import { TestNotificationView } from './-test-notification';
 import { Updateuser } from './-update-user';
 
 type Props = {
@@ -46,6 +47,8 @@ export function DangerousActions({ className }: Props) {
 				<SetPassword />
 
 				<Updateuser />
+
+				<TestNotificationView />
 
 				<RemoveUser />
 			</div>
