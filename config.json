@@ -8,7 +8,7 @@
 			"l1MaxSize": "50mb"
 		},
 		"cors": {
-			"allowedOrigins": ["http://localhost:3000", "http://localhost:3001"]
+			"allowedOrigins": ["http://localhost:3000", "http://localhost:3003"]
 		}
 	},
 	"database": {
@@ -48,7 +48,7 @@
 		"port": 5001,
 		"url": "http://localhost:5001",
 		"cors": {
-			"allowedOrigins": ["http://localhost:3000"]
+			"allowedOrigins": ["http://localhost:3000", "http://localhost:3003"]
 		},
 		"capPerUser": 256,
 		"logger": {
