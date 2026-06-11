@@ -1,47 +1,29 @@
 import { zValidator } from '@hono/zod-validator';
-import { RedisService } from '@wanderlust/cache';
-import type { $dto } from '@wanderlust/common';
 import { ConfigService } from '@wanderlust/config';
+import { DatabaseService } from '@wanderlust/db';
+import * as schema from '@wanderlust/db/schema';
 import { JobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
+import { and, eq } from 'drizzle-orm';
 import { Hono } from 'hono';
-import SuperJSON from 'superjson';
 import z from 'zod';
 import { container } from '@/ioc';
 import type { THonoContext } from '@/lib/context';
 import { isAdmin } from '@/middlewares/is-admin';
 
-type TNotification = z.infer<typeof $dto.notification>;
-
-async function readAll(userId: string) {
-	const redis = container.get(RedisService).get();
-	const cfg = container.get(ConfigService).get();
-
-	const key = `notif:list:${userId}`;
-
-	const items = await redis.lrange(key, 0, cfg.notifications.capPerUser);
-
-	const result = items.map((x) => SuperJSON.parse<TNotification>(x));
-
-	return result;
-}
-
-async function setAll(userId: string, items: TNotification[]) {
-	const redis = container.get(RedisService).get();
-	const key = `notif:list:${userId}`;
-
-	const serialized = items.map((item) => SuperJSON.stringify(item));
-	return await redis
-		.multi()
-		.del(key)
-		.lpush(key, ...serialized)
-		.exec();
-}
-
 export const router = new Hono<THonoContext>()
 	.get('/list', async (c) => {
+		const cfg = container.get(ConfigService).get();
+		const db = container.get(DatabaseService).get();
+
 		const userId = c.get('user').id;
-		const result = await readAll(userId);
+
+		const result = await db.query.notifications.findMany({
+			where: (t, { eq }) => eq(t.recipientId, userId),
+			orderBy: (t, { desc }) => desc(t.createdAt),
+			limit: cfg.notifications.capPerUser,
+		});
+
 		return c.json(result);
 	})
 	.post(
@@ -53,20 +35,21 @@ export const router = new Hono<THonoContext>()
 			}),
 		),
 		async (c) => {
+			const db = container.get(DatabaseService).get();
 			const userId = c.get('user').id;
 			const { id } = c.req.valid('json');
 
-			const items = await readAll(userId);
-
-			const updated = items.map((item) => {
-				if (item.id !== id) {
-					return item;
-				}
-
-				return { ...item, readAt: new Date() };
-			});
-
-			await setAll(userId, updated);
+			await db
+				.update(schema.notifications)
+				.set({
+					readAt: new Date(),
+				})
+				.where(
+					and(
+						eq(schema.notifications.id, id),
+						eq(schema.notifications.recipientId, userId),
+					),
+				);
 
 			return c.json(
 				{
@@ -77,15 +60,15 @@ export const router = new Hono<THonoContext>()
 		},
 	)
 	.post('/mark-all-read', async (c) => {
+		const db = container.get(DatabaseService).get();
 		const userId = c.get('user').id;
 
-		const items = await readAll(userId);
-
-		const updated = items.map((item) => {
-			return { ...item, readAt: new Date() };
-		});
-
-		await setAll(userId, updated);
+		await db
+			.update(schema.notifications)
+			.set({
+				readAt: new Date(),
+			})
+			.where(eq(schema.notifications.recipientId, userId));
 
 		return c.json(
 			{
@@ -95,11 +78,12 @@ export const router = new Hono<THonoContext>()
 		);
 	})
 	.delete('/clear', async (c) => {
+		const db = container.get(DatabaseService).get();
 		const userId = c.get('user').id;
-		const redis = container.get(RedisService).get();
-		const key = `notif:list:${userId}`;
 
-		await redis.del(key);
+		await db
+			.delete(schema.notifications)
+			.where(eq(schema.notifications.recipientId, userId));
 
 		return c.json(
 			{
@@ -122,7 +106,6 @@ export const router = new Hono<THonoContext>()
 			const jobs = container.get(JobsService).get();
 
 			await jobs.notification.queue.add('create-notification', {
-				actorId: null,
 				createdAt: new Date(),
 				data: {
 					message: 'This is a test message from the server',
