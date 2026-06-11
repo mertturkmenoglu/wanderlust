@@ -80,7 +80,7 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 				path: '/',
 			}),
 		],
-		trustedOrigins: cfg.cors.allowedOrigins,
+		trustedOrigins: cfg.api.cors.allowedOrigins,
 		appName: 'Wanderlust',
 		emailAndPassword: {
 			enabled: true,
