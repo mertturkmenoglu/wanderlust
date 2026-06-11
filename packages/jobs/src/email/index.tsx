@@ -30,7 +30,7 @@ type Schemas = z.infer<typeof schemas>;
 
 type DataType = Schemas[JobName];
 
-export function initJobs(cfg: TConfigService, email: TEmailService) {
+export function initEmailJobs(cfg: TConfigService, email: TEmailService) {
 	const connection = new IORedis({
 		host: cfg.redis.host,
 		port: cfg.redis.port,
