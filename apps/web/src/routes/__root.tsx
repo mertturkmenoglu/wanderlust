@@ -12,6 +12,7 @@ import { ErrorComponent } from '@/components/error-component';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import type { orpc } from '@/lib/orpc';
+import { NotificationsContextProvider } from '@/stores/notifications-context';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -52,7 +53,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function Component() {
 	return (
-		<>
+		<NotificationsContextProvider>
 			<HeadContent />
 			<div className="flex min-h-screen flex-col">
 				<Header />
@@ -74,6 +75,6 @@ function Component() {
 				/>
 				<Toaster position="bottom-center" richColors />
 			</div>
-		</>
+		</NotificationsContextProvider>
 	);
 }
