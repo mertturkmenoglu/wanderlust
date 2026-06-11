@@ -1,4 +1,6 @@
 import { ORPCError } from '@orpc/client';
+import { JobsService, type TJobsService } from '@wanderlust/jobs';
+import { nanoid } from '@wanderlust/uid';
 import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
 import * as authz from './authz';
@@ -7,9 +9,14 @@ import { TripsRepository } from './repository';
 
 @injectable()
 export class TripsService {
+	private readonly jobs: TJobsService;
+
 	constructor(
 		@inject(TripsRepository) private readonly repo: TripsRepository,
-	) {}
+		@inject(JobsService) jobsService: JobsService,
+	) {
+		this.jobs = jobsService.get();
+	}
 
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(userId, data);
@@ -69,6 +76,22 @@ export class TripsService {
 		}
 
 		const result = await this.repo.createInvite(userId, data, trip.title);
+
+		await this.jobs.notification.queue.add('create-notification', {
+			id: nanoid(),
+			entityId: trip.id,
+			entityType: 'trip',
+			recipientId: result.toId,
+			type: 'trip_invite',
+			data: {
+				trip: {
+					id: trip.id,
+					title: trip.title,
+				},
+				role: result.role,
+				from: result.fromUser,
+			},
+		});
 
 		return {
 			invite: result,
@@ -157,14 +180,27 @@ export class TripsService {
 			inviteId: data.inviteId,
 		});
 
-		const result = await this.repo.acceptOrDeclineInvite(
+		const accepted = await this.repo.acceptOrDeclineInvite(
 			userId,
 			data,
 			invite.role,
 		);
 
+		if (accepted) {
+			await this.jobs.notification.queue.add('create-notification', {
+				entityId: invite.tripId,
+				entityType: 'trip',
+				id: nanoid(),
+				recipientId: invite.trip.ownerId,
+				type: 'trip_add_user',
+				data: {
+					newUser: invite.toUser,
+				},
+			});
+		}
+
 		return {
-			accepted: result,
+			accepted,
 		};
 	}
 
@@ -277,6 +313,22 @@ export class TripsService {
 
 		const result = await this.repo.createComment(userId, data);
 
+		if (result.userId !== trip.ownerId) {
+			await this.jobs.notification.queue.add('create-notification', {
+				entityId: trip.id,
+				entityType: 'trip',
+				id: nanoid(),
+				recipientId: trip.ownerId,
+				type: 'trip_add_comment',
+				data: {
+					trip: {
+						id: trip.id,
+						title: trip.title,
+					},
+				},
+			});
+		}
+
 		return {
 			comment: result,
 		};
@@ -375,10 +427,31 @@ export class TripsService {
 			});
 		}
 
-		const result = await this.repo.update(userId, data);
+		const [newTrip, isDateChanged] = await this.repo.update(userId, data);
+
+		if (isDateChanged && newTrip.visibilityLevel !== 'private') {
+			await this.jobs.notification.queue.addBulk(
+				newTrip.participants.map((p) => ({
+					name: 'create-notification',
+					data: {
+						entityId: newTrip.id,
+						entityType: 'trip',
+						id: nanoid(),
+						recipientId: p.userId,
+						type: 'trip_update',
+						data: {
+							trip: {
+								id: newTrip.id,
+								title: newTrip.title,
+							},
+						},
+					},
+				})),
+			);
+		}
 
 		return {
-			trip: result,
+			trip: newTrip,
 		};
 	}
 
