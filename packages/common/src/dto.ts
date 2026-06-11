@@ -1464,6 +1464,6 @@ export const $insert = {
 		]),
 		entityType: z.enum(['place', 'trip', 'user']),
 		entityId: z.string().min(1),
-		data: z.object({}).nullable(),
+		data: z.record(z.string(), z.any()).nullable(),
 	}),
 };
