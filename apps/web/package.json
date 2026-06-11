@@ -55,7 +55,9 @@
 		"typesense-instantsearch-adapter": "^3.0.2",
 		"yet-another-react-lightbox": "^3.32.0",
 		"zod": "catalog:",
-		"zustand": "^5.0.13"
+		"zustand": "^5.0.13",
+		"hono": "catalog:",
+		"@wanderlust/notifications": "workspace:*"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
