@@ -1,29 +1,45 @@
 import { zValidator } from '@hono/zod-validator';
 import { RedisService } from '@wanderlust/cache';
-import { $dto } from '@wanderlust/common';
+import type { $dto } from '@wanderlust/common';
 import { ConfigService } from '@wanderlust/config';
 import { Hono } from 'hono';
+import SuperJSON from 'superjson';
 import z from 'zod';
 import { container } from '@/ioc';
 import type { THonoContext } from '@/lib/context';
 
+type TNotification = z.infer<typeof $dto.notification>;
+
+async function readAll(userId: string) {
+	const redis = container.get(RedisService).get();
+	const cfg = container.get(ConfigService).get();
+
+	const key = `notif:list:${userId}`;
+
+	const items = await redis.lrange(key, 0, cfg.notifications.capPerUser);
+
+	const result = items.map((x) => SuperJSON.parse<TNotification>(x));
+
+	return result;
+}
+
+async function setAll(userId: string, items: TNotification[]) {
+	const redis = container.get(RedisService).get();
+	const key = `notif:list:${userId}`;
+
+	const serialized = items.map((item) => SuperJSON.stringify(item));
+	return await redis
+		.multi()
+		.del(key)
+		.lpush(key, ...serialized)
+		.exec();
+}
+
 export const router = new Hono<THonoContext>()
 	.get('/list', async (c) => {
-		const redis = container.get(RedisService).get();
-		const cfg = container.get(ConfigService).get();
-
 		const userId = c.get('user').id;
-		const key = `notif:list:${userId}`;
-
-		const items = await redis.lrange(key, 0, cfg.notifications.capPerUser);
-
-		const result = $dto.notification.array().safeParse(items);
-
-		if (!result.success) {
-			return c.json({ error: result.error }, 500);
-		}
-
-		return c.json(result.data);
+		const result = await readAll(userId);
+		return c.json(result);
 	})
 	.post(
 		'/mark-read',
@@ -34,20 +50,12 @@ export const router = new Hono<THonoContext>()
 			}),
 		),
 		async (c) => {
-			const redis = container.get(RedisService).get();
 			const userId = c.get('user').id;
 			const { id } = c.req.valid('json');
 
-			const key = `notif:list:${userId}`;
-			const items = await redis.lrange(key, 0, -1);
+			const items = await readAll(userId);
 
-			const result = $dto.notification.array().safeParse(items);
-
-			if (!result.success) {
-				return c.json({ error: result.error }, 500);
-			}
-
-			const updated = result.data.map((item) => {
+			const updated = items.map((item) => {
 				if (item.id !== id) {
 					return item;
 				}
@@ -55,13 +63,7 @@ export const router = new Hono<THonoContext>()
 				return { ...item, readAt: new Date() };
 			});
 
-			const serialized = updated.map((item) => JSON.stringify(item));
-
-			await redis
-				.multi()
-				.del(key)
-				.lpush(key, ...serialized)
-				.exec();
+			await setAll(userId, updated);
 
 			return c.json(
 				{
@@ -72,29 +74,15 @@ export const router = new Hono<THonoContext>()
 		},
 	)
 	.post('/mark-all-read', async (c) => {
-		const redis = container.get(RedisService).get();
 		const userId = c.get('user').id;
 
-		const key = `notif:list:${userId}`;
-		const items = await redis.lrange(key, 0, -1);
+		const items = await readAll(userId);
 
-		const result = $dto.notification.array().safeParse(items);
-
-		if (!result.success) {
-			return c.json({ error: result.error }, 500);
-		}
-
-		const updated = result.data.map((item) => {
+		const updated = items.map((item) => {
 			return { ...item, readAt: new Date() };
 		});
 
-		const serialized = updated.map((item) => JSON.stringify(item));
-
-		await redis
-			.multi()
-			.del(key)
-			.lpush(key, ...serialized)
-			.exec();
+		await setAll(userId, updated);
 
 		return c.json(
 			{
@@ -103,4 +91,18 @@ export const router = new Hono<THonoContext>()
 			200,
 		);
 	})
-	.get('/stream', async (c) => {});
+	.delete('/clear', async (c) => {
+		const userId = c.get('user').id;
+		const redis = container.get(RedisService).get();
+		const key = `notif:list:${userId}`;
+
+		await redis.del(key);
+
+		return c.json(
+			{
+				message: 'OK',
+			},
+			200,
+		);
+	})
+	.get('/stream', async () => {});
