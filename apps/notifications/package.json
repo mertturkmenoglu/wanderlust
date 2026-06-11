@@ -12,6 +12,7 @@
 		"build-types": "tsc --build"
 	},
 	"dependencies": {
+		"@hono/zod-validator": "^0.8.0",
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/cache": "workspace:*",
 		"@wanderlust/common": "workspace:*",
