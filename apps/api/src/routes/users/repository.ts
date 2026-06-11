@@ -4,6 +4,7 @@ import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
+import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
@@ -575,11 +576,14 @@ export class UsersRepository {
 				console.log('creating notification');
 
 				await this.jobs.notification.queue.add('create-notification', {
+					id: nanoid(),
 					type: 'user_follow',
 					actorId: thisUser.id,
 					recipientId: targetUser.id,
 					entityId: thisUser.id,
 					entityType: 'user',
+					readAt: null,
+					createdAt: new Date(),
 					data: {
 						follower: {
 							id: thisUser.id,
