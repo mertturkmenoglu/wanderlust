@@ -13,7 +13,7 @@ export default defineConfig({
 		tailwindcss(),
 	],
 	server: {
-		hmr: { port: 3001 },
+		hmr: { port: 3004 },
 	},
 	resolve: {
 		tsconfigPaths: true,
