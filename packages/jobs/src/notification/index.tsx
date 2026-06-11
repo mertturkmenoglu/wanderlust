@@ -2,6 +2,7 @@ import type { TRedisService } from '@wanderlust/cache';
 import { $insert } from '@wanderlust/common';
 import type { TConfigService } from '@wanderlust/config';
 import { Queue, Worker } from 'bullmq';
+import SuperJSON from 'superjson';
 import z from 'zod';
 
 const schemas = z.object({
@@ -26,10 +27,9 @@ export function initNotificationJobs(
 		async (job) => {
 			switch (job.name) {
 				case 'create-notification': {
-					console.log('create-notification', job.data);
 					const data = job.data as Schemas['create-notification'];
 					const key = `notif:list:${data.recipientId}`;
-					const serialized = JSON.stringify(data);
+					const serialized = SuperJSON.stringify(data);
 					await redis
 						.multi()
 						.lpush(key, serialized)
