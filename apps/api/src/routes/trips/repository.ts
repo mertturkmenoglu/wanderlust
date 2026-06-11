@@ -926,7 +926,7 @@ export class TripsRepository {
 
 			const updated = await this.get(userId, { id: data.id });
 
-			return updated;
+			return [updated, isDateChanged] as const;
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;
