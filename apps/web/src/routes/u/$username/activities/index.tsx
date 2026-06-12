@@ -1,65 +1,38 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
-import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { LoaderCircleIcon } from 'lucide-react';
+import { ItemGroup } from '@wanderlust/ui/components/item';
 import { AppMessage } from '@/components/app-message';
-import { orpc } from '@/lib/orpc';
-import { ActivityCard, type UserActivityType } from './-activity-card';
+import { ActivityItem } from './-item';
 
 export const Route = createFileRoute('/u/$username/activities/')({
 	component: RouteComponent,
+	loader: ({ context: { orpc, queryClient }, params }) =>
+		queryClient.ensureQueryData(
+			orpc.users.listActivities.queryOptions({
+				input: {
+					username: params.username,
+				},
+			}),
+		),
 });
 
 function RouteComponent() {
-	const { username } = Route.useParams();
+	const { activities } = Route.useLoaderData();
 
-	const query = useQuery(
-		orpc.users.listActivities.queryOptions({
-			input: {
-				username,
-			},
-		}),
-	);
-
-	if (query.error) {
+	if (activities.length === 0) {
 		return (
 			<AppMessage
-				errorMessage="Something went wrong"
-				className="my-16"
+				emptyMessage="No activities"
 				showBackButton={false}
+				className="my-16"
 			/>
 		);
 	}
 
-	if (query.data) {
-		const activities = query.data.activities;
-
-		if (activities.length === 0) {
-			return (
-				<AppMessage
-					emptyMessage="No activities"
-					showBackButton={false}
-					className="my-16"
-				/>
-			);
-		}
-
-		return (
-			<div className="space-y-4">
-				{activities.map((act, i) => (
-					<ActivityCard
-						activity={{
-							type: act.type as unknown as UserActivityType,
-							payload: act.payload as unknown as Record<string, unknown>,
-						}}
-						key={`activity-${i}`}
-					/>
-				))}
-			</div>
-		);
-	}
-
 	return (
-		<LoaderCircleIcon className="mx-auto my-16 size-8 animate-spin text-primary" />
+		<ItemGroup className="gap-2">
+			{activities.map((act, i) => (
+				<ActivityItem item={act} key={`activity-${i}`} />
+			))}
+		</ItemGroup>
 	);
 }
