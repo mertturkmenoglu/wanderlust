@@ -21,7 +21,7 @@ export function Actions() {
 			<Button
 				variant="outline"
 				type="button"
-				onClick={() => navigate({ to: '/settings' })}
+				onClick={() => navigate({ to: '/settings/notifications' })}
 			>
 				<Settings2Icon />
 				<span>Settings</span>
