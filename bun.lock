@@ -249,6 +249,7 @@
     "packages/auth": {
       "name": "@wanderlust/auth",
       "dependencies": {
+        "@wanderlust/cache": "workspace:*",
         "@wanderlust/config": "workspace:*",
         "@wanderlust/db": "workspace:*",
         "@wanderlust/jobs": "workspace:*",

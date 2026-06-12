@@ -19,6 +19,7 @@
 		"@wanderlust/uid": "workspace:*",
 		"@wanderlust/config": "workspace:*",
 		"@wanderlust/jobs": "workspace:*",
+		"@wanderlust/cache": "workspace:*",
 		"better-auth": "catalog:",
 		"inversify": "catalog:"
 	},

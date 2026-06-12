@@ -1,3 +1,4 @@
+import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db/schema';
@@ -16,8 +17,14 @@ export class AuthService {
 		@inject(DatabaseService) private readonly db: DatabaseService,
 		@inject(ConfigService) private readonly cfg: ConfigService,
 		@inject(JobsService) private readonly jobs: JobsService,
+		@inject(CacheService) private readonly cache: CacheService,
 	) {
-		this.instance = init(this.db.get(), this.cfg.get(), this.jobs.get());
+		this.instance = init(
+			this.db.get(),
+			this.cfg.get(),
+			this.jobs.get(),
+			this.cache.get(),
+		);
 	}
 
 	get(): TAuthService {
@@ -25,7 +32,12 @@ export class AuthService {
 	}
 }
 
-function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
+function init(
+	db: TDatabaseService,
+	cfg: TConfigService,
+	jobs: TJobsService,
+	cache: TCacheService,
+) {
 	return betterAuth({
 		database: drizzleAdapter(db, {
 			provider: 'pg',
@@ -33,6 +45,29 @@ function init(db: TDatabaseService, cfg: TConfigService, jobs: TJobsService) {
 			usePlural: true,
 		}),
 		baseURL: cfg.api.url,
+		databaseHooks: {
+			user: {
+				create: {
+					after: async (user) => {
+						const channels = schema.notificationChannelType.enumValues;
+						const categories = schema.notificationCategoryType.enumValues;
+						const preferences = channels.flatMap((ch) =>
+							categories.map((c) => ({
+								channel: ch,
+								category: c,
+								enabled: true,
+								userId: user.id,
+							})),
+						);
+						await db.insert(schema.notificationPreferences).values(preferences);
+						await cache.namespace('activities').setForever({
+							key: user.username as string,
+							value: [],
+						});
+					},
+				},
+			},
+		},
 		user: {
 			// TODO: Investigate why defining these columns in the Drizzle table doesn't automatically
 			// add them to the user object and if there's a way to do it, we should do it.
