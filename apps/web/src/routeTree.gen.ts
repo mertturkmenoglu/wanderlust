@@ -36,6 +36,7 @@ import { Route as TripsInvitesIndexRouteImport } from './routes/trips/invites/in
 import { Route as TripsDiscoverIndexRouteImport } from './routes/trips/discover/index'
 import { Route as TripsIdIndexRouteImport } from './routes/trips/$id/index'
 import { Route as SettingsProfileIndexRouteImport } from './routes/settings/profile/index'
+import { Route as SettingsNotificationsIndexRouteImport } from './routes/settings/notifications/index'
 import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
 import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
 import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
@@ -201,6 +202,12 @@ const SettingsProfileIndexRoute = SettingsProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsNotificationsIndexRoute =
+  SettingsNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => SettingsRoute,
+  } as any)
 const SettingsAccountIndexRoute = SettingsAccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
@@ -382,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
+  '/settings/notifications/': typeof SettingsNotificationsIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
@@ -436,6 +444,7 @@ export interface FileRoutesByTo {
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
+  '/settings/notifications': typeof SettingsNotificationsIndexRoute
   '/settings/profile': typeof SettingsProfileIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
@@ -495,6 +504,7 @@ export interface FileRoutesById {
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
+  '/settings/notifications/': typeof SettingsNotificationsIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
@@ -555,6 +565,7 @@ export interface FileRouteTypes {
     | '/lists/$id/'
     | '/p/$id/'
     | '/settings/account/'
+    | '/settings/notifications/'
     | '/settings/profile/'
     | '/trips/$id/'
     | '/trips/discover/'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/lists/$id'
     | '/p/$id'
     | '/settings/account'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/trips/$id'
     | '/trips/discover'
@@ -667,6 +679,7 @@ export interface FileRouteTypes {
     | '/lists/$id/'
     | '/p/$id/'
     | '/settings/account/'
+    | '/settings/notifications/'
     | '/settings/profile/'
     | '/trips/$id/'
     | '/trips/discover/'
@@ -919,6 +932,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsProfileIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/notifications/': {
+      id: '/settings/notifications/'
+      path: '/notifications'
+      fullPath: '/settings/notifications/'
+      preLoaderRoute: typeof SettingsNotificationsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/account/': {
       id: '/settings/account/'
       path: '/account'
@@ -1128,12 +1148,14 @@ declare module '@tanstack/react-router' {
 interface SettingsRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsAccountIndexRoute: typeof SettingsAccountIndexRoute
+  SettingsNotificationsIndexRoute: typeof SettingsNotificationsIndexRoute
   SettingsProfileIndexRoute: typeof SettingsProfileIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsAccountIndexRoute: SettingsAccountIndexRoute,
+  SettingsNotificationsIndexRoute: SettingsNotificationsIndexRoute,
   SettingsProfileIndexRoute: SettingsProfileIndexRoute,
 }
 
