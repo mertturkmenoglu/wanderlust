@@ -19,8 +19,8 @@ export function getRouter() {
 			return result;
 		}),
 		create: os.create.handler(async ({ input, context }) => {
-			const userId = context.session.user.id;
-			const result = await svc.create(userId, input);
+			const { id: userId, username } = context.session.user;
+			const result = await svc.create(userId, username, input);
 
 			return result;
 		}),

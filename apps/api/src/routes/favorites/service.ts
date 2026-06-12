@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { ActivitiesService } from '@/lib/activities';
 import type * as dto from './dto';
 import { FavoritesRepository } from './repository';
 
@@ -6,16 +7,25 @@ import { FavoritesRepository } from './repository';
 export class FavoritesService {
 	constructor(
 		@inject(FavoritesRepository) private readonly repo: FavoritesRepository,
+		@inject(ActivitiesService) private readonly activities: ActivitiesService,
 	) {}
 
 	async create(
 		userId: string,
+		username: string,
 		data: dto.CreateInput,
 	): Promise<dto.CreateOutput> {
-		const result = await this.repo.create(userId, data);
+		const [insertResult, place] = await this.repo.create(userId, data);
+
+		await this.activities.addActivity(username, 'create_favorite', {
+			place: {
+				id: place.id,
+				name: place.name,
+			},
+		});
 
 		return {
-			favorite: result,
+			favorite: insertResult,
 		};
 	}
 

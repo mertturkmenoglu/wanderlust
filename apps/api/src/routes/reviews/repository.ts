@@ -64,7 +64,7 @@ export class ReviewsRepository {
 
 	async create(userId: string, data: dto.CreateInput, urls: string[]) {
 		try {
-			const result = await this.db.transaction(async (tx) => {
+			const results = await this.db.transaction(async (tx) => {
 				const [review] = await tx
 					.insert(schema.reviews)
 					.values({
@@ -122,10 +122,20 @@ export class ReviewsRepository {
 					});
 				}
 
-				return res;
+				const place = await tx.query.places.findFirst({
+					where: (t, { eq }) => eq(t.id, review.placeId),
+				});
+
+				if (!place) {
+					throw new ORPCError('INTERNAL_SERVER_ERROR', {
+						message: 'Failed to retrieve the place after creating the review',
+					});
+				}
+
+				return [res, place] as const;
 			});
 
-			return result;
+			return results;
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;

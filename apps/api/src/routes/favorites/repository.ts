@@ -16,7 +16,7 @@ export class FavoritesRepository {
 
 	async create(userId: string, data: dto.CreateInput) {
 		try {
-			const result = await this.db.transaction(async (tx) => {
+			const results = await this.db.transaction(async (tx) => {
 				const [result] = await tx
 					.insert(schema.favorites)
 					.values({
@@ -36,10 +36,18 @@ export class FavoritesRepository {
 					})
 					.where(eq(schema.places.id, data.placeId));
 
-				return result;
+				const place = await tx.query.places.findFirst({
+					where: (t, { eq }) => eq(t.id, data.placeId),
+				});
+
+				if (!place) {
+					throw new Error('Cannot find place after favorite insertion');
+				}
+
+				return [result, place] as const;
 			});
 
-			return result;
+			return results;
 		} catch (err) {
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to create favorite',

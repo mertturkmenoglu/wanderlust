@@ -3,6 +3,7 @@ import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
+import { ActivitiesService } from '@/lib/activities';
 import * as authz from './authz';
 import type * as dto from './dto';
 import { TripsRepository } from './repository';
@@ -10,12 +11,15 @@ import { TripsRepository } from './repository';
 @injectable()
 export class TripsService {
 	private readonly jobs: TJobsService;
+	private readonly activities: ActivitiesService;
 
 	constructor(
 		@inject(TripsRepository) private readonly repo: TripsRepository,
-		@inject(JobsService) jobsService: JobsService,
+		@inject(JobsService) jobs: JobsService,
+		@inject(ActivitiesService) activities: ActivitiesService,
 	) {
-		this.jobs = jobsService.get();
+		this.jobs = jobs.get();
+		this.activities = activities;
 	}
 
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
@@ -136,6 +140,15 @@ export class TripsService {
 		}
 
 		const result = await this.repo.create(userId, data);
+
+		if (result.visibilityLevel === 'public') {
+			await this.activities.addActivity(result.owner.username, 'create_trip', {
+				trip: {
+					id: result.id,
+					title: result.title,
+				},
+			});
+		}
 
 		return {
 			trip: result,

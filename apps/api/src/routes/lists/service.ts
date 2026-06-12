@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import { ActivitiesService } from '@/lib/activities';
 import type * as dto from './dto';
 import { ListsRepository } from './repository';
 
@@ -6,6 +7,7 @@ import { ListsRepository } from './repository';
 export class ListsService {
 	constructor(
 		@inject(ListsRepository) private readonly repo: ListsRepository,
+		@inject(ActivitiesService) private readonly activities: ActivitiesService,
 	) {}
 
 	async listAll(
@@ -53,6 +55,19 @@ export class ListsService {
 		data: dto.CreateInput,
 	): Promise<dto.CreateOutput> {
 		const result = await this.repo.create(userId, data);
+
+		if (result.list.isPublic) {
+			await this.activities.addActivity(
+				result.list.user.username,
+				'create_list',
+				{
+					list: {
+						id: result.list.id,
+						name: result.list.name,
+					},
+				},
+			);
+		}
 
 		return {
 			list: result.list,

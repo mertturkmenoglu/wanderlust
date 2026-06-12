@@ -11,6 +11,7 @@ import {
 import { nanoid } from '@wanderlust/uid';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
+import { ActivitiesService } from '@/lib/activities';
 import type * as dto from './dto';
 import { ReviewsRepository } from './repository';
 
@@ -23,6 +24,7 @@ export class ReviewsService {
 		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
 		@inject(StorageService) storage: StorageService,
 		@inject(CacheService) cache: CacheService,
+		@inject(ActivitiesService) private readonly activities: ActivitiesService,
 	) {
 		this.storage = storage.get();
 		this.cache = cache.get();
@@ -62,6 +64,7 @@ export class ReviewsService {
 
 	async create(
 		userId: string,
+		username: string,
 		data: dto.CreateInput,
 	): Promise<dto.CreateOutput> {
 		const files = data.files || [];
@@ -100,14 +103,24 @@ export class ReviewsService {
 		}
 
 		try {
-			const result = await this.repo.create(userId, data, urls);
+			const [insertResult, place] = await this.repo.create(userId, data, urls);
 
 			await this.cache.namespace('reviews-ratings').delete({
 				key: `place-${data.placeId}`,
 			});
 
+			await this.activities.addActivity(username, 'create_review', {
+				review: {
+					id: insertResult.id,
+					place: {
+						id: place.id,
+						name: place.name,
+					},
+				},
+			});
+
 			return {
-				review: result,
+				review: insertResult,
 			};
 		} catch (_err) {
 			await this.removeAssets(urls);
