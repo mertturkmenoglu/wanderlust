@@ -988,3 +988,36 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
 		references: [users.id],
 	}),
 }));
+
+export const notificationChannelType = pgEnum('notification_channel_type', [
+	'email',
+	'in_app',
+]);
+
+export const notificationCategoryType = pgEnum('notification_category_type', [
+	'digest',
+	'recommendation',
+	'anniversary',
+	'upcoming-trips',
+]);
+
+export const notificationPreferences = pgTable(
+	'notification_preferences',
+	{
+		userId: text(),
+		channel: notificationChannelType().notNull(),
+		category: notificationCategoryType().notNull(),
+		enabled: boolean().notNull(),
+	},
+	(t) => [primaryKey({ columns: [t.userId, t.channel, t.category] })],
+);
+
+export const notificationPreferencesRelations = relations(
+	notificationPreferences,
+	({ one }) => ({
+		user: one(users, {
+			fields: [notificationPreferences.userId],
+			references: [users.id],
+		}),
+	}),
+);

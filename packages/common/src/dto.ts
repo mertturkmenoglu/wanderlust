@@ -18,7 +18,10 @@ import {
 	follows,
 	listItems,
 	lists,
+	notificationCategoryType,
+	notificationChannelType,
 	notificationEntityType,
+	notificationPreferences,
 	notifications,
 	notificationType,
 	places,
@@ -1396,6 +1399,23 @@ export const $dto = {
 	}).meta({
 		description: 'A notification entity',
 	}),
+	notificationPreference: createSelectSchema(notificationPreferences, {
+		userId: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'User ID',
+				examples: ['u123'],
+			}),
+		category: z.enum(notificationCategoryType.enumValues),
+		channel: z.enum(notificationChannelType.enumValues),
+		enabled: z.boolean().meta({
+			description: 'Whether this preference is enabled or not',
+			examples: [true, false],
+		}),
+	}).meta({
+		description: 'A notification preference of a user',
+	}),
 };
 
 export const $insert = {
@@ -1429,4 +1449,5 @@ export const $insert = {
 	eventLineupItem: createInsertSchema(eventLineupItems),
 	eventInterest: createInsertSchema(eventInterests),
 	notification: createInsertSchema(notifications),
+	notificationPreference: createInsertSchema(notificationPreferences),
 };
