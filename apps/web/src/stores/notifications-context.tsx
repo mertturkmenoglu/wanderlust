@@ -16,6 +16,16 @@ export type TNotification = InferResponseType<
 	typeof notificationsClient.list.$get
 >[number];
 
+export type TNotificationPreferences = InferResponseType<
+	typeof notificationsClient.preferences.$get
+>['preferences'];
+
+export type TSingleNotificationPreference = TNotificationPreferences[number];
+
+export type TNotificationCategory = TSingleNotificationPreference['category'];
+
+export type TNotificationChannel = TSingleNotificationPreference['channel'];
+
 type FilterMode = 'all' | 'unread' | 'read';
 
 type State = {
@@ -30,6 +40,10 @@ type State = {
 	clearAll: () => Promise<void>;
 	refetch: () => Promise<void>;
 	unreadCount: number;
+	preferences: TNotificationPreferences;
+	isPreferencesLoading: boolean;
+	isPreferencesError: boolean;
+	refetchPreferences: () => Promise<void>;
 };
 
 const options = queryOptions({
@@ -47,6 +61,21 @@ const options = queryOptions({
 	refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes
 });
 
+const preferencesOptions = queryOptions({
+	queryKey: ['notification-preferences'],
+	queryFn: async () => {
+		const res = await notificationsClient.preferences.$get();
+
+		if (!res.ok) {
+			throw new Error('Failed to fetch notification preferences');
+		}
+
+		const data = await res.json();
+		return data as { preferences: TNotificationPreferences };
+	},
+	refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes
+});
+
 export const NotificationsContext = createContext<State | null>(null);
 
 export function NotificationsContextProvider({ children }: PropsWithChildren) {
@@ -55,6 +84,11 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 
 	const query = useQuery({
 		...options,
+		enabled: isAuthenticated,
+	});
+
+	const preferencesQuery = useQuery({
+		...preferencesOptions,
 		enabled: isAuthenticated,
 	});
 
@@ -125,6 +159,14 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 					await query.refetch();
 				},
 				unreadCount: (query.data ?? []).filter((x) => x.readAt === null).length,
+				preferences: preferencesQuery.data?.preferences ?? [],
+				refetchPreferences: async () => {
+					await preferencesQuery.refetch();
+				},
+				isPreferencesLoading: isAuthenticated
+					? preferencesQuery.isLoading
+					: false,
+				isPreferencesError: isAuthenticated ? preferencesQuery.isError : false,
 			}}
 		>
 			{children}
