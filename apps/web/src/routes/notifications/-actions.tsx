@@ -12,11 +12,15 @@ export function Actions() {
 		<ButtonGroup>
 			<Button variant="outline" type="button" onClick={() => markAllAsRead()}>
 				<CheckCheckIcon />
-				<span>Mark All as Read</span>
+				<span>
+					Mark <span className="sr-only sm:not-sr-only">All as </span>Read
+				</span>
 			</Button>
 			<Button variant="outline" type="button" onClick={() => clearAll()}>
 				<TrashIcon />
-				<span>Clear All</span>
+				<span>
+					Clear <span className="sr-only sm:not-sr-only">All</span>
+				</span>
 			</Button>
 			<Button
 				variant="outline"

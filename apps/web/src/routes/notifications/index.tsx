@@ -17,7 +17,7 @@ function RouteComponent() {
 
 	return (
 		<div className="mx-auto my-8 max-w-7xl">
-			<div className="flex items-center justify-between">
+			<div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-between">
 				<Filters />
 
 				<Actions />
