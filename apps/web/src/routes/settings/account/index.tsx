@@ -40,6 +40,8 @@ function RouteComponent() {
 			<FieldLegend>Account</FieldLegend>
 			<FieldDescription>Change your account settings</FieldDescription>
 
+			<FieldSeparator />
+
 			<FieldGroup>
 				<FieldGroup className="grid grid-cols-1 md:grid-cols-2">
 					<Field>

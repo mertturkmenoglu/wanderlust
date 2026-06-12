@@ -1,4 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
+import {
+	FieldDescription,
+	FieldLegend,
+	FieldSeparator,
+	FieldSet,
+} from '@wanderlust/ui/components/field';
 import { Label } from '@wanderlust/ui/components/label';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { Form } from './-form';
@@ -19,10 +25,11 @@ function RouteComponent() {
 	const { profile } = Route.useLoaderData();
 
 	return (
-		<div>
-			<h2 className="font-semibold text-2xl tracking-tight first:mt-0">
-				Profile
-			</h2>
+		<FieldSet>
+			<FieldLegend>Profile</FieldLegend>
+			<FieldDescription>Update your profile</FieldDescription>
+
+			<FieldSeparator />
 
 			<div className="mt-4 grid grid-cols-3 items-center gap-4">
 				<Label>Profile Image</Label>
@@ -49,6 +56,6 @@ function RouteComponent() {
 			<Separator className="my-4" />
 
 			<Form />
-		</div>
+		</FieldSet>
 	);
 }
