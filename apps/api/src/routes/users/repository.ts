@@ -7,6 +7,7 @@ import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { ActivitiesService, type ActivityItem } from '@/lib/activities';
 import type * as dto from './dto';
 
 @injectable()
@@ -14,15 +15,18 @@ export class UsersRepository {
 	private readonly db: TDatabaseService;
 	private readonly cache: TCacheService;
 	private readonly jobs: TJobsService;
+	private readonly activities: ActivitiesService;
 
 	constructor(
 		@inject(DatabaseService) db: DatabaseService,
 		@inject(CacheService) cache: CacheService,
 		@inject(JobsService) jobs: JobsService,
+		@inject(ActivitiesService) activities: ActivitiesService,
 	) {
 		this.db = db.get();
 		this.cache = cache.get();
 		this.jobs = jobs.get();
+		this.activities = activities;
 	}
 
 	async updateImage(
@@ -405,7 +409,7 @@ export class UsersRepository {
 				.getOrSetForever({
 					key: data.username,
 					factory: async () => {
-						return [] as Array<Record<string, unknown>>;
+						return [] as ActivityItem[];
 					},
 				});
 
@@ -551,34 +555,14 @@ export class UsersRepository {
 					});
 				}
 
-				const activities = await this.cache
-					.namespace('activities')
-					.getOrSetForever({
-						key: data.username,
-						factory: async () => {
-							return [] as Array<Record<string, unknown>>;
-						},
-					});
-
-				activities.unshift({
-					type: 'follow',
-					data: {
-						thisUsername: thisUser.username,
-						otherUsername: targetUser.username,
-					},
+				await this.activities.addActivity(thisUser.username, 'follow', {
+					thisUsername: thisUser.username,
+					otherUsername: targetUser.username,
 				});
-
-				await this.cache.namespace('activities').set({
-					key: data.username,
-					value: activities.slice(0, 100),
-				});
-
-				console.log('creating notification');
 
 				await this.jobs.notification.queue.add('create-notification', {
 					id: nanoid(),
 					type: 'user_follow',
-					actorId: thisUser.id,
 					recipientId: targetUser.id,
 					entityId: thisUser.id,
 					entityType: 'user',
@@ -593,8 +577,6 @@ export class UsersRepository {
 						},
 					},
 				});
-
-				console.log('notification created');
 
 				return true;
 			});
