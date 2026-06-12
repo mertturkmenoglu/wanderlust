@@ -6,6 +6,7 @@ import { EmailService } from '@wanderlust/email/email';
 import { JobsService } from '@wanderlust/jobs';
 import { StorageService } from '@wanderlust/storage';
 import { Container } from 'inversify';
+import { ActivitiesService } from './lib/activities';
 import { SearchService } from './lib/search';
 import { modules } from './routes';
 
@@ -23,6 +24,7 @@ export async function bootstrapServices() {
 	container.bind(JobsService).toSelf();
 	container.bind(AuthService).toSelf();
 	container.bind(SearchService).toSelf();
+	container.bind(ActivitiesService).toSelf();
 
 	container.load(...modules);
 }
