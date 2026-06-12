@@ -151,7 +151,19 @@ export const listUserActivitiesInput = profile.pick({
 export type ListUserActivitiesInput = z.infer<typeof listUserActivitiesInput>;
 
 export const listUserActivitiesOutput = z.object({
-	activities: z.array(z.record(z.string(), z.unknown())),
+	activities: z.array(
+		z.object({
+			type: z.enum([
+				'create_favorite',
+				'create_list',
+				'create_review',
+				'create_trip',
+				'follow',
+			]),
+			createdAt: z.date(),
+			data: z.record(z.string(), z.unknown()),
+		}),
+	),
 });
 
 export type ListUserActivitiesOutput = z.infer<typeof listUserActivitiesOutput>;
