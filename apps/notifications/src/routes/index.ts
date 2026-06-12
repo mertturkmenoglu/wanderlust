@@ -1,4 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
+import { $insert } from '@wanderlust/common';
 import { ConfigService } from '@wanderlust/config';
 import { DatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db/schema';
@@ -121,6 +122,52 @@ export const router = new Hono<THonoContext>()
 			return c.json(
 				{
 					message: 'Created',
+				},
+				201,
+			);
+		},
+	)
+	.get('/preferences', async (c) => {
+		const user = c.get('user');
+		const db = container.get(DatabaseService).get();
+
+		const preferences = await db.query.notificationPreferences.findMany({
+			where: (t, { eq }) => eq(t.userId, user.id),
+		});
+
+		return c.json({
+			preferences,
+		});
+	})
+	.patch(
+		'/preferences',
+		zValidator('json', $insert.notificationPreference),
+		async (c) => {
+			const userId = c.get('user').id;
+			const body = c.req.valid('json');
+
+			const db = container.get(DatabaseService).get();
+
+			await db
+				.insert(schema.notificationPreferences)
+				.values({
+					...body,
+					userId,
+				})
+				.onConflictDoUpdate({
+					target: [
+						schema.notificationPreferences.userId,
+						schema.notificationPreferences.channel,
+						schema.notificationPreferences.category,
+					],
+					set: {
+						enabled: body.enabled,
+					},
+				});
+
+			return c.json(
+				{
+					message: 'OK',
 				},
 				201,
 			);
