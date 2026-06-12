@@ -18,6 +18,12 @@ const links = [
 			to: '/settings/profile',
 		}),
 	},
+	{
+		text: 'Notifications',
+		link: linkOptions({
+			to: '/settings/notifications',
+		}),
+	},
 ] as const satisfies Item[];
 
 export function Sidebar() {
