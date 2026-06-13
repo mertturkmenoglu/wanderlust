@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from '@tanstack/react-router';
+import { Link, linkOptions, useLoaderData } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Item,
@@ -16,7 +16,12 @@ export function Header() {
 
 	return (
 		<>
-			<BackLink href="/trips/my-trips" text="Go back to my trips" />
+			<BackLink
+				link={linkOptions({
+					to: '/trips/my-trips',
+				})}
+				text="Go back to my trips"
+			/>
 
 			<Item className="mt-4 p-0!">
 				<ItemContent>

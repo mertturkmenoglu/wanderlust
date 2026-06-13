@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, linkOptions } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
 import { authGuard } from '@/lib/auth';
 import { DateInfo } from './-date-info';
@@ -26,7 +26,15 @@ function RouteComponent() {
 
 	return (
 		<div className="mx-auto my-8 max-w-7xl">
-			<BackLink href={`/lists/${list.id}`} text="Go back to the list page" />
+			<BackLink
+				link={linkOptions({
+					to: '/lists/$id',
+					params: {
+						id: list.id,
+					},
+				})}
+				text="Go back to the list page"
+			/>
 
 			<div className="flex items-center justify-between">
 				<div>

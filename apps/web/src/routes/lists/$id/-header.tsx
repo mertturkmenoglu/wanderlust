@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, linkOptions } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { formatDistanceToNow } from 'date-fns';
 import { BackLink } from '@/components/back-link';
@@ -11,7 +11,12 @@ export function Header() {
 
 	return (
 		<>
-			<BackLink href="/lists" text="Go back to lists" />
+			<BackLink
+				link={linkOptions({
+					to: '/lists',
+				})}
+				text="Go back to lists"
+			/>
 
 			<div className="flex items-center justify-between gap-8">
 				<div>
