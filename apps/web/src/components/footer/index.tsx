@@ -10,24 +10,15 @@ export function Footer() {
 		<footer className="my-20">
 			<ul className="mb-8 flex items-center justify-center gap-4 text-muted-foreground text-sm md:gap-8">
 				<li>
-					<Link to="." href="/about">
+					<Link to="/help" hash={encodeURI('General Questions')}>
 						About
 					</Link>
 				</li>
 				<li>
-					<Link to="." href="/blog">
-						Blog
-					</Link>
+					<Link to="/help">FAQ</Link>
 				</li>
 				<li>
-					<Link to="." href="/help">
-						FAQ
-					</Link>
-				</li>
-				<li>
-					<Link to="." href="/contact-us">
-						Contact Us
-					</Link>
+					<Link to="/terms">Terms</Link>
 				</li>
 				<li>
 					<Link to="/privacy">Privacy</Link>
@@ -46,7 +37,7 @@ export function Footer() {
 				</li>
 				<li>
 					<a
-						href="https://twitter.com/capreaee"
+						href="https://twitter.com/AsyncSquirrel"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
