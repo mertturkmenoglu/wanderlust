@@ -6,9 +6,9 @@ import { GradientText } from '../gradient-text';
 import { Logo } from '../logo';
 import { useIsImpersonating } from './hooks';
 import { ImpersonationBanner } from './impersonation-banner';
+import { Links } from './links';
 import { Menu } from './menu';
-import { SignInButton } from './sign-in-button';
-import { SignedInLinks } from './signed-in';
+import { SignIn } from './sign-in';
 
 type Props = React.HTMLAttributes<HTMLElement>;
 
@@ -16,6 +16,21 @@ export function Header({ className, ...props }: Readonly<Props>) {
 	const session = authClient.useSession();
 	const isSignedIn = useIsAuthenticated();
 	const isImpersonating = useIsImpersonating();
+
+	const content = session.isPending ? (
+		<div className="h-8 w-16 animate-pulse rounded-full bg-primary" />
+	) : (
+		<div>
+			{!isSignedIn && <SignIn />}
+
+			{isSignedIn && (
+				<div className="flex items-center gap-2">
+					<Links />
+					<Menu />
+				</div>
+			)}
+		</div>
+	);
 
 	return (
 		<>
@@ -34,20 +49,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 					<GradientText className="font-bold" text="Wanderlust" />
 				</Link>
 
-				{session.isPending ? (
-					<div className="h-8 w-16 animate-pulse rounded-full bg-primary" />
-				) : (
-					<div>
-						{!isSignedIn && <SignInButton />}
-
-						{isSignedIn && (
-							<div className="flex items-center gap-2">
-								<SignedInLinks />
-								<Menu />
-							</div>
-						)}
-					</div>
-				)}
+				{content}
 			</header>
 		</>
 	);

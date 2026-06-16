@@ -7,13 +7,13 @@ export function SignOut() {
 
 	return (
 		<DropdownMenuItem
-			className="group cursor-pointer focus:bg-destructive"
+			className="cursor-pointer gap-4 focus:bg-destructive/10 focus:text-destructive focus:[&>svg]:text-destructive"
 			onClick={() => {
 				mutation.mutate();
 			}}
 		>
-			<LogOutIcon className="size-4 group-focus:text-white" />
-			<span className="ml-2 group-focus:text-white">Sign out</span>
+			<LogOutIcon />
+			<span>Sign out</span>
 		</DropdownMenuItem>
 	);
 }

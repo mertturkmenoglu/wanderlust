@@ -33,7 +33,7 @@ const items: Item[] = [
 	},
 ];
 
-export function SignedInLinks() {
+export function Links() {
 	const ctx = useNotificationsContext();
 
 	return (
