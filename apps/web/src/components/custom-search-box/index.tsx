@@ -10,9 +10,14 @@ import { type UseSearchBoxProps, useSearchBox } from 'react-instantsearch';
 
 type Props = {
 	isSearchOnType?: boolean;
+	onFocus?: () => void;
 } & UseSearchBoxProps;
 
-export function CustomSearchBox({ isSearchOnType = false, ...props }: Props) {
+export function CustomSearchBox({
+	isSearchOnType = false,
+	onFocus,
+	...props
+}: Props) {
 	const { query, refine } = useSearchBox(props);
 	const [inputValue, setInputValue] = useState(query);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -42,6 +47,11 @@ export function CustomSearchBox({ isSearchOnType = false, ...props }: Props) {
 
 					if (!isSearchOnType) {
 						refine(inputValue);
+					}
+				}}
+				onFocus={() => {
+					if (onFocus) {
+						onFocus();
 					}
 				}}
 				onReset={(e) => {
