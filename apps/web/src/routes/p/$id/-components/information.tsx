@@ -13,7 +13,6 @@ import {
 	PersonStandingIcon,
 	TramFrontIcon,
 } from 'lucide-react';
-import { OpenHoursDialog } from './open-hours-dialog';
 
 type Props = {
 	className?: string;
@@ -75,11 +74,6 @@ export function Information({ className }: Props) {
 						</div>
 					</>
 				)}
-
-				<div />
-				<div className="text-right">
-					<OpenHoursDialog />
-				</div>
 			</div>
 
 			<h3 className="mt-4 font-semibold text-xl tracking-tight">

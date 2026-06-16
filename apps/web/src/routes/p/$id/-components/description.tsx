@@ -7,6 +7,7 @@ import { FormattedRating } from '@/components/formatted-rating';
 import { InfoCard } from '@/components/info-card';
 import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { computeRating } from '@/lib/rating';
+import { HoursInfo } from './hours-info';
 
 type Props = {
 	className?: string;
@@ -25,10 +26,12 @@ export function Description({ className }: Props) {
 				<CollapsibleText text={place.description} charLimit={1000} />
 			</div>
 
-			<div className="grid h-min grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:grid-rows-1">
+			<div className="grid h-min grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5">
+				<HoursInfo />
+
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-4xl">
 							{computeRating(place.totalPoints, place.totalVotes)}
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
@@ -46,7 +49,7 @@ export function Description({ className }: Props) {
 
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-4xl">
 							{fmt.format(place.totalFavorites)}
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
@@ -64,7 +67,7 @@ export function Description({ className }: Props) {
 
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-4xl">
 							{place.priceLevel}/5
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
@@ -83,7 +86,7 @@ export function Description({ className }: Props) {
 
 				<InfoCard.Root>
 					<InfoCard.Content>
-						<InfoCard.NumberColumn className="md:text-3xl lg:text-6xl">
+						<InfoCard.NumberColumn className="md:text-3xl lg:text-4xl">
 							{place.accessibilityLevel}/5
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
