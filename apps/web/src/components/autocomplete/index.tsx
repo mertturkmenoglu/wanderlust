@@ -1,18 +1,18 @@
 import { Link } from '@tanstack/react-router';
-import { Button } from '@wanderlust/ui/components/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	type UseAutocompleteProps,
 	useAutocomplete,
 } from '@/hooks/use-autocomplete';
-import { ipx } from '@/lib/ipx';
+import type { TSearchHit } from '@/lib/search';
 import { CustomSearchBox } from '../custom-search-box';
-import { type AutocompleteItemInfo, Card } from './card';
+import { Card } from './card';
 
 type Props = {
 	showAdvancedSearch?: boolean;
 	showAllResultsButton?: boolean;
 	isCardClickable?: boolean;
-	onCardClick?: (v: AutocompleteItemInfo) => void;
+	onCardClick?: (v: TSearchHit['place']) => void;
 } & UseAutocompleteProps;
 
 export function Autocomplete({
@@ -23,7 +23,7 @@ export function Autocomplete({
 	...props
 }: Props) {
 	const { indices, currentRefinement } = useAutocomplete(props);
-	const hits = indices[0]?.hits ?? [];
+	const hits = (indices[0]?.hits ?? []) as unknown as TSearchHit[];
 
 	const showDropdown = currentRefinement !== '';
 	const isEmptyResult = hits.length === 0;
@@ -33,9 +33,15 @@ export function Autocomplete({
 			{showAdvancedSearch && (
 				<div className="text-sm leading-none tracking-tight">
 					Need more power? Try our{' '}
-					<Button variant="link" className="px-0 underline" size="sm" asChild>
-						<Link to="/search">Advanced Search</Link>
-					</Button>
+					<Link
+						to="/search"
+						className={buttonVariants({
+							variant: 'link',
+							className: 'px-0! underline',
+						})}
+					>
+						Advanced Search
+					</Link>
 				</div>
 			)}
 
@@ -46,36 +52,28 @@ export function Autocomplete({
 					{hits.slice(0, 5).map((hit) => (
 						<Card
 							key={hit.place.id}
-							id={hit.place.id}
-							image={ipx(hit.place.assets[0].url, 'w_512')}
-							name={hit.place.name}
-							categoryName={hit.place.category.name}
-							city={hit.place.address.cityName}
-							state={hit.place.address.city.stateName}
+							place={hit.place}
 							isCardClickable={isCardClickable}
 							onCardClick={onCardClick}
 						/>
 					))}
 
 					{!isEmptyResult && showAllResultsButton && (
-						<Button asChild variant="link">
-							<Link
-								to="/search"
-								search={{
-									q: currentRefinement,
-								}}
-							>
-								See all results
-							</Link>
-						</Button>
+						<Link
+							to="/search"
+							search={{
+								q: currentRefinement,
+							}}
+							className={buttonVariants({ variant: 'link' })}
+						>
+							See all results
+						</Link>
 					)}
 
 					{isEmptyResult && (
-						<Button asChild variant="link">
-							<Link to="/search">
-								No results found. Try our advanced search.
-							</Link>
-						</Button>
+						<Link to="/search" className={buttonVariants({ variant: 'link' })}>
+							No results found. Try our advanced search.
+						</Link>
 					)}
 				</div>
 			)}

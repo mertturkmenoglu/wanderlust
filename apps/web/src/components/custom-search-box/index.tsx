@@ -4,7 +4,7 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from '@wanderlust/ui/components/input-group';
-import { SearchIcon } from 'lucide-react';
+import { SearchIcon, XIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { type UseSearchBoxProps, useSearchBox } from 'react-instantsearch';
 
@@ -75,6 +75,12 @@ export function CustomSearchBox({ isSearchOnType = false, ...props }: Props) {
 						}}
 					/>
 					<InputGroupAddon align="inline-end">
+						{query !== '' && (
+							<InputGroupButton type="reset" variant="ghost">
+								<XIcon />
+								<span className="sr-only md:not-sr-only">Clear</span>
+							</InputGroupButton>
+						)}
 						<InputGroupButton type="submit" variant="ghost">
 							<SearchIcon />
 							<span className="sr-only md:not-sr-only">Search</span>

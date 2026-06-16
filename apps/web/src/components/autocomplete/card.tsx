@@ -1,72 +1,58 @@
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
+import {
+	Item,
+	ItemContent,
+	ItemDescription,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
+import { useAsset } from '@/hooks/use-asset';
 import { ipx } from '@/lib/ipx';
+import type { TSearchHit } from '@/lib/search';
 
-export type AutocompleteItemInfo = {
-	id: string;
-	name: string;
-	image: string;
-	categoryName: string;
-	city: string;
-	state: string;
-};
-
-type Props = AutocompleteItemInfo & {
+type Props = {
+	place: TSearchHit['place'];
 	isCardClickable: boolean;
-	onCardClick?: (v: AutocompleteItemInfo) => void;
+	onCardClick?: (v: TSearchHit['place']) => void;
 };
 
-export function Card({
-	name,
-	image,
-	id,
-	categoryName,
-	city,
-	state,
-	isCardClickable,
-	onCardClick,
-}: Props) {
+export function Card({ place, isCardClickable, onCardClick }: Props) {
+	const asset = useAsset(place.assets);
+
 	const innerContent = (
-		<>
-			<Image
-				src={ipx(image, 'w_256')}
-				alt=""
-				className="aspect-video w-24 rounded-lg object-cover md:w-48"
-				layout="constrained"
-				width={256}
-				aspectRatio={16 / 9}
-			/>
+		<Item>
+			<ItemMedia>
+				<Image
+					src={ipx(asset.url, 'w_256')}
+					alt={asset.description ?? place.name}
+					className="aspect-video w-16 rounded object-cover md:w-24"
+					layout="constrained"
+					width={256}
+					aspectRatio={16 / 9}
+				/>
+			</ItemMedia>
 
-			<div>
-				<div className="line-clamp-1 font-semibold text-base capitalize leading-none tracking-tight md:text-lg">
-					{name}
-				</div>
-				<div className="my-1 line-clamp-1 text-muted-foreground text-xs md:text-sm">
-					{city} / {state}
-				</div>
-
-				<div className="line-clamp-1 font-semibold text-primary text-xs leading-none tracking-tight md:text-sm">
-					{categoryName}
-				</div>
-			</div>
-		</>
+			<ItemContent>
+				<ItemTitle>{place.name}</ItemTitle>
+				<ItemDescription>
+					{place.address.city.name} / {place.address.city.stateName}
+				</ItemDescription>
+				<ItemDescription className="text-primary">
+					{place.category.name}
+				</ItemDescription>
+			</ItemContent>
+		</Item>
 	);
 
 	return (
-		<div className="p-4 hover:bg-muted">
+		<div className="hover:bg-muted">
 			{isCardClickable ? (
 				<button
 					type="button"
 					onClick={() => {
 						if (onCardClick) {
-							onCardClick({
-								categoryName,
-								city,
-								id,
-								image,
-								name,
-								state,
-							});
+							onCardClick(place);
 						}
 					}}
 					className="flex gap-2 text-left md:gap-8"
@@ -74,7 +60,7 @@ export function Card({
 					{innerContent}
 				</button>
 			) : (
-				<Link to="/p/$id" params={{ id }} className="flex gap-2 md:gap-8">
+				<Link to="/p/$id" params={{ id: place.id }}>
 					{innerContent}
 				</Link>
 			)}
