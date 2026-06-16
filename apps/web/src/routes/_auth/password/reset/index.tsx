@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, linkOptions, redirect } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Field,
@@ -64,7 +64,8 @@ function RouteComponent() {
 				<FieldSet>
 					<FieldLegend>Reset Password</FieldLegend>
 					<FieldDescription>
-						Already have an account? <AuthLink href="/sign-in" text="Sign In" />
+						Already have an account?{' '}
+						<AuthLink link={linkOptions({ to: '/sign-in' })} text="Sign In" />
 					</FieldDescription>
 				</FieldSet>
 
