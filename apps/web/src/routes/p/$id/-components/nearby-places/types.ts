@@ -1,9 +1,9 @@
-import type { Props as THit } from '@/routes/search/-components/hit';
+import type { TSearchHit } from '@/lib/search';
 
 export type SearchResponse = {
 	found: number;
 	hits: {
-		document: THit['hit'];
+		document: TSearchHit;
 	}[];
 	out_of: number;
 	page: number;
