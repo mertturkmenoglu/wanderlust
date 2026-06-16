@@ -21,6 +21,7 @@ export function Header() {
 				'prose-blockquote:italic prose-p:leading-relaxed prose-a:no-underline hover:prose-a:underline',
 			)}
 		>
+			<h2>{collection.name}</h2>
 			<Markdown remarkPlugins={[remarkGfm]}>{collection.description}</Markdown>
 		</div>
 	);
