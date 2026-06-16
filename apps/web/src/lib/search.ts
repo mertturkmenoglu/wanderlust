@@ -1,6 +1,7 @@
 import type { IndexUiState } from 'instantsearch.js';
+import type { Outputs } from './orpc';
 
-function serializeParams(params?: string[]): string | undefined {
+export function serializeParams(params?: string[]): string | undefined {
 	if (params === undefined) {
 		return undefined;
 	}
@@ -8,7 +9,7 @@ function serializeParams(params?: string[]): string | undefined {
 	return params.map((el) => el.split(' ').join('+')).join('|');
 }
 
-function deserializeParams(ser?: IndexUiState) {
+export function deserializeParams(ser?: IndexUiState) {
 	if (ser === undefined) {
 		// oxlint-disable-next-line no-useless-undefined
 		return undefined;
@@ -22,4 +23,9 @@ function deserializeParams(ser?: IndexUiState) {
 	return ser;
 }
 
-export { deserializeParams, serializeParams };
+export type TSearchHit = {
+	id: string;
+	location: [number, number];
+	name: string;
+	place: Outputs['places']['get']['place'];
+};
