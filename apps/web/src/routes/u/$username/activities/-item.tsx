@@ -15,17 +15,27 @@ type Props = {
 };
 
 export function ActivityItem({ item }: Props) {
-	switch (item.type) {
+	const Component = getVariantComponent(item.type);
+
+	if (!Component) {
+		return null;
+	}
+
+	return <Component item={item} />;
+}
+
+function getVariantComponent(type: Props['item']['type']) {
+	switch (type) {
 		case 'create_favorite':
-			return <VariantCreateFavorite item={item} />;
+			return VariantCreateFavorite;
 		case 'create_list':
-			return <VariantCreateList item={item} />;
+			return VariantCreateList;
 		case 'create_review':
-			return <VariantCreateReview item={item} />;
+			return VariantCreateReview;
 		case 'create_trip':
-			return <VariantCreateTrip item={item} />;
+			return VariantCreateTrip;
 		case 'follow':
-			return <VariantFollowUser item={item} />;
+			return VariantFollowUser;
 		default:
 			return null;
 	}
