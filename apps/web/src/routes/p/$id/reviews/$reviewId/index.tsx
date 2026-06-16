@@ -1,4 +1,4 @@
-import { createFileRoute, linkOptions } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
 import { CategoriesBanner, TripPlannerCta } from '@/components/banner/common';
 import { ReviewCard } from '@/components/review-card';
@@ -21,12 +21,10 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto my-8 w-full max-w-7xl">
 			<BackLink
-				link={linkOptions({
-					to: '/p/$id',
-					params: {
-						id: data.review.placeId,
-					},
-				})}
+				to="/p/$id"
+				params={{
+					id: data.review.placeId,
+				}}
 				text="Go back to place details"
 			/>
 
