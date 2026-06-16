@@ -25,7 +25,10 @@ function RouteComponent() {
 			<div className="mx-auto my-16 max-w-xl">
 				{faqData.groups.map((group) => (
 					<div key={group.title}>
-						<h4 className="mt-8 scroll-m-20 font-semibold text-xl tracking-tight">
+						<h4
+							id={encodeURI(group.title)}
+							className="mt-8 scroll-m-20 font-semibold text-xl tracking-tight"
+						>
 							{group.title}
 						</h4>
 						<Accordion type="single" collapsible className="w-full">
