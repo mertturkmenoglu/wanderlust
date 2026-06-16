@@ -24,6 +24,7 @@ export function Search() {
 				<Autocomplete
 					showAdvancedSearch={false}
 					showAllResultsButton={false}
+					showRecentSearches={false}
 					isCardClickable
 					onCardClick={(v) => {
 						const maxAllowedCount = 4;
