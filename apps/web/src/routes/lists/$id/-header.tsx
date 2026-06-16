@@ -1,7 +1,7 @@
-import { Link, linkOptions } from '@tanstack/react-router';
-import { buttonVariants } from '@wanderlust/ui/components/button';
-import { formatDistanceToNow } from 'date-fns';
 import { BackLink } from '@/components/back-link';
+import { RelativeTime } from '@/components/relative-time';
+import { UnderlineLink } from '@/components/underline-link';
+import { ChangeView } from './-change-view';
 import { useListQuery } from './-hooks';
 import { Menu } from './-menu';
 
@@ -11,35 +11,34 @@ export function Header() {
 
 	return (
 		<>
-			<BackLink
-				link={linkOptions({
-					to: '/lists',
-				})}
-				text="Go back to lists"
-			/>
+			<BackLink to="/lists" text="Go back to lists" />
 
-			<div className="flex items-center justify-between gap-8">
+			<div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
 				<div>
 					<h2 className="text-2xl tracking-tighter">{list.name}</h2>
-					<div className="flex items-baseline gap-2 text-muted-foreground text-xs">
-						<Link
+					<div className="flex items-baseline gap-2 text-muted-foreground text-sm">
+						<UnderlineLink
 							to="/u/$username"
-							params={{ username: list.user.username }}
-							className={buttonVariants({
-								variant: 'link',
-								size: 'sm',
-								className: 'p-0!',
-							})}
+							params={{
+								username: list.user.username,
+							}}
 						>
 							{list.user.name}
-						</Link>
-						<div title={new Date(list.createdAt).toLocaleString()}>
-							{formatDistanceToNow(list.createdAt)} ago
-						</div>
+						</UnderlineLink>
+						&mdash;
+						<RelativeTime date={list.createdAt} />
 					</div>
 				</div>
 
-				<Menu />
+				<div className="flex items-center justify-between gap-2">
+					<div className="flex items-center justify-end gap-4">
+						<span className="sr-only text-muted-foreground text-sm md:not-sr-only">
+							{list.items.length} items
+						</span>
+						<ChangeView />
+					</div>
+					<Menu />
+				</div>
 			</div>
 		</>
 	);
