@@ -1,8 +1,10 @@
 import { Button } from '@wanderlust/ui/components/button';
+import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { useReviewsQuery } from './-hooks';
 
 export function LoadMore() {
 	const query = useReviewsQuery();
+	const text = useLoadMoreText(query);
 
 	return (
 		<Button
@@ -11,11 +13,7 @@ export function LoadMore() {
 			variant="outline"
 			className="mx-auto mt-4"
 		>
-			{query.isFetchingNextPage
-				? 'Loading more...'
-				: query.hasNextPage
-					? 'Load More'
-					: 'Nothing more to load'}
+			{text}
 		</Button>
 	);
 }
