@@ -19,13 +19,7 @@ function RouteComponent() {
 	const { activities } = Route.useLoaderData();
 
 	if (activities.length === 0) {
-		return (
-			<AppMessage
-				emptyMessage="No activities"
-				showBackButton={false}
-				className="my-16"
-			/>
-		);
+		return <AppMessage empty="No activities" classNames={{ root: 'my-16' }} />;
 	}
 
 	return (

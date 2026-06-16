@@ -7,9 +7,8 @@ export function ErrorState() {
 			<Header />
 
 			<AppMessage
-				errorMessage="An error occurred while fetching the invites."
-				showBackButton={false}
-				className="my-8"
+				error="An error occurred while fetching the invites."
+				classNames={{ root: 'my-8' }}
 			/>
 		</div>
 	);

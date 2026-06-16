@@ -15,12 +15,7 @@ export function Content() {
 	const ctx = useBookmarksContext();
 
 	if (bookmarks.length === 0) {
-		return (
-			<AppMessage
-				emptyMessage="You have no bookmarks."
-				showBackButton={false}
-			/>
-		);
+		return <AppMessage empty="You have no bookmarks." />;
 	}
 
 	const bookmark = bookmarks[ctx.index];

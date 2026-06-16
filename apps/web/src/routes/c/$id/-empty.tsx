@@ -3,9 +3,8 @@ import { AppMessage } from '@/components/app-message';
 export function EmptyState() {
 	return (
 		<AppMessage
-			emptyMessage="There are no items in this collection"
-			showBackButton={false}
-			className="mt-8"
+			empty="There are no items in this collection"
+			classNames={{ root: 'mt-8' }}
 		/>
 	);
 }

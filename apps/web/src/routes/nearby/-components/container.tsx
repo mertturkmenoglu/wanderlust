@@ -33,9 +33,8 @@ export function Container() {
 			<div className="order-last md:order-first">
 				{items.length === 0 && (
 					<AppMessage
-						emptyMessage="No nearby locations found"
-						showBackButton={false}
-						className="mt-4"
+						empty="No nearby locations found"
+						classNames={{ root: 'mt-4' }}
 					/>
 				)}
 				{items.length > 0 && (

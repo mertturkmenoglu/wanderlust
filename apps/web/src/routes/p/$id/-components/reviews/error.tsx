@@ -2,10 +2,6 @@ import { AppMessage } from '@/components/app-message';
 
 export function ErrorState() {
 	return (
-		<AppMessage
-			errorMessage="Something went wrong"
-			showBackButton={false}
-			className="my-4"
-		/>
+		<AppMessage error="Something went wrong" classNames={{ root: 'my-4' }} />
 	);
 }

@@ -10,9 +10,8 @@ export function ErrorComponent({ message, refetch }: Props) {
 	return (
 		<div className="flex flex-col items-center justify-center">
 			<AppMessage
-				emptyMessage={message ?? 'Give permission to access your location'}
-				showBackButton={false}
-				className="mt-32"
+				empty={message ?? 'Give permission to access your location'}
+				classNames={{ root: 'mt-32' }}
 			/>
 			<Button variant="link" className="mb-32" onClick={refetch}>
 				Retry

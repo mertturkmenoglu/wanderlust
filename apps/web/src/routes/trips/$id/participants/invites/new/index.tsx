@@ -36,9 +36,8 @@ function RouteComponent() {
 	if (searchQuery.isError) {
 		return (
 			<AppMessage
-				errorMessage="Failed to search users"
-				showBackButton={false}
-				className="mt-8"
+				error="Failed to search users"
+				classNames={{ root: 'mt-8' }}
 			/>
 		);
 	}
@@ -58,11 +57,8 @@ function RouteComponent() {
 				/>
 				{users.length === 0 ? (
 					<AppMessage
-						emptyMessage={
-							search.length > 1 ? 'No users found' : 'Search by username'
-						}
-						showBackButton={false}
-						className="mt-8"
+						empty={search.length > 1 ? 'No users found' : 'Search by username'}
+						classNames={{ root: 'mt-8' }}
 					/>
 				) : (
 					<div>

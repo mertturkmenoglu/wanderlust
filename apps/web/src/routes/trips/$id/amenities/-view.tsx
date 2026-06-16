@@ -10,9 +10,8 @@ export function View() {
 	if (trip.requestedAmenities.length === 0) {
 		return (
 			<AppMessage
-				emptyMessage="No amenities requested"
-				showBackButton={false}
-				className="my-16"
+				empty="No amenities requested"
+				classNames={{ root: 'my-16' }}
 			/>
 		);
 	}

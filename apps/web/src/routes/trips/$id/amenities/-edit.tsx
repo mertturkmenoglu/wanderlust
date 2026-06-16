@@ -54,9 +54,8 @@ export function Edit() {
 	if (query.isError) {
 		return (
 			<AppMessage
-				errorMessage="Failed to load amenities"
-				showBackButton={false}
-				className="my-8"
+				error="Failed to load amenities"
+				classNames={{ root: 'my-8' }}
 			/>
 		);
 	}

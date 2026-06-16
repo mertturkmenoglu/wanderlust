@@ -41,9 +41,8 @@ export function Comments({ className }: Props) {
 	if (query.error) {
 		return (
 			<AppMessage
-				errorMessage="Failed to load comments"
-				showBackButton={false}
-				className="my-8"
+				error="Failed to load comments"
+				classNames={{ root: 'my-8' }}
 			/>
 		);
 	}
@@ -53,13 +52,7 @@ export function Comments({ className }: Props) {
 	}
 
 	if (!query.data) {
-		return (
-			<AppMessage
-				emptyMessage="No comments yet"
-				showBackButton={false}
-				className="my-8"
-			/>
-		);
+		return <AppMessage empty="No comments yet" classNames={{ root: 'my-8' }} />;
 	}
 
 	const pages = query.data.pages;
@@ -67,13 +60,7 @@ export function Comments({ className }: Props) {
 	const flatten = pages.flatMap((p) => p.comments);
 
 	if (isEmpty) {
-		return (
-			<AppMessage
-				emptyMessage="No comments yet"
-				showBackButton={false}
-				className="my-8"
-			/>
-		);
+		return <AppMessage empty="No comments yet" classNames={{ root: 'my-8' }} />;
 	}
 
 	return (

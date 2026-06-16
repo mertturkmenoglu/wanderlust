@@ -17,14 +17,7 @@ export function SuspenseWrapper({
 	placeholderVariant = 'spinner',
 }: Props) {
 	return (
-		<ErrorBoundary
-			fallback={
-				<AppMessage
-					errorMessage="Something went wrong"
-					showBackButton={false}
-				/>
-			}
-		>
+		<ErrorBoundary fallback={<AppMessage error="Something went wrong" />}>
 			<Suspense
 				fallback={
 					<div className="flex justify-center">

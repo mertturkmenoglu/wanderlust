@@ -25,9 +25,10 @@ export function EditItems({ className }: Props) {
 	if (list.items.length === 0) {
 		return (
 			<AppMessage
-				emptyMessage="This list is empty. Add some items to get started."
-				className={cn('my-16', className)}
-				showBackButton={false}
+				empty="This list is empty. Add some items to get started."
+				classNames={{
+					root: cn('my-16', className),
+				}}
 			/>
 		);
 	}

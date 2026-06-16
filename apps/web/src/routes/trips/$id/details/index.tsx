@@ -110,10 +110,11 @@ function RouteComponent() {
 							>
 								{locations.length === 0 && (
 									<AppMessage
-										emptyMessage="No locations scheduled for this day"
-										imageClassName="size-16"
-										showBackButton={false}
-										className="col-span-full my-4"
+										empty="No locations scheduled for this day"
+										classNames={{
+											root: 'col-span-full my-4',
+											logo: 'size-16',
+										}}
 									/>
 								)}
 
