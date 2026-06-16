@@ -38,9 +38,9 @@ export function Links() {
 
 	return (
 		<div className="relative flex items-center gap-2">
-			{items.map((item) => (
+			{items.map(({ key, ...item }) => (
 				<div key={item.link.to}>
-					{item.key === 'notifications' && ctx.unreadCount !== 0 && (
+					{key === 'notifications' && ctx.unreadCount !== 0 && (
 						<Badge className="absolute -right-3 -bottom-3 rounded-full text-xs">
 							{ctx.unreadCount > 10 ? '+' : ctx.unreadCount}
 						</Badge>
