@@ -19,23 +19,33 @@ type Props = {
 };
 
 export function NotificationItem({ item }: Props) {
-	switch (item.type) {
+	const Component = getVariantComponent(item.type);
+
+	if (!Component) {
+		return null;
+	}
+
+	return <Component item={item} />;
+}
+
+function getVariantComponent(type: TNotification['type']) {
+	switch (type) {
 		case 'user_follow':
-			return <VariantUserFollow item={item} />;
+			return VariantUserFollow;
 		case 'trip_add_comment':
-			return <VariantTripComment item={item} />;
+			return VariantTripComment;
 		case 'trip_add_user':
-			return <VariantTripAddUser item={item} />;
+			return VariantTripAddUser;
 		case 'trip_invite':
-			return <VariantTripInvite item={item} />;
+			return VariantTripInvite;
 		case 'trip_update':
-			return <VariantTripUpdate item={item} />;
+			return VariantTripUpdate;
 		case 'wl_event_suggest':
 			return null;
 		case 'wl_list_suggest':
 			return null;
 		case 'wl_system':
-			return <VariantWanderlustSystem item={item} />;
+			return VariantWanderlustSystem;
 		default:
 			return null;
 	}
