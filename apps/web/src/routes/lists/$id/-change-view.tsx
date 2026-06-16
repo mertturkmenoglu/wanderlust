@@ -7,7 +7,7 @@ export function ChangeView() {
 	const ctx = useListContext();
 
 	return (
-		<ButtonGroup className="ml-auto">
+		<ButtonGroup>
 			<Button
 				onClick={() => ctx.setView('list')}
 				variant={ctx.view === 'list' ? 'default' : 'outline'}
