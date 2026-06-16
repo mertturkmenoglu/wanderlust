@@ -1,5 +1,6 @@
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useId } from 'react';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { Rating } from './rating';
 
 type Props = {
@@ -18,12 +19,7 @@ export function FormattedRating({
 	showNumbers = true,
 }: Props) {
 	const id = useId();
-	const fmt = new Intl.NumberFormat('en-US', {
-		style: 'decimal',
-		compactDisplay: 'short',
-		notation: 'compact',
-	});
-
+	const fmt = useNumberFormatter();
 	const formattedRating = fmt.format(votes);
 
 	return (

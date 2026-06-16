@@ -5,6 +5,7 @@ import { DollarSignIcon, HeartIcon, PersonStandingIcon } from 'lucide-react';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { InfoCard } from '@/components/info-card';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { computeRating } from '@/lib/rating';
 
 type Props = {
@@ -15,11 +16,7 @@ export function Description({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
 	const rating = computeRating(place.totalPoints, place.totalVotes);
-	const fmt = Intl.NumberFormat('en-US', {
-		style: 'decimal',
-		compactDisplay: 'short',
-		notation: 'compact',
-	});
+	const fmt = useNumberFormatter();
 
 	return (
 		<div className={cn('grid grid-cols-1 gap-4', className)}>

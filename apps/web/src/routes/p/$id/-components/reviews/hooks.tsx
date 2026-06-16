@@ -1,5 +1,6 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useLoaderData, useSearch } from '@tanstack/react-router';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { type Outputs, orpc } from '@/lib/orpc';
 
 type Review = Outputs['reviews']['listByPlaceId']['reviews'][number];
@@ -24,11 +25,7 @@ export function useRatingsQuery(placeId: string) {
 	);
 }
 
-export const numFmt = Intl.NumberFormat('en-US', {
-	style: 'decimal',
-	compactDisplay: 'short',
-	notation: 'compact',
-});
+export const numFmt = useNumberFormatter();
 
 export function useReviewsQuery() {
 	const { place } = useLoaderData({ from: '/p/$id/' });
