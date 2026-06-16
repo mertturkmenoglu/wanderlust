@@ -31,7 +31,7 @@ function RouteComponent() {
 			<div className="mx-auto my-8 max-w-7xl">
 				<Header />
 
-				<Separator className="mb-2" />
+				<Separator className="my-2 md:my-0" />
 
 				{isEmpty && <EmptyState />}
 
