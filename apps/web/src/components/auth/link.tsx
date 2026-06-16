@@ -1,21 +1,31 @@
-import { Link, type LinkOptions } from '@tanstack/react-router';
-import { Button } from '@wanderlust/ui/components/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
+import {
+	type CreateLinkComponentRenderer,
+	type CreateLinkProps,
+	createLinkComponent,
+} from '@/lib/link';
 
-type Props = {
-	link: LinkOptions;
+type Props = CreateLinkProps<{
 	text: string;
-	className?: string;
+}>;
+
+const render: CreateLinkComponentRenderer<Props> = (
+	{ text, className, ...props },
+	ref,
+) => {
+	return (
+		<a
+			ref={ref}
+			{...props}
+			className={buttonVariants({
+				variant: 'link',
+				className: cn('px-0 text-sm underline', className),
+			})}
+		>
+			{text}
+		</a>
+	);
 };
 
-export function AuthLink({ link, text, className }: Readonly<Props>) {
-	return (
-		<Button
-			asChild
-			variant="link"
-			className={cn('px-0 text-sm underline', className)}
-		>
-			<Link {...link}>{text}</Link>
-		</Button>
-	);
-}
+export const AuthLink = createLinkComponent<Props>(render);
