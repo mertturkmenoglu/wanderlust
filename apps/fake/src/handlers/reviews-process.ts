@@ -36,6 +36,7 @@ export async function processChunk({
 				userId,
 				rating,
 				content: faker.lorem.paragraph(),
+				visitedAt: faker.date.recent({ days: 180 }),
 			};
 		});
 
