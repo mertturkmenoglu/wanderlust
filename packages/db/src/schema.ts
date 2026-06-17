@@ -1,7 +1,8 @@
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
 	bigint,
 	boolean,
+	check,
 	doublePrecision,
 	index,
 	integer,
@@ -648,13 +649,19 @@ export const reviews = pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		content: text().notNull(),
 		rating: smallint().notNull(),
+		visitedAt: timestamp({ withTimezone: true }).notNull(),
 		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 		updatedAt: timestamp({ withTimezone: true })
 			.notNull()
 			.defaultNow()
 			.$onUpdateFn(() => new Date()),
 	},
-	(table) => [index().on(table.placeId), index().on(table.userId)],
+	(table) => [
+		index().on(table.placeId),
+		index().on(table.userId),
+		check('rating_range', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
+		check('visited_at_past', sql`${table.visitedAt} <= now()`),
+	],
 );
 
 export const reviewsRelations = relations(reviews, ({ one, many }) => ({
