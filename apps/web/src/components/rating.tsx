@@ -7,6 +7,7 @@ type Props = {
 	id: string;
 	value?: number;
 	onChange: ({ value }: { value: number }) => void;
+	onHoverChange?: (details: rating.HoverChangeDetails) => void;
 	defaultValue?: number;
 	disabled?: boolean;
 	starsClassName?: string;
@@ -16,6 +17,7 @@ export function Rating({
 	id,
 	value,
 	onChange,
+	onHoverChange,
 	defaultValue,
 	disabled = false,
 	starsClassName,
@@ -27,6 +29,7 @@ export function Rating({
 		defaultValue,
 		disabled,
 		onValueChange: onChange,
+		onHoverChange: onHoverChange,
 	});
 
 	const api = rating.connect(service, normalizeProps);
