@@ -42,6 +42,7 @@ export const createInput = $dto.review
 		placeId: true,
 		content: true,
 		rating: true,
+		visitedAt: true,
 	})
 	.extend({
 		files: fileSchema.array().max(4, 'You can upload up to 4 files').optional(),
