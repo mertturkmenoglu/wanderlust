@@ -1,12 +1,13 @@
+import { useLoaderData } from '@tanstack/react-router';
 import MapContainer from 'react-map-gl/maplibre';
 import { createStyle } from '@/lib/map';
 
-type Props = {
-	latitude: number;
-	longitude: number;
-};
+const style = createStyle('streets-v2-light');
 
-export function MapComponent({ latitude, longitude }: Props) {
+export function MapComponent() {
+	const { city } = useLoaderData({ from: '/cities/$/' });
+	const { lat: latitude, lng: longitude } = city;
+
 	return (
 		<>
 			<h3 className="mt-8 text-lg md:text-2xl lg:mt-4">Location</h3>
@@ -19,7 +20,7 @@ export function MapComponent({ latitude, longitude }: Props) {
 						pitch: 0,
 						bearing: 0,
 					}}
-					mapStyle={createStyle('streets-v2-light')}
+					mapStyle={style}
 					dragPan={false}
 					dragRotate={false}
 					minZoom={10}

@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useLoaderData } from '@tanstack/react-router';
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -8,11 +8,9 @@ import {
 	BreadcrumbSeparator,
 } from '@wanderlust/ui/components/breadcrumb';
 
-type Props = {
-	cityName: string;
-};
+export function CityBreadcrumb() {
+	const { city } = useLoaderData({ from: '/cities/$/' });
 
-export function CityBreadcrumb({ cityName }: Props) {
 	return (
 		<Breadcrumb>
 			<BreadcrumbList>
@@ -29,7 +27,7 @@ export function CityBreadcrumb({ cityName }: Props) {
 				</BreadcrumbItem>
 				<BreadcrumbSeparator />
 				<BreadcrumbItem>
-					<BreadcrumbPage>{cityName}</BreadcrumbPage>
+					<BreadcrumbPage>{city.name}</BreadcrumbPage>
 				</BreadcrumbItem>
 			</BreadcrumbList>
 		</Breadcrumb>
