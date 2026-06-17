@@ -10,6 +10,7 @@ import {
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ChevronRightIcon, LogOutIcon } from 'lucide-react';
+import { useCallback } from 'react';
 import { UserImage } from '@/components/user-image';
 import { authClient } from '@/lib/auth';
 import { userImage } from '@/lib/image';
@@ -31,6 +32,22 @@ type Props = {
 };
 
 export function AccountItem({ item, isCurrentSession }: Props) {
+	const signOut = useCallback(async () => {
+		await authClient.multiSession.revoke({
+			sessionToken: item.session.token,
+		});
+
+		window.location.reload();
+	}, [item.session.token]);
+
+	const switchAccounts = useCallback(async () => {
+		await authClient.multiSession.setActive({
+			sessionToken: item.session.token,
+		});
+
+		window.location.reload();
+	}, [item.session.token]);
+
 	return (
 		<Item
 			variant="outline"
@@ -54,16 +71,7 @@ export function AccountItem({ item, isCurrentSession }: Props) {
 				<ItemDescription>{item.user.email}</ItemDescription>
 			</ItemContent>
 			<ItemActions>
-				<Button
-					variant="ghost"
-					size="sm"
-					onClick={async () => {
-						await authClient.multiSession.revoke({
-							sessionToken: item.session.token,
-						});
-						window.location.reload();
-					}}
-				>
+				<Button variant="ghost" size="sm" onClick={signOut}>
 					<LogOutIcon className="text-destructive" />
 					<span className="text-destructive">Sign out</span>
 				</Button>
@@ -72,12 +80,7 @@ export function AccountItem({ item, isCurrentSession }: Props) {
 					size="sm"
 					className="w-24"
 					disabled={isCurrentSession}
-					onClick={async () => {
-						await authClient.multiSession.setActive({
-							sessionToken: item.session.token,
-						});
-						window.location.reload();
-					}}
+					onClick={switchAccounts}
 				>
 					<span className="">Switch</span>
 					<ChevronRightIcon />
