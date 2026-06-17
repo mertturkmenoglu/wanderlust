@@ -31,7 +31,7 @@ function RouteComponent() {
 			<BackLink
 				to="/p/$id"
 				params={{ id: data.place.id }}
-				text="Back to place details"
+				text="Go back to place details"
 			/>
 
 			<div className="my-8 grid grid-cols-1 gap-8 md:grid-cols-3">
