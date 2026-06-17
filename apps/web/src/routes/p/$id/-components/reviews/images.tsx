@@ -1,9 +1,8 @@
 import { getRouteApi } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { useState } from 'react';
-import Lightbox from 'yet-another-react-lightbox';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
+import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { useAssetsQuery } from './hooks';
 
 type Props = {
@@ -25,13 +24,13 @@ type ContentProps = {
 function Content({ className }: ContentProps) {
 	const route = getRouteApi('/p/$id/');
 	const { id } = route.useParams();
-	const [open, setOpen] = useState(false);
-	const [index, setIndex] = useState(0);
 
 	const query = useAssetsQuery(id);
 
 	const images = query.data.assets;
 	const showMoreCount = Math.min(images.length - 4, 20);
+
+	const lb = useAssetLightbox(images);
 
 	return (
 		<div
@@ -44,12 +43,7 @@ function Content({ className }: ContentProps) {
 				<button
 					type="button"
 					key={image.id}
-					onClick={() => {
-						setIndex(() => {
-							setOpen(true);
-							return i;
-						});
-					}}
+					onClick={() => lb.openAt(i)}
 					className="relative"
 				>
 					<Image
@@ -75,25 +69,7 @@ function Content({ className }: ContentProps) {
 				</button>
 			))}
 
-			<Lightbox
-				open={open}
-				close={() => setOpen(false)}
-				slides={images.map((img) => ({
-					src: img.url,
-				}))}
-				carousel={{
-					finite: true,
-				}}
-				controller={{
-					closeOnBackdropClick: true,
-				}}
-				styles={{
-					container: {
-						backgroundColor: 'rgba(0, 0, 0, 0.8)',
-					},
-				}}
-				index={index}
-			/>
+			<lb.Component />
 		</div>
 	);
 }

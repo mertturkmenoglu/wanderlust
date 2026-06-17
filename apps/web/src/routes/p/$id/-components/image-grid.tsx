@@ -3,9 +3,8 @@ import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { GripHorizontalIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import Lightbox from 'yet-another-react-lightbox';
-import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
+import { useMemo } from 'react';
+import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { ipx } from '@/lib/ipx';
 
 type Props = {
@@ -39,8 +38,7 @@ export function ImageGrid({ className }: Props) {
 		return slice;
 	}, [images]);
 
-	const [open, setOpen] = useState(false);
-	const [index, setIndex] = useState(0);
+	const lb = useAssetLightbox(images);
 
 	if (!first) {
 		return null;
@@ -57,12 +55,7 @@ export function ImageGrid({ className }: Props) {
 				<button
 					type="button"
 					className="h-full w-full rounded-l-xl object-cover"
-					onClick={() =>
-						setIndex(() => {
-							setOpen(true);
-							return 0;
-						})
-					}
+					onClick={() => lb.openAt(0)}
 				>
 					<Image
 						src={ipx(first.url, 'w_1024')}
@@ -79,14 +72,7 @@ export function ImageGrid({ className }: Props) {
 					type="button"
 					className={cn('col-span-1 row-span-1')}
 					key={img.id}
-					onClick={() => {
-						if (img.url !== '') {
-							setIndex(() => {
-								setOpen(true);
-								return i + 1;
-							});
-						}
-					}}
+					onClick={() => lb.openAt(i + 1)}
 				>
 					{img.url !== '' ? (
 						<Image
@@ -115,36 +101,13 @@ export function ImageGrid({ className }: Props) {
 				className="absolute right-4 bottom-4"
 				variant="default"
 				size="sm"
-				onClick={() =>
-					setIndex(() => {
-						setOpen(true);
-						return 0;
-					})
-				}
+				onClick={() => lb.openAt(0)}
 			>
 				<GripHorizontalIcon />
 				<span>Show all</span>
 			</Button>
 
-			<Lightbox
-				open={open}
-				close={() => setOpen(false)}
-				plugins={[Thumbnails]}
-				slides={images.map((img) => ({
-					src: img.url,
-				}))}
-				animation={{ fade: 0 }}
-				controller={{
-					closeOnPullDown: true,
-					closeOnBackdropClick: true,
-				}}
-				index={index}
-				styles={{
-					container: {
-						backgroundColor: 'rgba(0, 0, 0, 0.8)',
-					},
-				}}
-			/>
+			<lb.Component />
 		</div>
 	);
 }

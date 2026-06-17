@@ -9,11 +9,10 @@ import {
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
-import { useState } from 'react';
-import Lightbox from 'yet-another-react-lightbox';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
+import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { ipx } from '@/lib/ipx';
 import type { Outputs } from '@/lib/orpc';
 import { Menu } from './menu';
@@ -24,8 +23,7 @@ type Props = {
 };
 
 export function ReviewCard({ review, className }: Props) {
-	const [open, setOpen] = useState(false);
-	const [index, setIndex] = useState(0);
+	const lb = useAssetLightbox(review.assets);
 
 	return (
 		<Item variant="default" className={cn(className)} size="sm">
@@ -69,16 +67,7 @@ export function ReviewCard({ review, className }: Props) {
 					})}
 				>
 					{review.assets.map((m, i) => (
-						<button
-							type="button"
-							key={m.url}
-							onClick={() => {
-								setIndex(() => {
-									setOpen(true);
-									return i;
-								});
-							}}
-						>
+						<button type="button" key={m.url} onClick={() => lb.openAt(i)}>
 							<Image
 								src={ipx(m.url, 'w_96')}
 								alt=""
@@ -90,25 +79,7 @@ export function ReviewCard({ review, className }: Props) {
 						</button>
 					))}
 				</div>
-				<Lightbox
-					open={open}
-					close={() => setOpen(false)}
-					slides={review.assets.map((m) => ({
-						src: m.url,
-					}))}
-					carousel={{
-						finite: true,
-					}}
-					controller={{
-						closeOnBackdropClick: true,
-					}}
-					styles={{
-						container: {
-							backgroundColor: 'rgba(0, 0, 0, 0.8)',
-						},
-					}}
-					index={index}
-				/>
+				<lb.Component />
 			</ItemContent>
 			<ItemFooter>
 				<div className="flex items-center gap-2">
