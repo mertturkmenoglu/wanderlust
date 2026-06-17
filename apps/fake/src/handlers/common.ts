@@ -1,4 +1,4 @@
-import { ConfigService, type TConfigService } from '@wanderlust/config';
+import { ConfigService } from '@wanderlust/config';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { Mutex } from 'async-mutex';
 import { Container } from 'inversify';
@@ -18,13 +18,7 @@ export async function getDb(): Promise<TDatabaseService> {
 	}
 
 	try {
-		const configData = await ConfigService.init();
-
-		container
-			.bind<TConfigService>('TConfigService')
-			.toConstantValue(configData);
-		container.bind<ConfigService>(ConfigService).toSelf().inSingletonScope();
-		container.get(ConfigService).set(configData);
+		container.bind(ConfigService).toSelf().inSingletonScope();
 		container.bind(DatabaseService).toSelf().inSingletonScope();
 
 		db = container.get(DatabaseService).get();
