@@ -8,7 +8,7 @@ import {
 	ItemHeader,
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import { CollapsibleText } from '@/components/collapsible-text';
@@ -82,7 +82,7 @@ export function ReviewCard({ review, className }: Props) {
 							<Image
 								src={ipx(m.url, 'w_96')}
 								alt=""
-								className="aspect-square rounded"
+								className="aspect-video rounded object-cover"
 								layout="constrained"
 								width={96}
 								aspectRatio={1}
@@ -118,6 +118,9 @@ export function ReviewCard({ review, className }: Props) {
 						showNumbers={false}
 					/>
 					<span className="font-semibold text-sm">{review.rating}.0</span>
+				</div>
+				<div className="text-muted-foreground text-xs">
+					Visited on {format(review.visitedAt, 'PPP')}
 				</div>
 			</ItemFooter>
 		</Item>
