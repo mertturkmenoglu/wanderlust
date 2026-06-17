@@ -56,7 +56,7 @@ export function AutocompleteContextProvider({
 		<AutocompleteContext.Provider
 			value={{
 				autocomplete: ac,
-				isDropdownOpen: isDropdownOpen && showRecentSearches,
+				isDropdownOpen: isDropdownOpen,
 				setIsDropdownOpen,
 				isEmpty,
 				recentSearchLimit: 5,

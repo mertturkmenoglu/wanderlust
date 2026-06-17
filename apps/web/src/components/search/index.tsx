@@ -36,6 +36,8 @@ export function Search({
 				<Autocomplete
 					showAdvancedSearch={showAdvancedSearch}
 					isCardClickable
+					showRecentSearches={true}
+					showAllResultsButton={true}
 					onCardClick={(v) => {
 						navigate({
 							to: '/p/$id',
