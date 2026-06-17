@@ -43,7 +43,7 @@ export function CreateReviewForm() {
 					rating: data.rating,
 					placeId: place.id,
 					files: ctx.uploader.acceptedFiles,
-					visitedAt: new Date(),
+					visitedAt: data.visitDate,
 				});
 			})}
 			className="mt-8 flex flex-col"
