@@ -728,6 +728,10 @@ export const $dto = {
 				description: 'Rating given by the user',
 				examples: [5],
 			}),
+		visitedAt: z.date().meta({
+			description: 'Timestamp when the user visited the place',
+			examples: [new Date('2023-01-10T14:00:00Z')],
+		}),
 		createdAt: z.date().meta({
 			description: 'Timestamp when the review was created',
 			examples: [new Date('2023-01-15T10:00:00Z')],
