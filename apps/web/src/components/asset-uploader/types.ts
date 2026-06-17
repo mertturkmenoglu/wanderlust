@@ -23,5 +23,22 @@ export type TUploader = fileUpload.Api<PropTypes>;
 
 export type Props = {
 	uploader: TUploader;
-	className?: string;
+	classNames?: Partial<{
+		root: string;
+		selector: Partial<{
+			root: string;
+			dropzone: string;
+			trigger: string;
+		}>;
+		grid: Partial<{
+			root: string;
+			item: string;
+			image: string;
+			title: string;
+			description: string;
+			delete: string;
+		}>;
+	}>;
 };
+
+export type AssetUploaderClassNames = Props['classNames'];

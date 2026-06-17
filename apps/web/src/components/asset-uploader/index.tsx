@@ -4,20 +4,20 @@ import { AssetSelector } from './asset-selector';
 import { AssetUploaderContextProvider, useUploaderContext } from './context';
 import type { Props } from './types';
 
-export function AssetUploader({ uploader, className }: Props) {
+export function AssetUploader({ uploader, classNames }: Props) {
 	return (
-		<AssetUploaderContextProvider uploader={uploader}>
-			<Content className={className} />
+		<AssetUploaderContextProvider uploader={uploader} classNames={classNames}>
+			<Content />
 		</AssetUploaderContextProvider>
 	);
 }
 
-function Content({ className }: { className?: string }) {
+function Content() {
 	const ctx = useUploaderContext();
 	const hasFiles = ctx.uploader.acceptedFiles.length !== 0;
 
 	return (
-		<div className={cn(className)}>
+		<div className={cn(ctx.classNames?.root)}>
 			{!hasFiles ? <AssetSelector /> : <AssetGrid />}
 		</div>
 	);
