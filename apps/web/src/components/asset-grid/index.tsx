@@ -1,9 +1,9 @@
 import { Image } from '@unpic/react';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { useMemo, useState } from 'react';
-import Lightbox from 'yet-another-react-lightbox';
-import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
+import { GripHorizontalIcon } from 'lucide-react';
+import { useMemo } from 'react';
+import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { ipx } from '@/lib/ipx';
 
 export type Props = {
@@ -11,7 +11,7 @@ export type Props = {
 	assets: Array<{
 		id: number;
 		url: string;
-		description: string;
+		description: string | null;
 		order: number;
 	}>;
 };
@@ -39,8 +39,7 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 		return slice;
 	}, [assets]);
 
-	const [open, setOpen] = useState(false);
-	const [index, setIndex] = useState(0);
+	const lb = useAssetLightbox(assets);
 
 	if (!first) {
 		return null;
@@ -57,20 +56,15 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 				<button
 					type="button"
 					className="h-full w-full rounded-l-xl object-cover"
-					onClick={() =>
-						setIndex(() => {
-							setOpen(true);
-							return 0;
-						})
-					}
+					onClick={() => lb.openAt(0)}
 				>
 					<Image
 						src={ipx(first.url, 'w_1024')}
 						alt={first.description ?? ''}
 						className="h-full w-full rounded-l-xl object-cover"
 						layout="constrained"
-						height={768}
-						aspectRatio={4 / 3}
+						height={1024}
+						aspectRatio={16 / 9}
 					/>
 				</button>
 			</div>
@@ -79,14 +73,7 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 					type="button"
 					className={cn('col-span-1 row-span-1')}
 					key={asset.id}
-					onClick={() => {
-						if (asset.url !== '') {
-							setIndex(() => {
-								setOpen(true);
-								return i + 1;
-							});
-						}
-					}}
+					onClick={() => lb.openAt(i + 1)}
 				>
 					{asset.url !== '' ? (
 						<Image
@@ -114,35 +101,13 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 				type="button"
 				className="absolute right-4 bottom-4"
 				size="sm"
-				onClick={() =>
-					setIndex(() => {
-						setOpen(true);
-						return 0;
-					})
-				}
+				onClick={() => lb.openAt(0)}
 			>
-				See all
+				<GripHorizontalIcon />
+				<span>Show all</span>
 			</Button>
 
-			<Lightbox
-				open={open}
-				close={() => setOpen(false)}
-				plugins={[Thumbnails]}
-				slides={assets.map((asset) => ({
-					src: asset.url,
-				}))}
-				animation={{ fade: 0 }}
-				controller={{
-					closeOnPullDown: true,
-					closeOnBackdropClick: true,
-				}}
-				index={index}
-				styles={{
-					container: {
-						backgroundColor: 'rgba(0, 0, 0, 0.8)',
-					},
-				}}
-			/>
+			<lb.Component />
 		</div>
 	);
 }

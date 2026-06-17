@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { z } from 'zod';
+import { AssetGrid } from '@/components/asset-grid';
 import { ErrorComponent } from '@/components/error-component';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
@@ -8,7 +9,6 @@ import { CityInfo } from './-components/city-info';
 import { Collections } from './-components/collections';
 import { Description } from './-components/description';
 import { Header } from './-components/header';
-import { ImageGrid } from './-components/image-grid';
 import { Information } from './-components/information';
 import { MapComponent } from './-components/map';
 import { NearbyPlaces } from './-components/nearby-places';
@@ -38,13 +38,15 @@ export const Route = createFileRoute('/p/$id/')({
 });
 
 function RouteComponent() {
+	const { place } = Route.useLoaderData();
+
 	return (
 		<main className="mx-auto mt-8 max-w-7xl">
 			<Breadcrumb />
 
 			<Header className="mt-8" />
 
-			<ImageGrid className="mt-8" />
+			<AssetGrid className="mt-8" assets={place.assets} />
 
 			<Description className="mt-8" />
 
