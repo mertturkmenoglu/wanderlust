@@ -73,6 +73,7 @@ export class ReviewsRepository {
 						userId: userId,
 						content: data.content,
 						rating: data.rating,
+						visitedAt: data.visitedAt,
 					})
 					.returning();
 
