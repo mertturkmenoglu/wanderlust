@@ -1,5 +1,4 @@
-import { Link } from '@tanstack/react-router';
-import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { Button } from '@wanderlust/ui/components/button';
 import { ScrollArea } from '@wanderlust/ui/components/scroll-area';
 import {
 	Sheet,
@@ -13,6 +12,7 @@ import { FilterIcon } from 'lucide-react';
 import React from 'react';
 import { useCurrentRefinements } from 'react-instantsearch';
 import { CustomSearchBox } from '@/components/custom-search-box';
+import { UnderlineLink } from '@/components/underline-link';
 import { CategoryBannerDisplay } from './category-banner-display';
 import { Filters } from './filters';
 import { Results } from './results';
@@ -37,26 +37,12 @@ export function Container() {
 
 			<div className="my-4 flex flex-row items-center gap-4">
 				<span className="text-sm">See:</span>
-				<Link
-					to="/nearby"
-					className={buttonVariants({ variant: 'link', className: 'px-0!' })}
-				>
-					Nearby places
-				</Link>
 
-				<Link
-					to="/cities/list"
-					className={buttonVariants({ variant: 'link', className: 'px-0!' })}
-				>
-					Cities
-				</Link>
+				<UnderlineLink to="/nearby">Nearby places</UnderlineLink>
 
-				<Link
-					to="/categories"
-					className={buttonVariants({ variant: 'link', className: 'px-0!' })}
-				>
-					Categories
-				</Link>
+				<UnderlineLink to="/cities/list">Cities</UnderlineLink>
+
+				<UnderlineLink to="/categories">Categories</UnderlineLink>
 			</div>
 
 			<div className="my-8 flex flex-col gap-8 md:flex-row">
