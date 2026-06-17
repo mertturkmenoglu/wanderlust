@@ -1,9 +1,9 @@
-import { useLoaderData } from '@tanstack/react-router';
+import { Link, useLoaderData } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { LoaderCircleIcon } from 'lucide-react';
+import { LoaderCircleIcon, PencilIcon } from 'lucide-react';
 import { FormattedRating } from '@/components/formatted-rating';
 import { computeRating } from '@/lib/rating';
-import { CreateReviewDialog } from './create/create-dialog';
 import { Filters } from './filters';
 import { numFmt, useRatingsQuery } from './hooks';
 import { ReviewImages } from './images';
@@ -44,7 +44,17 @@ export function RatingsSection({ className }: Props) {
 							</span>
 						</div>
 					</div>
-					<CreateReviewDialog />
+
+					<Link
+						to="/p/$id/reviews/new"
+						params={{
+							id: place.id,
+						}}
+						className={buttonVariants({ variant: 'default', size: 'sm' })}
+					>
+						<PencilIcon />
+						<span>Add a review</span>
+					</Link>
 				</div>
 
 				{query.isLoading && (
