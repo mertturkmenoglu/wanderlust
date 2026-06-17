@@ -1,7 +1,7 @@
-import { getRouteApi } from '@tanstack/react-router';
+import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { authClient } from '@/lib/auth';
-import { AddToListButton } from './add-to-list-button';
+import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
+import { AddToList } from './add-to-list';
 import { BookmarkButton } from './bookmark-button';
 import { FavoriteButton } from './favorite-button';
 import { Menu } from './menu';
@@ -12,10 +12,8 @@ type Props = {
 };
 
 export function Header({ className }: Props) {
-	const route = getRouteApi('/p/$id/');
-	const { place } = route.useLoaderData();
-	const session = authClient.useSession();
-	const isAuth = !!session.data?.user;
+	const { place } = useLoaderData({ from: '/p/$id/' });
+	const isAuth = useIsAuthenticated();
 
 	return (
 		<div className={cn(className)}>
@@ -27,7 +25,7 @@ export function Header({ className }: Props) {
 				<div className="flex w-full items-center justify-between sm:w-auto">
 					{isAuth && <PlanTripDialog />}
 
-					{isAuth && <AddToListButton />}
+					{isAuth && <AddToList />}
 
 					<FavoriteButton />
 
