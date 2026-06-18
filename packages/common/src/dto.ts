@@ -1,4 +1,6 @@
 import {
+	accoladeAssignments,
+	accolades,
 	accounts,
 	addresses,
 	assets,
@@ -372,6 +374,36 @@ export const $dto = {
 				description: 'Longitude of the address',
 				examples: [-0.1278],
 			}),
+	}),
+	accolade: createSelectSchema(accolades, {
+		id: z.string().min(1).meta({
+			description: 'Accolade ID',
+			examples: ['accolade123'],
+		}),
+		title: z.string().min(1).max(256).meta({
+			description: 'Title of the accolade',
+			examples: ['Best Museum'],
+		}),
+		description: z.string().min(1).meta({
+			description: 'Description of the accolade',
+			examples: ['Awarded for outstanding museum experience'],
+		}),
+		badge: z.url().min(1).meta({
+			description: 'Badge image URL of the accolade',
+			examples: ['https://example.com/images/best-museum-badge.png'],
+		}),
+		image: z.url().min(1).meta({
+			description: 'Image URL of the accolade',
+			examples: ['https://example.com/images/best-museum.jpg'],
+		}),
+		createdAt: z.date().meta({
+			description: 'Timestamp when the accolade was created',
+			examples: [new Date('2023-01-15T10:00:00Z')],
+		}),
+		updatedAt: z.date().meta({
+			description: 'Timestamp when the accolade was last updated',
+			examples: [new Date('2023-01-15T10:00:00Z')],
+		}),
 	}),
 	place: createSelectSchema(places, {
 		id: z
@@ -1422,6 +1454,39 @@ export const $dto = {
 	}),
 };
 
+export const $extended = {
+	place: $dto.place.extend({
+		assets: z.array($dto.asset).meta({
+			description: 'Assets associated with the place',
+		}),
+		category: $dto.category.meta({
+			description: 'Category of the place',
+		}),
+		address: $dto.address.extend({
+			city: $dto.city.meta({
+				description: 'City of the address',
+			}),
+		}).meta({
+			description: 'Address of the place',
+		}),
+		accolades: z.object({
+			id: z.string(),
+			createdAt: z.date(),
+			updatedAt: z.date(),
+			placeId: z.string(),
+			accoladeId: z.string(),
+			accolade: $dto.accolade,
+		}).array().meta({
+			description: 'Accolades associated with the place',
+		}),
+	}),
+	address: $dto.address.extend({
+		city: $dto.city.meta({
+			description: 'City of the address',
+		}),
+	}),
+}
+
 export const $insert = {
 	user: createInsertSchema(users),
 	account: createInsertSchema(accounts),
@@ -1430,6 +1495,8 @@ export const $insert = {
 	category: createInsertSchema(categories),
 	city: createInsertSchema(cities),
 	address: createInsertSchema(addresses),
+	accolade: createInsertSchema(accolades),
+	accoladeAssignment: createInsertSchema(accoladeAssignments),
 	place: createInsertSchema(places),
 	bookmark: createInsertSchema(bookmarks),
 	favorite: createInsertSchema(favorites),
