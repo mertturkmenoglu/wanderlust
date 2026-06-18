@@ -4,7 +4,7 @@ import type * as React from 'react';
 import { cn } from '../lib/utils';
 
 const badgeVariants = cva(
-	'inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-full border px-2 py-0.5 font-medium text-xs transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3',
+	'inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-full border font-medium transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none',
 	{
 		variants: {
 			variant: {
@@ -19,9 +19,15 @@ const badgeVariants = cva(
 				midnight:
 					'border-midnight bg-midnight text-midnight-foreground hover:bg-midnight/90',
 			},
+			size: {
+				default: 'px-2 py-0.5 text-xs [&>svg]:size-3',
+				lg: 'px-3 py-1 text-sm [&>svg]:size-3',
+				xl: 'px-4 py-1.5 text-base [&>svg]:size-4',
+			},
 		},
 		defaultVariants: {
 			variant: 'default',
+			size: 'default',
 		},
 	},
 );
@@ -29,6 +35,7 @@ const badgeVariants = cva(
 function Badge({
 	className,
 	variant,
+	size,
 	asChild = false,
 	...props
 }: React.ComponentProps<'span'> &
@@ -38,7 +45,7 @@ function Badge({
 	return (
 		<Comp
 			data-slot="badge"
-			className={cn(badgeVariants({ variant }), className)}
+			className={cn(badgeVariants({ variant, size }), className)}
 			{...props}
 		/>
 	);
