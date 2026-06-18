@@ -9,6 +9,7 @@ export type Place = Pick<
 	| 'totalVotes'
 	| 'totalPoints'
 	| 'assets'
+	| 'accolades'
 >;
 
 export type Props = {
