@@ -27,6 +27,7 @@ import { Route as HelpIndexRouteImport } from './routes/help/index'
 import { Route as ChangeAccountsIndexRouteImport } from './routes/change-accounts/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
 import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
+import { Route as AIndexRouteImport } from './routes/a/index'
 import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as TripsIdRouteImport } from './routes/trips/$id'
 import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
@@ -45,6 +46,7 @@ import { Route as DiscoverEventsIndexRouteImport } from './routes/discover/event
 import { Route as CitiesListIndexRouteImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexRouteImport } from './routes/cities/$/index'
 import { Route as CIdIndexRouteImport } from './routes/c/$id/index'
+import { Route as AIdIndexRouteImport } from './routes/a/$id/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
 import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
@@ -158,6 +160,11 @@ const BookmarksIndexRoute = BookmarksIndexRouteImport.update({
   path: '/bookmarks/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AIndexRoute = AIndexRouteImport.update({
+  id: '/a/',
+  path: '/a/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
@@ -247,6 +254,11 @@ const CitiesSplatIndexRoute = CitiesSplatIndexRouteImport.update({
 const CIdIndexRoute = CIdIndexRouteImport.update({
   id: '/c/$id/',
   path: '/c/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AIdIndexRoute = AIdIndexRouteImport.update({
+  id: '/a/$id/',
+  path: '/a/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
@@ -371,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/wip': typeof WipRoute
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/a/': typeof AIndexRoute
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/change-accounts/': typeof ChangeAccountsIndexRoute
@@ -387,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/trips/': typeof TripsIndexRoute
   '/sign-in/': typeof AuthSignInIndexRoute
   '/sign-up/': typeof AuthSignUpIndexRoute
+  '/a/$id/': typeof AIdIndexRoute
   '/c/$id/': typeof CIdIndexRoute
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
@@ -427,6 +441,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/wip': typeof WipRoute
+  '/a': typeof AIndexRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/change-accounts': typeof ChangeAccountsIndexRoute
@@ -443,6 +458,7 @@ export interface FileRoutesByTo {
   '/trips': typeof TripsIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
+  '/a/$id': typeof AIdIndexRoute
   '/c/$id': typeof CIdIndexRoute
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
@@ -488,6 +504,7 @@ export interface FileRoutesById {
   '/wip': typeof WipRoute
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
+  '/a/': typeof AIndexRoute
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/change-accounts/': typeof ChangeAccountsIndexRoute
@@ -504,6 +521,7 @@ export interface FileRoutesById {
   '/trips/': typeof TripsIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
+  '/a/$id/': typeof AIdIndexRoute
   '/c/$id/': typeof CIdIndexRoute
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
@@ -550,6 +568,7 @@ export interface FileRouteTypes {
     | '/wip'
     | '/trips/$id'
     | '/u/$username'
+    | '/a/'
     | '/bookmarks/'
     | '/categories/'
     | '/change-accounts/'
@@ -566,6 +585,7 @@ export interface FileRouteTypes {
     | '/trips/'
     | '/sign-in/'
     | '/sign-up/'
+    | '/a/$id/'
     | '/c/$id/'
     | '/cities/$/'
     | '/cities/list/'
@@ -606,6 +626,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/wip'
+    | '/a'
     | '/bookmarks'
     | '/categories'
     | '/change-accounts'
@@ -622,6 +643,7 @@ export interface FileRouteTypes {
     | '/trips'
     | '/sign-in'
     | '/sign-up'
+    | '/a/$id'
     | '/c/$id'
     | '/cities/$'
     | '/cities/list'
@@ -666,6 +688,7 @@ export interface FileRouteTypes {
     | '/wip'
     | '/trips/$id'
     | '/u/$username'
+    | '/a/'
     | '/bookmarks/'
     | '/categories/'
     | '/change-accounts/'
@@ -682,6 +705,7 @@ export interface FileRouteTypes {
     | '/trips/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
+    | '/a/$id/'
     | '/c/$id/'
     | '/cities/$/'
     | '/cities/list/'
@@ -726,6 +750,7 @@ export interface RootRouteChildren {
   TripsRoute: typeof TripsRouteWithChildren
   WipRoute: typeof WipRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
+  AIndexRoute: typeof AIndexRoute
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ChangeAccountsIndexRoute: typeof ChangeAccountsIndexRoute
@@ -740,6 +765,7 @@ export interface RootRouteChildren {
   TermsIndexRoute: typeof TermsIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
+  AIdIndexRoute: typeof AIdIndexRoute
   CIdIndexRoute: typeof CIdIndexRoute
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
@@ -882,6 +908,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookmarksIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/a/': {
+      id: '/a/'
+      path: '/a'
+      fullPath: '/a/'
+      preLoaderRoute: typeof AIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/u/$username': {
       id: '/u/$username'
       path: '/u/$username'
@@ -1006,6 +1039,13 @@ declare module '@tanstack/react-router' {
       path: '/c/$id'
       fullPath: '/c/$id/'
       preLoaderRoute: typeof CIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/a/$id/': {
+      id: '/a/$id/'
+      path: '/a/$id'
+      fullPath: '/a/$id/'
+      preLoaderRoute: typeof AIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/sign-up/': {
@@ -1263,6 +1303,7 @@ const rootRouteChildren: RootRouteChildren = {
   TripsRoute: TripsRouteWithChildren,
   WipRoute: WipRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
+  AIndexRoute: AIndexRoute,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ChangeAccountsIndexRoute: ChangeAccountsIndexRoute,
@@ -1277,6 +1318,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsIndexRoute: TermsIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
+  AIdIndexRoute: AIdIndexRoute,
   CIdIndexRoute: CIdIndexRoute,
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
