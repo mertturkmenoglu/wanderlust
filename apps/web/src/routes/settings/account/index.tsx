@@ -1,20 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Alert, AlertDescription } from '@wanderlust/ui/components/alert';
 import {
-	Field,
 	FieldDescription,
-	FieldGroup,
-	FieldLabel,
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
-import { cn } from '@wanderlust/ui/lib/utils';
-import { FacebookIcon } from '@/components/icons/facebook';
-import { GoogleIcon } from '@/components/icons/google';
+import { InfoIcon } from 'lucide-react';
 import { authClient } from '@/lib/auth';
+import { SettingsField } from '../-components/field';
 import { ChangePassword } from './-change-password';
 import { ChangeUsername } from './-change-username';
+import { useHasProvider } from './-hooks';
+import { SocialLogin } from './-social-login';
 
 export const Route = createFileRoute('/settings/account/')({
 	component: RouteComponent,
@@ -29,67 +27,60 @@ export const Route = createFileRoute('/settings/account/')({
 
 function RouteComponent() {
 	const { auth } = Route.useRouteContext();
-	const { accounts } = Route.useLoaderData();
-	const providers = (accounts.data ?? []).map((acc) => acc.providerId);
-	const hasEmailProvider = providers.includes('credential');
-	const hasGoogleProvider = providers.includes('google');
-	const hasFacebookProvider = providers.includes('facebook');
+	const hasEmailProvider = useHasProvider('credential');
 
 	return (
 		<FieldSet>
-			<FieldLegend>Account</FieldLegend>
+			<FieldLegend className="text-xl!">Account</FieldLegend>
 			<FieldDescription>Change your account settings</FieldDescription>
 
 			<FieldSeparator />
 
-			<FieldGroup>
-				<FieldGroup className="grid grid-cols-1 md:grid-cols-2">
-					<Field>
-						<FieldLabel>Email</FieldLabel>
-						<Input id="name" disabled value={auth.user?.email} />
-						<FieldDescription>
-							You cannot change your email address
-						</FieldDescription>
-					</Field>
+			<SettingsField.Root>
+				<SettingsField.Label>Email Address</SettingsField.Label>
 
-					<Field className="flex flex-col justify-start">
-						<FieldLabel>Username</FieldLabel>
-						<Input id="username" disabled value={auth.user?.username} />
-						<FieldDescription>
-							<ChangeUsername />
-						</FieldDescription>
-					</Field>
-				</FieldGroup>
+				<SettingsField.Description>
+					{auth.user?.email}
+				</SettingsField.Description>
 
-				<Field>
-					<FieldLabel>Password</FieldLabel>
-					<Input id="password" disabled value="********" />
-					<FieldDescription>
-						<ChangePassword hasEmailProvider={hasEmailProvider} />
-					</FieldDescription>
-				</Field>
-			</FieldGroup>
+				<Alert variant="default" className="mt-2 max-w-sm">
+					<InfoIcon />
+					<AlertDescription>
+						You cannot change your email address
+					</AlertDescription>
+				</Alert>
+			</SettingsField.Root>
 
-			<FieldSeparator />
+			<SettingsField.Root>
+				<SettingsField.Label>Username</SettingsField.Label>
 
-			<FieldGroup>
-				<Field className="flex flex-row gap-16">
-					<FieldLabel className="max-w-fit">Social Logins</FieldLabel>
-					<div className="flex flex-row items-center gap-4">
-						<GoogleIcon
-							className={cn('size-6', {
-								grayscale: !hasGoogleProvider,
-							})}
-						/>
+				<SettingsField.Description>
+					{auth.user?.username}
+				</SettingsField.Description>
 
-						<FacebookIcon
-							className={cn('size-6', {
-								grayscale: !hasFacebookProvider,
-							})}
-						/>
-					</div>
-				</Field>
-			</FieldGroup>
+				<ChangeUsername />
+			</SettingsField.Root>
+
+			<SettingsField.Root>
+				<SettingsField.Label>Password</SettingsField.Label>
+
+				<SettingsField.Description>********</SettingsField.Description>
+
+				<ChangePassword hasEmailProvider={hasEmailProvider} />
+			</SettingsField.Root>
+
+			<FieldSet className="mt-8">
+				<FieldLegend className="text-xl!">Social Logins</FieldLegend>
+				<FieldDescription>Manage your social logins</FieldDescription>
+
+				<FieldSeparator />
+
+				<div className="flex flex-row items-center gap-4">
+					<SocialLogin provider="google" className="w-full md:w-1/3" />
+
+					<SocialLogin provider="facebook" className="w-full md:w-1/3" />
+				</div>
+			</FieldSet>
 		</FieldSet>
 	);
 }
