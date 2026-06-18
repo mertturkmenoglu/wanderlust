@@ -61,6 +61,11 @@ export class BookmarksRepository {
 							},
 							category: true,
 							assets: true,
+							accolades: {
+								with: {
+									accolade: true,
+								}
+							}
 						},
 					},
 				},

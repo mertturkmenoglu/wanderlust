@@ -75,6 +75,11 @@ export class FavoritesRepository {
 							},
 							category: true,
 							assets: true,
+							accolades: {
+								with: {
+									accolade: true,
+								}
+							}
 						},
 					},
 				},
@@ -162,6 +167,11 @@ export class FavoritesRepository {
 								with: {
 									city: true,
 								},
+							},
+							accolades: {
+								with: {
+									accolade: true,
+								}
 							},
 							category: true,
 							assets: true,

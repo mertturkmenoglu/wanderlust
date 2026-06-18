@@ -59,6 +59,11 @@ export class AggregatorRepository {
 					},
 					category: true,
 					assets: true,
+					accolades: {
+						with: {
+							accolade: true,
+						}
+					}
 				},
 			});
 
@@ -84,6 +89,11 @@ export class AggregatorRepository {
 					},
 					category: true,
 					assets: true,
+					accolades: {
+						with: {
+							accolade: true,
+						}
+					}
 				},
 			});
 
@@ -109,6 +119,11 @@ export class AggregatorRepository {
 					},
 					category: true,
 					assets: true,
+					accolades: {
+						with: {
+							accolade: true,
+						}
+					},
 				},
 			});
 
@@ -134,6 +149,11 @@ export class AggregatorRepository {
 					},
 					category: true,
 					assets: true,
+					accolades: {
+						with: {
+							accolade: true,
+						}
+					}
 				},
 			});
 

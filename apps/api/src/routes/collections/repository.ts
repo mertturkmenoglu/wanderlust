@@ -70,6 +70,11 @@ export class CollectionsRepository {
 											city: true,
 										},
 									},
+									accolades: {
+										with: {
+											accolade: true,
+										}
+									}
 								},
 							},
 						},
@@ -246,6 +251,11 @@ export class CollectionsRepository {
 							address: {
 								with: {
 									city: true,
+								},
+							},
+							accolades: {
+								with: {
+									accolade: true,
 								},
 							},
 						},
@@ -618,6 +628,11 @@ export class CollectionsRepository {
 													city: true,
 												},
 											},
+											accolades: {
+												with: {
+													accolade: true,
+												},
+											},
 										},
 									},
 								},
@@ -680,6 +695,11 @@ export class CollectionsRepository {
 											address: {
 												with: {
 													city: true,
+												},
+											},
+											accolades: {
+												with: {
+													accolade: true,
 												},
 											},
 										},

@@ -135,6 +135,11 @@ export class ListsRepository {
 											city: true,
 										},
 									},
+									accolades: {
+										with: {
+											accolade: true,
+										}
+									},
 									category: true,
 									assets: true,
 								},

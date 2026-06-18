@@ -323,6 +323,11 @@ export class UsersRepository {
 									city: true,
 								},
 							},
+							accolades: {
+								with: {
+									accolade: true,
+								},
+							},
 						},
 					},
 				},

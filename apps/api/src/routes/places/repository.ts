@@ -24,6 +24,11 @@ export class PlacesRepository {
 							city: true,
 						},
 					},
+					accolades: {
+						with: {
+							accolade: true,
+						}
+					},
 					category: true,
 					assets: {
 						where: (t) =>
@@ -79,6 +84,11 @@ export class PlacesRepository {
 					},
 					category: true,
 					assets: true,
+					accolades: {
+						with: {
+							accolade: true,
+						},
+					},
 				},
 				offset: 0,
 				limit: 25,

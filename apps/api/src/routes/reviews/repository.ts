@@ -27,6 +27,11 @@ export class ReviewsRepository {
 									city: true,
 								},
 							},
+							accolades: {
+								with: {
+									accolade: true,
+								},
+							},
 							category: true,
 							assets: true,
 						},
@@ -221,6 +226,11 @@ export class ReviewsRepository {
 							address: {
 								with: {
 									city: true,
+								},
+							},
+							accolades: {
+								with: {
+									accolade: true,
 								},
 							},
 							category: true,

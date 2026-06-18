@@ -58,6 +58,11 @@ export class TripsRepository {
 											city: true,
 										},
 									},
+									accolades: {
+										with: {
+											accolade: true,
+										},
+									},
 								},
 							},
 						},
@@ -986,6 +991,11 @@ export class TripsRepository {
 							address: {
 								with: {
 									city: true,
+								},
+							},
+							accolades: {
+								with: {
+									accolade: true,
 								},
 							},
 						},
