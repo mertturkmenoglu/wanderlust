@@ -9,18 +9,16 @@ export const Route = createFileRoute('/settings')({
 
 function RouteComponent() {
 	return (
-		<div className="flex w-full flex-col">
-			<main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
-				<div className="mx-auto grid w-full max-w-7xl gap-2">
-					<h2 className="font-semibold text-3xl">Settings</h2>
-				</div>
-				<div className="mx-auto grid w-full max-w-7xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
+		<div className="mx-auto mt-8 max-w-7xl">
+			<h2 className="text-2xl">Settings</h2>
+			<div className="mt-4 flex flex-col gap-4 md:mt-8 md:flex-row">
+				<div className="min-w-xs md:pr-8">
 					<Sidebar />
-					<div className="grid gap-6">
-						<Outlet />
-					</div>
 				</div>
-			</main>
+				<div className="flex-1 md:-mt-4">
+					<Outlet />
+				</div>
+			</div>
 		</div>
 	);
 }
