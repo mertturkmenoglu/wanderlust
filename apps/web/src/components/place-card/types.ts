@@ -13,6 +13,9 @@ export type Place = Pick<
 
 export type Props = {
 	place: Place;
+	meta?: {
+		isFavorite: boolean;
+	};
 	variant?: 'default' | 'item';
 	as?: 'div' | 'link';
 } & React.HTMLAttributes<HTMLDivElement>;

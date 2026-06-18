@@ -9,9 +9,14 @@ import {
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { StarIcon } from 'lucide-react';
+import { HeartIcon, StarIcon } from 'lucide-react';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { ipx } from '@/lib/ipx';
 import { usePlaceCardContext } from './context';
+import {
+	useAddToFavoritesMutation,
+	useRemoveFromFavoritesMutation,
+} from './hooks';
 import type { Props } from './types';
 
 export function ItemVariant({
@@ -20,6 +25,10 @@ export function ItemVariant({
 	...props
 }: Props) {
 	const ctx = usePlaceCardContext();
+	const numFmt = useNumberFormatter();
+
+	const addMutation = useAddToFavoritesMutation();
+	const removeMutation = useRemoveFromFavoritesMutation();
 
 	return (
 		<Item variant="outline" size="default" className={cn(className)} {...props}>
@@ -43,16 +52,41 @@ export function ItemVariant({
 					{ctx.place.category.name}
 				</ItemDescription>
 			</ItemContent>
-			{ctx.rating !== '0.0' && (
-				<ItemActions>
-					<Button variant="outline">
-						<div className="flex items-center gap-1">
-							<span className="font-medium text-sm">{ctx.rating}</span>
-							<StarIcon className="size-4 fill-primary text-white" />
-						</div>
+
+			<ItemActions>
+				{ctx.meta && (
+					<Button
+						variant="outline"
+						type="button"
+						size="icon"
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+
+							if (ctx.meta?.isFavorite) {
+								removeMutation.mutate({ placeId: ctx.place.id });
+							} else {
+								addMutation.mutate({ placeId: ctx.place.id });
+							}
+						}}
+					>
+						<HeartIcon
+							className={cn({
+								'fill-primary text-primary': ctx.meta?.isFavorite,
+								'fill-muted text-muted-foreground': !ctx.meta?.isFavorite,
+							})}
+						/>
 					</Button>
-				</ItemActions>
-			)}
+				)}
+				{ctx.rating !== '0.0' && (
+					<Button variant="outline">
+						{ctx.rating} <StarIcon className="fill-primary text-primary" />
+						<span className="text-muted-foreground text-xs leading-px tracking-tighter">
+							({numFmt.format(ctx.place.totalVotes)})
+						</span>
+					</Button>
+				)}
+			</ItemActions>
 		</Item>
 	);
 }

@@ -4,71 +4,31 @@ import {
 	Card,
 	CardAction,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@wanderlust/ui/components/card';
-import {
-	Item,
-	ItemActions,
-	ItemContent,
-	ItemDescription,
-	ItemHeader,
-	ItemTitle,
-} from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { StarIcon } from 'lucide-react';
+import { HeartIcon, StarIcon } from 'lucide-react';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { ipx } from '@/lib/ipx';
 import { usePlaceCardContext } from './context';
+import {
+	useAddToFavoritesMutation,
+	useRemoveFromFavoritesMutation,
+} from './hooks';
 import type { Props } from './types';
 
-export const DefaultVariant = DefaultVariantB;
-
-export function DefaultVariantA({
+export function DefaultVariant({
 	className,
 	variant = 'default',
 	...props
 }: Props) {
 	const ctx = usePlaceCardContext();
+	const numFmt = useNumberFormatter();
 
-	return (
-		<Item key={ctx.place.id} className={cn('group p-0', className)} {...props}>
-			<ItemHeader>
-				<Image
-					src={ipx(ctx.asset.url, 'w_512')}
-					alt={ctx.asset.description ?? ''}
-					layout="constrained"
-					aspectRatio={16 / 9}
-					height={128}
-					className="aspect-video w-full rounded-md object-cover"
-				/>
-			</ItemHeader>
-			<ItemContent>
-				<ItemTitle className="line-clamp-1">{ctx.place.name}</ItemTitle>
-				<ItemDescription className="line-clamp-1">
-					{ctx.place.address.city.name} / {ctx.place.address.city.countryName}
-				</ItemDescription>
-				<ItemDescription className="line-clamp-1 text-primary">
-					{ctx.place.category.name}
-				</ItemDescription>
-			</ItemContent>
-			<ItemActions>
-				{ctx.rating !== '0.0' && (
-					<div className="flex items-center gap-1">
-						<span className="font-medium text-sm">{ctx.rating}</span>
-						<StarIcon className="size-3 fill-primary text-primary" />
-					</div>
-				)}
-			</ItemActions>
-		</Item>
-	);
-}
-
-export function DefaultVariantB({
-	className,
-	variant = 'default',
-	...props
-}: Props) {
-	const ctx = usePlaceCardContext();
+	const addMutation = useAddToFavoritesMutation();
+	const removeMutation = useRemoveFromFavoritesMutation();
 
 	return (
 		<Card size="sm" className={cn('group @container', className)} {...props}>
@@ -80,16 +40,32 @@ export function DefaultVariantB({
 				height={128}
 				className="aspect-video w-full object-cover"
 			/>
-
-			<CardHeader className="@max-[300px]:min-h-30 @min-[300px]:min-h-22">
-				{ctx.rating !== '0.0' && (
+			<CardHeader className="">
+				{ctx.meta && (
 					<CardAction>
-						<Badge variant="outline">
-							{ctx.rating} <StarIcon className="fill-primary text-primary" />{' '}
-						</Badge>
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+
+								if (ctx.meta?.isFavorite) {
+									removeMutation.mutate({ placeId: ctx.place.id });
+								} else {
+									addMutation.mutate({ placeId: ctx.place.id });
+								}
+							}}
+						>
+							<HeartIcon
+								className={cn({
+									'fill-primary text-primary': ctx.meta?.isFavorite,
+									'fill-muted text-muted-foreground': !ctx.meta?.isFavorite,
+								})}
+							/>
+						</button>
 					</CardAction>
 				)}
-				<CardTitle className="">{ctx.place.name}</CardTitle>
+				<CardTitle className="line-clamp-1">{ctx.place.name}</CardTitle>
 				<CardDescription className="line-clamp-1">
 					{ctx.place.address.city.name} / {ctx.place.address.city.countryName}
 				</CardDescription>
@@ -97,6 +73,14 @@ export function DefaultVariantB({
 					{ctx.place.category.name}
 				</CardDescription>
 			</CardHeader>
+			<CardFooter>
+				<Badge variant="default" size="lg" className="ml-auto w-fit">
+					{ctx.rating} <StarIcon className="fill-white text-white" />
+					<span className="text-white/70 text-xs leading-px tracking-tighter">
+						({numFmt.format(ctx.place.totalVotes)})
+					</span>
+				</Badge>
+			</CardFooter>
 		</Card>
 	);
 }

@@ -6,7 +6,7 @@ import type { Props } from './types';
 
 export function PlaceCard(props: Props) {
 	return (
-		<PlaceCardContextProvider place={props.place}>
+		<PlaceCardContextProvider place={props.place} meta={props.meta}>
 			<Content {...props} />
 		</PlaceCardContextProvider>
 	);

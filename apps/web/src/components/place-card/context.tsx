@@ -10,6 +10,9 @@ import type { Place } from './types';
 
 type State = {
 	place: Place;
+	meta?: {
+		isFavorite: boolean;
+	};
 	rating: string;
 	index: number;
 	setIndex: Dispatch<SetStateAction<number>>;
@@ -20,9 +23,12 @@ export const PlaceCardContext = createContext<State | null>(null);
 
 type Props = React.PropsWithChildren & {
 	place: Place;
+	meta?: {
+		isFavorite: boolean;
+	};
 };
 
-export function PlaceCardContextProvider({ children, place }: Props) {
+export function PlaceCardContextProvider({ children, place, meta }: Props) {
 	const [index, setIndex] = useState(0);
 	const el = place.assets[index];
 	const rating = computeRating(place.totalPoints, place.totalVotes);
@@ -39,6 +45,7 @@ export function PlaceCardContextProvider({ children, place }: Props) {
 				index,
 				setIndex,
 				rating,
+				meta,
 			}}
 		>
 			{children}
