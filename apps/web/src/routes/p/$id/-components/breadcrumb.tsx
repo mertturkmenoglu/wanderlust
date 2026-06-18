@@ -1,4 +1,4 @@
-import { getRouteApi, Link } from '@tanstack/react-router';
+import { Link, useLoaderData } from '@tanstack/react-router';
 import {
 	BreadcrumbItem,
 	BreadcrumbLink,
@@ -8,12 +8,15 @@ import {
 	Breadcrumb as ShadcnBreadcrumb,
 } from '@wanderlust/ui/components/breadcrumb';
 
-export function Breadcrumb() {
-	const route = getRouteApi('/p/$id/');
-	const { place } = route.useLoaderData();
+type Props = {
+	className?: string;
+};
+
+export function Breadcrumb({ className }: Props) {
+	const { place } = useLoaderData({ from: '/p/$id/' });
 
 	return (
-		<ShadcnBreadcrumb>
+		<ShadcnBreadcrumb className={className}>
 			<BreadcrumbList>
 				<BreadcrumbItem>
 					<BreadcrumbLink asChild>
