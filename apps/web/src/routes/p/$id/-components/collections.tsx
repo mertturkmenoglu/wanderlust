@@ -53,6 +53,7 @@ function Content({ className }: ContentProps) {
 										key={item.placeId}
 										as="link"
 										place={item.place}
+										meta={item.meta}
 										className="w-[256px]"
 									/>
 								))}

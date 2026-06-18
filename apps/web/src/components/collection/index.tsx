@@ -34,6 +34,7 @@ export function Collection({ collection, className }: CollectionProps) {
 						<PlaceCard
 							key={item.placeId}
 							place={item.place}
+							meta={item.meta}
 							className="w-[256px]"
 							as="link"
 						/>

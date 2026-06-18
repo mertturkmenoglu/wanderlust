@@ -18,7 +18,12 @@ export function Items({ className }: Props) {
 			)}
 		>
 			{collection.items.map((item) => (
-				<PlaceCard place={item.place} key={item.placeId} as="link" />
+				<PlaceCard
+					place={item.place}
+					key={item.placeId}
+					meta={item.meta}
+					as="link"
+				/>
 			))}
 		</div>
 	);

@@ -135,14 +135,19 @@ function RouteComponent() {
 													{formatDate(loc.scheduledTime, 'HH:mm')}
 												</div>
 											</div>
-											<div>
+											<div className="min-w-max">
 												<Link
 													to="/p/$id"
 													params={{
 														id: loc.placeId,
 													}}
+													className="min-w-max"
 												>
-													<PlaceCard className="max-w-xs" place={loc.place} />
+													<PlaceCard
+														className="min-w-xs"
+														place={loc.place}
+														meta={loc.meta}
+													/>
 												</Link>
 												<div className="mt-4">
 													<div className="text-muted-foreground text-sm">

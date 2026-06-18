@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import type { GeoHit } from 'instantsearch.js';
 import { PlaceCard } from '@/components/place-card';
 
@@ -8,14 +7,11 @@ type Props = {
 
 export function ItemComponent({ item }: Props) {
 	return (
-		<Link
-			to="/p/$id"
+		<PlaceCard
+			as="link"
+			place={item.place}
+			variant="item"
 			className="block text-left"
-			params={{
-				id: item.place.id,
-			}}
-		>
-			<PlaceCard place={item.place} variant="item" />
-		</Link>
+		/>
 	);
 }

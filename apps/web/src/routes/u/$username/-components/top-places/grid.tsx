@@ -26,15 +26,20 @@ export function Grid({ className }: Props) {
 				</div>
 			)}
 
-			{ctx.items.map((place) => (
+			{ctx.items.map((item) => (
 				<Link
 					to="/p/$id"
-					key={place.id}
+					key={item.place.id}
 					params={{
-						id: place.id,
+						id: item.place.id,
 					}}
 				>
-					<PlaceCard key={place.id} place={place} variant="item" />
+					<PlaceCard
+						key={item.place.id}
+						place={item.place}
+						meta={item.meta}
+						variant="item"
+					/>
 				</Link>
 			))}
 		</div>

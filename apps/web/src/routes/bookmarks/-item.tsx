@@ -10,7 +10,7 @@ import {
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { BookmarkIcon } from 'lucide-react';
+import { BookmarkIcon, HeartIcon } from 'lucide-react';
 import { useAsset } from '@/hooks/use-asset';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useBookmarksContext } from './-context';
@@ -73,6 +73,14 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 				<ItemActions>
 					<Button variant="secondary" size="icon">
 						<BookmarkIcon className="fill-primary text-primary" />
+					</Button>
+					<Button variant="secondary" size="icon">
+						<HeartIcon
+							className={cn({
+								'fill-primary text-primary': bookmark.meta.isFavorite,
+								'text-muted-foreground': !bookmark.meta.isFavorite,
+							})}
+						/>
 					</Button>
 				</ItemActions>
 			</button>

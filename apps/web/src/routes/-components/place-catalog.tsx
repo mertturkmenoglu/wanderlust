@@ -19,8 +19,13 @@ export function PlaceCatalog({ className, accessor }: PlaceCatalogProps) {
 			<div className="mt-2 grid grid-cols-1 gap-4 md:mt-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
 				{isEmpty && <div>No data available.</div>}
 				{!isEmpty &&
-					sliced.map((place) => (
-						<PlaceCard key={place.id} place={place} as="link" />
+					sliced.map((item) => (
+						<PlaceCard
+							key={item.place.id}
+							place={item.place}
+							meta={item.meta}
+							as="link"
+						/>
 					))}
 			</div>
 		</div>

@@ -41,7 +41,11 @@ export function Content() {
 			</ItemGroup>
 
 			<div className="hidden md:block">
-				<PlaceCard place={bookmark.place} className="w-full" />
+				<PlaceCard
+					place={bookmark.place}
+					meta={bookmark.meta}
+					className="w-full"
+				/>
 
 				<Actions bookmark={bookmark} />
 

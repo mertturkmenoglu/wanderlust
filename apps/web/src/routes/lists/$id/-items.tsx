@@ -19,6 +19,7 @@ export function Items() {
 				<PlaceCard
 					key={item.placeId}
 					place={item.place}
+					meta={item.meta}
 					as="link"
 					className="hover:bg-muted"
 					variant={ctx.view === 'grid' ? 'default' : 'item'}

@@ -8,7 +8,12 @@ import {
 } from 'react';
 import type { Outputs } from '@/lib/orpc';
 
-type PlaceItem = Outputs['places']['get']['place'];
+type PlaceItem = {
+	place: Outputs['places']['get']['place'];
+	meta: {
+		isFavorite: boolean;
+	};
+};
 
 type State = {
 	open: boolean;

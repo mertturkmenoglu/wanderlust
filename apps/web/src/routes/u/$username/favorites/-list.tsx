@@ -20,6 +20,9 @@ export function List() {
 				>
 					<PlaceCard
 						variant="item"
+						meta={{
+							isFavorite: true,
+						}}
 						place={fav.place}
 						className="hover:bg-muted"
 					/>
