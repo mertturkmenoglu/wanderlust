@@ -2,7 +2,7 @@ import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
 
@@ -188,6 +188,26 @@ export class FavoritesRepository {
 
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to fetch favorites',
+				cause: err,
+			});
+		}
+	}
+
+	async getFavoriteStatuses(userId: string, ids: string[]) {
+		try {
+			const result = await this.db
+				.select({ placeId: schema.favorites.placeId })
+				.from(schema.favorites)
+				.where(and(eq(schema.favorites.userId, userId), inArray(schema.favorites.placeId, ids)));
+
+			return Array.from(new Set(result.map((r) => r.placeId)));
+		} catch (err) {
+			if (err instanceof ORPCError) {
+				throw err;
+			}
+
+			throw new ORPCError('INTERNAL_SERVER_ERROR', {
+				message: 'Failed to fetch favorite statuses',
 				cause: err,
 			});
 		}
