@@ -527,7 +527,7 @@ export class TripsService {
 			});
 		}
 
-		const location = await this.repo.getLocation(data.locationId);
+		const location = await this.repo.getLocation(userId, data.locationId);
 
 		if (data.description === undefined) {
 			data.description = location.description;

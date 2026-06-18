@@ -11,8 +11,9 @@ export function getRouter() {
 	const svc = container.get(AggregatorService);
 
 	return os.router({
-		home: os.home.handler(async () => {
-			const result = await svc.home();
+		home: os.home.handler(async ({ context }) => {
+			const userId = context.session?.user?.id || null;
+			const result = await svc.home(userId);
 
 			return result;
 		}),

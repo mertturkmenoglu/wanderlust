@@ -17,8 +17,8 @@ export class CollectionsService {
 		};
 	}
 
-	async get(data: dto.GetInput): Promise<dto.GetOutput> {
-		const collection = await this.repo.getById(data);
+	async get(userId: string | null, data: dto.GetInput): Promise<dto.GetOutput> {
+		const collection = await this.repo.getById(userId, data);
 
 		return {
 			collection,
@@ -60,9 +60,10 @@ export class CollectionsService {
 	}
 
 	async reorderItems(
+		userId: string,
 		data: dto.ReorderItemsInput,
 	): Promise<dto.ReorderItemsOutput> {
-		const collection = await this.repo.reorderItems(data);
+		const collection = await this.repo.reorderItems(userId, data);
 
 		return {
 			collection,
@@ -102,9 +103,10 @@ export class CollectionsService {
 	}
 
 	async listByPlaceId(
+		userId: string | null,
 		data: dto.ListByPlaceIdInput,
 	): Promise<dto.ListByPlaceIdOutput> {
-		const result = await this.repo.listByPlaceId(data);
+		const result = await this.repo.listByPlaceId(userId, data);
 
 		return {
 			collections: result.collections,
@@ -112,9 +114,10 @@ export class CollectionsService {
 	}
 
 	async listByCityId(
+		userId: string | null,
 		data: dto.ListByCityIdInput,
 	): Promise<dto.ListByCityIdOutput> {
-		const result = await this.repo.listByCityId(data);
+		const result = await this.repo.listByCityId(userId, data);
 
 		return {
 			collections: result.collections,

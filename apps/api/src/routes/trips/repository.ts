@@ -5,17 +5,22 @@ import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { and, count, desc, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { FavoritesRepository } from '../favorites/repository';
 import type * as dto from './dto';
 
 @injectable()
 export class TripsRepository {
 	private readonly db: TDatabaseService;
 
-	constructor(@inject(DatabaseService) db: DatabaseService) {
+	constructor(
+		@inject(DatabaseService) db: DatabaseService,
+		@inject(FavoritesRepository)
+		private readonly favoritesRepo: FavoritesRepository,
+	) {
 		this.db = db.get();
 	}
 
-	async get(_userId: string, data: dto.GetInput) {
+	async get(userId: string, data: dto.GetInput) {
 		try {
 			const res = await this.db.query.trips.findFirst({
 				where: (t, { eq }) => eq(t.id, data.id),
@@ -66,7 +71,23 @@ export class TripsRepository {
 				});
 			}
 
-			return res;
+			const placeIds = Array.from(new Set(res.locations.map((l) => l.placeId)));
+
+			const favoriteStatuses = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, placeIds)
+				: [];
+
+			const locationsWithMeta = res.locations.map((loc) => ({
+				...loc,
+				meta: {
+					isFavorite: favoriteStatuses.includes(loc.placeId),
+				},
+			}));
+
+			return {
+				...res,
+				locations: locationsWithMeta,
+			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;
@@ -382,48 +403,7 @@ export class TripsRepository {
 					});
 				}
 
-				const trip = await tx.query.trips.findFirst({
-					where: (t, { eq }) => eq(t.id, newTrip.id),
-					with: {
-						participants: {
-							orderBy: (t, { desc }) => [desc(t.id)],
-							with: {
-								user: {
-									columns: {
-										id: true,
-										name: true,
-										username: true,
-										image: true,
-									},
-								},
-							},
-						},
-						owner: {
-							columns: {
-								id: true,
-								name: true,
-								username: true,
-								image: true,
-							},
-						},
-						locations: {
-							orderBy: (t, { asc }) => [asc(t.scheduledTime)],
-							with: {
-								place: {
-									with: {
-										assets: true,
-										category: true,
-										address: {
-											with: {
-												city: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				});
+				const trip = await this.get(userId, { id: newTrip.id });
 
 				if (!trip) {
 					throw new ORPCError('INTERNAL_SERVER_ERROR', {
@@ -939,7 +919,7 @@ export class TripsRepository {
 		}
 	}
 
-	async createLocation(_userId: string, data: dto.CreateLocationInput) {
+	async createLocation(userId: string, data: dto.CreateLocationInput) {
 		try {
 			const place = await this.db.query.places.findFirst({
 				where: (p, { eq }) => eq(p.id, data.placeId),
@@ -979,7 +959,7 @@ export class TripsRepository {
 				});
 			}
 
-			const location = await this.getLocation(newLocation.id);
+			const location = await this.getLocation(userId, newLocation.id);
 
 			return location;
 		} catch (err) {
@@ -994,7 +974,7 @@ export class TripsRepository {
 		}
 	}
 
-	async getLocation(id: string) {
+	async getLocation(userId: string, id: string) {
 		try {
 			const location = await this.db.query.tripLocations.findFirst({
 				where: (t, { eq }) => eq(t.id, id),
@@ -1019,7 +999,16 @@ export class TripsRepository {
 				});
 			}
 
-			return location;
+			const favoriteStatuses = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, [location.placeId])
+				: [];
+
+			return {
+				...location,
+				meta: {
+					isFavorite: favoriteStatuses.includes(location.placeId),
+				}
+			}
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;
@@ -1032,7 +1021,7 @@ export class TripsRepository {
 		}
 	}
 
-	async updateLocation(_userId: string, data: dto.UpdateLocationInput) {
+	async updateLocation(userId: string, data: dto.UpdateLocationInput) {
 		try {
 			const res = await this.db
 				.update(schema.tripLocations)
@@ -1054,7 +1043,7 @@ export class TripsRepository {
 				});
 			}
 
-			const updatedLocation = await this.getLocation(data.locationId);
+			const updatedLocation = await this.getLocation(userId, data.locationId);
 
 			return updatedLocation;
 		} catch (err) {

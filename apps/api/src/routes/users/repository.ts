@@ -8,6 +8,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService, type ActivityItem } from '@/lib/activities';
+import { FavoritesRepository } from '../favorites/repository';
 import type * as dto from './dto';
 
 @injectable()
@@ -22,6 +23,8 @@ export class UsersRepository {
 		@inject(CacheService) cache: CacheService,
 		@inject(JobsService) jobs: JobsService,
 		@inject(ActivitiesService) activities: ActivitiesService,
+		@inject(FavoritesRepository)
+		private readonly favoritesRepo: FavoritesRepository,
 	) {
 		this.db = db.get();
 		this.cache = cache.get();
@@ -295,7 +298,7 @@ export class UsersRepository {
 		}
 	}
 
-	async listTopPlaces(_userId: string, data: dto.ListTopPlacesInput) {
+	async listTopPlaces(userId: string, data: dto.ListTopPlacesInput) {
 		try {
 			const user = await this.db.query.users.findFirst({
 				where: (t, { eq }) => eq(t.username, data.username),
@@ -325,8 +328,20 @@ export class UsersRepository {
 				},
 			});
 
+			const placeIds = Array.from(new Set(topPlaces.map((tp) => tp.placeId)));
+
+			const favoriteStatuses = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, placeIds)
+				: [];
+
+
 			return {
-				topPlaces: topPlaces.map((tp) => tp.place),
+				topPlaces: topPlaces.map((tp) => ({
+					place: tp.place,
+					meta: {
+						isFavorite: favoriteStatuses.includes(tp.placeId),
+					},
+				})),
 			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
@@ -343,6 +358,21 @@ export class UsersRepository {
 	async updateTopPlaces(userId: string, data: dto.UpdateTopPlacesInput) {
 		try {
 			const result = await this.db.transaction(async (tx) => {
+				const user = await tx.query.users.findFirst({
+					columns: {
+						username: true,
+					},
+					where: (t, { eq }) => eq(t.id, userId),
+				});
+
+				if (!user) {
+					throw new ORPCError('NotFound', {
+						message: `User with id ${userId} not found`,
+					});
+				}
+
+				const username = user.username;
+
 				// Delete existing top places
 				await tx
 					.delete(schema.userTopPlaces)
@@ -361,21 +391,10 @@ export class UsersRepository {
 				}
 
 				// Fetch and return the updated top places
-				const topPlaces = await tx.query.places.findMany({
-					where: (t, { inArray }) => inArray(t.id, data.placesIds),
-					with: {
-						assets: true,
-						category: true,
-						address: {
-							with: {
-								city: true,
-							},
-						},
-					},
-				});
+				const topPlaces = await this.listTopPlaces(userId, { username });
 
 				return {
-					places: topPlaces,
+					places: topPlaces.topPlaces,
 				};
 			});
 

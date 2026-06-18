@@ -21,8 +21,9 @@ export function getRouter() {
 
 				return result;
 			}),
-		get: os.get.handler(async ({ input }) => {
-			const result = await svc.get(input);
+		get: os.get.handler(async ({ context, input }) => {
+			const userId = context.session?.user.id || null;
+			const result = await svc.get(userId, input);
 
 			return result;
 		}),
@@ -69,8 +70,9 @@ export function getRouter() {
 		reorderItems: os.reorderItems
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input }) => {
-				const result = await svc.reorderItems(input);
+			.handler(async ({ input, context }) => {
+				const userId = context.session.user.id;
+				const result = await svc.reorderItems(userId, input);
 
 				return result;
 			}),
@@ -106,13 +108,15 @@ export function getRouter() {
 
 				return result;
 			}),
-		listByPlaceId: os.listByPlaceId.handler(async ({ input }) => {
-			const result = await svc.listByPlaceId(input);
+		listByPlaceId: os.listByPlaceId.handler(async ({ input, context }) => {
+			const userId = context.session?.user.id || null;
+			const result = await svc.listByPlaceId(userId, input);
 
 			return result;
 		}),
-		listByCityId: os.listByCityId.handler(async ({ input }) => {
-			const result = await svc.listByCityId(input);
+		listByCityId: os.listByCityId.handler(async ({ input, context }) => {
+			const userId = context.session?.user.id || null;
+			const result = await svc.listByCityId(userId, input);
 
 			return result;
 		}),

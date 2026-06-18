@@ -10,13 +10,18 @@ import {
 import { nanoid } from '@wanderlust/uid';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { FavoritesRepository } from '../favorites/repository';
 import type * as dto from './dto';
 
 @injectable()
 export class CollectionsRepository {
 	private readonly db: TDatabaseService;
 
-	constructor(@inject(DatabaseService) db: DatabaseService) {
+	constructor(
+		@inject(DatabaseService) db: DatabaseService,
+		@inject(FavoritesRepository)
+		private readonly favoritesRepo: FavoritesRepository,
+	) {
 		this.db = db.get();
 	}
 
@@ -48,7 +53,7 @@ export class CollectionsRepository {
 		}
 	}
 
-	async getById(data: dto.GetInput) {
+	async getById(userId: string | null, data: dto.GetInput) {
 		try {
 			const result = await this.db.query.collections.findFirst({
 				where: (t, { eq }) => eq(t.id, data.id),
@@ -78,7 +83,23 @@ export class CollectionsRepository {
 				});
 			}
 
-			return result;
+			const placeIds = Array.from(
+				new Set([...result.items.map((item) => item.placeId)]),
+			);
+
+			const favoriteIds = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, placeIds)
+				: [];
+
+			return {
+				...result,
+				items: result.items.map((item) => ({
+					...item,
+					meta: {
+						isFavorite: favoriteIds.includes(item.placeId),
+					},
+				})),
+			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;
@@ -238,7 +259,12 @@ export class CollectionsRepository {
 				});
 			}
 
-			return item;
+			return {
+				...item,
+				meta: {
+					isFavorite: false,
+				},
+			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
 				throw err;
@@ -287,7 +313,7 @@ export class CollectionsRepository {
 		}
 	}
 
-	async reorderItems(data: dto.ReorderItemsInput) {
+	async reorderItems(userId: string, data: dto.ReorderItemsInput) {
 		try {
 			const collection = await this.db.query.collections.findFirst({
 				where: (t, { eq }) => eq(t.id, data.id),
@@ -331,27 +357,7 @@ export class CollectionsRepository {
 				);
 			});
 
-			const updatedCollection = await this.db.query.collections.findFirst({
-				where: (t, { eq }) => eq(t.id, data.id),
-				with: {
-					items: {
-						orderBy: (t, { asc }) => [asc(t.index)],
-						with: {
-							place: {
-								with: {
-									assets: true,
-									category: true,
-									address: {
-										with: {
-											city: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			});
+			const updatedCollection = await this.getById(userId, { id: data.id });
 
 			if (!updatedCollection) {
 				throw new ORPCError('INTERNAL_SERVER_ERROR', {
@@ -586,7 +592,7 @@ export class CollectionsRepository {
 		}
 	}
 
-	async listByPlaceId(data: dto.ListByPlaceIdInput) {
+	async listByPlaceId(userId: string | null, data: dto.ListByPlaceIdInput) {
 		try {
 			const result = await this.db.query.collectionsPlaces.findMany({
 				where: (t, { eq }) => eq(t.placeId, data.placeId),
@@ -621,8 +627,22 @@ export class CollectionsRepository {
 				},
 			});
 
+			const placeIds = Array.from(new Set([...result.flatMap(x => x.collection.items.map(y => y.placeId))]));
+
+			const favoriteIds = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, placeIds)
+				: [];
+
 			return {
-				collections: result.map((x) => x.collection),
+				collections: result.map((x) => ({
+					...x.collection,
+					items: x.collection.items.map((item) => ({
+						...item,
+						meta: {
+							isFavorite: favoriteIds.includes(item.placeId),
+						},
+					})),
+				})),
 			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
@@ -636,7 +656,7 @@ export class CollectionsRepository {
 		}
 	}
 
-	async listByCityId(data: dto.ListByCityIdInput) {
+	async listByCityId(userId: string | null, data: dto.ListByCityIdInput) {
 		try {
 			const result = await this.db.query.collectionsCities.findMany({
 				where: (t, { eq }) => eq(t.cityId, data.cityId),
@@ -671,8 +691,23 @@ export class CollectionsRepository {
 				},
 			});
 
+
+			const placeIds = Array.from(new Set([...result.flatMap(x => x.collection.items.map(y => y.placeId))]));
+
+			const favoriteIds = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, placeIds)
+				: [];
+
 			return {
-				collections: result.map((x) => x.collection),
+				collections: result.map((x) => ({
+					...x.collection,
+					items: x.collection.items.map((item) => ({
+						...item,
+						meta: {
+							isFavorite: favoriteIds.includes(item.placeId),
+						},
+					})),
+				})),
 			};
 		} catch (err) {
 			if (err instanceof ORPCError) {
@@ -698,7 +733,7 @@ export class CollectionsRepository {
 					place: {
 						columns: {
 							name: true,
-						}
+						},
 					},
 					collection: true,
 				},

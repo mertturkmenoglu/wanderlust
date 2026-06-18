@@ -5,6 +5,7 @@ import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { FavoritesRepository } from '../favorites/repository';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 import type * as dto from './dto';
 
@@ -12,7 +13,11 @@ import type * as dto from './dto';
 export class ListsRepository {
 	private readonly db: TDatabaseService;
 
-	constructor(@inject(DatabaseService) db: DatabaseService) {
+	constructor(
+		@inject(DatabaseService) db: DatabaseService,
+		@inject(FavoritesRepository)
+		private readonly favoritesRepo: FavoritesRepository,
+	) {
 		this.db = db.get();
 	}
 
@@ -151,8 +156,24 @@ export class ListsRepository {
 				});
 			}
 
+			const placeIds = Array.from(
+				new Set(result.items.map((item) => item.placeId)),
+			);
+
+			const favoriteStatuses = userId
+				? await this.favoritesRepo.getFavoriteStatuses(userId, placeIds)
+				: [];
+
 			return {
-				list: result,
+				list: {
+					...result,
+					items: result.items.map((item) => ({
+						...item,
+						meta: {
+							isFavorite: favoriteStatuses.includes(item.placeId),
+						},
+					})),
+				},
 			};
 		} catch (err) {
 			if (err instanceof ORPCError) {

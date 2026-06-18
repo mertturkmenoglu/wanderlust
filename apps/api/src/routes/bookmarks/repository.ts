@@ -4,13 +4,18 @@ import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { FavoritesRepository } from '../favorites/repository';
 import type * as dto from './dto';
 
 @injectable()
 export class BookmarksRepository {
 	private readonly db: TDatabaseService;
 
-	constructor(@inject(DatabaseService) db: DatabaseService) {
+	constructor(
+		@inject(DatabaseService) db: DatabaseService,
+		@inject(FavoritesRepository)
+		private readonly favoritesRepo: FavoritesRepository,
+	) {
 		this.db = db.get();
 	}
 
@@ -68,8 +73,19 @@ export class BookmarksRepository {
 
 			const pagination = Pagination.compute(data, totalItems);
 
+			const placeIds = Array.from(new Set(bookmarks.map((b) => b.placeId)));
+			const favoriteStatuses = await this.favoritesRepo.getFavoriteStatuses(
+				userId,
+				placeIds,
+			);
+
 			return {
-				bookmarks,
+				bookmarks: bookmarks.map((bookmark) => ({
+					...bookmark,
+					meta: {
+						isFavorite: favoriteStatuses.includes(bookmark.placeId),
+					},
+				})),
 				pagination,
 			};
 		} catch (err) {
