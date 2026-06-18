@@ -5,8 +5,8 @@ import {
 	FieldSeparator,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import { Label } from '@wanderlust/ui/components/label';
 import { Separator } from '@wanderlust/ui/components/separator';
+import { SettingsField } from '../-components/field';
 import { Form } from './-form';
 import { UpdateImage } from './-update-image';
 
@@ -26,32 +26,36 @@ function RouteComponent() {
 
 	return (
 		<FieldSet>
-			<FieldLegend>Profile</FieldLegend>
+			<FieldLegend className="text-xl!">Profile</FieldLegend>
 			<FieldDescription>Update your profile</FieldDescription>
 
 			<FieldSeparator />
 
-			<div className="mt-4 grid grid-cols-3 items-center gap-4">
-				<Label>Profile Image</Label>
-				<div className="col-span-2 flex">
+			<SettingsField.Root className="flex items-center gap-8">
+				<SettingsField.Label className="w-24">Profile</SettingsField.Label>
+
+				<SettingsField.Description>
 					<UpdateImage
 						fullName={profile.name}
 						image={profile.image ?? null}
 						fallbackImage="/profile.png"
 						action="profile"
 					/>
-				</div>
+				</SettingsField.Description>
+			</SettingsField.Root>
 
-				<Label>Banner Image</Label>
-				<div className="col-span-2 flex">
+			<SettingsField.Root className="flex items-center gap-8">
+				<SettingsField.Label className="w-24">Banner</SettingsField.Label>
+
+				<SettingsField.Description>
 					<UpdateImage
 						fullName={profile.name}
 						image={profile.banner ?? null}
 						fallbackImage="https://i.imgur.com/EwvUEmR.jpg"
 						action="banner"
 					/>
-				</div>
-			</div>
+				</SettingsField.Description>
+			</SettingsField.Root>
 
 			<Separator className="my-4" />
 
