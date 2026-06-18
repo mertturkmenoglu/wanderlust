@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import { ChevronRightIcon } from 'lucide-react';
 import { ActionBanner, type ActionBannerProps } from './action';
+import BentoGrid, { type BentoGridProps } from './bento';
 import { GradientBanner, type GradientBannerProps } from './gradient';
 import { OverlayBanner, type OverlayBannerProps } from './overlay';
 import { VerticalBanner, type VerticalBannerProps } from './vertical';
@@ -174,6 +175,96 @@ export function TripPlannerCta({ classNames }: TripPlannerCtaProps) {
 					</Link>
 				</Button>
 			}
+		/>
+	);
+}
+
+type AppBentoBannerProps = Pick<BentoGridProps, 'classNames'>;
+
+export function AppBentoBanner(props: AppBentoBannerProps) {
+	return (
+		<BentoGrid
+			columns={4}
+			gap={2}
+			minRowHeight="15rem"
+			sections={[
+				{
+					content: (
+						<Link to="/p/$id" params={{ id: 'rocky-mountains' }}>
+							<div className="relative size-full rounded-l-2xl">
+								<img
+									src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/moraine-lake.jpg"
+									alt="Moraine Lake"
+									className="h-full w-full rounded-l-2xl object-cover"
+								/>
+
+								<div className="absolute inset-0 rounded-l-2xl bg-linear-to-t from-black/50 to-transparent" />
+
+								<div className="absolute bottom-12 left-4 font-medium text-2xl text-white">
+									Explore the Rocky Mountains
+								</div>
+
+								<Button variant="sky" className="absolute right-4 bottom-12">
+									Take me there
+								</Button>
+							</div>
+						</Link>
+					),
+					colSpan: 2,
+					rowSpan: 2,
+				},
+				<Link to="/search" search={{ category: 'Coffee Shops' }}>
+					<div className="relative size-full">
+						<img
+							src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/2XI5t0u.jpeg"
+							alt=""
+							className="size-full object-cover"
+						/>
+
+						<div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
+
+						<div className="absolute bottom-12 left-4 pr-4 font-medium text-2xl text-white">
+							<div className="mt-2">Find nearby cafés</div>
+						</div>
+					</div>
+				</Link>,
+				<Link to="/search" search={{ category: 'Bookstores' }}>
+					<div className="relative size-full">
+						<img
+							src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/DOgJY3o.jpeg"
+							alt=""
+							className="size-full rounded-tr-2xl object-cover"
+						/>
+
+						<div className="absolute inset-0 rounded-tr-2xl bg-linear-to-t from-black/70 to-transparent" />
+
+						<div className="absolute bottom-12 left-4 pr-4 font-medium text-2xl text-white">
+							<div className="mt-2">Explore local bookstores</div>
+						</div>
+					</div>
+				</Link>,
+				{
+					content: (
+						<Link to="/search" search={{ category: 'Bookstores' }}>
+							<div className="relative size-full">
+								<img
+									src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/FKlIkC5.jpeg"
+									alt=""
+									className="size-full rounded-br-2xl object-cover"
+								/>
+
+								<div className="absolute inset-0 rounded-br-2xl bg-linear-to-t from-black/70 to-transparent" />
+
+								<div className="absolute bottom-12 left-4 pr-4 font-medium text-2xl text-white">
+									<div className="mt-2">Plan your next trip</div>
+								</div>
+							</div>
+						</Link>
+					),
+					colSpan: 2,
+				},
+			]}
+			{...props}
 		/>
 	);
 }
