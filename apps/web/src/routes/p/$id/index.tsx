@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { AssetGrid } from '@/components/asset-grid';
 import { AppBentoBanner } from '@/components/banner/common';
 import { ErrorComponent } from '@/components/error-component';
+import { Accolades } from './-components/accolades';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
 import { CityInfo } from './-components/city-info';
@@ -50,6 +51,8 @@ function RouteComponent() {
 			<Header className="mt-8" />
 
 			<AssetGrid className="mt-8" assets={place.assets} />
+
+			<Accolades className="mt-8" />
 
 			<Description className="mt-8" />
 
