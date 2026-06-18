@@ -60,6 +60,11 @@ export class PlacesSchema extends TSSchema {
 					},
 					assets: true,
 					category: true,
+					accolades: {
+						with: {
+							accolade: true,
+						}
+					}
 				},
 			});
 
