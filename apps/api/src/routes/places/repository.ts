@@ -1,7 +1,11 @@
 import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import {
+	$includes,
+	DatabaseService,
+	type TDatabaseService,
+} from '@wanderlust/db';
 import { and, eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
@@ -15,46 +19,18 @@ export class PlacesRepository {
 	}
 
 	async get(data: dto.GetInput) {
-		try {
-			const place = await this.db.query.places.findFirst({
-				where: (t) => eq(t.id, data.id),
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					accolades: {
-						with: {
-							accolade: true,
-						}
-					},
-					category: true,
-					assets: {
-						where: (t) =>
-							and(eq(t.entityId, data.id), eq(t.entityType, 'place')),
-						orderBy: (t, { asc }) => asc(t.order),
-					},
-				},
-			});
+		const place = await this.db.query.places.findFirst({
+			where: (t) => eq(t.id, data.id),
+			with: $includes.place,
+		});
 
-			if (!place) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Place with ID ${data.id} not found`,
-				});
-			}
-
-			return place;
-		} catch (err) {
-			if (err instanceof ORPCError) {
-				throw err;
-			}
-
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to fetch place',
-				cause: err,
+		if (!place) {
+			throw new ORPCError('NOT_FOUND', {
+				message: `Place with ID ${data.id} not found`,
 			});
 		}
+
+		return place;
 	}
 
 	async isFavorite(placeId: string, userId: string): Promise<boolean> {
@@ -74,204 +50,126 @@ export class PlacesRepository {
 	}
 
 	async peek() {
-		try {
-			const place = await this.db.query.places.findMany({
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					category: true,
-					assets: true,
-					accolades: {
-						with: {
-							accolade: true,
-						},
-					},
-				},
-				offset: 0,
-				limit: 25,
-				orderBy: (t, { desc }) => desc(t.createdAt),
-			});
+		const place = await this.db.query.places.findMany({
+			with: $includes.place,
+			offset: 0,
+			limit: 25,
+			orderBy: (t, { desc }) => desc(t.createdAt),
+		});
 
-			return place;
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to fetch places',
-				cause: err,
-			});
-		}
+		return place;
 	}
 
 	async update(data: dto.UpdateInput) {
 		const { id, ...updateData } = data;
 
-		try {
-			const [place] = await this.db
-				.update(schema.places)
-				.set(updateData)
-				.where(eq(schema.places.id, id))
-				.returning();
+		const [place] = await this.db
+			.update(schema.places)
+			.set(updateData)
+			.where(eq(schema.places.id, id))
+			.returning();
 
-			if (!place) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Place with ID ${id} not found`,
-				});
-			}
-
-			return this.get({ id: place.id });
-		} catch (err) {
-			if (err instanceof ORPCError) {
-				throw err;
-			}
-
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to update place',
-				cause: err,
+		if (!place) {
+			throw new ORPCError('NOT_FOUND', {
+				message: `Place with ID ${id} not found`,
 			});
 		}
+
+		return this.get({ id: place.id });
 	}
 
 	async updateAddress(data: dto.UpdateAddressInput) {
 		const { id: addressId, ...updateData } = data.address;
 
-		try {
-			const place = await this.get({ id: data.id });
+		const place = await this.get({ id: data.id });
 
-			const [address] = await this.db
-				.update(schema.addresses)
-				.set(updateData)
-				.where(eq(schema.addresses.id, addressId))
-				.returning();
+		const [address] = await this.db
+			.update(schema.addresses)
+			.set(updateData)
+			.where(eq(schema.addresses.id, addressId))
+			.returning();
 
-			if (!address) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Address for Place ID ${data.id} not found`,
-				});
-			}
-
-			return this.get({ id: place.id });
-		} catch (err) {
-			if (err instanceof ORPCError) {
-				throw err;
-			}
-
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to update place address',
-				cause: err,
+		if (!address) {
+			throw new ORPCError('NOT_FOUND', {
+				message: `Address for Place ID ${data.id} not found`,
 			});
 		}
+
+		return this.get({ id: place.id });
 	}
 
 	async updateAmenities(data: dto.UpdateAmenitiesInput) {
 		const { id, ...updateData } = data;
 
-		try {
-			const [place] = await this.db
-				.update(schema.places)
-				.set(updateData)
-				.where(eq(schema.places.id, id))
-				.returning();
+		const [place] = await this.db
+			.update(schema.places)
+			.set(updateData)
+			.where(eq(schema.places.id, id))
+			.returning();
 
-			if (!place) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Place with ID ${id} not found`,
-				});
-			}
-
-			return this.get({ id: place.id });
-		} catch (err) {
-			if (err instanceof ORPCError) {
-				throw err;
-			}
-
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to update place amenities',
-				cause: err,
+		if (!place) {
+			throw new ORPCError('NOT_FOUND', {
+				message: `Place with ID ${id} not found`,
 			});
 		}
+
+		return this.get({ id: place.id });
 	}
 
 	async updateHours(data: dto.UpdateHoursInput) {
 		const { id, ...updateData } = data;
 
-		try {
-			const [place] = await this.db
-				.update(schema.places)
-				.set(updateData)
-				.where(eq(schema.places.id, id))
-				.returning();
+		const [place] = await this.db
+			.update(schema.places)
+			.set(updateData)
+			.where(eq(schema.places.id, id))
+			.returning();
 
-			if (!place) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Place with ID ${id} not found`,
-				});
-			}
-
-			return this.get({ id: place.id });
-		} catch (err) {
-			if (err instanceof ORPCError) {
-				throw err;
-			}
-
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to update place hours',
-				cause: err,
+		if (!place) {
+			throw new ORPCError('NOT_FOUND', {
+				message: `Place with ID ${id} not found`,
 			});
 		}
+
+		return this.get({ id: place.id });
 	}
 
 	async _delete(data: dto.DeleteInput) {
-		try {
-			await this.db.delete(schema.places).where(eq(schema.places.id, data.id));
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to delete the place',
-				cause: err,
-			});
-		}
+		await this.db.delete(schema.places).where(eq(schema.places.id, data.id));
 	}
 
 	async searchAddresses(
 		data: dto.SearchAddressesInput,
 	): Promise<dto.SearchAddressesOutput> {
-		try {
-			const addresses = await this.db.query.addresses.findMany({
-				where: (t, { ilike, or }) =>
-					or(
-						ilike(t.line1, `%${data.query}%`),
-						ilike(t.line2, `%${data.query}%`),
-						ilike(t.postalCode, `%${data.query}%`),
-					),
-				offset: 0,
-				limit: 30,
-				orderBy: (t, { desc }) => desc(t.id),
-			});
-
-			const totalRecords = await this.db.$count(
-				schema.addresses,
+		const addresses = await this.db.query.addresses.findMany({
+			where: (t, { ilike, or }) =>
 				or(
-					ilike(schema.addresses.line1, `%${data.query}%`),
-					ilike(schema.addresses.line2, `%${data.query}%`),
-					ilike(schema.addresses.postalCode, `%${data.query}%`),
+					ilike(t.line1, `%${data.query}%`),
+					ilike(t.line2, `%${data.query}%`),
+					ilike(t.postalCode, `%${data.query}%`),
 				),
-			);
+			offset: 0,
+			limit: 30,
+			orderBy: (t, { desc }) => desc(t.id),
+		});
 
-			const pagination = Pagination.compute(
-				{ page: 1, pageSize: 30 },
-				totalRecords,
-			);
+		const totalRecords = await this.db.$count(
+			schema.addresses,
+			or(
+				ilike(schema.addresses.line1, `%${data.query}%`),
+				ilike(schema.addresses.line2, `%${data.query}%`),
+				ilike(schema.addresses.postalCode, `%${data.query}%`),
+			),
+		);
 
-			return {
-				addresses,
-				pagination,
-			};
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to search addresses',
-				cause: err,
-			});
-		}
+		const pagination = Pagination.compute(
+			{ page: 1, pageSize: 30 },
+			totalRecords,
+		);
+
+		return {
+			addresses,
+			pagination,
+		};
 	}
 }

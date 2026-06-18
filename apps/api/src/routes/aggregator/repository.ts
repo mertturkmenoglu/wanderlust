@@ -1,5 +1,9 @@
 import { ORPCError } from '@orpc/client';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import {
+	$includes,
+	DatabaseService,
+	type TDatabaseService,
+} from '@wanderlust/db';
 import { sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 
@@ -51,20 +55,7 @@ export class AggregatorRepository {
 					desc(t.totalVotes),
 				],
 				limit: 25,
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					category: true,
-					assets: true,
-					accolades: {
-						with: {
-							accolade: true,
-						}
-					}
-				},
+				with: $includes.place,
 			});
 
 			return result;
@@ -81,20 +72,7 @@ export class AggregatorRepository {
 			const result = await this.db.query.places.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalVotes)],
 				limit: 25,
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					category: true,
-					assets: true,
-					accolades: {
-						with: {
-							accolade: true,
-						}
-					}
-				},
+				with: $includes.place,
 			});
 
 			return result;
@@ -111,20 +89,7 @@ export class AggregatorRepository {
 			const result = await this.db.query.places.findMany({
 				orderBy: (t, { desc }) => [desc(t.createdAt)],
 				limit: 25,
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					category: true,
-					assets: true,
-					accolades: {
-						with: {
-							accolade: true,
-						}
-					},
-				},
+				with: $includes.place,
 			});
 
 			return result;
@@ -141,20 +106,7 @@ export class AggregatorRepository {
 			const result = await this.db.query.places.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalFavorites)],
 				limit: 25,
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					category: true,
-					assets: true,
-					accolades: {
-						with: {
-							accolade: true,
-						}
-					}
-				},
+				with: $includes.place,
 			});
 
 			return result;

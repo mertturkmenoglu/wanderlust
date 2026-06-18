@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/server';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
@@ -14,76 +13,48 @@ export class CategoriesRepository {
 	}
 
 	async list() {
-		try {
-			return this.db.query.categories.findMany({
-				orderBy: (t, { asc }) => asc(t.name),
-			});
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to fetch categories',
-				cause: err,
-			});
-		}
+		return this.db.query.categories.findMany({
+			orderBy: (t, { asc }) => asc(t.name),
+		});
 	}
 
 	async create(data: dto.CreateInput) {
-		try {
-			const [result] = await this.db
-				.insert(schema.categories)
-				.values({
-					id: data.id,
-					name: data.name,
-					image: data.image,
-				})
-				.returning();
+		const [result] = await this.db
+			.insert(schema.categories)
+			.values({
+				id: data.id,
+				name: data.name,
+				image: data.image,
+			})
+			.returning();
 
-			if (!result) {
-				throw new Error('No category returned after insertion');
-			}
-
-			return result;
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to create category',
-				cause: err,
-			});
+		if (!result) {
+			throw new Error('No category returned after insertion');
 		}
+
+		return result;
 	}
 
 	async update(data: dto.UpdateInput) {
-		try {
-			const [result] = await this.db
-				.update(schema.categories)
-				.set({
-					name: data.name,
-					image: data.image,
-				})
-				.where(eq(schema.categories.id, data.id))
-				.returning();
+		const [result] = await this.db
+			.update(schema.categories)
+			.set({
+				name: data.name,
+				image: data.image,
+			})
+			.where(eq(schema.categories.id, data.id))
+			.returning();
 
-			if (!result) {
-				throw new Error('No category returned after update');
-			}
-
-			return result;
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to update category',
-				cause: err,
-			});
+		if (!result) {
+			throw new Error('No category returned after update');
 		}
+
+		return result;
 	}
 
 	async _delete(data: dto.DeleteInput) {
-		try {
-			await this.db
-				.delete(schema.categories)
-				.where(eq(schema.categories.id, data.id));
-		} catch (err) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to delete category',
-				cause: err,
-			});
-		}
+		await this.db
+			.delete(schema.categories)
+			.where(eq(schema.categories.id, data.id));
 	}
 }

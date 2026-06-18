@@ -39,9 +39,10 @@ export class AggregatorService {
 			),
 		);
 
-		const favoriteIds = userId
-			? await this.favoritesRepo.getFavoriteStatuses(userId, ids)
-			: [];
+		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+			userId,
+			ids,
+		);
 
 		const mapWithMeta = (places: dto.HomeOutput['new'][number]['place'][]) => {
 			return places.map((place) => ({
