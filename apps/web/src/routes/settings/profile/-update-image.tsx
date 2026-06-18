@@ -40,10 +40,21 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 	);
 
 	return (
-		<div className="ml-auto flex max-w-xl gap-4">
+		<div className="flex max-w-xl gap-4">
 			<Dialog>
 				<DialogTrigger asChild>
-					<Button variant="link">Change {action} image</Button>
+					<button type="button" className="group relative">
+						<img
+							src={preview}
+							alt="Preview"
+							className={cn('rounded object-cover', {
+								'aspect-square size-24': action === 'profile',
+								'aspect-video h-32': action === 'banner',
+							})}
+						/>
+
+						<UploadIcon className="absolute inset-0 m-auto size-8 rounded bg-white p-2 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
+					</button>
 				</DialogTrigger>
 				<DialogContent className="sm:max-w-xl">
 					<DialogHeader>
