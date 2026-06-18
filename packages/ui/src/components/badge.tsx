@@ -18,6 +18,8 @@ const badgeVariants = cva(
 					'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
 				midnight:
 					'border-midnight bg-midnight text-midnight-foreground hover:bg-midnight/90',
+				warning:
+					'border-warning bg-warning text-warning-foreground hover:bg-warning/90',
 			},
 			size: {
 				default: 'px-2 py-0.5 text-xs [&>svg]:size-3',
