@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { z } from 'zod';
 import { AssetGrid } from '@/components/asset-grid';
+import { AppBentoBanner } from '@/components/banner/common';
 import { ErrorComponent } from '@/components/error-component';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
@@ -80,6 +81,8 @@ function RouteComponent() {
 			<Collections className="my-4" />
 
 			<CityTagNavigation className="my-4" />
+
+			<AppBentoBanner classNames={{ root: 'my-4' }} />
 		</main>
 	);
 }
