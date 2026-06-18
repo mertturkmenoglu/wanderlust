@@ -13,6 +13,7 @@ import { Description } from './-components/description';
 import { Header } from './-components/header';
 import { Information } from './-components/information';
 import { MapComponent } from './-components/map';
+import { NearbyCities } from './-components/nearby-cities';
 import { NearbyPlaces } from './-components/nearby-places';
 import { Reviews } from './-components/reviews';
 
@@ -67,6 +68,8 @@ function RouteComponent() {
 			<Separator className="my-4" />
 
 			<NearbyPlaces className="col-span-2" />
+
+			<NearbyCities className="my-4" />
 
 			<Separator className="my-4" />
 
