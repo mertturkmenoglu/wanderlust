@@ -13,11 +13,18 @@ export const homeInput = z.object({});
 
 export type HomeInput = z.infer<typeof homeInput>;
 
+const placeWithMeta = z.object({
+	place: place,
+	meta: z.object({
+		isFavorite: z.boolean(),
+	}),
+})
+
 export const homeOutput = z.object({
-	new: place.array(),
-	popular: place.array(),
-	featured: place.array(),
-	favorites: place.array(),
+	new: placeWithMeta.array(),
+	popular: placeWithMeta.array(),
+	featured: placeWithMeta.array(),
+	favorites: placeWithMeta.array(),
 });
 
 export type HomeOutput = z.infer<typeof homeOutput>;

@@ -108,7 +108,12 @@ export const listTopPlacesInput = profile.pick({
 export type ListTopPlacesInput = z.infer<typeof listTopPlacesInput>;
 
 export const listTopPlacesOutput = z.object({
-	places: place.array(),
+	places: z.object({
+		place: place,
+		meta: z.object({
+			isFavorite: z.boolean(),
+		})
+	}).array(),
 });
 
 export type ListTopPlacesOutput = z.infer<typeof listTopPlacesOutput>;
@@ -120,7 +125,12 @@ export const updateTopPlacesInput = z.object({
 export type UpdateTopPlacesInput = z.infer<typeof updateTopPlacesInput>;
 
 export const updateTopPlacesOutput = z.object({
-	places: place.array(),
+	places: z.object({
+		place: place,
+		meta: z.object({
+			isFavorite: z.boolean(),
+		})
+	}).array(),
 });
 
 export type UpdateTopPlacesOutput = z.infer<typeof updateTopPlacesOutput>;

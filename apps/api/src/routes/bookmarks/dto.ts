@@ -39,6 +39,9 @@ export const listOutput = z.object({
 	bookmarks: $dto.bookmark
 		.extend({
 			place: place,
+			meta: z.object({
+				isFavorite: z.boolean(),
+			}),
 		})
 		.array(),
 	pagination: Pagination.schema,

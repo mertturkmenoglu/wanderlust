@@ -11,6 +11,9 @@ const collectionItem = $dto.collectionItem.extend({
 			city: $dto.city,
 		}),
 	}),
+	meta: z.object({
+		isFavorite: z.boolean(),
+	}),
 });
 
 const collectionWithItems = collection.extend({

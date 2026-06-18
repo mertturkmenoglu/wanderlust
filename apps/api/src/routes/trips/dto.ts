@@ -52,6 +52,9 @@ const place = $dto.place.extend({
 const location = $dto.tripLocation.extend(
 	z.object({
 		place: place,
+		meta: z.object({
+			isFavorite: z.boolean(),
+		}),
 	}).shape,
 );
 

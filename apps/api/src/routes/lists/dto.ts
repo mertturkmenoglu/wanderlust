@@ -20,6 +20,12 @@ const listWithItems = list.extend({
 				category: $dto.category,
 				assets: $dto.asset.array(),
 			}),
+			meta: z.object({
+				isFavorite: z.boolean().meta({
+					description: 'Whether the place is favorited by the user',
+					example: true,
+				}),
+			}),
 		})
 		.array(),
 });
