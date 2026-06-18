@@ -29,6 +29,8 @@ export function Filters() {
 				</div>
 			</div>
 
+			<RefinementList attribute="place.accolades.accolade.title" />
+
 			<RefinementList attribute="place.category.name" />
 
 			<RefinementList attribute="place.amenities" />
