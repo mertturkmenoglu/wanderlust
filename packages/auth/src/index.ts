@@ -106,6 +106,11 @@ function init(
 				},
 			},
 		},
+		account: {
+			accountLinking: {
+				allowDifferentEmails: true,
+			},
+		},
 		plugins: [
 			admin(),
 			multiSession({
