@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useRouteContext } from '@tanstack/react-router';
+import { useLoaderData, useRouteContext } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import z from 'zod';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -119,3 +119,9 @@ export const changePasswordSchema = z
 	});
 
 export type FormInput = z.infer<typeof changePasswordSchema>;
+
+export function useHasProvider(provider: 'google' | 'facebook' | 'credential') {
+	const { accounts } = useLoaderData({ from: '/settings/account/' });
+	const providers = (accounts.data ?? []).map((acc) => acc.providerId);
+	return providers.includes(provider);
+}
