@@ -1,6 +1,8 @@
 import consola from 'consola';
 import { colorize } from 'consola/utils';
 import { oraPromise } from 'ora';
+import { generate as generateAccolades } from './handlers/accolades';
+import { generate as generateAccoladeAssignments } from './handlers/accolades-places';
 import { generate as generateAddresses } from './handlers/addresses';
 import { generate as generateAssets } from './handlers/assets';
 import { generate as generateBookmarks } from './handlers/bookmarks';
@@ -28,6 +30,7 @@ import { generate as generateReviews } from './handlers/reviews';
 import { generate as generateUsers } from './handlers/users';
 
 export const paths = {
+	accolades: 'tmp/accolades.txt',
 	places: 'tmp/places.txt',
 	users: 'tmp/users.txt',
 	reviews: 'tmp/reviews.txt',
@@ -41,6 +44,8 @@ const mapping = {
 	cities: generateCities,
 	addresses: generateAddresses,
 	users: generateUsers,
+	accolades: generateAccolades,
+	'accolade-assignments': generateAccoladeAssignments,
 	places: generatePlaces,
 	'fake-id': generateFakeIds,
 	assets: generateAssets,
@@ -71,8 +76,11 @@ const steps: Step[] = [
 	'cities',
 	'addresses',
 	'users',
+	'accolades',
+	'fake-id', // run fake id to get accolade ids for other steps
 	'places',
 	'fake-id', // run fake id to get user and places ids
+	'accolade-assignments',
 	'assets',
 	'follows',
 	'reviews',

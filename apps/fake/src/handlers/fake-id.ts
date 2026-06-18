@@ -2,6 +2,7 @@ import { $ } from 'bun';
 
 export async function generate() {
 	const domains = [
+		'accolades',
 		'places',
 		'users',
 		'reviews',
