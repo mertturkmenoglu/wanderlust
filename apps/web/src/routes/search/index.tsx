@@ -18,6 +18,7 @@ const schema = z.object({
 	state: z.string().optional(),
 	city: z.string().optional(),
 	country: z.string().optional(),
+	accolade: z.string().optional(),
 });
 
 export const Route = createFileRoute('/search/')({
@@ -48,6 +49,9 @@ const routing: RouterProps = {
 				country: serializeParams(
 					s?.refinementList?.['place.address.city.countryName'],
 				),
+				accolade: serializeParams(
+					s?.refinementList?.['place.accolades.accolade.title'],
+				),
 			};
 		},
 		// @ts-expect-error TODO: fix it
@@ -58,6 +62,9 @@ const routing: RouterProps = {
 					page: routeState.page,
 					hitsPerPage: routeState.pageSize,
 					refinementList: {
+						'place.accolades.accolade.title': deserializeParams(
+							routeState.accolade,
+						),
 						'place.category.name': deserializeParams(routeState.category),
 						'place.amenities': deserializeParams(routeState.amenity),
 						'place.priceLevel': deserializeParams(routeState.price),
