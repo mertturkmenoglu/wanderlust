@@ -1,18 +1,25 @@
+import { DatabaseService } from '@wanderlust/db';
 import { consola } from 'consola';
 import { bootstrapServices, container } from '@/ioc';
 import { SearchService } from '@/lib/search';
-import { handlePlaces } from './handle-places';
+import { CitiesSchema } from './schemas/cities';
+import { PlacesSchema } from './schemas/places';
 
 async function main() {
 	await bootstrapServices();
 
 	const search = container.get(SearchService).get();
+	const db = container.get(DatabaseService).get();
+
+	const placesSchema = new PlacesSchema('places', search, db);
+	const citiesSchema = new CitiesSchema('cities', search, db);
 
 	const start = performance.now();
 
 	consola.start('Syncing primary database with Typesense');
 
-	await handlePlaces(search);
+	await placesSchema.sync();
+	await citiesSchema.sync();
 
 	const end = performance.now();
 
