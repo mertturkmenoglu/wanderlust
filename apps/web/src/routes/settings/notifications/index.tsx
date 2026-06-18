@@ -80,7 +80,7 @@ function RouteComponent() {
 	}
 	return (
 		<FieldSet>
-			<FieldLegend>Notifications</FieldLegend>
+			<FieldLegend className="text-xl!">Notifications</FieldLegend>
 			<FieldDescription>Change your notification preferences</FieldDescription>
 
 			<FieldSeparator />
