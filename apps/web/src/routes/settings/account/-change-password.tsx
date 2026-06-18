@@ -75,7 +75,9 @@ export function ChangePassword({
 					className="px-0!"
 					disabled={!hasEmailProvider}
 				>
-					{hasEmailProvider ? 'Change Password' : 'Email Required'}
+					{hasEmailProvider
+						? 'Change'
+						: 'Sign up with email to change password'}
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>

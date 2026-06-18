@@ -58,7 +58,7 @@ export function ChangeUsername() {
 		<AlertDialog open={open} onOpenChange={setOpen}>
 			<AlertDialogTrigger asChild>
 				<Button variant="link" size="sm" className="px-0!">
-					Change Username
+					Change
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
