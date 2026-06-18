@@ -7,6 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@wanderlust/ui/components/card';
+import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { useNearbyCities } from './hooks';
@@ -38,33 +39,38 @@ function Content({ className }: Props) {
 	return (
 		<div className={cn(className)}>
 			<h3 className="font-semibold text-xl tracking-tight">Nearby Cities</h3>
-			<div className="my-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-				{cities.map((c) => (
-					<Card>
-						<img src={c.image} alt="" className="aspect-video w-full" />
-						<CardHeader>
-							<CardTitle>{c.name}</CardTitle>
-							<CardDescription className="line-clamp-1">
-								{c.stateName} / {c.countryName}
-							</CardDescription>
-						</CardHeader>
-						<CardFooter>
-							<Link
-								to="/cities/$"
-								params={{
-									_splat: `${c.id}`,
-								}}
-								className={buttonVariants({
-									variant: 'midnight',
-									className: 'w-full',
-								})}
-							>
-								View
-							</Link>
-						</CardFooter>
-					</Card>
-				))}
-			</div>
+
+			<ScrollArea type="always">
+				<div className="my-4 flex gap-4">
+					{cities.map((c) => (
+						<Card className="w-60">
+							<img src={c.image} alt="" className="aspect-video w-full" />
+							<CardHeader>
+								<CardTitle>{c.name}</CardTitle>
+								<CardDescription className="line-clamp-1">
+									{c.stateName} / {c.countryName}
+								</CardDescription>
+							</CardHeader>
+							<CardFooter>
+								<Link
+									to="/cities/$"
+									params={{
+										_splat: `${c.id}`,
+									}}
+									className={buttonVariants({
+										variant: 'midnight',
+										className: 'w-full',
+									})}
+								>
+									View
+								</Link>
+							</CardFooter>
+						</Card>
+					))}
+				</div>
+
+				<ScrollBar orientation="horizontal" className="mt-8" />
+			</ScrollArea>
 		</div>
 	);
 }
