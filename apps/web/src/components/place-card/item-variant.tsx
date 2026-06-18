@@ -1,5 +1,12 @@
+import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
+import { Badge } from '@wanderlust/ui/components/badge';
 import { Button } from '@wanderlust/ui/components/button';
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from '@wanderlust/ui/components/hover-card';
 import {
 	Item,
 	ItemActions,
@@ -9,7 +16,7 @@ import {
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { HeartIcon, StarIcon } from 'lucide-react';
+import { AwardIcon, HeartIcon, StarIcon } from 'lucide-react';
 import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { ipx } from '@/lib/ipx';
 import { usePlaceCardContext } from './context';
@@ -54,6 +61,30 @@ export function ItemVariant({
 			</ItemContent>
 
 			<ItemActions>
+				{ctx.place.accolades.length > 0 && (
+					<HoverCard>
+						<HoverCardTrigger asChild>
+							<Button variant="warning" size="icon">
+								<AwardIcon />
+							</Button>
+						</HoverCardTrigger>
+						<HoverCardContent className="flex flex-col gap-2 p-2">
+							{ctx.place.accolades.map((acc) => (
+								<Link
+									key={acc.id}
+									to="/a/$id"
+									params={{ id: acc.accolade.id }}
+									className="flex"
+								>
+									<Badge variant="warning">
+										<AwardIcon />
+										{acc.accolade.title}
+									</Badge>
+								</Link>
+							))}
+						</HoverCardContent>
+					</HoverCard>
+				)}
 				{ctx.meta && (
 					<Button
 						variant="outline"

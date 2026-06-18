@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Badge } from '@wanderlust/ui/components/badge';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Card,
 	CardAction,
@@ -52,15 +53,17 @@ export function DefaultVariant({
 			{ctx.place.accolades.length > 0 && (
 				<HoverCard>
 					<HoverCardTrigger asChild>
-						<div className="absolute top-2 left-2 z-10 flex items-center rounded-full bg-white p-2">
-							<AwardIcon className="fill-white text-primary" />
+						<div
+							className={buttonVariants({
+								variant: 'warning',
+								size: 'icon',
+								className: 'absolute top-2 left-2 z-10',
+							})}
+						>
+							<AwardIcon />
 						</div>
 					</HoverCardTrigger>
-					<HoverCardContent
-						align="center"
-						side="right"
-						className="flex flex-col gap-2 p-2"
-					>
+					<HoverCardContent className="flex flex-col gap-2 p-2">
 						{ctx.place.accolades.map((acc) => (
 							<Link
 								key={acc.id}
@@ -78,9 +81,11 @@ export function DefaultVariant({
 				</HoverCard>
 			)}
 			{ctx.meta && (
-				<button
+				<Button
 					type="button"
-					className="absolute top-2 right-2 z-10 rounded-full bg-background/80 p-2 transition-colors hover:bg-background/90"
+					size="icon"
+					variant="secondary"
+					className="absolute top-2 right-2 z-10"
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
@@ -98,7 +103,7 @@ export function DefaultVariant({
 							'fill-muted text-muted-foreground': !ctx.meta?.isFavorite,
 						})}
 					/>
-				</button>
+				</Button>
 			)}
 			<CardHeader>
 				{ctx.rating !== '0.0' && (
