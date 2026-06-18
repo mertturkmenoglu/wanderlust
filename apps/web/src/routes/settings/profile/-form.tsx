@@ -62,21 +62,14 @@ export function Form() {
 					website: data.website || null,
 				});
 			})}
-			className="mt-4"
 		>
-			<FieldGroup className="gap-4 md:gap-8">
+			<FieldGroup className="max-w-xl gap-4 md:gap-8">
 				<Controller
 					name="fullName"
 					control={form.control}
 					render={({ field, fieldState }) => (
-						<Field
-							data-invalid={fieldState.invalid}
-							orientation="horizontal"
-							className="gap-4 md:gap-16"
-						>
-							<FieldLabel htmlFor="name" className="min-w-16 md:min-w-48">
-								Full Name
-							</FieldLabel>
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="name">Full Name</FieldLabel>
 							<Input
 								{...field}
 								id="name"
@@ -93,14 +86,8 @@ export function Form() {
 					name="bio"
 					control={form.control}
 					render={({ field, fieldState }) => (
-						<Field
-							data-invalid={fieldState.invalid}
-							orientation="horizontal"
-							className="gap-4 md:gap-16"
-						>
-							<FieldLabel htmlFor="bio" className="min-w-16 md:min-w-48">
-								About You
-							</FieldLabel>
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="bio">About You</FieldLabel>
 							<Textarea
 								{...field}
 								id="bio"
@@ -118,14 +105,8 @@ export function Form() {
 					name="website"
 					control={form.control}
 					render={({ field, fieldState }) => (
-						<Field
-							data-invalid={fieldState.invalid}
-							orientation="horizontal"
-							className="gap-4 md:gap-16"
-						>
-							<FieldLabel htmlFor="website" className="min-w-16 md:min-w-48">
-								Website
-							</FieldLabel>
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="website">Website</FieldLabel>
 							<Input
 								{...field}
 								id="website"
