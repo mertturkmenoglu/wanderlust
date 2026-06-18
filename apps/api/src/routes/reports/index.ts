@@ -4,6 +4,7 @@ import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
+import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { contract } from './contract';
 import { ReportsRepository } from './repository';
 import { ReportsService } from './service';
@@ -12,7 +13,7 @@ export function getRouter() {
 	const os = implement(contract).$context<AuthContext>().use(requireAuth);
 	const svc = container.get(ReportsService);
 
-	return os.router({
+	return os.use(withErrorNormalization).router({
 		get: os.get.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
 			const result = await svc.get(userId, input);

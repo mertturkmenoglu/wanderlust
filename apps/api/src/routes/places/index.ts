@@ -4,6 +4,7 @@ import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
+import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { contract } from './contract';
 import { PlacesRepository } from './repository';
 import { PlacesService } from './service';
@@ -12,7 +13,7 @@ export function getRouter() {
 	const os = implement(contract).$context<Context>();
 	const svc = container.get(PlacesService);
 
-	return os.router({
+	return os.use(withErrorNormalization).router({
 		get: os.get.handler(async ({ input, context }) => {
 			const userId = context.session?.user?.id || null;
 			const result = await svc.get(input, userId);
@@ -27,11 +28,7 @@ export function getRouter() {
 		update: os.update
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.update(input);
 
 				return result;
@@ -39,11 +36,7 @@ export function getRouter() {
 		updateAddress: os.updateAddress
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.updateAddress(input);
 
 				return result;
@@ -51,11 +44,7 @@ export function getRouter() {
 		updateAmenities: os.updateAmenities
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.updateAmenities(input);
 
 				return result;
@@ -63,11 +52,7 @@ export function getRouter() {
 		updateHours: os.updateHours
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.updateHours(input);
 
 				return result;
@@ -75,11 +60,7 @@ export function getRouter() {
 		delete: os.delete
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				await svc._delete(input);
 
 				return {};
@@ -87,11 +68,7 @@ export function getRouter() {
 		searchAddresses: os.searchAddresses
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.searchAddresses(input);
 
 				return result;

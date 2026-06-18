@@ -4,6 +4,7 @@ import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
+import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { contract } from './contract';
 import { CitiesRepository } from './repository';
 import { CitiesService } from './service';
@@ -12,7 +13,7 @@ export function getRouter() {
 	const os = implement(contract).$context<Context>();
 	const svc = container.get(CitiesService);
 
-	return os.router({
+	return os.use(withErrorNormalization).router({
 		list: os.list.handler(async () => {
 			const result = await svc.list();
 
@@ -31,11 +32,7 @@ export function getRouter() {
 		create: os.create
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.create(input);
 
 				return result;
@@ -43,11 +40,7 @@ export function getRouter() {
 		update: os.update
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				const result = await svc.update(input);
 
 				return result;
@@ -55,11 +48,7 @@ export function getRouter() {
 		delete: os.delete
 			.use(requireAuth)
 			.use(isAdmin)
-			.handler(async ({ input, context, errors }) => {
-				if (!context.session?.user) {
-					throw errors.UNAUTHORIZED();
-				}
-
+			.handler(async ({ input }) => {
 				await svc._delete(input);
 
 				return {};

@@ -4,6 +4,7 @@ import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
+import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { contract } from './contract';
 import { CollectionsRepository } from './repository';
 import { CollectionsService } from './service';
@@ -12,7 +13,7 @@ export function getRouter() {
 	const os = implement(contract).$context<Context>();
 	const svc = container.get(CollectionsService);
 
-	return os.router({
+	return os.use(withErrorNormalization).router({
 		list: os.list
 			.use(requireAuth)
 			.use(isAdmin)
