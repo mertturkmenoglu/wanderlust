@@ -19,6 +19,8 @@ export function useRefinementTitle(attribute: RefinementListAttribute) {
 			return 'Amenities';
 		case 'place.address.city.countryName':
 			return 'Countries';
+		case 'place.accolades.accolade.title':
+			return 'Accolades';
 		default:
 			return attribute;
 	}
@@ -70,6 +72,8 @@ export function useLimit(attribute: RefinementListAttribute) {
 	switch (attribute) {
 		case 'place.category.name':
 			return 10;
+		case 'place.accolades.accolade.title':
+			return 10;
 		default:
 			return 5;
 	}
@@ -78,6 +82,8 @@ export function useLimit(attribute: RefinementListAttribute) {
 export function useShowMoreLimit(attribute: RefinementListAttribute) {
 	switch (attribute) {
 		case 'place.category.name':
+			return 20;
+		case 'place.accolades.accolade.title':
 			return 20;
 		default:
 			return 10;
@@ -102,13 +108,21 @@ export function useSearchPlaceholder(attribute: RefinementListAttribute) {
 	switch (attribute) {
 		case 'place.category.name':
 			return 'Search categories';
+		case 'place.address.city.name':
+			return 'Search cities';
+		case 'place.address.city.countryName':
+			return 'Search countries';
 		default:
 			return `Search ${attribute}`;
 	}
 }
 
 export function useShowInput(attribute: RefinementListAttribute) {
-	const searchable: RefinementListAttribute[] = ['place.category.name'];
+	const searchable: RefinementListAttribute[] = [
+		'place.category.name',
+		'place.address.city.name',
+		'place.address.city.countryName',
+	];
 	return searchable.includes(attribute);
 }
 
