@@ -199,6 +199,47 @@ export const addressesRelations = relations(addresses, ({ one }) => ({
 	}),
 }));
 
+export const accolades = pgTable('accolades', {
+	id: text().primaryKey(),
+	title: text().notNull(),
+	description: text().notNull(),
+	image: text().notNull(),
+	badge: text().notNull(),
+	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp({ withTimezone: true })
+		.notNull()
+		.defaultNow()
+		.$onUpdateFn(() => new Date()),
+});
+
+export const accoladesRelations = relations(accolades, ({ many }) => ({
+	places: many(accoladeAssignments),
+}));
+
+export const accoladeAssignments = pgTable('accolade_assignments', {
+	id: text().primaryKey(),
+	placeId: text().notNull().references(() => places.id, { onDelete: 'cascade' }),
+	accoladeId: text().notNull().references(() => accolades.id, { onDelete: 'cascade' }),
+	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp({ withTimezone: true })
+		.notNull()
+		.defaultNow()
+		.$onUpdateFn(() => new Date()),
+}, (t) => [
+	unique().on(t.placeId, t.accoladeId),
+]);
+
+export const accoladeAssignmentsRelations = relations(accoladeAssignments, ({ one }) => ({
+	place: one(places, {
+		fields: [accoladeAssignments.placeId],
+		references: [places.id],
+	}),
+	accolade: one(accolades, {
+		fields: [accoladeAssignments.accoladeId],
+		references: [accolades.id],
+	}),
+}));
+
 export const places = pgTable(
 	'places',
 	{
@@ -244,6 +285,7 @@ export const placesRelations = relations(places, ({ one, many }) => ({
 		references: [categories.id],
 	}),
 	assets: many(assets),
+	accolades: many(accoladeAssignments),
 }));
 
 export const eventAgeRestriction = pgEnum('event_age_restriction', [
