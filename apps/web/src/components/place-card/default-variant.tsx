@@ -1,4 +1,12 @@
 import { Image } from '@unpic/react';
+import { Badge } from '@wanderlust/ui/components/badge';
+import {
+	Card,
+	CardAction,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@wanderlust/ui/components/card';
 import {
 	Item,
 	ItemActions,
@@ -13,7 +21,9 @@ import { ipx } from '@/lib/ipx';
 import { usePlaceCardContext } from './context';
 import type { Props } from './types';
 
-export function DefaultVariant({
+export const DefaultVariant = DefaultVariantB;
+
+export function DefaultVariantA({
 	className,
 	variant = 'default',
 	...props
@@ -50,5 +60,43 @@ export function DefaultVariant({
 				)}
 			</ItemActions>
 		</Item>
+	);
+}
+
+export function DefaultVariantB({
+	className,
+	variant = 'default',
+	...props
+}: Props) {
+	const ctx = usePlaceCardContext();
+
+	return (
+		<Card size="sm" className={cn('group @container', className)} {...props}>
+			<Image
+				src={ipx(ctx.asset.url, 'w_512')}
+				alt={ctx.asset.description ?? ''}
+				layout="constrained"
+				aspectRatio={16 / 9}
+				height={128}
+				className="aspect-video w-full object-cover"
+			/>
+
+			<CardHeader className="@max-[300px]:min-h-30 @min-[300px]:min-h-22">
+				{ctx.rating !== '0.0' && (
+					<CardAction>
+						<Badge variant="outline">
+							{ctx.rating} <StarIcon className="fill-primary text-primary" />{' '}
+						</Badge>
+					</CardAction>
+				)}
+				<CardTitle className="">{ctx.place.name}</CardTitle>
+				<CardDescription className="line-clamp-1">
+					{ctx.place.address.city.name} / {ctx.place.address.city.countryName}
+				</CardDescription>
+				<CardDescription className="line-clamp-1 text-primary">
+					{ctx.place.category.name}
+				</CardDescription>
+			</CardHeader>
+		</Card>
 	);
 }
