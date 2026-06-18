@@ -1,4 +1,4 @@
-import { $dto, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Pagination } from '@wanderlust/common';
 import z from 'zod';
 
 const list = $dto.list.extend({
@@ -13,13 +13,7 @@ const list = $dto.list.extend({
 const listWithItems = list.extend({
 	items: $dto.listItem
 		.extend({
-			place: $dto.place.extend({
-				address: $dto.address.extend({
-					city: $dto.city,
-				}),
-				category: $dto.category,
-				assets: $dto.asset.array(),
-			}),
+			place: $extended.place,
 			meta: z.object({
 				isFavorite: z.boolean().meta({
 					description: 'Whether the place is favorited by the user',

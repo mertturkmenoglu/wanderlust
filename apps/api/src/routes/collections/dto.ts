@@ -1,16 +1,10 @@
-import { $dto, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Pagination } from '@wanderlust/common';
 import z from 'zod';
 
 const collection = $dto.collection;
 
 const collectionItem = $dto.collectionItem.extend({
-	place: $dto.place.extend({
-		assets: $dto.asset.array(),
-		category: $dto.category,
-		address: $dto.address.extend({
-			city: $dto.city,
-		}),
-	}),
+	place: $extended.place,
 	meta: z.object({
 		isFavorite: z.boolean(),
 	}),

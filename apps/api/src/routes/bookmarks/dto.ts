@@ -1,4 +1,4 @@
-import { $dto, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Pagination } from '@wanderlust/common';
 import z from 'zod';
 
 export const createInput = $dto.bookmark.pick({
@@ -27,18 +27,10 @@ export const listInput = Pagination.queryParamsSchema.extend({});
 
 export type ListInput = z.infer<typeof listInput>;
 
-const place = $dto.place.extend({
-	assets: $dto.asset.array(),
-	category: $dto.category,
-	address: $dto.address.extend({
-		city: $dto.city,
-	}),
-});
-
 export const listOutput = z.object({
 	bookmarks: $dto.bookmark
 		.extend({
-			place: place,
+			place: $extended.place,
 			meta: z.object({
 				isFavorite: z.boolean(),
 			}),

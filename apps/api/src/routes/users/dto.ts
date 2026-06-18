@@ -1,4 +1,4 @@
-import { $dto, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Pagination } from '@wanderlust/common';
 import z from 'zod';
 
 const profile = $dto.user.pick({
@@ -12,14 +12,6 @@ const profile = $dto.user.pick({
 	followersCount: true,
 	followingCount: true,
 	createdAt: true,
-});
-
-const place = $dto.place.extend({
-	assets: $dto.asset.array(),
-	category: $dto.category,
-	address: $dto.address.extend({
-		city: $dto.city,
-	}),
 });
 
 export const updateImageInput = z.object({
@@ -109,7 +101,7 @@ export type ListTopPlacesInput = z.infer<typeof listTopPlacesInput>;
 
 export const listTopPlacesOutput = z.object({
 	places: z.object({
-		place: place,
+		place: $extended.place,
 		meta: z.object({
 			isFavorite: z.boolean(),
 		})
@@ -126,7 +118,7 @@ export type UpdateTopPlacesInput = z.infer<typeof updateTopPlacesInput>;
 
 export const updateTopPlacesOutput = z.object({
 	places: z.object({
-		place: place,
+		place: $extended.place,
 		meta: z.object({
 			isFavorite: z.boolean(),
 		})

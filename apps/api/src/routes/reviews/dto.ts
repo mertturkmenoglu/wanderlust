@@ -1,4 +1,4 @@
-import { $dto, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Pagination } from '@wanderlust/common';
 import z from 'zod';
 
 const review = $dto.review.extend({
@@ -11,13 +11,6 @@ const review = $dto.review.extend({
 	assets: $dto.asset.array(),
 });
 
-const place = $dto.place.extend({
-	assets: $dto.asset.array(),
-	category: $dto.category,
-	address: $dto.address.extend({
-		city: $dto.city,
-	}),
-});
 
 export const getInput = $dto.review.pick({
 	id: true,
@@ -27,7 +20,7 @@ export type GetInput = z.infer<typeof getInput>;
 
 export const getOutput = z.object({
 	review: review.extend({
-		place: place,
+		place: $extended.place,
 	}),
 });
 
@@ -75,7 +68,7 @@ export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
 export const listByUsernameOutput = z.object({
 	reviews: review
 		.extend({
-			place: place,
+			place: $extended.place,
 		})
 		.array(),
 	pagination: Pagination.schema,

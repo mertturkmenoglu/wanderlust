@@ -1,4 +1,4 @@
-import { $dto, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Pagination } from '@wanderlust/common';
 import z from 'zod';
 import { amenities } from '../amenities/consts';
 
@@ -41,17 +41,9 @@ const invite = $dto.tripInvite.extend(
 	}).shape,
 );
 
-const place = $dto.place.extend({
-	assets: $dto.asset.array(),
-	category: $dto.category,
-	address: $dto.address.extend({
-		city: $dto.city,
-	}),
-});
-
 const location = $dto.tripLocation.extend(
 	z.object({
-		place: place,
+		place: $extended.place,
 		meta: z.object({
 			isFavorite: z.boolean(),
 		}),

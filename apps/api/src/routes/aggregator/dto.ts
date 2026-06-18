@@ -1,20 +1,12 @@
-import { $dto } from '@wanderlust/common';
+import { $extended } from '@wanderlust/common';
 import z from 'zod';
-
-const place = $dto.place.extend({
-	assets: $dto.asset.array(),
-	category: $dto.category,
-	address: $dto.address.extend({
-		city: $dto.city,
-	}),
-});
 
 export const homeInput = z.object({});
 
 export type HomeInput = z.infer<typeof homeInput>;
 
 const placeWithMeta = z.object({
-	place: place,
+	place: $extended.place,
 	meta: z.object({
 		isFavorite: z.boolean(),
 	}),
