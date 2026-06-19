@@ -28,37 +28,7 @@ export class TripsRepository {
 	async get(userId: string, data: dto.GetInput) {
 		const res = await this.db.query.trips.findFirst({
 			where: (t, { eq }) => eq(t.id, data.id),
-			with: {
-				participants: {
-					orderBy: (t, { desc }) => [desc(t.id)],
-					with: {
-						user: {
-							columns: {
-								id: true,
-								name: true,
-								username: true,
-								image: true,
-							},
-						},
-					},
-				},
-				owner: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-				locations: {
-					orderBy: (t, { asc }) => [asc(t.scheduledTime)],
-					with: {
-						place: {
-							with: $includes.place,
-						},
-					},
-				},
-			},
+			with: $includes.trip,
 		});
 
 		if (!res) {
@@ -69,10 +39,7 @@ export class TripsRepository {
 
 		const placeIds = Array.from(new Set(res.locations.map((l) => l.placeId)));
 
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
-			userId,
-			placeIds,
-		);
+		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(userId, placeIds);
 
 		return {
 			...res,
@@ -83,24 +50,7 @@ export class TripsRepository {
 	async listInvites(_userId: string, data: dto.ListInvitesInput) {
 		const result = await this.db.query.tripInvites.findMany({
 			where: (t, { eq }) => eq(t.tripId, data.id),
-			with: {
-				fromUser: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-				toUser: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-			},
+			with: $includes.tripInvite,
 		});
 
 		return result;
@@ -147,24 +97,7 @@ export class TripsRepository {
 
 			const invite = await tx.query.tripInvites.findFirst({
 				where: (t, { eq }) => eq(t.id, newInv.id),
-				with: {
-					fromUser: {
-						columns: {
-							id: true,
-							name: true,
-							username: true,
-							image: true,
-						},
-					},
-					toUser: {
-						columns: {
-							id: true,
-							name: true,
-							username: true,
-							image: true,
-						},
-					},
-				},
+				with: $includes.tripInvite,
 			});
 
 			if (!invite) {
@@ -206,37 +139,8 @@ export class TripsRepository {
 
 		const trips = await this.db.query.trips.findMany({
 			where: (t, { inArray }) => inArray(t.id, ids),
-			with: {
-				participants: {
-					orderBy: (t, { desc }) => [desc(t.id)],
-					with: {
-						user: {
-							columns: {
-								id: true,
-								name: true,
-								username: true,
-								image: true,
-							},
-						},
-					},
-				},
-				owner: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-				locations: {
-					orderBy: (t, { asc }) => [asc(t.scheduledTime)],
-					with: {
-						place: {
-							with: $includes.place,
-						},
-					},
-				},
-			},
+			with: $includes.trip,
+			orderBy: (t, { desc }) => [desc(t.createdAt)],
 		});
 
 		const [countResult] = await this.db
@@ -277,24 +181,7 @@ export class TripsRepository {
 			offset: offset,
 			limit: data.pageSize,
 			orderBy: (t, { desc }) => [desc(t.sentAt)],
-			with: {
-				fromUser: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-				toUser: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-			},
+			with: $includes.tripInvite,
 		});
 
 		const totalRecords = await this.db.$count(
@@ -348,41 +235,7 @@ export class TripsRepository {
 		const result = await this.db.query.tripInvites.findFirst({
 			where: (t, { eq, and }) =>
 				and(eq(t.id, data.inviteId), eq(t.toId, userId)),
-			with: {
-				fromUser: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-				toUser: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-				trip: {
-					columns: {
-						requestedAmenities: false,
-						visibilityLevel: false,
-						description: false,
-					},
-					with: {
-						owner: {
-							columns: {
-								id: true,
-								name: true,
-								username: true,
-								image: true,
-							},
-						},
-					},
-				},
-			},
+			with: $includes.tripInviteDetails,
 		});
 
 		if (!result) {
@@ -523,16 +376,7 @@ export class TripsRepository {
 			orderBy: (t, { desc }) => [desc(t.createdAt)],
 			offset: offset,
 			limit: data.pageSize,
-			with: {
-				user: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-			},
+			with: $includes.tripComment,
 		});
 
 		const totalRecords = await this.db.$count(
@@ -558,16 +402,7 @@ export class TripsRepository {
 	async getComment(commentId: string) {
 		const result = await this.db.query.tripComments.findFirst({
 			where: (t, { eq }) => eq(t.id, commentId),
-			with: {
-				user: {
-					columns: {
-						id: true,
-						name: true,
-						username: true,
-						image: true,
-					},
-				},
-			},
+			with: $includes.tripComment,
 		});
 
 		if (!result) {
