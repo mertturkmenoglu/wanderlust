@@ -25,8 +25,98 @@ const withPlace = {
 	assets: true,
 } satisfies With<'places'>;
 
+const withTripParticipant = {
+	user: {
+		columns: {
+			id: true,
+			name: true,
+			username: true,
+			image: true,
+		}
+	}
+} satisfies With<'tripParticipants'>;
+
+const withTrip = {
+	participants: {
+		orderBy: (t, { desc }) => [desc(t.id)],
+		with: withTripParticipant,
+	},
+	owner: {
+		columns: {
+			id: true,
+			name: true,
+			username: true,
+			image: true,
+		},
+	},
+	locations: {
+		orderBy: (t, { asc }) => [asc(t.scheduledTime)],
+		with: {
+			place: {
+				with: withPlace,
+			},
+		},
+	},
+} satisfies With<'trips'>;
+
+const withTripInvite = {
+	fromUser: {
+		columns: {
+			id: true,
+			name: true,
+			username: true,
+			image: true,
+		},
+	},
+	toUser: {
+		columns: {
+			id: true,
+			name: true,
+			username: true,
+			image: true,
+		},
+	},
+} satisfies With<'tripInvites'>;
+
+const withTripInviteDetails = {
+	...withTripInvite,
+	trip: {
+		columns: {
+			requestedAmenities: false,
+			visibilityLevel: false,
+			description: false,
+		},
+		with: {
+			owner: {
+				columns: {
+					id: true,
+					name: true,
+					username: true,
+					image: true,
+				},
+			},
+		},
+	},
+} satisfies With<'tripInvites'>;
+
+const withTripComment = {
+	user: {
+		columns: {
+			id: true,
+			name: true,
+			username: true,
+			image: true,
+		},
+	}
+} satisfies With<'tripComments'>;
+
 export const $includes = {
 	accolade: withAccolade,
 	address: withAddress,
 	place: withPlace,
+	tripParticipant: withTripParticipant,
+	trip: withTrip,
+	tripInvite: withTripInvite,
+	tripInviteDetails: withTripInviteDetails,
+	tripComment: withTripComment,
 };
