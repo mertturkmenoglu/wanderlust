@@ -1,0 +1,27 @@
+{
+	"extends": "../../packages/config/tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "dist",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"jsx": "react-jsx",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	},
+	"references": [
+		{ "path": "../../packages/auth" },
+		{ "path": "../../packages/cache" },
+		{ "path": "../../packages/common" },
+		{ "path": "../../packages/config" },
+		{ "path": "../../packages/db" },
+		{ "path": "../../packages/jobs" },
+		{ "path": "../../packages/uid" }
+	],
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist"]
+}

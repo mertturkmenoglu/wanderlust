@@ -1,0 +1,45 @@
+{
+	"name": "@wanderlust/chat",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "bun run --hot src/index.ts",
+		"build": "tsdown",
+		"start": "NODE_ENV=production bun run dist/index.js",
+		"test": "bun test",
+		"check-types": "tsc --noEmit",
+		"build-types": "tsc --build"
+	},
+	"dependencies": {
+		"@hono/zod-validator": "^0.8.0",
+		"@wanderlust/auth": "workspace:*",
+		"@wanderlust/cache": "workspace:*",
+		"@wanderlust/common": "workspace:*",
+		"@wanderlust/config": "workspace:*",
+		"@wanderlust/db": "workspace:*",
+		"@wanderlust/jobs": "workspace:*",
+		"@wanderlust/uid": "workspace:*",
+		"drizzle-orm": "catalog:",
+		"evlog": "catalog:",
+		"hono": "catalog:",
+		"inversify": "catalog:",
+		"reflect-metadata": "catalog:",
+		"zod": "catalog:",
+		"superjson": "catalog:"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/src/index.d.mts",
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"types": "./dist/src/*.d.mts",
+			"default": "./src/*.ts"
+		}
+	}
+}
