@@ -6,6 +6,12 @@ import {
 	assets,
 	bookmarks,
 	categories,
+	chatParticipantRole,
+	chatParticipants,
+	chatSharedEntityType,
+	chatSystemEventType,
+	chats,
+	chatType,
 	cities,
 	collectionItems,
 	collections,
@@ -20,6 +26,13 @@ import {
 	follows,
 	listItems,
 	lists,
+	messageAttachments,
+	messageAttachmentType,
+	messageDeletions,
+	messageReactions,
+	messageSharedEntities,
+	messages,
+	messageType,
 	notificationCategoryType,
 	notificationChannelType,
 	notificationEntityType,
@@ -376,26 +389,42 @@ export const $dto = {
 			}),
 	}),
 	accolade: createSelectSchema(accolades, {
-		id: z.string().min(1).meta({
-			description: 'Accolade ID',
-			examples: ['accolade123'],
-		}),
-		title: z.string().min(1).max(256).meta({
-			description: 'Title of the accolade',
-			examples: ['Best Museum'],
-		}),
-		description: z.string().min(1).meta({
-			description: 'Description of the accolade',
-			examples: ['Awarded for outstanding museum experience'],
-		}),
-		badge: z.url().min(1).meta({
-			description: 'Badge image URL of the accolade',
-			examples: ['https://example.com/images/best-museum-badge.png'],
-		}),
-		image: z.url().min(1).meta({
-			description: 'Image URL of the accolade',
-			examples: ['https://example.com/images/best-museum.jpg'],
-		}),
+		id: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'Accolade ID',
+				examples: ['accolade123'],
+			}),
+		title: z
+			.string()
+			.min(1)
+			.max(256)
+			.meta({
+				description: 'Title of the accolade',
+				examples: ['Best Museum'],
+			}),
+		description: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'Description of the accolade',
+				examples: ['Awarded for outstanding museum experience'],
+			}),
+		badge: z
+			.url()
+			.min(1)
+			.meta({
+				description: 'Badge image URL of the accolade',
+				examples: ['https://example.com/images/best-museum-badge.png'],
+			}),
+		image: z
+			.url()
+			.min(1)
+			.meta({
+				description: 'Image URL of the accolade',
+				examples: ['https://example.com/images/best-museum.jpg'],
+			}),
 		createdAt: z.date().meta({
 			description: 'Timestamp when the accolade was created',
 			examples: [new Date('2023-01-15T10:00:00Z')],
@@ -1452,6 +1481,37 @@ export const $dto = {
 	}).meta({
 		description: 'A notification preference of a user',
 	}),
+	chatType: z.enum(chatType.enumValues).meta({
+		description: 'Type of chat',
+		examples: ['direct', 'group'],
+	}),
+	chatParticipantRole: z.enum(chatParticipantRole.enumValues).meta({
+		description: 'Role of the chat participant',
+		examples: ['admin', 'member'],
+	}),
+	messageType: z.enum(messageType.enumValues).meta({
+		description: 'Type of message',
+		examples: ['text', 'media', 'audio'],
+	}),
+	messageAttachmentType: z.enum(messageAttachmentType.enumValues).meta({
+		description: 'Type of message attachment',
+		examples: ['image', 'video', 'audio'],
+	}),
+	chatSharedEntityType: z.enum(chatSharedEntityType.enumValues).meta({
+		description: 'Type of shared entity in chat',
+		examples: ['place', 'trip', 'event'],
+	}),
+	chatSystemEventType: z.enum(chatSystemEventType.enumValues).meta({
+		description: 'Type of system event in chat',
+		examples: ['member_joined', 'member_left', 'renamed'],
+	}),
+	chat: createSelectSchema(chats),
+	chatParticipant: createSelectSchema(chatParticipants),
+	message: createSelectSchema(messages),
+	messageAttachment: createSelectSchema(messageAttachments),
+	messageSharedEntity: createSelectSchema(messageSharedEntities),
+	messageDeletion: createSelectSchema(messageDeletions),
+	messageReaction: createSelectSchema(messageReactions),
 };
 
 export const $extended = {
@@ -1462,30 +1522,35 @@ export const $extended = {
 		category: $dto.category.meta({
 			description: 'Category of the place',
 		}),
-		address: $dto.address.extend({
-			city: $dto.city.meta({
-				description: 'City of the address',
+		address: $dto.address
+			.extend({
+				city: $dto.city.meta({
+					description: 'City of the address',
+				}),
+			})
+			.meta({
+				description: 'Address of the place',
 			}),
-		}).meta({
-			description: 'Address of the place',
-		}),
-		accolades: z.object({
-			id: z.string(),
-			createdAt: z.date(),
-			updatedAt: z.date(),
-			placeId: z.string(),
-			accoladeId: z.string(),
-			accolade: $dto.accolade,
-		}).array().meta({
-			description: 'Accolades associated with the place',
-		}),
+		accolades: z
+			.object({
+				id: z.string(),
+				createdAt: z.date(),
+				updatedAt: z.date(),
+				placeId: z.string(),
+				accoladeId: z.string(),
+				accolade: $dto.accolade,
+			})
+			.array()
+			.meta({
+				description: 'Accolades associated with the place',
+			}),
 	}),
 	address: $dto.address.extend({
 		city: $dto.city.meta({
 			description: 'City of the address',
 		}),
 	}),
-}
+};
 
 export const $insert = {
 	user: createInsertSchema(users),
@@ -1521,4 +1586,11 @@ export const $insert = {
 	eventInterest: createInsertSchema(eventInterests),
 	notification: createInsertSchema(notifications),
 	notificationPreference: createInsertSchema(notificationPreferences),
+	chat: createInsertSchema(chats),
+	chatParticipant: createInsertSchema(chatParticipants),
+	message: createInsertSchema(messages),
+	messageAttachment: createInsertSchema(messageAttachments),
+	messageSharedEntity: createInsertSchema(messageSharedEntities),
+	messageDeletion: createInsertSchema(messageDeletions),
+	messageReaction: createInsertSchema(messageReactions),
 };
