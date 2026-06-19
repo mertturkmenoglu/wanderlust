@@ -1,5 +1,6 @@
 import { relations, sql } from 'drizzle-orm';
 import {
+	type AnyPgColumn,
 	bigint,
 	boolean,
 	check,
@@ -14,6 +15,8 @@ import {
 	text,
 	timestamp,
 	unique,
+	uniqueIndex,
+	uuid,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable(
@@ -54,6 +57,9 @@ export const usersRelations = relations(users, ({ many }) => ({
 	trips: many(trips),
 	topPlaces: many(userTopPlaces),
 	eventInterests: many(eventInterests),
+	messages: many(messages),
+	createdChats: many(chats, { relationName: 'createdChats' }),
+	chats: many(chatParticipants, { relationName: 'chats' }),
 }));
 
 export const sessions = pgTable('sessions', {
@@ -216,29 +222,38 @@ export const accoladesRelations = relations(accolades, ({ many }) => ({
 	places: many(accoladeAssignments),
 }));
 
-export const accoladeAssignments = pgTable('accolade_assignments', {
-	id: text().primaryKey(),
-	placeId: text().notNull().references(() => places.id, { onDelete: 'cascade' }),
-	accoladeId: text().notNull().references(() => accolades.id, { onDelete: 'cascade' }),
-	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-	updatedAt: timestamp({ withTimezone: true })
-		.notNull()
-		.defaultNow()
-		.$onUpdateFn(() => new Date()),
-}, (t) => [
-	unique().on(t.placeId, t.accoladeId),
-]);
+export const accoladeAssignments = pgTable(
+	'accolade_assignments',
+	{
+		id: text().primaryKey(),
+		placeId: text()
+			.notNull()
+			.references(() => places.id, { onDelete: 'cascade' }),
+		accoladeId: text()
+			.notNull()
+			.references(() => accolades.id, { onDelete: 'cascade' }),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+		updatedAt: timestamp({ withTimezone: true })
+			.notNull()
+			.defaultNow()
+			.$onUpdateFn(() => new Date()),
+	},
+	(t) => [unique().on(t.placeId, t.accoladeId)],
+);
 
-export const accoladeAssignmentsRelations = relations(accoladeAssignments, ({ one }) => ({
-	place: one(places, {
-		fields: [accoladeAssignments.placeId],
-		references: [places.id],
+export const accoladeAssignmentsRelations = relations(
+	accoladeAssignments,
+	({ one }) => ({
+		place: one(places, {
+			fields: [accoladeAssignments.placeId],
+			references: [places.id],
+		}),
+		accolade: one(accolades, {
+			fields: [accoladeAssignments.accoladeId],
+			references: [accolades.id],
+		}),
 	}),
-	accolade: one(accolades, {
-		fields: [accoladeAssignments.accoladeId],
-		references: [accolades.id],
-	}),
-}));
+);
 
 export const places = pgTable(
 	'places',
@@ -1070,3 +1085,367 @@ export const notificationPreferencesRelations = relations(
 		}),
 	}),
 );
+
+export const chatType = pgEnum('chat_type', ['direct', 'group']);
+
+export const chatParticipantRole = pgEnum('chat_participant_role', [
+	'member',
+	'admin',
+]);
+
+export const messageType = pgEnum('message_type', [
+	'text', // text only
+	'media', // text? + media+ attachments,
+	'audio', // audio only
+	'sticker', // text? + sticker
+	'gif', // text? + gif
+	'share', // text? + entity,
+	'system', // system message only
+]);
+
+export const messageAttachmentType = pgEnum('message_attachment_type', [
+	'image',
+	'video',
+	'audio',
+]);
+
+export const chatSharedEntityType = pgEnum('chat_shared_entity_type', [
+	'place',
+	'review',
+	'event',
+	'list',
+	'trip',
+	'user',
+]);
+
+export const chatSystemEventType = pgEnum('chat_system_event_type', [
+	'conversation_created',
+	'member_joined',
+	'member_added',
+	'member_removed',
+	'member_left',
+	'role_granted',
+	'role_revoked',
+	'renamed',
+	'description_changed',
+	'image_changed',
+	'message_pinned',
+	'message_unpinned',
+]);
+
+export type TMessageMetadata = {
+	linkPreview?: {
+		url: string;
+		title?: string;
+		description?: string;
+		imageUrl?: string;
+		siteName?: string;
+	};
+	sticker?: {
+		id: string;
+		packId?: string;
+		url: string;
+	};
+	gif?: {
+		provider: 'giphy' | 'tenor';
+		id: string;
+		url: string;
+		width: number;
+		height: number;
+	};
+	// Arbitrary payload for `system` messages (e.g. { targetUserId, oldName })
+	system?: Record<string, unknown>;
+};
+
+export const chats = pgTable(
+	'chats',
+	{
+		id: uuid()
+			.primaryKey()
+			.$defaultFn(() => Bun.randomUUIDv7()),
+		type: chatType().notNull(),
+
+		// These fields are for group chats only
+		name: text(), // optional, should be null for direct chats
+		description: text(),
+		imageUrl: text(),
+
+		creatorId: text().references(() => users.id, { onDelete: 'set null' }),
+
+		// Pinned message
+		pinnedMessageId: uuid().references((): AnyPgColumn => messages.id, {
+			onDelete: 'set null',
+		}),
+		pinnedById: text().references(() => users.id, { onDelete: 'set null' }),
+		pinnedAt: timestamp({ withTimezone: true }),
+
+		// Denormalized last message info for quick access
+		lastMessageId: uuid().references((): AnyPgColumn => messages.id, {
+			onDelete: 'set null',
+		}),
+		lastMessageAt: timestamp({ withTimezone: true }),
+
+		// Stored as "minUserId:maxUserId" for direct chats, null for group chats
+		// This is used to enforce uniqueness of direct chats between two users
+		// Multiple nulls are allowed for unique indexes in Postgres.
+		directKey: text(),
+
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+		updatedAt: timestamp({ withTimezone: true })
+			.notNull()
+			.defaultNow()
+			.$onUpdateFn(() => new Date()),
+	},
+	(t) => [uniqueIndex().on(t.directKey), index().on(t.lastMessageAt)],
+);
+
+export const chatParticipants = pgTable('chat_participants', {
+	id: uuid().primaryKey().$defaultFn(() => Bun.randomUUIDv7()),
+	chatId: uuid()
+		.notNull()
+		.references(() => chats.id, { onDelete: 'cascade' }),
+	userId: text()
+		.notNull()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	role: chatParticipantRole().notNull().default('member'),
+
+	joinedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	leftAt: timestamp({ withTimezone: true }),
+	invitedById: text().references(() => users.id, { onDelete: 'set null' }),
+
+	lastReadMessageId: uuid().references((): AnyPgColumn => messages.id, { onDelete: 'set null' }),
+	lastReadAt: timestamp({ withTimezone: true }),
+
+	mutedUntil: timestamp({ withTimezone: true }),
+	clearedAt: timestamp({ withTimezone: true }),
+
+	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp({ withTimezone: true })
+		.notNull()
+		.defaultNow()
+		.$onUpdateFn(() => new Date()),
+}, (t) => [
+	uniqueIndex().on(t.chatId, t.userId),
+	index().on(t.userId),
+	index().on(t.chatId),
+]);
+
+export const messages = pgTable('messagees', {
+	id: uuid().primaryKey().$defaultFn(() => Bun.randomUUIDv7()),
+	chatId: uuid()
+		.notNull()
+		.references(() => chats.id, { onDelete: 'cascade' }),
+	senderId: text().references(() => users.id, { onDelete: 'set null' }),
+	type: messageType().notNull().default('text'),
+	body: text(),
+	replyToMessageId: uuid().references((): AnyPgColumn => messages.id, { onDelete: 'set null' }),
+	systemEvent: chatSystemEventType(),
+	metadata: jsonb().$type<TMessageMetadata>(),
+	editedAt: timestamp({ withTimezone: true }),
+	deletedAt: timestamp({ withTimezone: true }),
+	deletedById: text().references(() => users.id, { onDelete: 'set null' }),
+	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp({ withTimezone: true })
+		.notNull()
+		.defaultNow()
+		.$onUpdateFn(() => new Date()),
+}, (t) => [
+	index().on(t.chatId, t.id),
+	index().on(t.replyToMessageId),
+	check('check_messages_audio_body', sql`${t.type} <> 'audio' OR ${t.body} IS NOT NULL`),
+]);
+
+export const messageAttachments = pgTable(
+	'message_attachments',
+	{
+		id: uuid().primaryKey().$defaultFn(() => Bun.randomUUIDv7()),
+		messageId: uuid()
+			.notNull()
+			.references(() => messages.id, { onDelete: 'cascade' }),
+		type: messageAttachmentType().notNull(),
+
+		storageKey: text().notNull(),
+		url: text().notNull(),
+		caption: text(),
+
+		mimeType: text(),
+		sizeBytes: bigint({ mode: 'number' }),
+		width: integer(),
+		height: integer(),
+		durationMs: integer(),
+		thumbnailKey: text(),
+		blurhash: text(),
+
+		sortOrder: integer().notNull().default(0),
+
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [index().on(t.messageId)],
+);
+
+
+export const messageSharedEntities = pgTable(
+	'message_shared_entities',
+	{
+		id: uuid().primaryKey().$defaultFn(() => Bun.randomUUIDv7()),
+		messageId: uuid()
+			.notNull()
+			.references(() => messages.id, { onDelete: 'cascade' }),
+		entityType: chatSharedEntityType().notNull(),
+		entityId: text().notNull(),
+		snapshot: jsonb().$type<Record<string, unknown>>(),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [
+		index().on(t.messageId),
+		index().on(t.entityType, t.entityId),
+	],
+);
+
+export const messageDeletions = pgTable(
+	'message_deletions',
+	{
+		messageId: uuid()
+			.notNull()
+			.references(() => messages.id, { onDelete: 'cascade' }),
+		userId: text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [primaryKey({ columns: [t.messageId, t.userId] })],
+);
+
+export const messageReactions = pgTable(
+	'message_reactions',
+	{
+		messageId: uuid()
+			.notNull()
+			.references(() => messages.id, { onDelete: 'cascade' }),
+		userId: text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		emoji: text().notNull(),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [
+		primaryKey({ columns: [t.messageId, t.userId, t.emoji] }),
+		index().on(t.messageId),
+	],
+);
+
+export const chatRelations = relations(chats, ({ one, many }) => ({
+	creator: one(users, {
+		fields: [chats.creatorId],
+		references: [users.id],
+		relationName: 'chatCreator',
+	}),
+	pinnedBy: one(users, {
+		fields: [chats.pinnedById],
+		references: [users.id],
+		relationName: 'chatPinnedBy',
+	}),
+	pinnedMessage: one(messages, {
+		fields: [chats.pinnedMessageId],
+		references: [messages.id],
+		relationName: 'pinnedMessage',
+	}),
+	lastMessage: one(messages, {
+		fields: [chats.lastMessageId],
+		references: [messages.id],
+		relationName: 'lastMessage',
+	}),
+	participants: many(chatParticipants),
+	messages: many(messages, { relationName: 'chatMessages' }),
+}));
+
+export const chatParticipantsRelations = relations(
+	chatParticipants,
+	({ one }) => ({
+		chat: one(chats, {
+			fields: [chatParticipants.chatId],
+			references: [chats.id],
+		}),
+		user: one(users, {
+			fields: [chatParticipants.userId],
+			references: [users.id],
+			relationName: 'participantUser',
+		}),
+		invitedBy: one(users, {
+			fields: [chatParticipants.invitedById],
+			references: [users.id],
+			relationName: 'participantInvitedBy',
+		}),
+		lastReadMessage: one(messages, {
+			fields: [chatParticipants.lastReadMessageId],
+			references: [messages.id],
+		}),
+	}),
+);
+
+export const messagesRelations = relations(messages, ({ one, many }) => ({
+	chat: one(chats, {
+		fields: [messages.chatId],
+		references: [chats.id],
+		relationName: 'chatMessages',
+	}),
+	sender: one(users, {
+		fields: [messages.senderId],
+		references: [users.id],
+		relationName: 'messageSender',
+	}),
+	deletedBy: one(users, {
+		fields: [messages.deletedById],
+		references: [users.id],
+		relationName: 'messageDeletedBy',
+	}),
+	replyTo: one(messages, {
+		fields: [messages.replyToMessageId],
+		references: [messages.id],
+		relationName: 'replyTo',
+	}),
+	replies: many(messages, { relationName: 'replyTo' }),
+	attachments: many(messageAttachments),
+	sharedEntity: one(messageSharedEntities),
+	deletions: many(messageDeletions),
+	reactions: many(messageReactions),
+}));
+
+export const messageAttachmentsRelations = relations(messageAttachments, ({ one }) => ({
+	message: one(messages, {
+		fields: [messageAttachments.messageId],
+		references: [messages.id],
+	}),
+}));
+
+export const messageSharedEntitiesRelations = relations(
+	messageSharedEntities,
+	({ one }) => ({
+		message: one(messages, {
+			fields: [messageSharedEntities.messageId],
+			references: [messages.id],
+		}),
+	}),
+);
+
+export const messageDeletionsRelations = relations(messageDeletions, ({ one }) => ({
+	message: one(messages, {
+		fields: [messageDeletions.messageId],
+		references: [messages.id],
+	}),
+	user: one(users, {
+		fields: [messageDeletions.userId],
+		references: [users.id],
+	}),
+}));
+
+export const messageReactionsRelations = relations(messageReactions, ({ one }) => ({
+	message: one(messages, {
+		fields: [messageReactions.messageId],
+		references: [messages.id],
+	}),
+	user: one(users, {
+		fields: [messageReactions.userId],
+		references: [users.id],
+	}),
+}));
