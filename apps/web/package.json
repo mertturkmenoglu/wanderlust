@@ -57,7 +57,8 @@
 		"zod": "catalog:",
 		"zustand": "^5.0.13",
 		"hono": "catalog:",
-		"@wanderlust/notifications": "workspace:*"
+		"@wanderlust/notifications": "workspace:*",
+		"@wanderlust/chat": "workspace:*"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
