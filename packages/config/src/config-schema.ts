@@ -57,4 +57,14 @@ export const configSchema = z.object({
 			serviceName: z.string(),
 		}),
 	}),
+	chat: z.object({
+		port: z.number(),
+		url: z.string(),
+		cors: z.object({
+			allowedOrigins: z.array(z.string()),
+		}),
+		logger: z.object({
+			serviceName: z.string(),
+		}),
+	}),
 });

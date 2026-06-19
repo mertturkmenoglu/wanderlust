@@ -8,7 +8,10 @@
 			"l1MaxSize": "50mb"
 		},
 		"cors": {
-			"allowedOrigins": ["http://localhost:3000", "http://localhost:3003"]
+			"allowedOrigins": [
+				"http://localhost:3000",
+				"http://localhost:3003"
+			]
 		}
 	},
 	"database": {
@@ -48,11 +51,27 @@
 		"port": 5001,
 		"url": "http://localhost:5001",
 		"cors": {
-			"allowedOrigins": ["http://localhost:3000", "http://localhost:3003"]
+			"allowedOrigins": [
+				"http://localhost:3000",
+				"http://localhost:3003"
+			]
 		},
 		"capPerUser": 256,
 		"logger": {
 			"serviceName": "wl-notifications"
+		}
+	},
+	"chat": {
+		"port": 5005,
+		"url": "http://localhost:5005",
+		"cors": {
+			"allowedOrigins": [
+				"http://localhost:3000",
+				"http://localhost:3003"
+			]
+		},
+		"logger": {
+			"serviceName": "wl-chat"
 		}
 	}
 }
