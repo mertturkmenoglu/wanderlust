@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WipRouteImport } from './routes/wip'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TripsIndexRouteImport } from './routes/trips/index'
 import { Route as TermsIndexRouteImport } from './routes/terms/index'
@@ -21,9 +22,9 @@ import { Route as ReportIndexRouteImport } from './routes/report/index'
 import { Route as PrivacyIndexRouteImport } from './routes/privacy/index'
 import { Route as NotificationsIndexRouteImport } from './routes/notifications/index'
 import { Route as NearbyIndexRouteImport } from './routes/nearby/index'
-import { Route as MessagesIndexRouteImport } from './routes/messages/index'
 import { Route as ListsIndexRouteImport } from './routes/lists/index'
 import { Route as HelpIndexRouteImport } from './routes/help/index'
+import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as ChangeAccountsIndexRouteImport } from './routes/change-accounts/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
 import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
@@ -38,6 +39,7 @@ import { Route as TripsDiscoverIndexRouteImport } from './routes/trips/discover/
 import { Route as TripsIdIndexRouteImport } from './routes/trips/$id/index'
 import { Route as SettingsProfileIndexRouteImport } from './routes/settings/profile/index'
 import { Route as SettingsNotificationsIndexRouteImport } from './routes/settings/notifications/index'
+import { Route as SettingsChatIndexRouteImport } from './routes/settings/chat/index'
 import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
 import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
 import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
@@ -85,6 +87,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -130,11 +137,6 @@ const NearbyIndexRoute = NearbyIndexRouteImport.update({
   path: '/nearby/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MessagesIndexRoute = MessagesIndexRouteImport.update({
-  id: '/messages/',
-  path: '/messages/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ListsIndexRoute = ListsIndexRouteImport.update({
   id: '/lists/',
   path: '/lists/',
@@ -144,6 +146,11 @@ const HelpIndexRoute = HelpIndexRouteImport.update({
   id: '/help/',
   path: '/help/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ChatRoute,
 } as any)
 const ChangeAccountsIndexRoute = ChangeAccountsIndexRouteImport.update({
   id: '/change-accounts/',
@@ -216,6 +223,11 @@ const SettingsNotificationsIndexRoute =
     path: '/notifications/',
     getParentRoute: () => SettingsRoute,
   } as any)
+const SettingsChatIndexRoute = SettingsChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsAccountIndexRoute = SettingsAccountIndexRouteImport.update({
   id: '/account/',
   path: '/account/',
@@ -378,6 +390,7 @@ const TripsIdParticipantsInvitesNewIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chat': typeof ChatRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/wip': typeof WipRoute
@@ -387,9 +400,9 @@ export interface FileRoutesByFullPath {
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/change-accounts/': typeof ChangeAccountsIndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/help/': typeof HelpIndexRoute
   '/lists/': typeof ListsIndexRoute
-  '/messages/': typeof MessagesIndexRoute
   '/nearby/': typeof NearbyIndexRoute
   '/notifications/': typeof NotificationsIndexRoute
   '/privacy/': typeof PrivacyIndexRoute
@@ -409,6 +422,7 @@ export interface FileRoutesByFullPath {
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
+  '/settings/chat/': typeof SettingsChatIndexRoute
   '/settings/notifications/': typeof SettingsNotificationsIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
@@ -445,9 +459,9 @@ export interface FileRoutesByTo {
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/change-accounts': typeof ChangeAccountsIndexRoute
+  '/chat': typeof ChatIndexRoute
   '/help': typeof HelpIndexRoute
   '/lists': typeof ListsIndexRoute
-  '/messages': typeof MessagesIndexRoute
   '/nearby': typeof NearbyIndexRoute
   '/notifications': typeof NotificationsIndexRoute
   '/privacy': typeof PrivacyIndexRoute
@@ -467,6 +481,7 @@ export interface FileRoutesByTo {
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
+  '/settings/chat': typeof SettingsChatIndexRoute
   '/settings/notifications': typeof SettingsNotificationsIndexRoute
   '/settings/profile': typeof SettingsProfileIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
@@ -499,6 +514,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chat': typeof ChatRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/wip': typeof WipRoute
@@ -508,9 +524,9 @@ export interface FileRoutesById {
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/change-accounts/': typeof ChangeAccountsIndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/help/': typeof HelpIndexRoute
   '/lists/': typeof ListsIndexRoute
-  '/messages/': typeof MessagesIndexRoute
   '/nearby/': typeof NearbyIndexRoute
   '/notifications/': typeof NotificationsIndexRoute
   '/privacy/': typeof PrivacyIndexRoute
@@ -530,6 +546,7 @@ export interface FileRoutesById {
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
+  '/settings/chat/': typeof SettingsChatIndexRoute
   '/settings/notifications/': typeof SettingsNotificationsIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
@@ -563,6 +580,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/chat'
     | '/settings'
     | '/trips'
     | '/wip'
@@ -572,9 +590,9 @@ export interface FileRouteTypes {
     | '/bookmarks/'
     | '/categories/'
     | '/change-accounts/'
+    | '/chat/'
     | '/help/'
     | '/lists/'
-    | '/messages/'
     | '/nearby/'
     | '/notifications/'
     | '/privacy/'
@@ -594,6 +612,7 @@ export interface FileRouteTypes {
     | '/lists/$id/'
     | '/p/$id/'
     | '/settings/account/'
+    | '/settings/chat/'
     | '/settings/notifications/'
     | '/settings/profile/'
     | '/trips/$id/'
@@ -630,9 +649,9 @@ export interface FileRouteTypes {
     | '/bookmarks'
     | '/categories'
     | '/change-accounts'
+    | '/chat'
     | '/help'
     | '/lists'
-    | '/messages'
     | '/nearby'
     | '/notifications'
     | '/privacy'
@@ -652,6 +671,7 @@ export interface FileRouteTypes {
     | '/lists/$id'
     | '/p/$id'
     | '/settings/account'
+    | '/settings/chat'
     | '/settings/notifications'
     | '/settings/profile'
     | '/trips/$id'
@@ -683,6 +703,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/chat'
     | '/settings'
     | '/trips'
     | '/wip'
@@ -692,9 +713,9 @@ export interface FileRouteTypes {
     | '/bookmarks/'
     | '/categories/'
     | '/change-accounts/'
+    | '/chat/'
     | '/help/'
     | '/lists/'
-    | '/messages/'
     | '/nearby/'
     | '/notifications/'
     | '/privacy/'
@@ -714,6 +735,7 @@ export interface FileRouteTypes {
     | '/lists/$id/'
     | '/p/$id/'
     | '/settings/account/'
+    | '/settings/chat/'
     | '/settings/notifications/'
     | '/settings/profile/'
     | '/trips/$id/'
@@ -746,6 +768,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatRoute: typeof ChatRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   TripsRoute: typeof TripsRouteWithChildren
   WipRoute: typeof WipRoute
@@ -756,7 +779,6 @@ export interface RootRouteChildren {
   ChangeAccountsIndexRoute: typeof ChangeAccountsIndexRoute
   HelpIndexRoute: typeof HelpIndexRoute
   ListsIndexRoute: typeof ListsIndexRoute
-  MessagesIndexRoute: typeof MessagesIndexRoute
   NearbyIndexRoute: typeof NearbyIndexRoute
   NotificationsIndexRoute: typeof NotificationsIndexRoute
   PrivacyIndexRoute: typeof PrivacyIndexRoute
@@ -801,6 +823,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -866,13 +895,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NearbyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/messages/': {
-      id: '/messages/'
-      path: '/messages'
-      fullPath: '/messages/'
-      preLoaderRoute: typeof MessagesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lists/': {
       id: '/lists/'
       path: '/lists'
@@ -886,6 +908,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/help/'
       preLoaderRoute: typeof HelpIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/chat/': {
+      id: '/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof ChatRoute
     }
     '/change-accounts/': {
       id: '/change-accounts/'
@@ -983,6 +1012,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/settings/notifications/'
       preLoaderRoute: typeof SettingsNotificationsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/chat/': {
+      id: '/settings/chat/'
+      path: '/chat'
+      fullPath: '/settings/chat/'
+      preLoaderRoute: typeof SettingsChatIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/settings/account/': {
@@ -1205,9 +1241,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ChatRouteChildren {
+  ChatIndexRoute: typeof ChatIndexRoute
+}
+
+const ChatRouteChildren: ChatRouteChildren = {
+  ChatIndexRoute: ChatIndexRoute,
+}
+
+const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
+
 interface SettingsRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsAccountIndexRoute: typeof SettingsAccountIndexRoute
+  SettingsChatIndexRoute: typeof SettingsChatIndexRoute
   SettingsNotificationsIndexRoute: typeof SettingsNotificationsIndexRoute
   SettingsProfileIndexRoute: typeof SettingsProfileIndexRoute
 }
@@ -1215,6 +1262,7 @@ interface SettingsRouteChildren {
 const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsAccountIndexRoute: SettingsAccountIndexRoute,
+  SettingsChatIndexRoute: SettingsChatIndexRoute,
   SettingsNotificationsIndexRoute: SettingsNotificationsIndexRoute,
   SettingsProfileIndexRoute: SettingsProfileIndexRoute,
 }
@@ -1299,6 +1347,7 @@ const UUsernameRouteWithChildren = UUsernameRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatRoute: ChatRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   TripsRoute: TripsRouteWithChildren,
   WipRoute: WipRoute,
@@ -1309,7 +1358,6 @@ const rootRouteChildren: RootRouteChildren = {
   ChangeAccountsIndexRoute: ChangeAccountsIndexRoute,
   HelpIndexRoute: HelpIndexRoute,
   ListsIndexRoute: ListsIndexRoute,
-  MessagesIndexRoute: MessagesIndexRoute,
   NearbyIndexRoute: NearbyIndexRoute,
   NotificationsIndexRoute: NotificationsIndexRoute,
   PrivacyIndexRoute: PrivacyIndexRoute,
