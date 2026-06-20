@@ -55,12 +55,16 @@ function Component() {
 	return (
 		<NotificationsContextProvider>
 			<HeadContent />
+
 			<div className="flex min-h-screen flex-col">
-				<Header />
-				<main className="flex-1">
+				<Header className="shrink-0" />
+
+				<main className="flex min-h-0 flex-1 flex-col overflow-hidden">
 					<Outlet />
 				</main>
+
 				<Footer />
+
 				<TanStackDevtools
 					plugins={[
 						{
@@ -73,6 +77,7 @@ function Component() {
 						},
 					]}
 				/>
+
 				<Toaster position="bottom-center" richColors />
 			</div>
 		</NotificationsContextProvider>
