@@ -11,7 +11,7 @@ export const Route = createFileRoute('/')({
 
 function App() {
 	return (
-		<div className="mx-auto mt-8 flex max-w-7xl flex-col gap-4 md:gap-8">
+		<div className="mx-auto mt-8 flex w-full max-w-7xl flex-col gap-4 md:gap-8">
 			<Search />
 
 			<TagNavigation />

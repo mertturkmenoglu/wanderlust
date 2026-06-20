@@ -35,7 +35,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 	return (
 		<>
 			{isImpersonating && (
-				<ImpersonationBanner className="mx-auto mt-4 max-w-7xl" />
+				<ImpersonationBanner className="mx-auto mt-4 w-full max-w-7xl" />
 			)}
 			<header
 				className={cn(

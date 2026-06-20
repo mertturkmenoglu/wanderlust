@@ -20,7 +20,7 @@ function RouteComponent() {
 	const categories = query.categories;
 
 	return (
-		<div className="mx-auto my-8 max-w-7xl">
+		<div className="mx-auto my-8 w-full max-w-7xl">
 			<h2 className="text-2xl">Browse by Category</h2>
 
 			<div className="mt-4 grid grid-cols-2 gap-4">

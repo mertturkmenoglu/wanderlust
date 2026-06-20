@@ -20,7 +20,7 @@ export const Route = createFileRoute('/e/$id/')({
 
 function RouteComponent() {
 	return (
-		<main className="mx-auto mt-8 max-w-7xl">
+		<main className="mx-auto mt-8 w-full max-w-7xl">
 			<Breadcrumb />
 
 			<Header className="mt-8" />

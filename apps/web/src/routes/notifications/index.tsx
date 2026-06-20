@@ -16,7 +16,7 @@ function RouteComponent() {
 	const { filtered } = useNotificationsContext();
 
 	return (
-		<div className="mx-auto my-8 max-w-7xl">
+		<div className="mx-auto my-8 w-full max-w-7xl">
 			<div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-between">
 				<Filters />
 

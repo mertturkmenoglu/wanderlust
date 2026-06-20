@@ -25,7 +25,7 @@ export const Route = createFileRoute('/bookmarks/')({
 function RouteComponent() {
 	return (
 		<BookmarksContextProvider>
-			<div className="mx-auto my-8 max-w-7xl">
+			<div className="mx-auto my-8 w-full max-w-7xl">
 				<h2 className="text-2xl">Your Bookmarks</h2>
 				<SuspenseWrapper>
 					<div className="my-4">

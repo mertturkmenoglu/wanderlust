@@ -19,7 +19,7 @@ function RouteComponent() {
 	const groups = groupCitiesByCountry(cities);
 
 	return (
-		<div className="mx-auto max-w-7xl">
+		<div className="mx-auto w-full max-w-7xl">
 			<CategoriesBanner />
 
 			<div className="my-8">

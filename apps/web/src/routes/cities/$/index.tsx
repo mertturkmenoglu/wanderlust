@@ -49,7 +49,7 @@ function RouteComponent() {
 
 	return (
 		<SuspenseWrapper>
-			<div className="mx-auto max-w-7xl py-8">
+			<div className="mx-auto w-full max-w-7xl py-8">
 				<CityBreadcrumb />
 
 				<Description />

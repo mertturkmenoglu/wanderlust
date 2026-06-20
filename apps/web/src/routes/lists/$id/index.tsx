@@ -28,7 +28,7 @@ function RouteComponent() {
 
 	return (
 		<ListContextProvider>
-			<div className="mx-auto my-8 max-w-7xl">
+			<div className="mx-auto my-8 w-full max-w-7xl">
 				<Header />
 
 				<Separator className="my-2 md:my-0" />

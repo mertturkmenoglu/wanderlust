@@ -23,7 +23,7 @@ function RouteComponent() {
 	const isEmpty = collection.items.length === 0;
 
 	return (
-		<div className="mx-auto mt-8 max-w-7xl md:mt-16">
+		<div className="mx-auto mt-8 w-full max-w-7xl md:mt-16">
 			<Header />
 
 			{isEmpty && <EmptyState />}

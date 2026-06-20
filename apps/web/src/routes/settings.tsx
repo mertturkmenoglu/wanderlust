@@ -9,7 +9,7 @@ export const Route = createFileRoute('/settings')({
 
 function RouteComponent() {
 	return (
-		<div className="mx-auto mt-8 max-w-7xl">
+		<div className="mx-auto mt-8 w-full max-w-7xl">
 			<h2 className="text-2xl">Settings</h2>
 			<div className="mt-4 flex flex-col gap-4 md:mt-8 md:flex-row">
 				<div className="min-w-xs md:pr-8">

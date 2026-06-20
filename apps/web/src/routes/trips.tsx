@@ -8,7 +8,7 @@ export const Route = createFileRoute('/trips')({
 
 function RouteComponent() {
 	return (
-		<div className="mx-auto my-8 max-w-7xl">
+		<div className="mx-auto my-8 w-full max-w-7xl">
 			<Outlet />
 		</div>
 	);
