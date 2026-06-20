@@ -14,6 +14,7 @@ import {
 	ChevronDownIcon,
 	Settings2Icon,
 	UserIcon,
+	InboxIcon,
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -44,6 +45,13 @@ const links = [
 			to: '/settings/notifications',
 		}),
 		icon: BellIcon,
+	},
+	{
+		text: 'Chat',
+		link: linkOptions({
+			to: '/settings/chat',
+		}),
+		icon: InboxIcon,
 	},
 ] as const satisfies Item[];
 
