@@ -10,6 +10,8 @@ import { ChatService } from './service';
 export function getRouter() {
 	const svc = container.get(ChatService);
 
+	console.log('', svc == null ? '' : '')
+
 	return new Hono<THonoContext>()
 		.post('/chat.create', async (c) => {
 			return c.json(

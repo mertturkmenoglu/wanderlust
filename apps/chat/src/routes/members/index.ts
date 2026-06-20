@@ -8,6 +8,8 @@ import { MembersService } from './service';
 export function getRouter() {
 	const svc = container.get(MembersService);
 
+	console.log('', svc == null ? '' : '')
+
 	return new Hono<THonoContext>()
 		.post('/chat.members.list', async (c) => {
 			return c.json(

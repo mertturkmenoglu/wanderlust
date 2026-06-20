@@ -3,5 +3,7 @@ import { MediaRepository } from "./repository";
 
 @injectable()
 export class MediaService {
-	constructor(@inject(MediaRepository) private readonly mediaRepository: MediaRepository) { }
+	constructor(@inject(MediaRepository) private readonly mediaRepository: MediaRepository) {
+		console.log('', this.mediaRepository == null ? '' : '')
+	}
 }

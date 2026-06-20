@@ -8,6 +8,8 @@ import { MediaService } from './service';
 export function getRouter() {
 	const svc = container.get(MediaService);
 
+	console.log('', svc == null ? '' : '')
+
 	return new Hono<THonoContext>()
 		.post('/media.createUpload', async (c) => {
 			return c.json(

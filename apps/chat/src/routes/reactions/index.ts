@@ -8,6 +8,8 @@ import { ReactionsService } from './service';
 export function getRouter() {
 	const svc = container.get(ReactionsService);
 
+	console.log('', svc == null ? '' : '')
+
 	return new Hono<THonoContext>()
 		.post('/chat.reactions.add', async (c) => {
 			return c.json(

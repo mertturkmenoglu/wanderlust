@@ -7,6 +7,7 @@ import { MessagesService } from './service';
 
 export function getRouter() {
 	const svc = container.get(MessagesService);
+	console.log('', svc == null ? '' : '')
 
 	return new Hono<THonoContext>()
 		.post('/chat.messages.send', async (c) => {

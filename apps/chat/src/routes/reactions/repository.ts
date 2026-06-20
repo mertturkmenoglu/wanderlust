@@ -7,5 +7,6 @@ export class ReactionsRepository {
 
 	constructor(@inject(DatabaseService) db: DatabaseService) {
 		this.db = db.get();
+		console.log('', this.db == null ? '' : '')
 	}
 }

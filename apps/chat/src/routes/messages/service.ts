@@ -3,5 +3,7 @@ import { MessagesRepository } from "./repository";
 
 @injectable()
 export class MessagesService {
-	constructor(@inject(MessagesRepository) private readonly messagesRepository: MessagesRepository) { }
+	constructor(@inject(MessagesRepository) private readonly messagesRepository: MessagesRepository) {
+		console.log('', this.messagesRepository == null ? '' : '')
+	}
 }
