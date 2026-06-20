@@ -39,7 +39,7 @@ export function Header({ className, ...props }: Readonly<Props>) {
 			)}
 			<header
 				className={cn(
-					'mx-auto mt-8 flex w-full max-w-7xl items-center justify-between',
+					'mx-auto mt-8 flex h-10 w-full max-w-7xl items-center justify-between',
 					className,
 				)}
 				{...props}
