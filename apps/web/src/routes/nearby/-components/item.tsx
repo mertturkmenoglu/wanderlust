@@ -6,12 +6,5 @@ type Props = {
 };
 
 export function ItemComponent({ item }: Props) {
-	return (
-		<PlaceCard
-			as="link"
-			place={item.place}
-			variant="item"
-			className="block text-left"
-		/>
-	);
+	return <PlaceCard as="link" place={item.place} variant="item" />;
 }
