@@ -16,11 +16,11 @@ const items: Item[] = [
 		}),
 	},
 	{
-		key: 'messages',
+		key: 'chat',
 		icon: InboxIcon,
-		label: 'Messages',
+		label: 'Chat',
 		link: linkOptions({
-			to: '/messages',
+			to: '/chat',
 		}),
 	},
 	{
