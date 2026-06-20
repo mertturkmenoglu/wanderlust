@@ -4,10 +4,17 @@ import {
 	TwitterLogoIcon,
 } from '@radix-ui/react-icons';
 import { Link } from '@tanstack/react-router';
+import { useShouldRender } from './hooks';
 
 export function Footer() {
+	const shouldRender = useShouldRender();
+
+	if (!shouldRender) {
+		return null;
+	}
+
 	return (
-		<footer className="my-20">
+		<footer className="my-8 shrink-0">
 			<ul className="mb-8 flex items-center justify-center gap-4 text-muted-foreground text-sm md:gap-8">
 				<li>
 					<Link to="/help" hash={encodeURI('General Questions')}>
