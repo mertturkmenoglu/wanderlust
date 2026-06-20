@@ -39,7 +39,7 @@ export function Container() {
 				)}
 				{items.length > 0 && (
 					<ScrollArea className="mt-4 h-150">
-						<div className="space-y-2 pr-4">
+						<div className="flex flex-col gap-2 pr-4">
 							{items.map((item) => (
 								<ItemComponent key={`item-${item.place.id}`} item={item} />
 							))}
