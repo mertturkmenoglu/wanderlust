@@ -22,28 +22,18 @@ It's open source and free.
   - Search for places.
   - Explore cities and countries.
   - Explore places/point of interests (POIs).
-  - Explore places by category.
   - Explore curated collections of places.
   - Discover nearby places.
 - User:
   - Create an account.
   - Follow other users.
-  - Customize your profile, add information about yourself.
+  - Customize your profile.
   - Add favorite places to your profile.
-  - Use custom profile and banner images.
-  - View other users':
-    - Profile
-    - Reviews
-    - Recent Activities
-    - Top locations
-    - Favorites
-    - Public Lists
 - Reviews:
   - Create reviews.
   - Rate places.
   - Upload images.
-  - Filter reviews by rating and date.
-  - Sort reviews by rating and date.
+  - Filter and sort reviews by rating and date.
 - Lists, Bookmarks, Favorites:
   - Create lists.
   - Add places to your lists.
@@ -57,10 +47,11 @@ It's open source and free.
   - View other users' trips.
   - Add requested amenities.
   - Comment on trips.
+- Notifications:
+	- Receive notifications for new followers, messages, and trip updates.
 
 ## Planned Features
 
-- Notifications.
 - In app messaging.
 - Trip itinerary.
 - Better place and user search.
@@ -108,8 +99,7 @@ It's open source and free.
 
 ## Requirements
 
-- Docker (https://docs.docker.com/desktop/setup/install/linux/ubuntu/)
-- Bun (https://bun.sh/)
+Please read the `docs/prerequisites.md` file about the requirements to run the project.
 
 ## Installation and Running
 
@@ -118,6 +108,7 @@ It's open source and free.
   - Start Docker service or Docker Desktop.
 - Run `bun install` to install dependencies.
 - Run `bun dev` to start the development servers.
+- Please read the `docs/index.md` file about the next steps to take after setting up the project.
 
 ## License
 
