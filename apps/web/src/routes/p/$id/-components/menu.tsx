@@ -6,7 +6,12 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
-import { EllipsisVerticalIcon, FlagIcon, Share2Icon } from 'lucide-react';
+import {
+	EllipsisVerticalIcon,
+	FlagIcon,
+	SendIcon,
+	Share2Icon,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 async function handleShareClick() {
@@ -30,7 +35,20 @@ export function Menu() {
 				</Button>
 			</DropdownMenuTrigger>
 
-			<DropdownMenuContent className="w-48 space-y-2 p-2" align="end">
+			<DropdownMenuContent className="w-48 space-y-2" align="end">
+				<DropdownMenuItem className="cursor-pointer p-0">
+					<Button
+						className="flex w-full justify-start hover:no-underline"
+						variant="link"
+						size="sm"
+						asChild
+					>
+						<Link to="/chat">
+							<SendIcon className="mr-2 size-4" />
+							Send via Chat
+						</Link>
+					</Button>
+				</DropdownMenuItem>
 				<DropdownMenuItem className="cursor-pointer p-0">
 					<Button
 						className="flex w-full justify-start hover:no-underline"
