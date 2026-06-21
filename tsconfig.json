@@ -1,19 +1,59 @@
 {
 	"files": [],
 	"references": [
-		{ "path": "./packages/config" },
-		{ "path": "./packages/common" },
-		{ "path": "./packages/uid" },
-		{ "path": "./packages/db" },
-		{ "path": "./packages/cache" },
-		{ "path": "./packages/storage" },
-		{ "path": "./packages/auth" },
-		{ "path": "./packages/email" },
-		{ "path": "./packages/jobs" },
-		{ "path": "./packages/ui" },
-		{ "path": "./apps/api" },
-		{ "path": "./apps/fake" },
-		{ "path": "./apps/web" },
-		{ "path": "./apps/wiop" }
+		{
+			"path": "./packages/auth"
+		},
+		{
+			"path": "./packages/cache"
+		},
+		{
+			"path": "./packages/common"
+		},
+		{
+			"path": "./packages/config"
+		},
+		{
+			"path": "./packages/contract"
+		},
+		{
+			"path": "./packages/db"
+		},
+		{
+			"path": "./packages/email"
+		},
+		{
+			"path": "./packages/jobs"
+		},
+		{
+			"path": "./packages/storage"
+		},
+		{
+			"path": "./packages/ui"
+		},
+		{
+			"path": "./packages/uid"
+		},
+		{
+			"path": "./apps/admin"
+		},
+		{
+			"path": "./apps/api"
+		},
+		{
+			"path": "./apps/chat"
+		},
+		{
+			"path": "./apps/fake"
+		},
+		{
+			"path": "./apps/notifications"
+		},
+		{
+			"path": "./apps/web"
+		},
+		{
+			"path": "./apps/wiop"
+		}
 	]
 }
