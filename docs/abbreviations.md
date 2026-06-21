@@ -20,8 +20,10 @@ Here's a list of abbreviations used throughout the project (Note: List is not ex
 - `FB`: Facebook
 - `GIN`: Generalized Inverted Index
 - `hbs`: Handlebars file extension
+- `HMR`: Hot Module Replacement
 - `HTTP`: Hypertext Transfer Protocol
 - `ID`: Identifier
+- `ioc`: "Inversion of Control", although slightly differently used in the project.
 - `IP`: Internet Protocol
 - `JSON`: JavaScript Object Notation
 - `L1`: Layer 1 cache
@@ -57,4 +59,5 @@ Here's a list of abbreviations used throughout the project (Note: List is not ex
 - `url`: Uniform Resource Locator
 - `utf8`: Unicode Transformation Format – 8-bit
 - `uuid`: Universally unique identifier
+- `WIOP`: Wanderlust Image Optimization Proxy
 - `z`: Usually refers to the `zod` package.

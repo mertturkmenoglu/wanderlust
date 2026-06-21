@@ -6,12 +6,12 @@
 ## Definitions
 
 - We are using [Drizzle ORM](https://orm.drizzle.team/docs/overview).
-- Every definition is inside `src/db/schema/index.ts` file.
+- Every definition is inside `packages/db` directory.
 
 ## Migrations
 
 - In development, you can use `bun run db:push` command to directly change the database without creating migration files.
-- If you want to create migrations, you can run:
+- If you want to create migrations, you can run (inside `apps/api` directory):
 
 ```sh
 bun db:generate
@@ -29,7 +29,7 @@ and follow on-screen prompts.
 ## Writing Query Results to a File
 
 - Sometimes you may want to write the result of a query to a file.
-- You can do this by running the following command:
+- You can do this by running the following command (change the query as needed):
 
 ```bash
 docker exec -i wl-postgres psql -d wanderlust -U postgres -c "SELECT id FROM users" --csv -o /home/file.csv
