@@ -1,145 +1,103 @@
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
+import { implement } from '@orpc/server';
 import { ContainerModule } from 'inversify';
-import z from 'zod';
 import { container } from '@/ioc';
-import type { THonoContext } from '@/lib/context';
+import type { Context } from '@/lib/context';
+import { requireAuth } from '@/middlewares/authn';
+import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { contract } from './contract';
 import { ChatRepository } from './repository';
 import { ChatService } from './service';
 
 export function getRouter() {
+	const os = implement(contract).$context<Context>().use(requireAuth);
 	const svc = container.get(ChatService);
 
-	console.log('', svc == null ? '' : '')
+	return os.use(withErrorNormalization).router({
+		create: os.create.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.create(userId, input);
 
-	return new Hono<THonoContext>()
-		.post('/chat.create', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.open', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.get(
-			'/chat.info',
-			zValidator(
-				'query',
-				z.object({
-					q: z.string(),
-				}),
-			),
-			async (c) => {
-				return c.json(
-					{
-						message: 'Not implemented',
-					},
-					501,
-				);
-			},
-		)
-		.get(
-			'/chat.list',
-			zValidator(
-				'json',
-				z.object({
-					id: z.string(),
-				}),
-			),
-			async (c) => {
-				return c.json({
-					items: ['alice', 'barbara', 'charlie', 'diana'],
-				});
-			},
-		)
-		.post('/chat.update', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.leave', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.clear', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.markRead', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.pin', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.unpin', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.get('/chat.unread', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.mute', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.unmute', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		})
-		.post('/chat.delete', async (c) => {
-			return c.json(
-				{
-					message: 'Not implemented',
-				},
-				501,
-			);
-		});
+			return result;
+		}),
+		open: os.open.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.open(userId, input);
+
+			return result;
+		}),
+		info: os.info.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.info(userId, input);
+
+			return result;
+		}),
+		list: os.list.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.list(userId, input);
+
+			return result;
+		}),
+		update: os.update.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.update(userId, input);
+
+			return result;
+		}),
+		leave: os.leave.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.leave(userId, input);
+
+			return result;
+		}),
+		clear: os.clear.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.clear(userId, input);
+
+			return result;
+		}),
+		markRead: os.markRead.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.markRead(userId, input);
+
+			return result;
+		}),
+		pin: os.pin.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.pin(userId, input);
+
+			return result;
+		}),
+		unpin: os.unpin.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.unpin(userId, input);
+
+			return result;
+		}),
+		unread: os.unread.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.unread(userId, input);
+
+			return result;
+		}),
+		mute: os.mute.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.mute(userId, input);
+
+			return result;
+		}),
+		unmute: os.unmute.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.unmute(userId, input);
+
+			return result;
+		}),
+		delete: os.delete.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.delete(userId, input);
+
+			return result;
+		}),
+	});
 }
 
 export const module = new ContainerModule(({ bind }) => {
