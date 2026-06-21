@@ -1,13 +1,5 @@
 import { Button } from '@wanderlust/ui/components/button';
 import {
-	Empty,
-	EmptyContent,
-	EmptyDescription,
-	EmptyHeader,
-	EmptyMedia,
-	EmptyTitle,
-} from '@wanderlust/ui/components/empty';
-import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
@@ -15,16 +7,20 @@ import {
 } from '@wanderlust/ui/components/input-group';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
-import {
-	ArrowUpRightIcon,
-	EllipsisVerticalIcon,
-	PlusIcon,
-	SendIcon,
-} from 'lucide-react';
+import { EllipsisVerticalIcon, PlusIcon, SendIcon } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { useChatContext } from '@/stores/chat-context';
+import { NoMessagesView } from './no-messages';
+import { SelectChatView } from './select-chat';
 import type { ConversationPanelProps } from './types';
 
 export function Content({ className, ...props }: ConversationPanelProps) {
+	const ctx = useChatContext();
+
+	if (ctx.chatId === null) {
+		return <SelectChatView className={className} />;
+	}
+
 	return (
 		<div className={cn('flex flex-col', className)} {...props}>
 			<div className="flex flex-row items-center justify-between gap-4 p-4">
@@ -43,25 +39,7 @@ export function Content({ className, ...props }: ConversationPanelProps) {
 			<Separator className="" />
 
 			<div className="flex flex-1 flex-col items-center justify-center bg-muted p-4 text-muted-foreground">
-				<Empty>
-					<EmptyHeader>
-						<EmptyMedia variant="default">
-							<Logo variant="default" grayscale />
-						</EmptyMedia>
-						<EmptyTitle>No Messages Yet</EmptyTitle>
-						<EmptyDescription>
-							You haven&apos;t started any conversations yet. Get started by
-							sending a message to Clark first.
-						</EmptyDescription>
-					</EmptyHeader>
-					<EmptyContent className="flex-row justify-center gap-2">
-						Do not share any sensitive information in your messages. You can
-						learn more about how to safely use Wanderlust in our help centre.
-					</EmptyContent>
-					<Button variant="link" className="text-muted-foreground" size="sm">
-						Learn More <ArrowUpRightIcon />
-					</Button>
-				</Empty>
+				<NoMessagesView />
 			</div>
 
 			<Separator />
