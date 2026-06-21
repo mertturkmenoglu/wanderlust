@@ -4,28 +4,58 @@
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
 		"outDir": "dist",
-
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"skipLibCheck": true,
-		"types": ["vite/client"],
-		"rootDirs": ["."],
+		"types": [
+			"vite/client"
+		],
+		"rootDirs": [
+			"."
+		],
 		"paths": {
-			"@/*": ["./src/*"],
-			"@wanderlust/ui/*": ["../../packages/ui/src/*"],
-			"@wanderlust/notifications/*": ["../../apps/notifications/src/*"]
+			"@/*": [
+				"./src/*"
+			],
+			"@wanderlust/ui/*": [
+				"../../packages/ui/src/*"
+			],
+			"@wanderlust/notifications/*": [
+				"../../apps/notifications/src/*"
+			]
 		},
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
 	"references": [
-		{ "path": "../../apps/api" },
-		{ "path": "../../packages/auth" },
-		{ "path": "../../packages/ui" },
-		{ "path": "../../packages/config" },
-		{ "path": "../../apps/notifications" }
+		{
+			"path": "../../apps/api"
+		},
+		{
+			"path": "../../packages/auth"
+		},
+		{
+			"path": "../../packages/ui"
+		},
+		{
+			"path": "../../packages/config"
+		},
+		{
+			"path": "../../apps/notifications"
+		},
+		{
+			"path": "../../packages/contract"
+		}
 	],
-	"include": ["src/**/*.ts", "src/**/*.tsx", "*.ts", "*.d.ts"],
-	"exclude": ["node_modules", "dist"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"*.ts",
+		"*.d.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
 }
