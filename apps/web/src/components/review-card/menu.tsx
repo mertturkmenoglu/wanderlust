@@ -11,6 +11,7 @@ import {
 import {
 	EllipsisVerticalIcon,
 	FlagIcon,
+	SendIcon,
 	Share2Icon,
 	TrashIcon,
 } from 'lucide-react';
@@ -36,6 +37,15 @@ export function Menu({ review }: Props) {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56" align="end">
+				<DropdownMenuItem>
+					<Link to="/chat" className="flex w-full items-center justify-between">
+						Send via Chat
+						<DropdownMenuShortcut>
+							<SendIcon className="size-3" />
+						</DropdownMenuShortcut>
+					</Link>
+				</DropdownMenuItem>
+
 				<DropdownMenuItem asChild>
 					<Button
 						className="flex w-full cursor-pointer items-center justify-between"
