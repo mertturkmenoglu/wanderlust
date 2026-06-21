@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
+import type { reviews as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -9,7 +10,6 @@ import {
 import { nanoid } from '@wanderlust/uid';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 
 @injectable()
 export class ReviewsRepository {

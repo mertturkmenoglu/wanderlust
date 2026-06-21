@@ -1,16 +1,16 @@
 import { implement } from '@orpc/server';
+import { cities } from '@wanderlust/contract';
 import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { contract } from './contract';
 import { CitiesRepository } from './repository';
 import { CitiesService } from './service';
 
 export function getRouter() {
-	const os = implement(contract).$context<Context>();
+	const os = implement(cities.contract).$context<Context>();
 	const svc = container.get(CitiesService);
 
 	return os.use(withErrorNormalization).router({

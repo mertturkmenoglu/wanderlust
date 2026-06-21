@@ -1,11 +1,11 @@
 import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
+import type { reports as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { count, desc, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 
 @injectable()
 export class ReportsRepository {

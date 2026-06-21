@@ -1,6 +1,7 @@
 import { ORPCError } from '@orpc/client';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { Pagination } from '@wanderlust/common';
+import type { users as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -13,7 +14,6 @@ import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService, type ActivityItem } from '@/lib/activities';
 import { FavoritesRepository } from '../favorites/repository';
-import type * as dto from './dto';
 
 @injectable()
 export class UsersRepository {
@@ -259,7 +259,10 @@ export class UsersRepository {
 
 		const placeIds = Array.from(new Set(topPlaces.map((tp) => tp.placeId)));
 
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(userId, placeIds);
+		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+			userId,
+			placeIds,
+		);
 
 		return {
 			topPlaces: topPlaces.map((tp) => ({
@@ -356,10 +359,7 @@ export class UsersRepository {
 				createdAt: schema.users.createdAt,
 			})
 			.from(schema.follows)
-			.innerJoin(
-				schema.users,
-				eq(schema.users.id, schema.follows.followingId),
-			)
+			.innerJoin(schema.users, eq(schema.users.id, schema.follows.followingId))
 			.where(
 				and(
 					eq(schema.follows.followerId, userId),

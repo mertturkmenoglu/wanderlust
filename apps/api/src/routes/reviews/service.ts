@@ -2,6 +2,7 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { reviews as dto } from '@wanderlust/contract';
 import {
 	createPathname,
 	getFilenameFromUrl,
@@ -12,7 +13,6 @@ import { nanoid } from '@wanderlust/uid';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
-import type * as dto from './dto';
 import { ReviewsRepository } from './repository';
 
 @injectable()

@@ -1,7 +1,7 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { aggregator as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { FavoritesRepository } from '../favorites/repository';
-import type * as dto from './dto';
 import { AggregatorRepository } from './repository';
 
 @injectable()

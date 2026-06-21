@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
+import type { lists as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -13,7 +14,6 @@ import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
-import type * as dto from './dto';
 
 @injectable()
 export class ListsRepository {
@@ -285,7 +285,6 @@ export class ListsRepository {
 		return {
 			list,
 		};
-
 	}
 
 	async _delete(userId: string, data: dto.DeleteInput) {
@@ -373,7 +372,6 @@ export class ListsRepository {
 		return {
 			item: listItem,
 		};
-
 	}
 
 	async updateItems(userId: string, data: dto.UpdateItemsInput) {
@@ -438,7 +436,6 @@ export class ListsRepository {
 		return {
 			list: updatedList,
 		};
-
 	}
 
 	async removeItem(userId: string, data: dto.RemoveItemInput) {

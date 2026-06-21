@@ -1,6 +1,6 @@
+import type { lists as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
-import type * as dto from './dto';
 import { ListsRepository } from './repository';
 
 @injectable()
@@ -8,7 +8,7 @@ export class ListsService {
 	constructor(
 		@inject(ListsRepository) private readonly repo: ListsRepository,
 		@inject(ActivitiesService) private readonly activities: ActivitiesService,
-	) {}
+	) { }
 
 	async listAll(
 		userId: string,

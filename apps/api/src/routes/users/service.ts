@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { ORPCError } from '@orpc/client';
+import type { users as dto } from '@wanderlust/contract';
 import {
 	createPathname,
 	getFilenameFromUrl,
@@ -9,7 +10,6 @@ import {
 import { nanoid } from '@wanderlust/uid';
 import { fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 import { UsersRepository } from './repository';
 
 @injectable()

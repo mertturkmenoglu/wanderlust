@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
+import type { trips as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -11,7 +12,6 @@ import { and, count, desc, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { FavoritesRepository } from '../favorites/repository';
-import type * as dto from './dto';
 
 @injectable()
 export class TripsRepository {
@@ -39,7 +39,10 @@ export class TripsRepository {
 
 		const placeIds = Array.from(new Set(res.locations.map((l) => l.placeId)));
 
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(userId, placeIds);
+		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+			userId,
+			placeIds,
+		);
 
 		return {
 			...res,
@@ -590,7 +593,7 @@ export class TripsRepository {
 
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(userId, [
 			location.placeId,
-		])
+		]);
 
 		return {
 			...location,

@@ -1,11 +1,11 @@
 import { ORPCError } from '@orpc/client';
+import type { trips as dto } from '@wanderlust/contract';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import * as authz from './authz';
-import type * as dto from './dto';
 import { TripsRepository } from './repository';
 
 @injectable()

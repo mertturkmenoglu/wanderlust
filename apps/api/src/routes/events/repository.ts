@@ -1,11 +1,11 @@
 import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
+import type { events as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 
 @injectable()
 export class EventsRepository {

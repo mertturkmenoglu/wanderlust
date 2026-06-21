@@ -1,7 +1,10 @@
-import type { Comment, ExtendedTrip } from './dto';
+import type { trips as dto } from '@wanderlust/contract';
 
 // Check if the action user is the trip owner or an editor.
-export function isPrivilegedUser(trip: ExtendedTrip, userId: string): boolean {
+export function isPrivilegedUser(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	if (trip.ownerId === userId) {
 		return true;
 	}
@@ -15,11 +18,11 @@ export function isPrivilegedUser(trip: ExtendedTrip, userId: string): boolean {
 	return false;
 }
 
-export function isOwner(trip: ExtendedTrip, userId: string): boolean {
+export function isOwner(trip: dto.ExtendedTrip, userId: string): boolean {
 	return trip.ownerId === userId;
 }
 
-export function isParticipant(trip: ExtendedTrip, userId: string): boolean {
+export function isParticipant(trip: dto.ExtendedTrip, userId: string): boolean {
 	for (const participant of trip.participants) {
 		if (participant.userId === userId) {
 			return true;
@@ -30,24 +33,30 @@ export function isParticipant(trip: ExtendedTrip, userId: string): boolean {
 }
 
 export function isOwnerOrParticipant(
-	trip: ExtendedTrip,
+	trip: dto.ExtendedTrip,
 	userId: string,
 ): boolean {
 	return isOwner(trip, userId) || isParticipant(trip, userId);
 }
 
-export function canCreateInvite(trip: ExtendedTrip, userId: string): boolean {
+export function canCreateInvite(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	// Only privileged users can create invites.
 	return isPrivilegedUser(trip, userId);
 }
 
-export function canDeleteInvite(trip: ExtendedTrip, userId: string): boolean {
+export function canDeleteInvite(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	// Only privileged users can delete invites.
 	return isPrivilegedUser(trip, userId);
 }
 
 export function canDeleteParticipant(
-	trip: ExtendedTrip,
+	trip: dto.ExtendedTrip,
 	userId: string,
 	participantId: string,
 ): boolean {
@@ -77,7 +86,7 @@ export function canDeleteParticipant(
 	return false;
 }
 
-export function canRead(trip: ExtendedTrip, userId: string): boolean {
+export function canRead(trip: dto.ExtendedTrip, userId: string): boolean {
 	switch (trip.visibilityLevel) {
 		case 'public':
 			return true;
@@ -92,23 +101,32 @@ export function canRead(trip: ExtendedTrip, userId: string): boolean {
 	}
 }
 
-export function canCreateComment(trip: ExtendedTrip, userId: string): boolean {
+export function canCreateComment(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	return isOwnerOrParticipant(trip, userId);
 }
 
-export function canReadComment(trip: ExtendedTrip, userId: string): boolean {
+export function canReadComment(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	// Comment read privileges are the same as trip read privileges
 	return canRead(trip, userId);
 }
 
-export function canUpdateComment(comment: Comment, userId: string): boolean {
+export function canUpdateComment(
+	comment: dto.Comment,
+	userId: string,
+): boolean {
 	// Only the comment author can update the comment
 	return comment.userId === userId;
 }
 
 export function canDeleteComment(
-	trip: ExtendedTrip,
-	comment: Comment,
+	trip: dto.ExtendedTrip,
+	comment: dto.Comment,
 	userId: string,
 ): boolean {
 	// Trip owner and editors can delete any comment
@@ -121,29 +139,38 @@ export function canDeleteComment(
 }
 
 export function canManageAmenities(
-	trip: ExtendedTrip,
+	trip: dto.ExtendedTrip,
 	userId: string,
 ): boolean {
 	// Only privileged users can manage amenities
 	return isPrivilegedUser(trip, userId);
 }
 
-export function canUpdateTrip(trip: ExtendedTrip, userId: string): boolean {
+export function canUpdateTrip(trip: dto.ExtendedTrip, userId: string): boolean {
 	// Currently, only the owner can update the trip
 	return isOwner(trip, userId);
 }
 
-export function canCreateLocation(trip: ExtendedTrip, userId: string): boolean {
+export function canCreateLocation(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	// Only privileged users can create locations
 	return isPrivilegedUser(trip, userId);
 }
 
-export function canUpdateLocation(trip: ExtendedTrip, userId: string): boolean {
+export function canUpdateLocation(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	// Only privileged users can update locations
 	return isPrivilegedUser(trip, userId);
 }
 
-export function canDeleteLocation(trip: ExtendedTrip, userId: string): boolean {
+export function canDeleteLocation(
+	trip: dto.ExtendedTrip,
+	userId: string,
+): boolean {
 	// Only privileged users can delete locations
 	return isPrivilegedUser(trip, userId);
 }

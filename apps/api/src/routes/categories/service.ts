@@ -1,5 +1,5 @@
+import type { categories as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 import { CategoriesRepository } from './repository';
 
 @injectable()
@@ -7,7 +7,7 @@ export class CategoriesService {
 	constructor(
 		@inject(CategoriesRepository)
 		private readonly repository: CategoriesRepository,
-	) {}
+	) { }
 
 	async list(): Promise<dto.ListOutput> {
 		const result = await this.repository.list();

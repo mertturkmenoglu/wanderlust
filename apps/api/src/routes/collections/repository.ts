@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
+import type { collections as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -14,7 +15,6 @@ import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
-import type * as dto from './dto';
 
 @injectable()
 export class CollectionsRepository {

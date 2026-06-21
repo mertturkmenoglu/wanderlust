@@ -1,8 +1,8 @@
+import type { categories as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 
 @injectable()
 export class CategoriesRepository {

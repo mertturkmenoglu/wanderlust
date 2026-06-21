@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
+import type { places as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -8,7 +9,6 @@ import {
 } from '@wanderlust/db';
 import { and, eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 
 @injectable()
 export class PlacesRepository {

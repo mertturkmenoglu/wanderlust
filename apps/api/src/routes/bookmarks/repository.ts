@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
+import type { bookmarks as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
@@ -10,7 +11,6 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { FavoritesRepository } from '../favorites/repository';
-import type * as dto from './dto';
 
 @injectable()
 export class BookmarksRepository {

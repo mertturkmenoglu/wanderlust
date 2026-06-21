@@ -1,5 +1,5 @@
+import type { collections as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 import { CollectionsRepository } from './repository';
 
 @injectable()

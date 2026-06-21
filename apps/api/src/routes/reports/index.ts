@@ -1,16 +1,18 @@
 import { implement } from '@orpc/server';
+import { reports } from '@wanderlust/contract';
 import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { contract } from './contract';
 import { ReportsRepository } from './repository';
 import { ReportsService } from './service';
 
 export function getRouter() {
-	const os = implement(contract).$context<AuthContext>().use(requireAuth);
+	const os = implement(reports.contract)
+		.$context<AuthContext>()
+		.use(requireAuth);
 	const svc = container.get(ReportsService);
 
 	return os.use(withErrorNormalization).router({

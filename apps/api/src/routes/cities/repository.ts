@@ -1,9 +1,9 @@
 import { ORPCError } from '@orpc/server';
+import type { cities as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { eq, inArray } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import type * as dto from './dto';
 
 @injectable()
 export class CitiesRepository {
