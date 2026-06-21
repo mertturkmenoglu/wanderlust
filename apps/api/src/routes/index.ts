@@ -1,5 +1,3 @@
-export type { AppContract, AppRouterClient } from './client-types';
-
 import * as aggregator from './aggregator';
 import * as amenities from './amenities';
 import * as bookmarks from './bookmarks';
@@ -16,7 +14,7 @@ import * as reviews from './reviews';
 import * as trips from './trips';
 import * as users from './users';
 
-type AppRouterShape = {
+export type AppRouter = {
 	aggregator: ReturnType<typeof aggregator.getRouter>;
 	amenities: ReturnType<typeof amenities.getRouter>;
 	bookmarks: ReturnType<typeof bookmarks.getRouter>;
@@ -32,9 +30,9 @@ type AppRouterShape = {
 	reviews: ReturnType<typeof reviews.getRouter>;
 	trips: ReturnType<typeof trips.getRouter>;
 	users: ReturnType<typeof users.getRouter>;
-};
+}
 
-export function getAppRouter(): AppRouterShape {
+export function getAppRouter(): AppRouter {
 	return {
 		aggregator: aggregator.getRouter(),
 		amenities: amenities.getRouter(),
@@ -69,7 +67,3 @@ export const modules = [
 	favorites.module,
 	events.module,
 ];
-
-// export type AppRouter = ReturnType<typeof getAppRouter>;
-// export type AppRouterClient = RouterClient<AppRouter>;
-export type AppRouter = AppRouterShape;
