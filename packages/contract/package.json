@@ -1,0 +1,25 @@
+{
+	"name": "@wanderlust/contract",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"build-types": "tsc --build"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"zod": "catalog:",
+		"@wanderlust/common": "workspace:*",
+		"@orpc/contract": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}
