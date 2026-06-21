@@ -14,8 +14,4 @@
 
 ## Next Steps
 
-Inside the `docs` folder, you can find documentation files.
-
-Read these documentation files in this specific order:
-
-- `ipx.md`
+Please read the `docs/index.md` file about the next steps to take after setting up the project.
