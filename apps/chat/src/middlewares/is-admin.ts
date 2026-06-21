@@ -1,17 +1,22 @@
-import { createMiddleware } from 'hono/factory';
-import type { THonoContext } from '@/lib/context';
+import { ORPCError, os } from '@orpc/server';
+import type { AuthContext } from '@/lib/context';
 
-export const isAdmin = createMiddleware<THonoContext>(async (c, next) => {
-	const user = c.get('user');
+export const isAdmin = os
+	.$context<AuthContext>()
+	.middleware(async ({ context, next }) => {
+		const user = context.session?.user;
 
-	if (user.role !== 'admin') {
-		return c.json(
-			{
-				message: 'Forbidden',
-			},
-			401,
-		);
-	}
+		if (!user) {
+			throw new ORPCError('UNAUTHORIZED');
+		}
 
-	await next();
-});
+		const isAdmin = user.role === 'admin';
+
+		if (!isAdmin) {
+			throw new ORPCError('FORBIDDEN');
+		}
+
+		return next({
+			context,
+		});
+	});

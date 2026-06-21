@@ -1,20 +1,17 @@
-import { AuthService } from '@wanderlust/auth';
-import { createMiddleware } from 'hono/factory';
-import { container } from '@/ioc';
-import type { THonoContext } from '@/lib/context';
+import { ORPCError, os } from '@orpc/server';
+import type { Context } from '@/lib/context';
 
-export const isAuth = createMiddleware<THonoContext>(async (c, next) => {
-	const auth = container.get(AuthService).get();
+export const requireAuth = os
+	.$context<Context>()
+	.middleware(async ({ context, next }) => {
+		if (!context.session?.user) {
+			throw new ORPCError('UNAUTHORIZED');
+		}
 
-	const session = await auth.api.getSession({
-		headers: c.req.raw.headers,
+		return next({
+			context: {
+				...context,
+				session: context.session,
+			},
+		});
 	});
-
-	if (!session) {
-		return c.json({ message: 'Unauthorized' }, 401);
-	}
-
-	c.set('user', session.user);
-	c.set('session', session.session);
-	await next();
-});
