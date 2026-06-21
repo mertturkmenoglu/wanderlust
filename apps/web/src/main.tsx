@@ -14,12 +14,11 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { ErrorComponent } from './components/error-component';
-import { orpc, queryClient } from './lib/orpc';
+import { queryClient } from './lib/query-client';
 
 const router = createRouter({
 	routeTree,
 	context: {
-		orpc,
 		queryClient,
 	},
 	defaultPreload: false,
