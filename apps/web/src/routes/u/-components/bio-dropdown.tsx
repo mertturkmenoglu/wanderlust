@@ -3,37 +3,64 @@ import { Button } from '@wanderlust/ui/components/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
-import { cn } from '@wanderlust/ui/lib/utils';
-import { EllipsisVerticalIcon, FlagIcon } from 'lucide-react';
+import {
+	BanIcon,
+	EllipsisVerticalIcon,
+	FlagIcon,
+	MapPlusIcon,
+	Share2Icon,
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+async function handleShareClick() {
+	await navigator.clipboard.writeText(globalThis.window.location.href);
+	toast.success('Link copied to clipboard!');
+}
 
 export function BioDropdown() {
 	const { profile, meta } = useLoaderData({ from: '/u/$username' });
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger asChild className="block">
-				<Button
-					className="flex items-center justify-center"
-					variant="outline"
-					size="icon"
-				>
-					<EllipsisVerticalIcon className="size-6 text-black" />
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline" size="icon">
+					<EllipsisVerticalIcon />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-48 space-y-2 p-2" align="end">
-				<DropdownMenuItem className="cursor-pointer p-0">
-					<Button
-						className={cn('flex w-full justify-start hover:no-underline', {
-							'disabled cursor-not-allowed bg-muted text-muted-foreground hover:text-muted-foreground':
-								meta.isSelf,
-						})}
-						variant={meta.isSelf ? 'ghost' : 'link'}
-						size="sm"
-						asChild
+			<DropdownMenuContent className="w-48" align="end">
+				<DropdownMenuGroup>
+					<DropdownMenuItem asChild>
+						<button type="button" className="w-full" onClick={handleShareClick}>
+							<Share2Icon />
+							<span className="ml-2">Share</span>
+						</button>
+					</DropdownMenuItem>
+
+					<DropdownMenuItem asChild>
+						<button
+							type="button"
+							className="w-full disabled:text-muted-foreground"
+							onClick={() => {}}
+							disabled={meta.isSelf}
+						>
+							<MapPlusIcon />
+							<span className="ml-2">Invite to trip</span>
+						</button>
+					</DropdownMenuItem>
+				</DropdownMenuGroup>
+
+				<DropdownMenuSeparator />
+
+				<DropdownMenuGroup>
+					<DropdownMenuItem
 						disabled={meta.isSelf}
+						variant="destructive"
+						asChild
 					>
 						<Link
 							to="/report"
@@ -42,11 +69,22 @@ export function BioDropdown() {
 								type: 'user',
 							}}
 						>
-							<FlagIcon className="mr-2 size-4" />
-							Report
+							<FlagIcon />
+							<span className="ml-2">Report</span>
 						</Link>
-					</Button>
-				</DropdownMenuItem>
+					</DropdownMenuItem>
+
+					<DropdownMenuItem
+						disabled={meta.isSelf}
+						variant="destructive"
+						asChild
+					>
+						<button type="button" className="w-full" onClick={() => {}}>
+							<BanIcon />
+							<span className="ml-2">Block</span>
+						</button>
+					</DropdownMenuItem>
+				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
