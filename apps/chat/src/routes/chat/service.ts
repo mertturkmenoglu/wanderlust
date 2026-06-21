@@ -33,6 +33,20 @@ export class ChatService {
 		};
 	}
 
+	async hasDirectChat(
+		userId: string,
+		data: dto.HasDirectChatInput,
+	): Promise<dto.HasDirectChatOutput> {
+		const hasDirectChat = await this.repository.hasDirectChat(
+			userId,
+			data.id,
+		);
+
+		return {
+			hasDirectChat,
+		};
+	}
+
 	async create(
 		userId: string,
 		data: dto.CreateInput,

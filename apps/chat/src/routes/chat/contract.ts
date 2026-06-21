@@ -36,6 +36,23 @@ export const contract = {
 		successDescription: 'OK',
 		tags: ['Chat'],
 	}),
+	hasDirectChat: oc.input(dto.hasDirectChatInput).output(dto.hasDirectChatOutput).errors({
+		BAD_REQUEST: {},
+		UNAUTHORIZED: {},
+		FORBIDDEN: {},
+		NOT_FOUND: {},
+		CONFLICT: {},
+		UNPROCESSABLE_CONTENT: {},
+		INTERNAL_SERVER_ERROR: {},
+	}).route({
+		method: 'GET',
+		path: '/chats/direct/:userId',
+		summary: 'Check if a direct chat exists',
+		description: 'Checks if a direct chat exists between the authenticated user and the specified user.',
+		successStatus: 200,
+		successDescription: 'OK',
+		tags: ['Chat'],
+	}),
 	info: oc.input(dto.infoInput).output(dto.infoOutput).errors({
 		BAD_REQUEST: {},
 		UNAUTHORIZED: {},

@@ -25,6 +25,12 @@ export function getRouter() {
 
 			return result;
 		}),
+		hasDirectChat: os.hasDirectChat.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.hasDirectChat(userId, input);
+
+			return result;
+		}),
 		info: os.info.handler(async ({ input, context }) => {
 			const userId = context.session.user.id;
 			const result = await svc.info(userId, input);

@@ -193,4 +193,13 @@ export class ChatRepository {
 
 		return chat;
 	}
+
+	async hasDirectChat(userId: string, otherUserId: string): Promise<dto.HasDirectChatOutput['hasDirectChat']> {
+		const directKey = [userId, otherUserId].toSorted().join(':');
+		const existingChat = await this.db.query.chats.findFirst({
+			where: (t, { eq }) => eq(t.directKey, directKey),
+		});
+
+		return !!existingChat;
+	}
 }

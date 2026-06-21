@@ -39,6 +39,18 @@ export const openOutput = z.object({
 
 export type OpenOutput = z.infer<typeof openOutput>;
 
+export const hasDirectChatInput = z.object({
+	id: z.string(),
+});
+
+export type HasDirectChatInput = z.infer<typeof hasDirectChatInput>;
+
+export const hasDirectChatOutput = z.object({
+	hasDirectChat: z.boolean(),
+});
+
+export type HasDirectChatOutput = z.infer<typeof hasDirectChatOutput>;
+
 export const infoInput = z.object({
 	id: z.string(),
 });
