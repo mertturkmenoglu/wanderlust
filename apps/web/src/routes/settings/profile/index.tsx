@@ -6,13 +6,14 @@ import {
 	FieldSet,
 } from '@wanderlust/ui/components/field';
 import { Separator } from '@wanderlust/ui/components/separator';
+import { orpc } from '@/lib/orpc';
 import { SettingsField } from '../-components/field';
 import { Form } from './-form';
 import { UpdateImage } from './-update-image';
 
 export const Route = createFileRoute('/settings/profile/')({
 	component: RouteComponent,
-	loader: ({ context: { orpc, queryClient } }) => {
+	loader: ({ context: { queryClient } }) => {
 		return queryClient.ensureQueryData(
 			orpc.users.getMe.queryOptions({
 				input: {},
