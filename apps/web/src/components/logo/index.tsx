@@ -1,7 +1,7 @@
 import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 
-type Props = {
+export type LogoProps = {
 	variant?: 'default' | 'large' | 'medium' | 'small' | 'xs';
 	grayscale?: boolean;
 	className?: string;
@@ -12,7 +12,7 @@ export function Logo({
 	grayscale = false,
 	className,
 	...props
-}: Props) {
+}: LogoProps) {
 	const height = (() => {
 		switch (variant) {
 			case 'xs':
