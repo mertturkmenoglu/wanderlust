@@ -1,7 +1,7 @@
 import { Link, type LinkOptions } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { Logo } from '../logo';
+import { Logo, type LogoProps } from '../logo';
 
 type BackLink = LinkOptions & {
 	text: string;
@@ -20,6 +20,7 @@ type Props = {
 	success?: React.ReactNode;
 	empty?: React.ReactNode;
 	backLink?: BackLink | false;
+	logoProps?: Partial<LogoProps>;
 };
 
 type Variant = 'error' | 'success' | 'empty';
@@ -30,6 +31,7 @@ export function AppMessage({
 	success,
 	empty,
 	backLink = false,
+	logoProps,
 }: Readonly<Props>) {
 	const variant: Variant = error ? 'error' : success ? 'success' : 'empty';
 
@@ -49,13 +51,18 @@ export function AppMessage({
 				grayscale={variant !== 'success'}
 				className={cn(classNames?.logo)}
 				variant="default"
+				{...logoProps}
 			/>
 			<div
-				className={cn('font-semibold text-lg', {
-					'text-destructive': variant === 'error',
-					'text-primary': variant === 'success',
-					'text-muted-foreground': variant === 'empty',
-				})}
+				className={cn(
+					'font-semibold text-lg',
+					{
+						'text-destructive': variant === 'error',
+						'text-primary': variant === 'success',
+						'text-muted-foreground': variant === 'empty',
+					},
+					classNames?.[variant],
+				)}
 			>
 				{message}
 			</div>
@@ -64,9 +71,12 @@ export function AppMessage({
 					{...backLink}
 					className={buttonVariants({
 						variant: 'link',
-						className: cn({
-							'text-destructive': variant === 'error',
-						}),
+						className: cn(
+							{
+								'text-destructive': variant === 'error',
+							},
+							classNames?.backLink,
+						),
 					})}
 				>
 					{backLink.text}
