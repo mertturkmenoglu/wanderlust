@@ -9,6 +9,7 @@ import {
 } from '@wanderlust/ui/components/input-group';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { PlusIcon, SearchIcon, Settings2Icon } from 'lucide-react';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { useChatContext } from '@/stores/chat-context';
 import { NewChatDialog } from './new-chat-dialog';
 
@@ -63,7 +64,9 @@ export function Header({ className }: Props) {
 				</ButtonGroup>
 			</div>
 
-			{ctx.dialogType === 'new' && <NewChatDialog />}
+			<SuspenseWrapper>
+				{ctx.dialogType === 'new' && <NewChatDialog />}
+			</SuspenseWrapper>
 		</div>
 	);
 }

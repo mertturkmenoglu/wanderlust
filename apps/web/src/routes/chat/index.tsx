@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Dialog } from '@wanderlust/ui/components/dialog';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { authGuard } from '@/lib/auth';
 import { ChatContextProvider, useChatContext } from '@/stores/chat-context';
 import { ConversationPanel } from './-components/conversation-panel';
@@ -33,7 +34,9 @@ function Container() {
 			<div className="flex min-h-0 flex-1 items-stretch rounded-lg border border-border">
 				<SidePanel className="max-w-md rounded-r-none border-border border-r" />
 
-				<ConversationPanel className="flex-1" />
+				<SuspenseWrapper>
+					<ConversationPanel className="flex-1" />
+				</SuspenseWrapper>
 			</div>
 		</Dialog>
 	);
