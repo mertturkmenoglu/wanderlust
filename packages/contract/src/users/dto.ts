@@ -43,6 +43,16 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
+export const getByIdInput = z.object({
+	id: z.string().min(1),
+});
+
+export type GetByIdInput = z.infer<typeof getByIdInput>;
+
+export const getByIdOutput = getOutput;
+
+export type GetByIdOutput = z.infer<typeof getByIdOutput>;
+
 export const getMeInput = z.object({});
 
 export type GetMeInput = z.infer<typeof getMeInput>;
