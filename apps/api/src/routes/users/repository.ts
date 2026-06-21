@@ -108,6 +108,40 @@ export class UsersRepository {
 		};
 	}
 
+	async getById(userId: string, data: dto.GetByIdInput) {
+		const result = await this.db.query.users.findFirst({
+			where: (t, { eq }) => eq(t.id, data.id),
+		});
+
+		if (!result) {
+			throw new ORPCError('NotFound', {
+				message: `User with id ${data.id} not found`,
+			});
+		}
+
+		const isSelf = result.id === userId;
+
+		let isFollowing = false;
+
+		if (!isSelf) {
+			// Check if the requesting user is following the target user
+			const follow = await this.db.query.follows.findFirst({
+				where: (t, { eq, and }) =>
+					and(eq(t.followerId, userId), eq(t.followingId, result.id)),
+			});
+
+			isFollowing = follow !== undefined;
+		}
+
+		return {
+			profile: result,
+			meta: {
+				isFollowing,
+				isSelf,
+			},
+		};
+	}
+
 	async getMe(userId: string) {
 		const result = await this.db.query.users.findFirst({
 			where: (t, { eq }) => eq(t.id, userId),

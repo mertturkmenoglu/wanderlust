@@ -94,6 +94,15 @@ export class UsersService {
 		};
 	}
 
+	async getById(userId: string, data: dto.GetByIdInput): Promise<dto.GetByIdOutput> {
+		const result = await this.repo.getById(userId, data);
+
+		return {
+			profile: result.profile,
+			meta: result.meta,
+		};
+	}
+
 	async getMe(userId: string): Promise<dto.GetMeOutput> {
 		const result = await this.repo.getMe(userId);
 

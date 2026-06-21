@@ -25,6 +25,12 @@ export function getRouter() {
 
 			return result;
 		}),
+		getById: os.getById.handler(async ({ input, context }) => {
+			const userId = context.session.user.id;
+			const result = await svc.getById(userId, input);
+
+			return result;
+		}),
 		getMe: os.getMe.handler(async ({ context }) => {
 			const userId = context.session.user.id;
 			const result = await svc.getMe(userId);
