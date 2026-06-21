@@ -2,12 +2,13 @@ import { createFileRoute } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
 import { CategoriesBanner, TripPlannerCta } from '@/components/banner/common';
 import { ReviewCard } from '@/components/review-card';
+import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/p/$id/reviews/$reviewId/')({
 	component: RouteComponent,
 	loader: ({ params, context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.reviews.get.queryOptions({
+			orpc.reviews.get.queryOptions({
 				input: {
 					id: params.reviewId,
 				},

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { AssetGrid } from '@/components/asset-grid';
 import { AppBentoBanner } from '@/components/banner/common';
 import { ErrorComponent } from '@/components/error-component';
+import { orpc } from '@/lib/orpc';
 import { Accolades } from './-components/accolades';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
@@ -30,7 +31,7 @@ export const Route = createFileRoute('/p/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			context.orpc.places.get.queryOptions({
+			orpc.places.get.queryOptions({
 				input: {
 					id: params.id,
 				},

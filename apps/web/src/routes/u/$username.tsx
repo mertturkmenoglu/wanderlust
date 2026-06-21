@@ -1,11 +1,12 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { orpc } from '@/lib/orpc';
 import { Header } from './-components/header';
 
 export const Route = createFileRoute('/u/$username')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			context.orpc.users.get.queryOptions({
+			orpc.users.get.queryOptions({
 				input: {
 					username: params.username,
 				},

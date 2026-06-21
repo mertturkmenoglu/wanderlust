@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
+import { orpc } from '@/lib/orpc';
 import { EmptyState } from './-empty';
 import { InviteItem } from './-item';
 
@@ -7,7 +8,7 @@ export const Route = createFileRoute('/trips/invites/')({
 	component: RouteComponent,
 	loader: ({ context }) => {
 		return context.queryClient.ensureQueryData(
-			context.orpc.trips.listMyInvites.queryOptions({
+			orpc.trips.listMyInvites.queryOptions({
 				input: {},
 			}),
 		);

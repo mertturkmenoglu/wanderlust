@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { orpc } from '@/lib/orpc';
 import { EmptyState } from './-empty';
 import { Header } from './-header';
 import { useCollectionQuery } from './-hooks';
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/c/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		context.queryClient.prefetchQuery(
-			context.orpc.collections.get.queryOptions({
+			orpc.collections.get.queryOptions({
 				input: {
 					id: params.id,
 				},

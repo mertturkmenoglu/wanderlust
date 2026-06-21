@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { CategoriesBanner } from '@/components/banner/common';
+import { orpc } from '@/lib/orpc';
 import { CityItem } from './-item';
 import { groupCitiesByCountry } from './-utils';
 
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/cities/list/')({
 	component: RouteComponent,
 	loader: ({ context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.cities.list.queryOptions({
+			orpc.cities.list.queryOptions({
 				input: {},
 			}),
 		),

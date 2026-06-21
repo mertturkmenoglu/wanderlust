@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { ErrorComponent } from '@/components/error-component';
+import { orpc } from '@/lib/orpc';
 import { Header } from './-header';
 import { schema } from './-hooks';
 import { TripTabs } from './-tabs';
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/trips/$id')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
-			context.orpc.trips.get.queryOptions({
+			orpc.trips.get.queryOptions({
 				input: {
 					id: params.id,
 				},

@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ItemGroup } from '@wanderlust/ui/components/item';
 import { z } from 'zod';
 import { Pagination } from '@/components/pagination';
+import { orpc } from '@/lib/orpc';
 import { EmptyState } from './-empty';
 import { FollowersItem } from './-item';
 
@@ -17,7 +18,7 @@ export const Route = createFileRoute('/u/$username/followers/')({
 	}),
 	loader: ({ context, params, deps }) => {
 		return context.queryClient.ensureQueryData(
-			context.orpc.users.listFollowers.queryOptions({
+			orpc.users.listFollowers.queryOptions({
 				input: {
 					username: params.username,
 					page: deps.page,

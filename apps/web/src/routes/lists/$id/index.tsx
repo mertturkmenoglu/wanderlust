@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { authGuard } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { ListContextProvider } from './-context';
 import { EmptyState } from './-empty';
 import { Header } from './-header';
@@ -12,7 +13,7 @@ export const Route = createFileRoute('/lists/$id/')({
 	beforeLoad: authGuard,
 	loader: ({ context, params }) => {
 		context.queryClient.prefetchQuery(
-			context.orpc.lists.get.queryOptions({
+			orpc.lists.get.queryOptions({
 				input: {
 					id: params.id,
 				},

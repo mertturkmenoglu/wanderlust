@@ -11,12 +11,10 @@ import { Toaster } from 'sonner';
 import { ErrorComponent } from '@/components/error-component';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
-import type { orpc } from '@/lib/orpc';
 import { NotificationsContextProvider } from '@/stores/notifications-context';
 
 interface MyRouterContext {
 	queryClient: QueryClient;
-	orpc: typeof orpc;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({

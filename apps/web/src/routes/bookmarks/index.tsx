@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { authGuard } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { Content } from './-content';
 import { BookmarksContextProvider } from './-context';
 import { bookmarksSearchSchema } from './-hooks';
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/bookmarks/')({
 	loaderDeps: ({ search }) => ({ search }),
 	loader: ({ context, deps: { search } }) => {
 		context.queryClient.prefetchQuery(
-			context.orpc.bookmarks.list.queryOptions({
+			orpc.bookmarks.list.queryOptions({
 				input: {
 					page: search.page,
 					pageSize: search.pageSize,

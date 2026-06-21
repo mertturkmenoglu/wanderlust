@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
 import { authGuard } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { DateInfo } from './-date-info';
 import { EditInfo } from './-edit-info';
 import { EditItems } from './-edit-items';
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/lists/$id/edit/')({
 	beforeLoad: authGuard,
 	loader: ({ context, params }) => {
 		context.queryClient.prefetchQuery(
-			context.orpc.lists.get.queryOptions({
+			orpc.lists.get.queryOptions({
 				input: {
 					id: params.id,
 				},

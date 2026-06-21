@@ -4,6 +4,7 @@ import { BackLink } from '@/components/back-link';
 import { PlaceCard } from '@/components/place-card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { authGuard } from '@/lib/auth';
+import { orpc } from '@/lib/orpc';
 import { Content } from './-content';
 import { CreateReviewContextProvider } from './-context';
 import { useCreateReviewForm } from './-hooks';
@@ -13,7 +14,7 @@ export const Route = createFileRoute('/p/$id/reviews/new/')({
 	beforeLoad: authGuard,
 	loader: ({ params, context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.places.get.queryOptions({
+			orpc.places.get.queryOptions({
 				input: {
 					id: params.id,
 				},

@@ -2,11 +2,12 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Item, ItemTitle } from '@wanderlust/ui/components/item';
 import { ipx } from '@/lib/ipx';
+import { orpc } from '@/lib/orpc';
 import { serializeParams } from '@/lib/search';
 
 export const Route = createFileRoute('/categories/')({
 	component: RouteComponent,
-	loader: ({ context: { queryClient, orpc } }) =>
+	loader: ({ context: { queryClient } }) =>
 		queryClient.ensureQueryData(
 			orpc.categories.list.queryOptions({
 				input: {},

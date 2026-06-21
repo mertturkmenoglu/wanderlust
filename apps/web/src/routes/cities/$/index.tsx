@@ -30,7 +30,7 @@ export const Route = createFileRoute('/cities/$/')({
 		}
 
 		return context.queryClient.ensureQueryData(
-			context.orpc.cities.get.queryOptions({
+			orpc.cities.get.queryOptions({
 				input: {
 					id: +cityId,
 				},

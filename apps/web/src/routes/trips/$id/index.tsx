@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { orpc } from '@/lib/orpc';
 import { useTripSummary } from './-hooks';
 import { SummaryCard } from './-summary-card';
 
@@ -6,7 +7,7 @@ export const Route = createFileRoute('/trips/$id/')({
 	component: RouteComponent,
 	loader: ({ params, context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.trips.getSummary.queryOptions({
+			orpc.trips.getSummary.queryOptions({
 				input: {
 					id: params.id,
 				},
