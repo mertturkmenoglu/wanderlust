@@ -7,7 +7,8 @@ export function SignOut() {
 
 	return (
 		<DropdownMenuItem
-			className="cursor-pointer gap-4 focus:bg-destructive/10 focus:text-destructive focus:[&>svg]:text-destructive"
+			className="cursor-pointer gap-4"
+			variant="destructive"
 			onClick={() => {
 				mutation.mutate();
 			}}

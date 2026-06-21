@@ -11,10 +11,7 @@ export type MenuItemProps = {
 export function MenuItem({ link, icon: Icon, text }: Readonly<MenuItemProps>) {
 	return (
 		<DropdownMenuItem asChild>
-			<Link
-				{...link}
-				className="cursor-pointer gap-4 focus:bg-primary/10 focus:text-primary focus:[&>svg]:text-primary"
-			>
+			<Link {...link} className="cursor-pointer gap-4">
 				<Icon />
 				<span>{text}</span>
 			</Link>
