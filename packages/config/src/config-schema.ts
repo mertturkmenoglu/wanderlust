@@ -12,6 +12,9 @@ export const configSchema = z.object({
 		cors: z.object({
 			allowedOrigins: z.array(z.string()),
 		}),
+		logger: z.object({
+			serviceName: z.string(),
+		}),
 	}),
 	database: z.object({
 		url: z.string(),
