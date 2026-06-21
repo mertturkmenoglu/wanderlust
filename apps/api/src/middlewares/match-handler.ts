@@ -1,5 +1,7 @@
 import { createMiddleware } from 'hono/factory';
+import { createContext } from '@/lib/context';
 import type { getHandlers } from '@/routes/handler';
+import { container } from '../ioc';
 
 export const matchHandler = ({ api, rpc }: ReturnType<typeof getHandlers>) => {
 	return createMiddleware(async (c, next) => {

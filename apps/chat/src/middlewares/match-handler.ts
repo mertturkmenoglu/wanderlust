@@ -1,5 +1,7 @@
 import { createMiddleware } from 'hono/factory';
+import { createContext } from '@/lib/context';
 import type { getHandlers } from '@/routes/handler';
+import { container } from '../ioc';
 
 export const matchHandler = ({ api, rpc }: ReturnType<typeof getHandlers>) => {
 	return createMiddleware(async (c, next) => {
@@ -8,7 +10,6 @@ export const matchHandler = ({ api, rpc }: ReturnType<typeof getHandlers>) => {
 
 		const res = await handler.handle(c.req.raw, {
 			prefix: isRpcRequest ? '/rpc' : '/api',
-			// @ts-expect-error Context type inference
 			context: await createContext({ context: c, container }),
 		});
 
