@@ -3,7 +3,7 @@ import { inspect } from 'node:util';
 
 const errorLog = createWriteStream('errors.log', { flags: 'a' });
 
-export const devErrorLogInterceptor = (error: unknown) => {
+export const devErrorLogger = (error: unknown) => {
 	if (process.env.NODE_ENV === 'development') {
 		const entry = {
 			timestamp: new Date().toISOString(),
