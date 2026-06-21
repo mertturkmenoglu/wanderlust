@@ -7,21 +7,45 @@
 		"declarationMap": true,
 		"sourceMap": true,
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": [
+				"./src/*"
+			]
 		},
 		"jsx": "react-jsx",
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"noUnusedParameters": false,
+		"noUnusedLocals": false
 	},
 	"references": [
-		{ "path": "../../packages/auth" },
-		{ "path": "../../packages/cache" },
-		{ "path": "../../packages/common" },
-		{ "path": "../../packages/config" },
-		{ "path": "../../packages/db" },
-		{ "path": "../../packages/jobs" },
-		{ "path": "../../packages/uid" }
+		{
+			"path": "../../packages/auth"
+		},
+		{
+			"path": "../../packages/cache"
+		},
+		{
+			"path": "../../packages/common"
+		},
+		{
+			"path": "../../packages/config"
+		},
+		{
+			"path": "../../packages/db"
+		},
+		{
+			"path": "../../packages/jobs"
+		},
+		{
+			"path": "../../packages/uid"
+		}
 	],
-	"include": ["src/**/*.ts", "src/**/*.tsx"],
-	"exclude": ["node_modules", "dist"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
 }
