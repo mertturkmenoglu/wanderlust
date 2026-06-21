@@ -65,7 +65,7 @@ export function FavoriteButton() {
 		<TooltipProvider>
 			<Tooltip>
 				<TooltipTrigger asChild>
-					<Button variant="ghost" onClick={onClick}>
+					<Button variant="ghost" onClick={onClick} size="icon">
 						<HeartIcon
 							className={cn('size-6 text-primary', {
 								'fill-primary': fav,

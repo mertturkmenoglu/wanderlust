@@ -18,7 +18,11 @@ export function Trigger() {
 			<Tooltip>
 				<TooltipTrigger asChild>
 					<DialogTrigger asChild>
-						<Button variant="ghost" onClick={() => ctx.setOpen(true)}>
+						<Button
+							variant="ghost"
+							onClick={() => ctx.setOpen(true)}
+							size="icon"
+						>
 							<PlusIcon className={cn('size-6 text-primary')} />
 						</Button>
 					</DialogTrigger>
