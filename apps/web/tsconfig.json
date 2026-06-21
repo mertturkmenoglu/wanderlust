@@ -46,6 +46,9 @@
 		},
 		{
 			"path": "../../packages/contract"
+		},
+		{
+			"path": "../../apps/chat",
 		}
 	],
 	"include": [
