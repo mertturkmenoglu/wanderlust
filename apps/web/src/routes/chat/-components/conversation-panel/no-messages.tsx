@@ -26,7 +26,7 @@ export function NoMessagesView({ className }: Props) {
 				<EmptyTitle>No Messages Yet</EmptyTitle>
 				<EmptyDescription>
 					You haven&apos;t started any conversations yet. Get started by sending
-					a message to Clark first.
+					a message first.
 				</EmptyDescription>
 			</EmptyHeader>
 			<EmptyContent className="flex-row justify-center gap-2 text-muted-foreground text-xs">
