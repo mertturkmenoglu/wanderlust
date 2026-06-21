@@ -12,7 +12,11 @@
 		"build-types": "tsc --build"
 	},
 	"dependencies": {
-		"@hono/zod-validator": "^0.8.0",
+		"@orpc/client": "catalog:",
+		"@orpc/contract": "catalog:",
+		"@orpc/openapi": "catalog:",
+		"@orpc/server": "catalog:",
+		"@orpc/zod": "catalog:",
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/cache": "workspace:*",
 		"@wanderlust/common": "workspace:*",
