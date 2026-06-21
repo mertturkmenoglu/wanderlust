@@ -33,6 +33,7 @@
 		"@wanderlust/jobs": "workspace:*",
 		"@wanderlust/storage": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
+		"@wanderlust/contract": "workspace:*",
 		"consola": "catalog:",
 		"drizzle-orm": "catalog:",
 		"evlog": "catalog:",
