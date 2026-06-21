@@ -1,3 +1,4 @@
+import { ORPCError } from '@orpc/client';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
 import { ChatRepository } from './repository';
@@ -8,7 +9,7 @@ export class ChatService {
 		@inject(ChatRepository) private readonly repository: ChatRepository,
 	) { }
 
-	async list(userId: string): Promise<dto.ListOutput> {
+	async list(userId: string, data: dto.ListInput): Promise<dto.ListOutput> {
 		const chats = await this.repository.list(userId);
 
 		return {
@@ -30,5 +31,89 @@ export class ChatService {
 		return {
 			chat,
 		};
+	}
+
+	async create(
+		userId: string,
+		data: dto.CreateInput,
+	): Promise<dto.CreateOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async update(
+		userId: string,
+		data: dto.UpdateInput,
+	): Promise<dto.UpdateOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async leave(userId: string, data: dto.LeaveInput): Promise<dto.LeaveOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async clear(userId: string, data: dto.ClearInput): Promise<dto.ClearOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async markRead(
+		userId: string,
+		data: dto.MarkReadInput,
+	): Promise<dto.MarkReadOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async pin(userId: string, data: dto.PinInput): Promise<dto.PinOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async unpin(userId: string, data: dto.UnpinInput): Promise<dto.UnpinOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async unread(
+		userId: string,
+		data: dto.UnreadInput,
+	): Promise<dto.UnreadOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async mute(userId: string, data: dto.MuteInput): Promise<dto.MuteOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async unmute(
+		userId: string,
+		data: dto.UnmuteInput,
+	): Promise<dto.UnmuteOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
+	}
+
+	async delete(
+		userId: string,
+		data: dto.DeleteInput,
+	): Promise<dto.DeleteOutput> {
+		throw new ORPCError('NOT_IMPLEMENTED', {
+			message: 'Not implemented yet',
+		});
 	}
 }
