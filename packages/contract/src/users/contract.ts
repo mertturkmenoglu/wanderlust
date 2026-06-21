@@ -65,6 +65,27 @@ export const contract = {
 			successDescription: 'OK',
 			tags: ['Users'],
 		}),
+	getById: oc
+		.input(dto.getByIdInput)
+		.output(dto.getByIdOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'GET',
+			path: '/users/id/:id',
+			summary: 'Get User by ID',
+			description: 'Retrieve the profile of a user by their ID',
+			successStatus: 200,
+			successDescription: 'OK',
+			tags: ['Users'],
+		}),
 	getMe: oc
 		.input(dto.getMeInput)
 		.output(dto.getMeOutput)
