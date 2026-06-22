@@ -1,24 +1,24 @@
 {
-  "files.watcherExclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "search.exclude": {
-    "**/routeTree.gen.ts": true
-  },
-  "files.readonlyInclude": {
-    "**/routeTree.gen.ts": true
-  },
-	"typescript.preferences.autoImportFileExcludePatterns": [
+	"files.watcherExclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"search.exclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"files.readonlyInclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"js/ts.preferences.autoImportFileExcludePatterns": [
 		"**/node_modules/better-auth",
-    "radix-ui",
-    "@radix-ui/**",
-    "postcss"
+		"radix-ui",
+		"@radix-ui/**",
+		"postcss",
+		"@mdxeditor/editor",
 	],
-  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
-    "@radix-ui",
-    "^lucide-react/dist/lucide-react.suffixed$",
-    "react-day-picker",
-    "@mdxeditor/editor",
-    "radix-ui"
-  ],
+	"js/ts.preferences.autoImportSpecifierExcludeRegexes": [
+		"@radix-ui",
+		"react-day-picker",
+		"@mdxeditor/editor",
+		"radix-ui"
+	],
 }
