@@ -1,6 +1,7 @@
 import { DatabaseService } from '@wanderlust/db';
 import { consola } from 'consola';
-import { bootstrapServices, container } from '@/ioc';
+import { bootstrapServices } from '@/bootstrap';
+import { container } from '@/ioc';
 import { SearchService } from '@/lib/search';
 import { CitiesSchema } from './schemas/cities';
 import { PlacesSchema } from './schemas/places';
