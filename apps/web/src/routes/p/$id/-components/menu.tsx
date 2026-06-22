@@ -31,7 +31,7 @@ export function Menu() {
 				</Button>
 			</DropdownMenuTrigger>
 
-			<DropdownMenuContent className="w-48" align="end">
+			<DropdownMenuContent className="w-40" align="end">
 				<DropdownMenuItem asChild>
 					<Link to="/chat">
 						<SendIcon />
@@ -46,7 +46,7 @@ export function Menu() {
 					</button>
 				</DropdownMenuItem>
 
-				<DropdownMenuItem asChild>
+				<DropdownMenuItem asChild variant="destructive">
 					<Link
 						to="/report"
 						search={{
