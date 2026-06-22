@@ -72,7 +72,7 @@ export function ItemVariant({
 							{ctx.place.accolades.map((acc) => (
 								<Link
 									key={acc.id}
-									to="/a/$id"
+									to="/accolades/$id"
 									params={{ id: acc.accolade.id }}
 									className="flex"
 								>

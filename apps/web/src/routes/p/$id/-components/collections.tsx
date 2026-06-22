@@ -41,7 +41,10 @@ function Content({ className }: ContentProps) {
 					<div key={collection.id}>
 						<div key={collection.id} className="mb-4 flex items-baseline gap-4">
 							<h3 className="font-bold text-2xl">{collection.name}</h3>
-							<UnderlineLink to="/c/$id" params={{ id: collection.id }}>
+							<UnderlineLink
+								to="/collections/$id"
+								params={{ id: collection.id }}
+							>
 								See more
 							</UnderlineLink>
 						</div>

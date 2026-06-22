@@ -19,7 +19,7 @@ export function Collection({ collection, className }: CollectionProps) {
 					{collection.name}
 				</div>
 				<UnderlineLink
-					to="/c/$id"
+					to="/collections/$id"
 					params={{
 						id: collection.id,
 					}}

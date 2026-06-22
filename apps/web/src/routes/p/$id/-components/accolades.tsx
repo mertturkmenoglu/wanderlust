@@ -19,7 +19,7 @@ export function Accolades({ className }: Props) {
 			{place.accolades.map((acc) => (
 				<Link
 					key={acc.id}
-					to="/a/$id"
+					to="/accolades/$id"
 					params={{
 						id: acc.accolade.id,
 					}}
