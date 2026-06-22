@@ -5,7 +5,7 @@ import { Header } from './-header';
 import { useCollectionQuery } from './-hooks';
 import { Items } from './-items';
 
-export const Route = createFileRoute('/c/$id/')({
+export const Route = createFileRoute('/collections/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
 		context.queryClient.prefetchQuery(
