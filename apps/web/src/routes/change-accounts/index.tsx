@@ -31,7 +31,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="mx-auto my-16 flex max-w-3xl flex-col">
+		<div className="mx-auto my-16 flex w-full max-w-3xl flex-col">
 			<ItemGroup className="gap-6">
 				{data.map((item) => (
 					<AccountItem

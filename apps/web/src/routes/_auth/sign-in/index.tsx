@@ -58,7 +58,7 @@ function RouteComponent() {
 					password: data.password,
 				});
 			})}
-			className="mx-auto my-32 max-w-lg"
+			className="mx-auto my-32 w-full max-w-lg"
 		>
 			<FieldGroup className="gap-4">
 				<Logo variant="medium" />
