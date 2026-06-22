@@ -28,7 +28,7 @@ import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as ChangeAccountsIndexRouteImport } from './routes/change-accounts/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
 import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
-import { Route as AIndexRouteImport } from './routes/a/index'
+import { Route as AccoladesIndexRouteImport } from './routes/accolades/index'
 import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as TripsIdRouteImport } from './routes/trips/$id'
 import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
@@ -45,10 +45,10 @@ import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
 import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
 import { Route as EIdIndexRouteImport } from './routes/e/$id/index'
 import { Route as DiscoverEventsIndexRouteImport } from './routes/discover/events/index'
+import { Route as CollectionsIdIndexRouteImport } from './routes/collections/$id/index'
 import { Route as CitiesListIndexRouteImport } from './routes/cities/list/index'
 import { Route as CitiesSplatIndexRouteImport } from './routes/cities/$/index'
-import { Route as CIdIndexRouteImport } from './routes/c/$id/index'
-import { Route as AIdIndexRouteImport } from './routes/a/$id/index'
+import { Route as AccoladesIdIndexRouteImport } from './routes/accolades/$id/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
 import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
@@ -167,9 +167,9 @@ const BookmarksIndexRoute = BookmarksIndexRouteImport.update({
   path: '/bookmarks/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AIndexRoute = AIndexRouteImport.update({
-  id: '/a/',
-  path: '/a/',
+const AccoladesIndexRoute = AccoladesIndexRouteImport.update({
+  id: '/accolades/',
+  path: '/accolades/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UUsernameRoute = UUsernameRouteImport.update({
@@ -253,6 +253,11 @@ const DiscoverEventsIndexRoute = DiscoverEventsIndexRouteImport.update({
   path: '/discover/events/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollectionsIdIndexRoute = CollectionsIdIndexRouteImport.update({
+  id: '/collections/$id/',
+  path: '/collections/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CitiesListIndexRoute = CitiesListIndexRouteImport.update({
   id: '/cities/list/',
   path: '/cities/list/',
@@ -263,14 +268,9 @@ const CitiesSplatIndexRoute = CitiesSplatIndexRouteImport.update({
   path: '/cities/$/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CIdIndexRoute = CIdIndexRouteImport.update({
-  id: '/c/$id/',
-  path: '/c/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AIdIndexRoute = AIdIndexRouteImport.update({
-  id: '/a/$id/',
-  path: '/a/$id/',
+const AccoladesIdIndexRoute = AccoladesIdIndexRouteImport.update({
+  id: '/accolades/$id/',
+  path: '/accolades/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
@@ -396,7 +396,7 @@ export interface FileRoutesByFullPath {
   '/wip': typeof WipRoute
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
-  '/a/': typeof AIndexRoute
+  '/accolades/': typeof AccoladesIndexRoute
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/change-accounts/': typeof ChangeAccountsIndexRoute
@@ -413,10 +413,10 @@ export interface FileRoutesByFullPath {
   '/trips/': typeof TripsIndexRoute
   '/sign-in/': typeof AuthSignInIndexRoute
   '/sign-up/': typeof AuthSignUpIndexRoute
-  '/a/$id/': typeof AIdIndexRoute
-  '/c/$id/': typeof CIdIndexRoute
+  '/accolades/$id/': typeof AccoladesIdIndexRoute
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
+  '/collections/$id/': typeof CollectionsIdIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
   '/e/$id/': typeof EIdIndexRoute
   '/lists/$id/': typeof ListsIdIndexRoute
@@ -455,7 +455,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/wip': typeof WipRoute
-  '/a': typeof AIndexRoute
+  '/accolades': typeof AccoladesIndexRoute
   '/bookmarks': typeof BookmarksIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/change-accounts': typeof ChangeAccountsIndexRoute
@@ -472,10 +472,10 @@ export interface FileRoutesByTo {
   '/trips': typeof TripsIndexRoute
   '/sign-in': typeof AuthSignInIndexRoute
   '/sign-up': typeof AuthSignUpIndexRoute
-  '/a/$id': typeof AIdIndexRoute
-  '/c/$id': typeof CIdIndexRoute
+  '/accolades/$id': typeof AccoladesIdIndexRoute
   '/cities/$': typeof CitiesSplatIndexRoute
   '/cities/list': typeof CitiesListIndexRoute
+  '/collections/$id': typeof CollectionsIdIndexRoute
   '/discover/events': typeof DiscoverEventsIndexRoute
   '/e/$id': typeof EIdIndexRoute
   '/lists/$id': typeof ListsIdIndexRoute
@@ -520,7 +520,7 @@ export interface FileRoutesById {
   '/wip': typeof WipRoute
   '/trips/$id': typeof TripsIdRouteWithChildren
   '/u/$username': typeof UUsernameRouteWithChildren
-  '/a/': typeof AIndexRoute
+  '/accolades/': typeof AccoladesIndexRoute
   '/bookmarks/': typeof BookmarksIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/change-accounts/': typeof ChangeAccountsIndexRoute
@@ -537,10 +537,10 @@ export interface FileRoutesById {
   '/trips/': typeof TripsIndexRoute
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
-  '/a/$id/': typeof AIdIndexRoute
-  '/c/$id/': typeof CIdIndexRoute
+  '/accolades/$id/': typeof AccoladesIdIndexRoute
   '/cities/$/': typeof CitiesSplatIndexRoute
   '/cities/list/': typeof CitiesListIndexRoute
+  '/collections/$id/': typeof CollectionsIdIndexRoute
   '/discover/events/': typeof DiscoverEventsIndexRoute
   '/e/$id/': typeof EIdIndexRoute
   '/lists/$id/': typeof ListsIdIndexRoute
@@ -586,7 +586,7 @@ export interface FileRouteTypes {
     | '/wip'
     | '/trips/$id'
     | '/u/$username'
-    | '/a/'
+    | '/accolades/'
     | '/bookmarks/'
     | '/categories/'
     | '/change-accounts/'
@@ -603,10 +603,10 @@ export interface FileRouteTypes {
     | '/trips/'
     | '/sign-in/'
     | '/sign-up/'
-    | '/a/$id/'
-    | '/c/$id/'
+    | '/accolades/$id/'
     | '/cities/$/'
     | '/cities/list/'
+    | '/collections/$id/'
     | '/discover/events/'
     | '/e/$id/'
     | '/lists/$id/'
@@ -645,7 +645,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/wip'
-    | '/a'
+    | '/accolades'
     | '/bookmarks'
     | '/categories'
     | '/change-accounts'
@@ -662,10 +662,10 @@ export interface FileRouteTypes {
     | '/trips'
     | '/sign-in'
     | '/sign-up'
-    | '/a/$id'
-    | '/c/$id'
+    | '/accolades/$id'
     | '/cities/$'
     | '/cities/list'
+    | '/collections/$id'
     | '/discover/events'
     | '/e/$id'
     | '/lists/$id'
@@ -709,7 +709,7 @@ export interface FileRouteTypes {
     | '/wip'
     | '/trips/$id'
     | '/u/$username'
-    | '/a/'
+    | '/accolades/'
     | '/bookmarks/'
     | '/categories/'
     | '/change-accounts/'
@@ -726,10 +726,10 @@ export interface FileRouteTypes {
     | '/trips/'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
-    | '/a/$id/'
-    | '/c/$id/'
+    | '/accolades/$id/'
     | '/cities/$/'
     | '/cities/list/'
+    | '/collections/$id/'
     | '/discover/events/'
     | '/e/$id/'
     | '/lists/$id/'
@@ -773,7 +773,7 @@ export interface RootRouteChildren {
   TripsRoute: typeof TripsRouteWithChildren
   WipRoute: typeof WipRoute
   UUsernameRoute: typeof UUsernameRouteWithChildren
-  AIndexRoute: typeof AIndexRoute
+  AccoladesIndexRoute: typeof AccoladesIndexRoute
   BookmarksIndexRoute: typeof BookmarksIndexRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ChangeAccountsIndexRoute: typeof ChangeAccountsIndexRoute
@@ -787,10 +787,10 @@ export interface RootRouteChildren {
   TermsIndexRoute: typeof TermsIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
-  AIdIndexRoute: typeof AIdIndexRoute
-  CIdIndexRoute: typeof CIdIndexRoute
+  AccoladesIdIndexRoute: typeof AccoladesIdIndexRoute
   CitiesSplatIndexRoute: typeof CitiesSplatIndexRoute
   CitiesListIndexRoute: typeof CitiesListIndexRoute
+  CollectionsIdIndexRoute: typeof CollectionsIdIndexRoute
   DiscoverEventsIndexRoute: typeof DiscoverEventsIndexRoute
   EIdIndexRoute: typeof EIdIndexRoute
   ListsIdIndexRoute: typeof ListsIdIndexRoute
@@ -937,11 +937,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookmarksIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/a/': {
-      id: '/a/'
-      path: '/a'
-      fullPath: '/a/'
-      preLoaderRoute: typeof AIndexRouteImport
+    '/accolades/': {
+      id: '/accolades/'
+      path: '/accolades'
+      fullPath: '/accolades/'
+      preLoaderRoute: typeof AccoladesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/u/$username': {
@@ -1056,6 +1056,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverEventsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collections/$id/': {
+      id: '/collections/$id/'
+      path: '/collections/$id'
+      fullPath: '/collections/$id/'
+      preLoaderRoute: typeof CollectionsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cities/list/': {
       id: '/cities/list/'
       path: '/cities/list'
@@ -1070,18 +1077,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CitiesSplatIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/c/$id/': {
-      id: '/c/$id/'
-      path: '/c/$id'
-      fullPath: '/c/$id/'
-      preLoaderRoute: typeof CIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/a/$id/': {
-      id: '/a/$id/'
-      path: '/a/$id'
-      fullPath: '/a/$id/'
-      preLoaderRoute: typeof AIdIndexRouteImport
+    '/accolades/$id/': {
+      id: '/accolades/$id/'
+      path: '/accolades/$id'
+      fullPath: '/accolades/$id/'
+      preLoaderRoute: typeof AccoladesIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/sign-up/': {
@@ -1352,7 +1352,7 @@ const rootRouteChildren: RootRouteChildren = {
   TripsRoute: TripsRouteWithChildren,
   WipRoute: WipRoute,
   UUsernameRoute: UUsernameRouteWithChildren,
-  AIndexRoute: AIndexRoute,
+  AccoladesIndexRoute: AccoladesIndexRoute,
   BookmarksIndexRoute: BookmarksIndexRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ChangeAccountsIndexRoute: ChangeAccountsIndexRoute,
@@ -1366,10 +1366,10 @@ const rootRouteChildren: RootRouteChildren = {
   TermsIndexRoute: TermsIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
-  AIdIndexRoute: AIdIndexRoute,
-  CIdIndexRoute: CIdIndexRoute,
+  AccoladesIdIndexRoute: AccoladesIdIndexRoute,
   CitiesSplatIndexRoute: CitiesSplatIndexRoute,
   CitiesListIndexRoute: CitiesListIndexRoute,
+  CollectionsIdIndexRoute: CollectionsIdIndexRoute,
   DiscoverEventsIndexRoute: DiscoverEventsIndexRoute,
   EIdIndexRoute: EIdIndexRoute,
   ListsIdIndexRoute: ListsIdIndexRoute,
