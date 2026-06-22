@@ -40,7 +40,7 @@ export function Content() {
 	}
 
 	return (
-		<div className="mx-auto my-16 max-w-xl">
+		<div className="mx-auto my-16 w-full max-w-xl">
 			<form
 				onSubmit={form.handleSubmit((data) => {
 					mutation.mutate({
