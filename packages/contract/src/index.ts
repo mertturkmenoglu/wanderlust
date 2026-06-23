@@ -9,6 +9,7 @@ import * as favorites from './favorites';
 import * as health from './health';
 import * as lists from './lists';
 import * as places from './places';
+import * as preferences from './preferences';
 import * as reports from './reports';
 import * as reviews from './reviews';
 import * as trips from './trips';
@@ -26,11 +27,12 @@ export type AppRouter = {
 	health: health.Contract;
 	lists: lists.Contract;
 	places: places.Contract;
+	preferences: preferences.Contract;
 	reports: reports.Contract;
 	reviews: reviews.Contract;
 	trips: trips.Contract;
 	users: users.Contract;
-}
+};
 
 export {
 	aggregator,
@@ -44,6 +46,7 @@ export {
 	health,
 	lists,
 	places,
+	preferences,
 	reports,
 	reviews,
 	trips,
