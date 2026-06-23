@@ -26,6 +26,9 @@
 			"path": "./packages/jobs"
 		},
 		{
+			"path": "./packages/search"
+		},
+		{
 			"path": "./packages/storage"
 		},
 		{
@@ -42,6 +45,9 @@
 		},
 		{
 			"path": "./apps/chat"
+		},
+		{
+			"path": "./apps/cli"
 		},
 		{
 			"path": "./apps/fake"
