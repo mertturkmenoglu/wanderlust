@@ -18,6 +18,7 @@ import {
 	SelectValue,
 } from '@wanderlust/ui/components/select';
 import { Switch } from '@wanderlust/ui/components/switch';
+import { useTheme } from 'next-themes';
 import { Controller, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useUpdatePreferences } from '@/hooks/use-update-preferences';
@@ -33,6 +34,7 @@ import {
 export function PreferencesForm() {
 	const form = useFormContext<TPreferences>();
 	const mutation = useUpdatePreferences();
+	const { setTheme } = useTheme();
 
 	return (
 		<form
@@ -40,8 +42,10 @@ export function PreferencesForm() {
 			className="w-full"
 			onSubmit={form.handleSubmit((data) => {
 				mutation.mutate(data, {
-					onSuccess: () => {
+					onSuccess: (result) => {
 						toast.success('Preferences updated successfully');
+
+						setTheme(result.preferences.theme);
 					},
 				});
 			})}
@@ -336,7 +340,12 @@ export function PreferencesForm() {
 					</FieldGroup>
 				</FieldSet>
 
-				<Button type="submit" form="preferences-form" variant="default">
+				<Button
+					type="submit"
+					form="preferences-form"
+					variant="default"
+					className="ml-auto w-full max-w-xs"
+				>
 					Save Preferences
 				</Button>
 			</FieldSet>
