@@ -11,7 +11,7 @@ function Component() {
 	// Container Height = (100% dynamic viewport height) - (header height)- (header margin) - (chat container margin)
 	// If for some reason page level element heights are changed (component add/remove etc.), you must update the container height calculation here as well.
 	return (
-		<div className="my-8 flex h-[calc(100dvh-4.5rem-4rem)] overflow-hidden p-4">
+		<div className="my-8 flex h-[calc(100dvh-4.5rem-4rem)] flex-col overflow-hidden md:p-4">
 			<Outlet />
 		</div>
 	);
