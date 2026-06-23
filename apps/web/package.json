@@ -11,6 +11,7 @@
 		"check-types": "vite build && tsc --noEmit"
 	},
 	"dependencies": {
+		"@date-fns/tz": "catalog:",
 		"@dnd-kit/helpers": "^0.4.0",
 		"@dnd-kit/react": "^0.4.0",
 		"@hookform/resolvers": "^5.2.0",
@@ -31,8 +32,8 @@
 		"@wanderlust/api": "workspace:*",
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/chat": "workspace:*",
-		"@wanderlust/notifications": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
+		"@wanderlust/notifications": "workspace:*",
 		"@wanderlust/ui": "workspace:*",
 		"@zag-js/file-upload": "^1.40.0",
 		"@zag-js/rating-group": "^1.40.0",
@@ -44,6 +45,7 @@
 		"instantsearch.js": "^4.96.2",
 		"lucide-react": "^1.14.0",
 		"maplibre-gl": "^5.24.0",
+		"next-themes": "^0.4.6",
 		"react": "catalog:",
 		"react-datepicker": "^9.1.0",
 		"react-dom": "catalog:",
@@ -60,8 +62,7 @@
 		"typesense-instantsearch-adapter": "^3.0.2",
 		"yet-another-react-lightbox": "^3.32.0",
 		"zod": "catalog:",
-		"zustand": "^5.0.13",
-		"@date-fns/tz": "catalog:"
+		"zustand": "^5.0.13"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
