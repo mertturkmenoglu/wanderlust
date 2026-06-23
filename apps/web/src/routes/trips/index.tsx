@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { buttonVariants } from '@wanderlust/ui/components/button';
-import { MailsIcon, MapIcon, SearchIcon } from 'lucide-react';
+import { MailsIcon, MapIcon, PlusIcon, SearchIcon } from 'lucide-react';
 import { z } from 'zod';
 import { ErrorComponent } from '@/components/error-component';
 import { GradientText } from '@/components/gradient-text';
-import { CreateDialog } from '@/components/trips/create-dialog';
 import { authGuard } from '@/lib/auth';
 
 const schema = z.object({
@@ -37,7 +36,16 @@ function RouteComponent() {
 			</h2>
 
 			<div className="mt-16 grid max-w-md grid-cols-2 gap-2 md:gap-8">
-				<CreateDialog />
+				<Link
+					to="/trips/new"
+					className={buttonVariants({
+						variant: 'ghost',
+						size: 'lg',
+					})}
+				>
+					<PlusIcon />
+					Create Trip
+				</Link>
 
 				<Link
 					to="/trips/my-trips"
