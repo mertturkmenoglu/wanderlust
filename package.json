@@ -42,6 +42,7 @@
 	"scripts": {
 		"check": "biome check --write .",
 		"dev": "turbo dev",
+		"cli": "bun run --filter='./apps/cli' cli",
 		"build": "turbo build",
 		"check-types": "turbo check-types",
 		"clean": "bun run --filter='./apps/api' clean",
