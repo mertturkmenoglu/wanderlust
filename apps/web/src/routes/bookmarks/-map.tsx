@@ -1,14 +1,14 @@
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
-import { createStyle } from '@/lib/map';
+import { useMapStyle } from '@/hooks/use-map-style';
 import type { TBookmark } from './-hooks';
 
 type Props = {
 	bookmark: TBookmark;
 };
 
-const style = createStyle('streets-v2-light');
-
 export function BookmarkItemMap({ bookmark }: Props) {
+	const style = useMapStyle();
+
 	const {
 		place: { address },
 	} = bookmark;

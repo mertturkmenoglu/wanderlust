@@ -3,7 +3,7 @@ import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ExternalLinkIcon } from 'lucide-react';
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
-import { createStyle } from '@/lib/map';
+import { useMapStyle } from '@/hooks/use-map-style';
 import mapPinIcon from '@/map-pin.svg';
 
 type Props = {
@@ -16,6 +16,7 @@ export function MapComponent({ className }: Props) {
 	const lat = place.address.lat;
 	const lng = place.address.lng;
 	const zoom = 17;
+	const style = useMapStyle();
 
 	return (
 		<div className={cn(className)}>
@@ -45,7 +46,7 @@ export function MapComponent({ className }: Props) {
 				longitude={lng}
 				minZoom={14}
 				style={{ width: '100%', height: '400px', marginTop: '16px', zIndex: 0 }}
-				mapStyle={createStyle('streets-v2-light')}
+				mapStyle={style}
 			>
 				<Marker latitude={lat} longitude={lng}>
 					<img src={mapPinIcon} alt="map pin" />

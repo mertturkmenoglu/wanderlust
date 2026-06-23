@@ -2,8 +2,8 @@ import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { useGeoSearch } from 'react-instantsearch';
 import MapContainer from 'react-map-gl/maplibre';
 import { AppMessage } from '@/components/app-message';
+import { useMapStyle } from '@/hooks/use-map-style';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { createStyle } from '@/lib/map';
 import { ErrorComponent } from './error';
 import { GeoSearch } from './geo-search';
 import { ItemComponent } from './item';
@@ -14,6 +14,7 @@ export function Container() {
 	const { items } = useGeoSearch();
 	const query = useGeolocationPermission();
 	const isMobile = useIsMobile();
+	const style = useMapStyle();
 
 	if (query.isLoading) {
 		return <Loading />;
@@ -56,7 +57,7 @@ export function Container() {
 					pitch: 0,
 					bearing: 0,
 				}}
-				mapStyle={createStyle('streets-v2-light')}
+				mapStyle={style}
 				minZoom={10}
 				style={{
 					height: isMobile ? '200px' : '600px',

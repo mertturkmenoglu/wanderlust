@@ -1,12 +1,11 @@
 import { useLoaderData } from '@tanstack/react-router';
 import MapContainer from 'react-map-gl/maplibre';
-import { createStyle } from '@/lib/map';
-
-const style = createStyle('streets-v2-light');
+import { useMapStyle } from '@/hooks/use-map-style';
 
 export function MapComponent() {
 	const { city } = useLoaderData({ from: '/cities/$/' });
 	const { lat: latitude, lng: longitude } = city;
+	const style = useMapStyle();
 
 	return (
 		<>
