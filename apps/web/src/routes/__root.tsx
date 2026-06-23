@@ -11,6 +11,7 @@ import { Toaster } from 'sonner';
 import { ErrorComponent } from '@/components/error-component';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
+import { ThemeProvider } from '@/components/theme-provider';
 import { useSyncPreferences } from '@/hooks/use-sync-preferences';
 import { NotificationsContextProvider } from '@/stores/notifications-context';
 
@@ -55,32 +56,38 @@ function Component() {
 
 	return (
 		<NotificationsContextProvider>
-			<HeadContent />
+			<ThemeProvider
+				attribute="class"
+				storageKey="wl-theme"
+				defaultTheme="light"
+			>
+				<HeadContent />
 
-			<div className="flex min-h-screen flex-col">
-				<Header className="shrink-0" />
+				<div className="flex min-h-screen flex-col">
+					<Header className="shrink-0" />
 
-				<main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-					<Outlet />
-				</main>
+					<main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+						<Outlet />
+					</main>
 
-				<Footer />
+					<Footer />
 
-				<TanStackDevtools
-					plugins={[
-						{
-							name: 'TanStack Query',
-							render: <ReactQueryDevtoolsPanel />,
-						},
-						{
-							name: 'TanStack Router',
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-					]}
-				/>
+					<TanStackDevtools
+						plugins={[
+							{
+								name: 'TanStack Query',
+								render: <ReactQueryDevtoolsPanel />,
+							},
+							{
+								name: 'TanStack Router',
+								render: <TanStackRouterDevtoolsPanel />,
+							},
+						]}
+					/>
 
-				<Toaster position="bottom-center" richColors />
-			</div>
+					<Toaster position="bottom-center" richColors />
+				</div>
+			</ThemeProvider>
 		</NotificationsContextProvider>
 	);
 }
