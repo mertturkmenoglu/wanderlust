@@ -9,6 +9,7 @@ import * as favorites from './favorites';
 import * as health from './health';
 import * as lists from './lists';
 import * as places from './places';
+import * as preferences from './preferences';
 import * as reports from './reports';
 import * as reviews from './reviews';
 import * as trips from './trips';
@@ -26,11 +27,12 @@ export type AppRouter = {
 	health: ReturnType<typeof health.getRouter>;
 	lists: ReturnType<typeof lists.getRouter>;
 	places: ReturnType<typeof places.getRouter>;
+	preferences: ReturnType<typeof preferences.getRouter>;
 	reports: ReturnType<typeof reports.getRouter>;
 	reviews: ReturnType<typeof reviews.getRouter>;
 	trips: ReturnType<typeof trips.getRouter>;
 	users: ReturnType<typeof users.getRouter>;
-}
+};
 
 export function getAppRouter(): AppRouter {
 	return {
@@ -45,6 +47,7 @@ export function getAppRouter(): AppRouter {
 		health: health.getRouter(),
 		lists: lists.getRouter(),
 		places: places.getRouter(),
+		preferences: preferences.getRouter(),
 		reports: reports.getRouter(),
 		reviews: reviews.getRouter(),
 		trips: trips.getRouter(),
@@ -64,6 +67,7 @@ export const modules = [
 	reviews.module,
 	reports.module,
 	places.module,
+	preferences.module,
 	favorites.module,
 	events.module,
 ];
