@@ -35,7 +35,8 @@
 			"reflect-metadata": "^0.2.2",
 			"evlog": "^2.17.0",
 			"ioredis": "^5.10.1",
-			"superjson": "^2.2.5"
+			"superjson": "^2.2.5",
+			"typesense": "^3.0.6"
 		}
 	},
 	"scripts": {
