@@ -1,22 +1,11 @@
-import {
-	Link,
-	type LinkOptions,
-	linkOptions,
-	useMatches,
-} from '@tanstack/react-router';
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from '@wanderlust/ui/components/collapsible';
+import { Link, type LinkOptions, linkOptions } from '@tanstack/react-router';
 import {
 	BellIcon,
-	ChevronDownIcon,
-	Settings2Icon,
-	UserIcon,
 	InboxIcon,
+	Settings2Icon,
+	SparklesIcon,
+	UserIcon,
 } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 type Item = {
 	text: string;
@@ -52,6 +41,13 @@ const links = [
 			to: '/settings/chat',
 		}),
 		icon: InboxIcon,
+	},
+	{
+		text: 'Preferences',
+		link: linkOptions({
+			to: '/settings/preferences',
+		}),
+		icon: SparklesIcon,
 	},
 ] as const satisfies Item[];
 
