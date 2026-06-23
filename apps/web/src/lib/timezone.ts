@@ -1,4 +1,6 @@
-export const timeZoneOffsets = [
+import { format } from "date-fns";
+
+export const timezoneOffsets = [
 	"UTC-11:00",
 	"UTC-10:00",
 	"UTC-09:30",
@@ -37,3 +39,17 @@ export const timeZoneOffsets = [
 	"UTC+13:00",
 	"UTC+14:00",
 ];
+
+export function getCurrentTimezoneOffset(withUtcPrefix = true) {
+	const offset = format(new Date(), "xxx");
+	return withUtcPrefix ? `UTC${offset}` : offset;
+}
+
+export function stripUTCPrefix(offsetWithUtcPrefix: string) {
+	return offsetWithUtcPrefix.replace(/^UTC/, "");
+}
+
+export function getCurrentTimezoneIANAName() {
+	const ianaTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	return ianaTimezone;
+}
