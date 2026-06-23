@@ -40,6 +40,7 @@ import {
 	notifications,
 	notificationType,
 	places,
+	preferences,
 	reports,
 	reviews,
 	tripComments,
@@ -1512,6 +1513,7 @@ export const $dto = {
 	messageSharedEntity: createSelectSchema(messageSharedEntities),
 	messageDeletion: createSelectSchema(messageDeletions),
 	messageReaction: createSelectSchema(messageReactions),
+	preference: createSelectSchema(preferences),
 };
 
 export const $extended = {
@@ -1593,4 +1595,5 @@ export const $insert = {
 	messageSharedEntity: createInsertSchema(messageSharedEntities),
 	messageDeletion: createInsertSchema(messageDeletions),
 	messageReaction: createInsertSchema(messageReactions),
+	preference: createInsertSchema(preferences),
 };
