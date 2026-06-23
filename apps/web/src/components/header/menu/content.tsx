@@ -1,9 +1,14 @@
 import { linkOptions } from '@tanstack/react-router';
 import {
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuLabel,
+	DropdownMenuPortal,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 } from '@wanderlust/ui/components/dropdown-menu';
 import {
 	BellIcon,
@@ -14,10 +19,14 @@ import {
 	MapIcon,
 	ScaleIcon,
 	Settings2Icon,
+	SunMoonIcon,
 	UserIcon,
 	UserKeyIcon,
 	UsersIcon,
 } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useUpdatePreferences } from '@/hooks/use-update-preferences';
+import { usePreferencesStore } from '@/stores/preferences-context';
 import { useShortName } from './hooks';
 import { MenuItem } from './item';
 import { SignOut } from './sign-out';
@@ -116,6 +125,9 @@ const getItems = (username: string) => ({
 export function Content({ fullName, username }: Readonly<Props>) {
 	const shortName = useShortName(fullName, 25);
 	const items = getItems(username);
+	const { setTheme } = useTheme();
+	const theme = usePreferencesStore((state) => state.preferences.theme);
+	const mutation = useUpdatePreferences();
 
 	return (
 		<DropdownMenuContent className="w-56" align="end">
@@ -129,6 +141,81 @@ export function Content({ fullName, username }: Readonly<Props>) {
 				<MenuItem {...items.notifications} />
 
 				<MenuItem {...items.settings} />
+
+				<DropdownMenuSub>
+					<DropdownMenuSubTrigger className="gap-4">
+						<SunMoonIcon />
+						<span>Change Theme</span>
+					</DropdownMenuSubTrigger>
+					<DropdownMenuPortal>
+						<DropdownMenuSubContent>
+							<DropdownMenuLabel>Change Theme</DropdownMenuLabel>
+							<DropdownMenuCheckboxItem
+								checked={theme === 'light'}
+								onCheckedChange={(checked) => {
+									if (!checked) {
+										return;
+									}
+
+									mutation.mutate(
+										{
+											theme: 'light',
+										},
+										{
+											onSuccess: () => {
+												setTheme('light');
+											},
+										},
+									);
+								}}
+							>
+								<span>Light</span>
+							</DropdownMenuCheckboxItem>
+							<DropdownMenuCheckboxItem
+								checked={theme === 'dark'}
+								onCheckedChange={(checked) => {
+									if (!checked) {
+										return;
+									}
+
+									mutation.mutate(
+										{
+											theme: 'dark',
+										},
+										{
+											onSuccess: () => {
+												setTheme('dark');
+											},
+										},
+									);
+								}}
+							>
+								<span>Dark</span>
+							</DropdownMenuCheckboxItem>
+							<DropdownMenuCheckboxItem
+								checked={theme === 'auto'}
+								onCheckedChange={(checked) => {
+									if (!checked) {
+										return;
+									}
+
+									mutation.mutate(
+										{
+											theme: 'auto',
+										},
+										{
+											onSuccess: () => {
+												setTheme('auto');
+											},
+										},
+									);
+								}}
+							>
+								<span>Auto</span>
+							</DropdownMenuCheckboxItem>
+						</DropdownMenuSubContent>
+					</DropdownMenuPortal>
+				</DropdownMenuSub>
 			</DropdownMenuGroup>
 
 			<DropdownMenuSeparator />
