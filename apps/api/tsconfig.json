@@ -38,6 +38,9 @@
 			"path": "../../packages/jobs"
 		},
 		{
+			"path": "../../packages/search"
+		},
+		{
 			"path": "../../packages/storage"
 		},
 		{
