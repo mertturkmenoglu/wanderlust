@@ -34,6 +34,7 @@
 		"@wanderlust/storage": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
+		"@wanderlust/search": "workspace:*",
 		"consola": "catalog:",
 		"drizzle-orm": "catalog:",
 		"evlog": "catalog:",
@@ -41,7 +42,7 @@
 		"hono": "catalog:",
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
-		"typesense": "^3.0.6",
+		"typesense": "catalog:",
 		"zod": "catalog:",
 		"date-fns": "catalog:"
 	},
