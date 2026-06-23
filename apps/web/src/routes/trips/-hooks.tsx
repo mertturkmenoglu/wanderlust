@@ -1,5 +1,4 @@
 import { linkOptions } from '@tanstack/react-router';
-import { format } from 'date-fns';
 import z from 'zod';
 
 export const schema = z.object({
@@ -49,10 +48,4 @@ export function useTabs(id: string) {
 			title: 'Edit',
 		}),
 	];
-}
-
-export function useTripTimeFormatter() {
-	return (date: Date) => {
-		return format(date, 'LLL do p');
-	};
 }
