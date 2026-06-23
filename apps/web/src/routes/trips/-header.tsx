@@ -8,11 +8,10 @@ import {
 } from '@wanderlust/ui/components/item';
 import { BackLink } from '@/components/back-link';
 import { RelativeTime } from '@/components/relative-time';
-import { useTripTimeFormatter } from './-hooks';
+import { TSTZDisplay } from '@/components/tstz-display';
 
 export function Header() {
 	const { trip } = useLoaderData({ from: '/trips/$id' });
-	const format = useTripTimeFormatter();
 
 	return (
 		<>
@@ -21,8 +20,9 @@ export function Header() {
 			<Item className="mt-4 p-0!">
 				<ItemContent>
 					<ItemTitle className="md:text-2xl">{trip.title}</ItemTitle>
-					<ItemDescription className="text-xs md:text-sm">
-						{format(trip.startAt)} - {format(trip.endAt)}
+					<ItemDescription className="flex flex-wrap items-center gap-2 text-xs md:text-sm">
+						<TSTZDisplay date={trip.startAt} /> -{' '}
+						<TSTZDisplay date={trip.endAt} />
 					</ItemDescription>
 					<ItemDescription className="text-xs md:text-sm">
 						Last updated: <RelativeTime date={trip.updatedAt} /> by{' '}
