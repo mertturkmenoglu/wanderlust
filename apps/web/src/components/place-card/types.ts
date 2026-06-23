@@ -20,3 +20,13 @@ export type Props = {
 	variant?: 'default' | 'item';
 	as?: 'div' | 'link';
 } & React.HTMLAttributes<HTMLDivElement>;
+
+export type MinimalPlace = Pick<Place, 'id' | 'name'> & {
+	image: string;
+};
+
+export type MinimalPlaceProps = {
+	place: MinimalPlace;
+	variant?: 'default' | 'item';
+	as?: 'div' | 'link';
+} & React.HTMLAttributes<HTMLDivElement>;
