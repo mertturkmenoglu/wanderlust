@@ -22,8 +22,8 @@ export function Header({ className }: Props) {
 
 	return (
 		<div className={cn(className)}>
-			<div className="flex flex-row items-center justify-between px-4 text-2xl">
-				<div>Chats</div>
+			<div className="flex flex-row items-center justify-end px-4 text-2xl md:justify-between">
+				<div className="hidden md:block">Chats</div>
 				<div className="flex flex-row items-center justify-end gap-2">
 					<DialogTrigger asChild>
 						<Button size="sm" onClick={() => ctx.setDialogType('new')}>
@@ -51,14 +51,14 @@ export function Header({ className }: Props) {
 					</InputGroup>
 				</form>
 
-				<ButtonGroup className="mt-4">
-					<Button size="sm" variant="default" className="w-20">
+				<ButtonGroup className="mt-4 grid w-full grid-cols-3 md:flex md:w-auto">
+					<Button size="sm" variant="default" className="md:w-20">
 						All
 					</Button>
-					<Button size="sm" variant="outline" className="w-20">
+					<Button size="sm" variant="outline" className="md:w-20">
 						Unread
 					</Button>
-					<Button size="sm" variant="outline" className="w-20">
+					<Button size="sm" variant="outline" className="md:w-20">
 						Archived
 					</Button>
 				</ButtonGroup>
