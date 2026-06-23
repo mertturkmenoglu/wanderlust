@@ -60,7 +60,8 @@
 		"typesense-instantsearch-adapter": "^3.0.2",
 		"yet-another-react-lightbox": "^3.32.0",
 		"zod": "catalog:",
-		"zustand": "^5.0.13"
+		"zustand": "^5.0.13",
+		"@date-fns/tz": "catalog:"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",

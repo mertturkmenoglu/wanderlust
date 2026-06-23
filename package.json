@@ -30,6 +30,7 @@
 			"react-email": "^6.1.1",
 			"@types/node": "^25.6.2",
 			"date-fns": "^4.1.0",
+			"@date-fns/tz": "^1.5.0",
 			"hono": "^4.12.18",
 			"reflect-metadata": "^0.2.2",
 			"evlog": "^2.17.0",
