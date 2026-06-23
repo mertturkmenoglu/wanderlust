@@ -109,7 +109,7 @@ export function DefaultVariant({
 				{ctx.rating !== '0.0' && (
 					<CardAction>
 						<Badge variant="default" size="default" className="ml-auto w-fit">
-							{ctx.rating} <StarIcon className="fill-white text-white" />
+							<span className="text-white">{ctx.rating}</span> <StarIcon className="fill-white text-white" />
 							<span className="text-white/70 text-xs leading-px tracking-tighter">
 								({numFmt.format(ctx.place.totalVotes)})
 							</span>

@@ -19,7 +19,7 @@ export function PlanTripBanner() {
 						asChild
 						variant="outline"
 						size={isMobile ? 'sm' : 'default'}
-						className="bg-white text-midnight"
+						className="bg-white text-midnight dark:border-none dark:bg-white dark:text-midnight dark:outline-none"
 					>
 						<Link to="/trips/planner">
 							<MapIcon />

@@ -22,7 +22,7 @@ export function Menu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button className="rounded-full" variant="ghost">
-					<UserIcon className="size-5 text-black" />
+					<UserIcon className="size-5" />
 					<span className="sr-only">Menu</span>
 					<span className="hidden sm:block">{shortName}</span>
 				</Button>

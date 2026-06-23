@@ -10,11 +10,11 @@ export type QuickActionCardProps = {
 
 export function Card({ icon: Icon, text, link }: QuickActionCardProps) {
 	return (
-		<div className="group rounded-md bg-yellow-400">
+		<div className="group bg-yellow-400">
 			<Link
 				{...link}
 				className={cn(
-					'flex aspect-[3] flex-col items-center justify-center gap-4 rounded-md bg-slate-50 p-4',
+					'flex aspect-[3] flex-col items-center justify-center gap-4 bg-muted p-4',
 					'transition duration-200 group-hover:translate-x-2 group-hover:-translate-y-2',
 				)}
 			>
