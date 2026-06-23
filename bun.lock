@@ -96,6 +96,7 @@
         "@wanderlust/db": "workspace:*",
         "@wanderlust/email": "workspace:*",
         "@wanderlust/jobs": "workspace:*",
+        "@wanderlust/search": "workspace:*",
         "@wanderlust/storage": "workspace:*",
         "@wanderlust/uid": "workspace:*",
         "consola": "catalog:",
@@ -106,7 +107,7 @@
         "hono": "catalog:",
         "inversify": "catalog:",
         "reflect-metadata": "catalog:",
-        "typesense": "^3.0.6",
+        "typesense": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -138,6 +139,29 @@
         "inversify": "catalog:",
         "reflect-metadata": "catalog:",
         "superjson": "catalog:",
+        "zod": "catalog:",
+      },
+      "devDependencies": {
+        "@types/bun": "catalog:",
+        "typescript": "catalog:",
+      },
+    },
+    "apps/cli": {
+      "name": "@wanderlust/cli",
+      "dependencies": {
+        "@drizzle-team/brocli": "^0.12.0",
+        "@wanderlust/auth": "workspace:*",
+        "@wanderlust/cache": "workspace:*",
+        "@wanderlust/common": "workspace:*",
+        "@wanderlust/config": "workspace:*",
+        "@wanderlust/db": "workspace:*",
+        "@wanderlust/jobs": "workspace:*",
+        "@wanderlust/search": "workspace:*",
+        "@wanderlust/uid": "workspace:*",
+        "consola": "catalog:",
+        "inversify": "catalog:",
+        "reflect-metadata": "catalog:",
+        "typesense": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -394,6 +418,17 @@
         "typescript": "catalog:",
       },
     },
+    "packages/search": {
+      "name": "@wanderlust/search",
+      "dependencies": {
+        "@wanderlust/config": "workspace:*",
+        "inversify": "catalog:",
+        "typesense": "catalog:",
+      },
+      "devDependencies": {
+        "typescript": "catalog:",
+      },
+    },
     "packages/storage": {
       "name": "@wanderlust/storage",
       "dependencies": {
@@ -477,6 +512,7 @@
     "reflect-metadata": "^0.2.2",
     "superjson": "^2.2.5",
     "typescript": "^6.0.3",
+    "typesense": "^3.0.6",
     "zod": "^4.4.3",
   },
   "packages": {
@@ -700,7 +736,7 @@
 
     "@dnd-kit/state": ["@dnd-kit/state@0.4.0", "", { "dependencies": { "@preact/signals-core": "^1.10.0", "tslib": "^2.6.2" } }, "sha512-vVdwOY9VsYdMNa7Z0xQhTXlzHqCcCugGuoM1kzvZhnZ0tYVPRdmIhWfeO6Y2ZoN92JwYAyJRRNl4ICkEe2mneg=="],
 
-    "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
+    "@drizzle-team/brocli": ["@drizzle-team/brocli@0.12.0", "", {}, "sha512-mlUE+rZ8CatQekLhnaiN91Iemdd+e2gFKooGlnRB3oPTL3VghLfX24dx7HrzMNeC1JrIB/0kpsfyty3f5HNfxQ=="],
 
     "@emnapi/core": ["@emnapi/core@1.10.0", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.1", "tslib": "^2.4.0" } }, "sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw=="],
 
@@ -1622,6 +1658,8 @@
 
     "@wanderlust/chat": ["@wanderlust/chat@workspace:apps/chat"],
 
+    "@wanderlust/cli": ["@wanderlust/cli@workspace:apps/cli"],
+
     "@wanderlust/common": ["@wanderlust/common@workspace:packages/common"],
 
     "@wanderlust/config": ["@wanderlust/config@workspace:packages/config"],
@@ -1637,6 +1675,8 @@
     "@wanderlust/jobs": ["@wanderlust/jobs@workspace:packages/jobs"],
 
     "@wanderlust/notifications": ["@wanderlust/notifications@workspace:apps/notifications"],
+
+    "@wanderlust/search": ["@wanderlust/search@workspace:packages/search"],
 
     "@wanderlust/storage": ["@wanderlust/storage@workspace:packages/storage"],
 
@@ -3253,6 +3293,8 @@
     "dom-serializer/entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
 
     "dot-prop/type-fest": ["type-fest@5.3.0", "", { "dependencies": { "tagged-tag": "^1.0.0" } }, "sha512-d9CwU93nN0IA1QL+GSNDdwLAu1Ew5ZjTwupvedwg3WdfoH6pIDvYQ2hV0Uc2nKBLPq7NB5apCx57MLS5qlmO5g=="],
+
+    "drizzle-kit/@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 
     "engine.io/@types/node": ["@types/node@22.19.1", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-LCCV0HdSZZZb34qifBsyWlUmok6W7ouER+oQIGBScS8EsZsQbrtFTUrDX4hOl+CS6p7cnNC4td+qrSVGSCTUfQ=="],
 
