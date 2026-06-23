@@ -33,11 +33,13 @@ import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as TripsIdRouteImport } from './routes/trips/$id'
 import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
 import { Route as TripsPlannerIndexRouteImport } from './routes/trips/planner/index'
+import { Route as TripsNewIndexRouteImport } from './routes/trips/new/index'
 import { Route as TripsMyTripsIndexRouteImport } from './routes/trips/my-trips/index'
 import { Route as TripsInvitesIndexRouteImport } from './routes/trips/invites/index'
 import { Route as TripsDiscoverIndexRouteImport } from './routes/trips/discover/index'
 import { Route as TripsIdIndexRouteImport } from './routes/trips/$id/index'
 import { Route as SettingsProfileIndexRouteImport } from './routes/settings/profile/index'
+import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
 import { Route as SettingsNotificationsIndexRouteImport } from './routes/settings/notifications/index'
 import { Route as SettingsChatIndexRouteImport } from './routes/settings/chat/index'
 import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
@@ -192,6 +194,11 @@ const TripsPlannerIndexRoute = TripsPlannerIndexRouteImport.update({
   path: '/planner/',
   getParentRoute: () => TripsRoute,
 } as any)
+const TripsNewIndexRoute = TripsNewIndexRouteImport.update({
+  id: '/new/',
+  path: '/new/',
+  getParentRoute: () => TripsRoute,
+} as any)
 const TripsMyTripsIndexRoute = TripsMyTripsIndexRouteImport.update({
   id: '/my-trips/',
   path: '/my-trips/',
@@ -217,6 +224,12 @@ const SettingsProfileIndexRoute = SettingsProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsPreferencesIndexRoute =
+  SettingsPreferencesIndexRouteImport.update({
+    id: '/preferences/',
+    path: '/preferences/',
+    getParentRoute: () => SettingsRoute,
+  } as any)
 const SettingsNotificationsIndexRoute =
   SettingsNotificationsIndexRouteImport.update({
     id: '/notifications/',
@@ -424,11 +437,13 @@ export interface FileRoutesByFullPath {
   '/settings/account/': typeof SettingsAccountIndexRoute
   '/settings/chat/': typeof SettingsChatIndexRoute
   '/settings/notifications/': typeof SettingsNotificationsIndexRoute
+  '/settings/preferences/': typeof SettingsPreferencesIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
   '/trips/invites/': typeof TripsInvitesIndexRoute
   '/trips/my-trips/': typeof TripsMyTripsIndexRoute
+  '/trips/new/': typeof TripsNewIndexRoute
   '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/password/forgot/': typeof AuthPasswordForgotIndexRoute
@@ -483,11 +498,13 @@ export interface FileRoutesByTo {
   '/settings/account': typeof SettingsAccountIndexRoute
   '/settings/chat': typeof SettingsChatIndexRoute
   '/settings/notifications': typeof SettingsNotificationsIndexRoute
+  '/settings/preferences': typeof SettingsPreferencesIndexRoute
   '/settings/profile': typeof SettingsProfileIndexRoute
   '/trips/$id': typeof TripsIdIndexRoute
   '/trips/discover': typeof TripsDiscoverIndexRoute
   '/trips/invites': typeof TripsInvitesIndexRoute
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
+  '/trips/new': typeof TripsNewIndexRoute
   '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
@@ -548,11 +565,13 @@ export interface FileRoutesById {
   '/settings/account/': typeof SettingsAccountIndexRoute
   '/settings/chat/': typeof SettingsChatIndexRoute
   '/settings/notifications/': typeof SettingsNotificationsIndexRoute
+  '/settings/preferences/': typeof SettingsPreferencesIndexRoute
   '/settings/profile/': typeof SettingsProfileIndexRoute
   '/trips/$id/': typeof TripsIdIndexRoute
   '/trips/discover/': typeof TripsDiscoverIndexRoute
   '/trips/invites/': typeof TripsInvitesIndexRoute
   '/trips/my-trips/': typeof TripsMyTripsIndexRoute
+  '/trips/new/': typeof TripsNewIndexRoute
   '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
@@ -614,11 +633,13 @@ export interface FileRouteTypes {
     | '/settings/account/'
     | '/settings/chat/'
     | '/settings/notifications/'
+    | '/settings/preferences/'
     | '/settings/profile/'
     | '/trips/$id/'
     | '/trips/discover/'
     | '/trips/invites/'
     | '/trips/my-trips/'
+    | '/trips/new/'
     | '/trips/planner/'
     | '/u/$username/'
     | '/password/forgot/'
@@ -673,11 +694,13 @@ export interface FileRouteTypes {
     | '/settings/account'
     | '/settings/chat'
     | '/settings/notifications'
+    | '/settings/preferences'
     | '/settings/profile'
     | '/trips/$id'
     | '/trips/discover'
     | '/trips/invites'
     | '/trips/my-trips'
+    | '/trips/new'
     | '/trips/planner'
     | '/u/$username'
     | '/password/forgot'
@@ -737,11 +760,13 @@ export interface FileRouteTypes {
     | '/settings/account/'
     | '/settings/chat/'
     | '/settings/notifications/'
+    | '/settings/preferences/'
     | '/settings/profile/'
     | '/trips/$id/'
     | '/trips/discover/'
     | '/trips/invites/'
     | '/trips/my-trips/'
+    | '/trips/new/'
     | '/trips/planner/'
     | '/u/$username/'
     | '/_auth/password/forgot/'
@@ -972,6 +997,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsPlannerIndexRouteImport
       parentRoute: typeof TripsRoute
     }
+    '/trips/new/': {
+      id: '/trips/new/'
+      path: '/new'
+      fullPath: '/trips/new/'
+      preLoaderRoute: typeof TripsNewIndexRouteImport
+      parentRoute: typeof TripsRoute
+    }
     '/trips/my-trips/': {
       id: '/trips/my-trips/'
       path: '/my-trips'
@@ -1005,6 +1037,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/settings/profile/'
       preLoaderRoute: typeof SettingsProfileIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/preferences/': {
+      id: '/settings/preferences/'
+      path: '/preferences'
+      fullPath: '/settings/preferences/'
+      preLoaderRoute: typeof SettingsPreferencesIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/settings/notifications/': {
@@ -1256,6 +1295,7 @@ interface SettingsRouteChildren {
   SettingsAccountIndexRoute: typeof SettingsAccountIndexRoute
   SettingsChatIndexRoute: typeof SettingsChatIndexRoute
   SettingsNotificationsIndexRoute: typeof SettingsNotificationsIndexRoute
+  SettingsPreferencesIndexRoute: typeof SettingsPreferencesIndexRoute
   SettingsProfileIndexRoute: typeof SettingsProfileIndexRoute
 }
 
@@ -1264,6 +1304,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAccountIndexRoute: SettingsAccountIndexRoute,
   SettingsChatIndexRoute: SettingsChatIndexRoute,
   SettingsNotificationsIndexRoute: SettingsNotificationsIndexRoute,
+  SettingsPreferencesIndexRoute: SettingsPreferencesIndexRoute,
   SettingsProfileIndexRoute: SettingsProfileIndexRoute,
 }
 
@@ -1307,6 +1348,7 @@ interface TripsRouteChildren {
   TripsDiscoverIndexRoute: typeof TripsDiscoverIndexRoute
   TripsInvitesIndexRoute: typeof TripsInvitesIndexRoute
   TripsMyTripsIndexRoute: typeof TripsMyTripsIndexRoute
+  TripsNewIndexRoute: typeof TripsNewIndexRoute
   TripsPlannerIndexRoute: typeof TripsPlannerIndexRoute
 }
 
@@ -1316,6 +1358,7 @@ const TripsRouteChildren: TripsRouteChildren = {
   TripsDiscoverIndexRoute: TripsDiscoverIndexRoute,
   TripsInvitesIndexRoute: TripsInvitesIndexRoute,
   TripsMyTripsIndexRoute: TripsMyTripsIndexRoute,
+  TripsNewIndexRoute: TripsNewIndexRoute,
   TripsPlannerIndexRoute: TripsPlannerIndexRoute,
 }
 
