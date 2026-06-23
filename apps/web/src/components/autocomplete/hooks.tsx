@@ -1,6 +1,7 @@
 import { useDebouncedValue } from '@tanstack/react-pacer';
 import { useEffect } from 'react';
 import { useLocalStorage } from '@/hooks/use-localstorage';
+import { usePreferencesStore } from '@/stores/preferences-context';
 import { useAutocompleteContext } from './context';
 
 const key = 'wl-recent-searches';
@@ -13,18 +14,27 @@ export function useRecentSearches() {
 export function useTrackRecentSearches() {
 	const ctx = useAutocompleteContext();
 	const searches = useRecentSearches();
+	const isRecentSearchesEnabled = usePreferencesStore(
+		(s) => s.preferences.enableSearchHistory,
+	);
+
 	const [debounced] = useDebouncedValue(ctx.autocomplete.currentRefinement, {
 		wait: 1000,
 	});
 
 	useEffect(() => {
-		if (debounced) {
+		if (debounced && isRecentSearchesEnabled) {
 			searches.setValues((prev) => {
 				const filtered = prev.filter((item) => item !== debounced);
 				return [debounced, ...filtered].slice(0, ctx.recentSearchLimit);
 			});
 		}
-	}, [debounced, searches.setValues, ctx.recentSearchLimit]);
+	}, [
+		debounced,
+		searches.setValues,
+		ctx.recentSearchLimit,
+		isRecentSearchesEnabled,
+	]);
 }
 
 export function useHandleClickOutside(
