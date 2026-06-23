@@ -17,6 +17,7 @@ import {
 	unique,
 	uniqueIndex,
 	uuid,
+	varchar,
 } from 'drizzle-orm/pg-core';
 
 export const users = pgTable(
@@ -1449,3 +1450,26 @@ export const messageReactionsRelations = relations(messageReactions, ({ one }) =
 		references: [users.id],
 	}),
 }));
+
+export const preferenceUnitsEnum = pgEnum('preference_units', ['metric', 'imperial']);
+
+export const preferenceMapStyleEnum = pgEnum('preference_map_style', ['auto', 'light', 'dark']);
+
+export const preferenceSearchRadiusEnum = pgEnum('preference_search_radius', [
+	'close',
+	'medium',
+	'far',
+]);
+
+export const preferenceThemeEnum = pgEnum('preference_theme', ['auto', 'light', 'dark']);
+
+export const preferences = pgTable('preferences', {
+	userId: text().primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+	units: preferenceUnitsEnum().notNull().default('metric'),
+	timezone: varchar({ length: 9 }).notNull().default('UTC+00:00'),
+	mapStyle: preferenceMapStyleEnum().notNull().default('auto'),
+	searchRadius: preferenceSearchRadiusEnum().notNull().default('close'),
+	enableSearchHistory: boolean().notNull().default(true),
+	enableRecentViews: boolean().notNull().default(true),
+	theme: preferenceThemeEnum().notNull().default('auto'),
+});
