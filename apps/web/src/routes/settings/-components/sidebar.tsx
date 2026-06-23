@@ -56,48 +56,8 @@ const links = [
 ] as const satisfies Item[];
 
 export function Sidebar() {
-	const isMobile = useIsMobile();
-	const matches = useMatches();
-
-	if (isMobile) {
-		const lastMatch = matches.at(-1);
-
-		if (!lastMatch) {
-			return null;
-		}
-
-		const currentLink = links.find(
-			(link) =>
-				link.link.to === lastMatch.pathname ||
-				link.link.to === lastMatch.pathname.substring(0, link.link.to.length),
-		);
-
-		if (!currentLink) {
-			return null;
-		}
-
-		return (
-			<Collapsible>
-				<CollapsibleTrigger className="group w-full">
-					<div className="flex items-center gap-2 rounded-md bg-muted p-4 font-semibold">
-						<currentLink.icon />
-						{currentLink.text}
-						<ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
-					</div>
-				</CollapsibleTrigger>
-				<CollapsibleContent className="mt-4">
-					<nav className="grid text-muted-foreground text-sm md:gap-10">
-						{links.map((el) => (
-							<SItem item={el} key={el.link.to} />
-						))}
-					</nav>
-				</CollapsibleContent>
-			</Collapsible>
-		);
-	}
-
 	return (
-		<nav className="grid gap-10 text-muted-foreground text-sm">
+		<nav className="grid gap-4 text-muted-foreground text-sm md:gap-10">
 			{links.map((el) => (
 				<SItem item={el} key={el.link.to} />
 			))}
