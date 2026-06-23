@@ -22,7 +22,7 @@ import { useTheme } from 'next-themes';
 import { Controller, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useUpdatePreferences } from '@/hooks/use-update-preferences';
-import { timeZoneOffsets } from '@/lib/time-zone';
+import { timezoneOffsets } from '@/lib/timezone';
 import type { TPreferences } from '@/stores/preferences-context';
 import {
 	mapStyleOptions,
@@ -217,7 +217,7 @@ export function PreferencesForm() {
 											<SelectValue placeholder="Timezone" />
 										</SelectTrigger>
 										<SelectContent position="popper" align="end">
-											{timeZoneOffsets.map((offset) => (
+											{timezoneOffsets.map((offset) => (
 												<SelectItem key={offset} value={offset}>
 													{offset}
 												</SelectItem>
