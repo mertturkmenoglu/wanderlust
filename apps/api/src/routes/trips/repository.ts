@@ -11,6 +11,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, count, desc, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
+import type { Tx } from '@/lib/transactions';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
@@ -25,8 +26,10 @@ export class TripsRepository {
 		this.db = db.get();
 	}
 
-	async get(userId: string, data: dto.GetInput) {
-		const res = await this.db.query.trips.findFirst({
+	async get(userId: string, data: dto.GetInput, options?: { tx?: Tx }) {
+		const db = options?.tx ?? this.db;
+
+		const res = await db.query.trips.findFirst({
 			where: (t, { eq }) => eq(t.id, data.id),
 			with: $includes.trip,
 		});
@@ -220,7 +223,7 @@ export class TripsRepository {
 				});
 			}
 
-			const trip = await this.get(userId, { id: newTrip.id });
+			const trip = await this.get(userId, { id: newTrip.id }, { tx });
 
 			if (!trip) {
 				throw new ORPCError('INTERNAL_SERVER_ERROR', {
