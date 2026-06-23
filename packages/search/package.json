@@ -1,0 +1,25 @@
+{
+	"name": "@wanderlust/search",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"check-types": "tsc --noEmit",
+		"build-types": "tsc --build"
+	},
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"typesense": "catalog:",
+		"@wanderlust/config": "workspace:*",
+		"inversify": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}
