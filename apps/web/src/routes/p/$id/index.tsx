@@ -18,6 +18,7 @@ import { MapComponent } from './-components/map';
 import { NearbyCities } from './-components/nearby-cities';
 import { NearbyPlaces } from './-components/nearby-places';
 import { Reviews } from './-components/reviews';
+import { useTrackRecentViews } from './-hooks';
 
 const schema = z.object({
 	page: z.number().min(1).max(100).optional(),
@@ -44,6 +45,8 @@ export const Route = createFileRoute('/p/$id/')({
 
 function RouteComponent() {
 	const { place } = Route.useLoaderData();
+
+	useTrackRecentViews();
 
 	return (
 		<main className="mx-auto mt-8 w-full max-w-7xl">
