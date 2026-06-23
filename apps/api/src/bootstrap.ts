@@ -4,11 +4,11 @@ import { ConfigService } from '@wanderlust/config';
 import { DatabaseService } from '@wanderlust/db';
 import { EmailService } from '@wanderlust/email';
 import { JobsService } from '@wanderlust/jobs';
+import { SearchService } from '@wanderlust/search';
 import { StorageService } from '@wanderlust/storage';
 import { initLogger } from 'evlog';
 import { container } from './ioc';
 import { ActivitiesService } from './lib/activities';
-import { SearchService } from './lib/search';
 import { modules } from './routes';
 
 export async function bootstrapServices() {
