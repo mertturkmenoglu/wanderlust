@@ -11,6 +11,7 @@ import { Toaster } from 'sonner';
 import { ErrorComponent } from '@/components/error-component';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
+import { useSyncPreferences } from '@/hooks/use-sync-preferences';
 import { NotificationsContextProvider } from '@/stores/notifications-context';
 
 interface MyRouterContext {
@@ -50,6 +51,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function Component() {
+	useSyncPreferences();
+
 	return (
 		<NotificationsContextProvider>
 			<HeadContent />
