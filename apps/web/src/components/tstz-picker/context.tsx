@@ -10,7 +10,7 @@ import {
 	useState,
 } from 'react';
 import type { TSTZPickerProps } from './types';
-import { defaultFormatStr } from './utils';
+import { defaultFormatStr, padNumber } from './utils';
 
 type State = {
 	sHours12: string;
@@ -34,12 +34,10 @@ export function TSTZPickerContextProvider(
 	props: TSTZPickerContextProviderProps,
 ) {
 	const [sHours12, sSetHours12] = useState<string>(() => {
-		const hours = new Date().getHours() % 12 || 12;
-		return hours.toString().padStart(2, '0');
+		return padNumber(new Date().getHours() % 12 || 12);
 	});
 	const [sMinutes, sSetMinutes] = useState<string>(() => {
-		const minutes = new Date().getMinutes();
-		return minutes.toString().padStart(2, '0');
+		return padNumber(new Date().getMinutes());
 	});
 	const [isAm, setIsAm] = useState<boolean>(() => {
 		const hours = new Date().getHours();
