@@ -1,39 +1,14 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import z from 'zod';
-import { useLocalStorage } from '@/hooks/use-localstorage';
+import { type TRecentView, useRecentViews } from '@/hooks/use-recent-views';
 import { usePreferencesStore } from '@/stores/preferences-context';
-
-const key = 'wl-recent-views';
-
-const schema = z.object({
-	id: z.string(),
-	name: z.string(),
-	image: z.url(),
-});
-
-type TRecentView = z.infer<typeof schema>;
 
 export function useTrackRecentViews() {
 	const isRecentViewsEnabled = usePreferencesStore(
 		(s) => s.preferences.enableRecentViews,
 	);
 
-	const [_values, setValues, clearValues] = useLocalStorage<TRecentView[]>(
-		key,
-		[],
-		{
-			deserializer: (str) => {
-				try {
-					const parsed = JSON.parse(str);
-					const validated = z.array(schema).parse(parsed);
-					return validated;
-				} catch {}
-
-				return [];
-			},
-		},
-	);
+	const [, setValues, clearValues] = useRecentViews();
 
 	const { place } = useLoaderData({ from: '/p/$id/' });
 
