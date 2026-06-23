@@ -8,6 +8,7 @@ import {
 import { useInterleaveRenderer } from '@/components/interleave-renderer';
 import { PlaceCatalog } from '@/routes/-components/place-catalog';
 import { FeaturedCitiesCatalog } from './featured-cities-catalog';
+import { RecentlyViewed } from './recently-viewed';
 
 const listA: React.ReactNode[] = [
 	<FeaturedCitiesCatalog />,
@@ -19,6 +20,8 @@ const listA: React.ReactNode[] = [
 	<NearbyLocationsBanner />,
 
 	<TripPlannerBanner />,
+
+	<RecentlyViewed />,
 
 	<EventBanner />,
 ];
