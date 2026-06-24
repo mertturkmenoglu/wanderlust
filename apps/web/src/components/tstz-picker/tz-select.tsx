@@ -23,7 +23,7 @@ export function TZSelect() {
 			<SelectTrigger
 				id={id}
 				aria-invalid={ctx.fieldState.invalid}
-				className="max-w-40"
+				className="w-full"
 			>
 				<SelectValue placeholder="Timezone" />
 			</SelectTrigger>

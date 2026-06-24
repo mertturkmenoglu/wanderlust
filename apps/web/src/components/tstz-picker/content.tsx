@@ -59,7 +59,7 @@ export function Content() {
 
 				<PopoverContent
 					align="start"
-					className={cn('w-md', classNames?.content)}
+					className={cn('max-w-md', classNames?.content)}
 				>
 					<Calendar
 						mode="single"
@@ -90,9 +90,9 @@ export function Content() {
 								<AssistedNumberSelect variant="minutes" />
 
 								<AmPmSelect />
-
-								<TZSelect />
 							</div>
+
+							<TZSelect />
 						</Field>
 					</FieldGroup>
 				</PopoverContent>
