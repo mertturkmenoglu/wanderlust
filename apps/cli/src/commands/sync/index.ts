@@ -4,7 +4,9 @@ import { SearchService } from '@wanderlust/search';
 import consola from 'consola';
 import { bootstrapServices } from './bootstrap';
 import { container } from './ioc';
+import { CitiesSchema } from './schema/cities';
 import { PlacesSchema } from './schema/places';
+import { UsersSchema } from './schema/users';
 
 export const sync = command({
 	name: 'sync',
@@ -17,7 +19,8 @@ export const sync = command({
 		const db = container.get(DatabaseService).get();
 
 		const placesSchema = new PlacesSchema('places', search, db);
-		const citiesSchema = new PlacesSchema('cities', search, db);
+		const citiesSchema = new CitiesSchema('cities', search, db);
+		const usersSchema = new UsersSchema('users', search, db);
 
 		const start = performance.now();
 
@@ -25,6 +28,7 @@ export const sync = command({
 
 		await placesSchema.sync();
 		await citiesSchema.sync();
+		await usersSchema.sync();
 
 		const end = performance.now();
 
