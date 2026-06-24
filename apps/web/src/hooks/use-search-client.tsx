@@ -1,57 +1,36 @@
-import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter';
+import { useState } from 'react';
+import { SearchService } from '@/lib/search';
 
-function useSearchClient() {
-	const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
-		server: {
-			apiKey: 'wanderlust',
-			nodes: [
-				{
-					host: 'localhost',
-					port: 8108,
-					protocol: 'http',
-				},
-			],
-			numRetries: 8,
-			useServerSideSearchCache: true,
-		},
-		additionalSearchParameters: {
-			query_by: 'name',
-		},
-	});
-	const searchClient = typesenseInstantsearchAdapter.searchClient;
+export function useSearchClient() {
+	const [service] = useState(() => new SearchService());
 
-	return searchClient;
+	return service.getDefaultSearchClient();
 }
 
 type GeoSearchClientProps = {
 	additionalSearchParameters?: Record<string, unknown>;
 };
 
-function useGeoSearchClient(props?: GeoSearchClientProps) {
-	const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
-		server: {
-			apiKey: 'wanderlust',
-			nodes: [
-				{
-					host: 'localhost',
-					port: 8108,
-					protocol: 'http',
-				},
-			],
-			numRetries: 8,
-			useServerSideSearchCache: true,
-		},
-		additionalSearchParameters: {
-			query_by: 'name',
-			per_page: 10,
-			...props?.additionalSearchParameters,
-		},
-		geoLocationField: 'location',
-	});
+export function useGeoSearchClient(props?: GeoSearchClientProps) {
+	const [service] = useState(() => new SearchService());
 
-	const searchClient = typesenseInstantsearchAdapter.searchClient;
-
-	return searchClient;
+	return service.getGeoSearchClient(props?.additionalSearchParameters);
 }
 
-export { useGeoSearchClient, useSearchClient };
+export function useUsersSearchClient(props?: GeoSearchClientProps) {
+	const [service] = useState(() => new SearchService());
+
+	return service.getUsersSearchClient(props?.additionalSearchParameters);
+}
+
+export function usePlacesSearchClient(props?: GeoSearchClientProps) {
+	const [service] = useState(() => new SearchService());
+
+	return service.getPlacesSearchClient(props?.additionalSearchParameters);
+}
+
+export function useCitiesSearchClient(props?: GeoSearchClientProps) {
+	const [service] = useState(() => new SearchService());
+
+	return service.getCitiesSearchClient(props?.additionalSearchParameters);
+}
