@@ -31,7 +31,6 @@ export function Content() {
 		dateLabel,
 		timeLabel,
 		classNames,
-		tzOffset,
 	} = useTSTZPickerContext();
 
 	useFieldUpdateEffect();

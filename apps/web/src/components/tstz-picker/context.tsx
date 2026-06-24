@@ -56,11 +56,15 @@ export function TSTZPickerContextProvider(
 
 	const minutes = useMemo(() => Number.parseInt(sMinutes, 10), [sMinutes]);
 
-	const formatted = props.value
-		? format(props.value, props.formatStr ?? defaultFormatStr, {
-				in: tz(tzOffset),
-			})
-		: 'Pick a date';
+	const formatted = useMemo(() => {
+		if (!props.value) {
+			return 'Pick a date';
+		}
+
+		const str = props.formatStr ?? defaultFormatStr;
+		const result = format(props.value, str, { in: tz(tzOffset) });
+		return `${result} ${tzOffset}`;
+	}, [props.value, props.formatStr, tzOffset]);
 
 	return (
 		<TSTZPickerContext.Provider
