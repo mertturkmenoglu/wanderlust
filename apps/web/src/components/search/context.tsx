@@ -9,9 +9,9 @@ import {
 } from 'react';
 import { useAutocomplete } from '@/hooks/use-autocomplete';
 import { useSearchType } from '@/hooks/use-search-type';
-import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
+import type { TCityHit, TPlaceHit, TUserHit } from '@/lib/search';
 
-export type TSearchResultType = TSearchHit | TSearchCityHit | TSearchUserHit;
+export type TSearchResultType = TPlaceHit | TCityHit | TUserHit;
 
 type State<T extends TSearchResultType> = {
 	variant: 'global' | 'local';

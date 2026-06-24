@@ -2,7 +2,7 @@ import { useDebouncedValue } from '@tanstack/react-pacer';
 import { useEffect, useMemo } from 'react';
 import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { useSearchType } from '@/hooks/use-search-type';
-import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
+import type { TCityHit, TPlaceHit, TUserHit } from '@/lib/search';
 import { usePreferencesStore } from '@/stores/preferences-context';
 import { useSearchContext } from './context';
 
@@ -118,16 +118,16 @@ export function useSearchHitsTypeCasted(unknownHits: unknown) {
 	const [searchType] = useSearchType();
 
 	if (searchType === 'places') {
-		return unknownHits as TSearchHit[];
+		return unknownHits as TPlaceHit[];
 	}
 
 	if (searchType === 'cities') {
-		return unknownHits as TSearchCityHit[];
+		return unknownHits as TCityHit[];
 	}
 
 	if (searchType === 'users') {
-		return unknownHits as TSearchUserHit[];
+		return unknownHits as TUserHit[];
 	}
 
-	return unknownHits as TSearchHit[];
+	return unknownHits as TPlaceHit[];
 }

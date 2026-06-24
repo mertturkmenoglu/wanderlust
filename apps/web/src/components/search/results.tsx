@@ -9,7 +9,7 @@ import {
 } from '@wanderlust/ui/components/item';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
-import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
+import type { TCityHit, TPlaceHit, TUserHit } from '@/lib/search';
 import { useSearchContext } from './context';
 
 export function ResultsView() {
@@ -44,7 +44,7 @@ function getResultsView(
 
 export function PlacesResultsView() {
 	const ctx = useSearchContext();
-	const hits = ctx.hits as TSearchHit[];
+	const hits = ctx.hits as TPlaceHit[];
 
 	return (
 		<div>
@@ -94,7 +94,7 @@ export function PlacesResultsView() {
 
 export function CitiesResultsView() {
 	const ctx = useSearchContext();
-	const hits = ctx.hits as TSearchCityHit[];
+	const hits = ctx.hits as TCityHit[];
 
 	return (
 		<div>
@@ -140,7 +140,7 @@ export function CitiesResultsView() {
 
 export function UsersResultsView() {
 	const ctx = useSearchContext();
-	const hits = ctx.hits as TSearchUserHit[];
+	const hits = ctx.hits as TUserHit[];
 
 	return (
 		<div>
