@@ -34,7 +34,7 @@ export type CategoriesBannerProps = Pick<OverlayBannerProps, 'classNames'>;
 
 export function CategoriesBanner({
 	classNames = {
-		root: 'my-8',
+		root: '',
 		image: 'aspect-[2]',
 	},
 }: CategoriesBannerProps) {
