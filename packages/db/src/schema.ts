@@ -185,6 +185,7 @@ export const cities = pgTable('cities', {
 	lat: doublePrecision().notNull(),
 	lng: doublePrecision().notNull(),
 	description: text().notNull(),
+	timezone: text().notNull(),
 });
 
 export const addresses = pgTable('addresses', {
