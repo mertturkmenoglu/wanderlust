@@ -1,4 +1,8 @@
 import type { IndexUiState } from 'instantsearch.js';
+import TypesenseInstantSearchAdapter, {
+	type BaseAdapterOptions,
+	type BaseSearchParameters,
+} from 'typesense-instantsearch-adapter';
 import { env } from './env';
 import type { Outputs } from './orpc';
 
@@ -52,7 +56,7 @@ export type TSearchUserHit = {
 	name: string;
 	username: string;
 	image: string | null;
-}
+};
 
 type TypeSenseCollection = 'places' | 'cities' | 'users';
 
@@ -99,7 +103,10 @@ export async function searchTypesense<T = TSearchHit>(
 	const searchApiKey = env.VITE_SEARCH_CLIENT_API_KEY;
 	const searchApiUrl = env.VITE_SEARCH_CLIENT_URL;
 
-	const url = new URL(`/collections/${collection}/documents/search?${query}`, searchApiUrl);
+	const url = new URL(
+		`/collections/${collection}/documents/search?${query}`,
+		searchApiUrl,
+	);
 
 	const res = await fetch(url.toString(), {
 		headers: {
@@ -109,4 +116,121 @@ export async function searchTypesense<T = TSearchHit>(
 
 	const data = (await res.json()) as SearchResponse<T>;
 	return data;
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: This is the type definition from the typesense-instantsearch-adapter package, and we need to use it as is.
+type BaseSchema = Record<string, any>;
+
+export class SearchService<T extends BaseSchema> {
+	getServerOptions(): BaseAdapterOptions['server'] {
+		return {
+			apiKey: env.VITE_SEARCH_CLIENT_API_KEY,
+			nodes: [
+				{
+					url: env.VITE_SEARCH_CLIENT_URL,
+				},
+			],
+			numRetries: 4,
+			useServerSideSearchCache: true,
+		};
+	}
+
+	getDefaultAdapter() {
+		return new TypesenseInstantSearchAdapter({
+			server: this.getServerOptions(),
+			additionalSearchParameters: {
+				query_by: [
+					'name',
+					'place.description',
+					'place.website',
+					'place.address.city.name',
+					'place.address.city.countryName',
+					'place.address.city.stateName',
+					'place.category.name',
+				],
+			},
+		});
+	}
+
+	getDefaultSearchClient() {
+		return this.getDefaultAdapter().searchClient;
+	}
+
+	getAdapter(additionalSearchParameters: BaseSearchParameters<T>) {
+		return new TypesenseInstantSearchAdapter({
+			server: this.getServerOptions(),
+			additionalSearchParameters,
+		});
+	}
+
+	getPlacesAdapter(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return this.getAdapter({
+			query_by: [
+				'name',
+				'place.description',
+				'place.website',
+				'place.address.city.name',
+				'place.address.city.countryName',
+				'place.address.city.stateName',
+				'place.category.name',
+			],
+			per_page: 10,
+			...additionalSearchParameters,
+		});
+	}
+
+	getPlacesSearchClient(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return this.getPlacesAdapter(additionalSearchParameters).searchClient;
+	}
+
+	getGeoAdapter(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return new TypesenseInstantSearchAdapter({
+			server: this.getServerOptions(),
+			additionalSearchParameters: {
+				query_by: 'name',
+				per_page: 10,
+				...additionalSearchParameters,
+			},
+			geoLocationField: 'location',
+		});
+	}
+
+	getGeoSearchClient(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return this.getGeoAdapter(additionalSearchParameters).searchClient;
+	}
+
+	getUsersAdapter(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return new TypesenseInstantSearchAdapter({
+			server: this.getServerOptions(),
+			additionalSearchParameters: {
+				query_by: ['name', 'username'],
+				per_page: 10,
+				...additionalSearchParameters,
+			},
+		});
+	}
+
+	getUsersSearchClient(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return this.getUsersAdapter(additionalSearchParameters).searchClient;
+	}
+
+	getCitiesAdapter(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return new TypesenseInstantSearchAdapter({
+			server: this.getServerOptions(),
+			additionalSearchParameters: {
+				query_by: [
+					'name',
+					'city.countryName',
+					'city.stateName',
+					'city.description',
+				],
+				per_page: 10,
+				...additionalSearchParameters,
+			},
+		});
+	}
+
+	getCitiesSearchClient(additionalSearchParameters?: BaseSearchParameters<T>) {
+		return this.getCitiesAdapter(additionalSearchParameters).searchClient;
+	}
 }
