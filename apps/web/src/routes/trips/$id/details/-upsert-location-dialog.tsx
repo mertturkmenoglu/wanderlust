@@ -25,11 +25,10 @@ import {
 	Trash2Icon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { InstantSearch } from 'react-instantsearch';
-import { Autocomplete } from '@/components/autocomplete';
+import { Search } from '@/components/search';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { useSearchClient } from '@/hooks/use-search-client';
 import { orpc } from '@/lib/orpc';
+import type { TSearchHit } from '@/lib/search';
 
 const fmtString = "yyyy-MM-dd'T'HH:mm";
 
@@ -48,7 +47,6 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 		locId,
 	} = route.useSearch();
 	const { id: tripId } = route.useParams();
-	const searchClient = useSearchClient();
 	const invalidate = useInvalidator();
 	const navigate = useNavigate();
 
@@ -241,26 +239,16 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 								</div>
 							</div>
 						) : (
-							<InstantSearch
-								indexName="places"
-								searchClient={searchClient}
-								routing={false}
-								future={{
-									preserveSharedStateOnUnmount: true,
+							<Search
+								variant="local"
+								onItemClick={(v) => {
+									const hit = v as TSearchHit;
+									navigate({
+										to: '.',
+										search: (prev) => ({ ...prev, placeId: hit.place.id }),
+									});
 								}}
-							>
-								<Autocomplete
-									showAdvancedSearch={false}
-									showAllResultsButton={false}
-									isCardClickable
-									onCardClick={(v) => {
-										navigate({
-											to: '.',
-											search: (prev) => ({ ...prev, placeId: v.id }),
-										});
-									}}
-								/>
-							</InstantSearch>
+							/>
 						)}
 					</AlertDialogDescription>
 				</AlertDialogHeader>

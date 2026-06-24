@@ -19,20 +19,20 @@ export function SortView() {
 					const newArr = arrayMove(ctx.items, initial, current);
 
 					mutation.mutate({
-						placesIds: newArr.map((x) => x.id),
+						placesIds: newArr.map((x) => x.place.id),
 					});
 				}}
 			>
 				{ctx.items.map((item, i) => (
 					<SortableItem
-						key={item.id}
-						item={item}
+						key={item.place.id}
+						item={item.place}
 						index={i}
 						onRemoveClick={(placeId) => {
-							const newItems = ctx.items.filter((i) => i.id !== placeId);
+							const newItems = ctx.items.filter((i) => i.place.id !== placeId);
 
 							mutation.mutate({
-								placesIds: newItems.map((p) => p.id),
+								placesIds: newItems.map((p) => p.place.id),
 							});
 						}}
 					/>

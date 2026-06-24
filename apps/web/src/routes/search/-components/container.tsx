@@ -11,11 +11,11 @@ import {
 import { FilterIcon } from 'lucide-react';
 import React from 'react';
 import { useCurrentRefinements } from 'react-instantsearch';
-import { CustomSearchBox } from '@/components/custom-search-box';
 import { UnderlineLink } from '@/components/underline-link';
 import { CategoryBannerDisplay } from './category-banner-display';
 import { Filters } from './filters';
 import { Results } from './results';
+import { SearchBox } from './search-box';
 
 const MemoizedFilters = React.memo(function MFilters() {
 	return <Filters />;
@@ -33,7 +33,7 @@ export function Container() {
 		<>
 			<CategoryBannerDisplay className="mb-4" />
 
-			<CustomSearchBox isSearchOnType />
+			<SearchBox />
 
 			<div className="my-4 flex flex-row items-center gap-4">
 				<span className="text-sm">See:</span>
