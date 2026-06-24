@@ -1,4 +1,5 @@
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
+import { Pin } from '@/components/pin';
 import { useMapStyle } from '@/hooks/use-map-style';
 import type { TBookmark } from './-hooks';
 
@@ -32,7 +33,9 @@ export function BookmarkItemMap({ bookmark }: Props) {
 			minZoom={12}
 			mapStyle={style}
 		>
-			<Marker latitude={address.lat} longitude={address.lng} />
+			<Marker latitude={address.lat} longitude={address.lng} anchor="bottom">
+				<Pin />
+			</Marker>
 		</MapContainer>
 	);
 }

@@ -4,6 +4,7 @@ import type { MapLibreEvent } from 'maplibre-gl';
 import { useCallback, useEffect, useState } from 'react';
 import { type UseGeoSearchProps, useGeoSearch } from 'react-instantsearch';
 import { Marker, Popup, useMap } from 'react-map-gl/maplibre';
+import { Pin } from '@/components/pin';
 import { PlaceCard } from '@/components/place-card';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -46,7 +47,10 @@ export function GeoSearch(props: UseGeoSearchProps) {
 						e.originalEvent.stopPropagation();
 						setItemIndex(i);
 					}}
-				/>
+					anchor="bottom"
+				>
+					<Pin />
+				</Marker>
 			))}
 
 			{itemIndex !== -1 && items[itemIndex] && (

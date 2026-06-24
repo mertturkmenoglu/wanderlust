@@ -3,8 +3,8 @@ import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ExternalLinkIcon } from 'lucide-react';
 import MapContainer, { Marker } from 'react-map-gl/maplibre';
+import { Pin } from '@/components/pin';
 import { useMapStyle } from '@/hooks/use-map-style';
-import mapPinIcon from '@/map-pin.svg';
 
 type Props = {
 	className?: string;
@@ -48,8 +48,8 @@ export function MapComponent({ className }: Props) {
 				style={{ width: '100%', height: '400px', marginTop: '16px', zIndex: 0 }}
 				mapStyle={style}
 			>
-				<Marker latitude={lat} longitude={lng}>
-					<img src={mapPinIcon} alt="map pin" />
+				<Marker latitude={lat} longitude={lng} anchor="bottom">
+					<Pin />
 				</Marker>
 			</MapContainer>
 		</div>
