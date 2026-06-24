@@ -6,6 +6,7 @@ import {
 	TripPlannerCta,
 } from '@/components/banner/common';
 import { useInterleaveRenderer } from '@/components/interleave-renderer';
+import { TagNavigation } from '@/components/tag-navigation';
 import { PlaceCatalog } from '@/routes/-components/place-catalog';
 import { FeaturedCitiesCatalog } from './featured-cities-catalog';
 import { RecentlyViewed } from './recently-viewed';
@@ -27,7 +28,7 @@ const listA: React.ReactNode[] = [
 ];
 
 const listB: React.ReactNode[] = [
-	null,
+	<TagNavigation className="my-8" />,
 
 	<PlaceCatalog accessor="featured" />,
 
