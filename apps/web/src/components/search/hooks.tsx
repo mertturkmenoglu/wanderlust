@@ -1,5 +1,5 @@
 import { useDebouncedValue } from '@tanstack/react-pacer';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { useSearchType } from '@/hooks/use-search-type';
 import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
@@ -58,27 +58,60 @@ export function useTrackRecentSearches() {
 	]);
 }
 
+const placePlaceholders = [
+	'Find places, attractions, and destinations',
+	'Search for a place e.g. Eiffel Tower, Grand Canyon, or Rocky Mountains',
+	'Discover new places',
+	'Find your next adventure',
+	'Search for a location',
+	'Explore the world',
+	'Discover new destinations',
+];
+
+const cityPlaceholders = [
+	'Search for a city e.g. Paris, New York, or Tokyo',
+	'Find cities to explore',
+	'Discover new cities',
+	'Search for a city',
+	'Explore urban destinations',
+];
+
+const userPlaceholders = [
+	'Find people to follow',
+	'Search for users by name or username',
+	'Discover new people',
+	'Connect with others',
+];
+
+function getRandomElement<T>(arr: T[]): T {
+	return arr[Math.floor(Math.random() * arr.length)];
+}
+
 export function useInputPlaceholder() {
 	const ctx = useSearchContext();
 	const [searchType] = useSearchType();
 
-	if (ctx.variant === 'local') {
+	const memoized = useMemo(() => {
+		if (ctx.variant === 'local') {
+			return 'Search';
+		}
+
+		if (searchType === 'places') {
+			return getRandomElement(placePlaceholders);
+		}
+
+		if (searchType === 'cities') {
+			return getRandomElement(cityPlaceholders);
+		}
+
+		if (searchType === 'users') {
+			return getRandomElement(userPlaceholders);
+		}
+
 		return 'Search';
-	}
+	}, [ctx.variant, searchType]);
 
-	if (searchType === 'places') {
-		return 'Search a place';
-	}
-
-	if (searchType === 'cities') {
-		return 'Search a city';
-	}
-
-	if (searchType === 'users') {
-		return 'Search a user';
-	}
-
-	return 'Search';
+	return memoized;
 }
 
 export function useSearchHitsTypeCasted(unknownHits: unknown) {
