@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { XIcon } from 'lucide-react';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { useSearchContext } from './context';
-import { useRecentSearches } from './hooks';
 
 export function RecentSearchesView() {
 	const ctx = useSearchContext();

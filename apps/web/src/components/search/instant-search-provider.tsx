@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { InstantSearch } from 'react-instantsearch';
 import { useSearchClient } from '@/hooks/use-search-client';
-import { useSearchType } from './hooks';
+import { useSearchType } from '@/hooks/use-search-type';
 
 type Props = PropsWithChildren;
 

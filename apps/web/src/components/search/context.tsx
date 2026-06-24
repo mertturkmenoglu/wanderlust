@@ -8,8 +8,9 @@ import {
 	useState,
 } from 'react';
 import { useAutocomplete } from '@/hooks/use-autocomplete';
+import { useSearchType } from '@/hooks/use-search-type';
 import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
-import { useSearchHitsTypeCasted, useSearchType } from './hooks';
+import { useSearchHitsTypeCasted } from './hooks';
 
 type State = {
 	autocomplete: AutocompleteRenderState;

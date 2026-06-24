@@ -1,62 +1,10 @@
 import { useDebouncedValue } from '@tanstack/react-pacer';
 import { useEffect } from 'react';
-import z from 'zod';
-import { useLocalStorage } from '@/hooks/use-localstorage';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
+import { useSearchType } from '@/hooks/use-search-type';
 import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
 import { usePreferencesStore } from '@/stores/preferences-context';
 import { useSearchContext } from './context';
-
-export const searchTypeKey = 'wl-search-type';
-
-export type TSearchType = 'places' | 'cities' | 'users';
-
-export function useSearchType() {
-	return useLocalStorage<TSearchType>(searchTypeKey, 'places', {
-		deserializer: (str) => {
-			if (str === '"places"' || str === '"cities"' || str === '"users"') {
-				return str.slice(1, -1) as TSearchType;
-			}
-
-			return 'places';
-		},
-	});
-}
-
-const recentSearchesKey = 'wl-recent-searches';
-
-const recentSearchesSchema = z.object({
-	places: z.array(z.string()),
-	cities: z.array(z.string()),
-	users: z.array(z.string()),
-});
-
-export type TRecentSearches = z.infer<typeof recentSearchesSchema>;
-
-export function useRecentSearches() {
-	return useLocalStorage<TRecentSearches>(
-		recentSearchesKey,
-		{
-			cities: [],
-			places: [],
-			users: [],
-		},
-		{
-			deserializer: (str) => {
-				try {
-					const parsed = recentSearchesSchema.parse(JSON.parse(str));
-
-					return parsed;
-				} catch {}
-
-				return {
-					cities: [],
-					places: [],
-					users: [],
-				};
-			},
-		},
-	);
-}
 
 export function useTrackRecentSearches() {
 	const ctx = useSearchContext();

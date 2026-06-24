@@ -3,7 +3,7 @@ import { ButtonGroup } from '@wanderlust/ui/components/button-group';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { Building2Icon, MapPinIcon, UserIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useSearchType } from './hooks';
+import { useSearchType } from '@/hooks/use-search-type';
 
 type Props = {
 	className?: string;
