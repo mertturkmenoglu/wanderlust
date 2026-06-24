@@ -49,13 +49,11 @@ export class UsersSchema extends AbstractSchema {
 		const count = await this.db.$count(schema.users);
 		const step = 1000;
 
-		let lastCreatedAt: Date | null = null;
-
 		for (let i = 0; i < count; i += step) {
 			const users = await this.db.query.users.findMany({
-				where: (t, { gt }) => gt(t.createdAt, lastCreatedAt ?? new Date(0)),
 				orderBy: (t, { asc }) => [asc(t.createdAt), asc(t.name)],
 				limit: step,
+				offset: i,
 				columns: {
 					id: true,
 					name: true,
@@ -64,8 +62,6 @@ export class UsersSchema extends AbstractSchema {
 					createdAt: true,
 				},
 			});
-
-			lastCreatedAt = users.at(-1)?.createdAt ?? lastCreatedAt;
 
 			const docs = users.map((user) => ({
 				id: user.id,
