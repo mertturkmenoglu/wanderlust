@@ -326,6 +326,10 @@ export const $dto = {
 					'London is the capital city of the United Kingdom, known for its rich history and vibrant culture.',
 				],
 			}),
+		timezone: z.string().min(1).meta({
+			description: 'IANA timezone name',
+			examples: ['Europe/London', 'America/New_York'],
+		})
 	}).meta({
 		description: 'A city entity',
 	}),
