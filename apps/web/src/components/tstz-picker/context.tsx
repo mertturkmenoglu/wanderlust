@@ -9,6 +9,7 @@ import {
 	useMemo,
 	useState,
 } from 'react';
+import { getCurrentTimezoneIANAName } from '@/lib/timezone';
 import type { TSTZPickerProps } from './types';
 import { defaultFormatStr, padNumber } from './utils';
 
@@ -44,7 +45,7 @@ export function TSTZPickerContextProvider(
 		return hours < 12;
 	});
 	const [tzOffset, setTzOffset] = useState<string>(
-		format(new Date(), "'UTC'xxx"),
+		getCurrentTimezoneIANAName(),
 	);
 
 	const hours24 = useMemo(() => {

@@ -8,7 +8,7 @@ import {
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format } from 'date-fns';
 import { ClockPlusIcon } from 'lucide-react';
-import { getCurrentTimezoneOffset, stripUTCPrefix } from '@/lib/timezone';
+import { getCurrentTimezoneIANAName } from '@/lib/timezone';
 import { usePreferencesStore } from '@/stores/preferences-context';
 
 export type TSTZDisplayProps = {
@@ -20,22 +20,22 @@ export type TSTZDisplayProps = {
 
 export function TSTZDisplay({
 	date,
-	formatStr = 'PP p x',
+	formatStr = 'PP p',
 	timezones,
 	className,
 }: TSTZDisplayProps) {
 	const preferences = usePreferencesStore((s) => s.preferences);
-	const currentTimezone = getCurrentTimezoneOffset();
+	const currentTimezone = getCurrentTimezoneIANAName();
 
 	const selectedTimezones = timezones ?? [
-		{ timezone: '+00:00', explanation: 'Time in UTC' },
+		{ timezone: 'Etc/UTC', explanation: 'Time in UTC' },
 		{
 			timezone: preferences.timezone,
-			explanation: 'Time in your preferred timezone',
+			explanation: `Time in your preferred timezone (${preferences.timezone})`,
 		},
 		{
 			timezone: currentTimezone,
-			explanation: 'Time in your current timezone',
+			explanation: `Time in your current timezone (${currentTimezone})`,
 		},
 	];
 
@@ -44,7 +44,7 @@ export function TSTZDisplay({
 	const main = format(date, mainFormatStr);
 
 	const alternativeDisplays = selectedTimezones.map((t) => ({
-		formatted: format(date, formatStr, { in: tz(stripUTCPrefix(t.timezone)) }),
+		formatted: format(date, formatStr, { in: tz(t.timezone) }),
 		timezone: t.timezone,
 		explanation: t.explanation,
 	}));
