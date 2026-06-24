@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 
 export const preferencesSchema = z.object({
 	units: z.enum(['metric', 'imperial'], 'Choose an option').default('metric'),
-	timezone: z.string().default('UTC+00:00'),
+	timezone: z.string().default('Etc/UTC'),
 	mapStyle: z
 		.enum(['light', 'dark', 'auto'], 'Choose an option')
 		.default('light'),
@@ -13,7 +13,9 @@ export const preferencesSchema = z.object({
 		.default('close'),
 	enableSearchHistory: z.boolean().default(true),
 	enableRecentViews: z.boolean().default(true),
-	theme: z.enum(['light', 'dark', 'auto'], 'Choose an option').default('light'),
+	theme: z
+		.enum(['light', 'dark', 'system'], 'Choose an option')
+		.default('light'),
 });
 
 export type TPreferences = z.infer<typeof preferencesSchema>;

@@ -71,7 +71,7 @@ export const themeOptions: ThemeOption[] = [
 		label: 'Dark',
 	},
 	{
-		key: 'auto',
-		label: 'Auto',
+		key: 'system',
+		label: 'System',
 	}
 ];

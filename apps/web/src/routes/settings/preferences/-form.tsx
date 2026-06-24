@@ -19,10 +19,11 @@ import {
 } from '@wanderlust/ui/components/select';
 import { Switch } from '@wanderlust/ui/components/switch';
 import { useTheme } from 'next-themes';
+import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useUpdatePreferences } from '@/hooks/use-update-preferences';
-import { timezoneOffsets } from '@/lib/timezone';
+import { getIANANames } from '@/lib/timezone';
 import type { TPreferences } from '@/stores/preferences-context';
 import {
 	mapStyleOptions,
@@ -35,6 +36,7 @@ export function PreferencesForm() {
 	const form = useFormContext<TPreferences>();
 	const mutation = useUpdatePreferences();
 	const { setTheme } = useTheme();
+	const tzOptions = useMemo(() => getIANANames(), []);
 
 	return (
 		<form
@@ -217,9 +219,9 @@ export function PreferencesForm() {
 											<SelectValue placeholder="Timezone" />
 										</SelectTrigger>
 										<SelectContent position="popper" align="end">
-											{timezoneOffsets.map((offset) => (
-												<SelectItem key={offset} value={offset}>
-													{offset}
+											{tzOptions.map((ianaName) => (
+												<SelectItem key={ianaName} value={ianaName}>
+													{ianaName}
 												</SelectItem>
 											))}
 										</SelectContent>
