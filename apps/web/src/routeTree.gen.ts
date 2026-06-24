@@ -17,7 +17,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TripsIndexRouteImport } from './routes/trips/index'
 import { Route as TermsIndexRouteImport } from './routes/terms/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as SearchIndexRouteImport } from './routes/search/index'
 import { Route as ReportIndexRouteImport } from './routes/report/index'
 import { Route as PrivacyIndexRouteImport } from './routes/privacy/index'
 import { Route as NotificationsIndexRouteImport } from './routes/notifications/index'
@@ -114,11 +113,6 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
-} as any)
-const SearchIndexRoute = SearchIndexRouteImport.update({
-  id: '/search/',
-  path: '/search/',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const ReportIndexRoute = ReportIndexRouteImport.update({
   id: '/report/',
@@ -426,7 +420,6 @@ export interface FileRoutesByFullPath {
   '/notifications/': typeof NotificationsIndexRoute
   '/privacy/': typeof PrivacyIndexRoute
   '/report/': typeof ReportIndexRoute
-  '/search/': typeof SearchIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
@@ -488,7 +481,6 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsIndexRoute
   '/privacy': typeof PrivacyIndexRoute
   '/report': typeof ReportIndexRoute
-  '/search': typeof SearchIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/terms': typeof TermsIndexRoute
   '/trips': typeof TripsIndexRoute
@@ -556,7 +548,6 @@ export interface FileRoutesById {
   '/notifications/': typeof NotificationsIndexRoute
   '/privacy/': typeof PrivacyIndexRoute
   '/report/': typeof ReportIndexRoute
-  '/search/': typeof SearchIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
@@ -625,7 +616,6 @@ export interface FileRouteTypes {
     | '/notifications/'
     | '/privacy/'
     | '/report/'
-    | '/search/'
     | '/settings/'
     | '/terms/'
     | '/trips/'
@@ -687,7 +677,6 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/privacy'
     | '/report'
-    | '/search'
     | '/settings'
     | '/terms'
     | '/trips'
@@ -754,7 +743,6 @@ export interface FileRouteTypes {
     | '/notifications/'
     | '/privacy/'
     | '/report/'
-    | '/search/'
     | '/settings/'
     | '/terms/'
     | '/trips/'
@@ -820,7 +808,6 @@ export interface RootRouteChildren {
   NotificationsIndexRoute: typeof NotificationsIndexRoute
   PrivacyIndexRoute: typeof PrivacyIndexRoute
   ReportIndexRoute: typeof ReportIndexRoute
-  SearchIndexRoute: typeof SearchIndexRoute
   TermsIndexRoute: typeof TermsIndexRoute
   AuthSignInIndexRoute: typeof AuthSignInIndexRoute
   AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
@@ -897,13 +884,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
-    }
-    '/search/': {
-      id: '/search/'
-      path: '/search'
-      fullPath: '/search/'
-      preLoaderRoute: typeof SearchIndexRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/report/': {
       id: '/report/'
@@ -1425,7 +1405,6 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsIndexRoute: NotificationsIndexRoute,
   PrivacyIndexRoute: PrivacyIndexRoute,
   ReportIndexRoute: ReportIndexRoute,
-  SearchIndexRoute: SearchIndexRoute,
   TermsIndexRoute: TermsIndexRoute,
   AuthSignInIndexRoute: AuthSignInIndexRoute,
   AuthSignUpIndexRoute: AuthSignUpIndexRoute,
