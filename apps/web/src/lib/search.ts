@@ -47,7 +47,14 @@ export type TSearchCityHit = {
 	city: Outputs['cities']['get']['city'];
 };
 
-type TypeSenseCollection = 'places' | 'cities';
+export type TSearchUserHit = {
+	id: string;
+	name: string;
+	username: string;
+	image: string | null;
+}
+
+type TypeSenseCollection = 'places' | 'cities' | 'users';
 
 export class TypesenseQueryBuilder {
 	private readonly sp: URLSearchParams;
