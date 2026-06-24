@@ -4,6 +4,7 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from '@wanderlust/ui/components/input-group';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { SearchIcon, XIcon } from 'lucide-react';
 import type { UseSearchBoxProps } from 'react-instantsearch';
 import { useSearchBox } from '@/hooks/use-search-box';
@@ -30,13 +31,20 @@ export function SearchBox(props: Props) {
 					ctx.setIsDropdownOpen(true);
 				}}
 			>
-				<InputGroup className="group h-10 rounded-full pr-1 pl-2 focus-within:rounded-md md:h-14 md:pl-4">
+				<InputGroup
+					className={cn({
+						'group h-10 rounded-full pr-1 pl-2 focus-within:rounded-md md:h-14 md:pl-4':
+							ctx.variant === 'global',
+					})}
+				>
 					<InputGroupInput
 						ref={sb.ref}
 						autoComplete="off"
 						autoCorrect="off"
 						autoCapitalize="off"
-						className="rounded-md"
+						className={cn({
+							'rounded-md': ctx.variant === 'global',
+						})}
 						placeholder={placeholder}
 						spellCheck={false}
 						maxLength={128}
@@ -55,10 +63,19 @@ export function SearchBox(props: Props) {
 						<InputGroupButton
 							type="submit"
 							variant="default"
-							className="h-8 rounded-full px-2.5! md:h-10 md:px-4!"
+							className={cn({
+								'h-8 rounded-full px-2.5! md:h-10 md:px-4!':
+									ctx.variant === 'global',
+							})}
 						>
 							<SearchIcon />
-							<span className="sr-only md:not-sr-only md:ml-2!">Search</span>
+							<span
+								className={cn('sr-only md:not-sr-only', {
+									'md:ml-2!': ctx.variant === 'global',
+								})}
+							>
+								Search
+							</span>
 						</InputGroupButton>
 					</InputGroupAddon>
 				</InputGroup>

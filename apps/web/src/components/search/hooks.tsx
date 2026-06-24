@@ -18,7 +18,15 @@ export function useTrackRecentSearches() {
 	});
 
 	useEffect(() => {
-		if (debounced && isRecentSearchesEnabled) {
+		if (ctx.variant === 'local') {
+			return;
+		}
+
+		if (!isRecentSearchesEnabled) {
+			return;
+		}
+
+		if (debounced) {
 			setSearches((prev) => {
 				const newCities =
 					ctx.searchType === 'cities'
@@ -46,11 +54,17 @@ export function useTrackRecentSearches() {
 		ctx.recentSearchLimit,
 		isRecentSearchesEnabled,
 		ctx.searchType,
+		ctx.variant,
 	]);
 }
 
 export function useInputPlaceholder() {
+	const ctx = useSearchContext();
 	const [searchType] = useSearchType();
+
+	if (ctx.variant === 'local') {
+		return 'Search';
+	}
 
 	if (searchType === 'places') {
 		return 'Search a place';

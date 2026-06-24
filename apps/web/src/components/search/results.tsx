@@ -13,8 +13,8 @@ import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
 import { useSearchContext } from './context';
 
 export function ResultsView() {
-	const { searchType } = useSearchContext();
-	const View = getResultsView(searchType);
+	const { searchType, variant } = useSearchContext();
+	const View = getResultsView(variant, searchType);
 
 	if (!View) {
 		return null;
@@ -23,8 +23,11 @@ export function ResultsView() {
 	return <View />;
 }
 
-function getResultsView(searchType: 'places' | 'cities' | 'users') {
-	if (searchType === 'places') {
+function getResultsView(
+	variant: 'global' | 'local',
+	searchType: 'places' | 'cities' | 'users',
+) {
+	if (searchType === 'places' || variant === 'local') {
 		return PlacesResultsView;
 	}
 
@@ -51,6 +54,13 @@ export function PlacesResultsView() {
 					to="/p/$id"
 					params={{
 						id: hit.place.id,
+					}}
+					onClick={(e) => {
+						if (ctx.onItemClick) {
+							e.preventDefault();
+							e.stopPropagation();
+							ctx.onItemClick(hit);
+						}
 					}}
 				>
 					<Item className="hover:bg-muted">
@@ -95,6 +105,13 @@ export function CitiesResultsView() {
 					params={{
 						_splat: `${hit.city.id}/${hit.city.name}`,
 					}}
+					onClick={(e) => {
+						if (ctx.onItemClick) {
+							e.preventDefault();
+							e.stopPropagation();
+							ctx.onItemClick(hit);
+						}
+					}}
 				>
 					<Item className="hover:bg-muted">
 						<ItemMedia>
@@ -133,6 +150,13 @@ export function UsersResultsView() {
 					to="/u/$username"
 					params={{
 						username: hit.username,
+					}}
+					onClick={(e) => {
+						if (ctx.onItemClick) {
+							e.preventDefault();
+							e.stopPropagation();
+							ctx.onItemClick(hit);
+						}
 					}}
 				>
 					<Item className="hover:bg-muted">

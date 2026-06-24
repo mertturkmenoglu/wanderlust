@@ -9,6 +9,10 @@ export function RecentSearchesView() {
 	const [searches, , clearSearches] = useRecentSearches();
 	const searchItems = searches[ctx.searchType];
 
+	if (ctx.variant === 'local') {
+		return null;
+	}
+
 	if (searchItems.length === 0) {
 		return (
 			<div className="text-muted-foreground text-sm">

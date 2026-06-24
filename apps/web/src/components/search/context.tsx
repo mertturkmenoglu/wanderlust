@@ -10,9 +10,11 @@ import {
 import { useAutocomplete } from '@/hooks/use-autocomplete';
 import { useSearchType } from '@/hooks/use-search-type';
 import type { TSearchCityHit, TSearchHit, TSearchUserHit } from '@/lib/search';
-import { useSearchHitsTypeCasted } from './hooks';
 
-type State = {
+export type TSearchResultType = TSearchHit | TSearchCityHit | TSearchUserHit;
+
+type State<T extends TSearchResultType> = {
+	variant: 'global' | 'local';
 	autocomplete: AutocompleteRenderState;
 	isDropdownOpen: boolean;
 	setIsDropdownOpen: Dispatch<SetStateAction<boolean>>;
@@ -22,22 +24,33 @@ type State = {
 	showResults: boolean;
 	showRecentSearches: boolean;
 	searchType: 'places' | 'cities' | 'users';
-	hits: TSearchHit[] | TSearchCityHit[] | TSearchUserHit[];
+	hits: T[];
+	onItemClick?: (v: TSearchResultType) => void;
 };
 
-export const SearchContext = createContext<State | null>(null);
+export const SearchContext = createContext<State<TSearchResultType> | null>(
+	null,
+);
 
-export function SearchContextProvider({ children }: PropsWithChildren) {
+export function SearchContextProvider<T extends TSearchResultType>({
+	variant,
+	children,
+	onItemClick,
+}: PropsWithChildren<{
+	variant: 'global' | 'local';
+	onItemClick?: (v: TSearchResultType) => void;
+}>) {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 	const ac = useAutocomplete();
 	const [searchType] = useSearchType();
-	const unknownHits = (ac.indices[0]?.hits ?? []) as unknown;
-	const hits = useSearchHitsTypeCasted(unknownHits);
+	const hits = (ac.indices[0]?.hits ?? []) as unknown as T[];
 	const isEmpty = hits.length === 0;
-	const showAllResultsButton = !isEmpty && ac.currentRefinement !== '';
+	const showAllResultsButton =
+		!isEmpty && ac.currentRefinement !== '' && variant === 'global';
 	const showResults = ac.currentRefinement !== '' && !isEmpty;
-	const showRecentSearches = ac.currentRefinement === '' && !isEmpty;
+	const showRecentSearches =
+		ac.currentRefinement === '' && !isEmpty && variant === 'global';
 
 	return (
 		<SearchContext.Provider
@@ -52,6 +65,8 @@ export function SearchContextProvider({ children }: PropsWithChildren) {
 				showRecentSearches,
 				hits,
 				searchType,
+				variant,
+				onItemClick,
 			}}
 		>
 			{children}
@@ -59,7 +74,7 @@ export function SearchContextProvider({ children }: PropsWithChildren) {
 	);
 }
 
-export function useSearchContext() {
+export function useSearchContext<T extends TSearchResultType>() {
 	const context = useContext(SearchContext);
 
 	if (!context) {
@@ -68,5 +83,5 @@ export function useSearchContext() {
 		);
 	}
 
-	return context;
+	return context as State<T>;
 }

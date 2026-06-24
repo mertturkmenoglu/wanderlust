@@ -4,6 +4,10 @@ import { useSearchContext } from './context';
 export function EmptyState() {
 	const ctx = useSearchContext();
 
+	if (ctx.variant === 'local') {
+		return <div className="ml-4">No results found.</div>;
+	}
+
 	return (
 		<UnderlineLink
 			to="/search/$type"

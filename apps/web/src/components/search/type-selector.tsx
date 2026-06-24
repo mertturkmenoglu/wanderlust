@@ -4,14 +4,20 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { Building2Icon, MapPinIcon, UserIcon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSearchType } from '@/hooks/use-search-type';
+import { useSearchContext } from './context';
 
 type Props = {
 	className?: string;
 };
 
 export function TypeSelector({ className }: Props) {
+	const ctx = useSearchContext();
 	const [searchType, setSearchType] = useSearchType();
 	const isMobile = useIsMobile();
+
+	if (ctx.variant === 'local') {
+		return null;
+	}
 
 	return (
 		<ButtonGroup className={cn(className)}>

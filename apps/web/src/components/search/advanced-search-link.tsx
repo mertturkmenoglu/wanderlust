@@ -9,6 +9,10 @@ type Props = {
 export function AdvancedSearchLink({ className }: Props) {
 	const ctx = useSearchContext();
 
+	if (ctx.variant === 'local') {
+		return null;
+	}
+
 	return (
 		<div className={cn('text-sm leading-none tracking-tight', className)}>
 			Exploring something specific? Dig deeper with{' '}
