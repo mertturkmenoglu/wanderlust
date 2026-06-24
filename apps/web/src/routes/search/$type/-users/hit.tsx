@@ -10,14 +10,14 @@ import {
 import type { Hit as THit } from 'instantsearch.js';
 import { userImage } from '@/lib/image';
 import { ipx } from '@/lib/ipx';
-import type { TSearchUserHit } from '@/lib/search';
+import type { TUserHit } from '@/lib/search';
 
 export type Props = {
 	hit: THit;
 };
 
 export function Hit(props: Readonly<Props>) {
-	const hit = props.hit as unknown as TSearchUserHit;
+	const hit = props.hit as unknown as TUserHit;
 
 	return (
 		<Link

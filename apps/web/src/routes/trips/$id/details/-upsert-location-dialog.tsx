@@ -28,7 +28,7 @@ import { useEffect, useState } from 'react';
 import { Search } from '@/components/search';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import type { TSearchHit } from '@/lib/search';
+import type { TPlaceHit } from '@/lib/search';
 
 const fmtString = "yyyy-MM-dd'T'HH:mm";
 
@@ -242,7 +242,7 @@ export function UpsertLocationDialog({ onOpen }: Props) {
 							<Search
 								variant="local"
 								onItemClick={(v) => {
-									const hit = v as TSearchHit;
+									const hit = v as TPlaceHit;
 									navigate({
 										to: '.',
 										search: (prev) => ({ ...prev, placeId: hit.place.id }),

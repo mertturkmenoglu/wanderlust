@@ -9,14 +9,14 @@ import {
 } from '@wanderlust/ui/components/item';
 import type { Hit as THit } from 'instantsearch.js';
 import { ipx } from '@/lib/ipx';
-import type { TSearchCityHit } from '@/lib/search';
+import type { TCityHit } from '@/lib/search';
 
 export type Props = {
 	hit: THit;
 };
 
 export function Hit(props: Readonly<Props>) {
-	const hit = props.hit as unknown as TSearchCityHit;
+	const hit = props.hit as unknown as TCityHit;
 
 	return (
 		<Link

@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { Search as GlobalSearchComponent } from '@/components/search';
-import type { TSearchHit } from '@/lib/search';
+import type { TPlaceHit } from '@/lib/search';
 import { useTopPlacesContext } from './context';
 import { useTopPlacesMutation } from './hooks';
 
@@ -13,7 +13,7 @@ export function Search() {
 		<GlobalSearchComponent
 			variant="local"
 			onItemClick={(v) => {
-				const item = v as TSearchHit;
+				const item = v as TPlaceHit;
 				const maxAllowedCount = 4;
 				const alreadyInList = items.some((lo) => lo.place.id === item.id);
 
