@@ -1,14 +1,14 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
-import { useMemo } from 'react';
-import {
-	searchTypesense,
-	type TSearchCityHit,
-	TypesenseQueryBuilder,
-} from '@/lib/search';
+import { useMemo, useState } from 'react';
+import { SearchService, type TCityHit } from '@/lib/search';
 import { usePreferencesStore } from '@/stores/preferences-context';
 
 export function useNearbyCities() {
+	const [search] = useState(() =>
+		new SearchService<TCityHit>().getPlacesAdapter(),
+	);
+
 	const searchRadiusPreference = usePreferencesStore(
 		(s) => s.preferences.searchRadius,
 	);
@@ -32,13 +32,17 @@ export function useNearbyCities() {
 	return useSuspenseQuery({
 		queryKey: ['nearby-cities', place.address.cityId],
 		queryFn: async () => {
-			const query = new TypesenseQueryBuilder()
-				.append('q', '*')
-				.append('query_by', 'name')
-				.append('filter_by', `location:(${lat},${lng},${radius})`)
-				.build();
-
-			return searchTypesense<TSearchCityHit>('cities', query);
+			return search.typesenseClient
+				.collections<TCityHit>('cities')
+				.documents()
+				.search(
+					{
+						filter_by: `location:(${lat},${lng},${radius}) && city.id:!=[${place.address.cityId}]`,
+						q: '*',
+						sort_by: `location(${lat},${lng}):asc`,
+					},
+					{},
+				);
 		},
 	});
 }
