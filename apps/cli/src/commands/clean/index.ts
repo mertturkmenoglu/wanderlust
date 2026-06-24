@@ -5,7 +5,7 @@ import consola from 'consola';
 
 export const clean = command({
 	name: 'clean',
-	desc: 'Removes and recreates all Docker containers and pushes the database schema',
+	desc: 'Removes and recreates all Docker containers. Pushes the database schema.',
 	options: {},
 	handler: async (_opts) => {
 		const apiProjectPath = path.join(process.cwd(), '..', 'api');
