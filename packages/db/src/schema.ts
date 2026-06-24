@@ -1461,7 +1461,7 @@ export const preferenceSearchRadiusEnum = pgEnum('preference_search_radius', [
 	'far',
 ]);
 
-export const preferenceThemeEnum = pgEnum('preference_theme', ['auto', 'light', 'dark']);
+export const preferenceThemeEnum = pgEnum('preference_theme', ['system', 'light', 'dark']);
 
 export const preferences = pgTable('preferences', {
 	userId: text().primaryKey().references(() => users.id, { onDelete: 'cascade' }),
@@ -1471,5 +1471,5 @@ export const preferences = pgTable('preferences', {
 	searchRadius: preferenceSearchRadiusEnum().notNull().default('close'),
 	enableSearchHistory: boolean().notNull().default(true),
 	enableRecentViews: boolean().notNull().default(true),
-	theme: preferenceThemeEnum().notNull().default('auto'),
+	theme: preferenceThemeEnum().notNull().default('system'),
 });
