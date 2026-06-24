@@ -1466,7 +1466,7 @@ export const preferenceThemeEnum = pgEnum('preference_theme', ['system', 'light'
 export const preferences = pgTable('preferences', {
 	userId: text().primaryKey().references(() => users.id, { onDelete: 'cascade' }),
 	units: preferenceUnitsEnum().notNull().default('metric'),
-	timezone: varchar({ length: 9 }).notNull().default('UTC+00:00'),
+	timezone: varchar({ length: 64 }).notNull().default('Etc/UTC'), // There are long IANA timezone names, so we use varchar(64) to be safe
 	mapStyle: preferenceMapStyleEnum().notNull().default('auto'),
 	searchRadius: preferenceSearchRadiusEnum().notNull().default('close'),
 	enableSearchHistory: boolean().notNull().default(true),
