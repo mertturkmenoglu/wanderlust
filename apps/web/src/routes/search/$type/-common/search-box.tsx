@@ -8,7 +8,7 @@ import { SearchIcon, XIcon } from 'lucide-react';
 import type { UseSearchBoxProps } from 'react-instantsearch';
 import { useSearchBox } from '@/hooks/use-search-box';
 
-type Props = UseSearchBoxProps;
+type Props = { className?: string } & UseSearchBoxProps;
 
 export function SearchBox(props: Props) {
 	const sb = useSearchBox({
@@ -17,7 +17,7 @@ export function SearchBox(props: Props) {
 	});
 
 	return (
-		<div>
+		<div className={props.className}>
 			<sb.Form onSubmit={sb.onSubmit} onReset={sb.onReset}>
 				<InputGroup>
 					<InputGroupInput

@@ -3,12 +3,12 @@ import { useSearch } from '@tanstack/react-router';
 import { orpc } from '@/lib/orpc';
 
 export function useCurrentCategory() {
-	const search = useSearch({ from: '/search/' });
+	const search = useSearch({ from: '/search/$type/' });
 
 	const query = useQuery(
 		orpc.categories.list.queryOptions({
 			input: {},
-			enabled: search.category !== undefined,
+			enabled: (search) !== undefined,
 		}),
 	);
 

@@ -6,7 +6,7 @@ export function SearchPagination() {
 	const pagination = usePagination();
 	const previousPageIndex = pagination.currentRefinement - 1;
 	const nextPageIndex = pagination.currentRefinement + 1;
-	const navigate = useNavigate({ from: '/search/' });
+	const navigate = useNavigate({ from: '/search/$type/' });
 
 	return (
 		<div className="my-4 flex flex-row justify-center">

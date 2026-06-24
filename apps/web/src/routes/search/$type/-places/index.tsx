@@ -12,16 +12,17 @@ import { FilterIcon } from 'lucide-react';
 import React from 'react';
 import { useCurrentRefinements } from 'react-instantsearch';
 import { UnderlineLink } from '@/components/underline-link';
+import { Results } from '../-common/results';
+import { SearchBox } from '../-common/search-box';
+import { TypeSelector } from '../-common/type-selector';
 import { CategoryBannerDisplay } from './category-banner-display';
 import { Filters } from './filters';
-import { Results } from './results';
-import { SearchBox } from './search-box';
 
 const MemoizedFilters = React.memo(function MFilters() {
 	return <Filters />;
 });
 
-export function Container() {
+export function PlacesContainer() {
 	const { items } = useCurrentRefinements();
 	const refinementCount = items
 		.map((group) => group.refinements.length)
@@ -33,7 +34,9 @@ export function Container() {
 		<>
 			<CategoryBannerDisplay className="mb-4" />
 
-			<SearchBox />
+			<TypeSelector />
+
+			<SearchBox className="my-4" />
 
 			<div className="my-4 flex flex-row items-center gap-4">
 				<span className="text-sm">See:</span>
@@ -66,7 +69,12 @@ export function Container() {
 				<div className="hidden min-w-[256px] md:block">{inner}</div>
 
 				<div className="w-full">
-					<Results />
+					<Results
+						type="places"
+						classNames={{
+							list: 'space-y-4',
+						}}
+					/>
 				</div>
 			</div>
 		</>
