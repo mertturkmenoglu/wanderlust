@@ -10,7 +10,7 @@ import { UsersSchema } from './schema/users';
 
 export const sync = command({
 	name: 'sync',
-	desc: 'Syncs the primary database with Typesense',
+	desc: 'Syncs the Typesense with the primary database',
 	options: {},
 	handler: async (_opts) => {
 		await bootstrapServices();
@@ -24,7 +24,7 @@ export const sync = command({
 
 		const start = performance.now();
 
-		consola.start('Syncing primary database with Typesense');
+		consola.start('Syncing Typesense with the primary database');
 
 		await placesSchema.sync();
 		await citiesSchema.sync();
