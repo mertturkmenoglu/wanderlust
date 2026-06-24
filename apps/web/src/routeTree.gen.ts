@@ -43,6 +43,7 @@ import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/
 import { Route as SettingsNotificationsIndexRouteImport } from './routes/settings/notifications/index'
 import { Route as SettingsChatIndexRouteImport } from './routes/settings/chat/index'
 import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
+import { Route as SearchTypeIndexRouteImport } from './routes/search/$type/index'
 import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
 import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
 import { Route as EIdIndexRouteImport } from './routes/e/$id/index'
@@ -246,6 +247,11 @@ const SettingsAccountIndexRoute = SettingsAccountIndexRouteImport.update({
   path: '/account/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SearchTypeIndexRoute = SearchTypeIndexRouteImport.update({
+  id: '/search/$type/',
+  path: '/search/$type/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PIdIndexRoute = PIdIndexRouteImport.update({
   id: '/p/$id/',
   path: '/p/$id/',
@@ -434,6 +440,7 @@ export interface FileRoutesByFullPath {
   '/e/$id/': typeof EIdIndexRoute
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
+  '/search/$type/': typeof SearchTypeIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
   '/settings/chat/': typeof SettingsChatIndexRoute
   '/settings/notifications/': typeof SettingsNotificationsIndexRoute
@@ -495,6 +502,7 @@ export interface FileRoutesByTo {
   '/e/$id': typeof EIdIndexRoute
   '/lists/$id': typeof ListsIdIndexRoute
   '/p/$id': typeof PIdIndexRoute
+  '/search/$type': typeof SearchTypeIndexRoute
   '/settings/account': typeof SettingsAccountIndexRoute
   '/settings/chat': typeof SettingsChatIndexRoute
   '/settings/notifications': typeof SettingsNotificationsIndexRoute
@@ -562,6 +570,7 @@ export interface FileRoutesById {
   '/e/$id/': typeof EIdIndexRoute
   '/lists/$id/': typeof ListsIdIndexRoute
   '/p/$id/': typeof PIdIndexRoute
+  '/search/$type/': typeof SearchTypeIndexRoute
   '/settings/account/': typeof SettingsAccountIndexRoute
   '/settings/chat/': typeof SettingsChatIndexRoute
   '/settings/notifications/': typeof SettingsNotificationsIndexRoute
@@ -630,6 +639,7 @@ export interface FileRouteTypes {
     | '/e/$id/'
     | '/lists/$id/'
     | '/p/$id/'
+    | '/search/$type/'
     | '/settings/account/'
     | '/settings/chat/'
     | '/settings/notifications/'
@@ -691,6 +701,7 @@ export interface FileRouteTypes {
     | '/e/$id'
     | '/lists/$id'
     | '/p/$id'
+    | '/search/$type'
     | '/settings/account'
     | '/settings/chat'
     | '/settings/notifications'
@@ -757,6 +768,7 @@ export interface FileRouteTypes {
     | '/e/$id/'
     | '/lists/$id/'
     | '/p/$id/'
+    | '/search/$type/'
     | '/settings/account/'
     | '/settings/chat/'
     | '/settings/notifications/'
@@ -820,6 +832,7 @@ export interface RootRouteChildren {
   EIdIndexRoute: typeof EIdIndexRoute
   ListsIdIndexRoute: typeof ListsIdIndexRoute
   PIdIndexRoute: typeof PIdIndexRoute
+  SearchTypeIndexRoute: typeof SearchTypeIndexRoute
   AuthPasswordForgotIndexRoute: typeof AuthPasswordForgotIndexRoute
   AuthPasswordResetIndexRoute: typeof AuthPasswordResetIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
@@ -1066,6 +1079,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/account/'
       preLoaderRoute: typeof SettingsAccountIndexRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/search/$type/': {
+      id: '/search/$type/'
+      path: '/search/$type'
+      fullPath: '/search/$type/'
+      preLoaderRoute: typeof SearchTypeIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/p/$id/': {
       id: '/p/$id/'
@@ -1417,6 +1437,7 @@ const rootRouteChildren: RootRouteChildren = {
   EIdIndexRoute: EIdIndexRoute,
   ListsIdIndexRoute: ListsIdIndexRoute,
   PIdIndexRoute: PIdIndexRoute,
+  SearchTypeIndexRoute: SearchTypeIndexRoute,
   AuthPasswordForgotIndexRoute: AuthPasswordForgotIndexRoute,
   AuthPasswordResetIndexRoute: AuthPasswordResetIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
