@@ -27,7 +27,8 @@ function RouteComponent() {
 			<div className="mt-4 grid grid-cols-2 gap-4">
 				{categories.map((category) => (
 					<Link
-						to="/search"
+						to="/search/$type"
+						params={{ type: 'places' }}
 						search={{
 							category: serializeParams([category.name]),
 						}}

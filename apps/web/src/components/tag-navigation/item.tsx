@@ -14,7 +14,8 @@ export function NavItem(props: Props): React.ReactElement {
 	const { category, cityName } = props;
 
 	const link = linkOptions({
-		to: '/search',
+		to: '/search/$type',
+		params: { type: 'places' },
 		search: {
 			category: serializeParams([category]),
 			...(cityName ? { city: serializeParams([cityName]) } : {}),

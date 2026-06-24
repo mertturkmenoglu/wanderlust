@@ -151,7 +151,8 @@ function Item({ id }: { id: string }) {
 		<div className="group flex items-center gap-2 text-muted-foreground hover:text-primary">
 			<Icon className="size-6 shrink-0" />
 			<Link
-				to="/search"
+				to="/search/$type"
+				params={{ type: 'places' }}
 				search={{
 					amenity: id,
 				}}

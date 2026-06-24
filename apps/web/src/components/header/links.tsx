@@ -12,7 +12,8 @@ const items: Item[] = [
 		icon: SearchIcon,
 		label: 'Search',
 		link: linkOptions({
-			to: '/search',
+			to: '/search/$type',
+			params: { type: 'places' },
 		}),
 	},
 	{

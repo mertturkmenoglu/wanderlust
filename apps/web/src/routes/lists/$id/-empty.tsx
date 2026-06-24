@@ -29,7 +29,10 @@ export function EmptyState() {
 			</EmptyHeader>
 			<EmptyContent>
 				<Button variant="link" asChild>
-					<Link to={isOwner ? '/search' : '/lists'}>
+					<Link
+						to={isOwner ? '/search/$type' : '/lists'}
+						params={isOwner ? { type: 'places' } : undefined}
+					>
 						{isOwner
 							? 'Go to the search page to find places to add'
 							: 'Go to your lists page'}

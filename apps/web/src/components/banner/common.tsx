@@ -213,7 +213,11 @@ export function AppBentoBanner(props: AppBentoBannerProps) {
 					colSpan: 2,
 					rowSpan: 2,
 				},
-				<Link to="/search" search={{ category: 'Coffee Shops' }}>
+				<Link
+					to="/search/$type"
+					params={{ type: 'places' }}
+					search={{ category: 'Coffee Shops' }}
+				>
 					<div className="relative size-full">
 						<img
 							src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/2XI5t0u.jpeg"
@@ -228,7 +232,11 @@ export function AppBentoBanner(props: AppBentoBannerProps) {
 						</div>
 					</div>
 				</Link>,
-				<Link to="/search" search={{ category: 'Bookstores' }}>
+				<Link
+					to="/search/$type"
+					params={{ type: 'places' }}
+					search={{ category: 'Bookstores' }}
+				>
 					<div className="relative size-full">
 						<img
 							src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/DOgJY3o.jpeg"
@@ -245,7 +253,11 @@ export function AppBentoBanner(props: AppBentoBannerProps) {
 				</Link>,
 				{
 					content: (
-						<Link to="/search" search={{ category: 'Bookstores' }}>
+						<Link
+							to="/search/$type"
+							params={{ type: 'places' }}
+							search={{ category: 'Bookstores' }}
+						>
 							<div className="relative size-full">
 								<img
 									src="https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/FKlIkC5.jpeg"

@@ -18,7 +18,8 @@ export function CitySearchBanner() {
 					</div>
 					<Button asChild variant="warning" size={isMobile ? 'sm' : 'default'}>
 						<Link
-							to="/search"
+							to="/search/$type"
+							params={{ type: 'places' }}
 							search={{
 								city: city.name,
 							}}

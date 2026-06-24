@@ -44,7 +44,8 @@ export function Breadcrumb({ className }: Props) {
 				<BreadcrumbItem>
 					<BreadcrumbLink asChild>
 						<Link
-							to="/search"
+							to="/search/$type"
+							params={{ type: 'places' }}
 							search={{
 								category: place.category.name,
 							}}
