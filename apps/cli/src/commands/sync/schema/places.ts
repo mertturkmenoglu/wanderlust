@@ -48,26 +48,7 @@ export class PlacesSchema extends AbstractSchema {
 		let lastCreatedAt: Date | null = null;
 
 		for (let i = 0; i < count; i += step) {
-			const places = await this.db.query.places.findMany({
-				where: (t, { gt }) => gt(t.createdAt, lastCreatedAt ?? new Date(0)),
-				orderBy: (t, { asc }) => [asc(t.createdAt), asc(t.name)],
-				limit: step,
-				with: {
-					address: {
-						with: {
-							city: true,
-						},
-					},
-					assets: true,
-					category: true,
-					accolades: {
-						with: {
-							accolade: true,
-						}
-					}
-				},
-			});
-
+			const places = await this.findMany(lastCreatedAt, step);
 			lastCreatedAt = places.at(-1)?.createdAt ?? lastCreatedAt;
 
 			const docs = places.map((place) => ({
@@ -80,5 +61,41 @@ export class PlacesSchema extends AbstractSchema {
 				action: 'upsert',
 			});
 		}
+
+		const remaining = await this.findMany(lastCreatedAt, step);
+
+		if (remaining.length > 0) {
+			const docs = remaining.map((place) => ({
+				name: place.name,
+				place,
+				location: [place.address.lat, place.address.lng],
+			}));
+
+			await this.client.collections('places').documents().import(docs, {
+				action: 'upsert',
+			});
+		}
+	}
+
+	private async findMany(lastCreatedAt: Date | null, limit: number) {
+		return this.db.query.places.findMany({
+			where: (t, { gt }) => gt(t.createdAt, lastCreatedAt ?? new Date(0)),
+			orderBy: (t, { asc }) => [asc(t.createdAt), asc(t.name)],
+			limit: limit,
+			with: {
+				address: {
+					with: {
+						city: true,
+					},
+				},
+				assets: true,
+				category: true,
+				accolades: {
+					with: {
+						accolade: true,
+					}
+				}
+			},
+		});
 	}
 }
