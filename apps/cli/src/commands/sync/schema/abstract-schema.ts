@@ -23,7 +23,6 @@ export abstract class AbstractSchema {
 			.delete()
 			.catch((err) => {
 				if (isCollectionNotFoundError(err)) {
-					console.error({ message: err.message });
 					return;
 				}
 
