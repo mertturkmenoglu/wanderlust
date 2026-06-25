@@ -15,14 +15,11 @@ import {
 import { cn } from '@wanderlust/ui/lib/utils';
 import { SendHorizonalIcon } from 'lucide-react';
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-	type NewCommentFormInput,
-	type NewCommentFormProps,
-	useCreateCommentMutation,
-} from './hooks';
+import type { CreateTripCommentFormInput } from '@/schemas/create-trip-comment';
+import { type NewCommentFormProps, useCreateCommentMutation } from './hooks';
 
 export function Content({ className }: NewCommentFormProps) {
-	const form = useFormContext<NewCommentFormInput>();
+	const form = useFormContext<CreateTripCommentFormInput>();
 	const mutation = useCreateCommentMutation();
 	const { trip } = useLoaderData({ from: '/trips/$id' });
 

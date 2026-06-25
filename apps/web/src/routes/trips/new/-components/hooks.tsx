@@ -5,11 +5,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { orpc } from '@/lib/orpc';
-import { schema } from './schema';
+import { createTripSchema } from '@/schemas/create-trip';
 
 export function useCreateTripForm() {
 	return useForm({
-		resolver: zodResolver(schema),
+		resolver: zodResolver(createTripSchema),
 	});
 }
 

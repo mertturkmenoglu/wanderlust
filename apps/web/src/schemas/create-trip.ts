@@ -1,8 +1,8 @@
 import { isBefore } from "date-fns";
 import z from "zod";
-import { visibility } from "./visibility";
+import { visibility } from "./trip-visibility";
 
-export const schema = z
+export const createTripSchema = z
 	.object({
 		title: z
 			.string('Required')
@@ -49,4 +49,4 @@ export const schema = z
 		}
 	});
 
-export type TCreateTripForm = z.infer<typeof schema>;
+export type CreateTripFormInput = z.infer<typeof createTripSchema>;

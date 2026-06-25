@@ -18,12 +18,12 @@ import { Textarea } from '@wanderlust/ui/components/textarea';
 import { addYears } from 'date-fns';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TSTZPicker } from '@/components/tstz-picker';
+import type { CreateTripFormInput } from '@/schemas/create-trip';
+import { visibilityOptions } from '@/schemas/trip-visibility';
 import { useCreateTripMutation } from './hooks';
-import type { TCreateTripForm } from './schema';
-import { visibilityOptions } from './visibility';
 
 export function CreateTripForm() {
-	const form = useFormContext<TCreateTripForm>();
+	const form = useFormContext<CreateTripFormInput>();
 	const mutation = useCreateTripMutation();
 
 	const startAt = form.watch('startAt');
