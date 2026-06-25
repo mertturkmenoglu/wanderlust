@@ -25,13 +25,7 @@ export function EmptyState() {
 				</EmptyDescription>
 			</EmptyHeader>
 			<EmptyContent>
-				<Link
-					to="/trips"
-					search={{
-						showNewDialog: true,
-					}}
-					className={buttonVariants({})}
-				>
+				<Link to="/trips/new" className={buttonVariants({})}>
 					<PlusIcon />
 					<span>New Trip</span>
 				</Link>

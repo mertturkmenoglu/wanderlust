@@ -18,8 +18,7 @@ export function ChooseView() {
 				)}
 				onClick={() => {
 					navigate({
-						to: '/trips',
-						search: () => ({ showNewDialog: true }),
+						to: '/trips/new',
 					});
 				}}
 			>

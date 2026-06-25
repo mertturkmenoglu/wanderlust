@@ -115,7 +115,7 @@ export function TripPlannerBanner({ classNames }: TripPlannerBannerProps) {
 						use and you can save your trips for later.
 					</div>
 					<Button asChild variant="default">
-						<Link to="/trips/planner" className="text-white">
+						<Link to="/trips/new" className="text-white">
 							Go to Trip Planner
 						</Link>
 					</Button>
@@ -170,7 +170,7 @@ export function TripPlannerCta({ classNames }: TripPlannerCtaProps) {
 			}
 			right={
 				<Button asChild size="lg" variant="midnight">
-					<Link to="/trips/planner">
+					<Link to="/trips/new">
 						Start Planning <ChevronRightIcon />
 					</Link>
 				</Button>

@@ -21,7 +21,7 @@ export function PlanTripBanner() {
 						size={isMobile ? 'sm' : 'default'}
 						className="bg-white text-midnight dark:border-none dark:bg-white dark:text-midnight dark:outline-none"
 					>
-						<Link to="/trips/planner">
+						<Link to="/trips/new">
 							<MapIcon />
 							{isMobile ? 'Start' : 'Start Planning'}
 						</Link>

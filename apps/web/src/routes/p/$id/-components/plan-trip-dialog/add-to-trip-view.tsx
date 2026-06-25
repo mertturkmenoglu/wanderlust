@@ -17,13 +17,7 @@ export function AddToTripView() {
 				<span className="text-muted-foreground">
 					No trips found. Create a new trip first.
 				</span>
-				<Link
-					to="/trips"
-					search={{
-						showNewDialog: true,
-					}}
-					className={buttonVariants()}
-				>
+				<Link to="/trips/new" className={buttonVariants()}>
 					Create New Trip
 				</Link>
 			</div>
