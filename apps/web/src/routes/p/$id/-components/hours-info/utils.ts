@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { parse } from 'date-fns';
 
 const mapping: Record<number, string> = {
@@ -20,7 +21,7 @@ function dayToKey(day: string) {
 	return 0;
 }
 
-function parseHours(hours: Record<string, string>) {
+function parseHours(tz: string, hours: Record<string, string>) {
 	const result: { day: string; open: Date; close: Date }[] = [];
 
 	for (const [day, h] of Object.entries(hours)) {
@@ -28,8 +29,8 @@ function parseHours(hours: Record<string, string>) {
 		const openPart = parts[0];
 		const closePart = parts[1];
 
-		const open = parse(openPart, 'HH:mm', new Date());
-		const close = parse(closePart, 'HH:mm', new Date());
+		const open = parse(openPart, 'HH:mm', new TZDate(new Date(), tz));
+		const close = parse(closePart, 'HH:mm', new TZDate(new Date(), tz));
 
 		result.push({
 			day,

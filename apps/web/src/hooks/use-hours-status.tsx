@@ -1,9 +1,14 @@
+import { TZDate } from '@date-fns/tz';
 import { differenceInMinutes, isAfter, isBefore, isEqual } from 'date-fns';
 
 export type HoursStatus = 'open' | 'closingSoon' | 'openingSoon' | 'closed';
 
-export function useHoursStatus(open: Date, close: Date): HoursStatus {
-	const now = new Date();
+export function useHoursStatus(
+	tz: string,
+	open: Date,
+	close: Date,
+): HoursStatus {
+	const now = new TZDate(new Date(), tz);
 	const isSame = isEqual(open, close);
 
 	const isOpenNow = isAfter(now, open) && isBefore(now, close) && !isSame;

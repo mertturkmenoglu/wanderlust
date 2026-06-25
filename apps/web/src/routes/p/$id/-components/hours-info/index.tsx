@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import {
@@ -18,15 +19,16 @@ type Props = {
 
 export function HoursInfo({ className }: Props) {
 	const data = useLoaderData({ from: '/p/$id/' });
-	const hours = parseHours(data.place.hours);
-	const key = mapping[new Date().getUTCDay()];
+	const tz = data.place.address.city.timezone;
+	const hours = parseHours(tz, data.place.hours);
+	const key = mapping[new TZDate(new Date(), tz).getUTCDay()];
 	const today = hours.find((h) => h.day === key);
 
 	if (!today) {
 		return null;
 	}
 
-	const status = useHoursStatus(today.open, today.close);
+	const status = useHoursStatus(tz, today.open, today.close);
 
 	const Icon = useMemo(() => {
 		if (status === 'closingSoon') {
@@ -75,7 +77,7 @@ export function HoursInfo({ className }: Props) {
 				</InfoCard.NumberColumn>
 				<InfoCard.DescriptionColumn className="flex flex-col font-semibold text-primary">
 					{text}
-					<HoursDialog hours={hours} />
+					<HoursDialog tz={tz} hours={hours} />
 				</InfoCard.DescriptionColumn>
 			</InfoCard.Content>
 		</InfoCard.Root>
