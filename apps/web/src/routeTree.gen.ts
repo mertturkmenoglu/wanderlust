@@ -31,7 +31,6 @@ import { Route as AccoladesIndexRouteImport } from './routes/accolades/index'
 import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as TripsIdRouteImport } from './routes/trips/$id'
 import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
-import { Route as TripsPlannerIndexRouteImport } from './routes/trips/planner/index'
 import { Route as TripsNewIndexRouteImport } from './routes/trips/new/index'
 import { Route as TripsMyTripsIndexRouteImport } from './routes/trips/my-trips/index'
 import { Route as TripsInvitesIndexRouteImport } from './routes/trips/invites/index'
@@ -183,11 +182,6 @@ const UUsernameIndexRoute = UUsernameIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => UUsernameRoute,
-} as any)
-const TripsPlannerIndexRoute = TripsPlannerIndexRouteImport.update({
-  id: '/planner/',
-  path: '/planner/',
-  getParentRoute: () => TripsRoute,
 } as any)
 const TripsNewIndexRoute = TripsNewIndexRouteImport.update({
   id: '/new/',
@@ -444,7 +438,6 @@ export interface FileRoutesByFullPath {
   '/trips/invites/': typeof TripsInvitesIndexRoute
   '/trips/my-trips/': typeof TripsMyTripsIndexRoute
   '/trips/new/': typeof TripsNewIndexRoute
-  '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/password/reset/': typeof AuthPasswordResetIndexRoute
@@ -505,7 +498,6 @@ export interface FileRoutesByTo {
   '/trips/invites': typeof TripsInvitesIndexRoute
   '/trips/my-trips': typeof TripsMyTripsIndexRoute
   '/trips/new': typeof TripsNewIndexRoute
-  '/trips/planner': typeof TripsPlannerIndexRoute
   '/u/$username': typeof UUsernameIndexRoute
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
@@ -572,7 +564,6 @@ export interface FileRoutesById {
   '/trips/invites/': typeof TripsInvitesIndexRoute
   '/trips/my-trips/': typeof TripsMyTripsIndexRoute
   '/trips/new/': typeof TripsNewIndexRoute
-  '/trips/planner/': typeof TripsPlannerIndexRoute
   '/u/$username/': typeof UUsernameIndexRoute
   '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/_auth/password/reset/': typeof AuthPasswordResetIndexRoute
@@ -640,7 +631,6 @@ export interface FileRouteTypes {
     | '/trips/invites/'
     | '/trips/my-trips/'
     | '/trips/new/'
-    | '/trips/planner/'
     | '/u/$username/'
     | '/password/forgot/'
     | '/password/reset/'
@@ -701,7 +691,6 @@ export interface FileRouteTypes {
     | '/trips/invites'
     | '/trips/my-trips'
     | '/trips/new'
-    | '/trips/planner'
     | '/u/$username'
     | '/password/forgot'
     | '/password/reset'
@@ -767,7 +756,6 @@ export interface FileRouteTypes {
     | '/trips/invites/'
     | '/trips/my-trips/'
     | '/trips/new/'
-    | '/trips/planner/'
     | '/u/$username/'
     | '/_auth/password/forgot/'
     | '/_auth/password/reset/'
@@ -982,13 +970,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/u/$username/'
       preLoaderRoute: typeof UUsernameIndexRouteImport
       parentRoute: typeof UUsernameRoute
-    }
-    '/trips/planner/': {
-      id: '/trips/planner/'
-      path: '/planner'
-      fullPath: '/trips/planner/'
-      preLoaderRoute: typeof TripsPlannerIndexRouteImport
-      parentRoute: typeof TripsRoute
     }
     '/trips/new/': {
       id: '/trips/new/'
@@ -1349,7 +1330,6 @@ interface TripsRouteChildren {
   TripsInvitesIndexRoute: typeof TripsInvitesIndexRoute
   TripsMyTripsIndexRoute: typeof TripsMyTripsIndexRoute
   TripsNewIndexRoute: typeof TripsNewIndexRoute
-  TripsPlannerIndexRoute: typeof TripsPlannerIndexRoute
 }
 
 const TripsRouteChildren: TripsRouteChildren = {
@@ -1359,7 +1339,6 @@ const TripsRouteChildren: TripsRouteChildren = {
   TripsInvitesIndexRoute: TripsInvitesIndexRoute,
   TripsMyTripsIndexRoute: TripsMyTripsIndexRoute,
   TripsNewIndexRoute: TripsNewIndexRoute,
-  TripsPlannerIndexRoute: TripsPlannerIndexRoute,
 }
 
 const TripsRouteWithChildren = TripsRoute._addFileChildren(TripsRouteChildren)
