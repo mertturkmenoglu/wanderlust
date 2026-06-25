@@ -7,13 +7,37 @@ const alertVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: 'bg-card text-card-foreground',
+				default: 'text-card-foreground',
 				destructive:
-					'bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current',
+					'text-destructive *:data-[slot=alert-description]:text-destructive/90 dark:text-destructive-foreground *:dark:data-[slot=alert-description]:text-destructive-foreground [&>svg]:text-current',
+				warning:
+					'text-warning-foreground *:data-[slot=alert-description]:text-warning-foreground/90 dark:text-warning *:dark:data-[slot=alert-description]:text-warning [&>svg]:text-current',
+			},
+			fill: {
+				card: 'bg-card',
+				ghost: null,
 			},
 		},
+		compoundVariants: [
+			{
+				variant: 'default',
+				fill: 'ghost',
+				className: 'bg-card/90',
+			},
+			{
+				variant: 'destructive',
+				fill: 'ghost',
+				className: 'border-destructive bg-destructive/5',
+			},
+			{
+				variant: 'warning',
+				fill: 'ghost',
+				className: 'border-warning bg-warning/5',
+			},
+		],
 		defaultVariants: {
 			variant: 'default',
+			fill: 'card',
 		},
 	},
 );
@@ -21,13 +45,14 @@ const alertVariants = cva(
 function Alert({
 	className,
 	variant,
+	fill,
 	...props
 }: React.ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
 	return (
 		<div
 			data-slot="alert"
 			role="alert"
-			className={cn(alertVariants({ variant }), className)}
+			className={cn(alertVariants({ variant, fill }), className)}
 			{...props}
 		/>
 	);
