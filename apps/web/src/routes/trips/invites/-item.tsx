@@ -1,4 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
@@ -11,27 +10,32 @@ import {
 } from '@wanderlust/ui/components/item';
 import { format } from 'date-fns';
 import { CheckIcon, XIcon } from 'lucide-react';
-import { toast } from 'sonner';
 import { UserImage } from '@/components/user-image';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { userImage } from '@/lib/image';
-import { type Outputs, orpc } from '@/lib/orpc';
+import { type TTripInvite, useAcceptOrDeclineInviteMutation } from './-hooks';
 
 type Props = {
-	invite: Outputs['trips']['listMyInvites']['invites'][number];
+	invite: TTripInvite;
 };
 
 export function InviteItem({ invite }: Props) {
-	const invalidate = useInvalidator();
+	const mutation = useAcceptOrDeclineInviteMutation();
 
-	const mutation = useMutation(
-		orpc.trips.acceptOrDeclineInvite.mutationOptions({
-			onSuccess: async ({ accepted }) => {
-				toast.success(accepted ? 'Invite accepted' : 'Invite declined');
-				await invalidate();
-			},
-		}),
-	);
+	const acceptInvite = () => {
+		mutation.mutate({
+			accept: true,
+			id: invite.tripId,
+			inviteId: invite.id,
+		});
+	};
+
+	const declineInvite = () => {
+		mutation.mutate({
+			accept: false,
+			id: invite.tripId,
+			inviteId: invite.id,
+		});
+	};
 
 	return (
 		<Item variant="outline" className="hover:bg-muted">
@@ -61,32 +65,13 @@ export function InviteItem({ invite }: Props) {
 			</ItemContent>
 
 			<ItemActions>
-				<Button
-					size="sm"
-					onClick={() => {
-						mutation.mutate({
-							accept: true,
-							id: invite.tripId,
-							inviteId: invite.id,
-						});
-					}}
-				>
-					<CheckIcon className="size-4" />
+				<Button size="sm" onClick={acceptInvite}>
+					<CheckIcon />
 					Accept
 				</Button>
 
-				<Button
-					size="sm"
-					variant="destructive"
-					onClick={() => {
-						mutation.mutate({
-							accept: false,
-							id: invite.tripId,
-							inviteId: invite.id,
-						});
-					}}
-				>
-					<XIcon className="size-4" />
+				<Button size="sm" variant="destructive" onClick={declineInvite}>
+					<XIcon />
 					Decline
 				</Button>
 			</ItemActions>

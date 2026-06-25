@@ -1,30 +1,30 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
-import { orpc } from '@/lib/orpc';
 import { EmptyState } from './-empty';
+import { listMyInvitesQueryOptions } from './-hooks';
 import { InviteItem } from './-item';
 
 export const Route = createFileRoute('/trips/invites/')({
 	component: RouteComponent,
-	loader: ({ context }) => {
-		return context.queryClient.ensureQueryData(
-			orpc.trips.listMyInvites.queryOptions({
-				input: {},
-			}),
-		);
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData(listMyInvitesQueryOptions);
 	},
 });
 
 function RouteComponent() {
-	const { invites } = Route.useLoaderData();
+	const query = useSuspenseQuery(listMyInvitesQueryOptions);
+	const invites = query.data.invites;
 
 	return (
 		<div>
 			<Breadcrumb items={[{ name: 'My Invites', href: '/trips/invites' }]} />
+
 			<div className="my-4 space-y-4">
 				{invites.map((invite) => (
 					<InviteItem invite={invite} key={invite.id} />
 				))}
+
 				{invites.length === 0 && <EmptyState />}
 			</div>
 		</div>
