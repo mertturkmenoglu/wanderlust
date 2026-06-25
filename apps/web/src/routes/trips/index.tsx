@@ -2,19 +2,13 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { MailsIcon, MapIcon, PlusIcon, SearchIcon } from 'lucide-react';
-import { z } from 'zod';
 import { ErrorComponent } from '@/components/error-component';
 import { GradientText } from '@/components/gradient-text';
 import { authGuard } from '@/lib/auth';
 
-const schema = z.object({
-	showNewDialog: z.boolean().optional(),
-});
-
 export const Route = createFileRoute('/trips/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
-	validateSearch: schema,
 	errorComponent: ErrorComponent,
 });
 
