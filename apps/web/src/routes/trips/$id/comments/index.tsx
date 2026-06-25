@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { ReplyIcon } from 'lucide-react';
-import { Comments } from './-comments';
-import { NewComment } from './-new';
+import { CommentList } from './-list';
+import { NewCommentForm } from './-new';
 
 export const Route = createFileRoute('/trips/$id/comments/')({
 	component: RouteComponent,
@@ -9,15 +8,10 @@ export const Route = createFileRoute('/trips/$id/comments/')({
 
 function RouteComponent() {
 	return (
-		<div className="mt-4">
-			<div className="flex items-center">
-				<ReplyIcon className="mr-2 size-5" />
-				<div className="font-medium">Comments</div>
-			</div>
+		<div className="mx-auto mt-4 max-w-xl">
+			<NewCommentForm className="mt-8" />
 
-			<NewComment className="mt-4" />
-
-			<Comments className="mt-8" />
+			<CommentList className="mt-8" />
 		</div>
 	);
 }
