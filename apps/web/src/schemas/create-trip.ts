@@ -1,6 +1,6 @@
-import { isBefore } from "date-fns";
-import z from "zod";
-import { visibility } from "./trip-visibility";
+import { isBefore } from 'date-fns';
+import z from 'zod';
+import { visibility } from './trip-visibility';
 
 export const createTripSchema = z
 	.object({
@@ -12,8 +12,8 @@ export const createTripSchema = z
 			.string('Required')
 			.min(1, 'Too short')
 			.max(1024, 'At max 1024 characters'),
-		startAt: z.date("Required"),
-		endAt: z.date(),
+		startAt: z.date('Required'),
+		endAt: z.date('Required'),
 		visibilityLevel: z.enum(visibility, 'Choose an option'),
 	})
 	.superRefine((data, ctx) => {
@@ -50,3 +50,7 @@ export const createTripSchema = z
 	});
 
 export type CreateTripFormInput = z.infer<typeof createTripSchema>;
+
+export const updateTripSchema = createTripSchema;
+
+export type UpdateTripFormInput = z.infer<typeof updateTripSchema>;
