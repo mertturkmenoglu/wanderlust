@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Button } from '@wanderlust/ui/components/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -11,18 +11,18 @@ import {
 import {
 	Tooltip,
 	TooltipContent,
-	TooltipProvider,
 	TooltipTrigger,
 } from '@wanderlust/ui/components/tooltip';
 import { formatDistanceToNow } from 'date-fns';
-import { ArrowRightIcon, GlobeIcon, LockIcon, UsersIcon } from 'lucide-react';
-import type { Outputs } from '@/lib/orpc';
+import { ArrowRightIcon } from 'lucide-react';
+import { useVisibilityLevelIcon, useVisibilityLevelTooltip } from './-hooks';
+import type { TripItemProps } from './-types';
 
-type Props = {
-	trip: Outputs['trips']['list']['trips'][number];
-};
+export function TripItem({ trip }: TripItemProps) {
+	const Icon = useVisibilityLevelIcon(trip.visibilityLevel);
+	const tooltip = useVisibilityLevelTooltip(trip.visibilityLevel);
+	const description = `Created ${formatDistanceToNow(trip.createdAt)} ago by ${trip.owner.name}`;
 
-export function TripItem({ trip }: Props) {
 	return (
 		<Link
 			to="/trips/$id"
@@ -31,46 +31,25 @@ export function TripItem({ trip }: Props) {
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
-				<TooltipProvider>
-					<Tooltip>
-						<TooltipTrigger>
-							<ItemMedia variant="icon">
-								{trip.visibilityLevel === 'public' ? (
-									<GlobeIcon />
-								) : trip.visibilityLevel === 'friends' ? (
-									<UsersIcon />
-								) : (
-									<LockIcon />
-								)}
-							</ItemMedia>
-						</TooltipTrigger>
-						<TooltipContent>
-							<p>
-								{trip.visibilityLevel === 'public'
-									? 'Everyone can see this trip'
-									: trip.visibilityLevel === 'friends'
-										? 'Only participants can see this trip'
-										: 'Only you can see this trip'}
-							</p>
-						</TooltipContent>
-					</Tooltip>
-				</TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger>
+						<ItemMedia variant="icon">
+							<Icon />
+						</ItemMedia>
+					</TooltipTrigger>
+					<TooltipContent>{tooltip}</TooltipContent>
+				</Tooltip>
 				<ItemContent>
 					<ItemTitle>{trip.title}</ItemTitle>
 
-					<ItemDescription
-						title={`Created at ${trip.createdAt.toLocaleString()}`}
-					>
-						<div>
-							Created {formatDistanceToNow(trip.createdAt)} ago by{' '}
-							{trip.owner.name}
-						</div>
+					<ItemDescription title={description}>
+						<div>{description}</div>
 					</ItemDescription>
 				</ItemContent>
 				<ItemActions>
-					<Button variant="ghost" size="icon">
+					<div className={buttonVariants({ variant: 'ghost', size: 'icon' })}>
 						<ArrowRightIcon />
-					</Button>
+					</div>
 				</ItemActions>
 			</Item>
 		</Link>
