@@ -28,3 +28,11 @@ export const clean = command({
 		consola.success('Docker containers removed and recreated successfully.');
 	},
 });
+
+async function createAndGrantAccess(container: string, bucket: string) {
+	// Create the bucket
+	await $`echo 's3.bucket.create -name ${bucket}' | docker exec -i ${container} weed shell`.quiet();
+
+	// Grant access to the bucket
+	await $`echo 's3.bucket.access -name ${bucket} -user anonymous -access Read,List' | docker exec -i ${container} weed shell`.quiet();
+}
