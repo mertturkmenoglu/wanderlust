@@ -1,3 +1,6 @@
+import type { S3ClientConfig } from '@aws-sdk/client-s3';
+import type { TConfigService } from '@wanderlust/config';
+import { S3Driver } from 'flydrive/drivers/s3';
 import type { Bucket } from './buckets';
 
 export function getFilenameFromUrl(url: string): string {
@@ -19,4 +22,51 @@ export function splitFilename(filename: string): [string, string] {
 
 export function getExtension(filename: string) {
 	return filename.split('.').at(-1);
+}
+
+type BaseDriverConfig = S3ClientConfig;
+
+export function createDriverFactory(cfg: TConfigService) {
+	return {
+		createDriver(bucket: Bucket) {
+			const baseDriverConfig = {
+				credentials: {
+					accessKeyId: cfg.storage.accessKeyId,
+					secretAccessKey: cfg.storage.secretAccessKey,
+				},
+				region: cfg.storage.region,
+				endpoint: cfg.storage.endpoint,
+				forcePathStyle: true,
+			} satisfies BaseDriverConfig;
+
+			switch (bucket) {
+				case 'default':
+					return new S3Driver({
+						...baseDriverConfig,
+						bucket: 'default',
+						visibility: 'public',
+					});
+				case 'profile-images':
+					return new S3Driver({
+						...baseDriverConfig,
+						bucket: 'profile-images',
+						visibility: 'public',
+					});
+				case 'banner-images':
+					return new S3Driver({
+						...baseDriverConfig,
+						bucket: 'banner-images',
+						visibility: 'public',
+					});
+				case 'reviews':
+					return new S3Driver({
+						...baseDriverConfig,
+						bucket: 'reviews',
+						visibility: 'public',
+					});
+				default:
+					throw new Error(`Unknown bucket: ${bucket}`);
+			}
+		},
+	};
 }
