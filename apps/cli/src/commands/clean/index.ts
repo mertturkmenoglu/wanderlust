@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { command } from '@drizzle-team/brocli';
+import { buckets } from '@wanderlust/storage';
 import { $ } from 'bun';
-import consola from 'consola';
+import { Pipeline } from '@/lib/pipeline';
 
 export const clean = command({
 	name: 'clean',
@@ -15,17 +16,40 @@ export const clean = command({
 			'docker-compose.yml',
 		);
 
-		consola.start('Removing and recreating Docker containers');
+		const seaweedfsContainerName = 'wl-seaweedfs';
 
-		await $`docker compose -f ${dockerComposeFilePath} down -v`;
+		const pipeline = new Pipeline({
+			values: {
+				apiProjectPath,
+				dockerComposeFilePath,
+				seaweedfsContainerName,
+			},
+		})
+			.addStep(
+				'Remove Docker containers',
+				async ({ dockerComposeFilePath }) => {
+					await $`docker compose -f ${dockerComposeFilePath} down -v`;
+				},
+			)
+			.addStep(
+				'Recreate Docker containers',
+				async ({ dockerComposeFilePath }) => {
+					await $`docker compose -f ${dockerComposeFilePath} up -d --wait`;
+				},
+			)
+			.addStep('Push database schema', async ({ apiProjectPath }) => {
+				await $`bun run --cwd ${apiProjectPath} db:push`;
+			})
+			.addStep(
+				'Create SeaweedFS buckets and grant access',
+				async ({ seaweedfsContainerName }) => {
+					for (const bucket of buckets) {
+						await createAndGrantAccess(seaweedfsContainerName, bucket);
+					}
+				},
+			);
 
-		await $`docker compose -f ${dockerComposeFilePath} up -d --wait`;
-
-		consola.info('Pushing database schema');
-
-		await $`bun run --cwd ${apiProjectPath} db:push`;
-
-		consola.success('Docker containers removed and recreated successfully.');
+		await pipeline.run();
 	},
 });
 
