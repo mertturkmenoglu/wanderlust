@@ -1,14 +1,4 @@
 import { linkOptions } from '@tanstack/react-router';
-import z from 'zod';
-
-export const schema = z.object({
-	showLocationDialog: z.boolean().optional(),
-	placeId: z.string().optional(),
-	isUpdate: z.boolean().optional(),
-	description: z.string().optional(),
-	scheduledTime: z.string().optional(),
-	locId: z.string().optional(),
-});
 
 export function useTabs(id: string) {
 	return [
