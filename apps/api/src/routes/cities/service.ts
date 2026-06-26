@@ -23,8 +23,8 @@ export class CitiesService {
 	}
 
 	async listFeatured(): Promise<dto.ListFeaturedOutput> {
-		const result = await this.cache.getOrSet({
-			key: 'cities:featured',
+		const result = await this.cache.namespace('cities').getOrSet({
+			key: 'featured',
 			ttl: '1h',
 			factory: () => this.repository.listFeatured(),
 		});
@@ -45,6 +45,10 @@ export class CitiesService {
 	async create(data: dto.CreateInput): Promise<dto.CreateOutput> {
 		const result = await this.repository.create(data);
 
+		await this.cache.namespace('cities').delete({
+			key: 'featured',
+		});
+
 		return {
 			city: result,
 		};
@@ -53,6 +57,10 @@ export class CitiesService {
 	async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
 		const result = await this.repository.update(data);
 
+		await this.cache.namespace('cities').delete({
+			key: 'featured',
+		});
+
 		return {
 			city: result,
 		};
@@ -60,5 +68,9 @@ export class CitiesService {
 
 	async _delete(data: dto.DeleteInput): Promise<void> {
 		await this.repository._delete(data);
+
+		await this.cache.namespace('cities').delete({
+			key: 'featured',
+		});
 	}
 }
