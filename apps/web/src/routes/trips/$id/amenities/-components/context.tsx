@@ -1,4 +1,3 @@
-import { getRouteApi } from '@tanstack/react-router';
 import {
 	createContext,
 	type Dispatch,
@@ -22,10 +21,7 @@ type Props = PropsWithChildren;
 
 export function TripAmenitiesContextProvider({ children }: Props) {
 	const [isEditMode, setIsEditMode] = useState(false);
-	const route = getRouteApi('/trips/$id');
-	const { trip } = route.useLoaderData();
-	const { auth } = route.useRouteContext();
-	const isPrivileged = useTripIsPrivileged(trip, auth.user.id);
+	const isPrivileged = useTripIsPrivileged();
 	const canEdit = isPrivileged;
 
 	return (

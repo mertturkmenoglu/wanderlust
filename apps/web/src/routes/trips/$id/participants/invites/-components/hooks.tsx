@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -9,7 +9,7 @@ export type Invite = Outputs['trips']['listInvites']['invites'][number];
 export function useListInvitesQuery() {
 	const { id } = useParams({ from: '/trips/$id' });
 
-	return useQuery(
+	return useSuspenseQuery(
 		orpc.trips.listInvites.queryOptions({
 			input: {
 				id,

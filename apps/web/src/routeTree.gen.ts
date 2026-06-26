@@ -52,6 +52,7 @@ import { Route as CitiesSplatIndexRouteImport } from './routes/cities/$/index'
 import { Route as AccoladesIdIndexRouteImport } from './routes/accolades/$id/index'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
+import { Route as TripsIdParticipantsRouteImport } from './routes/trips/$id/participants'
 import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
 import { Route as UUsernameListsIndexRouteImport } from './routes/u/$username/lists/index'
 import { Route as UUsernameFollowingIndexRouteImport } from './routes/u/$username/following/index'
@@ -290,6 +291,11 @@ const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
   path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TripsIdParticipantsRoute = TripsIdParticipantsRouteImport.update({
+  id: '/participants',
+  path: '/participants',
+  getParentRoute: () => TripsIdRoute,
+} as any)
 const UUsernameReviewsIndexRoute = UUsernameReviewsIndexRouteImport.update({
   id: '/reviews/',
   path: '/reviews/',
@@ -323,9 +329,9 @@ const UUsernameActivitiesIndexRoute =
   } as any)
 const TripsIdParticipantsIndexRoute =
   TripsIdParticipantsIndexRouteImport.update({
-    id: '/participants/',
-    path: '/participants/',
-    getParentRoute: () => TripsIdRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => TripsIdParticipantsRoute,
   } as any)
 const TripsIdMediaIndexRoute = TripsIdMediaIndexRouteImport.update({
   id: '/media/',
@@ -374,9 +380,9 @@ const AuthPasswordForgotIndexRoute = AuthPasswordForgotIndexRouteImport.update({
 } as any)
 const TripsIdParticipantsInvitesIndexRoute =
   TripsIdParticipantsInvitesIndexRouteImport.update({
-    id: '/participants/invites/',
-    path: '/participants/invites/',
-    getParentRoute: () => TripsIdRoute,
+    id: '/invites/',
+    path: '/invites/',
+    getParentRoute: () => TripsIdParticipantsRoute,
   } as any)
 const PIdReviewsNewIndexRoute = PIdReviewsNewIndexRouteImport.update({
   id: '/p/$id/reviews/new/',
@@ -390,9 +396,9 @@ const PIdReviewsReviewIdIndexRoute = PIdReviewsReviewIdIndexRouteImport.update({
 } as any)
 const TripsIdParticipantsInvitesNewIndexRoute =
   TripsIdParticipantsInvitesNewIndexRouteImport.update({
-    id: '/participants/invites/new/',
-    path: '/participants/invites/new/',
-    getParentRoute: () => TripsIdRoute,
+    id: '/invites/new/',
+    path: '/invites/new/',
+    getParentRoute: () => TripsIdParticipantsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -417,6 +423,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/trips/$id/participants': typeof TripsIdParticipantsRouteWithChildren
   '/sign-in/': typeof AuthSignInIndexRoute
   '/sign-up/': typeof AuthSignUpIndexRoute
   '/accolades/$id/': typeof AccoladesIdIndexRoute
@@ -543,6 +550,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/terms/': typeof TermsIndexRoute
   '/trips/': typeof TripsIndexRoute
+  '/trips/$id/participants': typeof TripsIdParticipantsRouteWithChildren
   '/_auth/sign-in/': typeof AuthSignInIndexRoute
   '/_auth/sign-up/': typeof AuthSignUpIndexRoute
   '/accolades/$id/': typeof AccoladesIdIndexRoute
@@ -610,6 +618,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
+    | '/trips/$id/participants'
     | '/sign-in/'
     | '/sign-up/'
     | '/accolades/$id/'
@@ -735,6 +744,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/terms/'
     | '/trips/'
+    | '/trips/$id/participants'
     | '/_auth/sign-in/'
     | '/_auth/sign-up/'
     | '/accolades/$id/'
@@ -1118,6 +1128,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trips/$id/participants': {
+      id: '/trips/$id/participants'
+      path: '/participants'
+      fullPath: '/trips/$id/participants'
+      preLoaderRoute: typeof TripsIdParticipantsRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
     '/u/$username/reviews/': {
       id: '/u/$username/reviews/'
       path: '/reviews'
@@ -1162,10 +1179,10 @@ declare module '@tanstack/react-router' {
     }
     '/trips/$id/participants/': {
       id: '/trips/$id/participants/'
-      path: '/participants'
+      path: '/'
       fullPath: '/trips/$id/participants/'
       preLoaderRoute: typeof TripsIdParticipantsIndexRouteImport
-      parentRoute: typeof TripsIdRoute
+      parentRoute: typeof TripsIdParticipantsRoute
     }
     '/trips/$id/media/': {
       id: '/trips/$id/media/'
@@ -1232,10 +1249,10 @@ declare module '@tanstack/react-router' {
     }
     '/trips/$id/participants/invites/': {
       id: '/trips/$id/participants/invites/'
-      path: '/participants/invites'
+      path: '/invites'
       fullPath: '/trips/$id/participants/invites/'
       preLoaderRoute: typeof TripsIdParticipantsInvitesIndexRouteImport
-      parentRoute: typeof TripsIdRoute
+      parentRoute: typeof TripsIdParticipantsRoute
     }
     '/p/$id/reviews/new/': {
       id: '/p/$id/reviews/new/'
@@ -1253,10 +1270,10 @@ declare module '@tanstack/react-router' {
     }
     '/trips/$id/participants/invites/new/': {
       id: '/trips/$id/participants/invites/new/'
-      path: '/participants/invites/new'
+      path: '/invites/new'
       fullPath: '/trips/$id/participants/invites/new/'
       preLoaderRoute: typeof TripsIdParticipantsInvitesNewIndexRouteImport
-      parentRoute: typeof TripsIdRoute
+      parentRoute: typeof TripsIdParticipantsRoute
     }
   }
 }
@@ -1293,7 +1310,24 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
+interface TripsIdParticipantsRouteChildren {
+  TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
+  TripsIdParticipantsInvitesIndexRoute: typeof TripsIdParticipantsInvitesIndexRoute
+  TripsIdParticipantsInvitesNewIndexRoute: typeof TripsIdParticipantsInvitesNewIndexRoute
+}
+
+const TripsIdParticipantsRouteChildren: TripsIdParticipantsRouteChildren = {
+  TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
+  TripsIdParticipantsInvitesIndexRoute: TripsIdParticipantsInvitesIndexRoute,
+  TripsIdParticipantsInvitesNewIndexRoute:
+    TripsIdParticipantsInvitesNewIndexRoute,
+}
+
+const TripsIdParticipantsRouteWithChildren =
+  TripsIdParticipantsRoute._addFileChildren(TripsIdParticipantsRouteChildren)
+
 interface TripsIdRouteChildren {
+  TripsIdParticipantsRoute: typeof TripsIdParticipantsRouteWithChildren
   TripsIdIndexRoute: typeof TripsIdIndexRoute
   TripsIdAmenitiesIndexRoute: typeof TripsIdAmenitiesIndexRoute
   TripsIdCommentsIndexRoute: typeof TripsIdCommentsIndexRoute
@@ -1301,12 +1335,10 @@ interface TripsIdRouteChildren {
   TripsIdEditIndexRoute: typeof TripsIdEditIndexRoute
   TripsIdItineraryIndexRoute: typeof TripsIdItineraryIndexRoute
   TripsIdMediaIndexRoute: typeof TripsIdMediaIndexRoute
-  TripsIdParticipantsIndexRoute: typeof TripsIdParticipantsIndexRoute
-  TripsIdParticipantsInvitesIndexRoute: typeof TripsIdParticipantsInvitesIndexRoute
-  TripsIdParticipantsInvitesNewIndexRoute: typeof TripsIdParticipantsInvitesNewIndexRoute
 }
 
 const TripsIdRouteChildren: TripsIdRouteChildren = {
+  TripsIdParticipantsRoute: TripsIdParticipantsRouteWithChildren,
   TripsIdIndexRoute: TripsIdIndexRoute,
   TripsIdAmenitiesIndexRoute: TripsIdAmenitiesIndexRoute,
   TripsIdCommentsIndexRoute: TripsIdCommentsIndexRoute,
@@ -1314,10 +1346,6 @@ const TripsIdRouteChildren: TripsIdRouteChildren = {
   TripsIdEditIndexRoute: TripsIdEditIndexRoute,
   TripsIdItineraryIndexRoute: TripsIdItineraryIndexRoute,
   TripsIdMediaIndexRoute: TripsIdMediaIndexRoute,
-  TripsIdParticipantsIndexRoute: TripsIdParticipantsIndexRoute,
-  TripsIdParticipantsInvitesIndexRoute: TripsIdParticipantsInvitesIndexRoute,
-  TripsIdParticipantsInvitesNewIndexRoute:
-    TripsIdParticipantsInvitesNewIndexRoute,
 }
 
 const TripsIdRouteWithChildren =

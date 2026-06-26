@@ -6,7 +6,8 @@ import {
 	useContext,
 	useState,
 } from 'react';
-import { useIsCommentOwner, useIsPrivilegedStatus } from './hooks';
+import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
+import { useIsCommentOwner } from './hooks';
 import type { CommentProps, TComment } from './types';
 
 type State = {
@@ -25,7 +26,7 @@ type Props = PropsWithChildren & CommentProps;
 
 export function CommentContextProvider({ comment, children }: Props) {
 	const [isEditMode, setIsEditMode] = useState(false);
-	const isPrivileged = useIsPrivilegedStatus();
+	const isPrivileged = useTripIsPrivileged();
 	const isOwner = useIsCommentOwner(comment);
 	const canSeeActions = isOwner || isPrivileged;
 	const canEdit = isOwner;

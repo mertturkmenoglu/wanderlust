@@ -32,8 +32,7 @@ export const Route = createFileRoute('/trips/$id/details/')({
 function RouteComponent() {
 	const route = getRouteApi('/trips/$id');
 	const { trip } = route.useLoaderData();
-	const { auth } = route.useRouteContext();
-	const isPrivileged = useTripIsPrivileged(trip, auth.user?.id ?? '');
+	const isPrivileged = useTripIsPrivileged();
 	const navigate = useNavigate();
 
 	const intervalDays = eachDayOfInterval({
