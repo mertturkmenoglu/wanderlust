@@ -326,10 +326,13 @@ export const $dto = {
 					'London is the capital city of the United Kingdom, known for its rich history and vibrant culture.',
 				],
 			}),
-		timezone: z.string().min(1).meta({
-			description: 'IANA timezone name',
-			examples: ['Europe/London', 'America/New_York'],
-		})
+		timezone: z
+			.string()
+			.min(1)
+			.meta({
+				description: 'IANA timezone name',
+				examples: ['Europe/London', 'America/New_York'],
+			}),
 	}).meta({
 		description: 'A city entity',
 	}),
@@ -827,6 +830,7 @@ export const $dto = {
 		title: z
 			.string()
 			.min(1)
+			.max(256)
 			.meta({
 				description: 'Title of the trip',
 				examples: ['Summer Vacation in Europe'],
@@ -834,6 +838,7 @@ export const $dto = {
 		description: z
 			.string()
 			.min(1)
+			.max(8192)
 			.meta({
 				description: 'Description of the trip',
 				examples: [
