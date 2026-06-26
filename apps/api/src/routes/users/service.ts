@@ -1,8 +1,6 @@
-import path from 'node:path';
 import { ORPCError } from '@orpc/client';
 import type { users as dto } from '@wanderlust/contract';
 import {
-	createPathname,
 	getFilenameFromUrl,
 	StorageService,
 	type TStorageService,
@@ -35,21 +33,18 @@ export class UsersService {
 			});
 		}
 
-		const filepath = path.join(
-			data.type === 'profile' ? 'profile-images' : 'banner-images',
-			`${nanoid()}.${res.ext}`,
-		);
+		const id = nanoid();
+		const filename = `${id}.${res.ext}`;
+		const bucket = data.type === 'profile' ? 'profile-images' : 'banner-images';
 
 		try {
-			await this.storage.put(
-				filepath,
-				Buffer.from(await data.file.arrayBuffer()),
-				{
+			await this.storage
+				.use(bucket)
+				.put(filename, Buffer.from(await data.file.arrayBuffer()), {
 					contentType: res.mime,
-				},
-			);
+				});
 
-			const url = await this.storage.getUrl(filepath);
+			const url = await this.storage.use(bucket).getUrl(filename);
 			const result = await this.repo.updateImage(userId, data.type, url);
 
 			try {
@@ -57,11 +52,7 @@ export class UsersService {
 					const filename = getFilenameFromUrl(result.previousUrl);
 
 					if (filename !== '') {
-						const pathname = createPathname(
-							data.type ? 'profile-images' : 'banner-images',
-							filename,
-						);
-						await this.storage.delete(pathname);
+						await this.storage.use(bucket).delete(filename);
 					}
 				}
 			} catch (err) {
@@ -94,7 +85,10 @@ export class UsersService {
 		};
 	}
 
-	async getById(userId: string, data: dto.GetByIdInput): Promise<dto.GetByIdOutput> {
+	async getById(
+		userId: string,
+		data: dto.GetByIdInput,
+	): Promise<dto.GetByIdOutput> {
 		const result = await this.repo.getById(userId, data);
 
 		return {

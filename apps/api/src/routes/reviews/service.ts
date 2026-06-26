@@ -1,10 +1,8 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: TODO */
-import path from 'node:path';
 import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { reviews as dto } from '@wanderlust/contract';
 import {
-	createPathname,
 	getFilenameFromUrl,
 	StorageService,
 	type TStorageService,
@@ -38,75 +36,19 @@ export class ReviewsService {
 		};
 	}
 
-	private async getFileTypes(files: File[]): Promise<FileTypeResult[]> {
-		const filetypes: FileTypeResult[] = [];
-
-		for (const file of files) {
-			const t = await fileTypeFromBlob(file);
-
-			if (!t) {
-				throw new ORPCError('UNPROCESSABLE_CONTENT', {
-					message: 'One or more files have an unsupported file type',
-				});
-			}
-
-			if (!['image/jpeg', 'image/png', 'image/webp'].includes(t.mime)) {
-				throw new ORPCError('UNPROCESSABLE_CONTENT', {
-					message: 'One or more files have an unsupported file type',
-				});
-			}
-
-			filetypes.push(t);
-		}
-
-		return filetypes;
-	}
-
 	async create(
 		userId: string,
 		username: string,
 		data: dto.CreateInput,
 	): Promise<dto.CreateOutput> {
 		const files = data.files || [];
-		const urls: string[] = [];
-
-		if (files.length > 0) {
-			const filetypes: FileTypeResult[] = await this.getFileTypes(files);
-
-			for (let i = 0; i < files.length; i++) {
-				const id = nanoid();
-				const file = files[i]!;
-				const filetype = filetypes[i]!;
-				const filename = `${id}.${filetype.ext}`;
-				const filepath = path.join('reviews', filename);
-
-				try {
-					await this.storage.put(
-						filepath,
-						Buffer.from(await file.arrayBuffer()),
-						{
-							contentType: filetype.mime,
-						},
-					);
-
-					const url = await this.storage.getUrl(filepath);
-					urls.push(url);
-				} catch (_err) {
-					// Cleanup any files that were uploaded before the error occurred
-					await this.removeAssets(urls);
-
-					throw new ORPCError('INTERNAL_SERVER_ERROR', {
-						message: 'Failed to upload review files',
-					});
-				}
-			}
-		}
+		const urls = await this.uploadFiles(files);
 
 		try {
 			const [insertResult, place] = await this.repo.create(userId, data, urls);
 
 			await this.cache.namespace('reviews-ratings').delete({
-				key: `place-${data.placeId}`,
+				key: data.placeId,
 			});
 
 			await this.activities.addActivity(username, 'create_review', {
@@ -122,35 +64,13 @@ export class ReviewsService {
 			return {
 				review: insertResult,
 			};
-		} catch (_err) {
+		} catch {
 			await this.removeAssets(urls);
 
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to create review',
 			});
 		}
-	}
-
-	private async removeAssets(urls: string[]): Promise<boolean> {
-		let allDeleted = true;
-
-		for (const url of urls) {
-			const filename = getFilenameFromUrl(url);
-			const pathname = createPathname('reviews', filename);
-
-			try {
-				await this.storage.delete(pathname);
-			} catch (err) {
-				allDeleted = false;
-
-				console.error(
-					'Failed to delete review asset from storage during cleanup',
-					err,
-				);
-			}
-		}
-
-		return allDeleted;
 	}
 
 	async _delete(userId: string, data: dto.DeleteInput): Promise<void> {
@@ -163,9 +83,8 @@ export class ReviewsService {
 		}
 
 		const deleted = await this.repo._delete(userId, data);
-		const allAssetsDeleted = await this.removeAssets(
-			existing.assets.map((asset) => asset.url),
-		);
+		const urls = existing.assets.map((asset) => asset.url);
+		const allAssetsDeleted = await this.removeAssets(urls);
 
 		if (!allAssetsDeleted) {
 			console.warn(
@@ -174,7 +93,7 @@ export class ReviewsService {
 		}
 
 		await this.cache.namespace('reviews-ratings').delete({
-			key: `place-${deleted.placeId}`,
+			key: deleted.placeId,
 		});
 	}
 
@@ -202,7 +121,7 @@ export class ReviewsService {
 
 	async getRatings(data: dto.GetRatingsInput): Promise<dto.GetRatingsOutput> {
 		const result = await this.cache.namespace('reviews-ratings').getOrSet({
-			key: `place-${data.id}`,
+			key: data.id,
 			ttl: '30m',
 			factory: async () => this.repo.getRatings(data),
 		});
@@ -216,5 +135,96 @@ export class ReviewsService {
 		const result = await this.repo.listAssetsByPlaceId(data);
 
 		return result;
+	}
+
+	private async uploadFiles(files: File[]): Promise<string[]> {
+		const urls: string[] = [];
+		const filetypes = await this.getFileTypes(files);
+
+		for (let i = 0; i < files.length; i++) {
+			const id = nanoid();
+			const file = files[i]!;
+			const filetype = filetypes[i]!;
+			const filename = `${id}.${filetype.ext}`;
+
+			try {
+				await this.storage
+					.use('reviews')
+					.put(filename, Buffer.from(await file.arrayBuffer()), {
+						contentType: filetype.mime,
+					});
+
+				const url = await this.storage.use('reviews').getUrl(filename);
+				urls.push(url);
+			} catch (_err) {
+				// Cleanup any files that were uploaded before the error occurred
+				await this.removeAssets(urls);
+
+				throw new ORPCError('INTERNAL_SERVER_ERROR', {
+					message: 'Failed to upload review files',
+				});
+			}
+		}
+
+		return urls;
+	}
+
+	private async getFileTypes(files: File[]): Promise<FileTypeResult[]> {
+		const results = await Promise.allSettled(
+			files.map((file) => this.getFileType(file)),
+		);
+
+		const filetypes: FileTypeResult[] = [];
+
+		for (const result of results) {
+			if (result.status === 'fulfilled') {
+				filetypes.push(result.value);
+			} else {
+				throw new ORPCError('UNPROCESSABLE_CONTENT', {
+					message: 'One or more files have an unsupported file type',
+				});
+			}
+		}
+
+		return filetypes;
+	}
+
+	private async getFileType(file: File): Promise<FileTypeResult> {
+		const t = await fileTypeFromBlob(file);
+
+		if (!t) {
+			throw new ORPCError('UNPROCESSABLE_CONTENT', {
+				message: 'One or more files have an unsupported file type',
+			});
+		}
+
+		if (!['image/jpeg', 'image/png', 'image/webp'].includes(t.mime)) {
+			throw new ORPCError('UNPROCESSABLE_CONTENT', {
+				message: 'One or more files have an unsupported file type',
+			});
+		}
+
+		return t;
+	}
+
+	private async removeAssets(urls: string[]): Promise<boolean> {
+		let allDeleted = true;
+
+		for (const url of urls) {
+			const filename = getFilenameFromUrl(url);
+
+			try {
+				await this.storage.use('reviews').delete(filename);
+			} catch (err) {
+				allDeleted = false;
+
+				console.error(
+					'Failed to delete review asset from storage during cleanup',
+					err,
+				);
+			}
+		}
+
+		return allDeleted;
 	}
 }
