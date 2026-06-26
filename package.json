@@ -42,12 +42,9 @@
 	"scripts": {
 		"check": "biome check --write .",
 		"dev": "turbo dev",
-		"cli": "bun run --filter='./apps/cli' cli",
+		"cli": "bun run --cwd ./apps/cli cli",
 		"build": "turbo build",
-		"check-types": "turbo check-types",
-		"clean": "bun run --filter='./apps/api' clean",
-		"fake": "bun run --filter='./apps/fake' fake",
-		"search": "bun run --filter='./apps/api' search"
+		"check-types": "turbo check-types"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.14",
