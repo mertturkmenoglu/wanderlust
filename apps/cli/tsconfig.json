@@ -39,6 +39,9 @@
 		},
 		{
 			"path": "../../packages/uid"
+		},
+		{
+			"path": "../../packages/storage"
 		}
 	],
 	"include": [

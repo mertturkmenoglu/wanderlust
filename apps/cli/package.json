@@ -21,6 +21,7 @@
 		"@wanderlust/jobs": "workspace:*",
 		"@wanderlust/search": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
+		"@wanderlust/storage": "workspace:*",
 		"consola": "catalog:",
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
