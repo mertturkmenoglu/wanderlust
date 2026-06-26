@@ -2,7 +2,6 @@ import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { ErrorComponent } from '@/components/error-component';
 import { orpc } from '@/lib/orpc';
 import { Header } from './-header';
-import { schema } from './-hooks';
 import { TripTabs } from './-tabs';
 
 export const Route = createFileRoute('/trips/$id')({
@@ -16,7 +15,6 @@ export const Route = createFileRoute('/trips/$id')({
 			}),
 		);
 	},
-	validateSearch: schema,
 	errorComponent: ErrorComponent,
 });
 

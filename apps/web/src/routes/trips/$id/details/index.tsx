@@ -22,11 +22,13 @@ import { AppMessage } from '@/components/app-message';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { PlaceCard } from '@/components/place-card';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
-import { InfoCard } from './-info-card';
+import { tripUpsertLocationSchema } from '@/schemas/trip-upsert-location';
+import { useTripDays } from './-components/hooks';
 import { UpsertLocationDialog } from './-upsert-location-dialog';
 
 export const Route = createFileRoute('/trips/$id/details/')({
 	component: RouteComponent,
+	validateSearch: tripUpsertLocationSchema,
 });
 
 function RouteComponent() {
