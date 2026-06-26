@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { orpc } from '@/lib/orpc';
-import { useTripSummary } from './-components/-hooks';
+import { useTripSummary } from './-components/hooks';
 import { SummaryCard } from './-components/summary-card';
 
 export const Route = createFileRoute('/trips/$id/')({

@@ -28,6 +28,11 @@ export function useTabs(id: string) {
 			title: 'Itinerary',
 		}),
 		linkOptions({
+			to: '/trips/$id/media',
+			params: { id },
+			title: 'Media',
+		}),
+		linkOptions({
 			to: '/trips/$id/participants',
 			params: { id },
 			title: 'Participants',

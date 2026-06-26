@@ -33,7 +33,7 @@ export function TripTabs({ className }: Props) {
 							<TabsTrigger
 								key={t.to}
 								value={t.to}
-								className="bg-transparent px-0! shadow-none!"
+								className="border-none bg-transparent px-0! dark:bg-transparent!"
 							>
 								<Link
 									to={t.to}

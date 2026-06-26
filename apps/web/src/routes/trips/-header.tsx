@@ -1,5 +1,4 @@
-import { Link, useLoaderData } from '@tanstack/react-router';
-import { buttonVariants } from '@wanderlust/ui/components/button';
+import { useLoaderData } from '@tanstack/react-router';
 import {
 	Item,
 	ItemContent,
@@ -9,6 +8,7 @@ import {
 import { BackLink } from '@/components/back-link';
 import { RelativeTime } from '@/components/relative-time';
 import { TSTZDisplay } from '@/components/tstz-display';
+import { UnderlineLink } from '@/components/underline-link';
 
 export function Header() {
 	const { trip } = useLoaderData({ from: '/trips/$id' });
@@ -19,25 +19,20 @@ export function Header() {
 
 			<Item className="mt-4 p-0!">
 				<ItemContent>
-					<ItemTitle className="md:text-2xl">{trip.title}</ItemTitle>
+					<ItemTitle className="text-lg md:text-2xl">{trip.title}</ItemTitle>
 					<ItemDescription className="flex flex-wrap items-center gap-2 text-xs md:text-sm">
-						<TSTZDisplay date={trip.startAt} /> -{' '}
+						<TSTZDisplay date={trip.startAt} />
+						<span className="hidden md:mx-1 md:block">-</span>
 						<TSTZDisplay date={trip.endAt} />
 					</ItemDescription>
 					<ItemDescription className="text-xs md:text-sm">
 						Last updated: <RelativeTime date={trip.updatedAt} /> by{' '}
-						<Link
+						<UnderlineLink
 							to="/u/$username"
-							params={{
-								username: trip.owner.username,
-							}}
-							className={buttonVariants({
-								variant: 'link',
-								className: 'px-0!',
-							})}
+							params={{ username: trip.owner.username }}
 						>
 							{trip.owner.name}
-						</Link>
+						</UnderlineLink>
 					</ItemDescription>
 				</ItemContent>
 			</Item>
