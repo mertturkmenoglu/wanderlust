@@ -1,19 +1,21 @@
 import path from 'node:path';
 import { command } from '@drizzle-team/brocli';
 import { $ } from 'bun';
-import consola from 'consola';
+import { Pipeline } from '@/lib/pipeline';
 
 export const fake = command({
 	name: 'fake',
 	desc: 'Generates fake data for the application',
 	options: {},
 	handler: async (_opts) => {
-		const projectPath = path.join(process.cwd(), '..', 'fake');
+		const pipeline = new Pipeline({
+			values: {
+				path: path.join(process.cwd(), '..', 'fake'),
+			},
+		}).addStep('Generate fake data', async ({ path }) => {
+			await $`bun run --cwd ${path} fake`;
+		});
 
-		consola.start('Generating fake data');
-
-		await $`bun run --cwd ${projectPath} fake`;
-
-		consola.success('Fake data generation completed.');
+		await pipeline.run();
 	},
 });
