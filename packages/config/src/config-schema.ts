@@ -70,4 +70,10 @@ export const configSchema = z.object({
 			serviceName: z.string(),
 		}),
 	}),
+	storage: z.object({
+		accessKeyId: z.string(),
+		secretAccessKey: z.string(),
+		region: z.string(),
+		endpoint: z.string(),
+	}),
 });
