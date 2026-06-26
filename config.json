@@ -76,5 +76,11 @@
 		"logger": {
 			"serviceName": "wl-chat"
 		}
+	},
+	"storage": {
+		"accessKeyId": "admin",
+		"secretAccessKey": "secret",
+		"region": "eu-central-1",
+		"endpoint": "http://localhost:8333"
 	}
 }
