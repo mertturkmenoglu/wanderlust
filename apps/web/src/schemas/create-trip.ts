@@ -4,14 +4,8 @@ import { visibility } from './trip-visibility';
 
 export const createTripSchema = z
 	.object({
-		title: z
-			.string('Required')
-			.min(1, 'Too short')
-			.max(128, 'At max 128 characters'),
-		description: z
-			.string('Required')
-			.min(1, 'Too short')
-			.max(1024, 'At max 1024 characters'),
+		title: z.string('Required').min(1, 'Too short').max(256, 'Too long'),
+		description: z.string('Required').min(1, 'Too short').max(8192, 'Too long'),
 		startAt: z.date('Required'),
 		endAt: z.date('Required'),
 		visibilityLevel: z.enum(visibility, 'Choose an option'),
