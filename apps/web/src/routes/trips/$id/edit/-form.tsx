@@ -14,18 +14,24 @@ import {
 } from '@wanderlust/ui/components/field';
 import { Input } from '@wanderlust/ui/components/input';
 import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupText,
+	InputGroupTextarea,
+} from '@wanderlust/ui/components/input-group';
+import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
 } from '@wanderlust/ui/components/select';
-import { Textarea } from '@wanderlust/ui/components/textarea';
 import { addYears } from 'date-fns';
 import { AlertOctagonIcon, AlertTriangleIcon, Trash2Icon } from 'lucide-react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TSTZPicker } from '@/components/tstz-picker';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
+import { lengthTracker } from '@/lib/form';
 import type { UpdateTripFormInput } from '@/schemas/create-trip';
 import { visibilityOptions } from '@/schemas/trip-visibility';
 import { useDeleteTripMutation, useUpdateTripMutation } from './-hooks';
@@ -80,15 +86,22 @@ export function UpdateTripForm() {
 						render={({ field, fieldState }) => (
 							<Field data-invalid={fieldState.invalid}>
 								<FieldLabel htmlFor="description">Description</FieldLabel>
-								<Textarea
-									{...field}
-									id="description"
-									placeholder="You can add a description for your trip."
-									autoComplete="off"
-									rows={4}
-									className="max-h-32"
-									aria-invalid={fieldState.invalid}
-								/>
+								<InputGroup>
+									<InputGroupTextarea
+										{...field}
+										id="description"
+										placeholder="You can add a description for your trip."
+										autoComplete="off"
+										rows={4}
+										aria-invalid={fieldState.invalid}
+									/>
+
+									<InputGroupAddon align="block-end">
+										<InputGroupText>
+											{lengthTracker(field.value, 8192)}
+										</InputGroupText>
+									</InputGroupAddon>
+								</InputGroup>
 								{fieldState.invalid && (
 									<FieldError errors={[fieldState.error]} />
 								)}
