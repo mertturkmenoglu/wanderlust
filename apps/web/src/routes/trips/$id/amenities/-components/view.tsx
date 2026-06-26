@@ -20,15 +20,6 @@ export function View() {
 		from: '/trips/$id',
 	});
 
-	if (trip.requestedAmenities.length === 0) {
-		return (
-			<AppMessage
-				empty="No amenities requested"
-				classNames={{ root: 'my-16' }}
-			/>
-		);
-	}
-
 	return (
 		<Card>
 			<CardHeader>
@@ -52,6 +43,12 @@ export function View() {
 						{amenitiesDisplayNames.get(amenity) ?? amenity}
 					</Badge>
 				))}
+				{trip.requestedAmenities.length === 0 && (
+					<AppMessage
+						empty="No amenities requested"
+						classNames={{ root: 'my-4 mx-auto' }}
+					/>
+				)}
 			</CardContent>
 		</Card>
 	);

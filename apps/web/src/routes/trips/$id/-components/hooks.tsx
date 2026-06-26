@@ -10,7 +10,7 @@ import {
 	MessageCircleIcon,
 	Users2Icon,
 } from 'lucide-react';
-import type { SummaryCardProps } from './-summary-card';
+import type { SummaryCardProps } from './summary-card';
 
 export function useTripSummary() {
 	const data = useLoaderData({ from: '/trips/$id/' });
