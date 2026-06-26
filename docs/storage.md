@@ -1,9 +1,11 @@
 # Storage
 
-- We are using Flydrive for file uploads.
-- We are highly recommending reading the [Flydrive documentation](https://fly.io/docs/introduction).
+- We are using SeaweedFS and Flydrive for file uploads.
+- SeaweedFS is an S3 compatible distributed storage system.
+- Flydrive is a unified storage API library to interact with various types of storage systems.
+- We highly recommend reading the [SeaweedFS documentation](https://github.com/seaweedfs/seaweedfs) and the [Flydrive documentation](https://fly.io/docs/introduction)
 - You can find the library code in `packages/storage` directory.
-- The primary driver is the File System driver but you should still think in terms of buckets.
+- The primary driver is the S3 driver.
 - To define a new bucket, update the `buckets` array in `packages/storage/src/buckets.ts` file.
 - `packages/storage/src/helpers.ts` file contains generic file upload utilities.
 - Example usage:
@@ -11,9 +13,14 @@
 ```typescript
 const filename = crypto.randomUUID() + ".png";
 const content = await file.arrayBuffer();
-const path = createPathname("bucket-foo", filename);
-await storage.client.put(path, Buffer.from(content));
-const url = await storage.client.getUrl(path);
+const filetype = await fileTypeFromBlob(file);
+
+await storage.use('foo-bucket').put(filename, Buffer.from(content), {
+	contentType: filetype.mime,
+});
+
+const url = await storage.use('foo-bucket').getUrl(filename);
 console.log(url);
-await storage.client.delete(path);
+
+await storage.use('foo-bucket').delete(filename);
 ```
