@@ -74,6 +74,22 @@ services:
       start_period: 10s
       start_interval: 1s
 
+  wl-seaweedfs:
+    image: chrislusf/seaweedfs
+    container_name: wl-seaweedfs
+    restart: unless-stopped
+    ports:
+      - 7333:7333
+      - 8333:8333
+      - 9333:9333
+      - 8888:8888
+      - 9340:9340
+      - 23646:23646
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=secret
+      - S3_BUCKET=default
+
 networks:
   wl-searchnet:
   wl-redisnet:
