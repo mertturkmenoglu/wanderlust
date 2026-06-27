@@ -36,6 +36,7 @@
 			"evlog": "^2.17.0",
 			"ioredis": "^5.10.1",
 			"superjson": "^2.2.5",
+			"tiny-invariant": "^1.3.3",
 			"typesense": "^3.0.6"
 		}
 	},
