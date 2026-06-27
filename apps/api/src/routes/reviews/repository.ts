@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
 import type { reviews as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -10,6 +9,7 @@ import {
 import { nanoid } from '@wanderlust/uid';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 @injectable()
 export class ReviewsRepository {
@@ -38,11 +38,7 @@ export class ReviewsRepository {
 			},
 		});
 
-		if (!result) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Review with id ${data.id} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `Review with id ${data.id} not found`);
 
 		return result;
 	}
@@ -61,11 +57,7 @@ export class ReviewsRepository {
 				})
 				.returning();
 
-			if (!review) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to create review',
-				});
-			}
+			invariant(review, 'INTERNAL_SERVER_ERROR', 'Failed to create review');
 
 			if (urls.length > 0) {
 				await tx.insert(schema.assets).values(
@@ -101,21 +93,17 @@ export class ReviewsRepository {
 				},
 			});
 
-			if (!res) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to retrieve created review',
-				});
-			}
+			invariant(
+				res,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to retrieve created review',
+			);
 
 			const place = await tx.query.places.findFirst({
 				where: (t, { eq }) => eq(t.id, review.placeId),
 			});
 
-			if (!place) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to retrieve the place after creating the review',
-				});
-			}
+			invariant(place, 'INTERNAL_SERVER_ERROR', 'Failed to retrieve the place');
 
 			return [res, place] as const;
 		});
@@ -135,11 +123,11 @@ export class ReviewsRepository {
 				)
 				.returning();
 
-			if (!deleted) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Review with id ${data.id} not found or you are not authorized to delete it`,
-				});
-			}
+			invariant(
+				deleted,
+				'NOT_FOUND',
+				`Review with id ${data.id} not found or you are not authorized to delete it`,
+			);
 
 			await tx
 				.delete(schema.assets)
@@ -169,11 +157,11 @@ export class ReviewsRepository {
 			where: (users, { eq }) => eq(users.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const result = await this.db.query.reviews.findMany({
 			where: (reviews, { eq }) => eq(reviews.userId, user.id),

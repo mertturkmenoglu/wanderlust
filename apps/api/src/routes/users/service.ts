@@ -8,6 +8,7 @@ import {
 import { nanoid } from '@wanderlust/uid';
 import { fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 import { UsersRepository } from './repository';
 
 @injectable()
@@ -27,11 +28,7 @@ export class UsersService {
 	): Promise<dto.UpdateImageOutput> {
 		const res = await fileTypeFromBlob(data.file);
 
-		if (!res) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Unable to determine file type',
-			});
-		}
+		invariant(res, 'BAD_REQUEST', 'Unable to determine file type');
 
 		const id = nanoid();
 		const filename = `${id}.${res.ext}`;

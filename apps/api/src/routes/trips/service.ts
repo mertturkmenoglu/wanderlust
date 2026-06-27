@@ -5,6 +5,7 @@ import { nanoid } from '@wanderlust/uid';
 import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
+import { invariant } from '@/lib/invariant';
 import * as authz from './authz';
 import { TripsRepository } from './repository';
 
@@ -25,11 +26,11 @@ export class TripsService {
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(userId, data);
 
-		if (!authz.canRead(result, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(result, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
 		return {
 			trip: result,
@@ -42,11 +43,11 @@ export class TripsService {
 	): Promise<dto.ListInvitesOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
 		const result = await this.repo.listInvites(userId, data);
 
@@ -61,23 +62,23 @@ export class TripsService {
 	): Promise<dto.CreateInviteOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canCreateInvite(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to invite participants to trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canCreateInvite(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to invite participants to this trip',
+		);
 
-		if (trip.visibilityLevel === 'private') {
-			throw new ORPCError('CONFLICT', {
-				message: 'Cannot invite participants to private trips',
-			});
-		}
+		invariant(
+			trip.visibilityLevel !== 'private',
+			'CONFLICT',
+			'Cannot invite participants to private trips',
+		);
 
 		const result = await this.repo.createInvite(userId, data, trip.title);
 
@@ -127,17 +128,17 @@ export class TripsService {
 		userId: string,
 		data: dto.CreateInput,
 	): Promise<dto.CreateOutput> {
-		if (data.startAt.getTime() >= data.endAt.getTime()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Trip start date must be before end date',
-			});
-		}
+		invariant(
+			data.startAt.getTime() < data.endAt.getTime(),
+			'BAD_REQUEST',
+			'Trip start date must be before end date',
+		);
 
-		if (data.startAt.getTime() === Date.now()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Trip start date must be in the future',
-			});
-		}
+		invariant(
+			data.startAt.getTime() > Date.now(),
+			'BAD_REQUEST',
+			'Trip start date must be in the future',
+		);
 
 		const result = await this.repo.create(userId, data);
 
@@ -161,11 +162,13 @@ export class TripsService {
 	): Promise<dto.GetInviteDetailsOutput> {
 		const invite = await this.repo.getInviteDetails(userId, data);
 
-		if (invite.toId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access invite with id ${data.inviteId}`,
-			});
-		}
+		const canAccess = invite.toId === userId;
+
+		invariant(
+			canAccess,
+			'FORBIDDEN',
+			'User is not allowed to access this invite',
+		);
 
 		if (invite.expiresAt.getTime() < Date.now()) {
 			await this.repo.deleteInvite(userId, {
@@ -174,7 +177,7 @@ export class TripsService {
 			});
 
 			throw new ORPCError('GONE', {
-				message: `Invite with id ${data.inviteId} has expired`,
+				message: 'Invite has expired',
 				status: 410,
 			});
 		}
@@ -220,17 +223,17 @@ export class TripsService {
 	async leave(userId: string, data: dto.LeaveInput): Promise<dto.LeaveOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (authz.isOwner(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `Owner of the trip with id ${data.id} cannot leave the trip`,
-			});
-		}
+		invariant(
+			authz.isOwner(trip, userId) === false,
+			'FORBIDDEN',
+			'Owner of the trip cannot leave the trip',
+		);
 
 		await this.repo.leave(userId, data);
 
@@ -243,17 +246,17 @@ export class TripsService {
 	): Promise<dto.DeleteInviteOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canDeleteInvite(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to delete invites for trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canDeleteInvite(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to delete invites for this trip',
+		);
 
 		await this.repo.deleteInvite(userId, data);
 
@@ -266,17 +269,17 @@ export class TripsService {
 	): Promise<dto.DeleteOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.isOwner(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `Only the owner can delete the trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canDeleteTrip(trip, userId),
+			'FORBIDDEN',
+			'Only the owner can delete the trip',
+		);
 
 		await this.repo._delete(userId, data);
 
@@ -289,17 +292,17 @@ export class TripsService {
 	): Promise<dto.DeleteParticipantOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canDeleteParticipant(trip, userId, data.userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to remove participant with id ${data.userId} from trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canDeleteParticipant(trip, userId, data.userId),
+			'FORBIDDEN',
+			'User is not allowed to remove this participant from the trip',
+		);
 
 		await this.repo.deleteParticipant(userId, data);
 
@@ -312,17 +315,17 @@ export class TripsService {
 	): Promise<dto.CreateCommentOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canCreateComment(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to create comments on trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canCreateComment(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to create comments on this trip',
+		);
 
 		const result = await this.repo.createComment(userId, data);
 
@@ -353,17 +356,17 @@ export class TripsService {
 	): Promise<dto.ListCommentsOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canReadComment(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to read comments on trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canReadComment(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to read comments on this trip',
+		);
 
 		const result = await this.repo.listComments(userId, data);
 
@@ -379,11 +382,11 @@ export class TripsService {
 	): Promise<dto.UpdateCommentOutput> {
 		const comment = await this.repo.getComment(data.commentId);
 
-		if (!authz.canUpdateComment(comment, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to update comment with id ${data.commentId}`,
-			});
-		}
+		invariant(
+			authz.canUpdateComment(comment, userId),
+			'FORBIDDEN',
+			'User is not allowed to update this comment',
+		);
 
 		const result = await this.repo.updateComment(userId, data);
 
@@ -399,11 +402,11 @@ export class TripsService {
 		const comment = await this.repo.getComment(data.commentId);
 		const trip = await this.repo.get(userId, { id: comment.tripId });
 
-		if (!authz.canDeleteComment(trip, comment, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to delete comment with id ${data.commentId}`,
-			});
-		}
+		invariant(
+			authz.canDeleteComment(trip, comment, userId),
+			'FORBIDDEN',
+			'User is not allowed to delete this comment',
+		);
 
 		await this.repo.deleteComment(userId, data);
 
@@ -414,31 +417,31 @@ export class TripsService {
 		userId: string,
 		data: dto.UpdateInput,
 	): Promise<dto.UpdateOutput> {
-		if (data.startAt.getTime() >= data.endAt.getTime()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Trip start date must be before end date',
-			});
-		}
+		invariant(
+			data.startAt.getTime() < data.endAt.getTime(),
+			'BAD_REQUEST',
+			'Trip start date must be before end date',
+		);
 
-		if (data.startAt.getTime() === Date.now()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Trip start date must be in the future',
-			});
-		}
+		invariant(
+			data.startAt.getTime() > Date.now(),
+			'BAD_REQUEST',
+			'Trip start date must be in the future',
+		);
 
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canUpdateTrip(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to update trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canUpdateTrip(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to update this trip',
+		);
 
 		const [newTrip, isDateChanged] = await this.repo.update(userId, data);
 
@@ -474,29 +477,29 @@ export class TripsService {
 	): Promise<dto.CreateLocationOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canCreateLocation(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to create locations on trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canCreateLocation(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to create locations on this trip',
+		);
 
-		if (data.scheduledTime.getTime() < trip.startAt.getTime()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Location scheduled time cannot be before trip start date',
-			});
-		}
+		invariant(
+			data.scheduledTime.getTime() >= trip.startAt.getTime(),
+			'BAD_REQUEST',
+			'Location scheduled time cannot be before trip start date',
+		);
 
-		if (data.scheduledTime.getTime() > trip.endAt.getTime()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Location scheduled time cannot be after trip end date',
-			});
-		}
+		invariant(
+			data.scheduledTime.getTime() <= trip.endAt.getTime(),
+			'BAD_REQUEST',
+			'Location scheduled time cannot be after trip end date',
+		);
 
 		if (data.description === undefined) {
 			data.description = trip.description;
@@ -515,17 +518,17 @@ export class TripsService {
 	): Promise<dto.UpdateLocationOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canUpdateLocation(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to update locations on trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canUpdateLocation(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to update locations on this trip',
+		);
 
 		const location = await this.repo.getLocation(userId, data.locationId);
 
@@ -537,17 +540,17 @@ export class TripsService {
 			data.scheduledTime = location.scheduledTime;
 		}
 
-		if (data.scheduledTime.getTime() < trip.startAt.getTime()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Location scheduled time cannot be before trip start date',
-			});
-		}
+		invariant(
+			data.scheduledTime.getTime() >= trip.startAt.getTime(),
+			'BAD_REQUEST',
+			'Location scheduled time cannot be before trip start date',
+		);
 
-		if (data.scheduledTime.getTime() > trip.endAt.getTime()) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Location scheduled time cannot be after trip end date',
-			});
-		}
+		invariant(
+			data.scheduledTime.getTime() <= trip.endAt.getTime(),
+			'BAD_REQUEST',
+			'Location scheduled time cannot be after trip end date',
+		);
 
 		const result = await this.repo.updateLocation(userId, data);
 
@@ -562,17 +565,17 @@ export class TripsService {
 	): Promise<dto.DeleteLocationOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canDeleteLocation(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to delete locations on trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canDeleteLocation(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to delete locations on this trip',
+		);
 
 		await this.repo.deleteLocation(userId, data);
 
@@ -585,17 +588,17 @@ export class TripsService {
 	): Promise<dto.UpdateRequestedAmenitiesOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
-		if (!authz.canUpdateTrip(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to update requested amenities on trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canUpdateTrip(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to update requested amenities on this trip',
+		);
 
 		const result = await this.repo.updateRequestedAmenities(userId, data);
 
@@ -610,11 +613,11 @@ export class TripsService {
 	): Promise<dto.GetSummaryOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
-		if (!authz.canRead(trip, userId)) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `User with id ${userId} is not allowed to access trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			authz.canRead(trip, userId),
+			'FORBIDDEN',
+			'User is not allowed to access this trip',
+		);
 
 		const totalCities = new Set(
 			trip.locations.map((l) => l.place.address.cityId),

@@ -1,8 +1,8 @@
-import { ORPCError } from '@orpc/client';
 import type { preferences as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 type TxFn = Parameters<TDatabaseService['transaction']>[0];
 type Tx = Parameters<TxFn>[0];
@@ -36,11 +36,11 @@ export class PreferencesRepository {
 					})
 					.returning();
 
-				if (!inserted) {
-					throw new ORPCError('INTERNAL_SERVER_ERROR', {
-						message: 'Failed to create preferences for user',
-					});
-				}
+				invariant(
+					inserted,
+					'INTERNAL_SERVER_ERROR',
+					'Failed to create preferences for user',
+				);
 
 				return inserted;
 			}
@@ -59,21 +59,23 @@ export class PreferencesRepository {
 	): Promise<dto.UpdateOutput> {
 		const [updated] = await this.db
 			.insert(schema.preferences)
-			.values([{
-				userId: userId,
-				...data,
-			}])
+			.values([
+				{
+					userId: userId,
+					...data,
+				},
+			])
 			.onConflictDoUpdate({
 				target: schema.preferences.userId,
 				set: data,
 			})
 			.returning();
 
-		if (!updated) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to update preferences for user',
-			});
-		}
+		invariant(
+			updated,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to update preferences for user',
+		);
 
 		return {
 			preferences: updated,

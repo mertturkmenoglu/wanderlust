@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import type { bookmarks as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -10,6 +9,7 @@ import {
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
+import { invariant } from '@/lib/invariant';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
@@ -33,11 +33,7 @@ export class BookmarksRepository {
 			})
 			.returning();
 
-		if (!result) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'No bookmark returned after insertion',
-			});
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'No bookmark returned');
 
 		return result;
 	}
@@ -86,10 +82,6 @@ export class BookmarksRepository {
 				),
 			);
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Bookmark not found',
-			});
-		}
+		invariant(res.rowCount !== 0, 'NOT_FOUND', 'Bookmark not found');
 	}
 }

@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/client';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { Pagination } from '@wanderlust/common';
 import type { users as dto } from '@wanderlust/contract';
@@ -13,6 +12,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService, type ActivityItem } from '@/lib/activities';
+import { invariant } from '@/lib/invariant';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
@@ -45,11 +45,7 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.id, userId),
 		});
 
-		if (!user) {
-			throw new ORPCError('NotFound', {
-				message: `User with id ${userId} not found`,
-			});
-		}
+		invariant(user, 'NOT_FOUND', `User with id ${userId} not found`);
 
 		const previousUrl = type === 'profile' ? user.image : user.banner;
 
@@ -62,11 +58,7 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.id, userId),
 		});
 
-		if (!result) {
-			throw new ORPCError('NotFound', {
-				message: `User with id ${userId} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `User with id ${userId} not found`);
 
 		return {
 			profile: result,
@@ -79,11 +71,11 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!result) {
-			throw new ORPCError('NotFound', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			result,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const isSelf = result.id === userId;
 
@@ -113,11 +105,7 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!result) {
-			throw new ORPCError('NotFound', {
-				message: `User with id ${data.id} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `User with id ${data.id} not found`);
 
 		const isSelf = result.id === userId;
 
@@ -147,11 +135,7 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.id, userId),
 		});
 
-		if (!result) {
-			throw new ORPCError('NotFound', {
-				message: `User with id ${userId} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `User with id ${userId} not found`);
 
 		return {
 			profile: result,
@@ -163,11 +147,7 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.id, userId),
 		});
 
-		if (!result) {
-			throw new ORPCError('NotFound', {
-				message: `User with id ${userId} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `User with id ${userId} not found`);
 
 		const role: 'admin' | 'user' = result.role === 'admin' ? 'admin' : 'user';
 
@@ -183,11 +163,11 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NotFound', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const followers = await this.db.query.follows.findMany({
 			where: (t, { eq }) => eq(t.followingId, user.id),
@@ -230,11 +210,11 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NotFound', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const following = await this.db.query.follows.findMany({
 			where: (t, { eq }) => eq(t.followerId, user.id),
@@ -275,11 +255,11 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NotFound', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const topPlaces = await this.db.query.userTopPlaces.findMany({
 			where: (t, { eq }) => eq(t.userId, user.id),
@@ -317,11 +297,7 @@ export class UsersRepository {
 				where: (t, { eq }) => eq(t.id, userId),
 			});
 
-			if (!user) {
-				throw new ORPCError('NotFound', {
-					message: `User with id ${userId} not found`,
-				});
-			}
+			invariant(user, 'NOT_FOUND', `User with id ${userId} not found`);
 
 			const username = user.username;
 
@@ -358,11 +334,11 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NotFound', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const activities = await this.cache
 			.namespace('activities')
@@ -413,11 +389,11 @@ export class UsersRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!targetUser) {
-			throw new ORPCError('NotFound', {
-				message: `User with username ${data.username} not found`,
-			});
-		}
+		invariant(
+			targetUser,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const existingFollow = await this.db.query.follows.findFirst({
 			where: (t, { eq, and }) =>
@@ -484,11 +460,7 @@ export class UsersRepository {
 				where: (t, { eq }) => eq(t.id, userId),
 			});
 
-			if (!thisUser) {
-				throw new ORPCError('NotFound', {
-					message: `User with id ${userId} not found`,
-				});
-			}
+			invariant(thisUser, 'NOT_FOUND', `User with id ${userId} not found`);
 
 			await this.activities.addActivity(thisUser.username, 'follow', {
 				thisUsername: thisUser.username,
@@ -532,11 +504,7 @@ export class UsersRepository {
 
 		const first = result[0];
 
-		if (!first) {
-			throw new ORPCError('NotFound', {
-				message: `User with id ${userId} not found`,
-			});
-		}
+		invariant(first, 'NOT_FOUND', `User with id ${userId} not found`);
 
 		return {
 			profile: first,

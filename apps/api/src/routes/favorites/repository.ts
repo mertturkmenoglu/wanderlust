@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import type { favorites as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -9,6 +8,7 @@ import {
 } from '@wanderlust/db';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 @injectable()
 export class FavoritesRepository {
@@ -28,9 +28,7 @@ export class FavoritesRepository {
 				})
 				.returning();
 
-			if (!result) {
-				throw new Error('No favorite returned after insertion');
-			}
+			invariant(result, 'INTERNAL_SERVER_ERROR', 'No favorite returned');
 
 			await tx
 				.update(schema.places)
@@ -43,9 +41,7 @@ export class FavoritesRepository {
 				where: (t, { eq }) => eq(t.id, data.placeId),
 			});
 
-			if (!place) {
-				throw new Error('Cannot find place after favorite insertion');
-			}
+			invariant(place, 'NOT_FOUND', `Place with ID ${data.placeId} not found`);
 
 			return [result, place] as const;
 		});
@@ -92,11 +88,7 @@ export class FavoritesRepository {
 					),
 				);
 
-			if (res.rowCount === 0) {
-				throw new ORPCError('NOT_FOUND', {
-					message: 'Favorite not found',
-				});
-			}
+			invariant(res.rowCount !== 0, 'NOT_FOUND', 'Favorite not found');
 
 			await tx
 				.update(schema.places)
@@ -114,11 +106,7 @@ export class FavoritesRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'User not found',
-			});
-		}
+		invariant(user, 'NOT_FOUND', `User with username ${data.username} not found`);
 
 		const favorites = await this.db.query.favorites.findMany({
 			where: (t, { eq }) => eq(t.userId, user.id),

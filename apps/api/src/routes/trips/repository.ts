@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
 import type { trips as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -11,6 +10,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, count, desc, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
+import { invariant } from '@/lib/invariant';
 import type { Tx } from '@/lib/transactions';
 import { FavoritesRepository } from '../favorites/repository';
 
@@ -34,11 +34,7 @@ export class TripsRepository {
 			with: $includes.trip,
 		});
 
-		if (!res) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Trip with id ${data.id} not found`,
-			});
-		}
+		invariant(res, 'NOT_FOUND', `Trip with id ${data.id} not found`);
 
 		const placeIds = Array.from(new Set(res.locations.map((l) => l.placeId)));
 
@@ -73,11 +69,11 @@ export class TripsRepository {
 					and(eq(t.tripId, data.id), eq(t.toId, data.toUserId)),
 			});
 
-			if (inv) {
-				throw new ORPCError('CONFLICT', {
-					message: `Invite already exists for user with id ${data.toUserId} to trip with id ${data.id}`,
-				});
-			}
+			invariant(
+				!inv,
+				'CONFLICT',
+				`Invite already exists for user with id ${data.toUserId} to trip with id ${data.id}`,
+			);
 
 			const now = new Date();
 
@@ -95,22 +91,22 @@ export class TripsRepository {
 				})
 				.returning();
 
-			if (!newInv) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to get invite after creation',
-				});
-			}
+			invariant(
+				newInv,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to get invite after creation',
+			);
 
 			const invite = await tx.query.tripInvites.findFirst({
 				where: (t, { eq }) => eq(t.id, newInv.id),
 				with: $includes.tripInvite,
 			});
 
-			if (!invite) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to retrieve invite after creation',
-				});
-			}
+			invariant(
+				invite,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to retrieve invite after creation',
+			);
 
 			return invite;
 		});
@@ -165,11 +161,11 @@ export class TripsRepository {
 				),
 			);
 
-		if (!countResult) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to retrieve trips count',
-			});
-		}
+		invariant(
+			countResult,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to retrieve trips count',
+		);
 
 		const totalRecords = countResult.count;
 
@@ -217,19 +213,19 @@ export class TripsRepository {
 				})
 				.returning();
 
-			if (!newTrip) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to get trip after creation',
-				});
-			}
+			invariant(
+				newTrip,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to get trip after creation',
+			);
 
 			const trip = await this.get(userId, { id: newTrip.id }, { tx });
 
-			if (!trip) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to retrieve trip after creation',
-				});
-			}
+			invariant(
+				trip,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to retrieve trip after creation',
+			);
 
 			return trip;
 		});
@@ -244,11 +240,11 @@ export class TripsRepository {
 			with: $includes.tripInviteDetails,
 		});
 
-		if (!result) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Invite with id ${data.id} not found for user with id ${userId}`,
-			});
-		}
+		invariant(
+			result,
+			'NOT_FOUND',
+			`Invite with id ${data.inviteId} not found for user with id ${userId}`,
+		);
 
 		return result;
 	}
@@ -264,11 +260,11 @@ export class TripsRepository {
 				.delete(schema.tripInvites)
 				.where(eq(schema.tripInvites.id, data.inviteId));
 
-			if (deleteInviteResult.rowCount === 0) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to delete invite on acceptance',
-				});
-			}
+			invariant(
+				deleteInviteResult.rowCount === 1,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to delete invite on acceptance',
+			);
 
 			// If accepted, add the user as a participant
 			// Else, do nothing
@@ -298,11 +294,7 @@ export class TripsRepository {
 				),
 			);
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip participant not found',
-			});
-		}
+		invariant(res.rowCount === 1, 'NOT_FOUND', 'Trip participant not found');
 	}
 
 	async deleteInvite(_userId: string, data: dto.DeleteInviteInput) {
@@ -315,11 +307,7 @@ export class TripsRepository {
 				),
 			);
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip invite not found',
-			});
-		}
+		invariant(res.rowCount === 1, 'NOT_FOUND', 'Trip invite not found');
 	}
 
 	async _delete(userId: string, data: dto.DeleteInput) {
@@ -329,11 +317,11 @@ export class TripsRepository {
 				and(eq(schema.trips.id, data.id), eq(schema.trips.ownerId, userId)),
 			);
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip not found or user is not the owner',
-			});
-		}
+		invariant(
+			res.rowCount === 1,
+			'NOT_FOUND',
+			'Trip not found or user is not the owner',
+		);
 	}
 
 	async deleteParticipant(_userId: string, data: dto.DeleteParticipantInput) {
@@ -346,11 +334,7 @@ export class TripsRepository {
 				),
 			);
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip participant not found',
-			});
-		}
+		invariant(res.rowCount === 1, 'NOT_FOUND', 'Trip participant not found');
 	}
 
 	async createComment(userId: string, data: dto.CreateCommentInput) {
@@ -365,11 +349,7 @@ export class TripsRepository {
 			})
 			.returning();
 
-		if (!result) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to create comment',
-			});
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'Failed to create comment');
 
 		return result;
 	}
@@ -411,11 +391,7 @@ export class TripsRepository {
 			with: $includes.tripComment,
 		});
 
-		if (!result) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Comment with id ${commentId} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `Comment with id ${commentId} not found`);
 
 		return result;
 	}
@@ -434,11 +410,11 @@ export class TripsRepository {
 			)
 			.returning();
 
-		if (!updated) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Comment with id ${data.commentId} not found or user is not the author`,
-			});
-		}
+		invariant(
+			updated,
+			'NOT_FOUND',
+			`Comment with id ${data.commentId} not found or user is not the author`,
+		);
 
 		return updated;
 	}
@@ -448,11 +424,11 @@ export class TripsRepository {
 			.delete(schema.tripComments)
 			.where(eq(schema.tripComments.id, data.commentId));
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Comment with id ${data.commentId} not found`,
-			});
-		}
+		invariant(
+			res.rowCount === 1,
+			'NOT_FOUND',
+			`Comment with id ${data.commentId} not found`,
+		);
 	}
 
 	async update(userId: string, data: dto.UpdateInput) {
@@ -539,22 +515,18 @@ export class TripsRepository {
 			where: (p, { eq }) => eq(p.id, data.placeId),
 		});
 
-		if (!place) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Place with id ${data.placeId} not found`,
-			});
-		}
+		invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
 
 		const existing = await this.db.query.tripLocations.findFirst({
 			where: (t, { and, eq }) =>
 				and(eq(t.tripId, data.id), eq(t.placeId, data.placeId)),
 		});
 
-		if (existing) {
-			throw new ORPCError('CONFLICT', {
-				message: `Location with place id ${data.placeId} already exists in trip with id ${data.id}`,
-			});
-		}
+		invariant(
+			!existing,
+			'CONFLICT',
+			`Location with place id ${data.placeId} already exists in trip with id ${data.id}`,
+		);
 
 		const [newLocation] = await this.db
 			.insert(schema.tripLocations)
@@ -567,11 +539,11 @@ export class TripsRepository {
 			})
 			.returning();
 
-		if (!newLocation) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to create trip location',
-			});
-		}
+		invariant(
+			newLocation,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to create trip location',
+		);
 
 		const location = await this.getLocation(userId, newLocation.id);
 
@@ -588,11 +560,7 @@ export class TripsRepository {
 			},
 		});
 
-		if (!location) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Location with id ${id} not found`,
-			});
-		}
+		invariant(location, 'NOT_FOUND', `Location with id ${id} not found`);
 
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(userId, [
 			location.placeId,
@@ -621,11 +589,11 @@ export class TripsRepository {
 			)
 			.returning();
 
-		if (res.length === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip location not found',
-			});
-		}
+		invariant(
+			res.length !== 0,
+			'NOT_FOUND',
+			`Trip location with id ${data.locationId} not found`,
+		);
 
 		const updatedLocation = await this.getLocation(userId, data.locationId);
 
@@ -642,11 +610,11 @@ export class TripsRepository {
 				),
 			);
 
-		if (res.rowCount === 0) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip location not found',
-			});
-		}
+		invariant(
+			res.rowCount === 1,
+			'NOT_FOUND',
+			`Trip location with id ${data.locationId} not found`,
+		);
 	}
 
 	async updateRequestedAmenities(
@@ -661,11 +629,7 @@ export class TripsRepository {
 			.where(and(eq(schema.trips.id, data.id)))
 			.returning();
 
-		if (!updated) {
-			throw new ORPCError('NOT_FOUND', {
-				message: 'Trip not found or user is not the owner',
-			});
-		}
+		invariant(updated, 'NOT_FOUND', `Trip with id ${data.id} not found`);
 
 		const result = await this.get(userId, { id: data.id });
 

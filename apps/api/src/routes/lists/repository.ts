@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import type { lists as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -11,6 +10,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
+import { invariant } from '@/lib/invariant';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
@@ -65,11 +65,11 @@ export class ListsRepository {
 			where: (t, { eq }) => eq(t.username, data.username),
 		});
 
-		if (!user) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `User with username '${data.username}' not found`,
-			});
-		}
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username '${data.username}' not found`,
+		);
 
 		const result = await this.db.query.lists.findMany({
 			where: (t, { eq, and }) =>
@@ -123,17 +123,15 @@ export class ListsRepository {
 			},
 		});
 
-		if (!result) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `List with ID '${data.id}' not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		if (result.userId !== userId && !result.isPublic) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `You do not have access to list with ID '${data.id}'`,
-			});
-		}
+		const canAccess = result.isPublic || result.userId === userId;
+
+		invariant(
+			canAccess,
+			'FORBIDDEN',
+			`You do not have access to list with ID '${data.id}'`,
+		);
 
 		const placeIds = unique(result.items.map((item) => item.placeId));
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
@@ -189,11 +187,11 @@ export class ListsRepository {
 			eq(schema.lists.userId, userId),
 		);
 
-		if (count >= MAX_LISTS_PER_USER) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: `You have reached the maximum number of lists (${MAX_LISTS_PER_USER})`,
-			});
-		}
+		invariant(
+			count < MAX_LISTS_PER_USER,
+			'BAD_REQUEST',
+			`You have reached the maximum number of lists (${MAX_LISTS_PER_USER})`,
+		);
 
 		const [result] = await this.db
 			.insert(schema.lists)
@@ -205,9 +203,7 @@ export class ListsRepository {
 			})
 			.returning();
 
-		if (!result) {
-			throw new Error('No list returned after insertion');
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'No list returned');
 
 		const list = await this.db.query.lists.findFirst({
 			where: (t, { eq }) => eq(t.id, result.id),
@@ -223,11 +219,11 @@ export class ListsRepository {
 			},
 		});
 
-		if (!list) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to retrieve the created list',
-			});
-		}
+		invariant(
+			list,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to retrieve the created list',
+		);
 
 		return {
 			list,
@@ -239,17 +235,15 @@ export class ListsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!existing) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `List with ID '${data.id}' not found`,
-			});
-		}
+		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		if (existing.userId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `You do not have permission to update list with ID '${data.id}'`,
-			});
-		}
+		const canUpdate = existing.userId === userId;
+
+		invariant(
+			canUpdate,
+			'FORBIDDEN',
+			'You do not have permission to update this list',
+		);
 
 		const [updated] = await this.db
 			.update(schema.lists)
@@ -260,9 +254,7 @@ export class ListsRepository {
 			.where(eq(schema.lists.id, data.id))
 			.returning();
 
-		if (!updated) {
-			throw new Error('No list returned after update');
-		}
+		invariant(updated, 'INTERNAL_SERVER_ERROR', 'No list returned');
 
 		const list = await this.db.query.lists.findFirst({
 			where: (t, { eq }) => eq(t.id, updated.id),
@@ -278,9 +270,11 @@ export class ListsRepository {
 			},
 		});
 
-		if (!list) {
-			throw new Error('Failed to retrieve the updated list');
-		}
+		invariant(
+			list,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to retrieve the updated list',
+		);
 
 		return {
 			list,
@@ -292,17 +286,15 @@ export class ListsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!existing) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `List with ID '${data.id}' not found`,
-			});
-		}
+		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		if (existing.userId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `You do not have permission to delete list with ID '${data.id}'`,
-			});
-		}
+		const canDelete = existing.userId === userId;
+
+		invariant(
+			canDelete,
+			'FORBIDDEN',
+			'You do not have permission to delete this list',
+		);
 
 		await this.db.delete(schema.lists).where(eq(schema.lists.id, data.id));
 	}
@@ -312,17 +304,15 @@ export class ListsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!existing) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `List with ID '${data.id}' not found`,
-			});
-		}
+		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		if (existing.userId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `You do not have permission to modify list with ID '${data.id}'`,
-			});
-		}
+		const canModify = existing.userId === userId;
+
+		invariant(
+			canModify,
+			'FORBIDDEN',
+			'You do not have permission to modify this list',
+		);
 
 		let lastIndex = await this.db.query.listItems.findFirst({
 			where: (t, { eq }) => eq(t.listId, data.id),
@@ -336,11 +326,11 @@ export class ListsRepository {
 			lastIndex = { index: -1 };
 		}
 
-		if (lastIndex.index >= MAX_ITEMS_PER_LIST) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: `List with ID '${data.id}' has reached the maximum number of items (${MAX_ITEMS_PER_LIST})`,
-			});
-		}
+		invariant(
+			lastIndex.index < MAX_ITEMS_PER_LIST,
+			'BAD_REQUEST',
+			`List with ID '${data.id}' has reached the maximum number of items (${MAX_ITEMS_PER_LIST})`,
+		);
 
 		const [result] = await this.db
 			.insert(schema.listItems)
@@ -351,9 +341,7 @@ export class ListsRepository {
 			})
 			.returning();
 
-		if (!result) {
-			throw new Error('No list item returned after insertion');
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'No list item returned');
 
 		const listItem = await this.db.query.listItems.findFirst({
 			where: (t, { eq }) =>
@@ -365,9 +353,11 @@ export class ListsRepository {
 			},
 		});
 
-		if (!listItem) {
-			throw new Error('Failed to retrieve the created list item');
-		}
+		invariant(
+			listItem,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to retrieve the created list item',
+		);
 
 		return {
 			item: listItem,
@@ -379,23 +369,21 @@ export class ListsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!list) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `List with ID '${data.id}' not found`,
-			});
-		}
+		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		if (list.userId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `You do not have permission to modify list with ID '${data.id}'`,
-			});
-		}
+		const canModify = list.userId === userId;
 
-		if (data.placeIds.length > MAX_ITEMS_PER_LIST) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: `Cannot have more than ${MAX_ITEMS_PER_LIST} items in a list`,
-			});
-		}
+		invariant(
+			canModify,
+			'FORBIDDEN',
+			`You do not have permission to modify list with ID '${data.id}'`,
+		);
+
+		invariant(
+			data.placeIds.length < MAX_ITEMS_PER_LIST,
+			'BAD_REQUEST',
+			`Cannot have more than ${MAX_ITEMS_PER_LIST} items in a list`,
+		);
 
 		await this.db.transaction(async (tx) => {
 			// Delete existing items
@@ -429,9 +417,11 @@ export class ListsRepository {
 			},
 		});
 
-		if (!updatedList) {
-			throw new Error('Failed to retrieve the updated list');
-		}
+		invariant(
+			updatedList,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to retrieve the updated list',
+		);
 
 		return {
 			list: updatedList,
@@ -443,17 +433,15 @@ export class ListsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!list) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `List with ID '${data.id}' not found`,
-			});
-		}
+		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		if (list.userId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: `You do not have permission to modify list with ID '${data.id}'`,
-			});
-		}
+		const canModify = list.userId === userId;
+
+		invariant(
+			canModify,
+			'FORBIDDEN',
+			`You do not have permission to modify list with ID '${data.id}'`,
+		);
 
 		await this.db.transaction(async (tx) => {
 			// Delete the item
@@ -467,11 +455,11 @@ export class ListsRepository {
 				)
 				.returning();
 
-			if (result.length !== 1) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Item with Place ID '${data.placeId}' not found in list with ID '${data.id}'`,
-				});
-			}
+			invariant(
+				result.length === 1,
+				'NOT_FOUND',
+				`Item with Place ID '${data.placeId}' not found in list with ID '${data.id}'`,
+			);
 
 			// Get item
 			// biome-ignore lint/style/noNonNullAssertion: TODO

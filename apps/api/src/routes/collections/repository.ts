@@ -13,6 +13,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
+import { invariant } from '@/lib/invariant';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 
@@ -60,11 +61,7 @@ export class CollectionsRepository {
 			},
 		});
 
-		if (!result) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection with id ${data.id} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `Collection with ID ${data.id} not found`);
 
 		const placeIds = unique(result.items.map((item) => item.placeId));
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
@@ -88,11 +85,7 @@ export class CollectionsRepository {
 			})
 			.returning();
 
-		if (!result) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'No result returned after creating collection',
-			});
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
 
 		return result;
 	}
@@ -102,11 +95,11 @@ export class CollectionsRepository {
 			.delete(schema.collections)
 			.where(eq(schema.collections.id, data.id));
 
-		if (result.rowCount !== 1) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection with id ${data.id} not found`,
-			});
-		}
+		invariant(
+			result.rowCount === 1,
+			'NOT_FOUND',
+			`Collection with id ${data.id} not found`,
+		);
 	}
 
 	async update(data: dto.UpdateInput) {
@@ -119,11 +112,7 @@ export class CollectionsRepository {
 			.where(eq(schema.collections.id, data.id))
 			.returning();
 
-		if (!result) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection with id ${data.id} not found`,
-			});
-		}
+		invariant(result, 'NOT_FOUND', `Collection with id ${data.id} not found`);
 
 		return result;
 	}
@@ -134,11 +123,11 @@ export class CollectionsRepository {
 				where: (t, { eq }) => eq(t.id, data.id),
 			});
 
-			if (!collection) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Collection with id ${data.id} not found`,
-				});
-			}
+			invariant(
+				collection,
+				'NOT_FOUND',
+				`Collection with id ${data.id} not found`,
+			);
 
 			const lastItem = await this.db.query.collectionItems.findFirst({
 				where: (t, { eq }) => eq(t.collectionId, data.id),
@@ -159,11 +148,7 @@ export class CollectionsRepository {
 				})
 				.returning();
 
-			if (!result) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'No result returned after appending collection item',
-				});
-			}
+			invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
 
 			const item = await this.db.query.collectionItems.findFirst({
 				where: (t, { eq, and }) => {
@@ -179,11 +164,11 @@ export class CollectionsRepository {
 				},
 			});
 
-			if (!item) {
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to retrieve appended collection item',
-				});
-			}
+			invariant(
+				item,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to retrieve appended collection item',
+			);
 
 			return {
 				...item,
@@ -221,11 +206,11 @@ export class CollectionsRepository {
 				),
 			);
 
-		if (result.rowCount !== 1) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection item with id ${data.id} not found`,
-			});
-		}
+		invariant(
+			result.rowCount === 1,
+			'NOT_FOUND',
+			`Collection item with place id ${data.placeId} not found in collection ${data.id}`,
+		);
 	}
 
 	async reorderItems(userId: string, data: dto.ReorderItemsInput) {
@@ -233,11 +218,11 @@ export class CollectionsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!collection) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection with id ${data.id} not found`,
-			});
-		}
+		invariant(
+			collection,
+			'NOT_FOUND',
+			`Collection with id ${data.id} not found`,
+		);
 
 		const existingItems = await this.db.query.collectionItems.findMany({
 			where: (t, { eq }) => eq(t.collectionId, data.id),
@@ -245,15 +230,16 @@ export class CollectionsRepository {
 
 		const existingPlaceIds = existingItems.map((item) => item.placeId);
 		const inputPlaceIdsSet = new Set(data.placeIds);
+		const hasSameSize = existingPlaceIds.length === inputPlaceIdsSet.size;
+		const hasSameElements = existingPlaceIds.every((id) =>
+			inputPlaceIdsSet.has(id),
+		);
 
-		if (
-			existingPlaceIds.length !== inputPlaceIdsSet.size ||
-			!existingPlaceIds.every((id) => inputPlaceIdsSet.has(id))
-		) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: 'Input placeIds do not match existing collection items',
-			});
-		}
+		invariant(
+			hasSameSize && hasSameElements,
+			'BAD_REQUEST',
+			'Input placeIds do not match existing collection items',
+		);
 
 		await this.db.transaction(async (tx) => {
 			// Delete all existing items
@@ -273,11 +259,11 @@ export class CollectionsRepository {
 
 		const updatedCollection = await this.getById(userId, { id: data.id });
 
-		if (!updatedCollection) {
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to retrieve updated collection after reordering',
-			});
-		}
+		invariant(
+			updatedCollection,
+			'INTERNAL_SERVER_ERROR',
+			'Failed to retrieve updated collection after reordering',
+		);
 
 		return updatedCollection;
 	}
@@ -287,32 +273,28 @@ export class CollectionsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!collection) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection with id ${data.id} not found`,
-			});
-		}
+		invariant(
+			collection,
+			'NOT_FOUND',
+			`Collection with id ${data.id} not found`,
+		);
 
 		const place = await this.db.query.places.findFirst({
 			where: (t, { eq }) => eq(t.id, data.placeId),
 		});
 
-		if (!place) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Place with id ${data.placeId} not found`,
-			});
-		}
+		invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
 
 		const existingRelation = await this.db.query.collectionsPlaces.findFirst({
 			where: (t, { and, eq }) =>
 				and(eq(t.collectionId, data.id), eq(t.placeId, data.placeId)),
 		});
 
-		if (existingRelation) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: `Relation between collection ${data.id} and place ${data.placeId} already exists`,
-			});
-		}
+		invariant(
+			!existingRelation,
+			'BAD_REQUEST',
+			`Relation between collection ${data.id} and place ${data.placeId} already exists`,
+		);
 
 		const lastRelation = await this.db.query.collectionsPlaces.findFirst({
 			where: (t, { eq }) => eq(t.placeId, data.placeId),
@@ -343,11 +325,11 @@ export class CollectionsRepository {
 				)
 				.returning();
 
-			if (result.length !== 1) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Collection-Place relation not found for collection id ${data.id} and place id ${data.placeId}`,
-				});
-			}
+			invariant(
+				result.length === 1,
+				'NOT_FOUND',
+				`Collection-Place relation not found for collection id ${data.id} and place id ${data.placeId}`,
+			);
 
 			// biome-ignore lint/style/noNonNullAssertion: We check length above
 			const item = result[0]!;
@@ -372,32 +354,28 @@ export class CollectionsRepository {
 			where: (t, { eq }) => eq(t.id, data.id),
 		});
 
-		if (!collection) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Collection with id ${data.id} not found`,
-			});
-		}
+		invariant(
+			collection,
+			'NOT_FOUND',
+			`Collection with id ${data.id} not found`,
+		);
 
 		const city = await this.db.query.cities.findFirst({
 			where: (t, { eq }) => eq(t.id, data.cityId),
 		});
 
-		if (!city) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `City with id ${data.cityId} not found`,
-			});
-		}
+		invariant(city, 'NOT_FOUND', `City with id ${data.cityId} not found`);
 
 		const existingRelation = await this.db.query.collectionsCities.findFirst({
 			where: (t, { and, eq }) =>
 				and(eq(t.collectionId, data.id), eq(t.cityId, data.cityId)),
 		});
 
-		if (existingRelation) {
-			throw new ORPCError('BAD_REQUEST', {
-				message: `Relation between collection ${data.id} and city ${data.cityId} already exists`,
-			});
-		}
+		invariant(
+			!existingRelation,
+			'BAD_REQUEST',
+			`Relation between collection ${data.id} and city ${data.cityId} already exists`,
+		);
 
 		const lastRelation = await this.db.query.collectionsCities.findFirst({
 			where: (t, { eq }) => eq(t.cityId, data.cityId),
@@ -428,11 +406,11 @@ export class CollectionsRepository {
 				)
 				.returning();
 
-			if (result.length !== 1) {
-				throw new ORPCError('NOT_FOUND', {
-					message: `Collection-City relation not found for collection id ${data.id} and city id ${data.cityId}`,
-				});
-			}
+			invariant(
+				result.length === 1,
+				'NOT_FOUND',
+				`Collection-City relation not found for collection id ${data.id} and city id ${data.cityId}`,
+			);
 
 			// biome-ignore lint/style/noNonNullAssertion: We check length above
 			const item = result[0]!;
@@ -475,6 +453,7 @@ export class CollectionsRepository {
 		const placeIds = unique(
 			result.flatMap((x) => x.collection.items.map((y) => y.placeId)),
 		);
+
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
 			userId,
 			placeIds,
@@ -511,6 +490,7 @@ export class CollectionsRepository {
 		const placeIds = unique(
 			result.flatMap((x) => x.collection.items.map((y) => y.placeId)),
 		);
+
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
 			userId,
 			placeIds,

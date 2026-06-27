@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/server';
 import { Pagination } from '@wanderlust/common';
 import type { places as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -9,6 +8,7 @@ import {
 } from '@wanderlust/db';
 import { and, eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 @injectable()
 export class PlacesRepository {
@@ -24,11 +24,7 @@ export class PlacesRepository {
 			with: $includes.place,
 		});
 
-		if (!place) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Place with ID ${data.id} not found`,
-			});
-		}
+		invariant(place, 'NOT_FOUND', `Place with ID ${data.id} not found`);
 
 		return place;
 	}
@@ -69,11 +65,7 @@ export class PlacesRepository {
 			.where(eq(schema.places.id, id))
 			.returning();
 
-		if (!place) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Place with ID ${id} not found`,
-			});
-		}
+		invariant(place, 'NOT_FOUND', `Place with ID ${id} not found`);
 
 		return this.get({ id: place.id });
 	}
@@ -89,11 +81,11 @@ export class PlacesRepository {
 			.where(eq(schema.addresses.id, addressId))
 			.returning();
 
-		if (!address) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Address for Place ID ${data.id} not found`,
-			});
-		}
+		invariant(
+			address,
+			'NOT_FOUND',
+			`Address for Place ID ${data.id} not found`,
+		);
 
 		return this.get({ id: place.id });
 	}
@@ -107,11 +99,7 @@ export class PlacesRepository {
 			.where(eq(schema.places.id, id))
 			.returning();
 
-		if (!place) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Place with ID ${id} not found`,
-			});
-		}
+		invariant(place, 'NOT_FOUND', `Place with ID ${id} not found`);
 
 		return this.get({ id: place.id });
 	}
@@ -125,11 +113,7 @@ export class PlacesRepository {
 			.where(eq(schema.places.id, id))
 			.returning();
 
-		if (!place) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Place with ID ${id} not found`,
-			});
-		}
+		invariant(place, 'NOT_FOUND', `Place with ID ${id} not found`);
 
 		return this.get({ id: place.id });
 	}

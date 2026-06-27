@@ -1,4 +1,3 @@
-import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
 import type { reports as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -6,6 +5,7 @@ import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { count, desc, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 @injectable()
 export class ReportsRepository {
@@ -28,20 +28,16 @@ export class ReportsRepository {
 			where: (reports, { eq }) => eq(reports.id, data.id),
 		});
 
-		if (!report) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Report with id ${data.id} not found`,
-			});
-		}
+		invariant(report, 'NOT_FOUND', `Report with id ${data.id} not found`);
 
 		if (report.reporterId !== userId) {
 			const isAdmin = await this.isAdmin(userId);
 
-			if (!isAdmin) {
-				throw new ORPCError('FORBIDDEN', {
-					message: 'You do not have permission to access this report',
-				});
-			}
+			invariant(
+				isAdmin,
+				'FORBIDDEN',
+				'You do not have permission to access this report',
+			);
 		}
 
 		return report;
@@ -121,9 +117,7 @@ export class ReportsRepository {
 			})
 			.returning();
 
-		if (!report) {
-			throw new Error('Insertion failed, no report returned');
-		}
+		invariant(report, 'INTERNAL_SERVER_ERROR', 'No report item returned');
 
 		return report;
 	}
@@ -140,11 +134,7 @@ export class ReportsRepository {
 			.where(eq(schema.reports.id, data.id))
 			.returning();
 
-		if (!report) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Report with id ${data.id} not found`,
-			});
-		}
+		invariant(report, 'NOT_FOUND', `Report with id ${data.id} not found`);
 
 		return report;
 	}
@@ -154,10 +144,10 @@ export class ReportsRepository {
 			.delete(schema.reports)
 			.where(eq(schema.reports.id, data.id));
 
-		if (result.rowCount !== 1) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `Report with id ${data.id} not found`,
-			});
-		}
+		invariant(
+			result.rowCount === 1,
+			'NOT_FOUND',
+			`Report with id ${data.id} not found`,
+		);
 	}
 }

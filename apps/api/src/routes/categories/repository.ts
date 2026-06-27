@@ -3,6 +3,7 @@ import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 @injectable()
 export class CategoriesRepository {
@@ -28,9 +29,7 @@ export class CategoriesRepository {
 			})
 			.returning();
 
-		if (!result) {
-			throw new Error('No category returned after insertion');
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'No category returned');
 
 		return result;
 	}
@@ -45,9 +44,7 @@ export class CategoriesRepository {
 			.where(eq(schema.categories.id, data.id))
 			.returning();
 
-		if (!result) {
-			throw new Error('No category returned after update');
-		}
+		invariant(result, 'NOT_FOUND', `Category with ID ${data.id} not found`);
 
 		return result;
 	}

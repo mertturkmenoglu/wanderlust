@@ -1,9 +1,9 @@
-import { ORPCError } from '@orpc/server';
 import type { cities as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { eq, inArray } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { invariant } from '@/lib/invariant';
 
 @injectable()
 export class CitiesRepository {
@@ -45,11 +45,7 @@ export class CitiesRepository {
 			where: (t) => eq(t.id, data.id),
 		});
 
-		if (!city) {
-			throw new ORPCError('NOT_FOUND', {
-				message: `City with ID ${data.id} not found`,
-			});
-		}
+		invariant(city, 'NOT_FOUND', `City with ID ${data.id} not found`);
 
 		return city;
 	}
@@ -60,9 +56,7 @@ export class CitiesRepository {
 			.values(data)
 			.returning();
 
-		if (!result) {
-			throw new Error('No city returned after insertion');
-		}
+		invariant(result, 'INTERNAL_SERVER_ERROR', 'No city returned');
 
 		return result;
 	}
@@ -77,9 +71,7 @@ export class CitiesRepository {
 			.where(eq(schema.cities.id, id))
 			.returning();
 
-		if (!result) {
-			throw new Error('No city returned after update');
-		}
+		invariant(result, 'NOT_FOUND', `City with ID ${id} not found`);
 
 		return result;
 	}

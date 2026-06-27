@@ -39,6 +39,11 @@ export function isOwnerOrParticipant(
 	return isOwner(trip, userId) || isParticipant(trip, userId);
 }
 
+export function canDeleteTrip(trip: dto.ExtendedTrip, userId: string): boolean {
+	// Only the owner can delete the trip
+	return isOwner(trip, userId);
+}
+
 export function canCreateInvite(
 	trip: dto.ExtendedTrip,
 	userId: string,
