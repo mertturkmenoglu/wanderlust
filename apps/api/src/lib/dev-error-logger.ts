@@ -1,7 +1,10 @@
-import { createWriteStream } from 'node:fs';
 import { inspect } from 'node:util';
+import { createStream } from 'rotating-file-stream';
 
-const errorLog = createWriteStream('errors.log', { flags: 'a' });
+const errorLog = createStream('errors.log', {
+	size: '10M', // Rotate every 10 MB
+	interval: '7d', // Rotate every 7 days
+});
 
 export const devErrorLogger = async (error: unknown) => {
 	if (process.env.NODE_ENV === 'development') {
@@ -18,4 +21,4 @@ export const devErrorLogger = async (error: unknown) => {
 
 		errorLog.write(`${formatted}\n----\n`);
 	}
-}
+};
