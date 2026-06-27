@@ -1,10 +1,9 @@
 import { AuthService } from '@wanderlust/auth';
-import type { EvlogVariables } from 'evlog/hono';
 import type { Context as HonoContext } from 'hono';
 import type { Container } from 'inversify';
 import type { SetNonNullable } from '../type-utils';
 
-export type AppContext = HonoContext<EvlogVariables>;
+export type AppContext = HonoContext;
 
 export type CreateContextOptions = {
 	context: AppContext;
@@ -21,12 +20,9 @@ export async function createContext({
 		headers: context.req.raw.headers,
 	});
 
-	const logger = context.get('log');
-
 	return {
 		session,
 		container,
-		logger,
 	};
 }
 

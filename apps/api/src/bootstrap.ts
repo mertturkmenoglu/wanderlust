@@ -6,7 +6,6 @@ import { EmailService } from '@wanderlust/email';
 import { JobsService } from '@wanderlust/jobs';
 import { SearchService } from '@wanderlust/search';
 import { StorageService } from '@wanderlust/storage';
-import { initLogger } from 'evlog';
 import { container } from './ioc';
 import { ActivitiesService } from './lib/activities';
 import { modules } from './routes';
@@ -27,12 +26,6 @@ export async function bootstrapServices() {
 
 	const cfg = container.get(ConfigService).get();
 	const auth = container.get(AuthService).get();
-
-	initLogger({
-		env: {
-			service: cfg.api.logger.serviceName,
-		},
-	});
 
 	return {
 		cfg,
