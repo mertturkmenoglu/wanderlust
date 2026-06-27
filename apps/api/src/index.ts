@@ -2,7 +2,6 @@ import 'reflect-metadata';
 
 import { type EvlogVariables, evlog } from 'evlog/hono';
 import { Hono } from 'hono';
-import { serveStatic } from 'hono/bun';
 import { compress } from 'hono/compress';
 import { bootstrapServices } from './bootstrap';
 import { getCorsConfig } from './middlewares/cors';
@@ -11,14 +10,12 @@ import { getHandlers } from './routes/handler';
 
 const { cfg, auth } = await bootstrapServices();
 
-const app = new Hono<EvlogVariables>();
-
-app.use(evlog());
-app.use('/*', getCorsConfig(cfg));
-app.use('/uploads/*', serveStatic({ root: '../../' }));
-app.use(compress());
-app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
-app.use('/*', matchHandler(getHandlers()));
+const app = new Hono<EvlogVariables>()
+	.use(evlog())
+	.use('/*', getCorsConfig(cfg))
+	.use(compress())
+	.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw))
+	.use('/*', matchHandler(getHandlers()));
 
 export default {
 	port: cfg.api.port,
