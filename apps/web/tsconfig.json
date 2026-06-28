@@ -8,51 +8,14 @@
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"skipLibCheck": true,
-		"types": [
-			"vite/client"
-		],
-		"rootDirs": [
-			"."
-		],
+		"types": ["vite/client"],
+		"rootDirs": ["."],
 		"paths": {
-			"@/*": [
-				"./src/*"
-			],
+			"@/*": ["./src/*"]
 		},
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"references": [
-		{
-			"path": "../../apps/api"
-		},
-		{
-			"path": "../../packages/auth"
-		},
-		{
-			"path": "../../packages/ui"
-		},
-		{
-			"path": "../../packages/config"
-		},
-		{
-			"path": "../../apps/notifications"
-		},
-		{
-			"path": "../../packages/contract"
-		},
-		{
-			"path": "../../apps/chat",
-		}
-	],
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx",
-		"*.ts",
-		"*.d.ts"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
-	]
+	"include": ["src/**/*.ts", "src/**/*.tsx", "*.ts", "*.d.ts"],
+	"exclude": ["node_modules", "dist"]
 }
