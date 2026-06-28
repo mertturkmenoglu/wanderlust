@@ -45,6 +45,6 @@ export const createTripSchema = z
 
 export type CreateTripFormInput = z.infer<typeof createTripSchema>;
 
-export const updateTripSchema = createTripSchema;
+export const updateTripSchema = createTripSchema.extend({});
 
 export type UpdateTripFormInput = z.infer<typeof updateTripSchema>;
