@@ -13,14 +13,14 @@ import { exports } from './routes';
 export async function bootstrapServices() {
 	container.bind(ConfigService).toSelf().inSingletonScope();
 	container.bind(DatabaseService).toSelf().inSingletonScope();
-	container.bind(StorageService).toSelf();
-	container.bind(EmailService).toSelf();
-	container.bind(CacheService).toSelf();
+	container.bind(StorageService).toSelf().inSingletonScope();
+	container.bind(EmailService).toSelf().inSingletonScope();
+	container.bind(CacheService).toSelf().inSingletonScope();
 	container.bind(RedisService).toSelf().inSingletonScope();
-	container.bind(JobsService).toSelf();
-	container.bind(AuthService).toSelf();
-	container.bind(SearchService).toSelf();
-	container.bind(ActivitiesService).toSelf();
+	container.bind(JobsService).toSelf().inSingletonScope();
+	container.bind(AuthService).toSelf().inSingletonScope();
+	container.bind(SearchService).toSelf().inSingletonScope();
+	container.bind(ActivitiesService).toSelf().inSingletonScope();
 
 	for (const svc of exports) {
 		container.bind(svc).toSelf().inSingletonScope();
