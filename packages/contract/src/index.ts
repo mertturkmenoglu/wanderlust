@@ -1,3 +1,4 @@
+import * as accolades from './accolades';
 import * as aggregator from './aggregator';
 import * as amenities from './amenities';
 import * as bookmarks from './bookmarks';
@@ -15,6 +16,7 @@ import * as trips from './trips';
 import * as users from './users';
 
 export type AppRouter = {
+	accolades: accolades.Contract;
 	aggregator: aggregator.Contract;
 	amenities: amenities.Contract;
 	bookmarks: bookmarks.Contract;
@@ -33,6 +35,7 @@ export type AppRouter = {
 };
 
 export {
+	accolades,
 	aggregator,
 	amenities,
 	bookmarks,
