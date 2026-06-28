@@ -14,35 +14,58 @@ import { module as reviews } from './reviews';
 import { module as trips } from './trips';
 import { module as users } from './users';
 
-const features = {
-	aggregator,
-	amenities,
-	bookmarks,
-	categories,
-	cities,
-	collections,
-	favorites,
-	health,
-	lists,
-	places,
-	preferences,
-	reports,
-	reviews,
-	trips,
-	users,
-} as const;
-
-type FeatureName = keyof typeof features;
-type M = (typeof features)[FeatureName];
-
 export type AppRouter = {
-	[K in FeatureName]: ReturnType<M['router']>;
+	aggregator: ReturnType<typeof aggregator.router>;
+	amenities: ReturnType<typeof amenities.router>;
+	bookmarks: ReturnType<typeof bookmarks.router>;
+	categories: ReturnType<typeof categories.router>;
+	cities: ReturnType<typeof cities.router>;
+	collections: ReturnType<typeof collections.router>;
+	favorites: ReturnType<typeof favorites.router>;
+	health: ReturnType<typeof health.router>;
+	lists: ReturnType<typeof lists.router>;
+	places: ReturnType<typeof places.router>;
+	preferences: ReturnType<typeof preferences.router>;
+	reports: ReturnType<typeof reports.router>;
+	reviews: ReturnType<typeof reviews.router>;
+	trips: ReturnType<typeof trips.router>;
+	users: ReturnType<typeof users.router>;
 };
 
 export function getAppRouter(): AppRouter {
-	return Object.fromEntries(
-		Object.entries(features).map(([name, feature]) => [name, feature.router()]),
-	) as AppRouter;
+	return {
+		aggregator: aggregator.router(),
+		amenities: amenities.router(),
+		bookmarks: bookmarks.router(),
+		categories: categories.router(),
+		cities: cities.router(),
+		collections: collections.router(),
+		favorites: favorites.router(),
+		health: health.router(),
+		lists: lists.router(),
+		places: places.router(),
+		preferences: preferences.router(),
+		reports: reports.router(),
+		reviews: reviews.router(),
+		trips: trips.router(),
+		users: users.router(),
+	};
 }
 
-export const exports = Object.values(features).flatMap((f) => f.exports);
+export const exports = [
+	aggregator.exports,
+	amenities.exports,
+	bookmarks.exports,
+	categories.exports,
+	cities.exports,
+	collections.exports,
+	favorites.exports,
+	health.exports,
+	lists.exports,
+	places.exports,
+	preferences.exports,
+	reports.exports,
+	reviews.exports,
+	trips.exports,
+	users.exports,
+].flat();
