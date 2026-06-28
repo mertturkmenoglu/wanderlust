@@ -1,7 +1,7 @@
 import { ConfigService, type TConfigService } from '@wanderlust/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { inject, injectable } from 'inversify';
-import * as schema from './schema';
+import { relations } from './relations';
 
 @injectable()
 export class DatabaseService {
@@ -17,12 +17,8 @@ export class DatabaseService {
 }
 
 function init(cfg: TConfigService) {
-	return drizzle({
-		connection: {
-			connectionString: cfg.database.url,
-			ssl: cfg.database.ssl,
-		},
-		schema,
+	return drizzle(cfg.database.url, {
+		relations,
 	});
 }
 
