@@ -1,5 +1,5 @@
 {
-	"name": "wiop",
+	"name": "@wanderlust/wiop",
 	"private": true,
 	"version": "2.0.0",
 	"description": "Wanderlust image optimization proxy server",
