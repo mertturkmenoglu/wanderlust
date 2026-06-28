@@ -36,15 +36,5 @@
 	"devDependencies": {
 		"@types/bun": "catalog:",
 		"typescript": "catalog:"
-	},
-	"exports": {
-		".": {
-			"types": "./dist/src/index.d.mts",
-			"default": "./src/index.ts"
-		},
-		"./*": {
-			"types": "./dist/src/*.d.mts",
-			"default": "./src/*.ts"
-		}
 	}
 }
