@@ -1,27 +1,27 @@
 {
 	"name": "@wanderlust/config",
-	"type": "module",
 	"private": true,
-	"scripts": {
-		"dev": "tsc --watch",
-		"build": "tsc",
-		"check-types": "tsc --noEmit",
-		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
-	},
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		}
 	},
+	"scripts": {
+		"build": "tsc",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch"
+	},
 	"dependencies": {
-		"zod": "catalog:",
-		"inversify": "catalog:"
+		"inversify": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
-		"typescript": "catalog:",
-		"tsdown": "catalog:"
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
 	}
 }

@@ -1,13 +1,19 @@
 {
 	"name": "@wanderlust/ui",
 	"version": "1.0.0",
-	"type": "module",
 	"private": true,
+	"type": "module",
+	"exports": {
+		"./globals.css": "./src/styles/globals.css",
+		"./lib/*": "./src/lib/*.ts",
+		"./components/*": "./src/components/*.tsx",
+		"./hooks/*": "./src/hooks/*.ts"
+	},
 	"scripts": {
-		"dev": "tsc --watch",
 		"build": "tsc",
+		"build-types": "tsc --build",
 		"check-types": "tsc -b",
-		"build-types": "tsc --build"
+		"dev": "tsc --watch"
 	},
 	"dependencies": {
 		"@base-ui/react": "^1.4.1",
@@ -38,11 +44,5 @@
 		"@wanderlust/config": "workspace:*",
 		"tailwindcss": "^4.1.16",
 		"typescript": "catalog:"
-	},
-	"exports": {
-		"./globals.css": "./src/styles/globals.css",
-		"./lib/*": "./src/lib/*.ts",
-		"./components/*": "./src/components/*.tsx",
-		"./hooks/*": "./src/hooks/*.ts"
 	}
 }

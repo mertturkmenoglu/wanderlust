@@ -1,38 +1,38 @@
 {
 	"name": "@wanderlust/email",
-	"module": "src/index.ts",
-	"type": "module",
 	"private": true,
-	"scripts": {
-		"build": "email build",
-		"dev": "tsc --watch",
-		"export": "email export",
-		"start": "email start",
-		"check-types": "tsc --noEmit",
-		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
-	},
-	"devDependencies": {
-		"@react-email/ui": "6.1.1",
-		"@types/bun": "catalog:",
-		"@types/react": "catalog:",
-		"@types/react-dom": "catalog:",
-		"typescript": "catalog:",
-		"tsdown": "catalog:",
-		"@types/nodemailer": "^8.0.0"
-	},
-	"dependencies": {
-		"react": "catalog:",
-		"react-dom": "catalog:",
-		"react-email": "catalog:",
-		"nodemailer": "^8.0.7",
-		"inversify": "catalog:",
-		"@wanderlust/config": "workspace:*"
-	},
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./src/index.ts",
 			"default": "./src/index.ts"
 		}
+	},
+	"module": "src/index.ts",
+	"scripts": {
+		"build": "email build",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch",
+		"export": "email export",
+		"start": "email start"
+	},
+	"dependencies": {
+		"@wanderlust/config": "workspace:*",
+		"inversify": "catalog:",
+		"nodemailer": "^8.0.7",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"react-email": "catalog:"
+	},
+	"devDependencies": {
+		"@react-email/ui": "6.1.1",
+		"@types/bun": "catalog:",
+		"@types/nodemailer": "^8.0.0",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
 	}
 }

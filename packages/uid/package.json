@@ -1,19 +1,19 @@
 {
 	"name": "@wanderlust/uid",
-	"type": "module",
 	"private": true,
-	"scripts": {
-		"dev": "tsc --watch",
-		"build": "tsc",
-		"check-types": "tsc --noEmit",
-		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
-	},
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch"
 	},
 	"dependencies": {
 		"nanoid": "^5.1.11"

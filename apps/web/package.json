@@ -3,12 +3,12 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite --port 3000",
-		"start": "vite --port 3000",
 		"build": "vite build",
+		"check-types": "vite build && tsc --noEmit",
+		"dev": "vite --port 3000",
 		"serve": "vite preview",
-		"test": "vitest run",
-		"check-types": "vite build && tsc --noEmit"
+		"start": "vite --port 3000",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@date-fns/tz": "catalog:",

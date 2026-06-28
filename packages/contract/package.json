@@ -1,28 +1,28 @@
 {
 	"name": "@wanderlust/contract",
-	"type": "module",
 	"private": true,
-	"scripts": {
-		"dev": "tsc --watch",
-		"build": "tsc",
-		"check-types": "tsc --noEmit",
-		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
-	},
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		}
 	},
+	"scripts": {
+		"build": "tsc",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch"
+	},
 	"dependencies": {
-		"zod": "catalog:",
+		"@orpc/contract": "catalog:",
 		"@wanderlust/common": "workspace:*",
-		"@orpc/contract": "catalog:"
+		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:",
-		"tsdown": "catalog:"
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
 	},
 	"peerDependencies": {
 		"drizzle-orm": "catalog:"

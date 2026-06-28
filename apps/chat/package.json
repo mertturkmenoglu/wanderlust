@@ -1,16 +1,16 @@
 {
 	"name": "@wanderlust/chat",
-	"module": "src/index.ts",
-	"type": "module",
 	"private": true,
+	"type": "module",
+	"module": "src/index.ts",
 	"scripts": {
-		"dev": "bun run --hot src/index.ts",
 		"build": "tsdown",
-		"start": "NODE_ENV=production bun run dist/index.js",
-		"test": "bun test",
-		"check-types": "tsc --noEmit",
 		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "bun run --hot src/index.ts",
+		"start": "NODE_ENV=production bun run dist/index.js",
+		"test": "bun test"
 	},
 	"dependencies": {
 		"@orpc/client": "catalog:",
@@ -30,8 +30,8 @@
 		"hono": "catalog:",
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
-		"zod": "catalog:",
-		"superjson": "catalog:"
+		"superjson": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",

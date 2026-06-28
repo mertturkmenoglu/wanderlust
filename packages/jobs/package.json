@@ -1,36 +1,36 @@
 {
 	"name": "@wanderlust/jobs",
-	"type": "module",
 	"private": true,
-	"scripts": {
-		"dev": "tsc --watch",
-		"build": "tsc",
-		"check-types": "tsc --noEmit",
-		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
-	},
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		}
 	},
+	"scripts": {
+		"build": "tsc",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch"
+	},
 	"dependencies": {
-		"@wanderlust/config": "workspace:*",
-		"inversify": "catalog:",
-		"@wanderlust/email": "workspace:*",
+		"@react-email/components": "^1.0.12",
 		"@wanderlust/cache": "workspace:*",
 		"@wanderlust/common": "workspace:*",
+		"@wanderlust/config": "workspace:*",
 		"@wanderlust/db": "workspace:*",
-		"@react-email/components": "^1.0.12",
+		"@wanderlust/email": "workspace:*",
 		"bullmq": "^5.76.6",
+		"inversify": "catalog:",
 		"ioredis": "catalog:",
-		"zod": "catalog:",
 		"react": "catalog:",
-		"superjson": "catalog:"
+		"superjson": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:",
-		"@types/react": "catalog:"
+		"@types/react": "catalog:",
+		"typescript": "catalog:"
 	}
 }

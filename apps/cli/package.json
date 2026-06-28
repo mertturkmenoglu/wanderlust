@@ -1,16 +1,16 @@
 {
 	"name": "@wanderlust/cli",
-	"module": "src/index.ts",
-	"type": "module",
 	"private": true,
+	"type": "module",
+	"module": "src/index.ts",
 	"scripts": {
-		"cli": "bun run src/index.ts",
 		"build": "tsdown",
-		"start": "NODE_ENV=production bun run dist/index.js",
-		"test": "bun test",
-		"check-types": "tsc --noEmit",
 		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"cli": "bun run src/index.ts",
+		"start": "NODE_ENV=production bun run dist/index.js",
+		"test": "bun test"
 	},
 	"dependencies": {
 		"@drizzle-team/brocli": "^0.12.0",
@@ -21,14 +21,14 @@
 		"@wanderlust/db": "workspace:*",
 		"@wanderlust/jobs": "workspace:*",
 		"@wanderlust/search": "workspace:*",
-		"@wanderlust/uid": "workspace:*",
 		"@wanderlust/storage": "workspace:*",
+		"@wanderlust/uid": "workspace:*",
+		"bun": "catalog:",
 		"consola": "catalog:",
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
 		"typesense": "catalog:",
-		"zod": "catalog:",
-		"bun": "catalog:"
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",

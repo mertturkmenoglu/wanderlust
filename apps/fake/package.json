@@ -1,13 +1,13 @@
 {
 	"name": "@wanderlust/fake",
-	"module": "src/index.ts",
-	"type": "module",
 	"private": true,
+	"type": "module",
+	"module": "src/index.ts",
 	"scripts": {
-		"fake": "bun run src/index.ts",
-		"check-types": "tsc --noEmit",
 		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"fake": "bun run src/index.ts"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.4.0",
@@ -16,6 +16,7 @@
 		"@wanderlust/db": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
 		"async-mutex": "^0.5.0",
+		"bun": "catalog:",
 		"consola": "catalog:",
 		"drizzle-orm": "catalog:",
 		"inversify": "catalog:",
@@ -23,8 +24,7 @@
 		"p-limit": "^7.3.0",
 		"pg": "catalog:",
 		"piscina": "^5.1.4",
-		"zod": "catalog:",
-		"bun": "catalog:"
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@types/pg": "catalog:",

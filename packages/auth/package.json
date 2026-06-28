@@ -1,32 +1,32 @@
 {
 	"name": "@wanderlust/auth",
-	"type": "module",
 	"private": true,
-	"scripts": {
-		"dev": "tsc --watch",
-		"build": "tsc",
-		"check-types": "tsc --noEmit",
-		"build-types": "tsdown",
-		"build-types:watch": "tsdown --watch"
-	},
+	"type": "module",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		}
 	},
+	"scripts": {
+		"build": "tsc",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch"
+	},
 	"dependencies": {
-		"@wanderlust/db": "workspace:*",
-		"@wanderlust/uid": "workspace:*",
-		"@wanderlust/config": "workspace:*",
-		"@wanderlust/jobs": "workspace:*",
 		"@wanderlust/cache": "workspace:*",
+		"@wanderlust/config": "workspace:*",
+		"@wanderlust/db": "workspace:*",
+		"@wanderlust/jobs": "workspace:*",
+		"@wanderlust/uid": "workspace:*",
 		"better-auth": "catalog:",
 		"inversify": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:",
-		"tsdown": "catalog:"
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
 	}
 }

@@ -3,12 +3,12 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite --port 3003",
-		"start": "vite --port 3003",
 		"build": "vite build",
+		"check-types": "vite build && tsc --noEmit",
+		"dev": "vite --port 3003",
 		"serve": "vite preview",
-		"test": "vitest run",
-		"check-types": "vite build && tsc --noEmit"
+		"start": "vite --port 3003",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@dnd-kit/helpers": "^0.4.0",
@@ -29,13 +29,14 @@
 		"@unpic/react": "^1.0.2",
 		"@wanderlust/api": "workspace:*",
 		"@wanderlust/auth": "workspace:*",
-		"@wanderlust/ui": "workspace:*",
 		"@wanderlust/notifications": "workspace:*",
+		"@wanderlust/ui": "workspace:*",
 		"@zag-js/file-upload": "^1.40.0",
 		"@zag-js/rating-group": "^1.40.0",
 		"@zag-js/react": "^1.40.0",
 		"better-auth": "catalog:",
 		"date-fns": "catalog:",
+		"hono": "catalog:",
 		"instantsearch.css": "^8.16.1",
 		"instantsearch.js": "^4.96.2",
 		"lucide-react": "^1.14.0",
@@ -56,8 +57,7 @@
 		"typesense-instantsearch-adapter": "^3.0.2",
 		"yet-another-react-lightbox": "^3.32.0",
 		"zod": "catalog:",
-		"zustand": "^5.0.13",
-		"hono": "catalog:"
+		"zustand": "^5.0.13"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
