@@ -1,73 +1,48 @@
-import * as aggregator from './aggregator';
-import * as amenities from './amenities';
-import * as bookmarks from './bookmarks';
-import * as categories from './categories';
-import * as cities from './cities';
-import * as collections from './collections';
-import * as events from './events';
-import * as favorites from './favorites';
-import * as health from './health';
-import * as lists from './lists';
-import * as places from './places';
-import * as preferences from './preferences';
-import * as reports from './reports';
-import * as reviews from './reviews';
-import * as trips from './trips';
-import * as users from './users';
+import { module as aggregator } from './aggregator';
+import { module as amenities } from './amenities';
+import { module as bookmarks } from './bookmarks';
+import { module as categories } from './categories';
+import { module as cities } from './cities';
+import { module as collections } from './collections';
+import { module as favorites } from './favorites';
+import { module as health } from './health';
+import { module as lists } from './lists';
+import { module as places } from './places';
+import { module as preferences } from './preferences';
+import { module as reports } from './reports';
+import { module as reviews } from './reviews';
+import { module as trips } from './trips';
+import { module as users } from './users';
+
+const features = {
+	aggregator,
+	amenities,
+	bookmarks,
+	categories,
+	cities,
+	collections,
+	favorites,
+	health,
+	lists,
+	places,
+	preferences,
+	reports,
+	reviews,
+	trips,
+	users,
+} as const;
+
+type FeatureName = keyof typeof features;
+type M = (typeof features)[FeatureName];
 
 export type AppRouter = {
-	aggregator: ReturnType<typeof aggregator.getRouter>;
-	amenities: ReturnType<typeof amenities.getRouter>;
-	bookmarks: ReturnType<typeof bookmarks.getRouter>;
-	categories: ReturnType<typeof categories.getRouter>;
-	cities: ReturnType<typeof cities.getRouter>;
-	collections: ReturnType<typeof collections.getRouter>;
-	events: ReturnType<typeof events.getRouter>;
-	favorites: ReturnType<typeof favorites.getRouter>;
-	health: ReturnType<typeof health.getRouter>;
-	lists: ReturnType<typeof lists.getRouter>;
-	places: ReturnType<typeof places.getRouter>;
-	preferences: ReturnType<typeof preferences.getRouter>;
-	reports: ReturnType<typeof reports.getRouter>;
-	reviews: ReturnType<typeof reviews.getRouter>;
-	trips: ReturnType<typeof trips.getRouter>;
-	users: ReturnType<typeof users.getRouter>;
+	[K in FeatureName]: ReturnType<M['router']>;
 };
 
 export function getAppRouter(): AppRouter {
-	return {
-		aggregator: aggregator.getRouter(),
-		amenities: amenities.getRouter(),
-		bookmarks: bookmarks.getRouter(),
-		categories: categories.getRouter(),
-		cities: cities.getRouter(),
-		collections: collections.getRouter(),
-		events: events.getRouter(),
-		favorites: favorites.getRouter(),
-		health: health.getRouter(),
-		lists: lists.getRouter(),
-		places: places.getRouter(),
-		preferences: preferences.getRouter(),
-		reports: reports.getRouter(),
-		reviews: reviews.getRouter(),
-		trips: trips.getRouter(),
-		users: users.getRouter(),
-	};
+	return Object.fromEntries(
+		Object.entries(features).map(([name, feature]) => [name, feature.router()]),
+	) as AppRouter;
 }
 
-export const modules = [
-	aggregator.module,
-	bookmarks.module,
-	categories.module,
-	cities.module,
-	collections.module,
-	lists.module,
-	users.module,
-	trips.module,
-	reviews.module,
-	reports.module,
-	places.module,
-	preferences.module,
-	favorites.module,
-	events.module,
-];
+export const exports = Object.values(features).flatMap((f) => f.exports);
