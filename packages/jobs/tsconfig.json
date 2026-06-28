@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"composite": true,
 		"outDir": "dist",
+		"rootDir": "src",
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
@@ -10,22 +11,5 @@
 		"jsxImportSource": "react"
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx"],
-	"exclude": ["node_modules", "dist"],
-	"references": [
-		{
-			"path": "../config"
-		},
-		{
-			"path": "../email"
-		},
-		{
-			"path": "../db"
-		},
-		{
-			"path": "../cache"
-		},
-		{
-			"path": "../common"
-		}
-	]
+	"exclude": ["node_modules", "dist"]
 }

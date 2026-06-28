@@ -3,15 +3,11 @@
 	"compilerOptions": {
 		"composite": true,
 		"outDir": "dist",
+		"rootDir": "src",
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx"],
-	"exclude": ["node_modules", "dist"],
-	"references": [
-		{
-			"path": "../config"
-		}
-	]
+	"exclude": ["node_modules", "dist"]
 }

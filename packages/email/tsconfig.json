@@ -3,17 +3,13 @@
 	"compilerOptions": {
 		"composite": true,
 		"outDir": "dist",
+		"rootDir": "src",
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true
 	},
-	"include": ["emails/**/*.ts", "emails/**/*.tsx"],
-	"exclude": ["node_modules", "dist"],
-	"references": [
-		{
-			"path": "../config"
-		}
-	]
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist"]
 }

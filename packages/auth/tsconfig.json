@@ -7,31 +7,9 @@
 		"declarationMap": true,
 		"sourceMap": true,
 		"jsx": "react-jsx",
+		"rootDir": "src",
 		"jsxImportSource": "react"
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
-	],
-	"references": [
-		{
-			"path": "../db"
-		},
-		{
-			"path": "../config"
-		},
-		{
-			"path": "../uid"
-		},
-		{
-			"path": "../jobs"
-		},
-		{
-			"path": "../cache"
-		}
-	]
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist"]
 }
