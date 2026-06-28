@@ -12,7 +12,7 @@ import {
 } from 'react-email';
 import { logoUrl } from './common';
 
-export default function ReportAcknowledgeEmail() {
+export function ReportAcknowledgeEmail() {
 	return (
 		<Html>
 			<Head />

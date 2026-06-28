@@ -4,7 +4,7 @@ type Props = {
 	message: string;
 };
 
-export default function Email({ message }: Props) {
+export function Email({ message }: Props) {
 	return (
 		<Html>
 			<Head />
@@ -19,5 +19,3 @@ export default function Email({ message }: Props) {
 		</Html>
 	);
 }
-
-export * from './service';
