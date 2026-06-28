@@ -1,61 +1,9 @@
-import {
-	accoladeAssignments,
-	accolades,
-	accounts,
-	addresses,
-	assets,
-	bookmarks,
-	categories,
-	chatParticipantRole,
-	chatParticipants,
-	chatSharedEntityType,
-	chatSystemEventType,
-	chats,
-	chatType,
-	cities,
-	collectionItems,
-	collections,
-	collectionsCities,
-	collectionsPlaces,
-	eventAgendaItems,
-	eventInterests,
-	eventLineupItems,
-	events,
-	eventTicketOptions,
-	favorites,
-	follows,
-	listItems,
-	lists,
-	messageAttachments,
-	messageAttachmentType,
-	messageDeletions,
-	messageReactions,
-	messageSharedEntities,
-	messages,
-	messageType,
-	notificationCategoryType,
-	notificationChannelType,
-	notificationEntityType,
-	notificationPreferences,
-	notifications,
-	notificationType,
-	places,
-	preferences,
-	reports,
-	reviews,
-	tripComments,
-	tripInvites,
-	tripLocations,
-	tripParticipants,
-	trips,
-	users,
-	userTopPlaces,
-} from '@wanderlust/db';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import * as schema from '@wanderlust/db';
+import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod';
 import z from 'zod';
 
 export const $dto = {
-	user: createSelectSchema(users, {
+	user: createSelectSchema(schema.users, {
 		id: z
 			.string()
 			.min(1)
@@ -145,7 +93,7 @@ export const $dto = {
 	}).meta({
 		description: 'A user entity',
 	}),
-	asset: createSelectSchema(assets, {
+	asset: createSelectSchema(schema.assets, {
 		id: z
 			.number()
 			.int()
@@ -197,7 +145,7 @@ export const $dto = {
 	}).meta({
 		description: 'An asset entity',
 	}),
-	follows: createSelectSchema(follows, {
+	follows: createSelectSchema(schema.follows, {
 		followerId: z
 			.string()
 			.min(1)
@@ -217,7 +165,7 @@ export const $dto = {
 			examples: [new Date('2023-01-15T10:00:00Z')],
 		}),
 	}),
-	category: createSelectSchema(categories, {
+	category: createSelectSchema(schema.categories, {
 		id: z
 			.number()
 			.int()
@@ -245,7 +193,7 @@ export const $dto = {
 	}).meta({
 		description: 'A category entity',
 	}),
-	city: createSelectSchema(cities, {
+	city: createSelectSchema(schema.cities, {
 		id: z
 			.number()
 			.int()
@@ -336,7 +284,7 @@ export const $dto = {
 	}).meta({
 		description: 'A city entity',
 	}),
-	address: createSelectSchema(addresses, {
+	address: createSelectSchema(schema.addresses, {
 		id: z
 			.number()
 			.int()
@@ -396,7 +344,7 @@ export const $dto = {
 				examples: [-0.1278],
 			}),
 	}),
-	accolade: createSelectSchema(accolades, {
+	accolade: createSelectSchema(schema.accolades, {
 		id: z
 			.string()
 			.min(1)
@@ -442,7 +390,7 @@ export const $dto = {
 			examples: [new Date('2023-01-15T10:00:00Z')],
 		}),
 	}),
-	place: createSelectSchema(places, {
+	place: createSelectSchema(schema.places, {
 		id: z
 			.string()
 			.min(1)
@@ -571,7 +519,7 @@ export const $dto = {
 	}).meta({
 		description: 'A place entity',
 	}),
-	bookmark: createSelectSchema(bookmarks, {
+	bookmark: createSelectSchema(schema.bookmarks, {
 		id: z
 			.number()
 			.int()
@@ -600,7 +548,7 @@ export const $dto = {
 	}).meta({
 		description: 'A bookmark entity',
 	}),
-	favorite: createSelectSchema(favorites, {
+	favorite: createSelectSchema(schema.favorites, {
 		id: z
 			.number()
 			.int()
@@ -629,7 +577,7 @@ export const $dto = {
 	}).meta({
 		description: 'A favorite entity',
 	}),
-	collection: createSelectSchema(collections, {
+	collection: createSelectSchema(schema.collections, {
 		id: z
 			.string()
 			.min(1)
@@ -659,7 +607,7 @@ export const $dto = {
 	}).meta({
 		description: 'A collection entity',
 	}),
-	collectionItem: createSelectSchema(collectionItems, {
+	collectionItem: createSelectSchema(schema.collectionItems, {
 		collectionId: z
 			.string()
 			.min(1)
@@ -689,7 +637,7 @@ export const $dto = {
 	}).meta({
 		description: 'A collection item entity',
 	}),
-	list: createSelectSchema(lists, {
+	list: createSelectSchema(schema.lists, {
 		id: z
 			.string()
 			.min(1)
@@ -727,7 +675,7 @@ export const $dto = {
 	}).meta({
 		description: 'A list entity',
 	}),
-	listItem: createSelectSchema(listItems, {
+	listItem: createSelectSchema(schema.listItems, {
 		listId: z
 			.string()
 			.min(1)
@@ -758,7 +706,7 @@ export const $dto = {
 	}).meta({
 		description: 'A list item entity',
 	}),
-	review: createSelectSchema(reviews, {
+	review: createSelectSchema(schema.reviews, {
 		id: z
 			.string()
 			.min(1)
@@ -812,7 +760,7 @@ export const $dto = {
 	}).meta({
 		description: 'A review entity',
 	}),
-	trip: createSelectSchema(trips, {
+	trip: createSelectSchema(schema.trips, {
 		id: z
 			.string()
 			.min(1)
@@ -872,7 +820,7 @@ export const $dto = {
 	}).meta({
 		description: 'A trip entity',
 	}),
-	tripInvite: createSelectSchema(tripInvites, {
+	tripInvite: createSelectSchema(schema.tripInvites, {
 		id: z
 			.string()
 			.min(1)
@@ -923,7 +871,7 @@ export const $dto = {
 	}).meta({
 		description: 'A trip invite entity',
 	}),
-	tripComment: createSelectSchema(tripComments, {
+	tripComment: createSelectSchema(schema.tripComments, {
 		id: z
 			.string()
 			.min(1)
@@ -963,7 +911,7 @@ export const $dto = {
 	}).meta({
 		description: 'A trip comment entity',
 	}),
-	tripLocation: createSelectSchema(tripLocations, {
+	tripLocation: createSelectSchema(schema.tripLocations, {
 		id: z
 			.string()
 			.min(1)
@@ -999,7 +947,7 @@ export const $dto = {
 	}).meta({
 		description: 'A trip location entity',
 	}),
-	tripParticipant: createSelectSchema(tripParticipants, {
+	tripParticipant: createSelectSchema(schema.tripParticipants, {
 		id: z
 			.string()
 			.min(1)
@@ -1028,7 +976,7 @@ export const $dto = {
 	}).meta({
 		description: 'A trip participant entity',
 	}),
-	userTopPlaces: createSelectSchema(userTopPlaces, {
+	userTopPlaces: createSelectSchema(schema.userTopPlaces, {
 		userId: z
 			.string()
 			.min(1)
@@ -1053,7 +1001,7 @@ export const $dto = {
 	}).meta({
 		description: 'A user top places entity',
 	}),
-	report: createSelectSchema(reports, {
+	report: createSelectSchema(schema.reports, {
 		id: z
 			.string()
 			.min(1)
@@ -1122,7 +1070,7 @@ export const $dto = {
 	}).meta({
 		description: 'A report entity',
 	}),
-	event: createSelectSchema(events, {
+	event: createSelectSchema(schema.events, {
 		id: z
 			.string()
 			.min(1)
@@ -1247,7 +1195,7 @@ export const $dto = {
 	}).meta({
 		description: 'An event entity',
 	}),
-	eventTicketOption: createSelectSchema(eventTicketOptions, {
+	eventTicketOption: createSelectSchema(schema.eventTicketOptions, {
 		id: z
 			.string()
 			.min(1)
@@ -1320,7 +1268,7 @@ export const $dto = {
 	}).meta({
 		description: 'An event ticket option entity',
 	}),
-	eventAgendaItem: createSelectSchema(eventAgendaItems, {
+	eventAgendaItem: createSelectSchema(schema.eventAgendaItems, {
 		id: z
 			.string()
 			.min(1)
@@ -1364,8 +1312,8 @@ export const $dto = {
 	}).meta({
 		description: 'An event agenda item entity',
 	}),
-	eventInterest: createSelectSchema(eventInterests),
-	eventLineupItem: createSelectSchema(eventLineupItems, {
+	eventInterest: createSelectSchema(schema.eventInterests),
+	eventLineupItem: createSelectSchema(schema.eventLineupItems, {
 		id: z
 			.string()
 			.min(1)
@@ -1433,7 +1381,7 @@ export const $dto = {
 	}).meta({
 		description: 'An event lineup item entity',
 	}),
-	notification: createSelectSchema(notifications, {
+	notification: createSelectSchema(schema.notifications, {
 		id: z
 			.string()
 			.min(1)
@@ -1448,10 +1396,10 @@ export const $dto = {
 				description: 'Recipient ID',
 				examples: ['u123'],
 			}),
-		type: z.enum(notificationType.enumValues).meta({
+		type: z.enum(schema.notificationType.enumValues).meta({
 			description: 'Notification type',
 		}),
-		entityType: z.enum(notificationEntityType.enumValues).meta({
+		entityType: z.enum(schema.notificationEntityType.enumValues).meta({
 			description: 'Entity type',
 			examples: ['place', 'trip', 'user'],
 		}),
@@ -1474,7 +1422,7 @@ export const $dto = {
 	}).meta({
 		description: 'A notification entity',
 	}),
-	notificationPreference: createSelectSchema(notificationPreferences, {
+	notificationPreference: createSelectSchema(schema.notificationPreferences, {
 		userId: z
 			.string()
 			.min(1)
@@ -1482,8 +1430,8 @@ export const $dto = {
 				description: 'User ID',
 				examples: ['u123'],
 			}),
-		category: z.enum(notificationCategoryType.enumValues),
-		channel: z.enum(notificationChannelType.enumValues),
+		category: z.enum(schema.notificationCategoryType.enumValues),
+		channel: z.enum(schema.notificationChannelType.enumValues),
 		enabled: z.boolean().meta({
 			description: 'Whether this preference is enabled or not',
 			examples: [true, false],
@@ -1491,38 +1439,38 @@ export const $dto = {
 	}).meta({
 		description: 'A notification preference of a user',
 	}),
-	chatType: z.enum(chatType.enumValues).meta({
+	chatType: z.enum(schema.chatType.enumValues).meta({
 		description: 'Type of chat',
 		examples: ['direct', 'group'],
 	}),
-	chatParticipantRole: z.enum(chatParticipantRole.enumValues).meta({
+	chatParticipantRole: z.enum(schema.chatParticipantRole.enumValues).meta({
 		description: 'Role of the chat participant',
 		examples: ['admin', 'member'],
 	}),
-	messageType: z.enum(messageType.enumValues).meta({
+	messageType: z.enum(schema.messageType.enumValues).meta({
 		description: 'Type of message',
 		examples: ['text', 'media', 'audio'],
 	}),
-	messageAttachmentType: z.enum(messageAttachmentType.enumValues).meta({
+	messageAttachmentType: z.enum(schema.messageAttachmentType.enumValues).meta({
 		description: 'Type of message attachment',
 		examples: ['image', 'video', 'audio'],
 	}),
-	chatSharedEntityType: z.enum(chatSharedEntityType.enumValues).meta({
+	chatSharedEntityType: z.enum(schema.chatSharedEntityType.enumValues).meta({
 		description: 'Type of shared entity in chat',
 		examples: ['place', 'trip', 'event'],
 	}),
-	chatSystemEventType: z.enum(chatSystemEventType.enumValues).meta({
+	chatSystemEventType: z.enum(schema.chatSystemEventType.enumValues).meta({
 		description: 'Type of system event in chat',
 		examples: ['member_joined', 'member_left', 'renamed'],
 	}),
-	chat: createSelectSchema(chats),
-	chatParticipant: createSelectSchema(chatParticipants),
-	message: createSelectSchema(messages),
-	messageAttachment: createSelectSchema(messageAttachments),
-	messageSharedEntity: createSelectSchema(messageSharedEntities),
-	messageDeletion: createSelectSchema(messageDeletions),
-	messageReaction: createSelectSchema(messageReactions),
-	preference: createSelectSchema(preferences),
+	chat: createSelectSchema(schema.chats),
+	chatParticipant: createSelectSchema(schema.chatParticipants),
+	message: createSelectSchema(schema.messages),
+	messageAttachment: createSelectSchema(schema.messageAttachments),
+	messageSharedEntity: createSelectSchema(schema.messageSharedEntities),
+	messageDeletion: createSelectSchema(schema.messageDeletions),
+	messageReaction: createSelectSchema(schema.messageReactions),
+	preference: createSelectSchema(schema.preferences),
 };
 
 export const $extended = {
@@ -1564,45 +1512,45 @@ export const $extended = {
 };
 
 export const $insert = {
-	user: createInsertSchema(users),
-	account: createInsertSchema(accounts),
-	asset: createInsertSchema(assets),
-	follows: createInsertSchema(follows),
-	category: createInsertSchema(categories),
-	city: createInsertSchema(cities),
-	address: createInsertSchema(addresses),
-	accolade: createInsertSchema(accolades),
-	accoladeAssignment: createInsertSchema(accoladeAssignments),
-	place: createInsertSchema(places),
-	bookmark: createInsertSchema(bookmarks),
-	favorite: createInsertSchema(favorites),
-	collection: createInsertSchema(collections),
-	collectionItem: createInsertSchema(collectionItems),
-	collectionsCities: createInsertSchema(collectionsCities),
-	collectionsPlaces: createInsertSchema(collectionsPlaces),
-	list: createInsertSchema(lists),
-	listItem: createInsertSchema(listItems),
-	review: createInsertSchema(reviews),
-	trip: createInsertSchema(trips),
-	tripInvite: createInsertSchema(tripInvites),
-	tripComment: createInsertSchema(tripComments),
-	tripLocation: createInsertSchema(tripLocations),
-	tripParticipant: createInsertSchema(tripParticipants),
-	userTopPlaces: createInsertSchema(userTopPlaces),
-	report: createInsertSchema(reports),
-	event: createInsertSchema(events),
-	eventTicketOption: createInsertSchema(eventTicketOptions),
-	eventAgendaItem: createInsertSchema(eventAgendaItems),
-	eventLineupItem: createInsertSchema(eventLineupItems),
-	eventInterest: createInsertSchema(eventInterests),
-	notification: createInsertSchema(notifications),
-	notificationPreference: createInsertSchema(notificationPreferences),
-	chat: createInsertSchema(chats),
-	chatParticipant: createInsertSchema(chatParticipants),
-	message: createInsertSchema(messages),
-	messageAttachment: createInsertSchema(messageAttachments),
-	messageSharedEntity: createInsertSchema(messageSharedEntities),
-	messageDeletion: createInsertSchema(messageDeletions),
-	messageReaction: createInsertSchema(messageReactions),
-	preference: createInsertSchema(preferences),
+	user: createInsertSchema(schema.users),
+	account: createInsertSchema(schema.accounts),
+	asset: createInsertSchema(schema.assets),
+	follows: createInsertSchema(schema.follows),
+	category: createInsertSchema(schema.categories),
+	city: createInsertSchema(schema.cities),
+	address: createInsertSchema(schema.addresses),
+	accolade: createInsertSchema(schema.accolades),
+	accoladeAssignment: createInsertSchema(schema.accoladeAssignments),
+	place: createInsertSchema(schema.places),
+	bookmark: createInsertSchema(schema.bookmarks),
+	favorite: createInsertSchema(schema.favorites),
+	collection: createInsertSchema(schema.collections),
+	collectionItem: createInsertSchema(schema.collectionItems),
+	collectionsCities: createInsertSchema(schema.collectionsCities),
+	collectionsPlaces: createInsertSchema(schema.collectionsPlaces),
+	list: createInsertSchema(schema.lists),
+	listItem: createInsertSchema(schema.listItems),
+	review: createInsertSchema(schema.reviews),
+	trip: createInsertSchema(schema.trips),
+	tripInvite: createInsertSchema(schema.tripInvites),
+	tripComment: createInsertSchema(schema.tripComments),
+	tripLocation: createInsertSchema(schema.tripLocations),
+	tripParticipant: createInsertSchema(schema.tripParticipants),
+	userTopPlaces: createInsertSchema(schema.userTopPlaces),
+	report: createInsertSchema(schema.reports),
+	event: createInsertSchema(schema.events),
+	eventTicketOption: createInsertSchema(schema.eventTicketOptions),
+	eventAgendaItem: createInsertSchema(schema.eventAgendaItems),
+	eventLineupItem: createInsertSchema(schema.eventLineupItems),
+	eventInterest: createInsertSchema(schema.eventInterests),
+	notification: createInsertSchema(schema.notifications),
+	notificationPreference: createInsertSchema(schema.notificationPreferences),
+	chat: createInsertSchema(schema.chats),
+	chatParticipant: createInsertSchema(schema.chatParticipants),
+	message: createInsertSchema(schema.messages),
+	messageAttachment: createInsertSchema(schema.messageAttachments),
+	messageSharedEntity: createInsertSchema(schema.messageSharedEntities),
+	messageDeletion: createInsertSchema(schema.messageDeletions),
+	messageReaction: createInsertSchema(schema.messageReactions),
+	preference: createInsertSchema(schema.preferences),
 };
