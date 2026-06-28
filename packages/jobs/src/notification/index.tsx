@@ -34,7 +34,7 @@ export function initNotificationJobs(
 						id: data.id,
 						recipientId: data.recipientId,
 						type: data.type,
-						data: data.data,
+						data: JSON.parse(JSON.stringify(data.data)),
 						createdAt: new Date(),
 					});
 

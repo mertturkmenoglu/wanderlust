@@ -1,9 +1,11 @@
 import { render } from '@react-email/components';
 import type { TConfigService } from '@wanderlust/config';
-import type { TEmailService } from '@wanderlust/email/';
-import Email from '@wanderlust/email/email';
-import ForgotPasswordEmail from '@wanderlust/email/forgot-password';
-import WelcomeEmail from '@wanderlust/email/welcome';
+import {
+	ForgotPasswordEmail,
+	type TEmailService,
+	TestEmail,
+	WelcomeEmail,
+} from '@wanderlust/email';
 import { Queue, Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import z from 'zod';
@@ -45,7 +47,7 @@ export function initEmailJobs(cfg: TConfigService, email: TEmailService) {
 			switch (job.name) {
 				case 'test': {
 					const data = job.data as Schemas['test'];
-					const html = await render(<Email message={data.message} />);
+					const html = await render(<TestEmail message={data.message} />);
 
 					await email.sendMail({
 						from: cfg.email.from,
