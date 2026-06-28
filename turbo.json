@@ -18,7 +18,7 @@
 				"tsconfig.json",
 				"tsconfig*.json"
 			],
-			"outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map", "*.tsbuildinfo"]
+			"outputs": ["dist/**", "*.tsbuildinfo"]
 		},
 		"build-types:watch": {
 			"cache": false,
@@ -31,7 +31,7 @@
 				"tsconfig.json",
 				"tsconfig*.json"
 			],
-			"outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map", "*.tsbuildinfo"]
+			"outputs": ["dist/**", "*.tsbuildinfo"]
 		},
 		"lint": {
 			"dependsOn": ["^lint"]
@@ -40,7 +40,6 @@
 			"dependsOn": ["^check-types"]
 		},
 		"dev": {
-			"dependsOn": ["^build-types"],
 			"cache": false,
 			"persistent": true
 		}
