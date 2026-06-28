@@ -7,7 +7,6 @@ import { PreferencesRepository } from './repository';
 export class PreferencesService {
 	private readonly ns = 'preferences';
 	private readonly cache: TCacheService;
-	// private readonly log = createLogger({ name: 'PreferencesService' });
 
 	constructor(
 		@inject(PreferencesRepository)
@@ -34,19 +33,11 @@ export class PreferencesService {
 	): Promise<dto.UpdateOutput> {
 		const result = await this.repo.update(userId, data);
 
-		const _isCacheUpdated = await this.cache.namespace(this.ns).set({
+		await this.cache.namespace(this.ns).set({
 			key: userId,
 			value: result,
 			ttl: '1h',
 		});
-
-		// if (!isCacheUpdated) {
-		// 	this.log.warn('Failed to update cache for user preferences', {
-		// 		userId,
-		// 	});
-
-		// 	this.log.emit();
-		// }
 
 		return result;
 	}
