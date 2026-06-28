@@ -1,27 +1,28 @@
 import { implement } from '@orpc/server';
 import { aggregator } from '@wanderlust/contract';
-import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
+import { defineModule } from '@/lib/define-module';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { AggregatorRepository } from './repository';
 import { AggregatorService } from './service';
 
-export function getRouter() {
-	const os = implement(aggregator.contract).$context<Context>();
-	const svc = container.get(AggregatorService);
+export const module = defineModule({
+	exports: [AggregatorRepository, AggregatorService],
+	router: () => {
+		const os = implement(aggregator.contract)
+			.$context<Context>()
+			.use(withErrorNormalization);
 
-	return os.use(withErrorNormalization).router({
-		home: os.home.handler(async ({ context }) => {
-			const userId = context.session?.user?.id || null;
-			const result = await svc.home(userId);
+		const svc = container.get(AggregatorService);
 
-			return result;
-		}),
-	});
-}
+		return os.router({
+			home: os.home.handler(async ({ context }) => {
+				const userId = context.session?.user?.id || null;
+				const result = await svc.home(userId);
 
-export const module = new ContainerModule(({ bind }) => {
-	bind(AggregatorRepository).toSelf();
-	bind(AggregatorService).toSelf();
+				return result;
+			}),
+		});
+	},
 });

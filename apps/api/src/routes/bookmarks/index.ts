@@ -1,42 +1,44 @@
 import { implement } from '@orpc/server';
 import { bookmarks } from '@wanderlust/contract';
-import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
+import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { BookmarksRepository } from './repository';
 import { BookmarksService } from './service';
 
-export function getRouter() {
-	const os = implement(bookmarks.contract)
-		.$context<AuthContext>()
-		.use(requireAuth);
-	const svc = container.get(BookmarksService);
+export function getRouter() {}
 
-	return os.use(withErrorNormalization).router({
-		list: os.list.handler(async ({ input, context }) => {
-			const userId = context.session.user.id;
-			const result = await svc.list(userId, input);
+export const module = defineModule({
+	exports: [BookmarksRepository, BookmarksService],
+	router: () => {
+		const os = implement(bookmarks.contract)
+			.$context<AuthContext>()
+			.use(requireAuth)
+			.use(withErrorNormalization);
 
-			return result;
-		}),
-		create: os.create.handler(async ({ input, context }) => {
-			const userId = context.session.user.id;
-			const result = await svc.create(userId, input);
+		const svc = container.get(BookmarksService);
 
-			return result;
-		}),
-		delete: os.delete.handler(async ({ input, context }) => {
-			const userId = context.session.user.id;
-			await svc._delete(userId, input);
+		return os.router({
+			list: os.list.handler(async ({ input, context }) => {
+				const userId = context.session.user.id;
+				const result = await svc.list(userId, input);
 
-			return {};
-		}),
-	});
-}
+				return result;
+			}),
+			create: os.create.handler(async ({ input, context }) => {
+				const userId = context.session.user.id;
+				const result = await svc.create(userId, input);
 
-export const module = new ContainerModule(({ bind }) => {
-	bind(BookmarksService).toSelf();
-	bind(BookmarksRepository).toSelf();
+				return result;
+			}),
+			delete: os.delete.handler(async ({ input, context }) => {
+				const userId = context.session.user.id;
+				await svc._delete(userId, input);
+
+				return {};
+			}),
+		});
+	},
 });

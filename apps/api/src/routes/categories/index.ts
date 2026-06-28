@@ -1,51 +1,52 @@
 import { implement } from '@orpc/server';
 import { categories } from '@wanderlust/contract';
-import { ContainerModule } from 'inversify';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
+import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { CategoriesRepository } from './repository';
 import { CategoriesService } from './service';
 
-export function getRouter() {
-	const os = implement(categories.contract).$context<Context>();
-	const svc = container.get(CategoriesService);
+export const module = defineModule({
+	exports: [CategoriesService, CategoriesRepository],
+	router: () => {
+		const os = implement(categories.contract)
+			.$context<Context>()
+			.use(withErrorNormalization);
 
-	return os.use(withErrorNormalization).router({
-		list: os.list.handler(async () => {
-			const result = await svc.list();
-			return result;
-		}),
-		create: os.create
-			.use(requireAuth)
-			.use(isAdmin)
-			.handler(async ({ input }) => {
-				const result = await svc.create(input);
+		const svc = container.get(CategoriesService);
 
+		return os.router({
+			list: os.list.handler(async () => {
+				const result = await svc.list();
 				return result;
 			}),
-		update: os.update
-			.use(requireAuth)
-			.use(isAdmin)
-			.handler(async ({ input }) => {
-				const result = await svc.update(input);
+			create: os.create
+				.use(requireAuth)
+				.use(isAdmin)
+				.handler(async ({ input }) => {
+					const result = await svc.create(input);
 
-				return result;
-			}),
-		delete: os.delete
-			.use(requireAuth)
-			.use(isAdmin)
-			.handler(async ({ input }) => {
-				await svc._delete(input);
+					return result;
+				}),
+			update: os.update
+				.use(requireAuth)
+				.use(isAdmin)
+				.handler(async ({ input }) => {
+					const result = await svc.update(input);
 
-				return {};
-			}),
-	});
-}
+					return result;
+				}),
+			delete: os.delete
+				.use(requireAuth)
+				.use(isAdmin)
+				.handler(async ({ input }) => {
+					await svc._delete(input);
 
-export const module = new ContainerModule(({ bind }) => {
-	bind(CategoriesService).toSelf();
-	bind(CategoriesRepository).toSelf();
+					return {};
+				}),
+		});
+	},
 });
