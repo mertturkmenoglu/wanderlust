@@ -20,8 +20,12 @@ export const router = new Hono<THonoContext>()
 		const userId = c.get('user').id;
 
 		const result = await db.query.notifications.findMany({
-			where: (t, { eq }) => eq(t.recipientId, userId),
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			where: {
+				recipientId: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			limit: cfg.notifications.capPerUser,
 		});
 
@@ -132,7 +136,9 @@ export const router = new Hono<THonoContext>()
 		const db = container.get(DatabaseService).get();
 
 		const preferences = await db.query.notificationPreferences.findMany({
-			where: (t, { eq }) => eq(t.userId, user.id),
+			where: {
+				userId: user.id,
+			},
 		});
 
 		return c.json({
