@@ -18,6 +18,7 @@
 			"consola": "^3.4.2",
 			"drizzle-orm": "rc",
 			"inversify": "^8.1.0",
+			"@sindresorhus/slugify": "^3.0.0",
 			"pg": "^8.20.0",
 			"@types/pg": "^8.20.0",
 			"typescript": "^6.0.3",
