@@ -29,7 +29,6 @@
 		"@tanstack/react-table": "^8.21.3",
 		"@tanstack/router-plugin": "^1.167.35",
 		"@unpic/react": "^1.0.2",
-		"@wanderlust/api": "workspace:*",
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/chat": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
@@ -65,7 +64,6 @@
 		"zustand": "^5.0.13"
 	},
 	"devDependencies": {
-		"@hookform/devtools": "^4.4.0",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tanstack/devtools-vite": "^0.6.0",
 		"@tanstack/react-devtools": "^0.10.3",

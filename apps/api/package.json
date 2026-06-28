@@ -47,7 +47,6 @@
 		"@wanderlust/search": "workspace:*",
 		"@wanderlust/storage": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
-		"consola": "catalog:",
 		"date-fns": "catalog:",
 		"drizzle-orm": "catalog:",
 		"evlog": "catalog:",
@@ -56,7 +55,6 @@
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
 		"rotating-file-stream": "^3.2.9",
-		"typesense": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
