@@ -2,11 +2,7 @@ import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { Pagination } from '@wanderlust/common';
 import type { users as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
-import {
-	$includes,
-	DatabaseService,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
@@ -14,6 +10,7 @@ import { inject, injectable } from 'inversify';
 import { ActivitiesService, type ActivityItem } from '@/lib/activities';
 import { invariant } from '@/lib/invariant';
 import { FavoritesRepository } from '../favorites/repository';
+import * as statements from './statements';
 
 @injectable()
 export class UsersRepository {
@@ -41,9 +38,7 @@ export class UsersRepository {
 		type: dto.UpdateImageInput['type'],
 		url: string,
 	) {
-		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.id, userId),
-		});
+		const user = await statements.findUserById.execute(this.db, { id: userId });
 
 		invariant(user, 'NOT_FOUND', `User with id ${userId} not found`);
 
@@ -54,8 +49,8 @@ export class UsersRepository {
 			.set(type === 'profile' ? { image: url } : { banner: url })
 			.where(eq(schema.users.id, userId));
 
-		const result = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.id, userId),
+		const result = await statements.findUserById.execute(this.db, {
+			id: userId,
 		});
 
 		invariant(result, 'NOT_FOUND', `User with id ${userId} not found`);
@@ -67,8 +62,8 @@ export class UsersRepository {
 	}
 
 	async get(userId: string, data: dto.GetInput) {
-		const result = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+		const result = await statements.findUserByUsername.execute(this.db, {
+			username: data.username,
 		});
 
 		invariant(
@@ -83,9 +78,9 @@ export class UsersRepository {
 
 		if (!isSelf) {
 			// Check if the requesting user is following the target user
-			const follow = await this.db.query.follows.findFirst({
-				where: (t, { eq, and }) =>
-					and(eq(t.followerId, userId), eq(t.followingId, result.id)),
+			const follow = await statements.findFollowsRelation.execute(this.db, {
+				followerId: userId,
+				followingId: result.id,
 			});
 
 			isFollowing = follow !== undefined;
@@ -101,8 +96,8 @@ export class UsersRepository {
 	}
 
 	async getById(userId: string, data: dto.GetByIdInput) {
-		const result = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+		const result = await statements.findUserById.execute(this.db, {
+			id: data.id,
 		});
 
 		invariant(result, 'NOT_FOUND', `User with id ${data.id} not found`);
@@ -113,9 +108,9 @@ export class UsersRepository {
 
 		if (!isSelf) {
 			// Check if the requesting user is following the target user
-			const follow = await this.db.query.follows.findFirst({
-				where: (t, { eq, and }) =>
-					and(eq(t.followerId, userId), eq(t.followingId, result.id)),
+			const follow = await statements.findFollowsRelation.execute(this.db, {
+				followerId: userId,
+				followingId: result.id,
 			});
 
 			isFollowing = follow !== undefined;
@@ -131,8 +126,8 @@ export class UsersRepository {
 	}
 
 	async getMe(userId: string) {
-		const result = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.id, userId),
+		const result = await statements.findUserById.execute(this.db, {
+			id: userId,
 		});
 
 		invariant(result, 'NOT_FOUND', `User with id ${userId} not found`);
@@ -143,8 +138,8 @@ export class UsersRepository {
 	}
 
 	async getRole(userId: string) {
-		const result = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.id, userId),
+		const result = await statements.findUserById.execute(this.db, {
+			id: userId,
 		});
 
 		invariant(result, 'NOT_FOUND', `User with id ${userId} not found`);
@@ -159,8 +154,8 @@ export class UsersRepository {
 	async listFollowers(_userId: string, data: dto.ListFollowersInput) {
 		const offset = Pagination.getOffset(data);
 
-		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+		const user = await statements.findUserByUsername.execute(this.db, {
+			username: data.username,
 		});
 
 		invariant(
@@ -169,27 +164,10 @@ export class UsersRepository {
 			`User with username ${data.username} not found`,
 		);
 
-		const followers = await this.db.query.follows.findMany({
-			where: (t, { eq }) => eq(t.followingId, user.id),
-			orderBy: (t, { asc }) => [asc(t.createdAt)],
-			offset,
+		const followers = await statements.findManyFollowers.execute(this.db, {
+			userId: user.id,
 			limit: data.pageSize,
-			with: {
-				follower: {
-					columns: {
-						id: true,
-						username: true,
-						name: true,
-						image: true,
-						banner: true,
-						bio: true,
-						website: true,
-						followersCount: true,
-						followingCount: true,
-						createdAt: true,
-					},
-				},
-			},
+			offset,
 		});
 
 		const totalRecords = await this.db.$count(
@@ -206,8 +184,8 @@ export class UsersRepository {
 	async listFollowing(_userId: string, data: dto.ListFollowingInput) {
 		const offset = Pagination.getOffset(data);
 
-		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+		const user = await statements.findUserByUsername.execute(this.db, {
+			username: data.username,
 		});
 
 		invariant(
@@ -216,27 +194,10 @@ export class UsersRepository {
 			`User with username ${data.username} not found`,
 		);
 
-		const following = await this.db.query.follows.findMany({
-			where: (t, { eq }) => eq(t.followerId, user.id),
-			orderBy: (t, { asc }) => [asc(t.createdAt)],
-			offset,
+		const following = await statements.findManyFollowing.execute(this.db, {
+			userId: user.id,
 			limit: data.pageSize,
-			with: {
-				following: {
-					columns: {
-						id: true,
-						username: true,
-						name: true,
-						image: true,
-						banner: true,
-						bio: true,
-						website: true,
-						followersCount: true,
-						followingCount: true,
-						createdAt: true,
-					},
-				},
-			},
+			offset,
 		});
 
 		const totalRecords = await this.db.$count(
@@ -251,8 +212,8 @@ export class UsersRepository {
 	}
 
 	async listTopPlaces(userId: string, data: dto.ListTopPlacesInput) {
-		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+		const user = await statements.findUserByUsername.execute(this.db, {
+			username: data.username,
 		});
 
 		invariant(
@@ -261,14 +222,8 @@ export class UsersRepository {
 			`User with username ${data.username} not found`,
 		);
 
-		const topPlaces = await this.db.query.userTopPlaces.findMany({
-			where: (t, { eq }) => eq(t.userId, user.id),
-			orderBy: (t, { asc }) => [asc(t.index)],
-			with: {
-				place: {
-					with: $includes.place,
-				},
-			},
+		const topPlaces = await statements.findManyTopPlaces.execute(this.db, {
+			userId: user.id,
 		});
 
 		const placeIds = Array.from(new Set(topPlaces.map((tp) => tp.placeId)));
@@ -290,16 +245,9 @@ export class UsersRepository {
 
 	async updateTopPlaces(userId: string, data: dto.UpdateTopPlacesInput) {
 		const result = await this.db.transaction(async (tx) => {
-			const user = await tx.query.users.findFirst({
-				columns: {
-					username: true,
-				},
-				where: (t, { eq }) => eq(t.id, userId),
-			});
+			const user = await statements.findUserById.execute(tx, { id: userId });
 
 			invariant(user, 'NOT_FOUND', `User with id ${userId} not found`);
-
-			const username = user.username;
 
 			// Delete existing top places
 			await tx
@@ -319,10 +267,12 @@ export class UsersRepository {
 			}
 
 			// Fetch and return the updated top places
-			const topPlaces = await this.listTopPlaces(userId, { username });
+			const topPlaces = await statements.findManyTopPlaces.execute(tx, {
+				userId,
+			});
 
 			return {
-				places: topPlaces.topPlaces,
+				places: topPlaces,
 			};
 		});
 
@@ -330,8 +280,8 @@ export class UsersRepository {
 	}
 
 	async listActivities(_userId: string, data: dto.ListUserActivitiesInput) {
-		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+		const user = await statements.findUserByUsername.execute(this.db, {
+			username: data.username,
 		});
 
 		invariant(
@@ -385,8 +335,8 @@ export class UsersRepository {
 	}
 
 	async follow(userId: string, data: dto.FollowInput) {
-		const targetUser = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+		const targetUser = await statements.findUserByUsername.execute(this.db, {
+			username: data.username,
 		});
 
 		invariant(
@@ -395,10 +345,13 @@ export class UsersRepository {
 			`User with username ${data.username} not found`,
 		);
 
-		const existingFollow = await this.db.query.follows.findFirst({
-			where: (t, { eq, and }) =>
-				and(eq(t.followerId, userId), eq(t.followingId, targetUser.id)),
-		});
+		const existingFollow = await statements.findFollowsRelation.execute(
+			this.db,
+			{
+				followerId: userId,
+				followingId: targetUser.id,
+			},
+		);
 
 		if (existingFollow) {
 			const result = await this.db.transaction(async (tx) => {
@@ -456,8 +409,8 @@ export class UsersRepository {
 				})
 				.where(eq(schema.users.id, userId));
 
-			const thisUser = await tx.query.users.findFirst({
-				where: (t, { eq }) => eq(t.id, userId),
+			const thisUser = await statements.findUserById.execute(tx, {
+				id: userId,
 			});
 
 			invariant(thisUser, 'NOT_FOUND', `User with id ${userId} not found`);
