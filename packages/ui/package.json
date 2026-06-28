@@ -4,6 +4,8 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc",
 		"check-types": "tsc -b",
 		"build-types": "tsc --build"
 	},

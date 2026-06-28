@@ -5,7 +5,7 @@
 	"private": true,
 	"scripts": {
 		"build": "email build",
-		"dev": "email dev -p 4000",
+		"dev": "tsc --watch",
 		"export": "email export",
 		"start": "email start",
 		"check-types": "tsc --noEmit",
@@ -31,12 +31,8 @@
 	},
 	"exports": {
 		".": {
-			"types": "./dist/email.d.mts",
-			"import": "./dist/email.mjs"
-		},
-		"./*": {
-			"types": "./dist/*.d.mts",
-			"import": "./dist/*.mjs"
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
 		}
 	}
 }

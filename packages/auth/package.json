@@ -3,14 +3,16 @@
 	"type": "module",
 	"private": true,
 	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc",
 		"check-types": "tsc --noEmit",
 		"build-types": "tsdown",
 		"build-types:watch": "tsdown --watch"
 	},
 	"exports": {
 		".": {
-			"types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
 		}
 	},
 	"dependencies": {
