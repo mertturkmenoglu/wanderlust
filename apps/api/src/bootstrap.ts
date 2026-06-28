@@ -8,7 +8,7 @@ import { SearchService } from '@wanderlust/search';
 import { StorageService } from '@wanderlust/storage';
 import { container } from './ioc';
 import { ActivitiesService } from './lib/activities';
-import { modules } from './routes';
+import { exports } from './routes';
 
 export async function bootstrapServices() {
 	container.bind(ConfigService).toSelf().inSingletonScope();
@@ -22,7 +22,9 @@ export async function bootstrapServices() {
 	container.bind(SearchService).toSelf();
 	container.bind(ActivitiesService).toSelf();
 
-	container.load(...modules);
+	for (const svc of exports) {
+		container.bind(svc).toSelf().inSingletonScope();
+	}
 
 	const cfg = container.get(ConfigService).get();
 	const auth = container.get(AuthService).get();
