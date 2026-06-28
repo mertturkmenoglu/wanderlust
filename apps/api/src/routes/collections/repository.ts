@@ -33,7 +33,9 @@ export class CollectionsRepository {
 		const offset = Pagination.getOffset(data);
 
 		const result = await this.db.query.collections.findMany({
-			orderBy: (t, { desc }) => [desc(t.createdAt)],
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset,
 			limit: data.pageSize,
 		});
@@ -48,14 +50,16 @@ export class CollectionsRepository {
 
 	async getById(userId: string | null, data: dto.GetInput) {
 		const result = await this.db.query.collections.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 			with: {
 				items: {
-					orderBy: (t, { asc }) => [asc(t.index)],
+					orderBy: {
+						index: 'asc',
+					},
 					with: {
-						place: {
-							with: $includes.place,
-						},
+						place: $includes.place,
 					},
 				},
 			},
@@ -120,7 +124,9 @@ export class CollectionsRepository {
 	async appendItem(data: dto.AppendItemInput) {
 		try {
 			const collection = await this.db.query.collections.findFirst({
-				where: (t, { eq }) => eq(t.id, data.id),
+				where: {
+					id: data.id,
+				},
 			});
 
 			invariant(
@@ -130,8 +136,12 @@ export class CollectionsRepository {
 			);
 
 			const lastItem = await this.db.query.collectionItems.findFirst({
-				where: (t, { eq }) => eq(t.collectionId, data.id),
-				orderBy: (t, { desc }) => [desc(t.index)],
+				where: {
+					collectionId: data.id,
+				},
+				orderBy: {
+					index: 'desc',
+				},
 				columns: {
 					index: true,
 				},
@@ -151,16 +161,12 @@ export class CollectionsRepository {
 			invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
 
 			const item = await this.db.query.collectionItems.findFirst({
-				where: (t, { eq, and }) => {
-					return and(
-						eq(t.collectionId, result.collectionId),
-						eq(t.placeId, result.placeId),
-					);
+				where: {
+					collectionId: result.collectionId,
+					placeId: result.placeId,
 				},
 				with: {
-					place: {
-						with: $includes.place,
-					},
+					place: $includes.place,
 				},
 			});
 
@@ -215,7 +221,9 @@ export class CollectionsRepository {
 
 	async reorderItems(userId: string, data: dto.ReorderItemsInput) {
 		const collection = await this.db.query.collections.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(
@@ -225,7 +233,9 @@ export class CollectionsRepository {
 		);
 
 		const existingItems = await this.db.query.collectionItems.findMany({
-			where: (t, { eq }) => eq(t.collectionId, data.id),
+			where: {
+				collectionId: data.id,
+			},
 		});
 
 		const existingPlaceIds = existingItems.map((item) => item.placeId);
@@ -270,7 +280,9 @@ export class CollectionsRepository {
 
 	async createPlaceRelation(data: dto.CreatePlaceRelationInput) {
 		const collection = await this.db.query.collections.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(
@@ -280,14 +292,18 @@ export class CollectionsRepository {
 		);
 
 		const place = await this.db.query.places.findFirst({
-			where: (t, { eq }) => eq(t.id, data.placeId),
+			where: {
+				id: data.placeId,
+			},
 		});
 
 		invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
 
 		const existingRelation = await this.db.query.collectionsPlaces.findFirst({
-			where: (t, { and, eq }) =>
-				and(eq(t.collectionId, data.id), eq(t.placeId, data.placeId)),
+			where: {
+				collectionId: data.id,
+				placeId: data.placeId,
+			},
 		});
 
 		invariant(
@@ -297,8 +313,12 @@ export class CollectionsRepository {
 		);
 
 		const lastRelation = await this.db.query.collectionsPlaces.findFirst({
-			where: (t, { eq }) => eq(t.placeId, data.placeId),
-			orderBy: (t, { desc }) => [desc(t.index)],
+			where: {
+				placeId: data.placeId,
+			},
+			orderBy: {
+				index: 'desc',
+			},
 			columns: {
 				index: true,
 			},
@@ -351,7 +371,9 @@ export class CollectionsRepository {
 
 	async createCityRelation(data: dto.CreateCityRelationInput) {
 		const collection = await this.db.query.collections.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(
@@ -361,14 +383,18 @@ export class CollectionsRepository {
 		);
 
 		const city = await this.db.query.cities.findFirst({
-			where: (t, { eq }) => eq(t.id, data.cityId),
+			where: {
+				id: data.cityId,
+			},
 		});
 
 		invariant(city, 'NOT_FOUND', `City with id ${data.cityId} not found`);
 
 		const existingRelation = await this.db.query.collectionsCities.findFirst({
-			where: (t, { and, eq }) =>
-				and(eq(t.collectionId, data.id), eq(t.cityId, data.cityId)),
+			where: {
+				collectionId: data.id,
+				cityId: data.cityId,
+			},
 		});
 
 		invariant(
@@ -378,8 +404,12 @@ export class CollectionsRepository {
 		);
 
 		const lastRelation = await this.db.query.collectionsCities.findFirst({
-			where: (t, { eq }) => eq(t.cityId, data.cityId),
-			orderBy: (t, { desc }) => [desc(t.index)],
+			where: {
+				cityId: data.cityId,
+			},
+			orderBy: {
+				index: 'desc',
+			},
 			columns: {
 				index: true,
 			},
@@ -432,17 +462,21 @@ export class CollectionsRepository {
 
 	async listByPlaceId(userId: string | null, data: dto.ListByPlaceIdInput) {
 		const result = await this.db.query.collectionsPlaces.findMany({
-			where: (t, { eq }) => eq(t.placeId, data.placeId),
-			orderBy: (t, { asc }) => [asc(t.index)],
+			where: {
+				placeId: data.placeId,
+			},
+			orderBy: {
+				index: 'asc',
+			},
 			with: {
 				collection: {
 					with: {
 						items: {
-							orderBy: (t, { asc }) => [asc(t.index)],
+							orderBy: {
+								index: 'asc',
+							},
 							with: {
-								place: {
-									with: $includes.place,
-								},
+								place: $includes.place,
 							},
 						},
 					},
@@ -469,17 +503,21 @@ export class CollectionsRepository {
 
 	async listByCityId(userId: string | null, data: dto.ListByCityIdInput) {
 		const result = await this.db.query.collectionsCities.findMany({
-			where: (t, { eq }) => eq(t.cityId, data.cityId),
-			orderBy: (t, { asc }) => [asc(t.index)],
+			where: {
+				cityId: data.cityId,
+			},
+			orderBy: {
+				index: 'asc',
+			},
 			with: {
 				collection: {
 					with: {
 						items: {
-							orderBy: (t, { asc }) => [asc(t.index)],
+							orderBy: {
+								index: 'asc',
+							},
 							with: {
-								place: {
-									with: $includes.place,
-								},
+								place: $includes.place,
 							},
 						},
 					},

@@ -1,7 +1,7 @@
 import type { cities as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 
@@ -21,28 +21,35 @@ export class CitiesRepository {
 
 	async listFeatured() {
 		return this.db.query.cities.findMany({
-			where: (t) =>
-				inArray(t.id, [
-					1106, // Salzburg
-					1108, // Vienna
-					1109, // Istanbul
-					2300, // Athens
-					3012, // Rome
-					3014, // Turin
-					3015, // Florence
-					3016, // Venice
-					4010, // Prague
-					5010, // Amsterdam
-					6010, // Paris
-					7010, // Barcelona
-				]),
-			orderBy: (t, { asc }) => asc(t.name),
+			where: {
+				id: {
+					in: [
+						1106, // Salzburg
+						1108, // Vienna
+						1109, // Istanbul
+						2300, // Athens
+						3012, // Rome
+						3014, // Turin
+						3015, // Florence
+						3016, // Venice
+						4010, // Prague
+						5010, // Amsterdam
+						6010, // Paris
+						7010, // Barcelona
+					],
+				},
+			},
+			orderBy: {
+				name: 'asc',
+			},
 		});
 	}
 
 	async get(data: dto.GetInput) {
 		const city = await this.db.query.cities.findFirst({
-			where: (t) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(city, 'NOT_FOUND', `City with ID ${data.id} not found`);

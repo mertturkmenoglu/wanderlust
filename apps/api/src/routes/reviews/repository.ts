@@ -21,11 +21,11 @@ export class ReviewsRepository {
 
 	async get(data: dto.GetInput) {
 		const result = await this.db.query.reviews.findFirst({
-			where: (reviews, { eq }) => eq(reviews.id, data.id),
+			where: {
+				id: data.id,
+			},
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 				user: {
 					columns: {
 						id: true,
@@ -79,7 +79,9 @@ export class ReviewsRepository {
 				.where(eq(schema.places.id, data.placeId));
 
 			const res = await tx.query.reviews.findFirst({
-				where: (reviews, { eq }) => eq(reviews.id, review.id),
+				where: {
+					id: review.id,
+				},
 				with: {
 					assets: true,
 					user: {
@@ -100,7 +102,9 @@ export class ReviewsRepository {
 			);
 
 			const place = await tx.query.places.findFirst({
-				where: (t, { eq }) => eq(t.id, review.placeId),
+				where: {
+					id: review.placeId,
+				},
 			});
 
 			invariant(place, 'INTERNAL_SERVER_ERROR', 'Failed to retrieve the place');
@@ -154,7 +158,9 @@ export class ReviewsRepository {
 		const offset = Pagination.getOffset(data);
 
 		const user = await this.db.query.users.findFirst({
-			where: (users, { eq }) => eq(users.username, data.username),
+			where: {
+				username: data.username,
+			},
 		});
 
 		invariant(
@@ -164,11 +170,11 @@ export class ReviewsRepository {
 		);
 
 		const result = await this.db.query.reviews.findMany({
-			where: (reviews, { eq }) => eq(reviews.userId, user.id),
+			where: {
+				userId: user.id,
+			},
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 				user: {
 					columns: {
 						id: true,
@@ -179,7 +185,9 @@ export class ReviewsRepository {
 				},
 				assets: true,
 			},
-			orderBy: (reviews, { desc }) => desc(reviews.createdAt),
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset,
 			limit: data.pageSize,
 		});
@@ -201,12 +209,13 @@ export class ReviewsRepository {
 		const max = data.maxRating || 5;
 
 		const result = await this.db.query.reviews.findMany({
-			where: (reviews, { eq, and, gt, lte }) =>
-				and(
-					eq(reviews.placeId, data.id),
-					gt(reviews.rating, min),
-					lte(reviews.rating, max),
-				),
+			where: {
+				placeId: data.id,
+				rating: {
+					gt: min,
+					lte: max,
+				},
+			},
 			with: {
 				user: {
 					columns: {
@@ -279,8 +288,10 @@ export class ReviewsRepository {
 
 	async listAssetsByPlaceId(data: dto.ListAssetsByPlaceIdInput) {
 		const result = await this.db.query.assets.findMany({
-			where: (assets, { eq, and }) =>
-				and(eq(assets.entityId, data.id), eq(assets.entityType, 'review')),
+			where: {
+				entityId: data.id,
+				entityType: 'review',
+			},
 		});
 
 		return {

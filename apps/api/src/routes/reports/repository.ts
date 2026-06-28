@@ -17,7 +17,9 @@ export class ReportsRepository {
 
 	private async isAdmin(userId: string): Promise<boolean> {
 		const user = await this.db.query.users.findFirst({
-			where: (users, { eq }) => eq(users.id, userId),
+			where: {
+				id: userId,
+			},
 		});
 
 		return user?.role === 'admin';
@@ -25,7 +27,9 @@ export class ReportsRepository {
 
 	async get(userId: string, data: dto.GetInput) {
 		const report = await this.db.query.reports.findFirst({
-			where: (reports, { eq }) => eq(reports.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(report, 'NOT_FOUND', `Report with id ${data.id} not found`);

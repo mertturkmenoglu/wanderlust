@@ -31,8 +31,12 @@ export class ListsRepository {
 		const offset = Pagination.getOffset(data);
 
 		const result = await this.db.query.lists.findMany({
-			where: (t, { eq }) => eq(t.userId, userId),
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			where: {
+				userId: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset: offset,
 			limit: data.pageSize,
 			with: {
@@ -62,7 +66,9 @@ export class ListsRepository {
 		const offset = Pagination.getOffset(data);
 
 		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+			where: {
+				username: data.username,
+			},
 		});
 
 		invariant(
@@ -72,9 +78,13 @@ export class ListsRepository {
 		);
 
 		const result = await this.db.query.lists.findMany({
-			where: (t, { eq, and }) =>
-				and(eq(t.userId, user.id), eq(t.isPublic, true)),
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			where: {
+				userId: user.id,
+				isPublic: true,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset: offset,
 			limit: data.pageSize,
 			with: {
@@ -102,7 +112,9 @@ export class ListsRepository {
 
 	async get(userId: string, data: dto.GetInput) {
 		const result = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 			with: {
 				user: {
 					columns: {
@@ -115,9 +127,7 @@ export class ListsRepository {
 				items: {
 					orderBy: (t, { asc }) => asc(t.index),
 					with: {
-						place: {
-							with: $includes.place,
-						},
+						place: $includes.place,
 					},
 				},
 			},
@@ -149,7 +159,9 @@ export class ListsRepository {
 
 	async checkStatus(userId: string, data: dto.CheckStatusInput) {
 		const listIds = await this.db.query.lists.findMany({
-			where: (t, { eq }) => eq(t.userId, userId),
+			where: {
+				userId: userId,
+			},
 			columns: {
 				id: true,
 				name: true,
@@ -157,14 +169,12 @@ export class ListsRepository {
 		});
 
 		const statuses = await this.db.query.listItems.findMany({
-			where: (t, { eq, and, inArray }) =>
-				and(
-					eq(t.placeId, data.placeId),
-					inArray(
-						t.listId,
-						listIds.map((l) => l.id),
-					),
-				),
+			where: {
+				placeId: data.placeId,
+				listId: {
+					in: listIds.map((l) => l.id),
+				},
+			},
 			columns: {
 				listId: true,
 			},
@@ -206,7 +216,9 @@ export class ListsRepository {
 		invariant(result, 'INTERNAL_SERVER_ERROR', 'No list returned');
 
 		const list = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, result.id),
+			where: {
+				id: result.id,
+			},
 			with: {
 				user: {
 					columns: {
@@ -232,7 +244,9 @@ export class ListsRepository {
 
 	async update(userId: string, data: dto.UpdateInput) {
 		const existing = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
@@ -257,7 +271,9 @@ export class ListsRepository {
 		invariant(updated, 'INTERNAL_SERVER_ERROR', 'No list returned');
 
 		const list = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, updated.id),
+			where: {
+				id: updated.id,
+			},
 			with: {
 				user: {
 					columns: {
@@ -283,7 +299,9 @@ export class ListsRepository {
 
 	async _delete(userId: string, data: dto.DeleteInput) {
 		const existing = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
@@ -301,7 +319,9 @@ export class ListsRepository {
 
 	async appendItem(userId: string, data: dto.AppendItemInput) {
 		const existing = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
@@ -315,7 +335,9 @@ export class ListsRepository {
 		);
 
 		let lastIndex = await this.db.query.listItems.findFirst({
-			where: (t, { eq }) => eq(t.listId, data.id),
+			where: {
+				listId: data.id,
+			},
 			orderBy: (t, { desc }) => desc(t.index),
 			columns: {
 				index: true,
@@ -344,12 +366,12 @@ export class ListsRepository {
 		invariant(result, 'INTERNAL_SERVER_ERROR', 'No list item returned');
 
 		const listItem = await this.db.query.listItems.findFirst({
-			where: (t, { eq }) =>
-				and(eq(t.listId, result.listId), eq(t.placeId, result.placeId)),
+			where: {
+				listId: result.listId,
+				placeId: result.placeId,
+			},
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 			},
 		});
 
@@ -366,7 +388,9 @@ export class ListsRepository {
 
 	async updateItems(userId: string, data: dto.UpdateItemsInput) {
 		const list = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
@@ -404,7 +428,9 @@ export class ListsRepository {
 		});
 
 		const updatedList = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 			with: {
 				user: {
 					columns: {
@@ -430,7 +456,9 @@ export class ListsRepository {
 
 	async removeItem(userId: string, data: dto.RemoveItemInput) {
 		const list = await this.db.query.lists.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
+			where: {
+				id: data.id,
+			},
 		});
 
 		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);

@@ -20,7 +20,9 @@ export class PreferencesRepository {
 		tx: Tx,
 	): Promise<dto.GetOutput['preferences'] | undefined> {
 		return tx.query.preferences.findFirst({
-			where: (t, { eq }) => eq(t.userId, userId),
+			where: {
+				userId: userId,
+			},
 		});
 	}
 

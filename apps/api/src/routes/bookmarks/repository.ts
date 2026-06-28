@@ -42,14 +42,16 @@ export class BookmarksRepository {
 		const offset = Pagination.getOffset(data);
 
 		const bookmarks = await this.db.query.bookmarks.findMany({
-			where: (t, { eq }) => eq(t.userId, userId),
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			where: {
+				userId: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset,
 			limit: data.pageSize,
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 			},
 		});
 

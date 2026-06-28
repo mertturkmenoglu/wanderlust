@@ -30,8 +30,10 @@ export class TripsRepository {
 		const db = options?.tx ?? this.db;
 
 		const res = await db.query.trips.findFirst({
-			where: (t, { eq }) => eq(t.id, data.id),
-			with: $includes.trip,
+			where: {
+				id: data.id,
+			},
+			with: $includes.trip.with,
 		});
 
 		invariant(res, 'NOT_FOUND', `Trip with id ${data.id} not found`);
@@ -51,8 +53,10 @@ export class TripsRepository {
 
 	async listInvites(_userId: string, data: dto.ListInvitesInput) {
 		const result = await this.db.query.tripInvites.findMany({
-			where: (t, { eq }) => eq(t.tripId, data.id),
-			with: $includes.tripInvite,
+			where: {
+				tripId: data.id,
+			},
+			with: $includes.tripInvite.with,
 		});
 
 		return result;
@@ -65,8 +69,10 @@ export class TripsRepository {
 	) {
 		const result = await this.db.transaction(async (tx) => {
 			const inv = await tx.query.tripInvites.findFirst({
-				where: (t, { and, eq }) =>
-					and(eq(t.tripId, data.id), eq(t.toId, data.toUserId)),
+				where: {
+					tripid: data.id,
+					toId: data.toUserId,
+				},
 			});
 
 			invariant(
@@ -98,8 +104,10 @@ export class TripsRepository {
 			);
 
 			const invite = await tx.query.tripInvites.findFirst({
-				where: (t, { eq }) => eq(t.id, newInv.id),
-				with: $includes.tripInvite,
+				where: {
+					id: newInv.id,
+				},
+				with: $includes.tripInvite.with,
 			});
 
 			invariant(
@@ -140,9 +148,15 @@ export class TripsRepository {
 		const ids = Array.from(new Set(idsResult.map((r) => r.id)));
 
 		const trips = await this.db.query.trips.findMany({
-			where: (t, { inArray }) => inArray(t.id, ids),
-			with: $includes.trip,
-			orderBy: (t, { desc }) => [desc(t.createdAt)],
+			where: {
+				id: {
+					in: ids,
+				},
+			},
+			with: $includes.trip.with,
+			orderBy: {
+				createdAt: 'desc',
+			},
 		});
 
 		const [countResult] = await this.db
@@ -179,11 +193,15 @@ export class TripsRepository {
 		const offset = Pagination.getOffset(data);
 
 		const result = await this.db.query.tripInvites.findMany({
-			where: (t, { eq }) => eq(t.toId, userId),
+			where: {
+				toId: userId,
+			},
+			orderBy: {
+				sentAt: 'desc',
+			},
 			offset: offset,
 			limit: data.pageSize,
-			orderBy: (t, { desc }) => [desc(t.sentAt)],
-			with: $includes.tripInvite,
+			with: $includes.tripInvite.with,
 		});
 
 		const totalRecords = await this.db.$count(
@@ -235,9 +253,11 @@ export class TripsRepository {
 
 	async getInviteDetails(userId: string, data: dto.GetInviteDetailsInput) {
 		const result = await this.db.query.tripInvites.findFirst({
-			where: (t, { eq, and }) =>
-				and(eq(t.id, data.inviteId), eq(t.toId, userId)),
-			with: $includes.tripInviteDetails,
+			where: {
+				id: data.inviteId,
+				toId: userId,
+			},
+			with: $includes.tripInviteDetails.with,
 		});
 
 		invariant(
@@ -358,11 +378,15 @@ export class TripsRepository {
 		const offset = Pagination.getOffset(data);
 
 		const result = await this.db.query.tripComments.findMany({
-			where: (t, { eq }) => eq(t.tripId, data.id),
-			orderBy: (t, { desc }) => [desc(t.createdAt)],
+			where: {
+				tripId: data.id,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset: offset,
 			limit: data.pageSize,
-			with: $includes.tripComment,
+			with: $includes.tripComment.with,
 		});
 
 		const totalRecords = await this.db.$count(
@@ -387,8 +411,10 @@ export class TripsRepository {
 
 	async getComment(commentId: string) {
 		const result = await this.db.query.tripComments.findFirst({
-			where: (t, { eq }) => eq(t.id, commentId),
-			with: $includes.tripComment,
+			where: {
+				id: commentId,
+			},
+			with: $includes.tripComment.with,
 		});
 
 		invariant(result, 'NOT_FOUND', `Comment with id ${commentId} not found`);
@@ -512,14 +538,18 @@ export class TripsRepository {
 
 	async createLocation(userId: string, data: dto.CreateLocationInput) {
 		const place = await this.db.query.places.findFirst({
-			where: (p, { eq }) => eq(p.id, data.placeId),
+			where: {
+				id: data.placeId,
+			},
 		});
 
 		invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
 
 		const existing = await this.db.query.tripLocations.findFirst({
-			where: (t, { and, eq }) =>
-				and(eq(t.tripId, data.id), eq(t.placeId, data.placeId)),
+			where: {
+				tripId: data.id,
+				placeId: data.placeId,
+			},
 		});
 
 		invariant(
@@ -552,11 +582,11 @@ export class TripsRepository {
 
 	async getLocation(userId: string, id: string) {
 		const location = await this.db.query.tripLocations.findFirst({
-			where: (t, { eq }) => eq(t.id, id),
+			where: {
+				id: id,
+			},
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 			},
 		});
 

@@ -49,13 +49,17 @@ export class AggregatorRepository {
 	private async getFeatured() {
 		try {
 			const result = await this.db.query.places.findMany({
-				where: (t, { ne }) => ne(t.totalVotes, 0),
+				where: {
+					NOT: {
+						totalVotes: 0,
+					},
+				},
 				orderBy: (t, { desc }) => [
 					sql`(${t.totalPoints} / ${t.totalVotes}) DESC`,
 					desc(t.totalVotes),
 				],
 				limit: 25,
-				with: $includes.place,
+				with: $includes.place.with,
 			});
 
 			return result;
@@ -72,7 +76,7 @@ export class AggregatorRepository {
 			const result = await this.db.query.places.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalVotes)],
 				limit: 25,
-				with: $includes.place,
+				with: $includes.place.with,
 			});
 
 			return result;
@@ -89,7 +93,7 @@ export class AggregatorRepository {
 			const result = await this.db.query.places.findMany({
 				orderBy: (t, { desc }) => [desc(t.createdAt)],
 				limit: 25,
-				with: $includes.place,
+				with: $includes.place.with,
 			});
 
 			return result;
@@ -106,7 +110,7 @@ export class AggregatorRepository {
 			const result = await this.db.query.places.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalFavorites)],
 				limit: 25,
-				with: $includes.place,
+				with: $includes.place.with,
 			});
 
 			return result;

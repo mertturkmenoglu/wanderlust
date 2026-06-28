@@ -6,7 +6,7 @@ import {
 	DatabaseService,
 	type TDatabaseService,
 } from '@wanderlust/db';
-import { and, eq, ilike, or } from 'drizzle-orm';
+import { eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 
@@ -20,8 +20,10 @@ export class PlacesRepository {
 
 	async get(data: dto.GetInput) {
 		const place = await this.db.query.places.findFirst({
-			where: (t) => eq(t.id, data.id),
-			with: $includes.place,
+			where: {
+				id: data.id,
+			},
+			with: $includes.place.with,
 		});
 
 		invariant(place, 'NOT_FOUND', `Place with ID ${data.id} not found`);
@@ -31,7 +33,10 @@ export class PlacesRepository {
 
 	async isFavorite(placeId: string, userId: string): Promise<boolean> {
 		const fav = await this.db.query.favorites.findFirst({
-			where: (t) => and(eq(t.placeId, placeId), eq(t.userId, userId)),
+			where: {
+				placeId: placeId,
+				userId: userId,
+			},
 		});
 
 		return fav !== undefined;
@@ -39,7 +44,10 @@ export class PlacesRepository {
 
 	async isBookmarked(placeId: string, userId: string): Promise<boolean> {
 		const bookmark = await this.db.query.bookmarks.findFirst({
-			where: (t) => and(eq(t.placeId, placeId), eq(t.userId, userId)),
+			where: {
+				placeId: placeId,
+				userId: userId,
+			},
 		});
 
 		return bookmark !== undefined;
@@ -47,10 +55,12 @@ export class PlacesRepository {
 
 	async peek() {
 		const place = await this.db.query.places.findMany({
-			with: $includes.place,
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset: 0,
 			limit: 25,
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			with: $includes.place.with,
 		});
 
 		return place;
@@ -126,15 +136,24 @@ export class PlacesRepository {
 		data: dto.SearchAddressesInput,
 	): Promise<dto.SearchAddressesOutput> {
 		const addresses = await this.db.query.addresses.findMany({
-			where: (t, { ilike, or }) =>
-				or(
-					ilike(t.line1, `%${data.query}%`),
-					ilike(t.line2, `%${data.query}%`),
-					ilike(t.postalCode, `%${data.query}%`),
-				),
+			where: {
+				OR: [
+					{
+						line1: { ilike: `%${data.query}%` },
+					},
+					{
+						line2: { ilike: `%${data.query}%` },
+					},
+					{
+						postalCode: { ilike: `%${data.query}%` },
+					},
+				],
+			},
+			orderBy: {
+				id: 'desc',
+			},
 			offset: 0,
 			limit: 30,
-			orderBy: (t, { desc }) => desc(t.id),
 		});
 
 		const totalRecords = await this.db.$count(

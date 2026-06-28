@@ -38,7 +38,9 @@ export class FavoritesRepository {
 				.where(eq(schema.places.id, data.placeId));
 
 			const place = await tx.query.places.findFirst({
-				where: (t, { eq }) => eq(t.id, data.placeId),
+				where: {
+					id: data.placeId,
+				},
 			});
 
 			invariant(place, 'NOT_FOUND', `Place with ID ${data.placeId} not found`);
@@ -53,14 +55,16 @@ export class FavoritesRepository {
 		const offset = Pagination.getOffset(data);
 
 		const favorites = await this.db.query.favorites.findMany({
-			where: (t, { eq }) => eq(t.userId, userId),
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			where: {
+				userId: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset,
 			limit: data.pageSize,
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 			},
 		});
 
@@ -103,20 +107,28 @@ export class FavoritesRepository {
 		const offset = Pagination.getOffset(data);
 
 		const user = await this.db.query.users.findFirst({
-			where: (t, { eq }) => eq(t.username, data.username),
+			where: {
+				username: data.username,
+			},
 		});
 
-		invariant(user, 'NOT_FOUND', `User with username ${data.username} not found`);
+		invariant(
+			user,
+			'NOT_FOUND',
+			`User with username ${data.username} not found`,
+		);
 
 		const favorites = await this.db.query.favorites.findMany({
-			where: (t, { eq }) => eq(t.userId, user.id),
-			orderBy: (t, { desc }) => desc(t.createdAt),
+			where: {
+				userId: user.id,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
 			offset,
 			limit: data.pageSize,
 			with: {
-				place: {
-					with: $includes.place,
-				},
+				place: $includes.place,
 			},
 		});
 
