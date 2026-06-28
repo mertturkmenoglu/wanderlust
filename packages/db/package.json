@@ -4,14 +4,13 @@
 	"private": true,
 	"scripts": {
 		"check-types": "tsc --noEmit",
-		"build-types": "tsc --build"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch"
 	},
 	"exports": {
 		".": {
-			"default": "./src/index.ts"
-		},
-		"./*": {
-			"default": "./src/*.ts"
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
 		}
 	},
 	"dependencies": {
@@ -23,6 +22,7 @@
 	},
 	"devDependencies": {
 		"typescript": "catalog:",
-		"@types/pg": "catalog:"
+		"@types/pg": "catalog:",
+		"tsdown": "catalog:"
 	}
 }

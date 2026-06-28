@@ -9,12 +9,23 @@
 		"jsx": "react-jsx",
 		"jsxImportSource": "react"
 	},
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist"],
+	"references": [
+		{
+			"path": "../config"
+		},
+		{
+			"path": "../email"
+		},
+		{
+			"path": "../db"
+		},
+		{
+			"path": "../cache"
+		},
+		{
+			"path": "../common"
+		}
 	]
 }

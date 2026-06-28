@@ -9,12 +9,6 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"references": [
-		{ "path": "../../packages/common" },
-		{ "path": "../../packages/config" },
-		{ "path": "../../packages/db" },
-		{ "path": "../../packages/uid" }
-	],
 	"include": ["src/**/*.ts", "src/**/*.tsx"],
 	"exclude": ["node_modules", "dist"]
 }

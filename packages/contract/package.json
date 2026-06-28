@@ -4,14 +4,14 @@
 	"private": true,
 	"scripts": {
 		"check-types": "tsc --noEmit",
-		"build-types": "tsc --build"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"build": "tsdown"
 	},
 	"exports": {
 		".": {
-			"default": "./src/index.ts"
-		},
-		"./*": {
-			"default": "./src/*.ts"
+			"types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
 		}
 	},
 	"dependencies": {
@@ -20,6 +20,10 @@
 		"@orpc/contract": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"tsdown": "catalog:"
+	},
+	"peerDependencies": {
+		"drizzle-orm": "catalog:"
 	}
 }

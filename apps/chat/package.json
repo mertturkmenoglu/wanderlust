@@ -9,7 +9,8 @@
 		"start": "NODE_ENV=production bun run dist/index.js",
 		"test": "bun test",
 		"check-types": "tsc --noEmit",
-		"build-types": "tsc --build"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch"
 	},
 	"dependencies": {
 		"@orpc/client": "catalog:",

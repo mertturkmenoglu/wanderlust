@@ -18,12 +18,6 @@
 			"@/*": [
 				"./src/*"
 			],
-			"@wanderlust/ui/*": [
-				"../../packages/ui/src/*"
-			],
-			"@wanderlust/notifications/*": [
-				"../../apps/notifications/src/*"
-			]
 		},
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true

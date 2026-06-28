@@ -7,55 +7,25 @@
 		"declarationMap": true,
 		"sourceMap": true,
 		"paths": {
-			"@/*": [
-				"./src/*"
-			]
+			"@/*": ["./src/*"]
 		},
 		"jsx": "react-jsx",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
+	"include": ["src/**/*.ts", "src/**/*.tsx"],
+	"exclude": ["node_modules", "dist"],
 	"references": [
-		{
-			"path": "../../packages/auth"
-		},
-		{
-			"path": "../../packages/cache"
-		},
-		{
-			"path": "../../packages/common"
-		},
-		{
-			"path": "../../packages/config"
-		},
-		{
-			"path": "../../packages/db"
-		},
-		{
-			"path": "../../packages/email"
-		},
-		{
-			"path": "../../packages/jobs"
-		},
-		{
-			"path": "../../packages/search"
-		},
-		{
-			"path": "../../packages/storage"
-		},
-		{
-			"path": "../../packages/uid"
-		},
-		{
-			"path": "../../packages/contract"
-		}
-	],
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.tsx",
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
+		{ "path": "../../packages/auth" },
+		{ "path": "../../packages/cache" },
+		{ "path": "../../packages/common" },
+		{ "path": "../../packages/config" },
+		{ "path": "../../packages/contract" },
+		{ "path": "../../packages/db" },
+		{ "path": "../../packages/email" },
+		{ "path": "../../packages/jobs" },
+		{ "path": "../../packages/search" },
+		{ "path": "../../packages/storage" },
+		{ "path": "../../packages/uid" }
 	]
 }

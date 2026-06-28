@@ -16,7 +16,8 @@
 		"db:migrate": "bunx --bun drizzle-kit migrate",
 		"search": "bun run src/scripts/search/index.ts",
 		"clean": "bun run src/scripts/clean.ts",
-		"build-types": "tsdown"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch"
 	},
 	"dependencies": {
 		"@orpc/client": "catalog:",

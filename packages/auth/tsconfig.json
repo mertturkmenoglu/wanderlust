@@ -16,5 +16,22 @@
 	"exclude": [
 		"node_modules",
 		"dist"
+	],
+	"references": [
+		{
+			"path": "../db"
+		},
+		{
+			"path": "../config"
+		},
+		{
+			"path": "../uid"
+		},
+		{
+			"path": "../jobs"
+		},
+		{
+			"path": "../cache"
+		}
 	]
 }

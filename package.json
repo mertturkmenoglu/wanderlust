@@ -22,7 +22,6 @@
 			"pg": "^8.20.0",
 			"@types/pg": "^8.20.0",
 			"typescript": "^6.0.3",
-			"@types/bun": "^1.3.13",
 			"@types/react": "^19.2.14",
 			"@types/react-dom": "^19.2.3",
 			"react": "^19.2.6",
@@ -37,7 +36,11 @@
 			"ioredis": "^5.10.1",
 			"superjson": "^2.2.5",
 			"tiny-invariant": "^1.3.3",
-			"typesense": "^3.0.6"
+			"typesense": "^3.0.6",
+			"rolldown": "^1.1.3",
+			"tsdown": "^0.22.0",
+			"bun": "^1.3.14",
+			"@types/bun": "^1.3.14"
 		}
 	},
 	"scripts": {
@@ -45,12 +48,15 @@
 		"dev": "turbo dev",
 		"cli": "bun run --cwd ./apps/cli cli",
 		"build": "turbo build",
+		"build-types": "turbo build-types",
+		"build-types:watch": "turbo build-types:watch",
 		"check-types": "turbo check-types"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.14",
-		"@types/bun": "^1.3.13",
-		"turbo": "^2.9.16"
+		"@types/bun": "catalog:",
+		"turbo": "^2.9.16",
+		"tsdown": "catalog:"
 	},
-	"packageManager": "bun@1.3.0"
+	"packageManager": "bun@1.3.14"
 }

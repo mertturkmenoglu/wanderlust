@@ -9,12 +9,11 @@
 		"declarationMap": true,
 		"sourceMap": true
 	},
-	"include": [
-		"emails/**/*.ts",
-		"emails/**/*.tsx"
-	],
-	"exclude": [
-		"node_modules",
-		"dist"
+	"include": ["emails/**/*.ts", "emails/**/*.tsx"],
+	"exclude": ["node_modules", "dist"],
+	"references": [
+		{
+			"path": "../config"
+		}
 	]
 }

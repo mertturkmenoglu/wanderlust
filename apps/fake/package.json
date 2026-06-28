@@ -6,7 +6,8 @@
 	"scripts": {
 		"fake": "bun run src/index.ts",
 		"check-types": "tsc --noEmit",
-		"build-types": "tsc --build"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.4.0",
@@ -23,7 +24,8 @@
 		"p-limit": "^7.3.0",
 		"pg": "catalog:",
 		"piscina": "^5.1.4",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"bun": "catalog:"
 	},
 	"devDependencies": {
 		"@types/pg": "catalog:",

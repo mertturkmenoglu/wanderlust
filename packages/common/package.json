@@ -4,14 +4,13 @@
 	"private": true,
 	"scripts": {
 		"check-types": "tsc --noEmit",
-		"build-types": "tsc --build"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch"
 	},
 	"exports": {
 		".": {
-			"default": "./src/index.ts"
-		},
-		"./*": {
-			"default": "./src/*.ts"
+			"types": "./dist/index.d.mts",
+			"import": "./dist/index.mjs"
 		}
 	},
 	"dependencies": {
@@ -20,6 +19,7 @@
 		"@wanderlust/db": "workspace:*"
 	},
 	"devDependencies": {
-		"typescript": "catalog:"
+		"typescript": "catalog:",
+		"tsdown": "catalog:"
 	}
 }

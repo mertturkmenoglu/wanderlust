@@ -1,6 +1,7 @@
 {
 	"$schema": "https://v2-9-16.turborepo.dev/schema.json",
 	"ui": "tui",
+	"concurrency": "30",
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
@@ -9,7 +10,27 @@
 		},
 		"build-types": {
 			"dependsOn": ["^build-types"],
-			"inputs": ["src/**/*.ts", "src/**/*.tsx", "emails/**/*.ts", "emails/**/*.tsx", "tsconfig.json", "tsconfig*.json"],
+			"inputs": [
+				"src/**/*.ts",
+				"src/**/*.tsx",
+				"emails/**/*.ts",
+				"emails/**/*.tsx",
+				"tsconfig.json",
+				"tsconfig*.json"
+			],
+			"outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map", "*.tsbuildinfo"]
+		},
+		"build-types:watch": {
+			"cache": false,
+			"persistent": true,
+			"inputs": [
+				"src/**/*.ts",
+				"src/**/*.tsx",
+				"emails/**/*.ts",
+				"emails/**/*.tsx",
+				"tsconfig.json",
+				"tsconfig*.json"
+			],
 			"outputs": ["dist/**/*.d.ts", "dist/**/*.d.ts.map", "*.tsbuildinfo"]
 		},
 		"lint": {

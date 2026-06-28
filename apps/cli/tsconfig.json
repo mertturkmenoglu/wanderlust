@@ -15,35 +15,6 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"references": [
-		{
-			"path": "../../packages/auth"
-		},
-		{
-			"path": "../../packages/cache"
-		},
-		{
-			"path": "../../packages/common"
-		},
-		{
-			"path": "../../packages/config"
-		},
-		{
-			"path": "../../packages/db"
-		},
-		{
-			"path": "../../packages/jobs"
-		},
-		{
-			"path": "../../packages/search"
-		},
-		{
-			"path": "../../packages/uid"
-		},
-		{
-			"path": "../../packages/storage"
-		}
-	],
 	"include": [
 		"src/**/*.ts",
 		"src/**/*.tsx"

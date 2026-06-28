@@ -9,7 +9,8 @@
 		"start": "NODE_ENV=production bun run dist/index.js",
 		"test": "bun test",
 		"check-types": "tsc --noEmit",
-		"build-types": "tsc --build"
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch"
 	},
 	"dependencies": {
 		"@drizzle-team/brocli": "^0.12.0",
@@ -26,7 +27,8 @@
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
 		"typesense": "catalog:",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"bun": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
