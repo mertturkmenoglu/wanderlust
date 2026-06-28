@@ -1,5 +1,5 @@
+import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
-import * as schema from '@wanderlust/db/schema';
 import { inject, injectable } from 'inversify';
 import type * as dto from './dto';
 
@@ -42,10 +42,12 @@ export class ChatRepository {
 			},
 		});
 
-		const directChats = chats.filter((chat) => chat.type === 'direct' && chat.directKey !== null).map((ch) => ({
-			directKey: ch.directKey,
-			otherUserId: ch.directKey?.split(':').find((id) => id !== userId) ?? '',
-		}));
+		const directChats = chats
+			.filter((chat) => chat.type === 'direct' && chat.directKey !== null)
+			.map((ch) => ({
+				directKey: ch.directKey,
+				otherUserId: ch.directKey?.split(':').find((id) => id !== userId) ?? '',
+			}));
 
 		const otherUsers = await this.db.query.users.findMany({
 			where: (t, { inArray }) =>
@@ -61,11 +63,13 @@ export class ChatRepository {
 			},
 		});
 
-
 		return chats.map((chat) => {
 			if (chat.type === 'direct' && chat.directKey !== null) {
-				const otherUserId = chat.directKey.split(':').find((id) => id !== userId);
-				const otherUser = otherUsers.find((user) => user.id === otherUserId) ?? null;
+				const otherUserId = chat.directKey
+					.split(':')
+					.find((id) => id !== userId);
+				const otherUser =
+					otherUsers.find((user) => user.id === otherUserId) ?? null;
 
 				return {
 					...chat,
@@ -194,7 +198,10 @@ export class ChatRepository {
 		return chat;
 	}
 
-	async hasDirectChat(userId: string, otherUserId: string): Promise<dto.HasDirectChatOutput['hasDirectChat']> {
+	async hasDirectChat(
+		userId: string,
+		otherUserId: string,
+	): Promise<dto.HasDirectChatOutput['hasDirectChat']> {
 		const directKey = [userId, otherUserId].toSorted().join(':');
 		const existingChat = await this.db.query.chats.findFirst({
 			where: (t, { eq }) => eq(t.directKey, directKey),

@@ -4,7 +4,6 @@ import * as bookmarks from './bookmarks';
 import * as categories from './categories';
 import * as cities from './cities';
 import * as collections from './collections';
-import * as events from './events';
 import * as favorites from './favorites';
 import * as health from './health';
 import * as lists from './lists';
@@ -22,7 +21,6 @@ export type AppRouter = {
 	categories: categories.Contract;
 	cities: cities.Contract;
 	collections: collections.Contract;
-	events: events.Contract;
 	favorites: favorites.Contract;
 	health: health.Contract;
 	lists: lists.Contract;
@@ -41,7 +39,6 @@ export {
 	categories,
 	cities,
 	collections,
-	events,
 	favorites,
 	health,
 	lists,

@@ -1,7 +1,7 @@
 import type { TRedisService } from '@wanderlust/cache';
 import { $insert } from '@wanderlust/common';
 import type { TDatabaseService } from '@wanderlust/db';
-import * as schema from '@wanderlust/db/schema';
+import * as schema from '@wanderlust/db';
 import { Queue, Worker } from 'bullmq';
 import z from 'zod';
 
@@ -29,8 +29,13 @@ export function initNotificationJobs(
 				case 'create-notification': {
 					const data = job.data;
 					await db.insert(schema.notifications).values({
-						...data,
-						createdAt: undefined,
+						entityId: data.entityId,
+						entityType: data.entityType,
+						id: data.id,
+						recipientId: data.recipientId,
+						type: data.type,
+						data: data.data,
+						createdAt: new Date(),
 					});
 
 					break;

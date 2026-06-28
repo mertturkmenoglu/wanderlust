@@ -1,8 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
 import { $insert } from '@wanderlust/common';
 import { ConfigService } from '@wanderlust/config';
+import * as schema from '@wanderlust/db';
 import { DatabaseService } from '@wanderlust/db';
-import * as schema from '@wanderlust/db/schema';
 import { JobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { and, eq } from 'drizzle-orm';

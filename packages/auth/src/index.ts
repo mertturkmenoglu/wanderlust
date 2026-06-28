@@ -1,7 +1,7 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { ConfigService, type TConfigService } from '@wanderlust/config';
+import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
-import * as schema from '@wanderlust/db/schema';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { betterAuth } from 'better-auth';

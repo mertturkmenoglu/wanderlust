@@ -10,7 +10,7 @@ const placeWithMeta = z.object({
 	meta: z.object({
 		isFavorite: z.boolean(),
 	}),
-})
+});
 
 export const homeOutput = z.object({
 	new: placeWithMeta.array(),

@@ -1,7 +1,14 @@
-import { createORPCClient, type InferClientInputs, type InferClientOutputs } from '@orpc/client';
+import { createORPCClient } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
-import type { ContractRouterClient } from '@orpc/contract';
-import { createTanstackQueryUtils } from '@orpc/tanstack-query';
+import type {
+	ContractRouterClient,
+	InferContractRouterInputs,
+	InferContractRouterOutputs,
+} from '@orpc/contract';
+import {
+	createTanstackQueryUtils,
+	type RouterUtils,
+} from '@orpc/tanstack-query';
 import type { AppRouter } from '@wanderlust/contract';
 
 export const link = new RPCLink({
@@ -16,8 +23,9 @@ export const link = new RPCLink({
 
 export const client: ContractRouterClient<AppRouter> = createORPCClient(link);
 
-export const orpc = createTanstackQueryUtils(client);
+export const orpc: RouterUtils<typeof client> =
+	createTanstackQueryUtils(client);
 
-export type Inputs = InferClientInputs<typeof client>;
+export type Inputs = InferContractRouterInputs<AppRouter>;
 
-export type Outputs = InferClientOutputs<typeof client>;
+export type Outputs = InferContractRouterOutputs<AppRouter>;
