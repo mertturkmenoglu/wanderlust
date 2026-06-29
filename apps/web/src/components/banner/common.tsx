@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { cn } from '@wanderlust/ui/lib/utils';
 import { ChevronRightIcon } from 'lucide-react';
+import { ipx } from '@/lib/ipx';
 import { ActionBanner, type ActionBannerProps } from './action';
 import BentoGrid, { type BentoGridProps } from './bento';
 import { GradientBanner, type GradientBannerProps } from './gradient';
@@ -95,6 +97,43 @@ export function NearbyLocationsBanner({
 					<Button asChild size="lg" variant="secondary" className="mt-4">
 						<Link to="/nearby">Start Exploring</Link>
 					</Button>
+				</div>
+			}
+		/>
+	);
+}
+
+export type AccoladesBannerProps = Pick<VerticalBannerProps, 'classNames'> & {
+	showCta?: boolean;
+};
+
+export function AccoladesBanner({
+	classNames,
+	showCta = true,
+}: AccoladesBannerProps) {
+	return (
+		<VerticalBanner
+			image={ipx(
+				'https://raw.githubusercontent.com/mertturkmenoglu/wl-media/refs/heads/main/media/XFG5Q7R.jpeg',
+				'w_512',
+			)}
+			alt="Accolades Banner Image"
+			classNames={{
+				...classNames,
+				image: cn(classNames?.image, 'rounded-full'),
+			}}
+			content={
+				<div className="text-center">
+					<h2 className="mt-8 text-3xl">Explore the Awards</h2>
+					<p className="text-muted-foreground">
+						Browse the full list of categories and honorees. See who rose to the
+						top and what made them stand out.
+					</p>
+					{showCta && (
+						<Button asChild variant="link" className="mt-4">
+							<Link to="/accolades">See Accolades</Link>
+						</Button>
+					)}
 				</div>
 			}
 		/>
