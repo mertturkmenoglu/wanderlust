@@ -32,7 +32,6 @@
         "@unpic/react": "^1.0.2",
         "@wanderlust/api": "workspace:*",
         "@wanderlust/auth": "workspace:*",
-        "@wanderlust/notifications": "workspace:*",
         "@wanderlust/ui": "workspace:*",
         "@zag-js/file-upload": "^1.40.0",
         "@zag-js/rating-group": "^1.40.0",
@@ -190,30 +189,6 @@
         "typescript": "catalog:",
       },
     },
-    "apps/notifications": {
-      "name": "@wanderlust/notifications",
-      "dependencies": {
-        "@hono/zod-validator": "^0.8.0",
-        "@wanderlust/auth": "workspace:*",
-        "@wanderlust/cache": "workspace:*",
-        "@wanderlust/common": "workspace:*",
-        "@wanderlust/config": "workspace:*",
-        "@wanderlust/db": "workspace:*",
-        "@wanderlust/jobs": "workspace:*",
-        "@wanderlust/uid": "workspace:*",
-        "drizzle-orm": "catalog:",
-        "evlog": "catalog:",
-        "hono": "catalog:",
-        "inversify": "catalog:",
-        "reflect-metadata": "catalog:",
-        "superjson": "catalog:",
-        "zod": "catalog:",
-      },
-      "devDependencies": {
-        "@types/bun": "catalog:",
-        "typescript": "catalog:",
-      },
-    },
     "apps/web": {
       "name": "@wanderlust/web",
       "dependencies": {
@@ -238,7 +213,6 @@
         "@wanderlust/auth": "workspace:*",
         "@wanderlust/chat": "workspace:*",
         "@wanderlust/contract": "workspace:*",
-        "@wanderlust/notifications": "workspace:*",
         "@wanderlust/ui": "workspace:*",
         "@zag-js/file-upload": "^1.40.0",
         "@zag-js/rating-group": "^1.40.0",
@@ -910,8 +884,6 @@
     "@floating-ui/react-dom": ["@floating-ui/react-dom@2.1.8", "", { "dependencies": { "@floating-ui/dom": "^1.7.6" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-cC52bHwM/n/CxS87FH0yWdngEZrjdtLW/qVruo68qg+prK7ZQ4YGdut2GyDVpoGeAYe/h899rVeOVm6Oi40k2A=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
-
-    "@hono/zod-validator": ["@hono/zod-validator@0.8.0", "", { "peerDependencies": { "hono": ">=4.10.0", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-5uS4S1/LKtZQYvD4BtpPUFkOv8d1wNxHHrChm26buMiEYc1FrHWvDUaKVBwkiVtvSExHSpLGDvcnpI2Copyj9w=="],
 
     "@hookform/devtools": ["@hookform/devtools@4.4.0", "", { "dependencies": { "@emotion/react": "^11.1.5", "@emotion/styled": "^11.3.0", "@types/lodash": "^4.14.168", "little-state-machine": "^4.1.0", "lodash": "^4.17.21", "react-simple-animate": "^3.3.12", "use-deep-compare-effect": "^1.8.1", "uuid": "^8.3.2" }, "peerDependencies": { "react": "^16.8.0 || ^17 || ^18 || ^19", "react-dom": "^16.8.0 || ^17 || ^18 || ^19" } }, "sha512-Mtlic+uigoYBPXlfvPBfiYYUZuyMrD3pTjDpVIhL6eCZTvQkHsKBSKeZCvXWUZr8fqrkzDg27N+ZuazLKq6Vmg=="],
 
@@ -1800,8 +1772,6 @@
     "@wanderlust/fake": ["@wanderlust/fake@workspace:apps/fake"],
 
     "@wanderlust/jobs": ["@wanderlust/jobs@workspace:packages/jobs"],
-
-    "@wanderlust/notifications": ["@wanderlust/notifications@workspace:apps/notifications"],
 
     "@wanderlust/search": ["@wanderlust/search@workspace:packages/search"],
 
