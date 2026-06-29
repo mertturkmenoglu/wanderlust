@@ -5,11 +5,14 @@ type PipelineOptions<T> = {
 	enableMessages?: boolean;
 };
 
+type StepOptions<TPipelineOptions> = {
+	name: string;
+	skip?: boolean;
+	fn: (options: TPipelineOptions) => Promise<void>;
+};
+
 export class Pipeline<T> {
-	private steps: Array<{
-		name: string;
-		fn: (options: T) => Promise<void>;
-	}> = [];
+	private steps: Array<StepOptions<T>> = [];
 
 	private values: T;
 	private enableMessages: boolean;
@@ -19,21 +22,29 @@ export class Pipeline<T> {
 		this.enableMessages = options.enableMessages ?? true;
 	}
 
-	public addStep(name: string, fn: (options: T) => Promise<void>) {
-		this.steps.push({ name, fn });
+	public addStep(step: StepOptions<T>) {
+		this.steps.push(step);
 		return this;
 	}
 
 	public async run() {
-		for (const { name, fn } of this.steps) {
+		for (const step of this.steps) {
 			if (this.enableMessages) {
-				consola.start(`Starting step: ${name}`);
+				consola.start(`Starting step: ${step.name}`);
 			}
 
-			await fn(this.values);
+			if (step.skip) {
+				if (this.enableMessages) {
+					consola.info(`Skipping step: ${step.name}`);
+				}
+
+				continue;
+			}
+
+			await step.fn(this.values);
 
 			if (this.enableMessages) {
-				consola.success(`Completed step: ${name}`);
+				consola.success(`Completed step: ${step.name}`);
 			}
 		}
 	}
