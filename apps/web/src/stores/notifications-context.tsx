@@ -1,5 +1,4 @@
-import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { InferResponseType } from 'hono';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	createContext,
 	type Dispatch,
@@ -10,15 +9,13 @@ import {
 	useState,
 } from 'react';
 import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
-import { notificationsClient } from '@/lib/notifications';
+import { type Outputs, orpc } from '@/lib/orpc';
 
-export type TNotification = InferResponseType<
-	typeof notificationsClient.list.$get
->[number];
+export type TNotification =
+	Outputs['notifications']['list']['notifications'][number];
 
-export type TNotificationPreferences = InferResponseType<
-	typeof notificationsClient.preferences.$get
->['preferences'];
+export type TNotificationPreferences =
+	Outputs['notifications']['preferences']['preferences'];
 
 export type TSingleNotificationPreference = TNotificationPreferences[number];
 
@@ -46,33 +43,13 @@ type State = {
 	refetchPreferences: () => Promise<void>;
 };
 
-const options = queryOptions({
-	queryKey: ['notifications'],
-	queryFn: async () => {
-		const res = await notificationsClient.list.$get();
-
-		if (!res.ok) {
-			throw new Error('Failed to fetch notifications');
-		}
-
-		const data = await res.json();
-		return data as TNotification[];
-	},
+const options = orpc.notifications.list.queryOptions({
+	input: {},
 	refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes
 });
 
-const preferencesOptions = queryOptions({
-	queryKey: ['notification-preferences'],
-	queryFn: async () => {
-		const res = await notificationsClient.preferences.$get();
-
-		if (!res.ok) {
-			throw new Error('Failed to fetch notification preferences');
-		}
-
-		const data = await res.json();
-		return data as { preferences: TNotificationPreferences };
-	},
+const preferencesOptions = orpc.notifications.preferences.queryOptions({
+	input: {},
 	refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes
 });
 
@@ -94,25 +71,25 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 
 	const [mode, setMode] = useState<FilterMode>('all');
 	const filtered = useMemo(() => {
-		if (!query.data) {
+		if (!query.data?.notifications) {
 			return [];
 		}
 
 		if (mode === 'all') {
-			return query.data;
+			return query.data.notifications;
 		}
 
 		if (mode === 'read') {
-			return query.data.filter((x) => x.readAt !== null);
+			return query.data.notifications.filter((x) => x.readAt !== null);
 		}
 
-		return query.data.filter((x) => x.readAt === null);
+		return query.data.notifications.filter((x) => x.readAt === null);
 	}, [query.data, mode]);
 
 	async function clearAll() {
-		const res = await notificationsClient.clear.$delete();
+		const res = await orpc.notifications.clear.call({});
 
-		if (!res.ok) {
+		if (!res.success) {
 			throw new Error('Failed to clear notifications');
 		}
 
@@ -120,9 +97,9 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 	}
 
 	async function markAllAsRead() {
-		const res = await notificationsClient['mark-all-read'].$post();
+		const res = await orpc.notifications.markAllRead.call({});
 
-		if (!res.ok) {
+		if (!res.success) {
 			throw new Error('Failed to mark all as read');
 		}
 
@@ -130,13 +107,9 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 	}
 
 	async function markAsRead(id: string) {
-		const res = await notificationsClient['mark-read'].$post({
-			json: {
-				id,
-			},
-		});
+		const res = await orpc.notifications.markRead.call({ id });
 
-		if (!res.ok) {
+		if (!res.success) {
 			throw new Error('Failed to mark as read');
 		}
 
@@ -146,7 +119,7 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 	return (
 		<NotificationsContext.Provider
 			value={{
-				data: query.data ?? [],
+				data: query.data?.notifications ?? [],
 				clearAll,
 				markAllAsRead,
 				markAsRead,
@@ -158,7 +131,7 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 				refetch: async () => {
 					await query.refetch();
 				},
-				unreadCount: (query.data ?? []).filter((x) => x.readAt === null).length,
+				unreadCount: (query.data?.notifications ?? []).filter((x) => x.readAt === null).length,
 				preferences: preferencesQuery.data?.preferences ?? [],
 				refetchPreferences: async () => {
 					await preferencesQuery.refetch();

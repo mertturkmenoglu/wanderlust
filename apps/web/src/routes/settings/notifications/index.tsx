@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useRouteContext } from '@tanstack/react-router';
 import {
 	Field,
 	FieldContent,
@@ -12,7 +12,7 @@ import {
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { Switch } from '@wanderlust/ui/components/switch';
 import { toast } from 'sonner';
-import { notificationsClient } from '@/lib/notifications';
+import { orpc } from '@/lib/orpc';
 import {
 	type TNotificationCategory,
 	type TNotificationChannel,
@@ -24,6 +24,7 @@ export const Route = createFileRoute('/settings/notifications/')({
 });
 
 function RouteComponent() {
+	const { auth } = useRouteContext({ from: '/settings' });
 	const ctx = useNotificationsContext();
 
 	const isEnabled = (
@@ -46,16 +47,14 @@ function RouteComponent() {
 		category: TNotificationCategory,
 		enabled: boolean,
 	) => {
-		const res = await notificationsClient.preferences.$patch({
-			json: {
-				userId: '',
-				category,
-				channel,
-				enabled,
-			},
+		const res = await orpc.notifications.updatePreferences.call({
+			userId: auth.user.id,
+			category,
+			channel,
+			enabled,
 		});
 
-		if (!res.ok) {
+		if (!res.success) {
 			toast.error('Failed to update preferences');
 			return;
 		}
