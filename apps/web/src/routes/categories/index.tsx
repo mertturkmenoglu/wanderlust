@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Item, ItemTitle } from '@wanderlust/ui/components/item';
+import { CategoriesBanner } from '@/components/banner/common';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
 import { serializeParams } from '@/lib/search';
@@ -22,7 +23,9 @@ function RouteComponent() {
 
 	return (
 		<div className="mx-auto my-8 w-full max-w-7xl">
-			<h2 className="text-2xl">Browse by Category</h2>
+			<CategoriesBanner />
+
+			<h2 className="mt-8 text-2xl">Browse by Category</h2>
 
 			<div className="mt-4 grid grid-cols-2 gap-4">
 				{categories.map((category) => (
