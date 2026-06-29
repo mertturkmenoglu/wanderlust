@@ -12,8 +12,11 @@ export const fake = command({
 			values: {
 				path: path.join(process.cwd(), '..', 'fake'),
 			},
-		}).addStep('Generate fake data', async ({ path }) => {
-			await $`bun run --cwd ${path} fake`;
+		}).addStep({
+			name: 'Generate fake data',
+			fn: async ({ path }) => {
+				await $`bun run --cwd ${path} fake`;
+			},
 		});
 
 		await pipeline.run();

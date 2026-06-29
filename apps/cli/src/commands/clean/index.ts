@@ -25,29 +25,32 @@ export const clean = command({
 				seaweedfsContainerName,
 			},
 		})
-			.addStep(
-				'Remove Docker containers',
-				async ({ dockerComposeFilePath }) => {
+			.addStep({
+				name: 'Remove Docker containers',
+				fn: async ({ dockerComposeFilePath }) => {
 					await $`docker compose -f ${dockerComposeFilePath} down -v`;
 				},
-			)
-			.addStep(
-				'Recreate Docker containers',
-				async ({ dockerComposeFilePath }) => {
+			})
+			.addStep({
+				name: 'Recreate Docker containers',
+				fn: async ({ dockerComposeFilePath }) => {
 					await $`docker compose -f ${dockerComposeFilePath} up -d --wait`;
 				},
-			)
-			.addStep('Push database schema', async ({ apiProjectPath }) => {
-				await $`bun run --cwd ${apiProjectPath} db:push`;
 			})
-			.addStep(
-				'Create SeaweedFS buckets and grant access',
-				async ({ seaweedfsContainerName }) => {
+			.addStep({
+				name: 'Push database schema',
+				fn: async ({ apiProjectPath }) => {
+					await $`bun run --cwd ${apiProjectPath} db:push`;
+				},
+			})
+			.addStep({
+				name: 'Create SeaweedFS buckets and grant access',
+				fn: async ({ seaweedfsContainerName }) => {
 					for (const bucket of buckets) {
 						await createAndGrantAccess(seaweedfsContainerName, bucket);
 					}
 				},
-			);
+			});
 
 		await pipeline.run();
 	},
