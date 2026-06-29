@@ -80,16 +80,19 @@ export function NearbyLocationsBanner({
 		<VerticalBanner
 			image="https://i.imgur.com/Y3ujIqE.jpg"
 			alt="Nearby Locations Banner Image"
-			classNames={classNames}
+			classNames={{
+				...classNames,
+				image: cn(classNames?.image, 'rounded-2xl'),
+			}}
 			content={
 				<div className="text-center">
-					<h2 className="mt-8 font-bold font-serif text-3xl text-black/80">
+					<h2 className="mt-8 font-bold font-serif text-3xl">
 						Discover new locations around you
 					</h2>
 					<p className="font-serif text-muted-foreground">
 						Find new places to explore and enjoy with your friends and family.
 					</p>
-					<Button asChild size="lg" variant="secondary" className="mt-8">
+					<Button asChild size="lg" variant="secondary" className="mt-4">
 						<Link to="/nearby">Start Exploring</Link>
 					</Button>
 				</div>
