@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
@@ -12,24 +11,17 @@ import { Input } from '@wanderlust/ui/components/input';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { Textarea } from '@wanderlust/ui/components/textarea';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import z from 'zod';
-import { useInvalidator } from '@/hooks/use-invalidator';
-import { authClient } from '@/lib/auth';
-import { orpc } from '@/lib/orpc';
-
-const schema = z.object({
-	fullName: z.string().min(1).max(128),
-	bio: z.string().max(255).optional(),
-	website: z.string().max(255).optional(),
-});
+import {
+	type UpdateUserProfileFormInput,
+	updateUserProfileSchema,
+} from '@/schemas/update-user-profile';
+import { useUpdateUserProfileMutation } from './hooks';
 
 export function Form() {
-	const invalidate = useInvalidator();
 	const { profile } = useLoaderData({ from: '/settings/profile/' });
 
-	const form = useForm({
-		resolver: zodResolver(schema),
+	const form = useForm<UpdateUserProfileFormInput>({
+		resolver: zodResolver(updateUserProfileSchema),
 		defaultValues: {
 			fullName: profile.name,
 			bio: profile.bio ?? undefined,
@@ -37,32 +29,18 @@ export function Form() {
 		},
 	});
 
-	const mutation = useMutation(
-		orpc.users.update.mutationOptions({
-			onSuccess: async (newUser) => {
-				await invalidate();
-				await authClient.updateUser({
-					bio: newUser.profile.bio,
-					image: newUser.profile.image ?? undefined,
-					name: newUser.profile.name,
-					username: newUser.profile.username,
-					website: newUser.profile.website,
-				});
-				toast.success('Profile updated');
-			},
-		}),
-	);
+	const mutation = useUpdateUserProfileMutation();
+
+	const onSubmit = form.handleSubmit((data) => {
+		mutation.mutate({
+			bio: data.bio || null,
+			name: data.fullName,
+			website: data.website || null,
+		});
+	});
 
 	return (
-		<form
-			onSubmit={form.handleSubmit((data) => {
-				mutation.mutate({
-					bio: data.bio || null,
-					name: data.fullName,
-					website: data.website || null,
-				});
-			})}
-		>
+		<form onSubmit={onSubmit}>
 			<FieldGroup className="max-w-xl gap-4 md:gap-8">
 				<Controller
 					name="fullName"

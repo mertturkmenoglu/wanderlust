@@ -8,8 +8,8 @@ import {
 import { Separator } from '@wanderlust/ui/components/separator';
 import { orpc } from '@/lib/orpc';
 import { SettingsField } from '../-components/field';
-import { Form } from './-form';
-import { UpdateImage } from './-update-image';
+import { Form } from './-components/form';
+import { UpdateImage } from './-components/update-image';
 
 export const Route = createFileRoute('/settings/profile/')({
 	component: RouteComponent,

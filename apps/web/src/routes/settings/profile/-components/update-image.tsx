@@ -1,4 +1,3 @@
-import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Dialog,
@@ -10,10 +9,9 @@ import {
 } from '@wanderlust/ui/components/dialog';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { UploadIcon } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { authClient } from '@/lib/auth';
-import { orpc } from '@/lib/orpc';
+import Cropper from 'react-easy-crop';
+import { useImageCropper } from '@/hooks/use-image-cropper';
+import { useUpdateUserImageMutation } from './hooks';
 
 type Props = {
 	image: string | null;
@@ -22,22 +20,17 @@ type Props = {
 	action: 'profile' | 'banner';
 };
 
-export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
-	const [preview, setPreview] = useState(() =>
-		image === null ? fallbackImage : image,
-	);
-	const [file, setFile] = useState<File | null>(null);
-	const mutation = useMutation(
-		orpc.users.updateImage.mutationOptions({
-			onSuccess: async (res) => {
-				await authClient.updateUser({
-					image: res.profile.image,
-				});
-				toast.success('Image updated');
-				globalThis.window.location.reload();
-			},
-		}),
-	);
+export function UpdateImage({ image, fallbackImage, action }: Props) {
+	const cropper = useImageCropper({
+		initial: {
+			preview: image === null ? fallbackImage : image,
+			crop: { x: 0, y: 0 },
+			zoom: 1,
+			croppedAreaPixels: null,
+		},
+	});
+
+	const mutation = useUpdateUserImageMutation();
 
 	return (
 		<div className="flex max-w-xl gap-4">
@@ -45,7 +38,7 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 				<DialogTrigger asChild>
 					<button type="button" className="group relative">
 						<img
-							src={preview}
+							src={cropper.preview}
 							alt="Preview"
 							className={cn('rounded object-cover', {
 								'aspect-square size-24': action === 'profile',
@@ -56,21 +49,36 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 						<UploadIcon className="absolute inset-0 m-auto size-8 rounded bg-white p-2 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
 					</button>
 				</DialogTrigger>
-				<DialogContent className="sm:max-w-xl">
+				<DialogContent
+					className={cn({
+						'w-full sm:max-w-2xl': action === 'profile',
+						'w-full sm:max-w-4xl': action === 'banner',
+					})}
+				>
 					<DialogHeader>
 						<DialogTitle>
 							Select a new {action === 'profile' ? 'profile' : 'banner'} image
 						</DialogTitle>
 					</DialogHeader>
 					<div className="flex flex-col items-center justify-center gap-8 space-x-2 text-sm">
-						<div className="flex flex-col items-center gap-4">
-							<img
-								src={preview}
-								alt={fullName}
-								className={cn('mt-4 rounded-md object-cover', {
-									'aspect-square w-48': action === 'profile',
-									'aspect-video w-80': action === 'banner',
-								})}
+						<div
+							className={cn('cropper relative', {
+								'aspect-square w-64 sm:w-xl': action === 'profile',
+								'aspect-video w-80 sm:w-2xl md:w-3xl': action === 'banner',
+							})}
+						>
+							<Cropper
+								image={cropper.preview}
+								crop={cropper.crop}
+								zoom={cropper.zoom}
+								aspect={action === 'profile' ? 1 / 1 : 16 / 9}
+								cropShape="rect"
+								showGrid={true}
+								onCropChange={cropper.setCrop}
+								onZoomChange={cropper.setZoom}
+								onCropComplete={(_croppedArea, croppedAreaPixels) => {
+									cropper.setCroppedAreaPixels(croppedAreaPixels);
+								}}
 							/>
 						</div>
 						<div className="flex flex-col">
@@ -83,34 +91,37 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 								)}
 							>
 								<UploadIcon className="size-4 text-primary" />
-								{file ? 'Change selection' : `Upload a ${action} image`}
+								{cropper.preview
+									? 'Change selection'
+									: `Upload a ${action} image`}
 							</label>
-							<div className="mt-2 text-muted-foreground text-xs">
-								PNG, JPEG, and WebP are supported. Maximum 5MB.
+							<div className="mt-2 text-muted-foreground text-xs tracking-tight">
+								PNG and JPEG are supported. Maximum 5MB.
 							</div>
 							<input
 								id={`${action}-image`}
 								type="file"
 								name="files"
-								accept="image/jpeg,image/png,image/jpg,image/webp"
+								accept="image/jpeg,image/png,image/jpg"
 								placeholder={`Upload a ${action} image`}
 								className="hidden"
 								onChange={(e) => {
 									const file = e.target.files?.[0];
 
 									if (file) {
-										setPreview(URL.createObjectURL(file));
-										setFile(file);
+										cropper.setPreview(URL.createObjectURL(file));
 									}
 								}}
 							/>
 						</div>
 					</div>
-					<DialogFooter className="sm:justify-center">
+					<DialogFooter>
 						<Button
 							type="button"
 							variant="default"
 							onClick={async () => {
+								const file = await cropper.getCroppedImage();
+
 								if (!file) {
 									return;
 								}
@@ -120,7 +131,7 @@ export function UpdateImage({ image, fallbackImage, fullName, action }: Props) {
 									file: file,
 								});
 							}}
-							disabled={!file || mutation.isPending}
+							disabled={mutation.isPending}
 						>
 							Update
 						</Button>
