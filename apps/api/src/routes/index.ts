@@ -7,6 +7,7 @@ import { module as collections } from './collections';
 import { module as favorites } from './favorites';
 import { module as health } from './health';
 import { module as lists } from './lists';
+import { module as notifications } from './notifications';
 import { module as places } from './places';
 import { module as preferences } from './preferences';
 import { module as reports } from './reports';
@@ -24,6 +25,7 @@ export type AppRouter = {
 	favorites: ReturnType<typeof favorites.router>;
 	health: ReturnType<typeof health.router>;
 	lists: ReturnType<typeof lists.router>;
+	notifications: ReturnType<typeof notifications.router>;
 	places: ReturnType<typeof places.router>;
 	preferences: ReturnType<typeof preferences.router>;
 	reports: ReturnType<typeof reports.router>;
@@ -43,6 +45,7 @@ export function getAppRouter(): AppRouter {
 		favorites: favorites.router(),
 		health: health.router(),
 		lists: lists.router(),
+		notifications: notifications.router(),
 		places: places.router(),
 		preferences: preferences.router(),
 		reports: reports.router(),
@@ -62,6 +65,7 @@ export const exports = [
 	favorites.exports,
 	health.exports,
 	lists.exports,
+	notifications.exports,
 	places.exports,
 	preferences.exports,
 	reports.exports,
