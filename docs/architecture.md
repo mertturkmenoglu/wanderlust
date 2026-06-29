@@ -9,9 +9,8 @@
 - `apps`:
 	- `admin`: Admin panel for managing users, content, and other administrative tasks.
 	- `api`: Core backend API.
-	- `chat`: Chat API.
+	- `cli`: Command-line interface for various tasks and utilities.
 	- `fake`: Fake data generation CLI tool.
-	- `notifications`: Notifications API.
 	- `web`: Frontend web application.
 	- `wiop`: IPX image optimization service.
 - `packages`:
