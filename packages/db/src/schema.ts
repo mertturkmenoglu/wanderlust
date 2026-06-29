@@ -763,7 +763,10 @@ export const notificationCategoryType = p.pgEnum('notification_category_type', [
 export const notificationPreferences = p.pgTable(
 	'notification_preferences',
 	{
-		userId: p.text(),
+		userId: p
+			.text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
 		channel: notificationChannelType().notNull(),
 		category: notificationCategoryType().notNull(),
 		enabled: p.boolean().notNull(),
