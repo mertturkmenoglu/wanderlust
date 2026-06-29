@@ -1,8 +1,9 @@
+import { Separator } from '@wanderlust/ui/components/separator';
 import {
+	AccoladesBanner,
 	CategoriesBanner,
 	EventBanner,
 	NearbyLocationsBanner,
-	TripPlannerBanner,
 	TripPlannerCta,
 } from '@/components/banner/common';
 import { useInterleaveRenderer } from '@/components/interleave-renderer';
@@ -12,32 +13,36 @@ import { FeaturedCitiesCatalog } from './featured-cities-catalog';
 import { RecentlyViewed } from './recently-viewed';
 
 const listA: React.ReactNode[] = [
+	<Separator className="mt-8" />,
+
+	<TagNavigation className="" />,
+
+	<Separator />,
+
 	<FeaturedCitiesCatalog />,
-
-	<CategoriesBanner />,
-
-	<TripPlannerCta />,
-
-	<NearbyLocationsBanner />,
-
-	<TripPlannerBanner />,
-
-	<RecentlyViewed />,
-
-	<EventBanner />,
-];
-
-const listB: React.ReactNode[] = [
-	<TagNavigation className="my-8" />,
 
 	<PlaceCatalog accessor="featured" />,
 
+	<AccoladesBanner />,
+
+	<CategoriesBanner />,
+
 	<PlaceCatalog accessor="popular" />,
+
+	<TripPlannerCta />,
 
 	<PlaceCatalog accessor="favorites" />,
 
+	<NearbyLocationsBanner />,
+
 	<PlaceCatalog accessor="new" />,
+
+	<EventBanner />,
+
+	<RecentlyViewed />,
 ];
+
+const listB: React.ReactNode[] = [];
 
 export function Content() {
 	const ilr = useInterleaveRenderer();
