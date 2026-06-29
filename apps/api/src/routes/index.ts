@@ -2,6 +2,8 @@ import { module as aggregator } from './aggregator';
 import { module as amenities } from './amenities';
 import { module as bookmarks } from './bookmarks';
 import { module as categories } from './categories';
+import { module as chats } from './chats/chats';
+import { module as compose } from './chats/compose';
 import { module as cities } from './cities';
 import { module as collections } from './collections';
 import { module as favorites } from './favorites';
@@ -20,6 +22,10 @@ export type AppRouter = {
 	amenities: ReturnType<typeof amenities.router>;
 	bookmarks: ReturnType<typeof bookmarks.router>;
 	categories: ReturnType<typeof categories.router>;
+	chats: {
+		chats: ReturnType<typeof chats.router>;
+		compose: ReturnType<typeof compose.router>;
+	};
 	cities: ReturnType<typeof cities.router>;
 	collections: ReturnType<typeof collections.router>;
 	favorites: ReturnType<typeof favorites.router>;
@@ -40,6 +46,10 @@ export function getAppRouter(): AppRouter {
 		amenities: amenities.router(),
 		bookmarks: bookmarks.router(),
 		categories: categories.router(),
+		chats: {
+			chats: chats.router(),
+			compose: compose.router(),
+		},
 		cities: cities.router(),
 		collections: collections.router(),
 		favorites: favorites.router(),
@@ -61,6 +71,8 @@ export const exports = [
 	bookmarks.exports,
 	categories.exports,
 	cities.exports,
+	chats.exports,
+	compose.exports,
 	collections.exports,
 	favorites.exports,
 	health.exports,
