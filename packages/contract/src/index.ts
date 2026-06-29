@@ -3,6 +3,7 @@ import * as aggregator from './aggregator';
 import * as amenities from './amenities';
 import * as bookmarks from './bookmarks';
 import * as categories from './categories';
+import * as chats from './chats';
 import * as cities from './cities';
 import * as collections from './collections';
 import * as favorites from './favorites';
@@ -22,6 +23,10 @@ export type AppRouter = {
 	amenities: amenities.Contract;
 	bookmarks: bookmarks.Contract;
 	categories: categories.Contract;
+	chats: {
+		chats: chats.chats.Contract;
+		compose: chats.compose.Contract;
+	};
 	cities: cities.Contract;
 	collections: collections.Contract;
 	favorites: favorites.Contract;
@@ -42,6 +47,7 @@ export {
 	amenities,
 	bookmarks,
 	categories,
+	chats,
 	cities,
 	collections,
 	favorites,
