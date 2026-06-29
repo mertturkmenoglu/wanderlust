@@ -29,7 +29,6 @@
 		"@unpic/react": "^1.0.2",
 		"@wanderlust/api": "workspace:*",
 		"@wanderlust/auth": "workspace:*",
-		"@wanderlust/notifications": "workspace:*",
 		"@wanderlust/ui": "workspace:*",
 		"@zag-js/file-upload": "^1.40.0",
 		"@zag-js/rating-group": "^1.40.0",
