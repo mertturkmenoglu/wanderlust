@@ -8,6 +8,7 @@ import * as collections from './collections';
 import * as favorites from './favorites';
 import * as health from './health';
 import * as lists from './lists';
+import * as notifications from './notifications';
 import * as places from './places';
 import * as preferences from './preferences';
 import * as reports from './reports';
@@ -26,6 +27,7 @@ export type AppRouter = {
 	favorites: favorites.Contract;
 	health: health.Contract;
 	lists: lists.Contract;
+	notifications: notifications.Contract;
 	places: places.Contract;
 	preferences: preferences.Contract;
 	reports: reports.Contract;
@@ -45,6 +47,7 @@ export {
 	favorites,
 	health,
 	lists,
+	notifications,
 	places,
 	preferences,
 	reports,
