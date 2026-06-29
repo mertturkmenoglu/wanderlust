@@ -32,7 +32,6 @@
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/chat": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
-		"@wanderlust/notifications": "workspace:*",
 		"@wanderlust/ui": "workspace:*",
 		"@zag-js/file-upload": "^1.40.0",
 		"@zag-js/rating-group": "^1.40.0",
