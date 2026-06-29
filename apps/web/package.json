@@ -30,7 +30,6 @@
 		"@tanstack/router-plugin": "^1.167.35",
 		"@unpic/react": "^1.0.2",
 		"@wanderlust/auth": "workspace:*",
-		"@wanderlust/chat": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
 		"@wanderlust/ui": "workspace:*",
 		"@zag-js/file-upload": "^1.40.0",
