@@ -271,8 +271,21 @@ export class UsersRepository {
 				userId,
 			});
 
+			const places = topPlaces.map((tp) => tp.place);
+			const favorites = await this.favoritesRepo.getFavoriteStatuses(
+				userId,
+				places.map((p) => p.id),
+			);
+
+			const enrichedPlaces = topPlaces.map((tp) => ({
+				place: tp.place,
+				meta: {
+					isFavorite: favorites.includes(tp.placeId),
+				},
+			}));
+
 			return {
-				places: topPlaces,
+				places: enrichedPlaces,
 			};
 		});
 
