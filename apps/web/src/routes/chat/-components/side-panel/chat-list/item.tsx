@@ -11,10 +11,9 @@ import { endOfYesterday, formatDistanceToNow, isBefore } from 'date-fns';
 import { useMemo } from 'react';
 import { Logo } from '@/components/logo';
 import { UserImage } from '@/components/user-image';
-import type { TChat } from '@/lib/chat';
 import { truncateWithEllipses } from '@/lib/form';
 import { userImage } from '@/lib/image';
-import { useChatContext } from '@/stores/chat-context';
+import { type TChat, useChatContext } from '@/stores/chat-context';
 
 type Props = {
 	chat: TChat;

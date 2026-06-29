@@ -8,7 +8,9 @@ import {
 	useMemo,
 	useState,
 } from 'react';
-import { chatRpc, type TChat } from '@/lib/chat';
+import { type Outputs, orpc } from '@/lib/orpc';
+
+export type TChat = Outputs['chats']['chats']['info']['chat'];
 
 export type ChatDialogType = 'new' | null;
 
@@ -30,7 +32,7 @@ export function ChatContextProvider({ children }: PropsWithChildren) {
 	const [dialogType, setDialogType] = useState<ChatDialogType>(null);
 
 	const query = useQuery(
-		chatRpc.chat.info.queryOptions({
+		orpc.chats.chats.info.queryOptions({
 			input: chatId ? { id: chatId } : skipToken,
 		}),
 	);
