@@ -22,7 +22,7 @@ export function DetailRow({
 }: DetailRowProps) {
 	return (
 		<TableRow className={cn('flex', className)} {...props}>
-			<TableCell className="flex w-32 items-center justify-center bg-muted px-8 py-1.5 font-medium">
+			<TableCell className="flex w-40 items-center justify-center bg-muted px-8 py-1.5 font-medium">
 				{label}
 			</TableCell>
 			<TableCell className="wrap-break-word flex items-stretch justify-start whitespace-normal text-wrap px-8 py-1.5">

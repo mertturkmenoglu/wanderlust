@@ -2,8 +2,6 @@ import { Button } from '@wanderlust/ui/components/button';
 import { ButtonGroup } from '@wanderlust/ui/components/button-group';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
-import { Breadcrumbs } from '../breadcrumbs';
 
 export type ObjectDetailsProps = Omit<
 	React.ComponentPropsWithoutRef<'div'>,
@@ -34,17 +32,13 @@ export function ObjectDetails({
 	children,
 	...props
 }: ObjectDetailsProps) {
-	const crumbs = useBreadcrumbs();
-
 	return (
 		<div
 			className={cn('rounded-xl border border-border p-8', classNames?.root)}
 			{...props}
 		>
-			<Breadcrumbs crumbs={crumbs} />
-
 			{/* Header */}
-			<div className="mt-8 flex flex-row items-center justify-between gap-4">
+			<div className="flex flex-row items-center justify-between gap-4">
 				<div>
 					<div className="text-primary capitalize">{object.type}</div>
 					<div className="mt-2 text-4xl">{object.title}</div>
