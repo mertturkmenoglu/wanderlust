@@ -49,10 +49,6 @@ export function ObjectDetails({
 					<div className="text-primary capitalize">{object.type}</div>
 					<div className="mt-2 text-4xl">{object.title}</div>
 					<div className="text-muted-foreground text-sm">ID: {object.id}</div>
-
-					<div className="mt-4 text-muted-foreground text-sm">
-						{object.description ?? 'No description available.'}
-					</div>
 				</div>
 
 				<div className="flex flex-row items-center gap-2">
@@ -72,6 +68,10 @@ export function ObjectDetails({
 						Delete
 					</Button>
 				</div>
+			</div>
+
+			<div className="mt-4 text-muted-foreground text-sm">
+				{object.description ?? 'No description available.'}
 			</div>
 
 			<Separator className="my-8" />
