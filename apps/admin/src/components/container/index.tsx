@@ -1,8 +1,13 @@
+import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
+import { Breadcrumbs } from '../breadcrumbs';
 
 type Props = React.ComponentPropsWithoutRef<'div'>;
 
-export function Container({ className, ...props }: Props) {
+export function Container({ className, children, ...props }: Props) {
+	const crumbs = useBreadcrumbs();
+
 	return (
 		<div
 			className={cn(
@@ -10,6 +15,12 @@ export function Container({ className, ...props }: Props) {
 				className,
 			)}
 			{...props}
-		/>
+		>
+			<Breadcrumbs crumbs={crumbs} />
+
+			<Separator className="my-4" />
+
+			{children}
+		</div>
 	);
 }
