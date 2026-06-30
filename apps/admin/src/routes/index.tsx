@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Container } from '@/components/container';
 import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
 
 export const Route = createFileRoute('/')({
@@ -9,7 +10,7 @@ function RouteComponent() {
 	const isAuthenticated = useIsAuthenticated();
 
 	return (
-		<div>
+		<Container>
 			<div>Index</div>
 			{isAuthenticated ? (
 				<Link to="/dashboard">
@@ -20,6 +21,6 @@ function RouteComponent() {
 					<div>Sign In</div>
 				</Link>
 			)}
-		</div>
+		</Container>
 	);
 }
