@@ -1,4 +1,3 @@
-import { Image } from '@unpic/react';
 import { cn } from '@wanderlust/ui/lib/utils';
 
 type Props = {
@@ -13,24 +12,10 @@ export function Logo({
 	className,
 	...props
 }: Props) {
-	const height = (() => {
-		switch (variant) {
-			case 'small':
-				return 48;
-			case 'medium':
-				return 64;
-			case 'large':
-				return 192;
-			default:
-				return 96;
-		}
-	})();
-
 	return (
-		<Image
+		<img
 			src="/logo.png"
 			alt="Wanderlust logo"
-			layout="constrained"
 			className={cn(
 				{
 					grayscale: grayscale,
@@ -41,8 +26,6 @@ export function Logo({
 				},
 				className,
 			)}
-			height={height}
-			aspectRatio={1}
 			{...props}
 		/>
 	);
