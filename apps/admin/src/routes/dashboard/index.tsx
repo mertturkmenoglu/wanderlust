@@ -28,6 +28,13 @@ function RouteComponent() {
 				<UnderlineLink to="/dashboard/cities">Cities</UnderlineLink>
 
 				<UnderlineLink to="/dashboard/cities/new">New City</UnderlineLink>
+
+				<UnderlineLink
+					to="/dashboard/reports"
+					search={{ page: 1, pageSize: 20 }}
+				>
+					Reports
+				</UnderlineLink>
 			</div>
 		</Container>
 	);
