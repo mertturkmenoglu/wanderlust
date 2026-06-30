@@ -9,33 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
-import { Route as DashboardReportsIndexRouteImport } from './routes/dashboard/reports/index'
-import { Route as DashboardPlacesIndexRouteImport } from './routes/dashboard/places/index'
-import { Route as DashboardCollectionsIndexRouteImport } from './routes/dashboard/collections/index'
+import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardCitiesIndexRouteImport } from './routes/dashboard/cities/index'
 import { Route as DashboardCategoriesIndexRouteImport } from './routes/dashboard/categories/index'
-import { Route as DashboardUsersIdIndexRouteImport } from './routes/dashboard/users/$id/index'
-import { Route as DashboardReportsIdIndexRouteImport } from './routes/dashboard/reports/$id/index'
-import { Route as DashboardPlacesNewIndexRouteImport } from './routes/dashboard/places/new/index'
-import { Route as DashboardPlacesIdIndexRouteImport } from './routes/dashboard/places/$id/index'
-import { Route as DashboardCollectionsRelationsIndexRouteImport } from './routes/dashboard/collections/relations/index'
-import { Route as DashboardCollectionsNewIndexRouteImport } from './routes/dashboard/collections/new/index'
-import { Route as DashboardCollectionsIdIndexRouteImport } from './routes/dashboard/collections/$id/index'
 import { Route as DashboardCitiesNewIndexRouteImport } from './routes/dashboard/cities/new/index'
 import { Route as DashboardCitiesIdIndexRouteImport } from './routes/dashboard/cities/$id/index'
 import { Route as DashboardCategoriesNewIndexRouteImport } from './routes/dashboard/categories/new/index'
 import { Route as DashboardCategoriesIdIndexRouteImport } from './routes/dashboard/categories/$id/index'
-import { Route as DashboardCollectionsIdItemsIndexRouteImport } from './routes/dashboard/collections/$id/items/index'
-import { Route as DashboardCollectionsIdEditIndexRouteImport } from './routes/dashboard/collections/$id/edit/index'
 import { Route as DashboardCitiesIdEditIndexRouteImport } from './routes/dashboard/cities/$id/edit/index'
 import { Route as DashboardCategoriesIdEditIndexRouteImport } from './routes/dashboard/categories/$id/edit/index'
 
-const SignInRoute = SignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,310 +32,161 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardUsersIndexRoute = DashboardUsersIndexRouteImport.update({
-  id: '/dashboard/users/',
-  path: '/dashboard/users/',
+const SignInIndexRoute = SignInIndexRouteImport.update({
+  id: '/sign-in/',
+  path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardReportsIndexRoute = DashboardReportsIndexRouteImport.update({
-  id: '/dashboard/reports/',
-  path: '/dashboard/reports/',
-  getParentRoute: () => rootRouteImport,
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardPlacesIndexRoute = DashboardPlacesIndexRouteImport.update({
-  id: '/dashboard/places/',
-  path: '/dashboard/places/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardCollectionsIndexRoute =
-  DashboardCollectionsIndexRouteImport.update({
-    id: '/dashboard/collections/',
-    path: '/dashboard/collections/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const DashboardCitiesIndexRoute = DashboardCitiesIndexRouteImport.update({
-  id: '/dashboard/cities/',
-  path: '/dashboard/cities/',
-  getParentRoute: () => rootRouteImport,
+  id: '/cities/',
+  path: '/cities/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardCategoriesIndexRoute =
   DashboardCategoriesIndexRouteImport.update({
-    id: '/dashboard/categories/',
-    path: '/dashboard/categories/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DashboardUsersIdIndexRoute = DashboardUsersIdIndexRouteImport.update({
-  id: '/dashboard/users/$id/',
-  path: '/dashboard/users/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardReportsIdIndexRoute = DashboardReportsIdIndexRouteImport.update({
-  id: '/dashboard/reports/$id/',
-  path: '/dashboard/reports/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardPlacesNewIndexRoute = DashboardPlacesNewIndexRouteImport.update({
-  id: '/dashboard/places/new/',
-  path: '/dashboard/places/new/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardPlacesIdIndexRoute = DashboardPlacesIdIndexRouteImport.update({
-  id: '/dashboard/places/$id/',
-  path: '/dashboard/places/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardCollectionsRelationsIndexRoute =
-  DashboardCollectionsRelationsIndexRouteImport.update({
-    id: '/dashboard/collections/relations/',
-    path: '/dashboard/collections/relations/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DashboardCollectionsNewIndexRoute =
-  DashboardCollectionsNewIndexRouteImport.update({
-    id: '/dashboard/collections/new/',
-    path: '/dashboard/collections/new/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DashboardCollectionsIdIndexRoute =
-  DashboardCollectionsIdIndexRouteImport.update({
-    id: '/dashboard/collections/$id/',
-    path: '/dashboard/collections/$id/',
-    getParentRoute: () => rootRouteImport,
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => DashboardRoute,
   } as any)
 const DashboardCitiesNewIndexRoute = DashboardCitiesNewIndexRouteImport.update({
-  id: '/dashboard/cities/new/',
-  path: '/dashboard/cities/new/',
-  getParentRoute: () => rootRouteImport,
+  id: '/cities/new/',
+  path: '/cities/new/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardCitiesIdIndexRoute = DashboardCitiesIdIndexRouteImport.update({
-  id: '/dashboard/cities/$id/',
-  path: '/dashboard/cities/$id/',
-  getParentRoute: () => rootRouteImport,
+  id: '/cities/$id/',
+  path: '/cities/$id/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardCategoriesNewIndexRoute =
   DashboardCategoriesNewIndexRouteImport.update({
-    id: '/dashboard/categories/new/',
-    path: '/dashboard/categories/new/',
-    getParentRoute: () => rootRouteImport,
+    id: '/categories/new/',
+    path: '/categories/new/',
+    getParentRoute: () => DashboardRoute,
   } as any)
 const DashboardCategoriesIdIndexRoute =
   DashboardCategoriesIdIndexRouteImport.update({
-    id: '/dashboard/categories/$id/',
-    path: '/dashboard/categories/$id/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DashboardCollectionsIdItemsIndexRoute =
-  DashboardCollectionsIdItemsIndexRouteImport.update({
-    id: '/dashboard/collections/$id/items/',
-    path: '/dashboard/collections/$id/items/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DashboardCollectionsIdEditIndexRoute =
-  DashboardCollectionsIdEditIndexRouteImport.update({
-    id: '/dashboard/collections/$id/edit/',
-    path: '/dashboard/collections/$id/edit/',
-    getParentRoute: () => rootRouteImport,
+    id: '/categories/$id/',
+    path: '/categories/$id/',
+    getParentRoute: () => DashboardRoute,
   } as any)
 const DashboardCitiesIdEditIndexRoute =
   DashboardCitiesIdEditIndexRouteImport.update({
-    id: '/dashboard/cities/$id/edit/',
-    path: '/dashboard/cities/$id/edit/',
-    getParentRoute: () => rootRouteImport,
+    id: '/cities/$id/edit/',
+    path: '/cities/$id/edit/',
+    getParentRoute: () => DashboardRoute,
   } as any)
 const DashboardCategoriesIdEditIndexRoute =
   DashboardCategoriesIdEditIndexRouteImport.update({
-    id: '/dashboard/categories/$id/edit/',
-    path: '/dashboard/categories/$id/edit/',
-    getParentRoute: () => rootRouteImport,
+    id: '/categories/$id/edit/',
+    path: '/categories/$id/edit/',
+    getParentRoute: () => DashboardRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/sign-in': typeof SignInRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/': typeof DashboardIndexRoute
+  '/sign-in/': typeof SignInIndexRoute
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/cities/': typeof DashboardCitiesIndexRoute
-  '/dashboard/collections/': typeof DashboardCollectionsIndexRoute
-  '/dashboard/places/': typeof DashboardPlacesIndexRoute
-  '/dashboard/reports/': typeof DashboardReportsIndexRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
   '/dashboard/categories/$id/': typeof DashboardCategoriesIdIndexRoute
   '/dashboard/categories/new/': typeof DashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id/': typeof DashboardCitiesIdIndexRoute
   '/dashboard/cities/new/': typeof DashboardCitiesNewIndexRoute
-  '/dashboard/collections/$id/': typeof DashboardCollectionsIdIndexRoute
-  '/dashboard/collections/new/': typeof DashboardCollectionsNewIndexRoute
-  '/dashboard/collections/relations/': typeof DashboardCollectionsRelationsIndexRoute
-  '/dashboard/places/$id/': typeof DashboardPlacesIdIndexRoute
-  '/dashboard/places/new/': typeof DashboardPlacesNewIndexRoute
-  '/dashboard/reports/$id/': typeof DashboardReportsIdIndexRoute
-  '/dashboard/users/$id/': typeof DashboardUsersIdIndexRoute
   '/dashboard/categories/$id/edit/': typeof DashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit/': typeof DashboardCitiesIdEditIndexRoute
-  '/dashboard/collections/$id/edit/': typeof DashboardCollectionsIdEditIndexRoute
-  '/dashboard/collections/$id/items/': typeof DashboardCollectionsIdItemsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/sign-in': typeof SignInRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/sign-in': typeof SignInIndexRoute
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/cities': typeof DashboardCitiesIndexRoute
-  '/dashboard/collections': typeof DashboardCollectionsIndexRoute
-  '/dashboard/places': typeof DashboardPlacesIndexRoute
-  '/dashboard/reports': typeof DashboardReportsIndexRoute
-  '/dashboard/users': typeof DashboardUsersIndexRoute
   '/dashboard/categories/$id': typeof DashboardCategoriesIdIndexRoute
   '/dashboard/categories/new': typeof DashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id': typeof DashboardCitiesIdIndexRoute
   '/dashboard/cities/new': typeof DashboardCitiesNewIndexRoute
-  '/dashboard/collections/$id': typeof DashboardCollectionsIdIndexRoute
-  '/dashboard/collections/new': typeof DashboardCollectionsNewIndexRoute
-  '/dashboard/collections/relations': typeof DashboardCollectionsRelationsIndexRoute
-  '/dashboard/places/$id': typeof DashboardPlacesIdIndexRoute
-  '/dashboard/places/new': typeof DashboardPlacesNewIndexRoute
-  '/dashboard/reports/$id': typeof DashboardReportsIdIndexRoute
-  '/dashboard/users/$id': typeof DashboardUsersIdIndexRoute
   '/dashboard/categories/$id/edit': typeof DashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit': typeof DashboardCitiesIdEditIndexRoute
-  '/dashboard/collections/$id/edit': typeof DashboardCollectionsIdEditIndexRoute
-  '/dashboard/collections/$id/items': typeof DashboardCollectionsIdItemsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/sign-in': typeof SignInRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/': typeof DashboardIndexRoute
+  '/sign-in/': typeof SignInIndexRoute
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/cities/': typeof DashboardCitiesIndexRoute
-  '/dashboard/collections/': typeof DashboardCollectionsIndexRoute
-  '/dashboard/places/': typeof DashboardPlacesIndexRoute
-  '/dashboard/reports/': typeof DashboardReportsIndexRoute
-  '/dashboard/users/': typeof DashboardUsersIndexRoute
   '/dashboard/categories/$id/': typeof DashboardCategoriesIdIndexRoute
   '/dashboard/categories/new/': typeof DashboardCategoriesNewIndexRoute
   '/dashboard/cities/$id/': typeof DashboardCitiesIdIndexRoute
   '/dashboard/cities/new/': typeof DashboardCitiesNewIndexRoute
-  '/dashboard/collections/$id/': typeof DashboardCollectionsIdIndexRoute
-  '/dashboard/collections/new/': typeof DashboardCollectionsNewIndexRoute
-  '/dashboard/collections/relations/': typeof DashboardCollectionsRelationsIndexRoute
-  '/dashboard/places/$id/': typeof DashboardPlacesIdIndexRoute
-  '/dashboard/places/new/': typeof DashboardPlacesNewIndexRoute
-  '/dashboard/reports/$id/': typeof DashboardReportsIdIndexRoute
-  '/dashboard/users/$id/': typeof DashboardUsersIdIndexRoute
   '/dashboard/categories/$id/edit/': typeof DashboardCategoriesIdEditIndexRoute
   '/dashboard/cities/$id/edit/': typeof DashboardCitiesIdEditIndexRoute
-  '/dashboard/collections/$id/edit/': typeof DashboardCollectionsIdEditIndexRoute
-  '/dashboard/collections/$id/items/': typeof DashboardCollectionsIdItemsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/sign-in'
+    | '/dashboard'
+    | '/dashboard/'
+    | '/sign-in/'
     | '/dashboard/categories/'
     | '/dashboard/cities/'
-    | '/dashboard/collections/'
-    | '/dashboard/places/'
-    | '/dashboard/reports/'
-    | '/dashboard/users/'
     | '/dashboard/categories/$id/'
     | '/dashboard/categories/new/'
     | '/dashboard/cities/$id/'
     | '/dashboard/cities/new/'
-    | '/dashboard/collections/$id/'
-    | '/dashboard/collections/new/'
-    | '/dashboard/collections/relations/'
-    | '/dashboard/places/$id/'
-    | '/dashboard/places/new/'
-    | '/dashboard/reports/$id/'
-    | '/dashboard/users/$id/'
     | '/dashboard/categories/$id/edit/'
     | '/dashboard/cities/$id/edit/'
-    | '/dashboard/collections/$id/edit/'
-    | '/dashboard/collections/$id/items/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/sign-in'
     | '/dashboard/categories'
     | '/dashboard/cities'
-    | '/dashboard/collections'
-    | '/dashboard/places'
-    | '/dashboard/reports'
-    | '/dashboard/users'
     | '/dashboard/categories/$id'
     | '/dashboard/categories/new'
     | '/dashboard/cities/$id'
     | '/dashboard/cities/new'
-    | '/dashboard/collections/$id'
-    | '/dashboard/collections/new'
-    | '/dashboard/collections/relations'
-    | '/dashboard/places/$id'
-    | '/dashboard/places/new'
-    | '/dashboard/reports/$id'
-    | '/dashboard/users/$id'
     | '/dashboard/categories/$id/edit'
     | '/dashboard/cities/$id/edit'
-    | '/dashboard/collections/$id/edit'
-    | '/dashboard/collections/$id/items'
   id:
     | '__root__'
     | '/'
-    | '/sign-in'
+    | '/dashboard'
+    | '/dashboard/'
+    | '/sign-in/'
     | '/dashboard/categories/'
     | '/dashboard/cities/'
-    | '/dashboard/collections/'
-    | '/dashboard/places/'
-    | '/dashboard/reports/'
-    | '/dashboard/users/'
     | '/dashboard/categories/$id/'
     | '/dashboard/categories/new/'
     | '/dashboard/cities/$id/'
     | '/dashboard/cities/new/'
-    | '/dashboard/collections/$id/'
-    | '/dashboard/collections/new/'
-    | '/dashboard/collections/relations/'
-    | '/dashboard/places/$id/'
-    | '/dashboard/places/new/'
-    | '/dashboard/reports/$id/'
-    | '/dashboard/users/$id/'
     | '/dashboard/categories/$id/edit/'
     | '/dashboard/cities/$id/edit/'
-    | '/dashboard/collections/$id/edit/'
-    | '/dashboard/collections/$id/items/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  SignInRoute: typeof SignInRoute
-  DashboardCategoriesIndexRoute: typeof DashboardCategoriesIndexRoute
-  DashboardCitiesIndexRoute: typeof DashboardCitiesIndexRoute
-  DashboardCollectionsIndexRoute: typeof DashboardCollectionsIndexRoute
-  DashboardPlacesIndexRoute: typeof DashboardPlacesIndexRoute
-  DashboardReportsIndexRoute: typeof DashboardReportsIndexRoute
-  DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
-  DashboardCategoriesIdIndexRoute: typeof DashboardCategoriesIdIndexRoute
-  DashboardCategoriesNewIndexRoute: typeof DashboardCategoriesNewIndexRoute
-  DashboardCitiesIdIndexRoute: typeof DashboardCitiesIdIndexRoute
-  DashboardCitiesNewIndexRoute: typeof DashboardCitiesNewIndexRoute
-  DashboardCollectionsIdIndexRoute: typeof DashboardCollectionsIdIndexRoute
-  DashboardCollectionsNewIndexRoute: typeof DashboardCollectionsNewIndexRoute
-  DashboardCollectionsRelationsIndexRoute: typeof DashboardCollectionsRelationsIndexRoute
-  DashboardPlacesIdIndexRoute: typeof DashboardPlacesIdIndexRoute
-  DashboardPlacesNewIndexRoute: typeof DashboardPlacesNewIndexRoute
-  DashboardReportsIdIndexRoute: typeof DashboardReportsIdIndexRoute
-  DashboardUsersIdIndexRoute: typeof DashboardUsersIdIndexRoute
-  DashboardCategoriesIdEditIndexRoute: typeof DashboardCategoriesIdEditIndexRoute
-  DashboardCitiesIdEditIndexRoute: typeof DashboardCitiesIdEditIndexRoute
-  DashboardCollectionsIdEditIndexRoute: typeof DashboardCollectionsIdEditIndexRoute
-  DashboardCollectionsIdItemsIndexRoute: typeof DashboardCollectionsIdItemsIndexRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  SignInIndexRoute: typeof SignInIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sign-in': {
-      id: '/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -356,181 +196,111 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/users/': {
-      id: '/dashboard/users/'
-      path: '/dashboard/users'
-      fullPath: '/dashboard/users/'
-      preLoaderRoute: typeof DashboardUsersIndexRouteImport
+    '/sign-in/': {
+      id: '/sign-in/'
+      path: '/sign-in'
+      fullPath: '/sign-in/'
+      preLoaderRoute: typeof SignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/reports/': {
-      id: '/dashboard/reports/'
-      path: '/dashboard/reports'
-      fullPath: '/dashboard/reports/'
-      preLoaderRoute: typeof DashboardReportsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/places/': {
-      id: '/dashboard/places/'
-      path: '/dashboard/places'
-      fullPath: '/dashboard/places/'
-      preLoaderRoute: typeof DashboardPlacesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/collections/': {
-      id: '/dashboard/collections/'
-      path: '/dashboard/collections'
-      fullPath: '/dashboard/collections/'
-      preLoaderRoute: typeof DashboardCollectionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/cities/': {
       id: '/dashboard/cities/'
-      path: '/dashboard/cities'
+      path: '/cities'
       fullPath: '/dashboard/cities/'
       preLoaderRoute: typeof DashboardCitiesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/categories/': {
       id: '/dashboard/categories/'
-      path: '/dashboard/categories'
+      path: '/categories'
       fullPath: '/dashboard/categories/'
       preLoaderRoute: typeof DashboardCategoriesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/users/$id/': {
-      id: '/dashboard/users/$id/'
-      path: '/dashboard/users/$id'
-      fullPath: '/dashboard/users/$id/'
-      preLoaderRoute: typeof DashboardUsersIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/reports/$id/': {
-      id: '/dashboard/reports/$id/'
-      path: '/dashboard/reports/$id'
-      fullPath: '/dashboard/reports/$id/'
-      preLoaderRoute: typeof DashboardReportsIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/places/new/': {
-      id: '/dashboard/places/new/'
-      path: '/dashboard/places/new'
-      fullPath: '/dashboard/places/new/'
-      preLoaderRoute: typeof DashboardPlacesNewIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/places/$id/': {
-      id: '/dashboard/places/$id/'
-      path: '/dashboard/places/$id'
-      fullPath: '/dashboard/places/$id/'
-      preLoaderRoute: typeof DashboardPlacesIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/collections/relations/': {
-      id: '/dashboard/collections/relations/'
-      path: '/dashboard/collections/relations'
-      fullPath: '/dashboard/collections/relations/'
-      preLoaderRoute: typeof DashboardCollectionsRelationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/collections/new/': {
-      id: '/dashboard/collections/new/'
-      path: '/dashboard/collections/new'
-      fullPath: '/dashboard/collections/new/'
-      preLoaderRoute: typeof DashboardCollectionsNewIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/collections/$id/': {
-      id: '/dashboard/collections/$id/'
-      path: '/dashboard/collections/$id'
-      fullPath: '/dashboard/collections/$id/'
-      preLoaderRoute: typeof DashboardCollectionsIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/cities/new/': {
       id: '/dashboard/cities/new/'
-      path: '/dashboard/cities/new'
+      path: '/cities/new'
       fullPath: '/dashboard/cities/new/'
       preLoaderRoute: typeof DashboardCitiesNewIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/cities/$id/': {
       id: '/dashboard/cities/$id/'
-      path: '/dashboard/cities/$id'
+      path: '/cities/$id'
       fullPath: '/dashboard/cities/$id/'
       preLoaderRoute: typeof DashboardCitiesIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/categories/new/': {
       id: '/dashboard/categories/new/'
-      path: '/dashboard/categories/new'
+      path: '/categories/new'
       fullPath: '/dashboard/categories/new/'
       preLoaderRoute: typeof DashboardCategoriesNewIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/categories/$id/': {
       id: '/dashboard/categories/$id/'
-      path: '/dashboard/categories/$id'
+      path: '/categories/$id'
       fullPath: '/dashboard/categories/$id/'
       preLoaderRoute: typeof DashboardCategoriesIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/collections/$id/items/': {
-      id: '/dashboard/collections/$id/items/'
-      path: '/dashboard/collections/$id/items'
-      fullPath: '/dashboard/collections/$id/items/'
-      preLoaderRoute: typeof DashboardCollectionsIdItemsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/collections/$id/edit/': {
-      id: '/dashboard/collections/$id/edit/'
-      path: '/dashboard/collections/$id/edit'
-      fullPath: '/dashboard/collections/$id/edit/'
-      preLoaderRoute: typeof DashboardCollectionsIdEditIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/cities/$id/edit/': {
       id: '/dashboard/cities/$id/edit/'
-      path: '/dashboard/cities/$id/edit'
+      path: '/cities/$id/edit'
       fullPath: '/dashboard/cities/$id/edit/'
       preLoaderRoute: typeof DashboardCitiesIdEditIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/dashboard/categories/$id/edit/': {
       id: '/dashboard/categories/$id/edit/'
-      path: '/dashboard/categories/$id/edit'
+      path: '/categories/$id/edit'
       fullPath: '/dashboard/categories/$id/edit/'
       preLoaderRoute: typeof DashboardCategoriesIdEditIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SignInRoute: SignInRoute,
+interface DashboardRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardCategoriesIndexRoute: typeof DashboardCategoriesIndexRoute
+  DashboardCitiesIndexRoute: typeof DashboardCitiesIndexRoute
+  DashboardCategoriesIdIndexRoute: typeof DashboardCategoriesIdIndexRoute
+  DashboardCategoriesNewIndexRoute: typeof DashboardCategoriesNewIndexRoute
+  DashboardCitiesIdIndexRoute: typeof DashboardCitiesIdIndexRoute
+  DashboardCitiesNewIndexRoute: typeof DashboardCitiesNewIndexRoute
+  DashboardCategoriesIdEditIndexRoute: typeof DashboardCategoriesIdEditIndexRoute
+  DashboardCitiesIdEditIndexRoute: typeof DashboardCitiesIdEditIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
   DashboardCategoriesIndexRoute: DashboardCategoriesIndexRoute,
   DashboardCitiesIndexRoute: DashboardCitiesIndexRoute,
-  DashboardCollectionsIndexRoute: DashboardCollectionsIndexRoute,
-  DashboardPlacesIndexRoute: DashboardPlacesIndexRoute,
-  DashboardReportsIndexRoute: DashboardReportsIndexRoute,
-  DashboardUsersIndexRoute: DashboardUsersIndexRoute,
   DashboardCategoriesIdIndexRoute: DashboardCategoriesIdIndexRoute,
   DashboardCategoriesNewIndexRoute: DashboardCategoriesNewIndexRoute,
   DashboardCitiesIdIndexRoute: DashboardCitiesIdIndexRoute,
   DashboardCitiesNewIndexRoute: DashboardCitiesNewIndexRoute,
-  DashboardCollectionsIdIndexRoute: DashboardCollectionsIdIndexRoute,
-  DashboardCollectionsNewIndexRoute: DashboardCollectionsNewIndexRoute,
-  DashboardCollectionsRelationsIndexRoute:
-    DashboardCollectionsRelationsIndexRoute,
-  DashboardPlacesIdIndexRoute: DashboardPlacesIdIndexRoute,
-  DashboardPlacesNewIndexRoute: DashboardPlacesNewIndexRoute,
-  DashboardReportsIdIndexRoute: DashboardReportsIdIndexRoute,
-  DashboardUsersIdIndexRoute: DashboardUsersIdIndexRoute,
   DashboardCategoriesIdEditIndexRoute: DashboardCategoriesIdEditIndexRoute,
   DashboardCitiesIdEditIndexRoute: DashboardCitiesIdEditIndexRoute,
-  DashboardCollectionsIdEditIndexRoute: DashboardCollectionsIdEditIndexRoute,
-  DashboardCollectionsIdItemsIndexRoute: DashboardCollectionsIdItemsIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  SignInIndexRoute: SignInIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
