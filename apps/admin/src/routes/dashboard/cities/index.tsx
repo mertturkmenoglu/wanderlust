@@ -1,36 +1,46 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
-import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
-import { citiesCols } from '@/components/dashboard/columns';
-import { DataTable } from '@/components/dashboard/data-table';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { Breadcrumbs } from '@/components/breadcrumbs';
+import { Container } from '@/components/container';
+import { DenseList } from '@/components/dense-list';
+import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
+import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/dashboard/cities/')({
 	component: RouteComponent,
 	loader: async ({ context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.cities.list.queryOptions({
+			orpc.cities.list.queryOptions({
 				input: {},
 			}),
 		),
+	staticData: {
+		breadcrumb: 'Cities',
+	},
 });
 
 function RouteComponent() {
 	const { cities } = Route.useLoaderData();
+	const crumbs = useBreadcrumbs();
 
 	return (
-		<div>
-			<DashboardBreadcrumb
-				items={[{ name: 'Cities', href: '/dashboard/cities' }]}
-			/>
+		<Container>
+			<Breadcrumbs crumbs={crumbs} />
 
 			<Separator className="my-4" />
 
-			<DataTable
-				columns={citiesCols}
-				filterColumnId="name"
+			<DenseList
 				data={cities}
-				hrefPrefix="/dashboard/cities"
+				keyExtractor={(c) => c.id.toString()}
+				renderItem={(item, className) => (
+					<div className={cn(className)}>
+						<Link to="/dashboard/cities/$id" params={{ id: `${item.id}` }}>
+							{item.name}
+						</Link>
+					</div>
+				)}
 			/>
-		</div>
+		</Container>
 	);
 }
