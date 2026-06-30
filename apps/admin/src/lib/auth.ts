@@ -26,6 +26,12 @@ export async function authGuard() {
 		});
 	}
 
+	if (session.data.user.role !== 'admin') {
+		throw redirect({
+			to: '/sign-in',
+		});
+	}
+
 	return { auth: session.data };
 }
 

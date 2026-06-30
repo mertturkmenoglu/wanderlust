@@ -1,13 +1,16 @@
-import {
-	createORPCClient,
-	type InferClientInputs,
-	type InferClientOutputs,
-	ORPCError,
-} from '@orpc/client';
+import { createORPCClient, ORPCError } from '@orpc/client';
 import { RPCLink } from '@orpc/client/fetch';
-import { createTanstackQueryUtils } from '@orpc/tanstack-query';
+import type {
+	ContractRouterClient,
+	InferContractRouterInputs,
+	InferContractRouterOutputs,
+} from '@orpc/contract';
+import {
+	createTanstackQueryUtils,
+	type RouterUtils,
+} from '@orpc/tanstack-query';
 import { QueryCache, QueryClient } from '@tanstack/react-query';
-import type { AppRouterClient } from '@wanderlust/api/routes/client-types';
+import type { AppRouter } from '@wanderlust/contract';
 import { toast } from 'sonner';
 
 export const queryClient = new QueryClient({
@@ -46,10 +49,11 @@ export const link = new RPCLink({
 	},
 });
 
-export const client: AppRouterClient = createORPCClient(link);
+export const client: ContractRouterClient<AppRouter> = createORPCClient(link);
 
-export const orpc = createTanstackQueryUtils(client);
+export const orpc: RouterUtils<typeof client> =
+	createTanstackQueryUtils(client);
 
-export type Inputs = InferClientInputs<AppRouterClient>;
+export type Inputs = InferContractRouterInputs<AppRouter>;
 
-export type Outputs = InferClientOutputs<AppRouterClient>;
+export type Outputs = InferContractRouterOutputs<AppRouter>;
