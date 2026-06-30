@@ -1,22 +1,25 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { authGuard } from '@/lib/auth';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
 
 export const Route = createFileRoute('/')({
 	component: RouteComponent,
-	beforeLoad: async ({ context: { orpc } }) => {
-		const auth = await authGuard();
-		const { role } = await orpc.users.getRole.call({});
-
-		if (!auth.auth.user || role !== 'admin') {
-			throw redirect({
-				to: '/sign-in',
-			});
-		}
-
-		return auth;
-	},
 });
 
 function RouteComponent() {
-	return <div>Index</div>;
+	const isAuthenticated = useIsAuthenticated();
+
+	return (
+		<div>
+			<div>Index</div>
+			{isAuthenticated ? (
+				<Link to="/dashboard">
+					<div>Dashboard</div>
+				</Link>
+			) : (
+				<Link to="/sign-in">
+					<div>Sign In</div>
+				</Link>
+			)}
+		</div>
+	);
 }
