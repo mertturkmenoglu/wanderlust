@@ -1,10 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Container } from '@/components/container';
 import { DenseList } from '@/components/dense-list';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/dashboard/cities/')({
@@ -22,14 +19,9 @@ export const Route = createFileRoute('/dashboard/cities/')({
 
 function RouteComponent() {
 	const { cities } = Route.useLoaderData();
-	const crumbs = useBreadcrumbs();
 
 	return (
 		<Container>
-			<Breadcrumbs crumbs={crumbs} />
-
-			<Separator className="my-4" />
-
 			<DenseList
 				data={cities}
 				keyExtractor={(c) => c.id.toString()}

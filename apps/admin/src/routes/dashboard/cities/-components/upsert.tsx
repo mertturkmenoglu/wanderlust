@@ -23,15 +23,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@wanderlust/ui/components/select';
-import { Separator } from '@wanderlust/ui/components/separator';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { Textarea } from '@wanderlust/ui/components/textarea';
 import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useUpsert } from '@/hooks/use-upsert';
 import { type Outputs, orpc } from '@/lib/orpc';
@@ -97,14 +94,8 @@ export function Upsert({ action, city }: UpsertProps) {
 		}
 	});
 
-	const crumbs = useBreadcrumbs();
-
 	return (
 		<div>
-			<Breadcrumbs crumbs={crumbs} />
-
-			<Separator className="my-4" />
-
 			{previewUrl !== '' && (
 				<img
 					src={previewUrl}
@@ -114,13 +105,19 @@ export function Upsert({ action, city }: UpsertProps) {
 			)}
 
 			<form onSubmit={onSubmit}>
-				<FieldGroup className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+				<FieldGroup className="mt-8 gap-4">
 					<Controller
 						name="id"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="id">ID</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="id" className="min-w-64">
+									ID
+								</FieldLabel>
 								<Input
 									{...field}
 									id="id"
@@ -139,8 +136,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="name"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="name">Name</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="name" className="min-w-64">
+									Name
+								</FieldLabel>
 								<Input
 									{...field}
 									id="name"
@@ -158,8 +161,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="stateCode"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="stateCode">State Code</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="stateCode" className="min-w-64">
+									State Code
+								</FieldLabel>
 								<Input
 									{...field}
 									id="stateCode"
@@ -177,8 +186,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="stateName"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="stateName">State Name</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="stateName" className="min-w-64">
+									State Name
+								</FieldLabel>
 								<Input
 									{...field}
 									id="stateName"
@@ -196,8 +211,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="countryCode"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="countryCode">Country Code</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="countryCode" className="min-w-64">
+									Country Code
+								</FieldLabel>
 								<Input
 									{...field}
 									id="countryCode"
@@ -215,8 +236,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="countryName"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="countryName">Country Name</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="countryName" className="min-w-64">
+									Country Name
+								</FieldLabel>
 								<Input
 									{...field}
 									id="countryName"
@@ -234,8 +261,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="image"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="image">Image URL</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="image" className="min-w-64">
+									Image URL
+								</FieldLabel>
 
 								<InputGroup>
 									<InputGroupInput
@@ -270,8 +303,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="lat"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="lat">Latitude</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="lat" className="min-w-64">
+									Latitude
+								</FieldLabel>
 								<Input
 									{...field}
 									id="lat"
@@ -289,8 +328,14 @@ export function Upsert({ action, city }: UpsertProps) {
 						name="lng"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="lng">Longitude</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="lng" className="min-w-64">
+									Longitude
+								</FieldLabel>
 								<Input
 									{...field}
 									id="lng"
@@ -304,11 +349,11 @@ export function Upsert({ action, city }: UpsertProps) {
 						)}
 					/>
 
-					<div className="col-span-full">
+					<div className="flex justify-end">
 						<Button
 							type="button"
 							variant="link"
-							className="px-0"
+							className="ml-auto px-0"
 							onClick={async () => {
 								const text = await navigator.clipboard.readText();
 								const [lat, lng] = text
@@ -338,9 +383,12 @@ export function Upsert({ action, city }: UpsertProps) {
 						render={({ field, fieldState }) => (
 							<Field
 								data-invalid={fieldState.invalid}
-								className="col-span-full"
+								orientation="horizontal"
+								className="gap-16"
 							>
-								<FieldLabel htmlFor="description">Description</FieldLabel>
+								<FieldLabel htmlFor="description" className="min-w-64">
+									Description
+								</FieldLabel>
 								<Textarea
 									{...field}
 									id="description"
@@ -363,9 +411,9 @@ export function Upsert({ action, city }: UpsertProps) {
 							<Field
 								data-invalid={fieldState.invalid}
 								orientation="horizontal"
-								className="col-span-full"
+								className="gap-16"
 							>
-								<FieldContent>
+								<FieldContent className="min-w-64">
 									<FieldLabel htmlFor="timezone">Timezone</FieldLabel>
 									<FieldDescription>
 										City's timezone in IANA format (e.g., America/New_York)

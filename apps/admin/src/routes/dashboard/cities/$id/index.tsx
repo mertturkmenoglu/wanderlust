@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { BackLink } from '@/components/back-link';
 import { Container } from '@/components/container';
 import { ObjectDetails } from '@/components/object-details';
 import {
@@ -49,8 +48,6 @@ function RouteComponent() {
 
 	return (
 		<Container>
-			<BackLink to="/dashboard/cities" text="Cities" />
-
 			{confirm.Dialog}
 
 			<ObjectDetails
