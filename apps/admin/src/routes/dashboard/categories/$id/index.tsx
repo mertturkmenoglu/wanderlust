@@ -1,23 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
-import { Image } from '@unpic/react';
-import { Separator } from '@wanderlust/ui/components/separator';
-import { ArrowRightIcon, Edit2Icon, PaperclipIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { DashboardActions } from '@/components/dashboard/actions';
-import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
-import { keyValueCols } from '@/components/dashboard/columns';
-import { DataTable } from '@/components/dashboard/data-table';
-import { DeleteDialog } from '@/components/dashboard/delete-dialog';
-import { DashboardLink } from '@/components/dashboard/link';
+import { BackLink } from '@/components/back-link';
+import { Container } from '@/components/container';
+import { ObjectDetails } from '@/components/object-details';
+import {
+	DetailRow,
+	DetailTable,
+} from '@/components/object-details/detail-table';
+import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { ipx } from '@/lib/ipx';
+import { copyToClipboard } from '@/lib/clipboard';
+import { appLink } from '@/lib/link';
 import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/dashboard/categories/$id/')({
 	component: RouteComponent,
-	loader: async ({ context, params }) => {
-		const res = await context.orpc.categories.list.call({});
+	loader: async ({ params }) => {
+		const res = await orpc.categories.list.call({});
 		const category = res.categories.find((c) => c.id === +params.id);
 
 		if (!category) {
@@ -28,12 +28,17 @@ export const Route = createFileRoute('/dashboard/categories/$id/')({
 			category,
 		};
 	},
+	staticData: {
+		breadcrumb: (data) => data.category.name,
+	},
 });
 
 function RouteComponent() {
 	const { category } = Route.useLoaderData();
 	const navigate = useNavigate();
 	const invalidate = useInvalidator();
+
+	const confirm = useConfirmDialog();
 
 	const mutation = useMutation(
 		orpc.categories.delete.mutationOptions({
@@ -46,73 +51,69 @@ function RouteComponent() {
 	);
 
 	return (
-		<>
-			<DashboardBreadcrumb
-				items={[
-					{ name: 'Categories', href: '/dashboard/categories' },
-					{
-						name: category.name,
-						href: `/dashboard/categories/${category.id}`,
-					},
-				]}
-			/>
-			<Separator className="my-2" />
+		<Container>
+			<BackLink to="/dashboard/categories" text="Categories" />
 
-			<DashboardActions>
-				<DashboardLink
-					to="/categories"
-					icon={PaperclipIcon}
-					title="Visit Page"
-					action={ArrowRightIcon}
-				/>
+			{confirm.Dialog}
 
-				<DashboardLink
-					to="/dashboard/categories/$id/edit"
-					params={{
-						id: `${category.id}`,
-					}}
-					icon={Edit2Icon}
-					title="Edit"
-					action={ArrowRightIcon}
-				/>
+			<ObjectDetails
+				classNames={{
+					root: 'mt-4',
+				}}
+				object={{
+					type: 'category',
+					title: category.name,
+					id: `${category.id}`,
+				}}
+				onEdit={() =>
+					navigate({
+						to: '/dashboard/categories/$id/edit',
+						params: { id: `${category.id}` },
+					})
+				}
+				onVisit={() => {
+					navigate({
+						href: appLink(`/categories/${category.id}`),
+					});
+				}}
+				onShare={() => {
+					copyToClipboard(appLink(`/categories/${category.id}`));
+				}}
+				onDelete={async () => {
+					const ok = await confirm.confirm({
+						variant: 'destructive',
+						title: 'Delete Category',
+						description: `Are you sure you want to delete the category "${category.name}"? This action cannot be undone.`,
+						confirmText: 'Delete',
+						cancelText: 'Cancel',
+					});
 
-				<DeleteDialog
-					type="category"
-					onClick={() =>
-						mutation.mutate({
-							id: category.id,
-						})
+					if (!ok) {
+						return;
 					}
-				/>
-			</DashboardActions>
 
-			<Image
-				src={ipx(category.image, 'w_256')}
-				alt={category.name}
-				className="mt-4 aspect-video w-64 rounded-md object-cover"
-				layout="constrained"
-				width={256}
-				aspectRatio={16 / 9}
-			/>
+					mutation.mutate({
+						id: category.id,
+					});
+				}}
+			>
+				<DetailTable>
+					<DetailRow label="ID" value={category.id} />
 
-			<DataTable
-				columns={keyValueCols}
-				filterColumnId=""
-				data={[
-					{
-						k: 'ID',
-						v: `${category.id}`,
-					},
-					{
-						k: 'Name',
-						v: category.name,
-					},
-					{
-						k: 'Image URL',
-						v: category.image,
-					},
-				]}
-			/>
-		</>
+					<DetailRow label="Name" value={category.name} />
+
+					<DetailRow
+						label="Image"
+						value={
+							<img
+								src={category.image}
+								alt={category.name}
+								className="aspect-video h-32 object-cover"
+							/>
+						}
+					/>
+				</DetailTable>
+			</ObjectDetails>
+		</Container>
 	);
 }

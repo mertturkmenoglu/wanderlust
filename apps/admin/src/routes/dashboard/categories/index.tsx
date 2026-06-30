@@ -1,40 +1,44 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Separator } from '@wanderlust/ui/components/separator';
-import { DashboardBreadcrumb } from '@/components/dashboard/breadcrumb';
-import { keyValueCols } from '@/components/dashboard/columns';
-import { DataTable } from '@/components/dashboard/data-table';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
+import { Breadcrumbs } from '@/components/breadcrumbs';
+import { Container } from '@/components/container';
+import { DenseList } from '@/components/dense-list';
+import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
+import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/dashboard/categories/')({
 	component: RouteComponent,
 	loader: ({ context }) =>
 		context.queryClient.ensureQueryData(
-			context.orpc.categories.list.queryOptions({
+			orpc.categories.list.queryOptions({
 				input: {},
 			}),
 		),
+	staticData: {
+		breadcrumb: 'Categories',
+	},
 });
 
 function RouteComponent() {
 	const { categories } = Route.useLoaderData();
+	const crumbs = useBreadcrumbs();
 
 	return (
-		<>
-			<DashboardBreadcrumb
-				items={[{ name: 'Categories', href: '/dashboard/categories' }]}
-			/>
+		<Container>
+			<Breadcrumbs crumbs={crumbs} />
 
-			<Separator className="my-4" />
-
-			<DataTable
-				columns={keyValueCols}
-				filterColumnId="v"
-				data={categories.map((c) => ({
-					k: `${c.id}`,
-					v: c.name,
-				}))}
-				hrefPrefix="/dashboard/categories"
-				hrefColumnId="k"
+			<DenseList
+				data={categories}
+				className="mt-4"
+				keyExtractor={(c) => `category-${c.id}`}
+				renderItem={(item, className) => (
+					<div className={cn(className)}>
+						<Link to="/dashboard/categories/$id" params={{ id: `${item.id}` }}>
+							{item.name}
+						</Link>
+					</div>
+				)}
 			/>
-		</>
+		</Container>
 	);
 }

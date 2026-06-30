@@ -1,10 +1,12 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { Upsert } from '../../-upsert';
+import { Container } from '@/components/container';
+import { orpc } from '@/lib/orpc';
+import { Upsert } from '../../-components/upsert';
 
 export const Route = createFileRoute('/dashboard/categories/$id/edit/')({
 	component: RouteComponent,
-	loader: async ({ context, params }) => {
-		const res = await context.orpc.categories.list.call({});
+	loader: async ({ params }) => {
+		const res = await orpc.categories.list.call({});
 		const category = res.categories.find((c) => c.id === +params.id);
 
 		if (!category) {
@@ -15,10 +17,17 @@ export const Route = createFileRoute('/dashboard/categories/$id/edit/')({
 			category,
 		};
 	},
+	staticData: {
+		breadcrumb: 'Edit Category',
+	},
 });
 
 function RouteComponent() {
 	const { category } = Route.useLoaderData();
 
-	return <Upsert action="edit" category={category} />;
+	return (
+		<Container>
+			<Upsert action="edit" category={category} />
+		</Container>
+	);
 }
