@@ -1,40 +1,111 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
 import { Container } from '@/components/container';
-import { UnderlineLink } from '@/components/underline-link';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 
 export const Route = createFileRoute('/dashboard/')({
 	component: RouteComponent,
 	staticData: {
-		breadcrumb: 'Dashboard',
+		breadcrumb: 'Actions',
 	},
 });
 
 function RouteComponent() {
-	const crumbs = useBreadcrumbs();
-
 	return (
 		<Container>
-			<Breadcrumbs crumbs={crumbs} />
+			<div className="my-8 flex flex-row flex-wrap gap-4">
+				<Item variant="outline">
+					<ItemContent>
+						<ItemTitle>Categories</ItemTitle>
+					</ItemContent>
+					<ItemActions className="ml-16 flex gap-4">
+						<Link
+							to="/dashboard/categories"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							View
+						</Link>
+						<Link
+							to="/dashboard/categories/new"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							New
+						</Link>
+					</ItemActions>
+				</Item>
 
-			<div className="my-32 flex w-64 flex-col gap-2">
-				<UnderlineLink to="/dashboard/categories">Categories</UnderlineLink>
+				<Item variant="outline">
+					<ItemContent>
+						<ItemTitle>Cities</ItemTitle>
+					</ItemContent>
+					<ItemActions className="ml-16 flex gap-4">
+						<Link
+							to="/dashboard/cities"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							View
+						</Link>
+						<Link
+							to="/dashboard/cities/new"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							New
+						</Link>
+					</ItemActions>
+				</Item>
 
-				<UnderlineLink to="/dashboard/categories/new">
-					New Category
-				</UnderlineLink>
+				<Item variant="outline">
+					<ItemContent>
+						<ItemTitle>Reports</ItemTitle>
+					</ItemContent>
+					<ItemActions className="ml-16 flex gap-4">
+						<Link
+							to="/dashboard/reports"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							View
+						</Link>
+					</ItemActions>
+				</Item>
 
-				<UnderlineLink to="/dashboard/cities">Cities</UnderlineLink>
+				<Item variant="outline">
+					<ItemContent>
+						<ItemTitle>Places</ItemTitle>
+					</ItemContent>
+					<ItemActions className="ml-16 flex gap-4">
+						<Link
+							to="/dashboard/places"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							View
+						</Link>
+						<Link
+							to="/dashboard/places/new"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							New
+						</Link>
+					</ItemActions>
+				</Item>
 
-				<UnderlineLink to="/dashboard/cities/new">New City</UnderlineLink>
-
-				<UnderlineLink
-					to="/dashboard/reports"
-					search={{ page: 1, pageSize: 20 }}
-				>
-					Reports
-				</UnderlineLink>
+				<Item variant="outline">
+					<ItemContent>
+						<ItemTitle>Users</ItemTitle>
+					</ItemContent>
+					<ItemActions className="ml-16 flex gap-4">
+						<Link
+							to="/dashboard/users"
+							className={buttonVariants({ variant: 'default' })}
+						>
+							View
+						</Link>
+					</ItemActions>
+				</Item>
 			</div>
 		</Container>
 	);
