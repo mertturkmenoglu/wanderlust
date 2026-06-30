@@ -4,7 +4,6 @@
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
 		"outDir": "dist",
-
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
@@ -12,8 +11,7 @@
 		"types": ["vite/client"],
 		"rootDirs": ["."],
 		"paths": {
-			"@/*": ["./src/*"],
-			"@wanderlust/ui/*": ["../../packages/ui/src/*"],
+			"@/*": ["./src/*"]
 		},
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
