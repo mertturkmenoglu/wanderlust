@@ -1,9 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Container } from '@/components/container';
 import { DenseList } from '@/components/dense-list';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { orpc } from '@/lib/orpc';
 
 export const Route = createFileRoute('/dashboard/categories/')({
@@ -21,12 +19,9 @@ export const Route = createFileRoute('/dashboard/categories/')({
 
 function RouteComponent() {
 	const { categories } = Route.useLoaderData();
-	const crumbs = useBreadcrumbs();
 
 	return (
 		<Container>
-			<Breadcrumbs crumbs={crumbs} />
-
 			<DenseList
 				data={categories}
 				className="mt-4"

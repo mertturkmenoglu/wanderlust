@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { BackLink } from '@/components/back-link';
 import { Container } from '@/components/container';
 import { ObjectDetails } from '@/components/object-details';
 import {
@@ -52,8 +51,6 @@ function RouteComponent() {
 
 	return (
 		<Container>
-			<BackLink to="/dashboard/categories" text="Categories" />
-
 			{confirm.Dialog}
 
 			<ObjectDetails
@@ -73,11 +70,17 @@ function RouteComponent() {
 				}
 				onVisit={() => {
 					navigate({
-						href: appLink(`/categories/${category.id}`),
+						href: appLink(
+							`/search/places?category=${encodeURIComponent(category.name)}`,
+						),
 					});
 				}}
 				onShare={() => {
-					copyToClipboard(appLink(`/categories/${category.id}`));
+					copyToClipboard(
+						appLink(
+							`/search/places?category=${encodeURIComponent(category.name)}`,
+						),
+					);
 				}}
 				onDelete={async () => {
 					const ok = await confirm.confirm({

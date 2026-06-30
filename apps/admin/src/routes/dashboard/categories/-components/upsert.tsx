@@ -14,13 +14,10 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from '@wanderlust/ui/components/input-group';
-import { Separator } from '@wanderlust/ui/components/separator';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import z from 'zod';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useUpsert } from '@/hooks/use-upsert';
 import { type Outputs, orpc } from '@/lib/orpc';
@@ -76,30 +73,30 @@ export function Upsert({ action, category }: UpsertProps) {
 		}
 	});
 
-	const crumbs = useBreadcrumbs();
-
 	return (
 		<div>
-			<Breadcrumbs crumbs={crumbs} />
-
-			<Separator className="my-4" />
-
 			{previewUrl !== '' && (
 				<img
 					src={previewUrl}
 					alt="Preview"
-					className="mx-auto mt-8 aspect-video w-64 rounded-md object-cover"
+					className="mt-8 aspect-video w-64 rounded-md object-cover"
 				/>
 			)}
 
 			<form onSubmit={onSubmit}>
-				<FieldGroup className="mx-auto mt-8 max-w-3xl">
+				<FieldGroup className="mx-auto mt-8">
 					<Controller
 						name="id"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="id">ID</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="id" className="min-w-64">
+									ID
+								</FieldLabel>
 								<Input
 									{...field}
 									id="id"
@@ -118,8 +115,14 @@ export function Upsert({ action, category }: UpsertProps) {
 						name="name"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="name">Name</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="name" className="min-w-64">
+									Name
+								</FieldLabel>
 								<Input
 									{...field}
 									id="name"
@@ -137,8 +140,14 @@ export function Upsert({ action, category }: UpsertProps) {
 						name="image"
 						control={upsert.form.control}
 						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="image">Image URL</FieldLabel>
+							<Field
+								data-invalid={fieldState.invalid}
+								orientation="horizontal"
+								className="gap-16"
+							>
+								<FieldLabel htmlFor="image" className="min-w-64">
+									Image URL
+								</FieldLabel>
 
 								<InputGroup>
 									<InputGroupInput
@@ -166,8 +175,6 @@ export function Upsert({ action, category }: UpsertProps) {
 							</Field>
 						)}
 					/>
-
-					<div />
 
 					<div className="col-span-full flex items-center justify-end gap-2">
 						<Button
