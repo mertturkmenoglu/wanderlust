@@ -1,13 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import z from 'zod';
-import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Container } from '@/components/container';
 import { DenseList } from '@/components/dense-list';
 import { Pagination } from '@/components/pagination';
-import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { orpc } from '@/lib/orpc';
 
 const schema = z.object({
@@ -66,16 +63,11 @@ export const Route = createFileRoute('/dashboard/reports/')({
 });
 
 function RouteComponent() {
-	const crumbs = useBreadcrumbs();
 	const { reports, pagination } = Route.useLoaderData();
 	const navigate = Route.useNavigate();
 
 	return (
 		<Container>
-			<Breadcrumbs crumbs={crumbs} />
-
-			<Separator className="my-4" />
-
 			<DenseList
 				data={reports}
 				keyExtractor={(r) => r.id}
