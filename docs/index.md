@@ -2,22 +2,23 @@
 
 Welcome! Thanks for your interest in Wanderlust. We recommend reading this documentation in the order provided below to get a better understanding of the project.
 
-- `index.md` - This file (the one you are currently reading) is the main entry point for the Wanderlust documentation. It provides an overview of the project and its purpose.
-- `prerequisites.md` - Prerequisites needed to set up and run the project, including software and tools.
-- `architecture.md` - Architecture of the project, including its components and how they interact.
-- `tech-stack.md` - Overview of the technologies used in the project, including programming languages, frameworks, and libraries.
-- `abbreviations.md` - Abbreviations used throughout the project, along with their meanings.
-- `ports.md` - Ports used by the Wanderlust application, along with their corresponding services and descriptions.
-- `orpc.md` - An overview of oRPC (backend framework)
-- `auth.md` - Authentication and authorization mechanisms used in Wanderlust.
-- `docker.md` - Docker services and their explanations.
-- `database.md` - Notes on the database usage.
-- `cache.md` - Notes on the caching mechanisms.
-- `email.md` - Notes on the email service and Mailpit.
-- `storage.md` - Notes on the storage service and Flydrive.
-- `fake.md` - Notes on fake data generation for testing and development purposes.
-- `search.md` - Notes on the search service and Typesense.
-- `ipx.md` - Notes on the image proxy service and ipx.
+- [Index](index.md) - This file (the one you are currently reading) is the main entry point for the Wanderlust documentation. It provides an overview of the project and its purpose.
+- [Prerequisites](prerequisites.md) - Prerequisites needed to set up and run the project, including software and tools.
+- [Setup](setup.md) - Step-by-step instructions to set up the project on your local machine.
+- [Architecture](architecture.md) - Architecture of the project, including its components and how they interact.
+- [Tech Stack](tech-stack.md) - Overview of the technologies used in the project, including programming languages, frameworks, and libraries.
+- [Abbreviations](abbreviations.md) - Abbreviations used throughout the project, along with their meanings.
+- [Ports](ports.md) - Ports used by the Wanderlust application, along with their corresponding services and descriptions.
+- [oRPC](orpc.md) - An overview of oRPC (backend framework)
+- [Authentication](auth.md) - Authentication and authorization mechanisms used in Wanderlust.
+- [Docker](docker.md) - Docker services and their explanations.
+- [Database](database.md) - Notes on the database usage.
+- [Cache](cache.md) - Notes on the caching mechanisms.
+- [Email](email.md) - Notes on the email service and Mailpit.
+- [Storage](storage.md) - Notes on the storage service and Flydrive.
+- [Fake Data](fake.md) - Notes on fake data generation for testing and development purposes.
+- [Search](search.md) - Notes on the search service and Typesense.
+- [Image Proxy](ipx.md) - Notes on the image proxy service and ipx.
 
 ---
 
