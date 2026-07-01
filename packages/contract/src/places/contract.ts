@@ -17,9 +17,9 @@ export const contract = {
 			summary: 'Get a place by ID',
 			tags: ['Places'],
 		}),
-	peek: oc
-		.input(dto.peekInput)
-		.output(dto.peekOutput)
+	list: oc
+		.input(dto.listInput)
+		.output(dto.listOutput)
 		.errors({
 			INTERNAL_SERVER_ERROR: {},
 		})

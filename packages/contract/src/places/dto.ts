@@ -25,13 +25,13 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
-export const peekInput = z.object({});
+export const listInput = z.object({});
 
-export const peekOutput = z.object({
+export const listOutput = z.object({
 	places: place.array(),
 });
 
-export type PeekOutput = z.infer<typeof peekOutput>;
+export type ListOutput = z.infer<typeof listOutput>;
 
 export const updateInput = $dto.place.pick({
 	id: true,

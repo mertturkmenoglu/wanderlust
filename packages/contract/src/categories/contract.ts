@@ -2,6 +2,19 @@ import { oc } from '@orpc/contract';
 import * as dto from './dto';
 
 export const contract = {
+	get: oc
+		.input(dto.getInput)
+		.output(dto.getOutput)
+		.errors({
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			path: '/categories/:id',
+			method: 'GET',
+			description: 'Get a category by ID',
+			summary: 'Get a category by ID',
+			tags: ['Categories'],
+		}),
 	list: oc
 		.input(dto.listInput)
 		.output(dto.listOutput)

@@ -1,6 +1,18 @@
 import { $dto } from '@wanderlust/common';
 import z from 'zod';
 
+export const getInput = $dto.category.pick({
+	id: true,
+});
+
+export type GetInput = z.infer<typeof getInput>;
+
+export const getOutput = z.object({
+	category: $dto.category,
+});
+
+export type GetOutput = z.infer<typeof getOutput>;
+
 export const listInput = z.object({});
 
 export const listOutput = z.object({
