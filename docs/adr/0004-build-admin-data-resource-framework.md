@@ -1,0 +1,54 @@
+# ADR-0004: Build Admin Data Resource Framework
+
+## Status
+Accepted
+
+## Context
+Our admin app currently relies on ad-hoc queries and components. This solution worked well enough for the first few resources, but the admin app has grown to include more resources.
+
+Current state of the admin app:
+- Data-fetching and rendering logic is implemented multiple times across different screens and they are inconsistent with each other.
+- No consistent way to list, filter, or sort resources.
+- UI components are tightly coupled to each resource. They are not reusable enough.
+- Extending the functionality requires modifying multiple obscure code paths, which is error-prone.
+
+There are battle tested admin frameworks like React Admin (https://marmelab.com/react-admin/) or Refine (https://refine.dev/).
+
+Our evaluation of these frameworks:
+- `React Admin`: 
+	- Pros: 
+		- Mature and widely used.
+		- Provides a lot of built-in functionality (list, filter, sort, pagination, forms, etc.).
+	- Cons:
+		- Opinionated UI framework (Material UI).
+		- Limited flexibility for custom behaviors.
+- `Refine`:
+	- Pros:
+		- More flexible than React Admin.
+		- Supports multiple UI frameworks (Tailwind CSS, Material UI, Ant Design, Mantine, etc.).
+	- Cons:
+		- It also depends on the technologies we are already using, especially Tanstack.
+		- It does not provide UI elements, so we would still need to build our own components for the admin app.
+
+After these evaluations, we decided to build our own admin data layer — inspired by the concepts of these frameworks, but tailored to our specific needs.
+
+## Decision
+We will design and implement our own admin data layer, structured around three core abstractions:
+- `Resources`: Definition of each admin entity (e.g. cities, categories, places). It specifies admin pages URLs, data extractors, Tanstack Query hooks. It is the single source of truth that all pages and components consume.
+- `Components`: A shared library of building blocks. They are driven by the resource definitions.
+- `Pages`: Code-light pages that bridge the gap between components and the Tanstack Router. Creating different pages and ensuring they are wired up correctly is still the responsibility of the developer, but it requires a lot less effort and minimal code.
+
+## Consequences
+- Positive: 
+	- Full control over how everything interact with each other.
+	- Full control over the data layer, the UI elements, and the routing.
+	- Single source of truth (resources) for all entities.
+	- Utilizing our own codebase and technologies.
+- Negative: 
+	- We take on the full cost of designing, building, documenting, and maintaining this abstraction ourselves, rather than leveraging a community-maintained framework's existing feature set, documentation, and ecosystem (plugins, themes, examples).
+	- Any mistakes in the design of the abstraction will be costly to fix later, and may require significant refactoring.
+	- Introducing any ADR format will require some learning and adaptation for team members.
+	- Any contributor to the admin app have to learn our specific conventions.
+- Neutral / follow-ups:
+	- We must ensure that the abstractions we build are flexible enough to accommodate future requirements, and that they are well-documented and easy to understand for new contributors.
+	- We must follow the updates of other admin frameworks and libraries.
