@@ -7,7 +7,6 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -18,6 +17,7 @@ import { Spinner } from '@wanderlust/ui/components/spinner';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import z from 'zod';
+import { cmp } from '@/components/form';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { useUpsert } from '@/hooks/use-upsert';
 import { type Outputs, orpc } from '@/lib/orpc';
@@ -85,55 +85,41 @@ export function Upsert({ action, category }: UpsertProps) {
 
 			<form onSubmit={onSubmit}>
 				<FieldGroup className="mx-auto mt-8">
-					<Controller
+					<cmp.Input
 						name="id"
 						control={upsert.form.control}
-						render={({ field, fieldState }) => (
-							<Field
-								data-invalid={fieldState.invalid}
-								orientation="horizontal"
-								className="gap-16"
-							>
-								<FieldLabel htmlFor="id" className="min-w-64">
-									ID
-								</FieldLabel>
-								<Input
-									{...field}
-									id="id"
-									placeholder="ID"
-									disabled={action === 'edit'}
-									aria-invalid={fieldState.invalid}
-								/>
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
-						)}
+						elements={{
+							field: {
+								orientation: 'horizontal',
+								className: 'gap-16',
+							},
+							label: {
+								className: 'min-w-64',
+								children: 'ID',
+							},
+							input: {
+								placeholder: 'ID',
+								disabled: action === 'edit',
+							},
+						}}
 					/>
 
-					<Controller
+					<cmp.Input
 						name="name"
 						control={upsert.form.control}
-						render={({ field, fieldState }) => (
-							<Field
-								data-invalid={fieldState.invalid}
-								orientation="horizontal"
-								className="gap-16"
-							>
-								<FieldLabel htmlFor="name" className="min-w-64">
-									Name
-								</FieldLabel>
-								<Input
-									{...field}
-									id="name"
-									placeholder="Name"
-									aria-invalid={fieldState.invalid}
-								/>
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
-						)}
+						elements={{
+							field: {
+								orientation: 'horizontal',
+								className: 'gap-16',
+							},
+							label: {
+								className: 'min-w-64',
+								children: 'Name',
+							},
+							input: {
+								placeholder: 'Name',
+							},
+						}}
 					/>
 
 					<Controller

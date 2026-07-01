@@ -1,48 +1,96 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { queryOptions } from '@tanstack/react-query';
+import { createFileRoute, Link, linkOptions } from '@tanstack/react-router';
+import { cn } from '@wanderlust/ui/lib/utils';
 import z from 'zod';
 import { Container } from '@/components/container';
+import { DenseList } from '@/components/dense-list';
+import { DefaultPagination } from '@/components/pagination/default-pagination';
 import { authClient } from '@/lib/auth';
-import { Content } from './-content';
+import { defineStaticData } from '@/lib/define-static-data';
+import { defaultSearchSchema } from '@/schemas/default-search-schema';
+
+const searchSchema = defaultSearchSchema.extend({
+	searchBy: z.enum(['email', 'name']).optional().catch('email'),
+});
+
+const options = (search: z.infer<typeof searchSchema>) =>
+	queryOptions({
+		queryKey: ['users', search],
+		queryFn: async () => {
+			const result = await authClient.admin.listUsers({
+				query: {
+					limit: search.pageSize ?? 20,
+					offset: ((search.page ?? 1) - 1) * (search.pageSize ?? 20),
+					sortBy: 'name',
+					sortDirection: 'asc',
+					searchValue: search.search,
+					searchField: search.searchBy,
+					searchOperator: 'contains',
+				},
+			});
+
+			if (result.error) {
+				throw new Error(result.error.message);
+			}
+
+			return result.data;
+		},
+	});
+
+const link = (id: string) =>
+	linkOptions({
+		to: '/dashboard/users/$id',
+		params: { id },
+	});
+
+const staticData = defineStaticData({
+	breadcrumb: 'Users',
+});
 
 export const Route = createFileRoute('/dashboard/users/')({
 	component: RouteComponent,
-	validateSearch: z.object({
-		page: z.number().min(1).max(1_000_000).optional().catch(1),
-		pageSize: z.number().min(20).max(100).optional().catch(20),
-		search: z.string().optional(),
-		searchBy: z.enum(['email', 'name']).optional().catch('email'),
-	}),
-	loaderDeps: ({ search }) => ({
-		page: search.page,
-		pageSize: search.pageSize,
-		search: search.search,
-		searchBy: search.searchBy,
-	}),
-	loader: ({ deps }) => {
-		const page = deps.page ?? 1;
-		const pageSize = deps.pageSize ?? 20;
-
-		return authClient.admin.listUsers({
-			query: {
-				limit: pageSize,
-				offset: (page - 1) * pageSize,
-				sortBy: 'name',
-				sortDirection: 'asc',
-				searchValue: deps.search,
-				searchField: deps.searchBy,
-				searchOperator: 'contains',
-			},
-		});
+	validateSearch: searchSchema,
+	loaderDeps: ({ search }) => ({ search }),
+	loader: ({ context, deps }) => {
+		return context.queryClient.ensureQueryData(options(deps.search));
 	},
-	staticData: {
-		breadcrumb: 'Users',
-	},
+	staticData,
 });
 
 function RouteComponent() {
+	const { users, total } = Route.useLoaderData();
+	const search = Route.useSearch();
+	const hasNext = (search.page ?? 1) * (search.pageSize ?? 20) < total;
+
 	return (
 		<Container>
-			<Content />
+			<DenseList
+				data={users}
+				keyExtractor={(u) => u.id}
+				className="my-4"
+				renderItem={(item, className) => (
+					<Link {...link(item.id)}>
+						<div className={cn('flex gap-2', className)}>
+							<div>{item.name}</div>
+							<div className="ml-4 text-muted-foreground text-sm">
+								{/* @ts-expect-error username is included in the data */}@
+								{item.username}
+							</div>
+						</div>
+					</Link>
+				)}
+			/>
+
+			<DefaultPagination
+				pagination={{
+					hasNext,
+					hasPrevious: search.page ? search.page > 1 : false,
+					page: search.page ?? 1,
+					pageSize: search.pageSize ?? 20,
+					totalPages: Math.ceil(total / (search.pageSize ?? 20)),
+					totalRecords: total,
+				}}
+			/>
 		</Container>
 	);
 }

@@ -1,38 +1,21 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { cn } from '@wanderlust/ui/lib/utils';
-import { Container } from '@/components/container';
-import { DenseList } from '@/components/dense-list';
-import { orpc } from '@/lib/orpc';
+import { createFileRoute } from '@tanstack/react-router';
+import { DefaultListPage } from '@/components/default/list-page';
+import { citiesResource } from '@/resources/cities';
+import { defaultSearchSchema } from '@/schemas/default-search-schema';
 
 export const Route = createFileRoute('/dashboard/cities/')({
 	component: RouteComponent,
-	loader: async ({ context }) =>
-		context.queryClient.ensureQueryData(
-			orpc.cities.list.queryOptions({
-				input: {},
-			}),
-		),
+	validateSearch: defaultSearchSchema,
 	staticData: {
-		breadcrumb: 'Cities',
+		breadcrumb: citiesResource.breadcrumb,
 	},
 });
 
 function RouteComponent() {
-	const { cities } = Route.useLoaderData();
-
 	return (
-		<Container>
-			<DenseList
-				data={cities}
-				keyExtractor={(c) => c.id.toString()}
-				renderItem={(item, className) => (
-					<div className={cn(className)}>
-						<Link to="/dashboard/cities/$id" params={{ id: `${item.id}` }}>
-							{item.name}
-						</Link>
-					</div>
-				)}
-			/>
-		</Container>
+		<DefaultListPage
+			resource={citiesResource}
+			render={(item) => <div>{item.name}</div>}
+		/>
 	);
 }

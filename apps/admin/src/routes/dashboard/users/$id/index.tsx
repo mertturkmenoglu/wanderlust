@@ -1,11 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { Container } from '@/components/container';
-import { ObjectDetails } from '@/components/object-details';
-import {
-	DetailRow,
-	DetailTable,
-} from '@/components/object-details/detail-table';
+import { ObjectDetails } from '@/components/details';
+import { DetailRow, DetailTable } from '@/components/details/table';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
 import { authClient } from '@/lib/auth';
 import { copyToClipboard } from '@/lib/clipboard';

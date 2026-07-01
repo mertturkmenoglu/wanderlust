@@ -1,122 +1,47 @@
-import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
-import { toast } from 'sonner';
+import { createFileRoute } from '@tanstack/react-router';
 import { Container } from '@/components/container';
-import { ObjectDetails } from '@/components/object-details';
-import {
-	DetailRow,
-	DetailTable,
-} from '@/components/object-details/detail-table';
-import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
-import { useInvalidator } from '@/hooks/use-invalidator';
-import { copyToClipboard } from '@/lib/clipboard';
-import { appLink } from '@/lib/link';
-import { orpc } from '@/lib/orpc';
+import { renderer } from '@/components/details/renderer';
+import { Show } from '@/components/show';
+import { defineRows } from '@/lib/define-rows';
+import { categoriesResource } from '@/resources/categories';
 
 export const Route = createFileRoute('/dashboard/categories/$id/')({
 	component: RouteComponent,
-	loader: async ({ params }) => {
-		const res = await orpc.categories.list.call({});
-		const category = res.categories.find((c) => c.id === +params.id);
-
-		if (!category) {
-			throw notFound();
-		}
-
-		return {
-			category,
-		};
-	},
 	staticData: {
-		breadcrumb: (data) => data.category.name,
+		breadcrumb: 'Category Details',
 	},
 });
 
 function RouteComponent() {
-	const { category } = Route.useLoaderData();
-	const navigate = useNavigate();
-	const invalidate = useInvalidator();
+	const params = Route.useParams();
+	const query = categoriesResource.useOne({
+		id: +params.id,
+	});
 
-	const confirm = useConfirmDialog();
+	if (!query.data) {
+		return null;
+	}
 
-	const mutation = useMutation(
-		orpc.categories.delete.mutationOptions({
-			onSuccess: async () => {
-				await invalidate();
-				await navigate({ to: '/dashboard/categories' });
-				toast.success('Category deleted');
-			},
-		}),
-	);
+	const { category } = query.data;
+
+	const rows = defineRows([
+		['ID', category.id.toString()],
+		['Name', category.name],
+		['Image', renderer.Image(category.image)],
+	]);
 
 	return (
 		<Container>
-			{confirm.Dialog}
-
-			<ObjectDetails
-				classNames={{
-					root: 'mt-4',
+			<Show
+				resource={categoriesResource}
+				input={{
+					id: category.id,
 				}}
-				object={{
-					type: 'category',
-					title: category.name,
-					id: `${category.id}`,
+				deleteInput={{
+					id: category.id,
 				}}
-				onEdit={() =>
-					navigate({
-						to: '/dashboard/categories/$id/edit',
-						params: { id: `${category.id}` },
-					})
-				}
-				onVisit={() => {
-					navigate({
-						href: appLink(
-							`/search/places?category=${encodeURIComponent(category.name)}`,
-						),
-					});
-				}}
-				onShare={() => {
-					copyToClipboard(
-						appLink(
-							`/search/places?category=${encodeURIComponent(category.name)}`,
-						),
-					);
-				}}
-				onDelete={async () => {
-					const ok = await confirm.confirm({
-						variant: 'destructive',
-						title: 'Delete Category',
-						description: `Are you sure you want to delete the category "${category.name}"? This action cannot be undone.`,
-						confirmText: 'Delete',
-						cancelText: 'Cancel',
-					});
-
-					if (!ok) {
-						return;
-					}
-
-					mutation.mutate({
-						id: category.id,
-					});
-				}}
-			>
-				<DetailTable>
-					<DetailRow label="ID" value={category.id} />
-
-					<DetailRow label="Name" value={category.name} />
-
-					<DetailRow
-						label="Image"
-						value={
-							<img
-								src={category.image}
-								alt={category.name}
-								className="aspect-video h-32 object-cover"
-							/>
-						}
-					/>
-				</DetailTable>
-			</ObjectDetails>
+				rows={rows}
+			/>
 		</Container>
 	);
 }

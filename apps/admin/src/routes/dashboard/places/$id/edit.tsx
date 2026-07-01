@@ -1,18 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Container } from '@/components/container';
-import { Upsert } from '../-components/upsert';
 
-export const Route = createFileRoute('/dashboard/categories/new/')({
+export const Route = createFileRoute('/dashboard/places/$id/edit')({
 	component: RouteComponent,
 	staticData: {
-		breadcrumb: 'New Category',
+		breadcrumb: 'Edit Place',
 	},
 });
 
 function RouteComponent() {
 	return (
 		<Container>
-			<Upsert action="create" />
+			<div>Work in progress</div>
 		</Container>
 	);
 }
