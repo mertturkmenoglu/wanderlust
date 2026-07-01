@@ -18,21 +18,21 @@ export const Route = createFileRoute('/dashboard/')({
 function RouteComponent() {
 	return (
 		<Container>
-			<div className="my-8 flex flex-row flex-wrap gap-4">
+			<div className="my-8 flex flex-col gap-4">
 				<Item variant="outline">
 					<ItemContent>
 						<ItemTitle>Categories</ItemTitle>
 					</ItemContent>
-					<ItemActions className="ml-16 flex gap-4">
+					<ItemActions className="ml-16 flex">
 						<Link
 							to="/dashboard/categories"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							View
 						</Link>
 						<Link
 							to="/dashboard/categories/new"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							New
 						</Link>
@@ -43,16 +43,16 @@ function RouteComponent() {
 					<ItemContent>
 						<ItemTitle>Cities</ItemTitle>
 					</ItemContent>
-					<ItemActions className="ml-16 flex gap-4">
+					<ItemActions className="ml-16 flex">
 						<Link
 							to="/dashboard/cities"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							View
 						</Link>
 						<Link
 							to="/dashboard/cities/new"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							New
 						</Link>
@@ -63,10 +63,10 @@ function RouteComponent() {
 					<ItemContent>
 						<ItemTitle>Reports</ItemTitle>
 					</ItemContent>
-					<ItemActions className="ml-16 flex gap-4">
+					<ItemActions className="ml-16 flex">
 						<Link
 							to="/dashboard/reports"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							View
 						</Link>
@@ -77,16 +77,16 @@ function RouteComponent() {
 					<ItemContent>
 						<ItemTitle>Places</ItemTitle>
 					</ItemContent>
-					<ItemActions className="ml-16 flex gap-4">
+					<ItemActions className="ml-16 flex">
 						<Link
 							to="/dashboard/places"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							View
 						</Link>
 						<Link
 							to="/dashboard/places/new"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							New
 						</Link>
@@ -97,10 +97,10 @@ function RouteComponent() {
 					<ItemContent>
 						<ItemTitle>Users</ItemTitle>
 					</ItemContent>
-					<ItemActions className="ml-16 flex gap-4">
+					<ItemActions className="ml-16 flex">
 						<Link
 							to="/dashboard/users"
-							className={buttonVariants({ variant: 'default' })}
+							className={buttonVariants({ variant: 'link' })}
 						>
 							View
 						</Link>
