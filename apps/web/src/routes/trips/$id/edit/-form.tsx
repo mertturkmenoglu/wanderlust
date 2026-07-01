@@ -3,7 +3,6 @@ import { Alert, AlertDescription } from '@wanderlust/ui/components/alert';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Field,
-	FieldContent,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
@@ -12,23 +11,17 @@ import {
 	FieldSeparator,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupText,
 	InputGroupTextarea,
 } from '@wanderlust/ui/components/input-group';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@wanderlust/ui/components/select';
+import { SelectContent, SelectItem } from '@wanderlust/ui/components/select';
 import { addYears } from 'date-fns';
 import { AlertOctagonIcon, AlertTriangleIcon, Trash2Icon } from 'lucide-react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { cmp } from '@/components/form';
 import { TSTZPicker } from '@/components/tstz-picker';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
 import { lengthTracker } from '@/lib/form';
@@ -60,24 +53,15 @@ export function UpdateTripForm() {
 				<FieldLegend>Edit Your Trip</FieldLegend>
 				<FieldDescription>Change your trip info</FieldDescription>
 				<FieldGroup>
-					<Controller
+					<cmp.Input
 						name="title"
 						control={form.control}
-						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid}>
-								<FieldLabel htmlFor="title">Title</FieldLabel>
-								<Input
-									{...field}
-									id="title"
-									placeholder="My Awesome Trip"
-									autoComplete="off"
-									aria-invalid={fieldState.invalid}
-								/>
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
-						)}
+						elements={{
+							input: {
+								placeholder: 'My Awesome Trip',
+								autoComplete: 'off',
+							},
+						}}
 					/>
 
 					<Controller
@@ -111,44 +95,28 @@ export function UpdateTripForm() {
 
 					<FieldSeparator />
 
-					<Controller
+					<cmp.Select
 						name="visibilityLevel"
 						control={form.control}
-						render={({ field, fieldState }) => (
-							<Field data-invalid={fieldState.invalid} orientation="horizontal">
-								<FieldContent>
-									<FieldLabel htmlFor="visibility">Visibility</FieldLabel>
-									<FieldDescription>
-										{visibilityOptions.find((op) => op.value === field.value)
-											?.info ?? 'Change who can see your trip'}
-										{fieldState.invalid && (
-											<FieldError errors={[fieldState.error]} />
-										)}
-									</FieldDescription>
-								</FieldContent>
-
-								<Select
-									name={field.name}
-									value={field.value}
-									onValueChange={field.onChange}
-								>
-									<SelectTrigger
-										id="visibility"
-										aria-invalid={fieldState.invalid}
-										className="min-w-32"
-									>
-										<SelectValue placeholder="Select a visibility" />
-									</SelectTrigger>
-									<SelectContent position="popper" align="end">
-										{visibilityOptions.map((op) => (
-											<SelectItem key={op.value} value={op.value}>
-												{op.label}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</Field>
-						)}
+						label="Visibility"
+						description="Change who can see your trip"
+						selectContent={
+							<SelectContent position="popper" align="end">
+								{visibilityOptions.map((op) => (
+									<SelectItem key={op.value} value={op.value}>
+										{op.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						}
+						elements={{
+							trigger: {
+								className: 'min-w-32',
+							},
+							value: {
+								placeholder: 'Select a visibility',
+							},
+						}}
 					/>
 
 					<Alert variant="warning" fill="ghost">

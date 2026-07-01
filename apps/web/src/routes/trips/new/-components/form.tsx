@@ -1,26 +1,18 @@
 import {
 	Field,
-	FieldContent,
-	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupTextarea,
 } from '@wanderlust/ui/components/input-group';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@wanderlust/ui/components/select';
+import { SelectContent, SelectItem } from '@wanderlust/ui/components/select';
 import { addYears } from 'date-fns';
 import { Controller, useFormContext } from 'react-hook-form';
+import { cmp } from '@/components/form';
 import { TSTZPicker } from '@/components/tstz-picker';
 import { lengthTracker } from '@/lib/form';
 import type { CreateTripFormInput } from '@/schemas/create-trip';
@@ -41,22 +33,18 @@ export function CreateTripForm() {
 			})}
 		>
 			<FieldGroup>
-				<Controller
+				<cmp.Input
 					name="title"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="title">Title</FieldLabel>
-							<Input
-								{...field}
-								id="title"
-								placeholder="My Awesome Trip"
-								autoComplete="off"
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						label: {
+							children: 'Title',
+						},
+						input: {
+							placeholder: 'My Awesome Trip',
+							autoComplete: 'off',
+						},
+					}}
 				/>
 
 				<Controller
@@ -84,44 +72,28 @@ export function CreateTripForm() {
 					)}
 				/>
 
-				<Controller
+				<cmp.Select
 					name="visibilityLevel"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid} orientation="horizontal">
-							<FieldContent>
-								<FieldLabel htmlFor="visibility">Visibility</FieldLabel>
-								<FieldDescription>
-									{visibilityOptions.find((op) => op.value === field.value)
-										?.info ?? 'Change who can see your trip'}
-									{fieldState.invalid && (
-										<FieldError errors={[fieldState.error]} />
-									)}
-								</FieldDescription>
-							</FieldContent>
-
-							<Select
-								name={field.name}
-								value={field.value}
-								onValueChange={field.onChange}
-							>
-								<SelectTrigger
-									id="visibility"
-									aria-invalid={fieldState.invalid}
-									className="min-w-32"
-								>
-									<SelectValue placeholder="Select a visibility" />
-								</SelectTrigger>
-								<SelectContent position="popper" align="end">
-									{visibilityOptions.map((op) => (
-										<SelectItem key={op.value} value={op.value}>
-											{op.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</Field>
-					)}
+					label="Visibility"
+					description="Change who can see your trip"
+					selectContent={
+						<SelectContent position="popper" align="end">
+							{visibilityOptions.map((op) => (
+								<SelectItem key={op.value} value={op.value}>
+									{op.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					}
+					elements={{
+						trigger: {
+							className: 'min-w-32',
+						},
+						value: {
+							placeholder: 'Select a visibility',
+						},
+					}}
 				/>
 
 				<Controller

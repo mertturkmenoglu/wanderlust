@@ -11,25 +11,13 @@ import {
 	AlertDialogTrigger,
 } from '@wanderlust/ui/components/alert-dialog';
 import { Button } from '@wanderlust/ui/components/button';
-import {
-	Field,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from '@wanderlust/ui/components/field';
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from '@wanderlust/ui/components/input-group';
+import { FieldGroup } from '@wanderlust/ui/components/field';
 import { Spinner } from '@wanderlust/ui/components/spinner';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { cmp } from '@/components/form';
 import { authClient } from '@/lib/auth';
-import { normalizeMultipleErrors } from '@/lib/form';
 import { changePasswordSchema, type FormInput } from './-hooks';
 
 export function ChangePassword({
@@ -38,9 +26,6 @@ export function ChangePassword({
 	hasEmailProvider: boolean;
 }) {
 	const [open, setOpen] = useState(false);
-	const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-	const [showNewPassword, setShowNewPassword] = useState(false);
-	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 	const form = useForm({
 		resolver: zodResolver(changePasswordSchema),
@@ -93,133 +78,48 @@ export function ChangePassword({
 							})}
 						>
 							<FieldGroup className="gap-4">
-								<Controller
+								<cmp.Password
 									name="currentPassword"
 									control={form.control}
-									render={({ field, fieldState }) => (
-										<Field data-invalid={fieldState.invalid}>
-											<FieldLabel htmlFor="current-password">
-												Current Password
-											</FieldLabel>
-
-											<InputGroup>
-												<InputGroupInput
-													{...field}
-													id="current-password"
-													placeholder="Current Password"
-													autoComplete="current-password"
-													type={showCurrentPassword ? 'text' : 'password'}
-													aria-invalid={fieldState.invalid}
-												/>
-												<InputGroupAddon align="inline-end">
-													<InputGroupButton
-														type="button"
-														variant="ghost"
-														size="icon-sm"
-														onClick={() =>
-															setShowCurrentPassword((prev) => !prev)
-														}
-													>
-														{showCurrentPassword ? (
-															<EyeIcon className="size-4" />
-														) : (
-															<EyeOffIcon className="size-4" />
-														)}
-													</InputGroupButton>
-												</InputGroupAddon>
-											</InputGroup>
-											{fieldState.invalid && (
-												<FieldError errors={[fieldState.error]} />
-											)}
-										</Field>
-									)}
+									elements={{
+										input: {
+											placeholder: 'Current Password',
+											autoComplete: 'current-password',
+										},
+										label: {
+											children: 'Current Password',
+										},
+									}}
 								/>
 
-								<Controller
+								<cmp.Password
 									name="newPassword"
 									control={form.control}
-									render={({ field, fieldState }) => (
-										<Field data-invalid={fieldState.invalid}>
-											<FieldLabel htmlFor="new-password">
-												New Password
-											</FieldLabel>
-											<InputGroup>
-												<InputGroupInput
-													{...field}
-													id="new-password"
-													placeholder="New Password"
-													autoComplete="new-password"
-													type={showNewPassword ? 'text' : 'password'}
-													aria-invalid={fieldState.invalid}
-												/>
-												<InputGroupAddon align="inline-end">
-													<InputGroupButton
-														type="button"
-														variant="ghost"
-														size="icon-sm"
-														onClick={() => setShowNewPassword((prev) => !prev)}
-													>
-														{showNewPassword ? (
-															<EyeIcon className="size-4" />
-														) : (
-															<EyeOffIcon className="size-4" />
-														)}
-													</InputGroupButton>
-												</InputGroupAddon>
-											</InputGroup>
-											{fieldState.invalid && (
-												<FieldError
-													errors={normalizeMultipleErrors(
-														fieldState.error?.types,
-													)}
-												/>
-											)}
-										</Field>
-									)}
+									elements={{
+										input: {
+											placeholder: 'New Password',
+											autoComplete: 'new-password',
+										},
+										label: {
+											children: 'New Password',
+										},
+									}}
+									multipleErrors={true}
 								/>
 
-								<Controller
+								<cmp.Password
 									name="confirmPassword"
 									control={form.control}
-									render={({ field, fieldState }) => (
-										<Field data-invalid={fieldState.invalid}>
-											<FieldLabel htmlFor="confirm-password">
-												Confirm Password
-											</FieldLabel>
-											<InputGroup>
-												<InputGroupInput
-													{...field}
-													id="confirm-password"
-													placeholder="Confirm Password"
-													type={showConfirmPassword ? 'text' : 'password'}
-													aria-invalid={fieldState.invalid}
-												/>
-												<InputGroupAddon align="inline-end">
-													<InputGroupButton
-														type="button"
-														variant="ghost"
-														size="icon-sm"
-														onClick={() =>
-															setShowConfirmPassword((prev) => !prev)
-														}
-													>
-														{showConfirmPassword ? (
-															<EyeIcon className="size-4" />
-														) : (
-															<EyeOffIcon className="size-4" />
-														)}
-													</InputGroupButton>
-												</InputGroupAddon>
-											</InputGroup>
-											{fieldState.invalid && (
-												<FieldError
-													errors={normalizeMultipleErrors(
-														fieldState.error?.types,
-													)}
-												/>
-											)}
-										</Field>
-									)}
+									elements={{
+										input: {
+											placeholder: 'Confirm Password',
+											autoComplete: 'new-password',
+										},
+										label: {
+											children: 'Confirm Password',
+										},
+									}}
+									multipleErrors={true}
 								/>
 							</FieldGroup>
 						</form>

@@ -1,33 +1,20 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
-	Field,
 	FieldDescription,
-	FieldError,
 	FieldGroup,
-	FieldLabel,
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from '@wanderlust/ui/components/input-group';
 import { Spinner } from '@wanderlust/ui/components/spinner';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
 import z from 'zod';
 import { AuthLegalText } from '@/components/auth/legal-text';
 import { AuthLink } from '@/components/auth/link';
 import { OAuthGroup } from '@/components/auth/oauth-group';
+import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
-import { normalizeMultipleErrors } from '@/lib/form';
 import { useSignUpForm, useSignUpMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/sign-up/')({
@@ -47,7 +34,6 @@ export const Route = createFileRoute('/_auth/sign-up/')({
 });
 
 function RouteComponent() {
-	const [showPassword, setShowPassword] = useState(false);
 	const form = useSignUpForm();
 	const mutation = useSignUpMutation();
 
@@ -71,104 +57,54 @@ function RouteComponent() {
 						Already have an account? <AuthLink to="/sign-in" text="Sign In" />
 					</FieldDescription>
 					<FieldGroup className="grid grid-cols-1 md:grid-cols-2">
-						<Controller
+						<cmp.Input
 							name="fullName"
 							control={form.control}
-							render={({ field, fieldState }) => (
-								<Field data-invalid={fieldState.invalid}>
-									<FieldLabel htmlFor="full-name">Full Name</FieldLabel>
-									<Input
-										{...field}
-										id="full-name"
-										placeholder="Your name"
-										autoComplete="name"
-										aria-invalid={fieldState.invalid}
-									/>
-									{fieldState.invalid && (
-										<FieldError errors={[fieldState.error]} />
-									)}
-								</Field>
-							)}
+							elements={{
+								label: {
+									children: 'Full Name',
+								},
+								input: {
+									placeholder: 'Full Name',
+									autoComplete: 'name',
+								},
+							}}
 						/>
 
-						<Controller
+						<cmp.Input
 							name="username"
 							control={form.control}
-							render={({ field, fieldState }) => (
-								<Field data-invalid={fieldState.invalid}>
-									<FieldLabel htmlFor="username">Username</FieldLabel>
-									<Input
-										{...field}
-										id="username"
-										placeholder="Username"
-										autoComplete="username"
-										aria-invalid={fieldState.invalid}
-									/>
-									{fieldState.invalid && (
-										<FieldError errors={[fieldState.error]} />
-									)}
-								</Field>
-							)}
+							elements={{
+								input: {
+									placeholder: 'Username',
+									autoComplete: 'username',
+								},
+							}}
 						/>
 					</FieldGroup>
 				</FieldSet>
 
-				<Controller
+				<cmp.Input
 					name="email"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="email">Email</FieldLabel>
-							<Input
-								{...field}
-								id="email"
-								placeholder="Email"
-								autoComplete="email"
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'Email',
+							autoComplete: 'email',
+						},
+					}}
 				/>
 
-				<Controller
+				<cmp.Password
 					name="password"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="password">Password</FieldLabel>
-
-							<InputGroup>
-								<InputGroupInput
-									{...field}
-									id="password"
-									placeholder="Password"
-									aria-invalid={fieldState.invalid}
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="new-password"
-								/>
-								<InputGroupAddon align="inline-end">
-									<InputGroupButton
-										type="button"
-										variant="ghost"
-										size="icon-sm"
-										onClick={() => setShowPassword((prev) => !prev)}
-									>
-										{showPassword ? (
-											<EyeIcon className="size-4" />
-										) : (
-											<EyeOffIcon className="size-4" />
-										)}
-									</InputGroupButton>
-								</InputGroupAddon>
-							</InputGroup>
-							{fieldState.invalid && (
-								<FieldError
-									errors={normalizeMultipleErrors(fieldState.error?.types)}
-								/>
-							)}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'Password',
+							autoComplete: 'new-password',
+						},
+					}}
+					multipleErrors={true}
 				/>
 
 				<Button type="submit" disabled={mutation.isPending}>

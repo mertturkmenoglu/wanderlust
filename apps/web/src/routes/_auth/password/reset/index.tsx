@@ -1,29 +1,17 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
-	Field,
 	FieldDescription,
-	FieldError,
 	FieldGroup,
-	FieldLabel,
 	FieldLegend,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from '@wanderlust/ui/components/input-group';
 import { Spinner } from '@wanderlust/ui/components/spinner';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
 import z from 'zod';
 import { AuthLink } from '@/components/auth/link';
+import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
-import { normalizeMultipleErrors } from '@/lib/form';
 import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/password/reset/')({
@@ -45,7 +33,6 @@ export const Route = createFileRoute('/_auth/password/reset/')({
 
 function RouteComponent() {
 	const { token } = Route.useSearch();
-	const [showPassword, setShowPassword] = useState(false);
 	const form = usePasswordResetForm();
 	const mutation = usePasswordResetMutation();
 
@@ -68,44 +55,19 @@ function RouteComponent() {
 					</FieldDescription>
 				</FieldSet>
 
-				<Controller
+				<cmp.Password
 					name="newPassword"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="new-password">New Password</FieldLabel>
-
-							<InputGroup>
-								<InputGroupInput
-									{...field}
-									id="new-password"
-									placeholder="New Password"
-									aria-invalid={fieldState.invalid}
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="new-password"
-								/>
-								<InputGroupAddon align="inline-end">
-									<InputGroupButton
-										type="button"
-										variant="ghost"
-										size="icon-sm"
-										onClick={() => setShowPassword((prev) => !prev)}
-									>
-										{showPassword ? (
-											<EyeIcon className="size-4" />
-										) : (
-											<EyeOffIcon className="size-4" />
-										)}
-									</InputGroupButton>
-								</InputGroupAddon>
-							</InputGroup>
-							{fieldState.invalid && (
-								<FieldError
-									errors={normalizeMultipleErrors(fieldState.error?.types)}
-								/>
-							)}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'New Password',
+							autoComplete: 'new-password',
+						},
+						label: {
+							children: 'New Password',
+						},
+					}}
+					multipleErrors={true}
 				/>
 
 				<Button type="submit" disabled={mutation.isPending}>

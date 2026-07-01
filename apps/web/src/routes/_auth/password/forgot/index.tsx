@@ -1,19 +1,15 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
-	Field,
 	FieldDescription,
-	FieldError,
 	FieldGroup,
-	FieldLabel,
 	FieldLegend,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
 import { Spinner } from '@wanderlust/ui/components/spinner';
-import { Controller } from 'react-hook-form';
 import z from 'zod';
 import { AuthLink } from '@/components/auth/link';
+import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
 import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
@@ -52,22 +48,15 @@ function RouteComponent() {
 					</FieldDescription>
 				</FieldSet>
 
-				<Controller
+				<cmp.Input
 					name="email"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="email">Email</FieldLabel>
-							<Input
-								{...field}
-								id="email"
-								placeholder="Email"
-								autoComplete="email"
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'Email',
+							autoComplete: 'email',
+						},
+					}}
 				/>
 
 				<Button type="submit" disabled={mutation.isPending}>

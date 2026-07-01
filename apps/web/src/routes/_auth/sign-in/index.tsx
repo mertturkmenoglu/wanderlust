@@ -1,30 +1,18 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
-	Field,
 	FieldDescription,
-	FieldError,
 	FieldGroup,
-	FieldLabel,
 	FieldLegend,
 	FieldSeparator,
 	FieldSet,
 } from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from '@wanderlust/ui/components/input-group';
 import { Spinner } from '@wanderlust/ui/components/spinner';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useState } from 'react';
-import { Controller } from 'react-hook-form';
 import z from 'zod';
 import { AuthLegalText } from '@/components/auth/legal-text';
 import { AuthLink } from '@/components/auth/link';
 import { OAuthGroup } from '@/components/auth/oauth-group';
+import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
 import { useSignInForm, useSignInMutation } from './-hooks';
@@ -46,7 +34,6 @@ export const Route = createFileRoute('/_auth/sign-in/')({
 });
 
 function RouteComponent() {
-	const [showPassword, setShowPassword] = useState(false);
 	const form = useSignInForm();
 	const mutation = useSignInMutation();
 
@@ -70,63 +57,32 @@ function RouteComponent() {
 					</FieldDescription>
 				</FieldSet>
 
-				<Controller
+				<cmp.Input
 					name="email"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="email">Email</FieldLabel>
-							<Input
-								{...field}
-								id="email"
-								placeholder="Email"
-								autoComplete="email"
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'Email',
+							autoComplete: 'email',
+						},
+					}}
 				/>
 
-				<Controller
+				<cmp.Password
 					name="password"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="password">Password</FieldLabel>
+					elements={{
+						input: {
+							placeholder: 'Password',
+							autoComplete: 'current-password',
+						},
+					}}
+				/>
 
-							<InputGroup>
-								<InputGroupInput
-									{...field}
-									id="password"
-									placeholder="Password"
-									aria-invalid={fieldState.invalid}
-									type={showPassword ? 'text' : 'password'}
-									autoComplete="current-password"
-								/>
-								<InputGroupAddon align="inline-end">
-									<InputGroupButton
-										type="button"
-										variant="ghost"
-										size="icon-sm"
-										onClick={() => setShowPassword((prev) => !prev)}
-									>
-										{showPassword ? (
-											<EyeIcon className="size-4" />
-										) : (
-											<EyeOffIcon className="size-4" />
-										)}
-									</InputGroupButton>
-								</InputGroupAddon>
-							</InputGroup>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-							<AuthLink
-								to="/password/forgot"
-								text="Forgot password?"
-								className="justify-end"
-							/>
-						</Field>
-					)}
+				<AuthLink
+					to="/password/forgot"
+					text="Forgot password?"
+					className="justify-end"
 				/>
 
 				<Button type="submit" disabled={mutation.isPending}>

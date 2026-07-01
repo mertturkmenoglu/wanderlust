@@ -1,16 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
-import {
-	Field,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from '@wanderlust/ui/components/field';
-import { Input } from '@wanderlust/ui/components/input';
+import { FieldGroup } from '@wanderlust/ui/components/field';
 import { Spinner } from '@wanderlust/ui/components/spinner';
-import { Textarea } from '@wanderlust/ui/components/textarea';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { cmp } from '@/components/form';
 import {
 	type UpdateUserProfileFormInput,
 	updateUserProfileSchema,
@@ -42,60 +36,42 @@ export function Form() {
 	return (
 		<form onSubmit={onSubmit}>
 			<FieldGroup className="max-w-xl gap-4 md:gap-8">
-				<Controller
+				<cmp.Input
 					name="fullName"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="name">Full Name</FieldLabel>
-							<Input
-								{...field}
-								id="name"
-								placeholder="name"
-								autoComplete="name"
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'Full Name',
+							autoComplete: 'name',
+						},
+					}}
 				/>
 
-				<Controller
+				<cmp.Textarea
 					name="bio"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="bio">About You</FieldLabel>
-							<Textarea
-								{...field}
-								id="bio"
-								placeholder="Tell us about yourself"
-								autoComplete="off"
-								rows={6}
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						label: {
+							children: 'About You',
+						},
+						textarea: {
+							placeholder: 'Tell us about yourself',
+							autoComplete: 'off',
+							rows: 6,
+						},
+					}}
 				/>
 
-				<Controller
-					name="website"
+				<cmp.Input
+					name="fullName"
 					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="website">Website</FieldLabel>
-							<Input
-								{...field}
-								id="website"
-								placeholder="https://example.com"
-								type="url"
-								autoComplete="url"
-								aria-invalid={fieldState.invalid}
-							/>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
+					elements={{
+						input: {
+							placeholder: 'https://example.com',
+							autoComplete: 'url',
+							type: 'url',
+						},
+					}}
 				/>
 
 				<Button
