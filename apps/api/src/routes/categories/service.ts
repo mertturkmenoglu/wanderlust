@@ -7,7 +7,15 @@ export class CategoriesService {
 	constructor(
 		@inject(CategoriesRepository)
 		private readonly repository: CategoriesRepository,
-	) { }
+	) {}
+
+	async get(data: dto.GetInput): Promise<dto.GetOutput> {
+		const result = await this.repository.get(data);
+
+		return {
+			category: result,
+		};
+	}
 
 	async list(): Promise<dto.ListOutput> {
 		const result = await this.repository.list();

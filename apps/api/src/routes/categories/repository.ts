@@ -13,6 +13,18 @@ export class CategoriesRepository {
 		this.db = db.get();
 	}
 
+	async get(data: dto.GetInput) {
+		const result = await this.db.query.categories.findFirst({
+			where: {
+				id: data.id,
+			},
+		});
+
+		invariant(result, 'NOT_FOUND', `Category with ID ${data.id} not found`);
+
+		return result;
+	}
+
 	async list() {
 		return this.db.query.categories.findMany({
 			orderBy: (t, { asc }) => asc(t.name),

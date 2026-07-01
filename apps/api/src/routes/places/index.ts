@@ -25,8 +25,8 @@ export const module = defineModule({
 
 				return result;
 			}),
-			peek: os.peek.handler(async () => {
-				const result = await svc.peek();
+			list: os.list.handler(async () => {
+				const result = await svc.list();
 
 				return result;
 			}),

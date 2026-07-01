@@ -19,6 +19,11 @@ export const module = defineModule({
 		const svc = container.get(CategoriesService);
 
 		return os.router({
+			get: os.get.handler(async ({ input }) => {
+				const result = await svc.get(input);
+
+				return result;
+			}),
 			list: os.list.handler(async () => {
 				const result = await svc.list();
 				return result;

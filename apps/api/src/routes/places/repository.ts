@@ -53,7 +53,7 @@ export class PlacesRepository {
 		return bookmark !== undefined;
 	}
 
-	async peek() {
+	async list() {
 		const place = await this.db.query.places.findMany({
 			orderBy: {
 				createdAt: 'desc',

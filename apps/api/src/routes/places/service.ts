@@ -33,8 +33,8 @@ export class PlacesService {
 		};
 	}
 
-	async peek(): Promise<dto.PeekOutput> {
-		const result = await this.repository.peek();
+	async list(): Promise<dto.ListOutput> {
+		const result = await this.repository.list();
 
 		return {
 			places: result,
