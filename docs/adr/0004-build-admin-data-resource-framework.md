@@ -47,7 +47,6 @@ We will design and implement our own admin data layer, structured around three c
 - Negative: 
 	- We take on the full cost of designing, building, documenting, and maintaining this abstraction ourselves, rather than leveraging a community-maintained framework's existing feature set, documentation, and ecosystem (plugins, themes, examples).
 	- Any mistakes in the design of the abstraction will be costly to fix later, and may require significant refactoring.
-	- Introducing any ADR format will require some learning and adaptation for team members.
 	- Any contributor to the admin app have to learn our specific conventions.
 - Neutral / follow-ups:
 	- We must ensure that the abstractions we build are flexible enough to accommodate future requirements, and that they are well-documented and easy to understand for new contributors.
