@@ -1,28 +1,29 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: TODO */
 import { Link } from '@tanstack/react-router';
 import type { MapLibreEvent } from 'maplibre-gl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type UseGeoSearchProps, useGeoSearch } from 'react-instantsearch';
 import { Marker, Popup, useMap } from 'react-map-gl/maplibre';
 import { Pin } from '@/components/pin';
 import { PlaceCard } from '@/components/place-card';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 export function GeoSearch(props: UseGeoSearchProps) {
 	const { items, refine } = useGeoSearch(props);
 	const { current: map } = useMap();
 	const [itemIndex, setItemIndex] = useState(-1);
-	const isMobile = useIsMobile();
 
 	const onViewChange = useCallback(
 		({ target }: MapLibreEvent) => {
+			if (itemIndex !== -1) {
+				return;
+			}
+
 			refine({
 				northEast: target.getBounds().getNorthEast(),
 				southWest: target.getBounds().getSouthWest(),
 			});
 			setItemIndex(-1);
 		},
-		[refine],
+		[refine, itemIndex],
 	);
 
 	useEffect(() => {
@@ -36,9 +37,9 @@ export function GeoSearch(props: UseGeoSearchProps) {
 		};
 	}, [map, onViewChange]);
 
-	return (
-		<>
-			{items.map((item, i) => (
+	const markers = useMemo(() => {
+		return items.map((item, i) => {
+			return (
 				<Marker
 					key={`marker-${item.objectID}`}
 					latitude={item._geoloc.lat}
@@ -51,7 +52,13 @@ export function GeoSearch(props: UseGeoSearchProps) {
 				>
 					<Pin />
 				</Marker>
-			))}
+			);
+		});
+	}, [items]);
+
+	return (
+		<>
+			{markers}
 
 			{itemIndex !== -1 && items[itemIndex] && (
 				<Popup
@@ -59,22 +66,17 @@ export function GeoSearch(props: UseGeoSearchProps) {
 					latitude={items[itemIndex]._geoloc.lat}
 					longitude={items[itemIndex]._geoloc.lng}
 					closeButton={false}
-					className="flex min-w-md items-center text-primary!"
+					anchor="top"
+					closeOnMove={false}
+					className="flex min-w-md p-0! [&>div:nth-child(2)]:rounded-md! [&>div:nth-child(2)]:bg-none! [&>div:nth-child(2)]:p-0! [&>div:nth-child(2)]:shadow-none!"
 				>
 					<Link
 						to="/p/$id"
-						className="text-primary"
 						params={{
-							id: items[itemIndex]!.place.id,
+							id: items[itemIndex].place.id,
 						}}
 					>
-						{isMobile ? (
-							<div className="w-48">
-								<PlaceCard place={items[itemIndex]!.place} variant="item" />
-							</div>
-						) : (
-							<PlaceCard place={items[itemIndex]!.place} variant="item" />
-						)}
+						<PlaceCard place={items[itemIndex].place} variant="default" />
 					</Link>
 				</Popup>
 			)}
