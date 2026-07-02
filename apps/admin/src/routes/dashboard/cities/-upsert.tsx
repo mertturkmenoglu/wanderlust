@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Field,
@@ -29,10 +28,10 @@ import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { useUpsert } from '@/hooks/use-upsert';
-import { type Outputs, orpc } from '@/lib/orpc';
+import type { Outputs } from '@/lib/orpc';
 import { getIANANames } from '@/lib/timezone';
+import { citiesResource } from '@/resources/cities';
 
 const schema = z.object({
 	id: z.transform(Number).pipe(z.number().min(1)),
@@ -57,33 +56,13 @@ export type UpsertProps = {
 
 export function Upsert({ action, city }: UpsertProps) {
 	const [previewUrl, setPreviewUrl] = useState(city?.image ?? '');
-	const navigate = useNavigate();
-	const invalidate = useInvalidator();
 	const tzOptions = useMemo(() => getIANANames(), []);
 
 	const upsert = useUpsert({
 		action,
 		resolver: zodResolver(schema),
 		entity: city,
-		edit: orpc.cities.update.mutationOptions({
-			onSuccess: async (v) => {
-				await invalidate();
-				await navigate({
-					to: '/dashboard/cities/$id',
-					params: {
-						id: v.city.id.toString(),
-					},
-				});
-			},
-		}),
-		create: orpc.cities.create.mutationOptions({
-			onSuccess: async (v) => {
-				await navigate({
-					to: '/dashboard/cities/$id',
-					params: { id: v.city.id.toString() },
-				});
-			},
-		}),
+		resource: citiesResource,
 	});
 
 	const onSubmit = upsert.form.handleSubmit((data) => {

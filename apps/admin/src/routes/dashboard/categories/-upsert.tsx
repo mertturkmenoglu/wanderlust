@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
 	Field,
@@ -18,9 +17,9 @@ import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import z from 'zod';
 import { cmp } from '@/components/form';
-import { useInvalidator } from '@/hooks/use-invalidator';
 import { useUpsert } from '@/hooks/use-upsert';
-import { type Outputs, orpc } from '@/lib/orpc';
+import type { Outputs } from '@/lib/orpc';
+import { categoriesResource } from '@/resources/categories';
 
 const schema = z.object({
 	id: z.transform(Number).pipe(z.number().min(1)),
@@ -37,32 +36,12 @@ export type UpsertProps = {
 
 export function Upsert({ action, category }: UpsertProps) {
 	const [previewUrl, setPreviewUrl] = useState(category?.image ?? '');
-	const navigate = useNavigate();
-	const invalidate = useInvalidator();
 
 	const upsert = useUpsert({
 		action,
 		resolver: zodResolver(schema),
 		entity: category,
-		edit: orpc.categories.update.mutationOptions({
-			onSuccess: async (v) => {
-				await invalidate();
-				await navigate({
-					to: '/dashboard/categories/$id',
-					params: {
-						id: v.category.id.toString(),
-					},
-				});
-			},
-		}),
-		create: orpc.categories.create.mutationOptions({
-			onSuccess: async (v) => {
-				await navigate({
-					to: '/dashboard/categories/$id',
-					params: { id: v.category.id.toString() },
-				});
-			},
-		}),
+		resource: categoriesResource,
 	});
 
 	const onSubmit = upsert.form.handleSubmit((data) => {
