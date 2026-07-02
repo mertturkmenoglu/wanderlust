@@ -1,60 +1,29 @@
-import { type MutationOptions, useMutation } from '@tanstack/react-query';
 import {
 	type DefaultValues,
 	type FieldValues,
 	type Resolver,
 	useForm,
 } from 'react-hook-form';
+import type { DataResource, ResourceKey } from '@/lib/crud';
 
-type UseUpsertOptions<
-	TEditData,
-	TEditError,
-	TEditVariables,
-	TEditContext,
-	TCreateData,
-	TCreateError,
-	TCreateVariables,
-	TCreateContext,
+export type UseUpsertOptions<
+	K extends ResourceKey,
+	T,
 	TFieldValues extends FieldValues,
 	R extends Resolver<TFieldValues, unknown, TFieldValues>,
 > = {
 	resolver: R;
 	entity: DefaultValues<TFieldValues> | undefined;
+	resource: DataResource<K, T>;
 	action: 'create' | 'edit';
-	edit: MutationOptions<TEditData, TEditError, TEditVariables, TEditContext>;
-	create: MutationOptions<
-		TCreateData,
-		TCreateError,
-		TCreateVariables,
-		TCreateContext
-	>;
 };
 
 export function useUpsert<
-	TEditData,
-	TEditError,
-	TEditVariables,
-	TEditContext,
-	TCreateData,
-	TCreateError,
-	TCreateVariables,
-	TCreateContext,
+	K extends ResourceKey,
+	T,
 	TFieldValues extends FieldValues,
 	R extends Resolver<TFieldValues, unknown, TFieldValues>,
->(
-	opts: UseUpsertOptions<
-		TEditData,
-		TEditError,
-		TEditVariables,
-		TEditContext,
-		TCreateData,
-		TCreateError,
-		TCreateVariables,
-		TCreateContext,
-		TFieldValues,
-		R
-	>,
-) {
+>(opts: UseUpsertOptions<K, T, TFieldValues, R>) {
 	const form = useForm<TFieldValues>({
 		resolver: opts.resolver,
 		defaultValues: opts.entity
@@ -64,9 +33,13 @@ export function useUpsert<
 			: undefined,
 	});
 
-	const edit = useMutation(opts.edit);
+	const edit = opts.resource.useUpdate();
 
-	const create = useMutation(opts.create);
+	const create = opts.resource.useCreate();
 
-	return { form, edit, create, action: opts.action, entity: opts.entity };
+	return {
+		form,
+		edit,
+		create,
+	};
 }
