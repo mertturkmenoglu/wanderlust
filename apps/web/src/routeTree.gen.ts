@@ -66,6 +66,7 @@ import { Route as TripsIdEditIndexRouteImport } from './routes/trips/$id/edit/in
 import { Route as TripsIdDetailsIndexRouteImport } from './routes/trips/$id/details/index'
 import { Route as TripsIdCommentsIndexRouteImport } from './routes/trips/$id/comments/index'
 import { Route as TripsIdAmenitiesIndexRouteImport } from './routes/trips/$id/amenities/index'
+import { Route as PIdReviewsIndexRouteImport } from './routes/p/$id/reviews/index'
 import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/index'
 import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
 import { Route as AuthPasswordForgotIndexRouteImport } from './routes/_auth/password/forgot/index'
@@ -363,6 +364,11 @@ const TripsIdAmenitiesIndexRoute = TripsIdAmenitiesIndexRouteImport.update({
   path: '/amenities/',
   getParentRoute: () => TripsIdRoute,
 } as any)
+const PIdReviewsIndexRoute = PIdReviewsIndexRouteImport.update({
+  id: '/p/$id/reviews/',
+  path: '/p/$id/reviews/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListsIdEditIndexRoute = ListsIdEditIndexRouteImport.update({
   id: '/lists/$id/edit/',
   path: '/lists/$id/edit/',
@@ -449,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/password/reset/': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
+  '/p/$id/reviews/': typeof PIdReviewsIndexRoute
   '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
   '/trips/$id/details/': typeof TripsIdDetailsIndexRoute
@@ -509,6 +516,7 @@ export interface FileRoutesByTo {
   '/password/forgot': typeof AuthPasswordForgotIndexRoute
   '/password/reset': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit': typeof ListsIdEditIndexRoute
+  '/p/$id/reviews': typeof PIdReviewsIndexRoute
   '/trips/$id/amenities': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments': typeof TripsIdCommentsIndexRoute
   '/trips/$id/details': typeof TripsIdDetailsIndexRoute
@@ -576,6 +584,7 @@ export interface FileRoutesById {
   '/_auth/password/forgot/': typeof AuthPasswordForgotIndexRoute
   '/_auth/password/reset/': typeof AuthPasswordResetIndexRoute
   '/lists/$id/edit/': typeof ListsIdEditIndexRoute
+  '/p/$id/reviews/': typeof PIdReviewsIndexRoute
   '/trips/$id/amenities/': typeof TripsIdAmenitiesIndexRoute
   '/trips/$id/comments/': typeof TripsIdCommentsIndexRoute
   '/trips/$id/details/': typeof TripsIdDetailsIndexRoute
@@ -644,6 +653,7 @@ export interface FileRouteTypes {
     | '/password/forgot/'
     | '/password/reset/'
     | '/lists/$id/edit/'
+    | '/p/$id/reviews/'
     | '/trips/$id/amenities/'
     | '/trips/$id/comments/'
     | '/trips/$id/details/'
@@ -704,6 +714,7 @@ export interface FileRouteTypes {
     | '/password/forgot'
     | '/password/reset'
     | '/lists/$id/edit'
+    | '/p/$id/reviews'
     | '/trips/$id/amenities'
     | '/trips/$id/comments'
     | '/trips/$id/details'
@@ -770,6 +781,7 @@ export interface FileRouteTypes {
     | '/_auth/password/forgot/'
     | '/_auth/password/reset/'
     | '/lists/$id/edit/'
+    | '/p/$id/reviews/'
     | '/trips/$id/amenities/'
     | '/trips/$id/comments/'
     | '/trips/$id/details/'
@@ -821,6 +833,7 @@ export interface RootRouteChildren {
   AuthPasswordForgotIndexRoute: typeof AuthPasswordForgotIndexRoute
   AuthPasswordResetIndexRoute: typeof AuthPasswordResetIndexRoute
   ListsIdEditIndexRoute: typeof ListsIdEditIndexRoute
+  PIdReviewsIndexRoute: typeof PIdReviewsIndexRoute
   PIdReviewsReviewIdIndexRoute: typeof PIdReviewsReviewIdIndexRoute
   PIdReviewsNewIndexRoute: typeof PIdReviewsNewIndexRoute
 }
@@ -1226,6 +1239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdAmenitiesIndexRouteImport
       parentRoute: typeof TripsIdRoute
     }
+    '/p/$id/reviews/': {
+      id: '/p/$id/reviews/'
+      path: '/p/$id/reviews'
+      fullPath: '/p/$id/reviews/'
+      preLoaderRoute: typeof PIdReviewsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lists/$id/edit/': {
       id: '/lists/$id/edit/'
       path: '/lists/$id/edit'
@@ -1427,6 +1447,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthPasswordForgotIndexRoute: AuthPasswordForgotIndexRoute,
   AuthPasswordResetIndexRoute: AuthPasswordResetIndexRoute,
   ListsIdEditIndexRoute: ListsIdEditIndexRoute,
+  PIdReviewsIndexRoute: PIdReviewsIndexRoute,
   PIdReviewsReviewIdIndexRoute: PIdReviewsReviewIdIndexRoute,
   PIdReviewsNewIndexRoute: PIdReviewsNewIndexRoute,
 }
