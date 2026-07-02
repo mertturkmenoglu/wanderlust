@@ -80,7 +80,21 @@ export function Filters() {
 					onValueChange={(v) => {
 						const [newSortBy, newSortOrd] = v.split('-');
 						setIsDirty(true);
-						setSortBy(newSortBy === 'date' ? 'created_at' : 'rating');
+						setSortBy(() => {
+							if (newSortBy === 'date') {
+								return 'created_at';
+							}
+
+							if (newSortBy === 'rating') {
+								return 'rating';
+							}
+
+							if (newSortBy === 'likes') {
+								return 'likes';
+							}
+
+							return 'created_at';
+						});
 						setSortOrd(newSortOrd === 'desc' ? 'desc' : 'asc');
 					}}
 				>
@@ -98,6 +112,11 @@ export function Filters() {
 							<SelectLabel>Rating</SelectLabel>
 							<SelectItem value="rating-desc">Highest first</SelectItem>
 							<SelectItem value="rating-asc">Lowest first</SelectItem>
+						</SelectGroup>
+						<SelectGroup>
+							<SelectLabel>Likes</SelectLabel>
+							<SelectItem value="likes-desc">Highest first</SelectItem>
+							<SelectItem value="likes-asc">Lowest first</SelectItem>
 						</SelectGroup>
 					</SelectContent>
 				</Select>

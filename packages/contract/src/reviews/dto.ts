@@ -94,11 +94,11 @@ export const listByPlaceIdInput = Pagination.queryParamsSchema
 	.extend(
 		z.object({
 			sortBy: z
-				.enum(['created_at', 'rating'])
+				.enum(['created_at', 'rating', 'likes'])
 				.optional()
 				.meta({
 					description: 'Field to sort by',
-					examples: ['created_at', 'rating'],
+					examples: ['created_at', 'rating', 'likes'],
 				}),
 			sortOrd: z
 				.enum(['asc', 'desc'])

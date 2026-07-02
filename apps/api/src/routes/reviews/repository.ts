@@ -238,6 +238,18 @@ export class ReviewsRepository {
 						: desc(reviews.createdAt);
 				}
 
+				if (sortBy === 'rating') {
+					return sortOrd === 'asc'
+						? asc(reviews.rating)
+						: desc(reviews.rating);
+				}
+
+				if (sortBy === 'likes') {
+					return sortOrd === 'asc'
+						? asc(reviews.totalLikes)
+						: desc(reviews.totalLikes);
+				}
+
 				return sortOrd === 'asc' ? asc(reviews.rating) : desc(reviews.rating);
 			},
 			offset,
