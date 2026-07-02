@@ -1,46 +1,76 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
-import { ButtonGroup } from '@wanderlust/ui/components/button-group';
+import {
+	ButtonGroup,
+	ButtonGroupText,
+} from '@wanderlust/ui/components/button-group';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import type { Outputs } from '@/lib/orpc';
+
+type TPagination = Outputs['reviews']['listByPlaceId']['pagination'];
 
 type Props = {
-	hasNextPage: boolean;
-	hasPreviousPage: boolean;
-	page: number;
-	totalPages: number;
+	pagination: TPagination;
 	className?: string;
-	onPrevClick: () => void;
-	onNextClick: () => void;
+	onPrevClick?: () => void;
+	onNextClick?: () => void;
 };
 
 export function Pagination({
-	hasNextPage,
-	hasPreviousPage,
-	page,
-	totalPages,
+	pagination,
 	className,
 	onPrevClick,
 	onNextClick,
 }: Props) {
+	const navigate = useNavigate();
+
+	const next = onNextClick
+		? onNextClick
+		: () => {
+				navigate({
+					to: '.',
+					search: (prev) => ({
+						...prev,
+						page: Math.min(pagination.page + 1, pagination.totalPages),
+					}),
+				});
+			};
+
+	const prev = onPrevClick
+		? onPrevClick
+		: () => {
+				navigate({
+					to: '.',
+					search: (prev) => ({
+						...prev,
+						page: Math.max(pagination.page - 1, 1),
+					}),
+				});
+			};
+
 	return (
 		<ButtonGroup className={cn(className)}>
 			<Button
-				disabled={!hasPreviousPage}
+				disabled={!pagination.hasPrevious}
 				variant="outline"
 				className="w-32"
-				onClick={onPrevClick}
+				onClick={prev}
 			>
 				<ChevronLeftIcon />
 				Previous
 			</Button>
-			<Button variant="outline">
-				{totalPages > 0 ? page : 0} / {totalPages}
-			</Button>
+
+			<ButtonGroupText>
+				{pagination.totalPages > 0 ? pagination.page : 0} /{' '}
+				{pagination.totalPages}
+			</ButtonGroupText>
+
 			<Button
-				disabled={!hasNextPage}
+				disabled={!pagination.hasNext}
 				variant="outline"
 				className="w-32"
-				onClick={onNextClick}
+				onClick={next}
 			>
 				Next
 				<ChevronRightIcon />
