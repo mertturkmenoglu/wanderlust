@@ -3,7 +3,7 @@ import type { FileRouteTypes } from '@/routeTree.gen';
 
 type ValidRouteId = FileRouteTypes['id'];
 
-const dontRenderOnPages: ValidRouteId[] = ['/chat', '/settings'];
+const dontRenderOnPages: ValidRouteId[] = ['/chat', '/settings', '/nearby/'];
 
 export function useShouldRender() {
 	const matches = useMatches();
