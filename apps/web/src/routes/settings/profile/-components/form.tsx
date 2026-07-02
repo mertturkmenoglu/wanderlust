@@ -40,6 +40,9 @@ export function Form() {
 					name="fullName"
 					control={form.control}
 					elements={{
+						label: {
+							children: 'Full Name',
+						},
 						input: {
 							placeholder: 'Full Name',
 							autoComplete: 'name',
@@ -63,7 +66,7 @@ export function Form() {
 				/>
 
 				<cmp.Input
-					name="fullName"
+					name="website"
 					control={form.control}
 					elements={{
 						input: {
