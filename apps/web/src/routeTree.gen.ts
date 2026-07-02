@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WipRouteImport } from './routes/wip'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TripsIndexRouteImport } from './routes/trips/index'
@@ -90,6 +91,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NearbyRoute = NearbyRouteImport.update({
+  id: '/nearby',
+  path: '/nearby',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -131,9 +137,9 @@ const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const NearbyIndexRoute = NearbyIndexRouteImport.update({
-  id: '/nearby/',
-  path: '/nearby/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => NearbyRoute,
 } as any)
 const ListsIndexRoute = ListsIndexRouteImport.update({
   id: '/lists/',
@@ -410,6 +416,7 @@ const TripsIdParticipantsInvitesNewIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
+  '/nearby': typeof NearbyRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/wip': typeof WipRoute
@@ -539,6 +546,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRouteWithChildren
+  '/nearby': typeof NearbyRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/trips': typeof TripsRouteWithChildren
   '/wip': typeof WipRoute
@@ -608,6 +616,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/chat'
+    | '/nearby'
     | '/settings'
     | '/trips'
     | '/wip'
@@ -736,6 +745,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/chat'
+    | '/nearby'
     | '/settings'
     | '/trips'
     | '/wip'
@@ -804,6 +814,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRouteWithChildren
+  NearbyRoute: typeof NearbyRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   TripsRoute: typeof TripsRouteWithChildren
   WipRoute: typeof WipRoute
@@ -814,7 +825,6 @@ export interface RootRouteChildren {
   ChangeAccountsIndexRoute: typeof ChangeAccountsIndexRoute
   HelpIndexRoute: typeof HelpIndexRoute
   ListsIndexRoute: typeof ListsIndexRoute
-  NearbyIndexRoute: typeof NearbyIndexRoute
   NotificationsIndexRoute: typeof NotificationsIndexRoute
   PrivacyIndexRoute: typeof PrivacyIndexRoute
   ReportIndexRoute: typeof ReportIndexRoute
@@ -859,6 +869,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nearby': {
+      id: '/nearby'
+      path: '/nearby'
+      fullPath: '/nearby'
+      preLoaderRoute: typeof NearbyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -919,10 +936,10 @@ declare module '@tanstack/react-router' {
     }
     '/nearby/': {
       id: '/nearby/'
-      path: '/nearby'
+      path: '/'
       fullPath: '/nearby/'
       preLoaderRoute: typeof NearbyIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof NearbyRoute
     }
     '/lists/': {
       id: '/lists/'
@@ -1308,6 +1325,17 @@ const ChatRouteChildren: ChatRouteChildren = {
 
 const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
 
+interface NearbyRouteChildren {
+  NearbyIndexRoute: typeof NearbyIndexRoute
+}
+
+const NearbyRouteChildren: NearbyRouteChildren = {
+  NearbyIndexRoute: NearbyIndexRoute,
+}
+
+const NearbyRouteWithChildren =
+  NearbyRoute._addFileChildren(NearbyRouteChildren)
+
 interface SettingsRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsAccountIndexRoute: typeof SettingsAccountIndexRoute
@@ -1418,6 +1446,7 @@ const UUsernameRouteWithChildren = UUsernameRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRouteWithChildren,
+  NearbyRoute: NearbyRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   TripsRoute: TripsRouteWithChildren,
   WipRoute: WipRoute,
@@ -1428,7 +1457,6 @@ const rootRouteChildren: RootRouteChildren = {
   ChangeAccountsIndexRoute: ChangeAccountsIndexRoute,
   HelpIndexRoute: HelpIndexRoute,
   ListsIndexRoute: ListsIndexRoute,
-  NearbyIndexRoute: NearbyIndexRoute,
   NotificationsIndexRoute: NotificationsIndexRoute,
   PrivacyIndexRoute: PrivacyIndexRoute,
   ReportIndexRoute: ReportIndexRoute,
