@@ -14,7 +14,7 @@ export function NearbyPlaces(props: Props) {
 
 function Content({ className }: Props) {
 	const query = useNearbyPlaces();
-	const places = query.data.hits.slice(0, 5).map(({ document: p }) => ({
+	const places = (query.data.hits ?? []).slice(0, 5).map(({ document: p }) => ({
 		...p.place,
 		name: p.name,
 		totalVotes: 0,

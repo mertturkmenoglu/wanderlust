@@ -28,7 +28,7 @@ function Content({ className }: Props) {
 	const query = useNearbyCities();
 	const { place } = useLoaderData({ from: '/p/$id/' });
 
-	const cities = query.data.hits
+	const cities = (query.data.hits ?? [])
 		.map((c) => c.document.city)
 		.filter((c) => c.id !== place.address.cityId);
 
