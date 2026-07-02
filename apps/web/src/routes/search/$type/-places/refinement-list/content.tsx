@@ -16,7 +16,11 @@ export function Content({ className }: RefinementListProps) {
 
 			<ul className={cn('mt-2 w-full space-y-2')}>
 				{ctx.rl.items.map((item) => (
-					<RefinementListItem key="item.label" item={item} className="w-full" />
+					<RefinementListItem
+						key={`rl-${item.label}-${item.value}-${item.count}`}
+						item={item}
+						className="w-full"
+					/>
 				))}
 			</ul>
 
