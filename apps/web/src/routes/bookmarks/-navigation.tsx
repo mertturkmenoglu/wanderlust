@@ -5,23 +5,20 @@ import { useBookmarksQuery } from './-hooks';
 
 export function Navigation() {
 	const query = useBookmarksQuery();
-	const { totalPages, hasPrevious, hasNext, page } = query.data.pagination;
+	const pagination = query.data.pagination;
 	const navigate = useNavigate({ from: '/bookmarks/' });
 	const ctx = useBookmarksContext();
 
 	return (
 		<Pagination
-			hasNextPage={hasNext}
-			hasPreviousPage={hasPrevious}
-			page={page}
-			totalPages={totalPages}
+			pagination={pagination}
 			onPrevClick={() => {
 				ctx.setIndex(0);
 				navigate({
 					to: '.',
 					search: (prev) => ({
 						...prev,
-						page: page - 1,
+						page: pagination.page - 1,
 					}),
 				});
 			}}
@@ -31,7 +28,7 @@ export function Navigation() {
 					to: '.',
 					search: (prev) => ({
 						...prev,
-						page: page + 1,
+						page: pagination.page + 1,
 					}),
 				});
 			}}

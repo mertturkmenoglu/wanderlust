@@ -1,12 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useParams, useSearch } from '@tanstack/react-router';
 import { Pagination } from '@/components/pagination';
 import { PlaceCard } from '@/components/place-card';
 import { orpc } from '@/lib/orpc';
 
 export function AccoladePlacesList() {
 	const params = useParams({ from: '/accolades/$id/' });
-	const navigate = useNavigate({ from: '/accolades/$id/' });
 	const search = useSearch({ from: '/accolades/$id/' });
 
 	const query = useSuspenseQuery(
@@ -35,31 +34,7 @@ export function AccoladePlacesList() {
 				))}
 			</div>
 
-			<Pagination
-				hasPreviousPage={pagination.hasPrevious}
-				hasNextPage={pagination.hasNext}
-				page={pagination.page}
-				totalPages={pagination.totalPages}
-				onPrevClick={() => {
-					navigate({
-						to: '.',
-						search: (prev) => ({
-							...prev,
-							page: Math.max(prev.page - 1, 1),
-						}),
-					});
-				}}
-				onNextClick={() => {
-					navigate({
-						to: '.',
-						search: (prev) => ({
-							...prev,
-							page: Math.min(prev.page + 1, pagination.totalPages),
-						}),
-					});
-				}}
-				className="mx-auto mt-4"
-			/>
+			<Pagination className="mx-auto mt-4" pagination={pagination} />
 		</div>
 	);
 }

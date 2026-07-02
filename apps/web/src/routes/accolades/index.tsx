@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { Card, CardHeader, CardTitle } from '@wanderlust/ui/components/card';
 import { AccoladesBanner } from '@/components/banner/common';
 import { Pagination } from '@/components/pagination';
@@ -29,7 +29,6 @@ export const Route = createFileRoute('/accolades/')({
 
 function RouteComponent() {
 	const { accolades, pagination } = Route.useLoaderData();
-	const navigate = useNavigate({ from: '/accolades/' });
 
 	return (
 		<div className="mx-auto my-8 w-full max-w-7xl">
@@ -59,31 +58,7 @@ function RouteComponent() {
 				))}
 			</div>
 
-			<Pagination
-				hasNextPage={pagination.hasNext}
-				hasPreviousPage={pagination.hasPrevious}
-				page={pagination.page}
-				totalPages={pagination.totalPages}
-				onPrevClick={() => {
-					navigate({
-						to: '.',
-						search: (prev) => ({
-							...prev,
-							page: Math.max(prev.page - 1, 1),
-						}),
-					});
-				}}
-				onNextClick={() => {
-					navigate({
-						to: '.',
-						search: (prev) => ({
-							...prev,
-							page: Math.min(prev.page + 1, pagination.totalPages),
-						}),
-					});
-				}}
-				className="mx-auto mt-4"
-			/>
+			<Pagination className="mx-auto mt-4" pagination={pagination} />
 		</div>
 	);
 }

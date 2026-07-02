@@ -28,10 +28,7 @@ export function Content({ className }: CommentListProps) {
 
 			<Pagination
 				className="mx-auto mt-4"
-				hasNextPage={pagination.hasNext}
-				hasPreviousPage={pagination.hasPrevious}
-				page={pagination.page}
-				totalPages={pagination.totalPages}
+				pagination={pagination}
 				onNextClick={() => ctx.setPage((prev) => prev + 1)}
 				onPrevClick={() => ctx.setPage((prev) => prev - 1)}
 			/>

@@ -11,10 +11,14 @@ export function SearchPagination() {
 	return (
 		<div className="my-4 flex flex-row justify-center">
 			<Pagination
-				hasNextPage={!pagination.isLastPage}
-				hasPreviousPage={!pagination.isFirstPage}
-				page={pagination.currentRefinement + 1}
-				totalPages={pagination.nbPages}
+				pagination={{
+					hasNext: !pagination.isLastPage,
+					hasPrevious: !pagination.isFirstPage,
+					page: pagination.currentRefinement + 1,
+					totalPages: pagination.nbPages,
+					pageSize: pagination.nbHits,
+					totalRecords: 0,
+				}}
 				onPrevClick={() => {
 					pagination.refine(previousPageIndex);
 					navigate({
