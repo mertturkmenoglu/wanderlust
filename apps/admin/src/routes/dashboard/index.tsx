@@ -7,6 +7,11 @@ import {
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
 import { Container } from '@/components/container';
+import { accoladesResource } from '@/resources/accolades';
+import { categoriesResource } from '@/resources/categories';
+import { citiesResource } from '@/resources/cities';
+import { placesResource } from '@/resources/places';
+import { reportsResource } from '@/resources/reports';
 
 export const Route = createFileRoute('/dashboard/')({
 	component: RouteComponent,
@@ -15,97 +20,39 @@ export const Route = createFileRoute('/dashboard/')({
 	},
 });
 
+const resources = [
+	accoladesResource,
+	categoriesResource,
+	citiesResource,
+	reportsResource,
+	placesResource,
+];
+
 function RouteComponent() {
 	return (
 		<Container>
 			<div className="my-8 flex flex-col gap-4">
-				<Item variant="outline">
-					<ItemContent>
-						<ItemTitle>Categories</ItemTitle>
-					</ItemContent>
-					<ItemActions className="ml-16 flex">
-						<Link
-							to="/dashboard/categories"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							View
-						</Link>
-						<Link
-							to="/dashboard/categories/new"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							New
-						</Link>
-					</ItemActions>
-				</Item>
-
-				<Item variant="outline">
-					<ItemContent>
-						<ItemTitle>Cities</ItemTitle>
-					</ItemContent>
-					<ItemActions className="ml-16 flex">
-						<Link
-							to="/dashboard/cities"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							View
-						</Link>
-						<Link
-							to="/dashboard/cities/new"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							New
-						</Link>
-					</ItemActions>
-				</Item>
-
-				<Item variant="outline">
-					<ItemContent>
-						<ItemTitle>Reports</ItemTitle>
-					</ItemContent>
-					<ItemActions className="ml-16 flex">
-						<Link
-							to="/dashboard/reports"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							View
-						</Link>
-					</ItemActions>
-				</Item>
-
-				<Item variant="outline">
-					<ItemContent>
-						<ItemTitle>Places</ItemTitle>
-					</ItemContent>
-					<ItemActions className="ml-16 flex">
-						<Link
-							to="/dashboard/places"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							View
-						</Link>
-						<Link
-							to="/dashboard/places/new"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							New
-						</Link>
-					</ItemActions>
-				</Item>
-
-				<Item variant="outline">
-					<ItemContent>
-						<ItemTitle>Users</ItemTitle>
-					</ItemContent>
-					<ItemActions className="ml-16 flex">
-						<Link
-							to="/dashboard/users"
-							className={buttonVariants({ variant: 'link' })}
-						>
-							View
-						</Link>
-					</ItemActions>
-				</Item>
+				{resources.map((r) => (
+					<Item key={r.resource} variant="outline">
+						<ItemContent>
+							<ItemTitle className="capitalize">{r.resource}</ItemTitle>
+						</ItemContent>
+						<ItemActions className="ml-16 flex">
+							<Link
+								{...r.links.list}
+								className={buttonVariants({ variant: 'link' })}
+							>
+								View
+							</Link>
+							<Link
+								{...r.links.new}
+								className={buttonVariants({ variant: 'link' })}
+							>
+								New
+							</Link>
+						</ItemActions>
+					</Item>
+				))}
 			</div>
 		</Container>
 	);
