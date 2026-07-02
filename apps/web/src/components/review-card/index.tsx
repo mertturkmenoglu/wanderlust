@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
+import { Badge } from '@wanderlust/ui/components/badge';
 import {
 	Item,
 	ItemActions,
@@ -9,12 +10,14 @@ import {
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
+import { StarIcon } from 'lucide-react';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { ipx } from '@/lib/ipx';
 import type { Outputs } from '@/lib/orpc';
+import { useLikeReviewMutation, useLikesFormatter } from './hooks';
 import { Menu } from './menu';
 
 type Props = {
@@ -22,8 +25,10 @@ type Props = {
 	review: Outputs['reviews']['listByPlaceId']['reviews'][number];
 };
 
-export function ReviewCard({ review, className }: Props) {
+export function ReviewCard({ review: { review, meta }, className }: Props) {
 	const lb = useAssetLightbox(review.assets);
+	const likeMutation = useLikeReviewMutation();
+	const fmt = useLikesFormatter();
 
 	return (
 		<Item variant="default" className={cn(className)} size="sm">
@@ -81,7 +86,7 @@ export function ReviewCard({ review, className }: Props) {
 				</div>
 				<lb.Component />
 			</ItemContent>
-			<ItemFooter>
+			<ItemFooter className="items-start">
 				<div className="flex items-center gap-2">
 					<FormattedRating
 						rating={review.rating}
@@ -90,8 +95,25 @@ export function ReviewCard({ review, className }: Props) {
 					/>
 					<span className="font-semibold text-sm">{review.rating}.0</span>
 				</div>
-				<div className="text-muted-foreground text-xs">
-					Visited on {format(review.visitedAt, 'PPP')}
+				<div className="flex flex-col justify-end">
+					<button
+						type="button"
+						className="ml-auto"
+						title={meta.isLiked ? 'Unlike' : 'Like'}
+						disabled={likeMutation.isPending}
+						onClick={() => likeMutation.mutate({ id: review.id })}
+					>
+						<Badge
+							variant={meta.isLiked ? 'default' : 'outline'}
+							className="gap-1"
+						>
+							<StarIcon className="size-4" />
+							{fmt(review.totalLikes)}
+						</Badge>
+					</button>
+					<div className="mt-2 text-muted-foreground text-xs">
+						Visited on {format(review.visitedAt, 'PPP')}
+					</div>
 				</div>
 			</ItemFooter>
 		</Item>

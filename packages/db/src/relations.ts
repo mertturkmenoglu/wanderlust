@@ -73,6 +73,18 @@ export const relations = defineRelations(schema, (r) => ({
 		}),
 		assets: r.many.assets(),
 	},
+	reviewLikes: {
+		review: r.one.reviews({
+			from: r.reviewLikes.reviewId,
+			to: r.reviews.id,
+			optional: false,
+		}),
+		user: r.one.users({
+			from: r.reviewLikes.userId,
+			to: r.users.id,
+			optional: false,
+		}),
+	},
 	users: {
 		bookmarks: r.many.bookmarks(),
 		favorites: r.many.favorites(),

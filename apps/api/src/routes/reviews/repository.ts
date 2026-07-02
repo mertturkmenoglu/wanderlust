@@ -7,9 +7,10 @@ import {
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
-import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
+import { and, count, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { unique } from '@/lib/unique';
 
 @injectable()
 export class ReviewsRepository {
@@ -297,5 +298,178 @@ export class ReviewsRepository {
 		return {
 			assets: result,
 		};
+	}
+
+	async like(userId: string, data: dto.LikeInput) {
+		const result = await this.db.transaction(async (tx) => {
+			const thisUser = await tx.query.users.findFirst({
+				where: {
+					id: userId,
+				},
+			});
+
+			invariant(thisUser, 'NOT_FOUND', `User with id ${userId} not found`);
+
+			const existing = await tx.query.reviewLikes.findFirst({
+				where: {
+					reviewId: data.id,
+					userId,
+				},
+			});
+
+			const review = await tx.query.reviews.findFirst({
+				where: {
+					id: data.id,
+				},
+			});
+
+			invariant(review, 'NOT_FOUND', `Review with id ${data.id} not found`);
+
+			const reviewUser = await tx.query.users.findFirst({
+				where: {
+					id: review.userId,
+				},
+			});
+
+			invariant(
+				reviewUser,
+				'NOT_FOUND',
+				`User with id ${review.userId} not found`,
+			);
+
+			const place = await tx.query.places.findFirst({
+				where: {
+					id: review.placeId,
+				},
+			});
+
+			invariant(
+				place,
+				'NOT_FOUND',
+				`Place with id ${review.placeId} not found`,
+			);
+
+			if (existing) {
+				// Unlike the review
+				await tx
+					.delete(schema.reviewLikes)
+					.where(
+						and(
+							eq(schema.reviewLikes.reviewId, data.id),
+							eq(schema.reviewLikes.userId, userId),
+						),
+					);
+
+				await tx
+					.update(schema.reviews)
+					.set({
+						totalLikes: sql`${schema.reviews.totalLikes} - 1`,
+					})
+					.where(eq(schema.reviews.id, data.id));
+
+				return {
+					liked: false,
+					thisUser: {
+						username: thisUser.username,
+					},
+					user: {
+						id: reviewUser.id,
+						name: reviewUser.name,
+						username: reviewUser.username,
+						image: reviewUser.image,
+					},
+					place: {
+						id: review.placeId,
+						name: place.name,
+					},
+				};
+			}
+
+			await tx.insert(schema.reviewLikes).values({
+				reviewId: data.id,
+				userId,
+			});
+
+			await tx
+				.update(schema.reviews)
+				.set({
+					totalLikes: sql`${schema.reviews.totalLikes} + 1`,
+				})
+				.where(eq(schema.reviews.id, data.id));
+
+			return {
+				liked: true,
+				thisUser: {
+					username: thisUser.username,
+				},
+				user: {
+					id: reviewUser.id,
+					name: reviewUser.name,
+					username: reviewUser.username,
+					image: reviewUser.image,
+				},
+				place: {
+					id: review.placeId,
+					name: place.name,
+				},
+			};
+		});
+
+		return result;
+	}
+
+	async listLikes(_userId: string, data: dto.ListLikesInput) {
+		const offset = Pagination.getOffset(data);
+
+		const result = await this.db.query.reviewLikes.findMany({
+			where: {
+				reviewId: data.id,
+			},
+			with: {
+				user: {
+					columns: {
+						id: true,
+						username: true,
+						name: true,
+						image: true,
+					},
+				},
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
+			offset,
+			limit: data.pageSize,
+		});
+
+		const totalRecords = await this.db.$count(
+			schema.reviewLikes,
+			eq(schema.reviewLikes.reviewId, data.id),
+		);
+
+		return {
+			users: result.map((like) => like.user),
+			pagination: Pagination.compute(data, totalRecords),
+		};
+	}
+
+	async getLikedStatuses(userId: string | null, ids: string[]) {
+		if (!userId) {
+			return [];
+		}
+
+		const result = await this.db
+			.select({
+				reviewId: schema.reviewLikes.reviewId,
+			})
+			.from(schema.reviewLikes)
+			.where(
+				and(
+					eq(schema.reviewLikes.userId, userId),
+					inArray(schema.reviewLikes.reviewId, ids),
+				),
+			);
+
+		return unique(result.map((r) => r.reviewId));
 	}
 }

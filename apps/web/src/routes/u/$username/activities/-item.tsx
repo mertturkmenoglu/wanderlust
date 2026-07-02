@@ -6,7 +6,14 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from '@wanderlust/ui/components/item';
-import { HeartIcon, ListIcon, MapIcon, PenIcon, UserIcon } from 'lucide-react';
+import {
+	HeartIcon,
+	ListIcon,
+	MapIcon,
+	PenIcon,
+	StarIcon,
+	UserIcon,
+} from 'lucide-react';
 import { RelativeTime } from '@/components/relative-time';
 import type { Outputs } from '@/lib/orpc';
 
@@ -36,6 +43,8 @@ function getVariantComponent(type: Props['item']['type']) {
 			return VariantCreateTrip;
 		case 'follow':
 			return VariantFollowUser;
+		case 'like_review':
+			return VariantLikeReview;
 		default:
 			return null;
 	}
@@ -192,6 +201,54 @@ function VariantFollowUser({ item }: Props) {
 					<ItemTitle>
 						Started following{' '}
 						<span className="text-primary">@{data.otherUsername}</span>
+					</ItemTitle>
+					<ItemDescription>
+						<RelativeTime date={new Date(item.createdAt)} />
+					</ItemDescription>
+				</ItemContent>
+			</Item>
+		</Link>
+	);
+}
+
+type TLikeReview = {
+	review: {
+		id: string;
+		user: {
+			id: string;
+			name: string;
+			username: string;
+			image: string | null;
+		};
+		place: {
+			id: string;
+			name: string;
+		};
+	};
+};
+
+function VariantLikeReview({ item }: Props) {
+	const data = item.data as TLikeReview;
+
+	return (
+		<Link
+			to="/p/$id/reviews/$reviewId"
+			params={{
+				id: data.review.place.id,
+				reviewId: data.review.id,
+			}}
+		>
+			<Item variant="outline" className="hover:bg-muted">
+				<ItemMedia variant="icon">
+					<StarIcon />
+				</ItemMedia>
+
+				<ItemContent>
+					<ItemTitle>
+						Liked{' '}
+						<span className="text-primary">@{data.review.user.username}</span>'s
+						review for{' '}
+						<span className="text-primary">{data.review.place.name}</span>
 					</ItemTitle>
 					<ItemDescription>
 						<RelativeTime date={new Date(item.createdAt)} />

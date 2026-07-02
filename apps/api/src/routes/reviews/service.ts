@@ -28,11 +28,16 @@ export class ReviewsService {
 		this.cache = cache.get();
 	}
 
-	async get(data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(userId: string | null, data: dto.GetInput): Promise<dto.GetOutput> {
 		const result = await this.repo.get(data);
+
+		const likes = await this.repo.getLikedStatuses(userId, [result.id]);
 
 		return {
 			review: result,
+			meta: {
+				isLiked: likes.includes(result.id),
+			},
 		};
 	}
 
@@ -98,23 +103,45 @@ export class ReviewsService {
 	}
 
 	async listByUsername(
+		userId: string | null,
 		data: dto.ListByUsernameInput,
 	): Promise<dto.ListByUsernameOutput> {
 		const result = await this.repo.listByUsername(data);
 
+		const likes = await this.repo.getLikedStatuses(
+			userId,
+			result.reviews.map((r) => r.id),
+		);
+
 		return {
-			reviews: result.reviews,
+			reviews: result.reviews.map((review) => ({
+				review: review,
+				meta: {
+					isLiked: likes.includes(review.id),
+				},
+			})),
 			pagination: result.pagination,
 		};
 	}
 
 	async listByPlaceId(
+		userId: string | null,
 		data: dto.ListByPlaceIdInput,
 	): Promise<dto.ListByPlaceIdOutput> {
 		const result = await this.repo.listByPlaceId(data);
 
+		const likes = await this.repo.getLikedStatuses(
+			userId,
+			result.reviews.map((r) => r.id),
+		);
+
 		return {
-			reviews: result.reviews,
+			reviews: result.reviews.map((review) => ({
+				review: review,
+				meta: {
+					isLiked: likes.includes(review.id),
+				},
+			})),
 			pagination: result.pagination,
 		};
 	}
@@ -135,6 +162,55 @@ export class ReviewsService {
 		const result = await this.repo.listAssetsByPlaceId(data);
 
 		return result;
+	}
+
+	async like(userId: string, data: dto.LikeInput): Promise<dto.LikeOutput> {
+		const result = await this.repo.like(userId, data);
+
+		try {
+			if (result.liked) {
+				await this.activities.addActivity(
+					result.thisUser.username,
+					'like_review',
+					{
+						review: {
+							id: data.id,
+							user: {
+								id: result.user.id,
+								name: result.user.name,
+								username: result.user.username,
+								image: result.user.image,
+							},
+							place: {
+								id: result.place.id,
+								name: result.place.name,
+							},
+						},
+					},
+				);
+			}
+		} catch {
+			console.error('Failed to add like activity for review', {
+				reviewId: data.id,
+				userId,
+			});
+		}
+
+		return {
+			liked: result.liked,
+		};
+	}
+
+	async listLikes(
+		userId: string,
+		data: dto.ListLikesInput,
+	): Promise<dto.ListLikesOutput> {
+		const result = await this.repo.listLikes(userId, data);
+
+		return {
+			users: result.users,
+			pagination: result.pagination,
+		};
 	}
 
 	private async uploadFiles(files: File[]): Promise<string[]> {

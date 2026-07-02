@@ -6,7 +6,8 @@ export type ActivityType =
 	| 'create_list'
 	| 'create_review'
 	| 'create_trip'
-	| 'follow';
+	| 'follow'
+	| 'like_review';
 
 export type ActivityData = Record<string, unknown>;
 

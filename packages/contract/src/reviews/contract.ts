@@ -149,6 +149,48 @@ export const contract = {
 			successStatus: 200,
 			successDescription: 'OK',
 		}),
+	like: oc
+		.input(dto.likeInput)
+		.output(dto.likeOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'POST',
+			path: '/reviews/:id/likes',
+			summary: 'Like or Unlike Review by ID',
+			description: 'Like or unlike a review',
+			tags: ['Reviews'],
+			successStatus: 200,
+			successDescription: 'OK',
+		}),
+	listLikes: oc
+		.input(dto.listLikesInput)
+		.output(dto.listLikesOutput)
+		.errors({
+			BAD_REQUEST: {},
+			UNAUTHORIZED: {},
+			FORBIDDEN: {},
+			NOT_FOUND: {},
+			CONFLICT: {},
+			UNPROCESSABLE_CONTENT: {},
+			INTERNAL_SERVER_ERROR: {},
+		})
+		.route({
+			method: 'GET',
+			path: '/reviews/:id/likes',
+			summary: 'List Likes by Review ID',
+			description: 'List the likes for a specific review',
+			tags: ['Reviews'],
+			successStatus: 200,
+			successDescription: 'OK',
+		}),
 };
 
 export type Contract = typeof contract;

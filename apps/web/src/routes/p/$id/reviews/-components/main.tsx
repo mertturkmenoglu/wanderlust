@@ -18,7 +18,7 @@ export function Main() {
 		<section className="flex flex-col items-center gap-8">
 			<div>
 				{reviews.map((review) => (
-					<ReviewCard key={review.id} review={review} />
+					<ReviewCard key={review.review.id} review={review} />
 				))}
 			</div>
 

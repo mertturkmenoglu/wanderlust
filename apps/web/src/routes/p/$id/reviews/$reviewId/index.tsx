@@ -2,7 +2,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
 import { CategoriesBanner, TripPlannerCta } from '@/components/banner/common';
 import { ReviewCard } from '@/components/review-card';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { orpc } from '@/lib/orpc';
+import { Likes } from './-likes';
 
 export const Route = createFileRoute('/p/$id/reviews/$reviewId/')({
 	component: RouteComponent,
@@ -30,12 +32,20 @@ function RouteComponent() {
 			/>
 
 			<div className="mx-auto my-16 max-w-3xl">
-				<ReviewCard review={data.review} />
+				<ReviewCard review={data} />
+
+				<SuspenseWrapper>
+					<Likes />
+				</SuspenseWrapper>
 			</div>
 
 			<CategoriesBanner />
 
-			<TripPlannerCta />
+			<TripPlannerCta
+				classNames={{
+					root: 'my-8',
+				}}
+			/>
 		</div>
 	);
 }

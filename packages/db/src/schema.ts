@@ -508,6 +508,7 @@ export const reviews = p.pgTable(
 			.references(() => users.id, { onDelete: 'cascade' }),
 		content: p.text().notNull(),
 		rating: p.smallint().notNull(),
+		totalLikes: p.bigint({ mode: 'number' }).notNull().default(0),
 		visitedAt: p.timestamp({ withTimezone: true }).notNull(),
 		createdAt: p.timestamp({ withTimezone: true }).notNull().defaultNow(),
 		updatedAt: p
@@ -521,6 +522,25 @@ export const reviews = p.pgTable(
 		p.index().on(table.userId),
 		p.check('rating_range', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
 		p.check('visited_at_past', sql`${table.visitedAt} <= now()`),
+	],
+);
+
+export const reviewLikes = p.pgTable(
+	'review_likes',
+	{
+		reviewId: p
+			.text()
+			.notNull()
+			.references(() => reviews.id, { onDelete: 'cascade' }),
+		userId: p
+			.text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		createdAt: p.timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(table) => [
+		p.primaryKey({ columns: [table.reviewId, table.userId] }),
+		p.index().on(table.reviewId),
 	],
 );
 

@@ -61,9 +61,9 @@ export function useSortedReviews() {
 
 	if (search.sortBy === 'rating') {
 		if (search.sortOrd === 'asc') {
-			return reviews.sort((a, b) => a.rating - b.rating);
+			return reviews.sort((a, b) => a.review.rating - b.review.rating);
 		}
-		return reviews.sort((a, b) => b.rating - a.rating);
+		return reviews.sort((a, b) => b.review.rating - a.review.rating);
 	}
 
 	return reviews;

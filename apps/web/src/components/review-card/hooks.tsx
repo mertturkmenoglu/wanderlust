@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { orpc } from '@/lib/orpc';
 
 export function useDeleteReviewMutation(placeId: string) {
@@ -31,4 +32,34 @@ export function useDeleteReviewMutation(placeId: string) {
 			},
 		}),
 	);
+}
+
+export function useLikeReviewMutation() {
+	const invalidate = useInvalidator();
+
+	return useMutation(
+		orpc.reviews.like.mutationOptions({
+			onSuccess: async (v) => {
+				await invalidate();
+
+				toast.success(v.liked ? 'Review liked' : 'Review unliked');
+			},
+		}),
+	);
+}
+
+export function useLikesFormatter() {
+	const numFmt = useNumberFormatter();
+	const pluralRules = new Intl.PluralRules('en-US');
+
+	return (likes: number) => {
+		const formattedLikes = numFmt.format(likes);
+		const pluralCategory = pluralRules.select(likes);
+
+		if (pluralCategory === 'one') {
+			return `${formattedLikes} like`;
+		}
+
+		return `${formattedLikes} likes`;
+	};
 }

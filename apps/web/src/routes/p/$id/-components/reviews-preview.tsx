@@ -51,7 +51,7 @@ function Content() {
 
 			<div className="mt-4">
 				{reviews.map((review) => (
-					<ReviewCard key={review.id} review={review} />
+					<ReviewCard key={review.review.id} review={review} />
 				))}
 			</div>
 		</div>

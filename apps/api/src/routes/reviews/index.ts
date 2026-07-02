@@ -18,8 +18,9 @@ export const module = defineModule({
 		const svc = container.get(ReviewsService);
 
 		return os.router({
-			get: os.get.handler(async ({ input }) => {
-				const result = await svc.get(input);
+			get: os.get.handler(async ({ input, context }) => {
+				const userId = context.session?.user?.id || null;
+				const result = await svc.get(userId, input);
 
 				return result;
 			}),
@@ -35,13 +36,15 @@ export const module = defineModule({
 
 				return {};
 			}),
-			listByUsername: os.listByUsername.handler(async ({ input }) => {
-				const result = await svc.listByUsername(input);
+			listByUsername: os.listByUsername.handler(async ({ input, context }) => {
+				const userId = context.session?.user?.id || null;
+				const result = await svc.listByUsername(userId, input);
 
 				return result;
 			}),
-			listByPlaceId: os.listByPlaceId.handler(async ({ input }) => {
-				const result = await svc.listByPlaceId(input);
+			listByPlaceId: os.listByPlaceId.handler(async ({ input, context }) => {
+				const userId = context.session?.user?.id || null;
+				const result = await svc.listByPlaceId(userId, input);
 
 				return result;
 			}),
@@ -55,6 +58,20 @@ export const module = defineModule({
 
 				return result;
 			}),
+			like: os.like.use(requireAuth).handler(async ({ input, context }) => {
+				const userId = context.session.user.id;
+				const result = await svc.like(userId, input);
+
+				return result;
+			}),
+			listLikes: os.listLikes
+				.use(requireAuth)
+				.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.listLikes(userId, input);
+
+					return result;
+				}),
 		});
 	},
 });

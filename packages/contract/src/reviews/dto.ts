@@ -11,7 +11,6 @@ const review = $dto.review.extend({
 	assets: $dto.asset.array(),
 });
 
-
 export const getInput = $dto.review.pick({
 	id: true,
 });
@@ -21,6 +20,12 @@ export type GetInput = z.infer<typeof getInput>;
 export const getOutput = z.object({
 	review: review.extend({
 		place: $extended.place,
+	}),
+	meta: z.object({
+		isLiked: z.boolean().meta({
+			description: 'Indicates whether the review is liked by the user',
+			examples: [true, false],
+		}),
 	}),
 });
 
@@ -66,9 +71,17 @@ export const listByUsernameInput = Pagination.queryParamsSchema.extend(
 export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
 
 export const listByUsernameOutput = z.object({
-	reviews: review
-		.extend({
-			place: $extended.place,
+	reviews: z
+		.object({
+			review: review.extend({
+				place: $extended.place,
+			}),
+			meta: z.object({
+				isLiked: z.boolean().meta({
+					description: 'Indicates whether the review is liked by the user',
+					examples: [true, false],
+				}),
+			}),
 		})
 		.array(),
 	pagination: Pagination.schema,
@@ -120,7 +133,17 @@ export const listByPlaceIdInput = Pagination.queryParamsSchema
 export type ListByPlaceIdInput = z.infer<typeof listByPlaceIdInput>;
 
 export const listByPlaceIdOutput = z.object({
-	reviews: review.array(),
+	reviews: z
+		.object({
+			review: review,
+			meta: z.object({
+				isLiked: z.boolean().meta({
+					description: 'Indicates whether the review is liked by the user',
+					examples: [true, false],
+				}),
+			}),
+		})
+		.array(),
 	pagination: Pagination.schema,
 });
 
@@ -169,3 +192,38 @@ export const listAssetsByPlaceIdOutput = z.object({
 export type ListAssetsByPlaceIdOutput = z.infer<
 	typeof listAssetsByPlaceIdOutput
 >;
+
+export const likeInput = $dto.review.pick({
+	id: true,
+});
+
+export type LikeInput = z.infer<typeof likeInput>;
+
+export const likeOutput = z.object({
+	liked: z.boolean().meta({
+		description: 'Indicates whether the review was liked or unliked',
+		examples: [true, false],
+	}),
+});
+
+export type LikeOutput = z.infer<typeof likeOutput>;
+
+export const listLikesInput = Pagination.queryParamsSchema.extend(
+	$dto.review.pick({ id: true }).shape,
+);
+
+export type ListLikesInput = z.infer<typeof listLikesInput>;
+
+export const listLikesOutput = z.object({
+	users: $dto.user
+		.pick({
+			id: true,
+			username: true,
+			name: true,
+			image: true,
+		})
+		.array(),
+	pagination: Pagination.schema,
+});
+
+export type ListLikesOutput = z.infer<typeof listLikesOutput>;

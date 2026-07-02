@@ -21,7 +21,7 @@ import type { Outputs } from '@/lib/orpc';
 import { useDeleteReviewMutation } from './hooks';
 
 type Props = {
-	review: Outputs['reviews']['listByPlaceId']['reviews'][number];
+	review: Outputs['reviews']['listByPlaceId']['reviews'][number]['review'];
 };
 
 export function Menu({ review }: Props) {
