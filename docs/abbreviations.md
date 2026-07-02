@@ -2,6 +2,7 @@
 
 Here's a list of abbreviations used throughout the project (Note: List is not exhaustive):
 
+- `ADR`: Architecture Decision Record (See: https://adr.github.io/)
 - `API`: Application Programming Interface
 - `Authn`: Authentication. Verifying the user is the same person they claim to be.
 - `Authz`: Authorization. Verifying the user has permissions to access a resource/perform an action.
