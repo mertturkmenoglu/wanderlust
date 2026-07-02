@@ -30,9 +30,9 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto my-8 w-full max-w-7xl">
 			<BackLink
-				to="/p/$id"
+				to="/p/$id/reviews"
 				params={{ id: data.place.id }}
-				text="Go back to place details"
+				text="Go back to reviews"
 			/>
 
 			<div className="my-8 grid grid-cols-1 gap-8 md:grid-cols-3">

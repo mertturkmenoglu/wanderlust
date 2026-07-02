@@ -17,7 +17,7 @@ import { Information } from './-components/information';
 import { MapComponent } from './-components/map';
 import { NearbyCities } from './-components/nearby-cities';
 import { NearbyPlaces } from './-components/nearby-places';
-import { Reviews } from './-components/reviews';
+import { ReviewsPreview } from './-components/reviews-preview';
 import { useTrackRecentViews } from './-hooks';
 
 const schema = z.object({
@@ -84,7 +84,7 @@ function RouteComponent() {
 
 			<Separator className="my-4" />
 
-			<Reviews />
+			<ReviewsPreview />
 
 			<Separator className="my-4" />
 

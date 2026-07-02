@@ -1,13 +1,13 @@
 import { Progress } from '@wanderlust/ui/components/progress';
 import { StarIcon } from 'lucide-react';
-import type { Outputs } from '@/lib/orpc';
-import { numFmt } from './hooks';
+import { useNumberFormatter } from '@/hooks/use-number-formatter';
+import { useRatingsQuery } from './hooks';
 
-type Props = {
-	ratings: Outputs['reviews']['getRatings'];
-};
+export function Graph() {
+	const query = useRatingsQuery();
+	const ratings = query.data;
+	const numFmt = useNumberFormatter();
 
-export function RatingsGraph({ ratings }: Props) {
 	const entries = Object.entries(ratings.ratings).map(
 		(v) => [+v[0], v[1]] as const,
 	);

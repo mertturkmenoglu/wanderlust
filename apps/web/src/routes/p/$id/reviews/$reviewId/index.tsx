@@ -22,11 +22,11 @@ function RouteComponent() {
 	return (
 		<div className="mx-auto my-8 w-full max-w-7xl">
 			<BackLink
-				to="/p/$id"
+				to="/p/$id/reviews"
 				params={{
 					id: data.review.placeId,
 				}}
-				text="Go back to place details"
+				text="Go back to reviews"
 			/>
 
 			<div className="mx-auto my-16 max-w-3xl">

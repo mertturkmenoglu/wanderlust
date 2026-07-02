@@ -1,4 +1,4 @@
-import { getRouteApi } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import {
 	Select,
 	SelectContent,
@@ -13,8 +13,8 @@ import { Slider } from '@wanderlust/ui/components/slider';
 import { useEffect, useState } from 'react';
 
 export function Filters() {
-	const route = getRouteApi('/p/$id/');
-	const search = route.useSearch();
+	const search = useSearch({ from: '/p/$id/reviews/' });
+	const navigate = useNavigate({ from: '/p/$id/reviews/' });
 
 	const [isDirty, setIsDirty] = useState(false);
 	const [minRating, setMinRating] = useState(
@@ -26,7 +26,6 @@ export function Filters() {
 
 	const [sortBy, setSortBy] = useState(search.sortBy ?? 'created_at');
 	const [sortOrd, setSortOrd] = useState(search.sortOrd ?? 'desc');
-	const navigate = route.useNavigate();
 
 	const isAllRatings = minRating === 1 && maxRating === 5;
 
