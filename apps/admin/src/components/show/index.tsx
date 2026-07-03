@@ -1,12 +1,12 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { ButtonGroup } from '@wanderlust/ui/components/button-group';
+import { KeyValueList } from '@wanderlust/ui/components/key-value-list';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
 import { copyToClipboard } from '@/lib/clipboard';
 import type { DataResource, ProcIn, ResourceKey } from '@/lib/crud';
-import { DetailRow, DetailTable } from '../details/table';
 
 export type Props<K extends ResourceKey, T> = {
 	resource: DataResource<K, T>;
@@ -62,8 +62,9 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 							variant="midnight"
 							onClick={async () => {
 								await navigate({
-									to: props.resource.links.edit(props.resource.extractors.id(obj) ?? '')
-										.to,
+									to: props.resource.links.edit(
+										props.resource.extractors.id(obj) ?? '',
+									).to,
 								});
 							}}
 						>
@@ -114,17 +115,17 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 			</div>
 
 			<div className="mt-4 text-muted-foreground text-sm">
-				{props.resource.extractors.description(obj) ?? 'No description available.'}
+				{props.resource.extractors.description(obj) ??
+					'No description available.'}
 			</div>
 
 			<Separator className="my-8" />
 
 			<div className="flex flex-col gap-2">
-				<DetailTable>
-					{props.rows.map(([label, value]) => (
-						<DetailRow key={label} label={label} value={value} />
-					))}
-				</DetailTable>
+				<KeyValueList
+					variant="bordered"
+					items={props.rows.map((r) => ({ label: r[0], value: r[1] }))}
+				/>
 			</div>
 		</div>
 	);
