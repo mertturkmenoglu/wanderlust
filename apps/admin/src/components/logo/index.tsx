@@ -1,7 +1,7 @@
 import { cn } from '@wanderlust/ui/lib/utils';
 
 type Props = {
-	variant?: 'default' | 'large' | 'medium' | 'small';
+	variant?: 'default' | 'large' | 'medium' | 'small' | 'xs';
 	grayscale?: boolean;
 	className?: string;
 };
@@ -19,6 +19,7 @@ export function Logo({
 			className={cn(
 				{
 					grayscale: grayscale,
+					'size-8 min-h-8 min-w-8': variant === 'xs',
 					'size-12 min-h-12 min-w-12': variant === 'small',
 					'size-16 min-h-16 min-w-16': variant === 'medium',
 					'size-24 min-h-24 min-w-24': variant === 'default',
