@@ -18,36 +18,20 @@ export type Props<K extends ResourceKey, T> = {
 	input: ProcIn<K, 'get'>;
 	deleteInput: ProcIn<K, 'delete'>;
 	rows: Array<[string, React.ReactNode]>;
+	data: T;
 };
 
 export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 	const navigate = useNavigate();
 	const confirm = useConfirmDialog();
-	const query = props.resource.useOne(props.input);
 
 	const deleteMutation = props.resource.useDelete();
-
-	if (query.isLoading) {
-		return <div>Loading...</div>;
-	}
-
-	if (query.isError) {
-		return <div>Error: {query.error.message}</div>;
-	}
-
-	const data = query.data;
-
-	if (!data) {
-		return <div>Not found</div>;
-	}
-
-	const obj = props.resource.extractors.one(data);
 
 	return (
 		<Container
 			title={
-				props.resource.extractors.title(obj) ??
-				props.resource.extractors.id(obj) ??
+				props.resource.extractors.title(props.data) ??
+				props.resource.extractors.id(props.data) ??
 				'Details'
 			}
 			actions={
@@ -58,7 +42,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 							onClick={async () => {
 								await navigate({
 									to: props.resource.links.edit(
-										props.resource.extractors.id(obj) ?? '',
+										props.resource.extractors.id(props.data) ?? '',
 									).to,
 								});
 							}}
@@ -69,7 +53,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 							variant="outline"
 							onClick={async () => {
 								await navigate({
-									href: props.resource.extractors.appLink(obj),
+									href: props.resource.extractors.appLink(props.data),
 								});
 							}}
 						>
@@ -78,7 +62,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 						<Button
 							variant="outline"
 							onClick={async () => {
-								const link = props.resource.extractors.appLink(obj);
+								const link = props.resource.extractors.appLink(props.data);
 								await copyToClipboard(link ?? window.location.toString());
 							}}
 						>
@@ -129,7 +113,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 								id="preview"
 								title="Content Preview"
 								className="h-full w-full"
-								src={props.resource.extractors.appLink(obj)}
+								src={props.resource.extractors.appLink(props.data)}
 							/>
 						</ResizablePanel>
 					</ResizablePanelGroup>
