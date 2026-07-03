@@ -1,26 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { Container } from '@/components/container';
-import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { authClient } from '@/lib/auth';
 
 export const Route = createFileRoute('/')({
-	component: RouteComponent,
+	beforeLoad: async () => {
+		const auth = await authClient.getSession();
+
+		if (!auth) {
+			throw redirect({
+				to: '/sign-in',
+			});
+		}
+
+		throw redirect({
+			to: '/dashboard',
+		});
+	},
 });
-
-function RouteComponent() {
-	const isAuthenticated = useIsAuthenticated();
-
-	return (
-		<Container>
-			<div>Index</div>
-			{isAuthenticated ? (
-				<Link to="/dashboard">
-					<div>Dashboard</div>
-				</Link>
-			) : (
-				<Link to="/sign-in">
-					<div>Sign In</div>
-				</Link>
-			)}
-		</Container>
-	);
-}
