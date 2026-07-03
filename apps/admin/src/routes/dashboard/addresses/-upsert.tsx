@@ -1,49 +1,66 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addresses as dto } from '@wanderlust/contract';
-import { Button } from '@wanderlust/ui/components/button';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Input } from '@wanderlust/ui/components/input';
 import {
-	FieldDescription,
-	FieldGroup,
-	FieldLegend,
-	FieldSet,
-} from '@wanderlust/ui/components/field';
-import { Spinner } from '@wanderlust/ui/components/spinner';
-import { cmp } from '@/components/form';
-import { useUpsert } from '@/hooks/use-upsert';
-import type { Outputs } from '@/lib/orpc';
-import { addressesResource } from '@/resources/addresses';
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@wanderlust/ui/components/select';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
+import { useFormElement } from '@/components/form';
+import { FormContainer } from '@/components/form/container';
+import { SubmitButton } from '@/components/form/submit-button';
+import type { UpsertProps } from '@/components/form/upsert';
+import { orpc } from '@/lib/orpc';
+import { type Address, addressesResource } from '@/resources/addresses';
 
-type Address = Outputs['addresses']['get']['address'];
+const schema = z.object({
+	id: z.number({ error: 'Required' }),
+	cityId: z.number({ error: 'Required' }),
+	lat: z.number({ error: 'Required' }),
+	lng: z.number({ error: 'Required' }),
+	line1: z.string({ error: 'Required' }),
+	line2: z.string().optional(),
+	postalCode: z.string().optional(),
+});
 
-export type UpsertProps = {
-	action: 'create' | 'edit';
-	address?: Address;
-};
+export function Upsert({ action, entity }: UpsertProps<Address>) {
+	const citiesQuery = useSuspenseQuery(
+		orpc.cities.list.queryOptions({
+			input: {},
+		}),
+	);
 
-const schema = dto.updateInput;
+	const allCities = citiesQuery.data.cities;
 
-export function Upsert({ action, address }: UpsertProps) {
-	const ent = () => {
-		if (address) {
-			const { city, ...rest } = address;
-			return rest;
-		}
-		return undefined;
-	};
-
-	const upsert = useUpsert({
-		action,
+	const form = useForm({
 		resolver: zodResolver(schema),
-		entity: ent(),
-		resource: addressesResource,
+		defaultValues: {
+			...(entity ?? {}),
+			line2: entity?.line2 ?? undefined,
+			postalCode: entity?.postalCode ?? undefined,
+		},
 	});
 
-	const onSubmit = upsert.form.handleSubmit(
+	const create = addressesResource.useCreate();
+
+	const edit = addressesResource.useUpdate();
+
+	const onSubmit = form.handleSubmit(
 		(data) => {
+			const payload = {
+				...data,
+				line2: data.line2 ?? null,
+				postalCode: data.postalCode ?? null,
+			};
+
 			if (action === 'create') {
-				upsert.create.mutate(data);
+				create.mutate(payload);
 			} else {
-				upsert.edit.mutate(data);
+				edit.mutate(payload);
 			}
 		},
 		(err) => {
@@ -51,68 +68,114 @@ export function Upsert({ action, address }: UpsertProps) {
 		},
 	);
 
+	const { Element } = useFormElement(form.control);
+
 	return (
 		<form onSubmit={onSubmit}>
-			<FieldSet>
-				<FieldLegend className="capitalize">{action}</FieldLegend>
-				<FieldDescription className="capitalize">
-					{action} address
-				</FieldDescription>
+			<FormContainer action={action}>
+				<Element name="id" label="ID">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="ID"
+							value={r.field.value}
+							onChange={(e) => r.field.onChange(Number(e.target.value))}
+							disabled={action === 'edit'}
+						/>
+					)}
+				</Element>
 
-				<FieldGroup>
-					<cmp.Input
-						name="id"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'ID',
-							},
-							input: {
-								placeholder: 'ID',
-								disabled: action === 'edit',
-							},
-						}}
-					/>
+				<Element name="line1" label="Line 1">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="Line 1"
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-					<cmp.Input
-						name="line1"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'Line 1',
-							},
-							input: {
-								placeholder: 'Line 1',
-								disabled: action === 'edit',
-							},
-						}}
-					/>
+				<Element name="line2" label="Line 2">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="Line 2"
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-					<Button
-						variant="default"
-						type="submit"
-						className="ml-auto max-w-fit"
-						disabled={upsert.create.isPending || upsert.edit.isPending}
-					>
-						{(upsert.create.isPending || upsert.edit.isPending) && (
-							<Spinner className="text-white!" />
-						)}
-						<span>
-							{action === 'create' ? 'Create Accolade' : 'Edit Accolade'}
-						</span>
-					</Button>
-				</FieldGroup>
-			</FieldSet>
+				<Element name="postalCode" label="Postal Code">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="Postal Code"
+							{...r.field}
+						/>
+					)}
+				</Element>
+
+				<Element name="lat" label="Latitude">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="Latitude"
+							value={r.field.value}
+							onChange={(e) => r.field.onChange(Number(e.target.value))}
+						/>
+					)}
+				</Element>
+
+				<Element name="lng" label="Longitude">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="Longitude"
+							value={r.field.value}
+							onChange={(e) => r.field.onChange(Number(e.target.value))}
+						/>
+					)}
+				</Element>
+
+				<Element name="cityId" label="City">
+					{(r, id) => (
+						<Select
+							name={r.field.name}
+							value={r.field.value?.toString()}
+							onValueChange={(v) => r.field.onChange(Number(v))}
+						>
+							<SelectTrigger
+								id={id}
+								aria-invalid={r.fieldState.invalid}
+								className="min-w-32"
+							>
+								<SelectValue placeholder="City" />
+							</SelectTrigger>
+							<SelectContent position="popper" align="end">
+								{allCities.map((city) => (
+									<SelectItem
+										key={`select-city-${city.id}`}
+										value={city.id.toString()}
+									>
+										{city.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					)}
+				</Element>
+
+				<SubmitButton
+					action={action}
+					isLoading={create.isPending || edit.isPending}
+				/>
+			</FormContainer>
 		</form>
 	);
 }

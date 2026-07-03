@@ -3,27 +3,26 @@ import { CityCard } from '@/components/city-card';
 import { Container } from '@/components/container';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
 import { addressesResource } from '@/resources/addresses';
 
+const r = addressesResource;
+
 export const Route = createFileRoute('/dashboard/addresses/$id/')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Address Details',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: +params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'details'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = addressesResource.useOne({
-		id: +params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { address } = query.data;
+	const { address } = Route.useLoaderData();
 
 	const rows = defineRows([
 		['ID', address.id],
@@ -48,9 +47,9 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container>
+		<Container title={address.line1}>
 			<Show
-				resource={addressesResource}
+				resource={r}
 				input={{
 					id: address.id,
 				}}

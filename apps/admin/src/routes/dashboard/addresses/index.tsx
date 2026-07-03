@@ -1,28 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { DefaultListPage } from '@/components/default/list-page';
+import { getDefaultStaticData } from '@/lib/defaults';
 import { addressesResource } from '@/resources/addresses';
+
+const r = addressesResource;
 
 export const Route = createFileRoute('/dashboard/addresses/')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: addressesResource.breadcrumb,
-	},
+	staticData: getDefaultStaticData(r, 'list'),
 });
 
 function RouteComponent() {
-	return (
-		<DefaultListPage
-			resource={addressesResource}
-			render={(item) => (
-				<div className="flex flex-row justify-between gap-4">
-					<div className="text-sm">
-						{item.line1}, {item.line2}, {item.postalCode}
-					</div>
-					<div className="text-muted-foreground text-sm">
-						{item.city.name}, {item.city.stateName}, {item.city.countryName}
-					</div>
-				</div>
-			)}
-		/>
-	);
+	return <DefaultListPage resource={r} />;
 }
