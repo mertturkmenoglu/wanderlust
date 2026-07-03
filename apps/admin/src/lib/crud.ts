@@ -164,6 +164,11 @@ export type DataResource<TKey extends ResourceKey, TOne> = TDataHooks<TKey> & {
 	 * The resource key, e.g. "users", "places", etc.
 	 */
 	resource: TKey;
+
+	/**
+	 * The breadcrumbs for the CRUD pages for this resource.
+	 * These are used to display the breadcrumbs on the list, details, new, and edit pages for this resource.
+	 */
 	breadcrumbs: TDataBreadcrumbs<TOne>;
 
 	/**
@@ -184,6 +189,9 @@ export type DataResource<TKey extends ResourceKey, TOne> = TDataHooks<TKey> & {
 	 */
 	columns: ColumnDef<TOne>[];
 
+	/**
+	 * The oRPC procedures for the CRUD operations for this resource.
+	 */
 	options: TDataFnOptions<TKey>;
 };
 
