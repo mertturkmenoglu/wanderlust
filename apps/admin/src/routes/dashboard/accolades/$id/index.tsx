@@ -4,7 +4,6 @@ import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
-import { toTitleCase } from '@/lib/text';
 import { accoladesResource } from '@/resources/accolades';
 
 const r = accoladesResource;
@@ -35,7 +34,7 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container title={toTitleCase(accolade.title)}>
+		<Container title={accolade.title}>
 			<Show
 				resource={r}
 				input={{

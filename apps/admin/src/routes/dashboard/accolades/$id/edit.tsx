@@ -23,7 +23,7 @@ function RouteComponent() {
 
 	return (
 		<Container title={accolade.title}>
-			<Upsert action="edit" accolade={accolade} />
+			<Upsert action="edit" entity={accolade} />
 		</Container>
 	);
 }
