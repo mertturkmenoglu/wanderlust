@@ -6,7 +6,7 @@ import { type DataResource, defineResource, getDefaultLinks } from '@/lib/crud';
 import { appLink } from '@/lib/link';
 import { type Outputs, orpc } from '@/lib/orpc';
 
-type Accolade = Outputs['accolades']['get']['accolade'];
+export type Accolade = Outputs['accolades']['get']['accolade'];
 
 export const accoladesResource: DataResource<'accolades', Accolade> =
 	defineResource({
