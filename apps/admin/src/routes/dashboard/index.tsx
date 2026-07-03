@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
-	Item,
-	ItemActions,
-	ItemContent,
-	ItemTitle,
-} from '@wanderlust/ui/components/item';
+	Card,
+	CardAction,
+	CardHeader,
+	CardTitle,
+} from '@wanderlust/ui/components/card';
+import { ArrowRightIcon } from 'lucide-react';
 import { Container } from '@/components/container';
+import { toTitleCase } from '@/lib/text';
 import { accoladesResource } from '@/resources/accolades';
 import { addressesResource } from '@/resources/addresses';
 import { categoriesResource } from '@/resources/categories';
@@ -32,28 +33,19 @@ const resources = [
 
 function RouteComponent() {
 	return (
-		<Container>
-			<div className="my-8 flex flex-col gap-4">
+		<Container title="Dashboard">
+			<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
 				{resources.map((r) => (
-					<Item key={r.resource} variant="outline">
-						<ItemContent>
-							<ItemTitle className="capitalize">{r.resource}</ItemTitle>
-						</ItemContent>
-						<ItemActions className="ml-16 flex">
-							<Link
-								{...r.links.list}
-								className={buttonVariants({ variant: 'link' })}
-							>
-								View
-							</Link>
-							<Link
-								{...r.links.new}
-								className={buttonVariants({ variant: 'link' })}
-							>
-								New
-							</Link>
-						</ItemActions>
-					</Item>
+					<Link key={r.resource} {...r.links.list}>
+						<Card className="rounded-none! hover:bg-muted">
+							<CardHeader className="h-16">
+								<CardTitle>{toTitleCase(r.resource)}</CardTitle>
+								<CardAction>
+									<ArrowRightIcon className="size-4" />
+								</CardAction>
+							</CardHeader>
+						</Card>
+					</Link>
 				))}
 			</div>
 		</Container>
