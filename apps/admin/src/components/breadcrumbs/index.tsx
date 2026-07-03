@@ -7,31 +7,42 @@ import {
 	BreadcrumbSeparator,
 	Breadcrumb as ShadcnBreadcrumb,
 } from '@wanderlust/ui/components/breadcrumb';
-
-type TItem = {
-	label: string;
-	path: string;
-};
+import { SlashIcon } from 'lucide-react';
+import type { TDataBreadcrumb } from '@/lib/crud';
+import { Logo } from '../logo';
 
 type Props = {
-	crumbs: TItem[];
+	crumbs: TDataBreadcrumb[];
 };
 
 export function Breadcrumbs({ crumbs }: Readonly<Props>) {
 	return (
 		<ShadcnBreadcrumb>
-			<BreadcrumbList className="text-lg">
+			<BreadcrumbList>
+				<Logo variant="xs" />
+				<BreadcrumbItem>
+					<BreadcrumbLink asChild>
+						<Link to="/dashboard">Dashboard</Link>
+					</BreadcrumbLink>
+				</BreadcrumbItem>
+
+				<BreadcrumbSeparator className="text-muted-foreground">
+					<SlashIcon className="rotate-[-30deg]" />
+				</BreadcrumbSeparator>
+
 				{crumbs.slice(0, -1).map((item, i) => (
 					<div
-						key={`crumb-${item.path}-${i}`}
+						key={`crumb-${item.link.to}-${i}`}
 						className="wrap-break-word flex flex-wrap items-center gap-1.5"
 					>
 						<BreadcrumbItem key={item.label}>
 							<BreadcrumbLink asChild>
-								<Link to={item.path}>{item.label}</Link>
+								<Link {...item.link}>{item.label}</Link>
 							</BreadcrumbLink>
 						</BreadcrumbItem>
-						<BreadcrumbSeparator className="text-primary" />
+						<BreadcrumbSeparator className="text-muted-foreground">
+							<SlashIcon className="rotate-[-30deg]" />
+						</BreadcrumbSeparator>
 					</div>
 				))}
 				<BreadcrumbItem>
