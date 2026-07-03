@@ -1,30 +1,27 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Container } from '@/components/container';
-import { citiesResource } from '@/resources/cities';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
+import { citiesResource as r } from '@/resources/cities';
 import { Upsert } from '../-upsert';
 
 export const Route = createFileRoute('/dashboard/cities/$id/edit')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Edit City',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: +params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'edit'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = citiesResource.useOne({
-		id: +params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { city } = query.data;
+	const { city } = Route.useLoaderData();
 
 	return (
-		<Container>
-			<Upsert action="edit" city={city} />
+		<Container title={city.name}>
+			<Upsert action="edit" entity={city} />
 		</Container>
 	);
 }

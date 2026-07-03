@@ -1,30 +1,27 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Container } from '@/components/container';
-import { categoriesResource } from '@/resources/categories';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
+import { categoriesResource as r } from '@/resources/categories';
 import { Upsert } from '../-upsert';
 
 export const Route = createFileRoute('/dashboard/categories/$id/edit')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Edit Category',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: +params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'edit'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = categoriesResource.useOne({
-		id: +params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { category } = query.data;
+	const { category } = Route.useLoaderData();
 
 	return (
-		<Container>
-			<Upsert action="edit" category={category} />
+		<Container title={category.name}>
+			<Upsert action="edit" entity={category} />
 		</Container>
 	);
 }
