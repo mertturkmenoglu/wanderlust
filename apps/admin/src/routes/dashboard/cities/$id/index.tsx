@@ -1,28 +1,24 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Container } from '@/components/container';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
-import { citiesResource } from '@/resources/cities';
+import { citiesResource as r } from '@/resources/cities';
 
 export const Route = createFileRoute('/dashboard/cities/$id/')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'City Details',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: +params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'details'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = citiesResource.useOne({
-		id: +params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { city } = query.data;
+	const { city } = Route.useLoaderData();
 
 	const rows = defineRows([
 		['ID', city.id.toString()],
@@ -38,17 +34,16 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container>
-			<Show
-				resource={citiesResource}
-				input={{
-					id: city.id,
-				}}
-				deleteInput={{
-					id: city.id,
-				}}
-				rows={rows}
-			/>
-		</Container>
+		<Show
+			resource={r}
+			input={{
+				id: city.id,
+			}}
+			deleteInput={{
+				id: city.id,
+			}}
+			rows={rows}
+			data={city}
+		/>
 	);
 }

@@ -1,16 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
-import { Container } from '@/components/container';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
-import { reportsResource } from '@/resources/reports';
+import { reportsResource as r } from '@/resources/reports';
 
 export const Route = createFileRoute('/dashboard/reports/$id/')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Report Details',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'details'),
 });
 
 const reasons = [
@@ -37,18 +42,8 @@ function getReason(r: number) {
 }
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = reportsResource.useOne({
-		id: params.id,
-	});
-
-	const updateMutation = reportsResource.useUpdate();
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { report } = query.data;
+	const { report } = Route.useLoaderData();
+	const mutation = r.useUpdate();
 
 	const rows = defineRows([
 		['ID', report.id],
@@ -70,9 +65,9 @@ function RouteComponent() {
 				<Button
 					type="button"
 					variant="link"
-					disabled={updateMutation.isPending || report.resolved}
+					disabled={mutation.isPending || report.resolved}
 					onClick={() => {
-						updateMutation.mutate({
+						mutation.mutate({
 							id: report.id,
 							reason: report.reason,
 							resolved: true,
@@ -87,13 +82,16 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container>
-			<Show
-				resource={reportsResource}
-				input={{ id: report.id }}
-				deleteInput={{ id: report.id }}
-				rows={rows}
-			/>
-		</Container>
+		<Show
+			resource={r}
+			input={{
+				id: report.id,
+			}}
+			deleteInput={{
+				id: report.id,
+			}}
+			rows={rows}
+			data={report}
+		/>
 	);
 }

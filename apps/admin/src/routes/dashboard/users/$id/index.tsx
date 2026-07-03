@@ -1,3 +1,4 @@
+import { queryOptions } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { Container } from '@/components/container';
@@ -9,15 +10,26 @@ import { copyToClipboard } from '@/lib/clipboard';
 import { appLink } from '@/lib/link';
 import { DangerousActions } from './-dangerous';
 
+const qopts = (id: string) =>
+	queryOptions({
+		queryKey: ['user', id],
+		queryFn: async () => {
+			const res = await authClient.admin.getUser({
+				query: { id },
+			});
+
+			if (res.error) {
+				throw new Error(res.error.message);
+			}
+
+			return res.data;
+		},
+	});
+
 export const Route = createFileRoute('/dashboard/users/$id/')({
 	component: RouteComponent,
-	loader: ({ params }) => {
-		return authClient.admin.getUser({
-			query: { id: params.id },
-		});
-	},
-	staticData: {
-		breadcrumb: (data) => data.data.name,
+	loader: ({ params, context }) => {
+		return context.qc.ensureQueryData(qopts(params.id));
 	},
 });
 
@@ -26,9 +38,6 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const confirm = useConfirmDialog();
 
-	if (!query.data) {
-		return null;
-	}
 
 	return (
 		<Container>

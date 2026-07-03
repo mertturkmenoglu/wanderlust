@@ -4,9 +4,7 @@ import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
-import { addressesResource } from '@/resources/addresses';
-
-const r = addressesResource;
+import { addressesResource as r } from '@/resources/addresses';
 
 export const Route = createFileRoute('/dashboard/addresses/$id/')({
 	component: RouteComponent,
@@ -55,6 +53,7 @@ function RouteComponent() {
 				id: address.id,
 			}}
 			rows={rows}
+			data={address}
 		/>
 	);
 }

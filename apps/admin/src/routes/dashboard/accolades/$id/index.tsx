@@ -3,9 +3,7 @@ import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
-import { accoladesResource } from '@/resources/accolades';
-
-const r = accoladesResource;
+import { accoladesResource as r } from '@/resources/accolades';
 
 export const Route = createFileRoute('/dashboard/accolades/$id/')({
 	component: RouteComponent,
@@ -42,6 +40,7 @@ function RouteComponent() {
 				id: accolade.id,
 			}}
 			rows={rows}
+			data={accolade}
 		/>
 	);
 }

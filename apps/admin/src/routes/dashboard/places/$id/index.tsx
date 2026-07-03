@@ -3,31 +3,27 @@ import { KeyValueList } from '@wanderlust/ui/components/key-value-list';
 import { AccoladeCard } from '@/components/accolade-card';
 import { AddressCard } from '@/components/address-card';
 import { CategoryCard } from '@/components/category-card';
-import { Container } from '@/components/container';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
 import { toTitleCase } from '@/lib/text';
-import { placesResource } from '@/resources/places';
+import { placesResource as r } from '@/resources/places';
 
 export const Route = createFileRoute('/dashboard/places/$id/')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Place Details',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'details'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = placesResource.useOne({
-		id: params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { place } = query.data;
+	const { place } = Route.useLoaderData();
 
 	const hours = Object.entries(place.hours)
 		.toSorted((a, b) => {
@@ -92,17 +88,16 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container>
-			<Show
-				resource={placesResource}
-				input={{
-					id: place.id,
-				}}
-				deleteInput={{
-					id: place.id,
-				}}
-				rows={rows}
-			/>
-		</Container>
+		<Show
+			resource={r}
+			input={{
+				id: place.id,
+			}}
+			deleteInput={{
+				id: place.id,
+			}}
+			rows={rows}
+			data={place}
+		/>
 	);
 }
