@@ -1,25 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@wanderlust/ui/components/button';
-import {
-	Field,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from '@wanderlust/ui/components/field';
+import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
 } from '@wanderlust/ui/components/input-group';
-import { Spinner } from '@wanderlust/ui/components/spinner';
 import { useState } from 'react';
-import { Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import z from 'zod';
-import { cmp } from '@/components/form';
-import { useUpsert } from '@/hooks/use-upsert';
-import type { Outputs } from '@/lib/orpc';
-import { categoriesResource } from '@/resources/categories';
+import { useFormElement } from '@/components/form';
+import { FormContainer } from '@/components/form/container';
+import { SubmitButton } from '@/components/form/submit-button';
+import type { UpsertProps } from '@/components/form/upsert';
+import { type Category, categoriesResource } from '@/resources/categories';
+
+const res = categoriesResource;
 
 const schema = z.object({
 	id: z.transform(Number).pipe(z.number().min(1)),
@@ -27,30 +23,34 @@ const schema = z.object({
 	image: z.url().min(1).max(256),
 });
 
-type Category = Outputs['categories']['list']['categories'][number];
+export function Upsert({ action, entity }: UpsertProps<Category>) {
+	const [previewUrl, setPreviewUrl] = useState(entity?.image ?? '');
 
-export type UpsertProps = {
-	action: 'create' | 'edit';
-	category?: Category;
-};
-
-export function Upsert({ action, category }: UpsertProps) {
-	const [previewUrl, setPreviewUrl] = useState(category?.image ?? '');
-
-	const upsert = useUpsert({
-		action,
+	const form = useForm({
 		resolver: zodResolver(schema),
-		entity: category,
-		resource: categoriesResource,
+		defaultValues: {
+			...(entity ?? {}),
+		},
 	});
 
-	const onSubmit = upsert.form.handleSubmit((data) => {
-		if (action === 'create') {
-			upsert.create.mutate(data);
-		} else {
-			upsert.edit.mutate(data);
-		}
-	});
+	const create = res.useCreate();
+
+	const edit = res.useUpdate();
+
+	const onSubmit = form.handleSubmit(
+		(data) => {
+			if (action === 'create') {
+				create.mutate(data);
+			} else {
+				edit.mutate(data);
+			}
+		},
+		(err) => {
+			console.error('Form submission error:', err);
+		},
+	);
+
+	const { Element } = useFormElement(form.control);
 
 	return (
 		<div>
@@ -63,99 +63,52 @@ export function Upsert({ action, category }: UpsertProps) {
 			)}
 
 			<form onSubmit={onSubmit}>
-				<FieldGroup className="mx-auto mt-8">
-					<cmp.Input
-						name="id"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'ID',
-							},
-							input: {
-								placeholder: 'ID',
-								disabled: action === 'edit',
-							},
-						}}
-					/>
-
-					<cmp.Input
-						name="name"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'Name',
-							},
-							input: {
-								placeholder: 'Name',
-							},
-						}}
-					/>
-
-					<Controller
-						name="image"
-						control={upsert.form.control}
-						render={({ field, fieldState }) => (
-							<Field
-								data-invalid={fieldState.invalid}
-								orientation="horizontal"
-								className="gap-16"
-							>
-								<FieldLabel htmlFor="image" className="min-w-64">
-									Image URL
-								</FieldLabel>
-
-								<InputGroup>
-									<InputGroupInput
-										{...field}
-										id="image"
-										placeholder="https://example.com/image.jpg"
-										aria-invalid={fieldState.invalid}
-									/>
-									<InputGroupAddon align="inline-end">
-										<InputGroupButton
-											type="button"
-											variant="link"
-											size="sm"
-											disabled={upsert.form.watch('image') === ''}
-											onClick={() => setPreviewUrl(upsert.form.watch('image'))}
-										>
-											Preview
-										</InputGroupButton>
-									</InputGroupAddon>
-								</InputGroup>
-
-								{fieldState.invalid && (
-									<FieldError errors={[fieldState.error]} />
-								)}
-							</Field>
+				<FormContainer action={action}>
+					<Element name="id" label="ID">
+						{(r, id) => (
+							<Input
+								id={id}
+								placeholder="ID"
+								aria-invalid={r.fieldState.invalid}
+								disabled={action === 'edit'}
+								{...r.field}
+							/>
 						)}
-					/>
+					</Element>
 
-					<div className="col-span-full flex items-center justify-end gap-2">
-						<Button
-							variant="default"
-							type="submit"
-							disabled={upsert.create.isPending || upsert.edit.isPending}
-						>
-							{(upsert.create.isPending || upsert.edit.isPending) && (
-								<Spinner className="text-white!" />
-							)}
-							<span>
-								{action === 'create' ? 'Create Category' : 'Edit Category'}
-							</span>
-						</Button>
-					</div>
-				</FieldGroup>
+					<Element name="name" label="Name">
+						{(r, id) => <Input id={id} placeholder="Name" {...r.field} />}
+					</Element>
+
+					<Element name="image" label="Image URL">
+						{(r, id) => (
+							<InputGroup>
+								<InputGroupInput
+									id={id}
+									placeholder="https://example.com/image.jpg"
+									aria-invalid={r.fieldState.invalid}
+									{...r.field}
+								/>
+								<InputGroupAddon align="inline-end">
+									<InputGroupButton
+										type="button"
+										variant="link"
+										size="sm"
+										disabled={form.watch('image') === ''}
+										onClick={() => setPreviewUrl(form.watch('image'))}
+									>
+										Preview
+									</InputGroupButton>
+								</InputGroupAddon>
+							</InputGroup>
+						)}
+					</Element>
+
+					<SubmitButton
+						action={action}
+						isLoading={create.isPending || edit.isPending}
+					/>
+				</FormContainer>
 			</form>
 		</div>
 	);

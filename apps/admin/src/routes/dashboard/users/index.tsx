@@ -1,12 +1,11 @@
 import { queryOptions } from '@tanstack/react-query';
-import { createFileRoute, Link, linkOptions } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import z from 'zod';
 import { Container } from '@/components/container';
 import { DenseList } from '@/components/dense-list';
 import { DefaultPagination } from '@/components/pagination/default-pagination';
 import { authClient } from '@/lib/auth';
-import { defineStaticData } from '@/lib/define-static-data';
 import { defaultSearchSchema } from '@/schemas/default-search-schema';
 
 const searchSchema = defaultSearchSchema.extend({
@@ -37,24 +36,15 @@ const options = (search: z.infer<typeof searchSchema>) =>
 		},
 	});
 
-const link = (id: string) =>
-	linkOptions({
-		to: '/dashboard/users/$id',
-		params: { id },
-	});
-
-const staticData = defineStaticData({
-	breadcrumb: 'Users',
-});
-
 export const Route = createFileRoute('/dashboard/users/')({
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	loaderDeps: ({ search }) => ({ search }),
 	loader: ({ context, deps }) => {
-		return context.queryClient.ensureQueryData(options(deps.search));
+		return context.qc.ensureQueryData(
+			options({ ...deps.search, searchBy: deps.search.searchBy ?? 'email' }),
+		);
 	},
-	staticData,
 });
 
 function RouteComponent() {
@@ -63,13 +53,18 @@ function RouteComponent() {
 	const hasNext = (search.page ?? 1) * (search.pageSize ?? 20) < total;
 
 	return (
-		<Container>
+		<Container title="Users">
 			<DenseList
 				data={users}
 				keyExtractor={(u) => u.id}
 				className="my-4"
 				renderItem={(item, className) => (
-					<Link {...link(item.id)}>
+					<Link
+						to="/dashboard/users/$id"
+						params={{
+							id: item.id,
+						}}
+					>
 						<div className={cn('flex gap-2', className)}>
 							<div>{item.name}</div>
 							<div className="ml-4 text-muted-foreground text-sm">

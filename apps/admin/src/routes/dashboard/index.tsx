@@ -18,7 +18,14 @@ import { reportsResource } from '@/resources/reports';
 export const Route = createFileRoute('/dashboard/')({
 	component: RouteComponent,
 	staticData: {
-		breadcrumb: 'Actions',
+		breadcrumbs: () => [
+			{
+				label: 'Dashboard',
+				link: {
+					to: '/dashboard',
+				} as const,
+			},
+		],
 	},
 });
 

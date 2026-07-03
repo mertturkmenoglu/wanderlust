@@ -1,10 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { DefaultListPage } from '@/components/default/list-page';
 import { getDefaultStaticData } from '@/lib/defaults';
-import { accoladesResource } from '@/resources/accolades';
+import { accoladesResource as r } from '@/resources/accolades';
 import { defaultSearchSchema } from '@/schemas/default-search-schema';
-
-const r = accoladesResource;
 
 export const Route = createFileRoute('/dashboard/accolades/')({
 	component: RouteComponent,
@@ -13,5 +11,5 @@ export const Route = createFileRoute('/dashboard/accolades/')({
 });
 
 function RouteComponent() {
-	return <DefaultListPage resource={accoladesResource} />;
+	return <DefaultListPage resource={r} />;
 }

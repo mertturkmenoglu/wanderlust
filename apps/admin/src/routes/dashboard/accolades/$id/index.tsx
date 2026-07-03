@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Container } from '@/components/container';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
@@ -34,17 +33,15 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container title={accolade.title}>
-			<Show
-				resource={r}
-				input={{
-					id: accolade.id,
-				}}
-				deleteInput={{
-					id: accolade.id,
-				}}
-				rows={rows}
-			/>
-		</Container>
+		<Show
+			resource={r}
+			input={{
+				id: accolade.id,
+			}}
+			deleteInput={{
+				id: accolade.id,
+			}}
+			rows={rows}
+		/>
 	);
 }

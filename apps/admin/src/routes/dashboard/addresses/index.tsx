@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { DefaultListPage } from '@/components/default/list-page';
 import { getDefaultStaticData } from '@/lib/defaults';
-import { addressesResource } from '@/resources/addresses';
-
-const r = addressesResource;
+import { addressesResource as r } from '@/resources/addresses';
 
 export const Route = createFileRoute('/dashboard/addresses/')({
 	component: RouteComponent,
