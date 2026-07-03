@@ -1,16 +1,19 @@
-import { Link } from '@tanstack/react-router';
-import { cn } from '@wanderlust/ui/lib/utils';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
+import { DataTable } from '@wanderlust/ui/components/data-table';
+import { PlusIcon } from 'lucide-react';
 import type { DataResource, ResourceKey } from '@/lib/crud';
+import { toTitleCase } from '@/lib/text';
 import { Container } from '../container';
-import { DenseList } from '../dense-list';
 
 type Props<K extends ResourceKey, T> = {
 	resource: DataResource<K, T>;
-	render: (item: T) => React.ReactNode;
 };
 
 export function DefaultListPage<K extends ResourceKey, T>(props: Props<K, T>) {
 	const query = props.resource.useList({});
+	const navigate = useNavigate();
+	const columns = props.resource.columns;
 
 	if (query.isLoading) {
 		return <div>Loading...</div>;
@@ -26,21 +29,29 @@ export function DefaultListPage<K extends ResourceKey, T>(props: Props<K, T>) {
 		return <div>No data found</div>;
 	}
 
-	const idExtractor = props.resource.extractors.id;
-
 	return (
-		<Container>
-			<DenseList
+		<Container
+			title={toTitleCase(props.resource.resource)}
+			actions={
+				<Link
+					{...props.resource.links.new}
+					className={buttonVariants({ variant: 'default' })}
+				>
+					<PlusIcon />
+					<span>New {toTitleCase(props.resource.resource)}</span>
+				</Link>
+			}
+		>
+			<DataTable
+				columns={columns}
 				data={props.resource.extractors.list(data)}
-				className="my-4"
-				keyExtractor={idExtractor}
-				renderItem={(item, className) => (
-					<div className={cn(className)}>
-						<Link {...props.resource.links.details(idExtractor(item))}>
-							{props.render(item)}
-						</Link>
-					</div>
-				)}
+				onRowClick={(row) => {
+					navigate(
+						props.resource.links.details(
+							props.resource.extractors.id(row.original),
+						),
+					);
+				}}
 			/>
 		</Container>
 	);
