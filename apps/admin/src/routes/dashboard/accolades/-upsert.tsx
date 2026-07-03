@@ -1,55 +1,42 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@wanderlust/ui/components/button';
-import {
-	FieldDescription,
-	FieldGroup,
-	FieldLegend,
-	FieldSet,
-} from '@wanderlust/ui/components/field';
-import { Spinner } from '@wanderlust/ui/components/spinner';
+import { Input } from '@wanderlust/ui/components/input';
+import { Textarea } from '@wanderlust/ui/components/textarea';
+import { useForm } from 'react-hook-form';
 import z from 'zod';
-import { cmp } from '@/components/form';
-import { useUpsert } from '@/hooks/use-upsert';
-import type { Outputs } from '@/lib/orpc';
-import { accoladesResource } from '@/resources/accolades';
+import { useFormElement } from '@/components/form';
+import { FormContainer } from '@/components/form/container';
+import { SubmitButton } from '@/components/form/submit-button';
+import type { UpsertProps } from '@/components/form/upsert';
+import { type Accolade, accoladesResource } from '@/resources/accolades';
 
-type Accolade = Outputs['accolades']['get']['accolade'];
-
-export type UpsertProps = {
-	action: 'create' | 'edit';
-	accolade?: Accolade;
-};
+const res = accoladesResource;
 
 const schema = z.object({
 	id: z.string(),
 	title: z.string(),
 	description: z.string(),
 	badge: z.string(),
-	image: z.string().url(),
+	image: z.url(),
 });
 
-export function Upsert({ action, accolade }: UpsertProps) {
-	const ent = () => {
-		if (accolade) {
-			const { createdAt, updatedAt, ...rest } = accolade;
-			return rest;
-		}
-		return undefined;
-	};
-
-	const upsert = useUpsert({
-		action,
+export function Upsert({ action, entity }: UpsertProps<Accolade>) {
+	const form = useForm({
 		resolver: zodResolver(schema),
-		entity: ent(),
-		resource: accoladesResource,
+		defaultValues: {
+			...(entity ?? {}),
+		},
 	});
 
-	const onSubmit = upsert.form.handleSubmit(
+	const create = res.useCreate();
+
+	const edit = res.useUpdate();
+
+	const onSubmit = form.handleSubmit(
 		(data) => {
 			if (action === 'create') {
-				upsert.create.mutate(data);
+				create.mutate(data);
 			} else {
-				upsert.edit.mutate(data);
+				edit.mutate(data);
 			}
 		},
 		(err) => {
@@ -57,123 +44,75 @@ export function Upsert({ action, accolade }: UpsertProps) {
 		},
 	);
 
+	const { Element } = useFormElement(form.control);
+
 	return (
 		<form onSubmit={onSubmit}>
-			<FieldSet>
-				<FieldLegend className="capitalize">{action}</FieldLegend>
-				<FieldDescription className="capitalize">
-					{action} accolade
-				</FieldDescription>
+			<FormContainer action={action}>
+				<Element name="id" label="ID">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="ID"
+							disabled={action === 'edit'}
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-				<FieldGroup>
-					<cmp.Input
-						name="id"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'ID',
-							},
-							input: {
-								placeholder: 'ID',
-								disabled: action === 'edit',
-							},
-						}}
-					/>
+				<Element name="title" label="Title">
+					{(r, id) => (
+						<Input
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							placeholder="Title"
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-					<cmp.Input
-						name="title"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'Title',
-							},
-							input: {
-								placeholder: 'Title',
-							},
-						}}
-					/>
+				<Element name="description" label="Description">
+					{(r, id) => (
+						<Textarea
+							id={id}
+							aria-invalid={r.fieldState.invalid}
+							rows={6}
+							placeholder="Description"
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-					<cmp.Textarea
-						name="description"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'Description',
-							},
-							textarea: {
-								placeholder: 'Description',
-							},
-						}}
-					/>
+				<Element name="badge" label="Badge">
+					{(r, id) => (
+						<Input
+							id={id}
+							placeholder="https://example.com/badge.png"
+							aria-invalid={r.fieldState.invalid}
+							type="url"
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-					<cmp.Input
-						name="badge"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'Badge',
-							},
-							input: {
-								placeholder: 'https://example.com/badge.png',
-								type: 'url',
-							},
-						}}
-					/>
+				<Element name="image" label="Image">
+					{(r, id) => (
+						<Input
+							id={id}
+							placeholder="https://example.com/image.png"
+							aria-invalid={r.fieldState.invalid}
+							type="url"
+							{...r.field}
+						/>
+					)}
+				</Element>
 
-					<cmp.Input
-						name="image"
-						control={upsert.form.control}
-						elements={{
-							field: {
-								orientation: 'horizontal',
-								className: 'gap-16',
-							},
-							label: {
-								className: 'min-w-64',
-								children: 'Image',
-							},
-							input: {
-								placeholder: 'https://example.com/image.png',
-								type: 'url',
-							},
-						}}
-					/>
-
-					<Button
-						variant="default"
-						type="submit"
-						className="ml-auto max-w-fit"
-						disabled={upsert.create.isPending || upsert.edit.isPending}
-					>
-						{(upsert.create.isPending || upsert.edit.isPending) && (
-							<Spinner className="text-white!" />
-						)}
-						<span>
-							{action === 'create' ? 'Create Accolade' : 'Edit Accolade'}
-						</span>
-					</Button>
-				</FieldGroup>
-			</FieldSet>
+				<SubmitButton
+					action={action}
+					isLoading={create.isPending || edit.isPending}
+				/>
+			</FormContainer>
 		</form>
 	);
 }

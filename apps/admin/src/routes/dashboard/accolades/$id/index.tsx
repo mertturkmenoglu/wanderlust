@@ -2,27 +2,27 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Container } from '@/components/container';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
+import { toTitleCase } from '@/lib/text';
 import { accoladesResource } from '@/resources/accolades';
+
+const r = accoladesResource;
 
 export const Route = createFileRoute('/dashboard/accolades/$id/')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Accolade Details',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'details'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = accoladesResource.useOne({
-		id: params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { accolade } = query.data;
+	const { accolade } = Route.useLoaderData();
 
 	const rows = defineRows([
 		['ID', accolade.id],
@@ -35,9 +35,9 @@ function RouteComponent() {
 	]);
 
 	return (
-		<Container>
+		<Container title={toTitleCase(accolade.title)}>
 			<Show
-				resource={accoladesResource}
+				resource={r}
 				input={{
 					id: accolade.id,
 				}}

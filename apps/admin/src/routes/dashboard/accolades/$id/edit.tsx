@@ -1,29 +1,28 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Container } from '@/components/container';
+import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { accoladesResource } from '@/resources/accolades';
 import { Upsert } from '../-upsert';
 
+const r = accoladesResource;
+
 export const Route = createFileRoute('/dashboard/accolades/$id/edit')({
 	component: RouteComponent,
-	staticData: {
-		breadcrumb: 'Edit Accolade',
+	loader: async ({ params, context }) => {
+		return ensureData(r, context.qc, {
+			input: {
+				id: params.id,
+			},
+		});
 	},
+	staticData: getDefaultStaticData(r, 'edit'),
 });
 
 function RouteComponent() {
-	const params = Route.useParams();
-	const query = accoladesResource.useOne({
-		id: params.id,
-	});
-
-	if (!query.data) {
-		return null;
-	}
-
-	const { accolade } = query.data;
+	const { accolade } = Route.useLoaderData();
 
 	return (
-		<Container>
+		<Container title={accolade.title}>
 			<Upsert action="edit" accolade={accolade} />
 		</Container>
 	);
