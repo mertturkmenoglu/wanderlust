@@ -80,8 +80,8 @@ code {
 	--secondary-foreground: oklch(0.985 0 0);
 	--warning: oklch(0.852 0.199 91.936);
 	--warning-foreground: oklch(0.421 0.095 57.708);
-	--midnight: oklch(0.228 0.013 107.4);
-	--midnight-foreground: oklch(1 0 0);
+	--midnight: oklch(0.922 0 0);
+	--midnight-foreground: oklch(0.205 0 0);
 	--sky: oklch(0.5 0.134 242.749);
 	--sky-foreground: oklch(1 0 0);
 	--muted: oklch(0.274 0.006 286.033);
