@@ -2,17 +2,20 @@ import { isMatch, useMatches } from '@tanstack/react-router';
 
 export function useBreadcrumbs() {
 	const matches = useMatches();
+	const lastMatch = matches.at(-1);
 
-	const crumbs = matches
-		.filter((m) => isMatch(m, 'staticData'))
-		.map((m) => {
-			const { breadcrumb } = m.staticData;
-			const label =
-				typeof breadcrumb === 'function'
-					? breadcrumb(m.loaderData)
-					: breadcrumb;
-			return { label: label ?? '-', path: m.pathname };
-		});
+	if (!lastMatch) {
+		return [];
+	}
 
-	return crumbs;
+	if (isMatch(lastMatch, 'staticData') && lastMatch.staticData.breadcrumbs) {
+		const { breadcrumbs } = lastMatch.staticData;
+
+		if (breadcrumbs !== undefined) {
+			const items = breadcrumbs(lastMatch.loaderData);
+			return items;
+		}
+	}
+
+	return [];
 }
