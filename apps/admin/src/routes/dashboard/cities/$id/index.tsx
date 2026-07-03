@@ -27,7 +27,7 @@ function RouteComponent() {
 	const rows = defineRows([
 		['ID', city.id.toString()],
 		['Name', city.name],
-		['Description', city.description],
+		['Description', renderer.JSON(city.description)],
 		['State Code', city.stateCode],
 		['State Name', city.stateName],
 		['Country Code', city.countryCode],
