@@ -1,7 +1,13 @@
 import { useNavigate } from '@tanstack/react-router';
+import { Badge } from '@wanderlust/ui/components/badge';
 import { Button } from '@wanderlust/ui/components/button';
 import { ButtonGroup } from '@wanderlust/ui/components/button-group';
 import { KeyValueList } from '@wanderlust/ui/components/key-value-list';
+import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from '@wanderlust/ui/components/resizable';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
@@ -39,7 +45,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 	const obj = props.resource.extractors.one(data);
 
 	return (
-		<div className={cn('rounded-xl border border-border p-8')}>
+		<div className={cn('py-8')}>
 			{confirm.Dialog}
 
 			{/* Header */}
@@ -51,9 +57,9 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 					<div className="mt-2 text-4xl">
 						{props.resource.extractors.title(obj) ?? '-'}
 					</div>
-					<div className="text-muted-foreground text-sm">
+					<Badge variant="outline" className="rounded-md text-[0.6rem]">
 						ID: {props.resource.extractors.id(obj) ?? '-'}
-					</div>
+					</Badge>
 				</div>
 
 				<div className="flex flex-row items-center gap-2">
@@ -121,11 +127,27 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 
 			<Separator className="my-8" />
 
-			<div className="flex flex-col gap-2">
-				<KeyValueList
-					variant="bordered"
-					items={props.rows.map((r) => ({ label: r[0], value: r[1] }))}
-				/>
+			<div className="flex flex-row gap-2">
+				<ResizablePanelGroup
+					orientation="horizontal"
+					className="min-h-128 rounded-lg border"
+				>
+					<ResizablePanel defaultSize="60%" minSize="25%" maxSize="75%">
+						<KeyValueList
+							variant="bordered"
+							items={props.rows.map((r) => ({ label: r[0], value: r[1] }))}
+						/>
+					</ResizablePanel>
+					<ResizableHandle withHandle />
+					<ResizablePanel defaultSize="40%" minSize="25%" maxSize="75%">
+						<iframe
+							id="preview"
+							title="Content Preview"
+							className="h-full w-full"
+							src={props.resource.extractors.appLink(obj)}
+						/>
+					</ResizablePanel>
+				</ResizablePanelGroup>
 			</div>
 		</div>
 	);
