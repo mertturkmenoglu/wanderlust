@@ -10,7 +10,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { Toaster } from 'sonner';
 
 interface MyRouterContext {
-	queryClient: QueryClient;
+	qc: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
@@ -23,9 +23,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 		],
 	}),
-	staticData: {
-		breadcrumb: 'Home',
-	},
 });
 
 function Component() {
