@@ -8,6 +8,7 @@ import {
 } from '@wanderlust/ui/components/item';
 import { Container } from '@/components/container';
 import { accoladesResource } from '@/resources/accolades';
+import { addressesResource } from '@/resources/addresses';
 import { categoriesResource } from '@/resources/categories';
 import { citiesResource } from '@/resources/cities';
 import { placesResource } from '@/resources/places';
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/dashboard/')({
 
 const resources = [
 	accoladesResource,
+	addressesResource,
 	categoriesResource,
 	citiesResource,
 	reportsResource,
