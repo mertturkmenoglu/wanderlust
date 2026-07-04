@@ -16,7 +16,11 @@ export function DefaultListPage<K extends ResourceKey, T>(props: Props<K, T>) {
 	const columns = props.resource.columns;
 
 	if (query.isLoading) {
-		return <div>Loading...</div>;
+		return (
+			<Container title={toTitleCase(props.resource.resource)}>
+				Loading...
+			</Container>
+		);
 	}
 
 	if (query.isError) {
