@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { Outlet, useNavigate } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { ButtonGroup } from '@wanderlust/ui/components/button-group';
 import { KeyValueList } from '@wanderlust/ui/components/key-value-list';
@@ -119,6 +119,8 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 					</ResizablePanelGroup>
 				</div>
 			</div>
+
+			<Outlet />
 		</Container>
 	);
 }
