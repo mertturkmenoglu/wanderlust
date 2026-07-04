@@ -23,10 +23,9 @@ import { useFormElement } from '@/components/form';
 import { FormContainer } from '@/components/form/container';
 import { SubmitButton } from '@/components/form/submit-button';
 import type { UpsertProps } from '@/components/form/upsert';
+import { useUpsertDirtyEventListener } from '@/hooks/use-upsert-dirty-event-listener';
 import { getIANANames } from '@/lib/timezone';
-import { type City, citiesResource } from '@/resources/cities';
-
-const res = citiesResource;
+import { type City, citiesResource as res } from '@/resources/cities';
 
 const schema = z.object({
 	id: z.number(),
@@ -62,13 +61,19 @@ export function Upsert({ action, entity }: UpsertProps<City>) {
 			if (action === 'create') {
 				create.mutate(data);
 			} else {
-				edit.mutate(data);
+				edit.mutate(data, {
+					onSuccess: (v) => {
+						form.reset(v.city);
+					},
+				});
 			}
 		},
 		(err) => {
 			console.error('Form submission error:', err);
 		},
 	);
+
+	useUpsertDirtyEventListener(form);
 
 	const { Element } = useFormElement(form.control);
 

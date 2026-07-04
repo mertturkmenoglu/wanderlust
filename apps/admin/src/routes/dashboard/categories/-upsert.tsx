@@ -13,9 +13,11 @@ import { useFormElement } from '@/components/form';
 import { FormContainer } from '@/components/form/container';
 import { SubmitButton } from '@/components/form/submit-button';
 import type { UpsertProps } from '@/components/form/upsert';
-import { type Category, categoriesResource } from '@/resources/categories';
-
-const res = categoriesResource;
+import { useUpsertDirtyEventListener } from '@/hooks/use-upsert-dirty-event-listener';
+import {
+	type Category,
+	categoriesResource as res,
+} from '@/resources/categories';
 
 const schema = z.object({
 	id: z.transform(Number).pipe(z.number().min(1)),
@@ -42,13 +44,19 @@ export function Upsert({ action, entity }: UpsertProps<Category>) {
 			if (action === 'create') {
 				create.mutate(data);
 			} else {
-				edit.mutate(data);
+				edit.mutate(data, {
+					onSuccess: (v) => {
+						form.reset(v.category);
+					},
+				});
 			}
 		},
 		(err) => {
 			console.error('Form submission error:', err);
 		},
 	);
+
+	useUpsertDirtyEventListener(form);
 
 	const { Element } = useFormElement(form.control);
 

@@ -14,8 +14,9 @@ import { useFormElement } from '@/components/form';
 import { FormContainer } from '@/components/form/container';
 import { SubmitButton } from '@/components/form/submit-button';
 import type { UpsertProps } from '@/components/form/upsert';
+import { useUpsertDirtyEventListener } from '@/hooks/use-upsert-dirty-event-listener';
 import { orpc } from '@/lib/orpc';
-import { type Address, addressesResource } from '@/resources/addresses';
+import { type Address, addressesResource as res } from '@/resources/addresses';
 
 const schema = z.object({
 	id: z.number({ error: 'Required' }),
@@ -45,9 +46,9 @@ export function Upsert({ action, entity }: UpsertProps<Address>) {
 		},
 	});
 
-	const create = addressesResource.useCreate();
+	const create = res.useCreate();
 
-	const edit = addressesResource.useUpdate();
+	const edit = res.useUpdate();
 
 	const onSubmit = form.handleSubmit(
 		(data) => {
@@ -60,13 +61,23 @@ export function Upsert({ action, entity }: UpsertProps<Address>) {
 			if (action === 'create') {
 				create.mutate(payload);
 			} else {
-				edit.mutate(payload);
+				edit.mutate(payload, {
+					onSuccess: (v) => {
+						form.reset({
+							...v.address,
+							line2: v.address.line2 ?? undefined,
+							postalCode: v.address.postalCode ?? undefined,
+						});
+					},
+				});
 			}
 		},
 		(err) => {
 			console.error('Form submission error:', err);
 		},
 	);
+
+	useUpsertDirtyEventListener(form);
 
 	const { Element } = useFormElement(form.control);
 

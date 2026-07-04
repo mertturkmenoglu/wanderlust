@@ -7,9 +7,8 @@ import { useFormElement } from '@/components/form';
 import { FormContainer } from '@/components/form/container';
 import { SubmitButton } from '@/components/form/submit-button';
 import type { UpsertProps } from '@/components/form/upsert';
-import { type Accolade, accoladesResource } from '@/resources/accolades';
-
-const res = accoladesResource;
+import { useUpsertDirtyEventListener } from '@/hooks/use-upsert-dirty-event-listener';
+import { type Accolade, accoladesResource as res } from '@/resources/accolades';
 
 const schema = z.object({
 	id: z.string(),
@@ -36,13 +35,19 @@ export function Upsert({ action, entity }: UpsertProps<Accolade>) {
 			if (action === 'create') {
 				create.mutate(data);
 			} else {
-				edit.mutate(data);
+				edit.mutate(data, {
+					onSuccess: (v) => {
+						form.reset(v.accolade);
+					},
+				});
 			}
 		},
 		(err) => {
 			console.error('Form submission error:', err);
 		},
 	);
+
+	useUpsertDirtyEventListener(form);
 
 	const { Element } = useFormElement(form.control);
 
