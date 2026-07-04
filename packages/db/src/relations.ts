@@ -128,7 +128,13 @@ export const relations = defineRelations(schema, (r) => ({
 			to: r.categories.id,
 			optional: false,
 		}),
-		assets: r.many.assets(),
+		assets: r.many.assets({
+			from: r.places.id,
+			to: r.assets.entityId,
+			where: {
+				entityType: 'place',
+			},
+		}),
 	},
 	events: {
 		address: r.one.addresses({
