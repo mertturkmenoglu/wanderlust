@@ -44,7 +44,29 @@ export function useConfirmDialog() {
 	};
 
 	const Dialog = (
-		<AlertDialog open={open} onOpenChange={(o) => !o && handleCancel()}>
+		<ConfirmDialog
+			open={open}
+			handleCancel={handleCancel}
+			handleConfirm={handleConfirm}
+			{...options}
+		/>
+	);
+
+	return { confirm, Dialog };
+}
+
+export function ConfirmDialog(
+	options: ConfirmDialogOptions & {
+		open: boolean;
+		handleCancel: () => void;
+		handleConfirm: () => void;
+	},
+) {
+	return (
+		<AlertDialog
+			open={options.open}
+			onOpenChange={(o) => !o && options.handleCancel()}
+		>
 			<AlertDialogContent className={options.className}>
 				<AlertDialogHeader>
 					<AlertDialogTitle>
@@ -55,12 +77,12 @@ export function useConfirmDialog() {
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel onClick={handleCancel}>
+					<AlertDialogCancel onClick={options.handleCancel}>
 						{options.cancelText ?? 'Cancel'}
 					</AlertDialogCancel>
 
 					<Button
-						onClick={handleConfirm}
+						onClick={options.handleConfirm}
 						variant={
 							options.variant === 'destructive' ? 'destructive' : 'default'
 						}
@@ -71,6 +93,4 @@ export function useConfirmDialog() {
 			</AlertDialogContent>
 		</AlertDialog>
 	);
-
-	return { confirm, Dialog };
 }
