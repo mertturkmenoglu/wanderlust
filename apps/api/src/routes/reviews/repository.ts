@@ -7,7 +7,7 @@ import {
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
-import { and, count, eq, gte, inArray, lte, sql } from 'drizzle-orm';
+import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { unique } from '@/lib/unique';
@@ -74,10 +74,10 @@ export class ReviewsRepository {
 			await this.db
 				.update(schema.places)
 				.set({
-					totalVotes: sql`${schema.places.totalVotes} + 1`,
-					totalPoints: sql`${schema.places.totalPoints} + ${data.rating}`,
+					totalVotes: dz.sql`${schema.places.totalVotes} + 1`,
+					totalPoints: dz.sql`${schema.places.totalPoints} + ${data.rating}`,
 				})
-				.where(eq(schema.places.id, data.placeId));
+				.where(dz.eq(schema.places.id, data.placeId));
 
 			const res = await tx.query.reviews.findFirst({
 				where: {
@@ -121,9 +121,9 @@ export class ReviewsRepository {
 			const [deleted] = await tx
 				.delete(schema.reviews)
 				.where(
-					and(
-						eq(schema.reviews.id, data.id),
-						eq(schema.reviews.userId, userId),
+					dz.and(
+						dz.eq(schema.reviews.id, data.id),
+						dz.eq(schema.reviews.userId, userId),
 					),
 				)
 				.returning();
@@ -137,19 +137,19 @@ export class ReviewsRepository {
 			await tx
 				.delete(schema.assets)
 				.where(
-					and(
-						eq(schema.assets.entityId, data.id),
-						eq(schema.assets.entityType, 'review'),
+					dz.and(
+						dz.eq(schema.assets.entityId, data.id),
+						dz.eq(schema.assets.entityType, 'review'),
 					),
 				);
 
 			await tx
 				.update(schema.places)
 				.set({
-					totalVotes: sql`${schema.places.totalVotes} - 1`,
-					totalPoints: sql`${schema.places.totalPoints} - ${deleted.rating}`,
+					totalVotes: dz.sql`${schema.places.totalVotes} - 1`,
+					totalPoints: dz.sql`${schema.places.totalPoints} - ${deleted.rating}`,
 				})
-				.where(eq(schema.places.id, deleted.placeId));
+				.where(dz.eq(schema.places.id, deleted.placeId));
 
 			return deleted;
 		});
@@ -195,7 +195,7 @@ export class ReviewsRepository {
 
 		const totalRecords = await this.db.$count(
 			schema.reviews,
-			eq(schema.reviews.userId, user.id),
+			dz.eq(schema.reviews.userId, user.id),
 		);
 
 		return {
@@ -239,9 +239,7 @@ export class ReviewsRepository {
 				}
 
 				if (sortBy === 'rating') {
-					return sortOrd === 'asc'
-						? asc(reviews.rating)
-						: desc(reviews.rating);
+					return sortOrd === 'asc' ? asc(reviews.rating) : desc(reviews.rating);
 				}
 
 				if (sortBy === 'likes') {
@@ -258,10 +256,10 @@ export class ReviewsRepository {
 
 		const totalRecords = await this.db.$count(
 			schema.reviews,
-			and(
-				eq(schema.reviews.placeId, data.id),
-				gte(schema.reviews.rating, min),
-				lte(schema.reviews.rating, max),
+			dz.and(
+				dz.eq(schema.reviews.placeId, data.id),
+				dz.gte(schema.reviews.rating, min),
+				dz.lte(schema.reviews.rating, max),
 			),
 		);
 
@@ -275,10 +273,10 @@ export class ReviewsRepository {
 		const res = await this.db
 			.select({
 				rating: schema.reviews.rating,
-				count: count(schema.reviews.rating),
+				count: dz.count(schema.reviews.rating),
 			})
 			.from(schema.reviews)
-			.where(eq(schema.reviews.placeId, data.id))
+			.where(dz.eq(schema.reviews.placeId, data.id))
 			.groupBy(schema.reviews.rating);
 
 		const ratings: Record<number, number> = {};
@@ -377,18 +375,18 @@ export class ReviewsRepository {
 				await tx
 					.delete(schema.reviewLikes)
 					.where(
-						and(
-							eq(schema.reviewLikes.reviewId, data.id),
-							eq(schema.reviewLikes.userId, userId),
+						dz.and(
+							dz.eq(schema.reviewLikes.reviewId, data.id),
+							dz.eq(schema.reviewLikes.userId, userId),
 						),
 					);
 
 				await tx
 					.update(schema.reviews)
 					.set({
-						totalLikes: sql`${schema.reviews.totalLikes} - 1`,
+						totalLikes: dz.sql`${schema.reviews.totalLikes} - 1`,
 					})
-					.where(eq(schema.reviews.id, data.id));
+					.where(dz.eq(schema.reviews.id, data.id));
 
 				return {
 					liked: false,
@@ -416,9 +414,9 @@ export class ReviewsRepository {
 			await tx
 				.update(schema.reviews)
 				.set({
-					totalLikes: sql`${schema.reviews.totalLikes} + 1`,
+					totalLikes: dz.sql`${schema.reviews.totalLikes} + 1`,
 				})
-				.where(eq(schema.reviews.id, data.id));
+				.where(dz.eq(schema.reviews.id, data.id));
 
 			return {
 				liked: true,
@@ -467,7 +465,7 @@ export class ReviewsRepository {
 
 		const totalRecords = await this.db.$count(
 			schema.reviewLikes,
-			eq(schema.reviewLikes.reviewId, data.id),
+			dz.eq(schema.reviewLikes.reviewId, data.id),
 		);
 
 		return {
@@ -487,9 +485,9 @@ export class ReviewsRepository {
 			})
 			.from(schema.reviewLikes)
 			.where(
-				and(
-					eq(schema.reviewLikes.userId, userId),
-					inArray(schema.reviewLikes.reviewId, ids),
+				dz.and(
+					dz.eq(schema.reviewLikes.userId, userId),
+					dz.inArray(schema.reviewLikes.reviewId, ids),
 				),
 			);
 
