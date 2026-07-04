@@ -28,6 +28,7 @@
 		"better-auth": "catalog:",
 		"date-fns": "catalog:",
 		"lucide-react": "^1.21.0",
+		"nanoevents": "^9.1.0",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-error-boundary": "^6.1.1",
