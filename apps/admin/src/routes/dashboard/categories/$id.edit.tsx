@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Container } from '@/components/container';
+import { EditDialog } from '@/components/edit-dialog';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { categoriesResource as r } from '@/resources/categories';
-import { Upsert } from '../-upsert';
+import { Upsert } from './-upsert';
 
 export const Route = createFileRoute('/dashboard/categories/$id/edit')({
 	component: RouteComponent,
@@ -20,8 +20,8 @@ function RouteComponent() {
 	const { category } = Route.useLoaderData();
 
 	return (
-		<Container title={category.name}>
+		<EditDialog id={category.id.toString()} resource={r}>
 			<Upsert action="edit" entity={category} />
-		</Container>
+		</EditDialog>
 	);
 }

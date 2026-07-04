@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Container } from '@/components/container';
+import { EditDialog } from '@/components/edit-dialog';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { accoladesResource as r } from '@/resources/accolades';
-import { Upsert } from '../-upsert';
+import { Upsert } from './-upsert';
 
 export const Route = createFileRoute('/dashboard/accolades/$id/edit')({
 	component: RouteComponent,
@@ -20,8 +20,8 @@ function RouteComponent() {
 	const { accolade } = Route.useLoaderData();
 
 	return (
-		<Container title={accolade.title}>
+		<EditDialog id={accolade.id} resource={r}>
 			<Upsert action="edit" entity={accolade} />
-		</Container>
+		</EditDialog>
 	);
 }

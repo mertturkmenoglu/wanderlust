@@ -5,7 +5,7 @@ import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
 import { accoladesResource as r } from '@/resources/accolades';
 
-export const Route = createFileRoute('/dashboard/accolades/$id/')({
+export const Route = createFileRoute('/dashboard/accolades/$id')({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {

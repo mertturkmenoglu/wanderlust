@@ -10,7 +10,7 @@ import { defineRows } from '@/lib/define-rows';
 import { toTitleCase } from '@/lib/text';
 import { placesResource as r } from '@/resources/places';
 
-export const Route = createFileRoute('/dashboard/places/$id/')({
+export const Route = createFileRoute('/dashboard/places/$id')({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {

@@ -6,7 +6,7 @@ import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
 import { addressesResource as r } from '@/resources/addresses';
 
-export const Route = createFileRoute('/dashboard/addresses/$id/')({
+export const Route = createFileRoute('/dashboard/addresses/$id')({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {

@@ -3,9 +3,9 @@ import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
 import { defineRows } from '@/lib/define-rows';
-import { categoriesResource as r } from '@/resources/categories';
+import { citiesResource as r } from '@/resources/cities';
 
-export const Route = createFileRoute('/dashboard/categories/$id/')({
+export const Route = createFileRoute('/dashboard/cities/$id')({
 	component: RouteComponent,
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {
@@ -18,25 +18,32 @@ export const Route = createFileRoute('/dashboard/categories/$id/')({
 });
 
 function RouteComponent() {
-	const { category } = Route.useLoaderData();
+	const { city } = Route.useLoaderData();
 
 	const rows = defineRows([
-		['ID', category.id.toString()],
-		['Name', category.name],
-		['Image', renderer.Image(category.image)],
+		['ID', city.id.toString()],
+		['Name', city.name],
+		['Description', renderer.JSON(city.description)],
+		['State Code', city.stateCode],
+		['State Name', city.stateName],
+		['Country Code', city.countryCode],
+		['Country Name', city.countryName],
+		['Image', renderer.Image(city.image)],
+		['Coordinates', `Lat: ${city.lat}, Lng: ${city.lng}`],
+		['Timezone', city.timezone],
 	]);
 
 	return (
 		<Show
 			resource={r}
 			input={{
-				id: category.id,
+				id: city.id,
 			}}
 			deleteInput={{
-				id: category.id,
+				id: city.id,
 			}}
 			rows={rows}
-			data={category}
+			data={city}
 		/>
 	);
 }
