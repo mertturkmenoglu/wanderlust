@@ -299,16 +299,27 @@ export class ReviewsRepository {
 		};
 	}
 
-	async listAssetsByPlaceId(data: dto.ListAssetsByPlaceIdInput) {
-		const result = await this.db.query.assets.findMany({
-			where: {
-				entityId: data.id,
-				entityType: 'review',
-			},
-		});
+	async listAssetsByPlaceId(
+		data: dto.ListAssetsByPlaceIdInput,
+	): Promise<dto.ListAssetsByPlaceIdOutput> {
+		const results = await this.db
+			.select({
+				asset: schema.assets,
+				placeId: schema.reviews.placeId,
+			})
+			.from(schema.assets)
+			.innerJoin(
+				schema.reviews,
+				dz.and(
+					dz.eq(schema.assets.entityId, schema.reviews.id),
+					dz.eq(schema.assets.entityType, 'review'),
+				),
+			)
+			.where(dz.eq(schema.reviews.placeId, data.id))
+			.orderBy(dz.desc(schema.assets.createdAt));
 
 		return {
-			assets: result,
+			assets: results.map((r) => r.asset),
 		};
 	}
 
