@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Badge } from '@wanderlust/ui/components/badge';
+import { Button } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -8,9 +9,15 @@ import {
 	ItemFooter,
 	ItemHeader,
 } from '@wanderlust/ui/components/item';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@wanderlust/ui/components/tooltip';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
-import { StarIcon } from 'lucide-react';
+import { LanguagesIcon, StarIcon } from 'lucide-react';
+import { useMemo } from 'react';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
@@ -29,9 +36,19 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 	const lb = useAssetLightbox(review.assets);
 	const likeMutation = useLikeReviewMutation();
 	const fmt = useLikesFormatter();
+	const languageDisplayNames = new Intl.DisplayNames(['en'], {
+		type: 'language',
+	});
+	const lang = useMemo(() => {
+		if (review.detectedLanguage === null) {
+			return null;
+		}
+
+		return languageDisplayNames.of(review.detectedLanguage) ?? null;
+	}, [review.detectedLanguage, languageDisplayNames]);
 
 	return (
-		<Item variant="default" className={cn(className)} size="sm">
+		<Item variant="default" className={cn('px-0', className)} size="sm">
 			<ItemHeader>
 				<Link
 					to="/u/$username"
@@ -41,7 +58,7 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 					className="flex items-center gap-4"
 				>
 					<UserImage
-						className="size-16 rounded-full"
+						className="size-14 rounded-full"
 						src={review.user.image ?? ''}
 					/>
 					<div>
@@ -60,7 +77,20 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 					</div>
 				</Link>
 
-				<ItemActions>
+				<ItemActions className="flex-flex-row items-center">
+					{lang && (
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button variant="ghost" size="icon-sm">
+									<LanguagesIcon className="size-3.5 sm:size-4" />
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent>
+								Detected language: {lang} (
+								{review.detectedLanguage?.toUpperCase()})
+							</TooltipContent>
+						</Tooltip>
+					)}
 					<Menu review={review} />
 				</ItemActions>
 			</ItemHeader>
@@ -86,16 +116,28 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 				</div>
 				<lb.Component />
 			</ItemContent>
-			<ItemFooter className="items-start">
+			<ItemFooter className="flex flex-row items-center gap-4">
 				<div className="flex items-center gap-2">
 					<FormattedRating
 						rating={review.rating}
 						votes={1}
 						showNumbers={false}
+						starsClassName="size-3 sm:size-4"
 					/>
-					<span className="font-semibold text-sm">{review.rating}.0</span>
+					<span className="font-semibold text-xs sm:text-sm">
+						{review.rating}.0
+					</span>
 				</div>
-				<div className="flex flex-col justify-end">
+
+				<div className="flex flex-row items-center gap-2">
+					<div
+						className="text-muted-foreground text-xs"
+						title={`Visited on ${format(review.visitedAt, 'PPP')}`}
+					>
+						<span className="sr-only sm:not-sr-only">Visited on </span>
+						{format(review.visitedAt, 'PPP')}
+					</div>
+
 					<button
 						type="button"
 						className="ml-auto"
@@ -107,13 +149,10 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 							variant={meta.isLiked ? 'default' : 'outline'}
 							className="gap-1"
 						>
-							<StarIcon className="size-4" />
+							<StarIcon className="size-3 sm:size-4" />
 							{fmt(review.totalLikes)}
 						</Badge>
 					</button>
-					<div className="mt-2 text-muted-foreground text-xs">
-						Visited on {format(review.visitedAt, 'PPP')}
-					</div>
 				</div>
 			</ItemFooter>
 		</Item>
