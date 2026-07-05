@@ -1,7 +1,13 @@
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Badge } from '@wanderlust/ui/components/badge';
 import { Button } from '@wanderlust/ui/components/button';
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from '@wanderlust/ui/components/hover-card';
 import {
 	Item,
 	ItemActions,
@@ -9,6 +15,7 @@ import {
 	ItemFooter,
 	ItemHeader,
 } from '@wanderlust/ui/components/item';
+import { Spinner } from '@wanderlust/ui/components/spinner';
 import {
 	Tooltip,
 	TooltipContent,
@@ -17,13 +24,14 @@ import {
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 import { LanguagesIcon, StarIcon } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { ipx } from '@/lib/ipx';
-import type { Outputs } from '@/lib/orpc';
+import { type Outputs, orpc } from '@/lib/orpc';
+import { UserCard } from '../user-card';
 import { useLikeReviewMutation, useLikesFormatter } from './hooks';
 import { Menu } from './menu';
 
@@ -33,6 +41,8 @@ type Props = {
 };
 
 export function ReviewCard({ review: { review, meta }, className }: Props) {
+	const [open, setOpen] = useState(false);
+
 	const lb = useAssetLightbox(review.assets);
 	const likeMutation = useLikeReviewMutation();
 	const fmt = useLikesFormatter();
@@ -47,6 +57,17 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 		return languageDisplayNames.of(review.detectedLanguage) ?? null;
 	}, [review.detectedLanguage, languageDisplayNames]);
 
+	const query = useQuery(
+		orpc.users.get.queryOptions({
+			input: open
+				? {
+						username: review.user.username,
+					}
+				: skipToken,
+			staleTime: 5 * 60 * 1000, // avoid refetching every hover
+		}),
+	);
+
 	return (
 		<Item variant="default" className={cn('px-0', className)} size="sm">
 			<ItemHeader>
@@ -57,10 +78,26 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 					}}
 					className="flex items-center gap-4"
 				>
-					<UserImage
-						className="size-14 rounded-full"
-						src={review.user.image ?? ''}
-					/>
+					<HoverCard open={open} onOpenChange={setOpen}>
+						<HoverCardTrigger delay={200}>
+							<UserImage
+								className="size-14 rounded-full"
+								src={review.user.image ?? ''}
+							/>
+						</HoverCardTrigger>
+						<HoverCardContent className="p-0">
+							{query.isError && (
+								<div className="text-center text-muted-foreground text-xs">
+									An error occurred.
+								</div>
+							)}
+							{query.isLoading && <Spinner />}
+							{query.data && (
+								<UserCard profile={query.data.profile} meta={query.data.meta} />
+							)}
+						</HoverCardContent>
+					</HoverCard>
+
 					<div>
 						<div className="font-medium">{review.user.name}</div>
 						<div className="text-primary text-xs tracking-tight">
