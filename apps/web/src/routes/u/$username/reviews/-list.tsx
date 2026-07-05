@@ -10,7 +10,7 @@ export function List() {
 	return (
 		<ItemGroup className="gap-2">
 			{flat.map((review) => (
-				<ReviewItem key={review.id} review={review} />
+				<ReviewItem key={review.review.id} review={review} />
 			))}
 		</ItemGroup>
 	);
