@@ -1,4 +1,10 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import { redisStorage } from '@better-auth/redis-storage';
+import {
+	CacheService,
+	RedisService,
+	type TCacheService,
+	type TRedisService,
+} from '@wanderlust/cache';
 import { ConfigService, type TConfigService } from '@wanderlust/config';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
@@ -18,12 +24,14 @@ export class AuthService {
 		@inject(ConfigService) private readonly cfg: ConfigService,
 		@inject(JobsService) private readonly jobs: JobsService,
 		@inject(CacheService) private readonly cache: CacheService,
+		@inject(RedisService) private readonly redis: RedisService,
 	) {
 		this.instance = init(
 			this.db.get(),
 			this.cfg.get(),
 			this.jobs.get(),
 			this.cache.get(),
+			this.redis.get(),
 		);
 	}
 
@@ -37,6 +45,7 @@ function init(
 	cfg: TConfigService,
 	jobs: TJobsService,
 	cache: TCacheService,
+	redis: TRedisService,
 ) {
 	return betterAuth({
 		database: drizzleAdapter(db, {
@@ -168,7 +177,13 @@ function init(
 				httpOnly: true,
 			},
 		},
+		secondaryStorage: redisStorage({
+			client: redis,
+			keyPrefix: 'wl-auth:',
+		}),
 		session: {
+			expiresIn: 60 * 60 * 24 * 7, // 7 days
+			updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
 			cookieCache: {
 				enabled: true,
 				maxAge: 5 * 60,
