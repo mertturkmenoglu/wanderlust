@@ -16,6 +16,7 @@
 		"dev": "tsc --watch"
 	},
 	"dependencies": {
+		"@better-auth/redis-storage": "^1.6.23",
 		"@wanderlust/cache": "workspace:*",
 		"@wanderlust/config": "workspace:*",
 		"@wanderlust/db": "workspace:*",
@@ -23,6 +24,7 @@
 		"@wanderlust/uid": "workspace:*",
 		"better-auth": "catalog:",
 		"inversify": "catalog:",
+		"ioredis": "^5.11.1",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
