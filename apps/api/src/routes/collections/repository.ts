@@ -17,6 +17,7 @@ import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
+import { findManyByCityId } from './statements';
 
 @injectable()
 @TraceAll()
@@ -504,27 +505,8 @@ export class CollectionsRepository {
 	}
 
 	async listByCityId(userId: string | null, data: dto.ListByCityIdInput) {
-		const result = await this.db.query.collectionsCities.findMany({
-			where: {
-				cityId: data.cityId,
-			},
-			orderBy: {
-				index: 'asc',
-			},
-			with: {
-				collection: {
-					with: {
-						items: {
-							orderBy: {
-								index: 'asc',
-							},
-							with: {
-								place: $includes.place,
-							},
-						},
-					},
-				},
-			},
+		const result = await findManyByCityId.execute(this.db, {
+			id: data.cityId,
 		});
 
 		const placeIds = unique(

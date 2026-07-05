@@ -1,3 +1,4 @@
+import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { collections as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
@@ -6,9 +7,14 @@ import { CollectionsRepository } from './repository';
 @injectable()
 @TraceAll()
 export class CollectionsService {
+	private readonly cache: TCacheService;
+
 	constructor(
 		@inject(CollectionsRepository) private readonly repo: CollectionsRepository,
-	) {}
+		@inject(CacheService) cache: CacheService,
+	) {
+		this.cache = cache.get();
+	}
 
 	async list(data: dto.ListInput): Promise<dto.ListOutput> {
 		const result = await this.repo.list(data);
@@ -119,7 +125,12 @@ export class CollectionsService {
 		userId: string | null,
 		data: dto.ListByCityIdInput,
 	): Promise<dto.ListByCityIdOutput> {
-		const result = await this.repo.listByCityId(userId, data);
+		const result = await this.cache.namespace('collections').getOrSet({
+			key: `city:${data.cityId}`,
+			factory: async () => this.repo.listByCityId(userId, data),
+			ttl: '1h',
+			grace: '5m',
+		});
 
 		return {
 			collections: result.collections,
