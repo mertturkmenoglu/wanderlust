@@ -5,6 +5,7 @@ import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { PreferencesRepository } from './repository';
 import { PreferencesService } from './service';
 
@@ -14,7 +15,8 @@ export const module = defineModule({
 		const os = implement(preferences.contract)
 			.$context<Context>()
 			.use(requireAuth)
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(PreferencesService);
 

@@ -1,13 +1,13 @@
-import type { preferences as dto } from '@wanderlust/contract';
+import { preferences as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
-
-type TxFn = Parameters<TDatabaseService['transaction']>[0];
-type Tx = Parameters<TxFn>[0];
+import { Trace, TraceAll } from '@/lib/tracer';
+import { findByUserId } from './statements';
 
 @injectable()
+@TraceAll()
 export class PreferencesRepository {
 	private readonly db: TDatabaseService;
 
@@ -15,43 +15,16 @@ export class PreferencesRepository {
 		this.db = db.get();
 	}
 
-	private async findById(
-		userId: string,
-		tx: Tx,
-	): Promise<dto.GetOutput['preferences'] | undefined> {
-		return tx.query.preferences.findFirst({
-			where: {
-				userId: userId,
-			},
-		});
-	}
-
+	@Trace()
 	async get(userId: string, _data: dto.GetInput): Promise<dto.GetOutput> {
-		const preferences = await this.db.transaction(async (tx) => {
-			const result = await this.findById(userId, tx);
+		const pref = await findByUserId.execute(this.db, { userId });
 
-			if (!result) {
-				const [inserted] = await tx
-					.insert(schema.preferences)
-					.values({
-						userId: userId,
-					})
-					.returning();
-
-				invariant(
-					inserted,
-					'INTERNAL_SERVER_ERROR',
-					'Failed to create preferences for user',
-				);
-
-				return inserted;
-			}
-
-			return result;
-		});
+		if (!pref) {
+			return dto.getOutput.parse({ userId: userId });
+		}
 
 		return {
-			preferences,
+			preferences: pref,
 		};
 	}
 

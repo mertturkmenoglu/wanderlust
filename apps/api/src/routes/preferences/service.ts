@@ -1,9 +1,12 @@
+import { trace } from '@opentelemetry/api';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { preferences as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { PreferencesRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class PreferencesService {
 	private readonly ns = 'preferences';
 	private readonly cache: TCacheService;
@@ -17,10 +20,19 @@ export class PreferencesService {
 	}
 
 	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
+		const span = trace.getActiveSpan();
+
 		const result = await this.cache.namespace(this.ns).getOrSet({
 			key: userId,
 			ttl: '1h',
-			factory: async () => this.repo.get(userId, data),
+
+			factory: async () => {
+				span?.addEvent('cache-miss', {
+					'user.id': userId,
+				});
+
+				return this.repo.get(userId, data);
+			},
 			grace: '1m',
 		});
 
