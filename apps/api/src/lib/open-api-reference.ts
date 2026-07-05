@@ -1,5 +1,5 @@
-import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { OpenAPIReferencePlugin } from '@orpc/openapi/plugins';
+import { ZodToJsonSchemaConverter } from '@orpc/zod/zod4';
 
 const favicon =
 	'https://raw.githubusercontent.com/mertturkmenoglu/wanderlust/refs/heads/main/web/public/favicon.ico';
