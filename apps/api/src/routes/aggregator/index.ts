@@ -4,6 +4,7 @@ import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { AggregatorRepository } from './repository';
 import { AggregatorService } from './service';
 
@@ -12,7 +13,8 @@ export const module = defineModule({
 	router: () => {
 		const os = implement(aggregator.contract)
 			.$context<Context>()
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(AggregatorService);
 

@@ -1,14 +1,16 @@
 import type { favorites as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
+import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class FavoritesService {
 	constructor(
 		@inject(FavoritesRepository) private readonly repo: FavoritesRepository,
 		@inject(ActivitiesService) private readonly activities: ActivitiesService,
-	) { }
+	) {}
 
 	async create(
 		userId: string,

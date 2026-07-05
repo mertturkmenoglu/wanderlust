@@ -1,12 +1,14 @@
 import type { collections as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { CollectionsRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class CollectionsService {
 	constructor(
 		@inject(CollectionsRepository) private readonly repo: CollectionsRepository,
-	) { }
+	) {}
 
 	async list(data: dto.ListInput): Promise<dto.ListOutput> {
 		const result = await this.repo.list(data);

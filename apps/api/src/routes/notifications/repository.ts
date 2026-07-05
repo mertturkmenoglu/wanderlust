@@ -5,8 +5,10 @@ import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 
 @injectable()
+@TraceAll()
 export class NotificationsRepository {
 	private readonly db: TDatabaseService;
 	private readonly cfg: TConfigService;

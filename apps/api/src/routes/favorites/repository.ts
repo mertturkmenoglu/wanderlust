@@ -9,8 +9,10 @@ import {
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 
 @injectable()
+@TraceAll()
 export class FavoritesRepository {
 	private readonly db: TDatabaseService;
 

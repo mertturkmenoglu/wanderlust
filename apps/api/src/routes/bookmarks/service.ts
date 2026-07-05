@@ -1,12 +1,14 @@
 import type { bookmarks as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { BookmarksRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class BookmarksService {
 	constructor(
 		@inject(BookmarksRepository) private readonly repo: BookmarksRepository,
-	) { }
+	) {}
 
 	async create(
 		userId: string,

@@ -1,10 +1,12 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { aggregator as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
 import { AggregatorRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class AggregatorService {
 	private readonly ns = 'aggregator';
 	private readonly cache: TCacheService;

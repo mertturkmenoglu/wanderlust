@@ -1,8 +1,10 @@
 import type { addresses as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { AddressesRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class AddressesService {
 	constructor(
 		@inject(AddressesRepository) private readonly repo: AddressesRepository,

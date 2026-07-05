@@ -1,9 +1,11 @@
 import { ORPCError } from '@orpc/client';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import * as statements from './statements';
 
 @injectable()
+@TraceAll()
 export class AggregatorRepository {
 	private readonly db: TDatabaseService;
 

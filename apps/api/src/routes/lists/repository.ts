@@ -11,11 +11,13 @@ import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 
 @injectable()
+@TraceAll()
 export class ListsRepository {
 	private readonly db: TDatabaseService;
 

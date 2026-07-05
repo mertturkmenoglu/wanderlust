@@ -5,6 +5,7 @@ import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { FavoritesRepository } from './repository';
 import { FavoritesService } from './service';
 
@@ -14,7 +15,8 @@ export const module = defineModule({
 		const os = implement(favorites.contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(FavoritesService);
 

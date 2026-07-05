@@ -5,8 +5,10 @@ import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 
 @injectable()
+@TraceAll()
 export class AddressesRepository {
 	private readonly db: TDatabaseService;
 

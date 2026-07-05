@@ -1,8 +1,10 @@
 import type { accolades as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { AccoladesRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class AccoladesService {
 	constructor(
 		@inject(AccoladesRepository)
@@ -39,7 +41,10 @@ export class AccoladesService {
 		return result;
 	}
 
-	async getPlaces(userId: string | null, data: dto.GetPlacesInput): Promise<dto.GetPlacesOutput> {
+	async getPlaces(
+		userId: string | null,
+		data: dto.GetPlacesInput,
+	): Promise<dto.GetPlacesOutput> {
 		const result = await this.accoladesRepository.getPlaces(userId, data);
 
 		return result;

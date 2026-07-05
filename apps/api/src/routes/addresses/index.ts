@@ -6,6 +6,7 @@ import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { AddressesRepository } from './repository';
 import { AddressesService } from './service';
 
@@ -16,7 +17,8 @@ export const module = defineModule({
 			.$context<AuthContext>()
 			.use(requireAuth)
 			.use(isAdmin)
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(AddressesService);
 

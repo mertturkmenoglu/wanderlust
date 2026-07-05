@@ -1,9 +1,11 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { cities as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { CitiesRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class CitiesService {
 	private readonly cache: TCacheService;
 

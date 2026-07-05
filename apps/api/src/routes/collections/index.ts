@@ -6,6 +6,7 @@ import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { CollectionsRepository } from './repository';
 import { CollectionsService } from './service';
 
@@ -14,7 +15,8 @@ export const module = defineModule({
 	router: () => {
 		const os = implement(collections.contract)
 			.$context<Context>()
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(CollectionsService);
 

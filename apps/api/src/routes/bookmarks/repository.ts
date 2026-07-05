@@ -10,9 +10,11 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
+@TraceAll()
 export class BookmarksRepository {
 	private readonly db: TDatabaseService;
 

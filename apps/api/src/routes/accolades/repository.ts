@@ -6,9 +6,11 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { slugifyWithRandom } from '@/lib/slug';
+import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
+@TraceAll()
 export class AccoladesRepository {
 	private readonly db: TDatabaseService;
 

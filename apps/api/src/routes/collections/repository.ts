@@ -14,10 +14,12 @@ import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
+@TraceAll()
 export class CollectionsRepository {
 	private readonly db: TDatabaseService;
 

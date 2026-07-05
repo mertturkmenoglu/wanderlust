@@ -1,8 +1,10 @@
 import type { categories as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { CategoriesRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class CategoriesService {
 	constructor(
 		@inject(CategoriesRepository)

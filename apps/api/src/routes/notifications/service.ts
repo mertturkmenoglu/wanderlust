@@ -1,8 +1,10 @@
 import type { notifications as dto } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
+import { TraceAll } from '@/lib/tracer';
 import { NotificationsRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class NotificationsService {
 	constructor(
 		@inject(NotificationsRepository)
