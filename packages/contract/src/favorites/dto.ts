@@ -27,7 +27,6 @@ export const listInput = Pagination.queryParamsSchema.extend({});
 
 export type ListInput = z.infer<typeof listInput>;
 
-
 export const listOutput = z.object({
 	favorites: $dto.favorite
 		.extend({

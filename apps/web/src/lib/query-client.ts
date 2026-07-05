@@ -1,6 +1,6 @@
-import { ORPCError } from "@orpc/client";
-import { QueryCache, QueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { ORPCError } from '@orpc/client';
+import { QueryCache, QueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export const queryClient = new QueryClient({
 	defaultOptions: {

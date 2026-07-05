@@ -15,6 +15,7 @@ export function useSyncPreferences() {
 		}),
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: setPreferences is intentionally omitted from the dependency array.
 	useEffect(() => {
 		if (query.data) {
 			setPreferences(query.data.preferences);

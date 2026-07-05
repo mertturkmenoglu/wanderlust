@@ -11,9 +11,11 @@ export const getOutput = z.object({
 
 export type GetOutput = z.infer<typeof getOutput>;
 
-export const updateInput = $dto.preference.omit({
-	userId: true,
-}).partial();
+export const updateInput = $dto.preference
+	.omit({
+		userId: true,
+	})
+	.partial();
 
 export type UpdateInput = z.infer<typeof updateInput>;
 

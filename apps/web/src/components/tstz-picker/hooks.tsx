@@ -5,6 +5,7 @@ import { useTSTZPickerContext } from './context';
 export function useFieldUpdateEffect() {
 	const ctx = useTSTZPickerContext();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: ctx.onChange is intentionally omitted from the dependency array.
 	useEffect(() => {
 		const newDate = new TZDate(ctx.value ?? new Date(), ctx.tzOffset);
 

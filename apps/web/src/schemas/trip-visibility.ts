@@ -25,4 +25,3 @@ export const visibilityOptions: TVisibilityOption[] = [
 		info: 'Only you can see your trip',
 	},
 ];
-

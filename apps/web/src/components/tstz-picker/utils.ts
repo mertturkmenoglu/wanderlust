@@ -1,4 +1,4 @@
-export const defaultFormatStr = "PP K:mm a";
+export const defaultFormatStr = 'PP K:mm a';
 
 export const selectableHours = [
 	'01',

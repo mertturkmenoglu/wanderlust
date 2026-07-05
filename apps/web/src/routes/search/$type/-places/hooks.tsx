@@ -8,7 +8,7 @@ export function useCurrentCategory() {
 	const query = useQuery(
 		orpc.categories.list.queryOptions({
 			input: {},
-			enabled: (search) !== undefined,
+			enabled: search !== undefined,
 		}),
 	);
 

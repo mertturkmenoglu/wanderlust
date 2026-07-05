@@ -1,9 +1,9 @@
-import type { TPreferences } from "@/stores/preferences-context";
+import type { TPreferences } from '@/stores/preferences-context';
 
 type UnitOption = {
-	key: TPreferences["units"];
+	key: TPreferences['units'];
 	label: string;
-}
+};
 
 export const unitsOptions: UnitOption[] = [
 	{
@@ -13,13 +13,13 @@ export const unitsOptions: UnitOption[] = [
 	{
 		key: 'imperial',
 		label: 'Imperial',
-	}
+	},
 ];
 
 type MapStyleOption = {
-	key: TPreferences["mapStyle"];
+	key: TPreferences['mapStyle'];
 	label: string;
-}
+};
 
 export const mapStyleOptions: MapStyleOption[] = [
 	{
@@ -33,13 +33,13 @@ export const mapStyleOptions: MapStyleOption[] = [
 	{
 		key: 'auto',
 		label: 'Auto',
-	}
+	},
 ];
 
 type SearchRadiusOption = {
-	key: TPreferences["searchRadius"];
+	key: TPreferences['searchRadius'];
 	label: string;
-}
+};
 
 export const searchRadiusOptions: SearchRadiusOption[] = [
 	{
@@ -53,13 +53,13 @@ export const searchRadiusOptions: SearchRadiusOption[] = [
 	{
 		key: 'far',
 		label: 'Far',
-	}
+	},
 ];
 
 type ThemeOption = {
-	key: TPreferences["theme"];
+	key: TPreferences['theme'];
 	label: string;
-}
+};
 
 export const themeOptions: ThemeOption[] = [
 	{
@@ -73,5 +73,5 @@ export const themeOptions: ThemeOption[] = [
 	{
 		key: 'system',
 		label: 'System',
-	}
+	},
 ];

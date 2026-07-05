@@ -16,7 +16,7 @@ export function SendMessageView() {
 	const isDisabled = text.trim() === '';
 
 	const handleSend = () => {
-		alert('Message sent: ' + text);
+		alert(`Message sent: ${text}`);
 	};
 
 	if (!ctx.selectedUser) {

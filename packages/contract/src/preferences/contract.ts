@@ -2,7 +2,8 @@ import { oc } from '@orpc/contract';
 import * as dto from './dto';
 
 export const contract = {
-	get: oc.input(dto.getInput)
+	get: oc
+		.input(dto.getInput)
 		.output(dto.getOutput)
 		.errors({
 			BAD_REQUEST: {},
@@ -22,7 +23,8 @@ export const contract = {
 			successStatus: 200,
 			successDescription: 'OK',
 		}),
-	update: oc.input(dto.updateInput)
+	update: oc
+		.input(dto.updateInput)
 		.output(dto.updateOutput)
 		.errors({
 			BAD_REQUEST: {},

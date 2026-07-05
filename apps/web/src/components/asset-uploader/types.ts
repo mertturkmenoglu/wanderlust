@@ -1,5 +1,6 @@
 import type * as fileUpload from '@zag-js/file-upload';
 
+// biome-ignore lint/suspicious/noExplicitAny: any usage here is intentional
 type Dict<T = any> = Record<string, T>;
 
 type PropTypes<T = Dict> = Record<

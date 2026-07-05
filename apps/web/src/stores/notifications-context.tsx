@@ -131,7 +131,9 @@ export function NotificationsContextProvider({ children }: PropsWithChildren) {
 				refetch: async () => {
 					await query.refetch();
 				},
-				unreadCount: (query.data?.notifications ?? []).filter((x) => x.readAt === null).length,
+				unreadCount: (query.data?.notifications ?? []).filter(
+					(x) => x.readAt === null,
+				).length,
 				preferences: preferencesQuery.data?.preferences ?? [],
 				refetchPreferences: async () => {
 					await preferencesQuery.refetch();

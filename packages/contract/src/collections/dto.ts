@@ -242,7 +242,8 @@ export const ListAllPlaceCollectionsOutput = z.object({
 				createdAt: z.date(),
 				description: z.string(),
 			}),
-		}).extend({
+		})
+		.extend({
 			place: $dto.place.pick({ name: true }),
 		})
 		.array(),

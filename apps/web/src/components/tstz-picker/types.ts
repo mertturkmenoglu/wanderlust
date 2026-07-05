@@ -1,7 +1,7 @@
 import type { Calendar } from '@wanderlust/ui/components/calendar';
 import type {
 	ControllerFieldState,
-	ControllerRenderProps
+	ControllerRenderProps,
 } from 'react-hook-form';
 
 type ShadCnCalendarProps = React.ComponentProps<typeof Calendar>;
