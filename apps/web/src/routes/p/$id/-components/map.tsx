@@ -2,7 +2,8 @@ import { getRouteApi } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { ExternalLinkIcon } from 'lucide-react';
-import MapContainer, { Marker } from 'react-map-gl/maplibre';
+import { useEffect } from 'react';
+import MapContainer, { Marker, useMap } from 'react-map-gl/maplibre';
 import { Pin } from '@/components/pin';
 import { useMapStyle } from '@/hooks/use-map-style';
 
@@ -17,6 +18,13 @@ export function MapComponent({ className }: Props) {
 	const lng = place.address.lng;
 	const zoom = 17;
 	const style = useMapStyle();
+	const map = useMap();
+
+	useEffect(() => {
+		return () => {
+			map.current?.getMap().remove();
+		};
+	}, [map.current]);
 
 	return (
 		<div className={cn(className)}>

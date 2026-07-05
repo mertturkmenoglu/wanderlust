@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
+import { lazy } from 'react';
 import { z } from 'zod';
 import { AssetGrid } from '@/components/asset-grid';
 import { AppBentoBanner } from '@/components/banner/common';
 import { ErrorComponent } from '@/components/error-component';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { orpc } from '@/lib/orpc';
 import { Accolades } from './-components/accolades';
 import { Amenities } from './-components/amenities';
@@ -14,11 +16,14 @@ import { Collections } from './-components/collections';
 import { Description } from './-components/description';
 import { Header } from './-components/header';
 import { Information } from './-components/information';
-import { MapComponent } from './-components/map';
 import { NearbyCities } from './-components/nearby-cities';
 import { NearbyPlaces } from './-components/nearby-places';
 import { ReviewsPreview } from './-components/reviews-preview';
 import { useTrackRecentViews } from './-hooks';
+
+const MapComponent = lazy(() =>
+	import('./-components/map').then((mod) => ({ default: mod.MapComponent })),
+);
 
 const schema = z.object({
 	page: z.number().min(1).max(100).optional(),
@@ -65,7 +70,15 @@ function RouteComponent() {
 			<div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-16">
 				<Information className="col-span-1" />
 
-				<MapComponent className="col-span-2" />
+				<SuspenseWrapper
+					variant="skeleton"
+					classNames={{
+						placeholder: 'w-full! col-span-2!',
+						root: 'col-span-2 my-4',
+					}}
+				>
+					<MapComponent className="col-span-2" />
+				</SuspenseWrapper>
 			</div>
 
 			<Separator className="my-4" />
