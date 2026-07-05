@@ -6,13 +6,17 @@ import { memoryDriver } from 'bentocache/drivers/memory';
 import { redisBusDriver, redisDriver } from 'bentocache/drivers/redis';
 import { inject, injectable } from 'inversify';
 import superjson from 'superjson';
+import { RedisService, type TRedisService } from './redis';
 
 @injectable()
 export class CacheService {
 	private readonly instance: TCacheService;
 
-	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
-		this.instance = init(this.cfg.get());
+	constructor(
+		@inject(ConfigService) private readonly cfg: ConfigService,
+		@inject(RedisService) private readonly redis: RedisService,
+	) {
+		this.instance = init(this.cfg.get(), this.redis.get());
 	}
 
 	get(): TCacheService {
@@ -20,7 +24,7 @@ export class CacheService {
 	}
 }
 
-function init(cfg: TConfigService) {
+function init(cfg: TConfigService, redis: TRedisService) {
 	return new BentoCache({
 		default: 'cache',
 		grace: cfg.api.cache.grace,
@@ -34,18 +38,12 @@ function init(cfg: TConfigService) {
 				.useL1Layer(memoryDriver({ maxSize: cfg.api.cache.l1MaxSize }))
 				.useL2Layer(
 					redisDriver({
-						connection: {
-							host: cfg.redis.host,
-							port: cfg.redis.port,
-						},
+						connection: redis,
 					}),
 				)
 				.useBus(
 					redisBusDriver({
-						connection: {
-							host: cfg.redis.host,
-							port: cfg.redis.port,
-						},
+						connection: redis,
 					}),
 				),
 		},
