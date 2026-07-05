@@ -29,51 +29,67 @@ export const users = p.pgTable(
 			.defaultNow()
 			.$onUpdateFn(() => new Date()),
 	},
-	(t) => [p.index().on(t.username)],
+	(t) => [p.index().on(t.email), p.index().on(t.username)],
 );
 
-export const sessions = p.pgTable('sessions', {
-	id: p.text('id').primaryKey(),
-	expiresAt: p.timestamp('expires_at').notNull(),
-	token: p.text('token').notNull().unique(),
-	createdAt: p.timestamp('created_at').notNull(),
-	updatedAt: p.timestamp('updated_at').notNull(),
-	ipAddress: p.text('ip_address'),
-	userAgent: p.text('user_agent'),
-	userId: p
-		.text('user_id')
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	impersonatedBy: p.text('impersonated_by'),
-});
+export const sessions = p.pgTable(
+	'sessions',
+	{
+		id: p.text('id').primaryKey(),
+		expiresAt: p.timestamp('expires_at').notNull(),
+		token: p.text('token').notNull().unique(),
+		createdAt: p.timestamp('created_at').notNull(),
+		updatedAt: p.timestamp('updated_at').notNull(),
+		ipAddress: p.text('ip_address'),
+		userAgent: p.text('user_agent'),
+		userId: p
+			.text('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		impersonatedBy: p.text('impersonated_by'),
+	},
+	(t) => [p.index().on(t.userId), p.index().on(t.token)],
+);
 
-export const accounts = p.pgTable('accounts', {
-	id: p.text('id').primaryKey(),
-	accountId: p.text('account_id').notNull(),
-	providerId: p.text('provider_id').notNull(),
-	userId: p
-		.text('user_id')
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	accessToken: p.text('access_token'),
-	refreshToken: p.text('refresh_token'),
-	idToken: p.text('id_token'),
-	accessTokenExpiresAt: p.timestamp('access_token_expires_at'),
-	refreshTokenExpiresAt: p.timestamp('refresh_token_expires_at'),
-	scope: p.text('scope'),
-	password: p.text('password'),
-	createdAt: p.timestamp('created_at').notNull(),
-	updatedAt: p.timestamp('updated_at').notNull(),
-});
+export const accounts = p.pgTable(
+	'accounts',
+	{
+		id: p.text('id').primaryKey(),
+		accountId: p.text('account_id').notNull(),
+		providerId: p.text('provider_id').notNull(),
+		userId: p
+			.text('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		accessToken: p.text('access_token'),
+		refreshToken: p.text('refresh_token'),
+		idToken: p.text('id_token'),
+		accessTokenExpiresAt: p.timestamp('access_token_expires_at'),
+		refreshTokenExpiresAt: p.timestamp('refresh_token_expires_at'),
+		scope: p.text('scope'),
+		password: p.text('password'),
+		createdAt: p.timestamp('created_at').notNull(),
+		updatedAt: p.timestamp('updated_at').notNull(),
+	},
+	(t) => [
+		p.index().on(t.accountId),
+		p.index().on(t.providerId),
+		p.index().on(t.userId),
+	],
+);
 
-export const verifications = p.pgTable('verifications', {
-	id: p.text('id').primaryKey(),
-	identifier: p.text('identifier').notNull(),
-	value: p.text('value').notNull(),
-	expiresAt: p.timestamp('expires_at').notNull(),
-	createdAt: p.timestamp('created_at'),
-	updatedAt: p.timestamp('updated_at'),
-});
+export const verifications = p.pgTable(
+	'verifications',
+	{
+		id: p.text('id').primaryKey(),
+		identifier: p.text('identifier').notNull(),
+		value: p.text('value').notNull(),
+		expiresAt: p.timestamp('expires_at').notNull(),
+		createdAt: p.timestamp('created_at'),
+		updatedAt: p.timestamp('updated_at'),
+	},
+	(t) => [p.index().on(t.identifier)],
+);
 
 export const assetEntityType = p.pgEnum('asset_entity_type', [
 	'place',
@@ -521,6 +537,9 @@ export const reviews = p.pgTable(
 	(table) => [
 		p.index().on(table.placeId),
 		p.index().on(table.userId),
+		p.index().on(table.placeId, table.rating), // for rating range + filtering
+		p.index().on(table.placeId, table.createdAt), // default sort
+		p.index().on(table.placeId, table.totalLikes), // likes sort
 		p.check('rating_range', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
 		p.check('visited_at_past', sql`${table.visitedAt} <= now()`),
 	],
@@ -766,7 +785,7 @@ export const notifications = p.pgTable(
 		readAt: p.timestamp({ withTimezone: true }),
 		createdAt: p.timestamp({ withTimezone: true }).notNull().defaultNow(),
 	},
-	(t) => [p.index().on(t.recipientId)],
+	(t) => [p.index().on(t.recipientId, t.createdAt)],
 );
 
 export const notificationChannelType = p.pgEnum('notification_channel_type', [
