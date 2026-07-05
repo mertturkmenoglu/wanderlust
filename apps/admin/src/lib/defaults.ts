@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: any usage here is intentional */
 import type { QueryClient } from '@tanstack/react-query';
 import type { DataResource, ResourceKey } from './crud';
 

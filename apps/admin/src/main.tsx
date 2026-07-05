@@ -30,6 +30,7 @@ declare module '@tanstack/react-router' {
 	interface StaticDataRouteOption {
 		breadcrumbs?:
 			| (() => TDataBreadcrumb[])
+			// biome-ignore lint/suspicious/noExplicitAny: any usage here is intentional
 			| ((data: any) => TDataBreadcrumb[]);
 	}
 }

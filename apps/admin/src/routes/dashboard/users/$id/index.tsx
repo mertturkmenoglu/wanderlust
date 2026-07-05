@@ -38,18 +38,17 @@ function RouteComponent() {
 	const navigate = Route.useNavigate();
 	const confirm = useConfirmDialog();
 
-
 	return (
-		<Container>
+		<Container title="User Details">
 			{confirm.Dialog}
 
 			<ObjectDetails
 				object={{
-					id: query.data.id,
-					title: query.data.name,
+					id: query.id,
+					title: query.name,
 					type: 'user',
 					// @ts-expect-error bio is included in the data
-					description: query.data.bio,
+					description: query.bio,
 				}}
 				onEdit={() => {
 					toast.info('Use the actions below');
@@ -57,44 +56,42 @@ function RouteComponent() {
 				onVisit={() => {
 					navigate({
 						// @ts-expect-error username is included in the data
-						href: appLink(`/u/${query.data.username}`),
+						href: appLink(`/u/${query.username}`),
 					});
 				}}
 				onShare={() => {
 					// @ts-expect-error username is included in the data
-					copyToClipboard(appLink(`/u/${query.data.username}`));
+					copyToClipboard(appLink(`/u/${query.username}`));
 				}}
 				onDelete={() => {
 					toast.info('Use the actions below');
 				}}
 			>
 				<DetailTable>
-					<DetailRow label="ID" value={query.data.id} />
-					<DetailRow label="Name" value={query.data.name} />
-					<DetailRow label="Email" value={query.data.email} />
+					<DetailRow label="ID" value={query.id} />
+					<DetailRow label="Name" value={query.name} />
+					<DetailRow label="Email" value={query.email} />
 					{/* @ts-expect-error Username is included in the data */}
-					<DetailRow label="Username" value={query.data.username} />
+					<DetailRow label="Username" value={query.username} />
 					<DetailRow
 						label="Email Verified"
-						value={query.data.emailVerified ? 'Yes' : 'No'}
+						value={query.emailVerified ? 'Yes' : 'No'}
 					/>
 					<DetailRow
 						label="Role"
-						value={query.data.role === 'admin' ? 'Admin' : 'User'}
+						value={query.role === 'admin' ? 'Admin' : 'User'}
 					/>
-					<DetailRow label="Banned" value={query.data.banned ? 'Yes' : 'No'} />
-					<DetailRow label="Ban Reason" value={query.data.banReason ?? '—'} />
+					<DetailRow label="Banned" value={query.banned ? 'Yes' : 'No'} />
+					<DetailRow label="Ban Reason" value={query.banReason ?? '—'} />
 					<DetailRow
 						label="Ban Expires"
-						value={
-							query.data.banExpires ? query.data.banExpires.toISOString() : '—'
-						}
+						value={query.banExpires ? query.banExpires.toISOString() : '—'}
 					/>
 					<DetailRow
 						label="Image"
 						value={
 							<img
-								src={query.data.image ?? ''}
+								src={query.image ?? ''}
 								alt=""
 								className="aspect-square size-12"
 							/>
@@ -105,28 +102,22 @@ function RouteComponent() {
 						value={
 							<img
 								// @ts-expect-error Banner is valid
-								src={query.data.banner ?? ''}
+								src={query.banner ?? ''}
 								alt=""
 								className="aspect-video w-48"
 							/>
 						}
 					/>
 					{/* @ts-expect-error Website is valid */}
-					<DetailRow label="Website" value={query.data.website ?? '—'} />
+					<DetailRow label="Website" value={query.website ?? '—'} />
 					{/* @ts-expect-error Bio is valid */}
-					<DetailRow label="Bio" value={query.data.bio ?? '—'} />
+					<DetailRow label="Bio" value={query.bio ?? '—'} />
 					{/* @ts-expect-error Followers count is valid */}
-					<DetailRow label="Followers" value={query.data.followersCount} />
+					<DetailRow label="Followers" value={query.followersCount} />
 					{/* @ts-expect-error Following count is valid */}
-					<DetailRow label="Following" value={query.data.followingCount} />
-					<DetailRow
-						label="Created At"
-						value={query.data.createdAt.toISOString()}
-					/>
-					<DetailRow
-						label="Updated At"
-						value={query.data.updatedAt.toISOString()}
-					/>
+					<DetailRow label="Following" value={query.followingCount} />
+					<DetailRow label="Created At" value={query.createdAt.toISOString()} />
+					<DetailRow label="Updated At" value={query.updatedAt.toISOString()} />
 				</DetailTable>
 
 				<DangerousActions className="my-8" />
