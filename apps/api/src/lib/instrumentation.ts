@@ -17,7 +17,16 @@ const sdk = new NodeSDK({
 		'service.name': 'wl-api',
 	}),
 	spanProcessors: [new BatchSpanProcessor(traceExporter)],
-	instrumentations: [getNodeAutoInstrumentations(), new ORPCInstrumentation()],
+	instrumentations: [
+		getNodeAutoInstrumentations({
+			'@opentelemetry/instrumentation-pg': {
+				addSqlCommenterCommentToQueries: true,
+				enabled: true,
+				enhancedDatabaseReporting: true,
+			},
+		}),
+		new ORPCInstrumentation(),
+	],
 });
 
 sdk.start();
