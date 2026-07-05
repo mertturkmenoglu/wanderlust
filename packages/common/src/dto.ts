@@ -82,6 +82,14 @@ export const $dto = {
 				description: 'Number of users the user is following',
 				examples: [75],
 			}),
+		location: z
+			.string()
+			.max(32)
+			.nullable()
+			.meta({
+				description: 'Location of the user',
+				examples: ['New York, USA'],
+			}),
 		createdAt: z.date().meta({
 			description: 'Timestamp when the user was created',
 			examples: [new Date('2023-01-15T10:00:00Z')],

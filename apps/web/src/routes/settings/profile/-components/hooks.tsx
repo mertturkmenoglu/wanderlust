@@ -18,6 +18,7 @@ export function useUpdateUserProfileMutation() {
 					name: newUser.profile.name,
 					username: newUser.profile.username,
 					website: newUser.profile.website,
+					location: newUser.profile.location,
 				});
 
 				toast.success('Profile updated');

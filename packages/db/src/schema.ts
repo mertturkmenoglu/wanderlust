@@ -17,6 +17,7 @@ export const users = p.pgTable(
 		followingCount: p.integer('following_count').notNull().default(0),
 		createdAt: p.timestamp('created_at').notNull().defaultNow(),
 		role: p.text('role'),
+		location: p.varchar({ length: 32 }),
 		banned: p.boolean('banned'),
 		banReason: p.text('ban_reason'),
 		banExpires: p.timestamp('ban_expires', {

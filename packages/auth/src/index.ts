@@ -103,6 +103,11 @@ function init(
 					input: true,
 					required: false,
 				},
+				location: {
+					type: 'string',
+					input: true,
+					required: false,
+				},
 				followersCount: {
 					type: 'number',
 					input: false,

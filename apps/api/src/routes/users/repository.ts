@@ -466,6 +466,7 @@ export class UsersRepository {
 				name: data.name,
 				bio: data.bio,
 				website: data.website,
+				location: data.location,
 			})
 			.where(eq(schema.users.id, userId))
 			.returning();

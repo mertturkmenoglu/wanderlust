@@ -1,6 +1,6 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { ExternalLinkIcon } from 'lucide-react';
+import { ExternalLinkIcon, MapPinIcon } from 'lucide-react';
 import { ActionButtons } from './action-buttons';
 import { BioDropdown } from './bio-dropdown';
 import { HeaderImages } from './header-images';
@@ -46,6 +46,13 @@ export function Header({ className }: Props) {
 					<ExternalLinkIcon className="size-3" />
 					<span>{profile.website}</span>
 				</a>
+			)}
+
+			{profile.location && (
+				<div className="mt-2 flex items-center gap-1 text-primary text-sm">
+					<MapPinIcon className="size-3" />
+					<span>{profile.location}</span>
+				</div>
 			)}
 
 			<Tabs className="my-4" />

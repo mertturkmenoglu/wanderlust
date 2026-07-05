@@ -9,6 +9,7 @@ const profile = $dto.user.pick({
 	banner: true,
 	bio: true,
 	website: true,
+	location: true,
 	followersCount: true,
 	followingCount: true,
 	createdAt: true,
@@ -201,6 +202,7 @@ export const updateInput = profile.pick({
 	name: true,
 	bio: true,
 	website: true,
+	location: true,
 });
 
 export type UpdateInput = z.infer<typeof updateInput>;

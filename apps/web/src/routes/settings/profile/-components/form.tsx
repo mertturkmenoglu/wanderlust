@@ -20,6 +20,7 @@ export function Form() {
 			fullName: profile.name,
 			bio: profile.bio ?? undefined,
 			website: profile.website ?? undefined,
+			location: profile.location ?? undefined,
 		},
 	});
 
@@ -30,6 +31,7 @@ export function Form() {
 			bio: data.bio || null,
 			name: data.fullName,
 			website: data.website || null,
+			location: data.location || null,
 		});
 	});
 
@@ -73,6 +75,16 @@ export function Form() {
 							placeholder: 'https://example.com',
 							autoComplete: 'url',
 							type: 'url',
+						},
+					}}
+				/>
+
+				<cmp.Input
+					name="location"
+					control={form.control}
+					elements={{
+						input: {
+							placeholder: 'New York, USA',
 						},
 					}}
 				/>
