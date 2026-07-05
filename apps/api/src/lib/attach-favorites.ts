@@ -1,4 +1,6 @@
-export function attachFavoriteMetadata<T extends { placeId: string } | { id: string }>(
+export function attachFavoriteMetadata<
+	T extends { placeId: string } | { id: string },
+>(
 	items: T[],
 	favoriteIds: string[],
 ): (T & { meta: { isFavorite: boolean } })[] {
@@ -8,6 +10,6 @@ export function attachFavoriteMetadata<T extends { placeId: string } | { id: str
 		...item,
 		meta: {
 			isFavorite: favoriteSet.has('placeId' in item ? item.placeId : item.id),
-		}
+		},
 	}));
 }
