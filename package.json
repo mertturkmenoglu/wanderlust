@@ -56,7 +56,7 @@
 		"wl": "bun run --cwd ./apps/cli cli"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.14",
+		"@biomejs/biome": "2.5.1",
 		"@types/bun": "catalog:",
 		"tsdown": "catalog:",
 		"turbo": "2.9.16"
