@@ -24,8 +24,8 @@
 			"bun": "^1.3.14",
 			"consola": "^3.4.2",
 			"date-fns": "^4.1.0",
-			"drizzle-orm": "1.0.0-rc.4-5d5b77c",
-			"drizzle-kit": "1.0.0-rc.4-ca0f029",
+			"drizzle-orm": "rc",
+			"drizzle-kit": "rc",
 			"evlog": "^2.19.2",
 			"hono": "^4.12.18",
 			"inversify": "^8.1.0",
@@ -59,7 +59,7 @@
 		"@biomejs/biome": "^2.4.14",
 		"@types/bun": "catalog:",
 		"tsdown": "catalog:",
-		"turbo": "^2.9.16"
+		"turbo": "2.9.16"
 	},
 	"packageManager": "bun@1.3.14"
 }
