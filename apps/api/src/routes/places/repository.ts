@@ -9,8 +9,15 @@ import {
 import { eq, ilike, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
+import {
+	findBookmarkByPlaceIdAndUserId,
+	findFavoriteByPlaceIdAndUserId,
+	findPlaceById,
+} from './statements';
 
 @injectable()
+@TraceAll()
 export class PlacesRepository {
 	private readonly db: TDatabaseService;
 
@@ -19,20 +26,39 @@ export class PlacesRepository {
 	}
 
 	async get(data: dto.GetInput) {
-		const place = await this.db.query.places.findFirst({
-			where: {
-				id: data.id,
-			},
-			with: $includes.place.with,
-		});
+		const place = await findPlaceById.execute(this.db, { id: data.id });
 
 		invariant(place, 'NOT_FOUND', `Place with ID ${data.id} not found`);
 
 		return place;
 	}
 
+	async getMeta(placeId: string, userId: string) {
+		const meta = await this.db.transaction(async (tx) => {
+			const f = await findFavoriteByPlaceIdAndUserId.execute(tx, {
+				placeId,
+				userId,
+			});
+
+			const b = await findBookmarkByPlaceIdAndUserId.execute(tx, {
+				placeId,
+				userId,
+			});
+
+			return {
+				isFavorite: f !== undefined,
+				isBookmarked: b !== undefined,
+			};
+		});
+
+		return meta;
+	}
+
 	async isFavorite(placeId: string, userId: string): Promise<boolean> {
 		const fav = await this.db.query.favorites.findFirst({
+			columns: {
+				id: true,
+			},
 			where: {
 				placeId: placeId,
 				userId: userId,
@@ -44,6 +70,9 @@ export class PlacesRepository {
 
 	async isBookmarked(placeId: string, userId: string): Promise<boolean> {
 		const bookmark = await this.db.query.bookmarks.findFirst({
+			columns: {
+				id: true,
+			},
 			where: {
 				placeId: placeId,
 				userId: userId,
