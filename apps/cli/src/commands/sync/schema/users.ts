@@ -20,7 +20,6 @@ export class UsersSchema extends AbstractSchema {
 					{
 						name: 'username',
 						type: 'string',
-
 					},
 					{
 						name: 'image',
@@ -70,12 +69,9 @@ export class UsersSchema extends AbstractSchema {
 				image: user.image,
 			}));
 
-			await this.client
-				.collections(this.name)
-				.documents()
-				.import(docs, {
-					action: 'upsert',
-				});
+			await this.client.collections(this.name).documents().import(docs, {
+				action: 'upsert',
+			});
 		}
 	}
 }

@@ -49,11 +49,8 @@ export class CitiesSchema extends AbstractSchema {
 			location: [city.lat, city.lng],
 		}));
 
-		await this.client
-			.collections(this.name)
-			.documents()
-			.import(docs, {
-				action: 'upsert',
-			});
+		await this.client.collections(this.name).documents().import(docs, {
+			action: 'upsert',
+		});
 	}
 }

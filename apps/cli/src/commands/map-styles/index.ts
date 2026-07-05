@@ -22,10 +22,12 @@ const schema = z.array(
 	}),
 );
 
-const outputSchema = z.array(z.object({
-	key: z.string(),
-	text: z.string(),
-}));
+const outputSchema = z.array(
+	z.object({
+		key: z.string(),
+		text: z.string(),
+	}),
+);
 
 type TOutput = z.infer<typeof outputSchema>;
 
@@ -36,7 +38,9 @@ export const mapStyles = command({
 	name: 'map-styles',
 	desc: 'Gets the latest map styles from MapTiler repo and prints them to the console.',
 	options: {
-		includeDeprecated: boolean('include-deprecated').default(false).desc('Whether to include deprecated map styles in the output'),
+		includeDeprecated: boolean('include-deprecated')
+			.default(false)
+			.desc('Whether to include deprecated map styles in the output'),
 		codeUrl: string('code-url')
 			.default(defaultCodeUrl)
 			.desc('The URL to the mapstyle.ts file in the MapTiler Client repo'),

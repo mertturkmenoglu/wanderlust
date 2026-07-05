@@ -40,6 +40,7 @@ export function Trace(name?: string): MethodDecorator {
 }
 
 export function TraceAll(): ClassDecorator {
+	// biome-ignore lint/suspicious/noExplicitAny: I don't have a better type for this.
 	return (target: any) => {
 		const proto = target.prototype;
 		const className = target.name;

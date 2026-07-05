@@ -1,4 +1,4 @@
-import type { TDatabaseService } from "@wanderlust/db";
+import type { TDatabaseService } from '@wanderlust/db';
 
 export type TxFn = Parameters<TDatabaseService['transaction']>[0];
 

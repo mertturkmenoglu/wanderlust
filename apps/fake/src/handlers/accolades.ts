@@ -46,7 +46,7 @@ export async function generate() {
 		description: faker.lorem.paragraph(),
 		badge: faker.image.avatarGitHub(),
 		image: faker.image.url(),
-	}))
+	}));
 
 	await db.insert(schema.accolades).values(inserts);
 }

@@ -24,11 +24,13 @@ export async function generate() {
 			max: 3,
 		});
 
-		batch.push(...randomAccoladeIds.map((accoladeId) => ({
-			placeId,
-			accoladeId,
-			id: nanoid(),
-		})));
+		batch.push(
+			...randomAccoladeIds.map((accoladeId) => ({
+				placeId,
+				accoladeId,
+				id: nanoid(),
+			})),
+		);
 	}
 
 	const db = await getDb();

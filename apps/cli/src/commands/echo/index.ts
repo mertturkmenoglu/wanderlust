@@ -1,12 +1,11 @@
-import { command, positional } from "@drizzle-team/brocli";
+import { command, positional } from '@drizzle-team/brocli';
 
 export const echo = command({
-	name: "echo",
+	name: 'echo',
 	options: {
-		text: positional().desc("Text to echo").default("echo"),
+		text: positional().desc('Text to echo').default('echo'),
 	},
 	handler: (opts) => {
 		console.log(opts.text);
 	},
 });
-

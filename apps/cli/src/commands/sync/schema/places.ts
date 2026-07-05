@@ -93,8 +93,8 @@ export class PlacesSchema extends AbstractSchema {
 				accolades: {
 					with: {
 						accolade: true,
-					}
-				}
+					},
+				},
 			},
 		});
 	}
