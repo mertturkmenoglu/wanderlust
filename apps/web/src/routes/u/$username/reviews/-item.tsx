@@ -13,10 +13,10 @@ import type { Outputs } from '@/lib/orpc';
 import { toTitleCase } from '@/lib/text';
 
 type Props = {
-	review: Outputs['reviews']['get']['review'];
+	review: Outputs['reviews']['get'];
 };
 
-export function ReviewItem({ review }: Props) {
+export function ReviewItem({ review: { review, meta: _meta } }: Props) {
 	return (
 		<Link
 			to="/p/$id/reviews/$reviewId"
