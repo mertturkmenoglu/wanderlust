@@ -63,11 +63,13 @@ export function ItemVariant({
 			<ItemActions>
 				{ctx.place.accolades.length > 0 && (
 					<HoverCard>
-						<HoverCardTrigger asChild>
-							<Button variant="warning" size="icon">
-								<AwardIcon />
-							</Button>
-						</HoverCardTrigger>
+						<HoverCardTrigger
+							render={
+								<Button variant="warning" size="icon">
+									<AwardIcon />
+								</Button>
+							}
+						/>
 						<HoverCardContent className="flex flex-col gap-2 p-2">
 							{ctx.place.accolades.map((acc) => (
 								<Link

@@ -1,15 +1,16 @@
-import { Image } from '@unpic/react';
-import { Badge } from '@wanderlust/ui/components/badge';
+import { Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
-	Card,
-	CardAction,
-	CardHeader,
-	CardTitle,
-} from '@wanderlust/ui/components/card';
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { useNumberFormatter } from '@/hooks/use-number-formatter';
-import { userImage } from '@/lib/image';
-import { ipx } from '@/lib/ipx';
+import { ArrowRightIcon } from 'lucide-react';
+import { UserImage } from '../user-image';
 import { useUserCardContext } from './context';
 import type { Props } from './types';
 
@@ -19,28 +20,33 @@ export function ItemVariant({
 	...props
 }: Props) {
 	const ctx = useUserCardContext();
-	const numFmt = useNumberFormatter();
 
 	return (
-		<Card
-			size="sm"
-			className={cn('group @container relative', className)}
-			{...props}
-		>
-			<Image
-				src={ipx(userImage(props.profile.image), 'w_512')}
-				alt={props.profile.name ?? ''}
-				layout="constrained"
-				aspectRatio={16 / 9}
-				height={128}
-				className="aspect-video w-full object-cover"
-			/>
-			<CardHeader>
-				<CardTitle className="line-clamp-1">{ctx.profile.name}</CardTitle>
-				<CardAction>
-					<Badge>@{ctx.profile.username}</Badge>
-				</CardAction>
-			</CardHeader>
-		</Card>
+		<Item variant="outline" size="default" className={cn(className)} {...props}>
+			<ItemMedia>
+				<UserImage src={ctx.profile.image} />
+			</ItemMedia>
+			<ItemContent>
+				<ItemTitle className="line-clamp-1" title={ctx.profile.name}>
+					{ctx.profile.name}
+				</ItemTitle>
+				<ItemDescription className="line-clamp-1 text-primary text-sm">
+					@{ctx.profile.username}
+				</ItemDescription>
+			</ItemContent>
+
+			<ItemActions>
+				<Link
+					to="/u/$username"
+					params={{
+						username: ctx.profile.username,
+					}}
+					className={buttonVariants({ variant: 'midnight', size: 'sm' })}
+				>
+					<span>View Profile</span>
+					<ArrowRightIcon />
+				</Link>
+			</ItemActions>
+		</Item>
 	);
 }

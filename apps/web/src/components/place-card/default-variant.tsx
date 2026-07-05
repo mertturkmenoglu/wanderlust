@@ -52,17 +52,19 @@ export function DefaultVariant({
 			/>
 			{ctx.place.accolades.length > 0 && (
 				<HoverCard>
-					<HoverCardTrigger asChild>
-						<div
-							className={buttonVariants({
-								variant: 'warning',
-								size: 'icon',
-								className: 'absolute top-2 left-2 z-10',
-							})}
-						>
-							<AwardIcon />
-						</div>
-					</HoverCardTrigger>
+					<HoverCardTrigger
+						render={
+							<div
+								className={buttonVariants({
+									variant: 'warning',
+									size: 'icon',
+									className: 'absolute top-2 left-2 z-10',
+								})}
+							>
+								<AwardIcon />
+							</div>
+						}
+					/>
 					<HoverCardContent className="flex flex-col gap-2 p-2">
 						{ctx.place.accolades.map((acc) => (
 							<Link
@@ -109,7 +111,8 @@ export function DefaultVariant({
 				{ctx.rating !== '0.0' && (
 					<CardAction>
 						<Badge variant="default" size="default" className="ml-auto w-fit">
-							<span className="text-white">{ctx.rating}</span> <StarIcon className="fill-white text-white" />
+							<span className="text-white">{ctx.rating}</span>{' '}
+							<StarIcon className="fill-white text-white" />
 							<span className="text-white/70 text-xs leading-px tracking-tighter">
 								({numFmt.format(ctx.place.totalVotes)})
 							</span>
