@@ -1,4 +1,5 @@
 import { render } from '@react-email/components';
+import type { TRedisService } from '@wanderlust/cache';
 import type { TConfigService } from '@wanderlust/config';
 import {
 	ForgotPasswordEmail,
@@ -7,7 +8,6 @@ import {
 	WelcomeEmail,
 } from '@wanderlust/email';
 import { Queue, Worker } from 'bullmq';
-import IORedis from 'ioredis';
 import z from 'zod';
 
 const schemas = z.object({
@@ -32,15 +32,14 @@ type Schemas = z.infer<typeof schemas>;
 
 type DataType = Schemas[JobName];
 
-export function initEmailJobs(cfg: TConfigService, email: TEmailService) {
-	const connection = new IORedis({
-		host: cfg.redis.host,
-		port: cfg.redis.port,
-		db: cfg.redis.db,
-		maxRetriesPerRequest: null,
+export function initEmailJobs(
+	cfg: TConfigService,
+	redis: TRedisService,
+	email: TEmailService,
+) {
+	const queue = new Queue<DataType, unknown, JobName>('email', {
+		connection: redis.options,
 	});
-
-	const queue = new Queue<DataType, unknown, JobName>('email', { connection });
 	const worker = new Worker<DataType, unknown, JobName>(
 		'email',
 		async (job) => {
@@ -87,7 +86,7 @@ export function initEmailJobs(cfg: TConfigService, email: TEmailService) {
 				}
 			}
 		},
-		{ connection },
+		{ connection: redis.options, name: 'email-worker', concurrency: 5 },
 	);
 
 	return {

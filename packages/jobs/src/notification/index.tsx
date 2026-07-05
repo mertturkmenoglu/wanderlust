@@ -20,7 +20,7 @@ export function initNotificationJobs(
 	db: TDatabaseService,
 ) {
 	const queue = new Queue<DataType, unknown, JobName>('notification', {
-		connection: redis,
+		connection: redis.options,
 	});
 	const worker = new Worker<DataType, unknown, JobName>(
 		'notification',
@@ -42,7 +42,7 @@ export function initNotificationJobs(
 				}
 			}
 		},
-		{ connection: redis },
+		{ connection: redis.options, name: 'notification-worker', concurrency: 5 },
 	);
 
 	return {

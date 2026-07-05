@@ -35,7 +35,7 @@ function init(
 	redis: TRedisService,
 	db: TDatabaseService,
 ) {
-	const emailJobs = initEmailJobs(cfg, email);
+	const emailJobs = initEmailJobs(cfg, redis, email);
 	const notificationJobs = initNotificationJobs(redis, db);
 
 	return {
