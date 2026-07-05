@@ -11,6 +11,7 @@ import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { unique } from '@/lib/unique';
+import type { CreateReviewParams } from './types';
 
 @injectable()
 export class ReviewsRepository {
@@ -44,7 +45,7 @@ export class ReviewsRepository {
 		return result;
 	}
 
-	async create(userId: string, data: dto.CreateInput, urls: string[]) {
+	async create(userId: string, data: CreateReviewParams) {
 		const results = await this.db.transaction(async (tx) => {
 			const [review] = await tx
 				.insert(schema.reviews)
@@ -55,14 +56,16 @@ export class ReviewsRepository {
 					content: data.content,
 					rating: data.rating,
 					visitedAt: data.visitedAt,
+					detectedLanguage: data.detectedLanguage,
+					totalLikes: 0,
 				})
 				.returning();
 
 			invariant(review, 'INTERNAL_SERVER_ERROR', 'Failed to create review');
 
-			if (urls.length > 0) {
+			if (data.urls.length > 0) {
 				await tx.insert(schema.assets).values(
-					urls.map((url, i) => ({
+					data.urls.map((url, i) => ({
 						entityId: review.id,
 						entityType: 'review' as const,
 						url,
@@ -71,7 +74,7 @@ export class ReviewsRepository {
 				);
 			}
 
-			await this.db
+			await tx
 				.update(schema.places)
 				.set({
 					totalVotes: dz.sql`${schema.places.totalVotes} + 1`,
