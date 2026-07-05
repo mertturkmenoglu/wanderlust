@@ -27,12 +27,22 @@ export const requestLogger = winston.createLogger({
 		colorize({ all: true }),
 		timestamp({ format: 'HH:mm:ss' }),
 		align(),
-		printf(
-			({ level, message, timestamp, ...meta }) => {
-				const metaStr = Object.keys(meta).length ? `\n${JSON.stringify(meta, null, 2)}` : '';
-				return `[${timestamp}] ${level}: ${message}${metaStr}`;
-			}
-		),
+		printf(({ level, message, timestamp, ...meta }) => {
+			try {
+				delete meta.trace_id;
+				delete meta.span_id;
+				delete meta.trace_flags;
+			} catch {}
+
+			const metaStr = Object.keys(meta).length
+				? `\n${JSON.stringify(meta, null, 2)}`
+				: '';
+
+			const msg =
+				typeof message === 'string' ? message.trim() : JSON.stringify(message);
+
+			return `[${timestamp}] ${level}: ${msg}${metaStr}`;
+		}),
 	),
 	transports: [new winston.transports.Console()],
 });
