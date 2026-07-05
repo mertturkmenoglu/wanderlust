@@ -90,6 +90,15 @@ services:
       - AWS_SECRET_ACCESS_KEY=secret
       - S3_BUCKET=default
 
+  wl-jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: wl-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - 16686:16686
+      - 4318:4318
+
 networks:
   wl-searchnet:
   wl-redisnet:
