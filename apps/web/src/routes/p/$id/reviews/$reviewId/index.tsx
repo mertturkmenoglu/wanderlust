@@ -31,7 +31,7 @@ function RouteComponent() {
 				text="Go back to reviews"
 			/>
 
-			<div className="mx-auto my-16 max-w-3xl">
+			<div className="mx-auto max-w-3xl md:my-16">
 				<ReviewCard review={data} />
 
 				<SuspenseWrapper>
