@@ -509,6 +509,7 @@ export const reviews = p.pgTable(
 		content: p.text().notNull(),
 		rating: p.smallint().notNull(),
 		totalLikes: p.bigint({ mode: 'number' }).notNull().default(0),
+		detectedLanguage: p.text(),
 		visitedAt: p.timestamp({ withTimezone: true }).notNull(),
 		createdAt: p.timestamp({ withTimezone: true }).notNull().defaultNow(),
 		updatedAt: p
