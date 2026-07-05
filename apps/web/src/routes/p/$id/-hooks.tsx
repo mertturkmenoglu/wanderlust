@@ -12,6 +12,7 @@ export function useTrackRecentViews() {
 
 	const { place } = useLoaderData({ from: '/p/$id/' });
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: setValues is intentionally omitted from the dependency array.
 	useEffect(() => {
 		if (!isRecentViewsEnabled) {
 			clearValues();

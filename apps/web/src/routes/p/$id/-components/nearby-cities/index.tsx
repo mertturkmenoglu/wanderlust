@@ -18,7 +18,7 @@ type Props = {
 
 export function NearbyCities(props: Props) {
 	return (
-		<SuspenseWrapper placeholderVariant="spinner">
+		<SuspenseWrapper variant="spinner">
 			<Content {...props} />
 		</SuspenseWrapper>
 	);

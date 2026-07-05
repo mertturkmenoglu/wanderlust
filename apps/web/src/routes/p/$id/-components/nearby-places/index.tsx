@@ -6,7 +6,7 @@ import type { Props } from './types';
 
 export function NearbyPlaces(props: Props) {
 	return (
-		<SuspenseWrapper placeholderVariant="spinner">
+		<SuspenseWrapper variant="spinner">
 			<Content {...props} />
 		</SuspenseWrapper>
 	);

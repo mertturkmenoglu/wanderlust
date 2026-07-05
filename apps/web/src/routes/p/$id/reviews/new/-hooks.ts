@@ -58,10 +58,11 @@ export function useCreateReviewMutation() {
 				form.reset();
 				toast.success('Review added');
 				await navigate({
-					to: '/p/$id', params: {
-						id: v.review.placeId
-					}
-				})
+					to: '/p/$id',
+					params: {
+						id: v.review.placeId,
+					},
+				});
 			},
 		}),
 	);
