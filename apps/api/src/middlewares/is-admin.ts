@@ -20,3 +20,7 @@ export const isAdmin = os
 			context,
 		});
 	});
+
+Object.defineProperty(isAdmin, 'name', {
+	value: 'isAdmin',
+});
