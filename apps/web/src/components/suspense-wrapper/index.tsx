@@ -7,27 +7,33 @@ import { AppMessage } from '@/components/app-message';
 
 type Props = {
 	children: React.ReactNode;
-	placeholderClass?: string;
-	placeholderVariant?: 'spinner' | 'skeleton';
+	variant?: 'spinner' | 'skeleton';
+	classNames?: Partial<{
+		root: string;
+		placeholder: string;
+	}>;
 };
 
 export function SuspenseWrapper({
 	children,
-	placeholderClass,
-	placeholderVariant = 'spinner',
+	classNames,
+	variant = 'spinner',
 }: Props) {
 	return (
 		<ErrorBoundary fallback={<AppMessage error="Something went wrong" />}>
 			<Suspense
 				fallback={
-					<div className="flex justify-center">
-						{placeholderVariant === 'spinner' ? (
+					<div className={cn('flex justify-center', classNames?.root)}>
+						{variant === 'spinner' ? (
 							<Spinner
-								className={cn('mx-auto my-4 size-12', placeholderClass)}
+								className={cn('mx-auto my-4 size-12', classNames?.placeholder)}
 							/>
 						) : (
 							<Skeleton
-								className={cn('mx-auto my-4 h-full w-full', placeholderClass)}
+								className={cn(
+									'mx-auto my-4 h-full w-full',
+									classNames?.placeholder,
+								)}
 							/>
 						)}
 					</div>
