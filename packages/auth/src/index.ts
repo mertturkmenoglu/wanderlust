@@ -168,6 +168,35 @@ function init(
 				httpOnly: true,
 			},
 		},
+		secondaryStorage: {
+			async delete(key) {
+				await cache.namespace('auth').delete({
+					key,
+				});
+			},
+			get(key) {
+				return cache.namespace('auth').get({
+					key,
+				});
+			},
+			set(key, value, maxAge) {
+				return cache.namespace('auth').set({
+					key,
+					value,
+					ttl: maxAge,
+				});
+			},
+			getAndDelete(key) {
+				return cache.namespace('auth').pull(key);
+			},
+			increment(key, ttl) {
+				return cache.namespace('auth').getOrSet({
+					key,
+					ttl,
+					factory: async () => 1,
+				});
+			},
+		},
 		session: {
 			cookieCache: {
 				enabled: true,
