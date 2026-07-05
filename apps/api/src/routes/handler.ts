@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api';
 import { OpenAPIHandler } from '@orpc/openapi/fetch';
 import { onError } from '@orpc/server';
 import { RPCHandler } from '@orpc/server/fetch';
@@ -14,7 +15,18 @@ export function getHandlers() {
 	});
 
 	const rpc = new RPCHandler(appRouter, {
-		interceptors: [onError(devErrorLogger)],
+		interceptors: [
+			onError(devErrorLogger),
+			({ request, next }) => {
+				const span = trace.getActiveSpan();
+
+				request.signal?.addEventListener('abort', () => {
+					span?.addEvent('aborted', { reason: String(request.signal?.reason) });
+				});
+
+				return next();
+			},
+		],
 	});
 
 	return {
