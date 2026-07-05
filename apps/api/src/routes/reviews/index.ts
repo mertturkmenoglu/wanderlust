@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api';
 import { implement } from '@orpc/server';
 import { reviews } from '@wanderlust/contract';
 import { container } from '@/ioc';
@@ -25,7 +26,13 @@ export const module = defineModule({
 				return result;
 			}),
 			create: os.create.use(requireAuth).handler(async ({ input, context }) => {
+				const span = trace.getActiveSpan();
+
 				const { id: userId, username } = context.session.user;
+
+				span?.setAttribute('user.id', userId);
+				span?.setAttribute('user.username', username);
+
 				const result = await svc.create(userId, username, input);
 
 				return result;

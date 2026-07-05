@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api';
 import { Pagination } from '@wanderlust/common';
 import type { reviews as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
@@ -46,6 +47,20 @@ export class ReviewsRepository {
 	}
 
 	async create(userId: string, data: CreateReviewParams) {
+		const span = trace.getActiveSpan();
+
+		span?.addEvent(
+			'review.create.repository',
+			{
+				'user.id': userId,
+				'place.id': data.placeId,
+				'review.rating': data.rating,
+				'review.visitedAt': data.visitedAt?.toISOString() || 'unknown',
+				'review.detectedLanguage': data.detectedLanguage || 'unknown',
+			},
+			new Date(),
+		);
+
 		const results = await this.db.transaction(async (tx) => {
 			const [review] = await tx
 				.insert(schema.reviews)

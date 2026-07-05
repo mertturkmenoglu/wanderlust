@@ -1,4 +1,6 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: TODO */
+
+import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { reviews as dto } from '@wanderlust/contract';
@@ -47,13 +49,32 @@ export class ReviewsService {
 		username: string,
 		data: dto.CreateInput,
 	): Promise<dto.CreateOutput> {
+		const span = trace.getActiveSpan();
+
 		const files = data.files || [];
 		const urls = await this.uploadFiles(files);
+
+		span?.addEvent(
+			'review.files',
+			{
+				count: files.length,
+				urls: urls.join(','),
+			},
+			new Date(),
+		);
 
 		try {
 			const detectedLanguage = detectLanguage(data.content, {
 				outputFormat: LangCodeFormats.TwoLetter,
 			});
+
+			span?.addEvent(
+				'review.language.detected',
+				{
+					'language.detected': detectedLanguage ?? 'unknown',
+				},
+				new Date(),
+			);
 
 			const [insertResult, place] = await this.repo.create(userId, {
 				...data,
@@ -61,9 +82,28 @@ export class ReviewsService {
 				urls,
 			});
 
+			span?.addEvent(
+				'review.create',
+				{
+					'review.id': insertResult.id,
+					'review.place.id': place.id,
+					'review.place.name': place.name,
+				},
+				new Date(),
+			);
+
 			await this.cache.namespace('reviews-ratings').delete({
 				key: data.placeId,
 			});
+
+			span?.addEvent(
+				'review.create.place-ratings-cache-cleared',
+				{
+					'place.id': place.id,
+					'place.name': place.name,
+				},
+				new Date(),
+			);
 
 			await this.activities.addActivity(username, 'create_review', {
 				review: {
@@ -75,11 +115,40 @@ export class ReviewsService {
 				},
 			});
 
+			span?.addEvent(
+				'review.create.review-activity-added',
+				{
+					username: username,
+					'review.id': insertResult.id,
+					'place.id': place.id,
+					'place.name': place.name,
+				},
+				new Date(),
+			);
+
 			return {
 				review: insertResult,
 			};
-		} catch {
-			await this.removeAssets(urls);
+		} catch (err) {
+			span?.recordException(err as Error);
+			span?.addEvent(
+				'review.create.error',
+				{
+					message: (err as Error).message,
+				},
+				new Date(),
+			);
+
+			const allDeleted = await this.removeAssets(urls);
+
+			span?.addEvent(
+				'review.create.cleanup',
+				{
+					'assets.allDeleted': allDeleted,
+					'assets.urls': urls.join(','),
+				},
+				new Date(),
+			);
 
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to create review',
