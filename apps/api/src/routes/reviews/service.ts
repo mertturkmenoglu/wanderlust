@@ -11,6 +11,7 @@ import { nanoid } from '@wanderlust/uid';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
+import { detectLanguage, LangCodeFormats } from '@/lib/lang';
 import { ReviewsRepository } from './repository';
 
 @injectable()
@@ -50,7 +51,15 @@ export class ReviewsService {
 		const urls = await this.uploadFiles(files);
 
 		try {
-			const [insertResult, place] = await this.repo.create(userId, data, urls);
+			const detectedLanguage = detectLanguage(data.content, {
+				outputFormat: LangCodeFormats.TwoLetter,
+			});
+
+			const [insertResult, place] = await this.repo.create(userId, {
+				...data,
+				detectedLanguage,
+				urls,
+			});
 
 			await this.cache.namespace('reviews-ratings').delete({
 				key: data.placeId,
