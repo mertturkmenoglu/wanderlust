@@ -22,6 +22,12 @@ export function Likes() {
 		}),
 	);
 
+	const isEmpty = query.data.users.length === 0;
+
+	if (isEmpty) {
+		return null;
+	}
+
 	return (
 		<div>
 			<div className="text-lg">Likes</div>
