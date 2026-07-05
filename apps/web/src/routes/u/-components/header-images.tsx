@@ -73,7 +73,7 @@ export function HeaderImages({ className }: Props) {
 					src={ipx(imgProfile, 'w_512')}
 					imgClassName="size-48 md:size-32 ring-4 ring-white bg-white"
 					fallbackClassName="size-48 md:size-32 ring-4 ring-white bg-white"
-					className="absolute inset-x-0 -bottom-16 mx-auto size-32 bg-white ring-4 ring-white md:mx-16"
+					className="absolute inset-x-0 -bottom-16 mx-auto size-32 bg-background ring-4 ring-background md:mx-16"
 				/>
 			</button>
 
