@@ -1,4 +1,3 @@
-import { redact } from '@arcjet/redact';
 import { trace } from '@opentelemetry/api';
 import { ORPCError, os } from '@orpc/server';
 import type { Context } from '@/lib/context';
@@ -12,11 +11,15 @@ export const requireAuth = os
 			throw new ORPCError('UNAUTHORIZED');
 		}
 
-		const [user] = await redact(JSON.stringify(context.session.user), {
-			entities: ['email'],
-		});
+		// Redat email address from the user object before logging it to avoid leaking sensitive information.
+		const {
+			user: { email, ...user },
+		} = context.session;
 
-		span?.setAttribute('auth.user', user);
+		span?.setAttribute('auth.user.id', user.id);
+		span?.setAttribute('auth.user.username', user.username);
+		span?.setAttribute('auth.user.banned', user.banned ? 'true' : 'false');
+		span?.setAttribute('auth.user.role', user.role ?? 'user');
 
 		return next({
 			context: {
