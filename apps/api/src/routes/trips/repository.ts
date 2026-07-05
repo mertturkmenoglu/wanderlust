@@ -11,10 +11,12 @@ import { and, count, desc, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import type { Tx } from '@/lib/transactions';
 import { FavoritesRepository } from '../favorites/repository';
 
 @injectable()
+@TraceAll()
 export class TripsRepository {
 	private readonly db: TDatabaseService;
 

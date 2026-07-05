@@ -9,9 +9,11 @@ import { nanoid } from '@wanderlust/uid';
 import { fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import { UsersRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class UsersService {
 	private readonly storage: TStorageService;
 

@@ -9,10 +9,12 @@ import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService, type ActivityItem } from '@/lib/activities';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
 import * as statements from './statements';
 
 @injectable()
+@TraceAll()
 export class UsersRepository {
 	private readonly db: TDatabaseService;
 	private readonly cache: TCacheService;

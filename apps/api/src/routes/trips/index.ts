@@ -5,6 +5,7 @@ import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { TripsRepository } from './repository';
 import { TripsService } from './service';
 
@@ -14,7 +15,8 @@ export const module = defineModule({
 		const os = implement(trips.contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(TripsService);
 

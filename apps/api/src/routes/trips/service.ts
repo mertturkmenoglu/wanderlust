@@ -6,10 +6,12 @@ import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import * as authz from './authz';
 import { TripsRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class TripsService {
 	private readonly jobs: TJobsService;
 	private readonly activities: ActivitiesService;
