@@ -447,6 +447,7 @@ export const collectionsPlaces = p.pgTable(
 	(table) => [
 		p.primaryKey({ columns: [table.collectionId, table.placeId] }),
 		p.unique().on(table.collectionId, table.index),
+		p.index().on(table.placeId),
 	],
 );
 
@@ -467,6 +468,7 @@ export const collectionsCities = p.pgTable(
 	(table) => [
 		p.primaryKey({ columns: [table.collectionId, table.cityId] }),
 		p.unique().on(table.collectionId, table.index),
+		p.index().on(table.cityId),
 	],
 );
 
