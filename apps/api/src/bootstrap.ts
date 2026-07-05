@@ -6,11 +6,13 @@ import { EmailService } from '@wanderlust/email';
 import { JobsService } from '@wanderlust/jobs';
 import { SearchService } from '@wanderlust/search';
 import { StorageService } from '@wanderlust/storage';
-import { container } from './ioc';
+import { container, TYPES } from './ioc';
 import { ActivitiesService } from './lib/activities';
+import { logger } from './lib/logger';
 import { exports } from './routes';
 
 export async function bootstrapServices() {
+	container.bind(TYPES.Logger).toConstantValue(logger);
 	container.bind(ConfigService).toSelf().inSingletonScope();
 	container.bind(DatabaseService).toSelf().inSingletonScope();
 	container.bind(StorageService).toSelf().inSingletonScope();
