@@ -6,6 +6,7 @@ import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
+import { withTracing } from '@/middlewares/with-tracing';
 import { ReviewsRepository } from './repository';
 import { ReviewsService } from './service';
 
@@ -14,7 +15,8 @@ export const module = defineModule({
 	router: () => {
 		const os = implement(reviews.contract)
 			.$context<Context>()
-			.use(withErrorNormalization);
+			.use(withErrorNormalization)
+			.use(withTracing);
 
 		const svc = container.get(ReviewsService);
 

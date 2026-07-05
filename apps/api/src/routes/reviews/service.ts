@@ -14,9 +14,11 @@ import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { detectLanguage, LangCodeFormats } from '@/lib/lang';
+import { TraceAll } from '@/lib/tracer';
 import { ReviewsRepository } from './repository';
 
 @injectable()
+@TraceAll()
 export class ReviewsService {
 	private readonly storage: TStorageService;
 	private readonly cache: TCacheService;
@@ -206,7 +208,12 @@ export class ReviewsService {
 		userId: string | null,
 		data: dto.ListByPlaceIdInput,
 	): Promise<dto.ListByPlaceIdOutput> {
-		const result = await this.repo.listByPlaceId(data);
+		const result = await this.cache.namespace('reviews').getOrSet({
+			key: `places:${data.id}:page:${data.page}:pageSize:${data.pageSize}:sort:${data.sortBy}:order:${data.sortOrd}:min:${data.minRating}:max:${data.maxRating}`,
+			ttl: '10m',
+			factory: async () => this.repo.listByPlaceId(data),
+			grace: '1m',
+		});
 
 		const likes = await this.repo.getLikedStatuses(
 			userId,

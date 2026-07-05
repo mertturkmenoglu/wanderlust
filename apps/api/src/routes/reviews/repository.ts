@@ -11,10 +11,13 @@ import { nanoid } from '@wanderlust/uid';
 import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
+import { countByPlaceId } from './statements';
 import type { CreateReviewParams } from './types';
 
 @injectable()
+@TraceAll()
 export class ReviewsRepository {
 	private readonly db: TDatabaseService;
 
@@ -226,12 +229,18 @@ export class ReviewsRepository {
 		const offset = Pagination.getOffset(data);
 		const min = data.minRating || 0;
 		const max = data.maxRating || 5;
+		const sortBy = data.sortBy
+			? data.sortBy === 'created_at'
+				? 'createdAt'
+				: data.sortBy
+			: 'createdAt';
+		const sortOrd = data.sortOrd || 'desc';
 
 		const result = await this.db.query.reviews.findMany({
 			where: {
 				placeId: data.id,
 				rating: {
-					gt: min,
+					gte: min,
 					lte: max,
 				},
 			},
@@ -246,40 +255,22 @@ export class ReviewsRepository {
 				},
 				assets: true,
 			},
-			orderBy: (reviews, { desc, asc }) => {
-				const sortBy = data.sortBy || 'created_at';
-				const sortOrd = data.sortOrd || 'desc';
-
-				if (sortBy === 'created_at') {
-					return sortOrd === 'asc'
-						? asc(reviews.createdAt)
-						: desc(reviews.createdAt);
-				}
-
-				if (sortBy === 'rating') {
-					return sortOrd === 'asc' ? asc(reviews.rating) : desc(reviews.rating);
-				}
-
-				if (sortBy === 'likes') {
-					return sortOrd === 'asc'
-						? asc(reviews.totalLikes)
-						: desc(reviews.totalLikes);
-				}
-
-				return sortOrd === 'asc' ? asc(reviews.rating) : desc(reviews.rating);
+			orderBy: {
+				[sortBy]: sortOrd,
 			},
 			offset,
 			limit: data.pageSize,
 		});
 
-		const totalRecords = await this.db.$count(
-			schema.reviews,
-			dz.and(
-				dz.eq(schema.reviews.placeId, data.id),
-				dz.gte(schema.reviews.rating, min),
-				dz.lte(schema.reviews.rating, max),
-			),
-		);
+		const [total] = await countByPlaceId.execute(this.db, {
+			placeId: data.id,
+			minRating: min,
+			maxRating: max,
+		});
+
+		invariant(total, 'INTERNAL_SERVER_ERROR', 'Failed to count reviews');
+
+		const totalRecords = total.count;
 
 		return {
 			reviews: result,
@@ -497,17 +488,17 @@ export class ReviewsRepository {
 			return [];
 		}
 
-		const result = await this.db
-			.select({
-				reviewId: schema.reviewLikes.reviewId,
-			})
-			.from(schema.reviewLikes)
-			.where(
-				dz.and(
-					dz.eq(schema.reviewLikes.userId, userId),
-					dz.inArray(schema.reviewLikes.reviewId, ids),
-				),
-			);
+		const result = await this.db.query.reviewLikes.findMany({
+			columns: {
+				reviewId: true,
+			},
+			where: {
+				userId: userId,
+				reviewId: {
+					in: ids,
+				},
+			},
+		});
 
 		return unique(result.map((r) => r.reviewId));
 	}
