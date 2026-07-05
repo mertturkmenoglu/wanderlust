@@ -56,15 +56,17 @@ export function ChangeUsername() {
 
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogTrigger asChild>
-				<Button variant="link" size="sm" className="px-0!">
-					Change
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button variant="link" size="sm" className="px-0!">
+						Change
+					</Button>
+				}
+			/>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Change Username</AlertDialogTitle>
-					<AlertDialogDescription>
+					<AlertDialogDescription className="w-full">
 						<form
 							id="change-username-form"
 							onSubmit={form.handleSubmit(async (data) => {
