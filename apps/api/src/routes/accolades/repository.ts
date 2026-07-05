@@ -1,13 +1,18 @@
 import { Pagination } from '@wanderlust/common';
 import type { accolades as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import {
+	$includes,
+	DatabaseService,
+	type TDatabaseService,
+} from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { slugifyWithRandom } from '@/lib/slug';
 import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
+import { findAssignments } from './statements';
 
 @injectable()
 @TraceAll()
@@ -95,10 +100,11 @@ export class AccoladesRepository {
 		userId: string | null,
 		data: dto.GetPlacesInput,
 	): Promise<dto.GetPlacesOutput> {
-		const assignments = await this.db.query.accoladeAssignments.findMany({
-			where: {
-				accoladeId: data.id,
-			},
+		const offset = Pagination.getOffset(data);
+		const limit = data.pageSize;
+
+		const assignments = await findAssignments.execute(this.db, {
+			id: data.id,
 		});
 
 		const places = await this.db.query.places.findMany({
@@ -107,9 +113,9 @@ export class AccoladesRepository {
 					in: assignments.map((aa) => aa.placeId),
 				},
 			},
-			with: schema.$includes.place.with,
-			offset: Pagination.getOffset(data),
-			limit: data.pageSize,
+			with: $includes.place.with,
+			offset,
+			limit,
 		});
 
 		const favorites = await this.favoritesRepo.getFavoriteStatuses(
