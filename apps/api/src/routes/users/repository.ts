@@ -329,6 +329,7 @@ export class UsersRepository {
 				banner: schema.users.banner,
 				bio: schema.users.bio,
 				website: schema.users.website,
+				location: schema.users.location,
 				followersCount: schema.users.followersCount,
 				followingCount: schema.users.followingCount,
 				createdAt: schema.users.createdAt,
