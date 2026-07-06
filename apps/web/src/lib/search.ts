@@ -1,6 +1,6 @@
 import type { IndexUiState } from 'instantsearch.js';
+import type { ConfigurationOptions } from 'typesense/lib/Typesense/Configuration';
 import TypesenseInstantSearchAdapter, {
-	type BaseAdapterOptions,
 	type BaseSearchParameters,
 } from 'typesense-instantsearch-adapter';
 import { env } from './env';
@@ -66,7 +66,7 @@ export type TypeSenseCollection = 'places' | 'cities' | 'users';
 type BaseSchema = Record<string, any>;
 
 export class SearchService<T extends BaseSchema> {
-	getServerOptions(): BaseAdapterOptions['server'] {
+	getServerOptions(): ConfigurationOptions {
 		return {
 			apiKey: env.VITE_SEARCH_CLIENT_API_KEY,
 			nodes: [

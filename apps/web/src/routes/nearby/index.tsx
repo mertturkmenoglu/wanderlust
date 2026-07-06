@@ -5,6 +5,7 @@ import { Container } from './-components/container';
 
 export const Route = createFileRoute('/nearby/')({
 	component: RouteComponent,
+	ssr: false,
 });
 
 function RouteComponent() {

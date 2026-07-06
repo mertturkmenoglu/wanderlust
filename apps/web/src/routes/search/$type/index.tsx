@@ -9,6 +9,7 @@ import {
 	useUsersSearchClient,
 } from '@/hooks/use-search-client';
 import { deserializeParams, serializeParams } from '@/lib/search';
+import { seo } from '@/lib/seo';
 import { CitiesContainer } from './-cities';
 import { PlacesContainer } from './-places';
 import { UsersContainer } from './-users';
@@ -90,6 +91,31 @@ export const Route = createFileRoute('/search/$type/')({
 		if (type !== 'places' && type !== 'cities' && type !== 'users') {
 			throw new Error(`Invalid search type: ${type}`);
 		}
+	},
+	head: () => {
+		const { meta, links } = seo({
+			title: 'Search',
+			description: 'Search for places, cities, and users on Wanderlust',
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: 'Search',
+				type: 'website',
+				url: '/search/',
+				locale: 'en_US',
+				description: 'Search for places, cities, and users on Wanderlust',
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: 'Search',
+				description: 'Search for places, cities, and users on Wanderlust',
+			},
+		});
+
+		return {
+			meta,
+			links,
+		};
 	},
 	validateSearch: schema,
 });

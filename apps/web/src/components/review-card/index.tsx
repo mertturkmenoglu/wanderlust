@@ -71,13 +71,7 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 	return (
 		<Item variant="default" className={cn('px-0', className)} size="sm">
 			<ItemHeader>
-				<Link
-					to="/u/$username"
-					params={{
-						username: review.user.username,
-					}}
-					className="flex items-center gap-4"
-				>
+				<div className="flex items-center gap-4">
 					<HoverCard open={open} onOpenChange={setOpen}>
 						<HoverCardTrigger delay={200}>
 							<UserImage
@@ -99,10 +93,17 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 					</HoverCard>
 
 					<div>
-						<div className="font-medium">{review.user.name}</div>
-						<div className="text-primary text-xs tracking-tight">
-							<span className="">@{review.user.username}</span>
-						</div>
+						<Link
+							to="/u/$username"
+							params={{
+								username: review.user.username,
+							}}
+						>
+							<div className="font-medium">{review.user.name}</div>
+							<div className="text-primary text-xs tracking-tight">
+								<span className="">@{review.user.username}</span>
+							</div>
+						</Link>
 						<Link
 							to="/p/$id/reviews/$reviewId"
 							params={{
@@ -112,7 +113,7 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 							className="mt-1 text-muted-foreground text-xs hover:underline"
 						>{`${formatDistanceToNow(review.createdAt)} ago`}</Link>
 					</div>
-				</Link>
+				</div>
 
 				<ItemActions className="flex-flex-row items-center">
 					{lang && (

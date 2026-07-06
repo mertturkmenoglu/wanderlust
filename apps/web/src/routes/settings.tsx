@@ -11,6 +11,7 @@ import { authGuard } from '@/lib/auth';
 import { Sidebar } from './settings/-components/sidebar';
 
 export const Route = createFileRoute('/settings')({
+	ssr: false,
 	component: RouteComponent,
 	beforeLoad: authGuard,
 });

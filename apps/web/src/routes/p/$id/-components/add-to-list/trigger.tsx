@@ -17,15 +17,17 @@ export function Trigger() {
 		<TooltipProvider>
 			<Tooltip>
 				<TooltipTrigger asChild>
-					<DialogTrigger asChild>
-						<Button
-							variant="ghost"
-							onClick={() => ctx.setOpen(true)}
-							size="icon"
-						>
-							<PlusIcon className={cn('size-6 text-primary')} />
-						</Button>
-					</DialogTrigger>
+					<DialogTrigger
+						render={
+							<Button
+								variant="ghost"
+								onClick={() => ctx.setOpen(true)}
+								size="icon"
+							>
+								<PlusIcon className={cn('size-6 text-primary')} />
+							</Button>
+						}
+					/>
 				</TooltipTrigger>
 				<TooltipContent side="bottom">
 					<p>Add to list</p>

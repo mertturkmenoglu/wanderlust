@@ -1,4 +1,5 @@
 import { cn } from '@wanderlust/ui/lib/utils';
+import { useMemo } from 'react';
 import { PlaceCard } from '@/components/place-card';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { useNearbyPlaces } from './hooks';
@@ -14,7 +15,21 @@ export function NearbyPlaces(props: Props) {
 
 function Content({ className }: Props) {
 	const query = useNearbyPlaces();
-	const places = (query.data.hits ?? []).slice(0, 5).map(({ document: p }) => ({
+	const hits = query.data?.hits ?? [];
+	const uniqueHits = useMemo(() => {
+		const seen = new Set<string>();
+		const newArray: typeof hits = [];
+
+		for (const hit of hits) {
+			if (!seen.has(hit.document.place.id)) {
+				seen.add(hit.document.place.id);
+				newArray.push(hit);
+			}
+		}
+
+		return newArray;
+	}, [hits]);
+	const places = uniqueHits.slice(0, 5).map(({ document: p }) => ({
 		...p.place,
 		name: p.name,
 		totalVotes: 0,

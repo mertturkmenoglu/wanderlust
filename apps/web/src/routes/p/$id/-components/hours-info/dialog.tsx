@@ -30,15 +30,17 @@ export function HoursDialog({ tz, hours }: Props) {
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<Button
-					variant="link"
-					className="px-0! text-xs tracking-tight"
-					size="sm"
-				>
-					See Opening Hours
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger
+				render={
+					<Button
+						variant="link"
+						className="px-0! text-xs tracking-tight"
+						size="sm"
+					>
+						See Opening Hours
+					</Button>
+				}
+			/>
 			<DialogContent className="w-xs">
 				<DialogHeader>
 					<DialogTitle>Opening Hours</DialogTitle>
@@ -68,11 +70,13 @@ export function HoursDialog({ tz, hours }: Props) {
 					))}
 				</div>
 				<DialogFooter>
-					<DialogClose asChild>
-						<Button variant="outline" size="sm">
-							Close
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button variant="outline" size="sm">
+								Close
+							</Button>
+						}
+					/>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

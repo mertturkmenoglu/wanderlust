@@ -10,6 +10,7 @@ import { NotificationItem } from './-item';
 export const Route = createFileRoute('/notifications/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	ssr: false,
 });
 
 function RouteComponent() {

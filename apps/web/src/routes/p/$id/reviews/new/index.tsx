@@ -12,6 +12,7 @@ import { useCreateReviewForm } from './-hooks';
 export const Route = createFileRoute('/p/$id/reviews/new/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	ssr: false,
 	loader: ({ params, context }) =>
 		context.queryClient.ensureQueryData(
 			orpc.places.get.queryOptions({

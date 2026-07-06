@@ -11,6 +11,7 @@ import { Loading } from './-loading';
 export const Route = createFileRoute('/change-accounts/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	ssr: false,
 	loader: async () => {
 		const { data, error } = await authClient.multiSession.listDeviceSessions();
 		if (error) throw error;

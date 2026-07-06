@@ -31,12 +31,14 @@ export function Content({ className }: PlanTripDialogProps) {
 				ctx.setOpen(o);
 			}}
 		>
-			<AlertDialogTrigger asChild>
-				<Button variant="ghost" onClick={() => ctx.setOpen(true)}>
-					<MapIcon className="size-6 text-primary" />
-					<span className="text-primary">Plan a trip</span>
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button variant="ghost" onClick={() => ctx.setOpen(true)}>
+						<MapIcon className="size-6 text-primary" />
+						<span className="text-primary">Plan a trip</span>
+					</Button>
+				}
+			/>
 			<AlertDialogContent className={cn(className)}>
 				<AlertDialogHeader>
 					<AlertDialogTitle className="flex items-center justify-between gap-2">

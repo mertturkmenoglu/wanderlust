@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { CategoriesBanner } from '@/components/banner/common';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { CityItem } from './-item';
 import { groupCitiesByCountry } from './-utils';
 
@@ -13,6 +14,45 @@ export const Route = createFileRoute('/cities/list/')({
 				input: {},
 			}),
 		),
+	head: () => {
+		const description = 'Explore cities and discover attractions on Wanderlust';
+
+		const { meta, links } = seo({
+			title: 'Cities',
+			description,
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: 'Cities',
+				type: 'website',
+				url: '/cities/list',
+				locale: 'en_US',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+				description,
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: 'Cities',
+				description,
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+			},
+		});
+
+		return {
+			meta,
+			links,
+		};
+	},
 });
 
 function RouteComponent() {
@@ -21,7 +61,11 @@ function RouteComponent() {
 
 	return (
 		<div className="mx-auto w-full max-w-7xl">
-			<CategoriesBanner />
+			<CategoriesBanner
+				classNames={{
+					root: 'my-8',
+				}}
+			/>
 
 			<div className="my-8">
 				{groups.map((group) => (

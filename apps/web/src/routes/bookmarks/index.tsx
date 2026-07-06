@@ -9,6 +9,7 @@ import { bookmarksSearchSchema } from './-hooks';
 export const Route = createFileRoute('/bookmarks/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	ssr: false,
 	loaderDeps: ({ search }) => ({ search }),
 	loader: ({ context, deps: { search } }) => {
 		context.queryClient.prefetchQuery(

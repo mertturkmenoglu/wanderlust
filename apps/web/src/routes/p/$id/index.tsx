@@ -7,6 +7,7 @@ import { AppBentoBanner } from '@/components/banner/common';
 import { ErrorComponent } from '@/components/error-component';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { Accolades } from './-components/accolades';
 import { Amenities } from './-components/amenities';
 import { Breadcrumb } from './-components/breadcrumb';
@@ -43,6 +44,55 @@ export const Route = createFileRoute('/p/$id/')({
 				},
 			}),
 		);
+	},
+	head: ({ loaderData }) => {
+		if (!loaderData) {
+			return {
+				title: 'Place Not Found',
+				meta: [
+					{
+						name: 'description',
+						content: 'Place not found',
+					},
+				],
+			};
+		}
+
+		const place = loaderData.place;
+
+		const description =
+			place.description ?? `Explore ${place.name} on Wanderlust`;
+
+		const images = place.assets.map((asset) => ({
+			url: asset.url,
+			alt: asset.description ?? place.name,
+		}));
+
+		const { meta, links } = seo({
+			title: place.name,
+			description,
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: place.name,
+				type: 'website',
+				url: `/p/${place.id}`,
+				locale: 'en_US',
+				images: images,
+				description,
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: place.name,
+				description,
+				images: images.map((image) => image.url),
+			},
+		});
+
+		return {
+			meta,
+			links,
+		};
 	},
 	errorComponent: ErrorComponent,
 	validateSearch: schema,

@@ -43,7 +43,7 @@ function Content({ className }: Props) {
 			<ScrollArea type="always">
 				<div className="my-4 flex gap-4">
 					{cities.map((c) => (
-						<Card className="w-60">
+						<Card key={`nearby-cities-${c.id}`} className="w-60">
 							<img src={c.image} alt="" className="aspect-video w-full" />
 							<CardHeader>
 								<CardTitle>{c.name}</CardTitle>

@@ -8,6 +8,7 @@ import { useInterleaveRenderer } from '@/components/interleave-renderer';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { TagNavigation } from '@/components/tag-navigation';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { CityBreadcrumb } from './-city-breadcrumb';
 import { CitySearchBanner } from './-city-search-banner';
 import { Description } from './-description';
@@ -31,6 +32,59 @@ export const Route = createFileRoute('/cities/$/')({
 				},
 			}),
 		);
+	},
+	head: ({ loaderData }) => {
+		if (!loaderData) {
+			return {
+				title: 'City Not Found',
+				meta: [
+					{
+						name: 'description',
+						content: 'City not found',
+					},
+				],
+			};
+		}
+
+		const city = loaderData.city;
+
+		const description = `Explore ${city.name} and discover attractions on Wanderlust`;
+
+		const { meta, links } = seo({
+			title: city.name,
+			description,
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: city.name,
+				type: 'website',
+				url: `/cities/${city.id}`,
+				locale: 'en_US',
+				images: [
+					{
+						url: city.image ?? '',
+						alt: city.name,
+					},
+				],
+				description,
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: city.name,
+				description,
+				images: [
+					{
+						url: city.image ?? '',
+						alt: city.name,
+					},
+				],
+			},
+		});
+
+		return {
+			meta,
+			links,
+		};
 	},
 	errorComponent: ErrorComponent,
 });

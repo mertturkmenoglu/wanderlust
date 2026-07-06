@@ -1,3 +1,4 @@
+import { ClientOnly } from '@tanstack/react-router';
 import { Separator } from '@wanderlust/ui/components/separator';
 import {
 	AccoladesBanner,
@@ -39,7 +40,9 @@ const listA: React.ReactNode[] = [
 
 	<EventBanner />,
 
-	<RecentlyViewed />,
+	<ClientOnly>
+		<RecentlyViewed />
+	</ClientOnly>,
 ];
 
 const listB: React.ReactNode[] = [];
