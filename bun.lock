@@ -110,6 +110,7 @@
       "name": "@wanderlust/cli",
       "dependencies": {
         "@drizzle-team/brocli": "^0.12.0",
+        "@sindresorhus/slugify": "catalog:",
         "@wanderlust/config": "workspace:*",
         "@wanderlust/db": "workspace:*",
         "@wanderlust/search": "workspace:*",

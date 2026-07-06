@@ -18,6 +18,7 @@
 		"@wanderlust/db": "workspace:*",
 		"@wanderlust/search": "workspace:*",
 		"@wanderlust/storage": "workspace:*",
+		"@sindresorhus/slugify": "catalog:",
 		"bun": "catalog:",
 		"consola": "catalog:",
 		"inversify": "catalog:",
