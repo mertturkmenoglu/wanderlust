@@ -8,12 +8,17 @@ import {
 } from '@wanderlust/ui/components/sheet';
 import { Settings2Icon } from 'lucide-react';
 import { authGuard } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { Sidebar } from './settings/-components/sidebar';
 
 export const Route = createFileRoute('/settings')({
 	ssr: false,
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	head: () =>
+		seo({
+			title: 'Settings',
+		}),
 });
 
 function RouteComponent() {
