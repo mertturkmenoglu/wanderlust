@@ -1,8 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/privacy/')({
 	component: RouteComponent,
+	head: () =>
+		seo({
+			title: 'Privacy Policy',
+		}),
 });
 
 function RouteComponent() {

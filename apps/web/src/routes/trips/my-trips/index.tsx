@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { ItemGroup } from '@wanderlust/ui/components/item';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
 import { useFlattenedQuery } from '@/hooks/use-flattened-query';
+import { seo } from '@/lib/seo';
 import { EmptyState } from './-empty';
 import { ErrorState } from './-error';
 import { useMyTripsQuery } from './-hooks';
@@ -10,6 +11,10 @@ import { Loading } from './-loading';
 
 export const Route = createFileRoute('/trips/my-trips/')({
 	component: RouteComponent,
+	head: () =>
+		seo({
+			title: 'My Trips',
+		}),
 });
 
 function RouteComponent() {

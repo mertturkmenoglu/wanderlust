@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { authGuard } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { Content } from './-content';
 import { BookmarksContextProvider } from './-context';
 import { bookmarksSearchSchema } from './-hooks';
@@ -22,6 +23,10 @@ export const Route = createFileRoute('/bookmarks/')({
 		);
 	},
 	validateSearch: bookmarksSearchSchema,
+	head: () =>
+		seo({
+			title: 'Bookmarks',
+		}),
 });
 
 function RouteComponent() {

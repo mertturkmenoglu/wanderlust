@@ -9,6 +9,7 @@ import {
 import { PanelLeftOpenIcon } from 'lucide-react';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { authGuard } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { ChatContextProvider, useChatContext } from '@/stores/chat-context';
 import { ConversationPanel } from './-components/conversation-panel';
 import { SidePanel } from './-components/side-panel';
@@ -16,6 +17,11 @@ import { SidePanel } from './-components/side-panel';
 export const Route = createFileRoute('/chat/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	ssr: false,
+	head: () =>
+		seo({
+			title: 'Chat',
+		}),
 });
 
 function RouteComponent() {

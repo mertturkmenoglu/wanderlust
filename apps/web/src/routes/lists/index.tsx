@@ -1,11 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { authGuard } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { Content } from './-content';
 import { Header } from './-header';
 
 export const Route = createFileRoute('/lists/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
+	head: () =>
+		seo({
+			title: 'Lists',
+		}),
 });
 
 function RouteComponent() {

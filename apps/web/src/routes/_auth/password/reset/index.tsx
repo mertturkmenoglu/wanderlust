@@ -12,6 +12,7 @@ import { AuthLink } from '@/components/auth/link';
 import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { usePasswordResetForm, usePasswordResetMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/password/reset/')({
@@ -29,6 +30,10 @@ export const Route = createFileRoute('/_auth/password/reset/')({
 			});
 		}
 	},
+	head: () =>
+		seo({
+			title: 'Reset Your Password',
+		}),
 });
 
 function RouteComponent() {

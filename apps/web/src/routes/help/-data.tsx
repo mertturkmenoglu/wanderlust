@@ -61,16 +61,6 @@ export const faqData: FAQ = {
 					),
 				},
 				{
-					question: 'How do I add a location to my diary?',
-					answer: (
-						<div>
-							To add a location to your diary, navigate to the location&apos;s
-							page and tap the &quot;Add to Diary&quot; button. You can also add
-							notes and photos to make it more personal.
-						</div>
-					),
-				},
-				{
 					question: 'Can I plan a trip using Wanderlust?',
 					answer: (
 						<div>
@@ -90,10 +80,11 @@ export const faqData: FAQ = {
 					question: 'How do I connect with my friends on Wanderlust?',
 					answer: (
 						<div>
-							To connect with friends, go to the &quot;Friends&quot; tab and
-							search for their usernames. You can send a friend request, and
-							once accepted, you&apos;ll be able to see each other&apos;s
-							activity and share your experiences.
+							To connect with friends, use our search feature to search for
+							their names or usernames. You can follow a user and see their
+							profile. Depending on your (and their) privacy settings, you may
+							be able to view their trips, lists, reviews, and send each other
+							messages.
 						</div>
 					),
 				},
@@ -116,9 +107,9 @@ export const faqData: FAQ = {
 					answer: (
 						<div>
 							To leave a review, navigate to the location&apos;s page and scroll
-							down to the &quot;Reviews&quot; section. Tap &quot;Write a
-							Review,&quot; enter your comments, rate the location, and submit
-							your review.
+							down to the &quot;Reviews&quot; section. Tap &quot;Add a
+							Review,&quot; enter your comments, rate the location, upload a
+							couple of pictures if you like, and submit your review.
 						</div>
 					),
 				},
@@ -129,31 +120,6 @@ export const faqData: FAQ = {
 							Yes, you can delete your review by going to your profile,
 							selecting the review, and choosing the &quot;Delete&quot; option.
 							Currently, you cannot edit your review.
-						</div>
-					),
-				},
-			],
-		},
-		{
-			title: 'Events',
-			items: [
-				{
-					question: 'How do I find upcoming events in a specific location?',
-					answer: (
-						<div>
-							To find upcoming events, go to the events page. You can also use
-							the &quot;Search&quot; functionality to see a list of all upcoming
-							events in various locations.
-						</div>
-					),
-				},
-				{
-					question: 'Can I create an event on Wanderlust?',
-					answer: (
-						<div>
-							Currently, only verified organizers can create events. If you are
-							an event organizer and want to list an event on Wanderlust, please
-							contact our support team for verification.
 						</div>
 					),
 				},
@@ -237,9 +203,11 @@ export const faqData: FAQ = {
 					question: 'Can I control who sees my activity and diary entries?',
 					answer: (
 						<div>
-							Yes, you can adjust your privacy settings in the
-							&quot;Settings&quot; section of your profile to control who can
-							see your activity, diary entries, and other personal information.
+							Your profile is public — so any other user can see your activity,
+							reviews, and who you follow. You can adjust your trips' and lists'
+							privacy settings to control who can see them. You can also change
+							who can message you by going to your chat settings and adjusting
+							your privacy settings.
 						</div>
 					),
 				},

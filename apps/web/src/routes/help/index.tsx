@@ -5,15 +5,20 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@wanderlust/ui/components/accordion';
+import { seo } from '@/lib/seo';
 import { faqData } from './-data';
 
 export const Route = createFileRoute('/help/')({
 	component: RouteComponent,
+	head: () =>
+		seo({
+			title: 'Help Center',
+		}),
 });
 
 function RouteComponent() {
 	return (
-		<>
+		<div className="mx-auto w-full max-w-3xl">
 			<div className="mt-16 flex flex-col items-center justify-center">
 				<h2 className="scroll-m-20 pb-2 font-semibold text-3xl tracking-tight first:mt-0">
 					{faqData.title}
@@ -42,6 +47,6 @@ function RouteComponent() {
 					</div>
 				))}
 			</div>
-		</>
+		</div>
 	);
 }

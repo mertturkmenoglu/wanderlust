@@ -1,11 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { InstantSearch } from 'react-instantsearch';
 import { useGeoSearchClient } from '@/hooks/use-search-client';
+import { seo } from '@/lib/seo';
 import { Container } from './-components/container';
 
 export const Route = createFileRoute('/nearby/')({
 	component: RouteComponent,
 	ssr: false,
+	head: () =>
+		seo({
+			title: 'Nearby Places',
+		}),
 });
 
 function RouteComponent() {

@@ -15,6 +15,7 @@ import { OAuthGroup } from '@/components/auth/oauth-group';
 import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { useSignInForm, useSignInMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/sign-in/')({
@@ -31,6 +32,37 @@ export const Route = createFileRoute('/_auth/sign-in/')({
 			});
 		}
 	},
+	head: () =>
+		seo({
+			title: 'Sign In',
+			description: 'Sign in to your Wanderlust account',
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: 'Sign In',
+				type: 'website',
+				url: '/sign-in',
+				locale: 'en_US',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+				description: 'Sign in to your Wanderlust account',
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: 'Sign In',
+				description: 'Sign in to your Wanderlust account',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+			},
+		}),
 });
 
 function RouteComponent() {

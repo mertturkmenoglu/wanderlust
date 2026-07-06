@@ -4,6 +4,7 @@ import { ItemGroup } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { PlusIcon } from 'lucide-react';
 import { authClient, authGuard } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { ErrorState } from './-error';
 import { AccountItem } from './-item';
 import { Loading } from './-loading';
@@ -17,6 +18,10 @@ export const Route = createFileRoute('/change-accounts/')({
 		if (error) throw error;
 		return data;
 	},
+	head: () =>
+		seo({
+			title: 'Change Accounts',
+		}),
 });
 
 function RouteComponent() {

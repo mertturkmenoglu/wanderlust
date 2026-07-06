@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
+import { seo } from '@/lib/seo';
 import { EmptyState } from './-empty';
 import { listMyInvitesQueryOptions } from './-hooks';
 import { InviteItem } from './-item';
@@ -10,6 +11,10 @@ export const Route = createFileRoute('/trips/invites/')({
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(listMyInvitesQueryOptions);
 	},
+	head: () =>
+		seo({
+			title: 'My Invites',
+		}),
 });
 
 function RouteComponent() {

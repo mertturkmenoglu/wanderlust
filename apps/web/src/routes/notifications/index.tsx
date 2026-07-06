@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ItemGroup } from '@wanderlust/ui/components/item';
 import { authGuard } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { useNotificationsContext } from '@/stores/notifications-context';
 import { Actions } from './-actions';
 import { EmptyState } from './-empty';
@@ -11,6 +12,10 @@ export const Route = createFileRoute('/notifications/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
 	ssr: false,
+	head: () =>
+		seo({
+			title: 'Notifications',
+		}),
 });
 
 function RouteComponent() {

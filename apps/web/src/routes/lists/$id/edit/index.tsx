@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { BackLink } from '@/components/back-link';
 import { authGuard } from '@/lib/auth';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { DateInfo } from './-date-info';
 import { EditInfo } from './-edit-info';
 import { EditItems } from './-edit-items';
@@ -19,6 +20,10 @@ export const Route = createFileRoute('/lists/$id/edit/')({
 			}),
 		);
 	},
+	head: () =>
+		seo({
+			title: 'Edit List',
+		}),
 });
 
 function RouteComponent() {

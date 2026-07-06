@@ -5,6 +5,7 @@ import { CategoriesBanner } from '@/components/banner/common';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
 import { serializeParams } from '@/lib/search';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/categories/')({
 	component: RouteComponent,
@@ -14,6 +15,37 @@ export const Route = createFileRoute('/categories/')({
 				input: {},
 			}),
 		),
+	head: () =>
+		seo({
+			title: 'Categories',
+			description: 'Browse categories on Wanderlust',
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: 'Categories',
+				type: 'website',
+				url: '/categories/',
+				locale: 'en_US',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+				description: 'Browse categories on Wanderlust',
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: 'Categories',
+				description: 'Browse categories on Wanderlust',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+			},
+		}),
 });
 
 function RouteComponent() {

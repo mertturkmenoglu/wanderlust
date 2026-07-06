@@ -3,6 +3,7 @@ import { BackLink } from '@/components/back-link';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { accoladePlacesListSearchSchema } from '@/schemas/accolade-places';
 import { AccoladePlacesList } from './-list';
 
@@ -25,6 +26,55 @@ export const Route = createFileRoute('/accolades/$id/')({
 				},
 			}),
 		);
+	},
+	head: ({ loaderData }) => {
+		if (!loaderData) {
+			return {
+				title: 'Accolade Not Found',
+				meta: [
+					{
+						name: 'description',
+						content: 'Accolade not found',
+					},
+				],
+			};
+		}
+
+		const accolade = loaderData.accolade;
+
+		const description =
+			accolade.description ?? `Explore ${accolade.title} on Wanderlust`;
+
+		return seo({
+			title: accolade.title,
+			description,
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: accolade.title,
+				type: 'website',
+				url: `/accolades/${accolade.id}`,
+				locale: 'en_US',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+				description,
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: accolade.title,
+				description,
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+			},
+		});
 	},
 });
 

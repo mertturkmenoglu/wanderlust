@@ -5,6 +5,7 @@ import { Content } from './-components/content';
 
 export const Route = createFileRoute('/')({
 	component: App,
+	ssr: false,
 });
 
 function App() {

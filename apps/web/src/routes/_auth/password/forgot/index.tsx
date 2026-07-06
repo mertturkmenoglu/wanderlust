@@ -12,6 +12,7 @@ import { AuthLink } from '@/components/auth/link';
 import { cmp } from '@/components/form';
 import { Logo } from '@/components/logo';
 import { authClient } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 import { useForgotPasswordForm, useForgotPasswordMutation } from './-hooks';
 
 export const Route = createFileRoute('/_auth/password/forgot/')({
@@ -28,6 +29,37 @@ export const Route = createFileRoute('/_auth/password/forgot/')({
 			});
 		}
 	},
+	head: () =>
+		seo({
+			title: 'Forgot Password',
+			description: 'Reset your Wanderlust account password',
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: 'Forgot Password',
+				type: 'website',
+				url: '/password/forgot',
+				locale: 'en_US',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+				description: 'Reset your Wanderlust account password',
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: 'Forgot Password',
+				description: 'Reset your Wanderlust account password',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+			},
+		}),
 });
 
 function RouteComponent() {

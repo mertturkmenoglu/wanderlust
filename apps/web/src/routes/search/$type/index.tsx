@@ -85,6 +85,7 @@ const routing: RouterProps = {
 
 export const Route = createFileRoute('/search/$type/')({
 	component: RouteComponent,
+	ssr: false,
 	beforeLoad: ({ params }) => {
 		const type = params.type;
 

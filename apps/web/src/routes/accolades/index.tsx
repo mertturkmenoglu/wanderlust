@@ -4,6 +4,7 @@ import { AccoladesBanner } from '@/components/banner/common';
 import { Pagination } from '@/components/pagination';
 import { ipx } from '@/lib/ipx';
 import { orpc } from '@/lib/orpc';
+import { seo } from '@/lib/seo';
 import { listAccoladesSearchSchema } from '@/schemas/list-accolades';
 
 export const Route = createFileRoute('/accolades/')({
@@ -25,6 +26,37 @@ export const Route = createFileRoute('/accolades/')({
 			}),
 		);
 	},
+	head: () =>
+		seo({
+			title: 'Accolades',
+			description: 'Browse accolades on Wanderlust',
+			applicationName: 'Wanderlust',
+			openGraph: {
+				title: 'Accolades',
+				type: 'website',
+				url: '/accolades/',
+				locale: 'en_US',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+				description: 'Browse accolades on Wanderlust',
+				siteName: 'Wanderlust',
+			},
+			twitter: {
+				card: 'summary_large_image',
+				title: 'Accolades',
+				description: 'Browse accolades on Wanderlust',
+				images: [
+					{
+						url: '/logo.png',
+						alt: 'Wanderlust',
+					},
+				],
+			},
+		}),
 });
 
 function RouteComponent() {

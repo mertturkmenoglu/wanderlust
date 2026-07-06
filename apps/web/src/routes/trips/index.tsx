@@ -5,11 +5,16 @@ import { MailsIcon, MapIcon, PlusIcon, SearchIcon } from 'lucide-react';
 import { ErrorComponent } from '@/components/error-component';
 import { GradientText } from '@/components/gradient-text';
 import { authGuard } from '@/lib/auth';
+import { seo } from '@/lib/seo';
 
 export const Route = createFileRoute('/trips/')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
 	errorComponent: ErrorComponent,
+	head: () =>
+		seo({
+			title: 'Trips',
+		}),
 });
 
 function RouteComponent() {
