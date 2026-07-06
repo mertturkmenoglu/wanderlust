@@ -1,51 +1,54 @@
 import consola from 'consola';
 
-type PipelineOptions<T> = {
-	values: T;
-	enableMessages?: boolean;
-};
-
-type StepOptions<TPipelineOptions> = {
+type StepOptions<TContext, TResult> = {
 	name: string;
 	skip?: boolean;
-	fn: (options: TPipelineOptions) => Promise<void>;
+	fn: (context: TContext) => Promise<TResult>;
 };
 
-export class Pipeline<T> {
-	private steps: Array<StepOptions<T>> = [];
+type Merge<TContext, TResult> = TResult extends void
+	? TContext
+	: Omit<TContext, keyof TResult> & TResult;
 
-	private values: T;
+export class Pipeline<TContext extends object> {
+	// biome-ignore lint/suspicious/noExplicitAny: This is a generic pipeline, so we need to allow any type for the steps.
+	private steps: Array<StepOptions<any, any>> = [];
+
+	private context: TContext;
 	private enableMessages: boolean;
 
-	constructor(options: PipelineOptions<T>) {
-		this.values = options.values;
+	constructor(options: { values: TContext; enableMessages?: boolean }) {
+		this.context = options.values;
 		this.enableMessages = options.enableMessages ?? true;
 	}
 
-	public addStep(step: StepOptions<T>) {
+	public addStep<TResult = void>(
+		step: StepOptions<TContext, TResult>,
+	): Pipeline<Merge<TContext, TResult>> {
 		this.steps.push(step);
-		return this;
+		return this as unknown as Pipeline<Merge<TContext, TResult>>;
 	}
 
-	public async run() {
+	public async run(): Promise<TContext> {
 		for (const step of this.steps) {
 			if (this.enableMessages) {
-				consola.start(`Starting step: ${step.name}`);
+				consola.start(`Step: ${step.name}`);
 			}
 
 			if (step.skip) {
 				if (this.enableMessages) {
 					consola.info(`Skipping step: ${step.name}`);
 				}
-
 				continue;
 			}
 
-			await step.fn(this.values);
+			const result = await step.fn(this.context);
 
-			if (this.enableMessages) {
-				consola.success(`Completed step: ${step.name}`);
+			if (result && typeof result === 'object') {
+				this.context = { ...this.context, ...result };
 			}
 		}
+
+		return this.context;
 	}
 }
