@@ -1,0 +1,29 @@
+# ADR-0005: Tanstack Start
+
+## Status
+Accepted
+
+## Context
+We were already using Tanstack Router and now we switched to Tanstack Start for our web project. The main reason for this decision is that when we eventually go to production, we will need server-side rendering (SSR) capabilities for SEO and performance. Tanstack Start is a natural extension on top of Tanstack Router and provides the necessary SSR features that we require.
+
+It also plays very well with our existing data fetching and caching strategies. Tanstack Query and Tanstack Start work seamlessly together, we can easily manage our server state data in both the client and server environments.
+
+One of the main question mark in our mind is that Start is currently in RC (Release Candidate) stage, which means it is not yet fully stable.
+
+However, API is considered stable and we are confident that any potential changes will be minor and we can patch our codebase accordingly, easily.
+
+We also started using `tanstack-meta`, which is a library to add meta tags to our pages in a type-safe manner. This is important for SEO and social media sharing, and it integrates well with Tanstack Start.
+
+## Decision
+We started using Tanstack Start with commit `9a0a6812ee1a2ffe1f718ac21f5cd03e03192ed9`.
+
+## Consequences
+- Positive:
+	- We have SSR capabilities.
+	- Better SEO, better social media sharing.
+	- Better performance due to SSR and caching.
+- Negative:
+	- As of this moment, Start is in RC stage.
+	- Some features, like Search (Instantsearch) and Maps (Maplibre), require client side rendering and creates some problems with SSR.
+- Neutral / follow-ups:
+	- Keep an eye on the development of Tanstack Start and update our codebase accordingly when new versions are released.
