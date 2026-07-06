@@ -13,13 +13,20 @@ export const doctor = command({
 			.default(true),
 	},
 	handler: async (opts) => {
-		const repoRootPath = path.join(process.cwd(), '..', '..');
-
 		const pipeline = new Pipeline({
 			values: {},
 		})
 			.addStep({
-				name: 'Check Bun',
+				name: 'Starting',
+				fn: async () => {
+					const repoRootPath = path.join(process.cwd(), '..', '..');
+					return {
+						repoRootPath,
+					};
+				},
+			})
+			.addStep({
+				name: 'Checking Bun',
 				fn: async () => {
 					const res = await $`bun --version`.quiet().text();
 
@@ -29,15 +36,44 @@ export const doctor = command({
 
 					const bunVersion = res.trim();
 
+					return {
+						bunVersion,
+					};
+				},
+			})
+			.addStep({
+				name: 'Reading monorepo package.json',
+				fn: async ({ repoRootPath }) => {
 					const rootPackageJsonPath = path.join(repoRootPath, 'package.json');
 					const rootPackageJson = JSON.parse(
 						await Bun.file(rootPackageJsonPath).text(),
 					);
 
+					return {
+						rootPackageJson,
+					};
+				},
+			})
+			.addStep({
+				name: 'Reading Bun and Bun types versions',
+				fn: async ({ rootPackageJson }) => {
 					const bunCatalogVersion = rootPackageJson?.workspaces?.catalog?.bun;
 					const bunTypesCatalogVersion =
 						rootPackageJson?.workspaces?.catalog?.['@types/bun'];
 
+					return {
+						bunCatalogVersion,
+						bunTypesCatalogVersion,
+					};
+				},
+			})
+			.addStep({
+				name: 'Confirming Bun and Bun types versions',
+				fn: async ({
+					bunCatalogVersion,
+					bunTypesCatalogVersion,
+					bunVersion,
+				}) => {
 					if (!bunCatalogVersion) {
 						throw new Error(
 							'Bun version is not specified in the root package.json. Please specify it.',
@@ -69,7 +105,15 @@ export const doctor = command({
 							`Bun version mismatch. Expected: ${bunCatalogVersion}, Found: ${systemBunVersionWithCaret}. Please update Bun.`,
 						);
 					}
-
+				},
+			})
+			.addStep({
+				name: 'Bun checks are completed',
+				fn: async ({
+					bunVersion,
+					bunCatalogVersion,
+					bunTypesCatalogVersion,
+				}) => {
 					consola.info(`Bun version: ${bunVersion}`);
 					consola.info(`Root package.json Bun version: ${bunCatalogVersion}`);
 					consola.info(
@@ -78,7 +122,7 @@ export const doctor = command({
 				},
 			})
 			.addStep({
-				name: 'Check Docker',
+				name: 'Checking Docker',
 				fn: async () => {
 					const res = await $`docker --version`.quiet().text();
 
@@ -87,8 +131,15 @@ export const doctor = command({
 					}
 
 					const dockerVersion = res.trim();
-					consola.info(`Docker version: ${dockerVersion}`);
 
+					return {
+						dockerVersion,
+					};
+				},
+			})
+			.addStep({
+				name: 'Confirming Docker is running',
+				fn: async () => {
 					if (!opts.dockerRun) {
 						consola.info('Skipping Docker running check.');
 						return;
@@ -101,12 +152,22 @@ export const doctor = command({
 					}
 					consola.info('Docker is running.');
 				},
+			})
+			.addStep({
+				name: 'Docker checks are completed',
+				fn: async ({ dockerVersion }) => {
+					consola.info(`Docker version: ${dockerVersion}`);
+				},
+			})
+			.addStep({
+				name: 'Finalizing',
+				fn: async () => {
+					consola.success(
+						'All checks are successful. Your system is ready to run the application.',
+					);
+				},
 			});
 
 		await pipeline.run();
-
-		consola.success(
-			'All checks are successful. Your system is ready to run the application.',
-		);
 	},
 });

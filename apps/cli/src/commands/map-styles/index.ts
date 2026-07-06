@@ -2,6 +2,7 @@ import { boolean, command, string } from '@drizzle-team/brocli';
 import { inspect } from 'bun';
 import consola from 'consola';
 import z from 'zod';
+import { Pipeline } from '@/lib/pipeline';
 
 const schema = z.array(
 	z.object({
@@ -49,55 +50,105 @@ export const mapStyles = command({
 			.desc('The path to the output file where the map styles will be saved'),
 	},
 	handler: async (opts) => {
-		const res = await fetch(opts.codeUrl);
+		const pipeline = new Pipeline({
+			values: {
+				regex: /const MAP_STYLE_CONFIG = \[[\s\S]*\] as const;/,
+			},
+		})
+			.addStep({
+				name: 'Fetching map styles from MapTiler repo',
+				fn: async () => {
+					const res = await fetch(opts.codeUrl);
 
-		if (!res.ok) {
-			consola.error(`Failed to fetch map styles from ${opts.codeUrl}`);
-			process.exit(1);
-		}
+					if (!res.ok) {
+						consola.error(`Failed to fetch map styles from ${opts.codeUrl}`);
+						process.exit(1);
+					}
 
-		const rawCode = await res.text();
-		const regex = /const MAP_STYLE_CONFIG = \[[\s\S]*\] as const;/;
+					const rawCode = await res.text();
 
-		const match = rawCode.match(regex);
+					return {
+						rawCode,
+					};
+				},
+			})
+			.addStep({
+				name: 'Validating map styles',
+				fn: async (ctx) => {
+					const match = ctx.rawCode.match(ctx.regex);
 
-		if (!match) {
-			consola.error(
-				'Failed to find the MAP_STYLE_CONFIG array in the fetched code.',
-			);
-			process.exit(1);
-		}
+					if (!match) {
+						consola.error(
+							'Failed to find the MAP_STYLE_CONFIG array in the fetched code.',
+						);
+						process.exit(1);
+					}
 
-		const firstMatch = match[0]
-			.replace('const MAP_STYLE_CONFIG = ', '')
-			.replace(' as const;', '');
+					const firstMatch = match[0]
+						.replace('const MAP_STYLE_CONFIG = ', '')
+						.replace(' as const;', '');
 
-		// biome-ignore lint/security/noGlobalEval: We are using eval here to parse the fetched code. It's not ideal but I don't see an easier way than this to achieve the same thing.
-		const anyArr = eval(firstMatch);
+					return {
+						firstMatch,
+					};
+				},
+			})
+			.addStep({
+				name: 'Evaluating the code',
+				fn: async (ctx) => {
+					// biome-ignore lint/security/noGlobalEval: We are using eval here to parse the fetched code. It's not ideal but I don't see an easier way than this to achieve the same thing.
+					const anyArr = eval(ctx.firstMatch);
 
-		const validated = schema.safeParse(anyArr);
+					return {
+						anyArr,
+					};
+				},
+			})
+			.addStep({
+				name: 'Validating the parsed map styles',
+				fn: async (ctx) => {
+					const validated = schema.safeParse(ctx.anyArr);
 
-		if (!validated.success) {
-			consola.error(
-				'Failed to validate the fetched map styles:',
-				inspect(validated.error),
-			);
-			process.exit(1);
-		}
+					if (!validated.success) {
+						consola.error(
+							'Failed to validate the fetched map styles:',
+							inspect(validated.error),
+						);
+						process.exit(1);
+					}
 
-		const ids: TOutput = validated.data.flatMap((s) => {
-			const filtered = opts.includeDeprecated
-				? s.variants
-				: s.variants.filter((v) => !v.deprecated);
-			return filtered.map((v) => ({
-				key: v.id,
-				text: createName(v.id),
-			}));
-		});
+					return {
+						validated: validated.data,
+					};
+				},
+			})
+			.addStep({
+				name: 'Getting the map style IDs',
+				fn: async (ctx) => {
+					const ids: TOutput = ctx.validated.flatMap((s) => {
+						const filtered = opts.includeDeprecated
+							? s.variants
+							: s.variants.filter((v) => !v.deprecated);
+						return filtered.map((v) => ({
+							key: v.id,
+							text: createName(v.id),
+						}));
+					});
 
-		await Bun.write(opts.outputPath, JSON.stringify(ids, null, 2));
+					return {
+						ids,
+					};
+				},
+			})
+			.addStep({
+				name: 'Writing to output file',
+				fn: async (ctx) => {
+					await Bun.write(opts.outputPath, JSON.stringify(ctx.ids, null, 2));
+					process.exit(0);
+				},
+			});
 
-		process.exit(0);
+		await pipeline.run();
 	},
 });
 

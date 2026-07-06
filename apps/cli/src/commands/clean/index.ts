@@ -9,42 +9,48 @@ export const clean = command({
 	desc: 'Removes and recreates all Docker containers. Pushes the database schema.',
 	options: {},
 	handler: async (_opts) => {
-		const apiProjectPath = path.join(process.cwd(), '..', 'api');
-
-		const dockerComposeFilePath = path.join(
-			apiProjectPath,
-			'docker-compose.yml',
-		);
-
-		const seaweedfsContainerName = 'wl-seaweedfs';
-
 		const pipeline = new Pipeline({
-			values: {
-				apiProjectPath,
-				dockerComposeFilePath,
-				seaweedfsContainerName,
-			},
+			values: {},
 		})
 			.addStep({
-				name: 'Remove Docker containers',
+				name: 'Starting',
+				fn: async () => {
+					const apiProjectPath = path.join(process.cwd(), '..', 'api');
+
+					const dockerComposeFilePath = path.join(
+						apiProjectPath,
+						'docker-compose.yml',
+					);
+
+					const seaweedfsContainerName = 'wl-seaweedfs';
+
+					return {
+						apiProjectPath,
+						dockerComposeFilePath,
+						seaweedfsContainerName,
+					};
+				},
+			})
+			.addStep({
+				name: 'Removing Docker containers',
 				fn: async ({ dockerComposeFilePath }) => {
 					await $`docker compose -f ${dockerComposeFilePath} down -v`;
 				},
 			})
 			.addStep({
-				name: 'Recreate Docker containers',
+				name: 'Recreating Docker containers',
 				fn: async ({ dockerComposeFilePath }) => {
 					await $`docker compose -f ${dockerComposeFilePath} up -d --wait`;
 				},
 			})
 			.addStep({
-				name: 'Push database schema',
+				name: 'Pushing database schema',
 				fn: async ({ apiProjectPath }) => {
 					await $`bun run --cwd ${apiProjectPath} db:push`;
 				},
 			})
 			.addStep({
-				name: 'Create SeaweedFS buckets and grant access',
+				name: 'Creating SeaweedFS buckets and granting access',
 				fn: async ({ seaweedfsContainerName }) => {
 					for (const bucket of buckets) {
 						await createAndGrantAccess(seaweedfsContainerName, bucket);
