@@ -14,6 +14,7 @@ import { ErrorComponent } from '@/components/error-component';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
 import { ThemeProvider } from '@/components/theme-provider';
+import { useSyncPreferences } from '@/hooks/use-sync-preferences';
 import { NotificationsContextProvider } from '@/stores/notifications-context';
 import appCss from '../globals.css?url';
 
@@ -130,7 +131,7 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: PropsWithChildren) {
-	// useSyncPreferences();
+	useSyncPreferences();
 
 	return (
 		<html lang="en" suppressHydrationWarning>
