@@ -116,173 +116,160 @@ export const reorderItemsOutput = z.object({
 
 export type ReorderItemsOutput = z.infer<typeof reorderItemsOutput>;
 
-export const createPlaceRelationInput = $dto.collection
-	.pick({
-		id: true,
-	})
-	.extend($dto.collectionItem.pick({ placeId: true }).shape);
-
-export type CreatePlaceRelationInput = z.infer<typeof createPlaceRelationInput>;
-
-export const createPlaceRelationOutput = z.object({});
-
-export type CreatePlaceRelationOutput = z.infer<
-	typeof createPlaceRelationOutput
->;
-
-export const deletePlaceRelationInput = $dto.collection
-	.pick({
-		id: true,
-	})
-	.extend($dto.collectionItem.pick({ placeId: true }).shape);
-
-export type DeletePlaceRelationInput = z.infer<typeof deletePlaceRelationInput>;
-
-export const deletePlaceRelationOutput = z.object({});
-
-export type DeletePlaceRelationOutput = z.infer<
-	typeof deletePlaceRelationOutput
->;
-
-export const createCityRelationInput = $dto.collection
-	.pick({
-		id: true,
-	})
-	.extend(
-		z.object({
-			cityId: z
-				.number()
-				.int()
-				.min(1)
-				.meta({
-					description: 'The ID of the city to relate to the collection',
-					examples: [1024],
-				}),
-		}).shape,
-	);
-
-export type CreateCityRelationInput = z.infer<typeof createCityRelationInput>;
-
-export const createCityRelationOutput = z.object({});
-
-export type CreateCityRelationOutput = z.infer<typeof createCityRelationOutput>;
-
-export const deleteCityRelationInput = $dto.collection
-	.pick({
-		id: true,
-	})
-	.extend(
-		z.object({
-			cityId: z
-				.number()
-				.int()
-				.min(1)
-				.meta({
-					description: 'The ID of the city to remove from the collection',
-					examples: [1024],
-				}),
-		}).shape,
-	);
-
-export type DeleteCityRelationInput = z.infer<typeof deleteCityRelationInput>;
-
-export const deleteCityRelationOutput = z.object({});
-
-export type DeleteCityRelationOutput = z.infer<typeof deleteCityRelationOutput>;
-
-export const listByPlaceIdInput = $dto.collectionItem.pick({
-	placeId: true,
+export const getCollectionPlaceRelationInput = z.object({
+	collectionId: z.string(),
+	placeId: z.string(),
 });
 
-export type ListByPlaceIdInput = z.infer<typeof listByPlaceIdInput>;
+export type GetCollectionPlaceRelationInput = z.infer<
+	typeof getCollectionPlaceRelationInput
+>;
 
-export const listByPlaceIdOutput = z.object({
+export const getCollectionPlaceRelationOutput = z.object({
+	collection: collection,
+	place: $extended.place,
+});
+
+export type GetCollectionPlaceRelationOutput = z.infer<
+	typeof getCollectionPlaceRelationOutput
+>;
+
+export const listCollectionPlaceRelationsInput = z.object({
+	collectionId: z.string(),
+});
+
+export type ListCollectionPlaceRelationsInput = z.infer<
+	typeof listCollectionPlaceRelationsInput
+>;
+
+export const listCollectionPlaceRelationsOutput = z.object({
+	places: $extended.place.array(),
+});
+
+export type ListCollectionPlaceRelationsOutput = z.infer<
+	typeof listCollectionPlaceRelationsOutput
+>;
+
+export const createCollectionPlaceRelationInput = z.object({
+	collectionId: z.string(),
+	placeId: z.string(),
+});
+
+export type CreateCollectionPlaceRelationInput = z.infer<
+	typeof createCollectionPlaceRelationInput
+>;
+
+export const createCollectionPlaceRelationOutput = z.object({
+	collection: collection,
+	place: $extended.place,
+});
+
+export type CreateCollectionPlaceRelationOutput = z.infer<
+	typeof createCollectionPlaceRelationOutput
+>;
+
+export const deleteCollectionPlaceRelationInput = z.object({
+	collectionId: z.string(),
+	placeId: z.string(),
+});
+
+export type DeleteCollectionPlaceRelationInput = z.infer<
+	typeof deleteCollectionPlaceRelationInput
+>;
+
+export const deleteCollectionPlaceRelationOutput = z.object({});
+
+export type DeleteCollectionPlaceRelationOutput = z.infer<
+	typeof deleteCollectionPlaceRelationOutput
+>;
+
+export const getCollectionCityRelationInput = z.object({
+	collectionId: z.string(),
+	cityId: z.int(),
+});
+
+export type GetCollectionCityRelationInput = z.infer<
+	typeof getCollectionCityRelationInput
+>;
+
+export const getCollectionCityRelationOutput = z.object({
+	collection: collection,
+	city: $dto.city,
+});
+
+export type GetCollectionCityRelationOutput = z.infer<
+	typeof getCollectionCityRelationOutput
+>;
+
+export const listCollectionCityRelationsInput = z.object({
+	collectionId: z.string(),
+});
+
+export type ListCollectionCityRelationsInput = z.infer<
+	typeof listCollectionCityRelationsInput
+>;
+
+export const listCollectionCityRelationsOutput = z.object({
+	cities: $dto.city.array(),
+});
+
+export type ListCollectionCityRelationsOutput = z.infer<
+	typeof listCollectionCityRelationsOutput
+>;
+
+export const createCollectionCityRelationInput = z.object({
+	collectionId: z.string(),
+	cityId: z.int(),
+});
+
+export type CreateCollectionCityRelationInput = z.infer<
+	typeof createCollectionCityRelationInput
+>;
+
+export const createCollectionCityRelationOutput = z.object({
+	collection: collection,
+	city: $dto.city,
+});
+
+export type CreateCollectionCityRelationOutput = z.infer<
+	typeof createCollectionCityRelationOutput
+>;
+
+export const deleteCollectionCityRelationInput = z.object({
+	collectionId: z.string(),
+	cityId: z.int(),
+});
+
+export type DeleteCollectionCityRelationInput = z.infer<
+	typeof deleteCollectionCityRelationInput
+>;
+
+export const deleteCollectionCityRelationOutput = z.object({});
+
+export type DeleteCollectionCityRelationOutput = z.infer<
+	typeof deleteCollectionCityRelationOutput
+>;
+
+export const listByPlaceInput = $dto.place.pick({
+	id: true,
+});
+
+export type ListByPlaceInput = z.infer<typeof listByPlaceInput>;
+
+export const listByPlaceOutput = z.object({
 	collections: collectionWithItems.array(),
 });
 
-export type ListByPlaceIdOutput = z.infer<typeof listByPlaceIdOutput>;
+export type ListByPlaceOutput = z.infer<typeof listByPlaceOutput>;
 
-export const listByCityIdInput = z.object({
-	cityId: z
-		.number()
-		.int()
-		.min(1)
-		.meta({
-			description: 'The ID of the city to get collections for',
-			examples: [1024],
-		}),
+export const listByCityInput = $dto.city.pick({
+	id: true,
 });
 
-export type ListByCityIdInput = z.infer<typeof listByCityIdInput>;
+export type ListByCityInput = z.infer<typeof listByCityInput>;
 
-export const listByCityIdOutput = z.object({
+export const listByCityOutput = z.object({
 	collections: collectionWithItems.array(),
 });
 
-export type ListByCityIdOutput = z.infer<typeof listByCityIdOutput>;
-
-export const listAllPlaceCollectionsInput = Pagination.queryParamsSchema.extend(
-	{},
-);
-
-export type ListAllPlaceCollectionsInput = z.infer<
-	typeof listAllPlaceCollectionsInput
->;
-
-export const ListAllPlaceCollectionsOutput = z.object({
-	relations: z
-		.object({
-			createdAt: z.date(),
-			placeId: z.string(),
-			collectionId: z.string(),
-			index: z.number().int(),
-			collection: z.object({
-				id: z.string(),
-				name: z.string(),
-				createdAt: z.date(),
-				description: z.string(),
-			}),
-		})
-		.extend({
-			place: $dto.place.pick({ name: true }),
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
-
-export type ListAllPlaceCollectionsOutput = z.infer<
-	typeof ListAllPlaceCollectionsOutput
->;
-
-export const ListAllCityCollectionsInput = Pagination.queryParamsSchema.extend(
-	{},
-);
-
-export type ListAllCityCollectionsInput = z.infer<
-	typeof ListAllCityCollectionsInput
->;
-
-export const ListAllCityCollectionsOutput = z.object({
-	relations: z
-		.object({
-			createdAt: z.date(),
-			cityId: z.int(),
-			collectionId: z.string(),
-			index: z.number().int(),
-			collection: z.object({
-				id: z.string(),
-				name: z.string(),
-				createdAt: z.date(),
-				description: z.string(),
-			}),
-		})
-		.extend({
-			city: $dto.city.pick({ name: true }),
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
-
-export type ListAllCityCollectionsOutput = z.infer<
-	typeof ListAllCityCollectionsOutput
->;
+export type ListByCityOutput = z.infer<typeof listByCityOutput>;
