@@ -7,6 +7,7 @@ export function createQueryClient() {
 		defaultOptions: {
 			queries: {
 				staleTime: 60 * 1000, // 1 minute
+				retry: false, // disable automatic retries
 			},
 			mutations: {
 				onError: (e) => {
