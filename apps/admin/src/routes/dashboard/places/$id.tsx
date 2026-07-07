@@ -77,9 +77,18 @@ function RouteComponent() {
 		[
 			'Accolades',
 			renderer.Multiple(
-				place.accolades.map((a) => (
-					<AccoladeCard accolade={a.accolade} className="min-w-sm" />
-				)),
+				place.accolades.map((a) =>
+					renderer.Link(
+						'Accolade',
+						{
+							to: '/dashboard/accolades/$id',
+							params: {
+								id: a.accolade.id,
+							},
+						},
+						<AccoladeCard accolade={a.accolade} className="min-w-sm" />,
+					),
+				),
 			),
 		],
 		['Created At', renderer.Date(place.createdAt)],
