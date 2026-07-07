@@ -1,0 +1,66 @@
+import {
+	createContext,
+	type Dispatch,
+	type SetStateAction,
+	useContext,
+	useState,
+} from 'react';
+import { computeRating } from '@/lib/rating';
+import type { Place } from './types';
+
+type State = {
+	place: Place;
+	meta?: {
+		isFavorite: boolean;
+	};
+	rating: string;
+	index: number;
+	setIndex: Dispatch<SetStateAction<number>>;
+	asset: Place['assets'][number];
+};
+
+export const PlaceCardContext = createContext<State | null>(null);
+
+type Props = React.PropsWithChildren & {
+	place: Place;
+	meta?: {
+		isFavorite: boolean;
+	};
+};
+
+export function PlaceCardContextProvider({ children, place, meta }: Props) {
+	const [index, setIndex] = useState(0);
+	const el = place.assets[index];
+	const rating = computeRating(place.totalPoints, place.totalVotes);
+
+	if (!el) {
+		return null;
+	}
+
+	return (
+		<PlaceCardContext.Provider
+			value={{
+				place,
+				asset: el,
+				index,
+				setIndex,
+				rating,
+				meta,
+			}}
+		>
+			{children}
+		</PlaceCardContext.Provider>
+	);
+}
+
+export function usePlaceCardContext() {
+	const context = useContext(PlaceCardContext);
+
+	if (!context) {
+		throw new Error(
+			'usePlaceCardContext must be used within a PlaceCardContextProvider',
+		);
+	}
+
+	return context;
+}
