@@ -1,12 +1,9 @@
-import { ORPCError } from '@orpc/client';
 import { Pagination } from '@wanderlust/common';
 import type { collections as dto } from '@wanderlust/contract';
 import * as schema from '@wanderlust/db';
 import {
 	$includes,
-	codes,
 	DatabaseService,
-	isPgError,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
@@ -32,7 +29,7 @@ export class CollectionsRepository {
 		this.db = db.get();
 	}
 
-	async list(data: dto.ListInput) {
+	async list(_userId: string, data: dto.ListInput): Promise<dto.ListOutput> {
 		const offset = Pagination.getOffset(data);
 
 		const result = await this.db.query.collections.findMany({
@@ -51,7 +48,10 @@ export class CollectionsRepository {
 		};
 	}
 
-	async getById(userId: string | null, data: dto.GetInput) {
+	async getById(
+		userId: string | null,
+		data: dto.GetInput,
+	): Promise<dto.GetOutput> {
 		const result = await this.db.query.collections.findFirst({
 			where: {
 				id: data.id,
@@ -77,12 +77,17 @@ export class CollectionsRepository {
 		);
 
 		return {
-			...result,
-			items: attachFavoriteMetadata(result.items, favoriteIds),
+			collection: {
+				...result,
+				items: attachFavoriteMetadata(result.items, favoriteIds),
+			},
 		};
 	}
 
-	async create(data: dto.CreateInput) {
+	async create(
+		_userId: string,
+		data: dto.CreateInput,
+	): Promise<dto.CreateOutput> {
 		const [result] = await this.db
 			.insert(schema.collections)
 			.values({
@@ -94,10 +99,15 @@ export class CollectionsRepository {
 
 		invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
 
-		return result;
+		return {
+			collection: result,
+		};
 	}
 
-	async _delete(data: dto.DeleteInput) {
+	async _delete(
+		_userId: string,
+		data: dto.DeleteInput,
+	): Promise<dto.DeleteOutput> {
 		const result = await this.db
 			.delete(schema.collections)
 			.where(eq(schema.collections.id, data.id));
@@ -107,9 +117,14 @@ export class CollectionsRepository {
 			'NOT_FOUND',
 			`Collection with id ${data.id} not found`,
 		);
+
+		return {};
 	}
 
-	async update(data: dto.UpdateInput) {
+	async update(
+		_userId: string,
+		data: dto.UpdateInput,
+	): Promise<dto.UpdateOutput> {
 		const [result] = await this.db
 			.update(schema.collections)
 			.set({
@@ -121,12 +136,17 @@ export class CollectionsRepository {
 
 		invariant(result, 'NOT_FOUND', `Collection with id ${data.id} not found`);
 
-		return result;
+		return {
+			collection: result,
+		};
 	}
 
-	async appendItem(data: dto.AppendItemInput) {
-		try {
-			const collection = await this.db.query.collections.findFirst({
+	async appendItem(
+		_userId: string | null,
+		data: dto.AppendItemInput,
+	): Promise<dto.AppendItemOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const collection = await tx.query.collections.findFirst({
 				where: {
 					id: data.id,
 				},
@@ -138,7 +158,20 @@ export class CollectionsRepository {
 				`Collection with id ${data.id} not found`,
 			);
 
-			const lastItem = await this.db.query.collectionItems.findFirst({
+			const existingRow = await tx.query.collectionItems.findFirst({
+				where: {
+					collectionId: data.id,
+					placeId: data.placeId,
+				},
+			});
+
+			invariant(
+				!existingRow,
+				'CONFLICT',
+				`Item with place id ${data.placeId} already exists in collection ${data.id}`,
+			);
+
+			const lastItem = await tx.query.collectionItems.findFirst({
 				where: {
 					collectionId: data.id,
 				},
@@ -151,22 +184,27 @@ export class CollectionsRepository {
 			});
 
 			const lastIndex = lastItem ? lastItem.index : -1;
+			const newIndex = lastIndex + 1;
 
-			const [result] = await this.db
+			const [inserted] = await tx
 				.insert(schema.collectionItems)
 				.values({
 					collectionId: data.id,
 					placeId: data.placeId,
-					index: lastIndex + 1,
+					index: newIndex,
 				})
 				.returning();
 
-			invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
+			invariant(
+				inserted,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to insert collection item',
+			);
 
-			const item = await this.db.query.collectionItems.findFirst({
+			const item = await tx.query.collectionItems.findFirst({
 				where: {
-					collectionId: result.collectionId,
-					placeId: result.placeId,
+					collectionId: data.id,
+					placeId: data.placeId,
 				},
 				with: {
 					place: $includes.place,
@@ -185,103 +223,153 @@ export class CollectionsRepository {
 					isFavorite: false,
 				},
 			};
-		} catch (err) {
-			if (err instanceof ORPCError) {
-				throw err;
-			}
+		});
 
-			if (isPgError(err)) {
-				if (err.cause.code === codes.UNIQUE_VIOLATION) {
-					throw new ORPCError('CONFLICT', {
-						message: `Item with place id ${data.placeId} already exists in collection ${data.id}`,
-					});
-				}
-			}
-
-			throw new ORPCError('INTERNAL_SERVER_ERROR', {
-				message: 'Failed to append item to collection',
-				cause: err,
-			});
-		}
+		return {
+			collectionItem: result,
+		};
 	}
 
-	async removeItem(data: dto.RemoveItemInput) {
-		const result = await this.db
-			.delete(schema.collectionItems)
-			.where(
-				and(
-					eq(schema.collectionItems.collectionId, data.id),
-					eq(schema.collectionItems.placeId, data.placeId),
-				),
+	async removeItem(
+		_userId: string,
+		data: dto.RemoveItemInput,
+	): Promise<dto.RemoveItemOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const existingItem = await tx.query.collectionItems.findFirst({
+				where: {
+					collectionId: data.id,
+					placeId: data.placeId,
+				},
+			});
+
+			invariant(
+				existingItem,
+				'NOT_FOUND',
+				`Collection item with place id ${data.placeId} not found in collection ${data.id}`,
 			);
 
-		invariant(
-			result.rowCount === 1,
-			'NOT_FOUND',
-			`Collection item with place id ${data.placeId} not found in collection ${data.id}`,
-		);
+			const deleteResult = await tx
+				.delete(schema.collectionItems)
+				.where(
+					and(
+						eq(schema.collectionItems.collectionId, data.id),
+						eq(schema.collectionItems.placeId, data.placeId),
+					),
+				);
+
+			invariant(
+				deleteResult.rowCount === 1,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to delete collection item',
+			);
+
+			await tx
+				.update(schema.collectionItems)
+				.set({
+					index: sql`${schema.collectionItems.index} - 1`,
+				})
+				.where(
+					and(
+						eq(schema.collectionItems.collectionId, data.id),
+						gt(schema.collectionItems.index, existingItem.index),
+					),
+				);
+
+			return {};
+		});
+
+		return result;
 	}
 
-	async reorderItems(userId: string, data: dto.ReorderItemsInput) {
-		const collection = await this.db.query.collections.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
+	async reorderItems(
+		userId: string,
+		data: dto.ReorderItemsInput,
+	): Promise<dto.ReorderItemsOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const collection = await tx.query.collections.findFirst({
+				where: {
+					id: data.id,
+				},
+			});
 
-		invariant(
-			collection,
-			'NOT_FOUND',
-			`Collection with id ${data.id} not found`,
-		);
+			invariant(
+				collection,
+				'NOT_FOUND',
+				`Collection with id ${data.id} not found`,
+			);
 
-		const existingItems = await this.db.query.collectionItems.findMany({
-			where: {
-				collectionId: data.id,
-			},
-		});
+			const existingCollectionItems = await tx.query.collectionItems.findMany({
+				where: {
+					collectionId: data.id,
+				},
+			});
 
-		const existingPlaceIds = existingItems.map((item) => item.placeId);
-		const inputPlaceIdsSet = new Set(data.placeIds);
-		const hasSameSize = existingPlaceIds.length === inputPlaceIdsSet.size;
-		const hasSameElements = existingPlaceIds.every((id) =>
-			inputPlaceIdsSet.has(id),
-		);
+			const existingPlaceIds = existingCollectionItems.map(
+				(item) => item.placeId,
+			);
+			const inputPlaceIdsSet = new Set(data.placeIds);
+			const existingPlaceIdsSet = new Set(existingPlaceIds);
+			const isSameSet =
+				inputPlaceIdsSet.isSupersetOf(existingPlaceIdsSet) &&
+				existingPlaceIdsSet.isSupersetOf(inputPlaceIdsSet);
 
-		invariant(
-			hasSameSize && hasSameElements,
-			'BAD_REQUEST',
-			'Input placeIds do not match existing collection items',
-		);
+			invariant(
+				isSameSet,
+				'BAD_REQUEST',
+				'Input place IDs do not match existing collection items place IDs',
+			);
 
-		await this.db.transaction(async (tx) => {
-			// Delete all existing items
 			await tx
 				.delete(schema.collectionItems)
 				.where(eq(schema.collectionItems.collectionId, data.id));
 
-			// Re-insert items in the new order
 			await tx.insert(schema.collectionItems).values(
 				data.placeIds.map((placeId, index) => ({
 					collectionId: data.id,
 					placeId,
-					index: index + 1,
+					index: index,
 				})),
 			);
+
+			const result = await tx.query.collections.findFirst({
+				where: {
+					id: data.id,
+				},
+				with: {
+					items: {
+						orderBy: {
+							index: 'asc',
+						},
+						with: {
+							place: $includes.place,
+						},
+					},
+				},
+			});
+
+			invariant(result, 'NOT_FOUND', `Collection with ID ${data.id} not found`);
+
+			const placeIds = unique(result.items.map((item) => item.placeId));
+			const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+				userId,
+				placeIds,
+			);
+
+			return {
+				collection: {
+					...result,
+					items: attachFavoriteMetadata(result.items, favoriteIds),
+				},
+			};
 		});
 
-		const updatedCollection = await this.getById(userId, { id: data.id });
-
-		invariant(
-			updatedCollection,
-			'INTERNAL_SERVER_ERROR',
-			'Failed to retrieve updated collection after reordering',
-		);
-
-		return updatedCollection;
+		return result;
 	}
 
-	async createPlaceRelation(data: dto.CreatePlaceRelationInput) {
+	async createPlaceRelation(
+		userId: string | null,
+		data: dto.CreateCollectionPlaceRelationInput,
+	) {
 		const collection = await this.db.query.collections.findFirst({
 			where: {
 				id: data.id,
@@ -336,7 +424,10 @@ export class CollectionsRepository {
 		});
 	}
 
-	async deletePlaceRelation(data: dto.DeletePlaceRelationInput) {
+	async deletePlaceRelation(
+		userId: string | null,
+		data: dto.DeleteCollectionPlaceRelationInput,
+	) {
 		await this.db.transaction(async (tx) => {
 			const result = await tx
 				.delete(schema.collectionsPlaces)
@@ -372,7 +463,10 @@ export class CollectionsRepository {
 		});
 	}
 
-	async createCityRelation(data: dto.CreateCityRelationInput) {
+	async createCityRelation(
+		userId: string | null,
+		data: dto.CreateCityRelationInput,
+	) {
 		const collection = await this.db.query.collections.findFirst({
 			where: {
 				id: data.id,
@@ -427,7 +521,10 @@ export class CollectionsRepository {
 		});
 	}
 
-	async deleteCityRelation(data: dto.DeleteCityRelationInput) {
+	async deleteCityRelation(
+		userId: string | null,
+		data: dto.DeleteCityRelationInput,
+	) {
 		await this.db.transaction(async (tx) => {
 			const result = await tx
 				.delete(schema.collectionsCities)
@@ -463,7 +560,7 @@ export class CollectionsRepository {
 		});
 	}
 
-	async listByPlaceId(userId: string | null, data: dto.ListByPlaceIdInput) {
+	async listByPlace(userId: string | null, data: dto.ListByPlaceInput) {
 		const result = await this.db.query.collectionsPlaces.findMany({
 			where: {
 				placeId: data.placeId,
@@ -504,7 +601,7 @@ export class CollectionsRepository {
 		};
 	}
 
-	async listByCityId(userId: string | null, data: dto.ListByCityIdInput) {
+	async listByCity(userId: string | null, data: dto.ListByCityInput) {
 		const result = await findManyByCityId.execute(this.db, {
 			id: data.cityId,
 		});
@@ -523,56 +620,6 @@ export class CollectionsRepository {
 				...x.collection,
 				items: attachFavoriteMetadata(x.collection.items, favoriteIds),
 			})),
-		};
-	}
-
-	async listAllPlaceCollections(data: dto.ListAllPlaceCollectionsInput) {
-		const offset = Pagination.getOffset(data);
-
-		const result = await this.db.query.collectionsPlaces.findMany({
-			orderBy: (t, { asc }) => [asc(t.index)],
-			offset,
-			limit: data.pageSize,
-			with: {
-				place: {
-					columns: {
-						name: true,
-					},
-				},
-				collection: true,
-			},
-		});
-
-		const totalRecords = await this.db.$count(schema.collectionsPlaces);
-
-		return {
-			relations: result,
-			pagination: Pagination.compute(data, totalRecords),
-		};
-	}
-
-	async listAllCityCollections(data: dto.ListAllCityCollectionsInput) {
-		const offset = Pagination.getOffset(data);
-
-		const result = await this.db.query.collectionsCities.findMany({
-			orderBy: (t, { asc }) => [asc(t.index)],
-			offset,
-			limit: data.pageSize,
-			with: {
-				city: {
-					columns: {
-						name: true,
-					},
-				},
-				collection: true,
-			},
-		});
-
-		const totalRecords = await this.db.$count(schema.collectionsCities);
-
-		return {
-			relations: result,
-			pagination: Pagination.compute(data, totalRecords),
 		};
 	}
 }

@@ -3,6 +3,7 @@ import { collections } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
+import { getUserId, getUserIdOrThrow } from '@/lib/get-user-id';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
@@ -24,13 +25,14 @@ export const module = defineModule({
 			list: os.list
 				.use(requireAuth)
 				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.list(input);
+				.handler(async ({ context, input }) => {
+					const userId = getUserIdOrThrow(context);
+					const result = await svc.list(userId, input);
 
 					return result;
 				}),
 			get: os.get.handler(async ({ context, input }) => {
-				const userId = context.session?.user.id || null;
+				const userId = getUserId(context);
 				const result = await svc.get(userId, input);
 
 				return result;
@@ -38,112 +40,142 @@ export const module = defineModule({
 			create: os.create
 				.use(requireAuth)
 				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.create(input);
+				.handler(async ({ context, input }) => {
+					const userId = getUserIdOrThrow(context);
+					const result = await svc.create(userId, input);
 
 					return result;
 				}),
 			delete: os.delete
 				.use(requireAuth)
 				.use(isAdmin)
-				.handler(async ({ input }) => {
-					await svc._delete(input);
+				.handler(async ({ context, input }) => {
+					const userId = getUserIdOrThrow(context);
+					const result = await svc._delete(userId, input);
 
-					return {};
+					return result;
 				}),
 			update: os.update
 				.use(requireAuth)
 				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.update(input);
+				.handler(async ({ context, input }) => {
+					const userId = getUserIdOrThrow(context);
+					const result = await svc.update(userId, input);
 
 					return result;
 				}),
-			appendItem: os.appendItem
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.appendItem(input);
+			items: os.items.router({
+				append: os.items.append
+					.use(requireAuth)
+					.use(isAdmin)
+					.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.appendItem(userId, input);
 
-					return result;
-				}),
-			removeItem: os.removeItem
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.removeItem(input);
+						return result;
+					}),
+				remove: os.items.remove
+					.use(requireAuth)
+					.use(isAdmin)
+					.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.removeItem(userId, input);
 
-					return result;
-				}),
-			reorderItems: os.reorderItems
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.reorderItems(userId, input);
+						return result;
+					}),
+				reorder: os.items.reorder
+					.use(requireAuth)
+					.use(isAdmin)
+					.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.reorderItems(userId, input);
 
-					return result;
-				}),
-			createPlaceRelation: os.createPlaceRelation
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.createPlaceRelation(input);
-
-					return result;
-				}),
-			deletePlaceRelation: os.deletePlaceRelation
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.deletePlaceRelation(input);
-
-					return result;
-				}),
-			createCityRelation: os.createCityRelation
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.createCityRelation(input);
-
-					return result;
-				}),
-			deleteCityRelation: os.deleteCityRelation
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.deleteCityRelation(input);
-
-					return result;
-				}),
-			listByPlaceId: os.listByPlaceId.handler(async ({ input, context }) => {
-				const userId = context.session?.user.id || null;
-				const result = await svc.listByPlaceId(userId, input);
-
-				return result;
+						return result;
+					}),
 			}),
-			listByCityId: os.listByCityId.handler(async ({ input, context }) => {
-				const userId = context.session?.user.id || null;
-				const result = await svc.listByCityId(userId, input);
+			relations: os.relations.router({
+				places: {
+					get: os.relations.places.get.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.getCollectionPlaceRelation(userId, input);
 
-				return result;
+						return result;
+					}),
+					list: os.relations.places.list.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.listCollectionPlaceRelations(
+							userId,
+							input,
+						);
+
+						return result;
+					}),
+					create: os.relations.places.create
+						.use(requireAuth)
+						.use(isAdmin)
+						.handler(async ({ context, input }) => {
+							const userId = getUserIdOrThrow(context);
+							const result = await svc.createPlaceRelation(userId, input);
+
+							return result;
+						}),
+					delete: os.relations.places.delete
+						.use(requireAuth)
+						.use(isAdmin)
+						.handler(async ({ context, input }) => {
+							const userId = getUserIdOrThrow(context);
+							await svc.deletePlaceRelation(userId, input);
+
+							return {};
+						}),
+				},
+				cities: {
+					get: os.relations.cities.get.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.getCollectionCityRelation(userId, input);
+
+						return result;
+					}),
+					list: os.relations.cities.list.handler(async ({ context, input }) => {
+						const userId = getUserIdOrThrow(context);
+						const result = await svc.listCollectionCityRelations(userId, input);
+
+						return result;
+					}),
+					create: os.relations.cities.create
+						.use(requireAuth)
+						.use(isAdmin)
+						.handler(async ({ context, input }) => {
+							const userId = getUserIdOrThrow(context);
+							const result = await svc.createCityRelation(userId, input);
+
+							return result;
+						}),
+					delete: os.relations.cities.delete
+						.use(requireAuth)
+						.use(isAdmin)
+						.handler(async ({ context, input }) => {
+							const userId = getUserIdOrThrow(context);
+							await svc.deleteCityRelation(userId, input);
+
+							return {};
+						}),
+				},
 			}),
-			listAllPlaceCollections: os.listAllPlaceCollections
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.listAllPlaceCollections(input);
+			listBy: os.listBy.router({
+				place: os.listBy.place.handler(async ({ context, input }) => {
+					const userId = getUserIdOrThrow(context);
+					const result = await svc.listByPlace(userId, input);
 
 					return result;
 				}),
-			listAllCityCollections: os.listAllCityCollections
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.listAllCityCollections(input);
+				city: os.listBy.city.handler(async ({ context, input }) => {
+					const userId = getUserIdOrThrow(context);
+					const result = await svc.listByCity(userId, input);
 
 					return result;
 				}),
+			}),
 		});
 	},
 });
