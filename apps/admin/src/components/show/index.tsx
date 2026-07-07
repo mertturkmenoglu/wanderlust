@@ -8,6 +8,15 @@ import {
 	ResizablePanelGroup,
 } from '@wanderlust/ui/components/resizable';
 import { cn } from '@wanderlust/ui/lib/utils';
+import {
+	MoveUpRightIcon,
+	RefreshCwIcon,
+	Settings2Icon,
+	Share2Icon,
+	Trash2Icon,
+} from 'lucide-react';
+import { useRef } from 'react';
+import { toast } from 'sonner';
 import { useConfirmDialog } from '@/hooks/use-confirm-dialog';
 import { copyToClipboard } from '@/lib/clipboard';
 import type { DataResource, ProcIn, ResourceKey } from '@/lib/crud';
@@ -24,6 +33,7 @@ export type Props<K extends ResourceKey, T> = {
 export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 	const navigate = useNavigate();
 	const confirm = useConfirmDialog();
+	const previewRef = useRef<HTMLIFrameElement>(null);
 
 	const deleteMutation = props.resource.useDelete();
 
@@ -47,6 +57,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 								});
 							}}
 						>
+							<Settings2Icon />
 							Edit
 						</Button>
 						<Button
@@ -57,6 +68,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 								});
 							}}
 						>
+							<MoveUpRightIcon />
 							Visit
 						</Button>
 						<Button
@@ -66,7 +78,23 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 								await copyToClipboard(link ?? window.location.toString());
 							}}
 						>
+							<Share2Icon />
 							Share
+						</Button>
+						<Button
+							variant="outline"
+							onClick={async () => {
+								if (!previewRef.current) {
+									toast.error('Preview not available');
+									return;
+								}
+
+								// biome-ignore lint/correctness/noSelfAssign: This is is intentional to force the iframe to reload.
+								previewRef.current.src = previewRef.current.src;
+							}}
+						>
+							<RefreshCwIcon />
+							Refresh Preview
 						</Button>
 					</ButtonGroup>
 
@@ -88,6 +116,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 							deleteMutation.mutate(props.deleteInput);
 						}}
 					>
+						<Trash2Icon />
 						Delete
 					</Button>
 				</div>
@@ -111,6 +140,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 						<ResizablePanel defaultSize="40%" minSize="25%" maxSize="75%">
 							<iframe
 								id="preview"
+								ref={previewRef}
 								title="Content Preview"
 								className="h-full w-full"
 								src={props.resource.extractors.appLink(props.data)}
