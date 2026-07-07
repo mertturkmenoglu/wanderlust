@@ -12,6 +12,7 @@ import { accoladesResource } from '@/resources/accolades';
 import { addressesResource } from '@/resources/addresses';
 import { categoriesResource } from '@/resources/categories';
 import { citiesResource } from '@/resources/cities';
+import { collectionsResource } from '@/resources/collections';
 import { placesResource } from '@/resources/places';
 import { reportsResource } from '@/resources/reports';
 
@@ -34,6 +35,7 @@ const resources = [
 	addressesResource,
 	categoriesResource,
 	citiesResource,
+	collectionsResource,
 	reportsResource,
 	placesResource,
 ];
