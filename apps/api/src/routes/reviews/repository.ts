@@ -229,11 +229,16 @@ export class ReviewsRepository {
 		const offset = Pagination.getOffset(data);
 		const min = data.minRating || 0;
 		const max = data.maxRating || 5;
-		const sortBy = data.sortBy
-			? data.sortBy === 'created_at'
-				? 'createdAt'
-				: data.sortBy
-			: 'createdAt';
+		let sortBy = data.sortBy || 'createdAt';
+
+		if (data.sortBy === 'created_at') {
+			sortBy = 'createdAt';
+		} else if (data.sortBy === 'rating') {
+			sortBy = 'rating';
+		} else if (data.sortBy === 'likes') {
+			sortBy = 'totalLikes';
+		}
+
 		const sortOrd = data.sortOrd || 'desc';
 
 		const result = await this.db.query.reviews.findMany({
