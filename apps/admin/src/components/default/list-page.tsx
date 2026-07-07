@@ -8,6 +8,7 @@ import { Container } from '../container';
 
 type Props<K extends ResourceKey, T> = {
 	resource: DataResource<K, T>;
+	children?: React.ReactNode;
 };
 
 export function DefaultListPage<K extends ResourceKey, T>(props: Props<K, T>) {
@@ -57,6 +58,8 @@ export function DefaultListPage<K extends ResourceKey, T>(props: Props<K, T>) {
 					);
 				}}
 			/>
+
+			{props.children}
 		</Container>
 	);
 }
