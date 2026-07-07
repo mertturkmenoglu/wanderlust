@@ -22,8 +22,12 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useId, useState } from 'react';
 import {
 	Controller,
+	type ControllerFieldState,
+	type ControllerRenderProps,
+	type FieldPath,
 	type FieldValues,
 	type UseControllerProps,
+	type UseFormStateReturn,
 } from 'react-hook-form';
 import { normalizeMultipleErrors } from '@/lib/form';
 
@@ -302,3 +306,104 @@ export const cmp = {
 	Textarea: ControlledTextarea,
 	Select: ControlledSelect,
 };
+
+type ControlledElementProps<
+	TFieldValues extends FieldValues = FieldValues,
+	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+	TTransformedValues = TFieldValues,
+> = UseControllerProps<TFieldValues, TName, TTransformedValues> & {
+	label: string;
+	customize?: Partial<{
+		field: React.ComponentProps<typeof Field>;
+		label: Omit<React.ComponentProps<typeof FieldLabel>, 'children'>;
+		container: React.ComponentProps<'div'>;
+		error: React.ComponentProps<typeof FieldError>;
+	}>;
+	children: (
+		r: {
+			field: ControllerRenderProps<TFieldValues, TName>;
+			fieldState: ControllerFieldState;
+			formState: UseFormStateReturn<TFieldValues>;
+		},
+		id: string,
+	) => React.ReactNode;
+};
+
+export function ControlledElement<
+	T extends FieldValues = FieldValues,
+	TName extends FieldPath<T> = FieldPath<T>,
+	TTransformedValues = T,
+>({
+	label,
+	children,
+	customize,
+	...controller
+}: ControlledElementProps<T, TName, TTransformedValues>) {
+	const id = useId();
+
+	return (
+		<Controller
+			{...controller}
+			render={(r) => (
+				<Field
+					data-invalid={r.fieldState.invalid}
+					{...(customize?.field || {})}
+				>
+					<FieldLabel htmlFor={id} {...(customize?.label || {})}>
+						{label}
+					</FieldLabel>
+
+					<div className="w-full" {...(customize?.container || {})}>
+						{children(r, id)}
+
+						{r.fieldState.invalid && (
+							<FieldError
+								errors={[r.fieldState.error]}
+								{...(customize?.error || {})}
+							/>
+						)}
+					</div>
+				</Field>
+			)}
+		/>
+	);
+}
+
+export function useFormElement<TFieldValues extends FieldValues = FieldValues>(
+	control: UseControllerProps<TFieldValues>['control'],
+) {
+	return {
+		Element: <TName extends FieldPath<TFieldValues>>({
+			name,
+			label,
+			customize,
+			children,
+		}: {
+			name: TName;
+			label: string;
+			customize?: Partial<{
+				field: React.ComponentProps<typeof Field>;
+				label: Omit<React.ComponentProps<typeof FieldLabel>, 'children'>;
+				container: React.ComponentProps<'div'>;
+				error: React.ComponentProps<typeof FieldError>;
+			}>;
+			children: (
+				r: {
+					field: ControllerRenderProps<TFieldValues, TName>;
+					fieldState: ControllerFieldState;
+					formState: UseFormStateReturn<TFieldValues>;
+				},
+				id: string,
+			) => React.ReactNode;
+		}) => (
+			<ControlledElement
+				name={name}
+				control={control}
+				label={label}
+				customize={customize}
+			>
+				{children}
+			</ControlledElement>
+		),
+	};
+}
