@@ -29,6 +29,7 @@ import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
+import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
 import { ipx } from '@/lib/ipx';
 import { type Outputs, orpc } from '@/lib/orpc';
 import { UserCard } from '../user-card';
@@ -42,6 +43,7 @@ type Props = {
 
 export function ReviewCard({ review: { review, meta }, className }: Props) {
 	const [open, setOpen] = useState(false);
+	const isAuthenticated = useIsAuthenticated();
 
 	const lb = useAssetLightbox(review.assets);
 	const likeMutation = useLikeReviewMutation();
@@ -72,7 +74,17 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 		<Item variant="default" className={cn('px-0', className)} size="sm">
 			<ItemHeader>
 				<div className="flex items-center gap-4">
-					<HoverCard open={open} onOpenChange={setOpen}>
+					<HoverCard
+						open={open}
+						onOpenChange={(o) => {
+							if (!isAuthenticated) {
+								setOpen(false);
+								return;
+							}
+
+							setOpen(o);
+						}}
+					>
 						<HoverCardTrigger delay={200}>
 							<UserImage
 								className="size-14 rounded-full"
