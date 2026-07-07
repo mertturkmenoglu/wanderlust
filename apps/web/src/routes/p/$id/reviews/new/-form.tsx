@@ -1,12 +1,7 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { Calendar } from '@wanderlust/ui/components/calendar';
-import {
-	Field,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-} from '@wanderlust/ui/components/field';
+import { FieldGroup, FieldLabel } from '@wanderlust/ui/components/field';
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -19,8 +14,9 @@ import {
 	PopoverTrigger,
 } from '@wanderlust/ui/components/popover';
 import { format, subYears } from 'date-fns';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { AssetUploader } from '@/components/asset-uploader';
+import { useFormElement } from '@/components/form';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { lengthTracker } from '@/lib/form';
 import { useCreateReviewContext } from './-context';
@@ -34,90 +30,80 @@ export function CreateReviewForm() {
 	const mutation = useCreateReviewMutation();
 	const { place } = useLoaderData({ from: '/p/$id/reviews/new/' });
 
+	const onSubmit = form.handleSubmit((data) => {
+		mutation.mutate({
+			content: data.content,
+			rating: data.rating,
+			placeId: place.id,
+			files: ctx.uploader.acceptedFiles,
+			visitedAt: data.visitDate,
+		});
+	});
+
+	const { Element } = useFormElement(form.control);
+
 	return (
 		<form
 			id="create-review-form"
-			onSubmit={form.handleSubmit((data) => {
-				mutation.mutate({
-					content: data.content,
-					rating: data.rating,
-					placeId: place.id,
-					files: ctx.uploader.acceptedFiles,
-					visitedAt: data.visitDate,
-				});
-			})}
+			onSubmit={onSubmit}
 			className="mt-8 flex flex-col"
 		>
 			<FieldGroup>
 				<Rate />
 
-				<Controller
-					name="visitDate"
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="visitDate">Visit Date</FieldLabel>
-
-							<Popover>
-								<PopoverTrigger asChild>
-									<Button
-										variant="outline"
-										id="date-picker-simple"
-										className="w-full max-w-fit justify-start font-normal"
-									>
-										{field.value ? (
-											format(field.value, 'PPP')
-										) : (
-											<span>Pick a date</span>
-										)}
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0" align="start">
-									<Calendar
-										mode="single"
-										selected={field.value}
-										onSelect={field.onChange}
-										startMonth={subYears(new Date(), 1)}
-										endMonth={new Date()}
-										disabled={{
-											after: new Date(),
-											before: subYears(new Date(), 1),
-										}}
-									/>
-								</PopoverContent>
-							</Popover>
-
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
-					)}
-				/>
-
-				<Controller
-					name="content"
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor="content">Write Your Review</FieldLabel>
-							<InputGroup>
-								<InputGroupTextarea
-									{...field}
-									id="content"
-									placeholder="Leave a review, share your experience and help others discover great places!"
-									rows={isMobile ? 4 : 6}
-									autoComplete="off"
-									className="min-h-18 md:min-h-36"
-									aria-invalid={fieldState.invalid}
+				<Element name="visitDate" label="Visit Date">
+					{(r, id) => (
+						<Popover>
+							<PopoverTrigger asChild>
+								<Button
+									variant="outline"
+									id={id}
+									className="w-full max-w-fit justify-start font-normal"
+								>
+									{r.field.value ? (
+										format(r.field.value, 'PPP')
+									) : (
+										<span>Pick a date</span>
+									)}
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent className="w-auto p-0" align="start">
+								<Calendar
+									mode="single"
+									selected={r.field.value}
+									onSelect={r.field.onChange}
+									startMonth={subYears(new Date(), 1)}
+									endMonth={new Date()}
+									disabled={{
+										after: new Date(),
+										before: subYears(new Date(), 1),
+									}}
 								/>
-								<InputGroupAddon align="block-end">
-									<InputGroupText>
-										{lengthTracker(field.value, 2048)}
-									</InputGroupText>
-								</InputGroupAddon>
-							</InputGroup>
-							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-						</Field>
+							</PopoverContent>
+						</Popover>
 					)}
-				/>
+				</Element>
+
+				<Element name="content" label="Write Your Review">
+					{(r, id) => (
+						<InputGroup>
+							<InputGroupTextarea
+								{...r.field}
+								id={id}
+								placeholder="Leave a review, share your experience and help others discover great places!"
+								rows={isMobile ? 4 : 6}
+								autoComplete="off"
+								className="min-h-18 md:min-h-36"
+								aria-invalid={r.fieldState.invalid}
+							/>
+							<InputGroupAddon align="block-end">
+								<InputGroupText>
+									{lengthTracker(r.field.value, 2048)}
+								</InputGroupText>
+							</InputGroupAddon>
+						</InputGroup>
+					)}
+				</Element>
 
 				<div>
 					<FieldLabel>Add Photos</FieldLabel>
