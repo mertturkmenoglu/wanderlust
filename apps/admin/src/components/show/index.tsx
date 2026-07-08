@@ -83,6 +83,7 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 						</Button>
 						<Button
 							variant="outline"
+							disabled={!props.resource.enablePreview}
 							onClick={async () => {
 								if (!previewRef.current) {
 									toast.error('Preview not available');
@@ -94,7 +95,9 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 							}}
 						>
 							<RefreshCwIcon />
-							Refresh Preview
+							{!props.resource.enablePreview
+								? 'Preview Disabled'
+								: 'Refresh Preview'}
 						</Button>
 					</ButtonGroup>
 
@@ -130,21 +133,39 @@ export function Show<K extends ResourceKey, T>(props: Props<K, T>) {
 						orientation="horizontal"
 						className="min-h-128 rounded-lg border"
 					>
-						<ResizablePanel defaultSize="60%" minSize="25%" maxSize="75%">
+						<ResizablePanel
+							defaultSize={props.resource.enablePreview ? '60%' : '90%'}
+							minSize={props.resource.enablePreview ? '25%' : '10%'}
+							maxSize={props.resource.enablePreview ? '75%' : '90%'}
+						>
 							<KeyValueList
 								variant="bordered"
 								items={props.rows.map((r) => ({ label: r[0], value: r[1] }))}
 							/>
 						</ResizablePanel>
 						<ResizableHandle withHandle />
-						<ResizablePanel defaultSize="40%" minSize="25%" maxSize="75%">
-							<iframe
-								id="preview"
-								ref={previewRef}
-								title="Content Preview"
-								className="h-full w-full"
-								src={props.resource.extractors.appLink(props.data)}
-							/>
+						<ResizablePanel
+							defaultSize={props.resource.enablePreview ? '40%' : '10%'}
+							minSize={props.resource.enablePreview ? '25%' : '10%'}
+							maxSize={props.resource.enablePreview ? '75%' : '10%'}
+						>
+							{props.resource.enablePreview ? (
+								<iframe
+									id="preview"
+									ref={previewRef}
+									title="Content Preview"
+									className="h-full w-full"
+									src={props.resource.extractors.appLink(props.data)}
+								/>
+							) : (
+								<div className="m-4 flex items-center justify-center text-center text-xs">
+									<div>
+										Preview is not available for this resource. You can enable
+										it by calling <code>setPreviewEnabled(true)</code> when
+										building the resource.
+									</div>
+								</div>
+							)}
 						</ResizablePanel>
 					</ResizablePanelGroup>
 				</div>
