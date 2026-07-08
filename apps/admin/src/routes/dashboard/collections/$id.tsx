@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { renderer } from '@/components/details/renderer';
 import { PlaceCard } from '@/components/place-card';
 import { Show } from '@/components/show';
@@ -27,6 +28,16 @@ function RouteComponent() {
 		['Description', collection.description],
 		['Created At', renderer.Date(collection.createdAt)],
 		[
+			'Relations',
+			<Link
+				to="/dashboard/collections/$id/relations"
+				params={{ id: collection.id }}
+				className={buttonVariants({ variant: 'link', className: 'px-0!' })}
+			>
+				See related places and cities
+			</Link>,
+		],
+		[
 			'Items',
 			renderer.Multiple(
 				collection.items.map((item) =>
@@ -42,15 +53,6 @@ function RouteComponent() {
 					),
 				),
 			),
-		],
-		[
-			'Relations',
-			<Link
-				to="/dashboard/collections/$id/relations"
-				params={{ id: collection.id }}
-			>
-				Relations
-			</Link>,
 		],
 	]);
 
