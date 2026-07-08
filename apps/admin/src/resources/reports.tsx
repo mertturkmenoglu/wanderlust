@@ -18,6 +18,7 @@ export const reportsResource = new ResourceBuilder<'reports', Report>('reports')
 		appLink: (_report) => appLink('/'),
 		one: (data) => data.report,
 		list: (data) => data.reports,
+		pagination: (data) => data.pagination,
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([

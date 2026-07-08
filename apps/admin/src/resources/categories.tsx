@@ -20,6 +20,14 @@ export const categoriesResource = new ResourceBuilder<'categories', Category>(
 		description: (_category) => undefined,
 		appLink: (category) =>
 			appLink(`/search/places?category=${encodeURIComponent(category.name)}`),
+		pagination: (data) => ({
+			hasNext: false,
+			hasPrevious: false,
+			page: 1,
+			pageSize: data.categories.length,
+			totalPages: 1,
+			totalRecords: data.categories.length,
+		}),
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([

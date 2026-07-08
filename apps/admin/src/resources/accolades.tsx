@@ -20,6 +20,7 @@ export const accoladesResource = new ResourceBuilder<'accolades', Accolade>(
 		appLink: (accolade) => appLink(`/accolades/${accolade.id}`),
 		one: (data) => data.accolade,
 		list: (data) => data.accolades,
+		pagination: (data) => data.pagination,
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([

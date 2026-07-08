@@ -26,6 +26,7 @@ export const collectionsResource = new ResourceBuilder<
 				items: [],
 			}));
 		},
+		pagination: (data) => data.pagination,
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([

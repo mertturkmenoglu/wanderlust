@@ -17,6 +17,14 @@ export const citiesResource = new ResourceBuilder<'cities', City>('cities')
 		appLink: (city) => appLink(`/cities/${city.id}`),
 		one: (data) => data.city,
 		list: (data) => data.cities,
+		pagination: (data) => ({
+			hasNext: false,
+			hasPrevious: false,
+			page: 1,
+			pageSize: data.cities.length,
+			totalPages: 1,
+			totalRecords: data.cities.length,
+		}),
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([

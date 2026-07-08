@@ -20,6 +20,7 @@ export const addressesResource = new ResourceBuilder<'addresses', Address>(
 		appLink: (_address) => appLink('/'),
 		one: (data) => data.address,
 		list: (data) => data.addresses,
+		pagination: (data) => data.pagination,
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([
@@ -123,4 +124,5 @@ export const addressesResource = new ResourceBuilder<'addresses', Address>(
 			);
 		},
 	})
+	.setPreviewEnabled(false)
 	.build();

@@ -14,6 +14,14 @@ export const placesResource = new ResourceBuilder<'places', Place>('places')
 		appLink: (place) => appLink(`/p/${place.id}`),
 		one: (data) => data.place,
 		list: (data) => data.places,
+		pagination: (data) => ({
+			hasNext: false,
+			hasPrevious: false,
+			page: 1,
+			pageSize: data.places.length,
+			totalPages: 1,
+			totalRecords: data.places.length,
+		}),
 	})
 	.addDefaultBreadcrumbs()
 	.addColumns([
