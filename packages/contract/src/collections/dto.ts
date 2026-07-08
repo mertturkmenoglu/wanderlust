@@ -1,4 +1,4 @@
-import { $dto, $extended, Pagination } from '@wanderlust/common';
+import { $dto, $extended, Filter, Pagination, Sort } from '@wanderlust/common';
 import z from 'zod';
 
 const collection = $dto.collection;
@@ -14,13 +14,21 @@ const collectionWithItems = collection.extend({
 	items: collectionItem.array(),
 });
 
-export const listInput = Pagination.queryParamsSchema.extend({});
+export const listInput = Pagination.queryParamsSchema.extend({
+	sort: Sort.createSortSchema(['name', 'createdAt']).optional(),
+	filter: Filter.createFilterSchema(
+		['id', 'name', 'description', 'createdAt'],
+		['eq', 'ne', 'gt', 'lt', 'gte', 'lte', 'like', 'ilike'],
+	).optional(),
+});
 
 export type ListInput = z.infer<typeof listInput>;
 
 export const listOutput = z.object({
 	collections: collection.array(),
 	pagination: Pagination.schema,
+	sort: Sort.schema.optional(),
+	filter: Filter.schema.optional(),
 });
 
 export type ListOutput = z.infer<typeof listOutput>;
