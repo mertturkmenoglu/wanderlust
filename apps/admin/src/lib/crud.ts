@@ -199,6 +199,11 @@ export type DataResource<TKey extends ResourceKey, TOne> = TDataHooks<TKey> & {
 	 * The oRPC procedures for the CRUD operations for this resource.
 	 */
 	options: TDataFnOptions<TKey>;
+
+	/**
+	 * If true, the resource details page will render a preview of the resource's data in a side panel.
+	 */
+	enablePreview?: boolean;
 };
 
 export class ResourceBuilder<TKey extends ResourceKey, TOne> {
@@ -209,6 +214,8 @@ export class ResourceBuilder<TKey extends ResourceKey, TOne> {
 	private columns: ColumnDef<TOne>[] = [];
 	private options: TDataFnOptions<TKey> | null = null;
 	private hooks: TDataHooks<TKey> | null = null;
+
+	private enablePreview = true;
 
 	constructor(resource: TKey) {
 		this._resource = resource;
@@ -269,6 +276,11 @@ export class ResourceBuilder<TKey extends ResourceKey, TOne> {
 		return this;
 	}
 
+	public setPreviewEnabled(enabled: boolean) {
+		this.enablePreview = enabled;
+		return this;
+	}
+
 	public build(): DataResource<TKey, TOne> {
 		if (!this.breadcrumbs) {
 			throw new Error(
@@ -300,6 +312,7 @@ export class ResourceBuilder<TKey extends ResourceKey, TOne> {
 			extractors: this.extractors,
 			columns: this.columns,
 			options: this.options,
+			enablePreview: this.enablePreview,
 			...this.hooks,
 		};
 	}
