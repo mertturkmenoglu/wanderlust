@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserIndexRouteImport } from './routes/user/index'
 import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardUsersIndexRouteImport } from './routes/dashboard/users/index'
@@ -51,6 +52,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserIndexRoute = UserIndexRouteImport.update({
+  id: '/user/',
+  path: '/user/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInIndexRoute = SignInIndexRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
   '/sign-in/': typeof SignInIndexRoute
+  '/user/': typeof UserIndexRoute
   '/dashboard/accolades/$id': typeof DashboardAccoladesIdRouteWithChildren
   '/dashboard/accolades/new': typeof DashboardAccoladesNewRoute
   '/dashboard/addresses/$id': typeof DashboardAddressesIdRouteWithChildren
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/sign-in': typeof SignInIndexRoute
+  '/user': typeof UserIndexRoute
   '/dashboard/accolades/$id': typeof DashboardAccoladesIdRouteWithChildren
   '/dashboard/accolades/new': typeof DashboardAccoladesNewRoute
   '/dashboard/addresses/$id': typeof DashboardAddressesIdRouteWithChildren
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
   '/sign-in/': typeof SignInIndexRoute
+  '/user/': typeof UserIndexRoute
   '/dashboard/accolades/$id': typeof DashboardAccoladesIdRouteWithChildren
   '/dashboard/accolades/new': typeof DashboardAccoladesNewRoute
   '/dashboard/addresses/$id': typeof DashboardAddressesIdRouteWithChildren
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/'
     | '/sign-in/'
+    | '/user/'
     | '/dashboard/accolades/$id'
     | '/dashboard/accolades/new'
     | '/dashboard/addresses/$id'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/sign-in'
+    | '/user'
     | '/dashboard/accolades/$id'
     | '/dashboard/accolades/new'
     | '/dashboard/addresses/$id'
@@ -397,6 +408,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/'
     | '/sign-in/'
+    | '/user/'
     | '/dashboard/accolades/$id'
     | '/dashboard/accolades/new'
     | '/dashboard/addresses/$id'
@@ -432,6 +444,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   SignInIndexRoute: typeof SignInIndexRoute
+  UserIndexRoute: typeof UserIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -448,6 +461,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/': {
+      id: '/user/'
+      path: '/user'
+      fullPath: '/user/'
+      preLoaderRoute: typeof UserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in/': {
@@ -803,6 +823,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
   SignInIndexRoute: SignInIndexRoute,
+  UserIndexRoute: UserIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
