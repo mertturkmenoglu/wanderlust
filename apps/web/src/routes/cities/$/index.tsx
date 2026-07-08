@@ -125,7 +125,7 @@ function RouteComponent() {
 
 function Collections({ id }: { id: number }) {
 	const query = useSuspenseQuery(
-		orpc.collections.listByCityId.queryOptions({ input: { cityId: id } }),
+		orpc.collections.listBy.city.queryOptions({ input: { id: id } }),
 	);
 
 	const ilr = useInterleaveRenderer();

@@ -161,7 +161,6 @@ export type CreateCollectionPlaceRelationInput = z.infer<
 
 export const createCollectionPlaceRelationOutput = z.object({
 	collection: collection,
-	place: $extended.place,
 });
 
 export type CreateCollectionPlaceRelationOutput = z.infer<
@@ -228,7 +227,6 @@ export type CreateCollectionCityRelationInput = z.infer<
 
 export const createCollectionCityRelationOutput = z.object({
 	collection: collection,
-	city: $dto.city,
 });
 
 export type CreateCollectionCityRelationOutput = z.infer<

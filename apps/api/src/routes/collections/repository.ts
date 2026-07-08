@@ -367,86 +367,92 @@ export class CollectionsRepository {
 	}
 
 	async createPlaceRelation(
-		userId: string | null,
+		_userId: string | null,
 		data: dto.CreateCollectionPlaceRelationInput,
-	) {
-		const collection = await this.db.query.collections.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
+	): Promise<dto.CreateCollectionPlaceRelationOutput> {
+		await this.db.transaction(async (tx) => {
+			const collection = await tx.query.collections.findFirst({
+				where: {
+					id: data.collectionId,
+				},
+			});
 
-		invariant(
-			collection,
-			'NOT_FOUND',
-			`Collection with id ${data.id} not found`,
-		);
+			invariant(
+				collection,
+				'NOT_FOUND',
+				`Collection with id ${data.collectionId} not found`,
+			);
 
-		const place = await this.db.query.places.findFirst({
-			where: {
-				id: data.placeId,
-			},
-		});
+			const place = await tx.query.places.findFirst({
+				where: {
+					id: data.placeId,
+				},
+			});
 
-		invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
+			invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
 
-		const existingRelation = await this.db.query.collectionsPlaces.findFirst({
-			where: {
-				collectionId: data.id,
+			const existingRelation = await tx.query.collectionsPlaces.findFirst({
+				where: {
+					collectionId: data.collectionId,
+					placeId: data.placeId,
+				},
+			});
+
+			invariant(
+				!existingRelation,
+				'BAD_REQUEST',
+				`Relation between collection ${data.collectionId} and place ${data.placeId} already exists`,
+			);
+
+			const lastRelation = await tx.query.collectionsPlaces.findFirst({
+				where: {
+					placeId: data.placeId,
+				},
+				orderBy: {
+					index: 'desc',
+				},
+				columns: {
+					index: true,
+				},
+			});
+
+			const lastIndex = lastRelation ? lastRelation.index : -1;
+			const newIndex = lastIndex + 1;
+
+			await tx.insert(schema.collectionsPlaces).values({
+				collectionId: data.collectionId,
 				placeId: data.placeId,
-			},
+				index: newIndex,
+			});
 		});
 
-		invariant(
-			!existingRelation,
-			'BAD_REQUEST',
-			`Relation between collection ${data.id} and place ${data.placeId} already exists`,
-		);
+		const collection = await this.getById(null, { id: data.collectionId });
 
-		const lastRelation = await this.db.query.collectionsPlaces.findFirst({
-			where: {
-				placeId: data.placeId,
-			},
-			orderBy: {
-				index: 'desc',
-			},
-			columns: {
-				index: true,
-			},
-		});
-
-		const lastIndex = lastRelation ? lastRelation.index : -1;
-
-		await this.db.insert(schema.collectionsPlaces).values({
-			collectionId: data.id,
-			placeId: data.placeId,
-			index: lastIndex + 1,
-		});
+		return {
+			collection: collection.collection,
+		};
 	}
 
 	async deletePlaceRelation(
-		userId: string | null,
+		_userId: string | null,
 		data: dto.DeleteCollectionPlaceRelationInput,
-	) {
+	): Promise<dto.DeleteCollectionPlaceRelationOutput> {
 		await this.db.transaction(async (tx) => {
-			const result = await tx
+			const [deleted] = await tx
 				.delete(schema.collectionsPlaces)
 				.where(
 					and(
-						eq(schema.collectionsPlaces.collectionId, data.id),
+						eq(schema.collectionsPlaces.collectionId, data.collectionId),
 						eq(schema.collectionsPlaces.placeId, data.placeId),
 					),
 				)
 				.returning();
 
 			invariant(
-				result.length === 1,
+				deleted,
 				'NOT_FOUND',
-				`Collection-Place relation not found for collection id ${data.id} and place id ${data.placeId}`,
+				`Collection-Place relation not found for collection id ${data.collectionId} and place id ${data.placeId}`,
 			);
-
-			// biome-ignore lint/style/noNonNullAssertion: We check length above
-			const item = result[0]!;
 
 			// Reorder remaining relations
 			await tx
@@ -457,93 +463,113 @@ export class CollectionsRepository {
 				.where(
 					and(
 						eq(schema.collectionsPlaces.placeId, data.placeId),
-						gt(schema.collectionsPlaces.index, item.index),
+						gt(schema.collectionsPlaces.index, deleted.index),
 					),
 				);
 		});
+
+		return {};
 	}
 
 	async createCityRelation(
-		userId: string | null,
-		data: dto.CreateCityRelationInput,
-	) {
-		const collection = await this.db.query.collections.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
+		_userId: string | null,
+		data: dto.CreateCollectionCityRelationInput,
+	): Promise<dto.CreateCollectionCityRelationOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const collection = await tx.query.collections.findFirst({
+				where: {
+					id: data.collectionId,
+				},
+			});
 
-		invariant(
-			collection,
-			'NOT_FOUND',
-			`Collection with id ${data.id} not found`,
-		);
+			invariant(
+				collection,
+				'NOT_FOUND',
+				`Collection with id ${data.collectionId} not found`,
+			);
 
-		const city = await this.db.query.cities.findFirst({
-			where: {
-				id: data.cityId,
-			},
-		});
+			const city = await tx.query.cities.findFirst({
+				where: {
+					id: data.cityId,
+				},
+			});
 
-		invariant(city, 'NOT_FOUND', `City with id ${data.cityId} not found`);
+			invariant(city, 'NOT_FOUND', `City with id ${data.cityId} not found`);
 
-		const existingRelation = await this.db.query.collectionsCities.findFirst({
-			where: {
-				collectionId: data.id,
+			const existingRelation = await tx.query.collectionsCities.findFirst({
+				where: {
+					collectionId: data.collectionId,
+					cityId: data.cityId,
+				},
+			});
+
+			invariant(
+				!existingRelation,
+				'BAD_REQUEST',
+				`Relation between collection ${data.collectionId} and city ${data.cityId} already exists`,
+			);
+
+			const lastRelation = await tx.query.collectionsCities.findFirst({
+				where: {
+					cityId: data.cityId,
+				},
+				orderBy: {
+					index: 'desc',
+				},
+				columns: {
+					index: true,
+				},
+			});
+
+			const lastIndex = lastRelation ? lastRelation.index : -1;
+			const newIndex = lastIndex + 1;
+
+			await tx.insert(schema.collectionsCities).values({
+				collectionId: data.collectionId,
 				cityId: data.cityId,
-			},
+				index: newIndex,
+			});
+
+			const updatedCollection = await tx.query.collections.findFirst({
+				where: {
+					id: data.collectionId,
+				},
+			});
+
+			invariant(
+				updatedCollection,
+				'NOT_FOUND',
+				`Collection with id ${data.collectionId} not found`,
+			);
+
+			return updatedCollection;
 		});
 
-		invariant(
-			!existingRelation,
-			'BAD_REQUEST',
-			`Relation between collection ${data.id} and city ${data.cityId} already exists`,
-		);
-
-		const lastRelation = await this.db.query.collectionsCities.findFirst({
-			where: {
-				cityId: data.cityId,
-			},
-			orderBy: {
-				index: 'desc',
-			},
-			columns: {
-				index: true,
-			},
-		});
-
-		const lastIndex = lastRelation ? lastRelation.index : -1;
-
-		await this.db.insert(schema.collectionsCities).values({
-			collectionId: data.id,
-			cityId: data.cityId,
-			index: lastIndex + 1,
-		});
+		return {
+			collection: result,
+		};
 	}
 
 	async deleteCityRelation(
-		userId: string | null,
-		data: dto.DeleteCityRelationInput,
-	) {
+		_userId: string | null,
+		data: dto.DeleteCollectionCityRelationInput,
+	): Promise<dto.DeleteCollectionCityRelationOutput> {
 		await this.db.transaction(async (tx) => {
-			const result = await tx
+			const [deleted] = await tx
 				.delete(schema.collectionsCities)
 				.where(
 					and(
-						eq(schema.collectionsCities.collectionId, data.id),
+						eq(schema.collectionsCities.collectionId, data.collectionId),
 						eq(schema.collectionsCities.cityId, data.cityId),
 					),
 				)
 				.returning();
 
 			invariant(
-				result.length === 1,
+				deleted,
 				'NOT_FOUND',
-				`Collection-City relation not found for collection id ${data.id} and city id ${data.cityId}`,
+				`Collection-City relation not found for collection id ${data.collectionId} and city id ${data.cityId}`,
 			);
-
-			// biome-ignore lint/style/noNonNullAssertion: We check length above
-			const item = result[0]!;
 
 			// Reorder remaining relations
 			await tx
@@ -554,16 +580,21 @@ export class CollectionsRepository {
 				.where(
 					and(
 						eq(schema.collectionsCities.cityId, data.cityId),
-						gt(schema.collectionsCities.index, item.index),
+						gt(schema.collectionsCities.index, deleted.index),
 					),
 				);
 		});
+
+		return {};
 	}
 
-	async listByPlace(userId: string | null, data: dto.ListByPlaceInput) {
+	async listByPlace(
+		userId: string | null,
+		data: dto.ListByPlaceInput,
+	): Promise<dto.ListByPlaceOutput> {
 		const result = await this.db.query.collectionsPlaces.findMany({
 			where: {
-				placeId: data.placeId,
+				placeId: data.id,
 			},
 			orderBy: {
 				index: 'asc',
@@ -601,9 +632,12 @@ export class CollectionsRepository {
 		};
 	}
 
-	async listByCity(userId: string | null, data: dto.ListByCityInput) {
+	async listByCity(
+		userId: string | null,
+		data: dto.ListByCityInput,
+	): Promise<dto.ListByCityOutput> {
 		const result = await findManyByCityId.execute(this.db, {
-			id: data.cityId,
+			id: data.id,
 		});
 
 		const placeIds = unique(
@@ -620,6 +654,121 @@ export class CollectionsRepository {
 				...x.collection,
 				items: attachFavoriteMetadata(x.collection.items, favoriteIds),
 			})),
+		};
+	}
+
+	async getCollectionPlaceRelation(
+		userId: string | null,
+		data: dto.GetCollectionPlaceRelationInput,
+	): Promise<dto.GetCollectionPlaceRelationOutput> {
+		const collection = await this.getById(userId, { id: data.collectionId });
+
+		invariant(
+			collection.collection,
+			'NOT_FOUND',
+			`Collection with id ${data.collectionId} not found`,
+		);
+
+		const place = await this.db.query.places.findFirst({
+			where: {
+				id: data.placeId,
+			},
+			with: $includes.place.with,
+		});
+
+		invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
+
+		return {
+			collection: collection.collection,
+			place,
+		};
+	}
+
+	async listCollectionPlaceRelations(
+		_userId: string | null,
+		data: dto.ListCollectionPlaceRelationsInput,
+	): Promise<dto.ListCollectionPlaceRelationsOutput> {
+		const result = await this.db.query.collectionsPlaces.findMany({
+			where: {
+				collectionId: data.collectionId,
+			},
+			orderBy: {
+				index: 'asc',
+			},
+			with: {
+				collection: {
+					with: {
+						items: {
+							orderBy: {
+								index: 'asc',
+							},
+							with: {
+								place: $includes.place,
+							},
+						},
+					},
+				},
+			},
+		});
+
+		const places = result.flatMap((x) =>
+			x.collection.items.map((y) => y.place),
+		);
+
+		return {
+			places,
+		};
+	}
+
+	async getCollectionCityRelation(
+		userId: string | null,
+		data: dto.GetCollectionCityRelationInput,
+	): Promise<dto.GetCollectionCityRelationOutput> {
+		const collection = await this.getById(userId, { id: data.collectionId });
+
+		invariant(
+			collection.collection,
+			'NOT_FOUND',
+			`Collection with id ${data.collectionId} not found`,
+		);
+
+		const city = await this.db.query.cities.findFirst({
+			where: {
+				id: data.cityId,
+			},
+		});
+
+		invariant(city, 'NOT_FOUND', `City with id ${data.cityId} not found`);
+
+		return {
+			collection: collection.collection,
+			city,
+		};
+	}
+
+	async listCollectionCityRelations(
+		_userId: string | null,
+		data: dto.ListCollectionCityRelationsInput,
+	): Promise<dto.ListCollectionCityRelationsOutput> {
+		const result = await this.db.query.collectionsCities.findMany({
+			where: {
+				collectionId: data.collectionId,
+			},
+			orderBy: {
+				index: 'asc',
+			},
+		});
+
+		const cities = await this.db.query.cities.findMany({
+			where: {
+				id: {
+					in: result.map((x) => x.cityId),
+				},
+			},
+		});
+
+		return {
+			cities,
 		};
 	}
 }
