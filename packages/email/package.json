@@ -27,7 +27,7 @@
 		"react-email": "catalog:"
 	},
 	"devDependencies": {
-		"@react-email/ui": "6.1.1",
+		"@react-email/ui": "6.6.5",
 		"@types/bun": "catalog:",
 		"@types/nodemailer": "^8.0.0",
 		"@types/react": "catalog:",
