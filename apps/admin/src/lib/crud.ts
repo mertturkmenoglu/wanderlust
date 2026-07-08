@@ -18,6 +18,8 @@ export type ProcIn<K extends keyof Inputs, P extends string> =
 export type ProcOut<K extends keyof Outputs, P extends string> =
 	Outputs[K] extends Record<P, infer T> ? T : never;
 
+export type TPagination = Outputs['bookmarks']['list']['pagination'];
+
 export type TDataBreadcrumb = {
 	label: string;
 	link: LinkOptions;
@@ -69,6 +71,10 @@ export type TDataExtractors<TKey extends ResourceKey, TOne> = {
 	 * Extract a list of items of this resource from the data returned by the "list" procedure.
 	 */
 	list: (data: ProcOut<TKey, 'list'>) => TOne[];
+	/**
+	 * Extract the pagination information from the data returned by the "list" procedure.
+	 */
+	pagination: (data: ProcOut<TKey, 'list'>) => TPagination;
 	/**
 	 * Extract the title of a single item of this resource from the data returned by the "get" procedure.
 	 */
