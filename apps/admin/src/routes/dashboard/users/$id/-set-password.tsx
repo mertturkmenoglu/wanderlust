@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LockClosedIcon } from '@radix-ui/react-icons';
 import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import {
@@ -25,7 +24,7 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from '@wanderlust/ui/components/input-group';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, LockIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -88,7 +87,7 @@ const schema = z.object({
 });
 
 export function SetPassword() {
-	const { data } = useLoaderData({ from: '/dashboard/users/$id/' });
+	const data = useLoaderData({ from: '/dashboard/users/$id/' });
 	const invalidate = useInvalidator();
 	const [open, setOpen] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -128,17 +127,19 @@ export function SetPassword() {
 
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogTrigger asChild>
-				<Button
-					variant="destructive-ghost"
-					size="sm"
-					disabled={data.role === 'admin'}
-					onClick={() => setOpen(true)}
-				>
-					<LockClosedIcon />
-					Set Password
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button
+						variant="destructive-ghost"
+						size="sm"
+						disabled={data.role === 'admin'}
+						onClick={() => setOpen(true)}
+					>
+						<LockIcon />
+						Set Password
+					</Button>
+				}
+			/>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Set Password for {data.name}</AlertDialogTitle>

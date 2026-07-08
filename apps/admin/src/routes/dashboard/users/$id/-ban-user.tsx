@@ -26,7 +26,7 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 
 export function BanUser() {
-	const { data } = useLoaderData({ from: '/dashboard/users/$id/' });
+	const data = useLoaderData({ from: '/dashboard/users/$id/' });
 	const [open, setOpen] = useState(false);
 	const [reason, setReason] = useState('');
 	const [duration, setDuration] = useState<string>();
@@ -39,12 +39,14 @@ export function BanUser() {
 	if (data.banned === true) {
 		return (
 			<AlertDialog>
-				<AlertDialogTrigger asChild>
-					<Button variant="destructive-ghost" size="sm">
-						<GavelIcon />
-						Unban
-					</Button>
-				</AlertDialogTrigger>
+				<AlertDialogTrigger
+					render={
+						<Button variant="destructive-ghost" size="sm">
+							<GavelIcon />
+							Unban
+						</Button>
+					}
+				/>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>Unban {data.name}</AlertDialogTitle>
@@ -76,16 +78,18 @@ export function BanUser() {
 
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogTrigger asChild>
-				<Button
-					variant="destructive-ghost"
-					size="sm"
-					onClick={() => setOpen(true)}
-				>
-					<GavelIcon />
-					Ban this user
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button
+						variant="destructive-ghost"
+						size="sm"
+						onClick={() => setOpen(true)}
+					>
+						<GavelIcon />
+						Ban this user
+					</Button>
+				}
+			/>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Ban {data.name}</AlertDialogTitle>
