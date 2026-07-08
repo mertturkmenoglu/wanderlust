@@ -695,25 +695,18 @@ export class CollectionsRepository {
 			orderBy: {
 				index: 'asc',
 			},
-			with: {
-				collection: {
-					with: {
-						items: {
-							orderBy: {
-								index: 'asc',
-							},
-							with: {
-								place: $includes.place,
-							},
-						},
-					},
-				},
-			},
 		});
 
-		const places = result.flatMap((x) =>
-			x.collection.items.map((y) => y.place),
-		);
+		const placeIds = result.map((x) => x.placeId);
+
+		const places = await this.db.query.places.findMany({
+			where: {
+				id: {
+					in: placeIds,
+				},
+			},
+			with: $includes.place.with,
+		});
 
 		return {
 			places,
