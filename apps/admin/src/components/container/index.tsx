@@ -1,4 +1,5 @@
-import { Button } from '@wanderlust/ui/components/button';
+import { Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { UserIcon } from 'lucide-react';
@@ -24,9 +25,12 @@ export function Container({
 			<div className="flex flex-row items-center justify-between">
 				<Breadcrumbs crumbs={crumbs} />
 
-				<Button size="icon" variant="ghost">
+				<Link
+					to="/user"
+					className={buttonVariants({ size: 'icon', variant: 'ghost' })}
+				>
 					<UserIcon />
-				</Button>
+				</Link>
 			</div>
 
 			<div className="mt-4">
