@@ -10,6 +10,7 @@ import { nanoid } from '@wanderlust/uid';
 import { and, eq, gt, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
+import { transformFiltersToConditions } from '@/lib/filters-to-conditions';
 import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
@@ -31,10 +32,15 @@ export class CollectionsRepository {
 
 	async list(_userId: string, data: dto.ListInput): Promise<dto.ListOutput> {
 		const offset = Pagination.getOffset(data);
+		const sortBy = data.sort?.field ?? 'createdAt';
+		const filters = data.filter?.filters ?? [];
 
 		const result = await this.db.query.collections.findMany({
+			where: {
+				OR: transformFiltersToConditions(filters),
+			},
 			orderBy: {
-				createdAt: 'desc',
+				[sortBy]: data.sort?.order ?? 'desc',
 			},
 			offset,
 			limit: data.pageSize,
