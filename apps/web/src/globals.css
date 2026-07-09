@@ -164,4 +164,46 @@ code {
 	a {
 		@apply cursor-pointer;
 	}
+
+	.tiptap {
+		p.is-editor-empty:first-child::before {
+			@apply text-muted-foreground float-left h-0 pointer-events-none;
+			content: attr(data-placeholder);
+		}
+
+		a {
+			@apply text-primary underline underline-offset-2;
+		}
+
+		.hashtag {
+			@apply text-primary;
+		}
+
+		.mention {
+			@apply bg-primary/10 text-primary rounded-full px-2 py-1;
+			&::after {
+				content: "\200B";
+			}
+		}
+
+		/* Suggestion inline decoration styles (created by @tiptap/suggestion)
+     Visible highlight to help see the active suggestion range in demos */
+		[data-decoration-id] {
+			@apply text-primary rounded-full px-2 py-1;
+			box-decoration-break: clone;
+		}
+
+		.suggestion {
+			@apply bg-primary/10 text-primary rounded-full px-2 py-1;
+			box-decoration-break: clone;
+		}
+
+		.suggestion::after {
+			content: "\200B";
+		}
+
+		.suggestion.is-empty::after {
+			content: "\00A0";
+		}
+	}
 }
