@@ -1551,7 +1551,10 @@ export const $insert = {
 	address: createInsertSchema(schema.addresses),
 	accolade: createInsertSchema(schema.accolades),
 	accoladeAssignment: createInsertSchema(schema.accoladeAssignments),
-	place: createInsertSchema(schema.places),
+	place: createInsertSchema(schema.places, {
+		amenities: z.array(z.string()),
+		hours: z.record(z.string(), z.string()),
+	}),
 	bookmark: createInsertSchema(schema.bookmarks),
 	favorite: createInsertSchema(schema.favorites),
 	collection: createInsertSchema(schema.collections),
@@ -1560,7 +1563,17 @@ export const $insert = {
 	collectionsPlaces: createInsertSchema(schema.collectionsPlaces),
 	list: createInsertSchema(schema.lists),
 	listItem: createInsertSchema(schema.listItems),
-	review: createInsertSchema(schema.reviews),
+	review: createInsertSchema(schema.reviews, {
+		detectedLanguage: z.string().nullable(),
+		facets: z.array(
+			z.object({
+				type: z.string(),
+				value: z.string(),
+				start: z.number(),
+				end: z.number(),
+			}),
+		),
+	}),
 	trip: createInsertSchema(schema.trips),
 	tripInvite: createInsertSchema(schema.tripInvites),
 	tripComment: createInsertSchema(schema.tripComments),
