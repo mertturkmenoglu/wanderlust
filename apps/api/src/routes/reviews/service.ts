@@ -4,6 +4,7 @@ import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { reviews as dto } from '@wanderlust/contract';
+import { createLinkifyInstance } from '@wanderlust/richtext';
 import {
 	getFilenameFromUrl,
 	StorageService,
@@ -22,6 +23,7 @@ import { ReviewsRepository } from './repository';
 export class ReviewsService {
 	private readonly storage: TStorageService;
 	private readonly cache: TCacheService;
+	private readonly linkify = createLinkifyInstance();
 
 	constructor(
 		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
@@ -78,10 +80,21 @@ export class ReviewsService {
 				new Date(),
 			);
 
+			const facets = this.linkify.find(data.content);
+
+			span?.addEvent(
+				'review.facets',
+				{
+					facets: JSON.stringify(facets),
+				},
+				new Date(),
+			);
+
 			const [insertResult, place] = await this.repo.create(userId, {
 				...data,
 				detectedLanguage,
 				urls,
+				facets,
 			});
 
 			span?.addEvent(
