@@ -1,0 +1,25 @@
+{
+	"name": "@wanderlust/richtext",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"build-types": "tsdown",
+		"build-types:watch": "tsdown --watch",
+		"check-types": "tsc --noEmit",
+		"dev": "tsc --watch"
+	},
+	"dependencies": {
+		"linkifyjs": "catalog:"
+	},
+	"devDependencies": {
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
+	}
+}
