@@ -40,6 +40,8 @@ function getVariantComponent(type: TNotification['type']) {
 			return VariantTripInvite;
 		case 'trip_update':
 			return VariantTripUpdate;
+		case 'mention':
+			return VariantMention;
 		case 'wl_event_suggest':
 			return null;
 		case 'wl_list_suggest':
@@ -223,6 +225,54 @@ function VariantTripUpdate({ item }: Props) {
 					<ItemDescription>
 						Trip dates are changed. Click to see the details.
 					</ItemDescription>
+					<ItemDescription>
+						<RelativeTime date={new Date(item.createdAt)} />
+					</ItemDescription>
+				</ItemContent>
+
+				<MarkReadView item={item} />
+			</Item>
+		</Link>
+	);
+}
+
+function VariantMention({ item }: Props) {
+	const data = item.data as {
+		review: {
+			id: string;
+			place: {
+				id: string;
+				name: string;
+			};
+			user: {
+				id: string;
+				name: string;
+				username: string;
+				image: string | null;
+			};
+		};
+	};
+	return (
+		<Link
+			to="/p/$id/reviews/$reviewId"
+			params={{
+				id: data.review.place.id,
+				reviewId: data.review.id,
+			}}
+		>
+			<Item variant="outline" className="hover:bg-muted">
+				<UnreadBadge item={item} />
+
+				<ItemMedia variant="default">
+					<UserImage src={data.review.user.image} />
+				</ItemMedia>
+
+				<ItemContent>
+					<ItemTitle>
+						{data.review.user.name ?? 'Someone'} mentioned you in a review:{' '}
+						<span className="text-primary">{data.review.place.name}</span>
+					</ItemTitle>
+					<ItemDescription>Click to see the review.</ItemDescription>
 					<ItemDescription>
 						<RelativeTime date={new Date(item.createdAt)} />
 					</ItemDescription>
