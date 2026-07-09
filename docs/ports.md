@@ -11,6 +11,7 @@ Ports used by the Wanderlust:
 | 3003 	| Admin 						| Admin Web UI						|
 | 4000 	| Email 						| Email service 					|
 | 3006 	| Typesense  				| Dashboard     					|
+| 4318 	| Jaeger 						| Tracing endpoint 				|
 | 5000 	| API        				| HTTP server   					|
 | 5001 	| Notifications    	| Notifications server		|
 | 5005 	| Chat 							| Chat server   					|
@@ -23,6 +24,7 @@ Ports used by the Wanderlust:
 | 8888 	| SeaweedFS 				| Filer UI 								|
 | 9333 	| SeaweedFS 				| Master UI 							|
 | 9340 	| SeaweedFS					| Volume Server 					|
+| 16686 | Jaeger 						| Tracing UI 							|
 | 23646 | SeaweedFS 				| Admin UI 								|
 
 In development environment, ports are hardcoded. We expect these ports to be available.
