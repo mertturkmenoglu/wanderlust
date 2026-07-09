@@ -72,6 +72,7 @@ export class ReviewsRepository {
 					placeId: data.placeId,
 					userId: userId,
 					content: data.content,
+					facets: data.facets,
 					rating: data.rating,
 					visitedAt: data.visitedAt,
 					detectedLanguage: data.detectedLanguage,
