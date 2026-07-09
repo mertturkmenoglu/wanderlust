@@ -1,12 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { Placeholder } from '@tiptap/extensions';
+import { useEditor } from '@tiptap/react';
 import * as fileUpload from '@zag-js/file-upload';
 import { normalizeProps, useMachine } from '@zag-js/react';
-import { useId } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
+import { CustomLink } from '@/components/rich-text/custom-link';
+import { rteStyles } from '@/components/rich-text/editor-styles';
+import {
+	getScoppedStarterKit,
+	getUserMentionExtension,
+} from '@/components/rich-text/extensions';
+import { Hashtag } from '@/components/rich-text/hashtag';
 import { orpc } from '@/lib/orpc';
 
 const schema = z.object({
@@ -66,4 +75,42 @@ export function useCreateReviewMutation() {
 			},
 		}),
 	);
+}
+
+export function useCreateReviewEditor(opts: {
+	value: string;
+	onChangeRichTextListener: (value: string) => void;
+	onChangePlainTextListener?: (value: string) => void;
+}) {
+	const callbacksRef = useRef(opts);
+	useEffect(() => {
+		callbacksRef.current = opts;
+	});
+
+	const extensions = useMemo(() => {
+		return [
+			getScoppedStarterKit(),
+			Placeholder.configure({
+				placeholder:
+					'Leave a review, share your experience and help others discover great places!',
+			}),
+			CustomLink,
+			getUserMentionExtension(),
+			Hashtag,
+		];
+	}, []);
+
+	return useEditor({
+		extensions,
+		content: opts.value,
+		onUpdate: ({ editor }) => {
+			callbacksRef.current.onChangeRichTextListener(editor.getHTML());
+			callbacksRef.current.onChangePlainTextListener?.(editor.getText());
+		},
+		editorProps: {
+			attributes: {
+				class: rteStyles,
+			},
+		},
+	});
 }

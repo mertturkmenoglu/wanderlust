@@ -3,36 +3,32 @@ import { Button } from '@wanderlust/ui/components/button';
 import { Calendar } from '@wanderlust/ui/components/calendar';
 import { FieldGroup, FieldLabel } from '@wanderlust/ui/components/field';
 import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupText,
-	InputGroupTextarea,
-} from '@wanderlust/ui/components/input-group';
-import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from '@wanderlust/ui/components/popover';
 import { format, subYears } from 'date-fns';
+import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { AssetUploader } from '@/components/asset-uploader';
 import { useFormElement } from '@/components/form';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { lengthTracker } from '@/lib/form';
 import { useCreateReviewContext } from './-context';
+import { CreateReviewEditor } from './-editor';
 import { type FormInput, useCreateReviewMutation } from './-hooks';
 import { Rate } from './-rate';
 
 export function CreateReviewForm() {
 	const form = useFormContext<FormInput>();
 	const ctx = useCreateReviewContext();
-	const isMobile = useIsMobile();
 	const mutation = useCreateReviewMutation();
 	const { place } = useLoaderData({ from: '/p/$id/reviews/new/' });
+	const [plainText, setPlainText] = useState('');
 
 	const onSubmit = form.handleSubmit((data) => {
 		mutation.mutate({
-			content: data.content,
+			// We want the text version of the content to be sent to the backend, and process it into its facets there.
+			// We don't want to send the Tiptap JSON to the backend because it is not the format we wanted.
+			content: plainText,
 			rating: data.rating,
 			placeId: place.id,
 			files: ctx.uploader.acceptedFiles,
@@ -85,23 +81,15 @@ export function CreateReviewForm() {
 				</Element>
 
 				<Element name="content" label="Write Your Review">
-					{(r, id) => (
-						<InputGroup>
-							<InputGroupTextarea
-								{...r.field}
-								id={id}
-								placeholder="Leave a review, share your experience and help others discover great places!"
-								rows={isMobile ? 4 : 6}
-								autoComplete="off"
-								className="min-h-18 md:min-h-36"
-								aria-invalid={r.fieldState.invalid}
+					{(r) => (
+						<div className="flex-1 resize-none rounded-none">
+							<CreateReviewEditor
+								value={r.field.value}
+								onChangeRichTextListener={r.field.onChange}
+								onChangePlainTextListener={setPlainText}
+								onBlur={r.field.onBlur}
 							/>
-							<InputGroupAddon align="block-end">
-								<InputGroupText>
-									{lengthTracker(r.field.value, 2048)}
-								</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
+						</div>
 					)}
 				</Element>
 
