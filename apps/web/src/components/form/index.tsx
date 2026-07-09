@@ -19,7 +19,7 @@ import {
 } from '@wanderlust/ui/components/select';
 import { Textarea } from '@wanderlust/ui/components/textarea';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useId, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import {
 	Controller,
 	type ControllerFieldState,
@@ -372,8 +372,8 @@ export function ControlledElement<
 export function useFormElement<TFieldValues extends FieldValues = FieldValues>(
 	control: UseControllerProps<TFieldValues>['control'],
 ) {
-	return {
-		Element: <TName extends FieldPath<TFieldValues>>({
+	const Element = useMemo(() => {
+		return <TName extends FieldPath<TFieldValues>>({
 			name,
 			label,
 			customize,
@@ -404,6 +404,8 @@ export function useFormElement<TFieldValues extends FieldValues = FieldValues>(
 			>
 				{children}
 			</ControlledElement>
-		),
-	};
+		);
+	}, [control]);
+
+	return { Element };
 }
