@@ -745,6 +745,28 @@ export const $dto = {
 					'Amazing place! Had a wonderful time exploring the exhibits.',
 				],
 			}),
+		facets: z
+			.array(
+				z.object({
+					type: z.string(),
+					value: z.string(),
+					start: z.number(),
+					end: z.number(),
+				}),
+			)
+			.meta({
+				description: 'Facets detected in the review content',
+				examples: [
+					[
+						{
+							type: 'url',
+							value: 'https://example.com',
+							start: 10,
+							end: 30,
+						},
+					],
+				],
+			}),
 		rating: z
 			.number()
 			.min(1)
