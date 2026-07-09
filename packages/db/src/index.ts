@@ -4,3 +4,4 @@ export * from './pgerr';
 export * from './relations';
 export * from './schema';
 export * from './service';
+export * from './types';
