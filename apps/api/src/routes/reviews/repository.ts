@@ -508,4 +508,22 @@ export class ReviewsRepository {
 
 		return unique(result.map((r) => r.reviewId));
 	}
+
+	async getUsersByUsernames(usernames: string[]) {
+		const result = await this.db.query.users.findMany({
+			where: {
+				username: {
+					in: usernames,
+				},
+			},
+			columns: {
+				id: true,
+				username: true,
+				name: true,
+				image: true,
+			},
+		});
+
+		return result;
+	}
 }
