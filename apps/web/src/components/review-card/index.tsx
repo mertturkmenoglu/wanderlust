@@ -25,13 +25,13 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 import { LanguagesIcon, StarIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { CollapsibleText } from '@/components/collapsible-text';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
 import { ipx } from '@/lib/ipx';
 import { type Outputs, orpc } from '@/lib/orpc';
+import { EnrichedText } from '../rich-text/enriched-text';
 import { UserCard } from '../user-card';
 import { useLikeReviewMutation, useLikesFormatter } from './hooks';
 import { Menu } from './menu';
@@ -145,7 +145,7 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 				</ItemActions>
 			</ItemHeader>
 			<ItemContent>
-				<CollapsibleText text={review.content} charLimit={512} />
+				<EnrichedText text={review.content} facets={review.facets} />
 				<div
 					className={cn('flex items-center gap-4', {
 						'mt-4': review.assets.length > 0,
