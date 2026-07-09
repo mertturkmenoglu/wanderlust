@@ -27,9 +27,9 @@ function Content({ className }: ContentProps) {
 	const route = getRouteApi('/p/$id/');
 	const { id } = route.useParams();
 	const query = useSuspenseQuery(
-		orpc.collections.listBy.place.queryOptions({
+		orpc.collections.places.list.queryOptions({
 			input: {
-				id,
+				placeId: id,
 			},
 		}),
 	);
