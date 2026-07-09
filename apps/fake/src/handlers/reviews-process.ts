@@ -36,6 +36,16 @@ export async function processChunk({
 				userId,
 				rating,
 				content: faker.lorem.paragraph(),
+				detectedLanguage: faker.helpers.arrayElement([
+					'en',
+					'es',
+					'fr',
+					'de',
+					'it',
+					'tr',
+				]),
+				totalLikes: faker.number.int({ min: 0, max: 100 }),
+				facets: [],
 				visitedAt: faker.date.recent({ days: 180 }),
 			};
 		});

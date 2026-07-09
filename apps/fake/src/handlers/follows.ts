@@ -6,6 +6,7 @@ import type z from 'zod';
 import { paths } from '..';
 import { chunkArray, readFile } from '../utils';
 import { getDb } from './common';
+import { usernames } from './well-known';
 
 export async function generate() {
 	const userIds = await readFile(paths.users);
@@ -30,11 +31,14 @@ export async function generate() {
 		}
 	}
 
-	const usernames = ['esin', 'hilal', 'lidya', 'mina', 'sueda', 'zoktay'];
 	const db = await getDb();
 	await db.transaction(async (tx) => {
 		const ids = await tx.query.users.findMany({
-			where: (users, { inArray }) => inArray(users.username, usernames),
+			where: {
+				username: {
+					in: usernames,
+				},
+			},
 			columns: {
 				id: true,
 			},

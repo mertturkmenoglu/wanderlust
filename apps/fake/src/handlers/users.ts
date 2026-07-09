@@ -4,6 +4,7 @@ import * as schema from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import type z from 'zod';
 import { getDb } from './common';
+import { usernames } from './well-known';
 
 // This value is meant to be used in fake user generation only.
 // const defaultPassword = 'LoremIpsum!1';
@@ -76,11 +77,9 @@ export async function generate() {
 		});
 	}
 
-	// After all users are created, insert a test user with known credentials
+	// After all users are created, insert test users with known credentials
 	// for development and testing purposes.
 	await db.transaction(async (tx) => {
-		const usernames = ['esin', 'hilal', 'lidya', 'mina', 'sueda', 'zoktay'];
-
 		for (const username of usernames) {
 			const userId = nanoid();
 
