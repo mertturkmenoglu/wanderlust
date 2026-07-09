@@ -4,6 +4,7 @@ import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { reviews as dto } from '@wanderlust/contract';
+import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { createLinkifyInstance } from '@wanderlust/richtext';
 import {
 	getFilenameFromUrl,
@@ -23,6 +24,7 @@ import { ReviewsRepository } from './repository';
 export class ReviewsService {
 	private readonly storage: TStorageService;
 	private readonly cache: TCacheService;
+	private readonly jobs: TJobsService;
 	private readonly linkify = createLinkifyInstance();
 
 	constructor(
@@ -30,9 +32,11 @@ export class ReviewsService {
 		@inject(StorageService) storage: StorageService,
 		@inject(CacheService) cache: CacheService,
 		@inject(ActivitiesService) private readonly activities: ActivitiesService,
+		@inject(JobsService) jobs: JobsService,
 	) {
 		this.storage = storage.get();
 		this.cache = cache.get();
+		this.jobs = jobs.get();
 	}
 
 	async get(userId: string | null, data: dto.GetInput): Promise<dto.GetOutput> {
@@ -139,6 +143,51 @@ export class ReviewsService {
 					'place.name': place.name,
 				},
 				new Date(),
+			);
+
+			const mentionFacets = facets.filter((facet) => facet.type === 'mention');
+
+			const mentionedUsernames = mentionFacets.map((facet) =>
+				facet.value.slice(1),
+			);
+
+			const mentionedUsers =
+				await this.repo.getUsersByUsernames(mentionedUsernames);
+
+			span?.addEvent(
+				'review.create.mentioned-users',
+				{
+					mentionedUsernames: mentionedUsernames.join(','),
+				},
+				new Date(),
+			);
+
+			await this.jobs.notification.queue.addBulk(
+				mentionedUsers.map((u) => ({
+					name: 'create-notification',
+					data: {
+						id: nanoid(),
+						entityId: insertResult.id,
+						entityType: 'review',
+						type: 'mention',
+						recipientId: u.id,
+						data: {
+							review: {
+								id: insertResult.id,
+								place: {
+									id: place.id,
+									name: place.name,
+								},
+								user: {
+									id: userId,
+									name: insertResult.user.name,
+									username: username,
+									image: insertResult.user.image,
+								},
+							},
+						},
+					},
+				})),
 			);
 
 			return {
