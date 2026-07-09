@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import * as p from 'drizzle-orm/pg-core';
+import { reviewFacets } from './custom-types';
 
 export const users = p.pgTable(
 	'users',
@@ -526,6 +527,7 @@ export const reviews = p.pgTable(
 			.notNull()
 			.references(() => users.id, { onDelete: 'cascade' }),
 		content: p.text().notNull(),
+		facets: reviewFacets('facets').notNull().default([]),
 		rating: p.smallint().notNull(),
 		totalLikes: p.bigint({ mode: 'number' }).notNull().default(0),
 		detectedLanguage: p.text(),
