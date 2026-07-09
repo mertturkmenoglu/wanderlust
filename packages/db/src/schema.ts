@@ -760,6 +760,7 @@ export const notificationType = p.pgEnum('notification_type', [
 	'trip_update',
 	'trip_invite',
 	'trip_add_comment',
+	'mention',
 	'wl_event_suggest',
 	'wl_list_suggest',
 	'wl_system',
