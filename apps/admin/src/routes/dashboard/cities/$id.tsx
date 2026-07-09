@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { renderer } from '@/components/details/renderer';
 import { Show } from '@/components/show';
 import { ensureData, getDefaultStaticData } from '@/lib/defaults';
@@ -31,6 +32,16 @@ function RouteComponent() {
 		['Image', renderer.Image(city.image)],
 		['Coordinates', `Lat: ${city.lat}, Lng: ${city.lng}`],
 		['Timezone', city.timezone],
+		[
+			'Collections',
+			<Link
+				to="/dashboard/cities/$id/collections"
+				params={{ id: city.id.toString() }}
+				className={buttonVariants({ variant: 'link', className: 'px-0!' })}
+			>
+				See collections related to this city
+			</Link>,
+		],
 	]);
 
 	return (

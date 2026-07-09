@@ -37,9 +37,11 @@ import { Route as DashboardAccoladesIdRouteImport } from './routes/dashboard/acc
 import { Route as DashboardUsersIdIndexRouteImport } from './routes/dashboard/users/$id/index'
 import { Route as DashboardReportsIdIndexRouteImport } from './routes/dashboard/reports/$id/index'
 import { Route as DashboardPlacesIdEditRouteImport } from './routes/dashboard/places/$id.edit'
+import { Route as DashboardPlacesIdCollectionsRouteImport } from './routes/dashboard/places/$id.collections'
 import { Route as DashboardCollectionsIdRelationsRouteImport } from './routes/dashboard/collections/$id.relations'
 import { Route as DashboardCollectionsIdEditRouteImport } from './routes/dashboard/collections/$id.edit'
 import { Route as DashboardCitiesIdEditRouteImport } from './routes/dashboard/cities/$id.edit'
+import { Route as DashboardCitiesIdCollectionsRouteImport } from './routes/dashboard/cities/$id.collections'
 import { Route as DashboardCategoriesIdEditRouteImport } from './routes/dashboard/categories/$id.edit'
 import { Route as DashboardAddressesIdEditRouteImport } from './routes/dashboard/addresses/$id.edit'
 import { Route as DashboardAccoladesIdEditRouteImport } from './routes/dashboard/accolades/$id.edit'
@@ -186,6 +188,12 @@ const DashboardPlacesIdEditRoute = DashboardPlacesIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => DashboardPlacesIdRoute,
 } as any)
+const DashboardPlacesIdCollectionsRoute =
+  DashboardPlacesIdCollectionsRouteImport.update({
+    id: '/collections',
+    path: '/collections',
+    getParentRoute: () => DashboardPlacesIdRoute,
+  } as any)
 const DashboardCollectionsIdRelationsRoute =
   DashboardCollectionsIdRelationsRouteImport.update({
     id: '/relations',
@@ -203,6 +211,12 @@ const DashboardCitiesIdEditRoute = DashboardCitiesIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => DashboardCitiesIdRoute,
 } as any)
+const DashboardCitiesIdCollectionsRoute =
+  DashboardCitiesIdCollectionsRouteImport.update({
+    id: '/collections',
+    path: '/collections',
+    getParentRoute: () => DashboardCitiesIdRoute,
+  } as any)
 const DashboardCategoriesIdEditRoute =
   DashboardCategoriesIdEditRouteImport.update({
     id: '/edit',
@@ -251,9 +265,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/accolades/$id/edit': typeof DashboardAccoladesIdEditRoute
   '/dashboard/addresses/$id/edit': typeof DashboardAddressesIdEditRoute
   '/dashboard/categories/$id/edit': typeof DashboardCategoriesIdEditRoute
+  '/dashboard/cities/$id/collections': typeof DashboardCitiesIdCollectionsRoute
   '/dashboard/cities/$id/edit': typeof DashboardCitiesIdEditRoute
   '/dashboard/collections/$id/edit': typeof DashboardCollectionsIdEditRoute
   '/dashboard/collections/$id/relations': typeof DashboardCollectionsIdRelationsRoute
+  '/dashboard/places/$id/collections': typeof DashboardPlacesIdCollectionsRoute
   '/dashboard/places/$id/edit': typeof DashboardPlacesIdEditRoute
   '/dashboard/reports/$id/': typeof DashboardReportsIdIndexRoute
   '/dashboard/users/$id/': typeof DashboardUsersIdIndexRoute
@@ -286,9 +302,11 @@ export interface FileRoutesByTo {
   '/dashboard/accolades/$id/edit': typeof DashboardAccoladesIdEditRoute
   '/dashboard/addresses/$id/edit': typeof DashboardAddressesIdEditRoute
   '/dashboard/categories/$id/edit': typeof DashboardCategoriesIdEditRoute
+  '/dashboard/cities/$id/collections': typeof DashboardCitiesIdCollectionsRoute
   '/dashboard/cities/$id/edit': typeof DashboardCitiesIdEditRoute
   '/dashboard/collections/$id/edit': typeof DashboardCollectionsIdEditRoute
   '/dashboard/collections/$id/relations': typeof DashboardCollectionsIdRelationsRoute
+  '/dashboard/places/$id/collections': typeof DashboardPlacesIdCollectionsRoute
   '/dashboard/places/$id/edit': typeof DashboardPlacesIdEditRoute
   '/dashboard/reports/$id': typeof DashboardReportsIdIndexRoute
   '/dashboard/users/$id': typeof DashboardUsersIdIndexRoute
@@ -323,9 +341,11 @@ export interface FileRoutesById {
   '/dashboard/accolades/$id/edit': typeof DashboardAccoladesIdEditRoute
   '/dashboard/addresses/$id/edit': typeof DashboardAddressesIdEditRoute
   '/dashboard/categories/$id/edit': typeof DashboardCategoriesIdEditRoute
+  '/dashboard/cities/$id/collections': typeof DashboardCitiesIdCollectionsRoute
   '/dashboard/cities/$id/edit': typeof DashboardCitiesIdEditRoute
   '/dashboard/collections/$id/edit': typeof DashboardCollectionsIdEditRoute
   '/dashboard/collections/$id/relations': typeof DashboardCollectionsIdRelationsRoute
+  '/dashboard/places/$id/collections': typeof DashboardPlacesIdCollectionsRoute
   '/dashboard/places/$id/edit': typeof DashboardPlacesIdEditRoute
   '/dashboard/reports/$id/': typeof DashboardReportsIdIndexRoute
   '/dashboard/users/$id/': typeof DashboardUsersIdIndexRoute
@@ -361,9 +381,11 @@ export interface FileRouteTypes {
     | '/dashboard/accolades/$id/edit'
     | '/dashboard/addresses/$id/edit'
     | '/dashboard/categories/$id/edit'
+    | '/dashboard/cities/$id/collections'
     | '/dashboard/cities/$id/edit'
     | '/dashboard/collections/$id/edit'
     | '/dashboard/collections/$id/relations'
+    | '/dashboard/places/$id/collections'
     | '/dashboard/places/$id/edit'
     | '/dashboard/reports/$id/'
     | '/dashboard/users/$id/'
@@ -396,9 +418,11 @@ export interface FileRouteTypes {
     | '/dashboard/accolades/$id/edit'
     | '/dashboard/addresses/$id/edit'
     | '/dashboard/categories/$id/edit'
+    | '/dashboard/cities/$id/collections'
     | '/dashboard/cities/$id/edit'
     | '/dashboard/collections/$id/edit'
     | '/dashboard/collections/$id/relations'
+    | '/dashboard/places/$id/collections'
     | '/dashboard/places/$id/edit'
     | '/dashboard/reports/$id'
     | '/dashboard/users/$id'
@@ -432,9 +456,11 @@ export interface FileRouteTypes {
     | '/dashboard/accolades/$id/edit'
     | '/dashboard/addresses/$id/edit'
     | '/dashboard/categories/$id/edit'
+    | '/dashboard/cities/$id/collections'
     | '/dashboard/cities/$id/edit'
     | '/dashboard/collections/$id/edit'
     | '/dashboard/collections/$id/relations'
+    | '/dashboard/places/$id/collections'
     | '/dashboard/places/$id/edit'
     | '/dashboard/reports/$id/'
     | '/dashboard/users/$id/'
@@ -645,6 +671,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPlacesIdEditRouteImport
       parentRoute: typeof DashboardPlacesIdRoute
     }
+    '/dashboard/places/$id/collections': {
+      id: '/dashboard/places/$id/collections'
+      path: '/collections'
+      fullPath: '/dashboard/places/$id/collections'
+      preLoaderRoute: typeof DashboardPlacesIdCollectionsRouteImport
+      parentRoute: typeof DashboardPlacesIdRoute
+    }
     '/dashboard/collections/$id/relations': {
       id: '/dashboard/collections/$id/relations'
       path: '/relations'
@@ -664,6 +697,13 @@ declare module '@tanstack/react-router' {
       path: '/edit'
       fullPath: '/dashboard/cities/$id/edit'
       preLoaderRoute: typeof DashboardCitiesIdEditRouteImport
+      parentRoute: typeof DashboardCitiesIdRoute
+    }
+    '/dashboard/cities/$id/collections': {
+      id: '/dashboard/cities/$id/collections'
+      path: '/collections'
+      fullPath: '/dashboard/cities/$id/collections'
+      preLoaderRoute: typeof DashboardCitiesIdCollectionsRouteImport
       parentRoute: typeof DashboardCitiesIdRoute
     }
     '/dashboard/categories/$id/edit': {
@@ -726,10 +766,12 @@ const DashboardCategoriesIdRouteWithChildren =
   )
 
 interface DashboardCitiesIdRouteChildren {
+  DashboardCitiesIdCollectionsRoute: typeof DashboardCitiesIdCollectionsRoute
   DashboardCitiesIdEditRoute: typeof DashboardCitiesIdEditRoute
 }
 
 const DashboardCitiesIdRouteChildren: DashboardCitiesIdRouteChildren = {
+  DashboardCitiesIdCollectionsRoute: DashboardCitiesIdCollectionsRoute,
   DashboardCitiesIdEditRoute: DashboardCitiesIdEditRoute,
 }
 
@@ -753,10 +795,12 @@ const DashboardCollectionsIdRouteWithChildren =
   )
 
 interface DashboardPlacesIdRouteChildren {
+  DashboardPlacesIdCollectionsRoute: typeof DashboardPlacesIdCollectionsRoute
   DashboardPlacesIdEditRoute: typeof DashboardPlacesIdEditRoute
 }
 
 const DashboardPlacesIdRouteChildren: DashboardPlacesIdRouteChildren = {
+  DashboardPlacesIdCollectionsRoute: DashboardPlacesIdCollectionsRoute,
   DashboardPlacesIdEditRoute: DashboardPlacesIdEditRoute,
 }
 

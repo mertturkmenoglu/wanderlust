@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { KeyValueList } from '@wanderlust/ui/components/key-value-list';
 import { AccoladeCard } from '@/components/accolade-card';
 import { AddressCard } from '@/components/address-card';
@@ -94,6 +95,16 @@ function RouteComponent() {
 		['Created At', renderer.Date(place.createdAt)],
 		['Updated At', renderer.Date(place.updatedAt)],
 		['Assets', renderer.Gallery(place.assets.map((asset) => asset.url))],
+		[
+			'Collections',
+			<Link
+				to="/dashboard/places/$id/collections"
+				params={{ id: place.id.toString() }}
+				className={buttonVariants({ variant: 'link', className: 'px-0!' })}
+			>
+				See collections related to this place
+			</Link>,
+		],
 	]);
 
 	return (
