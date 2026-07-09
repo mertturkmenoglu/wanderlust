@@ -54,6 +54,7 @@
 		"@wanderlust/db": "workspace:*",
 		"@wanderlust/email": "workspace:*",
 		"@wanderlust/jobs": "workspace:*",
+		"@wanderlust/richtext": "workspace:*",
 		"@wanderlust/search": "workspace:*",
 		"@wanderlust/storage": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
