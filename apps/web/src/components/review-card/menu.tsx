@@ -64,7 +64,7 @@ export function Menu({ review }: Props) {
 					</Button>
 				</DropdownMenuItem>
 
-				<DropdownMenuItem>
+				<DropdownMenuItem variant="destructive">
 					<Link
 						to="/report"
 						search={{
@@ -85,6 +85,7 @@ export function Menu({ review }: Props) {
 						<DropdownMenuSeparator />
 
 						<DropdownMenuItem
+							variant="destructive"
 							onClick={() => {
 								if (confirm('Are you sure you want to delete this review?')) {
 									mutation.mutate({
