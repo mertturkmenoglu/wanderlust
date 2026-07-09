@@ -7,6 +7,7 @@ Welcome! Thanks for your interest in Wanderlust. We recommend reading this docum
 - [Setup](setup.md) - Step-by-step instructions to set up the project on your local machine.
 - [Architecture](architecture.md) - Architecture of the project, including its components and how they interact.
 - [Tech Stack](tech-stack.md) - Overview of the technologies used in the project, including programming languages, frameworks, and libraries.
+- [Glossary](glossary.md) - A collection of terminology used in the context of Wanderlust and their definitions.
 - [Abbreviations](abbreviations.md) - Abbreviations used throughout the project, along with their meanings.
 - [Ports](ports.md) - Ports used by the Wanderlust application, along with their corresponding services and descriptions.
 - [oRPC](orpc.md) - An overview of oRPC (backend framework)
