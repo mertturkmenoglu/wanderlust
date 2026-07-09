@@ -21,6 +21,13 @@ export function initNotificationJobs(
 ) {
 	const queue = new Queue<DataType, unknown, JobName>('notification', {
 		connection: redis.options,
+		defaultJobOptions: {
+			attempts: 3,
+			backoff: {
+				type: 'exponential',
+				delay: 1000,
+			},
+		},
 	});
 	const worker = new Worker<DataType, unknown, JobName>(
 		'notification',
