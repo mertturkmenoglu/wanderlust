@@ -17,7 +17,7 @@ export function TabItems({ action, entity }: UpsertProps<Collection>) {
 	const invalidate = useInvalidator();
 
 	const reorderMutation = useMutation(
-		orpc.collections.reorderItems.mutationOptions({
+		orpc.collections.items.reorder.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Collection items updated');

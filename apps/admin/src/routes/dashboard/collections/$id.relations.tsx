@@ -75,9 +75,9 @@ function ListRelatedPlaces() {
 	const params = Route.useParams();
 
 	const query = useSuspenseQuery(
-		orpc.collections.relations.places.list.queryOptions({
+		orpc.collections.relations.places.queryOptions({
 			input: {
-				collectionId: params.id,
+				id: params.id,
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
 		}),
@@ -125,9 +125,9 @@ function ListRelatedCities() {
 	const params = Route.useParams();
 
 	const query = useSuspenseQuery(
-		orpc.collections.relations.cities.list.queryOptions({
+		orpc.collections.relations.cities.queryOptions({
 			input: {
-				collectionId: params.id,
+				id: params.id,
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
 		}),

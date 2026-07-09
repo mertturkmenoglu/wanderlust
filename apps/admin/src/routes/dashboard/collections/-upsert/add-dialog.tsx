@@ -64,7 +64,7 @@ export function AddDialog({ collectionId }: Props) {
 	});
 
 	const mutation = useMutation(
-		orpc.collections.appendItem.mutationOptions({
+		orpc.collections.items.append.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Place added to collection');

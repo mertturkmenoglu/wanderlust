@@ -33,7 +33,7 @@ export function SortableItem({ index, item }: Props) {
 	});
 
 	const mutation = useMutation(
-		orpc.collections.removeItem.mutationOptions({
+		orpc.collections.items.remove.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Place removed from collection');
