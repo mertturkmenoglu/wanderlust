@@ -9,7 +9,14 @@ export function transformFiltersToConditions(
 
 	return filters.map((f) => ({
 		[f.field]: {
-			[f.operator]: f.value,
+			[f.operator]:
+				f.operator === 'ilike' && typeof f.value === 'string'
+					? transformValueToIlike(f.value)
+					: f.value,
 		},
 	}));
+}
+
+function transformValueToIlike(value: string): string {
+	return `%${value}%`;
 }
