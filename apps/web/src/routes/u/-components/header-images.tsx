@@ -4,8 +4,6 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { useMemo, useState } from 'react';
 import { UserImage } from '@/components/user-image';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
-import { userImage } from '@/lib/image';
-import { ipx } from '@/lib/ipx';
 
 type Props = {
 	className?: string;
@@ -19,7 +17,7 @@ export function HeaderImages({ className }: Props) {
 	const { profile } = useLoaderData({ from: '/u/$username' });
 	const [imgType, setImgType] = useState<ImageType>('banner');
 
-	const imgProfile = userImage(profile.image);
+	const imgProfile = profile.image;
 	const imgBanner = profile.banner ?? defaultBanner;
 
 	const imgSrc = useMemo(() => {
@@ -27,7 +25,7 @@ export function HeaderImages({ className }: Props) {
 			return imgBanner;
 		}
 
-		return imgProfile;
+		return imgProfile ?? '';
 	}, [imgType, imgBanner, imgProfile]);
 
 	const lb = useAssetLightbox([{ url: imgSrc }], {
@@ -70,7 +68,7 @@ export function HeaderImages({ className }: Props) {
 				className="w-full cursor-pointer"
 			>
 				<UserImage
-					src={ipx(imgProfile, 'w_512')}
+					src={imgProfile}
 					imgClassName="size-48 md:size-32 ring-4 ring-white bg-white"
 					fallbackClassName="size-48 md:size-32 ring-4 ring-white bg-white"
 					className="absolute inset-x-0 -bottom-16 mx-auto size-32 bg-background ring-4 ring-background md:mx-16"
