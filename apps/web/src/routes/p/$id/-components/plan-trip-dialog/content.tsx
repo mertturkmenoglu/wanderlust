@@ -35,7 +35,8 @@ export function Content({ className }: PlanTripDialogProps) {
 				render={
 					<Button variant="ghost" onClick={() => ctx.setOpen(true)}>
 						<MapIcon className="size-6 text-primary" />
-						<span className="text-primary">Plan a trip</span>
+						<span className="hidden text-primary md:block">Plan a trip</span>
+						<span className="text-primary md:hidden">Trip</span>
 					</Button>
 				}
 			/>
