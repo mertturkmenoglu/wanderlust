@@ -10,6 +10,14 @@ import { Logo } from '@/components/logo';
 import { RelativeTime } from '@/components/relative-time';
 import { UserImage } from '@/components/user-image';
 import { userImage } from '@/lib/image';
+import {
+	followNotificationSchema,
+	mentionNotificationSchema,
+	tripAddUserNotificationSchema,
+	tripInviteNotificationSchema,
+	tripNewCommentNotificationSchema,
+	tripUpdateNotificationSchema,
+} from '@/schemas/notifications';
 import type { TNotification } from '@/stores/notifications-context';
 import { MarkReadView } from './-mark-read';
 import { UnreadBadge } from './-unread-badge';
@@ -54,26 +62,34 @@ function getVariantComponent(type: TNotification['type']) {
 }
 
 function VariantUserFollow({ item }: Props) {
+	const result = followNotificationSchema.safeParse(item.data);
+
+	if (!result.success) {
+		return null;
+	}
+
+	const data = result.data.data;
+
 	return (
 		<Link
 			to="/u/$username"
 			params={{
-				username: item.data?.follower.username ?? '',
+				username: data.follower.username ?? '',
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
 				<UnreadBadge item={item} />
 
 				<ItemMedia variant="default">
-					<UserImage src={userImage(item.data?.follower.image)} />
+					<UserImage src={userImage(data.follower.image)} />
 				</ItemMedia>
 
 				<ItemContent>
 					<ItemTitle>
-						{item.data?.follower.name ?? 'Someone'} started following you
+						{data.follower.name ?? 'Someone'} started following you
 					</ItemTitle>
 					<ItemDescription>
-						Say hi to {item.data?.follower.name ?? 'Someone'}
+						Say hi to {data.follower.name ?? 'Someone'}
 					</ItemDescription>
 					<ItemDescription>
 						<RelativeTime date={new Date(item.createdAt)} />
@@ -111,22 +127,30 @@ function VariantWanderlustSystem({ item }: Props) {
 }
 
 function VariantTripInvite({ item }: Props) {
+	const result = tripInviteNotificationSchema.safeParse(item.data);
+
+	if (!result.success) {
+		return null;
+	}
+
+	const data = result.data.data;
+
 	return (
 		<Link to="/trips/invites">
 			<Item variant="outline" className="hover:bg-muted">
 				<UnreadBadge item={item} />
 
 				<ItemMedia variant="default">
-					<UserImage src={userImage(item.data?.from.image)} />
+					<UserImage src={userImage(data.from.image)} />
 				</ItemMedia>
 
 				<ItemContent>
 					<ItemTitle>
-						{item.data?.from.name ?? 'Someone'} invited you to join a trip
+						{data.from.name ?? 'Someone'} invited you to join a trip
 					</ItemTitle>
 					<ItemDescription>
-						{item.data?.from.name ?? 'Someone'} invited you to join them on the
-						trip "{item.data?.trip.title ?? ''}".
+						{data.from.name ?? 'Someone'} invited you to join them on the trip "
+						{data.trip.title ?? ''}".
 					</ItemDescription>
 					<ItemDescription>
 						<RelativeTime date={new Date(item.createdAt)} />
@@ -140,6 +164,14 @@ function VariantTripInvite({ item }: Props) {
 }
 
 function VariantTripAddUser({ item }: Props) {
+	const result = tripAddUserNotificationSchema.safeParse(item.data);
+
+	if (!result.success) {
+		return null;
+	}
+
+	const data = result.data.data;
+
 	return (
 		<Link
 			to="/trips/$id/participants"
@@ -151,15 +183,15 @@ function VariantTripAddUser({ item }: Props) {
 				<UnreadBadge item={item} />
 
 				<ItemMedia variant="default">
-					<UserImage src={userImage(item.data?.newUser.image)} />
+					<UserImage src={userImage(data.newUser.image)} />
 				</ItemMedia>
 
 				<ItemContent>
 					<ItemTitle>
-						{item.data?.newUser.name ?? 'Someone'} accepted to join your trip
+						{data.newUser.name ?? 'Someone'} accepted to join your trip
 					</ItemTitle>
 					<ItemDescription>
-						{item.data?.newUser.name ?? 'Someone'} joined your trip.
+						{data.newUser.name ?? 'Someone'} joined your trip.
 					</ItemDescription>
 					<ItemDescription>
 						<RelativeTime date={new Date(item.createdAt)} />
@@ -173,6 +205,14 @@ function VariantTripAddUser({ item }: Props) {
 }
 
 function VariantTripComment({ item }: Props) {
+	const result = tripNewCommentNotificationSchema.safeParse(item.data);
+
+	if (!result.success) {
+		return null;
+	}
+
+	const data = result.data.data;
+
 	return (
 		<Link
 			to="/trips/$id/comments"
@@ -189,7 +229,7 @@ function VariantTripComment({ item }: Props) {
 
 				<ItemContent>
 					<ItemTitle>
-						There is a new comment on your trip {item.data?.trip.title ?? ''}
+						There is a new comment on your trip {data.trip.title ?? ''}
 					</ItemTitle>
 					<ItemDescription>Click to see the newest comments</ItemDescription>
 					<ItemDescription>
@@ -204,6 +244,14 @@ function VariantTripComment({ item }: Props) {
 }
 
 function VariantTripUpdate({ item }: Props) {
+	const result = tripUpdateNotificationSchema.safeParse(item.data);
+
+	if (!result.success) {
+		return null;
+	}
+
+	const data = result.data.data;
+
 	return (
 		<Link
 			to="/trips/$id/details"
@@ -220,7 +268,7 @@ function VariantTripUpdate({ item }: Props) {
 
 				<ItemContent>
 					<ItemTitle>
-						There are changes to your trip {item.data?.trip.title ?? ''}
+						There are changes to your trip {data.trip.title ?? ''}
 					</ItemTitle>
 					<ItemDescription>
 						Trip dates are changed. Click to see the details.
@@ -237,40 +285,33 @@ function VariantTripUpdate({ item }: Props) {
 }
 
 function VariantMention({ item }: Props) {
-	const data = item.data as {
-		review: {
-			id: string;
-			place: {
-				id: string;
-				name: string;
-			};
-			user: {
-				id: string;
-				name: string;
-				username: string;
-				image: string | null;
-			};
-		};
-	};
+	const result = mentionNotificationSchema.safeParse(item.data);
+
+	if (!result.success) {
+		return null;
+	}
+
+	const data = result.data.review;
+
 	return (
 		<Link
 			to="/p/$id/reviews/$reviewId"
 			params={{
-				id: data.review.place.id,
-				reviewId: data.review.id,
+				id: data.place.id,
+				reviewId: data.id,
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
 				<UnreadBadge item={item} />
 
 				<ItemMedia variant="default">
-					<UserImage src={data.review.user.image} />
+					<UserImage src={data.user.image} />
 				</ItemMedia>
 
 				<ItemContent>
 					<ItemTitle>
-						{data.review.user.name ?? 'Someone'} mentioned you in a review:{' '}
-						<span className="text-primary">{data.review.place.name}</span>
+						{data.user.name ?? 'Someone'} mentioned you in a review:{' '}
+						<span className="text-primary">{data.place.name}</span>
 					</ItemTitle>
 					<ItemDescription>Click to see the review.</ItemDescription>
 					<ItemDescription>
