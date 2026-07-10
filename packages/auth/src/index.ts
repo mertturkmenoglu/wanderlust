@@ -12,7 +12,7 @@ import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { admin, multiSession, openAPI } from 'better-auth/plugins';
+import { admin, bearer, multiSession, openAPI } from 'better-auth/plugins';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -133,6 +133,7 @@ function init(
 			openAPI({
 				path: '/',
 			}),
+			bearer(),
 		],
 		trustedOrigins: cfg.api.cors.allowedOrigins,
 		appName: 'Wanderlust',
