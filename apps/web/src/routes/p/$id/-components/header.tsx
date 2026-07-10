@@ -1,6 +1,7 @@
 import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
+import { AddReviewLink } from './add-review-link';
 import { AddToList } from './add-to-list';
 import { BookmarkButton } from './bookmark-button';
 import { FavoriteButton } from './favorite-button';
@@ -23,6 +24,8 @@ export function Header({ className }: Props) {
 				</h2>
 
 				<div className="flex w-full items-center justify-between sm:w-auto">
+					{isAuth && <AddReviewLink />}
+
 					{isAuth && <PlanTripDialog />}
 
 					{isAuth && <AddToList />}
