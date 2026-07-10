@@ -6,6 +6,10 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
+import {
+	findManyByRecipientId,
+	findManyPreferencesByUserId,
+} from './statements';
 
 @injectable()
 @TraceAll()
@@ -22,18 +26,13 @@ export class NotificationsRepository {
 	}
 
 	async list(userId: string, _input: dto.ListInput): Promise<dto.ListOutput> {
-		const result = await this.db.query.notifications.findMany({
-			where: {
-				recipientId: userId,
-			},
-			orderBy: {
-				createdAt: 'desc',
-			},
+		const notifications = await findManyByRecipientId.execute(this.db, {
+			recipientId: userId,
 			limit: this.cfg.notifications.capPerUser,
 		});
 
 		return {
-			notifications: result,
+			notifications,
 		};
 	}
 
@@ -93,14 +92,12 @@ export class NotificationsRepository {
 		userId: string,
 		_input: dto.PreferencesInput,
 	): Promise<dto.PreferencesOutput> {
-		const result = await this.db.query.notificationPreferences.findMany({
-			where: {
-				userId: userId,
-			},
+		const preferences = await findManyPreferencesByUserId.execute(this.db, {
+			userId,
 		});
 
 		return {
-			preferences: result,
+			preferences,
 		};
 	}
 
