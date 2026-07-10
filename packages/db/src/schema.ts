@@ -791,7 +791,7 @@ export const notifications = p.pgTable(
 		readAt: p.timestamp({ withTimezone: true }),
 		createdAt: p.timestamp({ withTimezone: true }).notNull().defaultNow(),
 	},
-	(t) => [p.index().on(t.recipientId, t.createdAt)],
+	(t) => [p.index().on(t.recipientId), p.index().on(t.createdAt)],
 );
 
 export const notificationChannelType = p.pgEnum('notification_channel_type', [
