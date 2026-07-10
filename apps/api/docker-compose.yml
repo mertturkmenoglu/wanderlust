@@ -5,8 +5,6 @@ services:
     container_name: wl-postgres
     image: postgres:16.4-alpine
     restart: unless-stopped
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -98,6 +96,8 @@ services:
     image: chrislusf/seaweedfs
     container_name: wl-seaweedfs
     restart: unless-stopped
+    volumes:
+      - wl-seaweedfs-data:/data
     ports:
       - 7333:7333
       - 8333:8333
@@ -127,3 +127,4 @@ volumes:
   wl-pg-data:
   wl-typesense-data:
   wl-mailpit-data:
+  wl-seaweedfs-data:
