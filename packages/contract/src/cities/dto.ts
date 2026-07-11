@@ -39,11 +39,11 @@ export const createOutput = z.object({
 
 export type CreateOutput = z.infer<typeof createOutput>;
 
-export const updateInput = createInput;
+export const updateInput = createInput.extend({});
 
 export type UpdateInput = z.infer<typeof updateInput>;
 
-export const updateOutput = createOutput;
+export const updateOutput = createOutput.extend({});
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
 

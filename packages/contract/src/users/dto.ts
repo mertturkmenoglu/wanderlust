@@ -50,7 +50,7 @@ export const getByIdInput = z.object({
 
 export type GetByIdInput = z.infer<typeof getByIdInput>;
 
-export const getByIdOutput = getOutput;
+export const getByIdOutput = getOutput.extend({});
 
 export type GetByIdOutput = z.infer<typeof getByIdOutput>;
 
