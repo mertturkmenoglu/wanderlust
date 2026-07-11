@@ -52,19 +52,21 @@ export function TSTZDisplay({
 	return (
 		<div className={cn(className)}>
 			<HoverCard>
-				<HoverCardTrigger asChild>
-					<Button
-						size="sm"
-						variant="outline"
-						className="w-full justify-between"
-					>
-						<span>{main}</span>
-						<ClockPlusIcon className="size-4" />
-					</Button>
-				</HoverCardTrigger>
+				<HoverCardTrigger
+					render={
+						<Button
+							size="sm"
+							variant="outline"
+							className="w-full justify-between"
+						>
+							<span>{main}</span>
+							<ClockPlusIcon className="size-4" />
+						</Button>
+					}
+				/>
 				<HoverCardContent className="flex flex-col gap-2 p-2">
-					{alternativeDisplays.map((d, i) => (
-						<div key={i}>
+					{alternativeDisplays.map((d) => (
+						<div key={`${d.formatted}-${d.timezone}-${d.explanation}`}>
 							<div className="font-medium text-xs leading-snug">
 								{d.formatted}
 							</div>

@@ -48,9 +48,13 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 	const lb = useAssetLightbox(review.assets);
 	const likeMutation = useLikeReviewMutation();
 	const fmt = useLikesFormatter();
-	const languageDisplayNames = new Intl.DisplayNames(['en'], {
-		type: 'language',
-	});
+
+	const languageDisplayNames = useMemo(() => {
+		return new Intl.DisplayNames(['en'], {
+			type: 'language',
+		});
+	}, []);
+
 	const lang = useMemo(() => {
 		if (review.detectedLanguage === null) {
 			return null;

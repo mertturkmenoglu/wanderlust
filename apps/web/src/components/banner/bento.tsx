@@ -146,5 +146,3 @@ export function BentoGrid({
 		</div>
 	);
 }
-
-export default BentoGrid;

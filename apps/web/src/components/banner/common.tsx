@@ -4,33 +4,10 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { ChevronRightIcon } from 'lucide-react';
 import { ipx } from '@/lib/ipx';
 import { ActionBanner, type ActionBannerProps } from './action';
-import BentoGrid, { type BentoGridProps } from './bento';
+import { BentoGrid, type BentoGridProps } from './bento';
 import { GradientBanner, type GradientBannerProps } from './gradient';
 import { OverlayBanner, type OverlayBannerProps } from './overlay';
 import { VerticalBanner, type VerticalBannerProps } from './vertical';
-
-export type AppBannerProps = Pick<OverlayBannerProps, 'classNames'>;
-
-export function AppBanner({
-	classNames = {
-		root: 'my-8',
-		message: 'text-white text-shadow-lg text-shadow-midnight',
-		messageContainer: 'rounded-none',
-	},
-}: AppBannerProps) {
-	return (
-		<OverlayBanner
-			image="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1"
-			alt="Wanderlust Banner Image"
-			message="Inspiring explorations, one spark of Wanderlust!"
-			attr={{
-				text: 'Photo by Luca Bravo on Unsplash',
-				link: 'https://unsplash.com/photos/brown-wooden-boat-moving-towards-the-mountain-O453M2Liufs',
-			}}
-			classNames={classNames}
-		/>
-	);
-}
 
 export type CategoriesBannerProps = Pick<OverlayBannerProps, 'classNames'>;
 

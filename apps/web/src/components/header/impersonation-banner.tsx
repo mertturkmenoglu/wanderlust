@@ -1,6 +1,7 @@
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { TriangleAlertIcon, XIcon } from 'lucide-react';
+import { useCallback } from 'react';
 import { authClient } from '@/lib/auth';
 
 type Props = {
@@ -8,10 +9,12 @@ type Props = {
 };
 
 export function ImpersonationBanner({ className }: Props) {
-	const onClick = async () => {
-		await authClient.admin.stopImpersonating();
-		window.location.reload();
-	};
+	const onClick = useCallback(() => {
+		async () => {
+			await authClient.admin.stopImpersonating();
+			window.location.reload();
+		};
+	}, []);
 
 	return (
 		<div

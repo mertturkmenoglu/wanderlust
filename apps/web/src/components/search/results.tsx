@@ -48,9 +48,9 @@ export function PlacesResultsView() {
 
 	return (
 		<div>
-			{hits.slice(0, 5).map((hit, index) => (
+			{hits.slice(0, 5).map((hit) => (
 				<Link
-					key={`search-result-places-${hit.id}-${index}`}
+					key={`search-result-places-${hit.id}`}
 					to="/p/$id"
 					params={{
 						id: hit.place.id,
@@ -98,9 +98,9 @@ export function CitiesResultsView() {
 
 	return (
 		<div>
-			{hits.slice(0, 5).map((hit, index) => (
+			{hits.slice(0, 5).map((hit) => (
 				<Link
-					key={`search-result-cities-${hit.id}-${index}`}
+					key={`search-result-cities-${hit.id}`}
 					to="/cities/$"
 					params={{
 						_splat: `${hit.city.id}/${hit.city.name}`,
@@ -144,9 +144,9 @@ export function UsersResultsView() {
 
 	return (
 		<div>
-			{hits.slice(0, 5).map((hit, index) => (
+			{hits.slice(0, 5).map((hit) => (
 				<Link
-					key={`search-result-users-${hit.id}-${index}`}
+					key={`search-result-users-${hit.id}`}
 					to="/u/$username"
 					params={{
 						username: hit.username,

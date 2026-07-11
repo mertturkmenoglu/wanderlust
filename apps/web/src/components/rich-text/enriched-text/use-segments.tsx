@@ -4,7 +4,7 @@ import type { TEnrichedTextSegment, TRichTextFacet } from './types';
 export function useSegments(text: string, facets: TRichTextFacet[]) {
 	return useMemo(() => {
 		const segments: TEnrichedTextSegment[] = [];
-		const sortedFacets = [...facets].sort((a, b) => a.start - b.start);
+		const sortedFacets = facets.toSorted((a, b) => a.start - b.start);
 
 		let lastIndex = 0;
 

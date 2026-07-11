@@ -22,5 +22,5 @@ export function useFieldUpdateEffect() {
 		}
 
 		ctx.onChange(newDate);
-	}, [ctx.hours24, ctx.minutes, ctx.tzOffset]);
+	}, [ctx.hours24, ctx.minutes, ctx.tzOffset, ctx.value]);
 }

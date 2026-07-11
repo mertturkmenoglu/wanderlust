@@ -44,7 +44,7 @@ export function TSTZPickerContextProvider(
 		const hours = new Date().getHours();
 		return hours < 12;
 	});
-	const [tzOffset, setTzOffset] = useState<string>(
+	const [tzOffset, setTzOffset] = useState<string>(() =>
 		getCurrentTimezoneIANAName(),
 	);
 

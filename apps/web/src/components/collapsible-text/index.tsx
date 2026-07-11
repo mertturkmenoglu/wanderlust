@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: TODO */
-
 import { Button } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { useState } from 'react';
@@ -19,8 +17,8 @@ export function CollapsibleText({ text, className, charLimit = 200 }: Props) {
 	return (
 		<div className={cn(className)}>
 			<div className="flex flex-col text-gray-500 text-sm">
-				{paragraphs.map((p, i) => (
-					<div key={i} className="mt-4 first:mt-0">
+				{paragraphs.map((p) => (
+					<div key={`paragraph-${p}`} className="mt-4 first:mt-0">
 						{p}
 					</div>
 				))}

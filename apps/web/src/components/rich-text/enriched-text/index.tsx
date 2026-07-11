@@ -14,8 +14,10 @@ export function EnrichedText({
 
 	return (
 		<div className={cn('inline', className)} {...props}>
-			{segments.map((segment, index) => (
-				<React.Fragment key={index}>{renderSegment(segment)}</React.Fragment>
+			{segments.map((segment) => (
+				<React.Fragment key={`segment-${segment.text}`}>
+					{renderSegment(segment)}
+				</React.Fragment>
 			))}
 		</div>
 	);

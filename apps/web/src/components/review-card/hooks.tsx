@@ -48,9 +48,10 @@ export function useLikeReviewMutation() {
 	);
 }
 
+const pluralRules = new Intl.PluralRules('en-US');
+
 export function useLikesFormatter() {
 	const numFmt = useNumberFormatter();
-	const pluralRules = new Intl.PluralRules('en-US');
 
 	return (likes: number) => {
 		const formattedLikes = numFmt.format(likes);

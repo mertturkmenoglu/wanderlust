@@ -2,7 +2,6 @@ import { useDebouncedValue } from '@tanstack/react-pacer';
 import { useEffect, useMemo } from 'react';
 import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { useSearchType } from '@/hooks/use-search-type';
-import type { TCityHit, TPlaceHit, TUserHit } from '@/lib/search';
 import { usePreferencesStore } from '@/stores/preferences-context';
 import { useSearchContext } from './context';
 
@@ -112,22 +111,4 @@ export function useInputPlaceholder() {
 	}, [ctx.variant, searchType]);
 
 	return memoized;
-}
-
-export function useSearchHitsTypeCasted(unknownHits: unknown) {
-	const [searchType] = useSearchType();
-
-	if (searchType === 'places') {
-		return unknownHits as TPlaceHit[];
-	}
-
-	if (searchType === 'cities') {
-		return unknownHits as TCityHit[];
-	}
-
-	if (searchType === 'users') {
-		return unknownHits as TUserHit[];
-	}
-
-	return unknownHits as TPlaceHit[];
 }
