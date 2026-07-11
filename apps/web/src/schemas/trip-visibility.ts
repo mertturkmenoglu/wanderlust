@@ -1,6 +1,6 @@
 export const visibility = ['public', 'friends', 'private'] as const;
 
-export type Visibility = (typeof visibility)[number];
+type Visibility = (typeof visibility)[number];
 
 export type TVisibilityOption = {
 	label: string;

@@ -7,7 +7,7 @@ import z from 'zod';
 import { useInvalidator } from '@/hooks/use-invalidator';
 import { type Outputs, orpc } from '@/lib/orpc';
 
-export type List = Outputs['lists']['get']['list'];
+type List = Outputs['lists']['get']['list'];
 
 export type ListItem = List['items'][number];
 

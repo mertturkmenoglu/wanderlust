@@ -71,12 +71,13 @@ function RouteComponent() {
 			<div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
 				{accolades.map((accolade) => (
 					<Link
+						key={`accolades-${accolade.id}`}
 						to="/accolades/$id"
 						params={{
 							id: accolade.id,
 						}}
 					>
-						<Card key={`accolades-${accolade.id}`} className="relative pt-0">
+						<Card className="relative pt-0">
 							<img
 								src={ipx(accolade.image, 'w_512')}
 								alt=""

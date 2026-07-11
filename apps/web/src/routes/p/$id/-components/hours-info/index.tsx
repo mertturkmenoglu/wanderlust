@@ -1,4 +1,3 @@
-import { TZDate } from '@date-fns/tz';
 import { useLoaderData } from '@tanstack/react-router';
 import { cn } from '@wanderlust/ui/lib/utils';
 import {
@@ -11,7 +10,8 @@ import { useMemo } from 'react';
 import { InfoCard } from '@/components/info-card';
 import { useHoursStatus } from '@/hooks/use-hours-status';
 import { HoursDialog } from './dialog';
-import { mapping, parseHours } from './utils';
+import { useMustGetToday } from './hooks';
+import { parseHours } from './utils';
 
 type Props = {
 	className?: string;
@@ -21,13 +21,7 @@ export function HoursInfo({ className }: Props) {
 	const data = useLoaderData({ from: '/p/$id/' });
 	const tz = data.place.address.city.timezone;
 	const hours = parseHours(tz, data.place.hours);
-	const key = mapping[new TZDate(new Date(), tz).getUTCDay()];
-	const today = hours.find((h) => h.day === key);
-
-	if (!today) {
-		return null;
-	}
-
+	const today = useMustGetToday(tz, hours);
 	const status = useHoursStatus(tz, today.open, today.close);
 
 	const Icon = useMemo(() => {

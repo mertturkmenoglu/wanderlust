@@ -53,18 +53,20 @@ export function ChangePassword({
 
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogTrigger asChild>
-				<Button
-					variant="link"
-					size="sm"
-					className="px-0!"
-					disabled={!hasEmailProvider}
-				>
-					{hasEmailProvider
-						? 'Change'
-						: 'Sign up with email to change password'}
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button
+						variant="link"
+						size="sm"
+						className="px-0!"
+						disabled={!hasEmailProvider}
+					>
+						{hasEmailProvider
+							? 'Change'
+							: 'Sign up with email to change password'}
+					</Button>
+				}
+			/>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Change Password</AlertDialogTitle>

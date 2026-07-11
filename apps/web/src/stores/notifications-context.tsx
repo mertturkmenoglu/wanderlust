@@ -14,14 +14,8 @@ import { type Outputs, orpc } from '@/lib/orpc';
 export type TNotification =
 	Outputs['notifications']['list']['notifications'][number];
 
-export type TNotificationPreferences =
+type TNotificationPreferences =
 	Outputs['notifications']['preferences']['preferences'];
-
-export type TSingleNotificationPreference = TNotificationPreferences[number];
-
-export type TNotificationCategory = TSingleNotificationPreference['category'];
-
-export type TNotificationChannel = TSingleNotificationPreference['channel'];
 
 type FilterMode = 'all' | 'unread' | 'read';
 

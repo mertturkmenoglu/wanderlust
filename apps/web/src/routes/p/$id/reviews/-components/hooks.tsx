@@ -2,7 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useParams, useSearch } from '@tanstack/react-router';
 import { type Outputs, orpc } from '@/lib/orpc';
 
-export type Review = Outputs['reviews']['listByPlaceId']['reviews'][number];
+type Review = Outputs['reviews']['listByPlaceId']['reviews'][number];
 
 export function useReviewsQuery() {
 	const params = useParams({ from: '/p/$id/reviews/' });

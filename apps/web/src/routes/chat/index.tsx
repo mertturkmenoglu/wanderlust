@@ -16,8 +16,8 @@ import { SidePanel } from './-components/side-panel';
 
 export const Route = createFileRoute('/chat/')({
 	component: RouteComponent,
-	beforeLoad: authGuard,
 	ssr: false,
+	beforeLoad: authGuard,
 	head: () =>
 		seo({
 			title: 'Chat',

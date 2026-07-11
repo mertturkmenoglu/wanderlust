@@ -8,8 +8,8 @@ import { searchSchema, useReportForm } from './-hooks';
 
 export const Route = createFileRoute('/report/')({
 	component: RouteComponent,
-	beforeLoad: authGuard,
 	validateSearch: searchSchema,
+	beforeLoad: authGuard,
 	head: () =>
 		seo({
 			title: 'Report Content',

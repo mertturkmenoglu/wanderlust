@@ -1,12 +1,16 @@
 import { ItemGroup } from '@wanderlust/ui/components/item';
+import { lazy } from 'react';
 import { AppMessage } from '@/components/app-message';
 import { PlaceCard } from '@/components/place-card';
 import { Actions } from './-actions';
 import { useBookmarksContext } from './-context';
 import { useBookmarksQuery } from './-hooks';
 import { BookmarkItem } from './-item';
-import { BookmarkItemMap } from './-map';
 import { Navigation } from './-navigation';
+
+const BookmarkItemMap = lazy(() =>
+	import('./-map').then((mod) => ({ default: mod.BookmarkItemMap })),
+);
 
 export function Content() {
 	const {

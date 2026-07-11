@@ -5,9 +5,10 @@ type UseNumberIntlOptions = {
 	other: string;
 };
 
+const pluralRules = new Intl.PluralRules('en-US');
+
 export function useNumberIntl(opts: UseNumberIntlOptions) {
 	const numFmt = useNumberFormatter();
-	const pluralRules = new Intl.PluralRules('en-US');
 
 	return (count: number) => {
 		const formattedLikes = numFmt.format(count);

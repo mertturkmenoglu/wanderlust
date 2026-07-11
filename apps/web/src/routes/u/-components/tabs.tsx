@@ -1,8 +1,9 @@
-import { Link, useMatches, useParams } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { Separator } from '@wanderlust/ui/components/separator';
 import { Tabs, TabsList, TabsTrigger } from '@wanderlust/ui/components/tabs';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { useMustGetLastMatch } from '@/hooks/use-must-get-last-match';
 import { useTabs } from './hooks';
 
 type Props = {
@@ -11,13 +12,7 @@ type Props = {
 
 export function UserTabs({ className }: Props) {
 	const { username } = useParams({ from: '/u/$username' });
-	const matches = useMatches();
-	const lastMatch = matches.at(-1);
-
-	if (!lastMatch) {
-		return null;
-	}
-
+	const lastMatch = useMustGetLastMatch();
 	const tabs = useTabs(username);
 	const activeTab = tabs.find((tab) => tab.to === lastMatch.routeId);
 

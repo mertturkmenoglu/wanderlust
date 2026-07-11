@@ -30,7 +30,7 @@ const isomorphicLinkFetch = createIsomorphicFn()
 		});
 	});
 
-export const link = new RPCLink({
+const link = new RPCLink({
 	url: `${import.meta.env.VITE_API_URL ?? '__vite_api_url_not_defined'}/rpc`,
 	fetch: isomorphicLinkFetch,
 	plugins: [

@@ -59,7 +59,7 @@ export const FormSchema = z.object({
 		}),
 });
 
-export type FormInput = z.infer<typeof FormSchema>;
+type FormInput = z.infer<typeof FormSchema>;
 
 function usePasswordResetForm() {
 	return useForm<FormInput>({

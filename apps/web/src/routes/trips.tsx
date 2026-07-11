@@ -3,8 +3,8 @@ import { authGuard } from '@/lib/auth';
 
 export const Route = createFileRoute('/trips')({
 	component: RouteComponent,
-	beforeLoad: authGuard,
 	ssr: false,
+	beforeLoad: authGuard,
 });
 
 function RouteComponent() {

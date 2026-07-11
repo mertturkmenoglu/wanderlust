@@ -4,11 +4,19 @@ import { visibility } from './trip-visibility';
 
 export const createTripSchema = z
 	.object({
-		title: z.string('Required').min(1, 'Too short').max(256, 'Too long'),
-		description: z.string('Required').min(1, 'Too short').max(8192, 'Too long'),
-		startAt: z.date('Required'),
-		endAt: z.date('Required'),
-		visibilityLevel: z.enum(visibility, 'Choose an option'),
+		title: z
+			.string({ error: 'Required' })
+			.min(1, { error: 'Too short' })
+			.max(256, { error: 'Too long' }),
+		description: z
+			.string({ error: 'Required' })
+			.min(1, { error: 'Too short' })
+			.max(8192, { error: 'Too long' }),
+		startAt: z.date({ error: 'Required' }),
+		endAt: z.date({ error: 'Required' }),
+		visibilityLevel: z.enum(visibility, {
+			error: 'Choose an option',
+		}),
 	})
 	.superRefine((data, ctx) => {
 		if (!isBefore(data.startAt, data.endAt)) {

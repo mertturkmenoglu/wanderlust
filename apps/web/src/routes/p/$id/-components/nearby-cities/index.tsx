@@ -9,7 +9,9 @@ import {
 } from '@wanderlust/ui/components/card';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { useMemo } from 'react';
 import { SuspenseWrapper } from '@/components/suspense-wrapper';
+import type { TCityHit } from '@/lib/search';
 import { useNearbyCities } from './hooks';
 
 type Props = {
@@ -28,9 +30,18 @@ function Content({ className }: Props) {
 	const query = useNearbyCities();
 	const { place } = useLoaderData({ from: '/p/$id/' });
 
-	const cities = (query.data.hits ?? [])
-		.map((c) => c.document.city)
-		.filter((c) => c.id !== place.address.cityId);
+	const cities = useMemo(() => {
+		const arr: TCityHit['city'][] = [];
+		const initial = query.data.hits ?? [];
+
+		for (const c of initial) {
+			if (c.document.city.id !== place.address.cityId) {
+				arr.push(c.document.city);
+			}
+		}
+
+		return arr;
+	}, [query.data.hits, place.address.cityId]);
 
 	if (cities.length === 0) {
 		return null;

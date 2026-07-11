@@ -1,8 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { lazy } from 'react';
 import { InstantSearch } from 'react-instantsearch';
 import { useGeoSearchClient } from '@/hooks/use-search-client';
 import { seo } from '@/lib/seo';
-import { Container } from './-components/container';
+
+const Container = lazy(() =>
+	import('./-components/container').then((mod) => ({ default: mod.Container })),
+);
 
 export const Route = createFileRoute('/nearby/')({
 	component: RouteComponent,

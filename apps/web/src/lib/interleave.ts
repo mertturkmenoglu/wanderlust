@@ -13,24 +13,3 @@ export function interleave<T>(listA: T[], listB: T[]): T[] {
 
 	return result;
 }
-
-export function* interleaveGen<T>(
-	listA: Iterable<T>,
-	listB: Iterable<T>,
-): Generator<T> {
-	const iterA = listA[Symbol.iterator]();
-	const iterB = listB[Symbol.iterator]();
-	let nextA = iterA.next();
-	let nextB = iterB.next();
-
-	while (!nextA.done || !nextB.done) {
-		if (!nextA.done) {
-			yield nextA.value;
-			nextA = iterA.next();
-		}
-		if (!nextB.done) {
-			yield nextB.value;
-			nextB = iterB.next();
-		}
-	}
-}

@@ -13,7 +13,9 @@ const ratingTexts = ['Unpleasant', 'Bad', 'Average', 'Good', 'Outstanding'];
 
 export function Rate({ className }: Props) {
 	const form = useFormContext<FormInput>();
-	const [tempRating, setTempRating] = useState(form.getValues('rating') ?? 5);
+	const [tempRating, setTempRating] = useState(
+		() => form.getValues('rating') ?? 5,
+	);
 	const text = tempRating ? ratingTexts[tempRating - 1] : '';
 
 	return (

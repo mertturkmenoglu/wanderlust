@@ -19,12 +19,12 @@ type Props = {
 	hours: { day: string; open: Date; close: Date }[];
 };
 
-export function HoursDialog({ tz, hours }: Props) {
-	const timeFmt = new Intl.DateTimeFormat('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-	});
+const timeFmt = new Intl.DateTimeFormat('en-US', {
+	hour: '2-digit',
+	minute: '2-digit',
+});
 
+export function HoursDialog({ tz, hours }: Props) {
 	const today = new TZDate(new Date(), tz).getUTCDay();
 	const key = mapping[today];
 

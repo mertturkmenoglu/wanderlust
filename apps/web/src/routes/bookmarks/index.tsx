@@ -9,9 +9,10 @@ import { bookmarksSearchSchema } from './-hooks';
 
 export const Route = createFileRoute('/bookmarks/')({
 	component: RouteComponent,
-	beforeLoad: authGuard,
-	ssr: false,
+	validateSearch: bookmarksSearchSchema,
 	loaderDeps: ({ search }) => ({ search }),
+	ssr: false,
+	beforeLoad: authGuard,
 	loader: ({ context, deps: { search } }) => {
 		context.queryClient.prefetchQuery(
 			orpc.bookmarks.list.queryOptions({
@@ -22,7 +23,6 @@ export const Route = createFileRoute('/bookmarks/')({
 			}),
 		);
 	},
-	validateSearch: bookmarksSearchSchema,
 	head: () =>
 		seo({
 			title: 'Bookmarks',

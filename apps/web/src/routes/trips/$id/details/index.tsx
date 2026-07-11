@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Accordion } from '@wanderlust/ui/components/accordion';
+import { useMemo } from 'react';
 import { tripUpsertLocationSchema } from '@/schemas/trip-upsert-location';
 import { Header } from './-components/header';
 import { useTripDays } from './-components/hooks';
@@ -12,9 +13,19 @@ export const Route = createFileRoute('/trips/$id/details/')({
 
 function RouteComponent() {
 	const days = useTripDays();
-	const defaultOpenValues = days
-		.map(({ isDefaultOpen }, i) => (isDefaultOpen ? `day-${i}` : undefined))
-		.filter(Boolean) as string[];
+	const defaultOpenValues = useMemo(() => {
+		const arr: string[] = [];
+
+		for (let i = 0; i < days.length; i++) {
+			const { isDefaultOpen } = days[i];
+
+			if (isDefaultOpen) {
+				arr.push(`day-${i}`);
+			}
+		}
+
+		return arr;
+	}, [days]);
 
 	return (
 		<div className="mt-4">

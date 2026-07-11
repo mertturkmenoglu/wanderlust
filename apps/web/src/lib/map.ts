@@ -6,7 +6,7 @@ import { env } from './env';
 // https://github.com/maptiler/maptiler-client-js/blob/main/src/mapstyle.ts
 // or use the map-styles command in apps/cli to fetch the latest styles
 // and save them to a JSON file, then copy the contents of that file here.
-export const styles = [
+const styles = [
 	{
 		key: 'streets-v2',
 		text: 'Streets V2',

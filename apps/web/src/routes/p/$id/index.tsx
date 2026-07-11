@@ -36,6 +36,7 @@ const schema = z.object({
 
 export const Route = createFileRoute('/p/$id/')({
 	component: RouteComponent,
+	validateSearch: schema,
 	loader: ({ context, params }) => {
 		return context.queryClient.ensureQueryData(
 			orpc.places.get.queryOptions({
@@ -95,7 +96,6 @@ export const Route = createFileRoute('/p/$id/')({
 		};
 	},
 	errorComponent: ErrorComponent,
-	validateSearch: schema,
 });
 
 function RouteComponent() {

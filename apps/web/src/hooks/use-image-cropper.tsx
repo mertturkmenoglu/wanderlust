@@ -10,6 +10,16 @@ type ImageCropperOptions = {
 	};
 };
 
+const createImage = (url: string): Promise<HTMLImageElement> => {
+	return new Promise((resolve, reject) => {
+		const image = new Image();
+		image.addEventListener('load', () => resolve(image));
+		image.addEventListener('error', (error) => reject(error));
+		image.setAttribute('crossOrigin', 'anonymous');
+		image.src = url;
+	});
+};
+
 export function useImageCropper(opts: ImageCropperOptions) {
 	const [preview, setPreview] = useState(opts.initial.preview);
 	const [crop, setCrop] = useState<Point>(opts.initial.crop || { x: 0, y: 0 });
@@ -17,16 +27,6 @@ export function useImageCropper(opts: ImageCropperOptions) {
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(
 		opts.initial.croppedAreaPixels || null,
 	);
-
-	const createImage = (url: string): Promise<HTMLImageElement> => {
-		return new Promise((resolve, reject) => {
-			const image = new Image();
-			image.addEventListener('load', () => resolve(image));
-			image.addEventListener('error', (error) => reject(error));
-			image.setAttribute('crossOrigin', 'anonymous');
-			image.src = url;
-		});
-	};
 
 	const getCroppedImage = async (): Promise<File | null> => {
 		const image = await createImage(preview);
