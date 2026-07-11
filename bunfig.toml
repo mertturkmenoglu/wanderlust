@@ -1,4 +1,11 @@
 [install]
 linker = "isolated"
-# Only install package versions published at least 3 days ago
-minimumReleaseAge = 259200 # seconds
+# Only install package versions published at least a day ago
+minimumReleaseAge = 86400 # seconds
+
+minimumReleaseAgeExcludes = [
+	"typescript",
+	"@types/node",
+	"@types/bun",
+	"tsdown"
+]
