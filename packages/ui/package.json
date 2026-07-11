@@ -42,7 +42,6 @@
 		"@types/bun": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@wanderlust/config": "workspace:*",
 		"tailwindcss": "^4.1.16",
 		"typescript": "catalog:"
 	}

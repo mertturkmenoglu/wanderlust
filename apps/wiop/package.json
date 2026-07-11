@@ -16,7 +16,6 @@
 		"typescript": "catalog:"
 	},
 	"devDependencies": {
-		"@types/bun": "catalog:",
-		"@wanderlust/config": "workspace:*"
+		"@types/bun": "catalog:"
 	}
 }
