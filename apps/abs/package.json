@@ -28,7 +28,8 @@
 		"inversify": "catalog:",
 		"reflect-metadata": "catalog:",
 		"signale": "^1.4.0",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"tiny-invariant": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
