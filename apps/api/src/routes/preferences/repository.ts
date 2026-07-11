@@ -20,7 +20,18 @@ export class PreferencesRepository {
 		const pref = await findByUserId.execute(this.db, { userId });
 
 		if (!pref) {
-			return dto.getOutput.parse({ userId: userId });
+			return dto.getOutput.parse({
+				preferences: {
+					userId,
+					enableRecentViews: true,
+					enableSearchHistory: true,
+					mapStyle: 'light',
+					searchRadius: 'close',
+					theme: 'light',
+					timezone: 'Etc/UTC',
+					units: 'metric',
+				},
+			});
 		}
 
 		return {
