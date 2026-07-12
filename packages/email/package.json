@@ -21,7 +21,7 @@
 	"dependencies": {
 		"@wanderlust/config": "workspace:*",
 		"inversify": "catalog:",
-		"nodemailer": "^8.0.7",
+		"nodemailer": "^9.0.3",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"react-email": "catalog:"
