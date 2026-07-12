@@ -8,7 +8,7 @@
 		"build-types": "tsdown",
 		"build-types:watch": "tsdown --watch",
 		"check-types": "tsc --noEmit",
-		"dev": "bun run --env-file=../../.env --watch src/index.ts",
+		"live": "bun run --env-file=../../.env --watch src/index.ts",
 		"test": "bun test"
 	},
 	"dependencies": {
