@@ -5,6 +5,7 @@ Welcome! Thanks for your interest in Wanderlust. We recommend reading this docum
 - [Index](index.md) - This file (the one you are currently reading) is the main entry point for the Wanderlust documentation. It provides an overview of the project and its purpose.
 - [Prerequisites](prerequisites.md) - Prerequisites needed to set up and run the project, including software and tools.
 - [Setup](setup.md) - Step-by-step instructions to set up the project on your local machine.
+- [CLI](cli.md) - Command-line interface (CLI) tool for performing various development tasks easily.
 - [Architecture](architecture.md) - Architecture of the project, including its components and how they interact.
 - [Tech Stack](tech-stack.md) - Overview of the technologies used in the project, including programming languages, frameworks, and libraries.
 - [Glossary](glossary.md) - A collection of terminology used in the context of Wanderlust and their definitions.
