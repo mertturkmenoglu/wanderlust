@@ -1,11 +1,11 @@
 import { Pagination } from '@wanderlust/common';
 import type { accolades as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
 import {
 	$includes,
 	DatabaseService,
 	type TDatabaseService,
 } from '@wanderlust/db';
+import * as schema from '@wanderlust/db/schema';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
