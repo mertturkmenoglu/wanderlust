@@ -1,23 +1,24 @@
 import { cn } from '@wanderlust/ui/lib/utils';
 import { AssetGrid } from './asset-grid';
 import { AssetSelector } from './asset-selector';
-import { AssetUploaderContextProvider, useUploaderContext } from './context';
+import { AssetUploaderStoreProvider, useUploaderStore } from './store';
 import type { Props } from './types';
 
 export function AssetUploader({ uploader, classNames }: Props) {
 	return (
-		<AssetUploaderContextProvider uploader={uploader} classNames={classNames}>
+		<AssetUploaderStoreProvider uploader={uploader} classNames={classNames}>
 			<Content />
-		</AssetUploaderContextProvider>
+		</AssetUploaderStoreProvider>
 	);
 }
 
 function Content() {
-	const ctx = useUploaderContext();
-	const hasFiles = ctx.uploader.acceptedFiles.length !== 0;
+	const uploader = useUploaderStore((s) => s.uploader);
+	const classNames = useUploaderStore((s) => s.classNames);
+	const hasFiles = uploader.acceptedFiles.length !== 0;
 
 	return (
-		<div className={cn(ctx.classNames?.root)}>
+		<div className={cn(classNames?.root)}>
 			{!hasFiles ? <AssetSelector /> : <AssetGrid />}
 		</div>
 	);

@@ -11,25 +11,26 @@ import {
 import { cn } from '@wanderlust/ui/lib/utils';
 import { TrashIcon } from 'lucide-react';
 import { humanFileSize } from '@/lib/file';
-import { useUploaderContext } from './context';
+import { useUploaderStore } from './store';
 
 export function AssetGrid() {
-	const ctx = useUploaderContext();
-	const files = ctx.uploader.acceptedFiles;
+	const uploader = useUploaderStore((s) => s.uploader);
+	const classNames = useUploaderStore((s) => s.classNames);
+	const files = uploader.acceptedFiles;
 	const previews = files.map((f) => URL.createObjectURL(f));
 
 	return (
 		<ItemGroup
-			{...ctx.uploader.getItemGroupProps()}
-			className={cn('gap-2', ctx.classNames?.grid?.root)}
+			{...uploader.getItemGroupProps()}
+			className={cn('gap-2', classNames?.grid?.root)}
 		>
 			{files.map((f, i) => (
 				<Item
 					key={f.name}
-					{...ctx.uploader.getItemProps({ file: f })}
+					{...uploader.getItemProps({ file: f })}
 					role="listitem"
 					variant="outline"
-					className={cn('hover:bg-muted', ctx.classNames?.grid?.item)}
+					className={cn('hover:bg-muted', classNames?.grid?.item)}
 				>
 					<ItemMedia variant="default">
 						<img
@@ -37,21 +38,21 @@ export function AssetGrid() {
 							alt=""
 							className={cn(
 								'aspect-video w-16 rounded-md object-cover lg:w-32',
-								ctx.classNames?.grid?.image,
+								classNames?.grid?.image,
 							)}
 						/>
 					</ItemMedia>
 					<ItemContent>
 						<ItemTitle
-							className={cn('line-clamp-1', ctx.classNames?.grid?.title)}
-							{...ctx.uploader.getItemNameProps({ file: f })}
+							className={cn('line-clamp-1', classNames?.grid?.title)}
+							{...uploader.getItemNameProps({ file: f })}
 						>
 							{f.name}
 						</ItemTitle>
 						<ItemDescription
 							className={cn(
 								'line-clamp-1 text-xs tracking-tighter',
-								ctx.classNames?.grid?.description,
+								classNames?.grid?.description,
 							)}
 						>
 							{humanFileSize(f.size)}
@@ -61,8 +62,8 @@ export function AssetGrid() {
 						<Button
 							variant="destructive"
 							size="icon-sm"
-							className={cn('cursor-pointer', ctx.classNames?.grid?.delete)}
-							{...ctx.uploader.getItemDeleteTriggerProps({ file: f })}
+							className={cn('cursor-pointer', classNames?.grid?.delete)}
+							{...uploader.getItemDeleteTriggerProps({ file: f })}
 						>
 							<TrashIcon />
 							<span className="sr-only">Delete</span>
