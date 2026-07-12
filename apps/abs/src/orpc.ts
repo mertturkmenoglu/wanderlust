@@ -11,7 +11,7 @@ type ClientContext = {
 	token?: string;
 };
 
-export const link = new RPCLink<ClientContext>({
+const link = new RPCLink<ClientContext>({
 	// env variable name isn't important. Because it was already defined in .env file for web usage, I reused it here.
 	// VITE_ prefix doesn't matter here.
 	url: `${import.meta.env.VITE_API_URL}/rpc`,
