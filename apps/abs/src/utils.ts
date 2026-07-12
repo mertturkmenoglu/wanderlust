@@ -20,3 +20,7 @@ export function waitUntilApiIsHealthy(): Promise<void> {
 		}, 1000);
 	});
 }
+
+export const CHARS = {
+	BLANK: '\u2800', // Braille Pattern Blank
+};
