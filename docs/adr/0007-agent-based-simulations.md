@@ -17,8 +17,6 @@ The authoritative entity on agent development is [FIPA](https://www.fipa.org/), 
 FIPA's agent life cycle is as follows:
 ```mermaid
 ---
-config:
-  layout: elk
 title: FIPA Agent Life Cycle
 ---
 stateDiagram-v2
