@@ -7,6 +7,7 @@
 ## Structure
 
 - `apps`:
+	- `abs`: Agent Based Simulation application. (See [ADR-0007](adr/0007-agent-based-simulations.md))
 	- `admin`: Admin panel for managing users, content, and other administrative tasks.
 	- `api`: Core backend API.
 	- `cli`: Command-line interface for various tasks and utilities.
@@ -22,6 +23,8 @@
 	- `db`: Shared database package for Drizzle ORM tables, relations, and partial queries.
 	- `email`: Shared email package for sending emails.
 	- `jobs`: Shared jobs package for background jobs and task scheduling.
+	- `richtext`: Shared rich text package for manipulating rich text content.
+	- `search`: Shared Typesense search service.
 	- `storage`: Shared storage package for file uploads and management.
 	- `ui`: Shared UI components package. (ShadCN UI)
 	- `uid`: Shared unique ID generation package.
