@@ -1,78 +1,137 @@
-import { combine, persist } from 'zustand/middleware';
-import { createStore } from 'zustand/vanilla';
+import type signale from 'signale';
+import { Actions } from './actions';
 import { Auth } from './auth';
 import { L } from './logger';
 import { CustomStorage } from './persistence';
-import { CHARS } from './utils';
+import { $, CHARS } from './utils';
 
-type State = 'init' | 'idle' | 'running' | 'error' | 'destroyed';
+const actions = new Actions();
 
-export function createAgentStore(username: string) {
-	return createStore(
-		persist(
-			combine(
-				{
-					state: 'init' as State,
-					username: username,
-					user: {} as Auth.User,
-					token: '',
-					error: null as Error | null,
-					logger: L.scope(`agent:${username}`.padEnd(15, CHARS.BLANK)),
-				},
-				(set, get) => {
-					return {
-						async init() {
-							const { username, logger, state, token } = get();
+const availableActions = [
+	actions.getMe,
+	actions.accolades_list,
+	actions.accolades_get,
+	actions.accolades_getPlaces,
+	actions.aggregator_home,
+	actions.amenities_list,
+	actions.bookmarks_list,
+	actions.bookmarks_create,
+	actions.bookmarks_delete,
+	actions.categories_get,
+	actions.categories_list,
+	actions.cities_list,
+	actions.cities_get,
+	actions.cities_listFeatured,
+	actions.collections_get,
+	actions.collections_list,
+	actions.collections_placesList,
+	actions.collections_citiesList,
+	actions.favorites_list,
+	actions.favorites_create,
+	actions.favorites_delete,
+	actions.favorites_listByUsername,
+];
 
-							set({ state: 'init' });
+export class Agent {
+	private readonly username: string;
+	private readonly user: Auth.User;
+	private readonly token: string;
+	private readonly logger: signale.Signale<signale.DefaultMethods>;
+	private static readonly persister = CustomStorage;
+	private timer: ReturnType<typeof setTimeout> | null = null;
+	private lastRun: number | null = null;
+	private runInterval: number;
 
-							logger.info(`Agent is in ${state} state`);
+	constructor(username: string, user: Auth.User, token: string) {
+		this.username = username;
+		this.user = user;
+		this.token = token;
+		this.logger = L.scope(`agent:${this.username}`.padEnd(15, CHARS.BLANK));
 
-							try {
-								if (token === '') {
-									const res = await Auth.signIn(username);
+		this.runInterval = $.Random.int(3000, 20_000);
+		this.logger.info(`Run interval set to ${this.runInterval} ms`);
+		this.schedule();
+	}
 
-									if (!res) {
-										throw new Error(`Failed to sign in user ${username}`);
-									}
+	private schedule() {
+		this.logger.info('Scheduling next run');
+		if (this.timer !== null) {
+			clearTimeout(this.timer);
+			this.timer = null;
+		}
 
-									set({
-										user: res.user,
-										token: res.token,
-										state: 'idle',
-									});
+		const elapsed =
+			this.lastRun === null ? this.runInterval : Date.now() - this.lastRun;
+		const delay = Math.max(0, this.runInterval - elapsed);
 
-									logger.info('Agent is in idle state');
-								} else {
-									logger.info('Agent already has a token, skipping sign in');
-									set({ state: 'idle' });
-									logger.info('Agent is in idle state');
-								}
-							} catch (err) {
-								logger.error('Failed to initialize agent', err);
-								set({ state: 'error', error: err as Error });
-							}
-						},
-						async destroy() {
-							set({ state: 'destroyed' });
-							get().logger.info('Agent is in destroyed state');
-						},
-					};
-				},
-			),
-			{
-				name: `agent-store-${username}`,
-				version: 1,
-				partialize: (state) => ({
-					token: state.token,
-					user: state.user,
-					state: state.state,
-					username: state.username,
-				}),
-				storage: CustomStorage,
-			},
-		),
-	);
+		this.timer = setTimeout(() => {
+			this.timer = null;
+			void this.runTick();
+		}, delay);
+	}
+
+	private async runTick() {
+		this.lastRun = Date.now();
+
+		try {
+			await this.runAction();
+		} catch (err) {
+			if (err instanceof Error) {
+				this.logger.error('Scheduled run failed', err.message);
+			} else {
+				this.logger.error('Scheduled run failed', String(err));
+			}
+		} finally {
+			this.runInterval = $.Random.int(3000, 20_000);
+			this.logger.info(`Next run interval set to ${this.runInterval} ms`);
+			this.schedule();
+		}
+	}
+
+	private async runAction() {
+		const action = $.Random.element(availableActions);
+
+		await action(this);
+	}
+
+	getUsername(): string {
+		return this.username;
+	}
+
+	getUser(): Auth.User {
+		return this.user;
+	}
+
+	getToken(): string {
+		return this.token;
+	}
+
+	getLogger(): signale.Signale<signale.DefaultMethods> {
+		return this.logger;
+	}
+
+	static async load(username: string): Promise<Agent> {
+		const res = await Agent.persister.getItem(`agent-${username}`);
+
+		if (res === null) {
+			const authRes = await Auth.signIn(username);
+
+			if (!authRes) {
+				throw new Error(`Failed to sign in user ${username}`);
+			}
+
+			return new Agent(username, authRes.user, authRes.token);
+		}
+
+		return new Agent(res.username, res.user, res.token);
+	}
+
+	static async save(agent: Agent): Promise<void> {
+		await Agent.persister.setItem(`agent-${agent.getUsername()}`, {
+			username: agent.username,
+			user: agent.user,
+			token: agent.token,
+			lastRun: agent.lastRun,
+		});
+	}
 }
-
-export type AgentStore = ReturnType<typeof createAgentStore>;
