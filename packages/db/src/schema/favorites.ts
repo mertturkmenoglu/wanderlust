@@ -1,0 +1,20 @@
+import * as p from 'drizzle-orm/pg-core';
+import { users } from './auth';
+import { places } from './places';
+
+export const favorites = p.pgTable(
+	'favorites',
+	{
+		id: p.bigint({ mode: 'number' }).generatedAlwaysAsIdentity().primaryKey(),
+		placeId: p
+			.text()
+			.notNull()
+			.references(() => places.id, { onDelete: 'cascade' }),
+		userId: p
+			.text()
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		createdAt: p.timestamp({ withTimezone: true }).notNull().defaultNow(),
+	},
+	(table) => [p.unique().on(table.userId, table.placeId)],
+);
