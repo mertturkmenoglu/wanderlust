@@ -2,6 +2,7 @@
 
 Here's a list of abbreviations used throughout the project (Note: List is not exhaustive):
 
+- `ABS`: Agent Based Simulations (See [ADR-0007](adr/0007-agent-based-simulations.md))
 - `ADR`: Architecture Decision Record (See: https://adr.github.io/)
 - `API`: Application Programming Interface
 - `Authn`: Authentication. Verifying the user is the same person they claim to be.
