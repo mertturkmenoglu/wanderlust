@@ -19,11 +19,11 @@ import { cn } from '@wanderlust/ui/lib/utils';
 import { AwardIcon, HeartIcon, StarIcon } from 'lucide-react';
 import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { ipx } from '@/lib/ipx';
-import { usePlaceCardContext } from './context';
 import {
 	useAddToFavoritesMutation,
 	useRemoveFromFavoritesMutation,
 } from './hooks';
+import { usePlaceStore } from './store';
 import type { Props } from './types';
 
 export function ItemVariant({
@@ -31,7 +31,10 @@ export function ItemVariant({
 	variant = 'default',
 	...props
 }: Props) {
-	const ctx = usePlaceCardContext();
+	const asset = usePlaceStore((s) => s.asset);
+	const place = usePlaceStore((s) => s.place);
+	const meta = usePlaceStore((s) => s.meta);
+	const rating = usePlaceStore((s) => s.rating);
 	const numFmt = useNumberFormatter();
 
 	const addMutation = useAddToFavoritesMutation();
@@ -41,27 +44,27 @@ export function ItemVariant({
 		<Item variant="outline" size="default" className={cn(className)} {...props}>
 			<ItemMedia>
 				<Image
-					src={ipx(ctx.asset.url, 'w_256')}
-					alt={ctx.asset.description ?? ''}
+					src={ipx(asset.url, 'w_256')}
+					alt={asset.description ?? ''}
 					height={64}
 					aspectRatio={16 / 9}
 					className="aspect-video h-16 rounded-md object-cover"
 				/>
 			</ItemMedia>
 			<ItemContent>
-				<ItemTitle className="line-clamp-2" title={ctx.place.name}>
-					{ctx.place.name}
+				<ItemTitle className="line-clamp-2" title={place.name}>
+					{place.name}
 				</ItemTitle>
 				<ItemDescription className="line-clamp-1">
-					{ctx.place.address.city.name} / {ctx.place.address.city.countryName}
+					{place.address.city.name} / {place.address.city.countryName}
 				</ItemDescription>
 				<ItemDescription className="line-clamp-1 text-primary">
-					{ctx.place.category.name}
+					{place.category.name}
 				</ItemDescription>
 			</ItemContent>
 
 			<ItemActions>
-				{ctx.place.accolades.length > 0 && (
+				{place.accolades.length > 0 && (
 					<HoverCard>
 						<HoverCardTrigger
 							render={
@@ -71,7 +74,7 @@ export function ItemVariant({
 							}
 						/>
 						<HoverCardContent className="flex flex-col gap-2 p-2">
-							{ctx.place.accolades.map((acc) => (
+							{place.accolades.map((acc) => (
 								<Link
 									key={acc.id}
 									to="/accolades/$id"
@@ -87,7 +90,7 @@ export function ItemVariant({
 						</HoverCardContent>
 					</HoverCard>
 				)}
-				{ctx.meta && (
+				{meta && (
 					<Button
 						variant="outline"
 						type="button"
@@ -96,26 +99,26 @@ export function ItemVariant({
 							e.preventDefault();
 							e.stopPropagation();
 
-							if (ctx.meta?.isFavorite) {
-								removeMutation.mutate({ placeId: ctx.place.id });
+							if (meta?.isFavorite) {
+								removeMutation.mutate({ placeId: place.id });
 							} else {
-								addMutation.mutate({ placeId: ctx.place.id });
+								addMutation.mutate({ placeId: place.id });
 							}
 						}}
 					>
 						<HeartIcon
 							className={cn({
-								'fill-primary text-primary': ctx.meta?.isFavorite,
-								'fill-muted text-muted-foreground': !ctx.meta?.isFavorite,
+								'fill-primary text-primary': meta?.isFavorite,
+								'fill-muted text-muted-foreground': !meta?.isFavorite,
 							})}
 						/>
 					</Button>
 				)}
-				{ctx.rating !== '0.0' && (
+				{rating !== '0.0' && (
 					<Button variant="outline">
-						{ctx.rating} <StarIcon className="fill-primary text-primary" />
+						{rating} <StarIcon className="fill-primary text-primary" />
 						<span className="text-muted-foreground text-xs leading-px tracking-tighter">
-							({numFmt.format(ctx.place.totalVotes)})
+							({numFmt.format(place.totalVotes)})
 						</span>
 					</Button>
 				)}

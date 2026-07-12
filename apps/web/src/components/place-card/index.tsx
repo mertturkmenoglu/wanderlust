@@ -1,14 +1,14 @@
 import { Link } from '@tanstack/react-router';
-import { PlaceCardContextProvider } from './context';
 import { DefaultVariant } from './default-variant';
 import { ItemVariant } from './item-variant';
+import { PlaceStoreProvider } from './store';
 import type { Props } from './types';
 
 export function PlaceCard(props: Props) {
 	return (
-		<PlaceCardContextProvider place={props.place} meta={props.meta}>
+		<PlaceStoreProvider place={props.place} meta={props.meta}>
 			<Content {...props} />
-		</PlaceCardContextProvider>
+		</PlaceStoreProvider>
 	);
 }
 
