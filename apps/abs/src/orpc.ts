@@ -33,3 +33,11 @@ export const client: ContractRouterClient<AppRouter> = createORPCClient(link);
 export type Inputs = InferContractRouterInputs<AppRouter>;
 
 export type Outputs = InferContractRouterOutputs<AppRouter>;
+
+export function withContext(token: string) {
+	return {
+		context: {
+			token,
+		},
+	};
+}
