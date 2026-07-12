@@ -16,20 +16,14 @@
 		"@orpc/contract": "catalog:",
 		"@orpc/zod": "catalog:",
 		"@wanderlust/auth": "workspace:*",
-		"@wanderlust/cache": "workspace:*",
-		"@wanderlust/common": "workspace:*",
-		"@wanderlust/config": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
-		"@wanderlust/db": "workspace:*",
-		"@wanderlust/email": "workspace:*",
 		"@wanderlust/jobs": "workspace:*",
 		"better-auth": "catalog:",
 		"date-fns": "catalog:",
-		"inversify": "catalog:",
-		"reflect-metadata": "catalog:",
 		"signale": "^1.4.0",
+		"tiny-invariant": "catalog:",
 		"zod": "catalog:",
-		"tiny-invariant": "catalog:"
+		"zustand": "^5.0.14"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:",
