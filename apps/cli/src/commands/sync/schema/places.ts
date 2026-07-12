@@ -79,7 +79,11 @@ export class PlacesSchema extends AbstractSchema {
 
 	private async findMany(lastCreatedAt: Date | null, limit: number) {
 		return this.db.query.places.findMany({
-			where: (t, { gt }) => gt(t.createdAt, lastCreatedAt ?? new Date(0)),
+			where: {
+				createdAt: {
+					gt: lastCreatedAt ?? new Date(0),
+				},
+			},
 			orderBy: (t, { asc }) => [asc(t.createdAt), asc(t.name)],
 			limit: limit,
 			with: {
