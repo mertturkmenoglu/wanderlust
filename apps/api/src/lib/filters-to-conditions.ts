@@ -7,16 +7,17 @@ export function transformFiltersToConditions(
 		return [];
 	}
 
-	return filters.map((f) => ({
-		[f.field]: {
-			[f.operator]:
-				f.operator === 'ilike' && typeof f.value === 'string'
-					? transformValueToIlike(f.value)
-					: f.value,
-		},
-	}));
-}
+	return filters.map((f) => {
+		const isLikeOrILikeOperator =
+			f.operator === 'like' || f.operator === 'ilike';
+		const isStringValue = typeof f.value === 'string';
+		const shouldWrapValue = isLikeOrILikeOperator && isStringValue;
+		const value = shouldWrapValue ? `%${f.value}%` : f.value;
 
-function transformValueToIlike(value: string): string {
-	return `%${value}%`;
+		return {
+			[f.field]: {
+				[f.operator]: value,
+			},
+		};
+	});
 }
