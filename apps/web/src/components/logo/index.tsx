@@ -33,6 +33,7 @@ export function Logo({
 			src="/logo.png"
 			alt="Wanderlust logo"
 			layout="constrained"
+			data-testid="logo"
 			className={cn(
 				{
 					grayscale: grayscale,
