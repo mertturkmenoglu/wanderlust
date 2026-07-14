@@ -45,7 +45,7 @@ export class ActivitiesService {
 			createdAt: new Date(),
 		});
 
-		await this.cache.namespace('activities').set({
+		await this.cache.namespace('activities').setForever({
 			key: username,
 			value: activities.slice(0, 100),
 		});
