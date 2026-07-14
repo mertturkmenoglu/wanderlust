@@ -33,15 +33,10 @@ export const listOutput = z.object({
 
 export type ListOutput = z.infer<typeof listOutput>;
 
-export const updateInput = $dto.place.pick({
-	id: true,
-	name: true,
-	categoryId: true,
-	description: true,
-	phone: true,
-	website: true,
-	accessibilityLevel: true,
-	priceLevel: true,
+export const updateInput = $dto.place.omit({
+	createdAt: true,
+	updatedAt: true,
+	rating: true,
 });
 
 export type UpdateInput = z.infer<typeof updateInput>;
@@ -51,54 +46,6 @@ export const updateOutput = z.object({
 });
 
 export type UpdateOutput = z.infer<typeof updateOutput>;
-
-export const updateAddressInput = $dto.place.pick({ id: true }).extend(
-	z.object({
-		address: $dto.address.pick({
-			id: true,
-			cityId: true,
-			line1: true,
-			line2: true,
-			postalCode: true,
-			lat: true,
-			lng: true,
-		}),
-	}).shape,
-);
-
-export type UpdateAddressInput = z.infer<typeof updateAddressInput>;
-
-export const updateAddressOutput = z.object({
-	place: place,
-});
-
-export type UpdateAddressOutput = z.infer<typeof updateAddressOutput>;
-
-export const updateAmenitiesInput = $dto.place.pick({
-	id: true,
-	amenities: true,
-});
-
-export type UpdateAmenitiesInput = z.infer<typeof updateAmenitiesInput>;
-
-export const updateAmenitiesOutput = z.object({
-	place: place,
-});
-
-export type UpdateAmenitiesOutput = z.infer<typeof updateAmenitiesOutput>;
-
-export const updateHoursInput = $dto.place.pick({
-	id: true,
-	hours: true,
-});
-
-export type UpdateHoursInput = z.infer<typeof updateHoursInput>;
-
-export const updateHoursOutput = z.object({
-	place: place,
-});
-
-export type UpdateHoursOutput = z.infer<typeof updateHoursOutput>;
 
 export const deleteInput = $dto.place.pick({
 	id: true,

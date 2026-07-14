@@ -174,7 +174,7 @@ export const placesRemoveOutput = z.object({});
 export type PlacesRemoveOutput = z.infer<typeof placesRemoveOutput>;
 
 export const citiesListInput = z.object({
-	cityId: z.int(),
+	cityId: z.string().min(1),
 });
 
 export type CitiesListInput = z.infer<typeof citiesListInput>;
@@ -186,7 +186,7 @@ export const citiesListOutput = z.object({
 export type CitiesListOutput = z.infer<typeof citiesListOutput>;
 
 export const citiesAppendInput = z.object({
-	cityId: z.int(),
+	cityId: z.string().min(1),
 	collectionId: z.string(),
 });
 
@@ -199,7 +199,7 @@ export const citiesAppendOutput = z.object({
 export type CitiesAppendOutput = z.infer<typeof citiesAppendOutput>;
 
 export const citiesReorderInput = z.object({
-	cityId: z.int(),
+	cityId: z.string().min(1),
 	collectionIds: z.string().array(),
 });
 
@@ -212,7 +212,7 @@ export const citiesReorderOutput = z.object({
 export type CitiesReorderOutput = z.infer<typeof citiesReorderOutput>;
 
 export const citiesRemoveInput = z.object({
-	cityId: z.int(),
+	cityId: z.string().min(1),
 	collectionId: z.string(),
 });
 

@@ -1,4 +1,4 @@
-import { $extended } from '@wanderlust/common';
+import { $dto } from '@wanderlust/common';
 import z from 'zod';
 
 export const homeInput = z.object({});
@@ -6,7 +6,34 @@ export const homeInput = z.object({});
 export type HomeInput = z.infer<typeof homeInput>;
 
 const placeWithMeta = z.object({
-	place: $extended.place,
+	place: $dto.place
+		.pick({
+			id: true,
+			name: true,
+			rating: true,
+			locality: true,
+			adminAreaName: true,
+			countryName: true,
+		})
+		.extend({
+			accolades: z
+				.object({
+					id: z.string(),
+					accolade: z.object({
+						id: z.string(),
+						title: z.string(),
+					}),
+				})
+				.array(),
+			assets: z
+				.object({
+					url: z.string(),
+				})
+				.array(),
+			primaryCategory: z.object({
+				displayName: z.string(),
+			}),
+		}),
 	meta: z.object({
 		isFavorite: z.boolean(),
 	}),

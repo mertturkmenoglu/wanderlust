@@ -25,6 +25,9 @@ export const createInput = $dto.category.pick({
 	id: true,
 	name: true,
 	image: true,
+	attributions: true,
+	description: true,
+	displayName: true,
 });
 
 export type CreateInput = z.infer<typeof createInput>;
