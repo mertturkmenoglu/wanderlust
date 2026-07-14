@@ -1,33 +1,39 @@
 import { TZDate } from '@date-fns/tz';
-import { differenceInMinutes, isAfter, isBefore, isEqual } from 'date-fns';
+import { differenceInMinutes, isAfter, isBefore } from 'date-fns';
 
 export type HoursStatus = 'open' | 'closingSoon' | 'openingSoon' | 'closed';
 
 export function useHoursStatus(
 	tz: string,
-	open: Date,
-	close: Date,
+	intervals: {
+		off: boolean;
+		open: string;
+		close: string;
+	}[],
 ): HoursStatus {
 	const now = new TZDate(new Date(), tz);
-	const isSame = isEqual(open, close);
 
-	const isOpenNow = isAfter(now, open) && isBefore(now, close) && !isSame;
-
-	const isClosingSoon = isOpenNow && differenceInMinutes(close, now) <= 60;
-
-	const isOpeningSoon =
-		!isOpenNow && isBefore(now, open) && differenceInMinutes(open, now) <= 60;
-
-	if (isClosingSoon) {
-		return 'closingSoon';
+	if (intervals.length === 0) {
+		return 'closed';
 	}
 
-	if (isOpenNow) {
-		return 'open';
-	}
+	for (const interval of intervals) {
+		const o = new TZDate(interval.open, tz);
+		const c = new TZDate(interval.close, tz);
 
-	if (isOpeningSoon) {
-		return 'openingSoon';
+		if (isAfter(now, o) && isBefore(now, c)) {
+			if (interval.off) {
+				return 'closed';
+			}
+
+			const isClosingSoon = differenceInMinutes(c, now) <= 60;
+			return isClosingSoon ? 'closingSoon' : 'open';
+		}
+
+		if (isBefore(now, o)) {
+			const isOpeningSoon = differenceInMinutes(o, now) <= 60;
+			return isOpeningSoon ? 'openingSoon' : 'closed';
+		}
 	}
 
 	return 'closed';
