@@ -78,11 +78,10 @@ export function PlacesResultsView() {
 						<ItemContent>
 							<ItemTitle>{hit.place.name}</ItemTitle>
 							<ItemDescription>
-								{hit.place.address.city.name} /{' '}
-								{hit.place.address.city.stateName}
+								{hit.place.locality} / {hit.place.adminAreaName}
 							</ItemDescription>
 							<ItemDescription className="text-primary">
-								{hit.place.category.name}
+								{hit.place.primaryCategory.displayName}
 							</ItemDescription>
 						</ItemContent>
 					</Item>
@@ -101,9 +100,9 @@ export function CitiesResultsView() {
 			{hits.slice(0, 5).map((hit) => (
 				<Link
 					key={`search-result-cities-${hit.id}`}
-					to="/cities/$"
+					to="/cities/$id"
 					params={{
-						_splat: `${hit.city.id}/${hit.city.name}`,
+						id: hit.city.id,
 					}}
 					onClick={(e) => {
 						if (ctx.onItemClick) {

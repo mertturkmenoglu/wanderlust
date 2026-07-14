@@ -193,7 +193,7 @@ export function Content({ fullName, username }: Readonly<Props>) {
 								<span>Dark</span>
 							</DropdownMenuCheckboxItem>
 							<DropdownMenuCheckboxItem
-								checked={theme === 'auto'}
+								checked={theme === 'system'}
 								onCheckedChange={(checked) => {
 									if (!checked) {
 										return;
@@ -201,11 +201,11 @@ export function Content({ fullName, username }: Readonly<Props>) {
 
 									mutation.mutate(
 										{
-											theme: 'auto',
+											theme: 'system',
 										},
 										{
 											onSuccess: () => {
-												setTheme('auto');
+												setTheme('system');
 											},
 										},
 									);

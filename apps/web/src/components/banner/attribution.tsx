@@ -17,8 +17,8 @@ export type AttributionProps = {
 
 export function Attribution({ text, link }: AttributionProps) {
 	return (
-		<HoverCard openDelay={300}>
-			<HoverCardTrigger className="absolute top-2 right-2">
+		<HoverCard>
+			<HoverCardTrigger delay={300} className="absolute top-2 right-2">
 				<Badge variant="midnight">
 					<CircleQuestionMark className="text-midnight-foreground" />{' '}
 					Attribution

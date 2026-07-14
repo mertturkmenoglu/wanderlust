@@ -26,7 +26,7 @@ import z from 'zod';
 import { type Outputs, orpc } from '@/lib/orpc';
 
 type Props = {
-	children: React.ReactNode;
+	children: React.ReactElement;
 	onSuccess: (data: Outputs['lists']['create']) => Promise<void>;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,7 +58,7 @@ export function CreateListDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogTrigger render={children} />
 			<DialogContent className="sm:max-w-xl">
 				<DialogHeader>
 					<DialogTitle>Create a List</DialogTitle>
@@ -123,11 +123,13 @@ export function CreateListDialog({
 				</form>
 
 				<DialogFooter className="sm:justify-end">
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Cancel
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button type="button" variant="secondary">
+								Cancel
+							</Button>
+						}
+					/>
 
 					<Button
 						type="submit"
