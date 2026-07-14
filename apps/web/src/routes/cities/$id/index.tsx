@@ -12,7 +12,6 @@ import { seo } from '@/lib/seo';
 import { CityBreadcrumb } from './-city-breadcrumb';
 import { CitySearchBanner } from './-city-search-banner';
 import { Description } from './-description';
-import { getCityIdFromParams } from './-hooks';
 import { CityListBanner } from './-list-banner';
 import { PlanTripBanner } from './-plan-trip-banner';
 
@@ -20,15 +19,13 @@ const MapComponent = lazy(() =>
 	import('./-map').then((mod) => ({ default: mod.MapComponent })),
 );
 
-export const Route = createFileRoute('/cities/$/')({
+export const Route = createFileRoute('/cities/$id/')({
 	component: RouteComponent,
 	loader: ({ context, params }) => {
-		const id = getCityIdFromParams(params._splat);
-
 		return context.queryClient.ensureQueryData(
 			orpc.cities.get.queryOptions({
 				input: {
-					id,
+					id: params.id,
 				},
 			}),
 		);
@@ -123,7 +120,7 @@ function RouteComponent() {
 	);
 }
 
-function Collections({ id }: { id: number }) {
+function Collections({ id }: { id: string }) {
 	const query = useSuspenseQuery(
 		orpc.collections.cities.list.queryOptions({ input: { cityId: id } }),
 	);

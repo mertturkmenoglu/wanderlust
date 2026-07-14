@@ -9,7 +9,7 @@ import {
 } from '@wanderlust/ui/components/breadcrumb';
 
 export function CityBreadcrumb() {
-	const { city } = useLoaderData({ from: '/cities/$/' });
+	const { city } = useLoaderData({ from: '/cities/$id/' });
 
 	return (
 		<Breadcrumb>

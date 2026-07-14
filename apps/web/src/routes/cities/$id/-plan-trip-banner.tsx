@@ -5,7 +5,7 @@ import { OverlayBanner } from '@/components/banner/overlay';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export function PlanTripBanner() {
-	const { city } = useLoaderData({ from: '/cities/$/' });
+	const { city } = useLoaderData({ from: '/cities/$id/' });
 	const isMobile = useIsMobile();
 
 	return (

@@ -4,7 +4,7 @@ import { ChevronRightIcon } from 'lucide-react';
 import { GradientBanner } from '@/components/banner/gradient';
 
 export function CityListBanner() {
-	const { city } = useLoaderData({ from: '/cities/$/' });
+	const { city } = useLoaderData({ from: '/cities/$id/' });
 
 	return (
 		<GradientBanner

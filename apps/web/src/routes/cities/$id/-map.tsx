@@ -3,7 +3,7 @@ import MapContainer from 'react-map-gl/maplibre';
 import { useMapStyle } from '@/hooks/use-map-style';
 
 export function MapComponent() {
-	const { city } = useLoaderData({ from: '/cities/$/' });
+	const { city } = useLoaderData({ from: '/cities/$id/' });
 	const { lat: latitude, lng: longitude } = city;
 	const style = useMapStyle();
 

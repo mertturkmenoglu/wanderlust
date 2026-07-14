@@ -12,7 +12,7 @@ import { ClockIcon } from 'lucide-react';
 import { ipx } from '@/lib/ipx';
 
 export function Description() {
-	const { city } = useLoaderData({ from: '/cities/$/' });
+	const { city } = useLoaderData({ from: '/cities/$id/' });
 
 	return (
 		<div className="mt-4 grid grid-cols-5 gap-4 md:mt-8 md:gap-8">

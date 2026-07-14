@@ -11,9 +11,9 @@ type Props = {
 export function CityItem({ city }: Props) {
 	return (
 		<Link
-			to="/cities/$"
+			to="/cities/$id"
 			params={{
-				_splat: `${city.id}/${city.name}`,
+				id: city.id,
 			}}
 			className={cn(
 				'group overflow-hidden rounded-md border shadow-sm outline-none transition-all hover:shadow-md',
