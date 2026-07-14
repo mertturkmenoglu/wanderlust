@@ -1,7 +1,45 @@
-import { $includes } from '@wanderlust/db';
-import { sql } from 'drizzle-orm';
 import z from 'zod';
 import { definePreparedStatement } from '@/lib/define-prepared-statement';
+
+const queryColumnsAndRelations = {
+	columns: {
+		id: true,
+		name: true,
+		rating: true,
+		locality: true,
+		adminAreaName: true,
+		countryName: true,
+	},
+	with: {
+		accolades: {
+			columns: {
+				id: true,
+			},
+			with: {
+				accolade: {
+					columns: {
+						id: true,
+						title: true,
+					},
+				},
+			},
+		},
+		assets: {
+			columns: {
+				url: true,
+			},
+			orderBy: {
+				order: 'asc',
+			},
+			limit: 1,
+		},
+		primaryCategory: {
+			columns: {
+				displayName: true,
+			},
+		},
+	},
+} as const;
 
 export const findFeaturedPlaces = definePreparedStatement({
 	schema: z.object({}),
@@ -9,14 +47,13 @@ export const findFeaturedPlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				where: {
-					totalVotes: { ne: 0 },
+					rating: {
+						ne: 0,
+					},
 				},
-				orderBy: (t, { desc }) => [
-					sql`(${t.totalPoints} / ${t.totalVotes}) DESC`,
-					desc(t.totalVotes),
-				],
-				limit: 25,
-				with: $includes.place.with,
+				orderBy: (t, { desc }) => [desc(t.rating), desc(t.totalVotes)],
+				limit: 10,
+				...queryColumnsAndRelations,
 			})
 			.prepare('agg_featured_places');
 	},
@@ -28,8 +65,8 @@ export const findPopularPlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalVotes)],
-				limit: 25,
-				with: $includes.place.with,
+				limit: 10,
+				...queryColumnsAndRelations,
 			})
 			.prepare('agg_popular_places');
 	},
@@ -41,8 +78,8 @@ export const findNewPlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				orderBy: (t, { desc }) => [desc(t.createdAt)],
-				limit: 25,
-				with: $includes.place.with,
+				limit: 10,
+				...queryColumnsAndRelations,
 			})
 			.prepare('agg_new_places');
 	},
@@ -54,8 +91,8 @@ export const findFavoritePlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalFavorites)],
-				limit: 25,
-				with: $includes.place.with,
+				limit: 10,
+				...queryColumnsAndRelations,
 			})
 			.prepare('agg_favorite_places');
 	},
