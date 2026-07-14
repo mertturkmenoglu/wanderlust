@@ -1,7 +1,6 @@
 import React, { type PropsWithChildren, useState } from 'react';
 import { createStore, type ExtractState, useStore } from 'zustand';
 import { combine } from 'zustand/middleware';
-import { computeRating } from '@/lib/rating';
 import type { Place } from './types';
 
 type Props = PropsWithChildren<{
@@ -18,7 +17,7 @@ function createPlaceStore(place: Place, meta?: { isFavorite: boolean }) {
 				place,
 				meta,
 				index: 0,
-				rating: computeRating(place.totalPoints, place.totalVotes),
+				rating: place.rating,
 				asset: place.assets[0],
 			},
 			(set, get) => ({

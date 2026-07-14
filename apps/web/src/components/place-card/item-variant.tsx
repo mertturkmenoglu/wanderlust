@@ -17,7 +17,6 @@ import {
 } from '@wanderlust/ui/components/item';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { AwardIcon, HeartIcon, StarIcon } from 'lucide-react';
-import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { ipx } from '@/lib/ipx';
 import {
 	useAddToFavoritesMutation,
@@ -35,7 +34,6 @@ export function ItemVariant({
 	const place = usePlaceStore((s) => s.place);
 	const meta = usePlaceStore((s) => s.meta);
 	const rating = usePlaceStore((s) => s.rating);
-	const numFmt = useNumberFormatter();
 
 	const addMutation = useAddToFavoritesMutation();
 	const removeMutation = useRemoveFromFavoritesMutation();
@@ -56,10 +54,10 @@ export function ItemVariant({
 					{place.name}
 				</ItemTitle>
 				<ItemDescription className="line-clamp-1">
-					{place.address.city.name} / {place.address.city.countryName}
+					{place.locality} / {place.adminAreaName}
 				</ItemDescription>
 				<ItemDescription className="line-clamp-1 text-primary">
-					{place.category.name}
+					{place.primaryCategory.displayName}
 				</ItemDescription>
 			</ItemContent>
 
@@ -114,12 +112,9 @@ export function ItemVariant({
 						/>
 					</Button>
 				)}
-				{rating !== '0.0' && (
+				{rating !== 0 && (
 					<Button variant="outline">
 						{rating} <StarIcon className="fill-primary text-primary" />
-						<span className="text-muted-foreground text-xs leading-px tracking-tighter">
-							({numFmt.format(place.totalVotes)})
-						</span>
 					</Button>
 				)}
 			</ItemActions>

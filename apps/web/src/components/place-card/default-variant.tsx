@@ -16,7 +16,6 @@ import {
 } from '@wanderlust/ui/components/hover-card';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { AwardIcon, HeartIcon, StarIcon } from 'lucide-react';
-import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { ipx } from '@/lib/ipx';
 import {
 	useAddToFavoritesMutation,
@@ -34,7 +33,6 @@ export function DefaultVariant({
 	const place = usePlaceStore((s) => s.place);
 	const meta = usePlaceStore((s) => s.meta);
 	const rating = usePlaceStore((s) => s.rating);
-	const numFmt = useNumberFormatter();
 
 	const addMutation = useAddToFavoritesMutation();
 	const removeMutation = useRemoveFromFavoritesMutation();
@@ -111,23 +109,20 @@ export function DefaultVariant({
 				</Button>
 			)}
 			<CardHeader>
-				{rating !== '0.0' && (
+				{rating !== 0 && (
 					<CardAction>
 						<Badge variant="default" size="default" className="ml-auto w-fit">
 							<span className="text-white">{rating}</span>{' '}
 							<StarIcon className="fill-white text-white" />
-							<span className="text-white/70 text-xs leading-px tracking-tighter">
-								({numFmt.format(place.totalVotes)})
-							</span>
 						</Badge>
 					</CardAction>
 				)}
 				<CardTitle className="line-clamp-1">{place.name}</CardTitle>
 				<CardDescription className="line-clamp-1">
-					{place.address.city.name} / {place.address.city.countryName}
+					{place.locality} / {place.adminAreaName}
 				</CardDescription>
 				<CardDescription className="line-clamp-1 text-primary">
-					{place.category.name}
+					{place.primaryCategory.displayName}
 				</CardDescription>
 			</CardHeader>
 		</Card>
