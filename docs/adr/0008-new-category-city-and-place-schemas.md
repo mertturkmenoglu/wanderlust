@@ -1,0 +1,235 @@
+# ADR-0008: New Category, City, And Place Schemas
+
+## Status
+Accepted
+
+## Context
+We are updating our database schemas for categories, cities, and places to improve data integrity and support new features.
+
+All database schemas from now on will always have a string type (`text`, `char`, `varchar`) for the `id` field. This change is necessary to ensure consistency across our database and to accommodate future requirements.
+
+### Attributions
+We want to correctly attribute any content we use in Wanderlust. That's why, we created an `attributions` custom data type. TypeScript representation of the `Attribution` type is as follows:
+
+```typescript
+type Attribution {
+	// Type of the attribution (e.g. "image", "text", "video", etc.)
+	type: string;
+	// The actual attribution text (e.g. "Photo by John Doe", "Text by Jane Smith", etc.)
+	text: string;
+	// A link to the actual content or to the license of the content
+	link: string;
+}
+```
+
+### Categories
+
+Categories schema has been updated:
+
+```typescript
+type Category {
+	// Primary Key
+	id: string;
+	// Name of the category
+	name: string;
+	// How the category name is displayed to users
+	displayName: string;
+	// Short description of the category
+	description: string;
+	// URL to an image representing the category
+	image: string;
+	// Attributions for the text and/or image used in the category
+	attributions: Attribution[];
+}
+```
+
+### Cities
+
+Cities schema has been updated. Showing only the fields that have changed:
+
+```typescript
+type City {
+	// Primary Key
+	id: string;
+
+	// ...
+	// other fields
+	// ...
+
+	// Attributions for the text and/or image used in the city
+	attributions: Attribution[];
+}
+```
+
+### Addresses
+
+We decided to drop the `addresses` table. Because `address <-> place` is a one-to-one relationship, we can store the address information directly in the `places` table. This change simplifies our database schema and reduces the number of joins needed for queries.
+
+`addresses` table is still in the codebase, but it will be removed in a future migration. For now, we will keep it for backward compatibility.
+
+### Places
+
+Places schema has been updated.
+
+There are new `enum` types representing the `status`, `price level`, and `accessibility level` of a place. TypeScript representation of these enums is as follows:
+
+```typescript
+type PlaceStatus =
+	| 'unknown' // This is the default value for a place.
+	| 'operational' // The place is operational (not necessarily open at the moment) (see openingHours for more details)
+	| 'closed_temp' // The place is temporarily closed (e.g. for renovations, seasonal closure, etc.)
+	| 'closed_perm' // The place is permanently closed (e.g. out of business, demolished, etc.)
+	| 'future'; // The place is not yet open, it will open in the future (e.g. under construction, planned, etc.)
+
+type PlacePriceLevel =
+	| 'unknown' // This is the default value for a place.
+	| 'free' // The place is free to enter (e.g. public park, museum with free entry, etc.)
+	| 'cheap' // The place is cheap to enter (e.g. museum with low entry fee, etc.)
+	| 'moderate' // The place is moderately priced (e.g. restaurant with average prices, etc.)
+	| 'expensive' // The place is expensive (e.g. luxury hotel, fine dining restaurant, etc.)
+	| 'very_expensive'; // The place is very expensive (e.g. luxury resort, Michelin-starred restaurant, etc.)
+
+type PlaceAccessibilityLevel =
+	| 'unknown' // This is the default value for a place.
+	| 'not_accessible' // The place is not accessible (e.g. no wheelchair access, no ramps, etc.)
+	| 'partially_accessible' // The place is partially accessible (e.g. some areas are accessible, but not all)
+	| 'highly_accessible'; // The place is highly/fully accessible (e.g. wheelchair access, ramps, etc.)
+```
+
+Other changes and explanations:
+
+- `phone` column has been renamed to `intlPhone`. This change is to ensure the consistency of phone numbers. Every value stored in this column must be in the international phone number format `E.164` (https://www.twilio.com/docs/glossary/what-e164). Although this constraint is not applied on the database level, it should be enforced on the application level.
+
+- `website` column has been replaced with `websites` and `socials` columns. This change is to allow multiple websites and social media links for a place. Both columns are of type `jsonb` and stores an array of strings. Values are considered ordered and if the application needs to display them in a specific order, it should respect the order of the array. If the application needs to display only one website or social media link, it should display the first element of the array. If the array is empty, it means that there are no websites or social media links for the place.
+
+- `categoryId` column has been replaced with `primaryCategoryId` and `secondaryCategoryIds` columns. This change is to allow a place to have multiple categories. `primaryCategoryId` is a foreign key to the `categories` table and represents the primary category of the place. `secondaryCategoryIds` is of type `jsonb` and stores an array of strings, each string represents a categoryId column of the `categories` table. This allows a place to have multiple secondary categories. During queries, `primaryCategoryId` is used to populate a `primaryCategory` field of the `Category` type. `secondaryCategoryIds` is kept as a `string[]` and they don't populate any records.
+
+- `rating` column has been added. This column is of type `double precision` (`number` in TypeScript) and is automatically calculated based on the `totalVotes` and `totalPoints` columns. It is a generated (stored) column. It is automatically rounded to 2 decimal places. If the `totalVotes` is 0, the `rating` is 0. This column is used to display the average rating of a place.
+
+- `hours` column has been renamed to `openingHours` and it's internal storage format has been changed. The new format is a modified (simplified) version of the OpenStreetMap `opening_hours` format (https://wiki.openstreetmap.org/wiki/Key:opening_hours). Column's type is a custom Drizzle data type of `openingHours` which is internally stored as a `jsonb` column.
+
+Format of the `openingHours` column is as follows:
+
+```typescript
+type TOpeningHours = {
+	regular: {
+		day: string;
+		intervals: {
+			off: boolean;
+			open: string;
+			close: string;
+		}[];
+	}[];
+	special: {
+		rule: string;
+		intervals: {
+			off: boolean;
+			open: string;
+			close: string;
+		}[];
+	}[];
+};
+```
+
+`Regular`: Weekly schedule with each day of the week represented by a 2-letter abbreviation (`mn`, `tu`, `we`, `th`, `fr`, `sa`, `su`)
+- Each day can have multiple intervals.
+- If a day has no intervals, it means the place is closed for that day.
+- If a day has intervals, each interval can have an `off` flag. If `off` is `true`, it means the place is closed for that interval.
+- If a day has intervals, each interval must have an `open` and `close` time in `ISO 8601` time format (HH:mm).
+
+`Special`: Special days can be represented by a rule (e.g. `PH` for public holidays, or a specific date in YYYY-MM-DD format)
+- Each special day can have multiple intervals, similar to the regular weekly schedule.
+- If a special day has no intervals, it means the place is closed for that day.
+- If a special day has intervals, each interval can have an `off` flag. If `off` is `true`, it means the place is closed for that interval.
+- If a special day has intervals, each interval must have an `open` and `close` time in `ISO 8601` time format (HH:mm).
+
+Note about the timezone: A place inherits the timezone information from its city. Every city has a timezone (IANA name, e.g. `America/New_York`), and the opening hours are always in the local time of the city where the place is located.
+
+More information about the `ISO 8601` format: https://en.wikipedia.org/wiki/ISO_8601
+
+- `amenities` column's internal representation has been changed. It is, like before, a `jsonb` column that stores an array of strings. Each string represents an amenity. The new representation is a more structured format that allows for better categorization and filtering of amenities.
+
+Now, every amenity ID can be suffixed with `.0` or `.1` to represent the availability of the amenity. For example, `wifi.0` means that the place has no wifi. `wifi.1` means that the place has wifi. If an amenity ID does not have a suffix, `.1` is assumed. This keeps the backward compatibility with the old representation. The new representation allows for better filtering of amenities, as we can now filter for places that have or do not have a specific amenity.
+
+- `parkingOptions` column has been added. This column is of type `jsonb` and stores an array of strings. Each string represents a parking option available at the place. Like the `amenities` column, every parking option ID can be suffixed with `.0` or `.1` to represent the availability of the parking option. For example, `free_street.0` means that the place has no free street parking. `free_street.1` means that the place has free street parking. If a parking option ID does not have a suffix, `.1` is assumed.
+
+Options for this column are as follows:
+- `free_street` - Free street parking
+- `paid_street` - Paid street parking
+- `free_lot` - Free parking lot
+- `paid_lot` - Paid parking lot
+- `valet` - Valet parking
+- `free_garage` - Free parking garage
+- `paid_garage` - Paid parking garage
+
+- `accessibilityOptions` column has been added. This column is of type `jsonb` and stores an array of strings. Each string represents an accessibility option available at the place. Like the `amenities` column, every accessibility option ID can be suffixed with `.0` or `.1` to represent the availability of the accessibility option. For example, `entrance.0` means that the place has no accessible entrance services. `entrance.1` means that the place has an accessible entrance. If an accessibility option ID does not have a suffix, `.1` is assumed.
+
+Options for this column are as follows:
+- `entrance` - Accessible entrance
+- `restroom` - Accessible restroom
+- `parking` - Accessible parking
+- `seating` - Accessible seating
+
+- `paymentOptions` column has been added. This column is of type `jsonb` and stores an array of strings. Each string represents a payment option available at the place. Like the `amenities` column, every payment option ID can be suffixed with `.0` or `.1` to represent the availability of the payment option. For example, `cash.0` means that the place does not accept cash payments. `cash.1` means that the place accepts cash payments. If a payment option ID does not have a suffix, `.1` is assumed.
+
+Options for this column are as follows:
+- `cash` - Cash payments
+- `cc` - Credit card payments
+- `mobile` - Mobile payments (e.g. Apple Pay, Google Pay, etc)
+
+- `addressId` column has been removed. Address information is now stored directly in the `places` table.
+
+There are multiple new columns for storing address information:
+
+- `countryCode`: The country code of the place (e.g. "US", "CA", "GB", etc.). This is a 2-letter ISO 3166-1 alpha-2 country code.
+- `countryName`: The country name of the place in English(e.g. "United States", "Canada", "United Kingdom", etc.).
+- `adminAreaCode`: The administrative area code of the place (e.g. "CA" for California, "NY" for New York, etc.). This is a 2-letter ISO 3166-2 subdivision code.
+- `adminAreaName`: The administrative area name of the place (in English if possible).
+- `locality`: The locality (city/town) of the place.
+- `subLocality`: The sub-locality (neighborhood/district) of the place.
+- `postalCode`: The postal code of the place (e.g. "90210", "10001", etc.).
+- `addressLine`: The full address line of the place (e.g. "123 Main St, Apt 4B").
+- `lat`: The latitude of the place in decimal degrees (e.g. 40.98804717364555).
+- `lng`: The longitude of the place in decimal degrees (e.g. 29.028727824639695).
+- `wlCityId`: The ID of the city in Wanderlust. This is a foreign key to the `cities` table. This column is used to link a place to a city. Place's address information can be different from the city information. When displaying the place information, place's address information has higher priority. While linking content to other resources and using queries, the city's information has higher priority.
+
+Read more about 2-letter country codes: https://www.iso.org/iso-3166-country-codes.html
+
+Read more about the first subdivision of countries: https://en.wikipedia.org/wiki/ISO_3166-2
+
+Examples:
+
+| Fields              	| United States         	| Turkey                         	| United Kingdom 						| Explanation                                             	|
+|---------------------	|-----------------------	|--------------------------------	|-------------------------- |---------------------------------------------------------	|
+| Country Code        	| US                    	| TR                             	| UK             						| ISO 3166-1 alpha-2 codes                                	|
+| Administrative Area 	| California (CA)       	| İstanbul (34)                  	| England (EN)   						| ISO 3166-2                                              	|
+| Locality            	| Los Angeles           	| Kadıköy                        	| London         						| City, post town, district 																|
+| Sublocality         	| -                     	| Osmanağa                       	| Westminster    						| Neighborhood or district                                	|
+| Address Line        	| 2800 E Observatory Rd 	| Gen. Asım Gündüz Caddesi No:29 	| 10 Downing St  						| Street number, street name, building number, floor etc. 	|
+| Postal Code         	| 90027                 	| 34710                          	| SW1A 2AA       						| Postal Code/ZIP Code                                    	|
+| Place									| Griffith Observatory 		| Süreyya Operası               	| Prime Minister's Office 	| Place name										                           	|
+
+Additional materials:
+- https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country
+- https://support.google.com/business/answer/6397478?sjid=13737460244260076630-EU
+- https://github.com/google/libaddressinput/wiki/AddressValidationMetadata
+
+As a rule of thumb, every place should have a non-empty `countryCode`, `adminAreaCode`, and `locality`. If any of these fields are empty, place information is not collected properly and it should be fixed.
+
+If a place is located in a locality that does not have sub-localities, `subLocality` can be empty.
+
+## Decision
+Updated database tables with commit `4d1a5431a06fb36ce4d605b2d82f7a9fa182e9c3`.
+
+## Consequences
+- Positive:
+	- Better data integrity and consistency across the database.
+	- Attribution support
+	- Better support for multiple categories, websites, and social media links for places.
+	- Better support for amenities, parking options, accessibility options, and payment options for places.
+- Negative:
+	- More fields in the `places` table, which may increase the complexity of queries and data management.
+	- Address information collection is complex and requires more attention to ensure data integrity.
+- Neutral / follow-ups:
+	- We will need to update our data collection and validation processes to ensure that the new fields are populated correctly.
+	- We should consider automatically formatting the address information using `libaddressinput` library's address fmt values.
