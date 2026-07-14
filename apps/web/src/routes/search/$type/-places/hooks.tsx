@@ -1,16 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
-import { orpc } from '@/lib/orpc';
+import { useCategoriesQuery } from '@/hooks/use-categories';
 
 export function useCurrentCategory() {
 	const search = useSearch({ from: '/search/$type/' });
 
-	const query = useQuery(
-		orpc.categories.list.queryOptions({
-			input: {},
-			enabled: search !== undefined,
-		}),
-	);
+	const query = useCategoriesQuery();
 
 	if (!query.isSuccess) {
 		return null;
@@ -32,7 +26,7 @@ export function useCurrentCategory() {
 
 	const first = deserialized[0] ?? '';
 
-	const category = categories.find((c) => c.name === first);
+	const category = categories.find((c) => c.id === first);
 
 	if (!category) {
 		return null;

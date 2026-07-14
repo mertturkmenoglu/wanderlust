@@ -18,12 +18,15 @@ export function UpdateDialog() {
 
 	return (
 		<Dialog open={ctx.open} onOpenChange={ctx.setOpen}>
-			<DialogTrigger asChild>
-				<Button variant="ghost" size="icon">
-					<Settings2Icon />
-					<span className="sr-only">Edit top places</span>
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger
+				render={
+					<Button variant="ghost" size="icon">
+						<Settings2Icon />
+						<span className="sr-only">Edit top places</span>
+					</Button>
+				}
+			/>
+
 			<DialogContent className="">
 				<DialogHeader>
 					<DialogTitle>Update Top Places</DialogTitle>

@@ -45,27 +45,32 @@ export function InviteItem({ user, className }: Props) {
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<div
-					className={cn('flex cursor-pointer items-center gap-4', className)}
-				>
-					<UserImage src={ipx(userImage(user.image), 'w_512')} />
-
-					<div className="font-medium">{user.name}</div>
-
-					<div className="text-muted-foreground text-sm">@{user.username}</div>
-
+			<DialogTrigger
+				render={
 					<div
-						className={buttonVariants({
-							variant: 'ghost',
-							size: 'sm',
-							className: 'ml-auto',
-						})}
+						className={cn('flex cursor-pointer items-center gap-4', className)}
 					>
-						<ArrowRightIcon />
+						<UserImage src={ipx(userImage(user.image), 'w_512')} />
+
+						<div className="font-medium">{user.name}</div>
+
+						<div className="text-muted-foreground text-sm">
+							@{user.username}
+						</div>
+
+						<div
+							className={buttonVariants({
+								variant: 'ghost',
+								size: 'sm',
+								className: 'ml-auto',
+							})}
+						>
+							<ArrowRightIcon />
+						</div>
 					</div>
-				</div>
-			</DialogTrigger>
+				}
+			/>
+
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Invite {user.name} to the trip</DialogTitle>
@@ -97,9 +102,8 @@ export function InviteItem({ user, className }: Props) {
 					</RadioGroup>
 				</div>
 				<DialogFooter>
-					<DialogClose asChild>
-						<Button variant="secondary">Cancel</Button>
-					</DialogClose>
+					<DialogClose render={<Button variant="secondary">Cancel</Button>} />
+
 					<Button
 						onClick={(e) => {
 							e.preventDefault();

@@ -32,9 +32,7 @@ export function Content() {
 
 	return (
 		<AlertDialog open={ctx.isOpen} onOpenChange={onOpenChange}>
-			<AlertDialogTrigger asChild>
-				<Trigger />
-			</AlertDialogTrigger>
+			<AlertDialogTrigger render={<Trigger />} />
 			<AlertDialogContent className="min-h-150">
 				<AlertDialogHeader>
 					<AlertDialogTitle>{title}</AlertDialogTitle>

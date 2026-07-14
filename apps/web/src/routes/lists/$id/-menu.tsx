@@ -69,17 +69,19 @@ export function Menu() {
 								</Link>
 							</DropdownMenuItem>
 
-							<DialogTrigger asChild>
-								<DropdownMenuItem variant="destructive">
-									<button
-										type="button"
-										className="group flex w-full items-center gap-2 text-destructive"
-									>
-										<TrashIcon className="size-3 group-hover:text-destructive" />
-										<div className="text-sm">Delete</div>
-									</button>
-								</DropdownMenuItem>
-							</DialogTrigger>
+							<DialogTrigger
+								render={
+									<DropdownMenuItem variant="destructive">
+										<button
+											type="button"
+											className="group flex w-full items-center gap-2 text-destructive"
+										>
+											<TrashIcon className="size-3 group-hover:text-destructive" />
+											<div className="text-sm">Delete</div>
+										</button>
+									</DropdownMenuItem>
+								}
+							/>
 						</>
 					)}
 				</DropdownMenuContent>
@@ -94,11 +96,14 @@ export function Menu() {
 					undone and all data will be permanently deleted.
 				</div>
 				<DialogFooter className="">
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Cancel
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button type="button" variant="secondary">
+								Cancel
+							</Button>
+						}
+					/>
+
 					<Button
 						type="button"
 						variant="destructive"

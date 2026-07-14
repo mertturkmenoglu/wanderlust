@@ -24,9 +24,9 @@ export function FeaturedCitiesCatalog({ className }: Props) {
 			<div className="mt-2 grid grid-cols-2 gap-4 md:mt-4 md:grid-cols-3 lg:grid-cols-6">
 				{cities.cities.map((city) => (
 					<Link
-						to="/cities/$"
+						to="/cities/$id"
 						params={{
-							_splat: `${city.id}/${city.name}`,
+							id: city.id,
 						}}
 						key={city.id}
 						className="rounded-md decoration-2 decoration-primary underline-offset-4 hover:underline"

@@ -26,12 +26,10 @@ export function Breadcrumb() {
 				<BreadcrumbItem>
 					<BreadcrumbLink asChild>
 						<Link
-							to="/cities/$"
-							params={
-								{
-									// _splat: `${place.address.cityId}`,
-								}
-							}
+							to="/cities/$id"
+							params={{
+								id: '',
+							}}
 						>
 							{/* {place.address.city.name} */}
 							London

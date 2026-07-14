@@ -40,17 +40,15 @@ const routing: RouterProps = {
 				q: s?.query,
 				page: s?.page,
 				pageSize: s?.hitsPerPage,
-				category: serializeParams(s?.refinementList?.['place.category.name']),
+				category: serializeParams(
+					s?.refinementList?.['place.primaryCategory.id'],
+				),
 				amenity: serializeParams(s?.refinementList?.['place.amenities']),
 				price: serializeParams(s?.refinementList?.['place.priceLevel']),
 				a11y: serializeParams(s?.refinementList?.['place.accessibilityLevel']),
-				state: serializeParams(
-					s?.refinementList?.['place.address.city.stateName'],
-				),
-				city: serializeParams(s?.refinementList?.['place.address.city.name']),
-				country: serializeParams(
-					s?.refinementList?.['place.address.city.countryName'],
-				),
+				state: serializeParams(s?.refinementList?.['place.city.stateName']),
+				city: serializeParams(s?.refinementList?.['place.city.name']),
+				country: serializeParams(s?.refinementList?.['place.city.countryName']),
 				accolade: serializeParams(
 					s?.refinementList?.['place.accolades.accolade.title'],
 				),
@@ -67,15 +65,13 @@ const routing: RouterProps = {
 						'place.accolades.accolade.title': deserializeParams(
 							routeState.accolade,
 						),
-						'place.category.name': deserializeParams(routeState.category),
+						'place.category.id': deserializeParams(routeState.category),
 						'place.amenities': deserializeParams(routeState.amenity),
 						'place.priceLevel': deserializeParams(routeState.price),
 						'place.accessibilityLevel': deserializeParams(routeState.a11y),
-						'place.address.city.stateName': deserializeParams(routeState.state),
-						'place.address.city.name': deserializeParams(routeState.city),
-						'place.address.city.countryName': deserializeParams(
-							routeState.country,
-						),
+						'place.city.stateName': deserializeParams(routeState.state),
+						'place.city.name': deserializeParams(routeState.city),
+						'place.city.countryName': deserializeParams(routeState.country),
 					},
 				},
 			};

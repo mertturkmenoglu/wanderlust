@@ -2,13 +2,13 @@ import type { RefinementListItem } from 'instantsearch.js/es/connectors/refineme
 
 export type RefinementListProps = {
 	attribute:
-		| 'place.category.name'
+		| 'place.primaryCategory.id'
 		| 'place.priceLevel'
 		| 'place.accessibilityLevel'
-		| 'place.address.city.stateName'
-		| 'place.address.city.name'
+		| 'place.city.stateName'
+		| 'place.city.name'
 		| 'place.amenities'
-		| 'place.address.city.countryName'
+		| 'place.city.countryName'
 		| 'place.accolades.accolade.title';
 	className?: string;
 };

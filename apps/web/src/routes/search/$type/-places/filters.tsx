@@ -31,7 +31,7 @@ export function Filters() {
 
 			<RefinementList attribute="place.accolades.accolade.title" />
 
-			<RefinementList attribute="place.category.name" />
+			<RefinementList attribute="place.primaryCategory.id" />
 
 			<RefinementList attribute="place.amenities" />
 
@@ -39,11 +39,11 @@ export function Filters() {
 
 			<RefinementList attribute="place.accessibilityLevel" />
 
-			<RefinementList attribute="place.address.city.stateName" />
+			<RefinementList attribute="place.city.stateName" />
 
-			<RefinementList attribute="place.address.city.name" />
+			<RefinementList attribute="place.city.name" />
 
-			<RefinementList attribute="place.address.city.countryName" />
+			<RefinementList attribute="place.city.countryName" />
 		</>
 	);
 }

@@ -43,7 +43,6 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 
 	return (
 		<Item
-			asChild
 			variant="outline"
 			className={cn('max-h-32', {
 				'border border-primary bg-primary/5':
@@ -64,10 +63,10 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 				<ItemContent>
 					<ItemTitle className="line-clamp-1">{place.name}</ItemTitle>
 					<ItemDescription className="line-clamp-1">
-						{place.address.city.name} / {place.address.city.countryName}
+						{place.locality} / {place.adminAreaName}
 					</ItemDescription>
 					<ItemDescription className="text-primary text-xs lg:text-sm">
-						{place.category.name}
+						{place.primaryCategory.displayName}
 					</ItemDescription>
 				</ItemContent>
 				<ItemActions>

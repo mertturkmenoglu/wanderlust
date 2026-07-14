@@ -1,23 +1,25 @@
 import { useRefinementList as _useRefinementList } from 'react-instantsearch';
+import { useCategoriesQuery } from '@/hooks/use-categories';
 import { amenitiesDisplayNames } from '@/lib/amenities';
+import { toTitleCase } from '@/lib/text';
 import { useRefinementListContext } from './context';
 import type { RefinementListAttribute, RefinementListItemProps } from './types';
 
 export function useRefinementTitle(attribute: RefinementListAttribute) {
 	switch (attribute) {
-		case 'place.category.name':
+		case 'place.primaryCategory.id':
 			return 'Categories';
 		case 'place.priceLevel':
 			return 'Price Level';
 		case 'place.accessibilityLevel':
 			return 'Accessibility Level';
-		case 'place.address.city.stateName':
+		case 'place.city.stateName':
 			return 'States';
-		case 'place.address.city.name':
+		case 'place.city.name':
 			return 'Cities';
 		case 'place.amenities':
 			return 'Amenities';
-		case 'place.address.city.countryName':
+		case 'place.city.countryName':
 			return 'Countries';
 		case 'place.accolades.accolade.title':
 			return 'Accolades';
@@ -70,7 +72,7 @@ export function useShouldRenderMoreButton(attribute: RefinementListAttribute) {
 
 export function useLimit(attribute: RefinementListAttribute) {
 	switch (attribute) {
-		case 'place.category.name':
+		case 'place.primaryCategory.id':
 			return 10;
 		case 'place.accolades.accolade.title':
 			return 10;
@@ -81,7 +83,7 @@ export function useLimit(attribute: RefinementListAttribute) {
 
 export function useShowMoreLimit(attribute: RefinementListAttribute) {
 	switch (attribute) {
-		case 'place.category.name':
+		case 'place.primaryCategory.id':
 			return 20;
 		case 'place.accolades.accolade.title':
 			return 20;
@@ -106,11 +108,11 @@ export function useRefinementList(attribute: RefinementListAttribute) {
 
 export function useSearchPlaceholder(attribute: RefinementListAttribute) {
 	switch (attribute) {
-		case 'place.category.name':
+		case 'place.primaryCategory.id':
 			return 'Search categories';
-		case 'place.address.city.name':
+		case 'place.city.name':
 			return 'Search cities';
-		case 'place.address.city.countryName':
+		case 'place.city.countryName':
 			return 'Search countries';
 		default:
 			return `Search ${attribute}`;
@@ -119,23 +121,29 @@ export function useSearchPlaceholder(attribute: RefinementListAttribute) {
 
 export function useShowInput(attribute: RefinementListAttribute) {
 	const searchable: RefinementListAttribute[] = [
-		'place.category.name',
-		'place.address.city.name',
-		'place.address.city.countryName',
+		'place.primaryCategory.id',
+		'place.city.name',
+		'place.city.countryName',
 	];
 	return searchable.includes(attribute);
 }
 
 export function useItemLabel(item: RefinementListItemProps['item']) {
 	const ctx = useRefinementListContext();
+	const query = useCategoriesQuery();
+	const categories = query.data?.categories ?? [];
 
 	switch (ctx.attribute) {
 		case 'place.priceLevel':
-			return getPriceLevelLabel(+item.value);
+			return toTitleCase(item.value.replace('_', ' '));
 		case 'place.accessibilityLevel':
-			return getAccessibilityLevelLabel(+item.value);
+			return toTitleCase(item.value.replace('_', ' '));
 		case 'place.amenities':
 			return amenitiesDisplayNames.get(item.value) ?? item.value;
+		case 'place.primaryCategory.id': {
+			const category = categories.find((c) => c.id === item.value);
+			return category?.displayName ?? item.value;
+		}
 		default:
 			return item.label;
 	}

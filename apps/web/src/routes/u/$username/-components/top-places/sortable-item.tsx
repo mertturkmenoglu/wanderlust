@@ -44,7 +44,7 @@ export function SortableItem({ index, item, onRemoveClick }: Props) {
 
 			<ItemContent>
 				<ItemTitle>{item.name}</ItemTitle>
-				<ItemDescription>{item.category.name}</ItemDescription>
+				<ItemDescription>{item.primaryCategory.displayName}</ItemDescription>
 			</ItemContent>
 
 			<ItemActions>

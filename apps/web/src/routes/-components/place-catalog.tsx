@@ -22,7 +22,13 @@ export function PlaceCatalog({ className, accessor }: PlaceCatalogProps) {
 					sliced.map((item) => (
 						<PlaceCard
 							key={item.place.id}
-							place={item.place}
+							place={{
+								...item.place,
+								assets: item.place.assets.map((a) => ({
+									url: a.url,
+									description: '',
+								})),
+							}}
 							meta={item.meta}
 							as="link"
 						/>

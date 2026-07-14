@@ -20,9 +20,9 @@ export function Hit(props: Readonly<Props>) {
 
 	return (
 		<Link
-			to="/cities/$"
+			to="/cities/$id"
 			params={{
-				_splat: `${hit.city.id}/${hit.city.name}`,
+				id: hit.city.id,
 			}}
 		>
 			<Item variant="outline" size="default" className="hover:bg-muted">

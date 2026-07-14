@@ -10,15 +10,13 @@ type Props = {
 export function BookmarkItemMap({ bookmark }: Props) {
 	const style = useMapStyle();
 
-	const {
-		place: { address },
-	} = bookmark;
+	const place = bookmark.place;
 
 	return (
 		<MapContainer
 			initialViewState={{
-				latitude: address.lat,
-				longitude: address.lng,
+				latitude: place.lat,
+				longitude: place.lng,
 				zoom: 15,
 			}}
 			dragPan={false}
@@ -28,12 +26,12 @@ export function BookmarkItemMap({ bookmark }: Props) {
 				zIndex: 0,
 				marginTop: '16px',
 			}}
-			latitude={address.lat}
-			longitude={address.lng}
+			latitude={place.lat}
+			longitude={place.lng}
 			minZoom={12}
 			mapStyle={style}
 		>
-			<Marker latitude={address.lat} longitude={address.lng} anchor="bottom">
+			<Marker latitude={place.lat} longitude={place.lng} anchor="bottom">
 				<Pin />
 			</Marker>
 		</MapContainer>

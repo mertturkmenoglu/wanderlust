@@ -51,10 +51,10 @@ export function SortableItem({ index, item }: Props) {
 					{item.place.name}
 				</ItemTitle>
 				<ItemDescription className="line-clamp-1">
-					{item.place.address.city.name} / {item.place.address.city.countryName}
+					{item.place.locality} / {item.place.adminAreaName}
 				</ItemDescription>
 				<ItemDescription className="line-clamp-1 text-primary">
-					{item.place.category.name}
+					{item.place.primaryCategory.displayName}
 				</ItemDescription>
 			</ItemContent>
 

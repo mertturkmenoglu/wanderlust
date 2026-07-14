@@ -65,7 +65,7 @@ function RouteComponent() {
 						to="/search/$type"
 						params={{ type: 'places' }}
 						search={{
-							category: serializeParams([category.name]),
+							category: serializeParams([category.id]),
 						}}
 						key={category.id}
 					>
@@ -82,7 +82,9 @@ function RouteComponent() {
 								width={512}
 								aspectRatio={16 / 9}
 							/>
-							<ItemTitle className="line-clamp-1">{category.name}</ItemTitle>
+							<ItemTitle className="line-clamp-1">
+								{category.displayName}
+							</ItemTitle>
 						</Item>
 					</Link>
 				))}

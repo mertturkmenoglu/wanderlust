@@ -34,11 +34,14 @@ export function RemoveItemDialog({ item }: Props) {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button variant="destructive" size="icon">
-					<TrashIcon />
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger
+				render={
+					<Button variant="destructive" size="icon">
+						<TrashIcon />
+					</Button>
+				}
+			/>
+
 			<DialogContent className="sm:max-w-xl">
 				<DialogHeader>
 					<DialogTitle>Remove Place from List</DialogTitle>
@@ -48,11 +51,14 @@ export function RemoveItemDialog({ item }: Props) {
 					<div className="mt-2 font-bold">{item.place.name}</div>
 				</div>
 				<DialogFooter className="sm:justify-end">
-					<DialogClose asChild>
-						<Button type="button" variant="secondary">
-							Close
-						</Button>
-					</DialogClose>
+					<DialogClose
+						render={
+							<Button type="button" variant="secondary">
+								Close
+							</Button>
+						}
+					/>
+
 					<Button type="button" variant="destructive" onClick={onRemoveClick}>
 						Remove
 					</Button>
