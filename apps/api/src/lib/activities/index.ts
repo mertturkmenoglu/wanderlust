@@ -1,21 +1,7 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import { inject, injectable } from 'inversify';
-
-export type ActivityType =
-	| 'create_favorite'
-	| 'create_list'
-	| 'create_review'
-	| 'create_trip'
-	| 'follow'
-	| 'like_review';
-
-export type ActivityData = Record<string, unknown>;
-
-export type ActivityItem = {
-	type: ActivityType;
-	data: ActivityData;
-	createdAt: Date;
-};
+import type { ActivityItem, ActivityType } from './types';
+import { unshiftCapped } from './utilities';
 
 @injectable()
 export class ActivitiesService {
@@ -30,24 +16,34 @@ export class ActivitiesService {
 		type: ActivityType,
 		data: Record<string, unknown>,
 	) {
-		const activities = await this.cache
-			.namespace('activities')
-			.getOrSetForever({
-				key: username,
-				factory: async () => {
-					return [] as ActivityItem[];
-				},
-			});
-
-		activities.unshift({
+		const activities = await this.getActivitiesByUsername(username);
+		const newActivity: ActivityItem = {
 			type,
 			data,
 			createdAt: new Date(),
-		});
+		};
 
+		const cappedActivities = unshiftCapped(activities, newActivity);
+
+		await this.setActivitiesByUsername(username, cappedActivities);
+	}
+
+	private async getActivitiesByUsername(username: string) {
+		return this.cache.namespace('activities').getOrSetForever({
+			key: username,
+			factory: async () => {
+				return [] as ActivityItem[];
+			},
+		});
+	}
+
+	private async setActivitiesByUsername(
+		username: string,
+		activities: ActivityItem[],
+	) {
 		await this.cache.namespace('activities').setForever({
 			key: username,
-			value: activities.slice(0, 100),
+			value: activities,
 		});
 	}
 }
