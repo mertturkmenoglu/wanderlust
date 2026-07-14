@@ -59,36 +59,6 @@ export class PlacesService {
 		};
 	}
 
-	async updateAddress(
-		data: dto.UpdateAddressInput,
-	): Promise<dto.UpdateAddressOutput> {
-		const result = await this.repository.updateAddress(data);
-
-		return {
-			place: result,
-		};
-	}
-
-	async updateAmenities(
-		data: dto.UpdateAmenitiesInput,
-	): Promise<dto.UpdateAmenitiesOutput> {
-		const result = await this.repository.updateAmenities(data);
-
-		return {
-			place: result,
-		};
-	}
-
-	async updateHours(
-		data: dto.UpdateHoursInput,
-	): Promise<dto.UpdateHoursOutput> {
-		const result = await this.repository.updateHours(data);
-
-		return {
-			place: result,
-		};
-	}
-
 	async _delete(data: dto.DeleteInput): Promise<void> {
 		await this.repository._delete(data);
 	}

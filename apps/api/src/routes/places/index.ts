@@ -40,30 +40,6 @@ export const module = defineModule({
 
 					return result;
 				}),
-			updateAddress: os.updateAddress
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.updateAddress(input);
-
-					return result;
-				}),
-			updateAmenities: os.updateAmenities
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.updateAmenities(input);
-
-					return result;
-				}),
-			updateHours: os.updateHours
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.updateHours(input);
-
-					return result;
-				}),
 			delete: os.delete
 				.use(requireAuth)
 				.use(isAdmin)

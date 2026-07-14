@@ -109,54 +109,6 @@ export class PlacesRepository {
 		return this.get({ id: place.id });
 	}
 
-	async updateAddress(data: dto.UpdateAddressInput) {
-		const { id: addressId, ...updateData } = data.address;
-
-		const place = await this.get({ id: data.id });
-
-		const [address] = await this.db
-			.update(schema.addresses)
-			.set(updateData)
-			.where(eq(schema.addresses.id, addressId))
-			.returning();
-
-		invariant(
-			address,
-			'NOT_FOUND',
-			`Address for Place ID ${data.id} not found`,
-		);
-
-		return this.get({ id: place.id });
-	}
-
-	async updateAmenities(data: dto.UpdateAmenitiesInput) {
-		const { id, ...updateData } = data;
-
-		const [place] = await this.db
-			.update(schema.places)
-			.set(updateData)
-			.where(eq(schema.places.id, id))
-			.returning();
-
-		invariant(place, 'NOT_FOUND', `Place with ID ${id} not found`);
-
-		return this.get({ id: place.id });
-	}
-
-	async updateHours(data: dto.UpdateHoursInput) {
-		const { id, ...updateData } = data;
-
-		const [place] = await this.db
-			.update(schema.places)
-			.set(updateData)
-			.where(eq(schema.places.id, id))
-			.returning();
-
-		invariant(place, 'NOT_FOUND', `Place with ID ${id} not found`);
-
-		return this.get({ id: place.id });
-	}
-
 	async _delete(data: dto.DeleteInput) {
 		await this.db.delete(schema.places).where(eq(schema.places.id, data.id));
 	}
