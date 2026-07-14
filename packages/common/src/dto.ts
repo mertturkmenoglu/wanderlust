@@ -1,4 +1,4 @@
-import * as schema from '@wanderlust/db';
+import * as schema from '@wanderlust/db/schema';
 import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod';
 import z from 'zod';
 
@@ -175,13 +175,11 @@ export const $dto = {
 	}),
 	category: createSelectSchema(schema.categories, {
 		id: z
-			.number()
-			.int()
+			.string()
 			.min(1)
-			.max(32767)
 			.meta({
 				description: 'Category ID',
-				examples: [12],
+				examples: ['category123'],
 			}),
 		name: z
 			.string()
@@ -189,7 +187,15 @@ export const $dto = {
 			.max(64)
 			.meta({
 				description: 'Name of the category',
-				examples: ['Museums'],
+				examples: ['nature.park'],
+			}),
+		displayName: z
+			.string()
+			.min(1)
+			.max(64)
+			.meta({
+				description: 'Display name of the category',
+				examples: ['Parks'],
 			}),
 		image: z
 			.string()
@@ -198,18 +204,46 @@ export const $dto = {
 				description: 'Image URL of the category',
 				examples: ['https://example.com/images/museums.jpg'],
 			}),
+		attributions: z
+			.array(
+				z.object({
+					type: z
+						.string()
+						.min(1)
+						.meta({
+							description: 'Type of the attribution (e.g., image, text)',
+							examples: ['image'],
+						}),
+					text: z
+						.string()
+						.min(1)
+						.meta({
+							description: 'Text of the attribution',
+							examples: ['Photo by John Doe on Example'],
+						}),
+					link: z
+						.string()
+						.min(1)
+						.meta({
+							description: 'Link associated with the attribution',
+							examples: ['https://example.com/photo'],
+						}),
+				}),
+			)
+			.meta({
+				description: 'Attributions for the category image',
+				examples: [[]],
+			}),
 	}).meta({
 		description: 'A category entity',
 	}),
 	city: createSelectSchema(schema.cities, {
 		id: z
-			.number()
-			.int()
+			.string()
 			.min(1)
-			.max(2147483647)
 			.meta({
 				description: 'City ID',
-				examples: [1024],
+				examples: ['london'],
 			}),
 		name: z
 			.string()
@@ -289,6 +323,36 @@ export const $dto = {
 				description: 'IANA timezone name',
 				examples: ['Europe/London', 'America/New_York'],
 			}),
+		attributions: z
+			.array(
+				z.object({
+					type: z
+						.string()
+						.min(1)
+						.meta({
+							description: 'Type of the attribution (e.g., image, text)',
+							examples: ['image'],
+						}),
+					text: z
+						.string()
+						.min(1)
+						.meta({
+							description: 'Text of the attribution',
+							examples: ['Photo by John Doe on Example'],
+						}),
+					link: z
+						.string()
+						.min(1)
+						.meta({
+							description: 'Link associated with the attribution',
+							examples: ['https://example.com/photo'],
+						}),
+				}),
+			)
+			.meta({
+				description: 'Attributions for the city image',
+				examples: [[]],
+			}),
 	}).meta({
 		description: 'A city entity',
 	}),
@@ -303,13 +367,11 @@ export const $dto = {
 				examples: [2048],
 			}),
 		cityId: z
-			.number()
-			.int()
-			.min(0)
-			.max(2147483647)
+			.string()
+			.min(1)
 			.meta({
 				description: 'ID of the city associated with the address',
-				examples: [1024],
+				examples: ['london'],
 			}),
 		line1: z
 			.string()
@@ -399,130 +461,109 @@ export const $dto = {
 		}),
 	}),
 	place: createSelectSchema(schema.places, {
-		id: z
+		amenities: z
 			.string()
-			.min(1)
+			.array()
 			.meta({
-				description: 'Place ID',
-				examples: ['place123'],
+				description:
+					'Array of amenity IDs with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+				examples: [['wifi.1', 'parking.0']],
 			}),
-		name: z
-			.string()
-			.min(1)
-			.max(256)
+		paymentOptions: z.array(z.string()).meta({
+			description:
+				'Array of payment options with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+			examples: [['cash.1', 'cc.1', 'mobile.0']],
+		}),
+		parkingOptions: z.array(z.string()).meta({
+			description:
+				'Array of parking options with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+			examples: [['free_street.1', 'paid_lot.0']],
+		}),
+		accessibilityOptions: z.array(z.string()).meta({
+			description:
+				'Array of accessibility options with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+			examples: [['parking.1', 'entrance.0', 'restroom.1', 'seating.1']],
+		}),
+		openingHours: z
+			.object({
+				regular: z.array(
+					z.object({
+						day: z.string().meta({
+							description: 'Day of the week (2-letter abbreviation)',
+							examples: ['mn', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
+						}),
+						intervals: z.array(
+							z.object({
+								off: z.boolean().meta({
+									description: 'Whether the place is closed for the interval',
+									examples: [false],
+								}),
+								open: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Opening time in ISO 8601 time format (HH:mm)',
+										examples: ['09:00'],
+									}),
+								close: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Closing time in ISO 8601 time format (HH:mm)',
+										examples: ['17:00'],
+									}),
+							}),
+						),
+					}),
+				),
+				special: z.array(
+					z.object({
+						rule: z.string().meta({
+							description:
+								'Rule for special days (e.g., PH for public holidays, or a specific date in YYYY-MM-DD format)',
+							examples: ['PH', '2023-12-25'],
+						}),
+						intervals: z.array(
+							z.object({
+								off: z.boolean().meta({
+									description: 'Whether the place is closed for the interval',
+									examples: [false],
+								}),
+								open: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Opening time in ISO 8601 time format (HH:mm)',
+										examples: ['09:00'],
+									}),
+								close: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Closing time in ISO 8601 time format (HH:mm)',
+										examples: ['17:00'],
+									}),
+							}),
+						),
+					}),
+				),
+			})
 			.meta({
-				description: 'Name of the place',
-				examples: ['The British Museum'],
+				description: 'Opening hours information for the place',
 			}),
-		description: z
-			.string()
-			.min(1)
-			.meta({
-				description: 'Description of the place',
-				examples: [
-					'A world-famous museum showcasing art and artifacts from around the globe.',
-				],
-			}),
-		phone: z
-			.string()
-			.max(32)
-			.nullable()
-			.meta({
-				description: 'Contact phone number of the place',
-				examples: ['+90 500 123 4567'],
-			}),
-		website: z
-			.url()
-			.nullable()
-			.meta({
-				description: 'Website URL of the place',
-				examples: ['https://www.example.com'],
-			}),
-		addressId: z
-			.number()
-			.int()
-			.min(0)
-			.max(2147483647)
-			.meta({
-				description: 'ID of the address associated with the place',
-				examples: [2048],
-			}),
-		categoryId: z
-			.number()
-			.int()
-			.min(1)
-			.max(32767)
-			.meta({
-				description: 'ID of the category associated with the place',
-				examples: [12],
-			}),
-		priceLevel: z
-			.number()
-			.int()
-			.min(1)
-			.max(5)
-			.meta({
-				description: 'Price level of the place (1-5)',
-				examples: [1, 2, 3, 4, 5],
-			}),
-		accessibilityLevel: z
-			.number()
-			.int()
-			.min(1)
-			.max(5)
-			.meta({
-				description: 'Accessibility level of the place (1-5)',
-				examples: [1, 2, 3, 4, 5],
-			}),
-		totalVotes: z
-			.number()
-			.int()
-			.min(0)
-			.meta({
-				description: 'Total number of votes the place has received',
-				examples: [250],
-			}),
-		totalPoints: z
-			.number()
-			.int()
-			.min(0)
-			.meta({
-				description: 'Total points accumulated from votes',
-				examples: [1125],
-			}),
-		totalFavorites: z
-			.number()
-			.int()
-			.min(0)
-			.meta({
-				description: 'Total number of times the place has been favorited',
-				examples: [75],
-			}),
-		hours: z.record(z.string(), z.string()).meta({
-			description: 'Operating hours of the place',
+		websites: z.array(z.url()).meta({
+			description: 'Array of website URLs associated with the place',
+			examples: [['https://example.com', 'https://facebook.com/place123']],
+		}),
+		socials: z.array(z.url()).meta({
+			description: 'Array of social media URLs associated with the place',
 			examples: [
-				{
-					mon: '9:00 AM - 5:00 PM',
-					tue: '9:00 AM - 5:00 PM',
-					wed: '9:00 AM - 5:00 PM',
-					thu: '9:00 AM - 5:00 PM',
-					fri: '9:00 AM - 5:00 PM',
-					sat: '10:00 AM - 6:00 PM',
-					sun: 'Closed',
-				},
+				['https://twitter.com/place123', 'https://instagram.com/place123'],
 			],
 		}),
-		amenities: z.array(z.string()).meta({
-			description: 'List of amenities available at the place',
-			examples: [['WiFi', 'Parking', 'Restrooms']],
-		}),
-		createdAt: z.date().meta({
-			description: 'Timestamp when the place was created',
-			examples: [new Date('2023-01-15T10:00:00Z')],
-		}),
-		updatedAt: z.date().meta({
-			description: 'Timestamp when the place was last updated',
-			examples: [new Date('2023-01-15T10:00:00Z')],
+		secondaryCategoryIds: z.array(z.string()).meta({
+			description: 'Array of secondary category IDs associated with the place',
+			examples: [['category456', 'category789']],
 		}),
 	}).meta({
 		description: 'A place entity',
@@ -1508,18 +1549,12 @@ export const $extended = {
 		assets: z.array($dto.asset).meta({
 			description: 'Assets associated with the place',
 		}),
-		category: $dto.category.meta({
-			description: 'Category of the place',
+		city: $dto.city.meta({
+			description: 'City where the place is located',
 		}),
-		address: $dto.address
-			.extend({
-				city: $dto.city.meta({
-					description: 'City of the address',
-				}),
-			})
-			.meta({
-				description: 'Address of the place',
-			}),
+		primaryCategory: $dto.category.meta({
+			description: 'Primary category of the place',
+		}),
 		accolades: z
 			.object({
 				id: z.string(),
@@ -1546,14 +1581,148 @@ export const $insert = {
 	account: createInsertSchema(schema.accounts),
 	asset: createInsertSchema(schema.assets),
 	follows: createInsertSchema(schema.follows),
-	category: createInsertSchema(schema.categories),
-	city: createInsertSchema(schema.cities),
+	category: createInsertSchema(schema.categories, {
+		id: z.string(),
+		attributions: z.array(
+			z.object({
+				type: z.string(),
+				text: z.string(),
+				link: z.string(),
+			}),
+		),
+		description: z.string(),
+		displayName: z.string(),
+		image: z.string(),
+		name: z.string(),
+	}),
+	city: createInsertSchema(schema.cities, {
+		id: z.string(),
+		name: z.string(),
+		stateCode: z.string(),
+		stateName: z.string(),
+		countryCode: z.string(),
+		countryName: z.string(),
+		image: z.string(),
+		lat: z.number(),
+		lng: z.number(),
+		description: z.string(),
+		timezone: z.string(),
+		attributions: z.array(
+			z.object({
+				type: z.string(),
+				text: z.string(),
+				link: z.string(),
+			}),
+		),
+	}),
 	address: createInsertSchema(schema.addresses),
 	accolade: createInsertSchema(schema.accolades),
 	accoladeAssignment: createInsertSchema(schema.accoladeAssignments),
 	place: createInsertSchema(schema.places, {
-		amenities: z.array(z.string()),
-		hours: z.record(z.string(), z.string()),
+		amenities: z
+			.string()
+			.array()
+			.meta({
+				description:
+					'Array of amenity IDs with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+				examples: [['wifi.1', 'parking.0']],
+			}),
+		paymentOptions: z.array(z.string()).meta({
+			description:
+				'Array of payment options with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+			examples: [['cash.1', 'cc.1', 'mobile.0']],
+		}),
+		parkingOptions: z.array(z.string()).meta({
+			description:
+				'Array of parking options with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+			examples: [['free_street.1', 'paid_lot.0']],
+		}),
+		accessibilityOptions: z.array(z.string()).meta({
+			description:
+				'Array of accessibility options with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
+			examples: [['parking.1', 'entrance.0', 'restroom.1', 'seating.1']],
+		}),
+		openingHours: z
+			.object({
+				regular: z.array(
+					z.object({
+						day: z.string().meta({
+							description: 'Day of the week (2-letter abbreviation)',
+							examples: ['mn', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
+						}),
+						intervals: z.array(
+							z.object({
+								off: z.boolean().meta({
+									description: 'Whether the place is closed for the interval',
+									examples: [false],
+								}),
+								open: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Opening time in ISO 8601 time format (HH:mm)',
+										examples: ['09:00'],
+									}),
+								close: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Closing time in ISO 8601 time format (HH:mm)',
+										examples: ['17:00'],
+									}),
+							}),
+						),
+					}),
+				),
+				special: z.array(
+					z.object({
+						rule: z.string().meta({
+							description:
+								'Rule for special days (e.g., PH for public holidays, or a specific date in YYYY-MM-DD format)',
+							examples: ['PH', '2023-12-25'],
+						}),
+						intervals: z.array(
+							z.object({
+								off: z.boolean().meta({
+									description: 'Whether the place is closed for the interval',
+									examples: [false],
+								}),
+								open: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Opening time in ISO 8601 time format (HH:mm)',
+										examples: ['09:00'],
+									}),
+								close: z
+									.string()
+									.regex(/^\d{2}:\d{2}$/)
+									.meta({
+										description: 'Closing time in ISO 8601 time format (HH:mm)',
+										examples: ['17:00'],
+									}),
+							}),
+						),
+					}),
+				),
+			})
+			.meta({
+				description: 'Opening hours information for the place',
+			}),
+		websites: z.array(z.url()).meta({
+			description: 'Array of website URLs associated with the place',
+			examples: [['https://example.com', 'https://facebook.com/place123']],
+		}),
+		socials: z.array(z.url()).meta({
+			description: 'Array of social media URLs associated with the place',
+			examples: [
+				['https://twitter.com/place123', 'https://instagram.com/place123'],
+			],
+		}),
+		secondaryCategoryIds: z.array(z.string()).meta({
+			description: 'Array of secondary category IDs associated with the place',
+			examples: [['category456', 'category789']],
+		}),
 	}),
 	bookmark: createInsertSchema(schema.bookmarks),
 	favorite: createInsertSchema(schema.favorites),
