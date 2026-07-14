@@ -114,7 +114,8 @@ export function ItemVariant({
 				)}
 				{rating !== 0 && (
 					<Button variant="outline">
-						{rating} <StarIcon className="fill-primary text-primary" />
+						{rating.toFixed(1)}{' '}
+						<StarIcon className="fill-primary text-primary" />
 					</Button>
 				)}
 			</ItemActions>

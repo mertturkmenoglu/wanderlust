@@ -112,7 +112,7 @@ export function DefaultVariant({
 				{rating !== 0 && (
 					<CardAction>
 						<Badge variant="default" size="default" className="ml-auto w-fit">
-							<span className="text-white">{rating}</span>{' '}
+							<span className="text-white">{rating.toFixed(1)}</span>{' '}
 							<StarIcon className="fill-white text-white" />
 						</Badge>
 					</CardAction>
