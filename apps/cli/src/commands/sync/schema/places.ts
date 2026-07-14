@@ -54,7 +54,7 @@ export class PlacesSchema extends AbstractSchema {
 			const docs = places.map((place) => ({
 				name: place.name,
 				place,
-				location: [place.address.lat, place.address.lng],
+				location: [place.lat, place.lng],
 			}));
 
 			await this.client.collections('places').documents().import(docs, {
@@ -68,7 +68,7 @@ export class PlacesSchema extends AbstractSchema {
 			const docs = remaining.map((place) => ({
 				name: place.name,
 				place,
-				location: [place.address.lat, place.address.lng],
+				location: [place.lat, place.lng],
 			}));
 
 			await this.client.collections('places').documents().import(docs, {
@@ -87,13 +87,9 @@ export class PlacesSchema extends AbstractSchema {
 			orderBy: (t, { asc }) => [asc(t.createdAt), asc(t.name)],
 			limit: limit,
 			with: {
-				address: {
-					with: {
-						city: true,
-					},
-				},
 				assets: true,
-				category: true,
+				city: true,
+				primaryCategory: true,
 				accolades: {
 					with: {
 						accolade: true,
