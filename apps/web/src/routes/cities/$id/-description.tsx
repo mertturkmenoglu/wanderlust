@@ -9,6 +9,7 @@ import {
 } from '@wanderlust/ui/components/tooltip';
 import { format } from 'date-fns';
 import { ClockIcon } from 'lucide-react';
+import { Attribution } from '@/components/attribution';
 import { ipx } from '@/lib/ipx';
 
 export function Description() {
@@ -17,7 +18,7 @@ export function Description() {
 	return (
 		<div className="mt-4 grid grid-cols-5 gap-4 md:mt-8 md:gap-8">
 			<div className="col-span-5 lg:col-span-2">
-				<div className="">
+				<div className="relative">
 					<Image
 						src={ipx(city.image, 'w_512')}
 						alt=""
@@ -25,6 +26,7 @@ export function Description() {
 						width={512}
 						aspectRatio={16 / 9}
 					/>
+					<Attribution attributions={city.attributions} />
 				</div>
 			</div>
 
