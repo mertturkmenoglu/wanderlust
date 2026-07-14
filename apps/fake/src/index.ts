@@ -3,7 +3,6 @@ import { colorize } from 'consola/utils';
 import { oraPromise } from 'ora';
 import { generate as generateAccolades } from './handlers/accolades';
 import { generate as generateAccoladeAssignments } from './handlers/accolades-places';
-import { generate as generateAddresses } from './handlers/addresses';
 import { generate as generateAssets } from './handlers/assets';
 import { generate as generateBookmarks } from './handlers/bookmarks';
 import { generate as generateCategories } from './handlers/categories';
@@ -13,12 +12,6 @@ import { generate as generateCollectionItems } from './handlers/collection-items
 import { generate as generateCollections } from './handlers/collections';
 import { generate as generateCollectionsCities } from './handlers/collections-cities';
 import { generate as generateCollectionsPlaces } from './handlers/collections-places';
-import { generate as generateEventAgendaItems } from './handlers/event-agenda-items';
-import { generate as generateEventAssets } from './handlers/event-assets';
-import { generate as generateEventInterests } from './handlers/event-interests';
-import { generate as generateEventLineupItems } from './handlers/event-lineup-items';
-import { generate as generateEventTicketOptions } from './handlers/event-ticket-options';
-import { generate as generateEvents } from './handlers/events';
 import { generate as generateFakeIds } from './handlers/fake-id';
 import { generate as generateFavorites } from './handlers/favorites';
 import { generate as generateFollows } from './handlers/follows';
@@ -36,13 +29,13 @@ export const paths = {
 	reviews: 'tmp/reviews.txt',
 	collections: 'tmp/collections.txt',
 	lists: 'tmp/lists.txt',
-	events: 'tmp/events.txt',
+	// events: 'tmp/events.txt',
 } as const;
 
 const mapping = {
 	categories: generateCategories,
 	cities: generateCities,
-	addresses: generateAddresses,
+	// addresses: generateAddresses,
 	users: generateUsers,
 	accolades: generateAccolades,
 	'accolade-assignments': generateAccoladeAssignments,
@@ -60,12 +53,12 @@ const mapping = {
 	'collections-places': generateCollectionsPlaces,
 	lists: generateLists,
 	'list-items': generateListItems,
-	events: generateEvents,
-	'event-ticket-options': generateEventTicketOptions,
-	'event-agenda-items': generateEventAgendaItems,
-	'event-lineup-items': generateEventLineupItems,
-	'event-assets': generateEventAssets,
-	'event-interests': generateEventInterests,
+	// events: generateEvents,
+	// 'event-ticket-options': generateEventTicketOptions,
+	// 'event-agenda-items': generateEventAgendaItems,
+	// 'event-lineup-items': generateEventLineupItems,
+	// 'event-assets': generateEventAssets,
+	// 'event-interests': generateEventInterests,
 	cleanup: cleanup,
 } as const satisfies Record<string, () => Promise<void>>;
 
@@ -74,7 +67,7 @@ type Step = keyof typeof mapping;
 const steps: Step[] = [
 	'categories',
 	'cities',
-	'addresses',
+	// 'addresses',
 	'users',
 	'accolades',
 	'fake-id', // run fake id to get accolade ids for other steps
@@ -96,13 +89,13 @@ const steps: Step[] = [
 	'list-items',
 	'favorites',
 	'bookmarks',
-	'events',
-	'fake-id', // run fake id again to get event ids
-	'event-ticket-options',
-	'event-agenda-items',
-	'event-lineup-items',
-	'event-assets',
-	'event-interests',
+	// 'events',
+	// 'fake-id', // run fake id again to get event ids
+	// 'event-ticket-options',
+	// 'event-agenda-items',
+	// 'event-lineup-items',
+	// 'event-assets',
+	// 'event-interests',
 	'cleanup',
 ];
 

@@ -47,47 +47,53 @@ export async function generate() {
 		for (const { id } of ids) {
 			for (const { id: targetId } of ids) {
 				if (id === targetId) continue;
-				await tx.insert(schema.follows).values({
-					followerId: id,
-					followingId: targetId,
-				});
+				try {
+					await tx.insert(schema.follows).values({
+						followerId: id,
+						followingId: targetId,
+					});
+				} catch {
+					// ignore intentionally, this is just to ensure that the well-known users are following each other, but if they already follow each other, we don't care
+				}
 			}
 		}
 
-		const followingRows = await tx
-			.select({ userId: schema.follows.followerId, cnt: count() })
-			.from(schema.follows)
-			.where(
-				inArray(
-					schema.follows.followerId,
-					ids.map((x) => x.id),
-				),
-			)
-			.groupBy(schema.follows.followerId);
+		try {
+			const followingRows = await tx
+				.select({ userId: schema.follows.followerId, cnt: count() })
+				.from(schema.follows)
+				.where(
+					inArray(
+						schema.follows.followerId,
+						ids.map((x) => x.id),
+					),
+				)
+				.groupBy(schema.follows.followerId);
 
-		const followersRows = await tx
-			.select({ userId: schema.follows.followingId, cnt: count() })
-			.from(schema.follows)
-			.where(
-				inArray(
-					schema.follows.followingId,
-					ids.map((x) => x.id),
-				),
-			)
-			.groupBy(schema.follows.followingId);
+			const followersRows = await tx
+				.select({ userId: schema.follows.followingId, cnt: count() })
+				.from(schema.follows)
+				.where(
+					inArray(
+						schema.follows.followingId,
+						ids.map((x) => x.id),
+					),
+				)
+				.groupBy(schema.follows.followingId);
 
-		const followingMap = new Map(followingRows.map((r) => [r.userId, r.cnt]));
-		const followersMap = new Map(followersRows.map((r) => [r.userId, r.cnt]));
+			const followingMap = new Map(followingRows.map((r) => [r.userId, r.cnt]));
+			const followersMap = new Map(followersRows.map((r) => [r.userId, r.cnt]));
 
-		for (const userId of userIds) {
-			await tx
-				.update(schema.users)
-				.set({
-					followingCount: followingMap.get(userId) ?? 0,
-					followersCount: followersMap.get(userId) ?? 0,
-				})
-				.where(eq(schema.users.id, userId));
-		}
+			for (const userId of userIds) {
+				await tx
+					.update(schema.users)
+					.set({
+						followingCount: followingMap.get(userId) ?? 0,
+						followersCount: followersMap.get(userId) ?? 0,
+					})
+					.where(eq(schema.users.id, userId));
+			}
+		} catch {}
 	});
 }
 
