@@ -621,9 +621,8 @@ export class TripsService {
 			'User is not allowed to access this trip',
 		);
 
-		const totalCities = new Set(
-			trip.locations.map((l) => l.place.address.cityId),
-		).size;
+		const totalCities = new Set(trip.locations.map((l) => l.place.wlCityId))
+			.size;
 		const totalDays = eachDayOfInterval({
 			start: trip.startAt,
 			end: trip.endAt,
