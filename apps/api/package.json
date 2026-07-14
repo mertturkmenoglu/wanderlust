@@ -27,7 +27,7 @@
 		"dev": "bun run --env-file=../../.env --watch src/index.ts",
 		"search": "bun run src/scripts/search/index.ts",
 		"start": "NODE_ENV=production bun run dist/index.js",
-		"test": "bun test"
+		"test": "vitest"
 	},
 	"dependencies": {
 		"@hono/otel": "^1.1.2",
@@ -75,6 +75,7 @@
 		"drizzle-kit": "catalog:",
 		"tsdown": "^0.22.0",
 		"typescript": "catalog:",
-		"unrun": "^0.3.0"
+		"unrun": "^0.3.0",
+		"vitest": "catalog:"
 	}
 }
