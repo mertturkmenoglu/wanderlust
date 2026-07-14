@@ -14,6 +14,7 @@ import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
+import { canDelete, canRead, canUpdate } from './authz';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 
 @injectable()
@@ -137,10 +138,10 @@ export class ListsRepository {
 
 		invariant(result, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const canAccess = result.isPublic || result.userId === userId;
+		const hasReadPermission = canRead(result, userId);
 
 		invariant(
-			canAccess,
+			hasReadPermission,
 			'FORBIDDEN',
 			`You do not have access to list with ID '${data.id}'`,
 		);
@@ -253,10 +254,10 @@ export class ListsRepository {
 
 		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const canUpdate = existing.userId === userId;
+		const hasUpdatePermission = canUpdate(existing, userId);
 
 		invariant(
-			canUpdate,
+			hasUpdatePermission,
 			'FORBIDDEN',
 			'You do not have permission to update this list',
 		);
@@ -308,10 +309,10 @@ export class ListsRepository {
 
 		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const canDelete = existing.userId === userId;
+		const hasDeletePermission = canDelete(existing, userId);
 
 		invariant(
-			canDelete,
+			hasDeletePermission,
 			'FORBIDDEN',
 			'You do not have permission to delete this list',
 		);
@@ -328,10 +329,10 @@ export class ListsRepository {
 
 		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const canModify = existing.userId === userId;
+		const hasUpdatePermission = canUpdate(existing, userId);
 
 		invariant(
-			canModify,
+			hasUpdatePermission,
 			'FORBIDDEN',
 			'You do not have permission to modify this list',
 		);
@@ -397,10 +398,10 @@ export class ListsRepository {
 
 		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const canModify = list.userId === userId;
+		const hasUpdatePermission = canUpdate(list, userId);
 
 		invariant(
-			canModify,
+			hasUpdatePermission,
 			'FORBIDDEN',
 			`You do not have permission to modify list with ID '${data.id}'`,
 		);
@@ -465,17 +466,17 @@ export class ListsRepository {
 
 		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const canModify = list.userId === userId;
+		const hasUpdatePermission = canUpdate(list, userId);
 
 		invariant(
-			canModify,
+			hasUpdatePermission,
 			'FORBIDDEN',
 			`You do not have permission to modify list with ID '${data.id}'`,
 		);
 
 		await this.db.transaction(async (tx) => {
 			// Delete the item
-			const result = await tx
+			const [item] = await tx
 				.delete(schema.listItems)
 				.where(
 					and(
@@ -486,14 +487,10 @@ export class ListsRepository {
 				.returning();
 
 			invariant(
-				result.length === 1,
+				item !== undefined,
 				'NOT_FOUND',
 				`Item with Place ID '${data.placeId}' not found in list with ID '${data.id}'`,
 			);
-
-			// Get item
-			// biome-ignore lint/style/noNonNullAssertion: TODO
-			const item = result[0]!;
 
 			// Update indices of remaining items
 			await tx
