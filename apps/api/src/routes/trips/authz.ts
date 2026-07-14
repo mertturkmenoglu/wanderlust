@@ -62,29 +62,54 @@ export function canDeleteInvite(
 
 export function canDeleteParticipant(
 	trip: dto.ExtendedTrip,
-	userId: string,
-	participantId: string,
+	actorId: string,
+	targetId: string,
 ): boolean {
 	// Owner cannot be deleted
-	if (trip.ownerId === participantId) {
+	if (targetId === trip.ownerId) {
 		return false;
 	}
 
-	// You can remove yourself regardless of your role
-	if (userId === participantId) {
+	// Is target a participant in the trip?
+	const participant = trip.participants.find((p) => p.userId === targetId);
+
+	if (!participant) {
+		// If the target user is not a participant, you cannot delete them.
+		return false;
+	}
+
+	// Are you the owner or a participant?
+	const ownerOrParticipant = isOwnerOrParticipant(trip, actorId);
+
+	if (!ownerOrParticipant) {
+		// If the action user is not the owner or a participant, they cannot delete anyone.
+		return false;
+	}
+
+	// At this point, we asserted:
+	// 1. Actor is part of this trip.
+	// 2. Target is part of this trip.
+	// 3. Target is not the owner.
+
+	// Are you trying to remove yourself?
+	if (actorId === targetId) {
+		// Because we asserted you are not trying to remove the owner, you can remove yourself.
 		return true;
 	}
 
-	// Owner can remove anyone except themselves
-	if (trip.ownerId === userId) {
+	// Are you the owner?
+	if (trip.ownerId === actorId) {
+		// Owner can remove anyone.
 		return true;
 	}
 
-	// If the action user is an editor, they can remove anyone except the owner.
-	for (const participant of trip.participants) {
-		if (participant.userId === userId && participant.role === 'editor') {
-			return true;
-		}
+	const isEditor = trip.participants.find(
+		(p) => p.userId === actorId && p.role === 'editor',
+	);
+
+	if (isEditor) {
+		// If the action user is an editor, they can remove anyone except the owner.
+		return true;
 	}
 
 	// By default, you cannot remove anyone
