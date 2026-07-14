@@ -16,13 +16,13 @@ const withAddress = {
 
 const withPlace = {
 	with: {
-		address: withAddress,
 		accolades: {
 			with: {
 				accolade: true,
 			},
 		},
-		category: true,
+		primaryCategory: true,
+		city: true,
 		assets: true,
 	},
 } satisfies With<'places'>;

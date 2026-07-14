@@ -4,7 +4,7 @@ import { cities } from './cities';
 export const addresses = p.pgTable('addresses', {
 	id: p.integer().generatedAlwaysAsIdentity().primaryKey(),
 	cityId: p
-		.integer()
+		.text()
 		.notNull()
 		.references(() => cities.id, { onDelete: 'cascade' }),
 	line1: p.text().notNull(),

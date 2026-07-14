@@ -118,14 +118,15 @@ export const relations = defineRelations(schema, (r) => ({
 	},
 	places: {
 		accolades: r.many.accoladeAssignments(),
-		address: r.one.addresses({
-			from: r.places.addressId,
-			to: r.addresses.id,
-			optional: false,
-		}),
-		category: r.one.categories({
-			from: r.places.categoryId,
+		primaryCategory: r.one.categories({
+			from: r.places.primaryCategoryId,
 			to: r.categories.id,
+			optional: false,
+			alias: 'primaryCategory',
+		}),
+		city: r.one.cities({
+			from: r.places.wlCityId,
+			to: r.cities.id,
 			optional: false,
 		}),
 		assets: r.many.assets({

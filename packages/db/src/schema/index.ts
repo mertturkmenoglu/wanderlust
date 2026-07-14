@@ -9,6 +9,7 @@ export * from './cities';
 export * from './collections';
 export * from './events';
 export * from './favorites';
+export * from './lists';
 export * from './notifications';
 export * from './places';
 export * from './preferences';

@@ -1,7 +1,8 @@
 import * as p from 'drizzle-orm/pg-core';
+import { attributions } from '../custom-types';
 
 export const cities = p.pgTable('cities', {
-	id: p.integer().primaryKey(),
+	id: p.text().primaryKey(),
 	name: p.text().notNull(),
 	stateCode: p.text().notNull(),
 	stateName: p.text().notNull(),
@@ -12,4 +13,5 @@ export const cities = p.pgTable('cities', {
 	lng: p.doublePrecision().notNull(),
 	description: p.text().notNull(),
 	timezone: p.text().notNull(),
+	attributions: attributions('attributions').notNull().default([]),
 });

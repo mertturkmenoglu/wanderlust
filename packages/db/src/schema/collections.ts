@@ -45,7 +45,7 @@ export const collectionsPlaces = p.pgTable(
 	},
 	(table) => [
 		p.primaryKey({ columns: [table.collectionId, table.placeId] }),
-		p.unique().on(table.collectionId, table.index),
+		p.unique().on(table.placeId, table.index),
 		p.index().on(table.placeId),
 	],
 );
@@ -58,7 +58,7 @@ export const collectionsCities = p.pgTable(
 			.notNull()
 			.references(() => collections.id, { onDelete: 'cascade' }),
 		cityId: p
-			.integer()
+			.text()
 			.notNull()
 			.references(() => cities.id, { onDelete: 'cascade' }),
 		index: p.integer().notNull(),
@@ -66,7 +66,7 @@ export const collectionsCities = p.pgTable(
 	},
 	(table) => [
 		p.primaryKey({ columns: [table.collectionId, table.cityId] }),
-		p.unique().on(table.collectionId, table.index),
+		p.unique().on(table.cityId, table.index),
 		p.index().on(table.cityId),
 	],
 );
