@@ -1,72 +1,67 @@
 import {
 	BedIcon,
 	BeerIcon,
-	CameraIcon,
 	CoffeeIcon,
-	GraduationCapIcon,
 	LandmarkIcon,
 	LibraryIcon,
 	MapPinnedIcon,
 	MartiniIcon,
 	MountainSnowIcon,
+	ParasolIcon,
 	UtensilsIcon,
 } from 'lucide-react';
 import type { Props as NavItemProps } from './item';
 
 export const data = [
 	{
-		category: 'Hotels',
+		category: 'accommodation-hotel',
 		text: 'Hotels',
 		icon: BedIcon,
 	},
 	{
-		category: 'Coffee shops',
-		text: 'Coffee',
+		category: 'food-and-drink-cafe',
+		text: 'Cafés',
 		icon: CoffeeIcon,
 	},
 	{
-		category: 'Bars & Clubs',
-		text: 'Bars',
-		icon: MartiniIcon,
-	},
-	{
-		category: 'Breweries',
-		text: 'Breweries',
-		icon: BeerIcon,
-	},
-	{
-		category: 'Museums',
-		text: 'Museums',
-		icon: LandmarkIcon,
-	},
-	{
-		category: 'Photography spots',
-		text: 'Photography',
-		icon: CameraIcon,
-	},
-	{
-		category: 'Restaurants',
+		category: 'food-and-drink-restaurant',
 		text: 'Restaurants',
 		icon: UtensilsIcon,
 	},
 	{
-		category: 'Tourist Attractions',
+		category: 'food-and-drink-bar',
+		text: 'Bars',
+		icon: MartiniIcon,
+	},
+	{
+		category: 'food-and-drink-brewery',
+		text: 'Breweries',
+		icon: BeerIcon,
+	},
+	{
+		category: 'entertainment-museum',
+		text: 'Museums',
+		icon: LandmarkIcon,
+	},
+	{
+		category: 'nature-beach',
+		text: 'Beaches',
+		icon: ParasolIcon,
+	},
+
+	{
+		category: 'tourism',
 		text: 'Attractions',
 		icon: MapPinnedIcon,
 	},
 	{
-		category: 'Coworking spaces',
-		text: 'Work Spaces',
-		icon: GraduationCapIcon,
-	},
-	{
-		category: 'Bookstores',
+		category: 'commercial-bookstore',
 		text: 'Bookstores',
 		icon: LibraryIcon,
 	},
 	{
-		category: 'Natural landmarks',
-		text: 'Landmarks',
+		category: 'nature-national-park',
+		text: 'Nature',
 		icon: MountainSnowIcon,
 	},
 ] satisfies NavItemProps[];
