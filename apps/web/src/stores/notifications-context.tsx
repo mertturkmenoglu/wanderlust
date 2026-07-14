@@ -17,6 +17,11 @@ export type TNotification =
 type TNotificationPreferences =
 	Outputs['notifications']['preferences']['preferences'];
 
+export type TNotificationCategory =
+	TNotificationPreferences[number]['category'];
+
+export type TNotificationChannel = TNotificationPreferences[number]['channel'];
+
 type FilterMode = 'all' | 'unread' | 'read';
 
 type State = {
