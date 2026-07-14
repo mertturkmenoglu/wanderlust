@@ -11,7 +11,6 @@ import { InfoCard } from '@/components/info-card';
 import { useHoursStatus } from '@/hooks/use-hours-status';
 import { HoursDialog } from './dialog';
 import { useMustGetToday } from './hooks';
-import { parseHours } from './utils';
 
 type Props = {
 	className?: string;
@@ -19,10 +18,9 @@ type Props = {
 
 export function HoursInfo({ className }: Props) {
 	const data = useLoaderData({ from: '/p/$id/' });
-	const tz = data.place.address.city.timezone;
-	const hours = parseHours(tz, data.place.hours);
-	const today = useMustGetToday(tz, hours);
-	const status = useHoursStatus(tz, today.open, today.close);
+	const tz = data.place.city.timezone;
+	const today = useMustGetToday(tz, data.place.openingHours);
+	const status = useHoursStatus(tz, today.intervals);
 
 	const Icon = useMemo(() => {
 		if (status === 'closingSoon') {
@@ -71,7 +69,7 @@ export function HoursInfo({ className }: Props) {
 				</InfoCard.NumberColumn>
 				<InfoCard.DescriptionColumn className="flex flex-col font-semibold text-primary">
 					{text}
-					<HoursDialog tz={tz} hours={hours} />
+					<HoursDialog tz={tz} intervals={today.intervals} />
 				</InfoCard.DescriptionColumn>
 			</InfoCard.Content>
 		</InfoCard.Root>

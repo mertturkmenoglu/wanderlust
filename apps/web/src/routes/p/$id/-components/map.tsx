@@ -14,8 +14,8 @@ type Props = {
 export function MapComponent({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
-	const lat = place.address.lat;
-	const lng = place.address.lng;
+	const lat = place.lat;
+	const lng = place.lng;
 	const zoom = 17;
 	const style = useMapStyle();
 	const map = useMap();

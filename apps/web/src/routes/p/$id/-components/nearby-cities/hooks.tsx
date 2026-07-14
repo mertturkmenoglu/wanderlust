@@ -27,17 +27,17 @@ export function useNearbyCities() {
 	}, [searchRadiusPreference]);
 
 	const { place } = useLoaderData({ from: '/p/$id/' });
-	const { lat, lng } = place.address.city;
+	const { lat, lng } = place.city;
 
 	return useSuspenseQuery({
-		queryKey: ['nearby-cities', place.address.cityId],
+		queryKey: ['nearby-cities', place.wlCityId],
 		queryFn: async () => {
 			return search.typesenseClient
 				.collections<TCityHit>('cities')
 				.documents()
 				.search(
 					{
-						filter_by: `location:(${lat},${lng},${radius}) && city.id:!=[${place.address.cityId}]`,
+						filter_by: `location:(${lat},${lng},${radius}) && city.id:!=[${place.wlCityId}]`,
 						q: '*',
 						sort_by: `location(${lat},${lng}):asc`,
 					},

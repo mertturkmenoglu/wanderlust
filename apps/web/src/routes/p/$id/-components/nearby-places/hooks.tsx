@@ -27,7 +27,7 @@ export function useNearbyPlaces() {
 	}, [searchRadiusPreference]);
 
 	const { place } = useLoaderData({ from: '/p/$id/' });
-	const { lat, lng } = place.address;
+	const { lat, lng } = place;
 
 	return useSuspenseQuery({
 		queryKey: ['nearby-places', place.id],

@@ -68,15 +68,12 @@ export function Description({ className }: Props) {
 				<InfoCard.Root>
 					<InfoCard.Content>
 						<InfoCard.NumberColumn className="md:text-3xl lg:text-4xl">
-							{place.priceLevel}/5
+							<DollarSignIcon />
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
-							<div className="flex items-center">
-								{Array.from({ length: place.priceLevel }).map((_, i) => (
-									<DollarSignIcon className="size-4 text-primary" key={i} />
-								))}
+							<div className="text-primary capitalize">
+								{place.priceLevel.replace('_', ' ')}
 							</div>
-
 							<span className="text-muted-foreground text-xs tracking-tight">
 								Price Level
 							</span>
@@ -87,23 +84,14 @@ export function Description({ className }: Props) {
 				<InfoCard.Root>
 					<InfoCard.Content>
 						<InfoCard.NumberColumn className="md:text-3xl lg:text-4xl">
-							{place.accessibilityLevel}/5
+							<PersonStandingIcon />
 						</InfoCard.NumberColumn>
 						<InfoCard.DescriptionColumn>
-							<div className="flex items-center">
-								{Array.from({ length: place.accessibilityLevel }).map(
-									(_, i) => (
-										<PersonStandingIcon
-											className="size-4 text-primary"
-											key={i}
-										/>
-									),
-								)}
+							<div className="text-primary capitalize">
+								{place.accessibilityLevel.replace('_', ' ')}
 							</div>
-
-							<span className="line-clamp-1 text-muted-foreground text-xs tracking-tight">
-								Accessibility{' '}
-								<span className="sr-only md:not-sr-only">Level</span>
+							<span className="text-muted-foreground text-xs tracking-tight">
+								Accessibility Level
 							</span>
 						</InfoCard.DescriptionColumn>
 					</InfoCard.Content>

@@ -14,8 +14,8 @@ export function CityTagNavigation({ className }: Props) {
 	return (
 		<div className={cn('relative', className)}>
 			<Image
-				src={place.address.city.image}
-				alt={place.address.city.name}
+				src={place.city.image}
+				alt={place.city.name}
 				className="my-4 h-64 w-full rounded object-cover"
 				height={256}
 				width={2000}
@@ -28,10 +28,10 @@ export function CityTagNavigation({ className }: Props) {
 						className: 'mx-auto hover:bg-sky!',
 					})}
 				>
-					Discover Places in {place.address.city.name}
+					Discover Places in {place.city.name}
 				</div>
 				<div className="mx-auto mt-4 w-fit rounded bg-muted px-8 py-2">
-					<TagNavigation cityName={place.address.city.name} />
+					<TagNavigation cityName={place.city.name} />
 				</div>
 			</div>
 		</div>

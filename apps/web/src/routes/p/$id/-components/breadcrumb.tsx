@@ -29,12 +29,12 @@ export function Breadcrumb({ className }: Props) {
 				<BreadcrumbItem>
 					<BreadcrumbLink asChild>
 						<Link
-							to="/cities/$"
+							to="/cities/$id"
 							params={{
-								_splat: `${place.address.cityId}`,
+								id: place.wlCityId,
 							}}
 						>
-							{place.address.city.name}
+							{place.city.name}
 						</Link>
 					</BreadcrumbLink>
 				</BreadcrumbItem>
@@ -47,10 +47,10 @@ export function Breadcrumb({ className }: Props) {
 							to="/search/$type"
 							params={{ type: 'places' }}
 							search={{
-								category: place.category.name,
+								category: place.primaryCategory.id,
 							}}
 						>
-							{place.category.name}
+							{place.primaryCategory.displayName}
 						</Link>
 					</BreadcrumbLink>
 				</BreadcrumbItem>

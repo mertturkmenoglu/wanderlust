@@ -55,69 +55,76 @@ import {
 	WifiIcon,
 	WindIcon,
 	WineIcon,
+	XIcon,
 } from 'lucide-react';
 import { amenitiesDisplayNames } from '@/lib/amenities';
 
 type LucideIconType = typeof WifiIcon;
 
-const iconMapping = new Map<string, LucideIconType>([
-	['wifi', WifiIcon],
-	['freeParking', SquareParkingIcon],
-	['paidParking', ParkingMeterIcon],
-	['wheelchair', AccessibilityIcon],
-	['restrooms', ToiletIcon],
-	['ac', WindIcon],
-	['outdoor', RockingChairIcon],
-	['indoor', ArmchairIcon],
-	['bar', MartiniIcon],
-	['pet', PawPrintIcon],
-	['kidsPlay', BlocksIcon],
-	['driveThru', CarFrontIcon],
-	['loyalty', HandCoinsIcon],
-	['allWeekService', CalendarCheckIcon],
-	['delivery', PackageIcon],
-	['vegan', VeganIcon],
-	['liveMusic', MicVocalIcon],
-	['privateRooms', LockIcon],
-	['onlineOrdering', GlobeIcon],
-	['evCharging', PlugZapIcon],
-	['selfService', HandPlatterIcon],
-	['smoking', CigaretteIcon],
-	['guidedTours', RouteIcon],
-	['giftShop', GiftIcon],
-	['snackBar', DonutIcon],
-	['informationDesk', InfoIcon],
-	['specialExhibitions', GemIcon],
-	['observationDecks', TelescopeIcon],
-	['atm', CircleDollarSignIcon],
-	['photographyArea', CameraIcon],
-	['a11yServices', PersonStandingIcon],
-	['studyRoom', GraduationCapIcon],
-	['romanticAtmosphere', HeartIcon],
-	['familyFriendly', UsersIcon],
-	['concierge', ConciergeBellIcon],
-	['fitness', DumbbellIcon],
-	['spa', DropletsIcon],
-	['workspaces', BriefcaseBusinessIcon],
-	['groupActivities', UsersIcon],
-	['ecoFriendly', LeafIcon],
-	['publicTransportation', BusIcon],
-	['garden', FenceIcon],
-	['complimentaryTasting', HandPlatterIcon],
-	['gamingStations', Gamepad2Icon],
-	['onlineReservation', GlobeIcon],
-	['valetParking', TicketIcon],
-	['catering', UtensilsIcon],
-	['specialDietaryOptions', WheatOffIcon],
-	['childrensMenu', SquareMenuIcon],
-	['wineList', WineIcon],
-	['liveCookingStations', CookingPotIcon],
-	['happyHourSpecials', CupSodaIcon],
-	['chefsSpecials', ChefHatIcon],
-	['communalTables', Columns2Icon],
-	['brunchOptions', EggIcon],
-	['eventHosting', PartyPopperIcon],
-]);
+const iconMapping = new Map<string, LucideIconType>(
+	[
+		['wifi', WifiIcon],
+		['freeParking', SquareParkingIcon],
+		['paidParking', ParkingMeterIcon],
+		['wheelchair', AccessibilityIcon],
+		['restrooms', ToiletIcon],
+		['ac', WindIcon],
+		['outdoor', RockingChairIcon],
+		['indoor', ArmchairIcon],
+		['bar', MartiniIcon],
+		['pet', PawPrintIcon],
+		['kidsPlay', BlocksIcon],
+		['driveThru', CarFrontIcon],
+		['loyalty', HandCoinsIcon],
+		['allWeekService', CalendarCheckIcon],
+		['delivery', PackageIcon],
+		['vegan', VeganIcon],
+		['liveMusic', MicVocalIcon],
+		['privateRooms', LockIcon],
+		['onlineOrdering', GlobeIcon],
+		['evCharging', PlugZapIcon],
+		['selfService', HandPlatterIcon],
+		['smoking', CigaretteIcon],
+		['guidedTours', RouteIcon],
+		['giftShop', GiftIcon],
+		['snackBar', DonutIcon],
+		['informationDesk', InfoIcon],
+		['specialExhibitions', GemIcon],
+		['observationDecks', TelescopeIcon],
+		['atm', CircleDollarSignIcon],
+		['photographyArea', CameraIcon],
+		['a11yServices', PersonStandingIcon],
+		['studyRoom', GraduationCapIcon],
+		['romanticAtmosphere', HeartIcon],
+		['familyFriendly', UsersIcon],
+		['concierge', ConciergeBellIcon],
+		['fitness', DumbbellIcon],
+		['spa', DropletsIcon],
+		['workspaces', BriefcaseBusinessIcon],
+		['groupActivities', UsersIcon],
+		['ecoFriendly', LeafIcon],
+		['publicTransportation', BusIcon],
+		['garden', FenceIcon],
+		['complimentaryTasting', HandPlatterIcon],
+		['gamingStations', Gamepad2Icon],
+		['onlineReservation', GlobeIcon],
+		['valetParking', TicketIcon],
+		['catering', UtensilsIcon],
+		['specialDietaryOptions', WheatOffIcon],
+		['childrensMenu', SquareMenuIcon],
+		['wineList', WineIcon],
+		['liveCookingStations', CookingPotIcon],
+		['happyHourSpecials', CupSodaIcon],
+		['chefsSpecials', ChefHatIcon],
+		['communalTables', Columns2Icon],
+		['brunchOptions', EggIcon],
+		['eventHosting', PartyPopperIcon],
+	].flatMap(([k, v]) => [
+		[k, v] as [string, LucideIconType],
+		[`${k}.0`, v] as [string, LucideIconType],
+		[`${k}.1`, v] as [string, LucideIconType],
+	]),
+);
 
 type Props = {
 	className?: string;
@@ -146,10 +153,13 @@ export function Amenities({ className }: Props) {
 function Item({ id }: { id: string }) {
 	const Icon = iconMapping.get(id) ?? CheckIcon;
 	const displayName = amenitiesDisplayNames.get(id) ?? id;
+	const suffix = id.includes('.') ? id.split('.')[1] : '';
+
+	const positive = suffix === '1' || suffix === '';
 
 	return (
 		<div className="group flex items-center gap-2 text-muted-foreground hover:text-primary">
-			<Icon className="size-6 shrink-0" />
+			<Icon className={cn('size-6 shrink-0')} />
 			<Link
 				to="/search/$type"
 				params={{ type: 'places' }}
@@ -157,9 +167,15 @@ function Item({ id }: { id: string }) {
 					amenity: id,
 				}}
 				className="line-clamp-2 text-sm md:text-base"
+				title={
+					positive
+						? `${displayName} is available`
+						: `${displayName} is not available`
+				}
 			>
 				{displayName}
 			</Link>
+			{!positive && <XIcon className="ml-2 size-4 text-red-500" />}
 		</div>
 	);
 }

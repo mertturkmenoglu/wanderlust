@@ -35,13 +35,13 @@ function Content({ className }: Props) {
 		const initial = query.data.hits ?? [];
 
 		for (const c of initial) {
-			if (c.document.city.id !== place.address.cityId) {
+			if (c.document.city.id !== place.wlCityId) {
 				arr.push(c.document.city);
 			}
 		}
 
 		return arr;
-	}, [query.data.hits, place.address.cityId]);
+	}, [query.data.hits, place.wlCityId]);
 
 	if (cities.length === 0) {
 		return null;
@@ -64,9 +64,9 @@ function Content({ className }: Props) {
 							</CardHeader>
 							<CardFooter>
 								<Link
-									to="/cities/$"
+									to="/cities/$id"
 									params={{
-										_splat: `${c.id}`,
+										id: c.id,
 									}}
 									className={buttonVariants({
 										variant: 'midnight',

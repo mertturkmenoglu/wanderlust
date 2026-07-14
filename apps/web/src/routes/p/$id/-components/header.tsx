@@ -39,7 +39,7 @@ export function Header({ className }: Props) {
 			</div>
 
 			<div className="mt-2 ml-auto hidden text-primary text-sm sm:block">
-				{place.category.name}
+				{place.primaryCategory.displayName}
 			</div>
 		</div>
 	);

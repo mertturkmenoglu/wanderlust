@@ -30,8 +30,8 @@ function useWebsiteHostname(s: string): [string, boolean] {
 export function Information({ className }: Props) {
 	const route = getRouteApi('/p/$id/');
 	const { place } = route.useLoaderData();
-	const [host, ok] = useWebsiteHostname(place.website ?? '');
-	const gmDirBase = `https://maps.google.com/?saddr=Current+Location&daddr=${place.address.lat},${place.address.lng}`;
+	const [host, ok] = useWebsiteHostname(place.websites[0] ?? '');
+	const gmDirBase = `https://maps.google.com/?saddr=Current+Location&daddr=${place.lat},${place.lng}`;
 
 	return (
 		<div className={cn(className)}>
@@ -40,30 +40,34 @@ export function Information({ className }: Props) {
 				<div className="font-medium">Address</div>
 				<div className="text-muted-foreground text-xs md:text-sm">
 					<div className="text-right">
-						{place.address.line1} {place.address.line2}
+						{place.addressLine}
 						<br />
-						{place.address.city.name}, {place.address.city.stateName} /{' '}
-						{place.address.city.countryName}
+						{cn(
+							place.subLocality,
+							place.locality,
+							place.adminAreaName,
+							place.countryName,
+							place.postalCode,
+						)}
 						<br />
-						{place.address.postalCode}
 					</div>
 				</div>
 
-				{place.phone && (
+				{place.intlPhone && (
 					<>
 						<div className="font-medium">Phone</div>
 						<div className="text-muted-foreground text-xs md:text-sm">
-							<div className="text-right">{place.phone}</div>
+							<div className="text-right">{place.intlPhone}</div>
 						</div>
 					</>
 				)}
 
-				{place.website && ok && (
+				{place.websites[0] && ok && (
 					<>
 						<div className="font-medium">Website</div>
 						<div className="break-all text-right">
 							<a
-								href={place.website}
+								href={place.websites[0]}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="inline-flex items-center gap-1 text-primary text-xs hover:underline md:text-sm"

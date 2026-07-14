@@ -16,7 +16,11 @@ import { mapping } from './utils';
 
 type Props = {
 	tz: string;
-	hours: { day: string; open: Date; close: Date }[];
+	intervals: {
+		off: boolean;
+		open: string;
+		close: string;
+	}[];
 };
 
 const timeFmt = new Intl.DateTimeFormat('en-US', {
@@ -24,7 +28,7 @@ const timeFmt = new Intl.DateTimeFormat('en-US', {
 	minute: '2-digit',
 });
 
-export function HoursDialog({ tz, hours }: Props) {
+export function HoursDialog({ tz, intervals }: Props) {
 	const today = new TZDate(new Date(), tz).getUTCDay();
 	const key = mapping[today];
 
@@ -49,20 +53,19 @@ export function HoursDialog({ tz, hours }: Props) {
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col gap-2">
-					{hours.map((h) => (
+					{intervals.map((h) => (
 						<div
-							key={h.day}
-							className={cn('flex justify-between', {
-								'-m-2 bg-primary/10 p-2 text-primary': h.day === key,
-							})}
+							key={h.open + h.close}
+							className={cn('flex justify-between', {})}
 						>
-							<div className="font-bold capitalize">{h.day}</div>
+							<div className="font-bold capitalize">{key}</div>
 							<div>
 								{isEqual(h.open, h.close) ? (
 									<span>Closed</span>
 								) : (
 									<span>
-										{timeFmt.format(h.open)} &ndash; {timeFmt.format(h.close)}
+										{timeFmt.format(new TZDate(h.open, tz))} &ndash;{' '}
+										{timeFmt.format(new TZDate(h.close, tz))}
 									</span>
 								)}
 							</div>
