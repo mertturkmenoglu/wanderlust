@@ -26,18 +26,18 @@ export class CitiesRepository {
 			where: {
 				id: {
 					in: [
-						1106, // Salzburg
-						1108, // Vienna
-						1109, // Istanbul
-						2300, // Athens
-						3012, // Rome
-						3014, // Turin
-						3015, // Florence
-						3016, // Venice
-						4010, // Prague
-						5010, // Amsterdam
-						6010, // Paris
-						7010, // Barcelona
+						'salzburg',
+						'vienna',
+						'istanbul',
+						'athens',
+						'rome',
+						'turin',
+						'florence',
+						'venice',
+						'prague',
+						'amsterdam',
+						'paris',
+						'barcelona',
 					],
 				},
 			},

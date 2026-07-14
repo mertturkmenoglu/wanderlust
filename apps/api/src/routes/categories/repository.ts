@@ -1,6 +1,6 @@
 import type { categories as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import * as schema from '@wanderlust/db/schema';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -40,6 +40,9 @@ export class CategoriesRepository {
 				id: data.id,
 				name: data.name,
 				image: data.image,
+				description: data.description,
+				displayName: data.displayName,
+				attributions: data.attributions,
 			})
 			.returning();
 
