@@ -319,6 +319,7 @@ type ControlledElementProps<
 		container: React.ComponentProps<'div'>;
 		error: React.ComponentProps<typeof FieldError>;
 	}>;
+	multipleErrors?: boolean;
 	children: (
 		r: {
 			field: ControllerRenderProps<TFieldValues, TName>;
@@ -337,6 +338,7 @@ export function ControlledElement<
 	label,
 	children,
 	customize,
+	multipleErrors = false,
 	...controller
 }: ControlledElementProps<T, TName, TTransformedValues>) {
 	const id = useId();
@@ -358,7 +360,11 @@ export function ControlledElement<
 
 						{r.fieldState.invalid && (
 							<FieldError
-								errors={[r.fieldState.error]}
+								errors={
+									multipleErrors
+										? normalizeMultipleErrors(r.fieldState.error?.types)
+										: [r.fieldState.error]
+								}
 								{...(customize?.error || {})}
 							/>
 						)}
@@ -377,6 +383,7 @@ export function useFormElement<TFieldValues extends FieldValues = FieldValues>(
 			name,
 			label,
 			customize,
+			multipleErrors,
 			children,
 		}: {
 			name: TName;
@@ -387,6 +394,7 @@ export function useFormElement<TFieldValues extends FieldValues = FieldValues>(
 				container: React.ComponentProps<'div'>;
 				error: React.ComponentProps<typeof FieldError>;
 			}>;
+			multipleErrors?: boolean;
 			children: (
 				r: {
 					field: ControllerRenderProps<TFieldValues, TName>;
@@ -401,6 +409,7 @@ export function useFormElement<TFieldValues extends FieldValues = FieldValues>(
 				control={control}
 				label={label}
 				customize={customize}
+				multipleErrors={multipleErrors}
 			>
 				{children}
 			</ControlledElement>
