@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
-import { Button } from '@wanderlust/ui/components/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Item,
 	ItemActions,
@@ -42,15 +42,15 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 	};
 
 	return (
-		<Item
-			variant="outline"
-			className={cn('max-h-32', {
-				'border border-primary bg-primary/5':
-					itemIndex === ctx.index && !isMobile,
-				'hover:bg-muted': itemIndex !== ctx.index,
-			})}
-		>
-			<button className="block text-left" type="button" onClick={onClick}>
+		<button type="button" onClick={onClick}>
+			<Item
+				variant="outline"
+				className={cn('max-h-32', {
+					'border border-primary bg-primary/5':
+						itemIndex === ctx.index && !isMobile,
+					'hover:bg-muted': itemIndex !== ctx.index,
+				})}
+			>
 				<ItemMedia variant="default">
 					<Image
 						src={asset.url ?? ''}
@@ -70,19 +70,23 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 					</ItemDescription>
 				</ItemContent>
 				<ItemActions>
-					<Button variant="secondary" size="icon">
+					<div
+						className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+					>
 						<BookmarkIcon className="fill-primary text-primary" />
-					</Button>
-					<Button variant="secondary" size="icon">
+					</div>
+					<div
+						className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+					>
 						<HeartIcon
 							className={cn({
 								'fill-primary text-primary': bookmark.meta.isFavorite,
 								'text-muted-foreground': !bookmark.meta.isFavorite,
 							})}
 						/>
-					</Button>
+					</div>
 				</ItemActions>
-			</button>
-		</Item>
+			</Item>
+		</button>
 	);
 }
