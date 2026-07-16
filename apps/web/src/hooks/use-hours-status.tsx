@@ -3,13 +3,15 @@ import { differenceInMinutes, isAfter, isBefore } from 'date-fns';
 
 export type HoursStatus = 'open' | 'closingSoon' | 'openingSoon' | 'closed';
 
+export type HoursInterval = {
+	off: boolean;
+	open: string;
+	close: string;
+};
+
 export function useHoursStatus(
 	tz: string,
-	intervals: {
-		off: boolean;
-		open: string;
-		close: string;
-	}[],
+	intervals: HoursInterval[],
 ): HoursStatus {
 	const now = new TZDate(new Date(), tz);
 
@@ -17,9 +19,15 @@ export function useHoursStatus(
 		return 'closed';
 	}
 
-	for (const interval of intervals) {
-		const o = new TZDate(interval.open, tz);
-		const c = new TZDate(interval.close, tz);
+	const sortedIntervals = intervals.sort((a, b) => {
+		const aOpen = constructTZDateWithTime(now, a.open, tz);
+		const bOpen = constructTZDateWithTime(now, b.open, tz);
+		return aOpen.getTime() - bOpen.getTime();
+	});
+
+	for (const interval of sortedIntervals) {
+		const o = constructTZDateWithTime(now, interval.open, tz);
+		const c = constructTZDateWithTime(now, interval.close, tz);
 
 		if (isAfter(now, o) && isBefore(now, c)) {
 			if (interval.off) {
@@ -37,4 +45,17 @@ export function useHoursStatus(
 	}
 
 	return 'closed';
+}
+
+function extractDateString(date: TZDate): string {
+	return date.toISOString().split('T')[0];
+}
+
+function constructTZDateWithTime(
+	date: TZDate,
+	time: string,
+	tz: string,
+): TZDate {
+	const dateString = extractDateString(date);
+	return new TZDate(`${dateString}T${time}:00Z`, tz);
 }
