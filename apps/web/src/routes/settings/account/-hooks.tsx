@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useLoaderData, useRouteContext } from '@tanstack/react-router';
+import { useReducer } from 'react';
 import { toast } from 'sonner';
 import z from 'zod';
 import { useInvalidator } from '@/hooks/use-invalidator';
@@ -45,13 +46,13 @@ export function useChangeUsernameMutation() {
 export const changePasswordSchema = z
 	.object({
 		currentPassword: z
-			.string()
-			.min(1, { message: 'Current password is required' })
-			.max(128, { message: 'Password is too long' }),
+			.string({ error: 'Required' })
+			.min(1, { error: 'Required' })
+			.max(128, { error: 'Password is too long' }),
 		newPassword: z
-			.string()
-			.min(8, { message: 'At least 8 characters' })
-			.max(128, { message: 'Password is too long' })
+			.string({ error: 'Required' })
+			.min(8, { error: 'At least 8 characters' })
+			.max(128, { error: 'Password is too long' })
 			.superRefine((data, ctx) => {
 				let flag = false;
 				if (data.includes(' ')) {
@@ -98,7 +99,10 @@ export const changePasswordSchema = z
 					return z.NEVER;
 				}
 			}),
-		confirmPassword: z.string().min(1).max(128),
+		confirmPassword: z
+			.string({ error: 'Required' })
+			.min(1, { error: 'Required' })
+			.max(128, { error: 'Password is too long' }),
 	})
 	.superRefine((data, ctx) => {
 		if (data.newPassword !== data.confirmPassword) {
