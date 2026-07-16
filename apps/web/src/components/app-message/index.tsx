@@ -1,29 +1,8 @@
-import { Link, type LinkOptions } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
-import { Logo, type LogoProps } from '../logo';
-
-type BackLink = LinkOptions & {
-	text: string;
-};
-
-type Props = {
-	classNames?: Partial<{
-		root: string;
-		logo: string;
-		error: string;
-		success: string;
-		empty: string;
-		backLink: string;
-	}>;
-	error?: React.ReactNode;
-	success?: React.ReactNode;
-	empty?: React.ReactNode;
-	backLink?: BackLink | false;
-	logoProps?: Partial<LogoProps>;
-};
-
-type Variant = 'error' | 'success' | 'empty';
+import { Logo } from '../logo';
+import type { Props, Variant } from './types';
 
 export function AppMessage({
 	classNames,
@@ -46,6 +25,8 @@ export function AppMessage({
 				'flex h-full flex-col items-center justify-center space-y-4',
 				classNames?.root,
 			)}
+			data-testid="app-message"
+			data-variant={variant}
 		>
 			<Logo
 				grayscale={variant !== 'success'}

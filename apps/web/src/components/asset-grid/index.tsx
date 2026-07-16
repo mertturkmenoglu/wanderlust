@@ -5,16 +5,7 @@ import { GripHorizontalIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { ipx } from '@/lib/ipx';
-
-export type Props = {
-	className?: string;
-	assets: Array<{
-		id: number;
-		url: string;
-		description: string | null;
-		order: number;
-	}>;
-};
+import type { Props } from './types';
 
 export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 	const assets = unsortedAssets.sort((a, b) => a.order - b.order);
@@ -47,6 +38,7 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 
 	return (
 		<div
+			data-testid="asset-grid"
 			className={cn(
 				'relative grid h-64 grid-cols-4 grid-rows-2 gap-2 rounded-xl md:h-96 lg:h-128',
 				className,
