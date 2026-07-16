@@ -13,8 +13,11 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, bearer, multiSession, openAPI } from 'better-auth/plugins';
 import { inject, injectable } from 'inversify';
-import { z } from 'zod';
-import { generateUsernameFromEmail } from './username';
+import { additionalFields } from './additional-fields';
+import { hookAfterCreateUser } from './hooks';
+import { mapFacebookProfileToUser, mapGoogleProfileToUser } from './oauth';
+import { sendResetPassword } from './password-reset';
+import { session } from './session';
 
 @injectable()
 export class AuthService {
@@ -59,73 +62,16 @@ function init(
 			user: {
 				create: {
 					after: async (user) => {
-						const channels = schema.notificationChannelType.enumValues;
-						const categories = schema.notificationCategoryType.enumValues;
-						const preferences = channels.flatMap((ch) =>
-							categories.map((c) => ({
-								channel: ch,
-								category: c,
-								enabled: true,
-								userId: user.id,
-							})),
-						);
-						await db.insert(schema.notificationPreferences).values(preferences);
-						await cache.namespace('activities').setForever({
-							key: user.username as string,
-							value: [],
+						await hookAfterCreateUser(db, cache, {
+							id: user.id,
+							username: user.username as string,
 						});
 					},
 				},
 			},
 		},
 		user: {
-			// TODO: Investigate why defining these columns in the Drizzle table doesn't automatically
-			// add them to the user object and if there's a way to do it, we should do it.
-			//
-			// TODO: Adding required: false makes the field string | null | undefined, which is not ideal.
-			// We want string | null.
-			additionalFields: {
-				username: {
-					type: 'string',
-					input: true,
-					validator: {
-						input: z.string().regex(/^[a-zA-Z]\w{3,31}$/, {
-							message:
-								'Username must start with a letter and contain only alphanumeric characters and underscores',
-						}),
-					},
-				},
-				banner: {
-					type: 'string',
-					input: false,
-					required: false,
-				},
-				bio: {
-					type: 'string',
-					input: true,
-					required: false,
-				},
-				website: {
-					type: 'string',
-					input: true,
-					required: false,
-				},
-				location: {
-					type: 'string',
-					input: true,
-					required: false,
-				},
-				followersCount: {
-					type: 'number',
-					input: false,
-					required: false,
-				},
-				followingCount: {
-					type: 'number',
-					input: false,
-					required: false,
-				},
-			},
+			additionalFields,
 		},
 		account: {
 			accountLinking: {
@@ -146,12 +92,8 @@ function init(
 		appName: 'Wanderlust',
 		emailAndPassword: {
 			enabled: true,
-			sendResetPassword: async ({ url, user }) => {
-				await jobs.email.queue.add('password-reset', {
-					firstName: user.name,
-					email: user.email,
-					url,
-				});
+			sendResetPassword: async (data) => {
+				await sendResetPassword(data, jobs);
 			},
 		},
 		socialProviders: {
@@ -159,28 +101,14 @@ function init(
 				clientId: process.env.GOOGLE_CLIENT_ID as string,
 				clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 				prompt: 'select_account',
-				mapProfileToUser: (profile: TGoogleUser): TUser => {
-					return {
-						email: profile.email,
-						image: profile.picture,
-						name: profile.name,
-						username: generateUsernameFromEmail(profile.email),
-					};
-				},
+				mapProfileToUser: mapGoogleProfileToUser,
 			},
 			facebook: {
 				clientId: process.env.FACEBOOK_CLIENT_ID as string,
 				clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
 				prompt: 'select_account',
 				scope: ['email', 'public_profile'],
-				mapProfileToUser: (profile: TFacebookUser): TUser => {
-					return {
-						email: profile.email ?? '',
-						image: profile.picture.data.url,
-						name: profile.name,
-						username: generateUsernameFromEmail(profile.email ?? ''),
-					};
-				},
+				mapProfileToUser: mapFacebookProfileToUser,
 			},
 		},
 		advanced: {
@@ -194,39 +122,8 @@ function init(
 			client: redis,
 			keyPrefix: 'wl-auth:',
 		}),
-		session: {
-			expiresIn: 60 * 60 * 24 * 7, // 7 days
-			updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
-			cookieCache: {
-				enabled: true,
-				maxAge: 5 * 60,
-				strategy: 'compact',
-			},
-		},
+		session,
 	});
 }
-
-export type TUser = {
-	email: string;
-	image: string;
-	name: string;
-	username: string;
-};
-
-export type TGoogleUser = {
-	email: string;
-	picture: string;
-	name: string;
-};
-
-export type TFacebookUser = {
-	email?: string | undefined;
-	picture: {
-		data: {
-			url: string;
-		};
-	};
-	name: string;
-};
 
 export type TAuthService = ReturnType<typeof init>;
