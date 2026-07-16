@@ -13,14 +13,16 @@ export type TRecentView = z.infer<typeof schema>;
 
 export function useRecentViews() {
 	return useLocalStorage<TRecentView[]>(key, [], {
-		deserializer: (str) => {
-			try {
-				const parsed = JSON.parse(str);
-				const validated = z.array(schema).parse(parsed);
-				return validated;
-			} catch {}
-
-			return [];
-		},
+		deserializer,
 	});
+}
+
+export function deserializer(str: string): TRecentView[] {
+	try {
+		const parsed = JSON.parse(str);
+		const validated = z.array(schema).parse(parsed);
+		return validated;
+	} catch {}
+
+	return [];
 }
