@@ -15,6 +15,14 @@ export default defineConfig({
 	ssr: {
 		noExternal: ['typesense-instantsearch-adapter'],
 	},
+	optimizeDeps: {
+		exclude: [
+			'@tanstack/start-server-core',
+			'@tanstack/react-start',
+			'@tanstack/react-start/client',
+			'@tanstack/react-start/server',
+		],
+	},
 	server: {
 		hmr: { port: 3001 },
 	},
