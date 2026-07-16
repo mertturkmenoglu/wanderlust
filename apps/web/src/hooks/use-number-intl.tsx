@@ -1,4 +1,4 @@
-import { useNumberFormatter } from '@/hooks/use-number-formatter';
+import { useNumberFormatter } from './use-number-formatter';
 
 type UseNumberIntlOptions = {
 	one: string;
@@ -11,13 +11,13 @@ export function useNumberIntl(opts: UseNumberIntlOptions) {
 	const numFmt = useNumberFormatter();
 
 	return (count: number) => {
-		const formattedLikes = numFmt.format(count);
+		const formattedNumber = numFmt.format(count);
 		const pluralCategory = pluralRules.select(count);
 
 		if (pluralCategory === 'one') {
-			return `${formattedLikes} ${opts.one}`;
+			return `${formattedNumber} ${opts.one}`;
 		}
 
-		return `${formattedLikes} ${opts.other}`;
+		return `${formattedNumber} ${opts.other}`;
 	};
 }
