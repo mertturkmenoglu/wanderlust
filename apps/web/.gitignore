@@ -4,3 +4,5 @@ dist
 dist-ssr
 *.local
 .tanstack
+.vitest-attachments
+**/__screenshots__/
