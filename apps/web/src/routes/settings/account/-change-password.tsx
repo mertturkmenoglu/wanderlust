@@ -4,7 +4,6 @@ import {
 	AlertDialog,
 	AlertDialogCancel,
 	AlertDialogContent,
-	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
@@ -12,19 +11,30 @@ import {
 } from '@wanderlust/ui/components/alert-dialog';
 import { Button } from '@wanderlust/ui/components/button';
 import { FieldGroup } from '@wanderlust/ui/components/field';
+import {
+	InputGroup,
+	InputGroupInput,
+} from '@wanderlust/ui/components/input-group';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { cmp } from '@/components/form';
+import { useFormElement } from '@/components/form';
+import { PasswordShow } from '@/components/form/password-show';
 import { authClient } from '@/lib/auth';
-import { changePasswordSchema, type FormInput } from './-hooks';
+import {
+	changePasswordSchema,
+	type FormInput,
+	usePasswordState,
+} from './-hooks';
 
 export function ChangePassword({
 	hasEmailProvider,
 }: {
 	hasEmailProvider: boolean;
 }) {
+	const [show, setShow] = usePasswordState();
+
 	const [open, setOpen] = useState(false);
 
 	const form = useForm({
@@ -51,6 +61,8 @@ export function ChangePassword({
 		},
 	});
 
+	const { Element } = useFormElement(form.control);
+
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
 			<AlertDialogTrigger
@@ -70,63 +82,79 @@ export function ChangePassword({
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Change Password</AlertDialogTitle>
-					<AlertDialogDescription>
-						<form
-							id="change-password-form"
-							onSubmit={form.handleSubmit((data) => {
-								mutation.mutate({
-									body: data,
-								});
-							})}
-						>
-							<FieldGroup className="gap-4">
-								<cmp.Password
-									name="currentPassword"
-									control={form.control}
-									elements={{
-										input: {
-											placeholder: 'Current Password',
-											autoComplete: 'current-password',
-										},
-										label: {
-											children: 'Current Password',
-										},
-									}}
-								/>
-
-								<cmp.Password
-									name="newPassword"
-									control={form.control}
-									elements={{
-										input: {
-											placeholder: 'New Password',
-											autoComplete: 'new-password',
-										},
-										label: {
-											children: 'New Password',
-										},
-									}}
-									multipleErrors={true}
-								/>
-
-								<cmp.Password
-									name="confirmPassword"
-									control={form.control}
-									elements={{
-										input: {
-											placeholder: 'Confirm Password',
-											autoComplete: 'new-password',
-										},
-										label: {
-											children: 'Confirm Password',
-										},
-									}}
-									multipleErrors={true}
-								/>
-							</FieldGroup>
-						</form>
-					</AlertDialogDescription>
 				</AlertDialogHeader>
+				<form
+					id="change-password-form"
+					onSubmit={form.handleSubmit((data) => {
+						mutation.mutate({
+							body: data,
+						});
+					})}
+				>
+					<FieldGroup className="gap-4">
+						<Element
+							name="currentPassword"
+							label="Current Password"
+							multipleErrors
+						>
+							{(r, id) => (
+								<InputGroup>
+									<InputGroupInput
+										id={id}
+										placeholder="Current Password"
+										aria-invalid={r.fieldState.invalid}
+										type={show.current ? 'text' : 'password'}
+										{...r.field}
+									/>
+									<PasswordShow
+										show={show.current}
+										onShowChange={() => setShow({ type: 'current' })}
+									/>
+								</InputGroup>
+							)}
+						</Element>
+
+						<Element name="newPassword" label="New Password" multipleErrors>
+							{(r, id) => (
+								<InputGroup>
+									<InputGroupInput
+										id={id}
+										placeholder="New Password"
+										aria-invalid={r.fieldState.invalid}
+										type={show.new ? 'text' : 'password'}
+										{...r.field}
+									/>
+									<PasswordShow
+										show={show.new}
+										onShowChange={() => setShow({ type: 'new' })}
+									/>
+								</InputGroup>
+							)}
+						</Element>
+
+						<Element
+							name="confirmPassword"
+							label="Confirm Password"
+							multipleErrors
+						>
+							{(r, id) => (
+								<InputGroup>
+									<InputGroupInput
+										id={id}
+										placeholder="Confirm Password"
+										aria-invalid={r.fieldState.invalid}
+										type={show.confirm ? 'text' : 'password'}
+										{...r.field}
+									/>
+									<PasswordShow
+										show={show.confirm}
+										onShowChange={() => setShow({ type: 'confirm' })}
+									/>
+								</InputGroup>
+							)}
+						</Element>
+					</FieldGroup>
+				</form>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
 					<Button
