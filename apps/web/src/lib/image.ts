@@ -1,5 +1,7 @@
+const isBrowser = globalThis.window !== undefined;
+
 export function userImage(s: string | null): string {
-	if (globalThis.window !== undefined) {
+	if (isBrowser) {
 		if (s === null) {
 			return `${globalThis.window.location.origin}/profile.png`;
 		}
