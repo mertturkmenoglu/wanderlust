@@ -22,6 +22,7 @@
 		"@wanderlust/db": "workspace:*",
 		"@wanderlust/jobs": "workspace:*",
 		"@wanderlust/uid": "workspace:*",
+		"@sindresorhus/slugify": "catalog:",
 		"better-auth": "catalog:",
 		"inversify": "catalog:",
 		"ioredis": "^5.11.1",

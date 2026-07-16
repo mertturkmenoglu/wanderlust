@@ -9,11 +9,12 @@ import { ConfigService, type TConfigService } from '@wanderlust/config';
 import * as schema from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
-import { nanoid } from '@wanderlust/uid';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, bearer, multiSession, openAPI } from 'better-auth/plugins';
 import { inject, injectable } from 'inversify';
+import { z } from 'zod';
+import { generateUsernameFromEmail } from './username';
 
 @injectable()
 export class AuthService {
@@ -87,6 +88,12 @@ function init(
 				username: {
 					type: 'string',
 					input: true,
+					validator: {
+						input: z.string().regex(/^[a-zA-Z]\w{3,31}$/, {
+							message:
+								'Username must start with a letter and contain only alphanumeric characters and underscores',
+						}),
+					},
 				},
 				banner: {
 					type: 'string',
@@ -157,7 +164,7 @@ function init(
 						email: profile.email,
 						image: profile.picture,
 						name: profile.name,
-						username: profile.email.split('@')[0] ?? nanoid(10),
+						username: generateUsernameFromEmail(profile.email),
 					};
 				},
 			},
@@ -171,7 +178,7 @@ function init(
 						email: profile.email ?? '',
 						image: profile.picture.data.url,
 						name: profile.name,
-						username: profile.email?.split('@')[0] ?? nanoid(10),
+						username: generateUsernameFromEmail(profile.email ?? ''),
 					};
 				},
 			},
