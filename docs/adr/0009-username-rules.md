@@ -1,0 +1,37 @@
+---
+id: 9
+state: accepted
+created: 2026-07-16
+updated: 2026-07-16
+supersedes:
+superseded-by:
+domains:
+  - database
+  - api
+  - auth
+  - web
+---
+
+# ADR-0009: Username Rules
+
+## Status
+Accepted
+
+## Context
+
+`username` column in the `users` table must follow these rules:
+
+- Must be a string.
+- Cannot be shorter than 4 characters.
+- Cannot be longer than 20 characters.
+- Can only include A-Z, a-z, 0-9, and underscores (`_`).
+- Cannot include double underscores (`__`).
+- Cannot start or end with an underscore (`_`).
+- Cannot start with a number.
+- Cannot be a reserved username. (case insensitively compared)
+- Cannot be a username that is already taken by another user.
+
+## Decision
+Updated `packages/auth` package with commit `6793f456adac1b9eb8a7e33011b78a6be5b55d09` to enforce the above rules.
+
+## Consequences
