@@ -5,5 +5,5 @@ export const seo = createMetadataGenerator({
 		default: 'Wanderlust',
 		template: '%s | Wanderlust',
 	},
-	baseUrl: globalThis?.location.origin ?? 'http://localhost:3000',
+	baseUrl: 'http://localhost:3000',
 });
