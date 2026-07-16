@@ -60,6 +60,7 @@
 		"check-types": "turbo check-types",
 		"dev": "turbo dev",
 		"test": "vitest",
+		"test:headless": "vitest --browser.headless",
 		"knip": "bunx knip --workspace '!apps/admin'",
 		"sort-package-json": "npx sort-package-json apps/*/package.json packages/*/package.json package.json",
 		"wl": "bun run --cwd ./apps/cli cli"
