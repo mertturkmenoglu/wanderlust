@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren, useState } from 'react';
+import React, { type PropsWithChildren, useMemo } from 'react';
 import { createStore, type ExtractState, useStore } from 'zustand';
 import { combine } from 'zustand/middleware';
 import type { Place } from './types';
@@ -34,7 +34,7 @@ type PlaceStoreApi = ReturnType<typeof createPlaceStore>;
 const Context = React.createContext<PlaceStoreApi | null>(null);
 
 export function PlaceStoreProvider({ children, place, meta }: Props) {
-	const [store] = useState(() => createPlaceStore(place, meta));
+	const store = useMemo(() => createPlaceStore(place, meta), [place, meta]);
 	return <Context.Provider value={store}>{children}</Context.Provider>;
 }
 
