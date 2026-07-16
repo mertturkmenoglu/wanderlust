@@ -125,3 +125,25 @@ export function useHasProvider(provider: 'google' | 'facebook' | 'credential') {
 	const providers = (accounts.data ?? []).map((acc) => acc.providerId);
 	return providers.includes(provider);
 }
+
+type ReducerState = {
+	current: boolean;
+	new: boolean;
+	confirm: boolean;
+};
+
+export function usePasswordState() {
+	return useReducer(
+		(state: ReducerState, action: { type: keyof ReducerState }) => {
+			return {
+				...state,
+				[action.type]: !state[action.type],
+			};
+		},
+		{
+			current: false,
+			new: false,
+			confirm: false,
+		},
+	);
+}
