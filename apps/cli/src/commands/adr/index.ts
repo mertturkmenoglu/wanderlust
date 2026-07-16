@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { command, string } from '@drizzle-team/brocli';
-import slugify from '@sindresorhus/slugify';
 import consola from 'consola';
 import { Pipeline } from '@/lib/pipeline';
 
@@ -19,21 +18,6 @@ export const adr = command({
 			values: {},
 		})
 			.addStep({
-				name: 'Formatting title',
-				fn: async () => {
-					const title = opts.title.trim().toLowerCase();
-					const titleAsTitleCase = title
-						.split(' ')
-						.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-						.join(' ');
-
-					return {
-						title,
-						titleAsTitleCase,
-					};
-				},
-			})
-			.addStep({
 				name: 'Ensuring ADR directory exists',
 				fn: async () => {
 					if (!fs.existsSync(adrDirPath)) {
@@ -48,64 +32,84 @@ export const adr = command({
 					const adrFiles = allFiles.filter(
 						(file) => file.endsWith('.md') && /^[0-9]{4}\S*\.md$/.test(file),
 					);
-					const lastAdrFile = adrFiles.at(-1);
+					const last = adrFiles.at(-1);
 
 					return {
-						lastAdrFile,
+						last,
 					};
 				},
 			})
 			.addStep({
-				name: 'Getting new ADR filename and number',
+				name: 'Getting next number',
 				fn: async (ctx) => {
-					const [newAdrFilename, newAdrNumber] = getNewAdrFilenameAndNumber(
-						ctx.title,
-						ctx.lastAdrFile,
-					);
+					const next = getNextNumber(ctx.last);
 
 					return {
-						newAdrFilename,
-						newAdrNumber,
+						next,
+					};
+				},
+			})
+			.addStep({
+				name: 'Getting new ADR filename',
+				fn: async (ctx) => {
+					const nextFile = `${pad(ctx.next)}.md`;
+
+					return {
+						nextFile,
 					};
 				},
 			})
 			.addStep({
 				name: 'Read ADR template file',
 				fn: async () => {
-					const adrTemplateFilepath = path.join(adrDirPath, 'template.md');
-					const templateContent = fs.readFileSync(adrTemplateFilepath, 'utf-8');
+					const fp = path.join(adrDirPath, 'template.md');
+					const template = fs.readFileSync(fp, 'utf-8');
 
 					return {
-						templateContent,
+						template,
 					};
 				},
 			})
 			.addStep({
 				name: 'Create ADR file content',
-				fn: async ({ templateContent, newAdrNumber, titleAsTitleCase }) => {
-					const newAdrContent = templateContent.replace(
-						'# ADR-0001: <short title in Title Case>',
-						`# ADR-${newAdrNumber.toString().padStart(4, '0')}: ${titleAsTitleCase}`,
-					);
+				fn: async ({ template, next }) => {
+					const datestr = new Date().toISOString().split('T')[0];
+
+					if (!datestr) {
+						throw new Error('Failed to get current date in YYYY-MM-DD format.');
+					}
+
+					const padded = pad(next);
+
+					const newContent = template
+						.replaceAll('{id}', next.toString())
+						.replaceAll('{state}', 'accepted')
+						.replaceAll('{created}', datestr)
+						.replaceAll('{updated}', datestr)
+						.replaceAll('{title}', opts.title)
+						.replaceAll('{paddedId}', padded)
+						.replaceAll('{clDescription}', 'Created');
 
 					return {
-						newAdrContent,
+						newContent,
 					};
 				},
 			})
 			.addStep({
 				name: 'Create ADR file',
-				fn: async (ctx) => {
-					const newAdrFilepath = path.join(adrDirPath, ctx.newAdrFilename);
-
-					fs.writeFileSync(newAdrFilepath, ctx.newAdrContent, 'utf-8');
+				fn: async ({ nextFile, newContent }) => {
+					fs.writeFileSync(
+						path.join(adrDirPath, nextFile),
+						newContent,
+						'utf-8',
+					);
 				},
 			})
 			.addStep({
 				name: 'Finalizing',
-				fn: async ({ newAdrFilename }) => {
+				fn: async ({ nextFile }) => {
 					consola.success(
-						`ADR creation process completed successfully. New ADR file: ${newAdrFilename}`,
+						`ADR creation process completed successfully. New ADR file: ${nextFile}`,
 					);
 				},
 			});
@@ -114,31 +118,30 @@ export const adr = command({
 	},
 });
 
-function getNewAdrFilenameAndNumber(
-	title: string,
-	lastAdr?: string,
-): [string, number] {
-	const slugifiedTitle = slugify(title, { separator: '-' });
-
-	if (lastAdr === undefined) {
-		return [`0001-${slugifiedTitle}.md`, 1];
+function getNextNumber(last?: string): number {
+	if (last === undefined) {
+		return 1;
 	}
 
-	const [numstr] = lastAdr.split('-');
+	const numstr = last.split('.')[0];
 
 	if (!numstr) {
-		throw new Error(`Invalid last ADR file name: ${lastAdr}`);
+		throw new Error(
+			`Invalid last ADR file name, expected a number at the start: ${last}`,
+		);
 	}
 
 	const lastAdrNumber = Number.parseInt(numstr, 10);
 
 	if (Number.isNaN(lastAdrNumber)) {
 		throw new Error(
-			`Invalid last ADR file name, expected a number at the start: ${lastAdr}`,
+			`Invalid last ADR file name, expected a number at the start: ${last}`,
 		);
 	}
 
-	const newAdrNumber = lastAdrNumber + 1;
-	const newAdrFileName = `${newAdrNumber.toString().padStart(4, '0')}-${slugifiedTitle}.md`;
-	return [newAdrFileName, newAdrNumber];
+	return lastAdrNumber + 1;
+}
+
+function pad(adr: number): string {
+	return adr.toString().padStart(4, '0');
 }
