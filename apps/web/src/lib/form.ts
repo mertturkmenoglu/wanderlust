@@ -1,10 +1,18 @@
 import type { MultipleFieldErrors } from 'react-hook-form';
 
 function lengthTracker(s: string | undefined, max: number): string {
+	if (max < 0) {
+		throw new Error('Max length cannot be negative');
+	}
+
 	return `${s?.length ?? 0}/${max}`;
 }
 
 function truncateWithEllipses(s: string, max: number): string {
+	if (max < 0) {
+		throw new Error('Max length cannot be negative');
+	}
+
 	return s.length > max ? `${s.slice(0, max)}...` : s;
 }
 
