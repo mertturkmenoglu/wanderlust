@@ -1,7 +1,7 @@
-import type { Filter } from '@wanderlust/common';
+import type { Types } from '@wanderlust/common';
 
 export function transformFiltersToConditions(
-	filters: Filter.Info['filters'] | undefined,
+	filters: Types.Filter.Info['filters'] | undefined,
 ): Record<string, Record<string, unknown>>[] {
 	if (!filters) {
 		return [];

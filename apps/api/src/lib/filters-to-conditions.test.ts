@@ -1,8 +1,8 @@
-import type { Filter as FilterNs } from '@wanderlust/common';
+import type { Types } from '@wanderlust/common';
 import { describe, expect, test } from 'vitest';
 import { transformFiltersToConditions } from './filters-to-conditions';
 
-type Filter = FilterNs.Info['filters'][number];
+type Filter = Types.Filter.Info['filters'][number];
 
 describe('filtersToConditions', () => {
 	test('should return empty array given undefined filters', () => {
