@@ -1,12 +1,9 @@
-import type { TDatabaseService } from '@wanderlust/db';
 import type {
 	PgAsyncPreparedQuery,
 	PreparedQueryConfig,
 } from 'drizzle-orm/pg-core';
 import type z from 'zod';
-import type { Tx } from './transactions';
-
-type DbOrTx = TDatabaseService | Tx;
+import type { DbOrTx } from './transactions';
 
 export type DefinePreparedStatementOptions<
 	T extends PreparedQueryConfig,
