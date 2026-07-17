@@ -15,9 +15,9 @@ import { admin, bearer, multiSession, openAPI } from 'better-auth/plugins';
 import { inject, injectable } from 'inversify';
 import { additionalFields } from './additional-fields';
 import { hookAfterCreateUser } from './hooks';
-import { mapFacebookProfileToUser, mapGoogleProfileToUser } from './oauth';
 import { sendResetPassword } from './password-reset';
 import { session } from './session';
+import { generateUsernameFromEmail } from './username';
 
 @injectable()
 export class AuthService {
@@ -101,14 +101,28 @@ function init(
 				clientId: process.env.GOOGLE_CLIENT_ID as string,
 				clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 				prompt: 'select_account',
-				mapProfileToUser: mapGoogleProfileToUser,
+				mapProfileToUser: (profile) => {
+					return {
+						email: profile.email,
+						image: profile.picture,
+						name: profile.name,
+						username: generateUsernameFromEmail(profile.email),
+					};
+				},
 			},
 			facebook: {
 				clientId: process.env.FACEBOOK_CLIENT_ID as string,
 				clientSecret: process.env.FACEBOOK_CLIENT_SECRET as string,
 				prompt: 'select_account',
 				scope: ['email', 'public_profile'],
-				mapProfileToUser: mapFacebookProfileToUser,
+				mapProfileToUser: (profile) => {
+					return {
+						email: profile.email ?? '',
+						image: profile.picture.data.url,
+						name: profile.name,
+						username: generateUsernameFromEmail(profile.email ?? ''),
+					};
+				},
 			},
 		},
 		advanced: {
@@ -127,3 +141,5 @@ function init(
 }
 
 export type TAuthService = ReturnType<typeof init>;
+
+export * from './username';
