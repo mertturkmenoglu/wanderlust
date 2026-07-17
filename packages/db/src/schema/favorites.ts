@@ -5,7 +5,10 @@ import { places } from './places';
 export const favorites = p.pgTable(
 	'favorites',
 	{
-		id: p.bigint({ mode: 'number' }).generatedAlwaysAsIdentity().primaryKey(),
+		id: p
+			.text()
+			.primaryKey()
+			.$defaultFn(() => Bun.randomUUIDv7()),
 		placeId: p
 			.text()
 			.notNull()
