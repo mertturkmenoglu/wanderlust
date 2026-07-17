@@ -1,12 +1,12 @@
 import type { TRedisService } from '@wanderlust/cache';
-import { $insert } from '@wanderlust/common';
+import { Types } from '@wanderlust/common';
 import type { TDatabaseService } from '@wanderlust/db';
-import * as schema from '@wanderlust/db';
+import { schema } from '@wanderlust/db';
 import { Queue, Worker } from 'bullmq';
 import z from 'zod';
 
 const schemas = z.object({
-	'create-notification': $insert.notification,
+	'create-notification': Types.Notifications.$Insert.Notification,
 });
 
 type JobName = keyof z.infer<typeof schemas>;
