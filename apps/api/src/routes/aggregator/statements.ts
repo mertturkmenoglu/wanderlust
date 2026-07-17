@@ -14,14 +14,7 @@ const queryColumnsAndRelations = {
 		accolades: {
 			columns: {
 				id: true,
-			},
-			with: {
-				accolade: {
-					columns: {
-						id: true,
-						title: true,
-					},
-				},
+				title: true,
 			},
 		},
 		assets: {

@@ -1,10 +1,10 @@
 import { trace } from '@opentelemetry/api';
-import { Pagination } from '@wanderlust/common';
-import type { reviews as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Reviews } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
+	schema,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
@@ -25,7 +25,7 @@ export class ReviewsRepository {
 		this.db = db.get();
 	}
 
-	async get(data: dto.GetInput) {
+	async get(data: Reviews.dto.GetInput) {
 		const result = await this.db.query.reviews.findFirst({
 			where: {
 				id: data.id,
@@ -40,7 +40,12 @@ export class ReviewsRepository {
 						image: true,
 					},
 				},
-				assets: true,
+				assets: {
+					where: {
+						entityType: 'review',
+						entityId: data.id,
+					},
+				},
 			},
 		});
 
@@ -138,7 +143,7 @@ export class ReviewsRepository {
 		return results;
 	}
 
-	async _delete(userId: string, data: dto.DeleteInput) {
+	async _delete(userId: string, data: Reviews.dto.DeleteInput) {
 		return await this.db.transaction(async (tx) => {
 			const [deleted] = await tx
 				.delete(schema.reviews)
@@ -177,8 +182,8 @@ export class ReviewsRepository {
 		});
 	}
 
-	async listByUsername(data: dto.ListByUsernameInput) {
-		const offset = Pagination.getOffset(data);
+	async listByUsername(data: Reviews.dto.ListByUsernameInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const user = await this.db.query.users.findFirst({
 			where: {
@@ -222,12 +227,12 @@ export class ReviewsRepository {
 
 		return {
 			reviews: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async listByPlaceId(data: dto.ListByPlaceIdInput) {
-		const offset = Pagination.getOffset(data);
+	async listByPlaceId(data: Reviews.dto.ListByPlaceIdInput) {
+		const offset = Types.Pagination.getOffset(data);
 		const min = data.minRating || 0;
 		const max = data.maxRating || 5;
 		let sortBy = data.sortBy || 'createdAt';
@@ -280,11 +285,11 @@ export class ReviewsRepository {
 
 		return {
 			reviews: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async getRatings(data: dto.GetRatingsInput) {
+	async getRatings(data: Reviews.dto.GetRatingsInput) {
 		const res = await this.db
 			.select({
 				rating: schema.reviews.rating,
@@ -313,8 +318,8 @@ export class ReviewsRepository {
 	}
 
 	async listAssetsByPlaceId(
-		data: dto.ListAssetsByPlaceIdInput,
-	): Promise<dto.ListAssetsByPlaceIdOutput> {
+		data: Reviews.dto.ListAssetsByPlaceIdInput,
+	): Promise<Reviews.dto.ListAssetsByPlaceIdOutput> {
 		const results = await this.db
 			.select({
 				asset: schema.assets,
@@ -336,7 +341,7 @@ export class ReviewsRepository {
 		};
 	}
 
-	async like(userId: string, data: dto.LikeInput) {
+	async like(userId: string, data: Reviews.dto.LikeInput) {
 		const result = await this.db.transaction(async (tx) => {
 			const thisUser = await tx.query.users.findFirst({
 				where: {
@@ -454,8 +459,8 @@ export class ReviewsRepository {
 		return result;
 	}
 
-	async listLikes(_userId: string, data: dto.ListLikesInput) {
-		const offset = Pagination.getOffset(data);
+	async listLikes(_userId: string, data: Reviews.dto.ListLikesInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const result = await this.db.query.reviewLikes.findMany({
 			where: {
@@ -485,7 +490,7 @@ export class ReviewsRepository {
 
 		return {
 			users: result.map((like) => like.user),
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 

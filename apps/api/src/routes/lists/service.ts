@@ -1,4 +1,4 @@
-import type { lists as dto } from '@wanderlust/contract';
+import type { Lists } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { TraceAll } from '@/lib/tracer';
@@ -14,8 +14,8 @@ export class ListsService {
 
 	async listAll(
 		userId: string,
-		data: dto.ListAllInput,
-	): Promise<dto.ListAllOutput> {
+		data: Lists.dto.ListInput,
+	): Promise<Lists.dto.ListOutput> {
 		const result = await this.repo.listAll(userId, data);
 
 		return {
@@ -24,7 +24,9 @@ export class ListsService {
 		};
 	}
 
-	async listPublic(data: dto.ListPublicInput): Promise<dto.ListPublicOutput> {
+	async listPublic(
+		data: Lists.dto.ListPublicInput,
+	): Promise<Lists.dto.ListPublicOutput> {
 		const result = await this.repo.listPublic(data);
 
 		return {
@@ -33,7 +35,10 @@ export class ListsService {
 		};
 	}
 
-	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string,
+		data: Lists.dto.GetInput,
+	): Promise<Lists.dto.GetOutput> {
 		const result = await this.repo.get(userId, data);
 
 		return {
@@ -43,8 +48,8 @@ export class ListsService {
 
 	async checkStatus(
 		userId: string,
-		data: dto.CheckStatusInput,
-	): Promise<dto.CheckStatusOutput> {
+		data: Lists.dto.ListPlaceSaveStatInput,
+	): Promise<Lists.dto.ListPlaceSaveStatOutput> {
 		const result = await this.repo.checkStatus(userId, data);
 
 		return {
@@ -54,8 +59,8 @@ export class ListsService {
 
 	async create(
 		userId: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Lists.dto.CreateInput,
+	): Promise<Lists.dto.CreateOutput> {
 		const result = await this.repo.create(userId, data);
 
 		if (result.list.isPublic) {
@@ -78,8 +83,8 @@ export class ListsService {
 
 	async update(
 		userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Lists.dto.UpdateInput,
+	): Promise<Lists.dto.UpdateOutput> {
 		const result = await this.repo.update(userId, data);
 
 		return {
@@ -89,41 +94,21 @@ export class ListsService {
 
 	async _delete(
 		userId: string,
-		data: dto.DeleteInput,
-	): Promise<dto.DeleteOutput> {
+		data: Lists.dto.DeleteInput,
+	): Promise<Lists.dto.DeleteOutput> {
 		await this.repo._delete(userId, data);
 
 		return {};
 	}
 
-	async appendItem(
-		userId: string,
-		data: dto.AppendItemInput,
-	): Promise<dto.AppendItemOutput> {
-		const result = await this.repo.appendItem(userId, data);
-
-		return {
-			item: result.item,
-		};
-	}
-
 	async updateItems(
 		userId: string,
-		data: dto.UpdateItemsInput,
-	): Promise<dto.UpdateItemsOutput> {
+		data: Lists.dto.ItemsUpdateInput,
+	): Promise<Lists.dto.ItemsUpdateOutput> {
 		const result = await this.repo.updateItems(userId, data);
 
 		return {
 			list: result.list,
 		};
-	}
-
-	async removeItem(
-		userId: string,
-		data: dto.RemoveItemInput,
-	): Promise<dto.RemoveItemOutput> {
-		await this.repo.removeItem(userId, data);
-
-		return {};
 	}
 }

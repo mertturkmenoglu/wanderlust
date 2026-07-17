@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { categories } from '@wanderlust/contract';
+import { Categories } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -13,7 +13,7 @@ import { CategoriesService } from './service';
 export const module = defineModule({
 	exports: [CategoriesService, CategoriesRepository],
 	router: () => {
-		const os = implement(categories.contract)
+		const os = implement(Categories.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);

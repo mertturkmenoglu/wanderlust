@@ -1,6 +1,5 @@
-import type { cities as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import type { Cities } from '@wanderlust/contract';
+import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -47,7 +46,7 @@ export class CitiesRepository {
 		});
 	}
 
-	async get(data: dto.GetInput) {
+	async get(data: Cities.dto.GetInput) {
 		const city = await this.db.query.cities.findFirst({
 			where: {
 				id: data.id,
@@ -59,7 +58,7 @@ export class CitiesRepository {
 		return city;
 	}
 
-	async create(data: dto.CreateInput) {
+	async create(data: Cities.dto.CreateInput) {
 		const [result] = await this.db
 			.insert(schema.cities)
 			.values(data)
@@ -70,7 +69,7 @@ export class CitiesRepository {
 		return result;
 	}
 
-	async update(data: dto.UpdateInput) {
+	async update(data: Cities.dto.UpdateInput) {
 		const { id, ...updateData } = data;
 		const [result] = await this.db
 			.update(schema.cities)
@@ -85,7 +84,7 @@ export class CitiesRepository {
 		return result;
 	}
 
-	async _delete(data: dto.DeleteInput) {
+	async delete(data: Cities.dto.DeleteInput) {
 		await this.db.delete(schema.cities).where(eq(schema.cities.id, data.id));
 	}
 }

@@ -1,4 +1,4 @@
-import type { accolades as dto } from '@wanderlust/contract';
+import type { Accolades } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import { AccoladesRepository } from './repository';
@@ -13,14 +13,14 @@ export class AccoladesService {
 
 	async create(
 		userId: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Accolades.dto.CreateInput,
+	): Promise<Accolades.dto.CreateOutput> {
 		const result = await this.accoladesRepository.create(userId, data);
 
 		return result;
 	}
 
-	async list(data: dto.ListInput): Promise<dto.ListOutput> {
+	async list(data: Accolades.dto.ListInput): Promise<Accolades.dto.ListOutput> {
 		const result = await this.accoladesRepository.list(data);
 
 		return result;
@@ -28,32 +28,32 @@ export class AccoladesService {
 
 	async _delete(
 		userId: string,
-		data: dto.DeleteInput,
-	): Promise<dto.DeleteOutput> {
+		data: Accolades.dto.DeleteInput,
+	): Promise<Accolades.dto.DeleteOutput> {
 		await this.accoladesRepository._delete(userId, data);
 
 		return {};
 	}
 
-	async get(data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(data: Accolades.dto.GetInput): Promise<Accolades.dto.GetOutput> {
 		const result = await this.accoladesRepository.get(data);
 
 		return result;
 	}
 
-	async getPlaces(
+	async listPlaces(
 		userId: string | null,
-		data: dto.GetPlacesInput,
-	): Promise<dto.GetPlacesOutput> {
-		const result = await this.accoladesRepository.getPlaces(userId, data);
+		data: Accolades.dto.ListPlacesInput,
+	): Promise<Accolades.dto.ListPlacesOutput> {
+		const result = await this.accoladesRepository.listPlaces(userId, data);
 
 		return result;
 	}
 
 	async update(
 		userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Accolades.dto.UpdateInput,
+	): Promise<Accolades.dto.UpdateOutput> {
 		const result = await this.accoladesRepository.update(userId, data);
 
 		return result;

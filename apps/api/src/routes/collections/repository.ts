@@ -1,18 +1,20 @@
-import { Pagination } from '@wanderlust/common';
-import type { collections as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Collections } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
+	schema,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
-import { and, eq, gt, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { transformFiltersToConditions } from '@/lib/filters-to-conditions';
 import { invariant } from '@/lib/invariant';
+import { areSetsEqual } from '@/lib/set-equality';
 import { TraceAll } from '@/lib/tracer';
+import type { DbOrTx } from '@/lib/transactions';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 
@@ -29,8 +31,11 @@ export class CollectionsRepository {
 		this.db = db.get();
 	}
 
-	async list(_userId: string, data: dto.ListInput): Promise<dto.ListOutput> {
-		const offset = Pagination.getOffset(data);
+	async list(
+		_userId: string,
+		data: Collections.dto.ListInput,
+	): Promise<Collections.dto.ListOutput> {
+		const offset = Types.Pagination.getOffset(data);
 		const sortBy = data.sort?.field ?? 'createdAt';
 		const filters = data.filter?.filters ?? [];
 
@@ -49,17 +54,14 @@ export class CollectionsRepository {
 
 		return {
 			collections: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async getById(
-		userId: string | null,
-		data: dto.GetInput,
-	): Promise<dto.GetOutput> {
-		const result = await this.db.query.collections.findFirst({
+	private async findById(userId: string | null, id: string, tx: DbOrTx) {
+		const result = await tx.query.collections.findFirst({
 			where: {
-				id: data.id,
+				id,
 			},
 			with: {
 				items: {
@@ -73,7 +75,7 @@ export class CollectionsRepository {
 			},
 		});
 
-		invariant(result, 'NOT_FOUND', `Collection with ID ${data.id} not found`);
+		invariant(result, 'NOT_FOUND', `Collection with ID ${id} not found`);
 
 		const placeIds = unique(result.items.map((item) => item.placeId));
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
@@ -89,10 +91,17 @@ export class CollectionsRepository {
 		};
 	}
 
+	async getById(
+		userId: string | null,
+		data: Collections.dto.GetInput,
+	): Promise<Collections.dto.GetOutput> {
+		return this.findById(userId, data.id, this.db);
+	}
+
 	async create(
 		_userId: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Collections.dto.CreateInput,
+	): Promise<Collections.dto.CreateOutput> {
 		const [result] = await this.db
 			.insert(schema.collections)
 			.values({
@@ -109,10 +118,10 @@ export class CollectionsRepository {
 		};
 	}
 
-	async _delete(
+	async delete(
 		_userId: string,
-		data: dto.DeleteInput,
-	): Promise<dto.DeleteOutput> {
+		data: Collections.dto.DeleteInput,
+	): Promise<Collections.dto.DeleteOutput> {
 		const result = await this.db
 			.delete(schema.collections)
 			.where(eq(schema.collections.id, data.id));
@@ -128,8 +137,8 @@ export class CollectionsRepository {
 
 	async update(
 		_userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Collections.dto.UpdateInput,
+	): Promise<Collections.dto.UpdateOutput> {
 		const [result] = await this.db
 			.update(schema.collections)
 			.set({
@@ -146,10 +155,10 @@ export class CollectionsRepository {
 		};
 	}
 
-	async appendItem(
-		_userId: string | null,
-		data: dto.ItemsAppendInput,
-	): Promise<dto.ItemsAppendOutput> {
+	async updateItems(
+		userId: string,
+		data: Collections.dto.ItemsUpdateInput,
+	): Promise<Collections.dto.ItemsUpdateOutput> {
 		const result = await this.db.transaction(async (tx) => {
 			const collection = await tx.query.collections.findFirst({
 				where: {
@@ -163,218 +172,108 @@ export class CollectionsRepository {
 				`Collection with id ${data.id} not found`,
 			);
 
-			const existingRow = await tx.query.collectionItems.findFirst({
-				where: {
+			if (data.update.op === 'add') {
+				const existingItems = await tx.query.collectionItems.findMany({
+					where: {
+						placeId: {
+							in: data.update.items,
+						},
+					},
+				});
+
+				invariant(
+					existingItems.length === 0,
+					'CONFLICT',
+					'Some items already exist in the collection',
+				);
+
+				const lastIndex = await this.getLastIndexForCollection(tx, data.id);
+
+				const newItems = data.update.items.map((placeId, index) => ({
 					collectionId: data.id,
-					placeId: data.placeId,
-				},
-			});
+					placeId,
+					index: lastIndex + 1 + index,
+				}));
 
-			invariant(
-				!existingRow,
-				'CONFLICT',
-				`Item with place id ${data.placeId} already exists in collection ${data.id}`,
-			);
+				await tx.insert(schema.collectionItems).values(newItems);
 
-			const lastItem = await tx.query.collectionItems.findFirst({
-				where: {
-					collectionId: data.id,
-				},
-				orderBy: {
-					index: 'desc',
-				},
-				columns: {
-					index: true,
-				},
-			});
+				return this.findById(userId, data.id, tx);
+			}
 
-			const lastIndex = lastItem ? lastItem.index : -1;
-			const newIndex = lastIndex + 1;
+			if (data.update.op === 'remove') {
+				const deleteResult = await tx
+					.delete(schema.collectionItems)
+					.where(
+						and(
+							eq(schema.collectionItems.collectionId, data.id),
+							inArray(schema.collectionItems.placeId, data.update.items),
+						),
+					)
+					.returning();
 
-			const [inserted] = await tx
-				.insert(schema.collectionItems)
-				.values({
-					collectionId: data.id,
-					placeId: data.placeId,
-					index: newIndex,
-				})
-				.returning();
+				const ok = areSetsEqual(
+					new Set([...deleteResult.map((x) => x.placeId)]),
+					new Set(data.update.items),
+				);
 
-			invariant(
-				inserted,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to insert collection item',
-			);
+				invariant(
+					ok,
+					'NOT_FOUND',
+					'Some items to remove were not found in the collection',
+				);
 
-			const item = await tx.query.collectionItems.findFirst({
-				where: {
-					collectionId: data.id,
-					placeId: data.placeId,
-				},
-				with: {
-					place: $includes.place,
-				},
-			});
+				await tx
+					.update(schema.collectionItems)
+					.set({
+						index: sql`row_number() over (order by index) - 1`,
+					})
+					.where(eq(schema.collectionItems.collectionId, data.id));
 
-			invariant(
-				item,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to retrieve appended collection item',
-			);
+				return this.findById(userId, data.id, tx);
+			}
 
-			return {
-				...item,
-				meta: {
-					isFavorite: false,
-				},
-			};
+			if (data.update.op === 'move') {
+				const existingItems = await tx.query.collectionItems.findMany({
+					where: {
+						collectionId: data.id,
+					},
+				});
+
+				const existingPlaceIds = existingItems.map((item) => item.placeId);
+				const inputPlaceIdsSet = new Set(data.update.items);
+				const existingPlaceIdsSet = new Set(existingPlaceIds);
+				const isSameSet =
+					inputPlaceIdsSet.isSupersetOf(existingPlaceIdsSet) &&
+					existingPlaceIdsSet.isSupersetOf(inputPlaceIdsSet);
+
+				invariant(
+					isSameSet,
+					'BAD_REQUEST',
+					'Input place IDs do not match existing collection items place IDs',
+				);
+
+				await tx
+					.update(schema.collectionItems)
+					.set({
+						index: sql`row_number() over (order by array_position(${data.update.items}, place_id)) - 1`,
+					})
+					.where(eq(schema.collectionItems.collectionId, data.id));
+
+				return this.findById(userId, data.id, tx);
+			}
+
+			invariant(false, 'BAD_REQUEST', 'Invalid operation');
 		});
 
 		return {
-			collectionItem: result,
+			collection: result.collection,
 		};
-	}
-
-	async removeItem(
-		_userId: string,
-		data: dto.ItemsRemoveInput,
-	): Promise<dto.ItemsRemoveOutput> {
-		const result = await this.db.transaction(async (tx) => {
-			const existingItem = await tx.query.collectionItems.findFirst({
-				where: {
-					collectionId: data.id,
-					placeId: data.placeId,
-				},
-			});
-
-			invariant(
-				existingItem,
-				'NOT_FOUND',
-				`Collection item with place id ${data.placeId} not found in collection ${data.id}`,
-			);
-
-			const deleteResult = await tx
-				.delete(schema.collectionItems)
-				.where(
-					and(
-						eq(schema.collectionItems.collectionId, data.id),
-						eq(schema.collectionItems.placeId, data.placeId),
-					),
-				);
-
-			invariant(
-				deleteResult.rowCount === 1,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to delete collection item',
-			);
-
-			await tx
-				.update(schema.collectionItems)
-				.set({
-					index: sql`${schema.collectionItems.index} - 1`,
-				})
-				.where(
-					and(
-						eq(schema.collectionItems.collectionId, data.id),
-						gt(schema.collectionItems.index, existingItem.index),
-					),
-				);
-
-			return {};
-		});
-
-		return result;
-	}
-
-	async reorderItems(
-		userId: string,
-		data: dto.ItemsReorderInput,
-	): Promise<dto.ItemsReorderOutput> {
-		const result = await this.db.transaction(async (tx) => {
-			const collection = await tx.query.collections.findFirst({
-				where: {
-					id: data.id,
-				},
-			});
-
-			invariant(
-				collection,
-				'NOT_FOUND',
-				`Collection with id ${data.id} not found`,
-			);
-
-			const existingCollectionItems = await tx.query.collectionItems.findMany({
-				where: {
-					collectionId: data.id,
-				},
-			});
-
-			const existingPlaceIds = existingCollectionItems.map(
-				(item) => item.placeId,
-			);
-			const inputPlaceIdsSet = new Set(data.placeIds);
-			const existingPlaceIdsSet = new Set(existingPlaceIds);
-			const isSameSet =
-				inputPlaceIdsSet.isSupersetOf(existingPlaceIdsSet) &&
-				existingPlaceIdsSet.isSupersetOf(inputPlaceIdsSet);
-
-			invariant(
-				isSameSet,
-				'BAD_REQUEST',
-				'Input place IDs do not match existing collection items place IDs',
-			);
-
-			await tx
-				.delete(schema.collectionItems)
-				.where(eq(schema.collectionItems.collectionId, data.id));
-
-			await tx.insert(schema.collectionItems).values(
-				data.placeIds.map((placeId, index) => ({
-					collectionId: data.id,
-					placeId,
-					index: index,
-				})),
-			);
-
-			const result = await tx.query.collections.findFirst({
-				where: {
-					id: data.id,
-				},
-				with: {
-					items: {
-						orderBy: {
-							index: 'asc',
-						},
-						with: {
-							place: $includes.place,
-						},
-					},
-				},
-			});
-
-			invariant(result, 'NOT_FOUND', `Collection with ID ${data.id} not found`);
-
-			const placeIds = unique(result.items.map((item) => item.placeId));
-			const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
-				userId,
-				placeIds,
-			);
-
-			return {
-				collection: {
-					...result,
-					items: attachFavoriteMetadata(result.items, favoriteIds),
-				},
-			};
-		});
-
-		return result;
 	}
 
 	async listCollectionsForPlace(
 		userId: string | null,
-		data: dto.PlacesListInput,
-	): Promise<dto.PlacesListOutput> {
+		data: Collections.dto.PlacesListInput,
+	): Promise<Collections.dto.PlacesListOutput> {
 		const results = await this.db.query.collectionsPlaces.findMany({
 			where: {
 				placeId: data.placeId,
@@ -411,192 +310,175 @@ export class CollectionsRepository {
 		};
 	}
 
-	async appendCollectionToPlace(
+	async updateCollectionsForPlace(
 		_userId: string,
-		data: dto.PlacesAppendInput,
-	): Promise<dto.PlacesAppendOutput> {
-		const collection = await this.db.transaction(async (tx) => {
-			// Check if the association already exists
-			const existing = await tx.query.collectionsPlaces.findFirst({
+		data: Collections.dto.PlacesUpdateInput,
+	): Promise<Collections.dto.PlacesUpdateOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const place = await tx.query.places.findFirst({
 				where: {
-					collectionId: data.collectionId,
-					placeId: data.placeId,
-				},
-			});
-
-			invariant(
-				!existing,
-				'CONFLICT',
-				`Collection with id ${data.collectionId} is already associated with place ${data.placeId}`,
-			);
-
-			// Fetch the collection to ensure it exists
-			const collection = await tx.query.collections.findFirst({
-				where: {
-					id: data.collectionId,
-				},
-			});
-
-			invariant(
-				collection,
-				'NOT_FOUND',
-				`Collection with id ${data.collectionId} not found`,
-			);
-
-			// Find the last association for the given place to determine the next index
-			const lastAssociation = await tx.query.collectionsPlaces.findFirst({
-				where: {
-					placeId: data.placeId,
-				},
-				orderBy: {
-					index: 'desc',
+					id: data.placeId,
 				},
 				columns: {
-					index: true,
+					id: true,
 				},
 			});
 
-			// If there's no existing association, newIndex will be 0; otherwise, increment the last index by 1
-			const lastIndex = lastAssociation ? lastAssociation.index : -1;
-			const newIndex = lastIndex + 1;
+			invariant(place, 'NOT_FOUND', `Place with id ${data.placeId} not found`);
 
-			const [result] = await tx
-				.insert(schema.collectionsPlaces)
-				.values({
-					collectionId: data.collectionId,
-					placeId: data.placeId,
-					index: newIndex,
-				})
-				.returning();
-
-			invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
-
-			return collection;
-		});
-
-		return {
-			collection,
-		};
-	}
-
-	async reorderCollectionsForPlace(
-		_userId: string,
-		data: dto.PlacesReorderInput,
-	): Promise<dto.PlacesReorderOutput> {
-		const result = await this.db.transaction(async (tx) => {
-			// Find featured collections for the given place
-			const existingAssociations = await tx.query.collectionsPlaces.findMany({
-				where: {
-					placeId: data.placeId,
-				},
-			});
-
-			// Check if the input collection IDs match the existing collection IDs for the place
-			// Create sets for comparison
-			const existingCollectionIds = existingAssociations.map(
-				(assoc) => assoc.collectionId,
-			);
-			const inputCollectionIdsSet = new Set(data.collectionIds);
-			const existingCollectionIdsSet = new Set(existingCollectionIds);
-			const isSameSet =
-				inputCollectionIdsSet.isSupersetOf(existingCollectionIdsSet) &&
-				existingCollectionIdsSet.isSupersetOf(inputCollectionIdsSet);
-
-			invariant(
-				isSameSet,
-				'BAD_REQUEST',
-				'Input collection IDs do not match existing collections for the place',
-			);
-
-			// Delete existing associations for the place
-			await tx
-				.delete(schema.collectionsPlaces)
-				.where(eq(schema.collectionsPlaces.placeId, data.placeId));
-
-			// Insert new associations with the provided order
-			await tx.insert(schema.collectionsPlaces).values(
-				data.collectionIds.map((collectionId, index) => ({
-					collectionId,
-					placeId: data.placeId,
-					index: index,
-				})),
-			);
-
-			// Fetch the collections to return after reordering
-			const collections = await tx.query.collections.findMany({
-				where: {
-					id: {
-						in: data.collectionIds,
+			if (data.update.op === 'add') {
+				const existingAssociations = await tx.query.collectionsPlaces.findMany({
+					where: {
+						placeId: data.placeId,
+						collectionId: {
+							in: data.update.items,
+						},
 					},
-				},
-			});
+				});
 
-			return collections;
+				invariant(
+					existingAssociations.length === 0,
+					'CONFLICT',
+					'Some collections are already associated with the place',
+				);
+
+				const lastAssociation = await tx.query.collectionsPlaces.findFirst({
+					where: {
+						placeId: data.placeId,
+					},
+					orderBy: {
+						index: 'desc',
+					},
+					columns: {
+						index: true,
+					},
+				});
+
+				const lastIndex = lastAssociation ? lastAssociation.index : -1;
+
+				const newAssociations = data.update.items.map(
+					(collectionId, index) => ({
+						collectionId,
+						placeId: data.placeId,
+						index: lastIndex + 1 + index,
+					}),
+				);
+
+				await tx.insert(schema.collectionsPlaces).values(newAssociations);
+
+				return tx.query.collectionsPlaces.findMany({
+					where: {
+						placeId: data.placeId,
+					},
+					with: {
+						collection: {
+							columns: {
+								id: true,
+							},
+						},
+					},
+				});
+			}
+
+			if (data.update.op === 'remove') {
+				const deleteResult = await tx
+					.delete(schema.collectionsPlaces)
+					.where(
+						and(
+							eq(schema.collectionsPlaces.placeId, data.placeId),
+							inArray(schema.collectionsPlaces.collectionId, data.update.items),
+						),
+					)
+					.returning();
+
+				const ok = areSetsEqual(
+					new Set([...deleteResult.map((x) => x.collectionId)]),
+					new Set(data.update.items),
+				);
+
+				invariant(
+					ok,
+					'NOT_FOUND',
+					'Some collections to remove were not found for the place',
+				);
+
+				await tx
+					.update(schema.collectionsPlaces)
+					.set({
+						index: sql`row_number() over (order by index) - 1`,
+					})
+					.where(eq(schema.collectionsPlaces.placeId, data.placeId));
+
+				return tx.query.collectionsPlaces.findMany({
+					where: {
+						placeId: data.placeId,
+					},
+					with: {
+						collection: {
+							columns: {
+								id: true,
+							},
+						},
+					},
+				});
+			}
+
+			if (data.update.op === 'move') {
+				const existingAssociations = await tx.query.collectionsPlaces.findMany({
+					where: {
+						placeId: data.placeId,
+					},
+				});
+
+				const existingCollectionIds = existingAssociations.map(
+					(assoc) => assoc.collectionId,
+				);
+				const inputCollectionIdsSet = new Set(data.update.items);
+				const existingCollectionIdsSet = new Set(existingCollectionIds);
+				const isSameSet =
+					inputCollectionIdsSet.isSupersetOf(existingCollectionIdsSet) &&
+					existingCollectionIdsSet.isSupersetOf(inputCollectionIdsSet);
+
+				invariant(
+					isSameSet,
+					'BAD_REQUEST',
+					'Input collection IDs do not match existing collections for the place',
+				);
+
+				await tx
+					.update(schema.collectionsPlaces)
+					.set({
+						index: sql`row_number() over (order by array_position(${data.update.items}, collection_id)) - 1`,
+					})
+					.where(eq(schema.collectionsPlaces.placeId, data.placeId));
+
+				return tx.query.collectionsPlaces.findMany({
+					where: {
+						placeId: data.placeId,
+					},
+					with: {
+						collection: {
+							columns: {
+								id: true,
+							},
+						},
+					},
+				});
+			}
+
+			invariant(false, 'BAD_REQUEST', 'Invalid operation');
 		});
 
 		return {
-			collections: result,
+			placeId: data.placeId,
+			collectionIds: result.map((r) => r.collection.id),
 		};
-	}
-
-	async removeCollectionFromPlace(
-		_userId: string,
-		data: dto.PlacesRemoveInput,
-	): Promise<dto.PlacesRemoveOutput> {
-		const result = await this.db.transaction(async (tx) => {
-			// Find the existing association between the collection and place
-			const existingAssociation = await tx.query.collectionsPlaces.findFirst({
-				where: {
-					collectionId: data.collectionId,
-					placeId: data.placeId,
-				},
-			});
-
-			invariant(
-				existingAssociation,
-				'NOT_FOUND',
-				`Collection with id ${data.collectionId} is not associated with place ${data.placeId}`,
-			);
-
-			// Delete it
-			const deleteResult = await tx
-				.delete(schema.collectionsPlaces)
-				.where(
-					and(
-						eq(schema.collectionsPlaces.collectionId, data.collectionId),
-						eq(schema.collectionsPlaces.placeId, data.placeId),
-					),
-				);
-
-			invariant(
-				deleteResult.rowCount === 1,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to delete collection-place association',
-			);
-
-			// Update the indices of the remaining associations for the place
-			await tx
-				.update(schema.collectionsPlaces)
-				.set({
-					index: sql`${schema.collectionsPlaces.index} - 1`,
-				})
-				.where(
-					and(
-						eq(schema.collectionsPlaces.placeId, data.placeId),
-						gt(schema.collectionsPlaces.index, existingAssociation.index),
-					),
-				);
-
-			return {};
-		});
-
-		return result;
 	}
 
 	async listCollectionsForCity(
 		userId: string | null,
-		data: dto.CitiesListInput,
-	): Promise<dto.CitiesListOutput> {
+		data: Collections.dto.CitiesListInput,
+	): Promise<Collections.dto.CitiesListOutput> {
 		const results = await this.db.query.collectionsCities.findMany({
 			where: {
 				cityId: data.cityId,
@@ -633,192 +515,175 @@ export class CollectionsRepository {
 		};
 	}
 
-	async appendCollectionToCity(
+	async updateCollectionsForCity(
 		_userId: string,
-		data: dto.CitiesAppendInput,
-	): Promise<dto.CitiesAppendOutput> {
-		const collection = await this.db.transaction(async (tx) => {
-			// Check if the association already exists
-			const existing = await tx.query.collectionsCities.findFirst({
+		data: Collections.dto.CitiesUpdateInput,
+	): Promise<Collections.dto.CitiesUpdateOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const city = await tx.query.cities.findFirst({
 				where: {
-					collectionId: data.collectionId,
-					cityId: data.cityId,
-				},
-			});
-
-			invariant(
-				!existing,
-				'CONFLICT',
-				`Collection with id ${data.collectionId} is already associated with city ${data.cityId}`,
-			);
-
-			// Fetch the collection to ensure it exists
-			const collection = await tx.query.collections.findFirst({
-				where: {
-					id: data.collectionId,
-				},
-			});
-
-			invariant(
-				collection,
-				'NOT_FOUND',
-				`Collection with id ${data.collectionId} not found`,
-			);
-
-			// Find the last association for the given city to determine the next index
-			const lastAssociation = await tx.query.collectionsCities.findFirst({
-				where: {
-					cityId: data.cityId,
-				},
-				orderBy: {
-					index: 'desc',
+					id: data.cityId,
 				},
 				columns: {
-					index: true,
+					id: true,
 				},
 			});
 
-			// If there's no existing association, newIndex will be 0; otherwise, increment the last index by 1
-			const lastIndex = lastAssociation ? lastAssociation.index : -1;
-			const newIndex = lastIndex + 1;
+			invariant(city, 'NOT_FOUND', `City with id ${data.cityId} not found`);
 
-			const [result] = await tx
-				.insert(schema.collectionsCities)
-				.values({
-					collectionId: data.collectionId,
-					cityId: data.cityId,
-					index: newIndex,
-				})
-				.returning();
-
-			invariant(result, 'INTERNAL_SERVER_ERROR', 'No result returned');
-
-			return collection;
-		});
-
-		return {
-			collection,
-		};
-	}
-
-	async reorderCollectionsForCity(
-		_userId: string,
-		data: dto.CitiesReorderInput,
-	): Promise<dto.CitiesReorderOutput> {
-		const result = await this.db.transaction(async (tx) => {
-			// Find featured collections for the given city
-			const existingAssociations = await tx.query.collectionsCities.findMany({
-				where: {
-					cityId: data.cityId,
-				},
-			});
-
-			// Check if the input collection IDs match the existing collection IDs for the city
-			// Create sets for comparison
-			const existingCollectionIds = existingAssociations.map(
-				(assoc) => assoc.collectionId,
-			);
-			const inputCollectionIdsSet = new Set(data.collectionIds);
-			const existingCollectionIdsSet = new Set(existingCollectionIds);
-			const isSameSet =
-				inputCollectionIdsSet.isSupersetOf(existingCollectionIdsSet) &&
-				existingCollectionIdsSet.isSupersetOf(inputCollectionIdsSet);
-
-			invariant(
-				isSameSet,
-				'BAD_REQUEST',
-				'Input collection IDs do not match existing collections for the city',
-			);
-
-			// Delete existing associations for the city
-			await tx
-				.delete(schema.collectionsCities)
-				.where(eq(schema.collectionsCities.cityId, data.cityId));
-
-			// Insert new associations with the provided order
-			await tx.insert(schema.collectionsCities).values(
-				data.collectionIds.map((collectionId, index) => ({
-					collectionId,
-					cityId: data.cityId,
-					index: index,
-				})),
-			);
-
-			// Fetch the collections to return after reordering
-			const collections = await tx.query.collections.findMany({
-				where: {
-					id: {
-						in: data.collectionIds,
+			if (data.update.op === 'add') {
+				const existingAssociations = await tx.query.collectionsCities.findMany({
+					where: {
+						cityId: data.cityId,
+						collectionId: {
+							in: data.update.items,
+						},
 					},
-				},
-			});
+				});
 
-			return collections;
+				invariant(
+					existingAssociations.length === 0,
+					'CONFLICT',
+					'Some collections are already associated with the city',
+				);
+
+				const lastAssociation = await tx.query.collectionsCities.findFirst({
+					where: {
+						cityId: data.cityId,
+					},
+					orderBy: {
+						index: 'desc',
+					},
+					columns: {
+						index: true,
+					},
+				});
+
+				const lastIndex = lastAssociation ? lastAssociation.index : -1;
+
+				const newAssociations = data.update.items.map(
+					(collectionId, index) => ({
+						collectionId,
+						cityId: data.cityId,
+						index: lastIndex + 1 + index,
+					}),
+				);
+
+				await tx.insert(schema.collectionsCities).values(newAssociations);
+
+				return tx.query.collectionsCities.findMany({
+					where: {
+						cityId: data.cityId,
+					},
+					with: {
+						collection: {
+							columns: {
+								id: true,
+							},
+						},
+					},
+				});
+			}
+
+			if (data.update.op === 'remove') {
+				const deleteResult = await tx
+					.delete(schema.collectionsCities)
+					.where(
+						and(
+							eq(schema.collectionsCities.cityId, data.cityId),
+							inArray(schema.collectionsCities.collectionId, data.update.items),
+						),
+					)
+					.returning();
+
+				const ok = areSetsEqual(
+					new Set([...deleteResult.map((x) => x.collectionId)]),
+					new Set(data.update.items),
+				);
+
+				invariant(
+					ok,
+					'NOT_FOUND',
+					'Some collections to remove were not found for the city',
+				);
+
+				await tx
+					.update(schema.collectionsCities)
+					.set({
+						index: sql`row_number() over (order by index) - 1`,
+					})
+					.where(eq(schema.collectionsCities.cityId, data.cityId));
+
+				return tx.query.collectionsCities.findMany({
+					where: {
+						cityId: data.cityId,
+					},
+					with: {
+						collection: {
+							columns: {
+								id: true,
+							},
+						},
+					},
+				});
+			}
+
+			if (data.update.op === 'move') {
+				const existingAssociations = await tx.query.collectionsCities.findMany({
+					where: {
+						cityId: data.cityId,
+					},
+				});
+
+				const existingCollectionIds = existingAssociations.map(
+					(assoc) => assoc.collectionId,
+				);
+				const inputCollectionIdsSet = new Set(data.update.items);
+				const existingCollectionIdsSet = new Set(existingCollectionIds);
+				const isSameSet =
+					inputCollectionIdsSet.isSupersetOf(existingCollectionIdsSet) &&
+					existingCollectionIdsSet.isSupersetOf(inputCollectionIdsSet);
+
+				invariant(
+					isSameSet,
+					'BAD_REQUEST',
+					'Input collection IDs do not match existing collections for the city',
+				);
+
+				await tx
+					.update(schema.collectionsCities)
+					.set({
+						index: sql`row_number() over (order by array_position(${data.update.items}, collection_id)) - 1`,
+					})
+					.where(eq(schema.collectionsCities.cityId, data.cityId));
+
+				return tx.query.collectionsCities.findMany({
+					where: {
+						cityId: data.cityId,
+					},
+					with: {
+						collection: {
+							columns: {
+								id: true,
+							},
+						},
+					},
+				});
+			}
+
+			invariant(false, 'BAD_REQUEST', 'Invalid operation');
 		});
 
 		return {
-			collections: result,
+			cityId: data.cityId,
+			collectionIds: result.map((r) => r.collection.id),
 		};
-	}
-
-	async removeCollectionFromCity(
-		_userId: string,
-		data: dto.CitiesRemoveInput,
-	): Promise<dto.CitiesRemoveOutput> {
-		const result = await this.db.transaction(async (tx) => {
-			// Find the existing association between the collection and city
-			const existingAssociation = await tx.query.collectionsCities.findFirst({
-				where: {
-					collectionId: data.collectionId,
-					cityId: data.cityId,
-				},
-			});
-
-			invariant(
-				existingAssociation,
-				'NOT_FOUND',
-				`Collection with id ${data.collectionId} is not associated with city ${data.cityId}`,
-			);
-
-			// Delete it
-			const deleteResult = await tx
-				.delete(schema.collectionsCities)
-				.where(
-					and(
-						eq(schema.collectionsCities.collectionId, data.collectionId),
-						eq(schema.collectionsCities.cityId, data.cityId),
-					),
-				);
-
-			invariant(
-				deleteResult.rowCount === 1,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to delete collection-city association',
-			);
-
-			// Update the indices of the remaining associations for the city
-			await tx
-				.update(schema.collectionsCities)
-				.set({
-					index: sql`${schema.collectionsCities.index} - 1`,
-				})
-				.where(
-					and(
-						eq(schema.collectionsCities.cityId, data.cityId),
-						gt(schema.collectionsCities.index, existingAssociation.index),
-					),
-				);
-
-			return {};
-		});
-
-		return result;
 	}
 
 	async listPlacesForCollection(
 		_userId: string,
-		data: dto.RelationsPlacesInput,
-	): Promise<dto.RelationsPlacesOutput> {
+		data: Collections.dto.RelationsPlacesInput,
+	): Promise<Collections.dto.RelationsPlacesOutput> {
 		const result = await this.db.query.collectionsPlaces.findMany({
 			where: {
 				collectionId: data.id,
@@ -835,8 +700,8 @@ export class CollectionsRepository {
 
 	async listCitiesForCollection(
 		_userId: string,
-		data: dto.RelationsCitiesInput,
-	): Promise<dto.RelationsCitiesOutput> {
+		data: Collections.dto.RelationsCitiesInput,
+	): Promise<Collections.dto.RelationsCitiesOutput> {
 		const result = await this.db.query.collectionsCities.findMany({
 			where: {
 				collectionId: data.id,
@@ -849,5 +714,24 @@ export class CollectionsRepository {
 		return {
 			cities: result.map((r) => r.city),
 		};
+	}
+
+	private async getLastIndexForCollection(
+		tx: DbOrTx,
+		collectionId: string,
+	): Promise<number> {
+		const lastItem = await tx.query.collectionItems.findFirst({
+			where: {
+				collectionId,
+			},
+			orderBy: {
+				index: 'desc',
+			},
+			columns: {
+				index: true,
+			},
+		});
+
+		return lastItem ? lastItem.index : -1;
 	}
 }

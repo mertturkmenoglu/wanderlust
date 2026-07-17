@@ -1,5 +1,5 @@
-import { Pagination } from '@wanderlust/common';
-import type { accolades as dto } from '@wanderlust/contract';
+import { Types } from '@wanderlust/common';
+import type { Accolades } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
@@ -29,8 +29,8 @@ export class AccoladesRepository {
 
 	async create(
 		_userId: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Accolades.dto.CreateInput,
+	): Promise<Accolades.dto.CreateOutput> {
 		const slug = slugifyWithRandom(data.title);
 
 		const [result] = await this.db
@@ -49,8 +49,8 @@ export class AccoladesRepository {
 		return { accolade: result };
 	}
 
-	async list(data: dto.ListInput): Promise<dto.ListOutput> {
-		const offset = Pagination.getOffset(data);
+	async list(data: Accolades.dto.ListInput): Promise<Accolades.dto.ListOutput> {
+		const offset = Types.Pagination.getOffset(data);
 
 		const result = await this.db.query.accolades.findMany({
 			orderBy: {
@@ -62,7 +62,7 @@ export class AccoladesRepository {
 		});
 
 		const totalItems = await this.db.$count(schema.accolades);
-		const pagination = Pagination.compute(data, totalItems);
+		const pagination = Types.Pagination.compute(data, totalItems);
 
 		return {
 			accolades: result,
@@ -72,8 +72,8 @@ export class AccoladesRepository {
 
 	async _delete(
 		_userId: string,
-		data: dto.DeleteInput,
-	): Promise<dto.DeleteOutput> {
+		data: Accolades.dto.DeleteInput,
+	): Promise<Accolades.dto.DeleteOutput> {
 		const result = await this.db
 			.delete(schema.accolades)
 			.where(eq(schema.accolades.id, data.id))
@@ -84,7 +84,7 @@ export class AccoladesRepository {
 		return {};
 	}
 
-	async get(data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(data: Accolades.dto.GetInput): Promise<Accolades.dto.GetOutput> {
 		const accolade = await this.db.query.accolades.findFirst({
 			where: {
 				id: data.id,
@@ -96,11 +96,11 @@ export class AccoladesRepository {
 		return { accolade };
 	}
 
-	async getPlaces(
+	async listPlaces(
 		userId: string | null,
-		data: dto.GetPlacesInput,
-	): Promise<dto.GetPlacesOutput> {
-		const offset = Pagination.getOffset(data);
+		data: Accolades.dto.ListPlacesInput,
+	): Promise<Accolades.dto.ListPlacesOutput> {
+		const offset = Types.Pagination.getOffset(data);
 		const limit = data.pageSize;
 
 		const assignments = await findAssignments.execute(this.db, {
@@ -130,14 +130,14 @@ export class AccoladesRepository {
 					isFavorite: favorites.includes(place.id),
 				},
 			})),
-			pagination: Pagination.compute(data, assignments.length),
+			pagination: Types.Pagination.compute(data, assignments.length),
 		};
 	}
 
 	async update(
 		_userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Accolades.dto.UpdateInput,
+	): Promise<Accolades.dto.UpdateOutput> {
 		const results = await this.db
 			.update(schema.accolades)
 			.set({

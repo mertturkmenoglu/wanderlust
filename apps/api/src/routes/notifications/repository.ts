@@ -1,7 +1,6 @@
 import { ConfigService, type TConfigService } from '@wanderlust/config';
-import type { notifications as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import type { Notifications } from '@wanderlust/contract';
+import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -25,7 +24,10 @@ export class NotificationsRepository {
 		this.cfg = cfg.get();
 	}
 
-	async list(userId: string, _input: dto.ListInput): Promise<dto.ListOutput> {
+	async list(
+		userId: string,
+		_input: Notifications.dto.ListInput,
+	): Promise<Notifications.dto.ListOutput> {
 		const notifications = await findManyByRecipientId.execute(this.db, {
 			recipientId: userId,
 			limit: this.cfg.notifications.capPerUser,
@@ -38,8 +40,8 @@ export class NotificationsRepository {
 
 	async markRead(
 		userId: string,
-		input: dto.MarkReadInput,
-	): Promise<dto.MarkReadOutput> {
+		input: Notifications.dto.MarkReadInput,
+	): Promise<Notifications.dto.MarkReadOutput> {
 		const result = await this.db
 			.update(schema.notifications)
 			.set({
@@ -61,8 +63,8 @@ export class NotificationsRepository {
 
 	async markAllRead(
 		userId: string,
-		_input: dto.MarkAllReadInput,
-	): Promise<dto.MarkAllReadOutput> {
+		_input: Notifications.dto.MarkAllReadInput,
+	): Promise<Notifications.dto.MarkAllReadOutput> {
 		await this.db
 			.update(schema.notifications)
 			.set({
@@ -77,21 +79,19 @@ export class NotificationsRepository {
 
 	async clear(
 		userId: string,
-		_input: dto.ClearInput,
-	): Promise<dto.ClearOutput> {
+		_input: Notifications.dto.ClearInput,
+	): Promise<Notifications.dto.ClearOutput> {
 		await this.db
 			.delete(schema.notifications)
 			.where(eq(schema.notifications.recipientId, userId));
 
-		return {
-			success: true,
-		};
+		return {};
 	}
 
 	async preferences(
 		userId: string,
-		_input: dto.PreferencesInput,
-	): Promise<dto.PreferencesOutput> {
+		_input: Notifications.dto.PreferencesInput,
+	): Promise<Notifications.dto.PreferencesOutput> {
 		const preferences = await findManyPreferencesByUserId.execute(this.db, {
 			userId,
 		});
@@ -103,8 +103,8 @@ export class NotificationsRepository {
 
 	async updatePreferences(
 		userId: string,
-		input: dto.UpdatePreferencesInput,
-	): Promise<dto.UpdatePreferencesOutput> {
+		input: Notifications.dto.UpdatePreferencesInput,
+	): Promise<Notifications.dto.UpdatePreferencesOutput> {
 		await this.db
 			.insert(schema.notificationPreferences)
 			.values({

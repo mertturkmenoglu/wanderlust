@@ -1,5 +1,5 @@
 import { ORPCError } from '@orpc/client';
-import type { users as dto } from '@wanderlust/contract';
+import type { Users } from '@wanderlust/contract';
 import {
 	getFilenameFromUrl,
 	StorageService,
@@ -26,8 +26,8 @@ export class UsersService {
 
 	async updateImage(
 		userId: string,
-		data: dto.UpdateImageInput,
-	): Promise<dto.UpdateImageOutput> {
+		data: Users.dto.UpdateImageInput,
+	): Promise<Users.dto.UpdateImageOutput> {
 		const res = await fileTypeFromBlob(data.file);
 
 		invariant(res, 'BAD_REQUEST', 'Unable to determine file type');
@@ -75,7 +75,10 @@ export class UsersService {
 		}
 	}
 
-	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string,
+		data: Users.dto.GetInput,
+	): Promise<Users.dto.GetOutput> {
 		const result = await this.repo.get(userId, data);
 
 		return {
@@ -86,8 +89,8 @@ export class UsersService {
 
 	async getById(
 		userId: string,
-		data: dto.GetByIdInput,
-	): Promise<dto.GetByIdOutput> {
+		data: Users.dto.GetByIdInput,
+	): Promise<Users.dto.GetByIdOutput> {
 		const result = await this.repo.getById(userId, data);
 
 		return {
@@ -96,7 +99,7 @@ export class UsersService {
 		};
 	}
 
-	async getMe(userId: string): Promise<dto.GetMeOutput> {
+	async getMe(userId: string): Promise<Users.dto.GetMeOutput> {
 		const result = await this.repo.getMe(userId);
 
 		return {
@@ -104,7 +107,7 @@ export class UsersService {
 		};
 	}
 
-	async getRole(userId: string): Promise<dto.GetRoleOutput> {
+	async getRole(userId: string): Promise<Users.dto.GetRoleOutput> {
 		const result = await this.repo.getRole(userId);
 
 		return {
@@ -114,8 +117,8 @@ export class UsersService {
 
 	async listFollowers(
 		userId: string,
-		data: dto.ListFollowersInput,
-	): Promise<dto.ListFollowersOutput> {
+		data: Users.dto.ListFollowersInput,
+	): Promise<Users.dto.ListFollowersOutput> {
 		const result = await this.repo.listFollowers(userId, data);
 
 		return {
@@ -126,8 +129,8 @@ export class UsersService {
 
 	async listFollowing(
 		userId: string,
-		data: dto.ListFollowingInput,
-	): Promise<dto.ListFollowingOutput> {
+		data: Users.dto.ListFollowingInput,
+	): Promise<Users.dto.ListFollowingOutput> {
 		const result = await this.repo.listFollowing(userId, data);
 
 		return {
@@ -138,8 +141,8 @@ export class UsersService {
 
 	async listTopPlaces(
 		userId: string,
-		data: dto.ListTopPlacesInput,
-	): Promise<dto.ListTopPlacesOutput> {
+		data: Users.dto.ListTopPlacesInput,
+	): Promise<Users.dto.ListTopPlacesOutput> {
 		const result = await this.repo.listTopPlaces(userId, data);
 
 		return {
@@ -149,8 +152,8 @@ export class UsersService {
 
 	async updateTopPlaces(
 		userId: string,
-		data: dto.UpdateTopPlacesInput,
-	): Promise<dto.UpdateTopPlacesOutput> {
+		data: Users.dto.UpdateTopPlacesInput,
+	): Promise<Users.dto.UpdateTopPlacesOutput> {
 		const result = await this.repo.updateTopPlaces(userId, data);
 
 		return result;
@@ -158,8 +161,8 @@ export class UsersService {
 
 	async listActivities(
 		userId: string,
-		data: dto.ListUserActivitiesInput,
-	): Promise<dto.ListUserActivitiesOutput> {
+		data: Users.dto.ListUserActivitiesInput,
+	): Promise<Users.dto.ListUserActivitiesOutput> {
 		const result = await this.repo.listActivities(userId, data);
 
 		return {
@@ -169,8 +172,8 @@ export class UsersService {
 
 	async searchFollowing(
 		userId: string,
-		data: dto.SearchFollowingInput,
-	): Promise<dto.SearchFollowingOutput> {
+		data: Users.dto.SearchFollowingInput,
+	): Promise<Users.dto.SearchFollowingOutput> {
 		const result = await this.repo.searchFollowing(userId, data);
 
 		return {
@@ -180,8 +183,8 @@ export class UsersService {
 
 	async follow(
 		userId: string,
-		data: dto.FollowInput,
-	): Promise<dto.FollowOutput> {
+		data: Users.dto.FollowInput,
+	): Promise<Users.dto.FollowOutput> {
 		const result = await this.repo.follow(userId, data);
 
 		return {
@@ -191,8 +194,8 @@ export class UsersService {
 
 	async update(
 		userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Users.dto.UpdateInput,
+	): Promise<Users.dto.UpdateOutput> {
 		const result = await this.repo.update(userId, data);
 
 		return {
@@ -201,8 +204,8 @@ export class UsersService {
 	}
 
 	async checkUsernameAvailability(
-		data: dto.CheckUsernameAvailabilityInput,
-	): Promise<dto.CheckUsernameAvailabilityOutput> {
+		data: Users.dto.CheckUsernameAvailabilityInput,
+	): Promise<Users.dto.CheckUsernameAvailabilityOutput> {
 		const result = await this.repo.checkUsernameAvailability(data);
 
 		return {

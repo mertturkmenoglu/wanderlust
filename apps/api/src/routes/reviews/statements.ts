@@ -1,4 +1,4 @@
-import * as schema from '@wanderlust/db';
+import { schema } from '@wanderlust/db';
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 import z from 'zod';
 import { definePreparedStatement } from '@/lib/define-prepared-statement';

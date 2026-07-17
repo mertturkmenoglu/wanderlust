@@ -1,4 +1,4 @@
-import type { reports as dto } from '@wanderlust/contract';
+import type { Reports } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import { ReportsRepository } from './repository';
@@ -10,7 +10,10 @@ export class ReportsService {
 		@inject(ReportsRepository) private readonly repo: ReportsRepository,
 	) {}
 
-	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string,
+		data: Reports.dto.GetInput,
+	): Promise<Reports.dto.GetOutput> {
 		const result = await this.repo.get(userId, data);
 
 		return {
@@ -18,7 +21,7 @@ export class ReportsService {
 		};
 	}
 
-	async list(data: dto.ListInput): Promise<dto.ListOutput> {
+	async list(data: Reports.dto.ListInput): Promise<Reports.dto.ListOutput> {
 		const result = await this.repo.list(data);
 
 		return {
@@ -27,7 +30,9 @@ export class ReportsService {
 		};
 	}
 
-	async search(data: dto.SearchInput): Promise<dto.SearchOutput> {
+	async search(
+		data: Reports.dto.SearchInput,
+	): Promise<Reports.dto.SearchOutput> {
 		const result = await this.repo.search(data);
 
 		return {
@@ -38,8 +43,8 @@ export class ReportsService {
 
 	async create(
 		userId: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Reports.dto.CreateInput,
+	): Promise<Reports.dto.CreateOutput> {
 		const result = await this.repo.create(userId, data);
 
 		return {
@@ -47,7 +52,9 @@ export class ReportsService {
 		};
 	}
 
-	async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
+	async update(
+		data: Reports.dto.UpdateInput,
+	): Promise<Reports.dto.UpdateOutput> {
 		const result = await this.repo.update(data);
 
 		return {
@@ -55,7 +62,7 @@ export class ReportsService {
 		};
 	}
 
-	async _delete(data: dto.DeleteInput): Promise<void> {
+	async _delete(data: Reports.dto.DeleteInput): Promise<void> {
 		await this.repo._delete(data);
 	}
 }

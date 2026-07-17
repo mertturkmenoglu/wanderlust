@@ -1,6 +1,6 @@
 import { trace } from '@opentelemetry/api';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
-import type { preferences as dto } from '@wanderlust/contract';
+import type { Preferences } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import { PreferencesRepository } from './repository';
@@ -19,7 +19,10 @@ export class PreferencesService {
 		this.cache = cache.get();
 	}
 
-	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string,
+		data: Preferences.dto.GetInput,
+	): Promise<Preferences.dto.GetOutput> {
 		const span = trace.getActiveSpan();
 
 		const result = await this.cache.namespace(this.ns).getOrSet({
@@ -41,8 +44,8 @@ export class PreferencesService {
 
 	async update(
 		userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Preferences.dto.UpdateInput,
+	): Promise<Preferences.dto.UpdateOutput> {
 		const result = await this.repo.update(userId, data);
 
 		await this.cache.namespace(this.ns).set({

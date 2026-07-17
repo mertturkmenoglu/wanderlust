@@ -1,4 +1,4 @@
-import type { trips as dto } from '@wanderlust/contract';
+import type { Types } from '@wanderlust/common';
 import { describe, expect, test } from 'vitest';
 import {
 	canCreateInvite,
@@ -12,8 +12,10 @@ import {
 	isPrivilegedUser,
 } from './authz';
 
+type Trip = Types.Trips.ExtendedWithParticipantsAndLocations;
+
 describe('Trips Authorization', () => {
-	const privateTrip: dto.ExtendedTrip = {
+	const privateTrip: Trip = {
 		id: 'trip-1',
 		createdAt: new Date(),
 		updatedAt: new Date(),
@@ -71,13 +73,13 @@ describe('Trips Authorization', () => {
 		visibilityLevel: 'private',
 	};
 
-	const friendsTrip: dto.ExtendedTrip = {
+	const friendsTrip: Trip = {
 		...privateTrip,
 		id: 'trip-2',
 		visibilityLevel: 'friends',
 	};
 
-	const publicTrip: dto.ExtendedTrip = {
+	const publicTrip: Trip = {
 		...privateTrip,
 		id: 'trip-3',
 		visibilityLevel: 'public',
@@ -822,7 +824,7 @@ describe('Trips Authorization', () => {
 			['non-participant', nonParticipantId, 'friends', friendsTrip, false],
 			['non-participant', nonParticipantId, 'public', publicTrip, true],
 		])('can $0 read $1 trip expected=$4', ([, actorId, , trip, expected]) => {
-			const result = canRead(trip as dto.ExtendedTrip, actorId as string);
+			const result = canRead(trip as Trip, actorId as string);
 			expect(result).toBe(expected);
 		});
 	});

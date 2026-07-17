@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { accolades } from '@wanderlust/contract';
+import { Accolades } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -13,7 +13,7 @@ import { AccoladesService } from './service';
 export const module = defineModule({
 	exports: [AccoladesService, AccoladesRepository],
 	router: () => {
-		const os = implement(accolades.contract)
+		const os = implement(Accolades.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);
@@ -49,9 +49,9 @@ export const module = defineModule({
 
 				return result;
 			}),
-			getPlaces: os.getPlaces.handler(async ({ input, context }) => {
+			listPlaces: os.listPlaces.handler(async ({ input, context }) => {
 				const userId = context.session?.user?.id ?? null;
-				const result = await svc.getPlaces(userId, input);
+				const result = await svc.listPlaces(userId, input);
 
 				return result;
 			}),

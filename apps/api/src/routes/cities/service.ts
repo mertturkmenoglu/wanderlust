@@ -1,5 +1,5 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
-import type { cities as dto } from '@wanderlust/contract';
+import type { Cities } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import { CitiesRepository } from './repository';
@@ -16,7 +16,7 @@ export class CitiesService {
 		this.cache = cache.get();
 	}
 
-	async list(): Promise<dto.ListOutput> {
+	async list(): Promise<Cities.dto.ListOutput> {
 		const result = await this.repository.list();
 
 		return {
@@ -24,7 +24,7 @@ export class CitiesService {
 		};
 	}
 
-	async listFeatured(): Promise<dto.ListFeaturedOutput> {
+	async listFeatured(): Promise<Cities.dto.ListFeaturedOutput> {
 		const result = await this.cache.namespace('cities').getOrSet({
 			key: 'featured',
 			ttl: '1h',
@@ -36,7 +36,7 @@ export class CitiesService {
 		};
 	}
 
-	async get(data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(data: Cities.dto.GetInput): Promise<Cities.dto.GetOutput> {
 		const result = await this.repository.get(data);
 
 		return {
@@ -44,7 +44,7 @@ export class CitiesService {
 		};
 	}
 
-	async create(data: dto.CreateInput): Promise<dto.CreateOutput> {
+	async create(data: Cities.dto.CreateInput): Promise<Cities.dto.CreateOutput> {
 		const result = await this.repository.create(data);
 
 		await this.cache.namespace('cities').delete({
@@ -56,7 +56,7 @@ export class CitiesService {
 		};
 	}
 
-	async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
+	async update(data: Cities.dto.UpdateInput): Promise<Cities.dto.UpdateOutput> {
 		const result = await this.repository.update(data);
 
 		await this.cache.namespace('cities').delete({
@@ -68,8 +68,8 @@ export class CitiesService {
 		};
 	}
 
-	async _delete(data: dto.DeleteInput): Promise<void> {
-		await this.repository._delete(data);
+	async delete(data: Cities.dto.DeleteInput): Promise<void> {
+		await this.repository.delete(data);
 
 		await this.cache.namespace('cities').delete({
 			key: 'featured',

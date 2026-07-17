@@ -1,13 +1,13 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
-import { Pagination } from '@wanderlust/common';
-import type { users as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Users } from '@wanderlust/contract';
+import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { ActivitiesService, type ActivityItem } from '@/lib/activities';
+import { ActivitiesService } from '@/lib/activities';
+import type { ActivityItem } from '@/lib/activities/types';
 import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
@@ -37,7 +37,7 @@ export class UsersRepository {
 
 	async updateImage(
 		userId: string,
-		type: dto.UpdateImageInput['type'],
+		type: Users.dto.UpdateImageInput['type'],
 		url: string,
 	) {
 		const user = await statements.findUserById.execute(this.db, { id: userId });
@@ -63,7 +63,7 @@ export class UsersRepository {
 		};
 	}
 
-	async get(userId: string, data: dto.GetInput) {
+	async get(userId: string, data: Users.dto.GetInput) {
 		const result = await statements.findUserByUsername.execute(this.db, {
 			username: data.username,
 		});
@@ -97,7 +97,7 @@ export class UsersRepository {
 		};
 	}
 
-	async getById(userId: string, data: dto.GetByIdInput) {
+	async getById(userId: string, data: Users.dto.GetByIdInput) {
 		const result = await statements.findUserById.execute(this.db, {
 			id: data.id,
 		});
@@ -153,8 +153,8 @@ export class UsersRepository {
 		};
 	}
 
-	async listFollowers(_userId: string, data: dto.ListFollowersInput) {
-		const offset = Pagination.getOffset(data);
+	async listFollowers(_userId: string, data: Users.dto.ListFollowersInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const user = await statements.findUserByUsername.execute(this.db, {
 			username: data.username,
@@ -179,12 +179,12 @@ export class UsersRepository {
 
 		return {
 			followers: followers.map((f) => f.follower),
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async listFollowing(_userId: string, data: dto.ListFollowingInput) {
-		const offset = Pagination.getOffset(data);
+	async listFollowing(_userId: string, data: Users.dto.ListFollowingInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const user = await statements.findUserByUsername.execute(this.db, {
 			username: data.username,
@@ -209,11 +209,11 @@ export class UsersRepository {
 
 		return {
 			following: following.map((f) => f.following),
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async listTopPlaces(userId: string, data: dto.ListTopPlacesInput) {
+	async listTopPlaces(userId: string, data: Users.dto.ListTopPlacesInput) {
 		const user = await statements.findUserByUsername.execute(this.db, {
 			username: data.username,
 		});
@@ -245,7 +245,7 @@ export class UsersRepository {
 		};
 	}
 
-	async updateTopPlaces(userId: string, data: dto.UpdateTopPlacesInput) {
+	async updateTopPlaces(userId: string, data: Users.dto.UpdateTopPlacesInput) {
 		const result = await this.db.transaction(async (tx) => {
 			const user = await statements.findUserById.execute(tx, { id: userId });
 
@@ -257,9 +257,9 @@ export class UsersRepository {
 				.where(eq(schema.userTopPlaces.userId, userId));
 
 			// Only try to insert if there are places to insert
-			if (data.placesIds.length !== 0) {
+			if (data.placeIds.length !== 0) {
 				// Insert new top places
-				const inserts = data.placesIds.map((placeId, index) => ({
+				const inserts = data.placeIds.map((placeId, index) => ({
 					userId,
 					placeId,
 					index: index + 1,
@@ -294,7 +294,10 @@ export class UsersRepository {
 		return result;
 	}
 
-	async listActivities(_userId: string, data: dto.ListUserActivitiesInput) {
+	async listActivities(
+		_userId: string,
+		data: Users.dto.ListUserActivitiesInput,
+	) {
 		const user = await statements.findUserByUsername.execute(this.db, {
 			username: data.username,
 		});
@@ -319,7 +322,7 @@ export class UsersRepository {
 		};
 	}
 
-	async searchFollowing(userId: string, data: dto.SearchFollowingInput) {
+	async searchFollowing(userId: string, data: Users.dto.SearchFollowingInput) {
 		const followings = await this.db
 			.select({
 				id: schema.users.id,
@@ -350,7 +353,7 @@ export class UsersRepository {
 		};
 	}
 
-	async follow(userId: string, data: dto.FollowInput) {
+	async follow(userId: string, data: Users.dto.FollowInput) {
 		const targetUser = await statements.findUserByUsername.execute(this.db, {
 			username: data.username,
 		});
@@ -460,7 +463,7 @@ export class UsersRepository {
 		return result;
 	}
 
-	async update(userId: string, data: dto.UpdateInput) {
+	async update(userId: string, data: Users.dto.UpdateInput) {
 		const result = await this.db
 			.update(schema.users)
 			.set({
@@ -482,8 +485,8 @@ export class UsersRepository {
 	}
 
 	async checkUsernameAvailability(
-		data: dto.CheckUsernameAvailabilityInput,
-	): Promise<dto.CheckUsernameAvailabilityOutput> {
+		data: Users.dto.CheckUsernameAvailabilityInput,
+	): Promise<Users.dto.CheckUsernameAvailabilityOutput> {
 		const result = await this.db
 			.select({ id: schema.users.id })
 			.from(schema.users)

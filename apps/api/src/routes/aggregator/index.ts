@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { aggregator } from '@wanderlust/contract';
+import { Aggregator } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -11,7 +11,7 @@ import { AggregatorService } from './service';
 export const module = defineModule({
 	exports: [AggregatorRepository, AggregatorService],
 	router: () => {
-		const os = implement(aggregator.contract)
+		const os = implement(Aggregator.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);

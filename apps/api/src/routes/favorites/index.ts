@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { favorites } from '@wanderlust/contract';
+import { Favorites } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -12,7 +12,7 @@ import { FavoritesService } from './service';
 export const module = defineModule({
 	exports: [FavoritesService, FavoritesRepository],
 	router: () => {
-		const os = implement(favorites.contract)
+		const os = implement(Favorites.Contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
 			.use(withErrorNormalization)

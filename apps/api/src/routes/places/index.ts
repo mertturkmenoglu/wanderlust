@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { places } from '@wanderlust/contract';
+import { Places } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -13,7 +13,7 @@ import { PlacesService } from './service';
 export const module = defineModule({
 	exports: [PlacesService, PlacesRepository],
 	router: () => {
-		const os = implement(places.contract)
+		const os = implement(Places.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);
@@ -47,14 +47,6 @@ export const module = defineModule({
 					await svc._delete(input);
 
 					return {};
-				}),
-			searchAddresses: os.searchAddresses
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.searchAddresses(input);
-
-					return result;
 				}),
 		});
 	},

@@ -1,6 +1,6 @@
 import { trace } from '@opentelemetry/api';
 import { implement } from '@orpc/server';
-import { reviews } from '@wanderlust/contract';
+import { Reviews } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -13,7 +13,7 @@ import { ReviewsService } from './service';
 export const module = defineModule({
 	exports: [ReviewsService, ReviewsRepository],
 	router: () => {
-		const os = implement(reviews.contract)
+		const os = implement(Reviews.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);

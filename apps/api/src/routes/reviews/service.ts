@@ -1,9 +1,8 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: TODO */
-
 import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
-import type { reviews as dto } from '@wanderlust/contract';
+import type { Reviews } from '@wanderlust/contract';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { createLinkifyInstance } from '@wanderlust/richtext';
 import {
@@ -39,7 +38,10 @@ export class ReviewsService {
 		this.jobs = jobs.get();
 	}
 
-	async get(userId: string | null, data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string | null,
+		data: Reviews.dto.GetInput,
+	): Promise<Reviews.dto.GetOutput> {
 		const result = await this.repo.get(data);
 
 		const likes = await this.repo.getLikedStatuses(userId, [result.id]);
@@ -55,8 +57,8 @@ export class ReviewsService {
 	async create(
 		userId: string,
 		username: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Reviews.dto.CreateInput,
+	): Promise<Reviews.dto.CreateOutput> {
 		const span = trace.getActiveSpan();
 
 		const files = data.files || [];
@@ -220,7 +222,7 @@ export class ReviewsService {
 		}
 	}
 
-	async _delete(userId: string, data: dto.DeleteInput): Promise<void> {
+	async _delete(userId: string, data: Reviews.dto.DeleteInput): Promise<void> {
 		const existing = await this.repo.get(data);
 
 		if (existing.userId !== userId) {
@@ -246,8 +248,8 @@ export class ReviewsService {
 
 	async listByUsername(
 		userId: string | null,
-		data: dto.ListByUsernameInput,
-	): Promise<dto.ListByUsernameOutput> {
+		data: Reviews.dto.ListByUsernameInput,
+	): Promise<Reviews.dto.ListByUsernameOutput> {
 		const result = await this.repo.listByUsername(data);
 
 		const likes = await this.repo.getLikedStatuses(
@@ -268,8 +270,8 @@ export class ReviewsService {
 
 	async listByPlaceId(
 		userId: string | null,
-		data: dto.ListByPlaceIdInput,
-	): Promise<dto.ListByPlaceIdOutput> {
+		data: Reviews.dto.ListByPlaceIdInput,
+	): Promise<Reviews.dto.ListByPlaceIdOutput> {
 		const result = await this.cache.namespace('reviews').getOrSet({
 			key: `places:${data.id}:page:${data.page}:pageSize:${data.pageSize}:sort:${data.sortBy}:order:${data.sortOrd}:min:${data.minRating}:max:${data.maxRating}`,
 			ttl: '10m',
@@ -293,7 +295,9 @@ export class ReviewsService {
 		};
 	}
 
-	async getRatings(data: dto.GetRatingsInput): Promise<dto.GetRatingsOutput> {
+	async getRatings(
+		data: Reviews.dto.GetRatingsInput,
+	): Promise<Reviews.dto.GetRatingsOutput> {
 		const result = await this.cache.namespace('reviews-ratings').getOrSet({
 			key: data.id,
 			ttl: '30m',
@@ -304,14 +308,17 @@ export class ReviewsService {
 	}
 
 	async listAssetsByPlaceId(
-		data: dto.ListAssetsByPlaceIdInput,
-	): Promise<dto.ListAssetsByPlaceIdOutput> {
+		data: Reviews.dto.ListAssetsByPlaceIdInput,
+	): Promise<Reviews.dto.ListAssetsByPlaceIdOutput> {
 		const result = await this.repo.listAssetsByPlaceId(data);
 
 		return result;
 	}
 
-	async like(userId: string, data: dto.LikeInput): Promise<dto.LikeOutput> {
+	async like(
+		userId: string,
+		data: Reviews.dto.LikeInput,
+	): Promise<Reviews.dto.LikeOutput> {
 		const result = await this.repo.like(userId, data);
 
 		try {
@@ -350,8 +357,8 @@ export class ReviewsService {
 
 	async listLikes(
 		userId: string,
-		data: dto.ListLikesInput,
-	): Promise<dto.ListLikesOutput> {
+		data: Reviews.dto.ListLikesInput,
+	): Promise<Reviews.dto.ListLikesOutput> {
 		const result = await this.repo.listLikes(userId, data);
 
 		return {

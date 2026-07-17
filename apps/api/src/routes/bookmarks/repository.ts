@@ -1,9 +1,9 @@
-import { Pagination } from '@wanderlust/common';
-import type { bookmarks as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Bookmarks } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
+	schema,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
@@ -26,7 +26,7 @@ export class BookmarksRepository {
 		this.db = db.get();
 	}
 
-	async create(userId: string, data: dto.CreateInput) {
+	async create(userId: string, data: Bookmarks.dto.CreateInput) {
 		const [result] = await this.db
 			.insert(schema.bookmarks)
 			.values({
@@ -40,8 +40,8 @@ export class BookmarksRepository {
 		return result;
 	}
 
-	async list(userId: string, data: dto.ListInput) {
-		const offset = Pagination.getOffset(data);
+	async list(userId: string, data: Bookmarks.dto.ListInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const bookmarks = await this.db.query.bookmarks.findMany({
 			where: {
@@ -62,7 +62,7 @@ export class BookmarksRepository {
 			eq(schema.bookmarks.userId, userId),
 		);
 
-		const pagination = Pagination.compute(data, totalItems);
+		const pagination = Types.Pagination.compute(data, totalItems);
 
 		const placeIds = Array.from(new Set(bookmarks.map((b) => b.placeId)));
 		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
@@ -76,7 +76,7 @@ export class BookmarksRepository {
 		};
 	}
 
-	async _delete(userId: string, data: dto.DeleteInput) {
+	async delete(userId: string, data: Bookmarks.dto.DeleteInput) {
 		const res = await this.db
 			.delete(schema.bookmarks)
 			.where(

@@ -1,5 +1,5 @@
 import { ORPCError } from '@orpc/client';
-import type { trips as dto } from '@wanderlust/contract';
+import type { Trips } from '@wanderlust/contract';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { eachDayOfInterval } from 'date-fns';
@@ -25,7 +25,10 @@ export class TripsService {
 		this.activities = activities;
 	}
 
-	async get(userId: string, data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string,
+		data: Trips.dto.GetInput,
+	): Promise<Trips.dto.GetOutput> {
 		const result = await this.repo.get(userId, data);
 
 		invariant(
@@ -41,8 +44,8 @@ export class TripsService {
 
 	async listInvites(
 		userId: string,
-		data: dto.ListInvitesInput,
-	): Promise<dto.ListInvitesOutput> {
+		data: Trips.dto.ListInvitesInput,
+	): Promise<Trips.dto.ListInvitesOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -60,8 +63,8 @@ export class TripsService {
 
 	async createInvite(
 		userId: string,
-		data: dto.CreateInviteInput,
-	): Promise<dto.CreateInviteOutput> {
+		data: Trips.dto.CreateInviteInput,
+	): Promise<Trips.dto.CreateInviteOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -96,7 +99,7 @@ export class TripsService {
 					title: trip.title,
 				},
 				role: result.role,
-				from: result.fromUser,
+				from: result.from,
 			},
 		});
 
@@ -105,7 +108,10 @@ export class TripsService {
 		};
 	}
 
-	async list(userId: string, data: dto.ListInput): Promise<dto.ListOutput> {
+	async list(
+		userId: string,
+		data: Trips.dto.ListInput,
+	): Promise<Trips.dto.ListOutput> {
 		const result = await this.repo.list(userId, data);
 
 		return {
@@ -116,8 +122,8 @@ export class TripsService {
 
 	async listMyInvites(
 		userId: string,
-		data: dto.ListMyInvitesInput,
-	): Promise<dto.ListMyInvitesOutput> {
+		data: Trips.dto.ListMyInvitesInput,
+	): Promise<Trips.dto.ListMyInvitesOutput> {
 		const result = await this.repo.listMyInvites(userId, data);
 
 		return {
@@ -128,8 +134,8 @@ export class TripsService {
 
 	async create(
 		userId: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Trips.dto.CreateInput,
+	): Promise<Trips.dto.CreateOutput> {
 		invariant(
 			data.startAt.getTime() < data.endAt.getTime(),
 			'BAD_REQUEST',
@@ -160,8 +166,8 @@ export class TripsService {
 
 	async getInviteDetails(
 		userId: string,
-		data: dto.GetInviteDetailsInput,
-	): Promise<dto.GetInviteDetailsOutput> {
+		data: Trips.dto.GetInviteDetailsInput,
+	): Promise<Trips.dto.GetInviteDetailsOutput> {
 		const invite = await this.repo.getInviteDetails(userId, data);
 
 		const canAccess = invite.toId === userId;
@@ -191,8 +197,8 @@ export class TripsService {
 
 	async acceptOrDeclineInvite(
 		userId: string,
-		data: dto.AcceptOrDeclineInviteInput,
-	): Promise<dto.AcceptOrDeclineInviteOutput> {
+		data: Trips.dto.RespondInput,
+	): Promise<Trips.dto.RespondOutput> {
 		const { invite } = await this.getInviteDetails(userId, {
 			id: data.id,
 			inviteId: data.inviteId,
@@ -212,7 +218,7 @@ export class TripsService {
 				recipientId: invite.trip.ownerId,
 				type: 'trip_add_user',
 				data: {
-					newUser: invite.toUser,
+					newUser: invite.to,
 				},
 			});
 		}
@@ -222,7 +228,10 @@ export class TripsService {
 		};
 	}
 
-	async leave(userId: string, data: dto.LeaveInput): Promise<dto.LeaveOutput> {
+	async leave(
+		userId: string,
+		data: Trips.dto.LeaveInput,
+	): Promise<Trips.dto.LeaveOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -244,8 +253,8 @@ export class TripsService {
 
 	async deleteInvite(
 		userId: string,
-		data: dto.DeleteInviteInput,
-	): Promise<dto.DeleteInviteOutput> {
+		data: Trips.dto.DeleteInviteInput,
+	): Promise<Trips.dto.DeleteInviteOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -267,8 +276,8 @@ export class TripsService {
 
 	async _delete(
 		userId: string,
-		data: dto.DeleteInput,
-	): Promise<dto.DeleteOutput> {
+		data: Trips.dto.DeleteInput,
+	): Promise<Trips.dto.DeleteOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -290,8 +299,8 @@ export class TripsService {
 
 	async deleteParticipant(
 		userId: string,
-		data: dto.DeleteParticipantInput,
-	): Promise<dto.DeleteParticipantOutput> {
+		data: Trips.dto.DeleteParticipantInput,
+	): Promise<Trips.dto.DeleteParticipantOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -313,8 +322,8 @@ export class TripsService {
 
 	async createComment(
 		userId: string,
-		data: dto.CreateCommentInput,
-	): Promise<dto.CreateCommentOutput> {
+		data: Trips.dto.CreateCommentInput,
+	): Promise<Trips.dto.CreateCommentOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -354,8 +363,8 @@ export class TripsService {
 
 	async listComments(
 		userId: string,
-		data: dto.ListCommentsInput,
-	): Promise<dto.ListCommentsOutput> {
+		data: Trips.dto.ListCommentsInput,
+	): Promise<Trips.dto.ListCommentsOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -380,8 +389,8 @@ export class TripsService {
 
 	async updateComment(
 		userId: string,
-		data: dto.UpdateCommentInput,
-	): Promise<dto.UpdateCommentOutput> {
+		data: Trips.dto.UpdateCommentInput,
+	): Promise<Trips.dto.UpdateCommentOutput> {
 		const comment = await this.repo.getComment(data.commentId);
 
 		invariant(
@@ -399,8 +408,8 @@ export class TripsService {
 
 	async deleteComment(
 		userId: string,
-		data: dto.DeleteCommentInput,
-	): Promise<dto.DeleteCommentOutput> {
+		data: Trips.dto.DeleteCommentInput,
+	): Promise<Trips.dto.DeleteCommentOutput> {
 		const comment = await this.repo.getComment(data.commentId);
 		const trip = await this.repo.get(userId, { id: comment.tripId });
 
@@ -417,8 +426,8 @@ export class TripsService {
 
 	async update(
 		userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Trips.dto.UpdateInput,
+	): Promise<Trips.dto.UpdateOutput> {
 		invariant(
 			data.startAt.getTime() < data.endAt.getTime(),
 			'BAD_REQUEST',
@@ -475,8 +484,8 @@ export class TripsService {
 
 	async createLocation(
 		userId: string,
-		data: dto.CreateLocationInput,
-	): Promise<dto.CreateLocationOutput> {
+		data: Trips.dto.CreateLocationInput,
+	): Promise<Trips.dto.CreateLocationOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -516,8 +525,8 @@ export class TripsService {
 
 	async updateLocation(
 		userId: string,
-		data: dto.UpdateLocationInput,
-	): Promise<dto.UpdateLocationOutput> {
+		data: Trips.dto.UpdateLocationInput,
+	): Promise<Trips.dto.UpdateLocationOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -563,8 +572,8 @@ export class TripsService {
 
 	async deleteLocation(
 		userId: string,
-		data: dto.DeleteLocationInput,
-	): Promise<dto.DeleteLocationOutput> {
+		data: Trips.dto.DeleteLocationInput,
+	): Promise<Trips.dto.DeleteLocationOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -586,8 +595,8 @@ export class TripsService {
 
 	async updateRequestedAmenities(
 		userId: string,
-		data: dto.UpdateRequestedAmenitiesInput,
-	): Promise<dto.UpdateRequestedAmenitiesOutput> {
+		data: Trips.dto.UpdateRequestedAmenitiesInput,
+	): Promise<Trips.dto.UpdateRequestedAmenitiesOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(
@@ -611,8 +620,8 @@ export class TripsService {
 
 	async getSummary(
 		userId: string,
-		data: dto.GetSummaryInput,
-	): Promise<dto.GetSummaryOutput> {
+		data: Trips.dto.GetSummaryInput,
+	): Promise<Trips.dto.GetSummaryOutput> {
 		const trip = await this.repo.get(userId, { id: data.id });
 
 		invariant(

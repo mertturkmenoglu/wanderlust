@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { bookmarks } from '@wanderlust/contract';
+import { Bookmarks } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -14,7 +14,7 @@ export function getRouter() {}
 export const module = defineModule({
 	exports: [BookmarksRepository, BookmarksService],
 	router: () => {
-		const os = implement(bookmarks.contract)
+		const os = implement(Bookmarks.Contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
 			.use(withErrorNormalization)

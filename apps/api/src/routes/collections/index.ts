@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { collections } from '@wanderlust/contract';
+import { Collections } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -14,7 +14,7 @@ import { CollectionsService } from './service';
 export const module = defineModule({
 	exports: [CollectionsService, CollectionsRepository],
 	router: () => {
-		const os = implement(collections.contract)
+		const os = implement(Collections.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);
@@ -60,35 +60,17 @@ export const module = defineModule({
 				.use(isAdmin)
 				.handler(async ({ context, input }) => {
 					const userId = getUserIdOrThrow(context);
-					const result = await svc._delete(userId, input);
+					const result = await svc.delete(userId, input);
 
 					return result;
 				}),
 			items: os.items.router({
-				append: os.items.append
+				update: os.items.update
 					.use(requireAuth)
 					.use(isAdmin)
 					.handler(async ({ context, input }) => {
 						const userId = getUserIdOrThrow(context);
-						const result = await svc.appendItem(userId, input);
-
-						return result;
-					}),
-				remove: os.items.remove
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.removeItem(userId, input);
-
-						return result;
-					}),
-				reorder: os.items.reorder
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.reorderItems(userId, input);
+						const result = await svc.updateItems(userId, input);
 
 						return result;
 					}),
@@ -100,30 +82,12 @@ export const module = defineModule({
 
 					return result;
 				}),
-				append: os.places.append
+				update: os.places.update
 					.use(requireAuth)
 					.use(isAdmin)
 					.handler(async ({ context, input }) => {
 						const userId = getUserIdOrThrow(context);
-						const result = await svc.appendCollectionToPlace(userId, input);
-
-						return result;
-					}),
-				reorder: os.places.reorder
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.reorderCollectionsForPlace(userId, input);
-
-						return result;
-					}),
-				remove: os.places.remove
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.removeCollectionFromPlace(userId, input);
+						const result = await svc.updateCollectionsForPlace(userId, input);
 
 						return result;
 					}),
@@ -135,30 +99,12 @@ export const module = defineModule({
 
 					return result;
 				}),
-				append: os.cities.append
+				update: os.cities.update
 					.use(requireAuth)
 					.use(isAdmin)
 					.handler(async ({ context, input }) => {
 						const userId = getUserIdOrThrow(context);
-						const result = await svc.appendCollectionToCity(userId, input);
-
-						return result;
-					}),
-				reorder: os.cities.reorder
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.reorderCollectionsForCity(userId, input);
-
-						return result;
-					}),
-				remove: os.cities.remove
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.removeCollectionFromCity(userId, input);
+						const result = await svc.updateCollectionsForCity(userId, input);
 
 						return result;
 					}),

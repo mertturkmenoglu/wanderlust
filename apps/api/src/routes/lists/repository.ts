@@ -1,17 +1,19 @@
-import { Pagination } from '@wanderlust/common';
-import type { lists as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Lists } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
+	schema,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
-import { and, eq, gt, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
+import { areSetsEqual } from '@/lib/set-equality';
 import { TraceAll } from '@/lib/tracer';
+import type { DbOrTx } from '@/lib/transactions';
 import { unique } from '@/lib/unique';
 import { FavoritesRepository } from '../favorites/repository';
 import { canDelete, canRead, canUpdate } from './authz';
@@ -30,8 +32,8 @@ export class ListsRepository {
 		this.db = db.get();
 	}
 
-	async listAll(userId: string, data: dto.ListAllInput) {
-		const offset = Pagination.getOffset(data);
+	async listAll(userId: string, data: Lists.dto.ListInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const result = await this.db.query.lists.findMany({
 			where: {
@@ -61,12 +63,12 @@ export class ListsRepository {
 
 		return {
 			lists: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async listPublic(data: dto.ListPublicInput) {
-		const offset = Pagination.getOffset(data);
+	async listPublic(data: Lists.dto.ListPublicInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const user = await this.db.query.users.findFirst({
 			where: {
@@ -109,14 +111,14 @@ export class ListsRepository {
 
 		return {
 			lists: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async get(userId: string, data: dto.GetInput) {
-		const result = await this.db.query.lists.findFirst({
+	private async findById(userId: string, listId: string, tx: DbOrTx) {
+		const result = await tx.query.lists.findFirst({
 			where: {
-				id: data.id,
+				id: listId,
 			},
 			with: {
 				user: {
@@ -136,14 +138,14 @@ export class ListsRepository {
 			},
 		});
 
-		invariant(result, 'NOT_FOUND', `List with ID '${data.id}' not found`);
+		invariant(result, 'NOT_FOUND', `List with ID '${listId}' not found`);
 
 		const hasReadPermission = canRead(result, userId);
 
 		invariant(
 			hasReadPermission,
 			'FORBIDDEN',
-			`You do not have access to list with ID '${data.id}'`,
+			`You do not have access to list with ID '${listId}'`,
 		);
 
 		const placeIds = unique(result.items.map((item) => item.placeId));
@@ -160,7 +162,11 @@ export class ListsRepository {
 		};
 	}
 
-	async checkStatus(userId: string, data: dto.CheckStatusInput) {
+	async get(userId: string, data: Lists.dto.GetInput) {
+		return this.findById(userId, data.id, this.db);
+	}
+
+	async checkStatus(userId: string, data: Lists.dto.ListPlaceSaveStatInput) {
 		const listIds = await this.db.query.lists.findMany({
 			where: {
 				userId: userId,
@@ -194,7 +200,7 @@ export class ListsRepository {
 		};
 	}
 
-	async create(userId: string, data: dto.CreateInput) {
+	async create(userId: string, data: Lists.dto.CreateInput) {
 		const count = await this.db.$count(
 			schema.lists,
 			eq(schema.lists.userId, userId),
@@ -245,7 +251,7 @@ export class ListsRepository {
 		};
 	}
 
-	async update(userId: string, data: dto.UpdateInput) {
+	async update(userId: string, data: Lists.dto.UpdateInput) {
 		const existing = await this.db.query.lists.findFirst({
 			where: {
 				id: data.id,
@@ -300,7 +306,7 @@ export class ListsRepository {
 		};
 	}
 
-	async _delete(userId: string, data: dto.DeleteInput) {
+	async _delete(userId: string, data: Lists.dto.DeleteInput) {
 		const existing = await this.db.query.lists.findFirst({
 			where: {
 				id: data.id,
@@ -320,190 +326,135 @@ export class ListsRepository {
 		await this.db.delete(schema.lists).where(eq(schema.lists.id, data.id));
 	}
 
-	async appendItem(userId: string, data: dto.AppendItemInput) {
-		const existing = await this.db.query.lists.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
+	async updateItems(
+		userId: string,
+		data: Lists.dto.ItemsUpdateInput,
+	): Promise<Lists.dto.ItemsUpdateOutput> {
+		const result = await this.db.transaction(async (tx) => {
+			const list = await this.findById(userId, data.id, tx);
 
-		invariant(existing, 'NOT_FOUND', `List with ID '${data.id}' not found`);
+			invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
 
-		const hasUpdatePermission = canUpdate(existing, userId);
-
-		invariant(
-			hasUpdatePermission,
-			'FORBIDDEN',
-			'You do not have permission to modify this list',
-		);
-
-		let lastIndex = await this.db.query.listItems.findFirst({
-			where: {
-				listId: data.id,
-			},
-			orderBy: (t, { desc }) => desc(t.index),
-			columns: {
-				index: true,
-			},
-		});
-
-		if (!lastIndex) {
-			lastIndex = { index: -1 };
-		}
-
-		invariant(
-			lastIndex.index < MAX_ITEMS_PER_LIST,
-			'BAD_REQUEST',
-			`List with ID '${data.id}' has reached the maximum number of items (${MAX_ITEMS_PER_LIST})`,
-		);
-
-		const [result] = await this.db
-			.insert(schema.listItems)
-			.values({
-				listId: data.id,
-				placeId: data.placeId,
-				index: lastIndex.index + 1,
-			})
-			.returning();
-
-		invariant(result, 'INTERNAL_SERVER_ERROR', 'No list item returned');
-
-		const listItem = await this.db.query.listItems.findFirst({
-			where: {
-				listId: result.listId,
-				placeId: result.placeId,
-			},
-			with: {
-				place: $includes.place,
-			},
-		});
-
-		invariant(
-			listItem,
-			'INTERNAL_SERVER_ERROR',
-			'Failed to retrieve the created list item',
-		);
-
-		return {
-			item: listItem,
-		};
-	}
-
-	async updateItems(userId: string, data: dto.UpdateItemsInput) {
-		const list = await this.db.query.lists.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
-
-		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
-
-		const hasUpdatePermission = canUpdate(list, userId);
-
-		invariant(
-			hasUpdatePermission,
-			'FORBIDDEN',
-			`You do not have permission to modify list with ID '${data.id}'`,
-		);
-
-		invariant(
-			data.placeIds.length < MAX_ITEMS_PER_LIST,
-			'BAD_REQUEST',
-			`Cannot have more than ${MAX_ITEMS_PER_LIST} items in a list`,
-		);
-
-		await this.db.transaction(async (tx) => {
-			// Delete existing items
-			await tx
-				.delete(schema.listItems)
-				.where(eq(schema.listItems.listId, data.id));
-
-			if (data.placeIds.length > 0) {
-				// Insert new items
-				await tx.insert(schema.listItems).values(
-					data.placeIds.map((placeId, index) => ({
-						listId: data.id,
-						placeId: placeId,
-						index: index + 1,
-					})),
-				);
-			}
-		});
-
-		const updatedList = await this.db.query.lists.findFirst({
-			where: {
-				id: data.id,
-			},
-			with: {
-				user: {
-					columns: {
-						id: true,
-						username: true,
-						name: true,
-						image: true,
-					},
-				},
-			},
-		});
-
-		invariant(
-			updatedList,
-			'INTERNAL_SERVER_ERROR',
-			'Failed to retrieve the updated list',
-		);
-
-		return {
-			list: updatedList,
-		};
-	}
-
-	async removeItem(userId: string, data: dto.RemoveItemInput) {
-		const list = await this.db.query.lists.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
-
-		invariant(list, 'NOT_FOUND', `List with ID '${data.id}' not found`);
-
-		const hasUpdatePermission = canUpdate(list, userId);
-
-		invariant(
-			hasUpdatePermission,
-			'FORBIDDEN',
-			`You do not have permission to modify list with ID '${data.id}'`,
-		);
-
-		await this.db.transaction(async (tx) => {
-			// Delete the item
-			const [item] = await tx
-				.delete(schema.listItems)
-				.where(
-					and(
-						eq(schema.listItems.listId, data.id),
-						eq(schema.listItems.placeId, data.placeId),
-					),
-				)
-				.returning();
+			const hasUpdatePermission = canUpdate(list.list, userId);
 
 			invariant(
-				item !== undefined,
-				'NOT_FOUND',
-				`Item with Place ID '${data.placeId}' not found in list with ID '${data.id}'`,
+				hasUpdatePermission,
+				'FORBIDDEN',
+				`You do not have permission to modify list with ID '${data.id}'`,
 			);
 
-			// Update indices of remaining items
-			await tx
-				.update(schema.listItems)
-				.set({
-					index: sql`${schema.listItems.index} - 1`,
-				})
-				.where(
-					and(
-						eq(schema.listItems.listId, data.id),
-						gt(schema.listItems.index, item.index),
-					),
+			const currentItemCount = list.list.items.length;
+
+			if (data.update.op === 'add') {
+				invariant(
+					currentItemCount + data.update.items.length <= MAX_ITEMS_PER_LIST,
+					'BAD_REQUEST',
+					`Cannot have more than ${MAX_ITEMS_PER_LIST} items in a list`,
 				);
+
+				const existingItems = await tx.query.listItems.findMany({
+					where: {
+						listId: data.id,
+					},
+					columns: {
+						placeId: true,
+						index: true,
+					},
+				});
+
+				const existingPlaceIds = existingItems.map((item) => item.placeId);
+
+				if (existingPlaceIds.some((x) => data.update.items.includes(x))) {
+					invariant(
+						false,
+						'BAD_REQUEST',
+						'Some of the places you are trying to add are already in the list',
+					);
+				}
+
+				const lastIndex = existingItems
+					.map((item) => item.index)
+					.reduce((a, b) => Math.max(a, b), 0);
+
+				await tx.insert(schema.listItems).values(
+					data.update.items.map((placeId, index) => ({
+						listId: data.id,
+						placeId: placeId,
+						index: lastIndex + index + 1,
+					})),
+				);
+
+				return this.findById(userId, data.id, tx);
+			}
+
+			if (data.update.op === 'remove') {
+				const deleteResult = await tx
+					.delete(schema.listItems)
+					.where(
+						and(
+							eq(schema.listItems.listId, data.id),
+							inArray(schema.listItems.placeId, data.update.items),
+						),
+					)
+					.returning();
+
+				const ok = areSetsEqual(
+					new Set([...deleteResult.map((x) => x.placeId)]),
+					new Set([...data.update.items]),
+				);
+
+				invariant(
+					ok,
+					'BAD_REQUEST',
+					'Some of the places you are trying to remove are not in the list',
+				);
+
+				await tx
+					.update(schema.listItems)
+					.set({
+						index: sql`row_number() over (order by "index") - 1`,
+					})
+					.where(eq(schema.listItems.listId, data.id));
+
+				return this.findById(userId, data.id, tx);
+			}
+
+			if (data.update.op === 'move') {
+				const existingItems = await tx.query.listItems.findMany({
+					where: {
+						listId: data.id,
+					},
+					columns: {
+						placeId: true,
+						index: true,
+					},
+				});
+
+				const existingPlaceIds = existingItems.map((item) => item.placeId);
+				const inputPlaceIdsSet = new Set(data.update.items);
+				const existingPlaceIdsSet = new Set(existingPlaceIds);
+
+				invariant(
+					areSetsEqual(inputPlaceIdsSet, existingPlaceIdsSet),
+					'BAD_REQUEST',
+					'The provided list of place IDs does not match the existing items in the list',
+				);
+
+				await tx
+					.update(schema.listItems)
+					.set({
+						index: sql`row_number() over (order by array_position(${data.update.items}, "placeId")) - 1`,
+					})
+					.where(eq(schema.listItems.listId, data.id));
+
+				return this.findById(userId, data.id, tx);
+			}
+
+			invariant(false, 'BAD_REQUEST', 'Invalid operation type');
 		});
+
+		return {
+			list: result.list,
+		};
 	}
 }

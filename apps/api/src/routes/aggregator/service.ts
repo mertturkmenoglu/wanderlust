@@ -1,5 +1,5 @@
 import { CacheService, type TCacheService } from '@wanderlust/cache';
-import type { aggregator as dto } from '@wanderlust/contract';
+import type { Aggregator } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import { FavoritesRepository } from '../favorites/repository';
@@ -22,7 +22,7 @@ export class AggregatorService {
 		this.repo = repo;
 	}
 
-	async home(userId: string | null): Promise<dto.HomeOutput> {
+	async home(userId: string | null): Promise<Aggregator.dto.HomeOutput> {
 		const result = await this.cache.namespace(this.ns).getOrSet({
 			key: 'home',
 			ttl: '1h',
@@ -46,7 +46,9 @@ export class AggregatorService {
 			ids,
 		);
 
-		const mapWithMeta = (places: dto.HomeOutput['new'][number]['place'][]) => {
+		const mapWithMeta = (
+			places: Aggregator.dto.HomeOutput['new'][number]['place'][],
+		) => {
 			return places.map((place) => ({
 				place,
 				meta: {

@@ -1,4 +1,4 @@
-import type { categories as dto } from '@wanderlust/contract';
+import type { Categories } from '@wanderlust/contract';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db/schema';
 import { eq } from 'drizzle-orm';
@@ -15,7 +15,7 @@ export class CategoriesRepository {
 		this.db = db.get();
 	}
 
-	async get(data: dto.GetInput) {
+	async get(data: Categories.dto.GetInput) {
 		const result = await this.db.query.categories.findFirst({
 			where: {
 				id: data.id,
@@ -33,7 +33,7 @@ export class CategoriesRepository {
 		});
 	}
 
-	async create(data: dto.CreateInput) {
+	async create(data: Categories.dto.CreateInput) {
 		const [result] = await this.db
 			.insert(schema.categories)
 			.values({
@@ -51,7 +51,7 @@ export class CategoriesRepository {
 		return result;
 	}
 
-	async update(data: dto.UpdateInput) {
+	async update(data: Categories.dto.UpdateInput) {
 		const [result] = await this.db
 			.update(schema.categories)
 			.set({
@@ -66,7 +66,7 @@ export class CategoriesRepository {
 		return result;
 	}
 
-	async _delete(data: dto.DeleteInput) {
+	async _delete(data: Categories.dto.DeleteInput) {
 		await this.db
 			.delete(schema.categories)
 			.where(eq(schema.categories.id, data.id));

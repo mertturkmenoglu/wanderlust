@@ -1,11 +1,8 @@
 import { module as accolades } from './accolades';
-import { module as addresses } from './addresses';
 import { module as aggregator } from './aggregator';
 import { module as amenities } from './amenities';
 import { module as bookmarks } from './bookmarks';
 import { module as categories } from './categories';
-import { module as chats } from './chats/chats';
-import { module as compose } from './chats/compose';
 import { module as cities } from './cities';
 import { module as collections } from './collections';
 import { module as favorites } from './favorites';
@@ -21,15 +18,10 @@ import { module as users } from './users';
 
 export type AppRouter = {
 	accolades: ReturnType<typeof accolades.router>;
-	addresses: ReturnType<typeof addresses.router>;
 	aggregator: ReturnType<typeof aggregator.router>;
 	amenities: ReturnType<typeof amenities.router>;
 	bookmarks: ReturnType<typeof bookmarks.router>;
 	categories: ReturnType<typeof categories.router>;
-	chats: {
-		chats: ReturnType<typeof chats.router>;
-		compose: ReturnType<typeof compose.router>;
-	};
 	cities: ReturnType<typeof cities.router>;
 	collections: ReturnType<typeof collections.router>;
 	favorites: ReturnType<typeof favorites.router>;
@@ -47,15 +39,10 @@ export type AppRouter = {
 export function getAppRouter(): AppRouter {
 	return {
 		accolades: accolades.router(),
-		addresses: addresses.router(),
 		aggregator: aggregator.router(),
 		amenities: amenities.router(),
 		bookmarks: bookmarks.router(),
 		categories: categories.router(),
-		chats: {
-			chats: chats.router(),
-			compose: compose.router(),
-		},
 		cities: cities.router(),
 		collections: collections.router(),
 		favorites: favorites.router(),
@@ -73,14 +60,11 @@ export function getAppRouter(): AppRouter {
 
 export const exports = [
 	accolades.exports,
-	addresses.exports,
 	aggregator.exports,
 	amenities.exports,
 	bookmarks.exports,
 	categories.exports,
 	cities.exports,
-	chats.exports,
-	compose.exports,
 	collections.exports,
 	favorites.exports,
 	health.exports,

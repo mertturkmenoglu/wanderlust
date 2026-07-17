@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { preferences } from '@wanderlust/contract';
+import { Preferences } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -12,7 +12,7 @@ import { PreferencesService } from './service';
 export const module = defineModule({
 	exports: [PreferencesService, PreferencesRepository],
 	router: () => {
-		const os = implement(preferences.contract)
+		const os = implement(Preferences.Contract)
 			.$context<Context>()
 			.use(requireAuth)
 			.use(withErrorNormalization)

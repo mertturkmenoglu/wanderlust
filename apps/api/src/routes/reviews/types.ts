@@ -1,6 +1,6 @@
-import type { reviews as dto } from '@wanderlust/contract';
+import type { Reviews } from '@wanderlust/contract';
 
-export type CreateReviewParams = dto.CreateInput & {
+export type CreateReviewParams = Reviews.dto.CreateInput & {
 	detectedLanguage: string | null;
 	urls: string[];
 	facets: {

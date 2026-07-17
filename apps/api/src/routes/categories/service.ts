@@ -1,4 +1,4 @@
-import type { categories as dto } from '@wanderlust/contract';
+import type { Categories } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import { CategoriesRepository } from './repository';
@@ -11,7 +11,7 @@ export class CategoriesService {
 		private readonly repository: CategoriesRepository,
 	) {}
 
-	async get(data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(data: Categories.dto.GetInput): Promise<Categories.dto.GetOutput> {
 		const result = await this.repository.get(data);
 
 		return {
@@ -19,7 +19,7 @@ export class CategoriesService {
 		};
 	}
 
-	async list(): Promise<dto.ListOutput> {
+	async list(): Promise<Categories.dto.ListOutput> {
 		const result = await this.repository.list();
 
 		return {
@@ -27,7 +27,9 @@ export class CategoriesService {
 		};
 	}
 
-	async create(data: dto.CreateInput): Promise<dto.CreateOutput> {
+	async create(
+		data: Categories.dto.CreateInput,
+	): Promise<Categories.dto.CreateOutput> {
 		const result = await this.repository.create(data);
 
 		return {
@@ -35,7 +37,9 @@ export class CategoriesService {
 		};
 	}
 
-	async update(data: dto.UpdateInput): Promise<dto.UpdateOutput> {
+	async update(
+		data: Categories.dto.UpdateInput,
+	): Promise<Categories.dto.UpdateOutput> {
 		const result = await this.repository.update(data);
 
 		return {
@@ -43,7 +47,7 @@ export class CategoriesService {
 		};
 	}
 
-	async _delete(data: dto.DeleteInput): Promise<void> {
+	async _delete(data: Categories.dto.DeleteInput): Promise<void> {
 		await this.repository._delete(data);
 	}
 }

@@ -1,4 +1,4 @@
-import type { favorites as dto } from '@wanderlust/contract';
+import type { Favorites } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { TraceAll } from '@/lib/tracer';
@@ -15,8 +15,8 @@ export class FavoritesService {
 	async create(
 		userId: string,
 		username: string,
-		data: dto.CreateInput,
-	): Promise<dto.CreateOutput> {
+		data: Favorites.dto.CreateInput,
+	): Promise<Favorites.dto.CreateOutput> {
 		const [insertResult, place] = await this.repo.create(userId, data);
 
 		await this.activities.addActivity(username, 'create_favorite', {
@@ -31,7 +31,10 @@ export class FavoritesService {
 		};
 	}
 
-	async list(userId: string, data: dto.ListInput): Promise<dto.ListOutput> {
+	async list(
+		userId: string,
+		data: Favorites.dto.ListInput,
+	): Promise<Favorites.dto.ListOutput> {
 		const result = await this.repo.list(userId, data);
 
 		return {
@@ -42,16 +45,16 @@ export class FavoritesService {
 
 	async _delete(
 		userId: string,
-		data: dto.DeleteInput,
-	): Promise<dto.DeleteOutput> {
+		data: Favorites.dto.DeleteInput,
+	): Promise<Favorites.dto.DeleteOutput> {
 		await this.repo._delete(userId, data);
 
 		return {};
 	}
 
 	async listByUsername(
-		data: dto.ListByUsernameInput,
-	): Promise<dto.ListByUsernameOutput> {
+		data: Favorites.dto.ListByUsernameInput,
+	): Promise<Favorites.dto.ListByUsernameOutput> {
 		const result = await this.repo.listByUsername(data);
 
 		return {

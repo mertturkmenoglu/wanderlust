@@ -1,9 +1,9 @@
-import { Pagination } from '@wanderlust/common';
-import type { favorites as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Favorites } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
+	schema,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { and, eq, inArray, sql } from 'drizzle-orm';
@@ -20,7 +20,7 @@ export class FavoritesRepository {
 		this.db = db.get();
 	}
 
-	async create(userId: string, data: dto.CreateInput) {
+	async create(userId: string, data: Favorites.dto.CreateInput) {
 		const results = await this.db.transaction(async (tx) => {
 			const [result] = await tx
 				.insert(schema.favorites)
@@ -53,8 +53,8 @@ export class FavoritesRepository {
 		return results;
 	}
 
-	async list(userId: string, data: dto.ListInput) {
-		const offset = Pagination.getOffset(data);
+	async list(userId: string, data: Favorites.dto.ListInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const favorites = await this.db.query.favorites.findMany({
 			where: {
@@ -75,7 +75,7 @@ export class FavoritesRepository {
 			eq(schema.favorites.userId, userId),
 		);
 
-		const pagination = Pagination.compute(data, totalItems);
+		const pagination = Types.Pagination.compute(data, totalItems);
 
 		return {
 			favorites,
@@ -83,7 +83,7 @@ export class FavoritesRepository {
 		};
 	}
 
-	async _delete(userId: string, data: dto.DeleteInput) {
+	async _delete(userId: string, data: Favorites.dto.DeleteInput) {
 		await this.db.transaction(async (tx) => {
 			const res = await tx
 				.delete(schema.favorites)
@@ -105,8 +105,8 @@ export class FavoritesRepository {
 		});
 	}
 
-	async listByUsername(data: dto.ListByUsernameInput) {
-		const offset = Pagination.getOffset(data);
+	async listByUsername(data: Favorites.dto.ListByUsernameInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const user = await this.db.query.users.findFirst({
 			where: {
@@ -139,7 +139,7 @@ export class FavoritesRepository {
 			eq(schema.favorites.userId, user.id),
 		);
 
-		const pagination = Pagination.compute(data, totalItems);
+		const pagination = Types.Pagination.compute(data, totalItems);
 
 		return {
 			favorites,

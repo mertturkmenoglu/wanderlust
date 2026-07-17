@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { trips } from '@wanderlust/contract';
+import { Trips } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -12,7 +12,7 @@ import { TripsService } from './service';
 export const module = defineModule({
 	exports: [TripsService, TripsRepository],
 	router: () => {
-		const os = implement(trips.contract)
+		const os = implement(Trips.Contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
 			.use(withErrorNormalization)
@@ -21,33 +21,15 @@ export const module = defineModule({
 		const svc = container.get(TripsService);
 
 		return os.router({
-			get: os.get.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.get(userId, input);
-
-				return result;
-			}),
-			listInvites: os.listInvites.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.listInvites(userId, input);
-
-				return result;
-			}),
-			createInvite: os.createInvite.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.createInvite(userId, input);
-
-				return result;
-			}),
 			list: os.list.handler(async ({ input, context }) => {
 				const userId = context.session.user.id;
 				const result = await svc.list(userId, input);
 
 				return result;
 			}),
-			listMyInvites: os.listMyInvites.handler(async ({ input, context }) => {
+			get: os.get.handler(async ({ input, context }) => {
 				const userId = context.session.user.id;
-				const result = await svc.listMyInvites(userId, input);
+				const result = await svc.get(userId, input);
 
 				return result;
 			}),
@@ -57,31 +39,9 @@ export const module = defineModule({
 
 				return result;
 			}),
-			getInviteDetails: os.getInviteDetails.handler(
-				async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.getInviteDetails(userId, input);
-
-					return result;
-				},
-			),
-			acceptOrDeclineInvite: os.acceptOrDeclineInvite.handler(
-				async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.acceptOrDeclineInvite(userId, input);
-
-					return result;
-				},
-			),
 			leave: os.leave.handler(async ({ input, context }) => {
 				const userId = context.session.user.id;
 				await svc.leave(userId, input);
-
-				return {};
-			}),
-			deleteInvite: os.deleteInvite.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc.deleteInvite(userId, input);
 
 				return {};
 			}),
@@ -91,70 +51,111 @@ export const module = defineModule({
 
 				return {};
 			}),
-			deleteParticipant: os.deleteParticipant.handler(
-				async ({ input, context }) => {
-					const userId = context.session.user.id;
-					await svc.deleteParticipant(userId, input);
-
-					return {};
-				},
-			),
-			createComment: os.createComment.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.createComment(userId, input);
-
-				return result;
-			}),
-			listComments: os.listComments.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.listComments(userId, input);
-
-				return result;
-			}),
-			updateComment: os.updateComment.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.updateComment(userId, input);
-
-				return result;
-			}),
-			deleteComment: os.deleteComment.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc.deleteComment(userId, input);
-
-				return {};
-			}),
 			update: os.update.handler(async ({ input, context }) => {
 				const userId = context.session.user.id;
 				const result = await svc.update(userId, input);
 
 				return result;
 			}),
-			createLocation: os.createLocation.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.createLocation(userId, input);
 
-				return result;
-			}),
-			updateLocation: os.updateLocation.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.updateLocation(userId, input);
-
-				return result;
-			}),
-			deleteLocation: os.deleteLocation.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc.deleteLocation(userId, input);
-
-				return {};
-			}),
-			updateRequestedAmenities: os.updateRequestedAmenities.handler(
-				async ({ input, context }) => {
+			invites: {
+				list: os.invites.list.handler(async ({ input, context }) => {
 					const userId = context.session.user.id;
-					const result = await svc.updateRequestedAmenities(userId, input);
+					const result = await svc.listInvites(userId, input);
 
 					return result;
-				},
-			),
+				}),
+				create: os.invites.create.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.createInvite(userId, input);
+
+					return result;
+				}),
+				listMine: os.invites.listMine.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.listMyInvites(userId, input);
+
+					return result;
+				}),
+				getDetails: os.invites.getDetails.handler(
+					async ({ input, context }) => {
+						const userId = context.session.user.id;
+						const result = await svc.getInviteDetails(userId, input);
+
+						return result;
+					},
+				),
+				delete: os.invites.delete.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					await svc.deleteInvite(userId, input);
+
+					return {};
+				}),
+				respond: os.invites.respond.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.acceptOrDeclineInvite(userId, input);
+
+					return result;
+				}),
+			},
+
+			participants: {
+				delete: os.participants.delete.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					await svc.deleteParticipant(userId, input);
+
+					return {};
+				}),
+			},
+
+			comments: {
+				create: os.comments.create.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.createComment(userId, input);
+
+					return result;
+				}),
+				list: os.comments.list.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.listComments(userId, input);
+
+					return result;
+				}),
+				update: os.comments.update.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.updateComment(userId, input);
+
+					return result;
+				}),
+				delete: os.comments.delete.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					await svc.deleteComment(userId, input);
+
+					return {};
+				}),
+			},
+
+			locations: {
+				create: os.locations.create.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.createLocation(userId, input);
+
+					return result;
+				}),
+				update: os.locations.update.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					const result = await svc.updateLocation(userId, input);
+
+					return result;
+				}),
+				delete: os.locations.delete.handler(async ({ input, context }) => {
+					const userId = context.session.user.id;
+					await svc.deleteLocation(userId, input);
+
+					return {};
+				}),
+			},
+
 			getSummary: os.getSummary.handler(async ({ input, context }) => {
 				const userId = context.session.user.id;
 				const result = await svc.getSummary(userId, input);

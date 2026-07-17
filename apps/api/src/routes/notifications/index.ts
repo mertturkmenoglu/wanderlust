@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { notifications } from '@wanderlust/contract';
+import { Notifications } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -12,7 +12,7 @@ import { NotificationsService } from './service';
 export const module = defineModule({
 	exports: [NotificationsService, NotificationsRepository],
 	router: () => {
-		const os = implement(notifications.contract)
+		const os = implement(Notifications.Contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
 			.use(withErrorNormalization)

@@ -1,9 +1,9 @@
-import { Pagination } from '@wanderlust/common';
-import type { trips as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Trips } from '@wanderlust/contract';
 import {
 	$includes,
 	DatabaseService,
+	schema,
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
@@ -28,7 +28,7 @@ export class TripsRepository {
 		this.db = db.get();
 	}
 
-	async get(userId: string, data: dto.GetInput, options?: { tx?: Tx }) {
+	async get(userId: string, data: Trips.dto.GetInput, options?: { tx?: Tx }) {
 		const db = options?.tx ?? this.db;
 
 		const res = await db.query.trips.findFirst({
@@ -53,7 +53,7 @@ export class TripsRepository {
 		};
 	}
 
-	async listInvites(_userId: string, data: dto.ListInvitesInput) {
+	async listInvites(_userId: string, data: Trips.dto.ListInvitesInput) {
 		const result = await this.db.query.tripInvites.findMany({
 			where: {
 				tripId: data.id,
@@ -61,71 +61,81 @@ export class TripsRepository {
 			with: $includes.tripInvite.with,
 		});
 
-		return result;
+		return result.map(({ fromUser, toUser, ...inv }) => ({
+			...inv,
+			from: fromUser,
+			to: toUser,
+		}));
 	}
 
 	async createInvite(
 		userId: string,
-		data: dto.CreateInviteInput,
+		data: Trips.dto.CreateInviteInput,
 		tripTitle: string,
 	) {
-		const result = await this.db.transaction(async (tx) => {
-			const inv = await tx.query.tripInvites.findFirst({
-				where: {
-					tripid: data.id,
-					toId: data.toUserId,
-				},
-			});
+		const { fromUser, toUser, ...inv } = await this.db.transaction(
+			async (tx) => {
+				const inv = await tx.query.tripInvites.findFirst({
+					where: {
+						tripid: data.id,
+						toId: data.toUserId,
+					},
+				});
 
-			invariant(
-				!inv,
-				'CONFLICT',
-				`Invite already exists for user with id ${data.toUserId} to trip with id ${data.id}`,
-			);
+				invariant(
+					!inv,
+					'CONFLICT',
+					`Invite already exists for user with id ${data.toUserId} to trip with id ${data.id}`,
+				);
 
-			const now = new Date();
+				const now = new Date();
 
-			const [newInv] = await tx
-				.insert(schema.tripInvites)
-				.values({
-					id: nanoid(),
-					fromId: userId,
-					tripId: data.id,
-					toId: data.toUserId,
-					tripTitle: tripTitle,
-					sentAt: now,
-					expiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days later
-					role: data.role,
-				})
-				.returning();
+				const [newInv] = await tx
+					.insert(schema.tripInvites)
+					.values({
+						id: nanoid(),
+						fromId: userId,
+						tripId: data.id,
+						toId: data.toUserId,
+						tripTitle: tripTitle,
+						sentAt: now,
+						expiresAt: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days later
+						role: data.role,
+					})
+					.returning();
 
-			invariant(
-				newInv,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to get invite after creation',
-			);
+				invariant(
+					newInv,
+					'INTERNAL_SERVER_ERROR',
+					'Failed to get invite after creation',
+				);
 
-			const invite = await tx.query.tripInvites.findFirst({
-				where: {
-					id: newInv.id,
-				},
-				with: $includes.tripInvite.with,
-			});
+				const invite = await tx.query.tripInvites.findFirst({
+					where: {
+						id: newInv.id,
+					},
+					with: $includes.tripInvite.with,
+				});
 
-			invariant(
-				invite,
-				'INTERNAL_SERVER_ERROR',
-				'Failed to retrieve invite after creation',
-			);
+				invariant(
+					invite,
+					'INTERNAL_SERVER_ERROR',
+					'Failed to retrieve invite after creation',
+				);
 
-			return invite;
-		});
+				return invite;
+			},
+		);
 
-		return result;
+		return {
+			...inv,
+			from: fromUser,
+			to: toUser,
+		};
 	}
 
-	async list(userId: string, data: dto.ListInput) {
-		const offset = Pagination.getOffset(data);
+	async list(userId: string, data: Trips.dto.ListInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const idsResult = await this.db
 			.select({
@@ -187,12 +197,12 @@ export class TripsRepository {
 
 		return {
 			trips,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async listMyInvites(userId: string, data: dto.ListMyInvitesInput) {
-		const offset = Pagination.getOffset(data);
+	async listMyInvites(userId: string, data: Trips.dto.ListMyInvitesInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const result = await this.db.query.tripInvites.findMany({
 			where: {
@@ -212,12 +222,16 @@ export class TripsRepository {
 		);
 
 		return {
-			invites: result,
-			pagination: Pagination.compute(data, totalRecords),
+			invites: result.map(({ fromUser, toUser, ...inv }) => ({
+				...inv,
+				from: fromUser,
+				to: toUser,
+			})),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async create(userId: string, data: dto.CreateInput) {
+	async create(userId: string, data: Trips.dto.CreateInput) {
 		const result = await this.db.transaction(async (tx) => {
 			const [newTrip] = await tx
 				.insert(schema.trips)
@@ -253,7 +267,10 @@ export class TripsRepository {
 		return result;
 	}
 
-	async getInviteDetails(userId: string, data: dto.GetInviteDetailsInput) {
+	async getInviteDetails(
+		userId: string,
+		data: Trips.dto.GetInviteDetailsInput,
+	) {
 		const result = await this.db.query.tripInvites.findFirst({
 			where: {
 				id: data.inviteId,
@@ -268,12 +285,18 @@ export class TripsRepository {
 			`Invite with id ${data.inviteId} not found for user with id ${userId}`,
 		);
 
-		return result;
+		const { fromUser, toUser, ...inv } = result;
+
+		return {
+			...inv,
+			from: fromUser,
+			to: toUser,
+		};
 	}
 
 	async acceptOrDeclineInvite(
 		userId: string,
-		data: dto.AcceptOrDeclineInviteInput,
+		data: Trips.dto.RespondInput,
 		role: 'member' | 'editor',
 	) {
 		return await this.db.transaction(async (tx) => {
@@ -306,7 +329,7 @@ export class TripsRepository {
 		});
 	}
 
-	async leave(userId: string, data: dto.LeaveInput) {
+	async leave(userId: string, data: Trips.dto.LeaveInput) {
 		const res = await this.db
 			.delete(schema.tripParticipants)
 			.where(
@@ -319,7 +342,7 @@ export class TripsRepository {
 		invariant(res.rowCount === 1, 'NOT_FOUND', 'Trip participant not found');
 	}
 
-	async deleteInvite(_userId: string, data: dto.DeleteInviteInput) {
+	async deleteInvite(_userId: string, data: Trips.dto.DeleteInviteInput) {
 		const res = await this.db
 			.delete(schema.tripInvites)
 			.where(
@@ -332,7 +355,7 @@ export class TripsRepository {
 		invariant(res.rowCount === 1, 'NOT_FOUND', 'Trip invite not found');
 	}
 
-	async _delete(userId: string, data: dto.DeleteInput) {
+	async _delete(userId: string, data: Trips.dto.DeleteInput) {
 		const res = await this.db
 			.delete(schema.trips)
 			.where(
@@ -346,7 +369,10 @@ export class TripsRepository {
 		);
 	}
 
-	async deleteParticipant(_userId: string, data: dto.DeleteParticipantInput) {
+	async deleteParticipant(
+		_userId: string,
+		data: Trips.dto.DeleteParticipantInput,
+	) {
 		const res = await this.db
 			.delete(schema.tripParticipants)
 			.where(
@@ -359,7 +385,7 @@ export class TripsRepository {
 		invariant(res.rowCount === 1, 'NOT_FOUND', 'Trip participant not found');
 	}
 
-	async createComment(userId: string, data: dto.CreateCommentInput) {
+	async createComment(userId: string, data: Trips.dto.CreateCommentInput) {
 		const [result] = await this.db
 			.insert(schema.tripComments)
 			.values({
@@ -376,8 +402,8 @@ export class TripsRepository {
 		return result;
 	}
 
-	async listComments(_userId: string, data: dto.ListCommentsInput) {
-		const offset = Pagination.getOffset(data);
+	async listComments(_userId: string, data: Trips.dto.ListCommentsInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const result = await this.db.query.tripComments.findMany({
 			where: {
@@ -398,7 +424,7 @@ export class TripsRepository {
 
 		return {
 			comments: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
@@ -424,7 +450,7 @@ export class TripsRepository {
 		return result;
 	}
 
-	async updateComment(userId: string, data: dto.UpdateCommentInput) {
+	async updateComment(userId: string, data: Trips.dto.UpdateCommentInput) {
 		const [updated] = await this.db
 			.update(schema.tripComments)
 			.set({
@@ -447,7 +473,7 @@ export class TripsRepository {
 		return updated;
 	}
 
-	async deleteComment(_userId: string, data: dto.DeleteCommentInput) {
+	async deleteComment(_userId: string, data: Trips.dto.DeleteCommentInput) {
 		const res = await this.db
 			.delete(schema.tripComments)
 			.where(eq(schema.tripComments.id, data.commentId));
@@ -459,7 +485,7 @@ export class TripsRepository {
 		);
 	}
 
-	async update(userId: string, data: dto.UpdateInput) {
+	async update(userId: string, data: Trips.dto.UpdateInput) {
 		const existing = await this.get(userId, { id: data.id });
 
 		let isDateChanged = false;
@@ -538,7 +564,7 @@ export class TripsRepository {
 		return [updated, isDateChanged] as const;
 	}
 
-	async createLocation(userId: string, data: dto.CreateLocationInput) {
+	async createLocation(userId: string, data: Trips.dto.CreateLocationInput) {
 		const place = await this.db.query.places.findFirst({
 			where: {
 				id: data.placeId,
@@ -606,7 +632,7 @@ export class TripsRepository {
 		};
 	}
 
-	async updateLocation(userId: string, data: dto.UpdateLocationInput) {
+	async updateLocation(userId: string, data: Trips.dto.UpdateLocationInput) {
 		const res = await this.db
 			.update(schema.tripLocations)
 			.set({
@@ -632,7 +658,7 @@ export class TripsRepository {
 		return updatedLocation;
 	}
 
-	async deleteLocation(_userId: string, data: dto.DeleteLocationInput) {
+	async deleteLocation(_userId: string, data: Trips.dto.DeleteLocationInput) {
 		const res = await this.db
 			.delete(schema.tripLocations)
 			.where(
@@ -651,7 +677,7 @@ export class TripsRepository {
 
 	async updateRequestedAmenities(
 		userId: string,
-		data: dto.UpdateRequestedAmenitiesInput,
+		data: Trips.dto.UpdateRequestedAmenitiesInput,
 	) {
 		const [updated] = await this.db
 			.update(schema.trips)

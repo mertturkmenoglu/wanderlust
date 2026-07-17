@@ -34,3 +34,24 @@ export const findManyByCityId = definePreparedStatement({
 			.prepare('collections_find_many_by_city_id');
 	},
 });
+
+export const findLastIndexOfCollection = definePreparedStatement({
+	schema: z.object({
+		collectionId: z.int(),
+	}),
+	statement: (db) => {
+		return db.query.collectionsCities
+			.findFirst({
+				where: {
+					collectionId: { eq: sql.placeholder('collectionId') },
+				},
+				columns: {
+					index: true,
+				},
+				orderBy: {
+					index: 'desc',
+				},
+			})
+			.prepare('collections_find_last_index_of_collection');
+	},
+});

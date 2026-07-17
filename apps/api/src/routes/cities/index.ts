@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { cities } from '@wanderlust/contract';
+import { Cities } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -13,7 +13,7 @@ import { CitiesService } from './service';
 export const module = defineModule({
 	exports: [CitiesService, CitiesRepository],
 	router: () => {
-		const os = implement(cities.contract)
+		const os = implement(Cities.Contract)
 			.$context<Context>()
 			.use(withErrorNormalization)
 			.use(withTracing);
@@ -56,7 +56,7 @@ export const module = defineModule({
 				.use(requireAuth)
 				.use(isAdmin)
 				.handler(async ({ input }) => {
-					await svc._delete(input);
+					await svc.delete(input);
 
 					return {};
 				}),

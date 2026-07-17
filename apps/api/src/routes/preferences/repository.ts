@@ -1,6 +1,5 @@
-import { preferences as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import { Preferences } from '@wanderlust/contract';
+import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { Trace, TraceAll } from '@/lib/tracer';
@@ -16,11 +15,14 @@ export class PreferencesRepository {
 	}
 
 	@Trace()
-	async get(userId: string, _data: dto.GetInput): Promise<dto.GetOutput> {
+	async get(
+		userId: string,
+		_data: Preferences.dto.GetInput,
+	): Promise<Preferences.dto.GetOutput> {
 		const pref = await findByUserId.execute(this.db, { userId });
 
 		if (!pref) {
-			return dto.getOutput.parse({
+			return Preferences.dto.getOutput.parse({
 				preferences: {
 					userId,
 					enableRecentViews: true,
@@ -41,8 +43,8 @@ export class PreferencesRepository {
 
 	async update(
 		userId: string,
-		data: dto.UpdateInput,
-	): Promise<dto.UpdateOutput> {
+		data: Preferences.dto.UpdateInput,
+	): Promise<Preferences.dto.UpdateOutput> {
 		const [updated] = await this.db
 			.insert(schema.preferences)
 			.values([

@@ -1,6 +1,6 @@
-import { Pagination } from '@wanderlust/common';
-import type { reports as dto } from '@wanderlust/contract';
-import * as schema from '@wanderlust/db';
+import { Types } from '@wanderlust/common';
+import type { Reports } from '@wanderlust/contract';
+import { schema } from '@wanderlust/db';
 import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { count, desc, eq } from 'drizzle-orm';
@@ -27,7 +27,7 @@ export class ReportsRepository {
 		return user?.role === 'admin';
 	}
 
-	async get(userId: string, data: dto.GetInput) {
+	async get(userId: string, data: Reports.dto.GetInput) {
 		const report = await this.db.query.reports.findFirst({
 			where: {
 				id: data.id,
@@ -49,8 +49,8 @@ export class ReportsRepository {
 		return report;
 	}
 
-	async list(data: dto.ListInput) {
-		const offset = Pagination.getOffset(data);
+	async list(data: Reports.dto.ListInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		const result = await this.db.query.reports.findMany({
 			orderBy: (t, { desc }) => [desc(t.createdAt)],
@@ -62,12 +62,12 @@ export class ReportsRepository {
 
 		return {
 			reports: result,
-			pagination: Pagination.compute(data, totalRecords),
+			pagination: Types.Pagination.compute(data, totalRecords),
 		};
 	}
 
-	async search(data: dto.SearchInput) {
-		const offset = Pagination.getOffset(data);
+	async search(data: Reports.dto.SearchInput) {
+		const offset = Types.Pagination.getOffset(data);
 
 		// Query builder and count query builder
 		let qb = this.db.select().from(schema.reports).$dynamic();
@@ -106,11 +106,11 @@ export class ReportsRepository {
 
 		return {
 			reports,
-			pagination: Pagination.compute(data, totalRecords[0]?.count ?? 0),
+			pagination: Types.Pagination.compute(data, totalRecords[0]?.count ?? 0),
 		};
 	}
 
-	async create(userId: string, data: dto.CreateInput) {
+	async create(userId: string, data: Reports.dto.CreateInput) {
 		const [report] = await this.db
 			.insert(schema.reports)
 			.values({
@@ -128,7 +128,7 @@ export class ReportsRepository {
 		return report;
 	}
 
-	async update(data: dto.UpdateInput) {
+	async update(data: Reports.dto.UpdateInput) {
 		const [report] = await this.db
 			.update(schema.reports)
 			.set({
@@ -145,7 +145,7 @@ export class ReportsRepository {
 		return report;
 	}
 
-	async _delete(data: dto.DeleteInput) {
+	async _delete(data: Reports.dto.DeleteInput) {
 		const result = await this.db
 			.delete(schema.reports)
 			.where(eq(schema.reports.id, data.id));

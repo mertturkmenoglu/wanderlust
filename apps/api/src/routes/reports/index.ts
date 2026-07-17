@@ -1,5 +1,5 @@
 import { implement } from '@orpc/server';
-import { reports } from '@wanderlust/contract';
+import { Reports } from '@wanderlust/contract';
 import { container } from '@/ioc';
 import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
@@ -13,7 +13,7 @@ import { ReportsService } from './service';
 export const module = defineModule({
 	exports: [ReportsService, ReportsRepository],
 	router: () => {
-		const os = implement(reports.contract)
+		const os = implement(Reports.Contract)
 			.$context<AuthContext>()
 			.use(requireAuth)
 			.use(withErrorNormalization)
