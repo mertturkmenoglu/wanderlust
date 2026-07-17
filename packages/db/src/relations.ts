@@ -117,7 +117,10 @@ export const relations = defineRelations(schema, (r) => ({
 		}),
 	},
 	places: {
-		accolades: r.many.accoladeAssignments(),
+		accolades: r.many.accolades({
+			from: r.places.id.through(r.accoladeAssignments.placeId),
+			to: r.accolades.id.through(r.accoladeAssignments.accoladeId),
+		}),
 		primaryCategory: r.one.categories({
 			from: r.places.primaryCategoryId,
 			to: r.categories.id,

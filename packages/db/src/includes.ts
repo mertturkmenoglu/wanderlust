@@ -8,19 +8,9 @@ type With<TDomain extends Domain> = NonNullable<
 	Parameters<TDatabaseService['query'][TDomain]['findFirst']>[0]
 >;
 
-const withAddress = {
-	with: {
-		city: true,
-	},
-} satisfies With<'addresses'>;
-
 const withPlace = {
 	with: {
-		accolades: {
-			with: {
-				accolade: true,
-			},
-		},
+		accolades: true,
 		primaryCategory: true,
 		city: true,
 		assets: true,
@@ -125,7 +115,6 @@ const withTripComment = {
 } satisfies With<'tripComments'>;
 
 export const $includes = {
-	address: withAddress,
 	place: withPlace,
 	tripParticipant: withTripParticipant,
 	trip: withTrip,
