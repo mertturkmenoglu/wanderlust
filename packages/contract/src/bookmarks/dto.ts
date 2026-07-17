@@ -1,42 +1,35 @@
-import { $dto, $extended, Pagination } from '@wanderlust/common';
+import { Types } from '@wanderlust/common';
 import z from 'zod';
 
-export const createInput = $dto.bookmark.pick({
-	placeId: true,
-});
+export namespace dto {
+	export const createInput = Types.Bookmarks.$Insert.Bookmark;
 
-export type CreateInput = z.infer<typeof createInput>;
+	export type CreateInput = z.infer<typeof createInput>;
 
-export const createOutput = z.object({
-	bookmark: $dto.bookmark,
-});
+	export const createOutput = z.object({
+		bookmark: Types.Bookmark,
+	});
 
-export type CreateOutput = z.infer<typeof createOutput>;
+	export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $dto.bookmark.pick({
-	placeId: true,
-});
+	export const deleteInput = Types.Bookmark.pick({
+		placeId: true,
+	});
 
-export type DeleteInput = z.infer<typeof deleteInput>;
+	export type DeleteInput = z.infer<typeof deleteInput>;
 
-export const deleteOutput = z.object({});
+	export const deleteOutput = z.object({});
 
-export type DeleteOutput = z.infer<typeof deleteOutput>;
+	export type DeleteOutput = z.infer<typeof deleteOutput>;
 
-export const listInput = Pagination.queryParamsSchema.extend({});
+	export const listInput = Types.Pagination.queryParamsSchema.extend({});
 
-export type ListInput = z.infer<typeof listInput>;
+	export type ListInput = z.infer<typeof listInput>;
 
-export const listOutput = z.object({
-	bookmarks: $dto.bookmark
-		.extend({
-			place: $extended.place,
-			meta: z.object({
-				isFavorite: z.boolean(),
-			}),
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
+	export const listOutput = z.object({
+		bookmarks: z.array(Types.Bookmarks.Extended),
+		pagination: Types.Pagination.schema,
+	});
 
-export type ListOutput = z.infer<typeof listOutput>;
+	export type ListOutput = z.infer<typeof listOutput>;
+}

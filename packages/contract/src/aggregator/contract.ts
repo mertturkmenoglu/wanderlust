@@ -1,5 +1,5 @@
 import { oc } from '@orpc/contract';
-import * as dto from './dto';
+import { dto } from './dto';
 
 export const contract = {
 	home: oc

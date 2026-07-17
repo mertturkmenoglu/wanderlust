@@ -1,26 +1,26 @@
-import { $dto } from '@wanderlust/common';
+import { Types } from '@wanderlust/common';
 import z from 'zod';
 
-export const getInput = z.object({});
+export namespace dto {
+	export const getInput = z.object({});
 
-export type GetInput = z.infer<typeof getInput>;
+	export type GetInput = z.infer<typeof getInput>;
 
-export const getOutput = z.object({
-	preferences: $dto.preference,
-});
+	export const getOutput = z.object({
+		preferences: Types.Preference,
+	});
 
-export type GetOutput = z.infer<typeof getOutput>;
+	export type GetOutput = z.infer<typeof getOutput>;
 
-export const updateInput = $dto.preference
-	.omit({
+	export const updateInput = Types.Preference.omit({
 		userId: true,
-	})
-	.partial();
+	}).partial();
 
-export type UpdateInput = z.infer<typeof updateInput>;
+	export type UpdateInput = z.infer<typeof updateInput>;
 
-export const updateOutput = z.object({
-	preferences: $dto.preference,
-});
+	export const updateOutput = z.object({
+		preferences: Types.Preference,
+	});
 
-export type UpdateOutput = z.infer<typeof updateOutput>;
+	export type UpdateOutput = z.infer<typeof updateOutput>;
+}

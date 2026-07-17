@@ -1,229 +1,195 @@
-import { $dto, $extended, Pagination } from '@wanderlust/common';
+import { Types } from '@wanderlust/common';
 import z from 'zod';
 
-const review = $dto.review.extend({
-	user: $dto.user.pick({
+export namespace dto {
+	export const getInput = Types.Review.pick({
 		id: true,
-		username: true,
-		name: true,
-		image: true,
-	}),
-	assets: $dto.asset.array(),
-});
+	});
 
-export const getInput = $dto.review.pick({
-	id: true,
-});
+	export type GetInput = z.infer<typeof getInput>;
 
-export type GetInput = z.infer<typeof getInput>;
+	export const getOutput = z.object({
+		review: Types.Reviews.ExtendedWithPlace,
+		meta: Types.Reviews.Meta,
+	});
 
-export const getOutput = z.object({
-	review: review.extend({
-		place: $extended.place,
-	}),
-	meta: z.object({
-		isLiked: z.boolean().meta({
-			description: 'Indicates whether the review is liked by the user',
-			examples: [true, false],
-		}),
-	}),
-});
+	export type GetOutput = z.infer<typeof getOutput>;
 
-export type GetOutput = z.infer<typeof getOutput>;
+	const fileSchema = z
+		.file()
+		.max(1024 * 1024 * 5, 'File size must be less than 5MB'); // 5 MB
 
-const fileSchema = z
-	.file()
-	.max(1024 * 1024 * 5, 'File size must be less than 5MB'); // 5 MB
-
-export const createInput = $dto.review
-	.pick({
+	export const createInput = Types.Review.pick({
 		placeId: true,
 		content: true,
 		rating: true,
 		visitedAt: true,
-	})
-	.extend({
+	}).extend({
 		files: fileSchema.array().max(4, 'You can upload up to 4 files').optional(),
 	});
 
-export type CreateInput = z.infer<typeof createInput>;
+	export type CreateInput = z.infer<typeof createInput>;
 
-export const createOutput = z.object({
-	review: review,
-});
+	export const createOutput = z.object({
+		review: Types.Reviews.Extended,
+	});
 
-export type CreateOutput = z.infer<typeof createOutput>;
+	export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $dto.review.pick({
-	id: true,
-});
+	export const deleteInput = Types.Review.pick({
+		id: true,
+	});
 
-export type DeleteInput = z.infer<typeof deleteInput>;
+	export type DeleteInput = z.infer<typeof deleteInput>;
 
-export const deleteOutput = z.object({});
+	export const deleteOutput = z.object({});
 
-export type DeleteOutput = z.infer<typeof deleteOutput>;
+	export type DeleteOutput = z.infer<typeof deleteOutput>;
 
-export const listByUsernameInput = Pagination.queryParamsSchema.extend(
-	$dto.user.pick({ username: true }).shape,
-);
-
-export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
-
-export const listByUsernameOutput = z.object({
-	reviews: z
-		.object({
-			review: review.extend({
-				place: $extended.place,
-			}),
-			meta: z.object({
-				isLiked: z.boolean().meta({
-					description: 'Indicates whether the review is liked by the user',
-					examples: [true, false],
-				}),
-			}),
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
-
-export type ListByUsernameOutput = z.infer<typeof listByUsernameOutput>;
-
-export const listByPlaceIdInput = Pagination.queryParamsSchema
-	.extend($dto.place.pick({ id: true }).shape)
-	.extend(
-		z.object({
-			sortBy: z
-				.enum(['created_at', 'rating', 'likes'])
-				.optional()
-				.meta({
-					description: 'Field to sort by',
-					examples: ['created_at', 'rating', 'likes'],
-				}),
-			sortOrd: z
-				.enum(['asc', 'desc'])
-				.optional()
-				.meta({
-					description: 'Sort order',
-					examples: ['asc', 'desc'],
-				}),
-			minRating: z
-				.number()
-				.int()
-				.min(0)
-				.max(4)
-				.optional()
-				.meta({
-					description: 'Minimum rating filter',
-					examples: [3, 4],
-				}),
-			maxRating: z
-				.number()
-				.int()
-				.min(1)
-				.max(5)
-				.optional()
-				.meta({
-					description: 'Maximum rating filter',
-					examples: [4, 5],
-				}),
-		}).shape,
+	export const listByUsernameInput = Types.Pagination.queryParamsSchema.extend(
+		Types.User.pick({ username: true }).shape,
 	);
 
-export type ListByPlaceIdInput = z.infer<typeof listByPlaceIdInput>;
+	export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
 
-export const listByPlaceIdOutput = z.object({
-	reviews: z
-		.object({
-			review: review,
-			meta: z.object({
-				isLiked: z.boolean().meta({
-					description: 'Indicates whether the review is liked by the user',
-					examples: [true, false],
-				}),
-			}),
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
+	export const listByUsernameOutput = z.object({
+		reviews: z
+			.object({
+				review: Types.Reviews.ExtendedWithPlace,
+				meta: Types.Reviews.Meta,
+			})
+			.array(),
+		pagination: Types.Pagination.schema,
+	});
 
-export type ListByPlaceIdOutput = z.infer<typeof listByPlaceIdOutput>;
+	export type ListByUsernameOutput = z.infer<typeof listByUsernameOutput>;
 
-export const getRatingsInput = $dto.place.pick({
-	id: true,
-});
+	export const listByPlaceIdInput = Types.Pagination.queryParamsSchema
+		.extend(Types.Place.pick({ id: true }).shape)
+		.extend(
+			z.object({
+				sortBy: z
+					.enum(['created_at', 'rating', 'likes'])
+					.optional()
+					.meta({
+						description: 'Field to sort by',
+						examples: ['created_at', 'rating', 'likes'],
+					}),
+				sortOrd: z
+					.enum(['asc', 'desc'])
+					.optional()
+					.meta({
+						description: 'Sort order',
+						examples: ['asc', 'desc'],
+					}),
+				minRating: z
+					.number()
+					.int()
+					.min(0)
+					.max(4)
+					.optional()
+					.meta({
+						description: 'Minimum rating filter',
+						examples: [3, 4],
+					}),
+				maxRating: z
+					.number()
+					.int()
+					.min(1)
+					.max(5)
+					.optional()
+					.meta({
+						description: 'Maximum rating filter',
+						examples: [4, 5],
+					}),
+			}).shape,
+		);
 
-export type GetRatingsInput = z.infer<typeof getRatingsInput>;
+	export type ListByPlaceIdInput = z.infer<typeof listByPlaceIdInput>;
 
-export const getRatingsOutput = z.object({
-	ratings: z.record(z.string(), z.number().int()).meta({
-		description: 'A mapping of rating values to their respective counts',
-		examples: [
-			{
-				5: 10,
-				4: 5,
-				3: 2,
-				2: 1,
-				1: 0,
-			},
-		],
-	}),
-	totalVotes: z
-		.number()
-		.int()
-		.meta({
-			description: 'Total number of votes',
-			examples: [18],
+	export const listByPlaceIdOutput = z.object({
+		reviews: z
+			.object({
+				review: Types.Reviews.Extended,
+				meta: Types.Reviews.Meta,
+			})
+			.array(),
+		pagination: Types.Pagination.schema,
+	});
+
+	export type ListByPlaceIdOutput = z.infer<typeof listByPlaceIdOutput>;
+
+	export const getRatingsInput = Types.Place.pick({
+		id: true,
+	});
+
+	export type GetRatingsInput = z.infer<typeof getRatingsInput>;
+
+	export const getRatingsOutput = z.object({
+		ratings: z.record(z.string(), z.number().int()).meta({
+			description: 'A mapping of rating values to their respective counts',
+			examples: [
+				{
+					5: 10,
+					4: 5,
+					3: 2,
+					2: 1,
+					1: 0,
+				},
+			],
 		}),
-});
+		totalVotes: z
+			.number()
+			.int()
+			.meta({
+				description: 'Total number of votes',
+				examples: [18],
+			}),
+	});
 
-export type GetRatingsOutput = z.infer<typeof getRatingsOutput>;
+	export type GetRatingsOutput = z.infer<typeof getRatingsOutput>;
 
-export const listAssetsByPlaceIdInput = $dto.place.pick({
-	id: true,
-});
+	export const listAssetsByPlaceIdInput = Types.Place.pick({
+		id: true,
+	});
 
-export type ListAssetsByPlaceIdInput = z.infer<typeof listAssetsByPlaceIdInput>;
+	export type ListAssetsByPlaceIdInput = z.infer<
+		typeof listAssetsByPlaceIdInput
+	>;
 
-export const listAssetsByPlaceIdOutput = z.object({
-	assets: $dto.asset.array(),
-});
+	export const listAssetsByPlaceIdOutput = z.object({
+		assets: Types.Asset.array(),
+	});
 
-export type ListAssetsByPlaceIdOutput = z.infer<
-	typeof listAssetsByPlaceIdOutput
->;
+	export type ListAssetsByPlaceIdOutput = z.infer<
+		typeof listAssetsByPlaceIdOutput
+	>;
 
-export const likeInput = $dto.review.pick({
-	id: true,
-});
+	export const likeInput = Types.Review.pick({
+		id: true,
+	});
 
-export type LikeInput = z.infer<typeof likeInput>;
+	export type LikeInput = z.infer<typeof likeInput>;
 
-export const likeOutput = z.object({
-	liked: z.boolean().meta({
-		description: 'Indicates whether the review was liked or unliked',
-		examples: [true, false],
-	}),
-});
+	export const likeOutput = z.object({
+		liked: z.boolean().meta({
+			description: 'Indicates whether the review was liked or unliked',
+			examples: [true, false],
+		}),
+	});
 
-export type LikeOutput = z.infer<typeof likeOutput>;
+	export type LikeOutput = z.infer<typeof likeOutput>;
 
-export const listLikesInput = Pagination.queryParamsSchema.extend(
-	$dto.review.pick({ id: true }).shape,
-);
+	export const listLikesInput = Types.Pagination.queryParamsSchema.extend(
+		Types.Review.pick({ id: true }).shape,
+	);
 
-export type ListLikesInput = z.infer<typeof listLikesInput>;
+	export type ListLikesInput = z.infer<typeof listLikesInput>;
 
-export const listLikesOutput = z.object({
-	users: $dto.user
-		.pick({
-			id: true,
-			username: true,
-			name: true,
-			image: true,
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
+	export const listLikesOutput = z.object({
+		users: Types.Users.View.Basic.array(),
+		pagination: Types.Pagination.schema,
+	});
 
-export type ListLikesOutput = z.infer<typeof listLikesOutput>;
+	export type ListLikesOutput = z.infer<typeof listLikesOutput>;
+}

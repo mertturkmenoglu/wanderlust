@@ -1,196 +1,81 @@
 import { oc } from '@orpc/contract';
-import * as dto from './dto';
+import { ERRORS } from '../_common/errors';
+import { dto } from './dto';
 
-export const contract = {
-	get: oc
-		.input(dto.getInput)
-		.output(dto.getOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+export const contract = oc
+	.tag('Reviews')
+	.errors(ERRORS)
+	.router({
+		get: oc.input(dto.getInput).output(dto.getOutput).route({
 			method: 'GET',
 			path: '/reviews/:id',
 			summary: 'Get Review by ID',
 			description: 'Get a review',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
 		}),
-	create: oc
-		.input(dto.createInput)
-		.output(dto.createOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		create: oc.input(dto.createInput).output(dto.createOutput).route({
 			method: 'POST',
 			path: '/reviews',
 			summary: 'Create Review',
 			description: 'Create a new review',
-			tags: ['Reviews'],
 			successStatus: 201,
 			successDescription: 'Created',
 		}),
-	delete: oc
-		.input(dto.deleteInput)
-		.output(dto.deleteOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		delete: oc.input(dto.deleteInput).output(dto.deleteOutput).route({
 			method: 'DELETE',
 			path: '/reviews/:id',
 			summary: 'Delete Review by ID',
 			description: 'Delete a review',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
+			successStatus: 204,
+			successDescription: 'No Content',
 		}),
-	listByUsername: oc
-		.input(dto.listByUsernameInput)
-		.output(dto.listByUsernameOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			method: 'GET',
-			path: '/reviews/user/:username',
-			summary: 'List Reviews by Username',
-			description: 'Get a list of reviews by a specific user',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
-		}),
-	listByPlaceId: oc
-		.input(dto.listByPlaceIdInput)
-		.output(dto.listByPlaceIdOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			method: 'GET',
-			path: '/reviews/place/:id',
-			summary: 'List Reviews by Place ID',
-			description: 'Get a list of reviews for a specific place',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
-		}),
-	getRatings: oc
-		.input(dto.getRatingsInput)
-		.output(dto.getRatingsOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			method: 'GET',
-			path: '/reviews/ratings/place/:id',
-			summary: 'Get Ratings by Place ID',
-			description: 'Get the ratings for a specific place',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
-		}),
-	listAssetsByPlaceId: oc
-		.input(dto.listAssetsByPlaceIdInput)
-		.output(dto.listAssetsByPlaceIdOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			method: 'GET',
-			path: '/reviews/assets/place/:id',
-			summary: 'List Assets by Place ID',
-			description: 'Get a list of assets for a specific place',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
-		}),
-	like: oc
-		.input(dto.likeInput)
-		.output(dto.likeOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		listByUsername: oc
+			.input(dto.listByUsernameInput)
+			.output(dto.listByUsernameOutput)
+			.route({
+				method: 'GET',
+				path: '/reviews/user/:username',
+				summary: 'List Reviews by Username',
+				description: 'Get a list of reviews by a specific user',
+			}),
+		listByPlaceId: oc
+			.input(dto.listByPlaceIdInput)
+			.output(dto.listByPlaceIdOutput)
+			.route({
+				method: 'GET',
+				path: '/reviews/place/:id',
+				summary: 'List Reviews by Place ID',
+				description: 'Get a list of reviews for a specific place',
+			}),
+		getRatings: oc
+			.input(dto.getRatingsInput)
+			.output(dto.getRatingsOutput)
+			.route({
+				method: 'GET',
+				path: '/reviews/ratings/place/:id',
+				summary: 'Get Ratings by Place ID',
+				description: 'Get the ratings for a specific place',
+			}),
+		listAssetsByPlaceId: oc
+			.input(dto.listAssetsByPlaceIdInput)
+			.output(dto.listAssetsByPlaceIdOutput)
+			.route({
+				method: 'GET',
+				path: '/reviews/assets/place/:id',
+				summary: 'List Assets by Place ID',
+				description: 'Get a list of assets for a specific place',
+			}),
+		like: oc.input(dto.likeInput).output(dto.likeOutput).route({
 			method: 'POST',
 			path: '/reviews/:id/likes',
 			summary: 'Like or Unlike Review by ID',
 			description: 'Like or unlike a review',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
 		}),
-	listLikes: oc
-		.input(dto.listLikesInput)
-		.output(dto.listLikesOutput)
-		.errors({
-			BAD_REQUEST: {},
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		listLikes: oc.input(dto.listLikesInput).output(dto.listLikesOutput).route({
 			method: 'GET',
 			path: '/reviews/:id/likes',
 			summary: 'List Likes by Review ID',
 			description: 'List the likes for a specific review',
-			tags: ['Reviews'],
-			successStatus: 200,
-			successDescription: 'OK',
 		}),
-};
+	});
 
 export type Contract = typeof contract;

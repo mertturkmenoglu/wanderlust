@@ -1,178 +1,75 @@
 import { oc } from '@orpc/contract';
-import * as dto from './dto';
+import { ERRORS } from '../_common/errors';
+import { dto } from './dto';
 
-export const contract = {
-	listAll: oc
-		.input(dto.listAllInput)
-		.output(dto.listAllOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+export const contract = oc
+	.errors(ERRORS)
+	.tag('Lists')
+	.router({
+		list: oc.input(dto.listInput).output(dto.listOutput).route({
 			path: '/lists',
 			method: 'GET',
-			summary: 'List All Lists',
+			summary: 'Retrieve All Lists',
 			description: 'Retrieve all lists for the authenticated user.',
-			tags: ['Lists'],
 		}),
-	listPublic: oc
-		.input(dto.listPublicInput)
-		.output(dto.listPublicOutput)
-		.errors({
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			path: '/lists/user/:username',
-			method: 'GET',
-			summary: 'List Public Lists of a User',
-			description: 'Retrieve all public lists of a specified user.',
-			tags: ['Lists'],
-		}),
-	get: oc
-		.input(dto.getInput)
-		.output(dto.getOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		listPublic: oc
+			.input(dto.listPublicInput)
+			.output(dto.listPublicOutput)
+			.route({
+				path: '/lists/user/:username',
+				method: 'GET',
+				summary: 'List Public Lists of a User',
+				description: 'Retrieve all public lists of a specified user.',
+			}),
+		get: oc.input(dto.getInput).output(dto.getOutput).route({
 			path: '/lists/:id',
 			method: 'GET',
 			summary: 'Get a List',
 			description: 'Retrieve a specific list by its ID.',
-			tags: ['Lists'],
 		}),
-	checkStatus: oc
-		.input(dto.checkStatusInput)
-		.output(dto.checkStatusOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			path: '/lists/:id/status',
-			method: 'GET',
-			summary: 'Check List Status',
-			description: 'Check the status of a specific list.',
-			tags: ['Lists'],
-		}),
-	create: oc
-		.input(dto.createInput)
-		.output(dto.createOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			BAD_REQUEST: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		listPlaceSaveStat: oc
+			.input(dto.listPlaceSaveStatInput)
+			.output(dto.listPlaceSaveStatOutput)
+			.route({
+				path: '/lists/stat/:placeId',
+				method: 'GET',
+				summary: 'List Place Save Status',
+				description:
+					'Retrieve the save status of a specific place across all lists for the authenticated user.',
+			}),
+		create: oc.input(dto.createInput).output(dto.createOutput).route({
 			path: '/lists',
 			method: 'POST',
 			summary: 'Create a List',
 			description: 'Create a new list.',
-			tags: ['Lists'],
 			successStatus: 201,
 			successDescription: 'Created',
 		}),
-	update: oc
-		.input(dto.updateInput)
-		.output(dto.updateOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			BAD_REQUEST: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		update: oc.input(dto.updateInput).output(dto.updateOutput).route({
 			path: '/lists/:id',
 			method: 'PATCH',
 			summary: 'Update a List',
 			description: 'Update an existing list.',
-			tags: ['Lists'],
 		}),
-	delete: oc
-		.input(dto.deleteInput)
-		.output(dto.deleteOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
+		delete: oc.input(dto.deleteInput).output(dto.deleteOutput).route({
 			path: '/lists/:id',
 			method: 'DELETE',
 			summary: 'Delete a List',
 			description: 'Delete a specific list by its ID.',
-			tags: ['Lists'],
 			successStatus: 204,
 			successDescription: 'No Content',
 		}),
-	appendItem: oc
-		.input(dto.appendItemInput)
-		.output(dto.appendItemOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			BAD_REQUEST: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			path: '/lists/:id/items',
-			method: 'POST',
-			summary: 'Append Item to List',
-			description: 'Append a new item to an existing list.',
-			tags: ['Lists'],
-		}),
-	updateItems: oc
-		.input(dto.updateItemsInput)
-		.output(dto.updateItemsOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			BAD_REQUEST: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			path: '/lists/:id/items',
-			method: 'PATCH',
-			summary: 'Update Items in List',
-			description: 'Update items in an existing list.',
-			tags: ['Lists'],
-		}),
-	removeItem: oc
-		.input(dto.removeItemInput)
-		.output(dto.removeItemOutput)
-		.errors({
-			UNAUTHORIZED: {},
-			FORBIDDEN: {},
-			NOT_FOUND: {},
-			BAD_REQUEST: {},
-			CONFLICT: {},
-			UNPROCESSABLE_CONTENT: {},
-			INTERNAL_SERVER_ERROR: {},
-		})
-		.route({
-			path: '/lists/:id/items/:itemId',
-			method: 'DELETE',
-			summary: 'Remove Item from List',
-			description: 'Remove an item from an existing list.',
-			tags: ['Lists'],
-		}),
-};
+		items: {
+			update: oc
+				.input(dto.itemsUpdateInput)
+				.output(dto.itemsUpdateOutput)
+				.route({
+					path: '/lists/:id/items',
+					method: 'PATCH',
+					summary: 'Update Items in a List',
+					description: 'Update items in a specific list.',
+				}),
+		},
+	});
 
 export type Contract = typeof contract;

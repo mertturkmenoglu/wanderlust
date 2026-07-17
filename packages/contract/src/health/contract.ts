@@ -1,11 +1,10 @@
 import { oc } from '@orpc/contract';
-import * as dto from './dto';
+import { dto } from './dto';
 
 export const contract = {
 	check: oc
 		.input(dto.checkInput)
 		.output(dto.checkOutput)
-		.errors({})
 		.route({
 			path: '/health',
 			method: 'GET',

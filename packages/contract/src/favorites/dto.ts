@@ -1,56 +1,50 @@
-import { $dto, $extended, Pagination } from '@wanderlust/common';
+import { Types } from '@wanderlust/common';
 import z from 'zod';
 
-export const createInput = $dto.favorite.pick({
-	placeId: true,
-});
+export namespace dto {
+	export const createInput = Types.Favorite.pick({
+		placeId: true,
+	});
 
-export type CreateInput = z.infer<typeof createInput>;
+	export type CreateInput = z.infer<typeof createInput>;
 
-export const createOutput = z.object({
-	favorite: $dto.favorite,
-});
+	export const createOutput = z.object({
+		favorite: Types.Favorite,
+	});
 
-export type CreateOutput = z.infer<typeof createOutput>;
+	export type CreateOutput = z.infer<typeof createOutput>;
 
-export const deleteInput = $dto.favorite.pick({
-	placeId: true,
-});
+	export const deleteInput = Types.Favorite.pick({
+		placeId: true,
+	});
 
-export type DeleteInput = z.infer<typeof deleteInput>;
+	export type DeleteInput = z.infer<typeof deleteInput>;
 
-export const deleteOutput = z.object({});
+	export const deleteOutput = z.object({});
 
-export type DeleteOutput = z.infer<typeof deleteOutput>;
+	export type DeleteOutput = z.infer<typeof deleteOutput>;
 
-export const listInput = Pagination.queryParamsSchema.extend({});
+	export const listInput = Types.Pagination.queryParamsSchema.extend({});
 
-export type ListInput = z.infer<typeof listInput>;
+	export type ListInput = z.infer<typeof listInput>;
 
-export const listOutput = z.object({
-	favorites: $dto.favorite
-		.extend({
-			place: $extended.place,
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
+	export const listOutput = z.object({
+		favorites: Types.Favorites.Extended.array(),
+		pagination: Types.Pagination.schema,
+	});
 
-export type ListOutput = z.infer<typeof listOutput>;
+	export type ListOutput = z.infer<typeof listOutput>;
 
-export const listByUsernameInput = Pagination.queryParamsSchema.extend({
-	username: $dto.user.pick({ username: true }).shape.username,
-});
+	export const listByUsernameInput = Types.Pagination.queryParamsSchema.extend({
+		username: Types.User.pick({ username: true }).shape.username,
+	});
 
-export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
+	export type ListByUsernameInput = z.infer<typeof listByUsernameInput>;
 
-export const listByUsernameOutput = z.object({
-	favorites: $dto.favorite
-		.extend({
-			place: $extended.place,
-		})
-		.array(),
-	pagination: Pagination.schema,
-});
+	export const listByUsernameOutput = z.object({
+		favorites: Types.Favorites.Extended.array(),
+		pagination: Types.Pagination.schema,
+	});
 
-export type ListByUsernameOutput = z.infer<typeof listByUsernameOutput>;
+	export type ListByUsernameOutput = z.infer<typeof listByUsernameOutput>;
+}

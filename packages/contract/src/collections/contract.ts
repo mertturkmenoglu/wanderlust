@@ -1,6 +1,6 @@
 import { oc } from '@orpc/contract';
 import { ERRORS } from '../_common/errors';
-import * as dto from './dto';
+import { dto } from './dto';
 
 export const contract = oc
 	.errors(ERRORS)
@@ -39,33 +39,15 @@ export const contract = oc
 				'Delete an existing collection by its ID. This also removes all associated items and relations.',
 		}),
 		items: {
-			append: oc
-				.input(dto.itemsAppendInput)
-				.output(dto.itemsAppendOutput)
-				.route({
-					method: 'POST',
-					path: '/collections/:id/items',
-					summary: 'Append items to a collection',
-					description: 'Append one place item to a collection by its ID',
-				}),
-			remove: oc
-				.input(dto.itemsRemoveInput)
-				.output(dto.itemsRemoveOutput)
-				.route({
-					method: 'DELETE',
-					path: '/collections/:id/items',
-					summary: 'Remove an item from a collection',
-					description: 'Remove one place item from a collection by its ID',
-				}),
-			reorder: oc
-				.input(dto.itemsReorderInput)
-				.output(dto.itemsReorderOutput)
+			update: oc
+				.input(dto.itemsUpdateInput)
+				.output(dto.itemsUpdateOutput)
 				.route({
 					method: 'PATCH',
 					path: '/collections/:id/items',
-					summary: 'Reorder items in a collection',
+					summary: 'Update items in a collection',
 					description:
-						'Reorder items in a collection by providing a new order of place IDs',
+						'Update one or more place items in a collection by its ID',
 				}),
 		},
 		places: {
@@ -76,35 +58,15 @@ export const contract = oc
 				description:
 					'List collections that are featured on a specific place by its place id. Answers the question: "Which collections are featured on this place?"',
 			}),
-			append: oc
-				.input(dto.placesAppendInput)
-				.output(dto.placesAppendOutput)
-				.route({
-					method: 'POST',
-					path: '/collections/places/:placeId',
-					summary: 'Append a collection to a place',
-					description:
-						'Append a collection to a specific place by its place id',
-				}),
-			reorder: oc
-				.input(dto.placesReorderInput)
-				.output(dto.placesReorderOutput)
+			update: oc
+				.input(dto.placesUpdateInput)
+				.output(dto.placesUpdateOutput)
 				.route({
 					method: 'PATCH',
 					path: '/collections/places/:placeId',
-					summary: 'Reorder collections for a place',
+					summary: 'Update collections for a place',
 					description:
-						'Reorder collections for a specific place by its place id',
-				}),
-			remove: oc
-				.input(dto.placesRemoveInput)
-				.output(dto.placesRemoveOutput)
-				.route({
-					method: 'DELETE',
-					path: '/collections/places/:placeId',
-					summary: 'Remove a collection from a place',
-					description:
-						'Remove a collection from a specific place by its place id',
+						'Update collections that are featured on a specific place by its place id',
 				}),
 		},
 		cities: {
@@ -115,33 +77,15 @@ export const contract = oc
 				description:
 					'List collections that are featured in a specific city by its city id. Answers the question: "Which collections are featured in this city?"',
 			}),
-			append: oc
-				.input(dto.citiesAppendInput)
-				.output(dto.citiesAppendOutput)
-				.route({
-					method: 'POST',
-					path: '/collections/cities/:cityId',
-					summary: 'Append a collection to a city',
-					description: 'Append a collection to a specific city by its city id',
-				}),
-			reorder: oc
-				.input(dto.citiesReorderInput)
-				.output(dto.citiesReorderOutput)
+			update: oc
+				.input(dto.citiesUpdateInput)
+				.output(dto.citiesUpdateOutput)
 				.route({
 					method: 'PATCH',
 					path: '/collections/cities/:cityId',
-					summary: 'Reorder collections for a city',
-					description: 'Reorder collections for a specific city by its city id',
-				}),
-			remove: oc
-				.input(dto.citiesRemoveInput)
-				.output(dto.citiesRemoveOutput)
-				.route({
-					method: 'DELETE',
-					path: '/collections/cities/:cityId',
-					summary: 'Remove a collection from a city',
+					summary: 'Update collections for a city',
 					description:
-						'Remove a collection from a specific city by its city id',
+						'Update collections that are featured in a specific city by its city id',
 				}),
 		},
 		relations: {

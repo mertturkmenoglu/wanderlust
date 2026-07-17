@@ -1,66 +1,57 @@
-import * as accolades from './accolades';
-import * as addresses from './addresses';
-import * as aggregator from './aggregator';
-import * as amenities from './amenities';
-import * as bookmarks from './bookmarks';
-import * as categories from './categories';
-import * as chats from './chats';
-import * as cities from './cities';
-import * as collections from './collections';
-import * as favorites from './favorites';
-import * as health from './health';
-import * as lists from './lists';
-import * as notifications from './notifications';
-import * as places from './places';
-import * as preferences from './preferences';
-import * as reports from './reports';
-import * as reviews from './reviews';
-import * as trips from './trips';
-import * as users from './users';
+import { Accolades } from './accolades';
+import { Aggregator } from './aggregator';
+import { Amenities } from './amenities';
+import { Bookmarks } from './bookmarks';
+import { Categories } from './categories';
+import { Cities } from './cities';
+import { Collections } from './collections';
+import { Favorites } from './favorites';
+import { Health } from './health';
+import { Lists } from './lists';
+import { Notifications } from './notifications';
+import { Places } from './places';
+import { Preferences } from './preferences';
+import { Reports } from './reports';
+import { Reviews } from './reviews';
+import { Trips } from './trips';
+import { Users } from './users';
 
 export type AppRouter = {
-	accolades: accolades.Contract;
-	addresses: addresses.Contract;
-	aggregator: aggregator.Contract;
-	amenities: amenities.Contract;
-	bookmarks: bookmarks.Contract;
-	categories: categories.Contract;
-	chats: {
-		chats: chats.chats.Contract;
-		compose: chats.compose.Contract;
-	};
-	cities: cities.Contract;
-	collections: collections.Contract;
-	favorites: favorites.Contract;
-	health: health.Contract;
-	lists: lists.Contract;
-	notifications: notifications.Contract;
-	places: places.Contract;
-	preferences: preferences.Contract;
-	reports: reports.Contract;
-	reviews: reviews.Contract;
-	trips: trips.Contract;
-	users: users.Contract;
+	accolades: Accolades.Contract;
+	aggregator: Aggregator.Contract;
+	amenities: Amenities.Contract;
+	bookmarks: Bookmarks.Contract;
+	categories: Categories.Contract;
+	cities: Cities.Contract;
+	collections: Collections.Contract;
+	favorites: Favorites.Contract;
+	health: Health.Contract;
+	lists: Lists.Contract;
+	notifications: Notifications.Contract;
+	places: Places.Contract;
+	preferences: Preferences.Contract;
+	reports: Reports.Contract;
+	reviews: Reviews.Contract;
+	trips: Trips.Contract;
+	users: Users.Contract;
 };
 
 export {
-	accolades,
-	addresses,
-	aggregator,
-	amenities,
-	bookmarks,
-	categories,
-	chats,
-	cities,
-	collections,
-	favorites,
-	health,
-	lists,
-	notifications,
-	places,
-	preferences,
-	reports,
-	reviews,
-	trips,
-	users,
+	Accolades,
+	Aggregator,
+	Amenities,
+	Bookmarks,
+	Categories,
+	Cities,
+	Collections,
+	Favorites,
+	Health,
+	Lists,
+	Notifications,
+	Places,
+	Preferences,
+	Reports,
+	Reviews,
+	Trips,
+	Users,
 };
