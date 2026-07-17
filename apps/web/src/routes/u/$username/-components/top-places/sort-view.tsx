@@ -19,7 +19,7 @@ export function SortView() {
 					const newArr = arrayMove(ctx.items, initial, current);
 
 					mutation.mutate({
-						placesIds: newArr.map((x) => x.place.id),
+						placeIds: newArr.map((x) => x.place.id),
 					});
 				}}
 			>
@@ -32,7 +32,7 @@ export function SortView() {
 							const newItems = ctx.items.filter((i) => i.place.id !== placeId);
 
 							mutation.mutate({
-								placesIds: newItems.map((p) => p.place.id),
+								placeIds: newItems.map((p) => p.place.id),
 							});
 						}}
 					/>

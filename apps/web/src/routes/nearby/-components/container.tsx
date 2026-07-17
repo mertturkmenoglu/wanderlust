@@ -63,7 +63,7 @@ export function Container() {
 						<SheetDescription>Filters</SheetDescription>
 					</SheetHeader>
 					<div className="overflow-y-auto px-4">
-						<RefinementList attribute="place.category.id" />
+						<RefinementList attribute="place.primaryCategory.id" />
 
 						<RefinementList attribute="place.amenities" />
 

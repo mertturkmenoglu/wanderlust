@@ -9,7 +9,7 @@ export function AccoladePlacesList() {
 	const search = useSearch({ from: '/accolades/$id/' });
 
 	const query = useSuspenseQuery(
-		orpc.accolades.getPlaces.queryOptions({
+		orpc.accolades.listPlaces.queryOptions({
 			input: {
 				id: params.id,
 				page: search.page ?? 1,

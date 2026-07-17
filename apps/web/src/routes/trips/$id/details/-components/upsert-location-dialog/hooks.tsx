@@ -51,7 +51,7 @@ export function useCreateLocationMutation() {
 	const close = useCloseDialog();
 
 	return useMutation(
-		orpc.trips.createLocation.mutationOptions({
+		orpc.trips.locations.create.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				close();
@@ -65,7 +65,7 @@ export function useUpdateLocationMutation() {
 	const close = useCloseDialog();
 
 	return useMutation(
-		orpc.trips.updateLocation.mutationOptions({
+		orpc.trips.locations.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				close();
@@ -79,7 +79,7 @@ export function useDeleteLocationMutation() {
 	const close = useCloseDialog();
 
 	return useMutation(
-		orpc.trips.deleteLocation.mutationOptions({
+		orpc.trips.locations.delete.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				close();

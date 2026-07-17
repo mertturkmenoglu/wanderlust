@@ -40,7 +40,7 @@ export function InviteItem({ invite }: Props) {
 	return (
 		<Item variant="outline" className="hover:bg-muted">
 			<ItemMedia>
-				<UserImage src={userImage(invite.fromUser.image)} className="size-12" />
+				<UserImage src={userImage(invite.from.image)} className="size-12" />
 			</ItemMedia>
 
 			<ItemContent>
@@ -48,11 +48,11 @@ export function InviteItem({ invite }: Props) {
 					<Link
 						to="/u/$username"
 						params={{
-							username: invite.fromUser.username,
+							username: invite.from.username,
 						}}
 						className="text-primary"
 					>
-						{invite.fromUser.name}
+						{invite.from.name}
 					</Link>{' '}
 					invites you to join {invite.tripTitle}
 				</ItemTitle>

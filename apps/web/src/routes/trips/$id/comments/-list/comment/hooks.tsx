@@ -9,7 +9,7 @@ export function useDeleteCommentMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.trips.deleteComment.mutationOptions({
+		orpc.trips.comments.delete.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Comment removed');
@@ -22,7 +22,7 @@ export function useUpdateCommentMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.trips.updateComment.mutationOptions({
+		orpc.trips.comments.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Comment updated');

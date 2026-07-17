@@ -45,6 +45,7 @@ export function UpdateTripForm() {
 				updateMutation.mutate({
 					...data,
 					id: trip.id,
+					requestedAmenities: trip.requestedAmenities,
 				});
 			})}
 			className="flex w-full flex-col"

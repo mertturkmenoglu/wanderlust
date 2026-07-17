@@ -45,7 +45,10 @@ export function EditItems({ className }: Props) {
 
 					mutation.mutate({
 						id: list.id,
-						placeIds: newArr.map((x) => x.placeId),
+						update: {
+							op: 'move',
+							items: newArr.map((x) => x.placeId),
+						},
 					});
 				}}
 			>

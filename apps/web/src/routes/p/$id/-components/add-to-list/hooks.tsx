@@ -12,7 +12,7 @@ export function useCheckStatusQuery() {
 	const { place } = useLoaderData({ from: '/p/$id/' });
 
 	return useSuspenseQuery(
-		orpc.lists.checkStatus.queryOptions({
+		orpc.lists.listPlaceSaveStat.queryOptions({
 			input: {
 				placeId: place.id,
 			},
@@ -26,7 +26,7 @@ export function useAddToListMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.lists.appendItem.mutationOptions({
+		orpc.lists.items.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Added to the list');

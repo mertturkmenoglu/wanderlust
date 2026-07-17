@@ -21,13 +21,13 @@ export function Accolades({ className }: Props) {
 					key={acc.id}
 					to="/accolades/$id"
 					params={{
-						id: acc.accolade.id,
+						id: acc.id,
 					}}
 					className="flex"
 				>
 					<Badge variant="warning" size="lg">
 						<AwardIcon />
-						{acc.accolade.title}
+						{acc.title}
 					</Badge>
 				</Link>
 			))}

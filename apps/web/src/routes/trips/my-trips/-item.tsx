@@ -21,7 +21,7 @@ import type { TripItemProps } from './-types';
 export function TripItem({ trip }: TripItemProps) {
 	const Icon = useVisibilityLevelIcon(trip.visibilityLevel);
 	const tooltip = useVisibilityLevelTooltip(trip.visibilityLevel);
-	const description = `Created ${formatDistanceToNow(trip.createdAt)} ago by ${trip.owner.name}`;
+	const description = `Created ${formatDistanceToNow(trip.createdAt)} ago`;
 
 	return (
 		<Link

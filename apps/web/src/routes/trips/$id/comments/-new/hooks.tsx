@@ -24,7 +24,7 @@ export function useCreateCommentMutation() {
 	const form = useFormContext<CreateTripCommentFormInput>();
 
 	return useMutation(
-		orpc.trips.createComment.mutationOptions({
+		orpc.trips.comments.create.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Comment created successfully');

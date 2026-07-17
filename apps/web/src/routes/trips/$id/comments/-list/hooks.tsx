@@ -9,7 +9,7 @@ export function useCommentsQuery() {
 	const { trip } = useLoaderData({ from: '/trips/$id' });
 
 	return useSuspenseQuery(
-		orpc.trips.listComments.queryOptions({
+		orpc.trips.comments.list.queryOptions({
 			input: {
 				id: trip.id,
 				page: ctx.page,

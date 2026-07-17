@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { type Outputs, orpc } from '@/lib/orpc';
 
-export type TList = Outputs['lists']['listAll']['lists'][number];
+export type TList = Outputs['lists']['list']['lists'][number];
 
 export function useListsQuery() {
 	return useInfiniteQuery(
-		orpc.lists.listAll.infiniteOptions({
+		orpc.lists.list.infiniteOptions({
 			input: (p) => ({
 				page: p,
 				pageSize: 10,

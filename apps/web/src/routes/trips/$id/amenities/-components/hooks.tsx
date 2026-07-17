@@ -19,7 +19,7 @@ export function useUpdateTripAmenitiesMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.trips.updateRequestedAmenities.mutationOptions({
+		orpc.trips.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Amenities updated successfully');

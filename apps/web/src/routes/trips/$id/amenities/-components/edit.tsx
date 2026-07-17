@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import {
@@ -11,6 +12,7 @@ import { Checkbox } from '@wanderlust/ui/components/checkbox';
 import { Label } from '@wanderlust/ui/components/label';
 import { Controller } from 'react-hook-form';
 import { amenitiesDisplayNames } from '@/lib/amenities';
+import { orpc } from '@/lib/orpc';
 import { useTripAmenitiesContext } from './context';
 import {
 	useListAmenitiesQuery,
@@ -23,6 +25,13 @@ export function Edit() {
 	const params = useParams({ from: '/trips/$id/amenities/' });
 	const query = useListAmenitiesQuery();
 	const amenities = query.data.amenities;
+	const trip = useSuspenseQuery(
+		orpc.trips.get.queryOptions({
+			input: {
+				id: params.id,
+			},
+		}),
+	);
 
 	const form = useUpdateTripAmenitiesForm();
 	const mutation = useUpdateTripAmenitiesMutation();
@@ -30,8 +39,9 @@ export function Edit() {
 	const onSubmit = form.handleSubmit((data) => {
 		mutation.mutate(
 			{
+				...trip.data.trip,
 				id: params.id,
-				amenities: data.amenities ?? [],
+				requestedAmenities: data.amenities ?? [],
 			},
 			{
 				onSuccess: () => {

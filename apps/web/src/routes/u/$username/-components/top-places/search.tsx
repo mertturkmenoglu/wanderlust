@@ -28,7 +28,7 @@ export function Search() {
 				}
 
 				mutation.mutate({
-					placesIds: [...items.map((place) => place.place.id), item.place.id],
+					placeIds: [...items.map((place) => place.place.id), item.place.id],
 				});
 
 				ctx.setMode('items');

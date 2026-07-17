@@ -21,15 +21,15 @@ export function InviteItem({ invite, className }: Props) {
 			<Link
 				to="/u/$username"
 				params={{
-					username: invite.toUser.username,
+					username: invite.to.username,
 				}}
 				className="flex flex-row items-center gap-4"
 			>
-				<UserImage src={ipx(userImage(invite.toUser.image), 'w_512')} />
+				<UserImage src={ipx(userImage(invite.to.image), 'w_512')} />
 
-				<div>{invite.toUser.name}</div>
+				<div>{invite.to.name}</div>
 				<div className="text-muted-foreground text-sm">
-					@{invite.toUser.username}
+					@{invite.to.username}
 				</div>
 			</Link>
 

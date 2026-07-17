@@ -23,24 +23,11 @@ export function useListQuery() {
 	);
 }
 
-export function useRemoveListItemMutation() {
-	const invalidate = useInvalidator();
-
-	return useMutation(
-		orpc.lists.removeItem.mutationOptions({
-			onSuccess: async () => {
-				toast.success('Place removed from list');
-				await invalidate();
-			},
-		}),
-	);
-}
-
 export function useUpdateListItemsMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.lists.updateItems.mutationOptions({
+		orpc.lists.items.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('List items updated');

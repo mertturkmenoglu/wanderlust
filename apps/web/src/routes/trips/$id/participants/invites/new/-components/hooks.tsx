@@ -21,7 +21,7 @@ export function useCreateInviteMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.trips.createInvite.mutationOptions({
+		orpc.trips.invites.create.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Invite sent successfully');

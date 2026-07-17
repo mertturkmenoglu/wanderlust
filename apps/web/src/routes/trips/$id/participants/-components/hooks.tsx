@@ -7,7 +7,7 @@ export function useRemoveParticipantMutation() {
 	const invalidate = useInvalidator();
 
 	return useMutation(
-		orpc.trips.deleteParticipant.mutationOptions({
+		orpc.trips.participants.delete.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Participant removed');

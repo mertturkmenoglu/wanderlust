@@ -10,7 +10,7 @@ import {
 } from '@wanderlust/ui/components/dialog';
 import { TrashIcon } from 'lucide-react';
 import { useState } from 'react';
-import { type ListItem, useRemoveListItemMutation } from './-hooks';
+import { type ListItem, useUpdateListItemsMutation } from './-hooks';
 
 type Props = {
 	item: ListItem;
@@ -18,13 +18,16 @@ type Props = {
 
 export function RemoveItemDialog({ item }: Props) {
 	const [open, setOpen] = useState(false);
-	const mutation = useRemoveListItemMutation();
+	const mutation = useUpdateListItemsMutation();
 
 	const onRemoveClick = () => {
 		mutation.mutate(
 			{
 				id: item.listId,
-				placeId: item.placeId,
+				update: {
+					op: 'remove',
+					items: [item.placeId],
+				},
 			},
 			{
 				onSuccess: () => setOpen(false),

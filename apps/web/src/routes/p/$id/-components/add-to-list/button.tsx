@@ -18,7 +18,10 @@ export function AddButton() {
 				}
 				mutation.mutate({
 					id: ctx.listId,
-					placeId: place.id,
+					update: {
+						op: 'add',
+						items: [place.id],
+					},
 				});
 			}}
 			disabled={ctx.listId === null}
