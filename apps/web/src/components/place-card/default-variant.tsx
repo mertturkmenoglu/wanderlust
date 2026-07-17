@@ -71,12 +71,12 @@ export function DefaultVariant({
 							<Link
 								key={acc.id}
 								to="/accolades/$id"
-								params={{ id: acc.accolade.id }}
+								params={{ id: acc.id }}
 								className="flex"
 							>
 								<Badge variant="warning">
 									<AwardIcon />
-									{acc.accolade.title}
+									{acc.title}
 								</Badge>
 							</Link>
 						))}

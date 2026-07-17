@@ -5,13 +5,10 @@ type Asset = Pick<
 	'url' | 'description'
 >;
 
-type Accolade = {
-	id: string;
-	accolade: Pick<
-		Outputs['places']['get']['place']['accolades'][number]['accolade'],
-		'id' | 'title'
-	>;
-};
+type Accolade = Pick<
+	Outputs['places']['get']['place']['accolades'][number],
+	'id' | 'title'
+>;
 
 type PrimaryCategory = Pick<
 	Outputs['places']['get']['place']['primaryCategory'],
