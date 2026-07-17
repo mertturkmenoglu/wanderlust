@@ -7,7 +7,7 @@ import {
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
@@ -409,12 +409,31 @@ export class ListsRepository {
 					'Some of the places you are trying to remove are not in the list',
 				);
 
+				const remainingItems = await tx.query.listItems.findMany({
+					where: {
+						listId: data.id,
+					},
+					columns: {
+						placeId: true,
+						index: true,
+					},
+				});
+
+				const sortedRemainingItems = remainingItems.sort(
+					(a, b) => a.index - b.index,
+				);
+
 				await tx
-					.update(schema.listItems)
-					.set({
-						index: sql`row_number() over (order by "index") - 1`,
-					})
+					.delete(schema.listItems)
 					.where(eq(schema.listItems.listId, data.id));
+
+				await tx.insert(schema.listItems).values(
+					sortedRemainingItems.map((item, index) => ({
+						listId: data.id,
+						placeId: item.placeId,
+						index: index,
+					})),
+				);
 
 				return this.findById(userId, data.id, tx);
 			}
@@ -440,12 +459,17 @@ export class ListsRepository {
 					'The provided list of place IDs does not match the existing items in the list',
 				);
 
+				const sortedItems = data.update.items.map((placeId, index) => ({
+					listId: data.id,
+					placeId: placeId,
+					index: index,
+				}));
+
 				await tx
-					.update(schema.listItems)
-					.set({
-						index: sql`row_number() over (order by array_position(${data.update.items}, "placeId")) - 1`,
-					})
+					.delete(schema.listItems)
 					.where(eq(schema.listItems.listId, data.id));
+
+				await tx.insert(schema.listItems).values(sortedItems);
 
 				return this.findById(userId, data.id, tx);
 			}

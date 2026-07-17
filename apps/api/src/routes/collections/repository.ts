@@ -7,7 +7,7 @@ import {
 	type TDatabaseService,
 } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { transformFiltersToConditions } from '@/lib/filters-to-conditions';
@@ -222,12 +222,31 @@ export class CollectionsRepository {
 					'Some items to remove were not found in the collection',
 				);
 
+				const remainingItems = await tx.query.collectionItems.findMany({
+					where: {
+						collectionId: data.id,
+					},
+					columns: {
+						placeId: true,
+						index: true,
+					},
+				});
+
+				const sortedRemainingItems = remainingItems.sort(
+					(a, b) => a.index - b.index,
+				);
+
 				await tx
-					.update(schema.collectionItems)
-					.set({
-						index: sql`row_number() over (order by index) - 1`,
-					})
+					.delete(schema.collectionItems)
 					.where(eq(schema.collectionItems.collectionId, data.id));
+
+				await tx.insert(schema.collectionItems).values(
+					sortedRemainingItems.map((item, index) => ({
+						collectionId: data.id,
+						placeId: item.placeId,
+						index: index,
+					})),
+				);
 
 				return this.findById(userId, data.id, tx);
 			}
@@ -242,9 +261,7 @@ export class CollectionsRepository {
 				const existingPlaceIds = existingItems.map((item) => item.placeId);
 				const inputPlaceIdsSet = new Set(data.update.items);
 				const existingPlaceIdsSet = new Set(existingPlaceIds);
-				const isSameSet =
-					inputPlaceIdsSet.isSupersetOf(existingPlaceIdsSet) &&
-					existingPlaceIdsSet.isSupersetOf(inputPlaceIdsSet);
+				const isSameSet = areSetsEqual(inputPlaceIdsSet, existingPlaceIdsSet);
 
 				invariant(
 					isSameSet,
@@ -252,12 +269,17 @@ export class CollectionsRepository {
 					'Input place IDs do not match existing collection items place IDs',
 				);
 
+				const sortedItems = data.update.items.map((placeId, index) => ({
+					collectionId: data.id,
+					placeId,
+					index,
+				}));
+
 				await tx
-					.update(schema.collectionItems)
-					.set({
-						index: sql`row_number() over (order by array_position(${data.update.items}, place_id)) - 1`,
-					})
+					.delete(schema.collectionItems)
 					.where(eq(schema.collectionItems.collectionId, data.id));
+
+				await tx.insert(schema.collectionItems).values(sortedItems);
 
 				return this.findById(userId, data.id, tx);
 			}
@@ -402,12 +424,37 @@ export class CollectionsRepository {
 					'Some collections to remove were not found for the place',
 				);
 
+				const remainingAssociations = await tx.query.collectionsPlaces.findMany(
+					{
+						where: {
+							placeId: data.placeId,
+						},
+						columns: {
+							collectionId: true,
+							index: true,
+						},
+					},
+				);
+
+				const sortedRemainingAssociations = remainingAssociations.sort(
+					(a, b) => a.index - b.index,
+				);
+
 				await tx
-					.update(schema.collectionsPlaces)
-					.set({
-						index: sql`row_number() over (order by index) - 1`,
-					})
+					.delete(schema.collectionsPlaces)
 					.where(eq(schema.collectionsPlaces.placeId, data.placeId));
+
+				const reinsertedAssociations = sortedRemainingAssociations.map(
+					(assoc, index) => ({
+						collectionId: assoc.collectionId,
+						placeId: data.placeId,
+						index,
+					}),
+				);
+
+				await tx
+					.insert(schema.collectionsPlaces)
+					.values(reinsertedAssociations);
 
 				return tx.query.collectionsPlaces.findMany({
 					where: {
@@ -435,9 +482,10 @@ export class CollectionsRepository {
 				);
 				const inputCollectionIdsSet = new Set(data.update.items);
 				const existingCollectionIdsSet = new Set(existingCollectionIds);
-				const isSameSet =
-					inputCollectionIdsSet.isSupersetOf(existingCollectionIdsSet) &&
-					existingCollectionIdsSet.isSupersetOf(inputCollectionIdsSet);
+				const isSameSet = areSetsEqual(
+					inputCollectionIdsSet,
+					existingCollectionIdsSet,
+				);
 
 				invariant(
 					isSameSet,
@@ -445,12 +493,17 @@ export class CollectionsRepository {
 					'Input collection IDs do not match existing collections for the place',
 				);
 
+				const sortedItems = data.update.items.map((collectionId, index) => ({
+					collectionId,
+					placeId: data.placeId,
+					index,
+				}));
+
 				await tx
-					.update(schema.collectionsPlaces)
-					.set({
-						index: sql`row_number() over (order by array_position(${data.update.items}, collection_id)) - 1`,
-					})
+					.delete(schema.collectionsPlaces)
 					.where(eq(schema.collectionsPlaces.placeId, data.placeId));
+
+				await tx.insert(schema.collectionsPlaces).values(sortedItems);
 
 				return tx.query.collectionsPlaces.findMany({
 					where: {
@@ -607,12 +660,37 @@ export class CollectionsRepository {
 					'Some collections to remove were not found for the city',
 				);
 
+				const remainingAssociations = await tx.query.collectionsCities.findMany(
+					{
+						where: {
+							cityId: data.cityId,
+						},
+						columns: {
+							collectionId: true,
+							index: true,
+						},
+					},
+				);
+
+				const sortedRemainingAssociations = remainingAssociations.sort(
+					(a, b) => a.index - b.index,
+				);
+
 				await tx
-					.update(schema.collectionsCities)
-					.set({
-						index: sql`row_number() over (order by index) - 1`,
-					})
+					.delete(schema.collectionsCities)
 					.where(eq(schema.collectionsCities.cityId, data.cityId));
+
+				const reinsertedAssociations = sortedRemainingAssociations.map(
+					(assoc, index) => ({
+						collectionId: assoc.collectionId,
+						cityId: data.cityId,
+						index,
+					}),
+				);
+
+				await tx
+					.insert(schema.collectionsCities)
+					.values(reinsertedAssociations);
 
 				return tx.query.collectionsCities.findMany({
 					where: {
@@ -640,9 +718,10 @@ export class CollectionsRepository {
 				);
 				const inputCollectionIdsSet = new Set(data.update.items);
 				const existingCollectionIdsSet = new Set(existingCollectionIds);
-				const isSameSet =
-					inputCollectionIdsSet.isSupersetOf(existingCollectionIdsSet) &&
-					existingCollectionIdsSet.isSupersetOf(inputCollectionIdsSet);
+				const isSameSet = areSetsEqual(
+					inputCollectionIdsSet,
+					existingCollectionIdsSet,
+				);
 
 				invariant(
 					isSameSet,
@@ -650,12 +729,17 @@ export class CollectionsRepository {
 					'Input collection IDs do not match existing collections for the city',
 				);
 
+				const sortedItems = data.update.items.map((collectionId, index) => ({
+					collectionId,
+					cityId: data.cityId,
+					index,
+				}));
+
 				await tx
-					.update(schema.collectionsCities)
-					.set({
-						index: sql`row_number() over (order by array_position(${data.update.items}, collection_id)) - 1`,
-					})
+					.delete(schema.collectionsCities)
 					.where(eq(schema.collectionsCities.cityId, data.cityId));
+
+				await tx.insert(schema.collectionsCities).values(sortedItems);
 
 				return tx.query.collectionsCities.findMany({
 					where: {
