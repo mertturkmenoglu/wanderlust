@@ -1,4 +1,4 @@
-import * as schema from '@wanderlust/db';
+import { schema } from '@wanderlust/db';
 import { isCollectionExistsError } from '../utils/err-utils';
 import { AbstractSchema } from './abstract-schema';
 
@@ -90,11 +90,7 @@ export class PlacesSchema extends AbstractSchema {
 				assets: true,
 				city: true,
 				primaryCategory: true,
-				accolades: {
-					with: {
-						accolade: true,
-					},
-				},
+				accolades: true,
 			},
 		});
 	}

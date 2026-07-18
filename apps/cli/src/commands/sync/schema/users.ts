@@ -1,4 +1,4 @@
-import * as schema from '@wanderlust/db';
+import { schema } from '@wanderlust/db';
 import { isCollectionExistsError } from '../utils/err-utils';
 import { AbstractSchema } from './abstract-schema';
 
