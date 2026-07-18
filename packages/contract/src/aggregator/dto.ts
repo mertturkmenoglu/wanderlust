@@ -22,6 +22,10 @@ export namespace dto {
 		meta: Types.Places.Meta,
 	});
 
+	export type PlaceWithMeta = z.infer<typeof placeWithMeta>;
+
+	export type Place = Omit<PlaceWithMeta, 'meta'>['place'];
+
 	export const homeOutput = z.object({
 		new: placeWithMeta.array(),
 		popular: placeWithMeta.array(),
