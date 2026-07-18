@@ -1,7 +1,6 @@
-import type { $insert } from '@wanderlust/common';
-import type { z } from 'zod';
+import type { Types } from '@wanderlust/common';
 
-type Insert = z.infer<typeof $insert.city>;
+type Insert = Types.Cities.$Insert.City;
 
 export const data: Insert[] = [
 	{

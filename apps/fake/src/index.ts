@@ -1,73 +1,57 @@
 import consola from 'consola';
 import { colorize } from 'consola/utils';
 import { oraPromise } from 'ora';
-import { generate as generateAccolades } from './handlers/accolades';
-import { generate as generateAccoladeAssignments } from './handlers/accolades-places';
-import { generate as generateAssets } from './handlers/assets';
-import { generate as generateBookmarks } from './handlers/bookmarks';
-import { generate as generateCategories } from './handlers/categories';
-import { generate as generateCities } from './handlers/cities';
-import { generate as cleanup } from './handlers/cleanup';
-import { generate as generateCollectionItems } from './handlers/collection-items';
-import { generate as generateCollections } from './handlers/collections';
-import { generate as generateCollectionsCities } from './handlers/collections-cities';
-import { generate as generateCollectionsPlaces } from './handlers/collections-places';
-import { generate as generateFakeIds } from './handlers/fake-id';
-import { generate as generateFavorites } from './handlers/favorites';
-import { generate as generateFollows } from './handlers/follows';
-import { generate as generateListItems } from './handlers/list-items';
-import { generate as generateLists } from './handlers/lists';
-import { generate as generatePlaces } from './handlers/places';
-import { generate as generateReviewAssets } from './handlers/review-assets';
-import { generate as generateReviews } from './handlers/reviews';
-import { generate as generateUsers } from './handlers/users';
-
-export const paths = {
-	accolades: 'tmp/accolades.txt',
-	places: 'tmp/places.txt',
-	users: 'tmp/users.txt',
-	reviews: 'tmp/reviews.txt',
-	collections: 'tmp/collections.txt',
-	lists: 'tmp/lists.txt',
-	// events: 'tmp/events.txt',
-} as const;
+import {
+	accoladeAssignmentsGenerator,
+	accoladesGenerator,
+} from './generators/accolades';
+import { assetsGenerator } from './generators/assets';
+import { bookmarksGenerator } from './generators/bookmarks';
+import { categoriesGenerator } from './generators/categories';
+import { citiesGenerator } from './generators/cities';
+import { cleanupGenerator } from './generators/cleanup';
+import {
+	collectionItemsGenerator,
+	collectionsCitiesGenerator,
+	collectionsGenerator,
+	collectionsPlacesGenerator,
+} from './generators/collections';
+import { fakeIdGenerator } from './generators/fake-id';
+import { favoritesGenerator } from './generators/favorites';
+import { listItemsGenerator, listsGenerator } from './generators/lists';
+import { placesGenerator } from './generators/places';
+import { reviewAssetsGenerator, reviewsGenerator } from './generators/reviews';
+import { followsGenerator, usersGenerator } from './generators/users';
+import type { GeneratorDefinition } from './lib/define-generator';
 
 const mapping = {
-	categories: generateCategories,
-	cities: generateCities,
-	// addresses: generateAddresses,
-	users: generateUsers,
-	accolades: generateAccolades,
-	'accolade-assignments': generateAccoladeAssignments,
-	places: generatePlaces,
-	'fake-id': generateFakeIds,
-	assets: generateAssets,
-	follows: generateFollows,
-	favorites: generateFavorites,
-	bookmarks: generateBookmarks,
-	reviews: generateReviews,
-	'review-assets': generateReviewAssets,
-	collections: generateCollections,
-	'collection-items': generateCollectionItems,
-	'collections-cities': generateCollectionsCities,
-	'collections-places': generateCollectionsPlaces,
-	lists: generateLists,
-	'list-items': generateListItems,
-	// events: generateEvents,
-	// 'event-ticket-options': generateEventTicketOptions,
-	// 'event-agenda-items': generateEventAgendaItems,
-	// 'event-lineup-items': generateEventLineupItems,
-	// 'event-assets': generateEventAssets,
-	// 'event-interests': generateEventInterests,
-	cleanup: cleanup,
-} as const satisfies Record<string, () => Promise<void>>;
+	categories: categoriesGenerator,
+	cities: citiesGenerator,
+	users: usersGenerator,
+	accolades: accoladesGenerator,
+	'accolade-assignments': accoladeAssignmentsGenerator,
+	places: placesGenerator,
+	'fake-id': fakeIdGenerator,
+	assets: assetsGenerator,
+	follows: followsGenerator,
+	favorites: favoritesGenerator,
+	bookmarks: bookmarksGenerator,
+	reviews: reviewsGenerator,
+	'review-assets': reviewAssetsGenerator,
+	collections: collectionsGenerator,
+	'collection-items': collectionItemsGenerator,
+	'collections-cities': collectionsCitiesGenerator,
+	'collections-places': collectionsPlacesGenerator,
+	lists: listsGenerator,
+	'list-items': listItemsGenerator,
+	cleanup: cleanupGenerator,
+} as const satisfies Record<string, GeneratorDefinition>;
 
 type Step = keyof typeof mapping;
 
 const steps: Step[] = [
 	'categories',
 	'cities',
-	// 'addresses',
 	'users',
 	'accolades',
 	'fake-id', // run fake id to get accolade ids for other steps
@@ -89,13 +73,6 @@ const steps: Step[] = [
 	'list-items',
 	'favorites',
 	'bookmarks',
-	// 'events',
-	// 'fake-id', // run fake id again to get event ids
-	// 'event-ticket-options',
-	// 'event-agenda-items',
-	// 'event-lineup-items',
-	// 'event-assets',
-	// 'event-interests',
 	'cleanup',
 ];
 
@@ -106,9 +83,9 @@ async function main() {
 
 	for (const step of steps) {
 		const stepStart = Date.now();
-		const handler = mapping[step];
+		const generator = mapping[step];
 
-		await oraPromise(handler(), {
+		await oraPromise(generator.generate(), {
 			text: `Running step: ${colorize('underline', step)}`,
 			successText: () =>
 				`${step} completed in ${colorize('cyan', ((Date.now() - stepStart) / 1000).toFixed(2))} seconds`,
