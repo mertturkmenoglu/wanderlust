@@ -52,6 +52,10 @@ export namespace Accolades {
 			image: Url,
 		});
 
+		export type Accolade = z.infer<typeof Accolade>;
+
 		export const Assignment = createInsertSchema(schema.accoladeAssignments);
+
+		export type Assignment = z.infer<typeof Assignment>;
 	}
 }

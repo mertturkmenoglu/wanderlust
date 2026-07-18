@@ -103,9 +103,15 @@ export namespace Users {
 	export namespace $Insert {
 		export const User = createInsertSchema(schema.users);
 
+		export type User = z.infer<typeof User>;
+
 		export const Follow = createInsertSchema(schema.follows);
 
+		export type Follow = z.infer<typeof Follow>;
+
 		export const TopPlace = createInsertSchema(schema.userTopPlaces);
+
+		export type TopPlace = z.infer<typeof TopPlace>;
 	}
 
 	export namespace View {

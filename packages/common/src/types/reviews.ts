@@ -57,5 +57,7 @@ export namespace Reviews {
 			detectedLanguage: z.string().nullable(),
 			facets: z.array(RichTextFacet),
 		});
+
+		export type Review = z.infer<typeof Review>;
 	}
 }

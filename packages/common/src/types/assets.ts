@@ -45,5 +45,7 @@ export const Asset = createSelectSchema(schema.assets, {
 export namespace Assets {
 	export namespace $Insert {
 		export const Asset = createInsertSchema(schema.assets);
+
+		export type Asset = z.infer<typeof Asset>;
 	}
 }

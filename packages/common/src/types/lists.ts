@@ -44,6 +44,11 @@ export namespace Lists {
 
 	export namespace $Insert {
 		export const List = createInsertSchema(schema.lists);
+
+		export type List = z.infer<typeof List>;
+
 		export const Item = createInsertSchema(schema.listItems);
+
+		export type Item = z.infer<typeof Item>;
 	}
 }

@@ -83,5 +83,7 @@ export namespace Cities {
 			timezone: Timezone,
 			attributions: Attribution.array(),
 		});
+
+		export type City = z.infer<typeof City>;
 	}
 }

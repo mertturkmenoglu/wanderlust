@@ -59,12 +59,23 @@ export namespace Collections {
 
 	export namespace $Insert {
 		export const Collection = createInsertSchema(schema.collections).pick({
+			id: true,
 			name: true,
 			description: true,
 		});
 
+		export type Collection = z.infer<typeof Collection>;
+
 		export const Item = createInsertSchema(schema.collectionItems);
+
+		export type Item = z.infer<typeof Item>;
+
 		export const CityRelation = createInsertSchema(schema.collectionsCities);
+
+		export type CityRelation = z.infer<typeof CityRelation>;
+
 		export const PlaceRelation = createInsertSchema(schema.collectionsPlaces);
+
+		export type PlaceRelation = z.infer<typeof PlaceRelation>;
 	}
 }

@@ -1,5 +1,6 @@
 import { schema } from '@wanderlust/db';
 import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod';
+import type { z } from 'zod';
 import { Places } from './places';
 import { Resources } from './resources';
 import { Timestamp } from './timestamp';
@@ -19,11 +20,17 @@ export namespace Bookmarks {
 		meta: Places.Meta,
 	});
 
+	export type Extended = z.infer<typeof Extended>;
+
 	export namespace $Insert {
 		export const Bookmark = createInsertSchema(schema.bookmarks, {
+			userId: Resources.id,
 			placeId: Resources.id,
 		}).pick({
 			placeId: true,
+			userId: true,
 		});
+
+		export type Bookmark = z.infer<typeof Bookmark>;
 	}
 }

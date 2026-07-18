@@ -47,5 +47,7 @@ export namespace Categories {
 			image: Url,
 			name: z.string().min(1).max(64),
 		});
+
+		export type Category = z.infer<typeof Category>;
 	}
 }

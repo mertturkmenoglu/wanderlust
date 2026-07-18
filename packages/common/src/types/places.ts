@@ -122,12 +122,16 @@ export namespace Places {
 		accolades: z.array(Accolade),
 	});
 
+	export type Extended = z.infer<typeof Extended>;
+
 	export const Meta = z.object({
 		isFavorite: z.boolean().meta({
 			description: 'Whether the place is marked as a favorite by the user',
 			examples: [true],
 		}),
 	});
+
+	export type Meta = z.infer<typeof Meta>;
 
 	export namespace $Insert {
 		export const Place = createInsertSchema(schema.places, {
@@ -241,5 +245,7 @@ export namespace Places {
 				examples: [['category456', 'category789']],
 			}),
 		});
+
+		export type Place = z.infer<typeof Place>;
 	}
 }
