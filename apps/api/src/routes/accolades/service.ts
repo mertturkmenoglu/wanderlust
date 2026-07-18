@@ -1,15 +1,24 @@
+import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { Accolades } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
+import { AccoladesEnricher } from './enricher';
 import { AccoladesRepository } from './repository';
 
 @injectable()
 @TraceAll()
 export class AccoladesService {
+	private readonly ns = 'accolades';
+	private readonly cache: TCacheService;
+
 	constructor(
 		@inject(AccoladesRepository)
 		private readonly accoladesRepository: AccoladesRepository,
-	) {}
+		@inject(CacheService) cache: CacheService,
+		@inject(AccoladesEnricher) private readonly enricher: AccoladesEnricher,
+	) {
+		this.cache = cache.get();
+	}
 
 	async create(
 		userId: string,
@@ -30,7 +39,7 @@ export class AccoladesService {
 		userId: string,
 		data: Accolades.dto.DeleteInput,
 	): Promise<Accolades.dto.DeleteOutput> {
-		await this.accoladesRepository._delete(userId, data);
+		await this.accoladesRepository.delete(userId, data);
 
 		return {};
 	}
@@ -45,9 +54,22 @@ export class AccoladesService {
 		userId: string | null,
 		data: Accolades.dto.ListPlacesInput,
 	): Promise<Accolades.dto.ListPlacesOutput> {
-		const result = await this.accoladesRepository.listPlaces(userId, data);
+		const result = await this.cache.namespace(this.ns).getOrSet({
+			key: `places:${data.page}:${data.pageSize}`,
+			factory: async () => this.accoladesRepository.listPlaces(userId, data),
+			grace: '1h',
+			ttl: '1h',
+		});
 
-		return result;
+		const enrichedPlaces = await this.enricher.enrichPlaces(
+			userId,
+			result.places,
+		);
+
+		return {
+			places: enrichedPlaces,
+			pagination: result.pagination,
+		};
 	}
 
 	async update(

@@ -11,19 +11,14 @@ import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { slugifyWithRandom } from '@/lib/slug';
 import { TraceAll } from '@/lib/tracer';
-import { FavoritesRepository } from '../favorites/repository';
-import { findAssignments } from './statements';
+import { findAssignments, findMany } from './statements';
 
 @injectable()
 @TraceAll()
 export class AccoladesRepository {
 	private readonly db: TDatabaseService;
 
-	constructor(
-		@inject(DatabaseService) db: DatabaseService,
-		@inject(FavoritesRepository)
-		private readonly favoritesRepo: FavoritesRepository,
-	) {
+	constructor(@inject(DatabaseService) db: DatabaseService) {
 		this.db = db.get();
 	}
 
@@ -52,13 +47,9 @@ export class AccoladesRepository {
 	async list(data: Accolades.dto.ListInput): Promise<Accolades.dto.ListOutput> {
 		const offset = Types.Pagination.getOffset(data);
 
-		const result = await this.db.query.accolades.findMany({
-			orderBy: {
-				title: 'asc',
-				createdAt: 'asc',
-			},
-			offset: offset,
+		const result = await findMany.execute(this.db, {
 			limit: data.pageSize,
+			offset: offset,
 		});
 
 		const totalItems = await this.db.$count(schema.accolades);
@@ -70,7 +61,7 @@ export class AccoladesRepository {
 		};
 	}
 
-	async _delete(
+	async delete(
 		_userId: string,
 		data: Accolades.dto.DeleteInput,
 	): Promise<Accolades.dto.DeleteOutput> {
@@ -97,40 +88,18 @@ export class AccoladesRepository {
 	}
 
 	async listPlaces(
-		userId: string | null,
+		_userId: string | null,
 		data: Accolades.dto.ListPlacesInput,
-	): Promise<Accolades.dto.ListPlacesOutput> {
-		const offset = Types.Pagination.getOffset(data);
-		const limit = data.pageSize;
-
-		const assignments = await findAssignments.execute(this.db, {
-			id: data.id,
-		});
-
-		const places = await this.db.query.places.findMany({
-			where: {
-				id: {
-					in: assignments.map((aa) => aa.placeId),
-				},
-			},
-			with: $includes.place.with,
-			offset,
-			limit,
-		});
-
-		const favorites = await this.favoritesRepo.getFavoriteStatuses(
-			userId,
-			places.map((place) => place.id),
+	) {
+		const [size, places] = await this.findPlacesByAccoladeId(
+			data.id,
+			data.page,
+			data.pageSize,
 		);
 
 		return {
-			places: places.map((place) => ({
-				place,
-				meta: {
-					isFavorite: favorites.includes(place.id),
-				},
-			})),
-			pagination: Types.Pagination.compute(data, assignments.length),
+			places,
+			pagination: Types.Pagination.compute(data, size),
 		};
 	}
 
@@ -138,7 +107,7 @@ export class AccoladesRepository {
 		_userId: string,
 		data: Accolades.dto.UpdateInput,
 	): Promise<Accolades.dto.UpdateOutput> {
-		const results = await this.db
+		const [updated] = await this.db
 			.update(schema.accolades)
 			.set({
 				badge: data.badge,
@@ -149,12 +118,33 @@ export class AccoladesRepository {
 			.where(eq(schema.accolades.id, data.id))
 			.returning();
 
-		invariant(results.length === 1, 'NOT_FOUND', 'Accolade not found');
-
-		const [updated] = results;
-
 		invariant(updated, 'NOT_FOUND', 'Accolade not found');
 
 		return { accolade: updated };
+	}
+
+	private async findPlacesByAccoladeId(
+		id: string,
+		page: number,
+		pageSize: number,
+	) {
+		const offset = Types.Pagination.getOffset({ page, pageSize });
+
+		const assignments = await findAssignments.execute(this.db, {
+			id,
+		});
+
+		const places = await this.db.query.places.findMany({
+			where: {
+				id: {
+					in: assignments.map((aa) => aa.placeId),
+				},
+			},
+			with: $includes.place.with,
+			offset,
+			limit: pageSize,
+		});
+
+		return [assignments.length, places] as const;
 	}
 }

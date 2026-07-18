@@ -45,7 +45,7 @@ export const findFeaturedPlaces = definePreparedStatement({
 					},
 				},
 				orderBy: (t, { desc }) => [desc(t.rating), desc(t.totalVotes)],
-				limit: 10,
+				limit: 6,
 				...queryColumnsAndRelations,
 			})
 			.prepare('agg_featured_places');
@@ -58,7 +58,7 @@ export const findPopularPlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalVotes)],
-				limit: 10,
+				limit: 6,
 				...queryColumnsAndRelations,
 			})
 			.prepare('agg_popular_places');
@@ -71,7 +71,7 @@ export const findNewPlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				orderBy: (t, { desc }) => [desc(t.createdAt)],
-				limit: 10,
+				limit: 6,
 				...queryColumnsAndRelations,
 			})
 			.prepare('agg_new_places');
@@ -84,7 +84,7 @@ export const findFavoritePlaces = definePreparedStatement({
 		return db.query.places
 			.findMany({
 				orderBy: (t, { desc }) => [desc(t.totalFavorites)],
-				limit: 10,
+				limit: 6,
 				...queryColumnsAndRelations,
 			})
 			.prepare('agg_favorite_places');

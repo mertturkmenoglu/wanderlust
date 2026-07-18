@@ -2,7 +2,7 @@ import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { Aggregator } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
-import { FavoritesRepository } from '../favorites/repository';
+import { AggregatorEnricher } from './enricher';
 import { AggregatorRepository } from './repository';
 
 @injectable()
@@ -15,8 +15,7 @@ export class AggregatorService {
 	constructor(
 		@inject(CacheService) cache: CacheService,
 		@inject(AggregatorRepository) repo: AggregatorRepository,
-		@inject(FavoritesRepository)
-		private readonly favoritesRepo: FavoritesRepository,
+		@inject(AggregatorEnricher) private readonly enricher: AggregatorEnricher,
 	) {
 		this.cache = cache.get();
 		this.repo = repo;
@@ -30,38 +29,6 @@ export class AggregatorService {
 			grace: '1h',
 		});
 
-		const ids = Array.from(
-			new Set(
-				[
-					...result.new,
-					...result.popular,
-					...result.featured,
-					...result.favorites,
-				].map((place) => place.id),
-			),
-		);
-
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
-			userId,
-			ids,
-		);
-
-		const mapWithMeta = (
-			places: Aggregator.dto.HomeOutput['new'][number]['place'][],
-		) => {
-			return places.map((place) => ({
-				place,
-				meta: {
-					isFavorite: favoriteIds.includes(place.id),
-				},
-			}));
-		};
-
-		return {
-			new: mapWithMeta(result.new),
-			popular: mapWithMeta(result.popular),
-			featured: mapWithMeta(result.featured),
-			favorites: mapWithMeta(result.favorites),
-		};
+		return this.enricher.enrichPlaces(userId, result);
 	}
 }

@@ -1,32 +1,25 @@
 import { Types } from '@wanderlust/common';
 import type { Bookmarks } from '@wanderlust/contract';
-import {
-	$includes,
-	DatabaseService,
-	schema,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
-import { FavoritesRepository } from '../favorites/repository';
+import { findMany } from './statements';
 
 @injectable()
 @TraceAll()
 export class BookmarksRepository {
 	private readonly db: TDatabaseService;
 
-	constructor(
-		@inject(DatabaseService) db: DatabaseService,
-		@inject(FavoritesRepository)
-		private readonly favoritesRepo: FavoritesRepository,
-	) {
+	constructor(@inject(DatabaseService) db: DatabaseService) {
 		this.db = db.get();
 	}
 
-	async create(userId: string, data: Bookmarks.dto.CreateInput) {
+	async create(
+		userId: string,
+		data: Bookmarks.dto.CreateInput,
+	): Promise<Bookmarks.dto.CreateOutput> {
 		const [result] = await this.db
 			.insert(schema.bookmarks)
 			.values({
@@ -37,24 +30,16 @@ export class BookmarksRepository {
 
 		invariant(result, 'INTERNAL_SERVER_ERROR', 'No bookmark returned');
 
-		return result;
+		return {
+			bookmark: result,
+		};
 	}
 
 	async list(userId: string, data: Bookmarks.dto.ListInput) {
-		const offset = Types.Pagination.getOffset(data);
-
-		const bookmarks = await this.db.query.bookmarks.findMany({
-			where: {
-				userId: userId,
-			},
-			orderBy: {
-				createdAt: 'desc',
-			},
-			offset,
+		const bookmarks = await findMany.execute(this.db, {
+			userId,
 			limit: data.pageSize,
-			with: {
-				place: $includes.place,
-			},
+			offset: Types.Pagination.getOffset(data),
 		});
 
 		const totalItems = await this.db.$count(
@@ -64,19 +49,16 @@ export class BookmarksRepository {
 
 		const pagination = Types.Pagination.compute(data, totalItems);
 
-		const placeIds = Array.from(new Set(bookmarks.map((b) => b.placeId)));
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
-			userId,
-			placeIds,
-		);
-
 		return {
-			bookmarks: attachFavoriteMetadata(bookmarks, favoriteIds),
+			bookmarks,
 			pagination,
 		};
 	}
 
-	async delete(userId: string, data: Bookmarks.dto.DeleteInput) {
+	async delete(
+		userId: string,
+		data: Bookmarks.dto.DeleteInput,
+	): Promise<Bookmarks.dto.DeleteOutput> {
 		const res = await this.db
 			.delete(schema.bookmarks)
 			.where(
@@ -87,5 +69,7 @@ export class BookmarksRepository {
 			);
 
 		invariant(res.rowCount !== 0, 'NOT_FOUND', 'Bookmark not found');
+
+		return {};
 	}
 }

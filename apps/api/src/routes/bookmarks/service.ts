@@ -1,6 +1,7 @@
 import type { Bookmarks } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
+import { BookmarksEnricher } from './enricher';
 import { BookmarksRepository } from './repository';
 
 @injectable()
@@ -8,6 +9,7 @@ import { BookmarksRepository } from './repository';
 export class BookmarksService {
 	constructor(
 		@inject(BookmarksRepository) private readonly repo: BookmarksRepository,
+		@inject(BookmarksEnricher) private readonly enricher: BookmarksEnricher,
 	) {}
 
 	async create(
@@ -16,29 +18,32 @@ export class BookmarksService {
 	): Promise<Bookmarks.dto.CreateOutput> {
 		const result = await this.repo.create(userId, data);
 
-		return {
-			bookmark: result,
-		};
+		return result;
 	}
 
 	async list(
 		userId: string,
 		data: Bookmarks.dto.ListInput,
 	): Promise<Bookmarks.dto.ListOutput> {
-		const result = await this.repo.list(userId, data);
+		const { bookmarks, pagination } = await this.repo.list(userId, data);
+
+		const enrichedBookmarks = await this.enricher.enrichBookmarks(
+			userId,
+			bookmarks,
+		);
 
 		return {
-			bookmarks: result.bookmarks,
-			pagination: result.pagination,
+			bookmarks: enrichedBookmarks,
+			pagination,
 		};
 	}
 
-	async _delete(
+	async delete(
 		userId: string,
 		data: Bookmarks.dto.DeleteInput,
 	): Promise<Bookmarks.dto.DeleteOutput> {
-		await this.repo.delete(userId, data);
+		const result = await this.repo.delete(userId, data);
 
-		return {};
+		return result;
 	}
 }
