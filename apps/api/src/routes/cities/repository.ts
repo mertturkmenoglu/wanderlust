@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
+import { findById, findMany } from './statements';
 
 @injectable()
 @TraceAll()
@@ -15,9 +16,7 @@ export class CitiesRepository {
 	}
 
 	async list() {
-		return this.db.query.cities.findMany({
-			orderBy: (t, { asc }) => asc(t.name),
-		});
+		return findMany.execute(this.db, {});
 	}
 
 	async listFeatured() {
@@ -47,11 +46,7 @@ export class CitiesRepository {
 	}
 
 	async get(data: Cities.dto.GetInput) {
-		const city = await this.db.query.cities.findFirst({
-			where: {
-				id: data.id,
-			},
-		});
+		const city = await findById.execute(this.db, { id: data.id });
 
 		invariant(city, 'NOT_FOUND', `City with ID ${data.id} not found`);
 
