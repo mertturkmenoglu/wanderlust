@@ -6,8 +6,7 @@ import {
 	type TRedisService,
 } from '@wanderlust/cache';
 import { ConfigService, type TConfigService } from '@wanderlust/config';
-import * as schema from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
