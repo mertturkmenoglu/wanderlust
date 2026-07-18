@@ -50,7 +50,7 @@ export const module = defineModule({
 				.use(requireAuth)
 				.use(isAdmin)
 				.handler(async ({ input }) => {
-					await svc._delete(input);
+					await svc.delete(input);
 
 					return {};
 				}),

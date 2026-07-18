@@ -66,7 +66,7 @@ export class CategoriesRepository {
 		return result;
 	}
 
-	async _delete(data: Categories.dto.DeleteInput) {
+	async delete(data: Categories.dto.DeleteInput) {
 		await this.db
 			.delete(schema.categories)
 			.where(eq(schema.categories.id, data.id));
