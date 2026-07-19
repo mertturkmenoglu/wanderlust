@@ -9,7 +9,6 @@ import { ArrowRightIcon } from 'lucide-react';
 import { Container } from '@/components/container';
 import { toTitleCase } from '@/lib/text';
 import { accoladesResource } from '@/resources/accolades';
-import { addressesResource } from '@/resources/addresses';
 import { categoriesResource } from '@/resources/categories';
 import { citiesResource } from '@/resources/cities';
 import { collectionsResource } from '@/resources/collections';
@@ -32,7 +31,6 @@ export const Route = createFileRoute('/dashboard/')({
 
 const resources = [
 	accoladesResource,
-	addressesResource,
 	categoriesResource,
 	citiesResource,
 	collectionsResource,
