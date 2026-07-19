@@ -10,7 +10,7 @@ export const Route = createFileRoute('/dashboard/categories/$id')({
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {
 			input: {
-				id: +params.id,
+				id: params.id,
 			},
 		});
 	},
@@ -23,7 +23,10 @@ function RouteComponent() {
 	const rows = defineRows([
 		['ID', category.id.toString()],
 		['Name', category.name],
+		['Display Name', category.displayName],
+		['Description', category.description],
 		['Image', renderer.Image(category.image)],
+		['Attributions', renderer.Attributions(category.attributions)],
 	]);
 
 	return (

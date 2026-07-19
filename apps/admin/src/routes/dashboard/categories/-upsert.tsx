@@ -1,4 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Badge } from '@wanderlust/ui/components/badge';
+import { Button } from '@wanderlust/ui/components/button';
+import { Card, CardContent, CardFooter } from '@wanderlust/ui/components/card';
+import { Field, FieldError, FieldLabel } from '@wanderlust/ui/components/field';
 import { Input } from '@wanderlust/ui/components/input';
 import {
 	InputGroup,
@@ -6,9 +10,19 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from '@wanderlust/ui/components/input-group';
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemGroup,
+	ItemMedia,
+	ItemTitle,
+} from '@wanderlust/ui/components/item';
+import { XIcon } from 'lucide-react';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import z from 'zod';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { useFormElement } from '@/components/form';
 import { FormContainer } from '@/components/form/container';
 import { SubmitButton } from '@/components/form/submit-button';
@@ -20,9 +34,19 @@ import {
 } from '@/resources/categories';
 
 const schema = z.object({
-	id: z.transform(Number).pipe(z.number().min(1)),
+	id: z.string().min(1).max(63),
+	attributions: z
+		.object({
+			type: z.string().min(1).max(16),
+			text: z.string().min(1).max(1024),
+			link: z.url().min(1).max(512),
+		})
+		.array()
+		.max(10),
+	description: z.string().min(1).max(512),
+	displayName: z.string().min(1).max(64),
+	image: z.url().min(1).max(512),
 	name: z.string().min(1).max(64),
-	image: z.url().min(1).max(256),
 });
 
 export function Upsert({ action, entity }: UpsertProps<Category>) {
@@ -30,9 +54,7 @@ export function Upsert({ action, entity }: UpsertProps<Category>) {
 
 	const form = useForm({
 		resolver: zodResolver(schema),
-		defaultValues: {
-			...(entity ?? {}),
-		},
+		defaultValues: entity ?? {},
 	});
 
 	const create = res.useCreate();
@@ -59,6 +81,10 @@ export function Upsert({ action, entity }: UpsertProps<Category>) {
 	useUpsertDirtyEventListener(form);
 
 	const { Element } = useFormElement(form.control);
+	const farr = useFieldArray({
+		control: form.control,
+		name: 'attributions',
+	});
 
 	return (
 		<div>
@@ -88,6 +114,18 @@ export function Upsert({ action, entity }: UpsertProps<Category>) {
 						{(r, id) => <Input id={id} placeholder="Name" {...r.field} />}
 					</Element>
 
+					<Element name="displayName" label="Display Name">
+						{(r, id) => (
+							<Input id={id} placeholder="Display Name" {...r.field} />
+						)}
+					</Element>
+
+					<Element name="description" label="Description">
+						{(r, id) => (
+							<Input id={id} placeholder="Description" {...r.field} />
+						)}
+					</Element>
+
 					<Element name="image" label="Image URL">
 						{(r, id) => (
 							<InputGroup>
@@ -111,6 +149,52 @@ export function Upsert({ action, entity }: UpsertProps<Category>) {
 							</InputGroup>
 						)}
 					</Element>
+
+					<Field orientation="horizontal" className="gap-16">
+						<FieldLabel htmlFor="attrs" className="min-w-64 capitalize">
+							Attributions
+						</FieldLabel>
+
+						<div className="w-full">
+							<Card size="sm">
+								<CardContent>
+									<ItemGroup className="gap-2">
+										{farr.fields.map((field, i) => (
+											<Item key={field.id} variant="outline" size="xs">
+												<ItemMedia>
+													<Badge>{field.type}</Badge>
+												</ItemMedia>
+												<ItemContent>
+													<ItemTitle>{field.text}</ItemTitle>
+													<ItemDescription>{field.link}</ItemDescription>
+												</ItemContent>
+												<ItemActions>
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon"
+														onClick={() => farr.remove(i)}
+													>
+														<XIcon />
+													</Button>
+												</ItemActions>
+											</Item>
+										))}
+									</ItemGroup>
+								</CardContent>
+
+								<CardFooter>
+									<Button>Add</Button>
+								</CardFooter>
+							</Card>
+
+							{form.getFieldState('attributions').error && (
+								<FieldError
+									errors={[form.getFieldState('attributions').error]}
+								/>
+							)}
+						</div>
+					</Field>
 
 					<SubmitButton
 						action={action}

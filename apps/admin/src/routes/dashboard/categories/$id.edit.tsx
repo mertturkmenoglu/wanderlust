@@ -9,7 +9,7 @@ export const Route = createFileRoute('/dashboard/categories/$id/edit')({
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {
 			input: {
-				id: +params.id,
+				id: params.id,
 			},
 		});
 	},
@@ -20,7 +20,7 @@ function RouteComponent() {
 	const { category } = Route.useLoaderData();
 
 	return (
-		<EditDialog id={category.id.toString()} resource={r}>
+		<EditDialog id={category.id} resource={r}>
 			<Upsert action="edit" entity={category} />
 		</EditDialog>
 	);

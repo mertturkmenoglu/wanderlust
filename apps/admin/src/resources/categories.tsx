@@ -13,7 +13,7 @@ export const categoriesResource = new ResourceBuilder<'categories', Category>(
 )
 	.addDefaultLinks()
 	.addExtractors({
-		id: (category) => category.id.toString(),
+		id: (category) => category.id,
 		one: (data) => data.category,
 		list: (data) => data.categories,
 		title: (category) => category.name,
@@ -40,6 +40,14 @@ export const categoriesResource = new ResourceBuilder<'categories', Category>(
 			header: 'Name',
 		},
 		{
+			accessorKey: 'displayName',
+			header: 'Display Name',
+		},
+		{
+			accessorKey: 'description',
+			header: 'Description',
+		},
+		{
 			accessorKey: 'image',
 			header: 'Image',
 			cell: (info) => (
@@ -61,7 +69,7 @@ export const categoriesResource = new ResourceBuilder<'categories', Category>(
 	.addHooks({
 		useOne: (input) => {
 			return useQuery(
-				orpc.categories.get.queryOptions({ input: { id: +input.id } }),
+				orpc.categories.get.queryOptions({ input: { id: input.id } }),
 			);
 		},
 
