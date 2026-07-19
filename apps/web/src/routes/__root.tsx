@@ -8,7 +8,7 @@ import {
 	Scripts,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
-import type { PropsWithChildren } from 'react';
+import { lazy, type PropsWithChildren, Suspense } from 'react';
 import { Toaster } from 'sonner';
 import { ErrorComponent } from '@/components/error-component';
 import { Footer } from '@/components/footer';
@@ -17,6 +17,14 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { useSyncPreferences } from '@/hooks/use-sync-preferences';
 import { NotificationsContextProvider } from '@/stores/notifications-context';
 import appCss from '../globals.css?url';
+
+const Devtools = import.meta.env.PROD
+	? () => null
+	: lazy(() =>
+			import('@/components/devtools').then((mod) => ({
+				default: mod.Devtools,
+			})),
+		);
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -148,6 +156,10 @@ function RootDocument({ children }: PropsWithChildren) {
 					>
 						<div className="mx-4 flex min-h-screen flex-col">
 							<Header className="shrink-0" />
+
+							<Suspense fallback={null}>
+								<Devtools />
+							</Suspense>
 
 							<main className="flex min-h-0 flex-1 flex-col overflow-hidden">
 								{children}
