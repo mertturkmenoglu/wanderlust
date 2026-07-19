@@ -17,7 +17,7 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 
 export function SessionsView() {
-	const { data } = useLoaderData({ from: '/dashboard/users/$id/' });
+	const data = useLoaderData({ from: '/dashboard/users/$id/' });
 	const invalidate = useInvalidator();
 
 	if (!data) {
@@ -26,16 +26,18 @@ export function SessionsView() {
 
 	return (
 		<AlertDialog>
-			<AlertDialogTrigger asChild>
-				<Button
-					variant="destructive-ghost"
-					size="sm"
-					disabled={data.role === 'admin'}
-				>
-					<RefreshCwIcon />
-					Revoke All Sessions
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button
+						variant="destructive-ghost"
+						size="sm"
+						disabled={data.role === 'admin'}
+					>
+						<RefreshCwIcon />
+						Revoke All Sessions
+					</Button>
+				}
+			/>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>

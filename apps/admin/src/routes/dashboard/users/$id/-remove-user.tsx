@@ -19,7 +19,7 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 
 export function RemoveUser() {
-	const { data } = useLoaderData({ from: '/dashboard/users/$id/' });
+	const data = useLoaderData({ from: '/dashboard/users/$id/' });
 	const navigate = useNavigate({ from: '/dashboard/users/$id/' });
 	const [open, setOpen] = useState(false);
 	const [text, setText] = useState('');
@@ -35,16 +35,18 @@ export function RemoveUser() {
 
 	return (
 		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogTrigger asChild>
-				<Button
-					variant="destructive"
-					size="sm"
-					disabled={data.role === 'admin'}
-				>
-					<Trash2Icon />
-					Remove user
-				</Button>
-			</AlertDialogTrigger>
+			<AlertDialogTrigger
+				render={
+					<Button
+						variant="destructive"
+						size="sm"
+						disabled={data.role === 'admin'}
+					>
+						<Trash2Icon />
+						Remove user
+					</Button>
+				}
+			/>
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>Remove {data.name}</AlertDialogTitle>

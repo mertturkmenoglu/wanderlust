@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function DangerousActions({ className }: Props) {
-	const { data } = useLoaderData({ from: '/dashboard/users/$id/' });
+	const data = useLoaderData({ from: '/dashboard/users/$id/' });
 
 	if (!data) {
 		return null;

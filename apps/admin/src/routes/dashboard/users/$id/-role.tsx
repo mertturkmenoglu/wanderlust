@@ -19,7 +19,7 @@ import { useInvalidator } from '@/hooks/use-invalidator';
 import { authClient } from '@/lib/auth';
 
 export function RoleView() {
-	const { data } = useLoaderData({ from: '/dashboard/users/$id/' });
+	const data = useLoaderData({ from: '/dashboard/users/$id/' });
 	const [text, setText] = useState('');
 	const invalidate = useInvalidator();
 
@@ -34,12 +34,14 @@ export function RoleView() {
 	return (
 		<div>
 			<AlertDialog>
-				<AlertDialogTrigger asChild>
-					<Button variant="destructive-ghost" size="sm">
-						<KeyIcon />
-						Make Admin
-					</Button>
-				</AlertDialogTrigger>
+				<AlertDialogTrigger
+					render={
+						<Button variant="destructive-ghost" size="sm">
+							<KeyIcon />
+							Make Admin
+						</Button>
+					}
+				/>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>
