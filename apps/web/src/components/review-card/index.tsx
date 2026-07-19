@@ -1,4 +1,3 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Image } from '@unpic/react';
 import { Badge } from '@wanderlust/ui/components/badge';
@@ -23,17 +22,22 @@ import {
 } from '@wanderlust/ui/components/tooltip';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
-import { LanguagesIcon, StarIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { HeartIcon, LanguagesIcon } from 'lucide-react';
+import { useState } from 'react';
 import { FormattedRating } from '@/components/formatted-rating';
 import { UserImage } from '@/components/user-image';
 import { useAssetLightbox } from '@/hooks/use-asset-lightbox';
 import { useIsAuthenticated } from '@/hooks/use-is-authenticated';
+import { useNumberIntl } from '@/hooks/use-number-intl';
 import { ipx } from '@/lib/ipx';
-import { type Outputs, orpc } from '@/lib/orpc';
+import type { Outputs } from '@/lib/orpc';
 import { EnrichedText } from '../rich-text/enriched-text';
 import { UserCard } from '../user-card';
-import { useLikeReviewMutation, useLikesFormatter } from './hooks';
+import {
+	useDetectedLanguage,
+	useLikeReviewMutation,
+	useUserDetails,
+} from './hooks';
 import { Menu } from './menu';
 
 type Props = {
@@ -47,32 +51,15 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 
 	const lb = useAssetLightbox(review.assets);
 	const likeMutation = useLikeReviewMutation();
-	const fmt = useLikesFormatter();
 
-	const languageDisplayNames = useMemo(() => {
-		return new Intl.DisplayNames(['en'], {
-			type: 'language',
-		});
-	}, []);
+	const fmt = useNumberIntl({
+		one: 'like',
+		other: 'likes',
+	});
 
-	const lang = useMemo(() => {
-		if (review.detectedLanguage === null) {
-			return null;
-		}
+	const lang = useDetectedLanguage(review.detectedLanguage);
 
-		return languageDisplayNames.of(review.detectedLanguage) ?? null;
-	}, [review.detectedLanguage, languageDisplayNames]);
-
-	const query = useQuery(
-		orpc.users.get.queryOptions({
-			input: open
-				? {
-						username: review.user.username,
-					}
-				: skipToken,
-			staleTime: 5 * 60 * 1000, // avoid refetching every hover
-		}),
-	);
+	const query = useUserDetails(open, review.user.username);
 
 	return (
 		<Item variant="default" className={cn('px-0', className)} size="sm">
@@ -92,7 +79,7 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 						<HoverCardTrigger delay={200}>
 							<UserImage
 								className="size-14 rounded-full"
-								src={review.user.image ?? ''}
+								src={review.user.image}
 							/>
 						</HoverCardTrigger>
 						<HoverCardContent className="p-0">
@@ -117,7 +104,7 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 						>
 							<div className="font-medium">{review.user.name}</div>
 							<div className="text-primary text-xs tracking-tight">
-								<span className="">@{review.user.username}</span>
+								<span>@{review.user.username}</span>
 							</div>
 						</Link>
 						<Link
@@ -127,7 +114,11 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 								reviewId: review.id,
 							}}
 							className="mt-1 text-muted-foreground text-xs hover:underline"
-						>{`${formatDistanceToNow(review.createdAt)} ago`}</Link>
+						>
+							{formatDistanceToNow(review.createdAt, {
+								addSuffix: true,
+							})}
+						</Link>
 					</div>
 				</div>
 
@@ -203,7 +194,11 @@ export function ReviewCard({ review: { review, meta }, className }: Props) {
 							variant={meta.isLiked ? 'default' : 'outline'}
 							className="gap-1"
 						>
-							<StarIcon className="size-3 sm:size-4" />
+							<HeartIcon
+								className={cn('size-3 sm:size-4', {
+									'fill-white': meta.isLiked,
+								})}
+							/>
 							{fmt(review.totalLikes)}
 						</Badge>
 					</button>

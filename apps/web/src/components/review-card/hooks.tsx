@@ -1,8 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	skipToken,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { useInvalidator } from '@/hooks/use-invalidator';
-import { useNumberFormatter } from '@/hooks/use-number-formatter';
 import { orpc } from '@/lib/orpc';
 
 export function useDeleteReviewMutation(placeId: string) {
@@ -39,28 +43,34 @@ export function useLikeReviewMutation() {
 
 	return useMutation(
 		orpc.reviews.like.mutationOptions({
-			onSuccess: async (v) => {
+			onSuccess: async () => {
 				await invalidate();
-
-				toast.success(v.liked ? 'Review liked' : 'Review unliked');
 			},
 		}),
 	);
 }
 
-const pluralRules = new Intl.PluralRules('en-US');
+const languageDisplayNames = new Intl.DisplayNames(['en'], {
+	type: 'language',
+});
 
-export function useLikesFormatter() {
-	const numFmt = useNumberFormatter();
+export function useDetectedLanguage(langCode: string | null) {
+	if (langCode === null) {
+		return null;
+	}
 
-	return (likes: number) => {
-		const formattedLikes = numFmt.format(likes);
-		const pluralCategory = pluralRules.select(likes);
+	return languageDisplayNames.of(langCode) ?? null;
+}
 
-		if (pluralCategory === 'one') {
-			return `${formattedLikes} like`;
-		}
-
-		return `${formattedLikes} likes`;
-	};
+export function useUserDetails(open: boolean, username: string) {
+	return useQuery(
+		orpc.users.get.queryOptions({
+			input: open
+				? {
+						username: username,
+					}
+				: skipToken,
+			staleTime: 5 * 60 * 1000, // avoid refetching every hover
+		}),
+	);
 }
