@@ -33,7 +33,7 @@ export function SortableItem({ index, item }: Props) {
 	});
 
 	const mutation = useMutation(
-		orpc.collections.items.remove.mutationOptions({
+		orpc.collections.items.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Place removed from collection');
@@ -69,10 +69,10 @@ export function SortableItem({ index, item }: Props) {
 					{item.place.name}
 				</ItemTitle>
 				<ItemDescription className="line-clamp-1">
-					{item.place.address.city.name} / {item.place.address.city.countryName}
+					{item.place.city.name} / {item.place.city.countryName}
 				</ItemDescription>
 				<ItemDescription className="line-clamp-1 text-primary">
-					{item.place.category.name}
+					{item.place.primaryCategory.displayName}
 				</ItemDescription>
 			</ItemContent>
 
@@ -106,7 +106,10 @@ export function SortableItem({ index, item }: Props) {
 
 						mutation.mutate({
 							id: item.collectionId,
-							placeId: item.placeId,
+							update: {
+								op: 'remove',
+								items: [item.placeId],
+							},
 						});
 					}}
 				>

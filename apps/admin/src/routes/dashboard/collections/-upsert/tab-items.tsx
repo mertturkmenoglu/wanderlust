@@ -16,8 +16,8 @@ export function TabItems({ action, entity }: UpsertProps<Collection>) {
 
 	const invalidate = useInvalidator();
 
-	const reorderMutation = useMutation(
-		orpc.collections.items.reorder.mutationOptions({
+	const mutation = useMutation(
+		orpc.collections.items.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Collection items updated');
@@ -58,9 +58,12 @@ export function TabItems({ action, entity }: UpsertProps<Collection>) {
 						return;
 					}
 
-					reorderMutation.mutate({
+					mutation.mutate({
 						id: entity.id,
-						placeIds: newArr.map((x) => x.placeId),
+						update: {
+							op: 'move',
+							items: newArr.map((x) => x.placeId),
+						},
 					});
 				}}
 			>
