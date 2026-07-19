@@ -11,7 +11,7 @@ export type City = Outputs['cities']['get']['city'];
 export const citiesResource = new ResourceBuilder<'cities', City>('cities')
 	.addDefaultLinks()
 	.addExtractors({
-		id: (city) => city.id.toString(),
+		id: (city) => city.id,
 		title: (city) => city.name,
 		description: (city) => city.description,
 		appLink: (city) => appLink(`/cities/${city.id}`),
@@ -45,6 +45,10 @@ export const citiesResource = new ResourceBuilder<'cities', City>('cities')
 			header: 'Country',
 		},
 		{
+			accessorKey: 'timezone',
+			header: 'Timezone',
+		},
+		{
 			accessorKey: 'image',
 			header: 'Image',
 			cell: (info) => (
@@ -68,7 +72,7 @@ export const citiesResource = new ResourceBuilder<'cities', City>('cities')
 			return useQuery(
 				orpc.cities.get.queryOptions({
 					input: {
-						id: +input.id,
+						id: input.id,
 					},
 				}),
 			);
