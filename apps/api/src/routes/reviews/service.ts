@@ -4,7 +4,7 @@ import { ORPCError } from '@orpc/server';
 import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { Reviews } from '@wanderlust/contract';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
-import { createLinkifyInstance } from '@wanderlust/richtext';
+import { extractAllFacets } from '@wanderlust/richtext';
 import {
 	getFilenameFromUrl,
 	StorageService,
@@ -24,7 +24,7 @@ export class ReviewsService {
 	private readonly storage: TStorageService;
 	private readonly cache: TCacheService;
 	private readonly jobs: TJobsService;
-	private readonly linkify = createLinkifyInstance();
+	private readonly ns = 'reviews';
 
 	constructor(
 		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
@@ -61,40 +61,11 @@ export class ReviewsService {
 	): Promise<Reviews.dto.CreateOutput> {
 		const span = trace.getActiveSpan();
 
-		const files = data.files || [];
-		const urls = await this.uploadFiles(files);
-
-		span?.addEvent(
-			'review.files',
-			{
-				count: files.length,
-				urls: urls.join(','),
-			},
-			new Date(),
-		);
+		const urls = await this.uploadFiles(data.files || []);
 
 		try {
-			const detectedLanguage = detectLanguage(data.content, {
-				outputFormat: LangCodeFormats.TwoLetter,
-			});
-
-			span?.addEvent(
-				'review.language.detected',
-				{
-					'language.detected': detectedLanguage ?? 'unknown',
-				},
-				new Date(),
-			);
-
-			const facets = this.linkify.find(data.content);
-
-			span?.addEvent(
-				'review.facets',
-				{
-					facets: JSON.stringify(facets),
-				},
-				new Date(),
-			);
+			const detectedLanguage = this.getDetectedLanguage(data.content);
+			const facets = extractAllFacets(data.content);
 
 			const [insertResult, place] = await this.repo.create(userId, {
 				...data,
@@ -103,107 +74,43 @@ export class ReviewsService {
 				facets,
 			});
 
-			span?.addEvent(
-				'review.create',
-				{
-					'review.id': insertResult.id,
-					'review.place.id': place.id,
-					'review.place.name': place.name,
-				},
-				new Date(),
-			);
+			await this.invalidatePlaceRatings(data.placeId);
 
-			await this.cache.namespace('reviews-ratings').delete({
-				key: data.placeId,
+			if (urls.length > 0) {
+				await this.invalidatePlaceAssets(data.placeId);
+			}
+
+			await this.addCreateReviewActivityForUser({
+				username,
+				reviewId: insertResult.id,
+				placeId: place.id,
+				placeName: place.name,
 			});
 
-			span?.addEvent(
-				'review.create.place-ratings-cache-cleared',
-				{
-					'place.id': place.id,
-					'place.name': place.name,
-				},
-				new Date(),
-			);
+			const mentionedUsernames = facets
+				.filter((facet) => facet.type === 'mention')
+				.map((facet) => facet.value.slice(1) /* remove the @ */);
 
-			await this.activities.addActivity(username, 'create_review', {
-				review: {
-					id: insertResult.id,
-					place: {
-						id: place.id,
-						name: place.name,
-					},
+			await this.sendMentionNotifications({
+				mentionedUsernames,
+				reviewId: insertResult.id,
+				place: {
+					id: place.id,
+					name: place.name,
 				},
-			});
-
-			span?.addEvent(
-				'review.create.review-activity-added',
-				{
+				user: {
+					id: userId,
+					name: insertResult.user.name,
 					username: username,
-					'review.id': insertResult.id,
-					'place.id': place.id,
-					'place.name': place.name,
+					image: insertResult.user.image,
 				},
-				new Date(),
-			);
-
-			const mentionFacets = facets.filter((facet) => facet.type === 'mention');
-
-			const mentionedUsernames = mentionFacets.map((facet) =>
-				facet.value.slice(1),
-			);
-
-			const mentionedUsers =
-				await this.repo.getUsersByUsernames(mentionedUsernames);
-
-			span?.addEvent(
-				'review.create.mentioned-users',
-				{
-					mentionedUsernames: mentionedUsernames.join(','),
-				},
-				new Date(),
-			);
-
-			await this.jobs.notification.queue.addBulk(
-				mentionedUsers.map((u) => ({
-					name: 'create-notification',
-					data: {
-						id: nanoid(),
-						entityId: insertResult.id,
-						entityType: 'review',
-						type: 'mention',
-						recipientId: u.id,
-						data: {
-							review: {
-								id: insertResult.id,
-								place: {
-									id: place.id,
-									name: place.name,
-								},
-								user: {
-									id: userId,
-									name: insertResult.user.name,
-									username: username,
-									image: insertResult.user.image,
-								},
-							},
-						},
-					},
-				})),
-			);
+			});
 
 			return {
 				review: insertResult,
 			};
 		} catch (err) {
 			span?.recordException(err as Error);
-			span?.addEvent(
-				'review.create.error',
-				{
-					message: (err as Error).message,
-				},
-				new Date(),
-			);
 
 			const allDeleted = await this.removeAssets(urls);
 
@@ -223,6 +130,8 @@ export class ReviewsService {
 	}
 
 	async _delete(userId: string, data: Reviews.dto.DeleteInput): Promise<void> {
+		const span = trace.getActiveSpan();
+
 		const existing = await this.repo.get(data);
 
 		if (existing.userId !== userId) {
@@ -236,14 +145,21 @@ export class ReviewsService {
 		const allAssetsDeleted = await this.removeAssets(urls);
 
 		if (!allAssetsDeleted) {
-			console.warn(
-				`Failed to delete one or more review assets for review ${data.id}`,
+			span?.addEvent(
+				'review.delete.asset-delete-failure',
+				{
+					reviewId: data.id,
+					urls: urls.join(','),
+				},
+				new Date(),
 			);
 		}
 
-		await this.cache.namespace('reviews-ratings').delete({
-			key: deleted.placeId,
-		});
+		await this.invalidatePlaceRatings(deleted.placeId);
+
+		if (urls.length > 0) {
+			await this.invalidatePlaceAssets(deleted.placeId);
+		}
 	}
 
 	async listByUsername(
@@ -272,12 +188,7 @@ export class ReviewsService {
 		userId: string | null,
 		data: Reviews.dto.ListByPlaceIdInput,
 	): Promise<Reviews.dto.ListByPlaceIdOutput> {
-		const result = await this.cache.namespace('reviews').getOrSet({
-			key: `places:${data.id}:page:${data.page}:pageSize:${data.pageSize}:sort:${data.sortBy}:order:${data.sortOrd}:min:${data.minRating}:max:${data.maxRating}`,
-			ttl: '10m',
-			factory: async () => this.repo.listByPlaceId(data),
-			grace: '1m',
-		});
+		const result = await this.repo.listByPlaceId(data);
 
 		const likes = await this.repo.getLikedStatuses(
 			userId,
@@ -298,8 +209,8 @@ export class ReviewsService {
 	async getRatings(
 		data: Reviews.dto.GetRatingsInput,
 	): Promise<Reviews.dto.GetRatingsOutput> {
-		const result = await this.cache.namespace('reviews-ratings').getOrSet({
-			key: data.id,
+		const result = await this.cache.namespace(this.ns).getOrSet({
+			key: `places:${data.id}:ratings`,
 			ttl: '30m',
 			factory: async () => this.repo.getRatings(data),
 		});
@@ -310,7 +221,11 @@ export class ReviewsService {
 	async listAssetsByPlaceId(
 		data: Reviews.dto.ListAssetsByPlaceIdInput,
 	): Promise<Reviews.dto.ListAssetsByPlaceIdOutput> {
-		const result = await this.repo.listAssetsByPlaceId(data);
+		const result = await this.cache.namespace(this.ns).getOrSet({
+			key: `places:${data.id}:assets`,
+			ttl: '30m',
+			factory: async () => this.repo.listAssetsByPlaceId(data),
+		});
 
 		return result;
 	}
@@ -321,32 +236,12 @@ export class ReviewsService {
 	): Promise<Reviews.dto.LikeOutput> {
 		const result = await this.repo.like(userId, data);
 
-		try {
-			if (result.liked) {
-				await this.activities.addActivity(
-					result.thisUser.username,
-					'like_review',
-					{
-						review: {
-							id: data.id,
-							user: {
-								id: result.user.id,
-								name: result.user.name,
-								username: result.user.username,
-								image: result.user.image,
-							},
-							place: {
-								id: result.place.id,
-								name: result.place.name,
-							},
-						},
-					},
-				);
-			}
-		} catch {
-			console.error('Failed to add like activity for review', {
+		if (result.liked) {
+			await this.addLikeReviewActivityForUser({
+				username: result.thisUser.username,
 				reviewId: data.id,
-				userId,
+				reviewUser: result.user,
+				place: result.place,
 			});
 		}
 
@@ -368,6 +263,8 @@ export class ReviewsService {
 	}
 
 	private async uploadFiles(files: File[]): Promise<string[]> {
+		const span = trace.getActiveSpan();
+
 		const urls: string[] = [];
 		const filetypes = await this.getFileTypes(files);
 
@@ -386,7 +283,9 @@ export class ReviewsService {
 
 				const url = await this.storage.use('reviews').getUrl(filename);
 				urls.push(url);
-			} catch (_err) {
+			} catch (err) {
+				span?.recordException(err as Error);
+
 				// Cleanup any files that were uploaded before the error occurred
 				await this.removeAssets(urls);
 
@@ -395,6 +294,15 @@ export class ReviewsService {
 				});
 			}
 		}
+
+		span?.addEvent(
+			'review.files',
+			{
+				count: urls.length,
+				urls: urls.join(','),
+			},
+			new Date(),
+		);
 
 		return urls;
 	}
@@ -456,5 +364,179 @@ export class ReviewsService {
 		}
 
 		return allDeleted;
+	}
+
+	private getDetectedLanguage(text: string): string | null {
+		const span = trace.getActiveSpan();
+
+		const detectedLanguage = detectLanguage(text, {
+			outputFormat: LangCodeFormats.TwoLetter,
+		});
+
+		span?.addEvent(
+			'review.language.detected',
+			{
+				'language.detected': detectedLanguage ?? 'unknown',
+			},
+			new Date(),
+		);
+
+		return detectedLanguage;
+	}
+
+	private async invalidatePlaceRatings(placeId: string): Promise<void> {
+		const span = trace.getActiveSpan();
+
+		span?.addEvent(
+			'review.ratings.invalidate',
+			{
+				'place.id': placeId,
+			},
+			new Date(),
+		);
+
+		await this.cache.namespace(this.ns).delete({
+			key: `places:${placeId}:ratings`,
+		});
+	}
+
+	private async invalidatePlaceAssets(placeId: string): Promise<void> {
+		const span = trace.getActiveSpan();
+
+		span?.addEvent(
+			'review.assets.invalidate',
+			{
+				'place.id': placeId,
+			},
+			new Date(),
+		);
+
+		await this.cache.namespace(this.ns).delete({
+			key: `places:${placeId}:assets`,
+		});
+	}
+
+	private async addCreateReviewActivityForUser(data: {
+		username: string;
+		reviewId: string;
+		placeId: string;
+		placeName: string;
+	}) {
+		const span = trace.getActiveSpan();
+
+		await this.activities.addActivity(data.username, 'create_review', {
+			review: {
+				id: data.reviewId,
+				place: {
+					id: data.placeId,
+					name: data.placeName,
+				},
+			},
+		});
+
+		span?.addEvent(
+			'review.create.review-activity-added',
+			{
+				username: data.username,
+				'review.id': data.reviewId,
+				'place.id': data.placeId,
+				'place.name': data.placeName,
+			},
+			new Date(),
+		);
+	}
+
+	private async sendMentionNotifications(data: {
+		mentionedUsernames: string[];
+		reviewId: string;
+		place: {
+			id: string;
+			name: string;
+		};
+		user: {
+			id: string;
+			name: string;
+			username: string;
+			image: string | null;
+		};
+	}) {
+		const span = trace.getActiveSpan();
+
+		const mentionedUsers = await this.repo.getUsersByUsernames(
+			data.mentionedUsernames,
+		);
+
+		span?.addEvent(
+			'review.create.mentioned-users',
+			{
+				mentionedUsernames: data.mentionedUsernames.join(','),
+			},
+			new Date(),
+		);
+
+		await this.jobs.notification.queue.addBulk(
+			mentionedUsers.map((u) => ({
+				name: 'create-notification',
+				data: {
+					id: nanoid(),
+					entityId: data.reviewId,
+					entityType: 'review',
+					type: 'mention',
+					recipientId: u.id,
+					data: {
+						review: {
+							id: data.reviewId,
+							place: {
+								id: data.place.id,
+								name: data.place.name,
+							},
+							user: {
+								id: data.user.id,
+								name: data.user.name,
+								username: data.user.username,
+								image: data.user.image,
+							},
+						},
+					},
+				},
+			})),
+		);
+	}
+
+	private async addLikeReviewActivityForUser(data: {
+		username: string;
+		reviewId: string;
+		reviewUser: {
+			id: string;
+			name: string;
+			username: string;
+			image: string | null;
+		};
+		place: {
+			id: string;
+			name: string;
+		};
+	}) {
+		const span = trace.getActiveSpan();
+
+		try {
+			await this.activities.addActivity(data.username, 'like_review', {
+				review: {
+					id: data.reviewId,
+					user: {
+						id: data.reviewUser.id,
+						name: data.reviewUser.name,
+						username: data.reviewUser.username,
+						image: data.reviewUser.image,
+					},
+					place: {
+						id: data.place.id,
+						name: data.place.name,
+					},
+				},
+			});
+		} catch (err) {
+			span?.recordException(err as Error);
+		}
 	}
 }
