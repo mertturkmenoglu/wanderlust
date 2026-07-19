@@ -21,7 +21,7 @@ export function useRefinementTitle(attribute: RefinementListAttribute) {
 			return 'Amenities';
 		case 'place.city.countryName':
 			return 'Countries';
-		case 'place.accolades.accolade.title':
+		case 'place.accolades.title':
 			return 'Accolades';
 		default:
 			return attribute;
@@ -74,7 +74,7 @@ export function useLimit(attribute: RefinementListAttribute) {
 	switch (attribute) {
 		case 'place.primaryCategory.id':
 			return 10;
-		case 'place.accolades.accolade.title':
+		case 'place.accolades.title':
 			return 10;
 		default:
 			return 5;
@@ -85,7 +85,7 @@ export function useShowMoreLimit(attribute: RefinementListAttribute) {
 	switch (attribute) {
 		case 'place.primaryCategory.id':
 			return 20;
-		case 'place.accolades.accolade.title':
+		case 'place.accolades.title':
 			return 20;
 		default:
 			return 10;

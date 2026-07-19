@@ -29,7 +29,7 @@ export function Filters() {
 				</div>
 			</div>
 
-			<RefinementList attribute="place.accolades.accolade.title" />
+			<RefinementList attribute="place.accolades.title" />
 
 			<RefinementList attribute="place.primaryCategory.id" />
 

@@ -9,7 +9,7 @@ export type RefinementListProps = {
 		| 'place.city.name'
 		| 'place.amenities'
 		| 'place.city.countryName'
-		| 'place.accolades.accolade.title';
+		| 'place.accolades.title';
 	className?: string;
 };
 
