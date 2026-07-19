@@ -50,19 +50,22 @@ export function CreateReviewForm() {
 				<Element name="visitDate" label="Visit Date">
 					{(r, id) => (
 						<Popover>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									id={id}
-									className="w-full max-w-fit justify-start font-normal"
-								>
-									{r.field.value ? (
-										format(r.field.value, 'PPP')
-									) : (
-										<span>Pick a date</span>
-									)}
-								</Button>
-							</PopoverTrigger>
+							<PopoverTrigger
+								render={
+									<Button
+										variant="outline"
+										id={id}
+										className="w-full max-w-fit justify-start font-normal"
+									>
+										{r.field.value ? (
+											format(r.field.value, 'PPP')
+										) : (
+											<span>Pick a date</span>
+										)}
+									</Button>
+								}
+							/>
+
 							<PopoverContent className="w-auto p-0" align="start">
 								<Calendar
 									mode="single"
