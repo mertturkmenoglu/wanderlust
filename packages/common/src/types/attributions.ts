@@ -1,9 +1,11 @@
 import { z } from 'zod';
+import { Url } from './url';
 
 export const Attribution = z.object({
 	type: z
 		.string()
 		.min(1)
+		.max(16)
 		.meta({
 			description: 'Type of the attribution (e.g., image, text)',
 			examples: ['image'],
@@ -11,17 +13,12 @@ export const Attribution = z.object({
 	text: z
 		.string()
 		.min(1)
+		.max(1024)
 		.meta({
 			description: 'Text of the attribution',
 			examples: ['Photo by John Doe on Example'],
 		}),
-	link: z
-		.string()
-		.min(1)
-		.meta({
-			description: 'Link associated with the attribution',
-			examples: ['https://example.com/photo'],
-		}),
+	link: Url,
 });
 
 export namespace Attributions {}
