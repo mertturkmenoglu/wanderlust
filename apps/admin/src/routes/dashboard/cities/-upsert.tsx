@@ -28,7 +28,7 @@ import { getIANANames } from '@/lib/timezone';
 import { type City, citiesResource as res } from '@/resources/cities';
 
 const schema = z.object({
-	id: z.number(),
+	id: z.string(),
 	name: z.string().min(1).max(64),
 	stateCode: z.string().min(1).max(16),
 	stateName: z.string().min(1).max(64),
@@ -39,6 +39,13 @@ const schema = z.object({
 	lng: z.transform(Number).pipe(z.number().min(-180).max(180)),
 	description: z.string().min(1).max(4096),
 	timezone: z.string().min(1).max(64),
+	attributions: z
+		.object({
+			type: z.string().min(1).max(64),
+			text: z.string().min(1).max(256),
+			link: z.string().url().max(256),
+		})
+		.array(),
 });
 
 export function Upsert({ action, entity }: UpsertProps<City>) {
@@ -47,9 +54,7 @@ export function Upsert({ action, entity }: UpsertProps<City>) {
 
 	const form = useForm({
 		resolver: zodResolver(schema),
-		defaultValues: {
-			...(entity ?? {}),
-		},
+		defaultValues: entity ?? {},
 	});
 
 	const create = res.useCreate();

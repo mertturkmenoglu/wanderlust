@@ -29,7 +29,7 @@ export const Route = createFileRoute('/dashboard/cities/$id/collections')({
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {
 			input: {
-				id: +params.id,
+				id: params.id,
 			},
 		});
 	},
@@ -77,22 +77,13 @@ function List() {
 	const query = useSuspenseQuery(
 		orpc.collections.cities.list.queryOptions({
 			input: {
-				cityId: +params.id,
+				cityId: params.id,
 			},
 		}),
 	);
 
-	const removeMutation = useMutation(
-		orpc.collections.cities.remove.mutationOptions({
-			onSuccess: async () => {
-				await query.refetch();
-				toast.success('Collection city relation removed successfully');
-			},
-		}),
-	);
-
-	const reorderMutation = useMutation(
-		orpc.collections.cities.reorder.mutationOptions({
+	const mutation = useMutation(
+		orpc.collections.cities.update.mutationOptions({
 			onSuccess: async () => {
 				await query.refetch();
 				toast.success('Collection items updated');
@@ -120,15 +111,21 @@ function List() {
 				<SortableList
 					initial={collections}
 					onRemove={(item) => {
-						removeMutation.mutate({
-							cityId: +params.id,
-							collectionId: item.id,
+						mutation.mutate({
+							cityId: params.id,
+							update: {
+								op: 'remove',
+								items: [item.id],
+							},
 						});
 					}}
 					onReorder={(items) => {
-						reorderMutation.mutate({
-							cityId: +params.id,
-							collectionIds: items.map((x) => x.id),
+						mutation.mutate({
+							cityId: params.id,
+							update: {
+								op: 'move',
+								items: items.map((x) => x.id),
+							},
 						});
 					}}
 					renderItem={(item) => {
@@ -187,7 +184,7 @@ function New() {
 	);
 
 	const mutation = useMutation(
-		orpc.collections.cities.append.mutationOptions({
+		orpc.collections.cities.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Collection city relation created successfully');
@@ -220,8 +217,11 @@ function New() {
 									type="button"
 									onClick={() => {
 										mutation.mutate({
-											cityId: +params.id,
-											collectionId: collection.id,
+											cityId: params.id,
+											update: {
+												op: 'add',
+												items: [collection.id],
+											},
 										});
 									}}
 								>

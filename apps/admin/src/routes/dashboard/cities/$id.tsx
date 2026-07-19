@@ -11,7 +11,7 @@ export const Route = createFileRoute('/dashboard/cities/$id')({
 	loader: async ({ params, context }) => {
 		return ensureData(r, context.qc, {
 			input: {
-				id: +params.id,
+				id: params.id,
 			},
 		});
 	},
@@ -22,7 +22,7 @@ function RouteComponent() {
 	const { city } = Route.useLoaderData();
 
 	const rows = defineRows([
-		['ID', city.id.toString()],
+		['ID', city.id],
 		['Name', city.name],
 		['Description', renderer.JSON(city.description)],
 		['State Code', city.stateCode],
@@ -32,6 +32,7 @@ function RouteComponent() {
 		['Image', renderer.Image(city.image)],
 		['Coordinates', `Lat: ${city.lat}, Lng: ${city.lng}`],
 		['Timezone', city.timezone],
+		['Attributions', renderer.Attributions(city.attributions)],
 		[
 			'Collections',
 			<Link
