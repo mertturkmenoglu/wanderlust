@@ -23,7 +23,7 @@ export class Actions {
 	async accolades_getPlaces(agent: Agent) {
 		const res = await client.accolades.list({}, withContext(agent.getToken()));
 		const accolade = $.Random.element(res.accolades);
-		await client.accolades.getPlaces(
+		await client.accolades.listPlaces(
 			{
 				id: accolade.id,
 			},
