@@ -5,7 +5,14 @@ export const Route = createFileRoute('/dashboard')({
 	component: RouteComponent,
 	beforeLoad: authGuard,
 	staticData: {
-		breadcrumb: 'Dashboard',
+		breadcrumbs: () => [
+			{
+				label: 'Dashboard',
+				link: {
+					to: '/dashboard',
+				} as const,
+			},
+		],
 	},
 });
 
