@@ -21,4 +21,22 @@
 		"@mdxeditor/editor",
 		"radix-ui"
 	],
+	"cSpell.words": [
+		"CLDR",
+		"emojimart",
+		"EXIF",
+		"FIPA",
+		"geolocation",
+		"Instantsearch",
+		"linkify",
+		"Mailpit",
+		"Maplibre",
+		"ORPC",
+		"Sublocality",
+		"Turborepo",
+		"Typesense",
+		"unpic",
+		"varchar",
+		"WIOP"
+	],
 }
