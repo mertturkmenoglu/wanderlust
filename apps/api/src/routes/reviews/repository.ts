@@ -65,6 +65,8 @@ export class ReviewsRepository {
 				'review.rating': data.rating,
 				'review.visitedAt': data.visitedAt?.toISOString() || 'unknown',
 				'review.detectedLanguage': data.detectedLanguage || 'unknown',
+				'review.attachments': JSON.stringify(data.urls),
+				'review.facets': JSON.stringify(data.facets),
 			},
 			new Date(),
 		);
