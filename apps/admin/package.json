@@ -30,6 +30,7 @@
 		"@wanderlust/auth": "workspace:*",
 		"@wanderlust/contract": "workspace:*",
 		"@wanderlust/ui": "workspace:*",
+		"@wanderlust/common": "workspace:*",
 		"better-auth": "catalog:",
 		"date-fns": "catalog:",
 		"instantsearch.js": "^4.104.0",
@@ -44,7 +45,8 @@
 		"tailwindcss-animate": "^1.0.7",
 		"typesense": "^3.0.6",
 		"typesense-instantsearch-adapter": "^3.0.2",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"zustand": "^5.0.14"
 	},
 	"devDependencies": {
 		"@hookform/devtools": "^4.4.0",
