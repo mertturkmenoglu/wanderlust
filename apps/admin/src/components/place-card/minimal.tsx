@@ -14,7 +14,7 @@ import type { MinimalPlaceProps } from './types';
 export function MinimalPlaceCard(props: MinimalPlaceProps) {
 	if (props.as === 'link') {
 		return (
-			<Link to="/p/$id" params={{ id: props.place.id }}>
+			<Link to="/dashboard/places/$id" params={{ id: props.place.id }}>
 				{props.variant === 'item' ? (
 					<MinimalItemVariant {...props} />
 				) : (
