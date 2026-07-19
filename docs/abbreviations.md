@@ -7,7 +7,7 @@ Here's a list of abbreviations used throughout the project (Note: List is not ex
 - `API`: Application Programming Interface
 - `Authn`: Authentication. Verifying the user is the same person they claim to be.
 - `Authz`: Authorization. Verifying the user has permissions to access a resource/perform an action.
-- `c` or `ctx`: Context. Usually used as the request context, that carries information accross API boundaries.
+- `c` or `ctx`: Context. Usually used as the request context, that carries information across API boundaries.
 - `CLI`: Command Line Interface
 - `CORS`: Cross-Origin Resource Sharing. Allows to access restricted resources from a server on a different domain.
 - `CWD`: Current Working Directory

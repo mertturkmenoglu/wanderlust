@@ -12,7 +12,7 @@
 		- `service.ts`: Intermediary layer that is responsible for calling appropriate repository methods and performing additional business logic as needed.
 			- Caching
 			- Authorization/Permission checks
-			- Enqueing background jobs
+			- Enqueuing background jobs
 			- Content enrichment
 		- `authz.ts`: Authorization/Permission checkers
 		- `repository.ts`: Repository layer is responsible for interacting with the database and performing CRUD operations.

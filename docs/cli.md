@@ -1,6 +1,6 @@
 # CLI
 
-You can use the CLI tool to fullfill development tasks. Example usage:
+You can use the CLI tool to fulfill development tasks. Example usage:
 
 ```bash
 bun wl doctor
@@ -50,7 +50,7 @@ bun wl map-styles
 bun wl scaffold squirrel
 ```
 
-- `sync`: Sync the Typsense search index with the primary database. Example usage:
+- `sync`: Sync the Typesense search index with the primary database. Example usage:
 
 ```bash
 bun wl sync
