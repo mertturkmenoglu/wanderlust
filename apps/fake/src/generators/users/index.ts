@@ -97,6 +97,7 @@ export const usersGenerator = defineGenerator({
 					banner: faker.image.urlPicsumPhotos(),
 					bio: faker.lorem.sentence(),
 					website: faker.internet.url(),
+					role: 'admin',
 				});
 
 				await tx.insert(schema.accounts).values({
