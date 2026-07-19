@@ -9,18 +9,16 @@ import {
 	CircleQuestionMark,
 	CopyrightIcon,
 } from 'lucide-react';
+import type { AttributionProps } from './types';
 
-export type AttributionProps = {
-	attributions: {
-		text: string;
-		link: string;
-	}[];
-};
-
-export function Attribution({ attributions }: AttributionProps) {
+export function Attribution({ attributions, delay = 300 }: AttributionProps) {
 	return (
 		<HoverCard>
-			<HoverCardTrigger delay={300} className="absolute top-2 right-2">
+			<HoverCardTrigger
+				delay={delay}
+				className="absolute top-2 right-2"
+				data-testid="attribution-hover-trigger"
+			>
 				<Badge variant="midnight">
 					<CircleQuestionMark className="text-midnight-foreground" />{' '}
 					Attribution
@@ -28,6 +26,7 @@ export function Attribution({ attributions }: AttributionProps) {
 			</HoverCardTrigger>
 			<HoverCardContent
 				align="end"
+				data-testid="attribution-hover-card"
 				className="p-2 text-muted-foreground text-sm shadow-none"
 			>
 				{attributions.map((attr) => (
