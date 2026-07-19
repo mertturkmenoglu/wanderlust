@@ -36,6 +36,23 @@ export const renderer = {
 	JSON: (data: unknown) => (
 		<pre className="text-wrap">{JSON.stringify(data, null, 2)}</pre>
 	),
+	Attributions: (data: { type: string; text: string; link: string }[]) => (
+		<ItemGroup className="gap-2">
+			{data.map(({ type, text, link }, index) => (
+				<Badge key={index}>
+					{type}: {text}{' '}
+					<a
+						href={link}
+						className="underline"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Go to source
+					</a>
+				</Badge>
+			))}
+		</ItemGroup>
+	),
 	Multiple: (data: React.ReactNode[]) => (
 		<ItemGroup className="gap-2">
 			{data.map((item, index) => (
