@@ -49,9 +49,7 @@ const routing: RouterProps = {
 				state: serializeParams(s?.refinementList?.['place.city.stateName']),
 				city: serializeParams(s?.refinementList?.['place.city.name']),
 				country: serializeParams(s?.refinementList?.['place.city.countryName']),
-				accolade: serializeParams(
-					s?.refinementList?.['place.accolades.accolade.title'],
-				),
+				accolade: serializeParams(s?.refinementList?.['place.accolades.title']),
 			};
 		},
 		// @ts-expect-error TODO: fix it
@@ -62,10 +60,8 @@ const routing: RouterProps = {
 					page: routeState.page,
 					hitsPerPage: routeState.pageSize,
 					refinementList: {
-						'place.accolades.accolade.title': deserializeParams(
-							routeState.accolade,
-						),
-						'place.category.id': deserializeParams(routeState.category),
+						'place.accolades.title': deserializeParams(routeState.accolade),
+						'place.primaryCategory.id': deserializeParams(routeState.category),
 						'place.amenities': deserializeParams(routeState.amenity),
 						'place.priceLevel': deserializeParams(routeState.price),
 						'place.accessibilityLevel': deserializeParams(routeState.a11y),
