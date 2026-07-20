@@ -1,3 +1,4 @@
+import { inspect } from 'node:util';
 import { command } from '@drizzle-team/brocli';
 import { DatabaseService } from '@wanderlust/db';
 import { SearchService } from '@wanderlust/search';
@@ -13,28 +14,40 @@ export const sync = command({
 	desc: 'Syncs the Typesense with the primary database',
 	options: {},
 	handler: async (_opts) => {
-		await bootstrapServices();
+		try {
+			await bootstrapServices();
 
-		const search = container.get(SearchService).get();
-		const db = container.get(DatabaseService).get();
+			const search = container.get(SearchService).get();
+			const db = container.get(DatabaseService).get();
 
-		const placesSchema = new PlacesSchema('places', search, db);
-		const citiesSchema = new CitiesSchema('cities', search, db);
-		const usersSchema = new UsersSchema('users', search, db);
+			const placesSchema = new PlacesSchema('places', search, db);
+			const citiesSchema = new CitiesSchema('cities', search, db);
+			const usersSchema = new UsersSchema('users', search, db);
 
-		const start = performance.now();
+			const start = performance.now();
 
-		consola.start('Syncing Typesense with the primary database');
+			consola.start('Syncing Typesense with the primary database');
 
-		await placesSchema.sync();
-		await citiesSchema.sync();
-		await usersSchema.sync();
+			await placesSchema.sync();
+			await citiesSchema.sync();
+			await usersSchema.sync();
 
-		const end = performance.now();
+			const end = performance.now();
 
-		consola.success('Finished syncing with Typesense');
-		consola.info(`Total time: ${(end - start).toFixed(2)} ms`);
+			consola.success('Finished syncing with Typesense');
+			consola.info(`Total time: ${(end - start).toFixed(2)} ms`);
 
-		process.exit(0);
+			process.exit(0);
+		} catch (err) {
+			consola.error(
+				'Error syncing with Typesense',
+				inspect(err, {
+					compact: false,
+					depth: Number.POSITIVE_INFINITY,
+					breakLength: 80,
+				}),
+			);
+			process.exit(1);
+		}
 	},
 });
