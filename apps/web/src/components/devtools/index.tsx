@@ -8,7 +8,9 @@ import {
 import {
 	ChartSplineIcon,
 	CodeXmlIcon,
+	GitPullRequestIcon,
 	HardDriveIcon,
+	ImagesIcon,
 	MailIcon,
 	ShieldIcon,
 	TextSearchIcon,
@@ -45,6 +47,16 @@ const items = [
 		href: 'http://localhost:23646/',
 		icon: HardDriveIcon,
 		text: 'Object Storage',
+	},
+	{
+		href: 'https://github.com/mertturkmenoglu/wanderlust',
+		icon: GitPullRequestIcon,
+		text: 'GitHub Repository',
+	},
+	{
+		href: 'https://github.com/mertturkmenoglu/wl-media',
+		icon: ImagesIcon,
+		text: 'Media Repository',
 	},
 ];
 
