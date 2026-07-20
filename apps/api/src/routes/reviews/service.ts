@@ -15,11 +15,9 @@ import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { detectLanguage, LangCodeFormats } from '@/lib/lang';
-import { TraceAll } from '@/lib/tracer';
 import { ReviewsRepository } from './repository';
 
 @injectable()
-@TraceAll()
 export class ReviewsService {
 	private readonly storage: TStorageService;
 	private readonly cache: TCacheService;
