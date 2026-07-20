@@ -31,7 +31,19 @@ const a11y = [
 	'highly_accessible',
 ] as const;
 
-export function generateOne(categoryIds: string[], cityIds: string[]): Insert {
+export function generateOne(
+	categoryIds: string[],
+	cities: {
+		id: string;
+		name: string;
+		stateCode: string;
+		stateName: string;
+		countryCode: string;
+		countryName: string;
+		lat: number;
+		lng: number;
+	}[],
+): Insert {
 	const payment = faker.helpers.multiple(
 		() => rngSuffix(faker.helpers.arrayElement(['cash', 'cc', 'mobile'])),
 		{
@@ -57,6 +69,8 @@ export function generateOne(categoryIds: string[], cityIds: string[]): Insert {
 		},
 	);
 
+	const city = faker.helpers.arrayElement(cities);
+
 	const a11yOpts = faker.helpers.multiple(
 		() =>
 			rngSuffix(
@@ -72,10 +86,22 @@ export function generateOne(categoryIds: string[], cityIds: string[]): Insert {
 		},
 	);
 
+	const coord = faker.location.nearbyGPSCoordinate({
+		isMetric: true,
+		origin: [city.lat, city.lng],
+		radius: 50,
+	});
+
+	const state = faker.location.state({ abbreviated: true });
+	const stateFull = faker.location.state();
+
+	const votes = faker.number.int({ min: 0, max: 1_000 });
+	const points = faker.number.int({ min: votes, max: 5_000 * votes });
+
 	return {
 		id: nanoid(),
 		name: faker.lorem.sentence({ min: 2, max: 6 }).replace('.', ''),
-		description: faker.lorem.paragraphs({ min: 1, max: 5 }),
+		description: faker.lorem.paragraphs({ min: 1, max: 8 }),
 		status: faker.helpers.arrayElement(status),
 		intlPhone: faker.phone.number({
 			style: 'international',
@@ -97,17 +123,20 @@ export function generateOne(categoryIds: string[], cityIds: string[]): Insert {
 		amenities: generateAmenities(),
 		paymentOptions: payment,
 		parkingOptions: parking,
+		totalVotes: votes,
+		totalFavorites: faker.number.int({ min: 0, max: 1_000 }),
+		totalPoints: points,
 		accessibilityOptions: a11yOpts,
-		countryCode: faker.location.countryCode('alpha-2'),
-		countryName: faker.location.country(),
-		adminAreaCode: faker.location.state({ abbreviated: true }),
-		adminAreaName: faker.location.state(),
-		locality: faker.location.city(),
+		countryCode: city.countryCode,
+		countryName: city.countryName,
+		adminAreaCode: state,
+		adminAreaName: stateFull,
+		locality: city.name,
 		subLocality: faker.location.county(),
 		postalCode: faker.location.zipCode(),
 		addressLine: faker.location.streetAddress(),
-		lat: faker.location.latitude(),
-		lng: faker.location.longitude(),
-		wlCityId: faker.helpers.arrayElement(cityIds),
+		lat: coord[0],
+		lng: coord[1],
+		wlCityId: city.id,
 	};
 }

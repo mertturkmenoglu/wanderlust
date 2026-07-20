@@ -18,20 +18,25 @@ export async function getCategoryIds() {
 	return categoryIds;
 }
 
-export async function getCityIds() {
+export async function getAllCities() {
 	const db = await getDb();
 
 	const allCities = await db.query.cities.findMany({
 		columns: {
 			id: true,
+			lat: true,
+			lng: true,
+			countryCode: true,
+			countryName: true,
+			stateCode: true,
+			stateName: true,
+			name: true,
 		},
 	});
 
-	const cityIds = allCities.map((r) => r.id);
-
-	if (cityIds.length === 0) {
+	if (allCities.length === 0) {
 		throw new Error('No cities found. Generate cities first.');
 	}
 
-	return cityIds;
+	return allCities;
 }
