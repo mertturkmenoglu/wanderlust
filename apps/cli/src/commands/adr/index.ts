@@ -13,6 +13,7 @@ export const adr = command({
 	handler: async (opts) => {
 		const repoRootPath = path.join(process.cwd(), '..', '..');
 		const adrDirPath = path.join(repoRootPath, 'docs', 'adr');
+		const adrFileRegex = /^[0-9]{4}\S*\.md$/;
 
 		const pipeline = new Pipeline({
 			values: {},
@@ -29,9 +30,7 @@ export const adr = command({
 				name: 'Getting last ADR file',
 				fn: async () => {
 					const allFiles = fs.readdirSync(adrDirPath).toSorted();
-					const adrFiles = allFiles.filter(
-						(file) => file.endsWith('.md') && /^[0-9]{4}\S*\.md$/.test(file),
-					);
+					const adrFiles = allFiles.filter((file) => adrFileRegex.test(file));
 					const last = adrFiles.at(-1);
 
 					return {
