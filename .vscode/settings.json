@@ -22,11 +22,13 @@
 		"radix-ui"
 	],
 	"cSpell.words": [
+		"brocli",
 		"CLDR",
 		"emojimart",
 		"EXIF",
 		"FIPA",
 		"geolocation",
+		"Geonames",
 		"Instantsearch",
 		"linkify",
 		"Mailpit",
