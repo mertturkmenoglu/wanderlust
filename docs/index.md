@@ -12,7 +12,7 @@ Welcome! Thanks for your interest in Wanderlust. We recommend reading this docum
 - [Abbreviations](abbreviations.md) - Abbreviations used throughout the project, along with their meanings.
 - [Ports](ports.md) - Ports used by the Wanderlust application, along with their corresponding services and descriptions.
 - [oRPC](orpc.md) - An overview of oRPC (backend framework)
-- [Authentication](auth.md) - Authentication and authorization mechanisms used in Wanderlust.
+- [Auth(z)(n)](auth.md) - Authentication and authorization mechanisms used in Wanderlust.
 - [Docker](docker.md) - Docker services and their explanations.
 - [Database](database.md) - Notes on the database usage.
 - [Cache](cache.md) - Notes on the caching mechanisms.
