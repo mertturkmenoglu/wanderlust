@@ -15,17 +15,16 @@ Here's a list of abbreviations used throughout the project (Note: List is not ex
 - `dev`: Development
 - `DTO`: Data transfer object
 - `env`: Environment, usually refers to the environment variables/configurations.
-- `eq`: Equality
+- `eq`: Equality (Drizzle ORM operator)
 - `ER`: Entity-relationship diagrams.
 - `err`: Error
-- `fs`: File system
+- `fs`: File system. Usually refers to the `node:fs` package.
 - `FB`: Facebook
-- `GIN`: Generalized Inverted Index
-- `hbs`: Handlebars file extension
+- `GIN`: Generalized Inverted Index (Database index type)
 - `HMR`: Hot Module Replacement
 - `HTTP`: Hypertext Transfer Protocol
 - `ID`: Identifier
-- `ioc`: "Inversion of Control", although slightly differently used in the project.
+- `ioc`: "Inversion of Control", although used slightly differently in the project.
 - `IP`: Internet Protocol
 - `JSON`: JavaScript Object Notation
 - `L1`: Layer 1 cache
