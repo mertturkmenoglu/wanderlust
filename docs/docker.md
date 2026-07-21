@@ -21,7 +21,10 @@ docker compose down
 ## Services
 
 - `postgres`: PostgreSQL database
+- `pgbouncer`: PostgreSQL connection pooler
 - `typesense`: Typesense search engine
 - `typesense-dashboard`: Typesense dashboard
 - `mailpit`: Email testing tool
 - `redis`: Redis cache
+- `seaweedfs`: SeaweedFS file storage
+- `jaeger`: Jaeger tracing
