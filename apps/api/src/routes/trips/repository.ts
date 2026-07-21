@@ -77,7 +77,7 @@ export class TripsRepository {
 			async (tx) => {
 				const inv = await tx.query.tripInvites.findFirst({
 					where: {
-						tripid: data.id,
+						tripId: data.id,
 						toId: data.toUserId,
 					},
 				});
