@@ -13,9 +13,7 @@ Ports used by the Wanderlust:
 | 3006 	| Typesense  				| Dashboard     					|
 | 4318 	| Jaeger 						| Tracing endpoint 				|
 | 5000 	| API        				| HTTP server   					|
-| 5001 	| Notifications    	| Notifications server		|
-| 5005 	| Chat 							| Chat server   					|
-| 5432 	| PostgreSQL 				| Database      					|
+| 5432 	| PgBouncer 				| Database      					|
 | 6379 	| Redis      				| Redis         					|
 | 7333 	| SeaweedFS					| WebDAV									|
 | 8025 	| Mailpit    				| Web UI        					|
