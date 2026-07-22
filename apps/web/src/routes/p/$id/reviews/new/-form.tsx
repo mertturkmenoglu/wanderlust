@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '@wanderlust/ui/components/button';
 import { Calendar } from '@wanderlust/ui/components/calendar';
@@ -10,8 +11,10 @@ import {
 import { format, subYears } from 'date-fns';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { toast } from 'sonner';
 import { AssetUploader } from '@/components/asset-uploader';
 import { useFormElement } from '@/components/form';
+import { orpc } from '@/lib/orpc';
 import { useCreateReviewContext } from './-context';
 import { CreateReviewEditor } from './-editor';
 import { type FormInput, useCreateReviewMutation } from './-hooks';
@@ -24,14 +27,36 @@ export function CreateReviewForm() {
 	const { place } = useLoaderData({ from: '/p/$id/reviews/new/' });
 	const [plainText, setPlainText] = useState('');
 
-	const onSubmit = form.handleSubmit((data) => {
+	const uploadMutation = useMutation(orpc.assets.create.mutationOptions());
+
+	// I know this is not ideal, but I'm leaving it as it is for now.
+	const onSubmit = form.handleSubmit(async (data) => {
+		const ids: string[] = [];
+
+		for (const file of ctx.uploader.acceptedFiles) {
+			const res = await uploadMutation.mutateAsync({
+				asset: {
+					attributions: [],
+					file,
+					for: 'review',
+					alt: null,
+				},
+			});
+			ids.push(res.asset.id);
+		}
+
+		if (ids.length !== ctx.uploader.acceptedFiles.length) {
+			toast.error('Failed to upload all files');
+			return;
+		}
+
 		mutation.mutate({
 			// We want the text version of the content to be sent to the backend, and process it into its facets there.
 			// We don't want to send the Tiptap JSON to the backend because it is not the format we wanted.
 			content: plainText,
 			rating: data.rating,
 			placeId: place.id,
-			files: ctx.uploader.acceptedFiles,
+			files: ids,
 			visitedAt: data.visitDate,
 		});
 	});
