@@ -1,6 +1,7 @@
 import { Accolades } from './accolades';
 import { Aggregator } from './aggregator';
 import { Amenities } from './amenities';
+import { Assets } from './assets';
 import { Bookmarks } from './bookmarks';
 import { Categories } from './categories';
 import { Cities } from './cities';
@@ -17,6 +18,7 @@ import { Trips } from './trips';
 import { Users } from './users';
 
 export type AppRouter = {
+	assets: Assets.Contract;
 	accolades: Accolades.Contract;
 	aggregator: Aggregator.Contract;
 	amenities: Amenities.Contract;
@@ -40,6 +42,7 @@ export {
 	Accolades,
 	Aggregator,
 	Amenities,
+	Assets,
 	Bookmarks,
 	Categories,
 	Cities,
