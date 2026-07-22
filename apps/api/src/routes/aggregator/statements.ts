@@ -17,15 +17,7 @@ const queryColumnsAndRelations = {
 				title: true,
 			},
 		},
-		assets: {
-			columns: {
-				url: true,
-			},
-			orderBy: {
-				order: 'asc',
-			},
-			limit: 1,
-		},
+		assets: true,
 		primaryCategory: {
 			columns: {
 				displayName: true,
