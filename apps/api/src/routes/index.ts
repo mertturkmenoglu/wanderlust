@@ -1,6 +1,7 @@
 import { module as accolades } from './accolades';
 import { module as aggregator } from './aggregator';
 import { module as amenities } from './amenities';
+import { module as assets } from './assets';
 import { module as bookmarks } from './bookmarks';
 import { module as categories } from './categories';
 import { module as cities } from './cities';
@@ -20,6 +21,7 @@ export type AppRouter = {
 	accolades: ReturnType<typeof accolades.router>;
 	aggregator: ReturnType<typeof aggregator.router>;
 	amenities: ReturnType<typeof amenities.router>;
+	assets: ReturnType<typeof assets.router>;
 	bookmarks: ReturnType<typeof bookmarks.router>;
 	categories: ReturnType<typeof categories.router>;
 	cities: ReturnType<typeof cities.router>;
@@ -41,6 +43,7 @@ export function getAppRouter(): AppRouter {
 		accolades: accolades.router(),
 		aggregator: aggregator.router(),
 		amenities: amenities.router(),
+		assets: assets.router(),
 		bookmarks: bookmarks.router(),
 		categories: categories.router(),
 		cities: cities.router(),
@@ -62,6 +65,7 @@ export const exports = [
 	accolades.exports,
 	aggregator.exports,
 	amenities.exports,
+	assets.exports,
 	bookmarks.exports,
 	categories.exports,
 	cities.exports,
