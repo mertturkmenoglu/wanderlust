@@ -7,5 +7,5 @@ minimumReleaseAgeExcludes = [
 	"typescript",
 	"@types/node",
 	"@types/bun",
-	"tsdown"
+	"tsdown",
 ]
