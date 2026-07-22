@@ -1,5 +1,4 @@
 import * as p from 'drizzle-orm/pg-core';
-import { addresses } from './addresses';
 import { users } from './auth';
 import { places } from './places';
 
@@ -37,10 +36,6 @@ export const events = p.pgTable(
 		title: p.text().notNull(),
 		startsAt: p.timestamp({ withTimezone: true }).notNull(),
 		endsAt: p.timestamp({ withTimezone: true }).notNull(),
-		addressId: p
-			.integer()
-			.notNull()
-			.references(() => addresses.id, { onDelete: 'cascade' }),
 		description: p.text().notNull(),
 		organizerId: p
 			.text()
@@ -63,7 +58,6 @@ export const events = p.pgTable(
 			.$onUpdateFn(() => new Date()),
 	},
 	(table) => [
-		p.index().on(table.addressId),
 		p.index().on(table.organizerId),
 		p.index().on(table.createdAt),
 		p.index().on(table.title),
