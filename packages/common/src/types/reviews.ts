@@ -38,7 +38,7 @@ export const Review = createSelectSchema(schema.reviews, {
 export namespace Reviews {
 	export const Extended = Review.extend({
 		user: Users.View.Basic,
-		assets: Asset.array(),
+		assets: Asset.array().max(4),
 	});
 
 	export const ExtendedWithPlace = Extended.extend({
