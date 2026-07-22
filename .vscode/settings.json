@@ -22,6 +22,7 @@
 		"radix-ui"
 	],
 	"cSpell.words": [
+		"Blurhash",
 		"brocli",
 		"CLDR",
 		"emojimart",
@@ -35,6 +36,7 @@
 		"Maplibre",
 		"ORPC",
 		"Sublocality",
+		"Thumbhash",
 		"Turborepo",
 		"Typesense",
 		"unpic",
