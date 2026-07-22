@@ -16,7 +16,7 @@ export namespace dto {
 			countryName: true,
 		}).extend({
 			accolades: z.array(Types.Accolade.pick({ id: true, title: true })),
-			assets: z.array(Types.Asset.pick({ url: true })),
+			assets: z.array(Types.Asset),
 			primaryCategory: Types.Category.pick({ displayName: true }),
 		}),
 		meta: Types.Places.Meta,
