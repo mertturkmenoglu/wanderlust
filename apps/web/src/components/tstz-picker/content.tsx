@@ -44,18 +44,20 @@ export function Content() {
 			</FieldLabel>
 
 			<Popover>
-				<PopoverTrigger asChild>
-					<Button
-						id={triggerId}
-						variant="outline"
-						className={cn(
-							'w-full justify-start font-normal',
-							classNames?.trigger,
-						)}
-					>
-						<span>{formatted}</span>
-					</Button>
-				</PopoverTrigger>
+				<PopoverTrigger
+					render={
+						<Button
+							id={triggerId}
+							variant="outline"
+							className={cn(
+								'w-full justify-start font-normal',
+								classNames?.trigger,
+							)}
+						>
+							<span>{formatted}</span>
+						</Button>
+					}
+				/>
 
 				<PopoverContent
 					align="start"
