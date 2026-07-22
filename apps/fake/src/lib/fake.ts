@@ -32,6 +32,7 @@ export namespace Fake {
 	export namespace File {
 		export const paths = {
 			accolades: 'tmp/accolades.txt',
+			assets: 'tmp/assets.txt',
 			places: 'tmp/places.txt',
 			users: 'tmp/users.txt',
 			reviews: 'tmp/reviews.txt',

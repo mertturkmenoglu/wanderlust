@@ -3,6 +3,7 @@ import { defineGenerator } from '@/lib/define-generator';
 
 const resources = [
 	'accolades',
+	'assets',
 	'places',
 	'users',
 	'reviews',

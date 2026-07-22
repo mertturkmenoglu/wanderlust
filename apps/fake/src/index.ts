@@ -19,7 +19,7 @@ import {
 import { fakeIdGenerator } from './generators/fake-id';
 import { favoritesGenerator } from './generators/favorites';
 import { listItemsGenerator, listsGenerator } from './generators/lists';
-import { placesGenerator } from './generators/places';
+import { placeAssetsGenerator, placesGenerator } from './generators/places';
 import { reviewAssetsGenerator, reviewsGenerator } from './generators/reviews';
 import { followsGenerator, usersGenerator } from './generators/users';
 import type { GeneratorDefinition } from './lib/define-generator';
@@ -44,6 +44,7 @@ const mapping = {
 	'collections-places': collectionsPlacesGenerator,
 	lists: listsGenerator,
 	'list-items': listItemsGenerator,
+	'place-assets': placeAssetsGenerator,
 	cleanup: cleanupGenerator,
 } as const satisfies Record<string, GeneratorDefinition>;
 
@@ -57,8 +58,10 @@ const steps: Step[] = [
 	'fake-id', // run fake id to get accolade ids for other steps
 	'places',
 	'fake-id', // run fake id to get user and places ids
-	'accolade-assignments',
 	'assets',
+	'fake-id', // run fake id to get user and places ids
+	'place-assets',
+	'accolade-assignments',
 	'follows',
 	'reviews',
 	'fake-id', // run fake id again to get review ids

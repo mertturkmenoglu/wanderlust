@@ -4,25 +4,78 @@ import { schema } from '@wanderlust/db';
 import { getDb } from '@/lib/common';
 import { Fake } from '@/lib/fake';
 
-type Insert = Types.Assets.$Insert.Asset;
+const blur = 'LZMtaS?v_Ns:%MD%WBx]WBV@Rj%M';
 
-export async function processChunk(placeIds: string[]) {
+export async function processChunk(_placeIds: string[]) {
 	const db = await getDb();
-	const batch: Insert[] = [];
+	const user = await db.query.users.findFirst({
+		where: {
+			username: 'hilal',
+		},
+		columns: {
+			id: true,
+		},
+	});
 
-	for (const placeId of placeIds) {
-		const imageCount = faker.number.int({ min: 4, max: 10 });
-
-		for (let i = 0; i < imageCount; i++) {
-			batch.push({
-				entityType: 'place',
-				entityId: placeId,
-				url: Fake.Random.imageUrl(),
-				description: `Photo of place ${placeId} - ${i + 1}`,
-				order: i,
-			});
-		}
+	if (!user) {
+		throw new Error('User hilal not found');
 	}
 
-	await db.insert(schema.assets).values(batch).onConflictDoNothing();
+	const userId = user.id;
+
+	// First assets for places
+	// Every asset will be uploaded by the same user, hilal, for simplicity. In a better scenario, you might want to assign different users.
+
+	// 100 batches, 100 items each. 10K total
+	for (let i = 0; i < 100; i++) {
+		const batch: Types.Assets.$Insert.AssetDbInsert[] = [];
+
+		for (let j = 0; j < 100; j++) {
+			batch.push({
+				bucket: 'places',
+				key: faker.string.uuid(),
+				mimeType: 'image/jpeg',
+				size: 1024,
+				url: Fake.Random.imageUrl(),
+				alt: `Photo of place ${faker.string.uuid()}`,
+				attributions: [],
+				blurhash: blur,
+				height: 800,
+				metadata: {},
+				status: 'ready',
+				uploadedBy: userId,
+				visibility: 'public',
+				width: 600,
+			});
+		}
+
+		await db.insert(schema.assets).values(batch).onConflictDoNothing();
+	}
+
+	// Now assets for reviews
+	// 100 batches, 100 items each. 10K total
+	for (let i = 0; i < 100; i++) {
+		const batch: Types.Assets.$Insert.AssetDbInsert[] = [];
+
+		for (let j = 0; j < 100; j++) {
+			batch.push({
+				bucket: 'reviews',
+				key: faker.string.uuid(),
+				mimeType: 'image/jpeg',
+				size: 1024,
+				url: Fake.Random.imageUrl(),
+				alt: `Photo of review ${faker.string.uuid()}`,
+				attributions: [],
+				blurhash: blur,
+				height: 800,
+				metadata: {},
+				status: 'ready',
+				uploadedBy: userId,
+				visibility: 'public',
+				width: 600,
+			});
+		}
+
+		await db.insert(schema.assets).values(batch).onConflictDoNothing();
+	}
 }

@@ -4,32 +4,43 @@ import { schema } from '@wanderlust/db';
 import { getDb } from '@/lib/common';
 import { Fake } from '@/lib/fake';
 
-type Insert = Types.Assets.$Insert.Asset;
+type Insert = Types.Assets.$Insert.AssetToReviewInsert;
 
 export async function processChunk({ reviewIds }: { reviewIds: string[] }) {
-	const batch: Insert[] = [];
-
-	for (const reviewId of reviewIds) {
-		if (Math.random() > 0.3) {
-			continue;
-		}
-
-		const imageCount = faker.number.int({ min: 1, max: 4 });
-
-		for (let i = 0; i < imageCount; i++) {
-			batch.push({
-				entityType: 'review',
-				entityId: reviewId,
-				url: Fake.Random.imageUrl(),
-				description: `Photo of review ${reviewId} - ${i + 1}`,
-				order: i + 1,
-			});
-		}
-	}
-
 	const db = await getDb();
+	const assets = await db.query.assets.findMany({
+		where: {
+			bucket: 'reviews',
+		},
+		columns: {
+			id: true,
+		},
+	});
 
-	if (batch.length > 0) {
-		await db.insert(schema.assets).values(batch).onConflictDoNothing();
+	const chunks = Fake.Chunk.fromArray(reviewIds, 100);
+
+	for (const chunk of chunks) {
+		const batch: Insert[] = [];
+
+		for (const reviewId of chunk) {
+			if (Math.random() > 0.3) {
+				continue;
+			}
+
+			const sample = faker.helpers.arrayElements(assets, {
+				min: 1,
+				max: 4,
+			});
+
+			batch.push(
+				...sample.map((asset, i) => ({
+					assetId: asset.id,
+					reviewId,
+					order: i,
+				})),
+			);
+		}
+
+		await db.insert(schema.assetsToReviews).values(batch).onConflictDoNothing();
 	}
 }
