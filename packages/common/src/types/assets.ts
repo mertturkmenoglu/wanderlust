@@ -64,6 +64,17 @@ export namespace Assets {
 
 		export type AssetDbInsert = z.infer<typeof AssetDbInsert>;
 
+		export const AssetToReviewInsert = createInsertSchema(
+			schema.assetsToReviews,
+			{
+				assetId: Resources.id,
+				reviewId: Resources.id,
+				order: z.number().int().nonnegative(),
+			},
+		);
+
+		export type AssetToReviewInsert = z.infer<typeof AssetToReviewInsert>;
+
 		export const AssetToPlaceInsert = createInsertSchema(
 			schema.assetsToPlaces,
 			{
