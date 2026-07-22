@@ -15,17 +15,21 @@ export namespace dto {
 
 	export type GetOutput = z.infer<typeof getOutput>;
 
-	const fileSchema = z
-		.file()
-		.max(1024 * 1024 * 5, 'File size must be less than 5MB'); // 5 MB
-
 	export const createInput = Types.Review.pick({
 		placeId: true,
 		content: true,
 		rating: true,
 		visitedAt: true,
 	}).extend({
-		files: fileSchema.array().max(4, 'You can upload up to 4 files').optional(),
+		files: z
+			.array(z.string())
+			.max(4, { error: 'You can upload up to 4 files' })
+			.optional()
+			.meta({
+				description:
+					'An array of file IDs that has been uploaded to the system previously. The files should be uploaded using the assets upload endpoint before creating a review.',
+				examples: [['file-id-1', 'file-id-2']],
+			}),
 	});
 
 	export type CreateInput = z.infer<typeof createInput>;
