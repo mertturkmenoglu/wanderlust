@@ -43,7 +43,7 @@ export function ItemVariant({
 			<ItemMedia>
 				<Image
 					src={ipx(asset.url, 'w_256')}
-					alt={asset.description ?? ''}
+					alt={asset.alt ?? ''}
 					height={64}
 					aspectRatio={16 / 9}
 					className="aspect-video h-16 rounded-md object-cover"

@@ -38,7 +38,7 @@ export function SortableItem({ index, item }: Props) {
 			<ItemMedia variant="default">
 				<Image
 					src={ipx(asset.url, 'w_512')}
-					alt={asset.description ?? ''}
+					alt={asset.alt ?? ''}
 					layout="constrained"
 					height={64}
 					aspectRatio={16 / 9}

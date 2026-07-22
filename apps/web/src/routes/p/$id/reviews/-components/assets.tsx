@@ -30,10 +30,10 @@ export function Assets() {
 			<ScrollArea>
 				<div className="mb-4 flex flex-row gap-4">
 					{assets.map((asset, i) => (
-						<button type="button" key={asset.id} onClick={() => lb.openAt(i)}>
+						<button type="button" key={asset.url} onClick={() => lb.openAt(i)}>
 							<img
 								src={asset.url}
-								alt={asset.description ?? ''}
+								alt={asset.alt ?? ''}
 								className="aspect-video w-32 min-w-32! rounded object-cover"
 							/>
 						</button>

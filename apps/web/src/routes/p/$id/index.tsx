@@ -66,7 +66,7 @@ export const Route = createFileRoute('/p/$id/')({
 
 		const images = place.assets.map((asset) => ({
 			url: asset.url,
-			alt: asset.description ?? place.name,
+			alt: asset.alt ?? place.name,
 		}));
 
 		const { meta, links } = seo({

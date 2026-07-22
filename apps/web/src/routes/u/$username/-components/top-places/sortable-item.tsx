@@ -36,7 +36,7 @@ export function SortableItem({ index, item, onRemoveClick }: Props) {
 			<ItemMedia variant="image">
 				<Image
 					src={ipx(item.assets[0]?.url ?? '', 'w_512')}
-					alt={item.assets[0]?.description ?? ''}
+					alt={item.assets[0]?.alt ?? ''}
 					width={512}
 					aspectRatio={16 / 9}
 				/>

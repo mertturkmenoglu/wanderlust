@@ -57,6 +57,7 @@ export function BookmarkButton() {
 		}
 
 		createMutation.mutate({
+			userId: session.data.user.id,
 			placeId: place.id,
 		});
 	};

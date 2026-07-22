@@ -16,7 +16,6 @@ import {
 } from '@wanderlust/ui/components/hover-card';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { AwardIcon, HeartIcon, StarIcon } from 'lucide-react';
-import { ipx } from '@/lib/ipx';
 import {
 	useAddToFavoritesMutation,
 	useRemoveFromFavoritesMutation,
@@ -44,8 +43,8 @@ export function DefaultVariant({
 			{...props}
 		>
 			<Image
-				src={ipx(asset.url, 'w_512')}
-				alt={asset.description ?? ''}
+				src={asset.url}
+				alt={asset.alt ?? ''}
 				layout="constrained"
 				aspectRatio={16 / 9}
 				height={128}

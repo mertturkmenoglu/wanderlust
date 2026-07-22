@@ -8,7 +8,7 @@ import { ipx } from '@/lib/ipx';
 import type { Props } from './types';
 
 export function AssetGrid({ className, assets: unsortedAssets }: Props) {
-	const assets = unsortedAssets.sort((a, b) => a.order - b.order);
+	const assets = unsortedAssets;
 	const first = assets[0];
 
 	const rest = useMemo(() => {
@@ -19,10 +19,8 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 
 			for (let i = 0; i < pad; i++) {
 				slice.push({
-					id: Math.random(),
 					url: '',
-					description: '',
-					order: 0,
+					alt: '',
 				});
 			}
 		}
@@ -52,7 +50,7 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 				>
 					<Image
 						src={ipx(first.url, 'w_1024')}
-						alt={first.description ?? ''}
+						alt={first.alt ?? ''}
 						className="h-full w-full rounded-l-xl object-cover"
 						layout="constrained"
 						height={1024}
@@ -64,13 +62,13 @@ export function AssetGrid({ className, assets: unsortedAssets }: Props) {
 				<button
 					type="button"
 					className={cn('col-span-1 row-span-1')}
-					key={asset.id}
+					key={asset.url}
 					onClick={() => lb.openAt(i + 1)}
 				>
 					{asset.url !== '' ? (
 						<Image
 							src={ipx(asset.url, 'w_512')}
-							alt={asset.description ?? ''}
+							alt={asset.alt ?? ''}
 							className={cn('h-full w-full object-cover', {
 								'rounded-tr-xl': i === 1,
 								'rounded-br-xl': i === 3,

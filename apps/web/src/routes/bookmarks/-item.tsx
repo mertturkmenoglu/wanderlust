@@ -54,7 +54,7 @@ export function BookmarkItem({ bookmark, itemIndex }: Props) {
 				<ItemMedia variant="default">
 					<Image
 						src={asset.url ?? ''}
-						alt={asset.description ?? place.name}
+						alt={asset.alt ?? place.name}
 						className="aspect-video w-32 rounded-md object-cover md:w-16 lg:w-32"
 						width={512}
 						height={288}

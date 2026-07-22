@@ -26,7 +26,7 @@ export function PlaceCatalog({ className, accessor }: PlaceCatalogProps) {
 								...item.place,
 								assets: item.place.assets.map((a) => ({
 									url: a.url,
-									description: '',
+									alt: '',
 								})),
 							}}
 							meta={item.meta}

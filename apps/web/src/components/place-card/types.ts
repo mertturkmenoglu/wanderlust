@@ -2,7 +2,7 @@ import type { Outputs } from '@/lib/orpc';
 
 type Asset = Pick<
 	Outputs['places']['get']['place']['assets'][number],
-	'url' | 'description'
+	'alt' | 'url'
 >;
 
 type Accolade = Pick<
