@@ -11,7 +11,7 @@ export const requireAuth = os
 			throw new ORPCError('UNAUTHORIZED');
 		}
 
-		// Redat email address from the user object before logging it to avoid leaking sensitive information.
+		// Redact email address from the user object before logging it to avoid leaking sensitive information.
 		const {
 			user: { email, ...user },
 		} = context.session;
