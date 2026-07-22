@@ -9,91 +9,76 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WipRouteImport } from './routes/wip'
-import { Route as TripsRouteImport } from './routes/trips'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as NearbyRouteImport } from './routes/nearby'
-import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TripsIndexRouteImport } from './routes/trips/index'
-import { Route as TermsIndexRouteImport } from './routes/terms/index'
-import { Route as SettingsIndexRouteImport } from './routes/settings/index'
-import { Route as ReportIndexRouteImport } from './routes/report/index'
-import { Route as PrivacyIndexRouteImport } from './routes/privacy/index'
-import { Route as NotificationsIndexRouteImport } from './routes/notifications/index'
-import { Route as NearbyIndexRouteImport } from './routes/nearby/index'
-import { Route as ListsIndexRouteImport } from './routes/lists/index'
-import { Route as HelpIndexRouteImport } from './routes/help/index'
-import { Route as ChatIndexRouteImport } from './routes/chat/index'
-import { Route as ChangeAccountsIndexRouteImport } from './routes/change-accounts/index'
-import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
-import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as NearbyRouteImport } from './routes/nearby'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TripsRouteImport } from './routes/trips'
+import { Route as WipRouteImport } from './routes/wip'
 import { Route as AccoladesIndexRouteImport } from './routes/accolades/index'
-import { Route as UUsernameRouteImport } from './routes/u/$username'
+import { Route as BookmarksIndexRouteImport } from './routes/bookmarks/index'
+import { Route as CategoriesIndexRouteImport } from './routes/categories/index'
+import { Route as ChangeAccountsIndexRouteImport } from './routes/change-accounts/index'
+import { Route as ChatIndexRouteImport } from './routes/chat/index'
+import { Route as HelpIndexRouteImport } from './routes/help/index'
+import { Route as ListsIndexRouteImport } from './routes/lists/index'
+import { Route as NearbyIndexRouteImport } from './routes/nearby/index'
+import { Route as NotificationsIndexRouteImport } from './routes/notifications/index'
+import { Route as PrivacyIndexRouteImport } from './routes/privacy/index'
+import { Route as ReportIndexRouteImport } from './routes/report/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as TermsIndexRouteImport } from './routes/terms/index'
+import { Route as TripsIndexRouteImport } from './routes/trips/index'
 import { Route as TripsIdRouteImport } from './routes/trips/$id'
-import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
-import { Route as TripsNewIndexRouteImport } from './routes/trips/new/index'
-import { Route as TripsMyTripsIndexRouteImport } from './routes/trips/my-trips/index'
-import { Route as TripsInvitesIndexRouteImport } from './routes/trips/invites/index'
-import { Route as TripsDiscoverIndexRouteImport } from './routes/trips/discover/index'
-import { Route as TripsIdIndexRouteImport } from './routes/trips/$id/index'
-import { Route as SettingsProfileIndexRouteImport } from './routes/settings/profile/index'
-import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
-import { Route as SettingsNotificationsIndexRouteImport } from './routes/settings/notifications/index'
-import { Route as SettingsChatIndexRouteImport } from './routes/settings/chat/index'
-import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
-import { Route as SearchTypeIndexRouteImport } from './routes/search/$type/index'
-import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
-import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
-import { Route as EIdIndexRouteImport } from './routes/e/$id/index'
-import { Route as DiscoverEventsIndexRouteImport } from './routes/discover/events/index'
-import { Route as CollectionsIdIndexRouteImport } from './routes/collections/$id/index'
-import { Route as CitiesListIndexRouteImport } from './routes/cities/list/index'
-import { Route as CitiesIdIndexRouteImport } from './routes/cities/$id/index'
-import { Route as AccoladesIdIndexRouteImport } from './routes/accolades/$id/index'
-import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
+import { Route as UUsernameRouteImport } from './routes/u/$username'
 import { Route as AuthSignInIndexRouteImport } from './routes/_auth/sign-in/index'
+import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
+import { Route as AccoladesIdIndexRouteImport } from './routes/accolades/$id/index'
+import { Route as CitiesIdIndexRouteImport } from './routes/cities/$id/index'
+import { Route as CitiesListIndexRouteImport } from './routes/cities/list/index'
+import { Route as CollectionsIdIndexRouteImport } from './routes/collections/$id/index'
+import { Route as DiscoverEventsIndexRouteImport } from './routes/discover/events/index'
+import { Route as EIdIndexRouteImport } from './routes/e/$id/index'
+import { Route as ListsIdIndexRouteImport } from './routes/lists/$id/index'
+import { Route as PIdIndexRouteImport } from './routes/p/$id/index'
+import { Route as SearchTypeIndexRouteImport } from './routes/search/$type/index'
+import { Route as SettingsAccountIndexRouteImport } from './routes/settings/account/index'
+import { Route as SettingsChatIndexRouteImport } from './routes/settings/chat/index'
+import { Route as SettingsNotificationsIndexRouteImport } from './routes/settings/notifications/index'
+import { Route as SettingsPreferencesIndexRouteImport } from './routes/settings/preferences/index'
+import { Route as SettingsProfileIndexRouteImport } from './routes/settings/profile/index'
+import { Route as TripsIdIndexRouteImport } from './routes/trips/$id/index'
 import { Route as TripsIdParticipantsRouteImport } from './routes/trips/$id/participants'
-import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
-import { Route as UUsernameListsIndexRouteImport } from './routes/u/$username/lists/index'
-import { Route as UUsernameFollowingIndexRouteImport } from './routes/u/$username/following/index'
-import { Route as UUsernameFollowersIndexRouteImport } from './routes/u/$username/followers/index'
-import { Route as UUsernameFavoritesIndexRouteImport } from './routes/u/$username/favorites/index'
-import { Route as UUsernameActivitiesIndexRouteImport } from './routes/u/$username/activities/index'
-import { Route as TripsIdParticipantsIndexRouteImport } from './routes/trips/$id/participants/index'
-import { Route as TripsIdMediaIndexRouteImport } from './routes/trips/$id/media/index'
-import { Route as TripsIdItineraryIndexRouteImport } from './routes/trips/$id/itinerary/index'
-import { Route as TripsIdEditIndexRouteImport } from './routes/trips/$id/edit/index'
-import { Route as TripsIdDetailsIndexRouteImport } from './routes/trips/$id/details/index'
-import { Route as TripsIdCommentsIndexRouteImport } from './routes/trips/$id/comments/index'
-import { Route as TripsIdAmenitiesIndexRouteImport } from './routes/trips/$id/amenities/index'
-import { Route as PIdReviewsIndexRouteImport } from './routes/p/$id/reviews/index'
-import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/index'
-import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
+import { Route as TripsDiscoverIndexRouteImport } from './routes/trips/discover/index'
+import { Route as TripsInvitesIndexRouteImport } from './routes/trips/invites/index'
+import { Route as TripsMyTripsIndexRouteImport } from './routes/trips/my-trips/index'
+import { Route as TripsNewIndexRouteImport } from './routes/trips/new/index'
+import { Route as UUsernameIndexRouteImport } from './routes/u/$username/index'
 import { Route as AuthPasswordForgotIndexRouteImport } from './routes/_auth/password/forgot/index'
-import { Route as TripsIdParticipantsInvitesIndexRouteImport } from './routes/trips/$id/participants/invites/index'
-import { Route as PIdReviewsNewIndexRouteImport } from './routes/p/$id/reviews/new/index'
+import { Route as AuthPasswordResetIndexRouteImport } from './routes/_auth/password/reset/index'
+import { Route as ListsIdEditIndexRouteImport } from './routes/lists/$id/edit/index'
+import { Route as PIdReviewsIndexRouteImport } from './routes/p/$id/reviews/index'
+import { Route as TripsIdAmenitiesIndexRouteImport } from './routes/trips/$id/amenities/index'
+import { Route as TripsIdCommentsIndexRouteImport } from './routes/trips/$id/comments/index'
+import { Route as TripsIdDetailsIndexRouteImport } from './routes/trips/$id/details/index'
+import { Route as TripsIdEditIndexRouteImport } from './routes/trips/$id/edit/index'
+import { Route as TripsIdItineraryIndexRouteImport } from './routes/trips/$id/itinerary/index'
+import { Route as TripsIdMediaIndexRouteImport } from './routes/trips/$id/media/index'
+import { Route as TripsIdParticipantsIndexRouteImport } from './routes/trips/$id/participants/index'
+import { Route as UUsernameActivitiesIndexRouteImport } from './routes/u/$username/activities/index'
+import { Route as UUsernameFavoritesIndexRouteImport } from './routes/u/$username/favorites/index'
+import { Route as UUsernameFollowersIndexRouteImport } from './routes/u/$username/followers/index'
+import { Route as UUsernameFollowingIndexRouteImport } from './routes/u/$username/following/index'
+import { Route as UUsernameListsIndexRouteImport } from './routes/u/$username/lists/index'
+import { Route as UUsernameReviewsIndexRouteImport } from './routes/u/$username/reviews/index'
 import { Route as PIdReviewsReviewIdIndexRouteImport } from './routes/p/$id/reviews/$reviewId/index'
+import { Route as PIdReviewsNewIndexRouteImport } from './routes/p/$id/reviews/new/index'
+import { Route as TripsIdParticipantsInvitesIndexRouteImport } from './routes/trips/$id/participants/invites/index'
 import { Route as TripsIdParticipantsInvitesNewIndexRouteImport } from './routes/trips/$id/participants/invites/new/index'
 
-const WipRoute = WipRouteImport.update({
-  id: '/wip',
-  path: '/wip',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TripsRoute = TripsRouteImport.update({
-  id: '/trips',
-  path: '/trips',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NearbyRoute = NearbyRouteImport.update({
-  id: '/nearby',
-  path: '/nearby',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -101,74 +86,24 @@ const ChatRoute = ChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const NearbyRoute = NearbyRouteImport.update({
+  id: '/nearby',
+  path: '/nearby',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TripsIndexRoute = TripsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TripsRoute,
-} as any)
-const TermsIndexRoute = TermsIndexRouteImport.update({
-  id: '/terms/',
-  path: '/terms/',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsIndexRoute = SettingsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const ReportIndexRoute = ReportIndexRouteImport.update({
-  id: '/report/',
-  path: '/report/',
+const TripsRoute = TripsRouteImport.update({
+  id: '/trips',
+  path: '/trips',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrivacyIndexRoute = PrivacyIndexRouteImport.update({
-  id: '/privacy/',
-  path: '/privacy/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
-  id: '/notifications/',
-  path: '/notifications/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NearbyIndexRoute = NearbyIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NearbyRoute,
-} as any)
-const ListsIndexRoute = ListsIndexRouteImport.update({
-  id: '/lists/',
-  path: '/lists/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HelpIndexRoute = HelpIndexRouteImport.update({
-  id: '/help/',
-  path: '/help/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatIndexRoute = ChatIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ChatRoute,
-} as any)
-const ChangeAccountsIndexRoute = ChangeAccountsIndexRouteImport.update({
-  id: '/change-accounts/',
-  path: '/change-accounts/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
-  id: '/categories/',
-  path: '/categories/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BookmarksIndexRoute = BookmarksIndexRouteImport.update({
-  id: '/bookmarks/',
-  path: '/bookmarks/',
+const WipRoute = WipRouteImport.update({
+  id: '/wip',
+  path: '/wip',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccoladesIndexRoute = AccoladesIndexRouteImport.update({
@@ -176,121 +111,79 @@ const AccoladesIndexRoute = AccoladesIndexRouteImport.update({
   path: '/accolades/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UUsernameRoute = UUsernameRouteImport.update({
-  id: '/u/$username',
-  path: '/u/$username',
+const BookmarksIndexRoute = BookmarksIndexRouteImport.update({
+  id: '/bookmarks/',
+  path: '/bookmarks/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangeAccountsIndexRoute = ChangeAccountsIndexRouteImport.update({
+  id: '/change-accounts/',
+  path: '/change-accounts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ChatRoute,
+} as any)
+const HelpIndexRoute = HelpIndexRouteImport.update({
+  id: '/help/',
+  path: '/help/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListsIndexRoute = ListsIndexRouteImport.update({
+  id: '/lists/',
+  path: '/lists/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NearbyIndexRoute = NearbyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NearbyRoute,
+} as any)
+const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
+  id: '/notifications/',
+  path: '/notifications/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyIndexRoute = PrivacyIndexRouteImport.update({
+  id: '/privacy/',
+  path: '/privacy/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportIndexRoute = ReportIndexRouteImport.update({
+  id: '/report/',
+  path: '/report/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const TermsIndexRoute = TermsIndexRouteImport.update({
+  id: '/terms/',
+  path: '/terms/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TripsIndexRoute = TripsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TripsRoute,
 } as any)
 const TripsIdRoute = TripsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => TripsRoute,
 } as any)
-const UUsernameIndexRoute = UUsernameIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => UUsernameRoute,
-} as any)
-const TripsNewIndexRoute = TripsNewIndexRouteImport.update({
-  id: '/new/',
-  path: '/new/',
-  getParentRoute: () => TripsRoute,
-} as any)
-const TripsMyTripsIndexRoute = TripsMyTripsIndexRouteImport.update({
-  id: '/my-trips/',
-  path: '/my-trips/',
-  getParentRoute: () => TripsRoute,
-} as any)
-const TripsInvitesIndexRoute = TripsInvitesIndexRouteImport.update({
-  id: '/invites/',
-  path: '/invites/',
-  getParentRoute: () => TripsRoute,
-} as any)
-const TripsDiscoverIndexRoute = TripsDiscoverIndexRouteImport.update({
-  id: '/discover/',
-  path: '/discover/',
-  getParentRoute: () => TripsRoute,
-} as any)
-const TripsIdIndexRoute = TripsIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const SettingsProfileIndexRoute = SettingsProfileIndexRouteImport.update({
-  id: '/profile/',
-  path: '/profile/',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsPreferencesIndexRoute =
-  SettingsPreferencesIndexRouteImport.update({
-    id: '/preferences/',
-    path: '/preferences/',
-    getParentRoute: () => SettingsRoute,
-  } as any)
-const SettingsNotificationsIndexRoute =
-  SettingsNotificationsIndexRouteImport.update({
-    id: '/notifications/',
-    path: '/notifications/',
-    getParentRoute: () => SettingsRoute,
-  } as any)
-const SettingsChatIndexRoute = SettingsChatIndexRouteImport.update({
-  id: '/chat/',
-  path: '/chat/',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SettingsAccountIndexRoute = SettingsAccountIndexRouteImport.update({
-  id: '/account/',
-  path: '/account/',
-  getParentRoute: () => SettingsRoute,
-} as any)
-const SearchTypeIndexRoute = SearchTypeIndexRouteImport.update({
-  id: '/search/$type/',
-  path: '/search/$type/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PIdIndexRoute = PIdIndexRouteImport.update({
-  id: '/p/$id/',
-  path: '/p/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ListsIdIndexRoute = ListsIdIndexRouteImport.update({
-  id: '/lists/$id/',
-  path: '/lists/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EIdIndexRoute = EIdIndexRouteImport.update({
-  id: '/e/$id/',
-  path: '/e/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiscoverEventsIndexRoute = DiscoverEventsIndexRouteImport.update({
-  id: '/discover/events/',
-  path: '/discover/events/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CollectionsIdIndexRoute = CollectionsIdIndexRouteImport.update({
-  id: '/collections/$id/',
-  path: '/collections/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CitiesListIndexRoute = CitiesListIndexRouteImport.update({
-  id: '/cities/list/',
-  path: '/cities/list/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CitiesIdIndexRoute = CitiesIdIndexRouteImport.update({
-  id: '/cities/$id/',
-  path: '/cities/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccoladesIdIndexRoute = AccoladesIdIndexRouteImport.update({
-  id: '/accolades/$id/',
-  path: '/accolades/$id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
-  id: '/_auth/sign-up/',
-  path: '/sign-up/',
+const UUsernameRoute = UUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
@@ -298,86 +191,121 @@ const AuthSignInIndexRoute = AuthSignInIndexRouteImport.update({
   path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
+  id: '/_auth/sign-up/',
+  path: '/sign-up/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccoladesIdIndexRoute = AccoladesIdIndexRouteImport.update({
+  id: '/accolades/$id/',
+  path: '/accolades/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitiesIdIndexRoute = CitiesIdIndexRouteImport.update({
+  id: '/cities/$id/',
+  path: '/cities/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitiesListIndexRoute = CitiesListIndexRouteImport.update({
+  id: '/cities/list/',
+  path: '/cities/list/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionsIdIndexRoute = CollectionsIdIndexRouteImport.update({
+  id: '/collections/$id/',
+  path: '/collections/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoverEventsIndexRoute = DiscoverEventsIndexRouteImport.update({
+  id: '/discover/events/',
+  path: '/discover/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EIdIndexRoute = EIdIndexRouteImport.update({
+  id: '/e/$id/',
+  path: '/e/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListsIdIndexRoute = ListsIdIndexRouteImport.update({
+  id: '/lists/$id/',
+  path: '/lists/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PIdIndexRoute = PIdIndexRouteImport.update({
+  id: '/p/$id/',
+  path: '/p/$id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchTypeIndexRoute = SearchTypeIndexRouteImport.update({
+  id: '/search/$type/',
+  path: '/search/$type/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsAccountIndexRoute = SettingsAccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsChatIndexRoute = SettingsChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsNotificationsIndexRoute =
+  SettingsNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => SettingsRoute,
+  } as any)
+const SettingsPreferencesIndexRoute =
+  SettingsPreferencesIndexRouteImport.update({
+    id: '/preferences/',
+    path: '/preferences/',
+    getParentRoute: () => SettingsRoute,
+  } as any)
+const SettingsProfileIndexRoute = SettingsProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const TripsIdIndexRoute = TripsIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
 const TripsIdParticipantsRoute = TripsIdParticipantsRouteImport.update({
   id: '/participants',
   path: '/participants',
   getParentRoute: () => TripsIdRoute,
 } as any)
-const UUsernameReviewsIndexRoute = UUsernameReviewsIndexRouteImport.update({
-  id: '/reviews/',
-  path: '/reviews/',
+const TripsDiscoverIndexRoute = TripsDiscoverIndexRouteImport.update({
+  id: '/discover/',
+  path: '/discover/',
+  getParentRoute: () => TripsRoute,
+} as any)
+const TripsInvitesIndexRoute = TripsInvitesIndexRouteImport.update({
+  id: '/invites/',
+  path: '/invites/',
+  getParentRoute: () => TripsRoute,
+} as any)
+const TripsMyTripsIndexRoute = TripsMyTripsIndexRouteImport.update({
+  id: '/my-trips/',
+  path: '/my-trips/',
+  getParentRoute: () => TripsRoute,
+} as any)
+const TripsNewIndexRoute = TripsNewIndexRouteImport.update({
+  id: '/new/',
+  path: '/new/',
+  getParentRoute: () => TripsRoute,
+} as any)
+const UUsernameIndexRoute = UUsernameIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => UUsernameRoute,
 } as any)
-const UUsernameListsIndexRoute = UUsernameListsIndexRouteImport.update({
-  id: '/lists/',
-  path: '/lists/',
-  getParentRoute: () => UUsernameRoute,
-} as any)
-const UUsernameFollowingIndexRoute = UUsernameFollowingIndexRouteImport.update({
-  id: '/following/',
-  path: '/following/',
-  getParentRoute: () => UUsernameRoute,
-} as any)
-const UUsernameFollowersIndexRoute = UUsernameFollowersIndexRouteImport.update({
-  id: '/followers/',
-  path: '/followers/',
-  getParentRoute: () => UUsernameRoute,
-} as any)
-const UUsernameFavoritesIndexRoute = UUsernameFavoritesIndexRouteImport.update({
-  id: '/favorites/',
-  path: '/favorites/',
-  getParentRoute: () => UUsernameRoute,
-} as any)
-const UUsernameActivitiesIndexRoute =
-  UUsernameActivitiesIndexRouteImport.update({
-    id: '/activities/',
-    path: '/activities/',
-    getParentRoute: () => UUsernameRoute,
-  } as any)
-const TripsIdParticipantsIndexRoute =
-  TripsIdParticipantsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => TripsIdParticipantsRoute,
-  } as any)
-const TripsIdMediaIndexRoute = TripsIdMediaIndexRouteImport.update({
-  id: '/media/',
-  path: '/media/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const TripsIdItineraryIndexRoute = TripsIdItineraryIndexRouteImport.update({
-  id: '/itinerary/',
-  path: '/itinerary/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const TripsIdEditIndexRoute = TripsIdEditIndexRouteImport.update({
-  id: '/edit/',
-  path: '/edit/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const TripsIdDetailsIndexRoute = TripsIdDetailsIndexRouteImport.update({
-  id: '/details/',
-  path: '/details/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const TripsIdCommentsIndexRoute = TripsIdCommentsIndexRouteImport.update({
-  id: '/comments/',
-  path: '/comments/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const TripsIdAmenitiesIndexRoute = TripsIdAmenitiesIndexRouteImport.update({
-  id: '/amenities/',
-  path: '/amenities/',
-  getParentRoute: () => TripsIdRoute,
-} as any)
-const PIdReviewsIndexRoute = PIdReviewsIndexRouteImport.update({
-  id: '/p/$id/reviews/',
-  path: '/p/$id/reviews/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ListsIdEditIndexRoute = ListsIdEditIndexRouteImport.update({
-  id: '/lists/$id/edit/',
-  path: '/lists/$id/edit/',
+const AuthPasswordForgotIndexRoute = AuthPasswordForgotIndexRouteImport.update({
+  id: '/_auth/password/forgot/',
+  path: '/password/forgot/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthPasswordResetIndexRoute = AuthPasswordResetIndexRouteImport.update({
@@ -385,9 +313,91 @@ const AuthPasswordResetIndexRoute = AuthPasswordResetIndexRouteImport.update({
   path: '/password/reset/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthPasswordForgotIndexRoute = AuthPasswordForgotIndexRouteImport.update({
-  id: '/_auth/password/forgot/',
-  path: '/password/forgot/',
+const ListsIdEditIndexRoute = ListsIdEditIndexRouteImport.update({
+  id: '/lists/$id/edit/',
+  path: '/lists/$id/edit/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PIdReviewsIndexRoute = PIdReviewsIndexRouteImport.update({
+  id: '/p/$id/reviews/',
+  path: '/p/$id/reviews/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TripsIdAmenitiesIndexRoute = TripsIdAmenitiesIndexRouteImport.update({
+  id: '/amenities/',
+  path: '/amenities/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+const TripsIdCommentsIndexRoute = TripsIdCommentsIndexRouteImport.update({
+  id: '/comments/',
+  path: '/comments/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+const TripsIdDetailsIndexRoute = TripsIdDetailsIndexRouteImport.update({
+  id: '/details/',
+  path: '/details/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+const TripsIdEditIndexRoute = TripsIdEditIndexRouteImport.update({
+  id: '/edit/',
+  path: '/edit/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+const TripsIdItineraryIndexRoute = TripsIdItineraryIndexRouteImport.update({
+  id: '/itinerary/',
+  path: '/itinerary/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+const TripsIdMediaIndexRoute = TripsIdMediaIndexRouteImport.update({
+  id: '/media/',
+  path: '/media/',
+  getParentRoute: () => TripsIdRoute,
+} as any)
+const TripsIdParticipantsIndexRoute =
+  TripsIdParticipantsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TripsIdParticipantsRoute,
+  } as any)
+const UUsernameActivitiesIndexRoute =
+  UUsernameActivitiesIndexRouteImport.update({
+    id: '/activities/',
+    path: '/activities/',
+    getParentRoute: () => UUsernameRoute,
+  } as any)
+const UUsernameFavoritesIndexRoute = UUsernameFavoritesIndexRouteImport.update({
+  id: '/favorites/',
+  path: '/favorites/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+const UUsernameFollowersIndexRoute = UUsernameFollowersIndexRouteImport.update({
+  id: '/followers/',
+  path: '/followers/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+const UUsernameFollowingIndexRoute = UUsernameFollowingIndexRouteImport.update({
+  id: '/following/',
+  path: '/following/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+const UUsernameListsIndexRoute = UUsernameListsIndexRouteImport.update({
+  id: '/lists/',
+  path: '/lists/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+const UUsernameReviewsIndexRoute = UUsernameReviewsIndexRouteImport.update({
+  id: '/reviews/',
+  path: '/reviews/',
+  getParentRoute: () => UUsernameRoute,
+} as any)
+const PIdReviewsReviewIdIndexRoute = PIdReviewsReviewIdIndexRouteImport.update({
+  id: '/p/$id/reviews/$reviewId/',
+  path: '/p/$id/reviews/$reviewId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PIdReviewsNewIndexRoute = PIdReviewsNewIndexRouteImport.update({
+  id: '/p/$id/reviews/new/',
+  path: '/p/$id/reviews/new/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TripsIdParticipantsInvitesIndexRoute =
@@ -396,16 +406,6 @@ const TripsIdParticipantsInvitesIndexRoute =
     path: '/invites/',
     getParentRoute: () => TripsIdParticipantsRoute,
   } as any)
-const PIdReviewsNewIndexRoute = PIdReviewsNewIndexRouteImport.update({
-  id: '/p/$id/reviews/new/',
-  path: '/p/$id/reviews/new/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PIdReviewsReviewIdIndexRoute = PIdReviewsReviewIdIndexRouteImport.update({
-  id: '/p/$id/reviews/$reviewId/',
-  path: '/p/$id/reviews/$reviewId/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TripsIdParticipantsInvitesNewIndexRoute =
   TripsIdParticipantsInvitesNewIndexRouteImport.update({
     id: '/invites/new/',
@@ -850,32 +850,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wip': {
-      id: '/wip'
-      path: '/wip'
-      fullPath: '/wip'
-      preLoaderRoute: typeof WipRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trips': {
-      id: '/trips'
-      path: '/trips'
-      fullPath: '/trips'
-      preLoaderRoute: typeof TripsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nearby': {
-      id: '/nearby'
-      path: '/nearby'
-      fullPath: '/nearby'
-      preLoaderRoute: typeof NearbyRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -885,102 +864,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/nearby': {
+      id: '/nearby'
+      path: '/nearby'
+      fullPath: '/nearby'
+      preLoaderRoute: typeof NearbyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trips/': {
-      id: '/trips/'
-      path: '/'
-      fullPath: '/trips/'
-      preLoaderRoute: typeof TripsIndexRouteImport
-      parentRoute: typeof TripsRoute
-    }
-    '/terms/': {
-      id: '/terms/'
-      path: '/terms'
-      fullPath: '/terms/'
-      preLoaderRoute: typeof TermsIndexRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/': {
-      id: '/settings/'
-      path: '/'
-      fullPath: '/settings/'
-      preLoaderRoute: typeof SettingsIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/report/': {
-      id: '/report/'
-      path: '/report'
-      fullPath: '/report/'
-      preLoaderRoute: typeof ReportIndexRouteImport
+    '/trips': {
+      id: '/trips'
+      path: '/trips'
+      fullPath: '/trips'
+      preLoaderRoute: typeof TripsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/privacy/': {
-      id: '/privacy/'
-      path: '/privacy'
-      fullPath: '/privacy/'
-      preLoaderRoute: typeof PrivacyIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications/': {
-      id: '/notifications/'
-      path: '/notifications'
-      fullPath: '/notifications/'
-      preLoaderRoute: typeof NotificationsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nearby/': {
-      id: '/nearby/'
-      path: '/'
-      fullPath: '/nearby/'
-      preLoaderRoute: typeof NearbyIndexRouteImport
-      parentRoute: typeof NearbyRoute
-    }
-    '/lists/': {
-      id: '/lists/'
-      path: '/lists'
-      fullPath: '/lists/'
-      preLoaderRoute: typeof ListsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/help/': {
-      id: '/help/'
-      path: '/help'
-      fullPath: '/help/'
-      preLoaderRoute: typeof HelpIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat/': {
-      id: '/chat/'
-      path: '/'
-      fullPath: '/chat/'
-      preLoaderRoute: typeof ChatIndexRouteImport
-      parentRoute: typeof ChatRoute
-    }
-    '/change-accounts/': {
-      id: '/change-accounts/'
-      path: '/change-accounts'
-      fullPath: '/change-accounts/'
-      preLoaderRoute: typeof ChangeAccountsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/categories/': {
-      id: '/categories/'
-      path: '/categories'
-      fullPath: '/categories/'
-      preLoaderRoute: typeof CategoriesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bookmarks/': {
-      id: '/bookmarks/'
-      path: '/bookmarks'
-      fullPath: '/bookmarks/'
-      preLoaderRoute: typeof BookmarksIndexRouteImport
+    '/wip': {
+      id: '/wip'
+      path: '/wip'
+      fullPath: '/wip'
+      preLoaderRoute: typeof WipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accolades/': {
@@ -990,12 +899,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccoladesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/u/$username': {
-      id: '/u/$username'
-      path: '/u/$username'
-      fullPath: '/u/$username'
-      preLoaderRoute: typeof UUsernameRouteImport
+    '/bookmarks/': {
+      id: '/bookmarks/'
+      path: '/bookmarks'
+      fullPath: '/bookmarks/'
+      preLoaderRoute: typeof BookmarksIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/categories/': {
+      id: '/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof CategoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-accounts/': {
+      id: '/change-accounts/'
+      path: '/change-accounts'
+      fullPath: '/change-accounts/'
+      preLoaderRoute: typeof ChangeAccountsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat/': {
+      id: '/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof ChatRoute
+    }
+    '/help/': {
+      id: '/help/'
+      path: '/help'
+      fullPath: '/help/'
+      preLoaderRoute: typeof HelpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lists/': {
+      id: '/lists/'
+      path: '/lists'
+      fullPath: '/lists/'
+      preLoaderRoute: typeof ListsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nearby/': {
+      id: '/nearby/'
+      path: '/'
+      fullPath: '/nearby/'
+      preLoaderRoute: typeof NearbyIndexRouteImport
+      parentRoute: typeof NearbyRoute
+    }
+    '/notifications/': {
+      id: '/notifications/'
+      path: '/notifications'
+      fullPath: '/notifications/'
+      preLoaderRoute: typeof NotificationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy/': {
+      id: '/privacy/'
+      path: '/privacy'
+      fullPath: '/privacy/'
+      preLoaderRoute: typeof PrivacyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report/': {
+      id: '/report/'
+      path: '/report'
+      fullPath: '/report/'
+      preLoaderRoute: typeof ReportIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/terms/': {
+      id: '/terms/'
+      path: '/terms'
+      fullPath: '/terms/'
+      preLoaderRoute: typeof TermsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trips/': {
+      id: '/trips/'
+      path: '/'
+      fullPath: '/trips/'
+      preLoaderRoute: typeof TripsIndexRouteImport
+      parentRoute: typeof TripsRoute
     }
     '/trips/$id': {
       id: '/trips/$id'
@@ -1004,151 +997,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdRouteImport
       parentRoute: typeof TripsRoute
     }
-    '/u/$username/': {
-      id: '/u/$username/'
-      path: '/'
-      fullPath: '/u/$username/'
-      preLoaderRoute: typeof UUsernameIndexRouteImport
-      parentRoute: typeof UUsernameRoute
-    }
-    '/trips/new/': {
-      id: '/trips/new/'
-      path: '/new'
-      fullPath: '/trips/new/'
-      preLoaderRoute: typeof TripsNewIndexRouteImport
-      parentRoute: typeof TripsRoute
-    }
-    '/trips/my-trips/': {
-      id: '/trips/my-trips/'
-      path: '/my-trips'
-      fullPath: '/trips/my-trips/'
-      preLoaderRoute: typeof TripsMyTripsIndexRouteImport
-      parentRoute: typeof TripsRoute
-    }
-    '/trips/invites/': {
-      id: '/trips/invites/'
-      path: '/invites'
-      fullPath: '/trips/invites/'
-      preLoaderRoute: typeof TripsInvitesIndexRouteImport
-      parentRoute: typeof TripsRoute
-    }
-    '/trips/discover/': {
-      id: '/trips/discover/'
-      path: '/discover'
-      fullPath: '/trips/discover/'
-      preLoaderRoute: typeof TripsDiscoverIndexRouteImport
-      parentRoute: typeof TripsRoute
-    }
-    '/trips/$id/': {
-      id: '/trips/$id/'
-      path: '/'
-      fullPath: '/trips/$id/'
-      preLoaderRoute: typeof TripsIdIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/settings/profile/': {
-      id: '/settings/profile/'
-      path: '/profile'
-      fullPath: '/settings/profile/'
-      preLoaderRoute: typeof SettingsProfileIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/preferences/': {
-      id: '/settings/preferences/'
-      path: '/preferences'
-      fullPath: '/settings/preferences/'
-      preLoaderRoute: typeof SettingsPreferencesIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/notifications/': {
-      id: '/settings/notifications/'
-      path: '/notifications'
-      fullPath: '/settings/notifications/'
-      preLoaderRoute: typeof SettingsNotificationsIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/chat/': {
-      id: '/settings/chat/'
-      path: '/chat'
-      fullPath: '/settings/chat/'
-      preLoaderRoute: typeof SettingsChatIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/settings/account/': {
-      id: '/settings/account/'
-      path: '/account'
-      fullPath: '/settings/account/'
-      preLoaderRoute: typeof SettingsAccountIndexRouteImport
-      parentRoute: typeof SettingsRoute
-    }
-    '/search/$type/': {
-      id: '/search/$type/'
-      path: '/search/$type'
-      fullPath: '/search/$type/'
-      preLoaderRoute: typeof SearchTypeIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/p/$id/': {
-      id: '/p/$id/'
-      path: '/p/$id'
-      fullPath: '/p/$id/'
-      preLoaderRoute: typeof PIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lists/$id/': {
-      id: '/lists/$id/'
-      path: '/lists/$id'
-      fullPath: '/lists/$id/'
-      preLoaderRoute: typeof ListsIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/e/$id/': {
-      id: '/e/$id/'
-      path: '/e/$id'
-      fullPath: '/e/$id/'
-      preLoaderRoute: typeof EIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/discover/events/': {
-      id: '/discover/events/'
-      path: '/discover/events'
-      fullPath: '/discover/events/'
-      preLoaderRoute: typeof DiscoverEventsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/collections/$id/': {
-      id: '/collections/$id/'
-      path: '/collections/$id'
-      fullPath: '/collections/$id/'
-      preLoaderRoute: typeof CollectionsIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cities/list/': {
-      id: '/cities/list/'
-      path: '/cities/list'
-      fullPath: '/cities/list/'
-      preLoaderRoute: typeof CitiesListIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cities/$id/': {
-      id: '/cities/$id/'
-      path: '/cities/$id'
-      fullPath: '/cities/$id/'
-      preLoaderRoute: typeof CitiesIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/accolades/$id/': {
-      id: '/accolades/$id/'
-      path: '/accolades/$id'
-      fullPath: '/accolades/$id/'
-      preLoaderRoute: typeof AccoladesIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth/sign-up/': {
-      id: '/_auth/sign-up/'
-      path: '/sign-up'
-      fullPath: '/sign-up/'
-      preLoaderRoute: typeof AuthSignUpIndexRouteImport
+    '/u/$username': {
+      id: '/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof UUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/sign-in/': {
@@ -1158,6 +1011,118 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/sign-up/': {
+      id: '/_auth/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up/'
+      preLoaderRoute: typeof AuthSignUpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accolades/$id/': {
+      id: '/accolades/$id/'
+      path: '/accolades/$id'
+      fullPath: '/accolades/$id/'
+      preLoaderRoute: typeof AccoladesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cities/$id/': {
+      id: '/cities/$id/'
+      path: '/cities/$id'
+      fullPath: '/cities/$id/'
+      preLoaderRoute: typeof CitiesIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cities/list/': {
+      id: '/cities/list/'
+      path: '/cities/list'
+      fullPath: '/cities/list/'
+      preLoaderRoute: typeof CitiesListIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collections/$id/': {
+      id: '/collections/$id/'
+      path: '/collections/$id'
+      fullPath: '/collections/$id/'
+      preLoaderRoute: typeof CollectionsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discover/events/': {
+      id: '/discover/events/'
+      path: '/discover/events'
+      fullPath: '/discover/events/'
+      preLoaderRoute: typeof DiscoverEventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e/$id/': {
+      id: '/e/$id/'
+      path: '/e/$id'
+      fullPath: '/e/$id/'
+      preLoaderRoute: typeof EIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lists/$id/': {
+      id: '/lists/$id/'
+      path: '/lists/$id'
+      fullPath: '/lists/$id/'
+      preLoaderRoute: typeof ListsIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$id/': {
+      id: '/p/$id/'
+      path: '/p/$id'
+      fullPath: '/p/$id/'
+      preLoaderRoute: typeof PIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search/$type/': {
+      id: '/search/$type/'
+      path: '/search/$type'
+      fullPath: '/search/$type/'
+      preLoaderRoute: typeof SearchTypeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/account/': {
+      id: '/settings/account/'
+      path: '/account'
+      fullPath: '/settings/account/'
+      preLoaderRoute: typeof SettingsAccountIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/chat/': {
+      id: '/settings/chat/'
+      path: '/chat'
+      fullPath: '/settings/chat/'
+      preLoaderRoute: typeof SettingsChatIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/notifications/': {
+      id: '/settings/notifications/'
+      path: '/notifications'
+      fullPath: '/settings/notifications/'
+      preLoaderRoute: typeof SettingsNotificationsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/preferences/': {
+      id: '/settings/preferences/'
+      path: '/preferences'
+      fullPath: '/settings/preferences/'
+      preLoaderRoute: typeof SettingsPreferencesIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/profile/': {
+      id: '/settings/profile/'
+      path: '/profile'
+      fullPath: '/settings/profile/'
+      preLoaderRoute: typeof SettingsProfileIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/trips/$id/': {
+      id: '/trips/$id/'
+      path: '/'
+      fullPath: '/trips/$id/'
+      preLoaderRoute: typeof TripsIdIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
     '/trips/$id/participants': {
       id: '/trips/$id/participants'
       path: '/participants'
@@ -1165,109 +1130,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripsIdParticipantsRouteImport
       parentRoute: typeof TripsIdRoute
     }
-    '/u/$username/reviews/': {
-      id: '/u/$username/reviews/'
-      path: '/reviews'
-      fullPath: '/u/$username/reviews/'
-      preLoaderRoute: typeof UUsernameReviewsIndexRouteImport
-      parentRoute: typeof UUsernameRoute
+    '/trips/discover/': {
+      id: '/trips/discover/'
+      path: '/discover'
+      fullPath: '/trips/discover/'
+      preLoaderRoute: typeof TripsDiscoverIndexRouteImport
+      parentRoute: typeof TripsRoute
     }
-    '/u/$username/lists/': {
-      id: '/u/$username/lists/'
-      path: '/lists'
-      fullPath: '/u/$username/lists/'
-      preLoaderRoute: typeof UUsernameListsIndexRouteImport
-      parentRoute: typeof UUsernameRoute
+    '/trips/invites/': {
+      id: '/trips/invites/'
+      path: '/invites'
+      fullPath: '/trips/invites/'
+      preLoaderRoute: typeof TripsInvitesIndexRouteImport
+      parentRoute: typeof TripsRoute
     }
-    '/u/$username/following/': {
-      id: '/u/$username/following/'
-      path: '/following'
-      fullPath: '/u/$username/following/'
-      preLoaderRoute: typeof UUsernameFollowingIndexRouteImport
-      parentRoute: typeof UUsernameRoute
+    '/trips/my-trips/': {
+      id: '/trips/my-trips/'
+      path: '/my-trips'
+      fullPath: '/trips/my-trips/'
+      preLoaderRoute: typeof TripsMyTripsIndexRouteImport
+      parentRoute: typeof TripsRoute
     }
-    '/u/$username/followers/': {
-      id: '/u/$username/followers/'
-      path: '/followers'
-      fullPath: '/u/$username/followers/'
-      preLoaderRoute: typeof UUsernameFollowersIndexRouteImport
-      parentRoute: typeof UUsernameRoute
+    '/trips/new/': {
+      id: '/trips/new/'
+      path: '/new'
+      fullPath: '/trips/new/'
+      preLoaderRoute: typeof TripsNewIndexRouteImport
+      parentRoute: typeof TripsRoute
     }
-    '/u/$username/favorites/': {
-      id: '/u/$username/favorites/'
-      path: '/favorites'
-      fullPath: '/u/$username/favorites/'
-      preLoaderRoute: typeof UUsernameFavoritesIndexRouteImport
-      parentRoute: typeof UUsernameRoute
-    }
-    '/u/$username/activities/': {
-      id: '/u/$username/activities/'
-      path: '/activities'
-      fullPath: '/u/$username/activities/'
-      preLoaderRoute: typeof UUsernameActivitiesIndexRouteImport
-      parentRoute: typeof UUsernameRoute
-    }
-    '/trips/$id/participants/': {
-      id: '/trips/$id/participants/'
+    '/u/$username/': {
+      id: '/u/$username/'
       path: '/'
-      fullPath: '/trips/$id/participants/'
-      preLoaderRoute: typeof TripsIdParticipantsIndexRouteImport
-      parentRoute: typeof TripsIdParticipantsRoute
+      fullPath: '/u/$username/'
+      preLoaderRoute: typeof UUsernameIndexRouteImport
+      parentRoute: typeof UUsernameRoute
     }
-    '/trips/$id/media/': {
-      id: '/trips/$id/media/'
-      path: '/media'
-      fullPath: '/trips/$id/media/'
-      preLoaderRoute: typeof TripsIdMediaIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/trips/$id/itinerary/': {
-      id: '/trips/$id/itinerary/'
-      path: '/itinerary'
-      fullPath: '/trips/$id/itinerary/'
-      preLoaderRoute: typeof TripsIdItineraryIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/trips/$id/edit/': {
-      id: '/trips/$id/edit/'
-      path: '/edit'
-      fullPath: '/trips/$id/edit/'
-      preLoaderRoute: typeof TripsIdEditIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/trips/$id/details/': {
-      id: '/trips/$id/details/'
-      path: '/details'
-      fullPath: '/trips/$id/details/'
-      preLoaderRoute: typeof TripsIdDetailsIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/trips/$id/comments/': {
-      id: '/trips/$id/comments/'
-      path: '/comments'
-      fullPath: '/trips/$id/comments/'
-      preLoaderRoute: typeof TripsIdCommentsIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/trips/$id/amenities/': {
-      id: '/trips/$id/amenities/'
-      path: '/amenities'
-      fullPath: '/trips/$id/amenities/'
-      preLoaderRoute: typeof TripsIdAmenitiesIndexRouteImport
-      parentRoute: typeof TripsIdRoute
-    }
-    '/p/$id/reviews/': {
-      id: '/p/$id/reviews/'
-      path: '/p/$id/reviews'
-      fullPath: '/p/$id/reviews/'
-      preLoaderRoute: typeof PIdReviewsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lists/$id/edit/': {
-      id: '/lists/$id/edit/'
-      path: '/lists/$id/edit'
-      fullPath: '/lists/$id/edit/'
-      preLoaderRoute: typeof ListsIdEditIndexRouteImport
+    '/_auth/password/forgot/': {
+      id: '/_auth/password/forgot/'
+      path: '/password/forgot'
+      fullPath: '/password/forgot/'
+      preLoaderRoute: typeof AuthPasswordForgotIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/password/reset/': {
@@ -1277,19 +1179,117 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthPasswordResetIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/password/forgot/': {
-      id: '/_auth/password/forgot/'
-      path: '/password/forgot'
-      fullPath: '/password/forgot/'
-      preLoaderRoute: typeof AuthPasswordForgotIndexRouteImport
+    '/lists/$id/edit/': {
+      id: '/lists/$id/edit/'
+      path: '/lists/$id/edit'
+      fullPath: '/lists/$id/edit/'
+      preLoaderRoute: typeof ListsIdEditIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trips/$id/participants/invites/': {
-      id: '/trips/$id/participants/invites/'
-      path: '/invites'
-      fullPath: '/trips/$id/participants/invites/'
-      preLoaderRoute: typeof TripsIdParticipantsInvitesIndexRouteImport
+    '/p/$id/reviews/': {
+      id: '/p/$id/reviews/'
+      path: '/p/$id/reviews'
+      fullPath: '/p/$id/reviews/'
+      preLoaderRoute: typeof PIdReviewsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trips/$id/amenities/': {
+      id: '/trips/$id/amenities/'
+      path: '/amenities'
+      fullPath: '/trips/$id/amenities/'
+      preLoaderRoute: typeof TripsIdAmenitiesIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
+    '/trips/$id/comments/': {
+      id: '/trips/$id/comments/'
+      path: '/comments'
+      fullPath: '/trips/$id/comments/'
+      preLoaderRoute: typeof TripsIdCommentsIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
+    '/trips/$id/details/': {
+      id: '/trips/$id/details/'
+      path: '/details'
+      fullPath: '/trips/$id/details/'
+      preLoaderRoute: typeof TripsIdDetailsIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
+    '/trips/$id/edit/': {
+      id: '/trips/$id/edit/'
+      path: '/edit'
+      fullPath: '/trips/$id/edit/'
+      preLoaderRoute: typeof TripsIdEditIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
+    '/trips/$id/itinerary/': {
+      id: '/trips/$id/itinerary/'
+      path: '/itinerary'
+      fullPath: '/trips/$id/itinerary/'
+      preLoaderRoute: typeof TripsIdItineraryIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
+    '/trips/$id/media/': {
+      id: '/trips/$id/media/'
+      path: '/media'
+      fullPath: '/trips/$id/media/'
+      preLoaderRoute: typeof TripsIdMediaIndexRouteImport
+      parentRoute: typeof TripsIdRoute
+    }
+    '/trips/$id/participants/': {
+      id: '/trips/$id/participants/'
+      path: '/'
+      fullPath: '/trips/$id/participants/'
+      preLoaderRoute: typeof TripsIdParticipantsIndexRouteImport
       parentRoute: typeof TripsIdParticipantsRoute
+    }
+    '/u/$username/activities/': {
+      id: '/u/$username/activities/'
+      path: '/activities'
+      fullPath: '/u/$username/activities/'
+      preLoaderRoute: typeof UUsernameActivitiesIndexRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/u/$username/favorites/': {
+      id: '/u/$username/favorites/'
+      path: '/favorites'
+      fullPath: '/u/$username/favorites/'
+      preLoaderRoute: typeof UUsernameFavoritesIndexRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/u/$username/followers/': {
+      id: '/u/$username/followers/'
+      path: '/followers'
+      fullPath: '/u/$username/followers/'
+      preLoaderRoute: typeof UUsernameFollowersIndexRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/u/$username/following/': {
+      id: '/u/$username/following/'
+      path: '/following'
+      fullPath: '/u/$username/following/'
+      preLoaderRoute: typeof UUsernameFollowingIndexRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/u/$username/lists/': {
+      id: '/u/$username/lists/'
+      path: '/lists'
+      fullPath: '/u/$username/lists/'
+      preLoaderRoute: typeof UUsernameListsIndexRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/u/$username/reviews/': {
+      id: '/u/$username/reviews/'
+      path: '/reviews'
+      fullPath: '/u/$username/reviews/'
+      preLoaderRoute: typeof UUsernameReviewsIndexRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
+    '/p/$id/reviews/$reviewId/': {
+      id: '/p/$id/reviews/$reviewId/'
+      path: '/p/$id/reviews/$reviewId'
+      fullPath: '/p/$id/reviews/$reviewId/'
+      preLoaderRoute: typeof PIdReviewsReviewIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/p/$id/reviews/new/': {
       id: '/p/$id/reviews/new/'
@@ -1298,12 +1298,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PIdReviewsNewIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/p/$id/reviews/$reviewId/': {
-      id: '/p/$id/reviews/$reviewId/'
-      path: '/p/$id/reviews/$reviewId'
-      fullPath: '/p/$id/reviews/$reviewId/'
-      preLoaderRoute: typeof PIdReviewsReviewIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/trips/$id/participants/invites/': {
+      id: '/trips/$id/participants/invites/'
+      path: '/invites'
+      fullPath: '/trips/$id/participants/invites/'
+      preLoaderRoute: typeof TripsIdParticipantsInvitesIndexRouteImport
+      parentRoute: typeof TripsIdParticipantsRoute
     }
     '/trips/$id/participants/invites/new/': {
       id: '/trips/$id/participants/invites/new/'
