@@ -15,27 +15,6 @@ export const relations = defineRelations(schema, (r) => ({
 			optional: false,
 		}),
 	},
-	addresses: {
-		city: r.one.cities({
-			from: r.addresses.cityId,
-			to: r.cities.id,
-			optional: false,
-		}),
-	},
-	assets: {
-		review: r.one.reviews({
-			from: r.assets.entityId,
-			to: r.reviews.id,
-		}),
-		place: r.one.places({
-			from: r.assets.entityId,
-			to: r.places.id,
-		}),
-		event: r.one.events({
-			from: r.assets.entityId,
-			to: r.events.id,
-		}),
-	},
 	bookmarks: {
 		place: r.one.places({
 			from: r.bookmarks.placeId,
@@ -71,7 +50,10 @@ export const relations = defineRelations(schema, (r) => ({
 			to: r.users.id,
 			optional: false,
 		}),
-		assets: r.many.assets(),
+		assets: r.many.assets({
+			from: r.reviews.id.through(r.assetsToReviews.reviewId),
+			to: r.assets.id.through(r.assetsToReviews.assetId),
+		}),
 	},
 	reviewLikes: {
 		review: r.one.reviews({
@@ -133,25 +115,16 @@ export const relations = defineRelations(schema, (r) => ({
 			optional: false,
 		}),
 		assets: r.many.assets({
-			from: r.places.id,
-			to: r.assets.entityId,
-			where: {
-				entityType: 'place',
-			},
+			from: r.places.id.through(r.assetsToPlaces.placeId),
+			to: r.assets.id.through(r.assetsToPlaces.assetId),
 		}),
 	},
 	events: {
-		address: r.one.addresses({
-			from: r.events.addressId,
-			to: r.addresses.id,
-			optional: false,
-		}),
 		organizer: r.one.users({
 			from: r.events.organizerId,
 			to: r.users.id,
 			optional: false,
 		}),
-		assets: r.many.assets(),
 		ticketOptions: r.many.eventTicketOptions(),
 		agenda: r.many.eventAgendaItems(),
 		lineup: r.many.eventLineupItems(),
