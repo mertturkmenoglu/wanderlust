@@ -1,5 +1,4 @@
 export * from './accolades';
-export * from './addresses';
 export * from './assets';
 export * from './auth';
 export * from './bookmarks';
