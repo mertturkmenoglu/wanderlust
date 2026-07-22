@@ -5,13 +5,7 @@ import { CacheService, type TCacheService } from '@wanderlust/cache';
 import type { Reviews } from '@wanderlust/contract';
 import { JobsService, type TJobsService } from '@wanderlust/jobs';
 import { extractAllFacets } from '@wanderlust/richtext';
-import {
-	getFilenameFromUrl,
-	StorageService,
-	type TStorageService,
-} from '@wanderlust/storage';
 import { nanoid } from '@wanderlust/uid';
-import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { detectLanguage, LangCodeFormats } from '@/lib/lang';
@@ -19,19 +13,16 @@ import { ReviewsRepository } from './repository';
 
 @injectable()
 export class ReviewsService {
-	private readonly storage: TStorageService;
 	private readonly cache: TCacheService;
 	private readonly jobs: TJobsService;
 	private readonly ns = 'reviews';
 
 	constructor(
 		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
-		@inject(StorageService) storage: StorageService,
 		@inject(CacheService) cache: CacheService,
 		@inject(ActivitiesService) private readonly activities: ActivitiesService,
 		@inject(JobsService) jobs: JobsService,
 	) {
-		this.storage = storage.get();
 		this.cache = cache.get();
 		this.jobs = jobs.get();
 	}
@@ -59,8 +50,6 @@ export class ReviewsService {
 	): Promise<Reviews.dto.CreateOutput> {
 		const span = trace.getActiveSpan();
 
-		const urls = await this.uploadFiles(data.files || []);
-
 		try {
 			const detectedLanguage = this.getDetectedLanguage(data.content);
 			const facets = extractAllFacets(data.content);
@@ -68,13 +57,12 @@ export class ReviewsService {
 			const [insertResult, place] = await this.repo.create(userId, {
 				...data,
 				detectedLanguage,
-				urls,
 				facets,
 			});
 
 			await this.invalidatePlaceRatings(data.placeId);
 
-			if (urls.length > 0) {
+			if ((data.files?.length ?? 0) > 0) {
 				await this.invalidatePlaceAssets(data.placeId);
 			}
 
@@ -110,16 +98,16 @@ export class ReviewsService {
 		} catch (err) {
 			span?.recordException(err as Error);
 
-			const allDeleted = await this.removeAssets(urls);
+			// const allDeleted = await this.removeAssets(urls);
 
-			span?.addEvent(
-				'review.create.cleanup',
-				{
-					'assets.allDeleted': allDeleted,
-					'assets.urls': urls.join(','),
-				},
-				new Date(),
-			);
+			// span?.addEvent(
+			// 	'review.create.cleanup',
+			// 	{
+			// 		'assets.allDeleted': allDeleted,
+			// 		'assets.urls': urls.join(','),
+			// 	},
+			// 	new Date(),
+			// );
 
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to create review',
@@ -128,7 +116,7 @@ export class ReviewsService {
 	}
 
 	async _delete(userId: string, data: Reviews.dto.DeleteInput): Promise<void> {
-		const span = trace.getActiveSpan();
+		// const span = trace.getActiveSpan();
 
 		const existing = await this.repo.get(data);
 
@@ -139,25 +127,25 @@ export class ReviewsService {
 		}
 
 		const deleted = await this.repo._delete(userId, data);
-		const urls = existing.assets.map((asset) => asset.url);
-		const allAssetsDeleted = await this.removeAssets(urls);
+		// const urls = existing.assets.map((asset) => asset.url);
+		// const allAssetsDeleted = await this.removeAssets(urls);
 
-		if (!allAssetsDeleted) {
-			span?.addEvent(
-				'review.delete.asset-delete-failure',
-				{
-					reviewId: data.id,
-					urls: urls.join(','),
-				},
-				new Date(),
-			);
-		}
+		// if (!allAssetsDeleted) {
+		// 	span?.addEvent(
+		// 		'review.delete.asset-delete-failure',
+		// 		{
+		// 			reviewId: data.id,
+		// 			urls: urls.join(','),
+		// 		},
+		// 		new Date(),
+		// 	);
+		// }
 
 		await this.invalidatePlaceRatings(deleted.placeId);
 
-		if (urls.length > 0) {
-			await this.invalidatePlaceAssets(deleted.placeId);
-		}
+		// if (urls.length > 0) {
+		// 	await this.invalidatePlaceAssets(deleted.placeId);
+		// }
 	}
 
 	async listByUsername(
@@ -258,110 +246,6 @@ export class ReviewsService {
 			users: result.users,
 			pagination: result.pagination,
 		};
-	}
-
-	private async uploadFiles(files: File[]): Promise<string[]> {
-		const span = trace.getActiveSpan();
-
-		const urls: string[] = [];
-		const filetypes = await this.getFileTypes(files);
-
-		for (let i = 0; i < files.length; i++) {
-			const id = nanoid();
-			const file = files[i]!;
-			const filetype = filetypes[i]!;
-			const filename = `${id}.${filetype.ext}`;
-
-			try {
-				await this.storage
-					.use('reviews')
-					.put(filename, Buffer.from(await file.arrayBuffer()), {
-						contentType: filetype.mime,
-					});
-
-				const url = await this.storage.use('reviews').getUrl(filename);
-				urls.push(url);
-			} catch (err) {
-				span?.recordException(err as Error);
-
-				// Cleanup any files that were uploaded before the error occurred
-				await this.removeAssets(urls);
-
-				throw new ORPCError('INTERNAL_SERVER_ERROR', {
-					message: 'Failed to upload review files',
-				});
-			}
-		}
-
-		span?.addEvent(
-			'review.files',
-			{
-				count: urls.length,
-				urls: urls.join(','),
-			},
-			new Date(),
-		);
-
-		return urls;
-	}
-
-	private async getFileTypes(files: File[]): Promise<FileTypeResult[]> {
-		const results = await Promise.allSettled(
-			files.map((file) => this.getFileType(file)),
-		);
-
-		const filetypes: FileTypeResult[] = [];
-
-		for (const result of results) {
-			if (result.status === 'fulfilled') {
-				filetypes.push(result.value);
-			} else {
-				throw new ORPCError('UNPROCESSABLE_CONTENT', {
-					message: 'One or more files have an unsupported file type',
-				});
-			}
-		}
-
-		return filetypes;
-	}
-
-	private async getFileType(file: File): Promise<FileTypeResult> {
-		const t = await fileTypeFromBlob(file);
-
-		if (!t) {
-			throw new ORPCError('UNPROCESSABLE_CONTENT', {
-				message: 'One or more files have an unsupported file type',
-			});
-		}
-
-		if (!['image/jpeg', 'image/png', 'image/webp'].includes(t.mime)) {
-			throw new ORPCError('UNPROCESSABLE_CONTENT', {
-				message: 'One or more files have an unsupported file type',
-			});
-		}
-
-		return t;
-	}
-
-	private async removeAssets(urls: string[]): Promise<boolean> {
-		let allDeleted = true;
-
-		for (const url of urls) {
-			const filename = getFilenameFromUrl(url);
-
-			try {
-				await this.storage.use('reviews').delete(filename);
-			} catch (err) {
-				allDeleted = false;
-
-				console.error(
-					'Failed to delete review asset from storage during cleanup',
-					err,
-				);
-			}
-		}
-
-		return allDeleted;
 	}
 
 	private getDetectedLanguage(text: string): string | null {

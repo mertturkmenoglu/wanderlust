@@ -1,4 +1,5 @@
 import { trace } from '@opentelemetry/api';
+import { ORPCError } from '@orpc/client';
 import { Types } from '@wanderlust/common';
 import type { Reviews } from '@wanderlust/contract';
 import {
@@ -11,6 +12,7 @@ import { nanoid } from '@wanderlust/uid';
 import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
+import { areSetsEqual } from '@/lib/set-equality';
 import { TraceAll } from '@/lib/tracer';
 import { unique } from '@/lib/unique';
 import { countByPlaceId } from './statements';
@@ -40,12 +42,7 @@ export class ReviewsRepository {
 						image: true,
 					},
 				},
-				assets: {
-					where: {
-						entityType: 'review',
-						entityId: data.id,
-					},
-				},
+				assets: true,
 			},
 		});
 
@@ -65,11 +62,13 @@ export class ReviewsRepository {
 				'review.rating': data.rating,
 				'review.visitedAt': data.visitedAt?.toISOString() || 'unknown',
 				'review.detectedLanguage': data.detectedLanguage || 'unknown',
-				'review.attachments': JSON.stringify(data.urls),
+				'review.attachments': JSON.stringify(data.files ?? []),
 				'review.facets': JSON.stringify(data.facets),
 			},
 			new Date(),
 		);
+
+		void this.checkAssetsStatusAndPermissions(userId, data.files ?? []);
 
 		const results = await this.db.transaction(async (tx) => {
 			const [review] = await tx
@@ -89,15 +88,21 @@ export class ReviewsRepository {
 
 			invariant(review, 'INTERNAL_SERVER_ERROR', 'Failed to create review');
 
-			if (data.urls.length > 0) {
-				await tx.insert(schema.assets).values(
-					data.urls.map((url, i) => ({
-						entityId: review.id,
-						entityType: 'review' as const,
-						url,
-						order: i + 1,
+			if (data.files && data.files.length > 0) {
+				await tx.insert(schema.assetsToReviews).values(
+					data.files.map((f, i) => ({
+						assetId: f,
+						order: i,
+						reviewId: review.id,
 					})),
 				);
+
+				await tx
+					.update(schema.assets)
+					.set({
+						status: 'ready',
+					})
+					.where(dz.inArray(schema.assets.id, data.files));
 			}
 
 			await tx
@@ -145,6 +150,48 @@ export class ReviewsRepository {
 		return results;
 	}
 
+	async checkAssetsStatusAndPermissions(userId: string, assetIds: string[]) {
+		if (assetIds.length === 0) {
+			return;
+		}
+
+		const assets = await this.db.query.assets.findMany({
+			where: {
+				id: {
+					in: assetIds,
+				},
+			},
+			columns: {
+				id: true,
+				uploadedBy: true,
+				status: true,
+				bucket: true,
+			},
+		});
+
+		const fetchedAssetIds = assets.map((a) => a.id);
+		const ok = areSetsEqual(new Set(fetchedAssetIds), new Set(assetIds));
+
+		if (!ok) {
+			throw new ORPCError('CONFLICT', {
+				message: 'One or more assets do not exist or are not accessible',
+			});
+		}
+
+		for (const asset of assets) {
+			if (
+				asset.uploadedBy !== userId ||
+				asset.status !== 'pending' ||
+				asset.bucket !== 'reviews'
+			) {
+				// For security reasons, we don't reveal which asset is not accessible to the user. We just throw a generic error.
+				throw new ORPCError('CONFLICT', {
+					message: 'One or more assets do not exist or are not accessible',
+				});
+			}
+		}
+	}
+
 	async _delete(userId: string, data: Reviews.dto.DeleteInput) {
 		return await this.db.transaction(async (tx) => {
 			const [deleted] = await tx
@@ -163,14 +210,14 @@ export class ReviewsRepository {
 				`Review with id ${data.id} not found or you are not authorized to delete it`,
 			);
 
-			await tx
-				.delete(schema.assets)
-				.where(
-					dz.and(
-						dz.eq(schema.assets.entityId, data.id),
-						dz.eq(schema.assets.entityType, 'review'),
-					),
-				);
+			// await tx
+			// 	.delete(schema.assets)
+			// 	.where(
+			// 		dz.and(
+			// 			dz.eq(schema.assets.entityId, data.id),
+			// 			dz.eq(schema.assets.entityType, 'review'),
+			// 		),
+			// 	);
 
 			await tx
 				.update(schema.places)
@@ -320,26 +367,27 @@ export class ReviewsRepository {
 	}
 
 	async listAssetsByPlaceId(
-		data: Reviews.dto.ListAssetsByPlaceIdInput,
+		_data: Reviews.dto.ListAssetsByPlaceIdInput,
 	): Promise<Reviews.dto.ListAssetsByPlaceIdOutput> {
-		const results = await this.db
-			.select({
-				asset: schema.assets,
-				placeId: schema.reviews.placeId,
-			})
-			.from(schema.assets)
-			.innerJoin(
-				schema.reviews,
-				dz.and(
-					dz.eq(schema.assets.entityId, schema.reviews.id),
-					dz.eq(schema.assets.entityType, 'review'),
-				),
-			)
-			.where(dz.eq(schema.reviews.placeId, data.id))
-			.orderBy(dz.desc(schema.assets.createdAt));
+		// const results = await this.db
+		// 	.select({
+		// 		asset: schema.assets,
+		// 		placeId: schema.reviews.placeId,
+		// 	})
+		// 	.from(schema.assets)
+		// 	.innerJoin(
+		// 		schema.reviews,
+		// 		dz.and(
+		// 			dz.eq(schema.assets, schema.reviews.id),
+		// 			dz.eq(schema.assets.entityType, 'review'),
+		// 		),
+		// 	)
+		// 	.where(dz.eq(schema.reviews.placeId, data.id))
+		// 	.orderBy(dz.desc(schema.assets.createdAt));
 
 		return {
-			assets: results.map((r) => r.asset),
+			// assets: results.map((r) => r.asset),
+			assets: [],
 		};
 	}
 
