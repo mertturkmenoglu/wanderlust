@@ -25,7 +25,7 @@ export class ActivitiesService {
 		await this.setActivitiesByUsername(username, cappedActivities);
 	}
 
-	private async getActivitiesByUsername(username: string) {
+	async getActivitiesByUsername(username: string) {
 		return this.cache.namespace('activities').getOrSetForever({
 			key: username,
 			factory: async () => {
