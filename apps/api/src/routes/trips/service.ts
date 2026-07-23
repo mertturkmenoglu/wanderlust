@@ -87,7 +87,7 @@ export class TripsService {
 
 		const result = await this.repo.createInvite(userId, data, trip.title);
 
-		await this.jobs.notification.queue.add('create-notification', {
+		await this.jobs.notifications.queue.add('create-notification', {
 			id: nanoid(),
 			entityId: trip.id,
 			entityType: 'trip',
@@ -211,7 +211,7 @@ export class TripsService {
 		);
 
 		if (accepted) {
-			await this.jobs.notification.queue.add('create-notification', {
+			await this.jobs.notifications.queue.add('create-notification', {
 				entityId: invite.tripId,
 				entityType: 'trip',
 				id: nanoid(),
@@ -341,7 +341,7 @@ export class TripsService {
 		const result = await this.repo.createComment(userId, data);
 
 		if (result.userId !== trip.ownerId) {
-			await this.jobs.notification.queue.add('create-notification', {
+			await this.jobs.notifications.queue.add('create-notification', {
 				entityId: trip.id,
 				entityType: 'trip',
 				id: nanoid(),
@@ -457,7 +457,7 @@ export class TripsService {
 		const [newTrip, isDateChanged] = await this.repo.update(userId, data);
 
 		if (isDateChanged && newTrip.visibilityLevel !== 'private') {
-			await this.jobs.notification.queue.addBulk(
+			await this.jobs.notifications.queue.addBulk(
 				newTrip.participants.map((p) => ({
 					name: 'create-notification',
 					data: {

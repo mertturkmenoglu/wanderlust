@@ -439,7 +439,7 @@ export class UsersRepository {
 				otherUsername: targetUser.username,
 			});
 
-			await this.jobs.notification.queue.add('create-notification', {
+			await this.jobs.notifications.queue.add('create-notification', {
 				id: nanoid(),
 				type: 'user_follow',
 				recipientId: targetUser.id,
