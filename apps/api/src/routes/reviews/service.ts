@@ -98,17 +98,6 @@ export class ReviewsService {
 		} catch (err) {
 			span?.recordException(err as Error);
 
-			// const allDeleted = await this.removeAssets(urls);
-
-			// span?.addEvent(
-			// 	'review.create.cleanup',
-			// 	{
-			// 		'assets.allDeleted': allDeleted,
-			// 		'assets.urls': urls.join(','),
-			// 	},
-			// 	new Date(),
-			// );
-
 			throw new ORPCError('INTERNAL_SERVER_ERROR', {
 				message: 'Failed to create review',
 			});
@@ -356,7 +345,7 @@ export class ReviewsService {
 			new Date(),
 		);
 
-		await this.jobs.notification.queue.addBulk(
+		await this.jobs.notifications.queue.addBulk(
 			mentionedUsers.map((u) => ({
 				name: 'create-notification',
 				data: {

@@ -100,7 +100,7 @@ export class ReviewsRepository {
 				await tx
 					.update(schema.assets)
 					.set({
-						status: 'ready',
+						status: 'available',
 					})
 					.where(dz.inArray(schema.assets.id, data.files));
 			}
@@ -181,7 +181,7 @@ export class ReviewsRepository {
 		for (const asset of assets) {
 			if (
 				asset.uploadedBy !== userId ||
-				asset.status !== 'pending' ||
+				asset.status !== 'ready' ||
 				asset.bucket !== 'reviews'
 			) {
 				// For security reasons, we don't reveal which asset is not accessible to the user. We just throw a generic error.
@@ -210,14 +210,26 @@ export class ReviewsRepository {
 				`Review with id ${data.id} not found or you are not authorized to delete it`,
 			);
 
-			// await tx
-			// 	.delete(schema.assets)
-			// 	.where(
-			// 		dz.and(
-			// 			dz.eq(schema.assets.entityId, data.id),
-			// 			dz.eq(schema.assets.entityType, 'review'),
-			// 		),
-			// 	);
+			const assetsToBeDeleted = await tx.query.assetsToReviews.findMany({
+				where: {
+					reviewId: data.id,
+				},
+			});
+
+			const assetIdsToBeDeleted = assetsToBeDeleted.map((a) => a.assetId);
+
+			if (assetIdsToBeDeleted.length > 0) {
+				await tx
+					.delete(schema.assetsToReviews)
+					.where(dz.eq(schema.assetsToReviews.reviewId, data.id));
+
+				await tx
+					.update(schema.assets)
+					.set({
+						deletedAt: new Date(),
+					})
+					.where(dz.inArray(schema.assets.id, assetIdsToBeDeleted));
+			}
 
 			await tx
 				.update(schema.places)
