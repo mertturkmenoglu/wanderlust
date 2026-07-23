@@ -19,7 +19,7 @@ export const Asset = createSelectSchema(schema.assets, {
 	blurhash: z.string().min(1).max(255).nullable(),
 	alt: z.string().min(1).max(255).nullable(),
 
-	status: z.enum(['pending', 'ready', 'failed']),
+	status: z.enum(['pending', 'ready', 'available', 'failed']),
 	visibility: z.enum(['public', 'private']),
 
 	uploadedBy: Resources.id.nullable(),
