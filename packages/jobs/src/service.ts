@@ -1,10 +1,11 @@
-import { RedisService, type TRedisService } from '@wanderlust/cache';
-import { ConfigService, type TConfigService } from '@wanderlust/config';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
-import { EmailService, type TEmailService } from '@wanderlust/email';
+import { RedisService } from '@wanderlust/cache';
+import { ConfigService } from '@wanderlust/config';
+import { DatabaseService } from '@wanderlust/db';
+import { EmailService } from '@wanderlust/email';
 import { inject, injectable } from 'inversify';
-import { initEmailJobs } from './email';
-import { initNotificationJobs } from './notification';
+import type { Dependencies } from './internal/types';
+import { defineEmailJobs } from './jobs/emails';
+import { defineNotificationsJobs } from './jobs/notifications';
 
 @injectable()
 export class JobsService {
@@ -16,12 +17,12 @@ export class JobsService {
 		@inject(RedisService) private readonly redis: RedisService,
 		@inject(DatabaseService) private readonly db: DatabaseService,
 	) {
-		this.instance = init(
-			this.cfg.get(),
-			this.email.get(),
-			this.redis.get(),
-			this.db.get(),
-		);
+		this.instance = init({
+			config: this.cfg.get(),
+			email: this.email.get(),
+			redis: this.redis.get(),
+			db: this.db.get(),
+		});
 	}
 
 	get(): TJobsService {
@@ -29,18 +30,10 @@ export class JobsService {
 	}
 }
 
-function init(
-	cfg: TConfigService,
-	email: TEmailService,
-	redis: TRedisService,
-	db: TDatabaseService,
-) {
-	const emailJobs = initEmailJobs(cfg, redis, email);
-	const notificationJobs = initNotificationJobs(redis, db);
-
+function init(deps: Dependencies) {
 	return {
-		email: emailJobs,
-		notification: notificationJobs,
+		emails: defineEmailJobs(deps),
+		notifications: defineNotificationsJobs(deps),
 	};
 }
 
