@@ -1,24 +1,15 @@
-import { implement } from '@orpc/server';
-import { Amenities } from '@wanderlust/contract';
-import type { Context } from '@/lib/context';
+import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
+import { ListAmenitiesMethod } from './methods/list';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [],
+	exports: [ListAmenitiesMethod],
 	router: () => {
-		const os = implement(Amenities.Contract)
-			.$context<Context>()
-			.use(withErrorNormalization)
-			.use(withTracing);
+		const list = container.get(ListAmenitiesMethod);
 
 		return os.router({
-			list: os.list.handler(async () => {
-				return {
-					amenities: Amenities.values,
-				};
-			}),
+			list: list.route(),
 		});
 	},
 });
