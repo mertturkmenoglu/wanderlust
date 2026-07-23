@@ -1,64 +1,37 @@
-import { implement } from '@orpc/server';
-import { Notifications } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { requireAuth } from '@/middlewares/authn';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { NotificationsRepository } from './repository';
-import { NotificationsService } from './service';
+import { ClearNotificationsMethod } from './methods/clear';
+import { ListNotificationsMethod } from './methods/list';
+import { MarkAllNotificationsReadMethod } from './methods/mark-all-read';
+import { MarkNotificationReadMethod } from './methods/mark-read';
+import { GetNotificationPreferencesMethod } from './methods/preferences';
+import { UpdateNotificationPreferencesMethod } from './methods/update-preferences';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [NotificationsService, NotificationsRepository],
+	exports: [
+		ListNotificationsMethod,
+		MarkNotificationReadMethod,
+		MarkAllNotificationsReadMethod,
+		ClearNotificationsMethod,
+		GetNotificationPreferencesMethod,
+		UpdateNotificationPreferencesMethod,
+	],
 	router: () => {
-		const os = implement(Notifications.Contract)
-			.$context<AuthContext>()
-			.use(requireAuth)
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(NotificationsService);
+		const list = container.get(ListNotificationsMethod);
+		const markRead = container.get(MarkNotificationReadMethod);
+		const markAllRead = container.get(MarkAllNotificationsReadMethod);
+		const clear = container.get(ClearNotificationsMethod);
+		const preferences = container.get(GetNotificationPreferencesMethod);
+		const update = container.get(UpdateNotificationPreferencesMethod);
 
 		return os.router({
-			list: os.list.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.list(userId, input);
-
-				return result;
-			}),
-			markRead: os.markRead.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.markRead(userId, input);
-
-				return result;
-			}),
-			markAllRead: os.markAllRead.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.markAllRead(userId, input);
-
-				return result;
-			}),
-			clear: os.clear.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.clear(userId, input);
-
-				return result;
-			}),
-			preferences: os.preferences.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.preferences(userId, input);
-
-				return result;
-			}),
-			updatePreferences: os.updatePreferences.handler(
-				async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.updatePreferences(userId, input);
-
-					return result;
-				},
-			),
+			list: list.route(),
+			markRead: markRead.route(),
+			markAllRead: markAllRead.route(),
+			clear: clear.route(),
+			preferences: preferences.route(),
+			updatePreferences: update.route(),
 		});
 	},
 });
