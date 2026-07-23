@@ -17,12 +17,6 @@ export const contract = oc
 				successStatus: 201,
 				successDescription: 'Created',
 			}),
-		getRole: oc.input(dto.getRoleInput).output(dto.getRoleOutput).route({
-			method: 'GET',
-			path: '/users/me/role',
-			summary: 'Get User Role',
-			description: 'Retrieve the role of the currently authenticated user',
-		}),
 		get: oc.input(dto.getInput).output(dto.getOutput).route({
 			method: 'GET',
 			path: '/users/:username',
