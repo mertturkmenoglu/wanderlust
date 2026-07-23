@@ -50,4 +50,6 @@ export namespace dto {
 	export type DeleteInput = z.infer<typeof deleteInput>;
 
 	export const deleteOutput = z.object({});
+
+	export type DeleteOutput = z.infer<typeof deleteOutput>;
 }
