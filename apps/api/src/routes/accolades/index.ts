@@ -1,71 +1,37 @@
-import { implement } from '@orpc/server';
-import { Accolades } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { getUserId, getUserIdOrThrow } from '@/lib/get-user-id';
-import { requireAuth } from '@/middlewares/authn';
-import { isAdmin } from '@/middlewares/is-admin';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { AccoladesEnricher } from './enricher';
-import { AccoladesRepository } from './repository';
-import { AccoladesService } from './service';
+import { CreateAccoladeMethod } from './methods/create';
+import { DeleteAccoladeMethod } from './methods/delete';
+import { GetAccoladeMethod } from './methods/get';
+import { ListAccoladesMethod } from './methods/list';
+import { ListAccoladePlacesMethod } from './methods/list-places';
+import { UpdateAccoladeMethod } from './methods/update';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [AccoladesEnricher, AccoladesService, AccoladesRepository],
+	exports: [
+		GetAccoladeMethod,
+		ListAccoladesMethod,
+		ListAccoladePlacesMethod,
+		CreateAccoladeMethod,
+		UpdateAccoladeMethod,
+		DeleteAccoladeMethod,
+	],
 	router: () => {
-		const os = implement(Accolades.Contract)
-			.$context<Context>()
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(AccoladesService);
+		const get = container.get(GetAccoladeMethod);
+		const list = container.get(ListAccoladesMethod);
+		const listPlaces = container.get(ListAccoladePlacesMethod);
+		const create = container.get(CreateAccoladeMethod);
+		const update = container.get(UpdateAccoladeMethod);
+		const del = container.get(DeleteAccoladeMethod);
 
 		return os.router({
-			create: os.create
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input, context }) => {
-					const userId = getUserIdOrThrow(context);
-					const result = await svc.create(userId, input);
-
-					return result;
-				}),
-			list: os.list.handler(async ({ input }) => {
-				const result = await svc.list(input);
-
-				return result;
-			}),
-			delete: os.delete
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input, context }) => {
-					const userId = getUserIdOrThrow(context);
-					await svc._delete(userId, input);
-
-					return {};
-				}),
-			get: os.get.handler(async ({ input }) => {
-				const result = await svc.get(input);
-
-				return result;
-			}),
-			listPlaces: os.listPlaces.handler(async ({ input, context }) => {
-				const userId = getUserId(context);
-				const result = await svc.listPlaces(userId, input);
-
-				return result;
-			}),
-			update: os.update
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input, context }) => {
-					const userId = getUserIdOrThrow(context);
-					const result = await svc.update(userId, input);
-
-					return result;
-				}),
+			create: create.route(),
+			list: list.route(),
+			delete: del.route(),
+			get: get.route(),
+			listPlaces: listPlaces.route(),
+			update: update.route(),
 		});
 	},
 });
