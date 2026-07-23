@@ -11,7 +11,6 @@ import {
 import { format, subYears } from 'date-fns';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { toast } from 'sonner';
 import { AssetUploader } from '@/components/asset-uploader';
 import { useFormElement } from '@/components/form';
 import { orpc } from '@/lib/orpc';
@@ -27,27 +26,23 @@ export function CreateReviewForm() {
 	const { place } = useLoaderData({ from: '/p/$id/reviews/new/' });
 	const [plainText, setPlainText] = useState('');
 
-	const uploadMutation = useMutation(orpc.assets.create.mutationOptions());
+	const uploadMutation = useMutation(orpc.assets.createMany.mutationOptions());
 
-	// I know this is not ideal, but I'm leaving it as it is for now.
 	const onSubmit = form.handleSubmit(async (data) => {
-		const ids: string[] = [];
+		const files = ctx.uploader.acceptedFiles;
+		const fileIds: string[] = [];
 
-		for (const file of ctx.uploader.acceptedFiles) {
+		if (files.length > 0) {
 			const res = await uploadMutation.mutateAsync({
-				asset: {
-					attributions: [],
+				assets: files.map((file) => ({
 					file,
+					attributions: [],
 					for: 'review',
 					alt: null,
-				},
+				})),
 			});
-			ids.push(res.asset.id);
-		}
 
-		if (ids.length !== ctx.uploader.acceptedFiles.length) {
-			toast.error('Failed to upload all files');
-			return;
+			fileIds.push(...res.assets.map((a) => a.id));
 		}
 
 		mutation.mutate({
@@ -56,7 +51,7 @@ export function CreateReviewForm() {
 			content: plainText,
 			rating: data.rating,
 			placeId: place.id,
-			files: ids,
+			files: fileIds.length > 0 ? fileIds : undefined,
 			visitedAt: data.visitDate,
 		});
 	});
