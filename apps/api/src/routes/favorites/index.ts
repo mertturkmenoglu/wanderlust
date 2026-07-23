@@ -6,11 +6,12 @@ import { defineModule } from '@/lib/define-module';
 import { requireAuth } from '@/middlewares/authn';
 import { withErrorNormalization } from '@/middlewares/with-error-normalization';
 import { withTracing } from '@/middlewares/with-tracing';
+import { FavoriteStatusProvider } from './provides/status';
 import { FavoritesRepository } from './repository';
 import { FavoritesService } from './service';
 
 export const module = defineModule({
-	exports: [FavoritesService, FavoritesRepository],
+	exports: [FavoritesService, FavoritesRepository, FavoriteStatusProvider],
 	router: () => {
 		const os = implement(Favorites.Contract)
 			.$context<AuthContext>()
