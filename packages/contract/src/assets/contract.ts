@@ -14,4 +14,15 @@ export const contract = oc
 			successStatus: 201,
 			successDescription: 'Created',
 		}),
+		createMany: oc
+			.input(dto.createManyInput)
+			.output(dto.createManyOutput)
+			.route({
+				path: '/assets/bulk',
+				method: 'POST',
+				description: 'Create multiple assets',
+				summary: 'Create multiple assets',
+				successStatus: 201,
+				successDescription: 'Created',
+			}),
 	});

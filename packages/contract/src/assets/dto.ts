@@ -15,4 +15,20 @@ export namespace dto {
 	});
 
 	export type CreateOutput = z.infer<typeof createOutput>;
+
+	export const createManyInput = z.object({
+		assets: z.array(Types.Assets.$Insert.Asset).min(1).max(4),
+	});
+
+	export type CreateManyInput = z.infer<typeof createManyInput>;
+
+	export const createManyOutput = z.object({
+		assets: z.array(
+			Types.Asset.extend({
+				id: Types.Resources.id,
+			}),
+		),
+	});
+
+	export type CreateManyOutput = z.infer<typeof createManyOutput>;
 }
