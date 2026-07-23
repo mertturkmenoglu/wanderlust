@@ -1,4 +1,6 @@
-export const cacheOptions = {
+import { defineCacheOptions } from '@/lib/define-cache-options';
+
+export const cacheOptions = defineCacheOptions({
 	namespace: 'places',
 	keys: {
 		get: (id: string) => `get:${id}`,
@@ -9,4 +11,4 @@ export const cacheOptions = {
 	grace: {
 		get: '1h',
 	},
-};
+});

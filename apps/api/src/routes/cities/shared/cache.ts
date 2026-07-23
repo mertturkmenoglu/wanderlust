@@ -1,4 +1,6 @@
-export const cacheOptions = {
+import { defineCacheOptions } from '@/lib/define-cache-options';
+
+export const cacheOptions = defineCacheOptions({
 	namespace: 'cities',
 	keys: {
 		get: (id: string) => `get:${id}`,
@@ -14,4 +16,4 @@ export const cacheOptions = {
 		list: '6h',
 		listFeatured: '6h',
 	},
-};
+});

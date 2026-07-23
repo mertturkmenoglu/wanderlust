@@ -1,4 +1,6 @@
-export const cacheOptions = {
+import { defineCacheOptions } from '@/lib/define-cache-options';
+
+export const cacheOptions = defineCacheOptions({
 	namespace: 'aggregator',
 	ttl: {
 		home: '1h',
@@ -9,4 +11,4 @@ export const cacheOptions = {
 	grace: {
 		home: '1h',
 	},
-};
+});

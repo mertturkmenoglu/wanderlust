@@ -1,6 +1,7 @@
+import { defineCacheOptions } from '@/lib/define-cache-options';
 import { stableHash } from '@/lib/stable-hash';
 
-export const cacheOptions = {
+export const cacheOptions = defineCacheOptions({
 	namespace: 'accolades',
 	keys: {
 		listPlaces: (id: string, page: number, pageSize: number) =>
@@ -17,4 +18,4 @@ export const cacheOptions = {
 	grace: {
 		listPlaces: '1h',
 	},
-};
+});
