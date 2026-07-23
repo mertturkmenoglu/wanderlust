@@ -8,7 +8,7 @@ Backend framework used in Wanderlust for building APIs and services. Read [our o
 
 ## Facet
 
-A Rich Text Facet is a piece of metadata that describes the segments of a text which have special meaning. For example, a mention of a user, a hashtag, or a link can be considered as facets. Read [ADR-0006](adr/0006-rich-text-facets.md) for more information.
+A Rich Text Facet is a piece of metadata that describes the segments of a text which have special meaning. For example, a mention of a user, a hashtag, or a link can be considered as facets. Read [ADR-0006](adr/0006.md) for more information.
 
 ## POI
 
@@ -20,7 +20,7 @@ Rich text editor. A user interface component that allows users to create and edi
 
 ## ADR
 
-Architecture Decision Record. A document that captures important architectural decisions made during the development of Wanderlust, along with their context, rationale, and consequences. Read [ADR-0001](adr/0001-use-nygard-architectural-decision-records.md) for an example.
+Architecture Decision Record. A document that captures important architectural decisions made during the development of Wanderlust, along with their context, rationale, and consequences. Read [ADR-0001](adr/0001.md) for an example.
 
 ## Accolade
 
@@ -32,7 +32,7 @@ A data resource (in the context of `admin` project) is a representation of a dat
 
 ## IFF
 
-IFF stands for `Identity Factory Function`. Read [ADR-0003](adr/0003-use-identity-factory-functions.md) for more information.
+IFF stands for `Identity Factory Function`. Read [ADR-0003](adr/0003.md) for more information.
 
 ## Aggregation
 
