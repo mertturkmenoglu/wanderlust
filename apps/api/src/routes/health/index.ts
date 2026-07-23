@@ -1,19 +1,15 @@
-import { implement } from '@orpc/server';
-import { Health } from '@wanderlust/contract';
-import type { Context } from '@/lib/context';
+import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { CheckHealthMethod } from './methods/check';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [],
+	exports: [CheckHealthMethod],
 	router: () => {
-		const os = implement(Health.Contract).$context<Context>();
+		const check = container.get(CheckHealthMethod);
 
 		return os.router({
-			check: os.check.handler(async () => {
-				return {
-					message: 'OK',
-				};
-			}),
+			check: check.route(),
 		});
 	},
 });
