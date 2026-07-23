@@ -10,7 +10,7 @@ import { areSetsEqual } from '@/lib/set-equality';
 import { TraceAll } from '@/lib/tracer';
 import type { DbOrTx } from '@/lib/transactions';
 import { unique } from '@/lib/unique';
-import { FavoritesRepository } from '../favorites/repository';
+import { FavoriteStatusProvider } from '../favorites/provides/status';
 import { canDelete, canRead, canUpdate } from './authz';
 import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 
@@ -19,8 +19,8 @@ import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 export class ListsRepository {
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
-		@inject(FavoritesRepository)
-		private readonly favoritesRepo: FavoritesRepository,
+		@inject(FavoriteStatusProvider)
+		private readonly favorites: FavoriteStatusProvider,
 	) {}
 
 	async listAll(userId: string, data: Lists.dto.ListInput) {
@@ -140,7 +140,7 @@ export class ListsRepository {
 		);
 
 		const placeIds = unique(result.items.map((item) => item.placeId));
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+		const favoriteIds = await this.favorites.getFavoriteStatuses(
 			userId,
 			placeIds,
 		);

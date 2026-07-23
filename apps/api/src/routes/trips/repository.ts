@@ -8,15 +8,15 @@ import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
 import { TraceAll } from '@/lib/tracer';
 import type { Tx } from '@/lib/transactions';
-import { FavoritesRepository } from '../favorites/repository';
+import { FavoriteStatusProvider } from '../favorites/provides/status';
 
 @injectable()
 @TraceAll()
 export class TripsRepository {
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
-		@inject(FavoritesRepository)
-		private readonly favoritesRepo: FavoritesRepository,
+		@inject(FavoriteStatusProvider)
+		private readonly favorites: FavoriteStatusProvider,
 	) {}
 
 	async get(userId: string, data: Trips.dto.GetInput, options?: { tx?: Tx }) {
@@ -33,7 +33,7 @@ export class TripsRepository {
 
 		const placeIds = Array.from(new Set(res.locations.map((l) => l.placeId)));
 
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+		const favoriteIds = await this.favorites.getFavoriteStatuses(
 			userId,
 			placeIds,
 		);
@@ -611,7 +611,7 @@ export class TripsRepository {
 
 		invariant(location, 'NOT_FOUND', `Location with id ${id} not found`);
 
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(userId, [
+		const favoriteIds = await this.favorites.getFavoriteStatuses(userId, [
 			location.placeId,
 		]);
 

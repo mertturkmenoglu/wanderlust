@@ -11,15 +11,15 @@ import { areSetsEqual } from '@/lib/set-equality';
 import { TraceAll } from '@/lib/tracer';
 import type { DbOrTx } from '@/lib/transactions';
 import { unique } from '@/lib/unique';
-import { FavoritesRepository } from '../favorites/repository';
+import { FavoriteStatusProvider } from '../favorites/provides/status';
 
 @injectable()
 @TraceAll()
 export class CollectionsRepository {
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
-		@inject(FavoritesRepository)
-		private readonly favoritesRepo: FavoritesRepository,
+		@inject(FavoriteStatusProvider)
+		private readonly favorites: FavoriteStatusProvider,
 	) {}
 
 	async list(
@@ -69,7 +69,7 @@ export class CollectionsRepository {
 		invariant(result, 'NOT_FOUND', `Collection with ID ${id} not found`);
 
 		const placeIds = unique(result.items.map((item) => item.placeId));
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+		const favoriteIds = await this.favorites.getFavoriteStatuses(
 			userId,
 			placeIds,
 		);
@@ -308,7 +308,7 @@ export class CollectionsRepository {
 			r.collection.items.map((i) => i.placeId),
 		);
 		const uniquePlaceIds = unique(placeIds);
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+		const favoriteIds = await this.favorites.getFavoriteStatuses(
 			userId,
 			uniquePlaceIds,
 		);
@@ -544,7 +544,7 @@ export class CollectionsRepository {
 			r.collection.items.map((i) => i.placeId),
 		);
 		const uniquePlaceIds = unique(placeIds);
-		const favoriteIds = await this.favoritesRepo.getFavoriteStatuses(
+		const favoriteIds = await this.favorites.getFavoriteStatuses(
 			userId,
 			uniquePlaceIds,
 		);
