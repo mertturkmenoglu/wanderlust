@@ -28,6 +28,12 @@ export const module = defineModule({
 
 				return result;
 			}),
+			createMany: os.createMany.handler(async ({ input, context }) => {
+				const userId = getUserIdOrThrow(context);
+				const result = await svc.createMany(userId, input);
+
+				return result;
+			}),
 		});
 	},
 });
