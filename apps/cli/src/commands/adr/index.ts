@@ -105,6 +105,16 @@ export const adr = command({
 				},
 			})
 			.addStep({
+				name: 'Add ADR file to README.md',
+				fn: async (ctx) => {
+					fs.appendFileSync(
+						path.join(adrDirPath, 'README.md'),
+						`- [ADR-${pad(ctx.next)}: ${opts.title}](${ctx.nextFile})\n`,
+						'utf-8',
+					);
+				},
+			})
+			.addStep({
 				name: 'Finalizing',
 				fn: async ({ nextFile }) => {
 					consola.success(
