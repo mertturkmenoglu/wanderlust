@@ -1,4 +1,5 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Categories } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -9,16 +10,13 @@ import { CategoriesRepository } from './repository';
 @TraceAll()
 export class CategoriesService {
 	private readonly ns = 'categories';
-	private readonly cache: TCacheService;
 
 	constructor(
 		@inject(CategoriesRepository)
-		private readonly repository: CategoriesRepository,
-		@inject(CacheService)
-		cache: CacheService,
-	) {
-		this.cache = cache.get();
-	}
+		private readonly repo: CategoriesRepository,
+		@inject(Tokens.Cache)
+		private readonly cache: CacheService,
+	) {}
 
 	async get(data: Categories.dto.GetInput): Promise<Categories.dto.GetOutput> {
 		const list = await this.readFromCache();
@@ -42,7 +40,7 @@ export class CategoriesService {
 	async create(
 		data: Categories.dto.CreateInput,
 	): Promise<Categories.dto.CreateOutput> {
-		const result = await this.repository.create(data);
+		const result = await this.repo.create(data);
 
 		await this.invalidateCache();
 
@@ -54,7 +52,7 @@ export class CategoriesService {
 	async update(
 		data: Categories.dto.UpdateInput,
 	): Promise<Categories.dto.UpdateOutput> {
-		const result = await this.repository.update(data);
+		const result = await this.repo.update(data);
 
 		await this.invalidateCache();
 
@@ -64,7 +62,7 @@ export class CategoriesService {
 	}
 
 	async delete(data: Categories.dto.DeleteInput): Promise<void> {
-		await this.repository.delete(data);
+		await this.repo.delete(data);
 
 		await this.invalidateCache();
 	}
@@ -72,7 +70,7 @@ export class CategoriesService {
 	private async readFromCache() {
 		return this.cache.namespace(this.ns).getOrSetForever({
 			key: 'list',
-			factory: async () => await this.repository.list(),
+			factory: async () => await this.repo.list(),
 			grace: '6h',
 		});
 	}

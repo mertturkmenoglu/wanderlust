@@ -1,6 +1,7 @@
 import { ORPCError } from '@orpc/client';
+import { Tokens } from '@wanderlust/common';
 import type { Trips } from '@wanderlust/contract';
-import { JobsService, type TJobsService } from '@wanderlust/jobs';
+import type { JobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { eachDayOfInterval } from 'date-fns';
 import { inject, injectable } from 'inversify';
@@ -13,17 +14,11 @@ import { TripsRepository } from './repository';
 @injectable()
 @TraceAll()
 export class TripsService {
-	private readonly jobs: TJobsService;
-	private readonly activities: ActivitiesService;
-
 	constructor(
 		@inject(TripsRepository) private readonly repo: TripsRepository,
-		@inject(JobsService) jobs: JobsService,
-		@inject(ActivitiesService) activities: ActivitiesService,
-	) {
-		this.jobs = jobs.get();
-		this.activities = activities;
-	}
+		@inject(Tokens.Jobs) private readonly jobs: JobsService,
+		@inject(ActivitiesService) private readonly activities: ActivitiesService,
+	) {}
 
 	async get(
 		userId: string,

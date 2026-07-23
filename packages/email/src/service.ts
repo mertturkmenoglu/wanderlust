@@ -1,26 +1,12 @@
-import { ConfigService, type TConfigService } from '@wanderlust/config';
-import { inject, injectable } from 'inversify';
+import type { ConfigService } from '@wanderlust/config';
 import nodemailer from 'nodemailer';
 
-@injectable()
-export class EmailService {
-	private readonly instance: TEmailService;
-
-	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
-		this.instance = init(this.cfg.get());
-	}
-
-	get(): TEmailService {
-		return this.instance;
-	}
-}
-
-function init(cfg: TConfigService) {
+export function createEmail(deps: { cfg: ConfigService }) {
 	return nodemailer.createTransport({
-		host: cfg.email.host,
-		port: cfg.email.port,
-		secure: cfg.email.ssl,
+		host: deps.cfg.email.host,
+		port: deps.cfg.email.port,
+		secure: deps.cfg.email.ssl,
 	});
 }
 
-export type TEmailService = ReturnType<typeof init>;
+export type EmailService = ReturnType<typeof createEmail>;

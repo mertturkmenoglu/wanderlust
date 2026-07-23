@@ -1,6 +1,7 @@
-import { ConfigService, type TConfigService } from '@wanderlust/config';
+import { Tokens } from '@wanderlust/common';
+import type { ConfigService } from '@wanderlust/config';
 import type { Notifications } from '@wanderlust/contract';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -13,16 +14,10 @@ import {
 @injectable()
 @TraceAll()
 export class NotificationsRepository {
-	private readonly db: TDatabaseService;
-	private readonly cfg: TConfigService;
-
 	constructor(
-		@inject(DatabaseService) db: DatabaseService,
-		@inject(ConfigService) cfg: ConfigService,
-	) {
-		this.db = db.get();
-		this.cfg = cfg.get();
-	}
+		@inject(Tokens.Database) private readonly db: DatabaseService,
+		@inject(Tokens.Config) private readonly cfg: ConfigService,
+	) {}
 
 	async list(
 		userId: string,

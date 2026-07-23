@@ -1,11 +1,6 @@
-import { Types } from '@wanderlust/common';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Trips } from '@wanderlust/contract';
-import {
-	$includes,
-	DatabaseService,
-	schema,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { $includes, type DatabaseService, schema } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { and, count, desc, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -18,15 +13,11 @@ import { FavoritesRepository } from '../favorites/repository';
 @injectable()
 @TraceAll()
 export class TripsRepository {
-	private readonly db: TDatabaseService;
-
 	constructor(
-		@inject(DatabaseService) db: DatabaseService,
+		@inject(Tokens.Database) private readonly db: DatabaseService,
 		@inject(FavoritesRepository)
 		private readonly favoritesRepo: FavoritesRepository,
-	) {
-		this.db = db.get();
-	}
+	) {}
 
 	async get(userId: string, data: Trips.dto.GetInput, options?: { tx?: Tx }) {
 		const db = options?.tx ?? this.db;

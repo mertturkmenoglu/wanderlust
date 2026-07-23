@@ -1,5 +1,6 @@
+import { Tokens } from '@wanderlust/common';
 import type { Assets } from '@wanderlust/contract';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -8,11 +9,7 @@ import { TraceAll } from '@/lib/tracer';
 @injectable()
 @TraceAll()
 export class AssetsRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async createAsPending(v: {
 		userId: string;

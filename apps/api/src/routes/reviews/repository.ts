@@ -1,13 +1,8 @@
 import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/client';
-import { Types } from '@wanderlust/common';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Reviews } from '@wanderlust/contract';
-import {
-	$includes,
-	DatabaseService,
-	schema,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { $includes, type DatabaseService, schema } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -21,11 +16,7 @@ import type { CreateReviewParams } from './types';
 @injectable()
 @TraceAll()
 export class ReviewsRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async get(data: Reviews.dto.GetInput) {
 		const result = await this.db.query.reviews.findFirst({

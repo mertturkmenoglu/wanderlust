@@ -1,11 +1,11 @@
-import type { TRedisService } from '@wanderlust/cache';
-import type { TConfigService } from '@wanderlust/config';
-import type { TDatabaseService } from '@wanderlust/db';
-import type { TEmailService } from '@wanderlust/email';
+import type { RedisService } from '@wanderlust/cache';
+import type { ConfigService } from '@wanderlust/config';
+import type { DatabaseService } from '@wanderlust/db';
+import type { EmailService } from '@wanderlust/email';
 
 export type Dependencies = {
-	config: TConfigService;
-	email: TEmailService;
-	redis: TRedisService;
-	db: TDatabaseService;
+	config: ConfigService;
+	email: EmailService;
+	redis: RedisService;
+	db: DatabaseService;
 };

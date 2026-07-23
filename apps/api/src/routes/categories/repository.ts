@@ -1,5 +1,6 @@
+import { Tokens } from '@wanderlust/common';
 import type { Categories } from '@wanderlust/contract';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import type { DatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db/schema';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -9,11 +10,7 @@ import { TraceAll } from '@/lib/tracer';
 @injectable()
 @TraceAll()
 export class CategoriesRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async get(data: Categories.dto.GetInput) {
 		const result = await this.db.query.categories.findFirst({

@@ -15,7 +15,7 @@ type DefineModuleOptions<TRouter extends AnyContractRouter> = {
 	/**
 	 * oRPC router for this module.
 	 */
-	router: TRouter | (() => TRouter);
+	router: () => TRouter;
 };
 
 export function defineModule<TRouter extends AnyContractRouter>(

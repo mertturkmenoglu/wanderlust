@@ -10,7 +10,6 @@ export const matchHandler = ({ api, rpc }: ReturnType<typeof getHandlers>) => {
 
 		const res = await handler.handle(c.req.raw, {
 			prefix: isRpcRequest ? '/rpc' : '/api',
-			// @ts-expect-error Context type inference
 			context: await createContext({ context: c, container }),
 		});
 

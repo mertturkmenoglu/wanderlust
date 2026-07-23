@@ -1,29 +1,15 @@
-import { ConfigService, type TConfigService } from '@wanderlust/config';
-import { inject, injectable } from 'inversify';
+import type { ConfigService } from '@wanderlust/config';
 import IORedis from 'ioredis';
 
-@injectable()
-export class RedisService {
-	private readonly instance: TRedisService;
-
-	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
-		this.instance = init(this.cfg.get());
-	}
-
-	get(): TRedisService {
-		return this.instance;
-	}
-}
-
-function init(cfg: TConfigService) {
+export function createRedis(deps: { cfg: ConfigService }) {
 	const connection = new IORedis({
-		host: cfg.redis.host,
-		port: cfg.redis.port,
-		db: cfg.redis.db,
+		host: deps.cfg.redis.host,
+		port: deps.cfg.redis.port,
+		db: deps.cfg.redis.db,
 		maxRetriesPerRequest: null,
 	});
 
 	return connection;
 }
 
-export type TRedisService = ReturnType<typeof init>;
+export type RedisService = ReturnType<typeof createRedis>;

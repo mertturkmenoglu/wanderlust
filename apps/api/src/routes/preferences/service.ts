@@ -1,5 +1,6 @@
 import { trace } from '@opentelemetry/api';
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Preferences } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
@@ -9,15 +10,12 @@ import { PreferencesRepository } from './repository';
 @TraceAll()
 export class PreferencesService {
 	private readonly ns = 'preferences';
-	private readonly cache: TCacheService;
 
 	constructor(
 		@inject(PreferencesRepository)
 		private readonly repo: PreferencesRepository,
-		@inject(CacheService) cache: CacheService,
-	) {
-		this.cache = cache.get();
-	}
+		@inject(Tokens.Cache) private readonly cache: CacheService,
+	) {}
 
 	async get(
 		userId: string,

@@ -1,5 +1,5 @@
 import type { S3ClientConfig } from '@aws-sdk/client-s3';
-import type { TConfigService } from '@wanderlust/config';
+import type { ConfigService } from '@wanderlust/config';
 import { S3Driver } from 'flydrive/drivers/s3';
 import type { Bucket } from './buckets';
 
@@ -26,7 +26,7 @@ export function getExtension(filename: string) {
 
 type BaseDriverConfig = S3ClientConfig;
 
-export function createDriverFactory(cfg: TConfigService) {
+export function createDriverFactory(cfg: ConfigService) {
 	return {
 		createDriver(bucket: Bucket) {
 			const baseDriverConfig = {

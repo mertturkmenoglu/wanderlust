@@ -1,4 +1,5 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Accolades } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
@@ -9,28 +10,25 @@ import { AccoladesRepository } from './repository';
 @TraceAll()
 export class AccoladesService {
 	private readonly ns = 'accolades';
-	private readonly cache: TCacheService;
 
 	constructor(
 		@inject(AccoladesRepository)
-		private readonly accoladesRepository: AccoladesRepository,
-		@inject(CacheService) cache: CacheService,
+		private readonly repo: AccoladesRepository,
+		@inject(Tokens.Cache) private readonly cache: CacheService,
 		@inject(AccoladesEnricher) private readonly enricher: AccoladesEnricher,
-	) {
-		this.cache = cache.get();
-	}
+	) {}
 
 	async create(
 		userId: string,
 		data: Accolades.dto.CreateInput,
 	): Promise<Accolades.dto.CreateOutput> {
-		const result = await this.accoladesRepository.create(userId, data);
+		const result = await this.repo.create(userId, data);
 
 		return result;
 	}
 
 	async list(data: Accolades.dto.ListInput): Promise<Accolades.dto.ListOutput> {
-		const result = await this.accoladesRepository.list(data);
+		const result = await this.repo.list(data);
 
 		return result;
 	}
@@ -39,13 +37,13 @@ export class AccoladesService {
 		userId: string,
 		data: Accolades.dto.DeleteInput,
 	): Promise<Accolades.dto.DeleteOutput> {
-		await this.accoladesRepository.delete(userId, data);
+		await this.repo.delete(userId, data);
 
 		return {};
 	}
 
 	async get(data: Accolades.dto.GetInput): Promise<Accolades.dto.GetOutput> {
-		const result = await this.accoladesRepository.get(data);
+		const result = await this.repo.get(data);
 
 		return result;
 	}
@@ -56,7 +54,7 @@ export class AccoladesService {
 	): Promise<Accolades.dto.ListPlacesOutput> {
 		const result = await this.cache.namespace(this.ns).getOrSet({
 			key: `places:${data.page}:${data.pageSize}`,
-			factory: async () => this.accoladesRepository.listPlaces(userId, data),
+			factory: async () => this.repo.listPlaces(userId, data),
 			grace: '1h',
 			ttl: '1h',
 		});
@@ -76,7 +74,7 @@ export class AccoladesService {
 		userId: string,
 		data: Accolades.dto.UpdateInput,
 	): Promise<Accolades.dto.UpdateOutput> {
-		const result = await this.accoladesRepository.update(userId, data);
+		const result = await this.repo.update(userId, data);
 
 		return result;
 	}

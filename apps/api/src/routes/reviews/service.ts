@@ -1,9 +1,10 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: TODO */
 import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/server';
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Reviews } from '@wanderlust/contract';
-import { JobsService, type TJobsService } from '@wanderlust/jobs';
+import type { JobsService } from '@wanderlust/jobs';
 import { extractAllFacets } from '@wanderlust/richtext';
 import { nanoid } from '@wanderlust/uid';
 import { inject, injectable } from 'inversify';
@@ -13,19 +14,14 @@ import { ReviewsRepository } from './repository';
 
 @injectable()
 export class ReviewsService {
-	private readonly cache: TCacheService;
-	private readonly jobs: TJobsService;
 	private readonly ns = 'reviews';
 
 	constructor(
 		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
-		@inject(CacheService) cache: CacheService,
+		@inject(Tokens.Cache) private readonly cache: CacheService,
 		@inject(ActivitiesService) private readonly activities: ActivitiesService,
-		@inject(JobsService) jobs: JobsService,
-	) {
-		this.cache = cache.get();
-		this.jobs = jobs.get();
-	}
+		@inject(Tokens.Jobs) private readonly jobs: JobsService,
+	) {}
 
 	async get(
 		userId: string | null,

@@ -1,7 +1,7 @@
-import type { TDatabaseService } from '@wanderlust/db';
+import type { DatabaseService } from '@wanderlust/db';
 
-export type TxFn = Parameters<TDatabaseService['transaction']>[0];
+export type TxFn = Parameters<DatabaseService['transaction']>[0];
 
 export type Tx = Parameters<TxFn>[0];
 
-export type DbOrTx = TDatabaseService | Tx;
+export type DbOrTx = DatabaseService | Tx;

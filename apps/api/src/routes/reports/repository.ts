@@ -1,7 +1,6 @@
-import { Types } from '@wanderlust/common';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Reports } from '@wanderlust/contract';
-import { schema } from '@wanderlust/db';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { count, desc, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -11,11 +10,7 @@ import { TraceAll } from '@/lib/tracer';
 @injectable()
 @TraceAll()
 export class ReportsRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	private async isAdmin(userId: string): Promise<boolean> {
 		const user = await this.db.query.users.findFirst({

@@ -1,4 +1,5 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Cities } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
@@ -8,14 +9,11 @@ import { CitiesRepository } from './repository';
 @TraceAll()
 export class CitiesService {
 	private readonly ns = 'cities';
-	private readonly cache: TCacheService;
 
 	constructor(
-		@inject(CitiesRepository) private readonly repository: CitiesRepository,
-		@inject(CacheService) cache: CacheService,
-	) {
-		this.cache = cache.get();
-	}
+		@inject(CitiesRepository) private readonly repo: CitiesRepository,
+		@inject(Tokens.Cache) private readonly cache: CacheService,
+	) {}
 
 	async list(): Promise<Cities.dto.ListOutput> {
 		const result = await this.readFromCache();
@@ -42,7 +40,7 @@ export class CitiesService {
 	}
 
 	async create(data: Cities.dto.CreateInput): Promise<Cities.dto.CreateOutput> {
-		const result = await this.repository.create(data);
+		const result = await this.repo.create(data);
 
 		await this.invalidateCache();
 
@@ -52,7 +50,7 @@ export class CitiesService {
 	}
 
 	async update(data: Cities.dto.UpdateInput): Promise<Cities.dto.UpdateOutput> {
-		const result = await this.repository.update(data);
+		const result = await this.repo.update(data);
 
 		await this.invalidateCache();
 
@@ -62,7 +60,7 @@ export class CitiesService {
 	}
 
 	async delete(data: Cities.dto.DeleteInput): Promise<void> {
-		await this.repository.delete(data);
+		await this.repo.delete(data);
 
 		await this.invalidateCache();
 	}
@@ -74,7 +72,7 @@ export class CitiesService {
 	private async readFromCache() {
 		const result = await this.cache.namespace(this.ns).getOrSetForever({
 			key: 'list',
-			factory: () => this.repository.list(),
+			factory: () => this.repo.list(),
 			grace: '6h',
 		});
 
@@ -85,7 +83,7 @@ export class CitiesService {
 		const result = await this.cache.namespace(this.ns).getOrSet({
 			key: 'featured',
 			ttl: '6h',
-			factory: () => this.repository.listFeatured(),
+			factory: () => this.repo.listFeatured(),
 			grace: '6h',
 		});
 
@@ -96,7 +94,7 @@ export class CitiesService {
 		const result = await this.cache.namespace(this.ns).getOrSet({
 			key: `get-${id}`,
 			ttl: '6h',
-			factory: () => this.repository.get({ id }),
+			factory: () => this.repo.get({ id }),
 			grace: '6h',
 		});
 

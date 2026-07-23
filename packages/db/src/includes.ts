@@ -1,11 +1,11 @@
-import type { TDatabaseService } from './service';
+import type { DatabaseService } from './service';
 
-type Query = TDatabaseService['query'];
+type Query = DatabaseService['query'];
 
 type Domain = keyof Query;
 
 type With<TDomain extends Domain> = NonNullable<
-	Parameters<TDatabaseService['query'][TDomain]['findFirst']>[0]
+	Parameters<DatabaseService['query'][TDomain]['findFirst']>[0]
 >;
 
 const withPlace = {

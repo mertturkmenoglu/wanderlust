@@ -1,15 +1,12 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import { inject, injectable } from 'inversify';
 import type { ActivityItem, ActivityType } from './types';
 import { unshiftCapped } from './utilities';
 
 @injectable()
 export class ActivitiesService {
-	private readonly cache: TCacheService;
-
-	constructor(@inject(CacheService) cache: CacheService) {
-		this.cache = cache.get();
-	}
+	constructor(@inject(Tokens.Cache) private readonly cache: CacheService) {}
 
 	async addActivity(
 		username: string,

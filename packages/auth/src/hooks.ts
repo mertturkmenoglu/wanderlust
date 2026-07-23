@@ -1,10 +1,10 @@
-import type { TCacheService } from '@wanderlust/cache';
-import type { TDatabaseService } from '@wanderlust/db';
+import type { CacheService } from '@wanderlust/cache';
+import type { DatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db/schema';
 
 export async function hookAfterCreateUser(
-	db: TDatabaseService,
-	cache: TCacheService,
+	db: DatabaseService,
+	cache: CacheService,
 	user: { id: string; username: string },
 ) {
 	const channels = schema.notificationChannelType.enumValues;

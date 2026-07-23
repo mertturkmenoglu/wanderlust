@@ -1,4 +1,5 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Aggregator } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
@@ -9,17 +10,12 @@ import { AggregatorRepository } from './repository';
 @TraceAll()
 export class AggregatorService {
 	private readonly ns = 'aggregator';
-	private readonly cache: TCacheService;
-	private readonly repo: AggregatorRepository;
 
 	constructor(
-		@inject(CacheService) cache: CacheService,
-		@inject(AggregatorRepository) repo: AggregatorRepository,
+		@inject(Tokens.Cache) private readonly cache: CacheService,
+		@inject(AggregatorRepository) private readonly repo: AggregatorRepository,
 		@inject(AggregatorEnricher) private readonly enricher: AggregatorEnricher,
-	) {
-		this.cache = cache.get();
-		this.repo = repo;
-	}
+	) {}
 
 	async home(userId: string | null): Promise<Aggregator.dto.HomeOutput> {
 		const result = await this.cache.namespace(this.ns).getOrSet({

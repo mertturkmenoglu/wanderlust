@@ -1,5 +1,6 @@
+import { Tokens } from '@wanderlust/common';
 import type { Cities } from '@wanderlust/contract';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -9,11 +10,7 @@ import { findById, findMany } from './statements';
 @injectable()
 @TraceAll()
 export class CitiesRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async list() {
 		return findMany.execute(this.db, {});

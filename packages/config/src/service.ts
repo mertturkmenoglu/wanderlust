@@ -1,22 +1,8 @@
-import { injectable } from 'inversify';
 import { z } from 'zod';
 import configJson from '../../../config.json' with { type: 'json' };
 import { configSchema } from './config-schema';
 
-@injectable()
-export class ConfigService {
-	private readonly instance: TConfigService;
-
-	constructor() {
-		this.instance = init();
-	}
-
-	get(): TConfigService {
-		return this.instance;
-	}
-}
-
-function init() {
+export function createConfig() {
 	const res = configSchema.safeParse(configJson);
 
 	if (!res.success) {
@@ -28,4 +14,4 @@ function init() {
 	return res.data;
 }
 
-export type TConfigService = ReturnType<typeof init>;
+export type ConfigService = ReturnType<typeof createConfig>;

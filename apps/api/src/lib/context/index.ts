@@ -1,4 +1,5 @@
-import { AuthService } from '@wanderlust/auth';
+import type { AuthService } from '@wanderlust/auth';
+import { Tokens } from '@wanderlust/common';
 import type { Context as HonoContext } from 'hono';
 import type { Container } from 'inversify';
 import type { SetNonNullable } from '../type-utils';
@@ -14,7 +15,7 @@ export async function createContext({
 	context,
 	container,
 }: CreateContextOptions) {
-	const auth = container.get(AuthService).get();
+	const auth = container.get<AuthService>(Tokens.Auth);
 
 	const session = await auth.api.getSession({
 		headers: context.req.raw.headers,

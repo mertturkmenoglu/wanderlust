@@ -1,8 +1,8 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
-import { Types } from '@wanderlust/common';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Users } from '@wanderlust/contract';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
-import { JobsService, type TJobsService } from '@wanderlust/jobs';
+import { type DatabaseService, schema } from '@wanderlust/db';
+import type { JobsService } from '@wanderlust/jobs';
 import { nanoid } from '@wanderlust/uid';
 import { and, asc, eq, ilike, sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -16,24 +16,14 @@ import * as statements from './statements';
 @injectable()
 @TraceAll()
 export class UsersRepository {
-	private readonly db: TDatabaseService;
-	private readonly cache: TCacheService;
-	private readonly jobs: TJobsService;
-	private readonly activities: ActivitiesService;
-
 	constructor(
-		@inject(DatabaseService) db: DatabaseService,
-		@inject(CacheService) cache: CacheService,
-		@inject(JobsService) jobs: JobsService,
-		@inject(ActivitiesService) activities: ActivitiesService,
+		@inject(Tokens.Database) private readonly db: DatabaseService,
+		@inject(Tokens.Cache) private readonly cache: CacheService,
+		@inject(Tokens.Jobs) private readonly jobs: JobsService,
+		@inject(ActivitiesService) private readonly activities: ActivitiesService,
 		@inject(FavoritesRepository)
 		private readonly favoritesRepo: FavoritesRepository,
-	) {
-		this.db = db.get();
-		this.cache = cache.get();
-		this.jobs = jobs.get();
-		this.activities = activities;
-	}
+	) {}
 
 	async updateImage(
 		userId: string,

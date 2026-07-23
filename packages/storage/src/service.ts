@@ -1,23 +1,9 @@
-import { ConfigService, type TConfigService } from '@wanderlust/config';
+import type { ConfigService } from '@wanderlust/config';
 import { DriveManager } from 'flydrive';
-import { inject, injectable } from 'inversify';
 import { createDriverFactory } from './helpers';
 
-@injectable()
-export class StorageService {
-	private readonly instance: TStorageService;
-
-	constructor(@inject(ConfigService) private readonly cfg: ConfigService) {
-		this.instance = init(this.cfg.get());
-	}
-
-	get(): TStorageService {
-		return this.instance;
-	}
-}
-
-function init(cfg: TConfigService) {
-	const factory = createDriverFactory(cfg);
+export function createStorage(deps: { cfg: ConfigService }) {
+	const factory = createDriverFactory(deps.cfg);
 
 	return new DriveManager({
 		default: 'default',
@@ -30,4 +16,4 @@ function init(cfg: TConfigService) {
 	});
 }
 
-export type TStorageService = ReturnType<typeof init>;
+export type StorageService = ReturnType<typeof createStorage>;

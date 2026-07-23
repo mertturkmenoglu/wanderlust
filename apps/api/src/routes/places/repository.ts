@@ -1,10 +1,6 @@
+import { Tokens } from '@wanderlust/common';
 import type { Places } from '@wanderlust/contract';
-import {
-	$includes,
-	DatabaseService,
-	schema,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { $includes, type DatabaseService, schema } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -18,11 +14,7 @@ import {
 @injectable()
 @TraceAll()
 export class PlacesRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async get(data: Places.dto.GetInput) {
 		const place = await findPlaceById.execute(this.db, { id: data.id });

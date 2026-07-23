@@ -1,4 +1,5 @@
-import { CacheService, type TCacheService } from '@wanderlust/cache';
+import type { CacheService } from '@wanderlust/cache';
+import { Tokens } from '@wanderlust/common';
 import type { Places } from '@wanderlust/contract';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
@@ -8,23 +9,20 @@ import { PlacesRepository } from './repository';
 @TraceAll()
 export class PlacesService {
 	private readonly ns = 'places';
-	private readonly cache: ReturnType<TCacheService['namespace']>;
 
 	constructor(
-		@inject(PlacesRepository) private readonly repository: PlacesRepository,
-		@inject(CacheService) cacheService: CacheService,
-	) {
-		this.cache = cacheService.get().namespace(this.ns);
-	}
+		@inject(PlacesRepository) private readonly repo: PlacesRepository,
+		@inject(Tokens.Cache) private readonly cache: CacheService,
+	) {}
 
 	async get(
 		data: Places.dto.GetInput,
 		userId: string | null,
 	): Promise<Places.dto.GetOutput> {
-		const result = await this.cache.getOrSet({
+		const result = await this.cache.namespace(this.ns).getOrSet({
 			key: data.id,
 			ttl: '1h',
-			factory: async () => this.repository.get(data),
+			factory: async () => this.repo.get(data),
 			grace: '5m',
 		});
 
@@ -38,7 +36,7 @@ export class PlacesService {
 			};
 		}
 
-		const meta = await this.repository.getMeta(data.id, userId);
+		const meta = await this.repo.getMeta(data.id, userId);
 
 		return {
 			place: result,
@@ -47,7 +45,7 @@ export class PlacesService {
 	}
 
 	async list(): Promise<Places.dto.ListOutput> {
-		const result = await this.repository.list();
+		const result = await this.repo.list();
 
 		return {
 			places: result,
@@ -55,7 +53,7 @@ export class PlacesService {
 	}
 
 	async update(data: Places.dto.UpdateInput): Promise<Places.dto.UpdateOutput> {
-		const result = await this.repository.update(data);
+		const result = await this.repo.update(data);
 
 		return {
 			place: result,
@@ -63,6 +61,6 @@ export class PlacesService {
 	}
 
 	async _delete(data: Places.dto.DeleteInput): Promise<void> {
-		await this.repository._delete(data);
+		await this.repo._delete(data);
 	}
 }

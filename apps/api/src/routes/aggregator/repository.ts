@@ -1,5 +1,6 @@
 import { ORPCError } from '@orpc/client';
-import { DatabaseService, type TDatabaseService } from '@wanderlust/db';
+import { Tokens } from '@wanderlust/common';
+import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { TraceAll } from '@/lib/tracer';
 import * as statements from './statements';
@@ -7,11 +8,7 @@ import * as statements from './statements';
 @injectable()
 @TraceAll()
 export class AggregatorRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async home() {
 		const promises = await Promise.allSettled([

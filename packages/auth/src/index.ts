@@ -1,67 +1,36 @@
 import { redisStorage } from '@better-auth/redis-storage';
-import {
-	CacheService,
-	RedisService,
-	type TCacheService,
-	type TRedisService,
-} from '@wanderlust/cache';
-import { ConfigService, type TConfigService } from '@wanderlust/config';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
-import { JobsService, type TJobsService } from '@wanderlust/jobs';
+import type { CacheService, RedisService } from '@wanderlust/cache';
+import type { ConfigService } from '@wanderlust/config';
+import { type DatabaseService, schema } from '@wanderlust/db';
+import type { JobsService } from '@wanderlust/jobs';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, bearer, multiSession, openAPI } from 'better-auth/plugins';
-import { inject, injectable } from 'inversify';
 import { additionalFields } from './additional-fields';
 import { hookAfterCreateUser } from './hooks';
 import { sendResetPassword } from './password-reset';
 import { session } from './session';
 import { generateUsernameFromEmail } from './username';
 
-@injectable()
-export class AuthService {
-	private readonly instance: TAuthService;
-
-	constructor(
-		@inject(DatabaseService) private readonly db: DatabaseService,
-		@inject(ConfigService) private readonly cfg: ConfigService,
-		@inject(JobsService) private readonly jobs: JobsService,
-		@inject(CacheService) private readonly cache: CacheService,
-		@inject(RedisService) private readonly redis: RedisService,
-	) {
-		this.instance = init(
-			this.db.get(),
-			this.cfg.get(),
-			this.jobs.get(),
-			this.cache.get(),
-			this.redis.get(),
-		);
-	}
-
-	get(): TAuthService {
-		return this.instance;
-	}
-}
-
-function init(
-	db: TDatabaseService,
-	cfg: TConfigService,
-	jobs: TJobsService,
-	cache: TCacheService,
-	redis: TRedisService,
-) {
+export function createAuth(deps: {
+	db: DatabaseService;
+	cfg: ConfigService;
+	jobs: JobsService;
+	cache: CacheService;
+	redis: RedisService;
+}) {
 	return betterAuth({
-		database: drizzleAdapter(db, {
+		database: drizzleAdapter(deps.db, {
 			provider: 'pg',
 			schema: schema,
 			usePlural: true,
 		}),
-		baseURL: cfg.api.url,
+		baseURL: deps.cfg.api.url,
 		databaseHooks: {
 			user: {
 				create: {
 					after: async (user) => {
-						await hookAfterCreateUser(db, cache, {
+						await hookAfterCreateUser(deps.db, deps.cache, {
 							id: user.id,
 							username: user.username as string,
 						});
@@ -87,12 +56,12 @@ function init(
 			}),
 			bearer(),
 		],
-		trustedOrigins: cfg.api.cors.allowedOrigins,
+		trustedOrigins: deps.cfg.api.cors.allowedOrigins,
 		appName: 'Wanderlust',
 		emailAndPassword: {
 			enabled: true,
 			sendResetPassword: async (data) => {
-				await sendResetPassword(data, jobs);
+				await sendResetPassword(data, deps.jobs);
 			},
 		},
 		socialProviders: {
@@ -132,13 +101,13 @@ function init(
 			},
 		},
 		secondaryStorage: redisStorage({
-			client: redis,
+			client: deps.redis,
 			keyPrefix: 'wl-auth:',
 		}),
 		session,
 	});
 }
 
-export type TAuthService = ReturnType<typeof init>;
+export type AuthService = ReturnType<typeof createAuth>;
 
 export * from './username';

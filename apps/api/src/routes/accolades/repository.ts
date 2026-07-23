@@ -1,10 +1,6 @@
-import { Types } from '@wanderlust/common';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Accolades } from '@wanderlust/contract';
-import {
-	$includes,
-	DatabaseService,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { $includes, type DatabaseService } from '@wanderlust/db';
 import * as schema from '@wanderlust/db/schema';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -16,11 +12,7 @@ import { findAssignments, findMany } from './statements';
 @injectable()
 @TraceAll()
 export class AccoladesRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async create(
 		_userId: string,

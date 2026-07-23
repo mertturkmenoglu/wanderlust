@@ -1,10 +1,7 @@
 import { ORPCError } from '@orpc/client';
+import { Tokens } from '@wanderlust/common';
 import type { Users } from '@wanderlust/contract';
-import {
-	getFilenameFromUrl,
-	StorageService,
-	type TStorageService,
-} from '@wanderlust/storage';
+import { getFilenameFromUrl, type StorageService } from '@wanderlust/storage';
 import { nanoid } from '@wanderlust/uid';
 import { fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
@@ -15,14 +12,10 @@ import { UsersRepository } from './repository';
 @injectable()
 @TraceAll()
 export class UsersService {
-	private readonly storage: TStorageService;
-
 	constructor(
 		@inject(UsersRepository) private readonly repo: UsersRepository,
-		@inject(StorageService) storage: StorageService,
-	) {
-		this.storage = storage.get();
-	}
+		@inject(Tokens.Storage) private readonly storage: StorageService,
+	) {}
 
 	async updateImage(
 		userId: string,

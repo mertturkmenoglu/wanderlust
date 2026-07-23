@@ -1,11 +1,6 @@
-import { Types } from '@wanderlust/common';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Lists } from '@wanderlust/contract';
-import {
-	$includes,
-	DatabaseService,
-	schema,
-	type TDatabaseService,
-} from '@wanderlust/db';
+import { $includes, type DatabaseService, schema } from '@wanderlust/db';
 import { nanoid } from '@wanderlust/uid';
 import { and, eq, inArray } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
@@ -22,15 +17,11 @@ import { MAX_ITEMS_PER_LIST, MAX_LISTS_PER_USER } from './consts';
 @injectable()
 @TraceAll()
 export class ListsRepository {
-	private readonly db: TDatabaseService;
-
 	constructor(
-		@inject(DatabaseService) db: DatabaseService,
+		@inject(Tokens.Database) private readonly db: DatabaseService,
 		@inject(FavoritesRepository)
 		private readonly favoritesRepo: FavoritesRepository,
-	) {
-		this.db = db.get();
-	}
+	) {}
 
 	async listAll(userId: string, data: Lists.dto.ListInput) {
 		const offset = Types.Pagination.getOffset(data);

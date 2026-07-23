@@ -1,6 +1,6 @@
-import { Types } from '@wanderlust/common';
+import { Tokens, Types } from '@wanderlust/common';
 import type { Bookmarks } from '@wanderlust/contract';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
@@ -10,11 +10,7 @@ import { findMany } from './statements';
 @injectable()
 @TraceAll()
 export class BookmarksRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	async create(
 		userId: string,

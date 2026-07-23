@@ -1,7 +1,8 @@
 import crypto from 'node:crypto';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
+import { Tokens } from '@wanderlust/common';
 import type { Assets } from '@wanderlust/contract';
-import { StorageService, type TStorageService } from '@wanderlust/storage';
+import type { StorageService } from '@wanderlust/storage';
 import { type FileTypeResult, fileTypeFromBlob } from 'file-type';
 import { inject, injectable } from 'inversify';
 import { calculateBlurhash } from '@/lib/blurhash';
@@ -13,16 +14,12 @@ import { AssetsRepository } from './repository';
 @injectable()
 @TraceAll()
 export class AssetsService {
-	private readonly storage: TStorageService;
-
 	constructor(
 		@inject(AssetsRepository)
 		private readonly repo: AssetsRepository,
-		@inject(StorageService)
-		storage: StorageService,
-	) {
-		this.storage = storage.get();
-	}
+		@inject(Tokens.Storage)
+		private readonly storage: StorageService,
+	) {}
 
 	async create(
 		userId: string,

@@ -1,5 +1,6 @@
+import { Tokens } from '@wanderlust/common';
 import { Preferences } from '@wanderlust/contract';
-import { DatabaseService, schema, type TDatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { Trace, TraceAll } from '@/lib/tracer';
@@ -8,11 +9,7 @@ import { findByUserId } from './statements';
 @injectable()
 @TraceAll()
 export class PreferencesRepository {
-	private readonly db: TDatabaseService;
-
-	constructor(@inject(DatabaseService) db: DatabaseService) {
-		this.db = db.get();
-	}
+	constructor(@inject(Tokens.Database) private readonly db: DatabaseService) {}
 
 	@Trace()
 	async get(
