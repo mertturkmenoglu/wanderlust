@@ -7,6 +7,9 @@
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		},
 		"jsx": "react-jsx",
 		"jsxImportSource": "react"
 	},
