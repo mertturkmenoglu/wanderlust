@@ -21,8 +21,13 @@ export const assets = p.pgTable(
 		blurhash: p.text(),
 		alt: p.text(),
 
+		// The status of the asset, which can be one of the following:
+		// - pending: record has been created, waiting file to be uploaded to the object storage
+		// - ready: record has been created, file has been uploaded to the object storage, but not yet associated with a place or review
+		// - available: record has been created, file has been uploaded to the object storage, and associated with a place or review
+		// - failed: record has been created, but the file upload to the object storage has failed
 		status: p
-			.text('status', { enum: ['pending', 'ready', 'failed'] })
+			.text('status', { enum: ['pending', 'ready', 'available', 'failed'] })
 			.notNull()
 			.default('pending'),
 		visibility: p
