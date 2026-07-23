@@ -1,65 +1,37 @@
-import { implement } from '@orpc/server';
-import { Cities } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { requireAuth } from '@/middlewares/authn';
-import { isAdmin } from '@/middlewares/is-admin';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { CitiesRepository } from './repository';
-import { CitiesService } from './service';
+import { CreateCityMethod } from './methods/create';
+import { DeleteCityMethod } from './methods/delete';
+import { GetCityMethod } from './methods/get';
+import { ListCitiesMethod } from './methods/list';
+import { ListFeaturedCitiesMethod } from './methods/list-featured';
+import { UpdateCityMethod } from './methods/update';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [CitiesService, CitiesRepository],
+	exports: [
+		GetCityMethod,
+		ListCitiesMethod,
+		ListFeaturedCitiesMethod,
+		CreateCityMethod,
+		UpdateCityMethod,
+		DeleteCityMethod,
+	],
 	router: () => {
-		const os = implement(Cities.Contract)
-			.$context<Context>()
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(CitiesService);
+		const get = container.get(GetCityMethod);
+		const list = container.get(ListCitiesMethod);
+		const listFeatured = container.get(ListFeaturedCitiesMethod);
+		const create = container.get(CreateCityMethod);
+		const update = container.get(UpdateCityMethod);
+		const del = container.get(DeleteCityMethod);
 
 		return os.router({
-			list: os.list.handler(async () => {
-				const result = await svc.list();
-
-				return result;
-			}),
-			listFeatured: os.listFeatured.handler(async () => {
-				const result = await svc.listFeatured();
-
-				return result;
-			}),
-			get: os.get.handler(async ({ input }) => {
-				const result = await svc.get(input);
-
-				return result;
-			}),
-			create: os.create
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.create(input);
-
-					return result;
-				}),
-			update: os.update
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					const result = await svc.update(input);
-
-					return result;
-				}),
-			delete: os.delete
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ input }) => {
-					await svc.delete(input);
-
-					return {};
-				}),
+			list: list.route(),
+			listFeatured: listFeatured.route(),
+			get: get.route(),
+			create: create.route(),
+			update: update.route(),
+			delete: del.route(),
 		});
 	},
 });
