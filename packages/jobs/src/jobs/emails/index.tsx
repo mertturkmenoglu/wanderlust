@@ -1,6 +1,7 @@
 import { render } from '@react-email/components';
 import {
 	ForgotPasswordEmail,
+	PasswordChangeInfoEmail,
 	TestEmail,
 	WelcomeEmail,
 } from '@wanderlust/email';
@@ -20,6 +21,10 @@ export function defineEmailJobs(deps: Dependencies) {
 				firstName: z.string(),
 				email: z.email(),
 				url: z.url(),
+			}),
+			'password-change-info': z.object({
+				email: z.email(),
+				firstName: z.string(),
 			}),
 			welcome: z.object({
 				email: z.email(),
@@ -49,6 +54,18 @@ export function defineEmailJobs(deps: Dependencies) {
 					from: ctx.config.email.from,
 					to: data.email,
 					subject: 'Reset Your Password',
+					html: html,
+				});
+			},
+			'password-change-info': async (data, ctx) => {
+				const html = await render(
+					<PasswordChangeInfoEmail firstName={data.firstName} />,
+				);
+
+				await ctx.email.sendMail({
+					from: ctx.config.email.from,
+					to: data.email,
+					subject: 'Your Password Has Been Changed',
 					html: html,
 				});
 			},
