@@ -1,76 +1,48 @@
-import { implement } from '@orpc/server';
-import { Lists } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { requireAuth } from '@/middlewares/authn';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { ListsRepository } from './repository';
-import { ListsService } from './service';
+import { CreateListMethod } from './methods/create';
+import { DeleteListMethod } from './methods/delete';
+import { GetListMethod } from './methods/get';
+import { UpdateListItemsMethod } from './methods/items-update';
+import { ListAllMethod } from './methods/list';
+import { ListPlaceSaveStatMethod } from './methods/list-place-save-stat';
+import { ListPublicMethod } from './methods/list-public';
+import { UpdateListMethod } from './methods/update';
+import { ListProvider } from './provides/list';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [ListsService, ListsRepository],
+	exports: [
+		ListAllMethod,
+		ListPublicMethod,
+		GetListMethod,
+		ListPlaceSaveStatMethod,
+		CreateListMethod,
+		UpdateListMethod,
+		DeleteListMethod,
+		UpdateListItemsMethod,
+		ListProvider,
+	],
 	router: () => {
-		const os = implement(Lists.Contract)
-			.$context<AuthContext>()
-			.use(requireAuth)
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(ListsService);
+		const listAll = container.get(ListAllMethod);
+		const listPublic = container.get(ListPublicMethod);
+		const get = container.get(GetListMethod);
+		const listPlaceSaveStat = container.get(ListPlaceSaveStatMethod);
+		const create = container.get(CreateListMethod);
+		const update = container.get(UpdateListMethod);
+		const del = container.get(DeleteListMethod);
+		const updateItems = container.get(UpdateListItemsMethod);
 
 		return os.router({
-			list: os.list.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.listAll(userId, input);
-
-				return result;
-			}),
-			listPublic: os.listPublic.handler(async ({ input }) => {
-				const result = await svc.listPublic(input);
-
-				return result;
-			}),
-			get: os.get.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.get(userId, input);
-
-				return result;
-			}),
-			listPlaceSaveStat: os.listPlaceSaveStat.handler(
-				async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.checkStatus(userId, input);
-
-					return result;
-				},
-			),
-			create: os.create.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.create(userId, input);
-
-				return result;
-			}),
-			update: os.update.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.update(userId, input);
-
-				return result;
-			}),
-			delete: os.delete.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc._delete(userId, input);
-
-				return {};
-			}),
+			list: listAll.route(),
+			listPublic: listPublic.route(),
+			get: get.route(),
+			listPlaceSaveStat: listPlaceSaveStat.route(),
+			create: create.route(),
+			update: update.route(),
+			delete: del.route(),
 			items: {
-				update: os.items.update.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.updateItems(userId, input);
-
-					return result;
-				}),
+				update: updateItems.route(),
 			},
 		});
 	},
