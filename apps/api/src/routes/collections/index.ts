@@ -1,133 +1,80 @@
-import { implement } from '@orpc/server';
-import { Collections } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { getUserId, getUserIdOrThrow } from '@/lib/get-user-id';
-import { requireAuth } from '@/middlewares/authn';
-import { isAdmin } from '@/middlewares/is-admin';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { CollectionsRepository } from './repository';
-import { CollectionsService } from './service';
+import { CreateCollectionMethod } from './methods/create';
+import { DeleteCollectionMethod } from './methods/delete';
+import { GetCollectionMethod } from './methods/get';
+import { ItemsUpdateMethod } from './methods/items-update';
+import { ListCollectionsMethod } from './methods/list';
+import { ListCitiesForCollectionMethod } from './methods/list-cities-for-collection';
+import { ListCollectionsForCityMethod } from './methods/list-for-city';
+import { ListCollectionsForPlaceMethod } from './methods/list-for-place';
+import { ListPlacesForCollectionMethod } from './methods/list-places-for-collection';
+import { UpdateCollectionMethod } from './methods/update';
+import { UpdateCollectionsForCityMethod } from './methods/update-for-city';
+import { UpdateCollectionsForPlaceMethod } from './methods/update-for-place';
+import { CollectionProvider } from './provides/collection';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [CollectionsService, CollectionsRepository],
+	exports: [
+		GetCollectionMethod,
+		ListCollectionsMethod,
+		CreateCollectionMethod,
+		UpdateCollectionMethod,
+		DeleteCollectionMethod,
+		ItemsUpdateMethod,
+		ListCollectionsForPlaceMethod,
+		UpdateCollectionsForPlaceMethod,
+		ListCollectionsForCityMethod,
+		UpdateCollectionsForCityMethod,
+		ListPlacesForCollectionMethod,
+		ListCitiesForCollectionMethod,
+		CollectionProvider,
+	],
 	router: () => {
-		const os = implement(Collections.Contract)
-			.$context<Context>()
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(CollectionsService);
+		const get = container.get(GetCollectionMethod);
+		const list = container.get(ListCollectionsMethod);
+		const create = container.get(CreateCollectionMethod);
+		const update = container.get(UpdateCollectionMethod);
+		const del = container.get(DeleteCollectionMethod);
+		const itemsUpdate = container.get(ItemsUpdateMethod);
+		const listCollectionsForPlace = container.get(
+			ListCollectionsForPlaceMethod,
+		);
+		const updateCollectionsForPlace = container.get(
+			UpdateCollectionsForPlaceMethod,
+		);
+		const listCollectionsForCity = container.get(ListCollectionsForCityMethod);
+		const updateCollectionsForCity = container.get(
+			UpdateCollectionsForCityMethod,
+		);
+		const listPlacesForCollection = container.get(
+			ListPlacesForCollectionMethod,
+		);
+		const listCitiesForCollection = container.get(
+			ListCitiesForCollectionMethod,
+		);
 
 		return os.router({
-			get: os.get.handler(async ({ context, input }) => {
-				const userId = getUserId(context);
-				const result = await svc.get(userId, input);
-
-				return result;
-			}),
-			list: os.list
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ context, input }) => {
-					const userId = getUserIdOrThrow(context);
-					const result = await svc.list(userId, input);
-
-					return result;
-				}),
-			create: os.create
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ context, input }) => {
-					const userId = getUserIdOrThrow(context);
-					const result = await svc.create(userId, input);
-
-					return result;
-				}),
-			update: os.update
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ context, input }) => {
-					const userId = getUserIdOrThrow(context);
-					const result = await svc.update(userId, input);
-
-					return result;
-				}),
-			delete: os.delete
-				.use(requireAuth)
-				.use(isAdmin)
-				.handler(async ({ context, input }) => {
-					const userId = getUserIdOrThrow(context);
-					const result = await svc.delete(userId, input);
-
-					return result;
-				}),
+			get: get.route(),
+			list: list.route(),
+			create: create.route(),
+			update: update.route(),
+			delete: del.route(),
 			items: os.items.router({
-				update: os.items.update
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.updateItems(userId, input);
-
-						return result;
-					}),
+				update: itemsUpdate.route(),
 			}),
 			places: os.places.router({
-				list: os.places.list.handler(async ({ context, input }) => {
-					const userId = getUserId(context);
-					const result = await svc.listCollectionsForPlace(userId, input);
-
-					return result;
-				}),
-				update: os.places.update
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.updateCollectionsForPlace(userId, input);
-
-						return result;
-					}),
+				list: listCollectionsForPlace.route(),
+				update: updateCollectionsForPlace.route(),
 			}),
 			cities: os.cities.router({
-				list: os.cities.list.handler(async ({ context, input }) => {
-					const userId = getUserId(context);
-					const result = await svc.listCollectionsForCity(userId, input);
-
-					return result;
-				}),
-				update: os.cities.update
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.updateCollectionsForCity(userId, input);
-
-						return result;
-					}),
+				list: listCollectionsForCity.route(),
+				update: updateCollectionsForCity.route(),
 			}),
 			relations: os.relations.router({
-				places: os.relations.places
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.listPlacesForCollection(userId, input);
-
-						return result;
-					}),
-				cities: os.relations.cities
-					.use(requireAuth)
-					.use(isAdmin)
-					.handler(async ({ context, input }) => {
-						const userId = getUserIdOrThrow(context);
-						const result = await svc.listCitiesForCollection(userId, input);
-
-						return result;
-					}),
+				places: listPlacesForCollection.route(),
+				cities: listCitiesForCollection.route(),
 			}),
 		});
 	},
