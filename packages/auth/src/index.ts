@@ -8,7 +8,10 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, bearer, multiSession, openAPI } from 'better-auth/plugins';
 import { additionalFields } from './additional-fields';
 import { hookAfterCreateUser } from './hooks';
-import { sendResetPassword } from './password-reset';
+import {
+	sendPasswordChangeInfoEmail,
+	sendResetPassword,
+} from './password-reset';
 import { session } from './session';
 import { generateUsernameFromEmail } from './username';
 
@@ -62,6 +65,9 @@ export function createAuth(deps: {
 			enabled: true,
 			sendResetPassword: async (data) => {
 				await sendResetPassword(data, deps.jobs);
+			},
+			onPasswordReset: async (data) => {
+				await sendPasswordChangeInfoEmail(data, deps.jobs);
 			},
 		},
 		socialProviders: {

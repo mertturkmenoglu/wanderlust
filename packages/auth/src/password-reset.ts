@@ -11,3 +11,13 @@ export async function sendResetPassword(
 		url: data.url,
 	});
 }
+
+export async function sendPasswordChangeInfoEmail(
+	data: { user: User },
+	jobs: JobsService,
+): Promise<void> {
+	await jobs.emails.queue.add('password-change-info', {
+		email: data.user.email,
+		firstName: data.user.name,
+	});
+}
