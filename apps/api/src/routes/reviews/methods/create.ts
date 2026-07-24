@@ -1,45 +1,54 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: TODO */
 import { trace } from '@opentelemetry/api';
 import { ORPCError } from '@orpc/server';
 import type { CacheService } from '@wanderlust/cache';
 import { Tokens } from '@wanderlust/common';
 import type { Reviews } from '@wanderlust/contract';
+import { type DatabaseService, schema } from '@wanderlust/db';
 import type { JobsService } from '@wanderlust/jobs';
 import { extractAllFacets } from '@wanderlust/richtext';
 import { nanoid } from '@wanderlust/uid';
+import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
+import { getUserIdOrThrow } from '@/lib/get-user-id';
+import { invariant } from '@/lib/invariant';
 import { detectLanguage, LangCodeFormats } from '@/lib/lang';
-import { ReviewsRepository } from './repository';
+import { areSetsEqual } from '@/lib/set-equality';
+import { requireAuth } from '@/middlewares/authn';
+import { os } from '../shared/router';
+
+type CreateReviewParams = Reviews.dto.CreateInput & {
+	detectedLanguage: string | null;
+	facets: {
+		type: string;
+		value: string;
+		start: number;
+		end: number;
+	}[];
+};
 
 @injectable()
-export class ReviewsService {
+export class CreateReviewMethod {
 	private readonly ns = 'reviews';
 
 	constructor(
-		@inject(ReviewsRepository) private readonly repo: ReviewsRepository,
+		@inject(Tokens.Database) private readonly db: DatabaseService,
 		@inject(Tokens.Cache) private readonly cache: CacheService,
 		@inject(ActivitiesService) private readonly activities: ActivitiesService,
 		@inject(Tokens.Jobs) private readonly jobs: JobsService,
 	) {}
 
-	async get(
-		userId: string | null,
-		data: Reviews.dto.GetInput,
-	): Promise<Reviews.dto.GetOutput> {
-		const result = await this.repo.get(data);
+	route() {
+		return os.create.use(requireAuth).handler(async ({ input, context }) => {
+			const userId = getUserIdOrThrow(context);
+			const username = context.session.user.username;
+			const result = await this.execute(userId, username, input);
 
-		const likes = await this.repo.getLikedStatuses(userId, [result.id]);
-
-		return {
-			review: result,
-			meta: {
-				isLiked: likes.includes(result.id),
-			},
-		};
+			return result;
+		});
 	}
 
-	async create(
+	private async execute(
 		userId: string,
 		username: string,
 		data: Reviews.dto.CreateInput,
@@ -50,7 +59,7 @@ export class ReviewsService {
 			const detectedLanguage = this.getDetectedLanguage(data.content);
 			const facets = extractAllFacets(data.content);
 
-			const [insertResult, place] = await this.repo.create(userId, {
+			const [insertResult, place] = await this.create(userId, {
 				...data,
 				detectedLanguage,
 				facets,
@@ -100,137 +109,145 @@ export class ReviewsService {
 		}
 	}
 
-	async _delete(userId: string, data: Reviews.dto.DeleteInput): Promise<void> {
-		// const span = trace.getActiveSpan();
+	private async create(userId: string, data: CreateReviewParams) {
+		const span = trace.getActiveSpan();
 
-		const existing = await this.repo.get(data);
+		span?.addEvent(
+			'review.create.repository',
+			{
+				'user.id': userId,
+				'place.id': data.placeId,
+				'review.rating': data.rating,
+				'review.visitedAt': data.visitedAt?.toISOString() || 'unknown',
+				'review.detectedLanguage': data.detectedLanguage || 'unknown',
+				'review.attachments': JSON.stringify(data.files ?? []),
+				'review.facets': JSON.stringify(data.facets),
+			},
+			new Date(),
+		);
 
-		if (existing.userId !== userId) {
-			throw new ORPCError('FORBIDDEN', {
-				message: 'You are not authorized to delete this review',
+		void this.checkAssetsStatusAndPermissions(userId, data.files ?? []);
+
+		const results = await this.db.transaction(async (tx) => {
+			const [review] = await tx
+				.insert(schema.reviews)
+				.values({
+					id: nanoid(),
+					placeId: data.placeId,
+					userId: userId,
+					content: data.content,
+					facets: data.facets,
+					rating: data.rating,
+					visitedAt: data.visitedAt,
+					detectedLanguage: data.detectedLanguage,
+					totalLikes: 0,
+				})
+				.returning();
+
+			invariant(review, 'INTERNAL_SERVER_ERROR', 'Failed to create review');
+
+			if (data.files && data.files.length > 0) {
+				await tx.insert(schema.assetsToReviews).values(
+					data.files.map((f, i) => ({
+						assetId: f,
+						order: i,
+						reviewId: review.id,
+					})),
+				);
+
+				await tx
+					.update(schema.assets)
+					.set({
+						status: 'available',
+					})
+					.where(dz.inArray(schema.assets.id, data.files));
+			}
+
+			await tx
+				.update(schema.places)
+				.set({
+					totalVotes: dz.sql`${schema.places.totalVotes} + 1`,
+					totalPoints: dz.sql`${schema.places.totalPoints} + ${data.rating}`,
+				})
+				.where(dz.eq(schema.places.id, data.placeId));
+
+			const res = await tx.query.reviews.findFirst({
+				where: {
+					id: review.id,
+				},
+				with: {
+					assets: true,
+					user: {
+						columns: {
+							id: true,
+							username: true,
+							name: true,
+							image: true,
+						},
+					},
+				},
+			});
+
+			invariant(
+				res,
+				'INTERNAL_SERVER_ERROR',
+				'Failed to retrieve created review',
+			);
+
+			const place = await tx.query.places.findFirst({
+				where: {
+					id: review.placeId,
+				},
+			});
+
+			invariant(place, 'INTERNAL_SERVER_ERROR', 'Failed to retrieve the place');
+
+			return [res, place] as const;
+		});
+
+		return results;
+	}
+
+	async checkAssetsStatusAndPermissions(userId: string, assetIds: string[]) {
+		if (assetIds.length === 0) {
+			return;
+		}
+
+		const assets = await this.db.query.assets.findMany({
+			where: {
+				id: {
+					in: assetIds,
+				},
+			},
+			columns: {
+				id: true,
+				uploadedBy: true,
+				status: true,
+				bucket: true,
+			},
+		});
+
+		const fetchedAssetIds = assets.map((a) => a.id);
+		const ok = areSetsEqual(new Set(fetchedAssetIds), new Set(assetIds));
+
+		if (!ok) {
+			throw new ORPCError('CONFLICT', {
+				message: 'One or more assets do not exist or are not accessible',
 			});
 		}
 
-		const deleted = await this.repo._delete(userId, data);
-		// const urls = existing.assets.map((asset) => asset.url);
-		// const allAssetsDeleted = await this.removeAssets(urls);
-
-		// if (!allAssetsDeleted) {
-		// 	span?.addEvent(
-		// 		'review.delete.asset-delete-failure',
-		// 		{
-		// 			reviewId: data.id,
-		// 			urls: urls.join(','),
-		// 		},
-		// 		new Date(),
-		// 	);
-		// }
-
-		await this.invalidatePlaceRatings(deleted.placeId);
-
-		// if (urls.length > 0) {
-		// 	await this.invalidatePlaceAssets(deleted.placeId);
-		// }
-	}
-
-	async listByUsername(
-		userId: string | null,
-		data: Reviews.dto.ListByUsernameInput,
-	): Promise<Reviews.dto.ListByUsernameOutput> {
-		const result = await this.repo.listByUsername(data);
-
-		const likes = await this.repo.getLikedStatuses(
-			userId,
-			result.reviews.map((r) => r.id),
-		);
-
-		return {
-			reviews: result.reviews.map((review) => ({
-				review: review,
-				meta: {
-					isLiked: likes.includes(review.id),
-				},
-			})),
-			pagination: result.pagination,
-		};
-	}
-
-	async listByPlaceId(
-		userId: string | null,
-		data: Reviews.dto.ListByPlaceIdInput,
-	): Promise<Reviews.dto.ListByPlaceIdOutput> {
-		const result = await this.repo.listByPlaceId(data);
-
-		const likes = await this.repo.getLikedStatuses(
-			userId,
-			result.reviews.map((r) => r.id),
-		);
-
-		return {
-			reviews: result.reviews.map((review) => ({
-				review: review,
-				meta: {
-					isLiked: likes.includes(review.id),
-				},
-			})),
-			pagination: result.pagination,
-		};
-	}
-
-	async getRatings(
-		data: Reviews.dto.GetRatingsInput,
-	): Promise<Reviews.dto.GetRatingsOutput> {
-		const result = await this.cache.namespace(this.ns).getOrSet({
-			key: `places:${data.id}:ratings`,
-			ttl: '30m',
-			factory: async () => this.repo.getRatings(data),
-		});
-
-		return result;
-	}
-
-	async listAssetsByPlaceId(
-		data: Reviews.dto.ListAssetsByPlaceIdInput,
-	): Promise<Reviews.dto.ListAssetsByPlaceIdOutput> {
-		const result = await this.cache.namespace(this.ns).getOrSet({
-			key: `places:${data.id}:assets`,
-			ttl: '30m',
-			factory: async () => this.repo.listAssetsByPlaceId(data),
-		});
-
-		return result;
-	}
-
-	async like(
-		userId: string,
-		data: Reviews.dto.LikeInput,
-	): Promise<Reviews.dto.LikeOutput> {
-		const result = await this.repo.like(userId, data);
-
-		if (result.liked) {
-			await this.addLikeReviewActivityForUser({
-				username: result.thisUser.username,
-				reviewId: data.id,
-				reviewUser: result.user,
-				place: result.place,
-			});
+		for (const asset of assets) {
+			if (
+				asset.uploadedBy !== userId ||
+				asset.status !== 'ready' ||
+				asset.bucket !== 'reviews'
+			) {
+				// For security reasons, we don't reveal which asset is not accessible to the user. We just throw a generic error.
+				throw new ORPCError('CONFLICT', {
+					message: 'One or more assets do not exist or are not accessible',
+				});
+			}
 		}
-
-		return {
-			liked: result.liked,
-		};
-	}
-
-	async listLikes(
-		userId: string,
-		data: Reviews.dto.ListLikesInput,
-	): Promise<Reviews.dto.ListLikesOutput> {
-		const result = await this.repo.listLikes(userId, data);
-
-		return {
-			users: result.users,
-			pagination: result.pagination,
-		};
 	}
 
 	private getDetectedLanguage(text: string): string | null {
@@ -329,7 +346,7 @@ export class ReviewsService {
 	}) {
 		const span = trace.getActiveSpan();
 
-		const mentionedUsers = await this.repo.getUsersByUsernames(
+		const mentionedUsers = await this.getUsersByUsernames(
 			data.mentionedUsernames,
 		);
 
@@ -370,40 +387,21 @@ export class ReviewsService {
 		);
 	}
 
-	private async addLikeReviewActivityForUser(data: {
-		username: string;
-		reviewId: string;
-		reviewUser: {
-			id: string;
-			name: string;
-			username: string;
-			image: string | null;
-		};
-		place: {
-			id: string;
-			name: string;
-		};
-	}) {
-		const span = trace.getActiveSpan();
-
-		try {
-			await this.activities.addActivity(data.username, 'like_review', {
-				review: {
-					id: data.reviewId,
-					user: {
-						id: data.reviewUser.id,
-						name: data.reviewUser.name,
-						username: data.reviewUser.username,
-						image: data.reviewUser.image,
-					},
-					place: {
-						id: data.place.id,
-						name: data.place.name,
-					},
+	private async getUsersByUsernames(usernames: string[]) {
+		const result = await this.db.query.users.findMany({
+			where: {
+				username: {
+					in: usernames,
 				},
-			});
-		} catch (err) {
-			span?.recordException(err as Error);
-		}
+			},
+			columns: {
+				id: true,
+				username: true,
+				name: true,
+				image: true,
+			},
+		});
+
+		return result;
 	}
 }

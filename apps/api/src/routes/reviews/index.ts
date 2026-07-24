@@ -1,86 +1,51 @@
-import { trace } from '@opentelemetry/api';
-import { implement } from '@orpc/server';
-import { Reviews } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { Context } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { requireAuth } from '@/middlewares/authn';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { ReviewsRepository } from './repository';
-import { ReviewsService } from './service';
+import { CreateReviewMethod } from './methods/create';
+import { DeleteReviewMethod } from './methods/delete';
+import { GetReviewMethod } from './methods/get';
+import { GetRatingsMethod } from './methods/get-ratings';
+import { LikeReviewMethod } from './methods/like';
+import { ListReviewAssetsByPlaceIdMethod } from './methods/list-assets-by-place-id';
+import { ListReviewsByPlaceIdMethod } from './methods/list-by-place-id';
+import { ListReviewsByUsernameMethod } from './methods/list-by-username';
+import { ListReviewLikesMethod } from './methods/list-likes';
+import { LikeStatusProvider } from './provides/like-status';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [ReviewsService, ReviewsRepository],
+	exports: [
+		GetReviewMethod,
+		CreateReviewMethod,
+		DeleteReviewMethod,
+		ListReviewsByUsernameMethod,
+		ListReviewsByPlaceIdMethod,
+		GetRatingsMethod,
+		ListReviewAssetsByPlaceIdMethod,
+		LikeReviewMethod,
+		ListReviewLikesMethod,
+		LikeStatusProvider,
+	],
 	router: () => {
-		const os = implement(Reviews.Contract)
-			.$context<Context>()
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(ReviewsService);
+		const get = container.get(GetReviewMethod);
+		const create = container.get(CreateReviewMethod);
+		const del = container.get(DeleteReviewMethod);
+		const listByUsername = container.get(ListReviewsByUsernameMethod);
+		const listByPlaceId = container.get(ListReviewsByPlaceIdMethod);
+		const getRatings = container.get(GetRatingsMethod);
+		const listAssetsByPlaceId = container.get(ListReviewAssetsByPlaceIdMethod);
+		const like = container.get(LikeReviewMethod);
+		const listLikes = container.get(ListReviewLikesMethod);
 
 		return os.router({
-			get: os.get.handler(async ({ input, context }) => {
-				const userId = context.session?.user?.id || null;
-				const result = await svc.get(userId, input);
-
-				return result;
-			}),
-			create: os.create.use(requireAuth).handler(async ({ input, context }) => {
-				const span = trace.getActiveSpan();
-
-				const { id: userId, username } = context.session.user;
-
-				span?.setAttribute('user.id', userId);
-				span?.setAttribute('user.username', username);
-
-				const result = await svc.create(userId, username, input);
-
-				return result;
-			}),
-			delete: os.delete.use(requireAuth).handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc._delete(userId, input);
-
-				return {};
-			}),
-			listByUsername: os.listByUsername.handler(async ({ input, context }) => {
-				const userId = context.session?.user?.id || null;
-				const result = await svc.listByUsername(userId, input);
-
-				return result;
-			}),
-			listByPlaceId: os.listByPlaceId.handler(async ({ input, context }) => {
-				const userId = context.session?.user?.id || null;
-				const result = await svc.listByPlaceId(userId, input);
-
-				return result;
-			}),
-			getRatings: os.getRatings.handler(async ({ input }) => {
-				const result = await svc.getRatings(input);
-
-				return result;
-			}),
-			listAssetsByPlaceId: os.listAssetsByPlaceId.handler(async ({ input }) => {
-				const result = await svc.listAssetsByPlaceId(input);
-
-				return result;
-			}),
-			like: os.like.use(requireAuth).handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.like(userId, input);
-
-				return result;
-			}),
-			listLikes: os.listLikes
-				.use(requireAuth)
-				.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.listLikes(userId, input);
-
-					return result;
-				}),
+			get: get.route(),
+			create: create.route(),
+			delete: del.route(),
+			listByUsername: listByUsername.route(),
+			listByPlaceId: listByPlaceId.route(),
+			getRatings: getRatings.route(),
+			listAssetsByPlaceId: listAssetsByPlaceId.route(),
+			like: like.route(),
+			listLikes: listLikes.route(),
 		});
 	},
 });
