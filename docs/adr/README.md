@@ -1,6 +1,6 @@
 # Architecture Decision Records 
 
-- [ADR-0001: Use Nygard Architectural Decision Records](0001.md)
+- [ADR-0001: Use Architectural Decision Records](0001.md)
 - [ADR-0002: Merge Chat and Notifications Apps to Core](0002.md)
 - [ADR-0003: Use Identity Factory Functions](0003.md)
 - [ADR-0004: Build Admin Data Resource Framework](0004.md)
