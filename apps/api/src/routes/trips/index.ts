@@ -1,167 +1,117 @@
-import { implement } from '@orpc/server';
-import { Trips } from '@wanderlust/contract';
 import { container } from '@/ioc';
-import type { AuthContext } from '@/lib/context';
 import { defineModule } from '@/lib/define-module';
-import { requireAuth } from '@/middlewares/authn';
-import { withErrorNormalization } from '@/middlewares/with-error-normalization';
-import { withTracing } from '@/middlewares/with-tracing';
-import { TripsRepository } from './repository';
-import { TripsService } from './service';
+import { CreateCommentMethod } from './methods/comments/create';
+import { DeleteCommentMethod } from './methods/comments/delete';
+import { ListCommentsMethod } from './methods/comments/list';
+import { UpdateCommentMethod } from './methods/comments/update';
+import { CreateTripMethod } from './methods/create';
+import { DeleteTripMethod } from './methods/delete';
+import { GetTripMethod } from './methods/get';
+import { CreateInviteMethod } from './methods/invites/create';
+import { DeleteInviteMethod } from './methods/invites/delete';
+import { GetInviteDetailsMethod } from './methods/invites/details';
+import { ListInvitesMethod } from './methods/invites/list';
+import { ListMyInvitationsMethod } from './methods/invites/list-mine';
+import { RespondMethod } from './methods/invites/respond';
+import { LeaveTripMethod } from './methods/leave';
+import { ListTripsMethod } from './methods/list';
+import { CreateLocationMethod } from './methods/locations/create';
+import { DeleteLocationMethod } from './methods/locations/delete';
+import { UpdateLocationMethod } from './methods/locations/update';
+import { DeleteParticipantMethod } from './methods/participants/delete';
+import { GetTripSummaryMethod } from './methods/summary';
+import { UpdateTripMethod } from './methods/update';
+import { CommentProvider } from './provides/comment';
+import { InviteProvider } from './provides/invite';
+import { LocationProvider } from './provides/location';
+import { TripProvider } from './provides/trip';
+import { os } from './shared/router';
 
 export const module = defineModule({
-	exports: [TripsService, TripsRepository],
+	exports: [
+		ListTripsMethod,
+		GetTripMethod,
+		CreateTripMethod,
+		LeaveTripMethod,
+		DeleteTripMethod,
+		UpdateTripMethod,
+		GetTripSummaryMethod,
+		DeleteParticipantMethod,
+		CreateCommentMethod,
+		ListCommentsMethod,
+		UpdateCommentMethod,
+		DeleteCommentMethod,
+		ListInvitesMethod,
+		CreateInviteMethod,
+		ListMyInvitationsMethod,
+		GetInviteDetailsMethod,
+		DeleteInviteMethod,
+		RespondMethod,
+		CreateLocationMethod,
+		UpdateLocationMethod,
+		DeleteLocationMethod,
+		CommentProvider,
+		InviteProvider,
+		LocationProvider,
+		TripProvider,
+	],
 	router: () => {
-		const os = implement(Trips.Contract)
-			.$context<AuthContext>()
-			.use(requireAuth)
-			.use(withErrorNormalization)
-			.use(withTracing);
-
-		const svc = container.get(TripsService);
+		const list = container.get(ListTripsMethod);
+		const get = container.get(GetTripMethod);
+		const create = container.get(CreateTripMethod);
+		const leave = container.get(LeaveTripMethod);
+		const del = container.get(DeleteTripMethod);
+		const update = container.get(UpdateTripMethod);
+		const getSummary = container.get(GetTripSummaryMethod);
+		const deleteParticipant = container.get(DeleteParticipantMethod);
+		const createComment = container.get(CreateCommentMethod);
+		const listComments = container.get(ListCommentsMethod);
+		const updateComment = container.get(UpdateCommentMethod);
+		const deleteComment = container.get(DeleteCommentMethod);
+		const listInvites = container.get(ListInvitesMethod);
+		const createInvite = container.get(CreateInviteMethod);
+		const listMyInvites = container.get(ListMyInvitationsMethod);
+		const getInviteDetails = container.get(GetInviteDetailsMethod);
+		const deleteInvite = container.get(DeleteInviteMethod);
+		const respond = container.get(RespondMethod);
+		const createLocation = container.get(CreateLocationMethod);
+		const updateLocation = container.get(UpdateLocationMethod);
+		const deleteLocation = container.get(DeleteLocationMethod);
 
 		return os.router({
-			list: os.list.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.list(userId, input);
-
-				return result;
-			}),
-			get: os.get.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.get(userId, input);
-
-				return result;
-			}),
-			create: os.create.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.create(userId, input);
-
-				return result;
-			}),
-			leave: os.leave.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc.leave(userId, input);
-
-				return {};
-			}),
-			delete: os.delete.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				await svc._delete(userId, input);
-
-				return {};
-			}),
-			update: os.update.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.update(userId, input);
-
-				return result;
-			}),
+			list: list.route(),
+			get: get.route(),
+			create: create.route(),
+			leave: leave.route(),
+			delete: del.route(),
+			update: update.route(),
+			getSummary: getSummary.route(),
 
 			invites: {
-				list: os.invites.list.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.listInvites(userId, input);
-
-					return result;
-				}),
-				create: os.invites.create.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.createInvite(userId, input);
-
-					return result;
-				}),
-				listMine: os.invites.listMine.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.listMyInvites(userId, input);
-
-					return result;
-				}),
-				getDetails: os.invites.getDetails.handler(
-					async ({ input, context }) => {
-						const userId = context.session.user.id;
-						const result = await svc.getInviteDetails(userId, input);
-
-						return result;
-					},
-				),
-				delete: os.invites.delete.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					await svc.deleteInvite(userId, input);
-
-					return {};
-				}),
-				respond: os.invites.respond.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.acceptOrDeclineInvite(userId, input);
-
-					return result;
-				}),
+				list: listInvites.route(),
+				create: createInvite.route(),
+				listMine: listMyInvites.route(),
+				getDetails: getInviteDetails.route(),
+				delete: deleteInvite.route(),
+				respond: respond.route(),
 			},
 
 			participants: {
-				delete: os.participants.delete.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					await svc.deleteParticipant(userId, input);
-
-					return {};
-				}),
+				delete: deleteParticipant.route(),
 			},
 
 			comments: {
-				create: os.comments.create.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.createComment(userId, input);
-
-					return result;
-				}),
-				list: os.comments.list.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.listComments(userId, input);
-
-					return result;
-				}),
-				update: os.comments.update.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.updateComment(userId, input);
-
-					return result;
-				}),
-				delete: os.comments.delete.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					await svc.deleteComment(userId, input);
-
-					return {};
-				}),
+				create: createComment.route(),
+				list: listComments.route(),
+				update: updateComment.route(),
+				delete: deleteComment.route(),
 			},
 
 			locations: {
-				create: os.locations.create.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.createLocation(userId, input);
-
-					return result;
-				}),
-				update: os.locations.update.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					const result = await svc.updateLocation(userId, input);
-
-					return result;
-				}),
-				delete: os.locations.delete.handler(async ({ input, context }) => {
-					const userId = context.session.user.id;
-					await svc.deleteLocation(userId, input);
-
-					return {};
-				}),
+				create: createLocation.route(),
+				update: updateLocation.route(),
+				delete: deleteLocation.route(),
 			},
-
-			getSummary: os.getSummary.handler(async ({ input, context }) => {
-				const userId = context.session.user.id;
-				const result = await svc.getSummary(userId, input);
-
-				return result;
-			}),
 		});
 	},
 });
