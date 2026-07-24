@@ -3,8 +3,8 @@ import type { Trips } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
+import { os } from '../../internal/router';
 import { InviteProvider } from '../../provides/invite';
-import { os } from '../../shared/router';
 
 @injectable()
 export class GetInviteDetailsMethod {

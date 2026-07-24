@@ -15,7 +15,7 @@ import { invariant } from '@/lib/invariant';
 import { detectLanguage, LangCodeFormats } from '@/lib/lang';
 import { areSetsEqual } from '@/lib/set-equality';
 import { requireAuth } from '@/middlewares/authn';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 type CreateReviewParams = Reviews.dto.CreateInput & {
 	detectedLanguage: string | null;

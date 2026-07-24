@@ -1,7 +1,7 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { AggregateHomeMethod } from './methods/home';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [AggregateHomeMethod],

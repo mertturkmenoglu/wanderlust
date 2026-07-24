@@ -1,9 +1,9 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateBookmarkMethod } from './methods/create';
 import { DeleteBookmarkMethod } from './methods/delete';
 import { ListBookmarksMethod } from './methods/list';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [ListBookmarksMethod, CreateBookmarkMethod, DeleteBookmarkMethod],

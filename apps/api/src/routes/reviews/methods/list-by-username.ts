@@ -5,8 +5,8 @@ import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserId } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { os } from '../internal/router';
 import { LikeStatusProvider } from '../provides/like-status';
-import { os } from '../shared/router';
 
 @injectable()
 export class ListReviewsByUsernameMethod {

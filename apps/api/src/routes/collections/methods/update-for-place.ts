@@ -7,7 +7,7 @@ import { invariant } from '@/lib/invariant';
 import { areSetsEqual } from '@/lib/set-equality';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class UpdateCollectionsForPlaceMethod {

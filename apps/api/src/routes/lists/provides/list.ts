@@ -5,7 +5,7 @@ import { invariant } from '@/lib/invariant';
 import type { DbOrTx } from '@/lib/transactions';
 import { unique } from '@/lib/unique';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { canRead } from '../shared/authz';
+import { canRead } from '../internal/authz';
 
 @injectable()
 export class ListProvider {

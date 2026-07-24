@@ -4,8 +4,8 @@ import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { os } from '../shared/router';
-import { findFollowsRelation, findUserById } from '../shared/statements';
+import { os } from '../internal/router';
+import { findFollowsRelation, findUserById } from '../internal/statements';
 
 @injectable()
 export class GetUserByIdMethod {

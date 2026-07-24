@@ -7,8 +7,8 @@ import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { MAX_LISTS_PER_USER } from '../shared/consts';
-import { os } from '../shared/router';
+import { MAX_LISTS_PER_USER } from '../internal/consts';
+import { os } from '../internal/router';
 
 @injectable()
 export class CreateListMethod {

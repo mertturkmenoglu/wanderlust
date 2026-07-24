@@ -5,9 +5,9 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canUpdateComment } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { CommentProvider } from '../../provides/comment';
-import { canUpdateComment } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class UpdateCommentMethod {

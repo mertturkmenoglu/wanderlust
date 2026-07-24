@@ -2,7 +2,7 @@ import { $includes } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import type { DbOrTx } from '@/lib/transactions';
-import { canReadComment } from '../shared/authz';
+import { canReadComment } from '../internal/authz';
 import { TripProvider } from './trip';
 
 @injectable()

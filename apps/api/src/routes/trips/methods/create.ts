@@ -6,8 +6,8 @@ import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { os } from '../internal/router';
 import { TripProvider } from '../provides/trip';
-import { os } from '../shared/router';
 
 @injectable()
 export class CreateTripMethod {

@@ -3,8 +3,8 @@ import type { Lists } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
+import { os } from '../internal/router';
 import { ListProvider } from '../provides/list';
-import { os } from '../shared/router';
 
 @injectable()
 export class GetListMethod {

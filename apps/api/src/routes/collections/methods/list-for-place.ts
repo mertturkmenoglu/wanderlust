@@ -7,8 +7,8 @@ import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { getUserId } from '@/lib/get-user-id';
 import { unique } from '@/lib/unique';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListCollectionsForPlaceMethod {

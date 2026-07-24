@@ -7,9 +7,9 @@ import { and, eq, gt, lt, ne, or } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canRead, canUpdateTrip } from '../internal/authz';
+import { os } from '../internal/router';
 import { TripProvider } from '../provides/trip';
-import { canRead, canUpdateTrip } from '../shared/authz';
-import { os } from '../shared/router';
 
 @injectable()
 export class UpdateTripMethod {

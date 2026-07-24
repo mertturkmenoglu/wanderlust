@@ -5,9 +5,9 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canDeleteInvite } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { TripProvider } from '../../provides/trip';
-import { canDeleteInvite } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class DeleteInviteMethod {

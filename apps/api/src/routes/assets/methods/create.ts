@@ -7,9 +7,9 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { transformFile } from '../shared/file-transformation';
-import { getFileType } from '../shared/file-type';
-import { os } from '../shared/router';
+import { transformFile } from '../internal/file-transformation';
+import { getFileType } from '../internal/file-type';
+import { os } from '../internal/router';
 
 @injectable()
 export class CreateAssetMethod {

@@ -1,5 +1,6 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateListMethod } from './methods/create';
 import { DeleteListMethod } from './methods/delete';
 import { GetListMethod } from './methods/get';
@@ -9,7 +10,6 @@ import { ListPlaceSaveStatMethod } from './methods/list-place-save-stat';
 import { ListPublicMethod } from './methods/list-public';
 import { UpdateListMethod } from './methods/update';
 import { ListProvider } from './provides/list';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

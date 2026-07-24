@@ -1,12 +1,12 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { ClearNotificationsMethod } from './methods/clear';
 import { ListNotificationsMethod } from './methods/list';
 import { MarkAllNotificationsReadMethod } from './methods/mark-all-read';
 import { MarkNotificationReadMethod } from './methods/mark-read';
 import { GetNotificationPreferencesMethod } from './methods/preferences';
 import { UpdateNotificationPreferencesMethod } from './methods/update-preferences';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

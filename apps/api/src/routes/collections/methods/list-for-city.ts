@@ -6,7 +6,7 @@ import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { getUserId } from '@/lib/get-user-id';
 import { unique } from '@/lib/unique';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListCollectionsForCityMethod {

@@ -5,13 +5,13 @@ import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserId } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 import {
 	findBookmarkByPlaceIdAndUserId,
 	findFavoriteByPlaceIdAndUserId,
 	findPlaceById,
-} from '../shared/statements';
+} from '../internal/statements';
 
 @injectable()
 export class GetPlaceMethod {

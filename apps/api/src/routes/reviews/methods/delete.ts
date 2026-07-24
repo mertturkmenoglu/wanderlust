@@ -8,7 +8,7 @@ import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
 import { requireAuth } from '@/middlewares/authn';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class DeleteReviewMethod {

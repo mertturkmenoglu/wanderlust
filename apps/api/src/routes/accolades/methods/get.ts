@@ -3,7 +3,7 @@ import type { Accolades } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class GetAccoladeMethod {

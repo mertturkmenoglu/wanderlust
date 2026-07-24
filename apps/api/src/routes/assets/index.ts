@@ -1,8 +1,8 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateAssetMethod } from './methods/create';
 import { CreateManyAssetsMethod } from './methods/create-many';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [CreateAssetMethod, CreateManyAssetsMethod],

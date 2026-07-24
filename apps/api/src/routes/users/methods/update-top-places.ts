@@ -6,8 +6,8 @@ import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { os } from '../shared/router';
-import { findManyTopPlaces, findUserById } from '../shared/statements';
+import { os } from '../internal/router';
+import { findManyTopPlaces, findUserById } from '../internal/statements';
 
 @injectable()
 export class UpdateTopPlacesMethod {

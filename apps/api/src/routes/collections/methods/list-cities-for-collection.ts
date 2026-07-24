@@ -4,7 +4,7 @@ import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListCitiesForCollectionMethod {

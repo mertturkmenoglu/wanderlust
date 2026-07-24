@@ -4,7 +4,7 @@ import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
 import type { DbOrTx } from '@/lib/transactions';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { canRead } from '../shared/authz';
+import { canRead } from '../internal/authz';
 
 @injectable()
 export class TripProvider {

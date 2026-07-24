@@ -5,8 +5,8 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { canDelete } from '../shared/authz';
-import { os } from '../shared/router';
+import { canDelete } from '../internal/authz';
+import { os } from '../internal/router';
 
 @injectable()
 export class DeleteListMethod {

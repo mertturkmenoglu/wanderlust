@@ -6,9 +6,9 @@ import { nanoid } from '@wanderlust/uid';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canCreateInvite } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { TripProvider } from '../../provides/trip';
-import { canCreateInvite } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class CreateInviteMethod {

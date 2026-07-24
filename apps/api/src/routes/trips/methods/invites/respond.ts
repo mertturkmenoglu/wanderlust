@@ -7,8 +7,8 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { os } from '../../internal/router';
 import { InviteProvider } from '../../provides/invite';
-import { os } from '../../shared/router';
 
 @injectable()
 export class RespondMethod {

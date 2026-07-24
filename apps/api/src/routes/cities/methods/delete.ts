@@ -7,8 +7,8 @@ import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 
 @injectable()
 export class DeleteCityMethod {

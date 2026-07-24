@@ -3,8 +3,8 @@ import { Tokens } from '@wanderlust/common';
 import type { Cities } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListFeaturedCitiesMethod {

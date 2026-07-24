@@ -1,8 +1,8 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { GetPreferencesMethod } from './methods/get';
 import { UpdatePreferencesMethod } from './methods/update';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [GetPreferencesMethod, UpdatePreferencesMethod],

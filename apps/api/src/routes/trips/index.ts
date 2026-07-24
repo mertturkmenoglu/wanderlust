@@ -1,5 +1,6 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateCommentMethod } from './methods/comments/create';
 import { DeleteCommentMethod } from './methods/comments/delete';
 import { ListCommentsMethod } from './methods/comments/list';
@@ -25,7 +26,6 @@ import { CommentProvider } from './provides/comment';
 import { InviteProvider } from './provides/invite';
 import { LocationProvider } from './provides/location';
 import { TripProvider } from './provides/trip';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

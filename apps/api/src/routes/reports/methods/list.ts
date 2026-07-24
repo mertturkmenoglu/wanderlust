@@ -3,7 +3,7 @@ import type { Reports } from '@wanderlust/contract';
 import { type DatabaseService, schema } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { isAdmin } from '@/middlewares/is-admin';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListReportsMethod {

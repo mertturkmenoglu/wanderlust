@@ -6,10 +6,10 @@ import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
 import { areSetsEqual } from '@/lib/set-equality';
+import { canUpdate } from '../internal/authz';
+import { MAX_ITEMS_PER_LIST } from '../internal/consts';
+import { os } from '../internal/router';
 import { ListProvider } from '../provides/list';
-import { canUpdate } from '../shared/authz';
-import { MAX_ITEMS_PER_LIST } from '../shared/consts';
-import { os } from '../shared/router';
 
 @injectable()
 export class UpdateListItemsMethod {

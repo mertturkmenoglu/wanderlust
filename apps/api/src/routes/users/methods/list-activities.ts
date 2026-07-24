@@ -4,8 +4,8 @@ import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { invariant } from '@/lib/invariant';
-import { os } from '../shared/router';
-import { findUserByUsername } from '../shared/statements';
+import { os } from '../internal/router';
+import { findUserByUsername } from '../internal/statements';
 
 @injectable()
 export class ListActivitiesMethod {

@@ -9,8 +9,8 @@ import { areSetsEqual } from '@/lib/set-equality';
 import type { DbOrTx } from '@/lib/transactions';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
+import { os } from '../internal/router';
 import { CollectionProvider } from '../provides/collection';
-import { os } from '../shared/router';
 
 @injectable()
 export class ItemsUpdateMethod {

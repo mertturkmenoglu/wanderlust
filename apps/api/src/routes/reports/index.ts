@@ -1,12 +1,12 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateReportMethod } from './methods/create';
 import { DeleteReportMethod } from './methods/delete';
 import { GetReportMethod } from './methods/get';
 import { ListReportsMethod } from './methods/list';
 import { SearchReportsMethod } from './methods/search';
 import { UpdateReportMethod } from './methods/update';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

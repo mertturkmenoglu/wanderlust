@@ -1,12 +1,12 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateAccoladeMethod } from './methods/create';
 import { DeleteAccoladeMethod } from './methods/delete';
 import { GetAccoladeMethod } from './methods/get';
 import { ListAccoladesMethod } from './methods/list';
 import { ListAccoladePlacesMethod } from './methods/list-places';
 import { UpdateAccoladeMethod } from './methods/update';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

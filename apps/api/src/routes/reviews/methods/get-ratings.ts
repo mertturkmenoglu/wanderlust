@@ -4,7 +4,7 @@ import type { Reviews } from '@wanderlust/contract';
 import { type DatabaseService, schema } from '@wanderlust/db';
 import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class GetRatingsMethod {

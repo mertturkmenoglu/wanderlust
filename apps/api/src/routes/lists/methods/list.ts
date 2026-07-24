@@ -4,7 +4,7 @@ import { type DatabaseService, schema } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListAllMethod {

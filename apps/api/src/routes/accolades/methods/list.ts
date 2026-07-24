@@ -5,7 +5,7 @@ import { sql } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { z } from 'zod';
 import { definePreparedStatement } from '@/lib/define-prepared-statement';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListAccoladesMethod {

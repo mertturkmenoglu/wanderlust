@@ -3,8 +3,8 @@ import type { Collections } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserId } from '@/lib/get-user-id';
+import { os } from '../internal/router';
 import { CollectionProvider } from '../provides/collection';
-import { os } from '../shared/router';
 
 @injectable()
 export class GetCollectionMethod {

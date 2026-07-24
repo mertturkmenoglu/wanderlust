@@ -4,8 +4,8 @@ import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserId } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { os } from '../internal/router';
 import { LikeStatusProvider } from '../provides/like-status';
-import { os } from '../shared/router';
 import { countByPlaceId } from '../statements';
 
 @injectable()

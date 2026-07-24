@@ -8,14 +8,14 @@ import { getUserId } from '@/lib/get-user-id';
 import { MetadataEnricher } from '@/lib/metadata-enricher';
 import { unique } from '@/lib/unique';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 import {
 	findFavoritePlaces,
 	findFeaturedPlaces,
 	findNewPlaces,
 	findPopularPlaces,
-} from '../shared/statements';
+} from '../internal/statements';
 
 @injectable()
 export class AggregateHomeMethod {

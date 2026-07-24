@@ -5,8 +5,8 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { canUpdate } from '../shared/authz';
-import { os } from '../shared/router';
+import { canUpdate } from '../internal/authz';
+import { os } from '../internal/router';
 
 @injectable()
 export class UpdateListMethod {

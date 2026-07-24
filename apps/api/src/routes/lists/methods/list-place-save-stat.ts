@@ -3,7 +3,7 @@ import type { Lists } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListPlaceSaveStatMethod {

@@ -5,9 +5,9 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canDeleteComment } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { CommentProvider } from '../../provides/comment';
-import { canDeleteComment } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class DeleteCommentMethod {

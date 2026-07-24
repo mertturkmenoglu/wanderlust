@@ -5,9 +5,9 @@ import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canReadComment } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { TripProvider } from '../../provides/trip';
-import { canReadComment } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class ListCommentsMethod {

@@ -1,11 +1,11 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateCategoryMethod } from './methods/create';
 import { DeleteCategoryMethod } from './methods/delete';
 import { GetCategoryMethod } from './methods/get';
 import { ListCategoriesMethod } from './methods/list';
 import { UpdateCategoryMethod } from './methods/update';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

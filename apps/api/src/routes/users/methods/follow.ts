@@ -8,12 +8,12 @@ import { inject, injectable } from 'inversify';
 import { ActivitiesService } from '@/lib/activities';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 import {
 	findFollowsRelation,
 	findUserById,
 	findUserByUsername,
-} from '../shared/statements';
+} from '../internal/statements';
 
 @injectable()
 export class FollowMethod {

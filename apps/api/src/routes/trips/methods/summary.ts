@@ -5,8 +5,8 @@ import { eachDayOfInterval } from 'date-fns';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
+import { os } from '../internal/router';
 import { TripProvider } from '../provides/trip';
-import { os } from '../shared/router';
 
 @injectable()
 export class GetTripSummaryMethod {

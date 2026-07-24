@@ -4,8 +4,8 @@ import { type DatabaseService, schema } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
-import { os } from '../shared/router';
-import { findManyFollowers, findUserByUsername } from '../shared/statements';
+import { os } from '../internal/router';
+import { findManyFollowers, findUserByUsername } from '../internal/statements';
 
 @injectable()
 export class ListFollowersMethod {

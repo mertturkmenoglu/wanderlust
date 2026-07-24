@@ -1,6 +1,6 @@
 import { Amenities } from '@wanderlust/contract';
 import { injectable } from 'inversify';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListAmenitiesMethod {

@@ -1,5 +1,6 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CheckUsernameAvailabilityMethod } from './methods/check-username-availability';
 import { FollowMethod } from './methods/follow';
 import { GetUserMethod } from './methods/get';
@@ -14,7 +15,6 @@ import { UpdateMethod } from './methods/update';
 import { UpdateImageMethod } from './methods/update-image';
 import { UpdateTopPlacesMethod } from './methods/update-top-places';
 import { UserRolesProvider } from './provides/roles';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

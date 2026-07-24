@@ -5,10 +5,10 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canUpdateLocation } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { LocationProvider } from '../../provides/location';
 import { TripProvider } from '../../provides/trip';
-import { canUpdateLocation } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class UpdateLocationMethod {

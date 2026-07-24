@@ -9,8 +9,8 @@ import { definePreparedStatement } from '@/lib/define-prepared-statement';
 import { getUserId } from '@/lib/get-user-id';
 import { MetadataEnricher } from '@/lib/metadata-enricher';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListAccoladePlacesMethod {

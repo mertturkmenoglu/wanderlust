@@ -4,8 +4,8 @@ import type { Categories } from '@wanderlust/contract';
 import type { DatabaseService } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 
 @injectable()
 export class GetCategoryMethod {

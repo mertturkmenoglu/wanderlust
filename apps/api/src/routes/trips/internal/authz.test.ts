@@ -10,7 +10,7 @@ import {
 	isOwnerOrParticipant,
 	isParticipant,
 	isPrivilegedUser,
-} from '../shared/authz';
+} from '../internal/authz';
 
 type Trip = Types.Trips.ExtendedWithParticipantsAndLocations;
 

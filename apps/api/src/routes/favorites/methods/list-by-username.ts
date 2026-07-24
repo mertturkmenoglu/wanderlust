@@ -4,7 +4,7 @@ import { $includes, type DatabaseService, schema } from '@wanderlust/db';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class ListFavoritesByUsernameMethod {

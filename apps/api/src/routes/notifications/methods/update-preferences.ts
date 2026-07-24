@@ -2,7 +2,7 @@ import { Tokens } from '@wanderlust/common';
 import type { Notifications } from '@wanderlust/contract';
 import { type DatabaseService, schema } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class UpdateNotificationPreferencesMethod {

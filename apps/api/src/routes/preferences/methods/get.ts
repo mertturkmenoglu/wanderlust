@@ -7,8 +7,8 @@ import { inject, injectable } from 'inversify';
 import { z } from 'zod';
 import { definePreparedStatement } from '@/lib/define-prepared-statement';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
-import { cacheOptions } from '../shared/cache';
-import { os } from '../shared/router';
+import { cacheOptions } from '../internal/cache';
+import { os } from '../internal/router';
 
 @injectable()
 export class GetPreferencesMethod {

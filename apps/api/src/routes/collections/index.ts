@@ -1,5 +1,6 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateCollectionMethod } from './methods/create';
 import { DeleteCollectionMethod } from './methods/delete';
 import { GetCollectionMethod } from './methods/get';
@@ -13,7 +14,6 @@ import { UpdateCollectionMethod } from './methods/update';
 import { UpdateCollectionsForCityMethod } from './methods/update-for-city';
 import { UpdateCollectionsForPlaceMethod } from './methods/update-for-place';
 import { CollectionProvider } from './provides/collection';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

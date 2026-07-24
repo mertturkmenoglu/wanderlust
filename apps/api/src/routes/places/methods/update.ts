@@ -6,8 +6,8 @@ import { inject, injectable } from 'inversify';
 import { invariant } from '@/lib/invariant';
 import { requireAuth } from '@/middlewares/authn';
 import { isAdmin } from '@/middlewares/is-admin';
-import { os } from '../shared/router';
-import { findPlaceById } from '../shared/statements';
+import { os } from '../internal/router';
+import { findPlaceById } from '../internal/statements';
 
 @injectable()
 export class UpdatePlaceMethod {

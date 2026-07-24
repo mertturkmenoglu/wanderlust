@@ -5,10 +5,10 @@ import { nanoid } from '@wanderlust/uid';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
+import { canCreateLocation } from '../../internal/authz';
+import { os } from '../../internal/router';
 import { LocationProvider } from '../../provides/location';
 import { TripProvider } from '../../provides/trip';
-import { canCreateLocation } from '../../shared/authz';
-import { os } from '../../shared/router';
 
 @injectable()
 export class CreateLocationMethod {

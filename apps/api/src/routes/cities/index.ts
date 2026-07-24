@@ -1,12 +1,12 @@
 import { container } from '@/ioc';
 import { defineModule } from '@/lib/define-module';
+import { os } from './internal/router';
 import { CreateCityMethod } from './methods/create';
 import { DeleteCityMethod } from './methods/delete';
 import { GetCityMethod } from './methods/get';
 import { ListCitiesMethod } from './methods/list';
 import { ListFeaturedCitiesMethod } from './methods/list-featured';
 import { UpdateCityMethod } from './methods/update';
-import { os } from './shared/router';
 
 export const module = defineModule({
 	exports: [

@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
 import { UserRolesProvider } from '@/routes/users/provides/roles';
-import { os } from '../shared/router';
+import { os } from '../internal/router';
 
 @injectable()
 export class GetReportMethod {
