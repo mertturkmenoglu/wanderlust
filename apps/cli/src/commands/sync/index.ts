@@ -1,7 +1,8 @@
 import { inspect } from 'node:util';
 import { command } from '@drizzle-team/brocli';
-import { DatabaseService } from '@wanderlust/db';
-import { SearchService } from '@wanderlust/search';
+import { Tokens } from '@wanderlust/common';
+import type { DatabaseService } from '@wanderlust/db';
+import type { SearchService } from '@wanderlust/search';
 import consola from 'consola';
 import { bootstrapServices } from './bootstrap';
 import { container } from './ioc';
@@ -17,8 +18,8 @@ export const sync = command({
 		try {
 			await bootstrapServices();
 
-			const search = container.get(SearchService).get();
-			const db = container.get(DatabaseService).get();
+			const search = container.get<SearchService>(Tokens.Search);
+			const db = container.get<DatabaseService>(Tokens.Database);
 
 			const placesSchema = new PlacesSchema('places', search, db);
 			const citiesSchema = new CitiesSchema('cities', search, db);

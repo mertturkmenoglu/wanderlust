@@ -1,4 +1,4 @@
-import type { TDatabaseService } from '@wanderlust/db';
+import type { DatabaseService } from '@wanderlust/db';
 import type { Client } from 'typesense';
 import { isCollectionNotFoundError } from '../utils/err-utils';
 
@@ -7,9 +7,9 @@ export abstract class AbstractSchema {
 
 	protected readonly client: Client;
 
-	protected readonly db: TDatabaseService;
+	protected readonly db: DatabaseService;
 
-	constructor(name: string, client: Client, db: TDatabaseService) {
+	constructor(name: string, client: Client, db: DatabaseService) {
 		this.name = name;
 		this.client = client;
 		this.db = db;
