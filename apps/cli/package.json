@@ -18,6 +18,7 @@
 		"@wanderlust/config": "workspace:*",
 		"@wanderlust/db": "workspace:*",
 		"@wanderlust/search": "workspace:*",
+		"@wanderlust/common": "workspace:*",
 		"@wanderlust/storage": "workspace:*",
 		"bun": "catalog:",
 		"consola": "catalog:",
