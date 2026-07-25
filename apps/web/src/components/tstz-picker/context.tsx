@@ -66,23 +66,26 @@ export function TSTZPickerContextProvider(
 		return `${result} ${tzOffset}`;
 	}, [props.value, props.formatStr, tzOffset]);
 
+	const contextValue = useMemo<State>(
+		() => ({
+			sHours12,
+			sSetHours12,
+			sMinutes,
+			sSetMinutes,
+			isAm,
+			setIsAm,
+			hours24,
+			minutes,
+			formatted,
+			tzOffset,
+			setTzOffset,
+			...props,
+		}),
+		[sHours12, sMinutes, isAm, hours24, minutes, formatted, tzOffset, props],
+	);
+
 	return (
-		<TSTZPickerContext.Provider
-			value={{
-				sHours12,
-				sSetHours12,
-				sMinutes,
-				sSetMinutes,
-				isAm,
-				setIsAm,
-				hours24,
-				minutes,
-				formatted,
-				tzOffset,
-				setTzOffset,
-				...props,
-			}}
-		>
+		<TSTZPickerContext.Provider value={contextValue}>
 			{props.children}
 		</TSTZPickerContext.Provider>
 	);

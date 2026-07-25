@@ -21,6 +21,10 @@ export function useFieldUpdateEffect() {
 			newDate.setMinutes(ctx.minutes);
 		}
 
+		if (newDate.getTime() === (ctx.value?.getTime() ?? Number.NaN)) {
+			return;
+		}
+
 		ctx.onChange(newDate);
 	}, [ctx.hours24, ctx.minutes, ctx.tzOffset, ctx.value]);
 }
