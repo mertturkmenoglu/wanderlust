@@ -10,3 +10,4 @@
 - [ADR-0008: New Category, City, And Place Schemas](0008.md)
 - [ADR-0009: Username Rules](0009.md)
 - [ADR-0010: Resource-oriented Design](0010.md)
+- [ADR-0011: Reviews and Assets](0011.md)
