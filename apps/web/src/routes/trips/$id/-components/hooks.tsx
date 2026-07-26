@@ -1,11 +1,9 @@
 import { linkOptions, useLoaderData } from '@tanstack/react-router';
 import { formatDistanceToNow, isBefore } from 'date-fns';
 import {
-	BookTextIcon,
 	Building2Icon,
 	Calendar1Icon,
 	ClockFadingIcon,
-	ImagesIcon,
 	MapPinIcon,
 	MessageCircleIcon,
 	Users2Icon,
@@ -31,7 +29,7 @@ export function useTripSummary() {
 					? 'Plan final details'
 					: 'See details',
 			link: linkOptions({
-				to: '/trips/$id/details',
+				to: '/trips/$id/itinerary',
 				params: {
 					id: data.trip.id,
 				},
@@ -55,7 +53,7 @@ export function useTripSummary() {
 			icon: Calendar1Icon,
 			explain: 'View agenda for each day',
 			link: linkOptions({
-				to: '/trips/$id/details',
+				to: '/trips/$id/itinerary',
 				params: {
 					id: data.trip.id,
 				},
@@ -87,7 +85,7 @@ export function useTripSummary() {
 					? 'Add locations'
 					: 'See locations on the map',
 			link: linkOptions({
-				to: '/trips/$id/details',
+				to: '/trips/$id/itinerary',
 				params: {
 					id: data.trip.id,
 				},
@@ -102,32 +100,6 @@ export function useTripSummary() {
 				data.totalComments === 0 ? 'Start a discussion' : 'Join the discussion',
 			link: linkOptions({
 				to: '/trips/$id/comments',
-				params: {
-					id: data.trip.id,
-				},
-			}),
-		},
-		{
-			title: 'Itinerary Items',
-			value: data.totalItineraryItems,
-			color: 'text-cyan-600',
-			icon: BookTextIcon,
-			explain: 'Organize bookings & documents',
-			link: linkOptions({
-				to: '/trips/$id/itinerary',
-				params: {
-					id: data.trip.id,
-				},
-			}),
-		},
-		{
-			title: 'Media',
-			value: data.totalAssets,
-			color: 'text-fuchsia-600',
-			icon: ImagesIcon,
-			explain: data.totalAssets === 0 ? 'Add images' : 'Browse media',
-			link: linkOptions({
-				to: '/trips/$id/media',
 				params: {
 					id: data.trip.id,
 				},
