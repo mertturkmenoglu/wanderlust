@@ -3,7 +3,7 @@ import { Search } from '@/components/search';
 import type { TPlaceHit } from '@/lib/search';
 
 export function SearchView() {
-	const navigate = useNavigate({ from: '/trips/$id/details/' });
+	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
 
 	return (
 		<Search

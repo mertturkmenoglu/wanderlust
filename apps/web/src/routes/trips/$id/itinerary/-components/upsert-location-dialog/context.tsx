@@ -33,8 +33,8 @@ export function UpsertLocationDialogContextProvider({
 	children,
 	onOpen,
 }: Props) {
-	const params = useParams({ from: '/trips/$id/details/' });
-	const search = useSearch({ from: '/trips/$id/details/' });
+	const params = useParams({ from: '/trips/$id/itinerary/' });
+	const search = useSearch({ from: '/trips/$id/itinerary/' });
 
 	const [description, setDescription] = useState('');
 	const [scheduledTime, setScheduledTime] = useState(new Date());

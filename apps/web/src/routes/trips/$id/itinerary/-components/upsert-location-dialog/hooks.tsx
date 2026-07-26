@@ -17,7 +17,7 @@ export function usePlaceQuery() {
 
 export function useCloseDialog() {
 	const ctx = useUpsertLocationDialogContext();
-	const navigate = useNavigate({ from: '/trips/$id/details/' });
+	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
 
 	return () => {
 		ctx.setDescription('');
@@ -31,7 +31,7 @@ export function useCloseDialog() {
 
 export function useOpenDialog() {
 	const ctx = useUpsertLocationDialogContext();
-	const navigate = useNavigate({ from: '/trips/$id/details/' });
+	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
 
 	return () => {
 		if (ctx.onOpen) {

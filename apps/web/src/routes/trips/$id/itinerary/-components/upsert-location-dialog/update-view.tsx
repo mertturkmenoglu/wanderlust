@@ -12,7 +12,7 @@ import { usePlaceQuery } from './hooks';
 
 export function UpdateView() {
 	const ctx = useUpsertLocationDialogContext();
-	const navigate = useNavigate({ from: '/trips/$id/details/' });
+	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
 
 	return (
 		<div>

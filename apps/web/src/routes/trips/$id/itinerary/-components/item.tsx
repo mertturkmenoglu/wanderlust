@@ -18,7 +18,7 @@ type Props = {
 
 export function TripDetailsItem({ index }: Props) {
 	const isPrivileged = useTripIsPrivileged();
-	const navigate = useNavigate({ from: '/trips/$id/details/' });
+	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
 	const days = useTripDays();
 	const { day, locations } = days[index];
 
