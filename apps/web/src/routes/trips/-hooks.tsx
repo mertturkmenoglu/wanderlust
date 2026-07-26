@@ -8,19 +8,9 @@ export function useTabs(id: string) {
 			title: 'Summary',
 		}),
 		linkOptions({
-			to: '/trips/$id/details',
-			params: { id },
-			title: 'Details',
-		}),
-		linkOptions({
 			to: '/trips/$id/itinerary',
 			params: { id },
 			title: 'Itinerary',
-		}),
-		linkOptions({
-			to: '/trips/$id/media',
-			params: { id },
-			title: 'Media',
 		}),
 		linkOptions({
 			to: '/trips/$id/participants',
