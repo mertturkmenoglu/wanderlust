@@ -252,7 +252,7 @@ export const relations = defineRelations(schema, (r) => ({
 	trips: {
 		participants: r.many.tripParticipants(),
 		invites: r.many.tripInvites(),
-		locations: r.many.tripLocations(),
+		itineraryItems: r.many.itineraryItems(),
 		comments: r.many.tripComments(),
 		owner: r.one.users({
 			from: r.trips.ownerId,
@@ -272,16 +272,16 @@ export const relations = defineRelations(schema, (r) => ({
 			optional: false,
 		}),
 	},
-	tripLocations: {
+	itineraryItems: {
 		trip: r.one.trips({
-			from: r.tripLocations.tripId,
+			from: r.itineraryItems.tripId,
 			to: r.trips.id,
 			optional: false,
 		}),
 		place: r.one.places({
-			from: r.tripLocations.placeId,
+			from: r.itineraryItems.placeId,
 			to: r.places.id,
-			optional: false,
+			optional: true,
 		}),
 	},
 	messageAttachments: {
