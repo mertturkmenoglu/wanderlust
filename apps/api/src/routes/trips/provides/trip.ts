@@ -1,6 +1,6 @@
+import type { Types } from '@wanderlust/common';
 import { $includes } from '@wanderlust/db';
 import { inject, injectable } from 'inversify';
-import { attachFavoriteMetadata } from '@/lib/attach-favorites';
 import { invariant } from '@/lib/invariant';
 import type { DbOrTx } from '@/lib/transactions';
 import { FavoriteStatusProvider } from '@/routes/favorites/provides/status';
@@ -31,16 +31,28 @@ export class TripProvider {
 
 		invariant(res, 'NOT_FOUND', `Trip with id ${id} not found`);
 
-		const placeIds = Array.from(new Set(res.locations.map((l) => l.placeId)));
+		const placeIds = Array.from(
+			new Set(res.itineraryItems.map((l) => l.placeId)),
+		).filter(Boolean) as string[];
 
 		const favoriteIds = await this.favorites.getFavoriteStatuses(
 			userId,
 			placeIds,
 		);
 
-		const trip = {
+		const trip: Types.Trips.ExtendedWithParticipantsAndItinerary = {
 			...res,
-			locations: attachFavoriteMetadata(res.locations, favoriteIds),
+			itineraryItems: res.itineraryItems.map((item) => ({
+				...item,
+				place: item.place
+					? {
+							place: item.place,
+							meta: {
+								isFavorite: favoriteIds.includes(item.place.id),
+							},
+						}
+					: null,
+			})),
 		};
 
 		invariant(
