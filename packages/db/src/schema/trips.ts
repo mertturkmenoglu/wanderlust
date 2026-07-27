@@ -82,25 +82,52 @@ export const tripComments = p.pgTable(
 	(table) => [p.index().on(table.tripId), p.index().on(table.userId)],
 );
 
-export const tripLocations = p.pgTable(
-	'trip_locations',
+export const tripItineraryTransportationMode = p.pgEnum(
+	'trip_itinerary_transportation_mode',
+	['flight', 'car', 'train', 'bus', 'boat', 'other'],
+);
+
+export const tripItineraryItemType = p.pgEnum('trip_itinerary_item_type', [
+	'accommodation',
+	'transportation',
+	'event',
+	'location',
+	'dining',
+	'other',
+]);
+
+export const itineraryItems = p.pgTable(
+	'itinerary_items',
 	{
-		id: p.text().primaryKey(),
+		id: p
+			.text()
+			.primaryKey()
+			.$defaultFn(() => Bun.randomUUIDv7()),
 		tripId: p
 			.text()
 			.notNull()
 			.references(() => trips.id, { onDelete: 'cascade' }),
 		scheduledTime: p.timestamp({ withTimezone: true }).notNull(),
-		placeId: p
-			.text()
-			.notNull()
-			.references(() => places.id, { onDelete: 'cascade' }),
-		description: p.text().notNull(),
+		type: tripItineraryItemType().notNull(),
+		booked: p.boolean(),
+		checkInTime: p.timestamp({ withTimezone: true }),
+		checkOutTime: p.timestamp({ withTimezone: true }),
+		reservationNumber: p.text(),
+		notes: p.text(),
+		transportationMode: tripItineraryTransportationMode(),
+		transportationName: p.text(),
+		departureLocation: p.text(),
+		departureTime: p.timestamp({ withTimezone: true }),
+		arrivalLocation: p.text(),
+		arrivalTime: p.timestamp({ withTimezone: true }),
+		transportationConfirmationNumber: p.text(),
+		title: p.text(),
+		placeId: p.text().references(() => places.id, { onDelete: 'set null' }),
 	},
-	(table) => [
-		p.unique().on(table.tripId, table.placeId, table.scheduledTime),
-		p.index().on(table.tripId),
-		p.index().on(table.placeId),
+	(t) => [
+		p.index().on(t.tripId),
+		p.index().on(t.placeId),
+		p.index().on(t.scheduledTime),
 	],
 );
 
