@@ -14,17 +14,17 @@ import { GetInviteDetailsMethod } from './methods/invites/details';
 import { ListInvitesMethod } from './methods/invites/list';
 import { ListMyInvitationsMethod } from './methods/invites/list-mine';
 import { RespondMethod } from './methods/invites/respond';
+import { CreateItineraryItemMethod } from './methods/itinerary/create';
+import { DeleteItineraryItemMethod } from './methods/itinerary/delete';
+import { UpdateItineraryItemMethod } from './methods/itinerary/update';
 import { LeaveTripMethod } from './methods/leave';
 import { ListTripsMethod } from './methods/list';
-import { CreateLocationMethod } from './methods/locations/create';
-import { DeleteLocationMethod } from './methods/locations/delete';
-import { UpdateLocationMethod } from './methods/locations/update';
 import { DeleteParticipantMethod } from './methods/participants/delete';
 import { GetTripSummaryMethod } from './methods/summary';
 import { UpdateTripMethod } from './methods/update';
 import { CommentProvider } from './provides/comment';
 import { InviteProvider } from './provides/invite';
-import { LocationProvider } from './provides/location';
+import { ItineraryProvider } from './provides/itinerary';
 import { TripProvider } from './provides/trip';
 
 export const module = defineModule({
@@ -47,12 +47,12 @@ export const module = defineModule({
 		GetInviteDetailsMethod,
 		DeleteInviteMethod,
 		RespondMethod,
-		CreateLocationMethod,
-		UpdateLocationMethod,
-		DeleteLocationMethod,
+		CreateItineraryItemMethod,
+		UpdateItineraryItemMethod,
+		DeleteItineraryItemMethod,
 		CommentProvider,
 		InviteProvider,
-		LocationProvider,
+		ItineraryProvider,
 		TripProvider,
 	],
 	router: () => {
@@ -74,9 +74,9 @@ export const module = defineModule({
 		const getInviteDetails = container.get(GetInviteDetailsMethod);
 		const deleteInvite = container.get(DeleteInviteMethod);
 		const respond = container.get(RespondMethod);
-		const createLocation = container.get(CreateLocationMethod);
-		const updateLocation = container.get(UpdateLocationMethod);
-		const deleteLocation = container.get(DeleteLocationMethod);
+		const createItineraryItem = container.get(CreateItineraryItemMethod);
+		const updateItineraryItem = container.get(UpdateItineraryItemMethod);
+		const deleteItineraryItem = container.get(DeleteItineraryItemMethod);
 
 		return os.router({
 			list: list.route(),
@@ -107,10 +107,10 @@ export const module = defineModule({
 				delete: deleteComment.route(),
 			},
 
-			locations: {
-				create: createLocation.route(),
-				update: updateLocation.route(),
-				delete: deleteLocation.route(),
+			itinerary: {
+				create: createItineraryItem.route(),
+				update: updateItineraryItem.route(),
+				delete: deleteItineraryItem.route(),
 			},
 		});
 	},
