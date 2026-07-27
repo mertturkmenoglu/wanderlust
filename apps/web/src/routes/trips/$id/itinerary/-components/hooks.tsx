@@ -9,18 +9,18 @@ export function useTripDays() {
 	});
 
 	return intervalDays.map((day) => {
-		const locations = trip.locations.filter((loc) =>
+		const items = trip.itineraryItems.filter((loc) =>
 			isWithinInterval(new Date(loc.scheduledTime), {
 				start: day,
 				end: addDays(day, 1),
 			}),
 		);
 
-		const isDefaultOpen = locations.length > 0;
+		const isDefaultOpen = items.length > 0;
 
 		return {
 			day,
-			locations,
+			items,
 			isDefaultOpen,
 		};
 	});
