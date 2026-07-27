@@ -46,7 +46,7 @@ const withTrip = {
 				image: true,
 			},
 		},
-		locations: {
+		itineraryItems: {
 			orderBy: {
 				scheduledTime: 'asc',
 			},
