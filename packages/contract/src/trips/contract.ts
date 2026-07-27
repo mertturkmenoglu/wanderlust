@@ -163,35 +163,35 @@ export const contract = oc
 				}),
 		},
 
-		locations: {
+		itinerary: {
 			create: oc
-				.input(dto.createLocationInput)
-				.output(dto.createLocationOutput)
+				.input(dto.createItineraryItemInput)
+				.output(dto.createItineraryItemOutput)
 				.route({
 					method: 'POST',
-					path: '/trips/:id/locations',
-					summary: 'Create Trip Location',
-					description: 'Create a new location for a trip',
+					path: '/trips/:tripId/itinerary',
+					summary: 'Create Itinerary Item',
+					description: 'Create a new itinerary item for a trip',
 					successStatus: 201,
 					successDescription: 'Created',
 				}),
 			update: oc
-				.input(dto.updateLocationInput)
-				.output(dto.updateLocationOutput)
+				.input(dto.updateItineraryItemInput)
+				.output(dto.updateItineraryItemOutput)
 				.route({
 					method: 'PATCH',
-					path: '/trips/:id/locations/:locationId',
-					summary: 'Update Trip Location',
-					description: 'Update a location for a trip',
+					path: '/trips/:tripId/itinerary/:id',
+					summary: 'Update Itinerary Item',
+					description: 'Update an itinerary item for a trip',
 				}),
 			delete: oc
-				.input(dto.deleteLocationInput)
-				.output(dto.deleteLocationOutput)
+				.input(dto.deleteItineraryItemInput)
+				.output(dto.deleteItineraryItemOutput)
 				.route({
 					method: 'DELETE',
-					path: '/trips/:id/locations/:locationId',
-					summary: 'Delete Trip Location',
-					description: 'Delete a location from a trip',
+					path: '/trips/:tripId/itinerary/:id',
+					summary: 'Delete Itinerary Item',
+					description: 'Delete an itinerary item from a trip',
 					successStatus: 204,
 					successDescription: 'No Content',
 				}),

@@ -10,7 +10,7 @@ export namespace dto {
 	export type GetInput = z.infer<typeof getInput>;
 
 	export const getOutput = z.object({
-		trip: Types.Trips.ExtendedWithParticipantsAndLocations,
+		trip: Types.Trips.ExtendedWithParticipantsAndItinerary,
 	});
 
 	export type GetOutput = z.infer<typeof getOutput>;
@@ -238,57 +238,56 @@ export namespace dto {
 	export type UpdateInput = z.infer<typeof updateInput>;
 
 	export const updateOutput = z.object({
-		trip: Types.Trips.ExtendedWithParticipantsAndLocations,
+		trip: Types.Trips.ExtendedWithParticipantsAndItinerary,
 	});
 
 	export type UpdateOutput = z.infer<typeof updateOutput>;
 
-	export const createLocationInput = Types.Trip.pick({
+	export const createItineraryItemInput =
+		Types.Trips.$Insert.ItineraryItem.omit({
+			id: true,
+		});
+
+	export type CreateItineraryItemInput = z.infer<
+		typeof createItineraryItemInput
+	>;
+
+	export const createItineraryItemOutput = z.object({
+		itineraryItem: Types.Trips.ItineraryItem,
+	});
+
+	export type CreateItineraryItemOutput = z.infer<
+		typeof createItineraryItemOutput
+	>;
+
+	export const updateItineraryItemInput = Types.Trips.ItineraryItem;
+
+	export type UpdateItineraryItemInput = z.infer<
+		typeof updateItineraryItemInput
+	>;
+
+	export const updateItineraryItemOutput = z.object({
+		itineraryItem: Types.Trips.ItineraryItem,
+	});
+
+	export type UpdateItineraryItemOutput = z.infer<
+		typeof updateItineraryItemOutput
+	>;
+
+	export const deleteItineraryItemInput = Types.Trips.ItineraryItem.pick({
 		id: true,
-	}).extend(
-		Types.Trips.Location.pick({
-			placeId: true,
-			scheduledTime: true,
-		}).extend({
-			description: Types.Trips.Location.shape.description.optional(),
-		}).shape,
-	);
-
-	export type CreateLocationInput = z.infer<typeof createLocationInput>;
-
-	export const createLocationOutput = z.object({
-		location: Types.Trips.LocationExtended,
+		tripId: true,
 	});
 
-	export type CreateLocationOutput = z.infer<typeof createLocationOutput>;
+	export type DeleteItineraryItemInput = z.infer<
+		typeof deleteItineraryItemInput
+	>;
 
-	export const updateLocationInput = Types.Trip.pick({
-		id: true,
-	}).extend({
-		locationId: Types.Trips.Location.shape.id,
-		description: Types.Trips.Location.shape.description.optional(),
-		scheduledTime: Types.Trips.Location.shape.scheduledTime.optional(),
-	});
+	export const deleteItineraryItemOutput = z.object({});
 
-	export type UpdateLocationInput = z.infer<typeof updateLocationInput>;
-
-	export const updateLocationOutput = z.object({
-		location: Types.Trips.LocationExtended,
-	});
-
-	export type UpdateLocationOutput = z.infer<typeof updateLocationOutput>;
-
-	export const deleteLocationInput = Types.Trip.pick({
-		id: true,
-	}).extend({
-		locationId: Types.Trips.Location.pick({ id: true }).shape.id,
-	});
-
-	export type DeleteLocationInput = z.infer<typeof deleteLocationInput>;
-
-	export const deleteLocationOutput = z.object({});
-
-	export type DeleteLocationOutput = z.infer<typeof deleteLocationOutput>;
+	export type DeleteItineraryItemOutput = z.infer<
+		typeof deleteItineraryItemOutput
+	>;
 
 	export const updateRequestedAmenitiesInput = z.object({
 		id: Types.Trip.shape.id,
@@ -312,7 +311,7 @@ export namespace dto {
 	export type GetSummaryInput = z.infer<typeof getSummaryInput>;
 
 	export const getSummaryOutput = z.object({
-		trip: Types.Trips.ExtendedWithParticipantsAndLocations,
+		trip: Types.Trips.ExtendedWithParticipantsAndItinerary,
 		totalCities: z.number(),
 		totalDays: z.number(),
 		totalParticipants: z.number(),
