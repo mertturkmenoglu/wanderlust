@@ -5,6 +5,7 @@ import { eachDayOfInterval } from 'date-fns';
 import { eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
+import { unique } from '@/lib/unique';
 import { os } from '../internal/router';
 import { TripProvider } from '../provides/trip';
 
@@ -34,14 +35,17 @@ export class GetTripSummaryMethod {
 			tx: this.db,
 		});
 
-		const totalCities = new Set(trip.locations.map((l) => l.place.wlCityId))
-			.size;
+		const totalCities = new Set(
+			trip.itineraryItems.map((l) => l.place?.place.wlCityId).filter(Boolean),
+		).size;
 		const totalDays = eachDayOfInterval({
 			start: trip.startAt,
 			end: trip.endAt,
 		}).length;
 		const totalParticipants = trip.participants.length + 1;
-		const totalLocations = new Set(trip.locations.map((l) => l.place.id)).size;
+		const totalLocations = unique(
+			trip.itineraryItems.filter((l) => l.placeId),
+		).length;
 		const totalComments = await this.db.$count(
 			schema.tripComments,
 			eq(schema.tripComments.tripId, trip.id),

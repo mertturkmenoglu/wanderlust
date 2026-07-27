@@ -5,19 +5,19 @@ import { and, eq } from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
-import { canDeleteLocation } from '../../internal/authz';
+import { canDeleteItineraryItem } from '../../internal/authz';
 import { os } from '../../internal/router';
 import { TripProvider } from '../../provides/trip';
 
 @injectable()
-export class DeleteLocationMethod {
+export class DeleteItineraryItemMethod {
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
 		@inject(TripProvider) private readonly tripProvider: TripProvider,
 	) {}
 
 	route() {
-		return os.locations.delete.handler(async ({ input, context }) => {
+		return os.itinerary.delete.handler(async ({ input, context }) => {
 			const userId = getUserIdOrThrow(context);
 			const result = await this.execute(userId, input);
 
@@ -27,8 +27,8 @@ export class DeleteLocationMethod {
 
 	private async execute(
 		userId: string,
-		data: Trips.dto.DeleteLocationInput,
-	): Promise<Trips.dto.DeleteLocationOutput> {
+		data: Trips.dto.DeleteItineraryItemInput,
+	): Promise<Trips.dto.DeleteItineraryItemOutput> {
 		const { trip } = await this.tripProvider.find({
 			id: data.id,
 			userId,
@@ -36,24 +36,24 @@ export class DeleteLocationMethod {
 		});
 
 		invariant(
-			canDeleteLocation(trip, userId),
+			canDeleteItineraryItem(trip, userId),
 			'FORBIDDEN',
-			'User is not allowed to delete locations on this trip',
+			'User is not allowed to delete itinerary items on this trip',
 		);
 
 		const res = await this.db
-			.delete(schema.tripLocations)
+			.delete(schema.itineraryItems)
 			.where(
 				and(
-					eq(schema.tripLocations.id, data.locationId),
-					eq(schema.tripLocations.tripId, data.id),
+					eq(schema.itineraryItems.id, data.id),
+					eq(schema.itineraryItems.tripId, data.tripId),
 				),
 			);
 
 		invariant(
 			res.rowCount === 1,
 			'NOT_FOUND',
-			`Trip location with id ${data.locationId} not found`,
+			`Itinerary item with id ${data.id} not found`,
 		);
 
 		return {};
