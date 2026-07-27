@@ -12,7 +12,7 @@ import {
 	isPrivilegedUser,
 } from '../internal/authz';
 
-type Trip = Types.Trips.ExtendedWithParticipantsAndLocations;
+type Trip = Types.Trips.ExtendedWithParticipantsAndItinerary;
 
 describe('Trips Authorization', () => {
 	const privateTrip: Trip = {
@@ -62,7 +62,7 @@ describe('Trips Authorization', () => {
 				},
 			},
 		],
-		locations: [],
+		itineraryItems: [],
 		owner: {
 			id: 'user-1',
 			name: 'Alice',

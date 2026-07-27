@@ -1,6 +1,6 @@
 import type { Types } from '@wanderlust/common';
 
-type Trip = Types.Trips.ExtendedWithParticipantsAndLocations;
+type Trip = Types.Trips.ExtendedWithParticipantsAndItinerary;
 
 // Check if the action user is the trip owner or an editor.
 export function isPrivilegedUser(trip: Trip, userId: string): boolean {
@@ -162,17 +162,17 @@ export function canUpdateTrip(trip: Trip, userId: string): boolean {
 	return isOwner(trip, userId);
 }
 
-export function canCreateLocation(trip: Trip, userId: string): boolean {
+export function canCreateItineraryItem(trip: Trip, userId: string): boolean {
 	// Only privileged users can create locations
 	return isPrivilegedUser(trip, userId);
 }
 
-export function canUpdateLocation(trip: Trip, userId: string): boolean {
+export function canUpdateItineraryItem(trip: Trip, userId: string): boolean {
 	// Only privileged users can update locations
 	return isPrivilegedUser(trip, userId);
 }
 
-export function canDeleteLocation(trip: Trip, userId: string): boolean {
+export function canDeleteItineraryItem(trip: Trip, userId: string): boolean {
 	// Only privileged users can delete locations
 	return isPrivilegedUser(trip, userId);
 }
