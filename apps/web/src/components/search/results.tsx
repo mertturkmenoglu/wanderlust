@@ -60,6 +60,8 @@ export function PlacesResultsView() {
 							e.preventDefault();
 							e.stopPropagation();
 							ctx.onItemClick(hit);
+							ctx.setIsDropdownOpen(false);
+							ctx.autocomplete.refine('');
 						}
 					}}
 				>
