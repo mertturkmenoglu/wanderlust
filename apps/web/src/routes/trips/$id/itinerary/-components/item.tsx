@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	AccordionContent,
 	AccordionItem,
@@ -7,10 +7,8 @@ import {
 import { cn } from '@wanderlust/ui/lib/utils';
 import { formatDate } from 'date-fns';
 import { AppMessage } from '@/components/app-message';
-import { PlaceCard } from '@/components/place-card';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import { useTripDays } from './hooks';
-import { UpsertLocationDialog } from './upsert-location-dialog';
 
 type Props = {
 	index: number;
@@ -20,7 +18,7 @@ export function TripDetailsItem({ index }: Props) {
 	const isPrivileged = useTripIsPrivileged();
 	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
 	const days = useTripDays();
-	const { day, locations } = days[index];
+	const { day, items } = days[index];
 
 	return (
 		<AccordionItem
@@ -37,10 +35,10 @@ export function TripDetailsItem({ index }: Props) {
 			</AccordionTrigger>
 			<AccordionContent
 				className={cn('my-4 grid grid-cols-1 gap-16', {
-					'gap-16 border-border border-l-4': locations.length > 0,
+					'gap-16 border-border border-l-4': items.length > 0,
 				})}
 			>
-				{locations.length === 0 && (
+				{items.length === 0 && (
 					<AppMessage
 						empty="Nothing is scheduled for this day"
 						classNames={{
@@ -50,7 +48,7 @@ export function TripDetailsItem({ index }: Props) {
 					/>
 				)}
 
-				{locations
+				{items
 					.sort(
 						(a, b) =>
 							new Date(a.scheduledTime).getTime() -
@@ -68,7 +66,8 @@ export function TripDetailsItem({ index }: Props) {
 								</div>
 							</div>
 							<div className="min-w-max">
-								<Link
+								<pre>{JSON.stringify(loc, null, 2)}</pre>
+								{/* <Link
 									to="/p/$id"
 									params={{
 										id: loc.placeId,
@@ -80,16 +79,16 @@ export function TripDetailsItem({ index }: Props) {
 										place={loc.place}
 										meta={loc.meta}
 									/>
-								</Link>
+								</Link> */}
 								<div className="mt-4">
-									<div className="text-muted-foreground text-sm">
+									{/* <div className="text-muted-foreground text-sm">
 										{loc.description}
-									</div>
+									</div> */}
 								</div>
 							</div>
 							{isPrivileged && (
 								<div className="ml-auto self-start">
-									<UpsertLocationDialog
+									{/* <UpsertLocationDialog
 										onOpen={() => {
 											navigate({
 												to: '.',
@@ -103,7 +102,7 @@ export function TripDetailsItem({ index }: Props) {
 												}),
 											});
 										}}
-									/>
+									/> */}
 								</div>
 							)}
 						</div>
