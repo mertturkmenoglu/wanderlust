@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { buttonVariants } from '@wanderlust/ui/components/button';
 import { ScrollArea, ScrollBar } from '@wanderlust/ui/components/scroll-area';
 import { MapIcon } from 'lucide-react';
@@ -6,7 +6,6 @@ import { UnderlineLink } from '@/components/underline-link';
 import { useListTripsQuery } from './hooks';
 
 export function AddToTripView() {
-	const { place } = useLoaderData({ from: '/p/$id/' });
 	const query = useListTripsQuery();
 	const trips = query.data.trips;
 
@@ -30,14 +29,8 @@ export function AddToTripView() {
 				{trips.map((trip) => (
 					<UnderlineLink
 						key={trip.id}
-						to="/trips/$id"
+						to="/trips/$id/itinerary"
 						params={{ id: trip.id }}
-						search={{
-							isUpdate: false,
-							placeId: place.id,
-							showLocationDialog: true,
-							description: `Trip to ${place.name}`,
-						}}
 						className="justify-start"
 					>
 						{trip.title}
