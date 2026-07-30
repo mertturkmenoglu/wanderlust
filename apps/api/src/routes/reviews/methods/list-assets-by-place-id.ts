@@ -1,13 +1,15 @@
 import type { CacheService } from '@wanderlust/cache';
 import { Tokens } from '@wanderlust/common';
 import type { Reviews } from '@wanderlust/contract';
-import type { DatabaseService } from '@wanderlust/db';
+import { type DatabaseService, schema } from '@wanderlust/db';
+import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { cacheOptions } from '../internal/cache';
 import { os } from '../internal/router';
 
 @injectable()
 export class ListReviewAssetsByPlaceIdMethod {
-	private readonly ns = 'reviews';
+	private readonly ns = cacheOptions.namespace;
 
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
@@ -26,34 +28,32 @@ export class ListReviewAssetsByPlaceIdMethod {
 		data: Reviews.dto.ListAssetsByPlaceIdInput,
 	): Promise<Reviews.dto.ListAssetsByPlaceIdOutput> {
 		const result = await this.cache.namespace(this.ns).getOrSet({
-			key: `places:${data.id}:assets`,
-			ttl: '30m',
+			key: cacheOptions.keys.placeAssets(data.id),
+			ttl: cacheOptions.ttl.placeAssets,
 			factory: async () => this.find(data.id),
 		});
 
 		return result;
 	}
 
-	private async find(_placeId: string) {
-		// const results = await this.db
-		// 	.select({
-		// 		asset: schema.assets,
-		// 		placeId: schema.reviews.placeId,
-		// 	})
-		// 	.from(schema.assets)
-		// 	.innerJoin(
-		// 		schema.reviews,
-		// 		dz.and(
-		// 			dz.eq(schema.assets, schema.reviews.id),
-		// 			dz.eq(schema.assets.entityType, 'review'),
-		// 		),
-		// 	)
-		// 	.where(dz.eq(schema.reviews.placeId, data.id))
-		// 	.orderBy(dz.desc(schema.assets.createdAt));
+	private async find(placeId: string) {
+		const results = await this.db
+			.select(dz.getColumns(schema.assets))
+			.from(schema.assets)
+			.innerJoin(
+				schema.assetsToReviews,
+				dz.eq(schema.assetsToReviews.assetId, schema.assets.id),
+			)
+			.innerJoin(
+				schema.reviews,
+				dz.eq(schema.reviews.id, schema.assetsToReviews.reviewId),
+			)
+			.where(dz.eq(schema.reviews.placeId, placeId))
+			.orderBy(dz.desc(schema.assets.createdAt))
+			.limit(25);
 
 		return {
-			// assets: results.map((r) => r.asset),
-			assets: [],
+			assets: results,
 		};
 	}
 }
