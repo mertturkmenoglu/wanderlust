@@ -7,13 +7,15 @@ import {
 import { PlusIcon } from 'lucide-react';
 import { Footer } from './footer';
 import { Header } from './header';
+import { useItineraryContext } from './hooks';
 import { mux } from './mux';
 
 export function Content() {
 	const InnerContent = mux();
+	const ctx = useItineraryContext();
 
 	return (
-		<Dialog>
+		<Dialog open={ctx.open} onOpenChange={ctx.setOpen}>
 			<DialogTrigger
 				render={
 					<Button className="ml-auto" variant="secondary">

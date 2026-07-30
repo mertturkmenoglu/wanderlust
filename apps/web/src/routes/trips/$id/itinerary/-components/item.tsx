@@ -1,113 +1,167 @@
-import { useNavigate } from '@tanstack/react-router';
+import { Button, buttonVariants } from '@wanderlust/ui/components/button';
 import {
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '@wanderlust/ui/components/accordion';
-import { cn } from '@wanderlust/ui/lib/utils';
+	Card,
+	CardAction,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@wanderlust/ui/components/card';
+import {
+	KeyValueList,
+	type KeyValueListItem,
+} from '@wanderlust/ui/components/key-value-list';
 import { formatDate } from 'date-fns';
-import { AppMessage } from '@/components/app-message';
+import { CheckIcon, HomeIcon, Settings2Icon, XIcon } from 'lucide-react';
+import { useMemo } from 'react';
+import { CollapsibleText } from '@/components/collapsible-text';
+import { PlaceCard } from '@/components/place-card';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
-import { useTripDays } from './hooks';
+import type { Outputs } from '@/lib/orpc';
+import { toTitleCase } from '@/lib/text';
 
 type Props = {
-	index: number;
+	item: Outputs['trips']['get']['trip']['itineraryItems'][number];
 };
 
-export function TripDetailsItem({ index }: Props) {
+export function ItineraryItem({ item }: Props) {
 	const isPrivileged = useTripIsPrivileged();
-	const navigate = useNavigate({ from: '/trips/$id/itinerary/' });
-	const days = useTripDays();
-	const { day, items } = days[index];
+
+	const hhmm = formatDate(item.scheduledTime, 'HH:mm');
+	const details = useMemo(() => {
+		const arr: Array<KeyValueListItem> = [];
+
+		if (item.booked !== null) {
+			arr.push({
+				label: 'Booked',
+				value: item.booked ? (
+					<CheckIcon className="size-4" />
+				) : (
+					<XIcon className="size-4" />
+				),
+			});
+		}
+
+		if (item.checkInTime !== null) {
+			arr.push({
+				label: 'Check-in Time',
+				value: formatDate(item.checkInTime, 'HH:mm'),
+			});
+		}
+
+		if (item.checkOutTime !== null) {
+			arr.push({
+				label: 'Check-out Time',
+				value: formatDate(item.checkOutTime, 'HH:mm'),
+			});
+		}
+
+		if (item.reservationNumber !== null) {
+			arr.push({
+				label: 'Reservation Number',
+				value: item.reservationNumber,
+			});
+		}
+
+		if (item.transportationMode !== null) {
+			arr.push({
+				label: 'Transportation Mode',
+				value: toTitleCase(item.transportationMode),
+			});
+		}
+
+		if (item.transportationName !== null) {
+			arr.push({
+				label: 'Transportation Name',
+				value: item.transportationName,
+			});
+		}
+
+		if (item.departureLocation !== null) {
+			arr.push({
+				label: 'Departure Location',
+				value: item.departureLocation,
+			});
+		}
+
+		if (item.departureTime !== null) {
+			arr.push({
+				label: 'Departure Time',
+				value: formatDate(item.departureTime, 'HH:mm'),
+			});
+		}
+
+		if (item.arrivalLocation !== null) {
+			arr.push({
+				label: 'Arrival Location',
+				value: item.arrivalLocation,
+			});
+		}
+
+		if (item.arrivalTime !== null) {
+			arr.push({
+				label: 'Arrival Time',
+				value: formatDate(item.arrivalTime, 'HH:mm'),
+			});
+		}
+
+		if (item.transportationConfirmationNumber !== null) {
+			arr.push({
+				label: 'Confirmation Number',
+				value: item.transportationConfirmationNumber,
+			});
+		}
+
+		return arr;
+	}, [item]);
 
 	return (
-		<AccordionItem
-			value={`day-${index}`}
-			key={`day-${day.toISOString()}`}
-			className="mt-2 border-none"
-		>
-			<AccordionTrigger className="flex w-full items-center">
-				<div className="font-semibold text-lg">Day {index + 1}</div>
-
-				<div className="ml-auto text-muted-foreground text-sm">
-					{formatDate(day, 'dd MMM')}
-				</div>
-			</AccordionTrigger>
-			<AccordionContent
-				className={cn('my-4 grid grid-cols-1 gap-16', {
-					'gap-16 border-border border-l-4': items.length > 0,
-				})}
-			>
-				{items.length === 0 && (
-					<AppMessage
-						empty="Nothing is scheduled for this day"
-						classNames={{
-							root: 'col-span-full my-4',
-							logo: 'size-16',
-						}}
-					/>
-				)}
-
-				{items
-					.sort(
-						(a, b) =>
-							new Date(a.scheduledTime).getTime() -
-							new Date(b.scheduledTime).getTime(),
-					)
-					.map((loc) => (
-						<div
-							key={loc.scheduledTime.toISOString()}
-							className="ml-2 flex items-center gap-4"
-						>
-							<div className="mt-20 flex items-center gap-2 self-start">
-								<div className="h-1 w-8 min-w-8 bg-border" />
-								<div className="text-lg text-muted-foreground">
-									{formatDate(loc.scheduledTime, 'HH:mm')}
-								</div>
+		<div className="ml-2 flex items-center gap-4">
+			<div className="mt-20 flex items-center gap-2 self-start">
+				<div className="h-1 w-8 min-w-8 bg-border" />
+				<div className="text-lg text-muted-foreground">{hhmm}</div>
+			</div>
+			<div className="w-8/12 min-w-max">
+				<Card size="default" className="min-w-max">
+					<CardHeader>
+						<CardTitle>
+							{item.title ?? `${toTitleCase(item.type)} Item`}
+						</CardTitle>
+						<CardDescription>
+							{item.notes && <CollapsibleText text={item.notes} />}
+						</CardDescription>
+						<CardAction>
+							<div
+								className={buttonVariants({
+									variant: 'secondary',
+									size: 'icon-sm',
+								})}
+							>
+								<HomeIcon />
 							</div>
-							<div className="min-w-max">
-								<pre>{JSON.stringify(loc, null, 2)}</pre>
-								{/* <Link
-									to="/p/$id"
-									params={{
-										id: loc.placeId,
-									}}
-									className="min-w-max"
-								>
-									<PlaceCard
-										className="min-w-xs"
-										place={loc.place}
-										meta={loc.meta}
-									/>
-								</Link> */}
-								<div className="mt-4">
-									{/* <div className="text-muted-foreground text-sm">
-										{loc.description}
-									</div> */}
-								</div>
-							</div>
-							{isPrivileged && (
-								<div className="ml-auto self-start">
-									{/* <UpsertLocationDialog
-										onOpen={() => {
-											navigate({
-												to: '.',
-												search: () => ({
-													dialog: true,
-													update: true,
-													placeId: loc.placeId,
-													description: loc.description,
-													time: loc.scheduledTime.toISOString(),
-													locId: loc.id,
-												}),
-											});
-										}}
-									/> */}
-								</div>
-							)}
-						</div>
-					))}
-			</AccordionContent>
-		</AccordionItem>
+						</CardAction>
+					</CardHeader>
+					<CardContent>
+						{item.place && (
+							<PlaceCard
+								variant="item"
+								as="link"
+								place={item.place.place}
+								meta={item.place.meta}
+							/>
+						)}
+						<KeyValueList variant="bordered" className="my-4" items={details} />
+					</CardContent>
+					{isPrivileged && (
+						<CardFooter>
+							<Button variant="midnight" size="icon-sm" className="ml-auto">
+								<Settings2Icon />
+							</Button>
+						</CardFooter>
+					)}
+				</Card>
+			</div>
+		</div>
 	);
 }

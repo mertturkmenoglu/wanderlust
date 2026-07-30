@@ -21,6 +21,7 @@ import { z } from 'zod';
 import { useFormElement } from '@/components/form';
 import { toTitleCase } from '@/lib/text';
 import { DateSelection } from './date-selection';
+import { useCreateItineraryItemMutation, useTripId } from './hooks';
 
 const schema = z.object({
 	title: z.string({ error: 'Title is required' }),
@@ -28,7 +29,9 @@ const schema = z.object({
 	booked: z.boolean().optional(),
 	reservationNumber: z.string().optional(),
 	notes: z.string().optional(),
-	transportationMode: z.string().optional(),
+	transportationMode: z
+		.enum(['boat', 'bus', 'car', 'flight', 'other', 'train'])
+		.optional(),
 	transportationName: z.string().optional(),
 	departureLocation: z.string().optional(),
 	departureTime: z.date({ error: 'Departure time is invalid' }).optional(),
@@ -46,8 +49,15 @@ export function TransportationView() {
 		resolver: zodResolver(schema),
 	});
 
+	const tripId = useTripId();
+	const mutation = useCreateItineraryItemMutation();
+
 	const onSubmit = form.handleSubmit((data) => {
-		console.log(data);
+		mutation.mutate({
+			tripId: tripId,
+			type: 'transportation',
+			...data,
+		});
 	});
 
 	const { Element } = useFormElement(form.control);
@@ -74,6 +84,7 @@ export function TransportationView() {
 								id={id}
 								value={r.field.value}
 								onChange={r.field.onChange}
+								fieldState={r.fieldState}
 							/>
 						)}
 					</Element>
@@ -190,6 +201,7 @@ export function TransportationView() {
 									id={id}
 									value={r.field.value}
 									onChange={r.field.onChange}
+									fieldState={r.fieldState}
 								/>
 							)}
 						</Element>
@@ -212,6 +224,7 @@ export function TransportationView() {
 									id={id}
 									value={r.field.value}
 									onChange={r.field.onChange}
+									fieldState={r.fieldState}
 								/>
 							)}
 						</Element>

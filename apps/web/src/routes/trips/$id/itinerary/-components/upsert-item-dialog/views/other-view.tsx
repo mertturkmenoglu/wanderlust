@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useFormElement } from '@/components/form';
 import { DateSelection } from './date-selection';
+import { useCreateItineraryItemMutation, useTripId } from './hooks';
 
 const schema = z.object({
 	scheduledTime: z.date({ error: 'Scheduled time is required' }),
@@ -25,8 +26,15 @@ export function OtherView() {
 		resolver: zodResolver(schema),
 	});
 
+	const tripId = useTripId();
+	const mutation = useCreateItineraryItemMutation();
+
 	const onSubmit = form.handleSubmit((data) => {
-		console.log(data);
+		mutation.mutate({
+			tripId: tripId,
+			type: 'other',
+			...data,
+		});
 	});
 
 	const { Element } = useFormElement(form.control);
@@ -43,6 +51,7 @@ export function OtherView() {
 								id={id}
 								value={r.field.value}
 								onChange={r.field.onChange}
+								fieldState={r.fieldState}
 							/>
 						)}
 					</Element>

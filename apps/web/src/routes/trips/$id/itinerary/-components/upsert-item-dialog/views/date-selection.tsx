@@ -1,50 +1,34 @@
-import { Button } from '@wanderlust/ui/components/button';
-import { Calendar } from '@wanderlust/ui/components/calendar';
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '@wanderlust/ui/components/popover';
-import { format, subMonths } from 'date-fns';
+import { useLoaderData } from '@tanstack/react-router';
+import type { ControllerFieldState } from 'react-hook-form';
+import { TSTZPicker } from '@/components/tstz-picker';
 
 type Props = {
 	id: string;
 	value: Date | undefined;
 	onChange: (...event: any[]) => void;
+	fieldState: ControllerFieldState;
 };
 
 export function DateSelection(props: Props) {
-	return (
-		<Popover>
-			<PopoverTrigger
-				render={
-					<Button
-						variant="outline"
-						id={props.id}
-						className="w-full max-w-md justify-start font-normal"
-					>
-						{props.value ? (
-							format(props.value, 'PP p')
-						) : (
-							<span>Pick a date</span>
-						)}
-					</Button>
-				}
-			/>
+	const { trip } = useLoaderData({ from: '/trips/$id' });
 
-			<PopoverContent className="w-auto p-0" align="start">
-				<Calendar
-					mode="single"
-					selected={props.value}
-					onSelect={props.onChange}
-					startMonth={subMonths(new Date(), 1)}
-					endMonth={new Date()}
-					disabled={{
-						after: new Date(),
-						before: subMonths(new Date(), 1),
-					}}
-				/>
-			</PopoverContent>
-		</Popover>
+	return (
+		<TSTZPicker
+			dateLabel="Date"
+			timeLabel="Time"
+			formatStr="PP p"
+			fieldState={props.fieldState}
+			onChange={props.onChange}
+			value={props.value}
+			calendarProps={{
+				className: 'mx-auto',
+				startMonth: trip.startAt,
+				endMonth: trip.endAt,
+				disabled: {
+					after: trip.endAt,
+					before: trip.startAt,
+				},
+			}}
+		/>
 	);
 }

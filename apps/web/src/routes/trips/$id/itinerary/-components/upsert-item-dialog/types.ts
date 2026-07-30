@@ -18,6 +18,8 @@ export type ItineraryItemOption = Readonly<{
 export type State = {
 	type: ItineraryItemType | null;
 	setType: Dispatch<SetStateAction<ItineraryItemType | null>>;
+	open: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export const ItineraryContext = createContext<State | null>(null);

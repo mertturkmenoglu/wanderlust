@@ -2,9 +2,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Accordion } from '@wanderlust/ui/components/accordion';
 import { useMemo } from 'react';
 import { tripUpsertLocationSchema } from '@/schemas/trip-upsert-location';
+import { TripDayDetailsItem } from './-components/day-details-item';
 import { Header } from './-components/header';
 import { useTripDays } from './-components/hooks';
-import { TripDetailsItem } from './-components/item';
 
 export const Route = createFileRoute('/trips/$id/itinerary/')({
 	component: RouteComponent,
@@ -34,7 +34,10 @@ function RouteComponent() {
 			<div className="">
 				<Accordion type="multiple" defaultValue={defaultOpenValues}>
 					{days.map(({ day }, i) => (
-						<TripDetailsItem key={`trip-day-${day.toISOString()}`} index={i} />
+						<TripDayDetailsItem
+							key={`trip-day-${day.toISOString()}`}
+							index={i}
+						/>
 					))}
 				</Accordion>
 			</div>

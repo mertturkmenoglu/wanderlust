@@ -20,6 +20,7 @@ import { PlaceCard } from '@/components/place-card';
 import { Search } from '@/components/search';
 import type { TPlaceHit } from '@/lib/search';
 import { DateSelection } from './date-selection';
+import { useCreateItineraryItemMutation, useTripId } from './hooks';
 
 const schema = z.object({
 	title: z.string({ error: 'Title is required' }),
@@ -39,8 +40,15 @@ export function EventView() {
 		resolver: zodResolver(schema),
 	});
 
+	const tripId = useTripId();
+	const mutation = useCreateItineraryItemMutation();
+
 	const onSubmit = form.handleSubmit((data) => {
-		console.log(data);
+		mutation.mutate({
+			tripId: tripId,
+			type: 'event',
+			...data,
+		});
 	});
 
 	const { Element } = useFormElement(form.control);
@@ -67,6 +75,7 @@ export function EventView() {
 								id={id}
 								value={r.field.value}
 								onChange={r.field.onChange}
+								fieldState={r.fieldState}
 							/>
 						)}
 					</Element>
