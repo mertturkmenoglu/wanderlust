@@ -33,7 +33,7 @@ export class UpdateItineraryItemMethod {
 		data: Trips.dto.UpdateItineraryItemInput,
 	): Promise<Trips.dto.UpdateItineraryItemOutput> {
 		const { trip } = await this.tripProvider.find({
-			id: data.id,
+			id: data.tripId,
 			userId,
 			tx: this.db,
 		});
