@@ -19,8 +19,13 @@ import { useFormElement } from '@/components/form';
 import { PlaceCard } from '@/components/place-card';
 import { Search } from '@/components/search';
 import type { TPlaceHit } from '@/lib/search';
+import { useItineraryContext } from '../hooks';
 import { DateSelection } from './date-selection';
-import { useCreateItineraryItemMutation, useTripId } from './hooks';
+import {
+	useCreateItineraryItemMutation,
+	useTripId,
+	useUpdateItineraryItemMutation,
+} from './hooks';
 
 const schema = z.object({
 	title: z.string({ error: 'Title is required' }),
@@ -36,22 +41,50 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export function AccommodationView() {
-	const [selectedPlaceResult, setSelectedPlaceResult] =
-		useState<TPlaceHit | null>(null);
+	const ctx = useItineraryContext();
+	const [selectedPlace, setSelectedPlace] = useState<TPlaceHit['place'] | null>(
+		() => {
+			if (ctx.initialItem?.place?.place) {
+				return ctx.initialItem.place.place;
+			}
+
+			return null;
+		},
+	);
 
 	const form = useForm<Schema>({
 		resolver: zodResolver(schema),
+		defaultValues: ctx.initialItem
+			? {
+					booked: ctx.initialItem.booked ?? undefined,
+					checkInTime: ctx.initialItem.checkInTime ?? undefined,
+					checkOutTime: ctx.initialItem.checkOutTime ?? undefined,
+					notes: ctx.initialItem.notes ?? undefined,
+					placeId: ctx.initialItem.placeId ?? undefined,
+					reservationNumber: ctx.initialItem.reservationNumber ?? undefined,
+					scheduledTime: ctx.initialItem.scheduledTime,
+					title: ctx.initialItem.title ?? undefined,
+				}
+			: undefined,
 	});
 
 	const tripId = useTripId();
-	const mutation = useCreateItineraryItemMutation();
+	const create = useCreateItineraryItemMutation();
+	const edit = useUpdateItineraryItemMutation();
 
 	const onSubmit = form.handleSubmit((data) => {
-		mutation.mutate({
-			tripId: tripId,
-			type: 'accommodation',
-			...data,
-		});
+		if (ctx.mode === 'edit' && ctx.initialItem) {
+			edit.mutate({
+				...ctx.initialItem,
+				...data,
+			});
+		} else {
+			create.mutate({
+				tripId: tripId,
+				type: 'accommodation',
+				...data,
+			});
+		}
 	});
 
 	const { Element } = useFormElement(form.control);
@@ -165,20 +198,20 @@ export function AccommodationView() {
 							onItemClick={(v) => {
 								const item = v as TPlaceHit;
 								form.setValue('placeId', item.place.id);
-								setSelectedPlaceResult(item);
+								setSelectedPlace(item.place);
 							}}
 						/>
 					</div>
 
-					{selectedPlaceResult && (
+					{selectedPlace && (
 						<div className="flex flex-row items-center gap-4">
-							<PlaceCard place={selectedPlaceResult.place} variant="item" />
+							<PlaceCard place={selectedPlace} variant="item" />
 							<Button
 								type="button"
 								variant="destructive"
 								size="icon-sm"
 								onClick={() => {
-									setSelectedPlaceResult(null);
+									setSelectedPlace(null);
 									form.setValue('placeId', undefined);
 								}}
 							>

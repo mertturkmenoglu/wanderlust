@@ -20,8 +20,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useFormElement } from '@/components/form';
 import { toTitleCase } from '@/lib/text';
+import { useItineraryContext } from '../hooks';
 import { DateSelection } from './date-selection';
-import { useCreateItineraryItemMutation, useTripId } from './hooks';
+import {
+	useCreateItineraryItemMutation,
+	useTripId,
+	useUpdateItineraryItemMutation,
+} from './hooks';
 
 const schema = z.object({
 	title: z.string({ error: 'Title is required' }),
@@ -45,19 +50,46 @@ const transportModes = ['flight', 'car', 'train', 'bus', 'boat', 'other'];
 type Schema = z.infer<typeof schema>;
 
 export function TransportationView() {
+	const ctx = useItineraryContext();
+
 	const form = useForm<Schema>({
 		resolver: zodResolver(schema),
+		defaultValues: ctx.initialItem
+			? {
+					booked: ctx.initialItem.booked ?? undefined,
+					title: ctx.initialItem.title ?? undefined,
+					scheduledTime: ctx.initialItem.scheduledTime ?? undefined,
+					reservationNumber: ctx.initialItem.reservationNumber ?? undefined,
+					notes: ctx.initialItem.notes ?? undefined,
+					transportationMode: ctx.initialItem.transportationMode ?? undefined,
+					transportationName: ctx.initialItem.transportationName ?? undefined,
+					departureLocation: ctx.initialItem.departureLocation ?? undefined,
+					departureTime: ctx.initialItem.departureTime ?? undefined,
+					arrivalLocation: ctx.initialItem.arrivalLocation ?? undefined,
+					arrivalTime: ctx.initialItem.arrivalTime ?? undefined,
+					transportationConfirmationNumber:
+						ctx.initialItem.transportationConfirmationNumber ?? undefined,
+				}
+			: undefined,
 	});
 
 	const tripId = useTripId();
-	const mutation = useCreateItineraryItemMutation();
+	const create = useCreateItineraryItemMutation();
+	const edit = useUpdateItineraryItemMutation();
 
 	const onSubmit = form.handleSubmit((data) => {
-		mutation.mutate({
-			tripId: tripId,
-			type: 'transportation',
-			...data,
-		});
+		if (ctx.mode === 'edit' && ctx.initialItem) {
+			edit.mutate({
+				...ctx.initialItem,
+				...data,
+			});
+		} else {
+			create.mutate({
+				tripId: tripId,
+				type: 'transportation',
+				...data,
+			});
+		}
 	});
 
 	const { Element } = useFormElement(form.control);

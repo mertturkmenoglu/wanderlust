@@ -1,8 +1,23 @@
 import { type PropsWithChildren, useMemo, useState } from 'react';
-import { ItineraryContext, type ItineraryItemType, type State } from './types';
+import {
+	ItineraryContext,
+	type ItineraryItemType,
+	type State,
+	type UpsertItemDialogProps,
+} from './types';
 
-export function ItineraryContextProvider({ children }: PropsWithChildren) {
-	const [type, setType] = useState<ItineraryItemType | null>(null);
+export function ItineraryContextProvider({
+	children,
+	item,
+}: PropsWithChildren<UpsertItemDialogProps>) {
+	const [type, setType] = useState<ItineraryItemType | null>(() => {
+		if (item) {
+			return item.type;
+		}
+
+		return null;
+	});
+
 	const [open, setOpen] = useState(false);
 
 	const state = useMemo(() => {
@@ -11,10 +26,12 @@ export function ItineraryContextProvider({ children }: PropsWithChildren) {
 			setType,
 			open,
 			setOpen,
+			initialItem: item,
+			mode: item ? 'edit' : 'create',
 		};
 
 		return value;
-	}, [type, open]);
+	}, [type, open, item]);
 
 	return (
 		<ItineraryContext.Provider value={state}>

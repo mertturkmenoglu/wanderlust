@@ -19,8 +19,13 @@ import { useFormElement } from '@/components/form';
 import { PlaceCard } from '@/components/place-card';
 import { Search } from '@/components/search';
 import type { TPlaceHit } from '@/lib/search';
+import { useItineraryContext } from '../hooks';
 import { DateSelection } from './date-selection';
-import { useCreateItineraryItemMutation, useTripId } from './hooks';
+import {
+	useCreateItineraryItemMutation,
+	useTripId,
+	useUpdateItineraryItemMutation,
+} from './hooks';
 
 const schema = z.object({
 	scheduledTime: z.date({ error: 'Scheduled time is required' }),
@@ -33,21 +38,41 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export function LocationView() {
-	const [selectedPlaceResult, setSelectedPlaceResult] =
-		useState<TPlaceHit | null>(null);
+	const ctx = useItineraryContext();
+	const [selectedPlace, setSelectedPlace] = useState<TPlaceHit['place'] | null>(
+		() => ctx.initialItem?.place?.place ?? null,
+	);
+
 	const form = useForm<Schema>({
 		resolver: zodResolver(schema),
+		defaultValues: ctx.initialItem
+			? {
+					booked: ctx.initialItem.booked ?? undefined,
+					scheduledTime: ctx.initialItem.scheduledTime ?? undefined,
+					reservationNumber: ctx.initialItem.reservationNumber ?? undefined,
+					notes: ctx.initialItem.notes ?? undefined,
+					placeId: ctx.initialItem.place?.place?.id ?? undefined,
+				}
+			: undefined,
 	});
 
 	const tripId = useTripId();
-	const mutation = useCreateItineraryItemMutation();
+	const create = useCreateItineraryItemMutation();
+	const edit = useUpdateItineraryItemMutation();
 
 	const onSubmit = form.handleSubmit((data) => {
-		mutation.mutate({
-			tripId: tripId,
-			type: 'location',
-			...data,
-		});
+		if (ctx.mode === 'edit' && ctx.initialItem) {
+			edit.mutate({
+				...ctx.initialItem,
+				...data,
+			});
+		} else {
+			create.mutate({
+				tripId: tripId,
+				type: 'location',
+				...data,
+			});
+		}
 	});
 
 	const { Element } = useFormElement(form.control);
@@ -128,20 +153,20 @@ export function LocationView() {
 							onItemClick={(v) => {
 								const item = v as TPlaceHit;
 								form.setValue('placeId', item.place.id);
-								setSelectedPlaceResult(item);
+								setSelectedPlace(item.place);
 							}}
 						/>
 					</div>
 
-					{selectedPlaceResult && (
+					{selectedPlace && (
 						<div className="flex flex-row items-center gap-4">
-							<PlaceCard place={selectedPlaceResult.place} variant="item" />
+							<PlaceCard place={selectedPlace} variant="item" />
 							<Button
 								type="button"
 								variant="destructive"
 								size="icon-sm"
 								onClick={() => {
-									setSelectedPlaceResult(null);
+									setSelectedPlace(null);
 									form.setValue('placeId', undefined);
 								}}
 							>

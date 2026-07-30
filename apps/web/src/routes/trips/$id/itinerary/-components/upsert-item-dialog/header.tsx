@@ -1,8 +1,8 @@
 import {
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from '@wanderlust/ui/components/dialog';
+	AlertDialogDescription,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@wanderlust/ui/components/alert-dialog';
 import { useMemo } from 'react';
 import { useItineraryContext } from './hooks';
 
@@ -74,9 +74,9 @@ export function Header() {
 	}, [ctx.type]);
 
 	return (
-		<DialogHeader>
-			<DialogTitle>{title}</DialogTitle>
-			<DialogDescription>{description}</DialogDescription>
-		</DialogHeader>
+		<AlertDialogHeader>
+			<AlertDialogTitle>{title}</AlertDialogTitle>
+			<AlertDialogDescription>{description}</AlertDialogDescription>
+		</AlertDialogHeader>
 	);
 }

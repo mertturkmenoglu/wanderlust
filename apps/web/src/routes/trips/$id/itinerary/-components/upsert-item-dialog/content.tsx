@@ -1,10 +1,10 @@
-import { Button } from '@wanderlust/ui/components/button';
 import {
-	Dialog,
-	DialogContent,
-	DialogTrigger,
-} from '@wanderlust/ui/components/dialog';
-import { PlusIcon } from 'lucide-react';
+	AlertDialog,
+	AlertDialogContent,
+	AlertDialogTrigger,
+} from '@wanderlust/ui/components/alert-dialog';
+import { Button } from '@wanderlust/ui/components/button';
+import { PlusIcon, Settings2Icon } from 'lucide-react';
 import { Footer } from './footer';
 import { Header } from './header';
 import { useItineraryContext } from './hooks';
@@ -15,22 +15,29 @@ export function Content() {
 	const ctx = useItineraryContext();
 
 	return (
-		<Dialog open={ctx.open} onOpenChange={ctx.setOpen}>
-			<DialogTrigger
+		<AlertDialog open={ctx.open} onOpenChange={ctx.setOpen}>
+			<AlertDialogTrigger
 				render={
-					<Button className="ml-auto" variant="secondary">
-						<PlusIcon />
-						<span>Add Itinerary Item</span>
-					</Button>
+					ctx.mode === 'edit' ? (
+						<Button className="ml-auto" variant="midnight" size="icon-sm">
+							<Settings2Icon />
+							<span className="sr-only">Update Itinerary Item</span>
+						</Button>
+					) : (
+						<Button className="ml-auto" variant="secondary">
+							<PlusIcon />
+							<span>Add Itinerary Item</span>
+						</Button>
+					)
 				}
 			/>
-			<DialogContent className="md:min-w-3xl">
+			<AlertDialogContent className="md:min-w-3xl">
 				<Header />
 				<div className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4 py-4">
 					<InnerContent />
 				</div>
 				<Footer />
-			</DialogContent>
-		</Dialog>
+			</AlertDialogContent>
+		</AlertDialog>
 	);
 }

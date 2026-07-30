@@ -24,3 +24,18 @@ export function useCreateItineraryItemMutation() {
 		}),
 	);
 }
+
+export function useUpdateItineraryItemMutation() {
+	const ctx = useItineraryContext();
+	const invalidate = useInvalidator();
+
+	return useMutation(
+		orpc.trips.itinerary.update.mutationOptions({
+			onSuccess: async () => {
+				await invalidate();
+				toast.success('Itinerary item updated');
+				ctx.setOpen(false);
+			},
+		}),
+	);
+}

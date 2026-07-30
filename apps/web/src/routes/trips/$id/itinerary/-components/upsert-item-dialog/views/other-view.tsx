@@ -10,8 +10,13 @@ import { Textarea } from '@wanderlust/ui/components/textarea';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useFormElement } from '@/components/form';
+import { useItineraryContext } from '../hooks';
 import { DateSelection } from './date-selection';
-import { useCreateItineraryItemMutation, useTripId } from './hooks';
+import {
+	useCreateItineraryItemMutation,
+	useTripId,
+	useUpdateItineraryItemMutation,
+} from './hooks';
 
 const schema = z.object({
 	scheduledTime: z.date({ error: 'Scheduled time is required' }),
@@ -22,19 +27,36 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export function OtherView() {
+	const ctx = useItineraryContext();
+
 	const form = useForm<Schema>({
 		resolver: zodResolver(schema),
+		defaultValues: ctx.initialItem
+			? {
+					scheduledTime: ctx.initialItem.scheduledTime ?? undefined,
+					notes: ctx.initialItem.notes ?? undefined,
+					title: ctx.initialItem.title ?? undefined,
+				}
+			: undefined,
 	});
 
 	const tripId = useTripId();
-	const mutation = useCreateItineraryItemMutation();
+	const create = useCreateItineraryItemMutation();
+	const edit = useUpdateItineraryItemMutation();
 
 	const onSubmit = form.handleSubmit((data) => {
-		mutation.mutate({
-			tripId: tripId,
-			type: 'other',
-			...data,
-		});
+		if (ctx.mode === 'edit' && ctx.initialItem) {
+			edit.mutate({
+				...ctx.initialItem,
+				...data,
+			});
+		} else {
+			create.mutate({
+				tripId: tripId,
+				type: 'other',
+				...data,
+			});
+		}
 	});
 
 	const { Element } = useFormElement(form.control);

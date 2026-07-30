@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from '@wanderlust/ui/components/button';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import {
 	Card,
 	CardAction,
@@ -13,13 +13,23 @@ import {
 	type KeyValueListItem,
 } from '@wanderlust/ui/components/key-value-list';
 import { formatDate } from 'date-fns';
-import { CheckIcon, HomeIcon, Settings2Icon, XIcon } from 'lucide-react';
+import {
+	CheckIcon,
+	HomeIcon,
+	MapPinIcon,
+	NotepadTextIcon,
+	PartyPopperIcon,
+	PlaneIcon,
+	UtensilsIcon,
+	XIcon,
+} from 'lucide-react';
 import { useMemo } from 'react';
 import { CollapsibleText } from '@/components/collapsible-text';
 import { PlaceCard } from '@/components/place-card';
 import { useTripIsPrivileged } from '@/hooks/use-trip-is-privileged';
 import type { Outputs } from '@/lib/orpc';
 import { toTitleCase } from '@/lib/text';
+import { UpsertItemDialog } from './upsert-item-dialog';
 
 type Props = {
 	item: Outputs['trips']['get']['trip']['itineraryItems'][number];
@@ -138,7 +148,12 @@ export function ItineraryItem({ item }: Props) {
 									size: 'icon-sm',
 								})}
 							>
-								<HomeIcon />
+								{item.type === 'accommodation' && <HomeIcon />}
+								{item.type === 'transportation' && <PlaneIcon />}
+								{item.type === 'event' && <PartyPopperIcon />}
+								{item.type === 'location' && <MapPinIcon />}
+								{item.type === 'dining' && <UtensilsIcon />}
+								{item.type === 'other' && <NotepadTextIcon />}
 							</div>
 						</CardAction>
 					</CardHeader>
@@ -155,9 +170,7 @@ export function ItineraryItem({ item }: Props) {
 					</CardContent>
 					{isPrivileged && (
 						<CardFooter>
-							<Button variant="midnight" size="icon-sm" className="ml-auto">
-								<Settings2Icon />
-							</Button>
+							<UpsertItemDialog item={item} />
 						</CardFooter>
 					)}
 				</Card>
