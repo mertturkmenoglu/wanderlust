@@ -8,11 +8,12 @@ import { inject, injectable } from 'inversify';
 import { getUserIdOrThrow } from '@/lib/get-user-id';
 import { invariant } from '@/lib/invariant';
 import { requireAuth } from '@/middlewares/authn';
+import { cacheOptions } from '../internal/cache';
 import { os } from '../internal/router';
 
 @injectable()
 export class DeleteReviewMethod {
-	private readonly ns = 'reviews';
+	private readonly ns = cacheOptions.namespace;
 
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
@@ -94,25 +95,10 @@ export class DeleteReviewMethod {
 
 			return deleted;
 		});
-		// const urls = existing.assets.map((asset) => asset.url);
-		// const allAssetsDeleted = await this.removeAssets(urls);
 
-		// if (!allAssetsDeleted) {
-		// 	span?.addEvent(
-		// 		'review.delete.asset-delete-failure',
-		// 		{
-		// 			reviewId: data.id,
-		// 			urls: urls.join(','),
-		// 		},
-		// 		new Date(),
-		// 	);
-		// }
+		await this.invalidatePlaceAssets(result.placeId);
 
 		await this.invalidatePlaceRatings(result.placeId);
-
-		// if (urls.length > 0) {
-		// 	await this.invalidatePlaceAssets(deleted.placeId);
-		// }
 
 		return {};
 	}
@@ -129,7 +115,7 @@ export class DeleteReviewMethod {
 		);
 
 		await this.cache.namespace(this.ns).delete({
-			key: `places:${placeId}:ratings`,
+			key: cacheOptions.keys.placeRatings(placeId),
 		});
 	}
 
@@ -145,7 +131,7 @@ export class DeleteReviewMethod {
 		);
 
 		await this.cache.namespace(this.ns).delete({
-			key: `places:${placeId}:assets`,
+			key: cacheOptions.keys.placeAssets(placeId),
 		});
 	}
 }

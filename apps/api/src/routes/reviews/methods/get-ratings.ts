@@ -4,11 +4,12 @@ import type { Reviews } from '@wanderlust/contract';
 import { type DatabaseService, schema } from '@wanderlust/db';
 import * as dz from 'drizzle-orm';
 import { inject, injectable } from 'inversify';
+import { cacheOptions } from '../internal/cache';
 import { os } from '../internal/router';
 
 @injectable()
 export class GetRatingsMethod {
-	private readonly ns = 'reviews';
+	private readonly ns = cacheOptions.namespace;
 
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
@@ -27,8 +28,8 @@ export class GetRatingsMethod {
 		data: Reviews.dto.GetRatingsInput,
 	): Promise<Reviews.dto.GetRatingsOutput> {
 		const result = await this.cache.namespace(this.ns).getOrSet({
-			key: `places:${data.id}:ratings`,
-			ttl: '30m',
+			key: cacheOptions.keys.placeRatings(data.id),
+			ttl: cacheOptions.ttl.placeRatings,
 			factory: async () => this.compute(data.id),
 		});
 

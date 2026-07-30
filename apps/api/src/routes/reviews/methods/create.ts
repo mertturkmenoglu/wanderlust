@@ -15,6 +15,7 @@ import { invariant } from '@/lib/invariant';
 import { detectLanguage, LangCodeFormats } from '@/lib/lang';
 import { areSetsEqual } from '@/lib/set-equality';
 import { requireAuth } from '@/middlewares/authn';
+import { cacheOptions } from '../internal/cache';
 import { os } from '../internal/router';
 
 type CreateReviewParams = Reviews.dto.CreateInput & {
@@ -29,7 +30,7 @@ type CreateReviewParams = Reviews.dto.CreateInput & {
 
 @injectable()
 export class CreateReviewMethod {
-	private readonly ns = 'reviews';
+	private readonly ns = cacheOptions.namespace;
 
 	constructor(
 		@inject(Tokens.Database) private readonly db: DatabaseService,
@@ -280,7 +281,7 @@ export class CreateReviewMethod {
 		);
 
 		await this.cache.namespace(this.ns).delete({
-			key: `places:${placeId}:ratings`,
+			key: cacheOptions.keys.placeRatings(placeId),
 		});
 	}
 
@@ -296,7 +297,7 @@ export class CreateReviewMethod {
 		);
 
 		await this.cache.namespace(this.ns).delete({
-			key: `places:${placeId}:assets`,
+			key: cacheOptions.keys.placeAssets(placeId),
 		});
 	}
 
