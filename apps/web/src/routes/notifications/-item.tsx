@@ -18,7 +18,10 @@ import {
 	tripNewCommentNotificationSchema,
 	tripUpdateNotificationSchema,
 } from '@/schemas/notifications';
-import type { TNotification } from '@/stores/notifications-context';
+import {
+	type TNotification,
+	useNotificationsContext,
+} from '@/stores/notifications-context';
 import { MarkReadView } from './-mark-read';
 import { UnreadBadge } from './-unread-badge';
 
@@ -62,6 +65,7 @@ function getVariantComponent(type: TNotification['type']) {
 }
 
 function VariantUserFollow({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
 	const result = followNotificationSchema.safeParse(item);
 
 	if (!result.success) {
@@ -75,6 +79,9 @@ function VariantUserFollow({ item }: Props) {
 			to="/u/$username"
 			params={{
 				username: data.follower.username ?? '',
+			}}
+			onClick={async () => {
+				await markAsRead(item.id);
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
@@ -103,8 +110,16 @@ function VariantUserFollow({ item }: Props) {
 }
 
 function VariantWanderlustSystem({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
+
 	return (
-		<Item variant="outline" className="hover:bg-muted">
+		<Item
+			variant="outline"
+			className="hover:bg-muted"
+			onClick={async () => {
+				await markAsRead(item.id);
+			}}
+		>
 			<UnreadBadge item={item} />
 
 			<ItemMedia variant="default">
@@ -127,6 +142,7 @@ function VariantWanderlustSystem({ item }: Props) {
 }
 
 function VariantTripInvite({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
 	const result = tripInviteNotificationSchema.safeParse(item);
 
 	if (!result.success) {
@@ -137,7 +153,12 @@ function VariantTripInvite({ item }: Props) {
 	const data = result.data.data;
 
 	return (
-		<Link to="/trips/invites">
+		<Link
+			to="/trips/invites"
+			onClick={async () => {
+				await markAsRead(item.id);
+			}}
+		>
 			<Item variant="outline" className="hover:bg-muted">
 				<UnreadBadge item={item} />
 
@@ -165,6 +186,7 @@ function VariantTripInvite({ item }: Props) {
 }
 
 function VariantTripAddUser({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
 	const result = tripAddUserNotificationSchema.safeParse(item);
 
 	if (!result.success) {
@@ -178,6 +200,9 @@ function VariantTripAddUser({ item }: Props) {
 			to="/trips/$id/participants"
 			params={{
 				id: item.entityId,
+			}}
+			onClick={async () => {
+				await markAsRead(item.id);
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
@@ -206,6 +231,7 @@ function VariantTripAddUser({ item }: Props) {
 }
 
 function VariantTripComment({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
 	const result = tripNewCommentNotificationSchema.safeParse(item);
 
 	if (!result.success) {
@@ -219,6 +245,9 @@ function VariantTripComment({ item }: Props) {
 			to="/trips/$id/comments"
 			params={{
 				id: item.entityId,
+			}}
+			onClick={async () => {
+				await markAsRead(item.id);
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
@@ -245,6 +274,7 @@ function VariantTripComment({ item }: Props) {
 }
 
 function VariantTripUpdate({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
 	const result = tripUpdateNotificationSchema.safeParse(item);
 
 	if (!result.success) {
@@ -258,6 +288,9 @@ function VariantTripUpdate({ item }: Props) {
 			to="/trips/$id"
 			params={{
 				id: item.entityId,
+			}}
+			onClick={async () => {
+				await markAsRead(item.id);
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
@@ -286,6 +319,7 @@ function VariantTripUpdate({ item }: Props) {
 }
 
 function VariantMention({ item }: Props) {
+	const { markAsRead } = useNotificationsContext();
 	const result = mentionNotificationSchema.safeParse(item.data);
 
 	if (!result.success) {
@@ -300,6 +334,9 @@ function VariantMention({ item }: Props) {
 			params={{
 				id: data.place.id,
 				reviewId: data.id,
+			}}
+			onClick={async () => {
+				await markAsRead(item.id);
 			}}
 		>
 			<Item variant="outline" className="hover:bg-muted">
