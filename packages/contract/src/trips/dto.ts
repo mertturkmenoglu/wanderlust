@@ -1,6 +1,5 @@
 import { Types } from '@wanderlust/common';
 import z from 'zod';
-import { Amenities } from '../amenities/index';
 
 export namespace dto {
 	export const getInput = Types.Trip.pick({
@@ -293,23 +292,6 @@ export namespace dto {
 
 	export type DeleteItineraryItemOutput = z.infer<
 		typeof deleteItineraryItemOutput
-	>;
-
-	export const updateRequestedAmenitiesInput = z.object({
-		id: Types.Trip.shape.id,
-		amenities: z.array(z.string()).min(0).max(Amenities.values.length),
-	});
-
-	export type UpdateRequestedAmenitiesInput = z.infer<
-		typeof updateRequestedAmenitiesInput
-	>;
-
-	export const updateRequestedAmenitiesOutput = z.object({
-		trip: Types.Trip,
-	});
-
-	export type UpdateRequestedAmenitiesOutput = z.infer<
-		typeof updateRequestedAmenitiesOutput
 	>;
 
 	export const getSummaryInput = Types.Trip.pick({ id: true });
