@@ -6,13 +6,10 @@ import {
 	EmptyTitle,
 } from '@wanderlust/ui/components/empty';
 import { Logo } from '@/components/logo';
-import { Header } from './header';
 
 export function EmptyState() {
 	return (
 		<div>
-			<Header />
-
 			<Empty>
 				<EmptyHeader>
 					<EmptyMedia>
