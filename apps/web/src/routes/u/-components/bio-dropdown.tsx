@@ -15,7 +15,9 @@ import {
 	MapPlusIcon,
 	Share2Icon,
 } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { InviteToTripDialog } from './invite-to-trip-dialog';
 
 async function handleShareClick() {
 	await navigator.clipboard.writeText(globalThis.window.location.href);
@@ -23,69 +25,84 @@ async function handleShareClick() {
 }
 
 export function BioDropdown() {
+	const [open, setOpen] = useState(false);
 	const { profile, meta } = useLoaderData({ from: '/u/$username' });
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon">
-					<EllipsisVerticalIcon />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-48" align="end">
-				<DropdownMenuGroup>
-					<DropdownMenuItem asChild>
-						<button type="button" className="w-full" onClick={handleShareClick}>
-							<Share2Icon />
-							<span className="ml-2">Share</span>
-						</button>
-					</DropdownMenuItem>
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant="outline" size="icon">
+						<EllipsisVerticalIcon />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent className="w-48" align="end">
+					<DropdownMenuGroup>
+						<DropdownMenuItem asChild>
+							<button
+								type="button"
+								className="w-full"
+								onClick={handleShareClick}
+							>
+								<Share2Icon />
+								<span className="ml-2">Share</span>
+							</button>
+						</DropdownMenuItem>
 
-					<DropdownMenuItem asChild>
-						<button
-							type="button"
-							className="w-full disabled:text-muted-foreground"
-							onClick={() => {}}
+						<DropdownMenuItem asChild>
+							<button
+								type="button"
+								className="w-full disabled:text-muted-foreground"
+								onClick={() => {
+									setOpen(true);
+								}}
+								disabled={meta.isSelf}
+							>
+								<MapPlusIcon />
+								<span className="ml-2">Invite to trip</span>
+							</button>
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
+
+					<DropdownMenuSeparator />
+
+					<DropdownMenuGroup>
+						<DropdownMenuItem
 							disabled={meta.isSelf}
+							variant="destructive"
+							asChild
 						>
-							<MapPlusIcon />
-							<span className="ml-2">Invite to trip</span>
-						</button>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
+							<Link
+								to="/report"
+								search={{
+									id: profile.id,
+									type: 'user',
+								}}
+							>
+								<FlagIcon />
+								<span className="ml-2">Report</span>
+							</Link>
+						</DropdownMenuItem>
 
-				<DropdownMenuSeparator />
-
-				<DropdownMenuGroup>
-					<DropdownMenuItem
-						disabled={meta.isSelf}
-						variant="destructive"
-						asChild
-					>
-						<Link
-							to="/report"
-							search={{
-								id: profile.id,
-								type: 'user',
-							}}
+						<DropdownMenuItem
+							disabled={meta.isSelf}
+							variant="destructive"
+							asChild
 						>
-							<FlagIcon />
-							<span className="ml-2">Report</span>
-						</Link>
-					</DropdownMenuItem>
+							<button type="button" className="w-full" onClick={() => {}}>
+								<BanIcon />
+								<span className="ml-2">Block</span>
+							</button>
+						</DropdownMenuItem>
+					</DropdownMenuGroup>
+				</DropdownMenuContent>
+			</DropdownMenu>
 
-					<DropdownMenuItem
-						disabled={meta.isSelf}
-						variant="destructive"
-						asChild
-					>
-						<button type="button" className="w-full" onClick={() => {}}>
-							<BanIcon />
-							<span className="ml-2">Block</span>
-						</button>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
+			<InviteToTripDialog
+				open={open}
+				setOpen={setOpen}
+				displayName={profile.name ?? ''}
+			/>
+		</>
 	);
 }
