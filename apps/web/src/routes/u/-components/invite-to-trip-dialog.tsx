@@ -10,11 +10,13 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@wanderlust/ui/components/alert-dialog';
+import { Button } from '@wanderlust/ui/components/button';
 import { Item, ItemGroup, ItemTitle } from '@wanderlust/ui/components/item';
 import { Spinner } from '@wanderlust/ui/components/spinner';
 import { cn } from '@wanderlust/ui/lib/utils';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useFlattenedQuery } from '@/hooks/use-flattened-query';
+import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { orpc } from '@/lib/orpc';
 
 type Props = {
@@ -43,6 +45,7 @@ export function InviteToTripDialog(props: Props) {
 	);
 
 	const flat = useFlattenedQuery(query.data, (p) => p.trips);
+	const btnText = useLoadMoreText(query);
 
 	return (
 		<AlertDialog open={props.open} onOpenChange={props.setOpen}>
@@ -53,7 +56,7 @@ export function InviteToTripDialog(props: Props) {
 					</AlertDialogTitle>
 					<AlertDialogDescription>Select a trip</AlertDialogDescription>
 				</AlertDialogHeader>
-				<div>
+				<div className="no-scrollbar -mx-4 max-h-[50vh] overflow-y-auto px-4 py-4">
 					{query.isLoading && <Spinner />}
 					<ItemGroup className="gap-2">
 						{flat.map((t) => (
@@ -77,6 +80,16 @@ export function InviteToTripDialog(props: Props) {
 								</Item>
 							</button>
 						))}
+						{query.hasNextPage && (
+							<Button
+								variant="link"
+								onClick={() => {
+									query.fetchNextPage();
+								}}
+							>
+								{btnText}
+							</Button>
+						)}
 					</ItemGroup>
 				</div>
 				<AlertDialogFooter>
