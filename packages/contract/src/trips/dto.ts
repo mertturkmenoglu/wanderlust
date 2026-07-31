@@ -260,7 +260,13 @@ export namespace dto {
 		typeof createItineraryItemOutput
 	>;
 
-	export const updateItineraryItemInput = Types.Trips.ItineraryItem;
+	export const updateItineraryItemInput =
+		Types.Trips.ItineraryItem.partial().required({
+			id: true,
+			tripId: true,
+			type: true,
+			scheduledTime: true,
+		});
 
 	export type UpdateItineraryItemInput = z.infer<
 		typeof updateItineraryItemInput
