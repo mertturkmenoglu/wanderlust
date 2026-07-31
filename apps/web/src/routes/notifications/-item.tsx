@@ -62,7 +62,7 @@ function getVariantComponent(type: TNotification['type']) {
 }
 
 function VariantUserFollow({ item }: Props) {
-	const result = followNotificationSchema.safeParse(item.data);
+	const result = followNotificationSchema.safeParse(item);
 
 	if (!result.success) {
 		return null;
@@ -127,9 +127,10 @@ function VariantWanderlustSystem({ item }: Props) {
 }
 
 function VariantTripInvite({ item }: Props) {
-	const result = tripInviteNotificationSchema.safeParse(item.data);
+	const result = tripInviteNotificationSchema.safeParse(item);
 
 	if (!result.success) {
+		console.log({ item, error: result.error });
 		return null;
 	}
 
@@ -164,7 +165,7 @@ function VariantTripInvite({ item }: Props) {
 }
 
 function VariantTripAddUser({ item }: Props) {
-	const result = tripAddUserNotificationSchema.safeParse(item.data);
+	const result = tripAddUserNotificationSchema.safeParse(item);
 
 	if (!result.success) {
 		return null;
@@ -205,7 +206,7 @@ function VariantTripAddUser({ item }: Props) {
 }
 
 function VariantTripComment({ item }: Props) {
-	const result = tripNewCommentNotificationSchema.safeParse(item.data);
+	const result = tripNewCommentNotificationSchema.safeParse(item);
 
 	if (!result.success) {
 		return null;
@@ -244,7 +245,7 @@ function VariantTripComment({ item }: Props) {
 }
 
 function VariantTripUpdate({ item }: Props) {
-	const result = tripUpdateNotificationSchema.safeParse(item.data);
+	const result = tripUpdateNotificationSchema.safeParse(item);
 
 	if (!result.success) {
 		return null;
@@ -254,7 +255,7 @@ function VariantTripUpdate({ item }: Props) {
 
 	return (
 		<Link
-			to="/trips/$id/details"
+			to="/trips/$id"
 			params={{
 				id: item.entityId,
 			}}
