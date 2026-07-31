@@ -6,9 +6,68 @@ import { Asset } from './assets';
 import { Category } from './categories';
 import { City } from './cities';
 import { Resources } from './resources';
+import { Timestamp } from './timestamp';
 import { Url } from './url';
 
 export const Place = createSelectSchema(schema.places, {
+	id: Resources.id,
+	name: z
+		.string()
+		.min(1)
+		.max(255)
+		.meta({
+			description: 'Name of the place',
+			examples: ['Central Park', 'Eiffel Tower'],
+		}),
+	description: z
+		.string()
+		.min(1)
+		.max(2048)
+		.meta({
+			description: 'Description of the place',
+			examples: [
+				'A large public park in New York City.',
+				'An iconic landmark in Paris, France.',
+			],
+		}),
+	status: z
+		.enum(['unknown', 'operational', 'closed_temp', 'closed_perm', 'future'])
+		.meta({
+			description: 'Operational status of the place',
+			examples: ['operational', 'closed_temp'],
+		}),
+	intlPhone: z
+		.string()
+		.optional()
+		.meta({
+			description: 'International phone number in E.164 format',
+			examples: ['+14155552671'],
+		}),
+	primaryCategoryId: Resources.id,
+	priceLevel: z
+		.enum([
+			'unknown',
+			'free',
+			'cheap',
+			'moderate',
+			'expensive',
+			'very_expensive',
+		])
+		.meta({
+			description: 'Price level of the place',
+			examples: ['cheap', 'moderate'],
+		}),
+	accessibilityLevel: z
+		.enum([
+			'unknown',
+			'not_accessible',
+			'partially_accessible',
+			'highly_accessible',
+		])
+		.meta({
+			description: 'Accessibility level of the place',
+			examples: ['partially_accessible', 'highly_accessible'],
+		}),
 	amenities: z.array(z.string()).meta({
 		description:
 			'Array of amenity IDs with .0 and .1 suffixes. (.0=Not supported, .1=Supported)',
@@ -110,6 +169,98 @@ export const Place = createSelectSchema(schema.places, {
 		description: 'Array of secondary category IDs associated with the place',
 		examples: [['category456', 'category789']],
 	}),
+	totalVotes: z
+		.number()
+		.int()
+		.nonnegative()
+		.meta({
+			description: 'Total number of votes received by the place',
+			examples: [100],
+		}),
+	totalPoints: z
+		.number()
+		.int()
+		.nonnegative()
+		.meta({
+			description: 'Total points accumulated from votes',
+			examples: [450],
+		}),
+	rating: z
+		.number()
+		.min(0)
+		.max(5)
+		.meta({
+			description: 'Average rating of the place (0 to 5)',
+			examples: [4.5],
+		}),
+	totalFavorites: z
+		.number()
+		.int()
+		.nonnegative()
+		.meta({
+			description:
+				'Total number of times the place has been marked as favorite',
+			examples: [50],
+		}),
+	countryCode: z
+		.string()
+		.length(2)
+		.meta({
+			description: 'ISO 3166-1 alpha-2 country code of the place',
+			examples: ['US', 'FR'],
+		}),
+	countryName: z.string().meta({
+		description: 'Country name of the place',
+		examples: ['United States', 'France'],
+	}),
+	adminAreaCode: z.string().meta({
+		description:
+			'ISO 3166-2 subdivision code (e.g., US-CA for California, United States)',
+		examples: ['US-CA', 'FR-IDF'],
+	}),
+	adminAreaName: z.string().meta({
+		description: 'Subdivision name (e.g., state or province) of the place',
+		examples: ['California', 'Île-de-France'],
+	}),
+	locality: z.string().meta({
+		description: 'City or town name of the place',
+		examples: ['Los Angeles', 'Paris'],
+	}),
+	subLocality: z
+		.string()
+		.optional()
+		.meta({
+			description: 'Neighborhood or district name of the place',
+			examples: ['Hollywood', 'Le Marais'],
+		}),
+	postalCode: z
+		.string()
+		.optional()
+		.meta({
+			description: 'Postal code of the place',
+			examples: ['90028', '75003'],
+		}),
+	addressLine: z.string().meta({
+		description: 'Full address line of the place',
+		examples: [
+			'123 Main St, Los Angeles, CA 90028',
+			'10 Rue de Rivoli, 75001 Paris',
+		],
+	}),
+	lat: z.number().meta({
+		description: 'Latitude coordinate of the place',
+		examples: [34.0522, 48.8566],
+	}),
+	lng: z.number().meta({
+		description: 'Longitude coordinate of the place',
+		examples: [-118.2437, 2.3522],
+	}),
+	wlCityId: Resources.id.meta({
+		description: 'ID of the city in the Wanderlust database',
+		examples: ['city123', 'city456'],
+	}),
+	createdAt: Timestamp,
+	updatedAt: Timestamp,
 }).meta({
 	description: 'A place entity',
 });
