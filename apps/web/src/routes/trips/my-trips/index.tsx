@@ -1,7 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@wanderlust/ui/components/button';
 import { ItemGroup } from '@wanderlust/ui/components/item';
 import { Breadcrumb } from '@/components/trips/breadcrumb';
 import { useFlattenedQuery } from '@/hooks/use-flattened-query';
+import { useLoadMoreText } from '@/hooks/use-load-more-text';
 import { seo } from '@/lib/seo';
 import { EmptyState } from './-empty';
 import { ErrorState } from './-error';
@@ -29,6 +31,7 @@ function RouteComponent() {
 function Content() {
 	const query = useMyTripsQuery();
 	const flat = useFlattenedQuery(query.data, (p) => p.trips);
+	const btnText = useLoadMoreText(query);
 
 	if (query.isPending) {
 		return <Loading />;
@@ -47,6 +50,15 @@ function Content() {
 			{flat.map((trip) => (
 				<TripItem key={trip.id} trip={trip} />
 			))}
+			{query.hasNextPage && (
+				<Button
+					variant="link"
+					type="button"
+					onClick={() => query.fetchNextPage()}
+				>
+					{btnText}
+				</Button>
+			)}
 		</ItemGroup>
 	);
 }
