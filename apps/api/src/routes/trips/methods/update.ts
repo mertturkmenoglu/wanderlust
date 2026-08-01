@@ -118,22 +118,22 @@ export class UpdateTripMethod {
 				})
 				.where(eq(schema.trips.id, data.id));
 
-			// If date changed, there could be dangling location entities
+			// If date changed, there could be dangling itinerary items that are outside the new date range.
 			// Move them into the new trip date range
 			if (isDateChanged) {
-				// If the location scheduled time is before the new start date
+				// If the item scheduled time is before the new start date
 				// or after the new end date, set it to the new start date
 				await tx
-					.update(schema.tripLocations)
+					.update(schema.itineraryItems)
 					.set({
 						scheduledTime: data.startAt,
 					})
 					.where(
 						and(
-							eq(schema.tripLocations.tripId, data.id),
+							eq(schema.itineraryItems.tripId, data.id),
 							or(
-								lt(schema.tripLocations.scheduledTime, data.startAt),
-								gt(schema.tripLocations.scheduledTime, data.endAt),
+								lt(schema.itineraryItems.scheduledTime, data.startAt),
+								gt(schema.itineraryItems.scheduledTime, data.endAt),
 							),
 						),
 					);
