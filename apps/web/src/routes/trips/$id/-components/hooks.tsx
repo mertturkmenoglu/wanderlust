@@ -8,7 +8,11 @@ import {
 	MessageCircleIcon,
 	Users2Icon,
 } from 'lucide-react';
+import { useMemo } from 'react';
+import type { Outputs } from '@/lib/orpc';
 import type { SummaryCardProps } from './summary-card';
+
+type City = Outputs['cities']['get']['city'];
 
 export function useTripSummary() {
 	const data = useLoaderData({ from: '/trips/$id/' });
@@ -108,4 +112,48 @@ export function useTripSummary() {
 	];
 
 	return items;
+}
+
+export function useTripCities() {
+	const data = useLoaderData({ from: '/trips/$id/' });
+	const cities = useMemo(() => {
+		const items = data.trip.itineraryItems;
+		const cities: City[] = [];
+
+		for (const item of items) {
+			if (
+				item.place?.place?.city &&
+				!cities.find((c) => c.id === item.place?.place?.city.id)
+			) {
+				cities.push(item.place.place.city);
+			}
+		}
+
+		return cities.toSorted((a, b) => a.name.localeCompare(b.name));
+	}, [data.trip.itineraryItems]);
+
+	return cities;
+}
+
+export function useTripPlaces() {
+	const data = useLoaderData({ from: '/trips/$id/' });
+	const places = useMemo(() => {
+		const items = data.trip.itineraryItems.toSorted(
+			(a, b) => a.scheduledTime.getTime() - b.scheduledTime.getTime(),
+		);
+		const places: Outputs['places']['get']['place'][] = [];
+
+		for (const item of items) {
+			if (
+				item.place?.place &&
+				!places.find((p) => p.id === item.place?.place?.id)
+			) {
+				places.push(item.place.place);
+			}
+		}
+
+		return places;
+	}, [data.trip.itineraryItems]);
+
+	return places;
 }
