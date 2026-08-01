@@ -38,7 +38,7 @@ export const Place = createSelectSchema(schema.places, {
 		}),
 	intlPhone: z
 		.string()
-		.optional()
+		.nullable()
 		.meta({
 			description: 'International phone number in E.164 format',
 			examples: ['+14155552671'],
@@ -228,14 +228,14 @@ export const Place = createSelectSchema(schema.places, {
 	}),
 	subLocality: z
 		.string()
-		.optional()
+		.nullable()
 		.meta({
 			description: 'Neighborhood or district name of the place',
 			examples: ['Hollywood', 'Le Marais'],
 		}),
 	postalCode: z
 		.string()
-		.optional()
+		.nullable()
 		.meta({
 			description: 'Postal code of the place',
 			examples: ['90028', '75003'],
