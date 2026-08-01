@@ -12,6 +12,8 @@ import { getHandlers } from './routes/handler';
 
 const { cfg, auth } = await bootstrapServices();
 
+const h = getHandlers();
+
 const app = new Hono()
 	.use(compress())
 	.use(
@@ -26,7 +28,7 @@ const app = new Hono()
 	.use('*', requestLogger)
 	.use('/*', getCorsConfig(cfg))
 	.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw))
-	.use('/*', matchHandler(getHandlers()));
+	.use('/*', matchHandler(h));
 
 export default {
 	port: cfg.api.port,
