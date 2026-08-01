@@ -82,20 +82,11 @@ function List() {
 		}),
 	);
 
-	const removeMutation = useMutation(
-		orpc.collections.places.remove.mutationOptions({
+	const updateMutation = useMutation(
+		orpc.collections.places.update.mutationOptions({
 			onSuccess: async () => {
 				await query.refetch();
 				toast.success('Collection place relation removed successfully');
-			},
-		}),
-	);
-
-	const reorderMutation = useMutation(
-		orpc.collections.places.reorder.mutationOptions({
-			onSuccess: async () => {
-				await query.refetch();
-				toast.success('Collection items updated');
 			},
 		}),
 	);
@@ -120,15 +111,21 @@ function List() {
 				<SortableList
 					initial={collections}
 					onRemove={(item) => {
-						removeMutation.mutate({
+						updateMutation.mutate({
 							placeId: params.id,
-							collectionId: item.id,
+							update: {
+								items: [item.id],
+								op: 'remove',
+							},
 						});
 					}}
 					onReorder={(items) => {
-						reorderMutation.mutate({
+						updateMutation.mutate({
 							placeId: params.id,
-							collectionIds: items.map((x) => x.id),
+							update: {
+								items: items.map((x) => x.id),
+								op: 'move',
+							},
 						});
 					}}
 					renderItem={(item) => {
@@ -187,7 +184,7 @@ function New() {
 	);
 
 	const mutation = useMutation(
-		orpc.collections.places.append.mutationOptions({
+		orpc.collections.places.update.mutationOptions({
 			onSuccess: async () => {
 				await invalidate();
 				toast.success('Collection place relation created successfully');
@@ -221,7 +218,10 @@ function New() {
 									onClick={() => {
 										mutation.mutate({
 											placeId: params.id,
-											collectionId: collection.id,
+											update: {
+												op: 'add',
+												items: [collection.id],
+											},
 										});
 									}}
 								>

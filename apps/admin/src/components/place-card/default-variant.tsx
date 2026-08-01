@@ -45,7 +45,7 @@ export function DefaultVariant({
 		>
 			<Image
 				src={ipx(asset.url, 'w_512')}
-				alt={asset.description ?? ''}
+				alt={asset.alt ?? ''}
 				layout="constrained"
 				aspectRatio={16 / 9}
 				height={128}

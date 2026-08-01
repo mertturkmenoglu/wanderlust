@@ -1,5 +1,5 @@
 import { redirect } from '@tanstack/react-router';
-import type { TAuthService } from '@wanderlust/auth';
+import type { AuthService } from '@wanderlust/auth';
 import {
 	adminClient,
 	inferAdditionalFields,
@@ -11,7 +11,7 @@ import z from 'zod';
 export const authClient = createAuthClient({
 	baseURL: import.meta.env.VITE_API_URL,
 	plugins: [
-		inferAdditionalFields<TAuthService>(),
+		inferAdditionalFields<AuthService>(),
 		adminClient(),
 		multiSessionClient(),
 	],
