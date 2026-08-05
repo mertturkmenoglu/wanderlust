@@ -115,6 +115,7 @@ export class UpdateTripMethod {
 					visibilityLevel: data.visibilityLevel,
 					startAt: data.startAt,
 					endAt: data.endAt,
+					requestedAmenities: data.requestedAmenities,
 				})
 				.where(eq(schema.trips.id, data.id));
 
