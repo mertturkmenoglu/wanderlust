@@ -6,6 +6,7 @@ import { ListNotificationsMethod } from './methods/list';
 import { MarkAllNotificationsReadMethod } from './methods/mark-all-read';
 import { MarkNotificationReadMethod } from './methods/mark-read';
 import { GetNotificationPreferencesMethod } from './methods/preferences';
+import { SendNotificationMethod } from './methods/send';
 import { UpdateNotificationPreferencesMethod } from './methods/update-preferences';
 
 export const module = defineModule({
@@ -16,6 +17,7 @@ export const module = defineModule({
 		ClearNotificationsMethod,
 		GetNotificationPreferencesMethod,
 		UpdateNotificationPreferencesMethod,
+		SendNotificationMethod,
 	],
 	router: () => {
 		const list = container.get(ListNotificationsMethod);
@@ -24,6 +26,7 @@ export const module = defineModule({
 		const clear = container.get(ClearNotificationsMethod);
 		const preferences = container.get(GetNotificationPreferencesMethod);
 		const update = container.get(UpdateNotificationPreferencesMethod);
+		const send = container.get(SendNotificationMethod);
 
 		return os.router({
 			list: list.route(),
@@ -32,6 +35,7 @@ export const module = defineModule({
 			clear: clear.route(),
 			preferences: preferences.route(),
 			updatePreferences: update.route(),
+			send: send.route(),
 		});
 	},
 });
