@@ -61,4 +61,17 @@ export namespace dto {
 	});
 
 	export type UpdatePreferencesOutput = z.infer<typeof updatePreferencesOutput>;
+
+	export const sendInput = z.object({
+		recipientId: Types.Resources.id,
+		message: z.string().min(1).max(1000),
+	});
+
+	export type SendInput = z.infer<typeof sendInput>;
+
+	export const sendOutput = z.object({
+		success: z.boolean(),
+	});
+
+	export type SendOutput = z.infer<typeof sendOutput>;
 }

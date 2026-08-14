@@ -56,6 +56,12 @@ export const contract = oc
 				description:
 					'Update notification preferences for the authenticated user',
 			}),
+		send: oc.input(dto.sendInput).output(dto.sendOutput).route({
+			method: 'POST',
+			path: '/notifications/send',
+			summary: 'Send Notification',
+			description: 'Send a system notification to a user. Admin only.',
+		}),
 	});
 
 export type Contract = typeof contract;
