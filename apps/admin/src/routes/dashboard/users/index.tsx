@@ -1,6 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { buttonVariants } from '@wanderlust/ui/components/button';
 import { cn } from '@wanderlust/ui/lib/utils';
+import { BellIcon } from 'lucide-react';
 import z from 'zod';
 import { Container } from '@/components/container';
 import { DenseList } from '@/components/dense-list';
@@ -53,7 +55,18 @@ function RouteComponent() {
 	const hasNext = (search.page ?? 1) * (search.pageSize ?? 20) < total;
 
 	return (
-		<Container title="Users">
+		<Container
+			title="Users"
+			actions={
+				<Link
+					to="/dashboard/notifications"
+					className={buttonVariants({ size: 'sm' })}
+				>
+					<BellIcon />
+					Send Notification
+				</Link>
+			}
+		>
 			<DenseList
 				data={users}
 				keyExtractor={(u) => u.id}

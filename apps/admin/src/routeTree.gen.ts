@@ -26,6 +26,7 @@ import { Route as DashboardCitiesNewRouteImport } from './routes/dashboard/citie
 import { Route as DashboardCollectionsIndexRouteImport } from './routes/dashboard/collections/index'
 import { Route as DashboardCollectionsIdRouteImport } from './routes/dashboard/collections/$id'
 import { Route as DashboardCollectionsNewRouteImport } from './routes/dashboard/collections/new'
+import { Route as DashboardNotificationsIndexRouteImport } from './routes/dashboard/notifications/index'
 import { Route as DashboardPlacesIndexRouteImport } from './routes/dashboard/places/index'
 import { Route as DashboardPlacesIdRouteImport } from './routes/dashboard/places/$id'
 import { Route as DashboardPlacesNewRouteImport } from './routes/dashboard/places/new'
@@ -129,6 +130,12 @@ const DashboardCollectionsNewRoute = DashboardCollectionsNewRouteImport.update({
   path: '/collections/new',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardNotificationsIndexRoute =
+  DashboardNotificationsIndexRouteImport.update({
+    id: '/notifications/',
+    path: '/notifications/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardPlacesIndexRoute = DashboardPlacesIndexRouteImport.update({
   id: '/places/',
   path: '/places/',
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/cities/': typeof DashboardCitiesIndexRoute
   '/dashboard/collections/': typeof DashboardCollectionsIndexRoute
+  '/dashboard/notifications/': typeof DashboardNotificationsIndexRoute
   '/dashboard/places/': typeof DashboardPlacesIndexRoute
   '/dashboard/reports/': typeof DashboardReportsIndexRoute
   '/dashboard/users/': typeof DashboardUsersIndexRoute
@@ -264,6 +272,7 @@ export interface FileRoutesByTo {
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/cities': typeof DashboardCitiesIndexRoute
   '/dashboard/collections': typeof DashboardCollectionsIndexRoute
+  '/dashboard/notifications': typeof DashboardNotificationsIndexRoute
   '/dashboard/places': typeof DashboardPlacesIndexRoute
   '/dashboard/reports': typeof DashboardReportsIndexRoute
   '/dashboard/users': typeof DashboardUsersIndexRoute
@@ -299,6 +308,7 @@ export interface FileRoutesById {
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/cities/': typeof DashboardCitiesIndexRoute
   '/dashboard/collections/': typeof DashboardCollectionsIndexRoute
+  '/dashboard/notifications/': typeof DashboardNotificationsIndexRoute
   '/dashboard/places/': typeof DashboardPlacesIndexRoute
   '/dashboard/reports/': typeof DashboardReportsIndexRoute
   '/dashboard/users/': typeof DashboardUsersIndexRoute
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories/'
     | '/dashboard/cities/'
     | '/dashboard/collections/'
+    | '/dashboard/notifications/'
     | '/dashboard/places/'
     | '/dashboard/reports/'
     | '/dashboard/users/'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories'
     | '/dashboard/cities'
     | '/dashboard/collections'
+    | '/dashboard/notifications'
     | '/dashboard/places'
     | '/dashboard/reports'
     | '/dashboard/users'
@@ -402,6 +414,7 @@ export interface FileRouteTypes {
     | '/dashboard/categories/'
     | '/dashboard/cities/'
     | '/dashboard/collections/'
+    | '/dashboard/notifications/'
     | '/dashboard/places/'
     | '/dashboard/reports/'
     | '/dashboard/users/'
@@ -543,6 +556,13 @@ declare module '@tanstack/react-router' {
       path: '/collections/new'
       fullPath: '/dashboard/collections/new'
       preLoaderRoute: typeof DashboardCollectionsNewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/notifications/': {
+      id: '/dashboard/notifications/'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications/'
+      preLoaderRoute: typeof DashboardNotificationsIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/places/': {
@@ -735,6 +755,7 @@ interface DashboardRouteChildren {
   DashboardCategoriesIndexRoute: typeof DashboardCategoriesIndexRoute
   DashboardCitiesIndexRoute: typeof DashboardCitiesIndexRoute
   DashboardCollectionsIndexRoute: typeof DashboardCollectionsIndexRoute
+  DashboardNotificationsIndexRoute: typeof DashboardNotificationsIndexRoute
   DashboardPlacesIndexRoute: typeof DashboardPlacesIndexRoute
   DashboardReportsIndexRoute: typeof DashboardReportsIndexRoute
   DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
@@ -758,6 +779,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardCategoriesIndexRoute: DashboardCategoriesIndexRoute,
   DashboardCitiesIndexRoute: DashboardCitiesIndexRoute,
   DashboardCollectionsIndexRoute: DashboardCollectionsIndexRoute,
+  DashboardNotificationsIndexRoute: DashboardNotificationsIndexRoute,
   DashboardPlacesIndexRoute: DashboardPlacesIndexRoute,
   DashboardReportsIndexRoute: DashboardReportsIndexRoute,
   DashboardUsersIndexRoute: DashboardUsersIndexRoute,
